@@ -30,15 +30,13 @@ class qSlicerTablesReaderPrivate;
 class vtkSlicerTablesLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTablesReader
-  : public qSlicerFileReader
+class qSlicerTablesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerTablesReader(QObject* parent = nullptr);
-  qSlicerTablesReader(vtkSlicerTablesLogic* logic,
-                       QObject* parent = nullptr);
+  qSlicerTablesReader(vtkSlicerTablesLogic* logic, QObject* parent = nullptr);
   ~qSlicerTablesReader() override;
 
   vtkSlicerTablesLogic* logic() const;
@@ -55,6 +53,7 @@ public:
   double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
+
 protected:
   QScopedPointer<qSlicerTablesReaderPrivate> d_ptr;
 

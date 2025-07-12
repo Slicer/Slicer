@@ -18,7 +18,6 @@ vtkCxxSetObjectMacro(vtkDataIOManager, CacheManager, vtkCacheManager);
 vtkCxxSetObjectMacro(vtkDataIOManager, DataTransferCollection, vtkCollection);
 vtkCxxSetObjectMacro(vtkDataIOManager, FileFormatHelper, vtkDataFileFormatHelper);
 
-
 //----------------------------------------------------------------------------
 vtkDataIOManager::vtkDataIOManager()
 {
@@ -28,8 +27,8 @@ vtkDataIOManager::vtkDataIOManager()
 
   //--- set up callback
   this->TransferUpdateCommand = vtkCallbackCommand::New();
-  this->TransferUpdateCommand->SetClientData ( reinterpret_cast<void*>(this) );
-  this->TransferUpdateCommand->SetCallback (vtkDataIOManager::TransferUpdateCallback );
+  this->TransferUpdateCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->TransferUpdateCommand->SetCallback(vtkDataIOManager::TransferUpdateCallback);
   this->InUpdateCallbackFlag = 0;
 
   this->FileFormatHelper = nullptr;
@@ -61,15 +60,14 @@ vtkDataIOManager::~vtkDataIOManager()
   if (this->FileFormatHelper)
   {
     this->FileFormatHelper->Delete();
-    this->FileFormatHelper =  nullptr;
+    this->FileFormatHelper = nullptr;
   }
 
   this->EnableAsynchronousIO = 0;
 }
 
 //----------------------------------------------------------------------------
-void vtkDataIOManager::TransferUpdateCallback ( vtkObject* caller,
-                                       unsigned long eid, void* clientData, void* callData )
+void vtkDataIOManager::TransferUpdateCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
 {
   vtkDataIOManager* self = reinterpret_cast<vtkDataIOManager*>(clientData);
   if (self->GetInUpdateCallbackFlag())
@@ -77,21 +75,16 @@ void vtkDataIOManager::TransferUpdateCallback ( vtkObject* caller,
     return;
   }
   self->SetInUpdateCallbackFlag(1);
-  self->ProcessTransferUpdates( caller, eid, callData );
+  self->ProcessTransferUpdates(caller, eid, callData);
   self->SetInUpdateCallbackFlag(0);
 }
 
-
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::ProcessTransferUpdates ( vtkObject* vtkNotUsed(caller),
-                                                unsigned long vtkNotUsed(event),
-                                                void* vtkNotUsed(callData) )
+void vtkDataIOManager::ProcessTransferUpdates(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
 {
   vtkDebugMacro("ProcessTransferUpdates: invoking transfer update event.");
-  this->InvokeEvent ( vtkDataIOManager::TransferUpdateEvent);
+  this->InvokeEvent(vtkDataIOManager::TransferUpdateEvent);
 }
-
 
 //----------------------------------------------------------------------------
 void vtkDataIOManager::PrintSelf(ostream& os, vtkIndent indent)
@@ -100,9 +93,7 @@ void vtkDataIOManager::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "DataTransferCollection: " << this->GetDataTransferCollection() << "\n";
   os << indent << "CacheManager: " << this->GetCacheManager() << "\n";
   os << indent << "EnableAsynchronousIO: " << this->GetEnableAsynchronousIO() << "\n";
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkDataIOManager::SetTransferStatus(vtkDataTransfer* transfer, int status)
@@ -123,35 +114,32 @@ int vtkDataIOManager::GetNumberOfDataTransfers()
   {
     this->DataTransferCollection = vtkCollection::New();
   }
-  return ( this->DataTransferCollection->GetNumberOfItems() );
+  return (this->DataTransferCollection->GetNumberOfItems());
 }
 
-
-
 //----------------------------------------------------------------------------
-int vtkDataIOManager::GetTransferStatus( vtkDataTransfer* transfer)
+int vtkDataIOManager::GetTransferStatus(vtkDataTransfer* transfer)
 {
-  return ( transfer->GetTransferStatus() );
+  return (transfer->GetTransferStatus());
 }
 
 //----------------------------------------------------------------------------
-const char* vtkDataIOManager::GetTransferStatusString( vtkDataTransfer* transfer )
+const char* vtkDataIOManager::GetTransferStatusString(vtkDataTransfer* transfer)
 {
   return transfer->GetTransferStatusString();
 }
 
 //----------------------------------------------------------------------------
-vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer ( )
+vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer()
 {
   vtkDataTransfer* transfer = vtkDataTransfer::New();
-  transfer->SetTransferID ( this->GetUniqueTransferID() );
-  this->AddDataTransfer ( transfer );
-  return (transfer );
+  transfer->SetTransferID(this->GetUniqueTransferID());
+  this->AddDataTransfer(transfer);
+  return (transfer);
 }
 
-
 //----------------------------------------------------------------------------
-vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode* node )
+vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer(vtkMRMLNode* node)
 {
   if (node == nullptr)
   {
@@ -159,25 +147,23 @@ vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode* node )
     return nullptr;
   }
   vtkDataTransfer* transfer = vtkDataTransfer::New();
-  transfer->SetTransferID ( this->GetUniqueTransferID() );
-  transfer->SetTransferNodeID ( node->GetID() );
-  this->AddDataTransfer ( transfer );
+  transfer->SetTransferID(this->GetUniqueTransferID());
+  transfer->SetTransferNodeID(node->GetID());
+  this->AddDataTransfer(transfer);
   vtkDebugMacro("AddNewDataTransfer: returning new transfer");
-  return (transfer );
+  return (transfer);
 }
 
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::AddNewDataTransfer ( vtkDataTransfer* transfer, vtkMRMLNode* node )
+void vtkDataIOManager::AddNewDataTransfer(vtkDataTransfer* transfer, vtkMRMLNode* node)
 {
   if (node != nullptr && transfer != nullptr)
   {
-    this->AddDataTransfer ( transfer );
-    this->InvokeEvent (vtkDataIOManager::NewTransferEvent, transfer );
+    this->AddDataTransfer(transfer);
+    this->InvokeEvent(vtkDataIOManager::NewTransferEvent, transfer);
     vtkDebugMacro("AddNewDataTransfer: added data transfer to dataIOManager's collection, invoked the new transfer event");
   }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkDataIOManager::AllTransfersClearedFromCache()
@@ -191,18 +177,16 @@ void vtkDataIOManager::AllTransfersClearedFromCache()
   int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
-    dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
+    dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
     if (dt != nullptr)
     {
       dt->SetTransferCached(0);
     }
   }
-
 }
 
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer* transfer )
+void vtkDataIOManager::AddDataTransfer(vtkDataTransfer* transfer)
 {
 
   if (transfer == nullptr)
@@ -215,13 +199,13 @@ void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer* transfer )
     this->DataTransferCollection = vtkCollection::New();
   }
   vtkDebugMacro("AddDataTransfer: adding item");
-  this->DataTransferCollection->AddItem ( transfer );
-  transfer->AddObserver ( vtkCommand::ModifiedEvent,  (vtkCommand*)this->TransferUpdateCommand );
+  this->DataTransferCollection->AddItem(transfer);
+  transfer->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCommand);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
-void vtkDataIOManager::RemoveDataTransfer ( vtkDataTransfer* transfer)
+void vtkDataIOManager::RemoveDataTransfer(vtkDataTransfer* transfer)
 {
   if (this->DataTransferCollection == nullptr)
   {
@@ -230,34 +214,32 @@ void vtkDataIOManager::RemoveDataTransfer ( vtkDataTransfer* transfer)
   if (transfer != nullptr)
   {
     // remove observer before deleting
-    transfer->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCommand );
-    this->DataTransferCollection->RemoveItem ( transfer );
+    transfer->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCommand);
+    this->DataTransferCollection->RemoveItem(transfer);
     this->Modified();
   }
 }
 
-
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::RemoveDataTransfer ( int transferID )
+void vtkDataIOManager::RemoveDataTransfer(int transferID)
 {
   vtkDataTransfer* dt;
   if (this->DataTransferCollection == nullptr)
-  {    // remove observer before deleting
+  { // remove observer before deleting
     this->DataTransferCollection = vtkCollection::New();
   }
 
   int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
-    dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
+    dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
     if (dt != nullptr)
     {
       if (dt->GetTransferID() == transferID)
       {
         // remove observer before deleting
-        dt->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCallback );
-        this->DataTransferCollection->RemoveItem ( i );
+        dt->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCallback);
+        this->DataTransferCollection->RemoveItem(i);
         this->Modified();
         break;
       }
@@ -266,7 +248,7 @@ void vtkDataIOManager::RemoveDataTransfer ( int transferID )
 }
 
 //----------------------------------------------------------------------------
-vtkDataTransfer* vtkDataIOManager::GetDataTransfer ( int transferID )
+vtkDataTransfer* vtkDataIOManager::GetDataTransfer(int transferID)
 {
 
   vtkDataTransfer* dt;
@@ -279,19 +261,17 @@ vtkDataTransfer* vtkDataIOManager::GetDataTransfer ( int transferID )
   int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
-    dt = vtkDataTransfer::SafeDownCast ( this->DataTransferCollection->GetItemAsObject (i) );
+    dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
     if (transferID == dt->GetTransferID())
     {
-      return ( dt );
+      return (dt);
     }
   }
-  return ( nullptr );
+  return (nullptr);
 }
 
-
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::ClearDataTransfers( )
+void vtkDataIOManager::ClearDataTransfers()
 {
 
   if (this->DataTransferCollection == nullptr)
@@ -302,27 +282,25 @@ void vtkDataIOManager::ClearDataTransfers( )
   this->Modified();
 }
 
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::SetEnableAsynchronousIO ( int val )
+void vtkDataIOManager::SetEnableAsynchronousIO(int val)
 {
   if (val == 1 || val == 0)
   {
     this->EnableAsynchronousIO = val;
-    this->InvokeEvent ( vtkDataIOManager::SettingsUpdateEvent );
+    this->InvokeEvent(vtkDataIOManager::SettingsUpdateEvent);
   }
 }
 
-
 //----------------------------------------------------------------------------
-void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
+void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
 {
   if (node == nullptr)
   {
     vtkErrorMacro("QueueRead: null input node!");
     return;
   }
-  vtkMRMLStorableNode* dnode = vtkMRMLStorableNode::SafeDownCast ( node );
+  vtkMRMLStorableNode* dnode = vtkMRMLStorableNode::SafeDownCast(node);
   if (dnode == nullptr)
   {
     vtkErrorMacro("QueueRead: unable to cast input mrml node to a storable node");
@@ -350,7 +328,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     vtkErrorMacro("QueueRead: unable to find a pending storage node!");
     return;
   }
-  //vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
+  // vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
   const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char* dest;
@@ -377,10 +355,10 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     //--- check to see if FreeBufferSize is exceeded.
 
     //--- if force redownload is enabled, remove the old file from cache.
-    if (cm->GetEnableForceRedownload ())
+    if (cm->GetEnableForceRedownload())
     {
       vtkDebugMacro("QueueRead: Calling remove from cache");
-      this->GetCacheManager()->DeleteFromCache ( dest );
+      this->GetCacheManager()->DeleteFromCache(dest);
     }
 
     //---
@@ -396,8 +374,8 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     //--- a large scene that consists of multiple datasets.
     //--- ***The risk with this implementation  is that they may
     //--- forget to adjust the cache size, but aren't notified again...
-    float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
-    if ((cm->GetCurrentCacheSize()*1000000.0) >= bufsize)
+    float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
+    if ((cm->GetCurrentCacheSize() * 1000000.0) >= bufsize)
     {
       //--- No space left in cache. Don't trigger logic to download;
       //--- by invoking a RemoteReadEvent.
@@ -405,7 +383,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
       //--- Mark the node cancelled.
       if (cm->GetInsufficientFreeBufferNotificationFlag() == 0)
       {
-        cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+        cm->InvokeEvent(vtkCacheManager::InsufficientFreeBufferEvent);
         cm->SetInsufficientFreeBufferNotificationFlag(1);
         dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
       }
@@ -424,7 +402,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
       //--- trigger logic to download, if there's cache space.
       //--- and signal this remote read event to Logic and GUI.
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
-      this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+      this->InvokeEvent(vtkDataIOManager::RemoteReadEvent, node);
       cm->UpdateCacheInformation();
     }
   }
@@ -432,18 +410,17 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
   {
     vtkErrorMacro("QueueRead: cache manager is null.");
   }
-
 }
 
 //----------------------------------------------------------------------------
-void vtkDataIOManager::QueueWrite ( vtkMRMLNode* node )
+void vtkDataIOManager::QueueWrite(vtkMRMLNode* node)
 {
   if (node == nullptr)
   {
     vtkErrorMacro("QueueWrite: null input node!");
     return;
   }
-  vtkMRMLStorableNode* dnode = vtkMRMLStorableNode::SafeDownCast ( node );
+  vtkMRMLStorableNode* dnode = vtkMRMLStorableNode::SafeDownCast(node);
   if (dnode == nullptr)
   {
     vtkErrorMacro("QueueWrite: unable to cast input mrml node to a storable node");
@@ -470,7 +447,7 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode* node )
     vtkErrorMacro("QueueWrite: unable to find a pending storage node!");
     return;
   }
-  //vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
+  // vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueWrite: got the uri handler from the storage node");
   const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
   const char* dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
@@ -492,12 +469,11 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode* node )
 
   vtkDebugMacro("QueueWrite: invoking a remote write event on the data io manager");
   //--- signal this remote write event to Logic and GUI.
-  this->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent, node);
+  this->InvokeEvent(vtkDataIOManager::RemoteWriteEvent, node);
 }
 
-
 //----------------------------------------------------------------------------
-int vtkDataIOManager::GetUniqueTransferID ( )
+int vtkDataIOManager::GetUniqueTransferID()
 {
 
   //--- keep looping until we find an id that is unique
@@ -519,8 +495,8 @@ int vtkDataIOManager::GetUniqueTransferID ( )
     vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);
     for (int i = 0; i < n; i++)
     {
-      dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject ( i ) );
-      if  ( dt != nullptr && id == dt->GetTransferID() )
+      dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
+      if (dt != nullptr && id == dt->GetTransferID())
       {
         exists = 1;
         break;
@@ -540,12 +516,11 @@ int vtkDataIOManager::GetUniqueTransferID ( )
     }
   }
   vtkDebugMacro("GetUniqueTransferID: returning id = " << id);
-  return ( id );
+  return (id);
 }
 
-
 //----------------------------------------------------------------------------
-vtkDataFileFormatHelper* vtkDataIOManager:: GetFileFormatHelper()
+vtkDataFileFormatHelper* vtkDataIOManager::GetFileFormatHelper()
 {
   if (!this->FileFormatHelper)
   {

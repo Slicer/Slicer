@@ -55,10 +55,7 @@ vtkTransformVisualizerGlyph3D::vtkTransformVisualizerGlyph3D()
 }
 
 //------------------------------------------------------------------------------
-int vtkTransformVisualizerGlyph3D::RequestData(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector,
-  vtkInformationVector* outputVector)
+int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
@@ -70,11 +67,12 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPointData* outputPD = output->GetPointData();
 
-  vtkDataArray* inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
-  vtkDataArray* inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring
+  vtkDataArray* inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS, inputVector);
+  vtkDataArray* inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS, inputVector);
+  ; // Scalars for Coloring
   if (inCScalars == nullptr)
   {
-    vtkDataArray* inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS,inputVector); // Scalars for Scaling
+    vtkDataArray* inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS, inputVector); // Scalars for Scaling
     inCScalars = inSScalars;
   }
 
@@ -85,7 +83,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     return 1;
   }
 
-  if (inCScalars==nullptr)
+  if (inCScalars == nullptr)
   {
     vtkDebugMacro("No scalar data is available!");
     return 1;
@@ -103,18 +101,18 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
   // Prepare to copy output.
   vtkPointData* pd = input->GetPointData();
-  outputPD->CopyAllocate(pd,numPts*numSourcePts);
+  outputPD->CopyAllocate(pd, numPts * numSourcePts);
 
   vtkNew<vtkPoints> newPts;
-  newPts->Allocate(numPts*numSourcePts);
+  newPts->Allocate(numPts * numSourcePts);
 
-  vtkSmartPointer<vtkDataArray> newScalars=vtkSmartPointer<vtkDataArray>::Take(inCScalars->NewInstance());
+  vtkSmartPointer<vtkDataArray> newScalars = vtkSmartPointer<vtkDataArray>::Take(inCScalars->NewInstance());
   newScalars->SetNumberOfComponents(inCScalars->GetNumberOfComponents());
-  newScalars->Allocate(inCScalars->GetNumberOfComponents()*numPts*numSourcePts);
+  newScalars->Allocate(inCScalars->GetNumberOfComponents() * numPts * numSourcePts);
   newScalars->SetName(inCScalars->GetName());
 
   // Setting up for calls to PolyData::InsertNextCell()
-  output->Allocate(source, 3*numPts*numSourceCells, numPts*numSourceCells);
+  output->Allocate(source, 3 * numPts * numSourceCells, numPts * numSourceCells);
 
   vtkSmartPointer<vtkPoints> transformedSourcePts = vtkSmartPointer<vtkPoints>::New();
   transformedSourcePts->SetDataTypeToDouble();
@@ -132,9 +130,9 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   double v[3] = { 0 };
   for (vtkIdType inPtId = 0; inPtId < numPts; inPtId++)
   {
-    if (! (inPtId % 10000))
+    if (!(inPtId % 10000))
     {
-      this->UpdateProgress(static_cast<double>(inPtId)/numPts);
+      this->UpdateProgress(static_cast<double>(inPtId) / numPts);
       if (this->GetAbortExecute())
       {
         break;
@@ -143,7 +141,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
     // Get the scalar and vector data
     double scalarValue = inCScalars->GetComponent(inPtId, 0);
-    if (this->MagnitudeThresholding && (scalarValue<this->MagnitudeThresholdLower || scalarValue>this->MagnitudeThresholdUpper))
+    if (this->MagnitudeThresholding && (scalarValue < this->MagnitudeThresholdLower || scalarValue > this->MagnitudeThresholdUpper))
     {
       continue;
     }
@@ -163,9 +161,9 @@ int vtkTransformVisualizerGlyph3D::RequestData(
       pts->Reset();
       for (vtkIdType i = 0; i < npts; i++)
       {
-        pts->InsertId(i,cellPts->GetId(i) + ptIncr);
+        pts->InsertId(i, cellPts->GetId(i) + ptIncr);
       }
-      output->InsertNextCell(cell->GetCellType(),pts.GetPointer());
+      output->InsertNextCell(cell->GetCellType(), pts.GetPointer());
     }
 
     // translate Source to Input point
@@ -177,14 +175,14 @@ int vtkTransformVisualizerGlyph3D::RequestData(
       // if there is no y or z component
       if (v[1] == 0.0 && v[2] == 0.0)
       {
-        if (v[0] < 0) //just flip x if we need to
+        if (v[0] < 0) // just flip x if we need to
         {
-          trans->RotateWXYZ(180.0,0,1,0);
+          trans->RotateWXYZ(180.0, 0, 1, 0);
         }
       }
       else
       {
-        trans->RotateWXYZ(180.0, (v[0]+vMag)/2.0, v[1]/2.0, v[2]/2.0);
+        trans->RotateWXYZ(180.0, (v[0] + vMag) / 2.0, v[1] / 2.0, v[2] / 2.0);
       }
     }
 
@@ -198,12 +196,12 @@ int vtkTransformVisualizerGlyph3D::RequestData(
         {
           scale = 1.0e-10;
         }
-        trans->Scale(scale,1.0,1.0);
+        trans->Scale(scale, 1.0, 1.0);
       }
       else
       {
         double scale = this->ScaleFactor;
-        if (this->ScaleMode==VTK_SCALE_BY_SCALAR)
+        if (this->ScaleMode == VTK_SCALE_BY_SCALAR)
         {
           scale *= scalarValue;
         }
@@ -215,7 +213,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
         {
           scale = 1.0e-10;
         }
-        trans->Scale(scale,scale,scale);
+        trans->Scale(scale, scale, scale);
       }
     }
 
@@ -228,13 +226,13 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     }
     else
     {
-      trans->TransformPoints(sourcePts,newPts.GetPointer());
+      trans->TransformPoints(sourcePts, newPts.GetPointer());
     }
 
     // Copy point data from source
     for (vtkIdType i = 0; i < numSourcePts; i++)
     {
-      outputPD->CopyTuple(inCScalars, newScalars, inPtId, ptIncr+i);
+      outputPD->CopyTuple(inCScalars, newScalars, inPtId, ptIncr + i);
     }
 
     ptIncr += numSourcePts;
@@ -264,17 +262,17 @@ void vtkTransformVisualizerGlyph3D::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 void vtkTransformVisualizerGlyph3D::SetColorArray(const char* colorArrayName)
 {
-  this->SetInputArrayToProcess(ARRAY_INDEX_COLORS,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,colorArrayName);
+  this->SetInputArrayToProcess(ARRAY_INDEX_COLORS, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, colorArrayName);
 }
 
 //------------------------------------------------------------------------------
 void vtkTransformVisualizerGlyph3D::SetVectorArray(const char* vectorArrayName)
 {
-  this->SetInputArrayToProcess(ARRAY_INDEX_VECTORS,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,vectorArrayName);
+  this->SetInputArrayToProcess(ARRAY_INDEX_VECTORS, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vectorArrayName);
 }
 
 //------------------------------------------------------------------------------
 void vtkTransformVisualizerGlyph3D::SetScalarArray(const char* scalarArrayName)
 {
-  this->SetInputArrayToProcess(ARRAY_INDEX_SCALARS,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,scalarArrayName);
+  this->SetInputArrayToProcess(ARRAY_INDEX_SCALARS, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, scalarArrayName);
 }

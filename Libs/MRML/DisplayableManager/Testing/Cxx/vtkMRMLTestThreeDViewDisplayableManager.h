@@ -26,8 +26,7 @@
 
 class vtkMRMLCameraNode;
 
-class vtkMRMLTestThreeDViewDisplayableManager :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class vtkMRMLTestThreeDViewDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
@@ -39,7 +38,6 @@ public:
   static int NodeAddedCount;
 
 protected:
-
   vtkMRMLTestThreeDViewDisplayableManager();
   ~vtkMRMLTestThreeDViewDisplayableManager() override;
 
@@ -47,22 +45,20 @@ protected:
 
   void Create() override;
 
-//  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
-//  virtual void OnMRMLSceneClosedEvent(){}
-//  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
-//  virtual void OnMRMLSceneImportedEvent(){}
-//  virtual void OnMRMLSceneRestoredEvent(){}
+  //  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
+  //  virtual void OnMRMLSceneClosedEvent(){}
+  //  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
+  //  virtual void OnMRMLSceneImportedEvent(){}
+  //  virtual void OnMRMLSceneRestoredEvent(){}
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-//  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
+  //  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
 
 private:
-
   vtkMRMLTestThreeDViewDisplayableManager(const vtkMRMLTestThreeDViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLTestThreeDViewDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

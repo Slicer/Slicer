@@ -36,7 +36,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Sequence)
-  const char* GetNodeTagName() override {return "SequenceStorage";};
+  const char* GetNodeTagName() override { return "SequenceStorage"; };
 
   /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;

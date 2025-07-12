@@ -29,8 +29,10 @@
 class qSlicerTerminologyEditorWidgetPrivate : public Ui_qSlicerTerminologyEditorWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyEditorWidget);
+
 protected:
   qSlicerTerminologyEditorWidget* const q_ptr;
+
 public:
   qSlicerTerminologyEditorWidgetPrivate(qSlicerTerminologyEditorWidget& object);
   void init();
@@ -168,7 +170,7 @@ void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNaviga
   Q_D(qSlicerTerminologyEditorWidget);
   d->TerminologyInfo = terminologyInfo;
   d->OriginalName = d->TerminologyInfo.Name;
-  d->OriginalColor= d->TerminologyInfo.Color;
+  d->OriginalColor = d->TerminologyInfo.Color;
   d->updateGUIFromTerminologyInfo();
 }
 

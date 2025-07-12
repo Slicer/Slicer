@@ -23,9 +23,9 @@
 
 #include "qSlicerPlotsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_PLOTS_WIDGETS_PLUGINS_EXPORT
-qMRMLPlotSeriesPropertiesWidgetPlugin
-  : public QObject, public qSlicerPlotsModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_PLOTS_WIDGETS_PLUGINS_EXPORT qMRMLPlotSeriesPropertiesWidgetPlugin
+  : public QObject
+  , public qSlicerPlotsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -37,7 +37,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

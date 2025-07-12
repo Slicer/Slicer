@@ -21,7 +21,6 @@
 class VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
 {
 public:
-
   static vtkMRMLTextNode* New();
   vtkTypeMacro(vtkMRMLTextNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -54,7 +53,7 @@ public:
   /// Set text node contents and encoding.
   /// If the encoding is not specified, then it will not be changed from the current value.
   /// \sa SetEncoding()
-  void SetText(const std::string& text, int encoding=-1);
+  void SetText(const std::string& text, int encoding = -1);
   vtkGetMacro(Text, std::string);
 
   ///
@@ -98,7 +97,6 @@ protected:
   std::string Text;
   int Encoding{ VTK_ENCODING_US_ASCII };
   int ForceCreateStorageNode{ CreateStorageNodeAuto };
-
 };
 
 #endif

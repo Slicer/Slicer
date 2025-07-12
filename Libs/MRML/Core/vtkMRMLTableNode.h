@@ -60,7 +60,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -307,7 +307,7 @@ public:
   /// \param nullValue: this value is used when a new row is added to the column
   /// \return True on success.
   /// \sa SetAndObserveSchema
-  bool SetDefaultColumnType(const std::string& type, const std::string& nullValue="");
+  bool SetDefaultColumnType(const std::string& type, const std::string& nullValue = "");
 
   /// Name of the column that stores default properties that are used when a new column is created.
   static const char* GetDefaultColumnName();
@@ -340,14 +340,13 @@ public:
   //----------------------------------------------------------------
   /// Constructor and destructor
   //----------------------------------------------------------------
- protected:
+protected:
   vtkMRMLTableNode();
   ~vtkMRMLTableNode() override;
   vtkMRMLTableNode(const vtkMRMLTableNode&);
   void operator=(const vtkMRMLTableNode&);
 
- protected:
-
+protected:
   /// Get column property, even for reserved properties
   std::string GetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName);
 
@@ -366,7 +365,6 @@ public:
   bool UseFirstColumnAsRowHeader;
 
   vtkTable* Schema;
-
 };
 
 #endif

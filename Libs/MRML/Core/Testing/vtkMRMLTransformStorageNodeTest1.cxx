@@ -96,16 +96,14 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
   // Default center of transformation, identity transform
   {
     transform->Identity();
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_I.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_I.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Default center of transformation, translation
   {
     transform->Identity();
     transform->Translate(4.0, 5.0, 6.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_T.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_T.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Default center of transformation, rotation
@@ -114,8 +112,7 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
     transform->RotateX(30.0);
     transform->RotateY(45.0);
     transform->RotateZ(60.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_R.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_R.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Default center of transformation, trnslation, rotation
@@ -125,8 +122,7 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
     transform->RotateX(30.0);
     transform->RotateY(45.0);
     transform->RotateZ(60.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_TR.h5", scene,
-      transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_Default_TR.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Update center of transformation
@@ -137,16 +133,14 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
   // Non-default center of transformation, identity transform
   {
     transform->Identity();
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_I.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_I.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Non-default center of transformation, translation
   {
     transform->Identity();
     transform->Translate(4.0, 5.0, 6.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_T.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_T.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Non-default center of transformation, rotation
@@ -155,8 +149,7 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
     transform->RotateX(30.0);
     transform->RotateY(45.0);
     transform->RotateZ(60.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_R.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_R.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   // Non-default center of transformation, translation, rotation
@@ -166,8 +159,7 @@ int TestCenterOfTransformationReadWrite(vtkMRMLScene* scene)
     transform->RotateX(30.0);
     transform->RotateY(45.0);
     transform->RotateZ(60.0);
-    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_TR.h5",
-      scene, transform->GetMatrix(), centerOfTransformation));
+    CHECK_EXIT_SUCCESS(TestSaveAndRead(std::to_string(fileIndex++) + "_NonDefault_TR.h5", scene, transform->GetMatrix(), centerOfTransformation));
   }
 
   return EXIT_SUCCESS;

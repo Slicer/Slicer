@@ -31,14 +31,13 @@ class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModulePrivate;
 
-class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
-public:
 
+public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerTransformsModule(QObject* parent = nullptr);
   ~qSlicerTransformsModule() override;
@@ -77,6 +76,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override;
 
   QScopedPointer<qSlicerTransformsModulePrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerTransformsModule);
   Q_DISABLE_COPY(qSlicerTransformsModule);

@@ -110,10 +110,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndClose()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneStartImport()
-{
-
-}
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneStartImport() {}
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndImport()
@@ -136,7 +133,6 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
   {
     this->UpdateCameraNode();
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -167,9 +163,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
-                                                        unsigned long event,
-                                                        void* callData)
+void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   switch (event)
   {
@@ -191,18 +185,15 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
       else if (this->GetCameraNode() && this->GetCameraNode()->GetCamera())
       {
         vtkCamera* camera = this->GetCameraNode()->GetCamera();
-        camera->SetClippingRange(0.1, camera->GetDistance()*2);
+        camera->SetClippingRange(0.1, camera->GetDistance() * 2);
       }
       break;
-    default:
-      this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
-      break;
+    default: this->Superclass::ProcessMRMLNodesEvents(caller, event, callData); break;
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
-  vtkMRMLNode* vtkNotUsed(node))
+void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
 {
   this->RequestRender();
 }
@@ -222,16 +213,15 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode*
     if (newCameraNode)
     {
       // I'm already pointing to it
-      vtkDebugMacro("UpdateCamera: CameraNode [" << newCameraNode->GetID()
-                    << "] is already pointing to my ViewNode and I'm observing it - "
-                    << "Internal->CameraNode [" << this->Internal->CameraNode->GetID() << "]");
+      vtkDebugMacro("UpdateCamera: CameraNode [" << newCameraNode->GetID() << "] is already pointing to my ViewNode and I'm observing it - "
+                                                 << "Internal->CameraNode [" << this->Internal->CameraNode->GetID() << "]");
     }
     return;
   }
   // Do not associate the old camera node anymore with this view
   if (this->Internal->CameraNode && this->Internal->CameraNode->GetLayoutName() //
       && this->GetMRMLViewNode() && this->GetMRMLViewNode()->GetLayoutName()    //
-      && strcmp(this->Internal->CameraNode->GetLayoutName(), this->GetMRMLViewNode()->GetLayoutName())==0)
+      && strcmp(this->Internal->CameraNode->GetLayoutName(), this->GetMRMLViewNode()->GetLayoutName()) == 0)
   {
     this->Internal->CameraNode->SetLayoutName(nullptr);
   }
@@ -245,8 +235,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode*
   cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::LayoutNameModifiedEvent);
   cameraNodeEvents->InsertNextValue(vtkMRMLCameraNode::ResetCameraClippingEvent);
 
-  vtkSetAndObserveMRMLNodeEventsMacro(
-    this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());
+  vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());
 
   this->SetCameraToRenderer();
   this->InvokeEvent(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent, newCameraNode);
@@ -263,7 +252,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode*
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::RemoveMRMLObservers()
 {
-//  this->RemoveCameraObservers();
+  //  this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(nullptr);
 
   this->Superclass::RemoveMRMLObservers();
@@ -303,8 +292,7 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   if (!updatedCameraNode && viewNode->GetLayoutName() && strlen(viewNode->GetLayoutName()) > 0)
   {
     // Use CreateNodeByClass instead of New to make the new node based on default node stored in the scene
-    updatedCameraNode = vtkSmartPointer<vtkMRMLCameraNode>::Take(
-      vtkMRMLCameraNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLCameraNode")));
+    updatedCameraNode = vtkSmartPointer<vtkMRMLCameraNode>::Take(vtkMRMLCameraNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLCameraNode")));
     updatedCameraNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(updatedCameraNode->GetNodeTagName()));
     updatedCameraNode->SetDescription("Default Scene Camera"); // indicates that this is an automatically created default camera
     updatedCameraNode->SetLayoutName(viewNode->GetLayoutName());
@@ -336,7 +324,7 @@ void vtkMRMLCameraDisplayableManager::SetCameraToRenderer()
     // Do not call if there is no camera otherwise it will create a new one without a CameraNode
     this->GetRenderer()->ResetCameraClippingRange();
     // Default to ParallelProjection Off
-    //camera->ParallelProjectionOff();
+    // camera->ParallelProjectionOff();
   }
 }
 

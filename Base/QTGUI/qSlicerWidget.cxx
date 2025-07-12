@@ -35,13 +35,14 @@
 class qSlicerWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerWidget);
+
 protected:
   qSlicerWidget* const q_ptr;
 
 public:
   qSlicerWidgetPrivate(qSlicerWidget& object);
 
-  QPointer<QWidget>                          ParentContainer;
+  QPointer<QWidget> ParentContainer;
 };
 
 //-----------------------------------------------------------------------------

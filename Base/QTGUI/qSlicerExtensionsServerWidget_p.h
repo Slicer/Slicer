@@ -40,6 +40,7 @@ public:
   qSlicerExtensionsServerWidget* InstallWidget{ nullptr };
 public slots:
   void refresh();
+
 private:
   Q_DISABLE_COPY(ExtensionInstallWidgetWebChannelProxy);
 };
@@ -48,6 +49,7 @@ private:
 class qSlicerExtensionsServerWidgetPrivate : public qSlicerWebWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsServerWidget);
+
 protected:
   qSlicerExtensionsServerWidget* const q_ptr;
 

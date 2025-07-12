@@ -51,7 +51,7 @@ protected:
   void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   long Label{ 0 };
-  int Axis{-1};
+  int Axis{ -1 };
   bool HeuristicAlignment{ true };
   bool UseDistanceTransform{ false };
   bool UseBallStructuringElement{ false };

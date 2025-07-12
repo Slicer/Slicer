@@ -41,7 +41,8 @@ public:
   qSlicerScriptedFileReaderPrivate();
   virtual ~qSlicerScriptedFileReaderPrivate();
 
-  enum {
+  enum
+  {
     DescriptionMethod = 0,
     FileTypeMethod,
     ExtensionsMethod,
@@ -52,8 +53,8 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
-  QString    PythonClassName;
+  QString PythonSource;
+  QString PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -145,7 +146,10 @@ bool qSlicerScriptedFileReader::setPythonSource(const QString& filePath, const Q
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileReader::setPythonSource - "
                             "Failed to load scripted file Reader: "
-                            "class %1 was not found in file %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in file %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     return false;
   }
 
@@ -179,8 +183,7 @@ QString qSlicerScriptedFileReader::description() const
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'description' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
   }
@@ -200,8 +203,7 @@ qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType() const
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'fileType' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
   }
@@ -219,8 +221,7 @@ QStringList qSlicerScriptedFileReader::extensions() const
   }
   if (!PyList_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'extensions' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                << "is expected to return a string list !";
     return QStringList();
   }
@@ -231,8 +232,7 @@ QStringList qSlicerScriptedFileReader::extensions() const
   {
     if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
     {
-      qWarning() << d->PythonSource
-                 << " - In" << d->PythonClassName << "class, function 'extensions' "
+      qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
     }
@@ -257,8 +257,7 @@ bool qSlicerScriptedFileReader::canLoadFile(const QString& file) const
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canLoadFile' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canLoadFile' "
                << "is expected to return a boolean!";
     return false;
   }
@@ -281,8 +280,7 @@ double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file) con
 
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canLoadFileConfidence' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canLoadFileConfidence' "
                << "is expected to return a float!";
     return 0.0;
   }
@@ -303,8 +301,7 @@ bool qSlicerScriptedFileReader::load(const qSlicerIO::IOProperties& properties)
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'write' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'write' "
                << "is expected to return a string boolean !";
     return false;
   }

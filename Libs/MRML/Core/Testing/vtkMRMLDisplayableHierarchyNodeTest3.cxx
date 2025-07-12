@@ -126,7 +126,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   }
 
   std::cout << "Model nodes size = " << modelNodes.size() << std::endl;
-  std::cout << "Model display nodes size = " <<  modelDisplayNodes.size() << std::endl;
+  std::cout << "Model display nodes size = " << modelDisplayNodes.size() << std::endl;
   std::cout << "Model hierarchy nodes size = " << modelHierarchyNodes.size() << std::endl;
 
   // check that the top level hierarchy returns all the children
@@ -179,7 +179,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   PrintNames(immediateChildren2);
   if (immediateChildren2.size() != numModels)
   {
-    std::cerr<< "ERROR: Second level hierarchy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
+    std::cerr << "ERROR: Second level hierarchy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -209,7 +209,6 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
         return EXIT_FAILURE;
       }
     }
-
   }
   // now shuffle the nodes so that start with
   // 0 1 2 3 4
@@ -224,7 +223,6 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   immediateChildren2 = hnode2->GetChildrenNodes();
   std::cout << "Second level hierarchy immediate children after shuffle, expecting reverse order of names:" << std::endl;
   PrintNames(immediateChildren2);
-
 
   // now add some nodes out of order
   vtkNew<vtkMRMLModelNode> m6;

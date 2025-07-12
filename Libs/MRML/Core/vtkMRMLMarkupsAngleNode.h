@@ -40,9 +40,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsAngle.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsAngleMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsAngleMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsAngle.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsAngleMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsAngleMouseModePlaceAdd.png"; }
 
   /// Angle calculation and display modes. Default is Minimal
   /// \sa SetAngleMeasurementModeToMinimal()
@@ -62,13 +62,13 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsAngle";}
+  const char* GetNodeTagName() override { return "MarkupsAngle"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Angle";};
+  const char* GetMarkupType() override { return "Angle"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;

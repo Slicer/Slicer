@@ -48,17 +48,16 @@ class vtkOrientedImageData;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverter : public vtkObject
 {
 public:
-
   /// Default representation types
   /// In binary and fractional labelmaps values <=0 are considered background voxels (outside), values>0 are foreground (inside).
-  static const char* GetSegmentationBinaryLabelmapRepresentationName()     { return "Binary labelmap"; };
+  static const char* GetSegmentationBinaryLabelmapRepresentationName() { return "Binary labelmap"; };
   static const char* GetSegmentationFractionalLabelmapRepresentationName() { return "Fractional labelmap"; };
-  static const char* GetSegmentationPlanarContourRepresentationName()      { return "Planar contour"; };
-  static const char* GetSegmentationClosedSurfaceRepresentationName()      { return "Closed surface"; };
-  static const char* GetBinaryLabelmapRepresentationName()     { return GetSegmentationBinaryLabelmapRepresentationName(); };
+  static const char* GetSegmentationPlanarContourRepresentationName() { return "Planar contour"; };
+  static const char* GetSegmentationClosedSurfaceRepresentationName() { return "Closed surface"; };
+  static const char* GetBinaryLabelmapRepresentationName() { return GetSegmentationBinaryLabelmapRepresentationName(); };
   static const char* GetFractionalLabelmapRepresentationName() { return GetSegmentationFractionalLabelmapRepresentationName(); };
-  static const char* GetPlanarContourRepresentationName()      { return GetSegmentationPlanarContourRepresentationName(); };
-  static const char* GetClosedSurfaceRepresentationName()      { return GetSegmentationClosedSurfaceRepresentationName(); };
+  static const char* GetPlanarContourRepresentationName() { return GetSegmentationPlanarContourRepresentationName(); };
+  static const char* GetClosedSurfaceRepresentationName() { return GetSegmentationClosedSurfaceRepresentationName(); };
 
   // Common conversion parameters
   // ----------------------------
@@ -67,9 +66,9 @@ public:
   static const std::string GetReferenceImageGeometryParameterName() { return "Reference image geometry"; };
 
   /// Field names for 2D display parameters
-  static const char* GetScalarRangeFieldName() {return "ScalarRange";};
-  static const char* GetThresholdValueFieldName() {return "ThresholdValue";};
-  static const char* GetInterpolationTypeFieldName() {return "InterpolationType";};
+  static const char* GetScalarRangeFieldName() { return "ScalarRange"; };
+  static const char* GetThresholdValueFieldName() { return "ThresholdValue"; };
+  static const char* GetInterpolationTypeFieldName() { return "InterpolationType"; };
 
 public:
   static vtkSegmentationConverter* New();
@@ -83,8 +82,7 @@ public:
   void GetAvailableRepresentationNames(std::set<std::string>& representationNames);
 
   /// Get all possible conversions between two representations
-  void GetPossibleConversions(const std::string& sourceRepresentationName,
-    const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths);
+  void GetPossibleConversions(const std::string& sourceRepresentationName, const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths);
 
   /// Get all conversion parameters used by the selected conversion path
   void GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters, vtkSegmentationConversionPath* path);
@@ -96,7 +94,7 @@ public:
   void SetConversionParameters(vtkSegmentationConversionParameters* parameters);
 
   /// Set a conversion parameter to all rules having this parameter
-  void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description="");
+  void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description = "");
 
   /// Get a conversion parameter value from first rule containing this parameter
   /// Note: all parameters with the same name should contain the same value
@@ -119,7 +117,7 @@ public:
   /// Non-linear: calculate new extents and change only the extents
   void ApplyTransformOnReferenceImageGeometry(vtkAbstractTransform* transform);
 
-// Utility functions
+  // Utility functions
 public:
   /// Return cheapest path from a list of paths with costs
   static vtkSegmentationConversionPath* GetCheapestPath(vtkSegmentationConversionPaths* paths);
@@ -136,11 +134,16 @@ public:
   /// Utility function for de-serializing reference image geometry into a dummy oriented image data
   /// \param geometryString String containing the serialized image geometry
   /// \param orientedImageData Dummy oriented image data containing the de-serialized geometry information
-  /// \param allocateScalars Reallocate scalar array to match the new geometry. Can be set to false if image buffer is not used (e.g., an image is only created to parse image geometry)
+  /// \param allocateScalars Reallocate scalar array to match the new geometry. Can be set to false if image buffer is not used (e.g., an image is only created to parse image
+  /// geometry)
   /// \param scalarType If specified then scalar type will be set to the requested value, otherwise current value will be kept.
   /// \param numberOfScalarsComponents If specified then the number of scalar components will be set to the requested value, otherwise current value will be kept.
   /// \return Success flag
-  static bool DeserializeImageGeometry(std::string geometryString, vtkOrientedImageData* orientedImageData, bool allocateScalars = true, int scalarType = VTK_VOID, int numberOfScalarsComponents=-1);
+  static bool DeserializeImageGeometry(std::string geometryString,
+                                       vtkOrientedImageData* orientedImageData,
+                                       bool allocateScalars = true,
+                                       int scalarType = VTK_VOID,
+                                       int numberOfScalarsComponents = -1);
 
   /// Utility function for de-serializing reference image geometry into a matrix and a dimensions vector
   /// \param geometryString String containing the serialized image geometry
@@ -162,8 +165,10 @@ protected:
   /// \param skipRepresentations Representations that should be ignored (e.g., because they are
   ///   used already). The caller should pass an empty set (when the method is called recursively
   ///   the set is not empty).
-  void FindPath(const std::string& sourceRepresentationName, const std::string& targetRepresentationName,
-    vtkSegmentationConversionPaths* paths, vtkStringArray* skipRepresentations);
+  void FindPath(const std::string& sourceRepresentationName,
+                const std::string& targetRepresentationName,
+                vtkSegmentationConversionPaths* paths,
+                vtkStringArray* skipRepresentations);
 
 protected:
   vtkSegmentationConverter();

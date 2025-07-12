@@ -49,8 +49,7 @@ protected:
   float Background;
   int Outline;
 
-  void ThreadedExecute(vtkImageData* inData, vtkImageData* outData,
-                       int extent[6], int id) override;
+  void ThreadedExecute(vtkImageData* inData, vtkImageData* outData, int extent[6], int id) override;
 
 private:
   vtkImageLabelOutline(const vtkImageLabelOutline&) = delete;

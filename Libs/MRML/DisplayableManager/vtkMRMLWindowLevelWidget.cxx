@@ -76,17 +76,19 @@ vtkMRMLWindowLevelWidget::vtkMRMLWindowLevelWidget()
 
   this->AdjustMode = ModeAdjust;
 
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-    WidgetStateAdjustWindowLevel, WidgetEventAdjustWindowLevelStart, WidgetEventAdjustWindowLevelEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetStateAdjustWindowLevel, WidgetEventAdjustWindowLevelStart, WidgetEventAdjustWindowLevelEnd);
   this->SetKeyboardEventTranslation(WidgetStateAdjustWindowLevel, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventAdjustWindowLevelCancel);
   this->SetEventTranslation(WidgetStateAdjustWindowLevel, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventAdjustWindowLevelCancel);
 
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier,
-    WidgetStateAdjustWindowLevelAlternative, WidgetEventAdjustWindowLevelAlternativeStart, WidgetEventAdjustWindowLevelAlternativeEnd);
-  this->SetKeyboardEventTranslation(WidgetStateAdjustWindowLevelAlternative,
-    vtkEvent::AnyModifier, 0, 0, "Escape", WidgetEventAdjustWindowLevelAlternativeCancel);
-  this->SetEventTranslation(WidgetStateAdjustWindowLevelAlternative, vtkCommand::RightButtonPressEvent, vtkEvent::AnyModifier,
-    WidgetEventAdjustWindowLevelAlternativeCancel);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::ControlModifier,
+                                        WidgetStateAdjustWindowLevelAlternative,
+                                        WidgetEventAdjustWindowLevelAlternativeStart,
+                                        WidgetEventAdjustWindowLevelAlternativeEnd);
+  this->SetKeyboardEventTranslation(WidgetStateAdjustWindowLevelAlternative, vtkEvent::AnyModifier, 0, 0, "Escape", WidgetEventAdjustWindowLevelAlternativeCancel);
+  this->SetEventTranslation(WidgetStateAdjustWindowLevelAlternative, vtkCommand::RightButtonPressEvent, vtkEvent::AnyModifier, WidgetEventAdjustWindowLevelAlternativeCancel);
 
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::ControlModifier, WidgetEventResetWindowLevel);
 }
@@ -166,7 +168,7 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
   switch (widgetEvent)
   {
     case WidgetEventMouseMove:
-    // click-and-dragging the mouse cursor
+      // click-and-dragging the mouse cursor
       processedEvent = this->ProcessMouseMove(eventData);
       break;
     case WidgetEventAdjustWindowLevelStart:
@@ -178,8 +180,7 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
       this->AdjustMode = -1;
       if (interactionNode)
       {
-        this->AdjustMode = GetAdjustWindowLevelModeFromString(
-          interactionNode->GetAttribute(GetInteractionNodeAdjustWindowLevelModeAttributeName()));
+        this->AdjustMode = GetAdjustWindowLevelModeFromString(interactionNode->GetAttribute(GetInteractionNodeAdjustWindowLevelModeAttributeName()));
       }
       if (this->AdjustMode < 0)
       {
@@ -209,7 +210,7 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
         processedEvent = this->ProcessSetWindowLevelFromRegionStart(eventData);
       }
     }
-      break;
+    break;
     case WidgetEventAdjustWindowLevelEnd:
     case WidgetEventAdjustWindowLevelAlternativeEnd:
     case WidgetEventAlwaysOnAdjustWindowLevelEnd:
@@ -229,15 +230,10 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
       this->SetVolumeWindowLevel(this->StartVolumeWindowLevel[0], this->StartVolumeWindowLevel[1], this->IsStartVolumeAutoWindowLevel);
       break;
     case WidgetEventResetWindowLevel:
-    case WidgetEventAlwaysOnResetWindowLevel:
-      processedEvent = this->ProcessResetWindowLevel(eventData);
-      break;
+    case WidgetEventAlwaysOnResetWindowLevel: processedEvent = this->ProcessResetWindowLevel(eventData); break;
     case WidgetEventAdjustWindowLevelAlternativeCancel:
-    case WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel:
-      processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData, false);
-      break;
-    default:
-      processedEvent = false;
+    case WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel: processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData, false); break;
+    default: processedEvent = false;
   }
 
   return processedEvent;
@@ -264,12 +260,8 @@ bool vtkMRMLWindowLevelWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
 
   switch (this->WidgetState)
   {
-    case WidgetStateAdjustWindowLevel:
-      this->ProcessAdjustWindowLevel(eventData);
-      break;
-    case WidgetStateAdjustWindowLevelAlternative:
-      this->ProcessSetWindowLevelFromRegion(eventData);
-      break;
+    case WidgetStateAdjustWindowLevel: this->ProcessAdjustWindowLevel(eventData); break;
+    case WidgetStateAdjustWindowLevelAlternative: this->ProcessSetWindowLevelFromRegion(eventData); break;
   }
 
   return true;
@@ -328,7 +320,6 @@ vtkMRMLSliceLogic* vtkMRMLWindowLevelWidget::GetSliceLogic()
   }
   return this->SliceLogic;
 }
-
 
 //----------------------------------------------------------------------------------
 void vtkMRMLWindowLevelWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
@@ -434,16 +425,12 @@ bool vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionE
   if (editedLayer == vtkMRMLSliceLogic::LayerForeground)
   {
     sliceLogic->GetForegroundWindowLevelAndRange(
-      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1],
-      this->IsStartVolumeAutoWindowLevel);
+      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1], this->VolumeScalarRange[0], this->VolumeScalarRange[1], this->IsStartVolumeAutoWindowLevel);
   }
   else if (editedLayer == vtkMRMLSliceLogic::LayerBackground)
   {
     sliceLogic->GetBackgroundWindowLevelAndRange(
-      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1],
-      this->IsStartVolumeAutoWindowLevel);
+      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1], this->VolumeScalarRange[0], this->VolumeScalarRange[1], this->IsStartVolumeAutoWindowLevel);
   }
   this->StartVolumeWindowLevel[0] = this->LastVolumeWindowLevel[0];
   this->StartVolumeWindowLevel[1] = this->LastVolumeWindowLevel[1];
@@ -536,11 +523,7 @@ void vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegion(vtkMRMLInteractio
 
   if (this->CenteredRubberBand)
   {
-    int radius[2] =
-      {
-      abs(displayPos[0] - this->StartEventPosition[0]),
-      abs(displayPos[1] - this->StartEventPosition[1])
-      };
+    int radius[2] = { abs(displayPos[0] - this->StartEventPosition[0]), abs(displayPos[1] - this->StartEventPosition[1]) };
     rubberBand->SetCornerPoint1(this->StartEventPosition[0] - radius[0], this->StartEventPosition[1] - radius[1]);
     rubberBand->SetCornerPoint2(this->StartEventPosition[0] + radius[0], this->StartEventPosition[1] + radius[1]);
   }
@@ -554,7 +537,7 @@ void vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegion(vtkMRMLInteractio
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel/*=true*/)
+bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel /*=true*/)
 {
   if (!this->ProcessEndMouseDrag(eventData))
   {
@@ -639,7 +622,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
     extent[i * 2 + 1] = std::min(static_cast<int>(std::floor(bounds[i * 2 + 1])), imageData->GetExtent()[i * 2 + 1]);
   }
 
-   // calculate the statistics for the selected region
+  // calculate the statistics for the selected region
   vtkNew<vtkImageClip> clip;
   clip->SetOutputWholeExtent(extent);
   clip->SetInputData(imageData);
@@ -665,8 +648,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
 //----------------------------------------------------------------------------
 bool vtkMRMLWindowLevelWidget::SetVolumeWindowLevel(double window, double level, bool isAutoWindowLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    this->GetVolumeNodeFromSliceLayer(this->WindowLevelAdjustedLayer));
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetVolumeNodeFromSliceLayer(this->WindowLevelAdjustedLayer));
   if (!volumeNode)
   {
     return false;

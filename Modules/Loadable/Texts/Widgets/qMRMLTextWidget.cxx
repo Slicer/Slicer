@@ -32,15 +32,15 @@
 #include <QStyle>
 
 //-----------------------------------------------------------------------------
-class qMRMLTextWidgetPrivate
-  : public Ui_qMRMLTextWidget
+class qMRMLTextWidgetPrivate : public Ui_qMRMLTextWidget
 {
   Q_DECLARE_PUBLIC(qMRMLTextWidget);
+
 protected:
   qMRMLTextWidget* const q_ptr;
 
 public:
-  qMRMLTextWidgetPrivate( qMRMLTextWidget& object);
+  qMRMLTextWidgetPrivate(qMRMLTextWidget& object);
   ~qMRMLTextWidgetPrivate();
   virtual void setupUi(qMRMLTextWidget*);
 
@@ -98,7 +98,7 @@ void qMRMLTextWidgetPrivate::setEditing(bool editing)
 
 //-----------------------------------------------------------------------------
 qMRMLTextWidget::qMRMLTextWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
+  : Superclass(parentWidget)
   , d_ptr(new qMRMLTextWidgetPrivate(*this))
 {
   this->setup();

@@ -93,9 +93,9 @@ public slots:
   void onPlaceNodeClassNameListModifiedEvent();
 
 public:
-  vtkSmartPointer<vtkMRMLScene>            MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
-  vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
+  vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
 
   QAction* AdjustViewAction;
   QAction* AdjustWindowLevelAction;

@@ -33,13 +33,11 @@
 class qSlicerViewControllersModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidget
-  : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerViewControllersModuleWidget(QWidget* parent = nullptr);
   ~qSlicerViewControllersModuleWidget() override;

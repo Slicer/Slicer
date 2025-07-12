@@ -8,8 +8,8 @@
 
 int main(int argc, char* argv[])
 {
-  typedef itk::DiffusionTensor3D<float>         TensorType;
-  typedef itk::Image<TensorType, 3>             TensorImageType;
+  typedef itk::DiffusionTensor3D<float> TensorType;
+  typedef itk::Image<TensorType, 3> TensorImageType;
   typedef itk::ImageFileReader<TensorImageType> TensorReaderType;
   typedef itk::ImageFileWriter<TensorImageType> TensorWriterType;
 
@@ -18,10 +18,10 @@ int main(int argc, char* argv[])
   TensorReaderType::Pointer reader = TensorReaderType::New();
   TensorWriterType::Pointer writer = TensorWriterType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
   reader->Update();
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   itk::GetImageType(inputVolume, pixelType, componentType);
@@ -78,9 +78,9 @@ int main(int argc, char* argv[])
     ++itr;
   }
 
-  writer->SetFileName( outputVolume.c_str() );
+  writer->SetFileName(outputVolume.c_str());
 
-  writer->SetInput( reader->GetOutput() );
+  writer->SetInput(reader->GetOutput());
 
   writer->Update();
 

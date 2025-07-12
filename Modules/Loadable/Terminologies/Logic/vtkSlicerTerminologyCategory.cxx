@@ -62,11 +62,11 @@ void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "SNOMEDCTConceptID:   " << (this->SNOMEDCTConceptID?this->SNOMEDCTConceptID:"NULL") << "\n";
-  os << indent << "UMLSConceptUID:   " << (this->UMLSConceptUID?this->UMLSConceptUID:"NULL") << "\n";
-  os << indent << "Cid:   " << (this->Cid?this->Cid:"NULL") << "\n";
-  os << indent << "ContextGroupName:   " << (this->ContextGroupName?this->ContextGroupName:"NULL") << "\n";
-  os << indent << "ShowAnatomy:   " << (this->ShowAnatomy?"true":"false") << "\n";
+  os << indent << "SNOMEDCTConceptID:   " << (this->SNOMEDCTConceptID ? this->SNOMEDCTConceptID : "NULL") << "\n";
+  os << indent << "UMLSConceptUID:   " << (this->UMLSConceptUID ? this->UMLSConceptUID : "NULL") << "\n";
+  os << indent << "Cid:   " << (this->Cid ? this->Cid : "NULL") << "\n";
+  os << indent << "ContextGroupName:   " << (this->ContextGroupName ? this->ContextGroupName : "NULL") << "\n";
+  os << indent << "ShowAnatomy:   " << (this->ShowAnatomy ? "true" : "false") << "\n";
 }
 
 //----------------------------------------------------------------------------

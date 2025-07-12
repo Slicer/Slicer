@@ -26,14 +26,8 @@ public:
 
   vtkTypeMacro(vtkMRMLHierarchyNodeTestHelper1, vtkMRMLHierarchyNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLHierarchyNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLHierarchyNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLHierarchyNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLHierarchyNodeTestHelper1"; }
   virtual bool CanApplyNonLinearTransforms() { return false; }
 };
 vtkStandardNewMacro(vtkMRMLHierarchyNodeTestHelper1);
@@ -89,8 +83,6 @@ int vtkMRMLHierarchyNodeTest1(int, char*[])
     std::cerr << "Error setting parent node id to a different valid string" << std::endl;
     return EXIT_FAILURE;
   }
-
-
 
   TEST_SET_GET_BOOLEAN(node1.GetPointer(), AllowMultipleChildren);
 

@@ -37,7 +37,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -49,7 +49,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "dGEMRICProceduralColor";}
+  const char* GetNodeTagName() override { return "dGEMRICProceduralColor"; }
 
   ///
   ///
@@ -60,10 +60,10 @@ public:
   /// set of colors
   void SetType(int type) override;
 
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// The list of valid procedural types
-  //enum
+  // enum
   //{
   ///
   //};
@@ -71,15 +71,12 @@ public:
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
   {
-      DisplayModifiedEvent = 20000
+    DisplayModifiedEvent = 20000
   };
 
   ///
   /// Create default storage node or nullptr if does not have one
-  vtkMRMLStorageNode* CreateDefaultStorageNode() override
-  {
-    return Superclass::CreateDefaultStorageNode();
-  }
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override { return Superclass::CreateDefaultStorageNode(); }
 
   /// The list of valid types
   /// dGEMRIC-15T to display 1.5T dGEMRIC scans

@@ -61,9 +61,9 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
   {
     return true;
   }
-  else if (editData.isNull() && //
+  else if (editData.isNull() &&                         //
            decorationData.type() == QVariant::Pixmap && //
-           index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color )
+           index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color)
   {
     return true;
   }
@@ -95,7 +95,7 @@ bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index) const
     return false;
   }
   QRegExp regExp0To1With2Decimals("[01]\\.[0-9][0-9]");
-  bool res=  regExp0To1With2Decimals.exactMatch(editData.toString());
+  bool res = regExp0To1With2Decimals.exactMatch(editData.toString());
   return res;
 }
 
@@ -107,10 +107,9 @@ QWidget* qMRMLItemDelegate::createEditor(QWidget* parent, const QStyleOptionView
     ctkColorPickerButton* colorPicker = new ctkColorPickerButton(parent);
     colorPicker->setProperty("changeColorOnSet", true);
     colorPicker->setDisplayColorName(false);
-    ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel
-      | ctkColorPickerButton::UseCTKColorDialog;
+    ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
     colorPicker->setDialogOptions(options);
-    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(commitAndClose()),Qt::QueuedConnection);
+    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(commitAndClose()), Qt::QueuedConnection);
     return colorPicker;
   }
   else if (this->is0To1Value(index))
@@ -222,8 +221,7 @@ QSize qMRMLItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QMod
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate::updateEditorGeometry(
-  QWidget* editor, const QStyleOptionViewItem& option,const QModelIndex& index) const
+void qMRMLItemDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {

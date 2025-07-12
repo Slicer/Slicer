@@ -36,7 +36,7 @@ class vtkInformationVector;
 ///
 class VTK_ITK_EXPORT vtkITKGrowCut : public vtkImageAlgorithm
 {
- public:
+public:
   static vtkITKGrowCut* New();
   vtkTypeMacro(vtkITKGrowCut, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;

@@ -14,16 +14,19 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLROIListNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLROIListNode::vtkMRMLROIListNode()
 {
   this->ROIList = vtkCollection::New();
   this->TextScale = 4.5;
   this->Visibility = 1;
-  this->Color[0]=0.4; this->Color[1]=1.0; this->Color[2]=1.0;
+  this->Color[0] = 0.4;
+  this->Color[1] = 1.0;
+  this->Color[2] = 1.0;
   // from slicer 2: 1.0 0.5 0.5"
-  this->SelectedColor[0]=1.0; this->SelectedColor[1]=0.5; this->SelectedColor[2]=0.5;
+  this->SelectedColor[0] = 1.0;
+  this->SelectedColor[1] = 0.5;
+  this->SelectedColor[2] = 0.5;
   this->Name = nullptr;
   this->SetName("");
 
@@ -64,16 +67,12 @@ void vtkMRMLROIListNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  of <<" TextScale=\"" << this->TextScale << "\"";
-  of <<" Visibility=\"" << this->Visibility << "\"";
+  of << " TextScale=\"" << this->TextScale << "\"";
+  of << " Visibility=\"" << this->Visibility << "\"";
 
-  of << " color=\"" << this->Color[0] << " " <<
-    this->Color[1] << " " <<
-    this->Color[2] << "\"";
+  of << " color=\"" << this->Color[0] << " " << this->Color[1] << " " << this->Color[2] << "\"";
 
-  of << " selectedcolor=\"" << this->SelectedColor[0] << " " <<
-    this->SelectedColor[1] << " " <<
-    this->SelectedColor[2] << "\"";
+  of << " selectedcolor=\"" << this->SelectedColor[0] << " " << this->SelectedColor[1] << " " << this->SelectedColor[2] << "\"";
 
   of << " ambient=\"" << this->Ambient << "\"";
   of << " diffuse=\"" << this->Diffuse << "\"";
@@ -185,14 +184,14 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
       // assume ID is first, extract that part of the attValue
       char* ROI = const_cast<char*>(attValue);
       char* IDPtr;
-      IDPtr = strstr (ROI,"ROINodeID ");
-      vtkDebugMacro( "ReadXMLAttributes: Starting to parse out the ROI list, setting it up for tokenisation\n");
+      IDPtr = strstr(ROI, "ROINodeID ");
+      vtkDebugMacro("ReadXMLAttributes: Starting to parse out the ROI list, setting it up for tokenisation\n");
       while (IDPtr != nullptr)
       {
-        vtkDebugMacro( "current ID pt = " << IDPtr << endl);
+        vtkDebugMacro("current ID pt = " << IDPtr << endl);
 
         // find the end of this point, new line or end quote
-        IDPtr = strstr (IDPtr," ROINodeID");
+        IDPtr = strstr(IDPtr, " ROINodeID");
         if (IDPtr != nullptr)
         {
           // replace the space with a carriage return
@@ -201,23 +200,25 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
       }
       // now parse the string into tokens by the newline
       IDPtr = strtok(ROI, "\n");
-      vtkDebugMacro( "\nGetting tokens from the list, to make new points.\n");
+      vtkDebugMacro("\nGetting tokens from the list, to make new points.\n");
 
       while (IDPtr != nullptr)
       {
-        vtkDebugMacro( "got a token, adding a ROI for: " << IDPtr << endl);
+        vtkDebugMacro("got a token, adding a ROI for: " << IDPtr << endl);
         // now make a new point
         int ROIIndex = this->AddROI();
-        vtkDebugMacro( "new ROI index = " << ROIIndex << endl);
+        vtkDebugMacro("new ROI index = " << ROIIndex << endl);
         vtkMRMLROINode* newROINode = this->GetNthROINode(ROIIndex);
 
         if (newROINode != nullptr)
         {
           // now pass it the stuff to parse out and set itself from
-          vtkDebugMacro( "ReadXMLAttributes: passing the text pointer for ROI index " << ROIIndex <<  " to the new ROINode: " << IDPtr << endl);
+          vtkDebugMacro("ReadXMLAttributes: passing the text pointer for ROI index " << ROIIndex << " to the new ROINode: " << IDPtr << endl);
           newROINode->ReadXMLString(IDPtr);
-        } else {
-            vtkErrorMacro ("ERROR making a new MRML ROINode!\n");
+        }
+        else
+        {
+          vtkErrorMacro("ERROR making a new MRML ROINode!\n");
         }
         newROINode = nullptr;
         IDPtr = strtok(nullptr, "\n");
@@ -236,16 +237,16 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLROIListNode::Copy(vtkMRMLNode* vtkNotUsed(anode))
 {
-  //Fill in
+  // Fill in
   return;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLROIListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //int idx
+  // int idx
   Superclass::PrintSelf(os, indent);
-  //Fill in
+  // Fill in
 }
 
 //-----------------------------------------------------------
@@ -265,7 +266,7 @@ void vtkMRMLROIListNode::UpdateReferences()
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::GetNumberOfROIs()
 {
-    return this->ROIList->vtkCollection::GetNumberOfItems();
+  return this->ROIList->vtkCollection::GetNumberOfItems();
 }
 
 //----------------------------------------------------------------------------
@@ -273,7 +274,7 @@ int vtkMRMLROIListNode::AddROI()
 {
   if (!this->Scene)
   {
-    vtkErrorMacro ( << "Attempt to add ROI, but no scene set yet");
+    vtkErrorMacro(<< "Attempt to add ROI, but no scene set yet");
     return (-1);
   }
 
@@ -287,8 +288,8 @@ int vtkMRMLROIListNode::AddROI()
   ss << "-P";
   std::string nameString;
   ss >> nameString;
-  //ROINode->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
-  // use the same for the label text for now
+  // ROINode->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
+  //  use the same for the label text for now
   ROINode->SetLabelText(ROINode->GetID());
 
   // add it to the collection
@@ -339,9 +340,7 @@ void vtkMRMLROIListNode::RemoveAllROIs()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLROIListNode::ProcessMRMLEvents ( vtkObject* caller,
-                                            unsigned long event,
-                                            void* callData )
+void vtkMRMLROIListNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -467,12 +466,12 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
   }
-  node->SetXYZ(x,y,z);
+  node->SetXYZ(x, y, z);
 
-  //Update IJK
+  // Update IJK
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode* volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (volumeNode)
     {
       double rasPoint[4] = { x, y, z, 1.0 };
@@ -499,7 +498,6 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
     }
   }
 
-
   // the list contents have been modified
   node = nullptr;
   this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, nullptr);
@@ -517,7 +515,7 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
   }
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode* volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (volumeNode)
     {
 
@@ -531,14 +529,14 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
       k = k < dims[2] ? k : dims[2];
       delete[] dims;
 
-      node->SetIJK(i,j,k);
+      node->SetIJK(i, j, k);
 
-      //Update XYZ
+      // Update XYZ
       double rasPoint[4];
-      double ijkPoint[4]= { i, j, k, 1.0 };
+      double ijkPoint[4] = { i, j, k, 1.0 };
       vtkNew<vtkMatrix4x4> ijkToras;
       volumeNode->GetIJKToRASMatrix(ijkToras.GetPointer());
-      ijkToras->MultiplyPoint(ijkPoint,rasPoint);
+      ijkToras->MultiplyPoint(ijkPoint, rasPoint);
       node->SetXYZ(rasPoint[0], rasPoint[1], rasPoint[2]);
     }
     else
@@ -594,12 +592,12 @@ int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
   }
-  node->SetRadiusXYZ(Radiusx,Radiusy,Radiusz);
+  node->SetRadiusXYZ(Radiusx, Radiusy, Radiusz);
 
-   //Update RadiusIJK
+  // Update RadiusIJK
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
     {
       double* spacing = VolumeNode->GetSpacing();
@@ -626,12 +624,12 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
   }
-  node->SetRadiusIJK(Radiusi,Radiusj,Radiusk);
+  node->SetRadiusIJK(Radiusi, Radiusj, Radiusk);
 
-   //Update RadiusXYZ
+  // Update RadiusXYZ
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
     {
       double* spacing = VolumeNode->GetSpacing();
@@ -642,7 +640,6 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj
       vtkDebugMacro("No volume selected ...\n");
     }
   }
-
 
   // the list contents have been modified
   node = nullptr;
@@ -755,7 +752,7 @@ int vtkMRMLROIListNode::SetNthROIID(int n, const char* vtkNotUsed(id))
     vtkErrorMacro("Unable to get ROI number " << n);
     return 1;
   }
-  //node->SetID(id);
+  // node->SetID(id);
   node = nullptr;
   // the list contents have been modified
   this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, nullptr);
@@ -784,12 +781,13 @@ vtkMRMLROINode* vtkMRMLROIListNode::GetNthROINode(int n)
   vtkDebugMacro("GetNthROINode: getting item by index number: " << n);
   if (this->ROIList == nullptr)
   {
-    vtkErrorMacro ("GetNthROINode: ERROR: ROI list is null\n");
+    vtkErrorMacro("GetNthROINode: ERROR: ROI list is null\n");
     return nullptr;
   }
   if (n < 0 || n >= this->ROIList->GetNumberOfItems())
   {
-    vtkErrorMacro ("vtkMRMLROIListNode::GetNthROI: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->ROIList->GetNumberOfItems() << endl);
+    vtkErrorMacro("vtkMRMLROIListNode::GetNthROI: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->ROIList->GetNumberOfItems()
+                                                                         << endl);
     return nullptr;
   }
   else
@@ -805,8 +803,8 @@ void vtkMRMLROIListNode::SetAllVolumeNodeID()
   for (int n = 0; n < numROIs; ++n)
   {
     // Set the Volume ID for each ROI
-     vtkMRMLROINode* node = this->GetNthROINode(n);
-     node->SetVolumeNodeID(this->VolumeNodeID);
+    vtkMRMLROINode* node = this->GetNthROINode(n);
+    node->SetVolumeNodeID(this->VolumeNodeID);
   }
   // the list contents have been modified
   this->InvokeEvent(vtkMRMLROIListNode::ROIModifiedEvent, nullptr);
@@ -818,7 +816,7 @@ void vtkMRMLROIListNode::SetAllVolumeNodeID()
 void vtkMRMLROIListNode::UpdateIJK()
 {
   int numROIs = this->GetNumberOfROIs();
-  vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+  vtkMRMLVolumeNode* VolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
 
   if (VolumeNode != nullptr)
   {

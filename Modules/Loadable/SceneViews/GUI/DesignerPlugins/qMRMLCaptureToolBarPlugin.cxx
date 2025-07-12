@@ -23,7 +23,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLCaptureToolBarPlugin::qMRMLCaptureToolBarPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

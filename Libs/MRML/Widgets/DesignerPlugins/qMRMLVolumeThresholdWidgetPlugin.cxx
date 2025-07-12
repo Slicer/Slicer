@@ -2,7 +2,7 @@
 #include "qMRMLVolumeThresholdWidget.h"
 
 qMRMLVolumeThresholdWidgetPlugin::qMRMLVolumeThresholdWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -16,14 +16,14 @@ QString qMRMLVolumeThresholdWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLVolumeThresholdWidget\" \
           name=\"MRMLVolumeThresholdWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>20</height>\n"
-          "  </rect>\n"
-          " </property>\n"
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>20</height>\n"
+         "  </rect>\n"
+         " </property>\n"
          "</widget>\n";
 }
 

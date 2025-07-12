@@ -45,7 +45,8 @@ public:
   mutable bool MimeDataAccepted;
   QDropEvent* DropEvent;
 
-  enum {
+  enum
+  {
     ExecMethod = 0,
     IsMimeDataAcceptedMethod,
     DropEventMethod,
@@ -53,8 +54,8 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSourceFilePath;
-  QString    PythonClassName;
+  QString PythonSourceFilePath;
+  QString PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -216,8 +217,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath
-               << " - In" << d->PythonClassName << "class, function 'execDialog' "
+    qWarning() << d->PythonSourceFilePath << " - In" << d->PythonClassName << "class, function 'execDialog' "
                << "is expected to return a boolean";
     return false;
   }
@@ -242,7 +242,7 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) co
 void qSlicerScriptedFileDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerScriptedFileDialog);
-  d->DropEvent =  event;
+  d->DropEvent = event;
   d->MimeData = event->mimeData();
   d->PythonCppAPI.callMethod(d->DropEventMethod);
 }

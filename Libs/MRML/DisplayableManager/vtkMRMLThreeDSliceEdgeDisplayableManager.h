@@ -28,8 +28,7 @@
 /// \brief Displayable manager for showing slice edges in 3D views.
 ///
 /// Responsible for any display based on the reformat widgets.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDSliceEdgeDisplayableManager :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDSliceEdgeDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:

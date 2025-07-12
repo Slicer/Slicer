@@ -42,7 +42,6 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
-
 vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
 
 //----------------------------------------------------------------------
@@ -95,8 +94,9 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   // Line display
 
-  double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-    this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+  double diameter =
+    (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
+                                                                                                    : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
@@ -130,10 +130,9 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
                           lText * vector3[2] + c[2] };
                           */
     this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
-    this->TextActor->SetVisibility(
-      this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
-      && this->AnyPointVisibilityOnSlice //
-      && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+    this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+                                   && this->AnyPointVisibilityOnSlice                       //
+                                   && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
   }
   else
   {
@@ -162,16 +161,13 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   }
 }
 
-
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerLineRepresentation2D::CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
-      || !interactionEventData )
+      || !interactionEventData)
   {
     return;
   }
@@ -205,7 +201,7 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
   int count = 0;
   if (this->LineActor->GetVisibility())
   {
-    count +=  this->LineActor->RenderOverlay(viewport);
+    count += this->LineActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
   return count;

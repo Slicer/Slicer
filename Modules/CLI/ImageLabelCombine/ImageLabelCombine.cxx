@@ -26,22 +26,22 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  typedef short                               PixelType;
-  typedef itk::Image<PixelType, 3>            ImageType;
-  typedef itk::ImageFileReader<ImageType>     ReaderType;
-  typedef itk::ImageFileWriter<ImageType>     WriterType;
+  typedef short PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::ImageFileReader<ImageType> ReaderType;
+  typedef itk::ImageFileWriter<ImageType> WriterType;
   typedef itk::ImageRegionIterator<ImageType> IteratorType;
-  typedef itk::ImageDuplicator<ImageType>     DuplicatorType;
+  typedef itk::ImageDuplicator<ImageType> DuplicatorType;
 
-  ReaderType::Pointer     readerA = ReaderType::New();
-  ReaderType::Pointer     readerB = ReaderType::New();
-  WriterType::Pointer     writer = WriterType::New();
+  ReaderType::Pointer readerA = ReaderType::New();
+  ReaderType::Pointer readerB = ReaderType::New();
+  WriterType::Pointer writer = WriterType::New();
   DuplicatorType::Pointer duplicator = DuplicatorType::New();
-  ImageType::Pointer      input, output;
+  ImageType::Pointer input, output;
 
-  readerA->SetFileName(InputLabelMap_A.c_str() );
-  readerB->SetFileName(InputLabelMap_B.c_str() );
-  writer->SetFileName(OutputLabelMap.c_str() );
+  readerA->SetFileName(InputLabelMap_A.c_str());
+  readerB->SetFileName(InputLabelMap_B.c_str());
+  writer->SetFileName(OutputLabelMap.c_str());
 
   try
   {
@@ -57,14 +57,14 @@ int main(int argc, char* argv[])
   if (FirstOverwrites)
   {
     input = readerA->GetOutput();
-    duplicator->SetInputImage(readerB->GetOutput() );
+    duplicator->SetInputImage(readerB->GetOutput());
     duplicator->Update();
     output = duplicator->GetOutput();
   }
   else
   {
     input = readerB->GetOutput();
-    duplicator->SetInputImage(readerA->GetOutput() );
+    duplicator->SetInputImage(readerA->GetOutput());
     duplicator->Update();
     output = duplicator->GetOutput();
   }
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   const ImageType::SizeType inputSize = input->GetLargestPossibleRegion().GetSize();
   const ImageType::SizeType outputSize = output->GetLargestPossibleRegion().GetSize();
   bool dimCheck = true;
-  for (unsigned int i = 0; i<inputDim; i++)
+  for (unsigned int i = 0; i < inputDim; i++)
   {
     dimCheck = dimCheck && (inputSize[i] == outputSize[i]);
   }
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
 
   // This module operates on the image pixels. The images are expected to be
   // coinciding in the voxel space.
-  IteratorType itIn(input, input->GetLargestPossibleRegion() );
-  IteratorType itOut(output, output->GetLargestPossibleRegion() );
+  IteratorType itIn(input, input->GetLargestPossibleRegion());
+  IteratorType itOut(output, output->GetLargestPossibleRegion());
   itIn.GoToBegin();
   itOut.GoToBegin();
   for (; !itIn.IsAtEnd(); ++itIn, ++itOut)
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     {
       continue;
     }
-    itOut.Set(itIn.Get() );
+    itOut.Set(itIn.Get());
   }
 
   writer->SetInput(output);

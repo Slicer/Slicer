@@ -30,17 +30,14 @@
 /// Responsible for any display on Slice views that is not the slice themselves
 /// nor the annotations.
 /// Currently support only glyph display for Diffusion Tensor volumes.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManager
-  : public vtkMRMLAbstractSliceViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManager : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 public:
   static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
-                       vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLVolumeGlyphSliceDisplayableManager();
   ~vtkMRMLVolumeGlyphSliceDisplayableManager() override;
 
@@ -54,7 +51,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLVolumeGlyphSliceDisplayableManager(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
   void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
 

@@ -30,8 +30,7 @@
 
 class qSlicerModelsIOOptionsWidgetPrivate;
 
-class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsIOOptionsWidget
-  : public qSlicerIOOptionsWidget
+class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsIOOptionsWidget : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:

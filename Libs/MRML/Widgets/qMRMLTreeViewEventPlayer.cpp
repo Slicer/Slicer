@@ -31,24 +31,22 @@
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
-  QTreeView* treeView, bool& error)
+QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index, QTreeView* treeView, bool& error)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QStringList indices = str_index.split(".", Qt::SkipEmptyParts);
 #else
-  QStringList indices = str_index.split(".",QString::SkipEmptyParts);
+  QStringList indices = str_index.split(".", QString::SkipEmptyParts);
 #endif
   QModelIndex index;
-  for (int cc = 0; (cc+1) < indices.size(); cc+=2)
+  for (int cc = 0; (cc + 1) < indices.size(); cc += 2)
   {
-    index = treeView->model()->index(indices[cc].toInt(), indices[cc+1].toInt(),
-      index);
+    index = treeView->model()->index(indices[cc].toInt(), indices[cc + 1].toInt(), index);
     if (!index.isValid())
     {
-      error=true;
+      error = true;
       qCritical() << "ERROR: Tree view must have changed. "
-        << "Indices recorded in the test are no longer valid. Cannot playback.";
+                  << "Indices recorded in the test are no longer valid. Cannot playback.";
       break;
     }
   }
@@ -62,11 +60,7 @@ qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject* parent)
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
-                                    const QString& Command,
-                                    const QString& Arguments,
-                                    int EventType,
-                                    bool& Error)
+bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, int EventType, bool& Error)
 {
   if (Command != "currentNodeRenamed" && //
       Command != "currentNodeDeleted" && //
@@ -77,8 +71,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
   }
 
-  if (qMRMLTreeView* const treeView =
-     qobject_cast<qMRMLTreeView*>(Object))
+  if (qMRMLTreeView* const treeView = qobject_cast<qMRMLTreeView*>(Object))
   {
     if (Command == "currentNodeRenamed")
     {
@@ -96,12 +89,12 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
         treeView->deleteCurrentNode();
         return true;
       }
-//      return false;
+      //      return false;
     }
     if (Command == "editNodeRequested")
     {
-//      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
-//      emit treeView->editNodeRequested(node);
+      //      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
+      //      emit treeView->editNodeRequested(node);
       treeView->editCurrentNode();
       return true;
     }

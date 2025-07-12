@@ -49,8 +49,12 @@ vtkStandardNewMacro(vtkMRMLTransformHandleWidget);
 vtkMRMLTransformHandleWidget::vtkMRMLTransformHandleWidget()
 {
   // Handle interactions
-  this->SetEventTranslationClickAndDrag(WidgetStateOnTranslationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateTranslateTransformCenter, WidgetEventTranslateTransformCenterStart, WidgetEventTranslateTransformCenterEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnTranslationHandle,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateTranslateTransformCenter,
+                                        WidgetEventTranslateTransformCenterStart,
+                                        WidgetEventTranslateTransformCenterEnd);
 
   this->SetEventTranslation(WidgetStateTranslateTransformCenter, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventCancel);
   this->SetKeyboardEventTranslation(WidgetStateTranslateTransformCenter, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventCancel);
@@ -154,8 +158,7 @@ void vtkMRMLTransformHandleWidget::ApplyTransform(vtkTransform* transformToApply
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLTransformHandleWidget::CreateDefaultRepresentation(vtkMRMLTransformDisplayNode* displayNode,
-  vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkMRMLTransformHandleWidget::CreateDefaultRepresentation(vtkMRMLTransformDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation> rep = vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation>::New();
   this->SetRenderer(renderer);
@@ -195,18 +198,10 @@ bool vtkMRMLTransformHandleWidget::ProcessInteractionEvent(vtkMRMLInteractionEve
   bool processedEvent = false;
   switch (widgetEvent)
   {
-    case WidgetEventTranslateTransformCenterStart:
-      processedEvent = this->ProcessWidgetTranslateTransformCenterStart(eventData);
-      break;
-    case WidgetEventTranslateTransformCenterEnd:
-      processedEvent = ProcessEndMouseDrag(eventData);
-      break;
-    case WidgetEventMenu:
-      processedEvent = ProcessWidgetMenu(eventData);
-      break;
-    default:
-      processedEvent = Superclass::ProcessInteractionEvent(eventData);
-      break;
+    case WidgetEventTranslateTransformCenterStart: processedEvent = this->ProcessWidgetTranslateTransformCenterStart(eventData); break;
+    case WidgetEventTranslateTransformCenterEnd: processedEvent = ProcessEndMouseDrag(eventData); break;
+    case WidgetEventMenu: processedEvent = ProcessWidgetMenu(eventData); break;
+    default: processedEvent = Superclass::ProcessInteractionEvent(eventData); break;
   }
   return processedEvent;
 }
@@ -221,8 +216,7 @@ bool vtkMRMLTransformHandleWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData
     return false;
   }
 
-  return this->ProcessWidgetMenuDisplayNodeTypeAndIndex(
-    eventData, displayNode, displayNode->GetActiveInteractionType(), displayNode->GetActiveInteractionIndex());
+  return this->ProcessWidgetMenuDisplayNodeTypeAndIndex(eventData, displayNode, displayNode->GetActiveInteractionType(), displayNode->GetActiveInteractionIndex());
 }
 
 //-------------------------------------------------------------------------
@@ -286,8 +280,7 @@ bool vtkMRMLTransformHandleWidget::ProcessMouseMove(vtkMRMLInteractionEventData*
   // selected), the widget points are modified.
   // First construct a local coordinate system based on the display coordinates
   // of the widget.
-  double eventPos[2]
-  {
+  double eventPos[2]{
     static_cast<double>(eventData->GetDisplayPosition()[0]),
     static_cast<double>(eventData->GetDisplayPosition()[1]),
   };
@@ -335,9 +328,7 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
     eventPos_Display[0] = this->LastEventPosition[0];
     eventPos_Display[1] = this->LastEventPosition[1];
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos_Display, lastEventPos_World, eventPos_World,
-      orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -348,9 +339,7 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
     eventPos_Display[0] = eventPos[0];
     eventPos_Display[1] = eventPos[1];
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos_Display, lastEventPos_World, eventPos_World,
-      orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -370,12 +359,10 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
   if (vtkMath::Norm(translationAxis_World) > 0)
   {
     double lastEventPositionOnAxis_World[3] = { 0.0, 0.0, 0.0 };
-    this->GetClosestPointOnInteractionAxis(
-      InteractionTranslationHandle, index, this->LastEventPosition, lastEventPositionOnAxis_World);
+    this->GetClosestPointOnInteractionAxis(InteractionTranslationHandle, index, this->LastEventPosition, lastEventPositionOnAxis_World);
 
     double eventPositionOnAxis_World[3] = { 0.0, 0.0, 0.0 };
-    this->GetClosestPointOnInteractionAxis(
-      InteractionTranslationHandle, index, eventPos, eventPositionOnAxis_World);
+    this->GetClosestPointOnInteractionAxis(InteractionTranslationHandle, index, eventPos, eventPositionOnAxis_World);
 
     vtkMath::Subtract(eventPositionOnAxis_World, lastEventPositionOnAxis_World, translationVector_World);
     double distance = vtkMath::Norm(translationVector_World);

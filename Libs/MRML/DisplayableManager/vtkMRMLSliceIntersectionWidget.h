@@ -20,7 +20,7 @@
  * displayed slice intersection lines.
  *
  *
-*/
+ */
 
 #ifndef vtkMRMLSliceIntersectionWidget_h
 #define vtkMRMLSliceIntersectionWidget_h
@@ -82,23 +82,23 @@ public:
   {
     // Interactions without handles
     WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
-    WidgetStateBlend, ///< Fade between foreground/background volumes
-    WidgetStateTranslateSlice, ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
-    WidgetStateRotateIntersectingSlices, ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
-    WidgetStateZoomSlice, ///< Zoom slice (using right-button or mouse wheel)
-    WidgetStateTouchGesture, ///< Pinch/zoom/pan using touch gestures
+    WidgetStateBlend,                           ///< Fade between foreground/background volumes
+    WidgetStateTranslateSlice,                  ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
+    WidgetStateRotateIntersectingSlices,        ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
+    WidgetStateZoomSlice,                       ///< Zoom slice (using right-button or mouse wheel)
+    WidgetStateTouchGesture,                    ///< Pinch/zoom/pan using touch gestures
 
     // Interactions with slice intersection handles
-    WidgetStateOnTranslateIntersectingSlicesHandle, ///< hovering over a slice intersection point
-    WidgetStateTranslateIntersectingSlicesHandle, ///< translating all intersecting slices by drag-and-dropping handle
-    WidgetStateOnRotateIntersectingSlicesHandle, ///< hovering over a rotation interaction handle
-    WidgetStateRotateIntersectingSlicesHandle, ///< rotating all intersecting slices by drag-and-dropping handle
+    WidgetStateOnTranslateIntersectingSlicesHandle,      ///< hovering over a slice intersection point
+    WidgetStateTranslateIntersectingSlicesHandle,        ///< translating all intersecting slices by drag-and-dropping handle
+    WidgetStateOnRotateIntersectingSlicesHandle,         ///< hovering over a rotation interaction handle
+    WidgetStateRotateIntersectingSlicesHandle,           ///< rotating all intersecting slices by drag-and-dropping handle
     WidgetStateOnTranslateSingleIntersectingSliceHandle, ///< hovering over a single-slice translation interaction handle
-    WidgetStateTranslateSingleIntersectingSliceHandle, ///< translating a single slice by drag-and-dropping handle
+    WidgetStateTranslateSingleIntersectingSliceHandle,   ///< translating a single slice by drag-and-dropping handle
 
     // Interactions with intersecting slice thick slab handles
     WidgetStateOnTranslateIntersectingThickSlabHandle, ///< hovering over a slice thick slab translation handle
-    WidgetStateTranslateIntersectingThickSlabHandle, ///< adjusting a slice thick slab thickness by drag-and-dropping handle
+    WidgetStateTranslateIntersectingThickSlabHandle,   ///< adjusting a slice thick slab thickness by drag-and-dropping handle
 
     WidgetState_Last
   };
@@ -163,19 +163,17 @@ public:
     ActionTranslate = 1,
     ActionZoom = 2,
     ActionRotate = 4, /* not used */
-    ActionBlend = 8, /* fg to bg, labelmap to bg */
+    ActionBlend = 8,  /* fg to bg, labelmap to bg */
     ActionBrowseSlice = 64,
     ActionShowSlice = 128,
     ActionAdjustLightbox = 256,
     ActionSelectVolume = 512,
-    ActionSetCursorPosition = 1024, /* adjust cursor position in crosshair node as mouse is moved */
+    ActionSetCursorPosition = 1024,    /* adjust cursor position in crosshair node as mouse is moved */
     ActionSetCrosshairPosition = 2048, /* adjust cursor position in crosshair node as mouse is moved */
     ActionTranslateSliceIntersection = 4096,
     ActionRotateSliceIntersection = 8192,
-    ActionAll = ActionTranslate | ActionZoom | ActionRotate | ActionBlend
-    | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
-    | ActionSetCursorPosition | ActionSetCrosshairPosition
-    | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
+    ActionAll = ActionTranslate | ActionZoom | ActionRotate | ActionBlend | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
+                | ActionSetCursorPosition | ActionSetCrosshairPosition | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
   };
 
   /// Set exact list of actions to enable.

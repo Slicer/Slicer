@@ -177,23 +177,30 @@ public:
   /// \param commonGeometryImage Extent will be returned in this image geometry
   /// \param segmentIDs List of IDs of segments to include in the merged labelmap. If empty or missing, then all segments are included
   /// \param computeEffectiveExtent Specifies if the extent of a segment is the whole extent or the effective extent (where voxel values >0 found)
-  void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), bool computeEffectiveExtent = false, bool addPadding = false);
+  void DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
+                                     vtkOrientedImageData* commonGeometryImage,
+                                     const std::vector<std::string>& segmentIDs = std::vector<std::string>(),
+                                     bool computeEffectiveExtent = false,
+                                     bool addPadding = false);
 #endif // __VTK_WRAP__
 
   /// Determine common labelmap geometry for whole segmentation, for python compatibility.
   std::string DetermineCommonLabelmapGeometry(int extentComputationMode, vtkStringArray* segmentIds);
 
   /// Determine common labelmap extent for whole segmentation, for python compatibility.
-  void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-    vtkStringArray* segmentIds, bool computeEffectiveExtent = false, bool addPadding = false);
+  void DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
+                                     vtkOrientedImageData* commonGeometryImage,
+                                     vtkStringArray* segmentIds,
+                                     bool computeEffectiveExtent = false,
+                                     bool addPadding = false);
 
   /// Updates image geometry (origin, spacing, axis directions, extents) based on labelmaps stored in the segmentation.
   /// Does not allocate memory (to allow just retrieving geometry information without using memory).
-  bool SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs = nullptr,
-    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+  bool SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData,
+                                                  vtkStringArray* segmentIDs = nullptr,
+                                                  int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
 
-// Segment related methods
+  // Segment related methods
 
   /// Add a segment to this segmentation, do necessary conversions, and observe underlying
   /// data for changes.
@@ -234,7 +241,7 @@ public:
   vtkSegment* GetSegment(std::string segmentId);
 
   /// Get IDs for all contained segments
-  void GetSegmentIDs(std::vector<std::string> &segmentIds);
+  void GetSegmentIDs(std::vector<std::string>& segmentIds);
 
   /// Get IDs for all contained segments, for python compatibility
   void GetSegmentIDs(vtkStringArray* segmentIds);
@@ -280,7 +287,7 @@ public:
   /// \param tag Tag name to look for in segments
   /// \param value Tag value to look for in segments. If omitted or empty then any value is accepted
   /// \return Vector of segments containing the requested tag
-  std::vector<vtkSegment*> GetSegmentsByTag(std::string tag, std::string value="");
+  std::vector<vtkSegment*> GetSegmentsByTag(std::string tag, std::string value = "");
 
   /// Get representation from segment
   vtkDataObject* GetSegmentRepresentation(std::string segmentId, std::string representationName);
@@ -293,7 +300,7 @@ public:
   /// \return Success flag
   bool CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource = false);
 
-// Representation related methods
+  // Representation related methods
 
   /// Get representation names present in this segmentation in an output string vector
   /// Note: This assumes the first segment contains the same type of representations as
@@ -353,11 +360,14 @@ public:
   /// \param labelValues Input list of label values that will be used in the merged labelmap.
   ///   If not specified, then the label values in the segmentation will be used.
   ///   The size of the array should match the number of segment IDs used in the merged labelmap.
-  bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
-    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), vtkIntArray* labelValues = nullptr);
+  bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData,
+                              int extentComputationMode,
+                              vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
+                              const std::vector<std::string>& segmentIDs = std::vector<std::string>(),
+                              vtkIntArray* labelValues = nullptr);
 #endif // __VTK_WRAP__
 
- /// Shared labelmap utility functions
+  /// Shared labelmap utility functions
 
   /// Returns true if the binary labelmap representation is shared
   bool IsSharedBinaryLabelmap(std::string segmentID);
@@ -367,15 +377,16 @@ public:
   /// \param representationName Representation to check for shared segment IDs
   /// \param sharedSegmentIds Output segment IDs
   /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
-  void GetSegmentIDsSharingRepresentation(std::string originalSegmentId, std::string representationName,
-    std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId = true);
+  void GetSegmentIDsSharingRepresentation(std::string originalSegmentId,
+                                          std::string representationName,
+                                          std::vector<std::string>& sharedSegmentIds,
+                                          bool includeOriginalSegmentId = true);
 
   /// Gets the segment IDs that are shared with the specified segment binary labelmap
   /// \param originalSegmentId ID of the specified segment
   /// \param sharedSegmentIds Output segment IDs
   /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
-  void GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId, std::vector<std::string> &sharedSegmentIds,
-    bool includeOriginalSegmentId = true);
+  void GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId, std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId = true);
 
   /// Gets a unique shared labelmap value for the specified segment
   /// Compares all of the other segments that are shared with the specified segmentId to determine the a unique
@@ -404,15 +415,15 @@ public:
 
   /// Get the number of unique vtkDataObject that are used for a particular representation type
   /// If representationName is not specified, it will be set to the source representation name
-  int GetNumberOfLayers(std::string representationName="");
+  int GetNumberOfLayers(std::string representationName = "");
 
   /// Get the layer index for a particular segment
   /// If representationName is not specified, it will be set to the source representation name
-  int GetLayerIndex(std::string segmentId, std::string representationName="");
+  int GetLayerIndex(std::string segmentId, std::string representationName = "");
 
   /// Get the data object for a particular layer index
   /// If representationName is not specified, it will be set to the source representation name
-  vtkDataObject* GetLayerDataObject(int layer, std::string representationName="");
+  vtkDataObject* GetLayerDataObject(int layer, std::string representationName = "");
 
   /// Get a collection of all of the data objects in the segmentation
   /// If representationName is not specified, it will be set to the source representation name
@@ -450,8 +461,7 @@ public:
   /// Conversion starts from the source representation, and all representations along the
   /// path get overwritten.
   /// \return true on success
-  bool CreateRepresentation(vtkSegmentationConversionPath* path,
-    vtkSegmentationConversionParameters* parameters);
+  bool CreateRepresentation(vtkSegmentationConversionPath* path, vtkSegmentationConversionParameters* parameters);
 
   /// Removes a representation from all segments if present
   void RemoveRepresentation(const std::string& representationName);
@@ -471,11 +481,10 @@ public:
   /// \param segmentName name of added segment. If empty then the segmentId will be used as name.
   /// \param color of added segment. If not specified then empty then vtkSegment::SEGMENT_COLOR_INVALID is used.
   /// \return ID of the added segment. Empty on failure
-  std::string AddEmptySegment(std::string segmentId="", std::string segmentName="", double color[3]=nullptr);
+  std::string AddEmptySegment(std::string segmentId = "", std::string segmentName = "", double color[3] = nullptr);
 
   /// Get all possible conversions between the source representation and a specified target representation
-  void GetPossibleConversions(const std::string& targetRepresentationName,
-    vtkSegmentationConversionPaths* paths);
+  void GetPossibleConversions(const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths);
 
   /// Set a conversion parameter to all rules having this parameter
   void SetConversionParameter(const std::string& name, const std::string& value) { this->Converter->SetConversionParameter(name, value); };
@@ -485,8 +494,10 @@ public:
   std::string GetConversionParameter(const std::string& name) { return this->Converter->GetConversionParameter(name); };
 
   /// Get names of all conversion parameters used by the selected conversion path
-  void GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters,
-    vtkSegmentationConversionPath* path) { this->Converter->GetConversionParametersForPath(conversionParameters, path); };
+  void GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters, vtkSegmentationConversionPath* path)
+  {
+    this->Converter->GetConversionParametersForPath(conversionParameters, path);
+  };
 
   /// Serialize all conversion parameters.
   /// The resulting string can be parsed in a segmentation object using /sa DeserializeConversionParameters
@@ -496,7 +507,7 @@ public:
   /// Such a string can be constructed in a segmentation object using /sa SerializeAllConversionParameters
   void DeserializeConversionParameters(std::string conversionParametersString);
 
-// Get/set methods
+  // Get/set methods
 
   /// Get source representation name
   vtkGetMacro(SourceRepresentationName, std::string);
@@ -521,8 +532,7 @@ public:
 
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.
-  static void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
-    std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations);
+  static void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline, std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations);
 
   vtkSetMacro(UUIDSegmentIDs, bool);
   vtkGetMacro(UUIDSegmentIDs, bool);
@@ -580,7 +590,7 @@ protected:
   /// Generate a random segment ID.
   /// The form is "S_" + random alphanumeric characters.
   /// \param suffixLength Length of the generated ID
-  static std::string GenerateRandomSegmentID(int suffixLength, std::string validCharacters="");
+  static std::string GenerateRandomSegmentID(int suffixLength, std::string validCharacters = "");
 
   /// Generate unique segment name. If argument is empty then a new name will be generated in the form "Segment_N",
   /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment

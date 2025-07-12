@@ -25,7 +25,8 @@
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderFile);
 
-namespace {
+namespace
+{
 
 template <class T>
 vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
@@ -33,7 +34,7 @@ vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
   return vtkAOSDataArrayTemplate<T>::FastDownCast(a);
 }
 
-};
+}; // namespace
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderFile::vtkITKArchetypeImageSeriesVectorReaderFile() = default;
@@ -50,11 +51,9 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::PrintSelf(ostream& os, vtkInden
 
 //----------------------------------------------------------------------------
 template <class T>
-void vtkITKExecuteDataFromFileVector(
-  vtkITKArchetypeImageSeriesVectorReaderFile* self,
-  vtkImageData* data)
+void vtkITKExecuteDataFromFileVector(vtkITKArchetypeImageSeriesVectorReaderFile* self, vtkImageData* data)
 {
-  typedef itk::VectorImage<T,3> image2;
+  typedef itk::VectorImage<T, 3> image2;
   typedef itk::ImageSource<image2> FilterType;
   typename FilterType::Pointer filter;
   typedef itk::ImageFileReader<image2> ReaderType;
@@ -66,22 +65,18 @@ void vtkITKExecuteDataFromFileVector(
   }
   else
   {
-    typename itk::OrientImageFilter<image2,image2>::Pointer orient2 =
-      itk::OrientImageFilter<image2,image2>::New();
+    typename itk::OrientImageFilter<image2, image2>::Pointer orient2 = itk::OrientImageFilter<image2, image2>::New();
     orient2->SetDebug(self->GetDebug());
     orient2->SetInput(reader2->GetOutput());
     orient2->UseImageDirectionOn();
-    orient2->SetDesiredCoordinateOrientation(
-      self->GetDesiredCoordinateOrientation());
+    orient2->SetDesiredCoordinateOrientation(self->GetDesiredCoordinateOrientation());
     filter = orient2;
   }
   filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, T>::Pointer PixelContainer2;
   PixelContainer2 = filter->GetOutput()->GetPixelContainer();
-  void* ptr = static_cast<void*> (PixelContainer2->GetBufferPointer());
-  DownCast<T>(data->GetPointData()->GetScalars())
-    ->SetVoidArray(ptr, PixelContainer2->Size(), 0,
-                   vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
+  void* ptr = static_cast<void*>(PixelContainer2->GetBufferPointer());
+  DownCast<T>(data->GetPointData()->GetScalars())->SetVoidArray(ptr, PixelContainer2->Size(), 0, vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
   PixelContainer2->ContainerManageMemoryOff();
 }
 
@@ -116,9 +111,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
       vtkTemplateMacroCase(VTK_CHAR, char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
-    default:
-      vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
-      this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+      default: vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType); this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
     }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);
@@ -141,5 +134,5 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ReadProgressCallback(itk::Objec
   }
   vtkITKArchetypeImageSeriesVectorReaderFile* me = reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderFile*>(data);
   me->Progress = p->GetProgress();
-  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
+  me->InvokeEvent(vtkCommand::ProgressEvent, &me->Progress);
 }

@@ -76,8 +76,7 @@ bool qSlicerAbstractModuleWidget::isEntered() const
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleWidget::setup()
 {
-  const qSlicerAbstractModule* m =
-    qobject_cast<const qSlicerAbstractModule*>(this->module());
+  const qSlicerAbstractModule* m = qobject_cast<const qSlicerAbstractModule*>(this->module());
   if (m)
   {
     this->setObjectName(QString("%1ModuleWidget").arg(m->name()));
@@ -87,9 +86,7 @@ void qSlicerAbstractModuleWidget::setup()
 }
 
 //-----------------------------------------------------------
-bool qSlicerAbstractModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                                QString role /* = QString()*/,
-                                                QString context /* = QString()*/)
+bool qSlicerAbstractModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   // this method is redefined here to make it Q_INVOKABLE
   return qSlicerAbstractModuleRepresentation::setEditedNode(node, role, context);

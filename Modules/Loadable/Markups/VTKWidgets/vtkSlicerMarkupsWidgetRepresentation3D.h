@@ -22,7 +22,7 @@
  *
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation vtkSlicerMarkupsWidget
-*/
+ */
 
 #ifndef vtkSlicerMarkupsWidgetRepresentation3D_h
 #define vtkSlicerMarkupsWidgetRepresentation3D_h
@@ -68,15 +68,13 @@ public:
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
-  void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+  void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
-  bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3]=nullptr);
+  bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3] = nullptr);
 
   /// Return true if the control point is actually visible
   /// (displayed and not occluded by other objects in the view).
@@ -105,29 +103,29 @@ protected:
     ~ControlPointsPipeline3D() override;
 
     /// Orientation of the glyphs, represented as an array of quaternions
-    vtkSmartPointer<vtkDoubleArray>   GlyphOrientationArray;
+    vtkSmartPointer<vtkDoubleArray> GlyphOrientationArray;
 
     vtkSmartPointer<vtkGlyph3DMapper> GlyphMapper;
 
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
-    vtkSmartPointer<vtkProperty>     Property;
-    vtkSmartPointer<vtkProperty>     OccludedProperty;
+    vtkSmartPointer<vtkProperty> Property;
+    vtkSmartPointer<vtkProperty> OccludedProperty;
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
 
     vtkSmartPointer<vtkPolyData> VisiblePointsPolyData;
 
-    vtkSmartPointer<vtkFastSelectVisiblePoints>      SelectVisiblePoints;
+    vtkSmartPointer<vtkFastSelectVisiblePoints> SelectVisiblePoints;
 
-    vtkSmartPointer<vtkIdTypeArray>              ControlPointIndices;  // store original ID to determine which control point is actually visible
+    vtkSmartPointer<vtkIdTypeArray> ControlPointIndices; // store original ID to determine which control point is actually visible
     vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
 
-    vtkSmartPointer<vtkGlyph3DMapper>        OccludedGlyphMapper;
+    vtkSmartPointer<vtkGlyph3DMapper> OccludedGlyphMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
 
-    vtkSmartPointer<vtkActor>   Actor;
-    vtkSmartPointer<vtkActor>   OccludedActor;
+    vtkSmartPointer<vtkActor> Actor;
+    vtkSmartPointer<vtkActor> OccludedActor;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
   };

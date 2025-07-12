@@ -57,9 +57,11 @@ void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTableNode* vtkSlicerTablesLogic
-::AddTable(const char* fileName, const char* name /*=nullptr*/, bool findSchema /*=true*/, const char* password /*=0*/,
-  vtkMRMLMessageCollection* userMessages /*=nullptr*/)
+vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
+                                                 const char* name /*=nullptr*/,
+                                                 bool findSchema /*=true*/,
+                                                 const char* password /*=0*/,
+                                                 vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!this->GetMRMLScene())
   {
@@ -89,16 +91,15 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   {
     // SQLite
     std::string dbname = std::string("sqlite://") + std::string(fileName);
-    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
-                   vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
-    if (!database->Open(password?password:"", vtkSQLiteDatabase::USE_EXISTING))
+    if (!database->Open(password ? password : "", vtkSQLiteDatabase::USE_EXISTING))
     {
       vtkErrorMacro("Failed to read tables from " << fileName);
       return nullptr;
     }
     vtkStringArray* tables = database->GetTables();
-    for (int i = 0; i<tables->GetNumberOfTuples(); i++)
+    for (int i = 0; i < tables->GetNumberOfTuples(); i++)
     {
       std::string table = tables->GetValue(i);
 
@@ -153,7 +154,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     }
     if (res == 0) // failed to read
     {
-      vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: "<<fileName);
+      vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: " << fileName);
       this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
       this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
       return nullptr;
@@ -174,14 +175,11 @@ int vtkSlicerTablesLogic::GetLayoutWithTable(int currentLayout)
     case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView:
       // table already shown, no need to change
       return currentLayout;
-    case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
-      return vtkMRMLLayoutNode::SlicerLayout3DTableView;
+    case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView: return vtkMRMLLayoutNode::SlicerLayout3DTableView;
     case vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView:
     case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView:
     case vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView:
-    case vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView:
-      return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
-    default:
-      return vtkMRMLLayoutNode::SlicerLayoutFourUpTableView;
+    case vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView: return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
+    default: return vtkMRMLLayoutNode::SlicerLayoutFourUpTableView;
   }
 }

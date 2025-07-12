@@ -34,7 +34,6 @@
 // VTK includes
 #include "qMRMLWidget.h"
 
-
 // STD includes
 
 int qMRMLModelTest1(int argc, char* argv[])

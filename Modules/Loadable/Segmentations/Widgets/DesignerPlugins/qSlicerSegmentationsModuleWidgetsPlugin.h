@@ -47,14 +47,9 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
     QList<QDesignerCustomWidgetInterface*> plugins;
-    plugins << new qMRMLSegmentsTableViewPlugin
-      << new qMRMLSegmentationRepresentationsListViewPlugin
-      << new qMRMLSegmentationConversionParametersWidgetPlugin
-      << new qMRMLSegmentSelectorWidgetPlugin
-      << new qMRMLSegmentEditorWidgetPlugin
-      << new qMRMLSegmentationDisplayNodeWidgetPlugin
-      << new qMRMLSegmentationFileExportWidgetPlugin
-      << new qMRMLSegmentationShow3DButtonPlugin;
+    plugins << new qMRMLSegmentsTableViewPlugin << new qMRMLSegmentationRepresentationsListViewPlugin << new qMRMLSegmentationConversionParametersWidgetPlugin
+            << new qMRMLSegmentSelectorWidgetPlugin << new qMRMLSegmentEditorWidgetPlugin << new qMRMLSegmentationDisplayNodeWidgetPlugin
+            << new qMRMLSegmentationFileExportWidgetPlugin << new qMRMLSegmentationShow3DButtonPlugin;
     return plugins;
   }
 };

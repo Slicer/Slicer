@@ -24,9 +24,9 @@
 // Qt includes
 #include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
 #ifdef Slicer_HAVE_QT5
-#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+# include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 #else
-#include <QDesignerCustomWidgetCollectionInterface>
+# include <QDesignerCustomWidgetCollectionInterface>
 #endif
 
 // SequenceBrowser includes

@@ -34,8 +34,7 @@ class vtkVolume;
 
 #define VTKIS_VOLUME_PROPS 100
 
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeRenderingDisplayableManager
-  : public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeRenderingDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLVolumeRenderingDisplayableManager* New();
@@ -97,7 +96,7 @@ protected:
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);                           // Not implemented
 
   class vtkInternal;
   vtkInternal* Internal;

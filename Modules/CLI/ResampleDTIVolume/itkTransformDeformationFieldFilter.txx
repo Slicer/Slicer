@@ -7,16 +7,13 @@ namespace itk
 {
 
 template <class TInput, class TOutput, int NDimensions>
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::TransformDeformationFieldFilter()
+TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::TransformDeformationFieldFilter()
 {
-  this->SetNumberOfRequiredInputs( 1 );
+  this->SetNumberOfRequiredInputs(1);
 }
 
 template <class TInput, class TOutput, int NDimensions>
-ModifiedTimeType
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::GetMTime() const
+ModifiedTimeType TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::GetMTime() const
 {
   unsigned long latestTime = Object::GetMTime();
 
@@ -31,30 +28,26 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 }
 
 template <class TInput, class TOutput, int NDimensions>
-void
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::BeforeThreadedGenerateData()
+void TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::BeforeThreadedGenerateData()
 {
   if (m_Transform.IsNull())
   {
-    itkExceptionMacro( << "Transform not set" );
+    itkExceptionMacro(<< "Transform not set");
   }
-  if (!this->GetInput( 0 ))
+  if (!this->GetInput(0))
   {
-    itkExceptionMacro( << "Input deformation field not set" );
+    itkExceptionMacro(<< "Input deformation field not set");
   }
 }
 
 template <class TInput, class TOutput, int NDimensions>
-void
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::DynamicThreadedGenerateData( const OutputImageRegionType& outputRegionForThread)
+void TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::DynamicThreadedGenerateData(const OutputImageRegionType& outputRegionForThread)
 {
-  OutputDeformationFieldPointerType outputImagePtr = this->GetOutput( 0 );
-  InputIteratorType                 it( this->GetInput( 0 ), outputRegionForThread );
-  OutputIteratorType                out( outputImagePtr, outputRegionForThread );
+  OutputDeformationFieldPointerType outputImagePtr = this->GetOutput(0);
+  InputIteratorType it(this->GetInput(0), outputRegionForThread);
+  OutputIteratorType out(outputImagePtr, outputRegionForThread);
 
-  itk::Index<NDimensions>         index;
+  itk::Index<NDimensions> index;
   itk::Point<double, NDimensions> point;
   itk::Point<double, NDimensions> tempPoint;
   itk::Point<double, NDimensions> outputPoint;
@@ -62,18 +55,18 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   {
     index = it.GetIndex();
     InputDeformationPixelType vector = it.Get();
-    this->GetInput( 0 )->TransformIndexToPhysicalPoint( index, point );
+    this->GetInput(0)->TransformIndexToPhysicalPoint(index, point);
     for (int i = 0; i < NDimensions; i++)
     {
-      tempPoint[i] = point[i] + static_cast<double>( vector[i] );
+      tempPoint[i] = point[i] + static_cast<double>(vector[i]);
     }
-    outputPoint = m_Transform->TransformPoint( tempPoint );
+    outputPoint = m_Transform->TransformPoint(tempPoint);
     OutputDeformationPixelType outputVector;
     for (int i = 0; i < NDimensions; i++)
     {
-      outputVector[i] = static_cast<OutputDataType>( outputPoint[i] - point[i] );
+      outputVector[i] = static_cast<OutputDataType>(outputPoint[i] - point[i]);
     }
-    out.Set( outputVector );
+    out.Set(outputVector);
   }
 }
 
@@ -81,23 +74,21 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
  * Inform pipeline of required output region
  */
 template <class TInput, class TOutput, int NDimensions>
-void
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::GenerateOutputInformation()
+void TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::GenerateOutputInformation()
 {
   // call the superclass' implementation of this method
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
-  OutputDeformationFieldPointerType outputPtr = this->GetOutput( 0 );
+  OutputDeformationFieldPointerType outputPtr = this->GetOutput(0);
   if (!outputPtr)
   {
     return;
   }
-  outputPtr->SetSpacing( this->GetInput( 0 )->GetSpacing() );
-  outputPtr->SetOrigin( this->GetInput( 0 )->GetOrigin() );
-  outputPtr->SetDirection( this->GetInput( 0 )->GetDirection() );
+  outputPtr->SetSpacing(this->GetInput(0)->GetSpacing());
+  outputPtr->SetOrigin(this->GetInput(0)->GetOrigin());
+  outputPtr->SetDirection(this->GetInput(0)->GetDirection());
   // Set the size of the output region
-  outputPtr->SetRegions( this->GetInput( 0 )->GetLargestPossibleRegion() );
+  outputPtr->SetRegions(this->GetInput(0)->GetLargestPossibleRegion());
   return;
 }
 
@@ -109,9 +100,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
  * So we do the easy thing and request the entire input image.
  */
 template <class TInput, class TOutput, int NDimensions>
-void
-TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::GenerateInputRequestedRegion()
+void TransformDeformationFieldFilter<TInput, TOutput, NDimensions>::GenerateInputRequestedRegion()
 {
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -121,13 +110,12 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
     return;
   }
   // get pointers to the input and output
-  InputDeformationFieldPointerType inputPtr  =
-    const_cast<InputDeformationFieldType*>( this->GetInput() );
+  InputDeformationFieldPointerType inputPtr = const_cast<InputDeformationFieldType*>(this->GetInput());
 
   // Request the entire input image
   typename InputDeformationFieldType::RegionType inputRegion;
   inputRegion = inputPtr->GetLargestPossibleRegion();
-  inputPtr->SetRequestedRegion( inputRegion );
+  inputPtr->SetRequestedRegion(inputRegion);
   return;
 }
 

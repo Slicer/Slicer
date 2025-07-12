@@ -22,7 +22,7 @@
 #include "qMRMLListWidget.h"
 
 qMRMLListWidgetPlugin::qMRMLListWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

@@ -63,8 +63,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLStreamingVolumeNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override
-  {return "StreamingVolume";}
+  const char* GetNodeTagName() override { return "StreamingVolume"; }
 
   /// Set/Get the observed image data object and and image data connections
   /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(), vtkMRMLVolumeNode::GetImageDataConnection()
@@ -77,7 +76,7 @@ public:
   void SetAndObserveFrame(vtkStreamingVolumeFrame* frame);
 
   /// Returns a pointer to the current frame
-  vtkStreamingVolumeFrame* GetFrame(){return this->Frame.GetPointer();};
+  vtkStreamingVolumeFrame* GetFrame() { return this->Frame.GetPointer(); };
 
   /// Encodes the current vtkImageData as a compressed frame using the specified codec
   /// Returns true if the image is successfully encoded
@@ -127,12 +126,11 @@ protected:
 
 protected:
   vtkSmartPointer<vtkStreamingVolumeCodec> Codec;
-  std::string                              CodecFourCC;
+  std::string CodecFourCC;
   vtkSmartPointer<vtkStreamingVolumeFrame> Frame;
-  bool                                     FrameDecoded{ false };
-  bool                                     FrameDecodingInProgress{ false };
-  vtkSmartPointer<vtkCallbackCommand>      FrameModifiedCallbackCommand;
-
+  bool FrameDecoded{ false };
+  bool FrameDecodingInProgress{ false };
+  vtkSmartPointer<vtkCallbackCommand> FrameModifiedCallbackCommand;
 };
 
 #endif

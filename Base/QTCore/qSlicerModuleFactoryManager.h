@@ -34,8 +34,7 @@ class vtkSlicerApplicationLogic;
 // MRML includes
 class vtkMRMLScene;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
-  : public qSlicerAbstractModuleFactoryManager
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager : public qSlicerAbstractModuleFactoryManager
 {
   Q_OBJECT
 public:
@@ -107,6 +106,7 @@ signals:
   void moduleUnloaded(const QString& moduleName);
 
   void mrmlSceneChanged(vtkMRMLScene* newScene);
+
 protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
 
@@ -120,6 +120,7 @@ protected:
 
   /// Reimplemented to ensure order
   virtual void uninstantiateModules();
+
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
   Q_DISABLE_COPY(qSlicerModuleFactoryManager);

@@ -30,8 +30,10 @@ class qMRMLExpandingWebViewPrivate : public QObject
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLExpandingWebView);
+
 protected:
   qMRMLExpandingWebView* const q_ptr;
+
 public:
   qMRMLExpandingWebViewPrivate(qMRMLExpandingWebView& object);
   ~qMRMLExpandingWebViewPrivate() override;
@@ -47,8 +49,7 @@ public slots:
   void endProcessing();
 
 protected:
-
-  vtkMRMLScene*                      MRMLScene;
+  vtkMRMLScene* MRMLScene;
 };
 
 #endif

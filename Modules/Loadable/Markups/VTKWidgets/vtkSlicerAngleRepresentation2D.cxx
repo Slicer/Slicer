@@ -46,7 +46,6 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
-
 vtkStandardNewMacro(vtkSlicerAngleRepresentation2D);
 
 //----------------------------------------------------------------------
@@ -127,9 +126,9 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   double angle = markupsNode->GetAngleDegrees();
   bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
 
-  double p1[3] = {0.0};
-  double c[3] = {0.0};
-  double p2[3] = {0.0};
+  double p1[3] = { 0.0 };
+  double c[3] = { 0.0 };
+  double p2[3] = { 0.0 };
   markupsNode->GetNthControlPointPositionWorld(0, p1);
   markupsNode->GetNthControlPointPositionWorld(1, c);
   markupsNode->GetNthControlPointPositionWorld(2, p2);
@@ -138,7 +137,8 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   // fluctuations in angle value as the camera moves, etc.)
   if (((fabs(p1[0] - c[0]) < 0.001) && //
        (fabs(p1[1] - c[1]) < 0.001) && //
-       (fabs(p1[2] - c[2]) < 0.001)) || //
+       (fabs(p1[2] - c[2]) < 0.001))
+      ||                               //
       ((fabs(p2[0] - c[0]) < 0.001) && //
        (fabs(p2[1] - c[1]) < 0.001) && //
        (fabs(p2[2] - c[2]) < 0.001)))
@@ -198,14 +198,13 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   vtkMath::Normalize(vector3);
   double textPos[3] = { lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0], //
                         lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1], //
-                        lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2]};
+                        lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2] };
 
   this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), //
                                       static_cast<int>(textPos[1]));
-  this->TextActor->SetVisibility(
-    this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
-    && this->AnyPointVisibilityOnSlice //
-    && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
+  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+                                 && this->AnyPointVisibilityOnSlice                       //
+                                 && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
 }
 
 //----------------------------------------------------------------------
@@ -229,8 +228,9 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Update lines display properties
 
-  double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-    this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+  double diameter =
+    (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
+                                                                                                    : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
   this->ArcTubeFilter->SetRadius(diameter * 0.5);
 
@@ -283,14 +283,12 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerAngleRepresentation2D::CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
-    || !this->GetVisibility() || !interactionEventData )
+      || !this->GetVisibility() || !interactionEventData)
   {
     return;
   }
@@ -315,20 +313,20 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 
   vtkNew<vtkMatrix4x4> rasToxyMatrix;
   vtkMatrix4x4::Invert(this->GetSliceNode()->GetXYToRAS(), rasToxyMatrix.GetPointer());
-  for (int i = 0; i < numberOfPoints-1; i++)
+  for (int i = 0; i < numberOfPoints - 1; i++)
   {
     if (!this->PointsVisibilityOnSlice->GetValue(i))
     {
       continue;
     }
-    if (!this->PointsVisibilityOnSlice->GetValue(i+1))
+    if (!this->PointsVisibilityOnSlice->GetValue(i + 1))
     {
       i++; // skip one more, as the next iteration would use (i+1)-th point
       continue;
     }
     markupsNode->GetNthControlPointPositionWorld(i, pointWorldPos1);
     rasToxyMatrix->MultiplyPoint(pointWorldPos1, pointDisplayPos1);
-    markupsNode->GetNthControlPointPositionWorld(i+1, pointWorldPos2);
+    markupsNode->GetNthControlPointPositionWorld(i + 1, pointWorldPos2);
     rasToxyMatrix->MultiplyPoint(pointWorldPos2, pointDisplayPos2);
 
     double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
@@ -351,8 +349,7 @@ void vtkSlicerAngleRepresentation2D::GetActors(vtkPropCollection* pc)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(
-  vtkWindow* win)
+void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->LineActor->ReleaseGraphicsResources(win);
   this->ArcActor->ReleaseGraphicsResources(win);
@@ -365,11 +362,11 @@ int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport* viewport)
   int count = 0;
   if (this->LineActor->GetVisibility())
   {
-    count +=  this->LineActor->RenderOverlay(viewport);
+    count += this->LineActor->RenderOverlay(viewport);
   }
   if (this->ArcActor->GetVisibility())
   {
-    count +=  this->ArcActor->RenderOverlay(viewport);
+    count += this->ArcActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
 
@@ -377,8 +374,7 @@ int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport* viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
-  vtkViewport* viewport)
+int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = 0;
   if (this->LineActor->GetVisibility())
@@ -395,8 +391,7 @@ int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(
-  vtkViewport* viewport)
+int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count = 0;
   if (this->LineActor->GetVisibility())
@@ -439,7 +434,7 @@ double* vtkSlicerAngleRepresentation2D::GetBounds()
 //-----------------------------------------------------------------------------
 void vtkSlicerAngleRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)

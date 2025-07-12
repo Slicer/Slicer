@@ -3,8 +3,9 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTransformSlidersPlugin : public QObject,
-                                    public qMRMLWidgetsAbstractPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTransformSlidersPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 

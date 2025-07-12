@@ -29,8 +29,7 @@
 
 /// Concrete implementation of pqWidgetEventPlayer that translates
 /// high-level events into low-level Qt events.
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxEventPlayer :
-  public pqWidgetEventPlayer
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
 
@@ -42,9 +41,8 @@ public:
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
-  qMRMLNodeComboBoxEventPlayer(const qMRMLNodeComboBoxEventPlayer&); // NOT implemented
+  qMRMLNodeComboBoxEventPlayer(const qMRMLNodeComboBoxEventPlayer&);            // NOT implemented
   qMRMLNodeComboBoxEventPlayer& operator=(const qMRMLNodeComboBoxEventPlayer&); // NOT implemented
-
 };
 
 #endif

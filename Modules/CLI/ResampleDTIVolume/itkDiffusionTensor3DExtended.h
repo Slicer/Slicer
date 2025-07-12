@@ -31,30 +31,29 @@ template <class T>
 class DiffusionTensor3DExtended : public DiffusionTensor3D<T>
 {
 public:
-  typedef T                           DataType;
-  typedef DiffusionTensor3DExtended   Self;
+  typedef T DataType;
+  typedef DiffusionTensor3DExtended Self;
   typedef DiffusionTensor3D<DataType> Superclass;
-  typedef Matrix<DataType, 3, 3>      MatrixType;
+  typedef Matrix<DataType, 3, 3> MatrixType;
 
   DiffusionTensor3DExtended() = default;
-  DiffusionTensor3DExtended( const Superclass & tensor );
+  DiffusionTensor3DExtended(const Superclass& tensor);
   // /Get a Symmetric matrix representing the tensor
   MatrixType GetTensor2Matrix();
 
   // /Set the Tensor from a symmetric matrix
   template <class C>
-  void SetTensorFromMatrix( Matrix<C, 3, 3> matrix );
+  void SetTensorFromMatrix(Matrix<C, 3, 3> matrix);
 
   // /Cast the component values of the tensor
   template <class C>
-  operator DiffusionTensor3DExtended<C> const ();
-
+  operator DiffusionTensor3DExtended<C> const();
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DExtended.txx"
+# include "itkDiffusionTensor3DExtended.txx"
 #endif
 
 #endif

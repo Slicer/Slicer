@@ -37,8 +37,7 @@
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
 //---------------------------------------------------------------------------
-int vtkSceneViewEventsTest(
-  int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+int vtkSceneViewEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;
@@ -53,7 +52,6 @@ int vtkSceneViewEventsTest(
   sceneViewLogic->SetMRMLScene(scene);
   sceneViewLogic->SetMRMLApplicationLogic(appLogic);
   appLogic->SetModuleLogic("SceneViews", sceneViewLogic);
-
 
   vtkNew<vtkMRMLCameraNode> cameraNode;
   scene->AddNode(cameraNode.GetPointer());

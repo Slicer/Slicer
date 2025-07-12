@@ -24,7 +24,7 @@
 /// the points defined in the color transfer function
 class VTK_MRML_EXPORT vtkMRMLProceduralColorStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLProceduralColorStorageNode* New();
   vtkTypeMacro(vtkMRMLProceduralColorStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkMRMLProceduralColorStorageNode : public vtkMRMLStorageN
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "ProceduralColorStorage";}
+  const char* GetNodeTagName() override { return "ProceduralColorStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -54,7 +54,6 @@ protected:
 
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode* refNode) override;
-
 };
 
 #endif

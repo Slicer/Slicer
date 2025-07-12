@@ -29,8 +29,7 @@ class qSlicerTransformsReaderPrivate;
 class vtkSlicerTransformLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsReader
-  : public qSlicerFileReader
+class qSlicerTransformsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -52,7 +51,6 @@ public:
   /// For NIFTI file that contain displacement field, the method returns 0.6 which is
   /// higher than the default (0.5) to make the application prefer reading it as transform.
   double canLoadFileConfidence(const QString& file) const override;
-
 
 protected:
   QScopedPointer<qSlicerTransformsReaderPrivate> d_ptr;

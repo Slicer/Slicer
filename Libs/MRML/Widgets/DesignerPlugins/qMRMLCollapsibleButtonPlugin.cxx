@@ -23,7 +23,8 @@
 #include "qMRMLCollapsibleButton.h"
 
 //-----------------------------------------------------------------------------
-qMRMLCollapsibleButtonPlugin::qMRMLCollapsibleButtonPlugin(QObject* _parent): QObject(_parent)
+qMRMLCollapsibleButtonPlugin::qMRMLCollapsibleButtonPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 

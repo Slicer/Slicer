@@ -31,15 +31,14 @@ class vtkMRMLVolumePropertyNode;
 
 /// \name vtkMRMLVolumeRenderingDisplayNode
 /// \brief Abstract MRML node for storing information for Volume Rendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode
-  : public vtkMRMLDisplayNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -57,7 +56,7 @@ public:
   const char* GetShaderPropertyNodeID();
   void SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID);
   vtkMRMLShaderPropertyNode* GetShaderPropertyNode();
-  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene );
+  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode(vtkMRMLScene* mrmlScene);
 
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char* roiNodeID);

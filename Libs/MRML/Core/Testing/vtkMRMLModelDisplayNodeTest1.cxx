@@ -31,9 +31,7 @@ namespace
 const char* VOXEL_ARRAY_NAME = "ids";
 }
 //---------------------------------------------------------------------------
-int TestSetMesh(bool observeMeshBeforeObserveDisplay,
-                bool observeDisplayBeforeAddToScene,
-                bool meshTypeIsPolyData);
+int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeAddToScene, bool meshTypeIsPolyData);
 
 int TestScalarRange(vtkPointSet* mesh);
 int TestThreshold(vtkPointSet* mesh);
@@ -160,9 +158,7 @@ int TestThreshold(vtkPointSet* mesh)
 }
 
 //---------------------------------------------------------------------------
-int TestSetMesh(bool observeMeshBeforeObserveDisplay,
-                bool observeDisplayBeforeAddToScene,
-                bool meshTypeIsPolyData)
+int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeAddToScene, bool meshTypeIsPolyData)
 {
   vtkNew<vtkMRMLScene> scene;
 

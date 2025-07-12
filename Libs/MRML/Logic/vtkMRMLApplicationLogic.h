@@ -47,11 +47,9 @@ class vtkImageData;
 // STD includes
 #include <vector>
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
-  : public vtkMRMLAbstractLogic
+class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic : public vtkMRMLAbstractLogic
 {
 public:
-
   static vtkMRMLApplicationLogic* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
@@ -186,18 +184,18 @@ public:
 
   /// Load any default parameter sets into the specified scene
   /// Returns the total number of loaded parameter sets
-  static int LoadDefaultParameterSets(vtkMRMLScene* scene,
-                                      const std::vector<std::string>& directories);
+  static int LoadDefaultParameterSets(vtkMRMLScene* scene, const std::vector<std::string>& directories);
 
   /// Creates a unique (non-existent) file name by adding an index after base file name.
   /// knownExtension specifies the extension the index should be inserted before.
   /// It is necessary to provide extension, because there is no reliable way of correctly
   /// determining extension automatically (for example, file extension of some.file.nii.gz
   /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
-  static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension="");
+  static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension = "");
 
   /// List of custom events fired by the class.
-  enum Events{
+  enum Events
+  {
     RequestInvokeEvent = vtkCommand::UserEvent + 1,
     PauseRenderEvent = vtkCommand::UserEvent + 101,
     ResumeRenderEvent,
@@ -205,22 +203,20 @@ public:
     ShowViewContextMenuEvent,
   };
   /// Structure passed as calldata pointer in the RequestEvent invoked event.
-  struct InvokeRequest{
+  struct InvokeRequest
+  {
     InvokeRequest();
     /// 100ms by default.
     unsigned int Delay{ 100 };
     /// the caller to call InvokeEvent() on.
     vtkObject* Caller{ nullptr };
     /// The event id of InvokeEvent. ModifiedEvent by default.
-    unsigned long EventID{vtkCommand::ModifiedEvent};
+    unsigned long EventID{ vtkCommand::ModifiedEvent };
     /// Optional call data. 0 by default.
     void* CallData{ nullptr };
   };
   /// Conveniently calls an InvokeEvent on an object with a delay.
-  void InvokeEventWithDelay(unsigned int delayInMs,
-                            vtkObject* caller,
-                            unsigned long eventID = vtkCommand::ModifiedEvent,
-                            void* callData = nullptr);
+  void InvokeEventWithDelay(unsigned int delayInMs, vtkObject* caller, unsigned long eventID = vtkCommand::ModifiedEvent, void* callData = nullptr);
 
   /// Return the temporary path that was set by the application
   const char* GetTemporaryPath();
@@ -300,14 +296,13 @@ public:
   void UseCustomFontFile(vtkTextProperty* textProperty);
 
 protected:
-
   vtkMRMLApplicationLogic();
   ~vtkMRMLApplicationLogic() override;
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  void SetSelectionNode(vtkMRMLSelectionNode* );
-  void SetInteractionNode(vtkMRMLInteractionNode* );
+  void SetSelectionNode(vtkMRMLSelectionNode*);
+  void SetInteractionNode(vtkMRMLInteractionNode*);
 
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
@@ -321,14 +316,11 @@ protected:
   void OnMRMLSceneEndRestore() override;
 
 private:
-
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&) = delete;
   void operator=(const vtkMRMLApplicationLogic&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
-
 
 #endif

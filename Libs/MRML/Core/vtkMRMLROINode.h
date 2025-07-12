@@ -23,9 +23,9 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
-  virtual void ReadXMLString( const char* keyValuePairs);
+  virtual void ReadXMLString(const char* keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -37,7 +37,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MRMLROINode";}
+  const char* GetNodeTagName() override { return "MRMLROINode"; }
 
   ///
   ///
@@ -64,25 +64,25 @@ public:
   /// Note: The ROI Position is the center of the ROI
   void SetXYZ(double X, double Y, double Z);
   void SetXYZ(double* XYZ);
-  vtkGetVectorMacro(XYZ,double,3);
+  vtkGetVectorMacro(XYZ, double, 3);
 
   ///
   /// Get/Set for radius of the ROI in RAS coordinates
   void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   void SetRadiusXYZ(double* RadiusXYZ);
-  vtkGetVectorMacro(RadiusXYZ,double,3);
+  vtkGetVectorMacro(RadiusXYZ, double, 3);
 
   ///
   /// Get/Set for ROI Position in IJK coordinates
   void SetIJK(double I, double J, double K);
   void SetIJK(double* IJK);
-  vtkGetVectorMacro(IJK,double,3);
+  vtkGetVectorMacro(IJK, double, 3);
 
   ///
   /// Get/Set for radius of the ROI in IJK coordinates
   void SetRadiusIJK(double RadiusI, double RadiusJ, double RadiusK);
   void SetRadiusIJK(double* RadiusIJK);
-  vtkGetVectorMacro(RadiusIJK,double,3);
+  vtkGetVectorMacro(RadiusIJK, double, 3);
 
   ///
   /// Set/Get the InsideOut flag. This data member is used in conjunction
@@ -98,7 +98,7 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);

@@ -101,7 +101,7 @@ bool testLayoutManagerViewWidgetForThreeD(int line, qMRMLLayoutManager* layoutMa
   }
   return true;
 }
-}
+} // namespace
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManagerTest1(int argc, char* argv[])
@@ -148,7 +148,6 @@ int qMRMLLayoutManagerTest1(int argc, char* argv[])
   viewport2->setWindowTitle("New widget");
   layoutManager->setViewport(viewport2);
   viewport2->show();
-
 
   layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Green"))

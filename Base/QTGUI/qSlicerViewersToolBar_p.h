@@ -124,7 +124,6 @@ public:
 
   QAction* CrosshairToggleAction{ nullptr };
 
-
   QToolButton* SliceIntersectionsToolButton{ nullptr };
   QMenu* SliceIntersectionsMenu{ nullptr };
 
@@ -143,7 +142,7 @@ public:
   QAction* SliceIntersectionsMediumAction{ nullptr };
   QAction* SliceIntersectionsThickAction{ nullptr };
 
-  int CrosshairLastMode{vtkMRMLCrosshairNode::ShowBasic};
+  int CrosshairLastMode{ vtkMRMLCrosshairNode::ShowBasic };
 };
 
 #endif

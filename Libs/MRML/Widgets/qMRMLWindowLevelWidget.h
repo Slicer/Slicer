@@ -24,8 +24,7 @@
 #include "qMRMLVolumeWidget.h"
 class qMRMLWindowLevelWidgetPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget
-  : public qMRMLVolumeWidget
+class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget : public qMRMLVolumeWidget
 {
   Q_OBJECT
 
@@ -48,7 +47,7 @@ public:
   {
     Auto = 0,
     Manual = 1,
-    ManualMinMax =2
+    ManualMinMax = 2
   };
 
   /// Set Auto/Manual mode

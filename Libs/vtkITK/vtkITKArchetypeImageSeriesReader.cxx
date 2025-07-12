@@ -46,9 +46,9 @@
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-#include "itkDCMTKImageIO.h"
-#include "itkGDCMSeriesFileNames.h"
-#include "itkGDCMImageIO.h"
+# include "itkDCMTKImageIO.h"
+# include "itkGDCMSeriesFileNames.h"
+# include "itkGDCMImageIO.h"
 #endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
@@ -56,7 +56,7 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
-  this->Archetype  = nullptr;
+  this->Archetype = nullptr;
   this->IndexArchetype = 0;
   this->SingleFile = 1;
   this->UseOrientationFromFile = 1;
@@ -83,13 +83,13 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
     this->DefaultDataOrigin[i] = 0.0;
   }
 
-  this->SeriesInstanceUIDs.resize( 0 );
-  this->ContentTime.resize( 0 );
-  this->TriggerTime.resize( 0 );
-  this->EchoNumbers.resize( 0 );
-  this->DiffusionGradientOrientation.resize( 0 );
-  this->SliceLocation.resize( 0 );
-  this->ImageOrientationPatient.resize( 0 );
+  this->SeriesInstanceUIDs.resize(0);
+  this->ContentTime.resize(0);
+  this->TriggerTime.resize(0);
+  this->EchoNumbers.resize(0);
+  this->DiffusionGradientOrientation.resize(0);
+  this->SliceLocation.resize(0);
+  this->ImageOrientationPatient.resize(0);
 
   this->AnalyzeHeader = true;
 
@@ -152,19 +152,13 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Archetype: " <<
-    (this->Archetype ? this->Archetype : "(none)") << "\n";
+  os << indent << "Archetype: " << (this->Archetype ? this->Archetype : "(none)") << "\n";
 
-  os << indent << "FileNameSliceOffset: "
-     << this->FileNameSliceOffset << "\n";
-  os << indent << "FileNameSliceSpacing: "
-     << this->FileNameSliceSpacing << "\n";
-  os << indent << "FileNameSliceCount: "
-     << this->FileNameSliceCount << "\n";
+  os << indent << "FileNameSliceOffset: " << this->FileNameSliceOffset << "\n";
+  os << indent << "FileNameSliceSpacing: " << this->FileNameSliceSpacing << "\n";
+  os << indent << "FileNameSliceCount: " << this->FileNameSliceCount << "\n";
 
-  os << indent << "OutputScalarType: "
-     << vtkImageScalarTypeNameMacro(this->OutputScalarType)
-     << std::endl;
+  os << indent << "OutputScalarType: " << vtkImageScalarTypeNameMacro(this->OutputScalarType) << std::endl;
   os << indent << "DefaultDataSpacing: (" << this->DefaultDataSpacing[0];
   for (idx = 1; idx < 3; ++idx)
   {
@@ -214,7 +208,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
   // First see if the archetype exists
   if (!itksys::SystemTools::FileExists(fileNameCollapsed.c_str()))
   {
-    vtkDebugMacro(<<"The filename does not exist.");
+    vtkDebugMacro(<< "The filename does not exist.");
     return nullptr;
   }
 
@@ -232,13 +226,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
     }
     else
     {
-      GroupFiles(SelectedUID,
-        SelectedContentTime,
-        SelectedTriggerTime,
-        SelectedEchoNumbers,
-        SelectedDiffusion,
-        SelectedSlice,
-        SelectedOrientation);
+      GroupFiles(SelectedUID, SelectedContentTime, SelectedTriggerTime, SelectedEchoNumbers, SelectedDiffusion, SelectedSlice, SelectedOrientation);
     }
   }
 
@@ -266,14 +254,13 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
 
     if (this->FileNames.size() == 0)
     {
-      vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Files not found!");
+      vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Files not found!");
       this->SetErrorCode(vtkErrorCode::FileNotFoundError);
       return nullptr;
     }
     else if (this->FileNames.size() == 1) // If there is only one file in the series, just use an image file reader
     {
-      itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
+      itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
       imageReader->SetFileName(this->FileNames[0].c_str());
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
       if (this->ArchetypeIsDICOM)
@@ -285,7 +272,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == nullptr)
       {
-        vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+        vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
         this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
         return nullptr;
       }
@@ -295,8 +282,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
       //
       // more than one file, use series reader
       //
-      itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
-        itk::ImageSeriesReader<ImageType>::New();
+      itk::ImageSeriesReader<ImageType>::Pointer seriesReader = itk::ImageSeriesReader<ImageType>::New();
       seriesReader->SetFileNames(this->FileNames);
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
       if (this->ArchetypeIsDICOM)
@@ -306,8 +292,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
       else
 #endif
       {
-        itk::ImageFileReader<ImageType>::Pointer imageReader =
-          itk::ImageFileReader<ImageType>::New();
+        itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
         imageReader->SetFileName(this->FileNames[0].c_str());
         imageReader->UpdateOutputInformation();
         imageIO = imageReader->GetImageIO();
@@ -319,8 +304,8 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkDebugMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    vtkDebugMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return nullptr;
   }
@@ -328,7 +313,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
   {
     // GDCM can throw std::string exception if some verification fail
     vtkDebugMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "Error: " << err);
+                                                                                       << "Error: " << err);
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return nullptr;
   }
@@ -338,10 +323,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
 
 //----------------------------------------------------------------------------
 // This method returns the largest data that can be generated.
-int vtkITKArchetypeImageSeriesReader::RequestInformation(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** vtkNotUsed(inputVector),
-  vtkInformationVector* outputVector)
+int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotUsed(request), vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
@@ -349,7 +331,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   std::vector<std::string> candidateFiles;
   std::vector<std::string> candidateSeries;
   int extent[6];
-  std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
+  std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath(this->Archetype);
 
   if (this->SingleFile)
   {
@@ -358,7 +340,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   // Since we only need origin, spacing and extents, we can use one
   // image type.
-  typedef itk::Image<float,3> ImageType;
+  typedef itk::Image<float, 3> ImageType;
   itk::ImageRegion<3> region;
 
   typedef itk::ImageSource<ImageType> FilterType;
@@ -372,15 +354,15 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   else
   {
-    if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
+    if (!itksys::SystemTools::FileExists(fileNameCollapsed.c_str()))
     {
-      vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
+      vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
       this->SetErrorCode(vtkErrorCode::FileNotFoundError);
       return 0;
     }
   }
 
-  this->AllFileNames.resize( 0 );
+  this->AllFileNames.resize(0);
 
   // the code in this try/catch block uses ITK dicom code to evaluate
   // the files to see if they will be readable.  Some forms of dicom will
@@ -392,12 +374,12 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     if (this->GetNumberOfFileNames() > 0)
     {
       unsigned int nFiles = this->GetNumberOfFileNames();
-      this->AllFileNames.resize( 0 );
+      this->AllFileNames.resize(0);
       for (unsigned int k = 0; k < nFiles; k++)
       {
-        this->AllFileNames.push_back( this->FileNames[k] );
+        this->AllFileNames.push_back(this->FileNames[k]);
       }
-      this->FileNames.resize( 0 );
+      this->FileNames.resize(0);
 
       // if this is the only file set by user
       if (nFiles == 1)
@@ -418,12 +400,12 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       {
         typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
         DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
-        std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
+        std::string fileNamePath = itksys::SystemTools::GetFilenamePath(this->Archetype);
         if (fileNamePath == "")
         {
           fileNamePath = ".";
         }
-        inputImageFileGenerator->SetDirectory( fileNamePath );
+        inputImageFileGenerator->SetDirectory(fileNamePath);
 
         // determine if the file is diffusion weighted MR file
 
@@ -434,13 +416,13 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         for (unsigned int s = 0; s < candidateSeries.size(); s++)
         {
           std::vector<std::string> seriesFileNames;
-          seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] );
+          seriesFileNames = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
           for (unsigned int f = 0; f < seriesFileNames.size(); f++)
           {
-            this->AllFileNames.push_back( seriesFileNames[f] );
+            this->AllFileNames.push_back(seriesFileNames[f]);
           }
         }
-        //int nFiles = this->AllFileNames.size(); UNUSED
+        // int nFiles = this->AllFileNames.size(); UNUSED
 
         // analysis dicom files and fill the Dicom Tag arrays
         if (this->AnalyzeHeader)
@@ -456,8 +438,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           candidateFiles = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
           for (unsigned int f = 0; f < candidateFiles.size(); f++)
           {
-            if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) ==
-              fileNameCollapsed)
+            if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) == fileNameCollapsed)
             {
               found = 1;
               break;
@@ -473,14 +454,13 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       }
       else
 #endif
-      if (!this->GetSingleFile())
+        if (!this->GetSingleFile())
       { // not dicom
         // check the dimensions of the archetype - if there
         // is more then one slice, use only the archetype
         // but if it is a single slice, try to generate a
         // series of filenames
-        itk::ImageFileReader<ImageType>::Pointer imageReader =
-          itk::ImageFileReader<ImageType>::New();
+        itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
         imageReader->SetFileName(this->Archetype);
         imageReader->UpdateOutputInformation();
         region = imageReader->GetOutput()->GetLargestPossibleRegion();
@@ -494,10 +474,10 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         {
           // Generate filenames from the Archetype
           itk::ArchetypeSeriesFileNames::Pointer fit = itk::ArchetypeSeriesFileNames::New();
-          fit->SetArchetype (this->Archetype);
+          fit->SetArchetype(this->Archetype);
           candidateFiles = fit->GetFileNames();
-          this->AllFileNames.resize( candidateFiles.size() );
-          for (int f = 0; f < (int)(candidateFiles.size()); f ++)
+          this->AllFileNames.resize(candidateFiles.size());
+          for (int f = 0; f < (int)(candidateFiles.size()); f++)
           {
             this->AllFileNames[f] = candidateFiles[f];
           }
@@ -520,16 +500,16 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
   catch (const std::string& err)
   {
     // GDCM can throw std::string exception if some verification fail
-    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "Error: " << err);
+    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+                                                                                       << "Error: " << err);
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
@@ -550,7 +530,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   // Reduce the selection of filenames
   if (this->IsOnlyFile || this->SingleFile)
   {
-    this->FileNames.resize( 0 );
+    this->FileNames.resize(0);
     this->FileNames.emplace_back(this->Archetype);
   }
   else
@@ -561,13 +541,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     }
     else
     {
-    GroupFiles( SelectedUID,
-                SelectedContentTime,
-                SelectedTriggerTime,
-                SelectedEchoNumbers,
-                SelectedDiffusion,
-                SelectedSlice,
-                SelectedOrientation );
+      GroupFiles(SelectedUID, SelectedContentTime, SelectedTriggerTime, SelectedEchoNumbers, SelectedDiffusion, SelectedSlice, SelectedOrientation);
     }
   }
 
@@ -590,16 +564,14 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   {
     if (this->FileNames.size() == 0)
     {
-      vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Failed to read file series");
+      vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Failed to read file series");
       this->SetErrorCode(vtkErrorCode::FileNotFoundError);
       return 0;
     }
     else if (this->FileNames.size() == 1) // If there is only one file in the series, just use an image file reader
     {
-      itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
-        itk::OrientImageFilter<ImageType,ImageType>::New();
-      itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
+      itk::OrientImageFilter<ImageType, ImageType>::Pointer orient = itk::OrientImageFilter<ImageType, ImageType>::New();
+      itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
       imageReader->SetFileName(this->FileNames[0].c_str());
       imageReader->SetImageIO(imageIO);
 
@@ -622,9 +594,9 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         origin[i] = filter->GetOutput()->GetOrigin()[i];
 
         // Get IJK to RAS direction vector
-        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++)
+        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension(); j++)
         {
-          IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
+          IjkToLpsMatrix->SetElement(j, i, spacing[i] * filter->GetOutput()->GetDirection()[j][i]);
         }
       }
       region = filter->GetOutput()->GetLargestPossibleRegion();
@@ -635,19 +607,18 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
 
-      typedef std::vector<std::vector<double>>    DoubleVectorType;
-      typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
+      typedef std::vector<std::vector<double>> DoubleVectorType;
+      typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
       const itk::MetaDataDictionary& dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
       itk::MetaDataDictionary::ConstIterator end = dictionary.End();
       while (itr != end)
       {
-        itk::MetaDataObjectBase::Pointer  entry = itr->second;
-        MetaDataDoubleVectorType::Pointer entryvalue1
-          = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
+        itk::MetaDataObjectBase::Pointer entry = itr->second;
+        MetaDataDoubleVectorType::Pointer entryvalue1 = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
         if (entryvalue1)
         {
-          int pos = itr->first.find( "NRRD_measurement frame" );
+          int pos = itr->first.find("NRRD_measurement frame");
           if (pos != -1)
           {
             DoubleVectorType tagvalue = entryvalue1->GetMetaDataObjectValue();
@@ -655,7 +626,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
             {
               for (int j = 0; j < 3; j++)
               {
-                this->MeasurementFrameMatrix->SetElement(i,j, tagvalue.at( j ).at( i ));
+                this->MeasurementFrameMatrix->SetElement(i, j, tagvalue.at(j).at(i));
               }
             }
           }
@@ -666,7 +637,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == nullptr)
       {
-        vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+        vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
         this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
         return 0;
       }
@@ -676,10 +647,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       //
       // more than one file, use series reader
       //
-      itk::OrientImageFilter<ImageType,ImageType>::Pointer orient =
-        itk::OrientImageFilter<ImageType,ImageType>::New();
-      itk::ImageSeriesReader<ImageType>::Pointer seriesReader =
-        itk::ImageSeriesReader<ImageType>::New();
+      itk::OrientImageFilter<ImageType, ImageType>::Pointer orient = itk::OrientImageFilter<ImageType, ImageType>::New();
+      itk::ImageSeriesReader<ImageType>::Pointer seriesReader = itk::ImageSeriesReader<ImageType>::New();
       seriesReader->SetFileNames(this->FileNames);
       seriesReader->SetImageIO(imageIO);
       seriesReader->SetForceOrthogonalDirection(false);
@@ -700,9 +669,9 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         spacing[i] = filter->GetOutput()->GetSpacing()[i];
         origin[i] = filter->GetOutput()->GetOrigin()[i];
         // Get IJK to RAS direction vector
-        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++)
+        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension(); j++)
         {
-          IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
+          IjkToLpsMatrix->SetElement(j, i, spacing[i] * filter->GetOutput()->GetDirection()[j][i]);
         }
       }
 
@@ -718,16 +687,16 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
   // Transform from LPS to RAS
   vtkMatrix4x4* LpsToRasMatrix = vtkMatrix4x4::New();
   LpsToRasMatrix->Identity();
-  LpsToRasMatrix->SetElement(0,0,-1);
-  LpsToRasMatrix->SetElement(1,1,-1);
+  LpsToRasMatrix->SetElement(0, 0, -1);
+  LpsToRasMatrix->SetElement(1, 1, -1);
 
   vtkMatrix4x4* LPSMeasurementFrameMatrix = vtkMatrix4x4::New();
   LPSMeasurementFrameMatrix->DeepCopy(this->MeasurementFrameMatrix);
@@ -751,8 +720,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     }
   }
 
-  origin[0] *= -1;   // L -> R
-  origin[1] *= -1;   // P -> A
+  origin[0] *= -1; // L -> R
+  origin[1] *= -1; // P -> A
 
   if (this->UseNativeOrigin)
   {
@@ -767,7 +736,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     this->RasToIjkMatrix->Invert();
     for (int j = 0; j < 3; j++)
     {
-      this->RasToIjkMatrix->SetElement(j, 3, (extent[2*j+1] - extent[2*j])/2.0);
+      this->RasToIjkMatrix->SetElement(j, 3, (extent[2 * j + 1] - extent[2 * j]) / 2.0);
     }
   }
 
@@ -776,14 +745,14 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   // TODO: this may corrupt the slice spacig in multiframe DICOM files,
   // so probably it would be better to remove it.
-  this->RasToIjkMatrix->SetElement(3,3,1.0);
+  this->RasToIjkMatrix->SetElement(3, 3, 1.0);
 
   if (!this->GetUseOrientationFromFile())
   {
     this->RasToIjkMatrix->Identity();
     for (unsigned int j = 0; j < 3; j++)
     {
-      this->RasToIjkMatrix->SetElement(j, j, 1.0/spacing[j]);
+      this->RasToIjkMatrix->SetElement(j, j, 1.0 / spacing[j]);
     }
   }
 
@@ -847,7 +816,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         double min = 0, max = 0;
         for (unsigned int f = 0; f < this->FileNames.size(); f++)
         {
-          imageIO->SetFileName( this->FileNames[f] );
+          imageIO->SetFileName(this->FileNames[f]);
           imageIO->ReadImageInformation();
 
           if (imageIO->GetComponentType() == itk::IOComponentEnum::UCHAR)
@@ -907,7 +876,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         {
           throw std::string("Invalid voxel value range");
         }
-        if (min >= 0 ) // unsigned
+        if (min >= 0) // unsigned
         {
           if (max <= std::numeric_limits<uint8_t>::max())
           {
@@ -980,8 +949,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
@@ -989,7 +958,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   {
     // GDCM can throw std::string exception if some verification fail
     vtkDebugMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-      << "Error: " << err);
+                                                                                       << "Error: " << err);
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
@@ -1002,10 +971,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   this->SetNumberOfComponents(numberOfComponents);
   this->SetOutputScalarType(scalarType);
 
-
-  vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
-                                              scalarType,
-                                              numberOfComponents);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, numberOfComponents);
 
   if (imageIO->GetPixelType() == itk::IOPixelEnum::RGB)
   {
@@ -1063,8 +1029,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::GetScalarRangeMetaDataKeys(itk::ImageIOBase::Pointer imageIO,
-                                                                  std::string range_keys[2])
+void vtkITKArchetypeImageSeriesReader::GetScalarRangeMetaDataKeys(itk::ImageIOBase::Pointer imageIO, std::string range_keys[2])
 {
   if (dynamic_cast<itk::NrrdImageIO*>(imageIO.GetPointer()))
   {
@@ -1087,7 +1052,7 @@ void vtkITKArchetypeImageSeriesReader::GetScalarRangeMetaDataKeys(itk::ImageIOBa
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vtkImageData* data )
+void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo(vtkImageData* data)
 {
   if (data == nullptr)
   {
@@ -1097,7 +1062,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
 
   // If no metadata scalar range found
   if (this->MetaDataScalarRangeMinima.empty() || //
-     this->MetaDataScalarRangeMaxima.empty())
+      this->MetaDataScalarRangeMaxima.empty())
   {
     return;
   }
@@ -1142,21 +1107,21 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
+void vtkITKArchetypeImageSeriesReader::AssembleNthVolume(int n)
 {
-  this->FileNames.resize( 0 );
+  this->FileNames.resize(0);
   // int nFiles = this->AllFileNames.size(); UNUSED
 
   unsigned int nSlices = this->GetNumberOfSliceLocation();
 
   for (unsigned int k = 0; k < nSlices; k++)
   {
-    const char* name = GetNthFileName( 0, -1, -1, -1, 0, k, 0, n );
+    const char* name = GetNthFileName(0, -1, -1, -1, 0, k, 0, n);
     if (name == nullptr)
     {
       continue;
     }
-    std::string nameInString (name);
+    std::string nameInString(name);
     this->FileNames.push_back(nameInString);
   }
 }
@@ -1174,14 +1139,14 @@ const std::vector<std::string>& vtkITKArchetypeImageSeriesReader::GetFileNames()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInstanceUID,
-                                                               int idxContentTime,
-                                                               int idxTriggerTime,
-                                                               int idxEchoNumbers,
-                                                               int idxDiffusionGradientOrientation,
-                                                               int idxSliceLocation,
-                                                               int idxImageOrientationPatient,
-                                                               int n )
+const char* vtkITKArchetypeImageSeriesReader::GetNthFileName(int idxSeriesInstanceUID,
+                                                             int idxContentTime,
+                                                             int idxTriggerTime,
+                                                             int idxEchoNumbers,
+                                                             int idxDiffusionGradientOrientation,
+                                                             int idxSliceLocation,
+                                                             int idxImageOrientationPatient,
+                                                             int n)
 {
   int nFiles = this->AllFileNames.size();
   int count = 0;
@@ -1209,11 +1174,11 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
       else if (count == 0)
       {
         FirstName = this->AllFileNames[k];
-        count ++;
+        count++;
       }
       else
       {
-        count ++;
+        count++;
       }
     }
   }
@@ -1221,33 +1186,34 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
-                                                    int idxContentTime,
-                                                    int idxTriggerTime,
-                                                    int idxEchoNumbers,
-                                                    int idxDiffusionGradientOrientation,
-                                                    int idxSliceLocation,
-                                                    int idxImageOrientationPatient )
+void vtkITKArchetypeImageSeriesReader::GroupFiles(int idxSeriesInstanceUID,
+                                                  int idxContentTime,
+                                                  int idxTriggerTime,
+                                                  int idxEchoNumbers,
+                                                  int idxDiffusionGradientOrientation,
+                                                  int idxSliceLocation,
+                                                  int idxImageOrientationPatient)
 {
-  this->FileNames.resize( 0 );
+  this->FileNames.resize(0);
   int nFiles = this->AllFileNames.size();
   for (int k = 0; k < nFiles; k++)
   {
     if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) || //
-      (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) || //
-      (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) || //
-      (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) || //
-      (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation && //
-        this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) || //
-      (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) || //
-      (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && //
-        this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0))
+        (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||                           //
+        (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||                           //
+        (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||                           //
+        (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation &&                                                   //
+         this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0)
+        ||                                                                                                                //
+        (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) || //
+        (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient &&                                           //
+         this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0))
     {
       continue;
     }
     else
     {
-      this->FileNames.push_back( this->AllFileNames[k] );
+      this->FileNames.push_back(this->AllFileNames[k]);
     }
   }
   return;
@@ -1269,26 +1235,25 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   AnalyzeTime.Start();
 
   int nFiles = this->AllFileNames.size();
-  typedef itk::Image<float,3> ImageType;
+  typedef itk::Image<float, 3> ImageType;
 
-  this->IndexSeriesInstanceUIDs.resize( nFiles );
-  this->IndexContentTime.resize( nFiles );
-  this->IndexTriggerTime.resize( nFiles );
-  this->IndexEchoNumbers.resize( nFiles );
-  this->IndexDiffusionGradientOrientation.resize( nFiles );
-  this->IndexSliceLocation.resize( nFiles );
-  this->IndexImageOrientationPatient.resize( nFiles );
-  this->IndexImagePositionPatient.resize( nFiles );
+  this->IndexSeriesInstanceUIDs.resize(nFiles);
+  this->IndexContentTime.resize(nFiles);
+  this->IndexTriggerTime.resize(nFiles);
+  this->IndexEchoNumbers.resize(nFiles);
+  this->IndexDiffusionGradientOrientation.resize(nFiles);
+  this->IndexSliceLocation.resize(nFiles);
+  this->IndexImageOrientationPatient.resize(nFiles);
+  this->IndexImagePositionPatient.resize(nFiles);
 
-  this->SeriesInstanceUIDs.resize( 0 );
-  this->ContentTime.resize( 0 );
-  this->TriggerTime.resize( 0 );
-  this->EchoNumbers.resize( 0 );
-  this->DiffusionGradientOrientation.resize( 0 );
-  this->SliceLocation.resize( 0 );
-  this->ImageOrientationPatient.resize( 0 );
-  this->ImagePositionPatient.resize( 0 );
-
+  this->SeriesInstanceUIDs.resize(0);
+  this->ContentTime.resize(0);
+  this->TriggerTime.resize(0);
+  this->EchoNumbers.resize(0);
+  this->DiffusionGradientOrientation.resize(0);
+  this->SliceLocation.resize(0);
+  this->ImageOrientationPatient.resize(0);
+  this->ImagePositionPatient.resize(0);
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
   if (!gdcmIO->CanReadFile(this->Archetype))
@@ -1296,10 +1261,9 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     itk::ImageIOBase::Pointer lastImageIO;
     for (int f = 0; f < nFiles; f++)
     {
-      itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
+      itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
       const std::string& fileName = this->AllFileNames[f];
-      imageReader->SetFileName( fileName );
+      imageReader->SetFileName(fileName);
       // Try first to reuse the same imageIO for each file. If it fails, then use
       // the default imageIO
       if (lastImageIO && (lastImageIO->CanReadFile(fileName.c_str())))
@@ -1327,7 +1291,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       }
 
       // insert series
-      int idx = this->InsertSeriesInstanceUIDs( "Non-Dicom Series" );
+      int idx = this->InsertSeriesInstanceUIDs("Non-Dicom Series");
       this->IndexSeriesInstanceUIDs[f] = idx;
 
       // for now, assume ContentTime, TriggerTime, and DiffusionGradientOrientation do not exist
@@ -1340,7 +1304,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       if (ioHas3DInformation)
       {
         ImageType::PointType origin = imageReader->GetOutput()->GetOrigin();
-        idx = this->InsertSliceLocation( origin[2] );
+        idx = this->InsertSliceLocation(origin[2]);
       }
       else
       {
@@ -1349,29 +1313,28 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       this->IndexSliceLocation[f] = idx;
 
       // Orientation
-      float sliceOrientation[6] = {1., 0., 0., //
-                                   0., 1., 0.};
+      float sliceOrientation[6] = { 1., 0., 0., //
+                                    0., 1., 0. };
       if (ioHas3DInformation)
       {
-        ImageType::DirectionType orientation =
-          imageReader->GetOutput()->GetDirection();
+        ImageType::DirectionType orientation = imageReader->GetOutput()->GetDirection();
         for (int k = 0; k < 3; k++)
         {
           sliceOrientation[k] = orientation[0][k];
-          sliceOrientation[k+3] = orientation[1][k];
+          sliceOrientation[k + 3] = orientation[1][k];
         }
       }
-      idx = this->InsertImageOrientationPatient( sliceOrientation );
+      idx = this->InsertImageOrientationPatient(sliceOrientation);
       this->IndexImageOrientationPatient[f] = idx;
     }
     return;
   }
 
   // if Archetype is a Dicom File
-  gdcmIO->SetFileName( this->Archetype );
+  gdcmIO->SetFileName(this->Archetype);
   for (int f = 0; f < nFiles; f++)
   {
-    gdcmIO->SetFileName( this->AllFileNames[f] );
+    gdcmIO->SetFileName(this->AllFileNames[f]);
     gdcmIO->ReadImageInformation();
     itk::MetaDataDictionary& dict = gdcmIO->GetMetaDataDictionary();
     std::string tagValue;
@@ -1384,7 +1347,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0020|000e");
     if (!tagValue.empty())
     {
-      int idx = InsertSeriesInstanceUIDs( tagValue.c_str() );
+      int idx = InsertSeriesInstanceUIDs(tagValue.c_str());
       this->IndexSeriesInstanceUIDs[f] = idx;
     }
     else
@@ -1396,7 +1359,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0008|0033");
     if (!tagValue.empty())
     {
-      int idx = InsertContentTime( tagValue.c_str() );
+      int idx = InsertContentTime(tagValue.c_str());
       this->IndexContentTime[f] = idx;
     }
     else
@@ -1408,7 +1371,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0018|1060");
     if (!tagValue.empty())
     {
-      int idx = InsertTriggerTime( tagValue.c_str() );
+      int idx = InsertTriggerTime(tagValue.c_str());
       this->IndexTriggerTime[f] = idx;
     }
     else
@@ -1420,7 +1383,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     tagValue = vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(dict, "0018|0086");
     if (!tagValue.empty())
     {
-      int idx = InsertEchoNumbers( tagValue.c_str() );
+      int idx = InsertEchoNumbers(tagValue.c_str());
       this->IndexEchoNumbers[f] = idx;
     }
     else
@@ -1433,8 +1396,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     if (!tagValue.empty())
     {
       float a[3] = { -1 };
-      sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
-      int idx = InsertDiffusionGradientOrientation( a );
+      sscanf(tagValue.c_str(), "%f\\%f\\%f", a, a + 1, a + 2);
+      int idx = InsertDiffusionGradientOrientation(a);
       this->IndexDiffusionGradientOrientation[f] = idx;
     }
     else
@@ -1447,8 +1410,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     if (!tagValue.empty())
     {
       float a = -1;
-      sscanf( tagValue.c_str(), "%f", &a );
-      int idx = InsertSliceLocation( a );
+      sscanf(tagValue.c_str(), "%f", &a);
+      int idx = InsertSliceLocation(a);
       this->IndexSliceLocation[f] = idx;
     }
     else
@@ -1461,8 +1424,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     if (!tagValue.empty())
     {
       float a[6] = { -1 };
-      sscanf( tagValue.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", a, a+1, a+2, a+3, a+4, a+5 );
-      int idx = InsertImageOrientationPatient( a );
+      sscanf(tagValue.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", a, a + 1, a + 2, a + 3, a + 4, a + 5);
+      int idx = InsertImageOrientationPatient(a);
       this->IndexImageOrientationPatient[f] = idx;
     }
     else
@@ -1474,8 +1437,8 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     if (!tagValue.empty())
     {
       float a[3] = { -1 };
-      sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
-      int idx = InsertImagePositionPatient( a );
+      sscanf(tagValue.c_str(), "%f\\%f\\%f", a, a + 1, a + 2);
+      int idx = InsertImagePositionPatient(a);
       this->IndexImagePositionPatient[f] = idx;
     }
     else
@@ -1492,9 +1455,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 }
 
 //----------------------------------------------------------------------------
-const itk::MetaDataDictionary&
-vtkITKArchetypeImageSeriesReader
-::GetMetaDataDictionary() const
+const itk::MetaDataDictionary& vtkITKArchetypeImageSeriesReader::GetMetaDataDictionary() const
 {
   return this->Dictionary;
 }
@@ -1514,10 +1475,10 @@ void vtkITKArchetypeImageSeriesReader::ParseDictionary()
   std::vector<std::string> keys = this->Dictionary.GetKeys();
   for (int k = 0; k < nItems; k++)
   {
-    this->Tags.push_back( keys[k] );
+    this->Tags.push_back(keys[k]);
     std::string tagvalue;
     itk::ExposeMetaData<std::string>(this->Dictionary, keys[k], tagvalue);
-    this->TagValues.push_back( tagvalue );
+    this->TagValues.push_back(tagvalue);
   }
 }
 
@@ -1528,13 +1489,13 @@ unsigned int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
 }
 
 //----------------------------------------------------------------------------
-bool vtkITKArchetypeImageSeriesReader::HasKey( char* tag )
+bool vtkITKArchetypeImageSeriesReader::HasKey(char* tag)
 {
-  return this->Dictionary.HasKey( tag );
+  return this->Dictionary.HasKey(tag);
 }
 
 //----------------------------------------------------------------------------
-const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
+const char* vtkITKArchetypeImageSeriesReader::GetNthKey(unsigned int n)
 {
   if (n >= this->Tags.size())
   {
@@ -1544,7 +1505,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
 }
 
 //----------------------------------------------------------------------------
-const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
+const char* vtkITKArchetypeImageSeriesReader::GetNthValue(unsigned int n)
 {
   if (n >= this->TagValues.size())
   {
@@ -1554,9 +1515,9 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
 }
 
 //----------------------------------------------------------------------------
-const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
+const char* vtkITKArchetypeImageSeriesReader::GetTagValue(char* tag)
 {
-  std::string tagstr (tag);
+  std::string tagstr(tag);
   for (unsigned int k = 0; k < this->Tags.size(); k++)
   {
     if (this->Tags[k] == tagstr)
@@ -1568,7 +1529,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
 }
 
 //----------------------------------------------------------------------------
-const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
+const char* vtkITKArchetypeImageSeriesReader::GetFileName(unsigned int n)
 {
   if (n >= this->GetNumberOfFileNames())
   {
@@ -1578,29 +1539,29 @@ const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 }
 
 //----------------------------------------------------------------------------
-unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( const char* filename )
+unsigned int vtkITKArchetypeImageSeriesReader::AddFileName(const char* filename)
 {
-  std::string filenamestr (filename);
-  this->FileNames.push_back( filenamestr );
+  std::string filenamestr(filename);
+  this->FileNames.push_back(filenamestr);
   return this->FileNames.size();
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
+void vtkITKArchetypeImageSeriesReader::ResetFileNames()
 {
-  this->FileNames.resize( 0 );
-  this->AllFileNames.resize( 0 );
-  this->SeriesInstanceUIDs.resize( 0 );
-  this->ContentTime.resize( 0 );
-  this->TriggerTime.resize( 0 );
-  this->EchoNumbers.resize( 0 );
-  this->DiffusionGradientOrientation.resize( 0 );
-  this->SliceLocation.resize( 0 );
-  this->ImageOrientationPatient.resize( 0 );
+  this->FileNames.resize(0);
+  this->AllFileNames.resize(0);
+  this->SeriesInstanceUIDs.resize(0);
+  this->ContentTime.resize(0);
+  this->TriggerTime.resize(0);
+  this->EchoNumbers.resize(0);
+  this->DiffusionGradientOrientation.resize(0);
+  this->SliceLocation.resize(0);
+  this->ImageOrientationPatient.resize(0);
 }
 
 //----------------------------------------------------------------------------
-int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
+int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype()
 {
   // we will set FileNames to have only volumes that match the archetype
   // and we will return the size of the list.
@@ -1614,20 +1575,18 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size() //
       || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
   {
-    vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
-      << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
+    vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
 
-
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
   long int iArchetypeEchoNumbers = this->IndexEchoNumbers[this->IndexArchetype];
   long int iArchetypeDiffusion = this->IndexDiffusionGradientOrientation[this->IndexArchetype];
-  long int iArchetypeOrientation =  this->IndexImageOrientationPatient[this->IndexArchetype];
+  long int iArchetypeOrientation = this->IndexImageOrientationPatient[this->IndexArchetype];
 
   // keep track of the locations for the selected files
-  std::vector<std::pair <double, int> > fileNameSortKey;
+  std::vector<std::pair<double, int>> fileNameSortKey;
   bool originSet = false;
 
   // Sort good files based on distance from Origin to this->ImagePositionPatient along ScanAxis
@@ -1667,10 +1626,10 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
         if (!originSet)
         {
           std::vector<float> iopv = this->ImageOrientationPatient[kth_orientation];
-          float iopf1[] = {iopv[0], iopv[1], iopv[2]};
-          float iopf2[] = {iopv[3], iopv[4], iopv[5]};
+          float iopf1[] = { iopv[0], iopv[1], iopv[2] };
+          float iopf2[] = { iopv[3], iopv[4], iopv[5] };
 
-          vtkMath::Cross( iopf1, iopf2, this->ScanAxis );
+          vtkMath::Cross(iopf1, iopf2, this->ScanAxis);
           this->ScanOrigin[0] = this->ImagePositionPatient[kth_position][0];
           this->ScanOrigin[1] = this->ImagePositionPatient[kth_position][1];
           this->ScanOrigin[2] = this->ImagePositionPatient[kth_position][2];
@@ -1681,8 +1640,8 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
         tempiop[1] = this->ImagePositionPatient[kth_position][1];
         tempiop[2] = this->ImagePositionPatient[kth_position][2];
 
-        vtkMath::Subtract( tempiop, this->ScanOrigin, diff );
-        float dist = vtkMath::Dot( diff, ScanAxis );
+        vtkMath::Subtract(tempiop, this->ScanOrigin, diff);
+        float dist = vtkMath::Dot(diff, ScanAxis);
 
         fileNameSortKey.emplace_back(dist, k);
       }
@@ -1695,7 +1654,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   }
 
   std::sort(fileNameSortKey.begin(), fileNameSortKey.end());
-  std::vector<std::pair <double, int> >::iterator keyiter;
+  std::vector<std::pair<double, int>>::iterator keyiter;
   for (keyiter = fileNameSortKey.begin(); keyiter != fileNameSortKey.end(); ++keyiter)
   {
     FileNames.push_back(AllFileNames[keyiter->second]);

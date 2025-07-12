@@ -10,8 +10,7 @@ class vtkURIHandler;
 
 class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 {
-  public:
-
+public:
   /// The Usual vtk class functions
   static vtkDataTransfer* New();
   vtkTypeMacro(vtkDataTransfer, vtkObject);
@@ -20,33 +19,31 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetStringMacro(SourceURI);
   vtkGetStringMacro(DestinationURI);
   vtkSetStringMacro(DestinationURI);
-  vtkGetObjectMacro ( Handler, vtkURIHandler );
+  vtkGetObjectMacro(Handler, vtkURIHandler);
   virtual void SetHandler(vtkURIHandler* uriHandler);
-  vtkGetMacro ( TransferType, int );
-  vtkSetMacro ( TransferType, int );
-  vtkGetMacro ( TransferID, int );
-  vtkSetMacro ( TransferID, int );
-  vtkGetMacro ( SizeOnDisk, int );
-  vtkSetMacro ( SizeOnDisk, int );
+  vtkGetMacro(TransferType, int);
+  vtkSetMacro(TransferType, int);
+  vtkGetMacro(TransferID, int);
+  vtkSetMacro(TransferID, int);
+  vtkGetMacro(SizeOnDisk, int);
+  vtkSetMacro(SizeOnDisk, int);
   vtkGetStringMacro(TransferNodeID);
   vtkSetStringMacro(TransferNodeID);
-  vtkGetMacro ( Progress, int );
-  vtkSetMacro ( Progress, int );
-  vtkGetMacro ( TransferStatus, int );
-  vtkSetMacro ( TransferStatus, int );
+  vtkGetMacro(Progress, int);
+  vtkSetMacro(Progress, int);
+  vtkGetMacro(TransferStatus, int);
+  vtkSetMacro(TransferStatus, int);
 
-  vtkGetMacro ( CancelRequested, int );
-  vtkSetMacro ( CancelRequested, int );
+  vtkGetMacro(CancelRequested, int);
+  vtkSetMacro(CancelRequested, int);
 
-  vtkGetMacro (TransferCached, int );
-  vtkSetMacro (TransferCached, int );
+  vtkGetMacro(TransferCached, int);
+  vtkSetMacro(TransferCached, int);
 
-  void SetTransferStatusNoModify ( int val)
+  void SetTransferStatusNoModify(int val) { this->TransferStatus = val; }
+
+  const char* GetTransferStatusString()
   {
-      this->TransferStatus = val;
-  }
-
-  const char* GetTransferStatusString( ) {
     switch (this->TransferStatus)
     {
       case vtkDataTransfer::Idle: return "Idle";
@@ -63,7 +60,8 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
     return "Unknown";
   }
 
-  const char* GetTransferTypeString( ) {
+  const char* GetTransferTypeString()
+  {
     switch (this->TransferType)
     {
       case vtkDataTransfer::RemoteDownload: return "RemoteDownload";
@@ -79,30 +77,29 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   /// ready means ready to read into storage node
   enum
   {
-      Idle=0,
-      Pending,
-      Running,
-      Completed,
-      CompletedWithErrors,
-      CancelPending,
-      Cancelled,
-      Ready,
-      Deleted,
-      TimedOut
+    Idle = 0,
+    Pending,
+    Running,
+    Completed,
+    CompletedWithErrors,
+    CancelPending,
+    Cancelled,
+    Ready,
+    Deleted,
+    TimedOut
   };
   /// transfer type values
   enum
   {
-      RemoteDownload=0,
-      RemoteUpload,
-      LocalLoad,
-      LocalSave,
-      Unspecified
+    RemoteDownload = 0,
+    RemoteUpload,
+    LocalLoad,
+    LocalSave,
+    Unspecified
   };
 
- private:
-
- protected:
+private:
+protected:
   vtkDataTransfer();
   ~vtkDataTransfer() override;
   vtkDataTransfer(const vtkDataTransfer&);
@@ -120,7 +117,6 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   char* TransferNodeID;
   int Progress;
   int CancelRequested;
-
 };
 
 #endif

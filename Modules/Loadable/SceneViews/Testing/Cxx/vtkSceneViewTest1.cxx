@@ -41,7 +41,7 @@ int vtkSceneViewTest1(int, char*[])
 
   node1->SetAbsentStorageFileNames();
 
-  TEST_SET_GET_STD_STRING( node1.GetPointer(), SceneViewDescription);
+  TEST_SET_GET_STD_STRING(node1.GetPointer(), SceneViewDescription);
 
   node1->SetScreenShot(nullptr);
   vtkImageData* nullImage = node1->GetScreenShot();
@@ -52,7 +52,7 @@ int vtkSceneViewTest1(int, char*[])
   imageData->Delete();
   imageData = node1->GetScreenShot();
 
-  TEST_SET_GET_INT_RANGE( node1.GetPointer(), ScreenShotType, 0, 4);
+  TEST_SET_GET_INT_RANGE(node1.GetPointer(), ScreenShotType, 0, 4);
 
   col = node1->GetNodesByClass("vtkMRMLNode");
   CHECK_NOT_NULL(col);

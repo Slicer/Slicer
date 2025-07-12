@@ -14,8 +14,8 @@
 #ifndef _TILG_ISO_3D_H_
 #define _TILG_ISO_3D_H_
 
-#define OBJ  1
-#define BG   0
+#define OBJ 1
+#define BG 0
 
 int Env_Code_3_img(int loc[3], unsigned char* img, int dim[3]);
 // returns the neighbor code including the center at position loc

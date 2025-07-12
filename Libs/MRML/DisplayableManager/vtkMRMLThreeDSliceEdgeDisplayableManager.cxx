@@ -89,8 +89,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::vtkInternal(
-  vtkMRMLThreeDSliceEdgeDisplayableManager* _external)
+vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::vtkInternal(vtkMRMLThreeDSliceEdgeDisplayableManager* _external)
 {
   this->External = _external;
 }
@@ -112,11 +111,9 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::AddObservations(vtkM
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkEventBroker::ObservationVector observations;
-  if (!broker->GetObservationExist(node, vtkCommand::ModifiedEvent,
-    this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkCommand::ModifiedEvent,
-      this->External, this->External->GetMRMLNodesCallbackCommand());
+    broker->AddObservation(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
 }
 
@@ -125,8 +122,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::RemoveObservations(v
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkEventBroker::ObservationVector observations;
-  observations = broker->GetObservations(
-    node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -204,8 +200,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceNodes()
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
-  for (scene->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it))) ;)
+  for (scene->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it)));)
   {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (sliceNode)
@@ -236,8 +231,7 @@ vtkMRMLSliceNode* vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::GetSlic
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentationVisibility(
-  vtkMRMLSliceEdgeWidgetRepresentation* rep, vtkMRMLSliceNode* sliceNode)
+void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentationVisibility(vtkMRMLSliceEdgeWidgetRepresentation* rep, vtkMRMLSliceNode* sliceNode)
 {
   if (!rep || !sliceNode)
   {
@@ -249,9 +243,8 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
     return;
   }
 
-  bool show =
-    sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
-    && sliceNode->GetSliceVisible() && sliceNode->GetSliceEdgeVisibility3D();
+  bool show = sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
+              && sliceNode->GetSliceVisible() && sliceNode->GetSliceEdgeVisibility3D();
 
   bool isShown = renderer->HasViewProp(rep);
   if (show == isShown)
@@ -294,8 +287,7 @@ vtkMRMLSliceEdgeWidgetRepresentation* vtkMRMLThreeDSliceEdgeDisplayableManager::
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentationMesh(
-  vtkMRMLSliceEdgeWidgetRepresentation* rep, vtkMRMLSliceNode* sliceNode)
+void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentationMesh(vtkMRMLSliceEdgeWidgetRepresentation* rep, vtkMRMLSliceNode* sliceNode)
 {
   if (!rep || !sliceNode)
   {
@@ -331,8 +323,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateAllSliceEdgePi
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentation(
-  vtkMRMLSliceNode* sliceNode, vtkMRMLSliceEdgeWidgetRepresentation* rep)
+void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidgetRepresentation(vtkMRMLSliceNode* sliceNode, vtkMRMLSliceEdgeWidgetRepresentation* rep)
 {
   if (!sliceNode || (!rep && !sliceNode->GetSliceVisible()))
   {

@@ -35,10 +35,7 @@
 class qMRMLNodeFactoryPrivate
 {
 public:
-  qMRMLNodeFactoryPrivate()
-  {
-    this->MRMLScene = nullptr;
-  }
+  qMRMLNodeFactoryPrivate() { this->MRMLScene = nullptr; }
   vtkMRMLScene* MRMLScene;
   QHash<QString, QString> BaseNames;
   QHash<QString, QString> Attributes;
@@ -68,10 +65,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return nullptr;
   }
   vtkSmartPointer<vtkMRMLNode> node;
-  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toUtf8() ) );
+  node.TakeReference(d->MRMLScene->CreateNodeByClass(className.toUtf8()));
 
-  Q_ASSERT_X(node, "createNode",
-             QString("Failed to create node of type [%1]").arg(className).toUtf8());
+  Q_ASSERT_X(node, "createNode", QString("Failed to create node of type [%1]").arg(className).toUtf8());
 
   if (node == nullptr)
   {
@@ -100,8 +96,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   // it's visibility
   foreach (const QString& attributeName, d->Attributes.keys())
   {
-    node->SetAttribute(attributeName.toUtf8(),
-                       d->Attributes[attributeName].toUtf8());
+    node->SetAttribute(attributeName.toUtf8(), d->Attributes[attributeName].toUtf8());
   }
 
   emit this->nodeInitialized(node);
@@ -123,8 +118,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className,
-                                          const QHash<QString,QString>& attributes)
+vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className, const QHash<QString, QString>& attributes)
 {
   Q_ASSERT(scene);
   QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());

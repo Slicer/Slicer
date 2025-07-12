@@ -46,8 +46,7 @@ class vtkPolyData;
 class vtkMRMLInteractionWidgetRepresentation;
 class vtkTransform;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget
-  : public vtkMRMLAbstractWidget
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget : public vtkMRMLAbstractWidget
 {
 public:
   ///@{
@@ -69,9 +68,9 @@ public:
   {
     WidgetStateInteraction_First = WidgetStateUser,
     WidgetStateOnTranslationHandle = WidgetStateInteraction_First, // hovering over a translation interaction handle
-    WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
-    WidgetStateOnScaleHandle, // hovering over a scale interaction handle
-    WidgetStateUniformScale, // uniform scaling
+    WidgetStateOnRotationHandle,                                   // hovering over a rotation interaction handle
+    WidgetStateOnScaleHandle,                                      // hovering over a scale interaction handle
+    WidgetStateUniformScale,                                       // uniform scaling
     WidgetStateInteraction_Last
   };
 
@@ -79,7 +78,7 @@ public:
   enum
   {
     WidgetEventInteraction_First = WidgetEventUser,
-    WidgetEventReserved = WidgetEventInteraction_First,  // this events is only to prevent other widgets from processing an event
+    WidgetEventReserved = WidgetEventInteraction_First, // this events is only to prevent other widgets from processing an event
     WidgetEventUniformScaleStart,
     WidgetEventUniformScaleEnd,
     WidgetEventCancel,

@@ -212,7 +212,7 @@ int TestRemoveItem()
   return EXIT_SUCCESS;
 }
 
-}  // end anonymous namespace
+} // end anonymous namespace
 
 int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

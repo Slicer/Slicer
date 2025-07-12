@@ -56,8 +56,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char* argv[])
   colorsModule.setMRMLScene(scene);
   colorsModule.initialize(nullptr);
 
-  qSlicerColorsModuleWidget* colorsWidget =
-    dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
+  qSlicerColorsModuleWidget* colorsWidget = dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
   colorsWidget->show();
 
   std::vector<vtkMRMLNode*> nodes;

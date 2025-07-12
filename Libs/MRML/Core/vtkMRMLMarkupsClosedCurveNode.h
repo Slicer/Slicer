@@ -38,9 +38,9 @@ public:
   static vtkMRMLMarkupsClosedCurveNode* New();
   vtkTypeMacro(vtkMRMLMarkupsClosedCurveNode, vtkMRMLMarkupsCurveNode);
 
-  const char* GetIcon() override {return ":/Icons/MarkupsClosedCurve.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsClosedCurve.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsClosedCurveMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsClosedCurveMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -48,15 +48,14 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsClosedCurve";}
+  const char* GetNodeTagName() override { return "MarkupsClosedCurve"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "ClosedCurve";};
+  const char* GetMarkupType() override { return "ClosedCurve"; };
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsClosedCurveNode);
-
 
   //@{
   /// For internal use only.
@@ -73,7 +72,6 @@ protected:
   ~vtkMRMLMarkupsClosedCurveNode() override;
   vtkMRMLMarkupsClosedCurveNode(const vtkMRMLMarkupsClosedCurveNode&);
   void operator=(const vtkMRMLMarkupsClosedCurveNode&);
-
 };
 
 #endif

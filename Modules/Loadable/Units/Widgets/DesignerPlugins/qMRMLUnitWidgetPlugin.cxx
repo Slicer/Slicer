@@ -37,11 +37,11 @@ QWidget* qMRMLUnitWidgetPlugin::createWidget(QWidget* _parent)
 //------------------------------------------------------------------------------
 QString qMRMLUnitWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLUnitWidget\" name=\"MRMLUnitWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLUnitWidget\" name=\"MRMLUnitWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ int qMRMLSceneFactoryWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLSceneFactoryWidget   sceneFactory;
+  qMRMLSceneFactoryWidget sceneFactory;
   sceneFactory.generateScene();
   if (sceneFactory.mrmlScene() == nullptr)
   {

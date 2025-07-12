@@ -23,7 +23,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "AnnotationControlPointsStorage";}
+  const char* GetNodeTagName() override { return "AnnotationControlPointsStorage"; }
 
   // Initialize all the supported write file types
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -36,21 +36,35 @@ protected:
 
   const char* GetAnnotationStorageType() { return "point"; }
 
-  int WriteAnnotationPointDisplayProperties(fstream & of, vtkMRMLAnnotationPointDisplayNode* refNode, std::string preposition);
-  int WriteAnnotationControlPointsProperties(fstream & of, vtkMRMLAnnotationControlPointsNode* refNode);
+  int WriteAnnotationPointDisplayProperties(fstream& of, vtkMRMLAnnotationPointDisplayNode* refNode, std::string preposition);
+  int WriteAnnotationControlPointsProperties(fstream& of, vtkMRMLAnnotationControlPointsNode* refNode);
   int WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode* refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationControlPointsNode* refNode);
-  int ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode* refNode, char line[1024], int typeColumn, int xColumn, int yColumn, int zColumn,
-                      int selColumn,  int visColumn, int numColumns);
+  int ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode* refNode,
+                                      char line[1024],
+                                      int typeColumn,
+                                      int xColumn,
+                                      int yColumn,
+                                      int zColumn,
+                                      int selColumn,
+                                      int visColumn,
+                                      int numColumns);
   int ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode* refNode, std::string lineString, std::string preposition);
-  int ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode* refNode, char line[1024], int& typeColumn,
-                        int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns);
+  int ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode* refNode,
+                                            char line[1024],
+                                            int& typeColumn,
+                                            int& xColumn,
+                                            int& yColumn,
+                                            int& zColumn,
+                                            int& selColumn,
+                                            int& visColumn,
+                                            int& numColumns);
 
   /// Read data and set it in the referenced node
   int ReadDataInternal(vtkMRMLNode* refNode) override;
 
-  int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream &of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of) override;
 };
 
 #endif

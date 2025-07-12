@@ -33,6 +33,7 @@
 class qSlicerSettingsInternationalizationPanelPrivate : public Ui_qSlicerSettingsInternationalizationPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsInternationalizationPanel);
+
 protected:
   qSlicerSettingsInternationalizationPanel* const q_ptr;
 
@@ -45,8 +46,7 @@ public:
 // qSlicerSettingsInternationalizationPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerSettingsInternationalizationPanelPrivate
-::qSlicerSettingsInternationalizationPanelPrivate(qSlicerSettingsInternationalizationPanel& object)
+qSlicerSettingsInternationalizationPanelPrivate::qSlicerSettingsInternationalizationPanelPrivate(qSlicerSettingsInternationalizationPanel& object)
   : q_ptr(&object)
 {
 }
@@ -64,13 +64,13 @@ void qSlicerSettingsInternationalizationPanelPrivate::init()
   // Register settings
   q->registerProperty("Internationalization/Enabled",
                       this->InternationalizationEnabledCheckBox,
-                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
                       qSlicerSettingsInternationalizationPanel::tr("Enable/Disable Internationalization"),
                       ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->InternationalizationEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(enableInternationalization(bool)));
+  QObject::connect(this->InternationalizationEnabledCheckBox, SIGNAL(toggled(bool)), q, SLOT(enableInternationalization(bool)));
 }
 
 // --------------------------------------------------------------------------

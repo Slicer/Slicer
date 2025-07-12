@@ -31,7 +31,6 @@
 // qMRML includes
 #include "qMRMLCollapsibleButton.h"
 
-
 // --------------------------------------------------------------------------
 class qMRMLCollapsibleButtonPrivate
 {
@@ -44,7 +43,8 @@ public:
 
 // --------------------------------------------------------------------------
 qMRMLCollapsibleButton::qMRMLCollapsibleButton(QWidget* parentWidget)
-  : Superclass(parentWidget), d_ptr(new qMRMLCollapsibleButtonPrivate)
+  : Superclass(parentWidget)
+  , d_ptr(new qMRMLCollapsibleButtonPrivate)
 {
 }
 

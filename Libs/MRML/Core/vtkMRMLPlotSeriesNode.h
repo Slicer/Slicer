@@ -89,7 +89,7 @@ public:
 
   ///
   /// Set node attributes.
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -116,15 +116,13 @@ public:
 
   ///
   /// Method to propagate events generated in Plot nodes.
-  void ProcessMRMLEvents (vtkObject* caller,
-                                  unsigned long event,
-                                  void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// TableModifiedEvent is send when the parent table is modified
   enum
   {
-      TableModifiedEvent = 15000
+    TableModifiedEvent = 15000
   };
 
   ///
@@ -278,8 +276,7 @@ protected:
   //----------------------------------------------------------------
   /// Data
   //----------------------------------------------------------------
- protected:
-
+protected:
   ///
   /// Type of Plot (scatter, line, bar, ...).
   int PlotType{ PlotTypeLine };
@@ -295,7 +292,7 @@ protected:
   int MarkerStyle{ MarkerStyleCircle };
 
   double Color[3];
-  double Opacity{1.0};
+  double Opacity{ 1.0 };
 };
 
 #endif

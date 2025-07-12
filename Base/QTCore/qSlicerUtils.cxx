@@ -124,7 +124,7 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
   {
     if (QFile::exists(intDir.arg(subdir)))
     {
-      return directory+"/"+subdir+"/";
+      return directory + "/" + subdir + "/";
     }
   }
   return QString();
@@ -220,9 +220,7 @@ QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subD
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerUtils::pathWithoutIntDir(const QString& path,
-                                        const QString& subDirWithoutIntDir,
-                                        QString& intDir)
+QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir, QString& intDir)
 {
   QDir pathAsDir(path);
   if (!qSlicerUtils::pathEndsWith(path, subDirWithoutIntDir))
@@ -246,14 +244,11 @@ bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
 #else
   Qt::CaseSensitivity sensitivity = Qt::CaseSensitive;
 #endif
-  return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).
-      endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
+  return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::setPermissionsRecursively(const QString& path,
-                                             QFile::Permissions directoryPermissions,
-                                             QFile::Permissions filePermissions)
+bool qSlicerUtils::setPermissionsRecursively(const QString& path, QFile::Permissions directoryPermissions, QFile::Permissions filePermissions)
 {
   if (!QFile::exists(path))
   {
@@ -321,7 +316,7 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
     // Given an URL matching the regular expression reported above, this second
     // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
     // with "Documentation/<version>/"
-    QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" +version);
+    QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" + version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
   }

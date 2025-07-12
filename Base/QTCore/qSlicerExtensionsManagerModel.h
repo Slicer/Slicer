@@ -277,8 +277,7 @@ public:
   /// by \a slicerRevision, \a slicerOs and \a slicerArch.
   /// @return Return the reasons justifying the incompatibility or an empty list if the extension
   /// is compatible.
-  Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName, const QString& slicerRevision,
-                                                const QString& slicerOs, const QString& slicerArch) const;
+  Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName, const QString& slicerRevision, const QString& slicerOs, const QString& slicerArch) const;
 
   /// \brief Check if \a extensionName is compatible.
   /// An extension is considered incompatible when the version of Slicer used
@@ -306,7 +305,8 @@ public:
   /// \sa isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
                                     ExtensionMetadataType extensionMetadata,
-                                    const QString& archiveFile, bool installDependencies = true,
+                                    const QString& archiveFile,
+                                    bool installDependencies = true,
                                     bool waitForCompletion = false);
 
   /// \brief Uninstall \a extensionName
@@ -317,9 +317,7 @@ public:
   bool uninstallExtension(const QString& extensionName);
 
   /// \brief Extract \a archiveFile into \a destinationPath/extensionName directory
-  Q_INVOKABLE bool extractExtensionArchive(const QString& extensionName,
-                                           const QString& archiveFile,
-                                           const QString& destinationPath);
+  Q_INVOKABLE bool extractExtensionArchive(const QString& extensionName, const QString& archiveFile, const QString& destinationPath);
 
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel* model() const;
@@ -347,14 +345,11 @@ public:
   /// \sa serverKeysToIgnore()
   static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI);
 
-  static QStringList readArrayValues(QSettings& settings,
-                                     const QString& arrayName, const QString fieldName);
+  static QStringList readArrayValues(QSettings& settings, const QString& arrayName, const QString fieldName);
 
-  static void writeArrayValues(QSettings& settings, const QStringList& values,
-                               const QString& arrayName, const QString fieldName);
+  static void writeArrayValues(QSettings& settings, const QStringList& values, const QString& arrayName, const QString fieldName);
 
-  static bool writeExtensionDescriptionFile(const QString& file,
-                                            const ExtensionMetadataType& metadata);
+  static bool writeExtensionDescriptionFile(const QString& file, const ExtensionMetadataType& metadata);
 
   static ExtensionMetadataType parseExtensionDescriptionFile(const QString& file);
 
@@ -519,8 +514,7 @@ signals:
 
   void downloadFinished(QNetworkReply* reply);
 
-  void updateDownloadProgress(const QString& extensionName,
-                              qint64 received, qint64 total);
+  void updateDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
 
   void modelUpdated();
 
@@ -589,8 +583,7 @@ protected slots:
   /// \sa scheduleExtensionForUpdate
   void onUpdateDownloadFinished(qSlicerExtensionDownloadTask* task);
 
-  void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task,
-                                qint64 received, qint64 total);
+  void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task, qint64 received, qint64 total);
 
   bool onExtensionsMetadataFromServerQueryFinished(const QUuid& requestId);
 
@@ -605,6 +598,6 @@ private:
 Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ServerAPI);
 
 // MetaType already declared in qSlicerIO.h
-//Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ExtensionMetadataType)
+// Q_DECLARE_METATYPE(qSlicerExtensionsManagerModel::ExtensionMetadataType)
 
 #endif

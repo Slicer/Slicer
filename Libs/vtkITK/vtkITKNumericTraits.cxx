@@ -10,4 +10,4 @@ const unsigned __int64 NumericTraits<unsigned __int64>::ZeroValue() = 0ui64;
 const unsigned __int64 NumericTraits<unsigned __int64>::OneValue() = 1ui64;
 #endif
 
-};
+}; // namespace itk

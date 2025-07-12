@@ -31,16 +31,13 @@ namespace
 {
 
 //---------------------------------------------------------------------------
-std::vector<std::string> vector_diff(const std::vector<std::string>& v1,
-                                     const std::vector<std::string>& v2)
+std::vector<std::string> vector_diff(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
   std::set<std::string> s_v1(v1.begin(), v1.end());
   std::set<std::string> s_v2(v2.begin(), v2.end());
   std::vector<std::string> result;
 
-  std::set_difference(s_v1.begin(), s_v1.end(),
-                      s_v2.begin(), s_v2.end(),
-                      std::back_inserter(result));
+  std::set_difference(s_v1.begin(), s_v1.end(), s_v2.begin(), s_v2.end(), std::back_inserter(result));
   return result;
 }
 
@@ -48,7 +45,7 @@ std::vector<std::string> vector_diff(const std::vector<std::string>& v1,
 class vtkMRMLSceneCallback : public vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback
 {
 public:
-  static vtkMRMLSceneCallback* New() {return new vtkMRMLSceneCallback;}
+  static vtkMRMLSceneCallback* New() { return new vtkMRMLSceneCallback; }
 
   int NumberOfSingletonNodes;
 
@@ -171,15 +168,12 @@ public:
   }
 
 protected:
-  vtkMRMLSceneCallback()
-  {
-    this->NumberOfSingletonNodes = 0;
-  }
+  vtkMRMLSceneCallback() { this->NumberOfSingletonNodes = 0; }
   ~vtkMRMLSceneCallback() override = default;
 
 }; // class vtkMRMLSceneCallback
 
-}; //namespace
+}; // namespace
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneTest2(int argc, char* argv[])
@@ -194,7 +188,7 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   const char* sceneFilePath = argv[1];
 
   // Instantiate scene
-  vtkSmartPointer<vtkMRMLScene>  scene = vtkSmartPointer<vtkMRMLScene>::New(); // vtkSmartPointer instead of vtkNew to allow SetPointer
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New(); // vtkSmartPointer instead of vtkNew to allow SetPointer
   EXERCISE_BASIC_OBJECT_METHODS(scene.GetPointer());
   CHECK_INT(scene->GetNumberOfNodes(), 0);
 
@@ -211,7 +205,6 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   scene->AddObserver(vtkMRMLScene::EndCloseEvent, callback.GetPointer());
   scene->AddObserver(vtkMRMLScene::StartImportEvent, callback.GetPointer());
   scene->AddObserver(vtkMRMLScene::EndImportEvent, callback.GetPointer());
-
 
   //---------------------------------------------------------------------------
   // Make sure IsClosing, IsImporting, IsBatchProcessing default values are correct
@@ -245,8 +238,7 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   // Extract list of node that should be added to the scene
   //---------------------------------------------------------------------------
   std::vector<std::string> expectedNodeAddedClassNames;
-  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::GetExpectedNodeAddedClassNames(
-                       sceneFilePath, expectedNodeAddedClassNames));
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::GetExpectedNodeAddedClassNames(sceneFilePath, expectedNodeAddedClassNames));
   int expectedNumberOfNode = static_cast<int>(expectedNodeAddedClassNames.size());
 
   //---------------------------------------------------------------------------
@@ -255,13 +247,12 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   callback->ResetNumberOfEvents();
 
   // Load the scene
-  scene->SetURL( argv[1] );
+  scene->SetURL(argv[1]);
   scene->Connect();
 
   CHECK_EXIT_SUCCESS(callback->CheckStatus());
 
-  std::vector<std::string> unexpectedAddedNodeNames =
-      vector_diff(expectedNodeAddedClassNames, callback->NodeAddedClassNames);
+  std::vector<std::string> unexpectedAddedNodeNames = vector_diff(expectedNodeAddedClassNames, callback->NodeAddedClassNames);
   if (!unexpectedAddedNodeNames.empty())
   {
     std::cerr << "line " << __LINE__ << " - unexpectedAddedNodeNames: ";

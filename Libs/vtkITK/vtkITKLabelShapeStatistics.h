@@ -97,9 +97,7 @@ protected:
   ~vtkITKLabelShapeStatistics() override;
 
   int FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info) override;
-  int RequestData(vtkInformation* request,
-    vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
 
 protected:
   std::vector<std::string> ComputedStatistics;

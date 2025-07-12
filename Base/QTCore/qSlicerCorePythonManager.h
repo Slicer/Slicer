@@ -22,7 +22,7 @@
 #define __qSlicerCorePythonManager_h
 
 // CTK includes
-# include <ctkAbstractPythonManager.h>
+#include <ctkAbstractPythonManager.h>
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -65,10 +65,8 @@ public:
   Q_INVOKABLE static QString toPythonStringLiteral(QString path);
 
 protected:
-
   void preInitialization() override;
   ctkVTKPythonQtWrapperFactory* Factory;
-
 };
 
 #endif

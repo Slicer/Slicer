@@ -27,7 +27,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
-
 class vtkMRMLJsonElement;
 class vtkMRMLJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
@@ -47,10 +46,10 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "MarkupsJsonStorage";};
+  const char* GetNodeTagName() override { return "MarkupsJsonStorage"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;

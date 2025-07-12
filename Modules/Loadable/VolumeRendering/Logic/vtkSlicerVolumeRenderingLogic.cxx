@@ -63,12 +63,9 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
   this->PresetsScene = nullptr;
   this->DefaultROIClassName = "vtkMRMLMarkupsROINode";
 
-  this->RegisterRenderingMethod("VTK CPU Ray Casting",
-    "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
-  this->RegisterRenderingMethod("VTK GPU Ray Casting",
-    "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
-  this->RegisterRenderingMethod("VTK Multi-Volume (experimental)",
-    "vtkMRMLMultiVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK CPU Ray Casting", "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK GPU Ray Casting", "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK Multi-Volume (experimental)", "vtkMRMLMultiVolumeRenderingDisplayNode");
 }
 
 //----------------------------------------------------------------------------
@@ -106,30 +103,30 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
   }
 
   vtkNew<vtkMRMLVolumePropertyNode> vpn;
-  this->GetMRMLScene()->RegisterNodeClass( vpn.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(vpn.GetPointer());
 
   vtkNew<vtkMRMLVolumePropertyStorageNode> vpsn;
-  this->GetMRMLScene()->RegisterNodeClass( vpsn.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(vpsn.GetPointer());
 
   vtkNew<vtkMRMLShaderPropertyNode> spn;
-  this->GetMRMLScene()->RegisterNodeClass( spn.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(spn.GetPointer());
 
   vtkNew<vtkMRMLShaderPropertyStorageNode> spsn;
-  this->GetMRMLScene()->RegisterNodeClass( spsn.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(spsn.GetPointer());
 
   vtkNew<vtkMRMLCPURayCastVolumeRenderingDisplayNode> cpuVRNode;
-  this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(cpuVRNode.GetPointer());
   // Volume rendering nodes used to have the tag "VolumeRenderingParameters"
   // in scenes prior to Slicer 4.2
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 2, 0)
-  this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer(), "VolumeRenderingParameters");
+  this->GetMRMLScene()->RegisterNodeClass(cpuVRNode.GetPointer(), "VolumeRenderingParameters");
 #endif
 
   vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> gpuNode;
-  this->GetMRMLScene()->RegisterNodeClass( gpuNode.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(gpuNode.GetPointer());
 
   vtkNew<vtkMRMLMultiVolumeRenderingDisplayNode> multiNode;
-  this->GetMRMLScene()->RegisterNodeClass( multiNode.GetPointer() );
+  this->GetMRMLScene()->RegisterNodeClass(multiNode.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -159,12 +156,11 @@ void vtkSlicerVolumeRenderingLogic::AddVolumeRenderingDisplayNode(vtkMRMLVolumeR
   // .. then set and observe
   vtkSetAndObserveMRMLNodeMacro(*it, node);
 
-  //Don't update volume rendering while a scene is being imported
+  // Don't update volume rendering while a scene is being imported
   if (!this->GetMRMLScene()->IsImporting())
   {
     this->UpdateVolumeRenderingDisplayNode(node);
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -206,7 +202,7 @@ void vtkSlicerVolumeRenderingLogic::AddAllVolumeRenderingDisplayNodes()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* displayNodeClassName/*=0*/)
+void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* displayNodeClassName /*=0*/)
 {
   if (this->DisplayNodes.empty())
   {
@@ -369,7 +365,6 @@ void vtkSlicerVolumeRenderingLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     this->UpdateVolumeRenderingDisplayNode(vrDisplayNode);
   }
 
-
   // If volume display node is changed then update all volume rendering display nodes that follow it
   vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
   if (volumeDisplayNode)
@@ -401,7 +396,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
     return;
   }
 
-  //update scalar range
+  // update scalar range
   vtkColorTransferFunction* functionColor = prop->GetRGBTransferFunction();
 
   vtkDataArray* scalars = input->GetPointData()->GetScalars();
@@ -413,25 +408,24 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   double rangeNew[2];
   scalars->GetRange(rangeNew);
   functionColor->AdjustRange(rangeNew);
-  vtkDebugMacro("Color range: "<< functionColor->GetRange()[0] << " " << functionColor->GetRange()[1]);
+  vtkDebugMacro("Color range: " << functionColor->GetRange()[0] << " " << functionColor->GetRange()[1]);
 
   vtkPiecewiseFunction* functionOpacity = prop->GetScalarOpacity();
   functionOpacity->AdjustRange(rangeNew);
 
   vtkDebugMacro("Opacity range: " << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]);
 
-  rangeNew[1] = (rangeNew[1] - rangeNew[0])*0.25;
+  rangeNew[1] = (rangeNew[1] - rangeNew[0]) * 0.25;
   rangeNew[0] = 0;
 
   functionOpacity = prop->GetGradientOpacity();
-  functionOpacity->RemovePoint(255); //Remove the standard value
+  functionOpacity->RemovePoint(255); // Remove the standard value
   functionOpacity->AdjustRange(rangeNew);
   vtkDebugMacro("Gradient Opacity range: " << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(
-  double scalarRange[2], double threshold[2], vtkVolumeProperty* volumeProp, bool linearRamp, bool stayUpAtUpperLimit)
+void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[2], double threshold[2], vtkVolumeProperty* volumeProp, bool linearRamp, bool stayUpAtUpperLimit)
 {
 
   if (!volumeProp || !scalarRange || !threshold)
@@ -471,8 +465,7 @@ void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(
-  double scalarRange[2], double windowLevel[2], vtkScalarsToColors* colors, vtkVolumeProperty* volumeProp)
+void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], vtkScalarsToColors* colors, vtkVolumeProperty* volumeProp)
 {
   if (!volumeProp || !scalarRange || !windowLevel)
   {
@@ -501,14 +494,12 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(
     {
       vtkIdType colorIndex = (invertColorTable ? colorCount - 1 - i : i);
       inputColorTransfer->GetNodeValue(colorIndex, color_X_RGB_MS);
-      colorTransfer->AddRGBPoint(offset + color_X_RGB_MS[0] * scale,
-        color_X_RGB_MS[1], color_X_RGB_MS[2], color_X_RGB_MS[3], color_X_RGB_MS[4], color_X_RGB_MS[5]);
+      colorTransfer->AddRGBPoint(offset + color_X_RGB_MS[0] * scale, color_X_RGB_MS[1], color_X_RGB_MS[2], color_X_RGB_MS[3], color_X_RGB_MS[4], color_X_RGB_MS[5]);
     }
   }
   else
   {
-    double outputRange[2] =
-    {
+    double outputRange[2] = {
       windowLevel[1] - 0.5 * fabs(windowLevel[0]),
       windowLevel[1] + 0.5 * fabs(windowLevel[0]),
     };
@@ -531,22 +522,17 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(
       double color[4];
       lut->GetTableValue(0, color);
 
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous),
-        color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], previous),
-        color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous),
-        color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous),
-        color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], previous), color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
     }
     else // if (numberOfColors > 1)
     {
       double color[4] = { 0.0, 0.0, 0.0, 1.0 };
       vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
       lut->GetTableValue(firstColorTableIndex, color);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous),
-        color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
 
       // We place up to maxNumberOfPoints points in the color transfer function.
       // The number is high enough to accurately describe most color tables,
@@ -564,16 +550,13 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(
         const double value = offset + colorIndex * scale;
         vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
         lut->GetTableValue(colorTableIndex, color);
-        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous),
-          color[0], color[1], color[2]);
+        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous), color[0], color[1], color[2]);
       }
 
       vtkIdType lastColorTableIndex = (invertColorTable ? 0 : numberOfColors - 1);
       lut->GetTableValue(lastColorTableIndex, color);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous),
-        color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous),
-        color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
     }
   }
 
@@ -629,7 +612,7 @@ void vtkSlicerVolumeRenderingLogic::SetLabelMapToVolumeProp(vtkScalarsToColors* 
   const int colorCount = colors->GetNumberOfAvailableColors();
   double value = colors->GetRange()[0];
   double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
-  double color[4] = {0., 0., 0., 1.};
+  double color[4] = { 0., 0., 0., 1. };
   const double midPoint = 0.5;
   const double sharpness = 1.0;
   for (int i = 0; i < colorCount; ++i, value += step)
@@ -668,8 +651,7 @@ void vtkSlicerVolumeRenderingLogic::SetLabelMapToVolumeProp(vtkScalarsToColors* 
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::CopyDisplayToVolumeRenderingDisplayNode(
-  vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLVolumeDisplayNode* displayNode)
+void vtkSlicerVolumeRenderingLogic::CopyDisplayToVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLVolumeDisplayNode* displayNode)
 {
   if (!vspNode)
   {
@@ -702,8 +684,7 @@ void vtkSlicerVolumeRenderingLogic::CopyDisplayToVolumeRenderingDisplayNode(
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNode(
-  vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLScalarVolumeDisplayNode* vpNode)
+void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLScalarVolumeDisplayNode* vpNode)
 {
   if (!vspNode)
   {
@@ -767,8 +748,7 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayNode(
-  vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLLabelMapVolumeDisplayNode* vpNode)
+void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLLabelMapVolumeDisplayNode* vpNode)
 {
   if (!vspNode)
   {
@@ -864,7 +844,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
     // Add all 3D views to the display node
     std::vector<vtkMRMLNode*> viewNodes;
     scene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
-    for (std::vector<vtkMRMLNode*>::iterator nodeIt=viewNodes.begin(); nodeIt != viewNodes.end(); ++nodeIt)
+    for (std::vector<vtkMRMLNode*>::iterator nodeIt = viewNodes.begin(); nodeIt != viewNodes.end(); ++nodeIt)
     {
       displayNode->AddViewNodeID((*nodeIt)->GetID());
     }
@@ -927,8 +907,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
 // Description:
 // Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
-  vtkMRMLVolumeNode* volumeNode, vtkMRMLViewNode* viewNode)
+void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode* volumeNode, vtkMRMLViewNode* viewNode)
 {
   if (viewNode == nullptr || volumeNode == nullptr)
   {
@@ -936,10 +915,9 @@ void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
   }
 
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i = 0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
-      volumeNode->GetNthDisplayNode(i));
+    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
     if (dnode)
     {
       dnode->RemoveViewNodeID(viewNode->GetID());
@@ -950,8 +928,7 @@ void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
 // Description:
 // Find volume rendering display node reference in the volume
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeByID(
-  vtkMRMLVolumeNode* volumeNode, char* displayNodeID)
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeByID(vtkMRMLVolumeNode* volumeNode, char* displayNodeID)
 {
   if (displayNodeID == nullptr || volumeNode == nullptr)
   {
@@ -959,10 +936,9 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   }
 
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i = 0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
-      volumeNode->GetNthDisplayNode(i));
+    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
     if (dnode && !strcmp(displayNodeID, dnode->GetID()))
     {
       return dnode;
@@ -995,8 +971,8 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolume
       // Root cause is fixed in scene loading, so this should not happen anymore, but
       // log an error to help debugging in case this happens anyway.
       vtkErrorMacro("Invalid scene: " << dnode->GetID() << " is used by multiple volume nodes ("
-        << (dnode->GetVolumeNode() && dnode->GetVolumeNode()->GetID() ? dnode->GetVolumeNode()->GetID() : "(unknown)")
-        << " and " << (volumeNode && volumeNode->GetID() ? volumeNode->GetID() : "(unknown)") << ")");
+                                      << (dnode->GetVolumeNode() && dnode->GetVolumeNode()->GetID() ? dnode->GetVolumeNode()->GetID() : "(unknown)") << " and "
+                                      << (volumeNode && volumeNode->GetID() ? volumeNode->GetID() : "(unknown)") << ")");
     }
     return dnode;
   }
@@ -1006,20 +982,19 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolume
 // Description:
 // Find volume rendering display node referencing the view node and volume node
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeForViewNode(
-  vtkMRMLVolumeNode* volumeNode, vtkMRMLViewNode* viewNode)
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRenderingDisplayNodeForViewNode(vtkMRMLVolumeNode* volumeNode, vtkMRMLViewNode* viewNode)
 {
   if (viewNode == nullptr || volumeNode == nullptr)
   {
     return nullptr;
   }
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i = 0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
 
     if (dnode // display node is not necessarily volume rendering display node.
-      && dnode->IsDisplayableInView(viewNode->GetID()))
+        && dnode->IsDisplayableInView(viewNode->GetID()))
     {
       return dnode;
     }
@@ -1039,7 +1014,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   std::vector<vtkMRMLNode*> nodes;
   viewNode->GetScene()->GetNodesByClass("vtkMRMLVolumeRenderingDisplayNode", nodes);
 
-  for (unsigned int i = 0; i<nodes.size(); i++)
+  for (unsigned int i = 0; i < nodes.size(); i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]);
     if (dnode && dnode->IsViewNodeIDPresent(viewNode->GetID()))
@@ -1051,8 +1026,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
-::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
 {
   if (roiNode == nullptr || roiNode->GetScene() == nullptr)
   {
@@ -1077,9 +1051,11 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 // if needed create vtkMRMLVolumePropertyNode and vtkMRMLMarkupsROINode
 // and initialize them from VolumeNode
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode, vtkMRMLVolumeNode* volumeNode,
-  vtkMRMLVolumePropertyNode* propNode /*=nullptr*/, vtkMRMLNode* roiNode /*=nullptr*/, bool createROI/*=true*/)
+void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode* displayNode,
+                                                                    vtkMRMLVolumeNode* volumeNode,
+                                                                    vtkMRMLVolumePropertyNode* propNode /*=nullptr*/,
+                                                                    vtkMRMLNode* roiNode /*=nullptr*/,
+                                                                    bool createROI /*=true*/)
 {
   if (displayNode == nullptr)
   {
@@ -1202,7 +1178,7 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
 
   // the node name is based on the file name
   const std::string name = vpStorageNode->GetFileNameWithoutExtension(fname.c_str());
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+  std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
   vpNode->SetName(uname.c_str());
   this->GetMRMLScene()->AddNode(vpNode);
   this->GetMRMLScene()->AddNode(vpStorageNode);
@@ -1230,7 +1206,7 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
   }
   if (!filename || !strcmp(filename, ""))
   {
-    vtkErrorMacro(<<"AddShaderPropertyFromFile: can't load shader properties from empty file name");
+    vtkErrorMacro(<< "AddShaderPropertyFromFile: can't load shader properties from empty file name");
     return nullptr;
   }
 
@@ -1263,7 +1239,7 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
   // check to see which node can read this type of file
   if (spStorageNode->SupportedFileType(fname.c_str()))
   {
-    std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
 
     spNode->SetName(uname.c_str());
 
@@ -1412,8 +1388,7 @@ bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddPreset(
-  vtkMRMLVolumePropertyNode* preset, vtkImageData* icon/*=nullptr*/, bool appendToEnd/*=false*/)
+vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon /*=nullptr*/, bool appendToEnd /*=false*/)
 {
   if (preset == nullptr)
   {
@@ -1423,8 +1398,7 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddPreset(
   if (icon == nullptr)
   {
     // use the icon assigned to the preset node if available
-    vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(
-      preset->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(preset->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
     if (iconNode)
     {
       icon = iconNode->GetImageData();

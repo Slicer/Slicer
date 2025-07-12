@@ -60,7 +60,8 @@ public:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved) override;
 
-  enum MethodType{
+  enum MethodType
+  {
     Set = 0,
     Unobserve,
     Observe,
@@ -71,6 +72,7 @@ public:
   /// Methods are identified using vtkMRMLTestLogic::MethodType
   /// or vtkMRMLScene::SceneEventType
   std::map<unsigned long, int> CalledMethods;
+
 protected:
   vtkMRMLTestLogic() = default;
   ~vtkMRMLTestLogic() override = default;
@@ -222,8 +224,7 @@ void vtkMRMLTestLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAbstractLogicSceneEventsTest(
-  int vtkNotUsed(argc), char* vtkNotUsed(argv)[] )
+int vtkMRMLAbstractLogicSceneEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLTestLogic* testLogic = vtkMRMLTestLogic::New();

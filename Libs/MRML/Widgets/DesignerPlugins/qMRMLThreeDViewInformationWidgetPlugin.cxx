@@ -3,7 +3,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLThreeDViewInformationWidgetPlugin::qMRMLThreeDViewInformationWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

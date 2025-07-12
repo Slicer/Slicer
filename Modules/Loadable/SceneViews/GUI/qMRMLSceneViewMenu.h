@@ -71,7 +71,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneViewMenu);
   Q_DISABLE_COPY(qMRMLSceneViewMenu);
-
 };
 
 #endif

@@ -65,12 +65,9 @@ int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
     case vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView:
       // plot already shown, no need to change
       return currentLayout;
-    case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
-      return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
-    case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
-      return vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView;
-    default:
-      return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView;
+    case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView: return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
+    case vtkMRMLLayoutNode::SlicerLayoutConventionalView: return vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView;
+    default: return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView;
   }
 }
 
@@ -83,8 +80,7 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(
-    source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
+  vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
   vtkMRMLPlotSeriesNode* clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
   clonedSeriesNode->CopyWithScene(source);
   std::string nodeName(source->GetName() ? source->GetName() : "");
@@ -133,7 +129,7 @@ vtkMRMLPlotChartNode* vtkSlicerPlotsLogic::GetFirstPlotChartForSeries(vtkMRMLPlo
   }
   std::vector<vtkMRMLNode*> chartNodes;
   unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
-  for (unsigned int chartNodeIndex = 0; chartNodeIndex<numberOfNodes; chartNodeIndex++)
+  for (unsigned int chartNodeIndex = 0; chartNodeIndex < numberOfNodes; chartNodeIndex++)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(chartNodes[chartNodeIndex]);
     if (!chartNode)

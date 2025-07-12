@@ -65,13 +65,16 @@ class vtkSlicerCLIModuleLogic;
 class qSlicerCLIModuleUIHelper;
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModuleWidgetPrivate : public QObject,
-                                     public Ui_qSlicerCLIModuleWidget
+class qSlicerCLIModuleWidgetPrivate
+  : public QObject
+  , public Ui_qSlicerCLIModuleWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerCLIModuleWidget);
+
 protected:
   qSlicerCLIModuleWidget* const q_ptr;
+
 public:
   typedef qSlicerCLIModuleWidgetPrivate Self;
   qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object);
@@ -87,13 +90,11 @@ public:
   /// Convenient method to cast qSlicerAbstractModule into qSlicerCLIModule
   qSlicerCLIModule* module() const;
 
-
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
-  typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;
+  typedef std::vector<ModuleParameterGroup>::iterator ParameterGroupIterator;
 
   typedef std::vector<ModuleParameter>::const_iterator ParameterConstIterator;
-  typedef std::vector<ModuleParameter>::iterator       ParameterIterator;
-
+  typedef std::vector<ModuleParameter>::iterator ParameterIterator;
 
   ///
   /// Calling this method will loop through the structure resulting
@@ -102,8 +103,7 @@ public:
 
   ///
   void addParameterGroups();
-  void addParameterGroup(QBoxLayout* layout,
-                         const ModuleParameterGroup& parameterGroup);
+  void addParameterGroup(QBoxLayout* layout, const ModuleParameterGroup& parameterGroup);
 
   ///
   void addParameters(QFormLayout* layout, const ModuleParameterGroup& parameterGroup);
@@ -127,6 +127,5 @@ public:
   QAction* AutoRunOnOtherInputEvents;
   QAction* AutoRunCancelsRunningProcess;
 };
-
 
 #endif

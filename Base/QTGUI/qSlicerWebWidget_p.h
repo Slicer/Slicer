@@ -40,6 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage : public QWebEnginePage
 {
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
+
 public:
   qSlicerWebEnginePage(QWebEngineProfile* profile, QObject* parent = nullptr);
   ~qSlicerWebEnginePage() override;
@@ -65,8 +66,7 @@ protected:
 
   bool certificateError(const QWebEngineCertificateError& certificateError) override
   {
-    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
-             << qPrintable(certificateError.errorDescription());
+    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]" << qPrintable(certificateError.errorDescription());
     return false;
   }
 
@@ -96,10 +96,13 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate : public QObject, Ui_qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate
+  : public QObject
+  , Ui_qSlicerWebWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerWebWidget);
+
 protected:
   qSlicerWebWidget* const q_ptr;
 
@@ -152,7 +155,6 @@ protected slots:
   void onAppAboutToQuit();
 
 public:
-
   QElapsedTimer DownloadTime;
   bool HandleExternalUrlWithDesktopService;
   bool NavigationRequestAccepted;

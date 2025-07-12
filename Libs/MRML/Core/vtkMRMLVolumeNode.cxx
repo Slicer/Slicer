@@ -51,20 +51,20 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       this->IJKToRASDirections[i][j] = (i == j) ? 1.0 : 0.0;
     }
   }
 
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     this->Spacing[i] = 1.0;
   }
 
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     this->Origin[i] = 0.0;
   }
@@ -99,9 +99,9 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 
   // IJKToRASDirections 3x3 C array
   std::stringstream ss;
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       ss << this->IJKToRASDirections[i][j] << " ";
       if (i != 2 && j != 2)
@@ -140,9 +140,9 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
       double val;
       ss << attValue;
       double dirs[3][3];
-      for (int i = 0; i<3; i++)
+      for (int i = 0; i < 3; i++)
       {
-        for (int j = 0; j<3; j++)
+        for (int j = 0; j < 3; j++)
         {
           ss >> val;
           dirs[i][j] = val;
@@ -156,7 +156,7 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -228,9 +228,9 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 {
   bool isModified = false;
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->IJKToRASDirections[i][j], dirs[i][j]))
       {
@@ -247,50 +247,43 @@ void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::SetIJKToRASDirections(double ir, double jr, double kr,
-                                              double ia, double ja, double ka,
-                                              double is, double js, double ks)
+void vtkMRMLVolumeNode::SetIJKToRASDirections(double ir, double jr, double kr, double ia, double ja, double ka, double is, double js, double ks)
 {
-  double dirs[3][3] = {{ir, jr, kr},
-                       {ia, ja, ka},
-                       {is, js, ks}};
+  double dirs[3][3] = { { ir, jr, kr }, { ia, ja, ka }, { is, js, ks } };
   this->SetIJKToRASDirections(dirs);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIToRASDirection(double ir, double ia, double is)
 {
-  double dirs[3][3] = {
-    {ir, this->IJKToRASDirections[0][1], this->IJKToRASDirections[0][2]},
-    {ia, this->IJKToRASDirections[1][1], this->IJKToRASDirections[1][2]},
-    {is, this->IJKToRASDirections[2][1], this->IJKToRASDirections[2][2]}};
+  double dirs[3][3] = { { ir, this->IJKToRASDirections[0][1], this->IJKToRASDirections[0][2] },
+                        { ia, this->IJKToRASDirections[1][1], this->IJKToRASDirections[1][2] },
+                        { is, this->IJKToRASDirections[2][1], this->IJKToRASDirections[2][2] } };
   this->SetIJKToRASDirections(dirs);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetJToRASDirection(double jr, double ja, double js)
 {
-  double dirs[3][3] = {
-    {this->IJKToRASDirections[0][0], jr, this->IJKToRASDirections[0][2]},
-    {this->IJKToRASDirections[1][0], ja, this->IJKToRASDirections[1][2]},
-    {this->IJKToRASDirections[2][0], js, this->IJKToRASDirections[2][2]}};
+  double dirs[3][3] = { { this->IJKToRASDirections[0][0], jr, this->IJKToRASDirections[0][2] },
+                        { this->IJKToRASDirections[1][0], ja, this->IJKToRASDirections[1][2] },
+                        { this->IJKToRASDirections[2][0], js, this->IJKToRASDirections[2][2] } };
   this->SetIJKToRASDirections(dirs);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetKToRASDirection(double kr, double ka, double ks)
 {
-  double dirs[3][3] = {
-    {this->IJKToRASDirections[0][0], this->IJKToRASDirections[0][1], kr},
-    {this->IJKToRASDirections[1][0], this->IJKToRASDirections[1][1], ka},
-    {this->IJKToRASDirections[2][0], this->IJKToRASDirections[2][1], ks}};
+  double dirs[3][3] = { { this->IJKToRASDirections[0][0], this->IJKToRASDirections[0][1], kr },
+                        { this->IJKToRASDirections[1][0], this->IJKToRASDirections[1][1], ka },
+                        { this->IJKToRASDirections[2][0], this->IJKToRASDirections[2][1], ks } };
   this->SetIJKToRASDirections(dirs);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 {
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     dirs[i] = IJKToRASDirections[i][0];
   }
@@ -299,7 +292,7 @@ void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 {
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     dirs[i] = IJKToRASDirections[i][1];
   }
@@ -308,7 +301,7 @@ void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 {
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     dirs[i] = IJKToRASDirections[i][2];
   }
@@ -399,27 +392,27 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
   // normalize direction vectors
   double spacing[3];
   int col;
-  for (col=0; col<3; col++)
+  for (col = 0; col < 3; col++)
   {
-    double len =0;
+    double len = 0;
     int row;
-    for (row=0; row<3; row++)
+    for (row = 0; row < 3; row++)
     {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
     }
     len = sqrt(len);
     spacing[col] = len;
-    for (row=0; row<3; row++)
+    for (row = 0; row < 3; row++)
     {
-      mat->SetElement(row, col,  mat->GetElement(row, col)/len);
+      mat->SetElement(row, col, mat->GetElement(row, col) / len);
     }
   }
 
   double dirs[3][3];
   double origin[3];
-  for (int row = 0; row<3; row++)
+  for (int row = 0; row < 3; row++)
   {
-    for (int col = 0; col<3; col++)
+    for (int col = 0; col < 3; col++)
     {
       dirs[row][col] = mat->GetElement(row, col);
     }
@@ -452,9 +445,9 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
   // this is the full matrix including the spacing and origin
   mat->Identity();
   int row, col;
-  for (row=0; row<3; row++)
+  for (row = 0; row < 3; row++)
   {
-    for (col=0; col<3; col++)
+    for (col = 0; col < 3; col++)
     {
       mat->SetElement(row, col, this->Spacing[col] * IJKToRASDirections[row][col]);
     }
@@ -465,16 +458,16 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
 {
-  this->GetIJKToRASMatrix( mat );
+  this->GetIJKToRASMatrix(mat);
   mat->Invert();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
 {
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       dirs[i][j] = IJKToRASDirections[i][j];
     }
@@ -485,9 +478,9 @@ void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
 void vtkMRMLVolumeNode::SetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMatrix)
 {
   double dirs[3][3];
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       dirs[i][j] = ijkToRASDirectionMatrix->Element[i][j];
     }
@@ -500,9 +493,9 @@ void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirecti
 {
   double dirs[3][3];
   this->GetIJKToRASDirections(dirs);
-  for (int i = 0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j = 0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       ijkToRASDirectionMatrix->Element[i][j] = dirs[i][j];
     }
@@ -510,11 +503,7 @@ void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirecti
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
-                                                     const double* spacing,
-                                                     const int* dims,
-                                                     bool centerImage,
-                                                     vtkMatrix4x4* IJKToRAS)
+bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order, const double* spacing, const int* dims, bool centerImage, vtkMatrix4x4* IJKToRAS)
 {
   IJKToRAS->Identity();
   if (order == nullptr)
@@ -524,9 +513,9 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
 
   vtkNew<vtkMatrix4x4> scaleMat;
   scaleMat->Identity();
-  scaleMat->SetElement(0,0, spacing[0]);
-  scaleMat->SetElement(1,1, spacing[1]);
-  scaleMat->SetElement(2,2, spacing[2]);
+  scaleMat->SetElement(0, 0, spacing[0]);
+  scaleMat->SetElement(1, 1, spacing[1]);
+  scaleMat->SetElement(2, 2, spacing[2]);
 
   vtkNew<vtkMatrix4x4> orientMat;
   orientMat->Identity();
@@ -615,19 +604,19 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
 //----------------------------------------------------------------------------
 const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToRAS)
 {
-  double dir[4]={0,0,1,0};
+  double dir[4] = { 0, 0, 1, 0 };
   double kvec[4];
 
-  ijkToRAS->MultiplyPoint(dir,kvec);
+  ijkToRAS->MultiplyPoint(dir, kvec);
   int max_comp = 0;
   double max = fabs(kvec[0]);
 
-  for (int i = 1; i<3; i++)
+  for (int i = 1; i < 3; i++)
   {
     if (fabs(kvec[i]) > max)
     {
       max = fabs(kvec[i]);
-      max_comp=i;
+      max_comp = i;
     }
   }
 
@@ -637,32 +626,33 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToR
       if (kvec[max_comp] > 0)
       {
         return "LR";
-      } else
+      }
+      else
       {
-          return "RL";
+        return "RL";
       }
       break;
     case 1:
       if (kvec[max_comp] > 0)
       {
         return "PA";
-      } else
+      }
+      else
       {
-          return "AP";
+        return "AP";
       }
       break;
     case 2:
       if (kvec[max_comp] > 0)
       {
         return "IS";
-      } else
+      }
+      else
       {
-          return "SI";
+        return "SI";
       }
       break;
-    default:
-      vtkErrorWithObjectMacro (ijkToRAS, "Max components "<< max_comp << " not in valid range 0,1,2\n");
-      return "";
+    default: vtkErrorWithObjectMacro(ijkToRAS, "Max components " << max_comp << " not in valid range 0,1,2\n"); return "";
   }
 }
 
@@ -703,12 +693,10 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
 {
   if (imageData == nullptr)
   {
-    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
+    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0))
     {
-      oldProducer->GetOutputDataObject(0)->RemoveObservers(
-        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(vtkCommand::ModifiedEvent, this->DataEventForwarder);
     }
     this->SetImageDataConnection(nullptr);
   }
@@ -723,16 +711,14 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
         << " Origin must be (0,0,0), Spacing must be (1,1,1),"                      //
         << " and Direction must be an identity matrix.");
     }
-    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
+    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == imageData)
     {
       return;
     }
     else if (oldProducer && oldProducer->GetOutputDataObject(0))
     {
-      oldProducer->GetOutputDataObject(0)->RemoveObservers(
-        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(vtkCommand::ModifiedEvent, this->DataEventForwarder);
     }
     vtkNew<vtkTrivialProducer> tp;
     tp->SetOutput(imageData);
@@ -751,29 +737,23 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeNode::GetImageData()
 {
-  vtkAlgorithm* producer = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : nullptr;
-  return vtkImageData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(
-      this->ImageDataConnection->GetIndex()) : nullptr);
+  vtkAlgorithm* producer = this->ImageDataConnection ? this->ImageDataConnection->GetProducer() : nullptr;
+  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(this->ImageDataConnection->GetIndex()) : nullptr);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode
-::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
+void vtkMRMLVolumeNode::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 {
   if (newImageDataConnection == this->ImageDataConnection)
   {
     return;
   }
 
-  vtkAlgorithm* oldImageDataAlgorithm = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : nullptr;
+  vtkAlgorithm* oldImageDataAlgorithm = this->ImageDataConnection ? this->ImageDataConnection->GetProducer() : nullptr;
 
   this->ImageDataConnection = newImageDataConnection;
 
-  vtkAlgorithm* imageDataAlgorithm = this->ImageDataConnection ?
-    this->ImageDataConnection->GetProducer() : nullptr;
+  vtkAlgorithm* imageDataAlgorithm = this->ImageDataConnection ? this->ImageDataConnection->GetProducer() : nullptr;
   if (imageDataAlgorithm != nullptr)
   {
     vtkObserveMRMLObjectMacro(imageDataAlgorithm);
@@ -794,14 +774,12 @@ void vtkMRMLVolumeNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode
-::SetImageDataToDisplayNodes()
+void vtkMRMLVolumeNode::SetImageDataToDisplayNodes()
 {
   int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n = 0; n<ndisp; n++)
+  for (int n = 0; n < ndisp; n++)
   {
-    vtkMRMLVolumeDisplayNode* dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(
-      this->GetNthDisplayNode(n));
+    vtkMRMLVolumeDisplayNode* dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
     if (dnode)
     {
       this->SetImageDataToDisplayNode(dnode);
@@ -810,8 +788,7 @@ void vtkMRMLVolumeNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode
-::SetImageDataToDisplayNode(vtkMRMLVolumeDisplayNode* volumeDisplayNode)
+void vtkMRMLVolumeNode::SetImageDataToDisplayNode(vtkMRMLVolumeDisplayNode* volumeDisplayNode)
 {
   assert(volumeDisplayNode);
   volumeDisplayNode->SetInputImageDataConnection(this->GetImageDataConnection());
@@ -825,7 +802,7 @@ void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode:: OnNodeReferenceModified(vtkMRMLNodeReference* reference)
+void vtkMRMLVolumeNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
   this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
   Superclass::OnNodeReferenceModified(reference);
@@ -850,16 +827,14 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLVolumeNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   // did the image data change?
-  if (this->ImageDataConnection != nullptr && //
+  if (this->ImageDataConnection != nullptr &&                                           //
       this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) && //
-    event ==  vtkCommand::ModifiedEvent)
+      event == vtkCommand::ModifiedEvent)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
     return;
@@ -884,16 +859,14 @@ vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetVolumeDisplayNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::SetMetaDataDictionary( const itk::MetaDataDictionary& dictionary )
+void vtkMRMLVolumeNode::SetMetaDataDictionary(const itk::MetaDataDictionary& dictionary)
 {
   this->Dictionary = dictionary;
   this->Modified();
 }
 
 //---------------------------------------------------------------------------
-const
-itk::MetaDataDictionary&
-vtkMRMLVolumeNode::GetMetaDataDictionary() const
+const itk::MetaDataDictionary& vtkMRMLVolumeNode::GetMetaDataDictionary() const
 {
   return this->Dictionary;
 }
@@ -917,8 +890,7 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6],
-  vtkMatrix4x4* rasToSlice, bool useVoxelCenter/*=false*/)
+void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlice, bool useVoxelCenter /*=false*/)
 {
   vtkMRMLVolumeNode::GetBoundsInternal(bounds, rasToSlice, true, useVoxelCenter);
 }
@@ -930,8 +902,7 @@ void vtkMRMLVolumeNode::GetBounds(double bounds[6])
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
-  vtkMatrix4x4* rasToSlice, bool useTransform, bool useVoxelCenter/*=false*/)
+void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6], vtkMatrix4x4* rasToSlice, bool useTransform, bool useVoxelCenter /*=false*/)
 {
   vtkMath::UninitializeBounds(bounds);
   vtkImageData* volumeImage = this->GetImageData();
@@ -1023,7 +994,7 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
 bool vtkMRMLVolumeNode::GetModifiedSinceRead()
 {
   return this->Superclass::GetModifiedSinceRead() || //
-    (this->GetImageData() && this->GetImageData()->GetMTime() > this->GetStoredTime());
+         (this->GetImageData() && this->GetImageData()->GetMTime() > this->GetStoredTime());
 }
 
 //---------------------------------------------------------------------------
@@ -1098,8 +1069,7 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     case VTK_NEAREST_INTERPOLATION: reslice->SetInterpolationModeToNearestNeighbor(); break;
     case VTK_LINEAR_INTERPOLATION: reslice->SetInterpolationModeToLinear(); break;
     case VTK_CUBIC_INTERPOLATION: reslice->SetInterpolationModeToCubic(); break;
-    default:
-      vtkErrorMacro("ApplyNonLinearTransform: invalid interpolation mode: " << this->GetResamplingInterpolationMode());
+    default: vtkErrorMacro("ApplyNonLinearTransform: invalid interpolation mode: " << this->GetResamplingInterpolationMode());
   }
 
   double backgroundColor[4] = { 0, 0, 0, 0 };
@@ -1114,7 +1084,7 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   // that bulge out (due to the warping transform) would be cut off.
   // GetBoundsInternal method takes samples all over the volume, therefore the
   // complete transformed volume is included in the output.
-  double transformedBounds[6] = { 0.0,-1.0,0.0,-1.0,0.0,-1.0 };
+  double transformedBounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
   this->GetBoundsInternal(transformedBounds, rasToIJK, true);
   double spacing[3] = { 1.0, 1.0, 1.0 }; // output is specified in IJK coordinate system
   // transformedBounds is computed so that it includes the voxel corners, therefore the origin is half voxel towards the image center
@@ -1175,7 +1145,7 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
     return;
   }
 
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   imageData->GetExtent(extent);
 
   // No need to shift if extent already starts at zeros
@@ -1195,10 +1165,10 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
   ijkToRasMatrix->MultiplyPoint(shiftedOrigin_IJK, shiftedOrigin_RAS);
   this->SetOrigin(shiftedOrigin_RAS);
 
-  for (int i = 0; i<3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
-    extent[2*i+1] -= extent[2*i];
-    extent[2*i] = 0;
+    extent[2 * i + 1] -= extent[2 * i];
+    extent[2 * i] = 0;
   }
   imageData->SetExtent(extent);
 }
@@ -1212,7 +1182,7 @@ double vtkMRMLVolumeNode::GetImageBackgroundScalarComponentAsDouble(int componen
     return 0.0;
   }
 
-  int extent[6] = { 0,-1,0,-1,0,-1 };
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   imageData->GetExtent(extent);
 
   if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
@@ -1269,7 +1239,7 @@ bool vtkMRMLVolumeNode::IsCentered()
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLVolumeNode::GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform/*=true*/)
+void vtkMRMLVolumeNode::GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform /*=true*/)
 {
   vtkImageData* imageData = this->GetImageData();
   if (!imageData)
@@ -1327,8 +1297,7 @@ bool vtkMRMLVolumeNode::AddCenteringTransform()
   }
   std::string transformName = this->GetName();
   transformName.append(" centering transform");
-  vtkMRMLLinearTransformNode* centeringTransform = vtkMRMLLinearTransformNode::SafeDownCast(
-    scene->AddNewNodeByClass("vtkMRMLLinearTransformNode", transformName));
+  vtkMRMLLinearTransformNode* centeringTransform = vtkMRMLLinearTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLLinearTransformNode", transformName));
   vtkNew<vtkMatrix4x4> centeringTransformMatrix;
   centeringTransformMatrix->SetElement(0, 3, -centerPositionRAS[0]);
   centeringTransformMatrix->SetElement(1, 3, -centerPositionRAS[1]);
@@ -1356,13 +1325,13 @@ const char* vtkMRMLVolumeNode::GetVoxelVectorTypeAsString(int id)
 {
   switch (id)
   {
-  case VoxelVectorTypeUndefined: return "undefined";
-  case VoxelVectorTypeSpatial: return "spatial";
-  case VoxelVectorTypeColorRGB: return "colorRGB";
-  case VoxelVectorTypeColorRGBA: return "colorRGBA";
-  default:
-    // invalid id
-    return "";
+    case VoxelVectorTypeUndefined: return "undefined";
+    case VoxelVectorTypeSpatial: return "spatial";
+    case VoxelVectorTypeColorRGB: return "colorRGB";
+    case VoxelVectorTypeColorRGBA: return "colorRGBA";
+    default:
+      // invalid id
+      return "";
   }
 }
 
@@ -1414,8 +1383,7 @@ void vtkMRMLVolumeNode::ReverseSliceOrder(vtkImageData* imageData, vtkMatrix4x4*
     vtkPointData* pointData = imageData->GetPointData();
     vtkDataArray* pointDataArray = nullptr;
     int pointDataType = -1;
-    std::array<int, 4> candidatePointDataTypes
-      = { vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::VECTORS, vtkDataSetAttributes::NORMALS, vtkDataSetAttributes::TENSORS };
+    std::array<int, 4> candidatePointDataTypes = { vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::VECTORS, vtkDataSetAttributes::NORMALS, vtkDataSetAttributes::TENSORS };
     for (int candidatePointDataType : candidatePointDataTypes)
     {
       vtkDataArray* candidatePointDataArray = pointData->GetAttribute(candidatePointDataType);
@@ -1434,7 +1402,8 @@ void vtkMRMLVolumeNode::ReverseSliceOrder(vtkImageData* imageData, vtkMatrix4x4*
       {
         // There has been other data arrays, log a warning because we only flip the first one
         vtkGenericWarningMacro("vtkMRMLVolumeNode::ReverseSliceOrder: Multiple types of point data arrays were found,"
-          " only the " << vtkDataSetAttributes::GetAttributeTypeAsString(pointDataType) << " array will be flipped");
+                               " only the "
+                               << vtkDataSetAttributes::GetAttributeTypeAsString(pointDataType) << " array will be flipped");
       }
     }
 

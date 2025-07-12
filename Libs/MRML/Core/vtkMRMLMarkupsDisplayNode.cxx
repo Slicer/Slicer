@@ -70,8 +70,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   // markup display node settings
   this->TextScale = 3;
   this->GlyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
-  this->GlyphScale = 3.0; // relative to screen size
-  this->GlyphSize = 5.0;  // size in world coordinate system (mm)
+  this->GlyphScale = 3.0;     // relative to screen size
+  this->GlyphSize = 5.0;      // size in world coordinate system (mm)
   this->UseGlyphScale = true; // relative size by default
 
   this->SnapMode = vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface;
@@ -142,9 +142,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
 
-  this->AddNodeReferenceRole(this->GetLineColorNodeReferenceRole(),
-                             this->GetLineColorNodeReferenceMRMLAttributeName(),
-                             events.GetPointer());
+  this->AddNodeReferenceRole(this->GetLineColorNodeReferenceRole(), this->GetLineColorNodeReferenceMRMLAttributeName(), events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -282,9 +280,8 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   }
 }
 
-
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -330,7 +327,6 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyEndMacro();
 }
 
-
 //----------------------------------------------------------------------------
 const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString()
 {
@@ -368,24 +364,24 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
 {
   switch (id)
   {
-  case Vertex2D: return "Vertex2D";
-  case Dash2D: return "Dash2D";
-  case Cross2D: return "Cross2D";
-  case CrossDot2D: return "CrossDot2D";
-  case ThickCross2D: return "ThickCross2D";
-  case Triangle2D: return "Triangle2D";
-  case Square2D: return "Square2D";
-  case Circle2D: return "Circle2D";
-  case Diamond2D: return "Diamond2D";
-  case Arrow2D: return "Arrow2D";
-  case ThickArrow2D: return "ThickArrow2D";
-  case HookedArrow2D: return "HookedArrow2D";
-  case StarBurst2D: return "StarBurst2D";
-  case Sphere3D: return "Sphere3D";
-  case GlyphTypeInvalid:
-  default:
-    // invalid id
-    return "Invalid";
+    case Vertex2D: return "Vertex2D";
+    case Dash2D: return "Dash2D";
+    case Cross2D: return "Cross2D";
+    case CrossDot2D: return "CrossDot2D";
+    case ThickCross2D: return "ThickCross2D";
+    case Triangle2D: return "Triangle2D";
+    case Square2D: return "Square2D";
+    case Circle2D: return "Circle2D";
+    case Diamond2D: return "Diamond2D";
+    case Arrow2D: return "Arrow2D";
+    case ThickArrow2D: return "ThickArrow2D";
+    case HookedArrow2D: return "HookedArrow2D";
+    case StarBurst2D: return "StarBurst2D";
+    case Sphere3D: return "Sphere3D";
+    case GlyphTypeInvalid:
+    default:
+      // invalid id
+      return "Invalid";
   }
 }
 
@@ -414,11 +410,11 @@ const char* vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(int id)
 {
   switch (id)
   {
-  case SnapModeUnconstrained: return "unconstrained";
-  case SnapModeToVisibleSurface: return "toVisibleSurface";
-  default:
-    // invalid id
-    return "invalid";
+    case SnapModeUnconstrained: return "unconstrained";
+    case SnapModeToVisibleSurface: return "toVisibleSurface";
+    default:
+      // invalid id
+      return "invalid";
   }
 }
 
@@ -459,11 +455,11 @@ const char* vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(int id)
 {
   switch (id)
   {
-  case UseLineThickness: return "UseLineThickness";
-  case UseLineDiameter: return "UseLineDiameter";
-  default:
-    // invalid id
-    return "Invalid";
+    case UseLineThickness: return "UseLineThickness";
+    case UseLineDiameter: return "UseLineDiameter";
+    default:
+      // invalid id
+      return "Invalid";
   }
 }
 
@@ -486,21 +482,21 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintVectorMacro(SliceProjectionColor, double, 3);
   vtkMRMLPrintFloatMacro(SliceProjectionOpacity);
   {
-  os << indent << "ActiveComponents:";
-  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-  {
-    os << indent << indent;
-    if (it->first.empty())
+    os << indent << "ActiveComponents:";
+    for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
     {
-      os << "(default)";
+      os << indent << indent;
+      if (it->first.empty())
+      {
+        os << "(default)";
+      }
+      else
+      {
+        os << it->first;
+      }
+      os << ": " << it->second.Type << ", " << it->second.Index;
     }
-    else
-    {
-      os << it->first;
-    }
-    os << ": " << it->second.Type << ", " << it->second.Index;
-  }
-  os << "\n";
+    os << "\n";
   }
   vtkMRMLPrintEnumMacro(CurveLineSizeMode);
   vtkMRMLPrintFloatMacro(LineThickness);
@@ -529,19 +525,15 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject* caller,
-                                                  unsigned long event,
-                                                  void* callData)
+void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   if (caller == this->TextProperty)
   {
     switch (event)
     {
-      case vtkCommand::ModifiedEvent:
-        this->Modified();
-      default:
-        break;
+      case vtkCommand::ModifiedEvent: this->Modified();
+      default: break;
     }
   }
   return;
@@ -550,11 +542,11 @@ void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject* caller,
 //-----------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
-   Superclass::UpdateScene(scene);
+  Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-int  vtkMRMLMarkupsDisplayNode::GlyphTypeIs3D(int glyphType)
+int vtkMRMLMarkupsDisplayNode::GlyphTypeIs3D(int glyphType)
 {
   if (glyphType == vtkMRMLMarkupsDisplayNode::Sphere3D)
   {
@@ -597,7 +589,7 @@ const char* vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeNam
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -609,7 +601,7 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=GetD
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -621,11 +613,11 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=Get
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
+void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) != this->ActiveComponents.end() //
-      && this->ActiveComponents[context].Type == componentType //
-      && this->ActiveComponents[context].Index == componentIndex )
+      && this->ActiveComponents[context].Type == componentType             //
+      && this->ActiveComponents[context].Index == componentIndex)
   {
     // no change
     return;
@@ -671,10 +663,12 @@ void vtkMRMLMarkupsDisplayNode::SetActiveControlPoint(int controlPointIndex)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
-  int controlPointIndex, vtkMRMLInteractionEventData* eventData,
-  double orientationMatrixWorld[9], const char* viewNodeID,
-  const char* associatedNodeID, int positionStatus)
+int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointIndex,
+                                                             vtkMRMLInteractionEventData* eventData,
+                                                             double orientationMatrixWorld[9],
+                                                             const char* viewNodeID,
+                                                             const char* associatedNodeID,
+                                                             int positionStatus)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !eventData)
@@ -718,7 +712,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
 
   // Update active component but not yet fire modified event because the control
   // point is not created/updated yet in the markups node.
-  //TODO: Allow other interaction contexts to place markups
+  // TODO: Allow other interaction contexts to place markups
   bool activeComponentChanged = false;
   std::string interactionContext = eventData->GetInteractionContextName();
   if (this->ActiveComponents[interactionContext].Index != controlPointIndex //
@@ -777,8 +771,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   else
   {
     // Update existing control point
-    markupsNode->SetNthControlPointPositionOrientationWorld(controlPointIndex,
-      pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
+    markupsNode->SetNthControlPointPositionOrientationWorld(controlPointIndex, pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
     if (positionStatus == vtkMRMLMarkupsNode::PositionUndefined)
     {
       markupsNode->SetNthControlPointAutoCreated(controlPointIndex, false);
@@ -794,7 +787,6 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
 
   return controlPointIndex;
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::GetActiveControlPoints(std::vector<int>& controlPointIndices)
@@ -868,7 +860,7 @@ vtkDataSet* vtkMRMLMarkupsDisplayNode::GetScalarDataSet()
 //-----------------------------------------------------------
 vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
 {
-  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(), "") == 0)
   {
     return nullptr;
   }
@@ -922,18 +914,10 @@ void vtkMRMLMarkupsDisplayNode::SetHandleVisibility(int componentType, bool visi
 {
   switch (componentType)
   {
-    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle:
-      this->SetTranslationHandleVisibility(visibility);
-      break;
-    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle:
-      this->SetRotationHandleVisibility(visibility);
-      break;
-    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
-      this->SetScaleHandleVisibility(visibility);
-      break;
-    default:
-      vtkErrorMacro("Unknown handle type");
-      break;
+    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle: this->SetTranslationHandleVisibility(visibility); break;
+    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle: this->SetRotationHandleVisibility(visibility); break;
+    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle: this->SetScaleHandleVisibility(visibility); break;
+    default: vtkErrorMacro("Unknown handle type"); break;
   }
 }
 
@@ -942,14 +926,10 @@ bool vtkMRMLMarkupsDisplayNode::GetHandleVisibility(int componentType)
 {
   switch (componentType)
   {
-    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle:
-      return this->GetTranslationHandleVisibility();
-    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle:
-      return this->GetRotationHandleVisibility();
-    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
-      return this->GetScaleHandleVisibility();
-    default:
-      vtkErrorMacro("Unknown handle type");
+    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle: return this->GetTranslationHandleVisibility();
+    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle: return this->GetRotationHandleVisibility();
+    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle: return this->GetScaleHandleVisibility();
+    default: vtkErrorMacro("Unknown handle type");
   }
   return false;
 }

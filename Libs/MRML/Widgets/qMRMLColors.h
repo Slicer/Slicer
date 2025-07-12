@@ -32,7 +32,6 @@ class vtkColor3d;
 class QMRML_WIDGETS_EXPORT qMRMLColors
 {
 public:
-
   static QColor sliceRed();
   static QColor sliceYellow();
   static QColor sliceGreen();

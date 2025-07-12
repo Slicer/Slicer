@@ -30,7 +30,7 @@ class vtkMRMLDiffusionTensorVolumeDisplayNode;
 ///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusionImageVolumeNode
 {
-  public:
+public:
   static vtkMRMLDiffusionTensorVolumeNode* New();
   vtkTypeMacro(vtkMRMLDiffusionTensorVolumeNode, vtkMRMLDiffusionImageVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -62,7 +62,6 @@ protected:
 
   vtkMRMLDiffusionTensorVolumeNode(const vtkMRMLDiffusionTensorVolumeNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeNode&);
-
 };
 
 #endif

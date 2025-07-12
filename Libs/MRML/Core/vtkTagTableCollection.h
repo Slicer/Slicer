@@ -15,16 +15,15 @@ public:
   vtkTypeMacro(vtkTagTableCollection, vtkCollection);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  vtkTagTable* FindTagTableByName ( const char* name );
-  void AddTableByName ( vtkTagTable* t, const char* name );
-  void DeleteTableByName ( const char* name );
-  void ClearAllTagTables ( );
-  void SetRestoreSelectionStateForAllTables ( int val);
+  vtkTagTable* FindTagTableByName(const char* name);
+  void AddTableByName(vtkTagTable* t, const char* name);
+  void DeleteTableByName(const char* name);
+  void ClearAllTagTables();
+  void SetRestoreSelectionStateForAllTables(int val);
 
   ///
   /// Add a Tag Table to the list.
-  void AddItem ( vtkTagTable* t ) {
-  this->vtkCollection::AddItem ( (vtkObject*)t); };
+  void AddItem(vtkTagTable* t) { this->vtkCollection::AddItem((vtkObject*)t); };
 
   ///
   /// Get the next Table in the list. Return nullptr
@@ -42,15 +41,17 @@ public:
   /// Just pass the same cookie back and forth.
   vtkTagTable* GetNextTable(vtkCollectionSimpleIterator& cookie);
 
- protected:
+protected:
   vtkTagTableCollection();
   ~vtkTagTableCollection() override;
 
   /// hide the standard AddItem from the user and compiler.
-  void AddItem (vtkObject* o ) { this->vtkCollection::AddItem(o); } ;
+  void AddItem(vtkObject* o) { this->vtkCollection::AddItem(o); };
 
   vtkTagTableCollection(const vtkTagTableCollection&);
-  void operator=(const vtkTagTableCollection&); private:
+  void operator=(const vtkTagTableCollection&);
+
+private:
 };
 
 #endif

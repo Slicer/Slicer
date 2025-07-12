@@ -28,8 +28,8 @@
 #include <vtkImageAlgorithm.h>
 
 #define SHAPE_POLYGON 1
-#define SHAPE_LINES   2
-#define SHAPE_POINTS  3
+#define SHAPE_LINES 2
+#define SHAPE_POINTS 3
 
 class vtkPoints;
 
@@ -43,31 +43,28 @@ public:
   vtkSetMacro(Value, double);
   vtkGetMacro(Value, double);
 
-  void SetShapeToPolygon() {this->Shape = SHAPE_POLYGON;};
-  void SetShapeToLines() {this->Shape = SHAPE_LINES;};
-  void SetShapeToPoints() {this->Shape = SHAPE_POINTS;};
-  void SetShape(int s) {this->Shape = s;};
-  int GetShape() {return this->Shape;};
+  void SetShapeToPolygon() { this->Shape = SHAPE_POLYGON; };
+  void SetShapeToLines() { this->Shape = SHAPE_LINES; };
+  void SetShapeToPoints() { this->Shape = SHAPE_POINTS; };
+  void SetShape(int s) { this->Shape = s; };
+  int GetShape() { return this->Shape; };
 
   const char* GetShapeString()
   {
     switch (this->Shape)
     {
-    case SHAPE_POLYGON:
-      return "Polygon";
-    case SHAPE_LINES:
-      return "Lines";
-    case SHAPE_POINTS:
-      return "Points";
-    default:
-      return "None";
+      case SHAPE_POLYGON: return "Polygon";
+      case SHAPE_LINES: return "Lines";
+      case SHAPE_POINTS: return "Points";
+      default: return "None";
     }
   }
 
-  void SetShapeString(const char* str) {
-    if (strcmp(str,"Polygon") == 0)
+  void SetShapeString(const char* str)
+  {
+    if (strcmp(str, "Polygon") == 0)
       this->SetShapeToPolygon();
-    else if (strcmp(str,"Lines") == 0)
+    else if (strcmp(str, "Lines") == 0)
       this->SetShapeToLines();
     else
       this->SetShapeToPoints();
@@ -90,9 +87,7 @@ protected:
 
   /// Reimplemented.
   /// Not threaded because too simple a filter
-  int RequestData(vtkInformation* request,
-                          vtkInformationVector** inputVectors,
-                          vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVectors, vtkInformationVector* outputVector) override;
 
 private:
   vtkImageFillROI(const vtkImageFillROI&) = delete;

@@ -38,8 +38,7 @@ public:
 void qSlicerEventBrokerModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   this->Ui_qSlicerEventBrokerModuleWidget::setupUi(widget);
-  QObject::connect(this->EventBrokerWidget, SIGNAL(currentObjectChanged(vtkObject*)),
-          widget, SLOT(onCurrentObjectChanged(vtkObject*)));
+  QObject::connect(this->EventBrokerWidget, SIGNAL(currentObjectChanged(vtkObject*)), widget, SLOT(onCurrentObjectChanged(vtkObject*)));
 }
 
 //-----------------------------------------------------------------------------

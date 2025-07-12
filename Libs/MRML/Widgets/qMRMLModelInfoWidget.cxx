@@ -89,7 +89,6 @@ qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget* _parent)
 //------------------------------------------------------------------------------
 qMRMLModelInfoWidget::~qMRMLModelInfoWidget() = default;
 
-
 //------------------------------------------------------------------------------
 vtkMRMLModelNode* qMRMLModelInfoWidget::mrmlModelNode() const
 {
@@ -107,10 +106,9 @@ void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLNode* node)
 void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLModelNode* modelNode)
 {
   Q_D(qMRMLModelInfoWidget);
-  qvtkReconnect(d->MRMLModelNode, modelNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  //qvtkReconnect(d->MRMLModelNode, modelNode, vtkMRMLModelNode::DisplayModifiedEvent,
-  //              this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLModelNode, modelNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  // qvtkReconnect(d->MRMLModelNode, modelNode, vtkMRMLModelNode::DisplayModifiedEvent,
+  //               this, SLOT(updateWidgetFromMRML()));
   d->MRMLModelNode = modelNode;
   this->updateWidgetFromMRML();
 }
@@ -147,7 +145,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     {
       filter = d->GeometryFilter;
     }
-    d->MassProperties->SetInputConnection( filter->GetOutputPort() );
+    d->MassProperties->SetInputConnection(filter->GetOutputPort());
     filter->SetInputData(mesh);
     filter->Update();
     if (filter->GetOutput()->GetNumberOfCells() > 0)

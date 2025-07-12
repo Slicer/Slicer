@@ -52,9 +52,12 @@ qMRMLUtils::qMRMLUtils(QObject* _parent)
 qMRMLUtils::~qMRMLUtils() = default;
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)
+void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double>& vector)
 {
-  if (!matrix) { return; }
+  if (!matrix)
+  {
+    return;
+  }
 
   vector.clear();
 
@@ -62,22 +65,19 @@ void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vect
   {
     for (int j = 0; j < 4; j++)
     {
-      vector.append(matrix->GetElement(i,j));
+      vector.append(matrix->GetElement(i, j));
     }
   }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
-    vtkTransform* transform)
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global, vtkTransform* transform)
 {
-  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast( node ),
-    global, transform);
+  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast(node), global, transform);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
-  bool global, vtkTransform* transform)
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode, bool global, vtkTransform* transform)
 {
   Q_ASSERT(transform);
   if (!transform)

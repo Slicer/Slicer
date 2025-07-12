@@ -155,17 +155,14 @@ public:
   /// Add node type attribute that filter the nodes to
   /// display. The default of a null QVariant means that
   /// any non null attributeValue will match
-  Q_INVOKABLE void addAttribute(const QString& nodeType,
-                    const QString& attributeName,
-                    const QVariant& attributeValue = QVariant());
+  Q_INVOKABLE void addAttribute(const QString& nodeType, const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed nodes
   /// \sa addAttribute
   Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
   /// Return the current attribute filter for the given node type.
   /// \sa addAttribute, removeAttribute
-  Q_INVOKABLE QVariant attributeFilter(
-    const QString& nodeType, const QString& attributeName) const;
+  Q_INVOKABLE QVariant attributeFilter(const QString& nodeType, const QString& attributeName) const;
 
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.
@@ -259,8 +256,7 @@ protected:
   /// If for some reason a node has not been observed but its visibility has
   /// changed, the filter can be refresh by calling a\ invalidate()
   /// \sa filterAcceptsNode(), AcceptType, invalidate()
-  bool filterAcceptsRow(int source_row,
-                                const QModelIndex& source_parent) const override;
+  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
   /// This method returns whether the \a node should be visible or hidden
   /// from the view.
   /// It returns the behavior of the node with regard to the filters.

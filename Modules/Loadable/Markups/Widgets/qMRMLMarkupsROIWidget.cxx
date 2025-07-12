@@ -38,8 +38,7 @@
 #define SLIDERS_EPSILON 0.001
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsROIWidgetPrivate:
-  public Ui_qMRMLMarkupsROIWidget
+class qMRMLMarkupsROIWidgetPrivate : public Ui_qMRMLMarkupsROIWidget
 {
 
 public:
@@ -54,7 +53,6 @@ protected:
 
 private:
   Q_DECLARE_PUBLIC(qMRMLMarkupsROIWidget);
-
 };
 
 // --------------------------------------------------------------------------
@@ -78,20 +76,13 @@ void qMRMLMarkupsROIWidgetPrivate::setupUi(qMRMLMarkupsROIWidget* widget)
     this->roiTypeComboBox->addItem(vtkMRMLMarkupsROINode::GetROITypeAsString(roiType), roiType);
   }
 
-  QObject::connect(this->roiTypeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onROITypeParameterChanged()));
-  QObject::connect(this->insideOutCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setInsideOut(bool)));
-  QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayClippingBox(bool)));
-  QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setInteractiveMode(bool)));
-  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
-  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
-  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
+  QObject::connect(this->roiTypeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onROITypeParameterChanged()));
+  QObject::connect(this->insideOutCheckBox, SIGNAL(toggled(bool)), q, SLOT(setInsideOut(bool)));
+  QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)), q, SLOT(setDisplayClippingBox(bool)));
+  QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)), q, SLOT(setInteractiveMode(bool)));
+  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
+  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
+  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
   q->setEnabled(q->MarkupsNode != nullptr);
 }
 
@@ -100,7 +91,8 @@ void qMRMLMarkupsROIWidgetPrivate::setupUi(qMRMLMarkupsROIWidget* widget)
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsROIWidget::qMRMLMarkupsROIWidget(QWidget* parent)
-  : Superclass(parent), d_ptr(new qMRMLMarkupsROIWidgetPrivate(*this))
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsROIWidgetPrivate(*this))
 {
   this->setup();
 }
@@ -121,7 +113,6 @@ vtkMRMLMarkupsROINode* qMRMLMarkupsROIWidget::mrmlROINode() const
   return vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLMarkupsROIWidget::setExtent(double min, double max)
 {
@@ -129,9 +120,7 @@ void qMRMLMarkupsROIWidget::setExtent(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setExtent(double minLR, double maxLR,
-                                        double minPA, double maxPA,
-                                        double minIS, double maxIS)
+void qMRMLMarkupsROIWidget::setExtent(double minLR, double maxLR, double minPA, double maxPA, double minIS, double maxIS)
 {
   Q_D(qMRMLMarkupsROIWidget);
 
@@ -139,7 +128,6 @@ void qMRMLMarkupsROIWidget::setExtent(double minLR, double maxLR,
   d->PARangeWidget->setRange(minPA, maxPA);
   d->ISRangeWidget->setRange(minIS, maxIS);
 }
-
 
 // --------------------------------------------------------------------------
 void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
@@ -215,28 +203,21 @@ void qMRMLMarkupsROIWidget::updateROI()
   }
 
   double bounds[6];
-  d->LRRangeWidget->values(bounds[0],bounds[1]);
-  d->PARangeWidget->values(bounds[2],bounds[3]);
-  d->ISRangeWidget->values(bounds[4],bounds[5]);
+  d->LRRangeWidget->values(bounds[0], bounds[1]);
+  d->PARangeWidget->values(bounds[2], bounds[3]);
+  d->ISRangeWidget->values(bounds[4], bounds[5]);
 
   MRMLNodeModifyBlocker blocker(roiNode);
-  roiNode->SetXYZ(0.5*(bounds[1]+bounds[0]),
-                  0.5*(bounds[3]+bounds[2]),
-                  0.5*(bounds[5]+bounds[4]));
-  roiNode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),
-                        0.5*(bounds[3]-bounds[2]),
-                        0.5*(bounds[5]-bounds[4]));
+  roiNode->SetXYZ(0.5 * (bounds[1] + bounds[0]), 0.5 * (bounds[3] + bounds[2]), 0.5 * (bounds[5] + bounds[4]));
+  roiNode->SetRadiusXYZ(0.5 * (bounds[1] - bounds[0]), 0.5 * (bounds[3] - bounds[2]), 0.5 * (bounds[5] - bounds[4]));
 }
-
 
 // --------------------------------------------------------------------------
 void qMRMLMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
-  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
-  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                      this, SLOT(onMRMLDisplayNodeModified()));
+  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onMRMLDisplayNodeModified()));
 
   this->MarkupsNode = markupsNode;
 
@@ -339,21 +320,15 @@ void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
   double bounds[6];
   for (int i = 0; i < 3; ++i)
   {
-    bounds[i]   = xyz[i]-rxyz[i];
-    bounds[3+i] = xyz[i]+rxyz[i];
+    bounds[i] = xyz[i] - rxyz[i];
+    bounds[3 + i] = xyz[i] + rxyz[i];
   }
 
   if (d->AutoRange)
   {
-    d->LRRangeWidget->setRange(
-      qMin(bounds[0], d->LRRangeWidget->minimum()),
-      qMax(bounds[3], d->LRRangeWidget->maximum()));
-    d->PARangeWidget->setRange(
-      qMin(bounds[1], d->PARangeWidget->minimum()),
-      qMax(bounds[4], d->PARangeWidget->maximum()));
-    d->ISRangeWidget->setRange(
-      qMin(bounds[2], d->ISRangeWidget->minimum()),
-      qMax(bounds[5], d->ISRangeWidget->maximum()));
+    d->LRRangeWidget->setRange(qMin(bounds[0], d->LRRangeWidget->minimum()), qMax(bounds[3], d->LRRangeWidget->maximum()));
+    d->PARangeWidget->setRange(qMin(bounds[1], d->PARangeWidget->minimum()), qMax(bounds[4], d->PARangeWidget->maximum()));
+    d->ISRangeWidget->setRange(qMin(bounds[2], d->ISRangeWidget->minimum()), qMax(bounds[5], d->ISRangeWidget->maximum()));
   }
 
   d->LRRangeWidget->setValues(bounds[0], bounds[3]);

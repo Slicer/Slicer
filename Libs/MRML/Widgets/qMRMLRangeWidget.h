@@ -90,6 +90,7 @@ protected:
 class QMRML_WIDGETS_EXPORT qMRMLDoubleRangeSlider : public ctkDoubleRangeSlider
 {
   Q_OBJECT;
+
 public:
   qMRMLDoubleRangeSlider(QWidget* parentWidget);
   QPalette minimumHandlePalette() const;
@@ -110,6 +111,7 @@ public slots:
 class QMRML_WIDGETS_EXPORT qMRMLRangeSlider : public ctkRangeSlider
 {
   Q_OBJECT;
+
 public:
   qMRMLRangeSlider(QWidget* parentWidget);
   ~qMRMLRangeSlider() override;
@@ -122,6 +124,7 @@ public slots:
 
   /// Set the palette of the minimum handle
   void setMaximumHandlePalette(const QPalette& palette);
+
 protected:
   void initMinimumSliderStyleOption(QStyleOptionSlider* option) const override;
   void initMaximumSliderStyleOption(QStyleOptionSlider* option) const override;

@@ -76,8 +76,8 @@
 #include <vtkDoubleArray.h>
 #include <vtkVolumePicker.h>
 
-#include <vtkImageData.h> //TODO: Used for workaround. Remove when fixed
-#include <vtkTrivialProducer.h> //TODO: Used for workaround. Remove when fixed
+#include <vtkImageData.h>         //TODO: Used for workaround. Remove when fixed
+#include <vtkTrivialProducer.h>   //TODO: Used for workaround. Remove when fixed
 #include <vtkPiecewiseFunction.h> //TODO: Used for workaround. Remove when fixed
 
 // Register VTK object factory overrides
@@ -150,18 +150,19 @@ public:
     vtkSmartPointer<vtkClipVolume> ClipVolume;
 
     vtkSmartPointer<vtkImplicitFunctionToImageStencil> ImplicitFunctionToImageStencilFilter;
-    vtkSmartPointer<vtkImplicitBoolean>                ImplicitFunction;
-    vtkSmartPointer<vtkImageData>                      MaskImage;
-    vtkSmartPointer<vtkImageStencil>                   StencilFilter;
-    vtkSmartPointer<vtkImageGaussianSmooth>            Gaussian;
-    vtkSmartPointer<vtkImageMathematicsAddon>          ImageMathematics;
+    vtkSmartPointer<vtkImplicitBoolean> ImplicitFunction;
+    vtkSmartPointer<vtkImageData> MaskImage;
+    vtkSmartPointer<vtkImageStencil> StencilFilter;
+    vtkSmartPointer<vtkImageGaussianSmooth> Gaussian;
+    vtkSmartPointer<vtkImageMathematicsAddon> ImageMathematics;
   };
 
   //-------------------------------------------------------------------------
   class PipelineCPU : public Pipeline
   {
   public:
-    PipelineCPU() : Pipeline()
+    PipelineCPU()
+      : Pipeline()
     {
       this->RayCastMapperCPU = vtkSmartPointer<vtkFixedPointVolumeRayCastMapper>::New();
       this->VolumeScaling = vtkSmartPointer<vtkImageChangeInformation>::New();
@@ -174,7 +175,8 @@ public:
   class PipelineGPU : public Pipeline
   {
   public:
-    PipelineGPU() : Pipeline()
+    PipelineGPU()
+      : Pipeline()
     {
       this->RayCastMapperGPU = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
     }
@@ -184,7 +186,8 @@ public:
   class PipelineMultiVolume : public Pipeline
   {
   public:
-    PipelineMultiVolume(int actorPortIndex) : Pipeline()
+    PipelineMultiVolume(int actorPortIndex)
+      : Pipeline()
     {
       this->ActorPortIndex = actorPortIndex;
     }
@@ -283,11 +286,11 @@ private:
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolumeRenderingDisplayableManager* external)
-: External(external)
-, AddingVolumeNode(false)
-, OriginalDesiredUpdateRate(0.0) // 0 fps is a special value that means it hasn't been set
-, Interaction(0)
-, PickedNodeID("")
+  : External(external)
+  , AddingVolumeNode(false)
+  , OriginalDesiredUpdateRate(0.0) // 0 fps is a special value that means it hasn't been set
+  , Interaction(0)
+  , PickedNodeID("")
 {
   this->MultiVolumeActor = vtkSmartPointer<vtkMultiVolume>::New();
   this->MultiVolumeMapper = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
@@ -392,7 +395,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayNode(vtkMR
 
   // Check whether display node can be shown in this view
   vtkMRMLVolumeRenderingDisplayNode* volRenDispNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(displayNode);
-  if (!volRenDispNode //
+  if (!volRenDispNode                       //
       || !volRenDispNode->GetVolumeNodeID() //
       || !volRenDispNode->GetVolumePropertyNodeID())
   {
@@ -415,8 +418,8 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVol
   }
 
   return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D() //
-    && displayNode->GetOpacity() > 0 //
-    && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID());
+         && displayNode->GetOpacity() > 0                                              //
+         && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID());
 }
 
 //---------------------------------------------------------------------------
@@ -429,8 +432,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveOrphanPipeline
   {
     Pipeline* pipeline = *it;
     if (!pipeline->DisplayNode.GetPointer() || !pipeline->DisplayNode->GetDisplayableNode()
-      || (autoRelease && pipeline->DisplayNode && //
-        (!pipeline->DisplayNode->IsDisplayableInView(viewNode->GetID()) || !this->IsVisible(pipeline->DisplayNode))))
+        || (autoRelease && pipeline->DisplayNode && //
+            (!pipeline->DisplayNode->IsDisplayableInView(viewNode->GetID()) || !this->IsVisible(pipeline->DisplayNode))))
     {
       it = this->RemovePipelineIt(it);
     }
@@ -442,8 +445,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveOrphanPipeline
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::PipelineListType::iterator
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipelineIt(vtkMRMLVolumeRenderingDisplayNode* displayNode)
+vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::PipelineListType::iterator vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipelineIt(
+  vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
   PipelineListType::iterator it;
   for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end(); ++it)
@@ -457,8 +460,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipelineIt(vtkMRMLVolu
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::Pipeline*
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode)
+vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::Pipeline* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
   for (Pipeline* pipeline : this->DisplayPipelines)
   {
@@ -473,7 +475,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipeline(vtkMRMLVolume
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetNextAvailableMultiVolumeActorPortIndex()
 {
-  //TODO: Change back "port = 1" to to "port = 0" once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
+  // TODO: Change back "port = 1" to to "port = 0" once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
   const int MAXIMUM_NUMBER_OF_MULTIVOLUME_ACTORS = 10;
   for (int port = 1; port < MAXIMUM_NUMBER_OF_MULTIVOLUME_ACTORS; port++)
   {
@@ -523,7 +525,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddVolumeNode(vtkMRM
 
   this->AddObservations(node);
 
-  for (int i = 0; i<numDisplayNodes; i++)
+  for (int i = 0; i < numDisplayNodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if (this->UseDisplayNode(displayNode))
@@ -612,7 +614,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     pipelineMulti->DisplayNode = displayNode;
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
-    //TODO: Remove this workaround when the issue is fixed in VTK
+    // TODO: Remove this workaround when the issue is fixed in VTK
     double* multiVolumeBounds = this->MultiVolumeActor->GetBounds();
     if (multiVolumeBounds[0] > multiVolumeBounds[1]) // Prevent error that GetVolume throws if volume is null (TODO: need GetNumberOfVolumes)
     {
@@ -627,12 +629,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
       dummyVolumeActor->SetProperty(dummyVolumeProperty);
       this->MultiVolumeActor->SetVolume(dummyVolumeActor, 0);
     }
-    //TODO: Uncomment when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
-    // Set image data to mapper
-    //this->MultiVolumeMapper->SetInputConnection(pipelineMulti->ActorPortIndex, volumeNode->GetImageDataConnection());
-    // Add volume to multi-volume actor
-    //this->MultiVolumeActor->SetVolume(pipelineMulti->VolumeActor, pipelineMulti->ActorPortIndex);
-    // Make sure common actor is added to renderer and local cache
+    // TODO: Uncomment when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
+    //  Set image data to mapper
+    // this->MultiVolumeMapper->SetInputConnection(pipelineMulti->ActorPortIndex, volumeNode->GetImageDataConnection());
+    //  Add volume to multi-volume actor
+    // this->MultiVolumeActor->SetVolume(pipelineMulti->VolumeActor, pipelineMulti->ActorPortIndex);
+    //  Make sure common actor is added to renderer and local cache
     this->External->GetRenderer()->AddVolume(this->MultiVolumeActor);
     // Add pipeline
     this->DisplayPipelines.push_back(pipelineMulti);
@@ -640,8 +642,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     this->UpdateDisplayNode(displayNode);
   }
 
-  if (this->External->GetMRMLNodesObserverManager()->GetObservationsCount(
-    displayNode, this->DisplayObservedEvents->GetValue(0)) == 0)
+  if (this->External->GetMRMLNodesObserverManager()->GetObservationsCount(displayNode, this->DisplayObservedEvents->GetValue(0)) == 0)
   {
     this->External->GetMRMLNodesObserverManager()->AddObjectEvents(displayNode, this->DisplayObservedEvents);
   }
@@ -667,8 +668,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::PipelineListType::iterator
-vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemovePipelineIt(PipelineListType::iterator pipelineIt)
+vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::PipelineListType::iterator vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemovePipelineIt(
+  PipelineListType::iterator pipelineIt)
 {
   if (pipelineIt == this->DisplayPipelines.end())
   {
@@ -781,8 +782,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformToWorld(
-  vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix, bool& ijkToWorldLinear)
+bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformToWorld(vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix, bool& ijkToWorldLinear)
 {
   if (volumeNode == nullptr)
   {
@@ -809,8 +809,9 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformTo
   int success = transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
   if (!success)
   {
-    vtkWarningWithObjectMacro(this->External, "GetVolumeTransformToWorld: Non-linear parent transform found for volume node ("
-      << volumeNode->GetName() << "). Volume rendering will not be displayed. See https://github.com/Slicer/Slicer/issues/6648 for details.");
+    vtkWarningWithObjectMacro(this->External,
+                              "GetVolumeTransformToWorld: Non-linear parent transform found for volume node ("
+                                << volumeNode->GetName() << "). Volume rendering will not be displayed. See https://github.com/Slicer/Slicer/issues/6648 for details.");
     outputIjkToWorldMatrix->Identity();
     ijkToWorldLinear = false;
     return false;
@@ -841,13 +842,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNode(vt
   }
   else
   {
-    this->AddVolumeNode( vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode()) );
+    this->AddVolumeNode(vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode()));
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePipeline(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
 {
   if (!displayNode || !pipeline)
   {
@@ -936,10 +936,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         vtkImageData* inputImage = volumeNode->GetImageData();
         int* tempExtent = pipeline->MaskImage->GetExtent();
         int* volumeExtent = inputImage->GetExtent();
-        if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1] //
+        if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1]    //
             || tempExtent[2] != volumeExtent[2] || tempExtent[3] != volumeExtent[3] //
             || tempExtent[4] != volumeExtent[4] || tempExtent[5] != volumeExtent[5] //
-            || pipeline->MaskImage->GetScalarType() != inputImage->GetScalarType() //
+            || pipeline->MaskImage->GetScalarType() != inputImage->GetScalarType()  //
             || pipeline->MaskImage->GetNumberOfScalarComponents() != inputImage->GetNumberOfScalarComponents())
         {
           pipeline->MaskImage->SetExtent(volumeExtent);
@@ -1005,7 +1005,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   // Set volume visibility, return if hidden
   pipeline->VolumeActor->SetVisibility(displayNodeVisible);
   // Workaround for lack of support for Visibility flag in vtkMultiVolume's vtkVolume members
-  //TODO: Remove when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
+  // TODO: Remove when https://gitlab.kitware.com/vtk/vtk/issues/17302 is fixed in VTK
   if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
   {
     PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(this->GetPipeline(displayNode));
@@ -1055,12 +1055,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   if (openGLMapper)
   {
     int* dims = volumeNode->GetImageData()->GetDimensions();
-    unsigned short partitions[3] =
-    {
-      static_cast<unsigned short>(dims[0] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
-      static_cast<unsigned short>(dims[1] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
-      static_cast<unsigned short>(dims[2] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1)
-    };
+    unsigned short partitions[3] = { static_cast<unsigned short>(dims[0] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+                                     static_cast<unsigned short>(dims[1] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+                                     static_cast<unsigned short>(dims[2] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1) };
     openGLMapper->SetPartitions(partitions[0], partitions[1], partitions[2]);
   }
 
@@ -1106,8 +1103,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   }
   else if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
   {
-    vtkMRMLGPURayCastVolumeRenderingDisplayNode* gpuDisplayNode =
-      vtkMRMLGPURayCastVolumeRenderingDisplayNode::SafeDownCast(displayNode);
+    vtkMRMLGPURayCastVolumeRenderingDisplayNode* gpuDisplayNode = vtkMRMLGPURayCastVolumeRenderingDisplayNode::SafeDownCast(displayNode);
     vtkGPUVolumeRayCastMapper* gpuMapper = vtkGPUVolumeRayCastMapper::SafeDownCast(mapper);
 
     switch (viewNode->GetVolumeRenderingQuality())
@@ -1143,8 +1139,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   }
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
   {
-    vtkMRMLMultiVolumeRenderingDisplayNode* multiDisplayNode =
-      vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(displayNode);
+    vtkMRMLMultiVolumeRenderingDisplayNode* multiDisplayNode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(displayNode);
     vtkGPUVolumeRayCastMapper* gpuMultiMapper = vtkGPUVolumeRayCastMapper::SafeDownCast(mapper);
 
     switch (viewNode->GetVolumeRenderingQuality())
@@ -1180,16 +1175,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   // Set ray casting technique
   switch (viewNode->GetRaycastTechnique())
   {
-    case vtkMRMLViewNode::MaximumIntensityProjection:
-      mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
-      break;
-    case vtkMRMLViewNode::MinimumIntensityProjection:
-      mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
-      break;
+    case vtkMRMLViewNode::MaximumIntensityProjection: mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND); break;
+    case vtkMRMLViewNode::MinimumIntensityProjection: mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND); break;
     case vtkMRMLViewNode::Composite:
-    default:
-      mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
-      break;
+    default: mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND); break;
   }
 
   // Update ROI clipping planes
@@ -1240,8 +1229,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
 {
   if (!pipeline)
   {
@@ -1268,8 +1256,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromMarkupsROINode(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromMarkupsROINode(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
 {
   if (!displayNode || !pipeline)
   {
@@ -1295,8 +1282,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanes
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromClipNode(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromClipNode(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
 {
   if (!displayNode || !pipeline)
   {
@@ -1326,14 +1312,12 @@ double vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetFramerate()
     return 15.;
   }
 
-  return ( viewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum ?
-           0.0 : // special value meaning full quality
-           std::max(viewNode->GetExpectedFPS(), 0.0001) );
+  return (viewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum ? 0.0 : // special value meaning full quality
+            std::max(viewNode->GetExpectedFPS(), 0.0001));
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetMaxMemoryInBytes(
-  vtkMRMLVolumeRenderingDisplayNode* displayNode)
+vtkIdType vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetMaxMemoryInBytes(vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
   vtkMRMLViewNode* viewNode = this->External->GetMRMLViewNode();
   if (!viewNode)
@@ -1418,9 +1402,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddObservations(vtkM
   this->ObservedVolumeNodes.push_back(node);
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   broker->AddObservation(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
-  broker->AddObservation(node, vtkMRMLDisplayableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
-  broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
-  broker->AddObservation(node, vtkMRMLVolumeNode::ImageDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  broker->AddObservation(node, vtkMRMLDisplayableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  broker->AddObservation(node, vtkMRMLVolumeNode::ImageDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
 }
 
 //---------------------------------------------------------------------------
@@ -1441,9 +1425,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveObservations(v
   broker->RemoveObservations(observations);
   observations = broker->GetObservations(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLVolumeNode::ImageDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(node, vtkMRMLVolumeNode::ImageDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -1504,8 +1488,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
   int numberOfVisibleVolumes = 0;
   for (Pipeline* pipeline : this->DisplayPipelines)
   {
-    vtkMRMLMultiVolumeRenderingDisplayNode* multiDisplayNode =
-      vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(pipeline->DisplayNode);
+    vtkMRMLMultiVolumeRenderingDisplayNode* multiDisplayNode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(pipeline->DisplayNode);
     if (!multiDisplayNode)
     {
       continue;
@@ -1557,8 +1540,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
       minimumSampleDistance = sampleDistance;
     }
 
-    //double* spacing = volumeNode->GetSpacing();
-    //sumVolumeSpacing = (spacing[0] + spacing[1] + spacing[2]) / 3.0;
+    // double* spacing = volumeNode->GetSpacing();
+    // sumVolumeSpacing = (spacing[0] + spacing[1] + spacing[2]) / 3.0;
     sumVolumeSpacing += sampleDistance;
     numberOfVisibleVolumes++;
   }
@@ -1600,8 +1583,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::FindPickedDisplayNod
     vtkVolume* currentVolumeActor = pipeline->VolumeActor.GetPointer();
     if (currentVolumeActor == volume && currentDisplayNode)
     {
-      vtkDebugWithObjectMacro(currentDisplayNode, "FindPickedDisplayNodeFromVolumeActor: Found matching volume, pick was on volume "
-        << (currentDisplayNode->GetDisplayableNode() ? currentDisplayNode->GetDisplayableNode()->GetName() : "NULL"));
+      vtkDebugWithObjectMacro(currentDisplayNode,
+                              "FindPickedDisplayNodeFromVolumeActor: Found matching volume, pick was on volume "
+                                << (currentDisplayNode->GetDisplayableNode() ? currentDisplayNode->GetDisplayableNode()->GetName() : "NULL"));
       this->PickedNodeID = currentDisplayNode->GetID();
     }
   }
@@ -1633,13 +1617,13 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
 vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
 {
   delete this->Internal;
-  this->Internal=nullptr;
+  this->Internal = nullptr;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::PrintSelf( ostream& os, vtkIndent indent)
+void vtkMRMLVolumeRenderingDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf ( os, indent );
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtkMRMLVolumeRenderingDisplayableManager: " << this->GetClassName() << "\n";
 }
 
@@ -1793,7 +1777,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
   {
     if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
     {
-      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
+      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
       vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(callDataNode);
       if (displayNode)
       {
@@ -1806,7 +1790,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
         }
       }
     }
-    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent) //
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)      //
              || (event == vtkMRMLTransformableNode::TransformModifiedEvent) //
              || (event == vtkCommand::ModifiedEvent))
     {
@@ -1820,7 +1804,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
     else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
     {
       int numDisplayNodes = volumeNode->GetNumberOfDisplayNodes();
-      for (int i = 0; i<numDisplayNodes; i++)
+      for (int i = 0; i < numDisplayNodes; i++)
       {
         vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
         if (this->Internal->UseDisplayNode(displayNode))
@@ -1901,7 +1885,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
   {
-    vtkDebugMacro( "vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML: Scene is not set");
+    vtkDebugMacro("vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML: Scene is not set");
     return;
   }
   this->Internal->ClearDisplayableNodes();
@@ -1909,7 +1893,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
   vtkMRMLVolumeNode* volumeNode = nullptr;
   std::vector<vtkMRMLNode*> volumeNodes;
   int numOfVolumeNodes = scene ? scene->GetNodesByClass("vtkMRMLVolumeNode", volumeNodes) : 0;
-  for (int i = 0; i<numOfVolumeNodes; i++)
+  for (int i = 0; i < numOfVolumeNodes; i++)
   {
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeNodes[i]);
     if (volumeNode && this->Internal->UseDisplayableNode(volumeNode))

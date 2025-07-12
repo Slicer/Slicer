@@ -34,15 +34,13 @@ class vtkMRMLPlotViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
-class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   qSlicerViewControllersModule(QObject* parent = nullptr);
   ~qSlicerViewControllersModule() override;

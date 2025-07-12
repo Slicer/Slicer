@@ -31,8 +31,7 @@
 #include <vector>
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsPlaneWidgetPrivate:
-  public Ui_qMRMLMarkupsPlaneWidget
+class qMRMLMarkupsPlaneWidgetPrivate : public Ui_qMRMLMarkupsPlaneWidget
 {
 public:
   qMRMLMarkupsPlaneWidgetPrivate(qMRMLMarkupsPlaneWidget& object);
@@ -72,25 +71,16 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
     this->planeSizeModeComboBox->addItem(vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(sizeMode), sizeMode);
   }
 
-  QObject::connect(this->planeTypeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onPlaneTypeIndexChanged()));
-  QObject::connect(this->planeSizeModeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onPlaneSizeModeIndexChanged()));
+  QObject::connect(this->planeTypeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onPlaneTypeIndexChanged()));
+  QObject::connect(this->planeSizeModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onPlaneSizeModeIndexChanged()));
 
-  QObject::connect(this->sizeXSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneSizeSpinBoxChanged()));
-  QObject::connect(this->sizeYSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneSizeSpinBoxChanged()));
+  QObject::connect(this->sizeXSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneSizeSpinBoxChanged()));
+  QObject::connect(this->sizeYSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneSizeSpinBoxChanged()));
 
-
-  QObject::connect(this->boundsXMinSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsXMaxSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsYMinSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsYMaxSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsXMinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsXMaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsYMinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsYMaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
 
   QObject::connect(this->normalVisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(onNormalVisibilityCheckBoxChanged()));
   QObject::connect(this->normalOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(onNormalOpacitySliderChanged()));
@@ -104,14 +94,10 @@ QString qMRMLMarkupsPlaneWidgetPrivate::planeTypeName(int planeType)
 {
   switch (planeType)
   {
-    case vtkMRMLMarkupsPlaneNode::PlaneType3Points:
-      return qMRMLMarkupsPlaneWidget::tr("Three points");
-    case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal:
-      return qMRMLMarkupsPlaneWidget::tr("Point normal");
-    case vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit:
-      return qMRMLMarkupsPlaneWidget::tr("Plane fit");
-    default:
-      break;
+    case vtkMRMLMarkupsPlaneNode::PlaneType3Points: return qMRMLMarkupsPlaneWidget::tr("Three points");
+    case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal: return qMRMLMarkupsPlaneWidget::tr("Point normal");
+    case vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit: return qMRMLMarkupsPlaneWidget::tr("Plane fit");
+    default: break;
   }
   return "";
 }
@@ -121,7 +107,8 @@ QString qMRMLMarkupsPlaneWidgetPrivate::planeTypeName(int planeType)
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsPlaneWidget::qMRMLMarkupsPlaneWidget(QWidget* parent)
-  : Superclass(parent), d_ptr(new qMRMLMarkupsPlaneWidgetPrivate(*this))
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsPlaneWidgetPrivate(*this))
 {
   this->setup();
 }
@@ -146,8 +133,7 @@ vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode() const
 // --------------------------------------------------------------------------
 void qMRMLMarkupsPlaneWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
-  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->MarkupsNode = markupsNode;
   this->updateWidgetFromMRML();

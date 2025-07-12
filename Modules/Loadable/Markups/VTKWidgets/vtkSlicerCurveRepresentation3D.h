@@ -68,11 +68,9 @@ public:
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
-  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& componentIndex, double& closestDistance2);
+  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& componentIndex, double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation3D();
@@ -80,7 +78,7 @@ protected:
 
   void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode) override;
 
-  vtkSmartPointer<vtkPolyData>   Line;
+  vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
@@ -91,7 +89,7 @@ protected:
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 
-  double PreviousSpecularLightingCoeff{0.0};
+  double PreviousSpecularLightingCoeff{ 0.0 };
 
 private:
   vtkSlicerCurveRepresentation3D(const vtkSlicerCurveRepresentation3D&) = delete;

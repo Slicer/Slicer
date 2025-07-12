@@ -47,8 +47,7 @@ void qMRMLThreeDViewInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   this->Ui_qMRMLThreeDViewInformationWidget::setupUi(widget);
 
-  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(setViewGroup(int)));
+  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setViewGroup(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -70,7 +69,8 @@ void qMRMLThreeDViewInformationWidgetPrivate::updateWidgetFromMRMLViewNode()
 // qMRMLThreeDViewView methods
 
 // --------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _parent) : Superclass(_parent)
+qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLThreeDViewInformationWidgetPrivate(*this))
 {
   Q_D(qMRMLThreeDViewInformationWidget);
@@ -104,8 +104,7 @@ void qMRMLThreeDViewInformationWidget::setMRMLViewNode(vtkMRMLViewNode* newViewN
     return;
   }
 
-  d->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
-    d, SLOT(updateWidgetFromMRMLViewNode()));
+  d->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRMLViewNode()));
 
   d->MRMLViewNode = newViewNode;
 

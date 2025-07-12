@@ -43,8 +43,8 @@ public:
 
   enum
   {
-    DisplayableManagerFactoryRegisteredEvent     = 30100,
-    DisplayableManagerFactoryUnRegisteredEvent   = 30101
+    DisplayableManagerFactoryRegisteredEvent = 30100,
+    DisplayableManagerFactoryUnRegisteredEvent = 30101
   };
 
   /// Return True if Displayable Manager identified by \a vtkClassName
@@ -84,7 +84,6 @@ public:
   vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
 
 protected:
-
   vtkMRMLDisplayableManagerFactory();
   ~vtkMRMLDisplayableManagerFactory() override;
 
@@ -94,10 +93,8 @@ protected:
   typedef vtkMRMLDisplayableManagerFactory Self;
 
 private:
-
   vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&) = delete;
   void operator=(const vtkMRMLDisplayableManagerFactory&) = delete;
-
 };
 
 #endif

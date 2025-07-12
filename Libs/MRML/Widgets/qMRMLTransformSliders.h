@@ -64,14 +64,22 @@ public:
   ///
   /// Set/Get Coordinate system
   /// By default, the selector coordinate system will be set to GLOBAL
-  enum CoordinateReferenceType { GLOBAL, LOCAL };
+  enum CoordinateReferenceType
+  {
+    GLOBAL,
+    LOCAL
+  };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
   ///
   /// Set/Get TypeOfTransform
   /// By default, the selector coordinate system will be set to TRANSLATION
-  enum TransformType { ROTATION, TRANSLATION };
+  enum TransformType
+  {
+    ROTATION,
+    TRANSLATION
+  };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
@@ -182,8 +190,7 @@ protected:
   /// Parameter 'pad' allows to specify (using a value between 0 and 1)
   /// which percentage of the found range(max-min) value should be subtracted/added
   /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4* mat,
-                                                            double pad = 0);
+  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4* mat, double pad = 0);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformSliders);

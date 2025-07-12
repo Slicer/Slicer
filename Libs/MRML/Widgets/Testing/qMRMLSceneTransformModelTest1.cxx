@@ -130,10 +130,10 @@ int qMRMLSceneTransformModelTest1(int argc, char* argv[])
   item->insertRow(0,items);
   */
   QTreeView* view = new QTreeView(nullptr);
-  //view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  // view->setSelectionBehavior(QAbstractItemView::SelectRows);
   view->setDragDropMode(QAbstractItemView::InternalMove);
   view->setModel(&model);
-  //view->setModel(&m);
+  // view->setModel(&m);
   view->show();
   view->resize(500, 800);
 

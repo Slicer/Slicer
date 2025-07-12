@@ -64,23 +64,16 @@ public:
   /// If \a moduleName is empty, attribute will be set for module `__main__`.
   ///
   /// If \a moduleName is a dotted name, attribute will be set the last module.
-  static bool setModuleAttribute(const QString& moduleName,
-                                 const QString& attributeName,
-                                 PyObject* attributeValue);
+  static bool setModuleAttribute(const QString& moduleName, const QString& attributeName, PyObject* attributeValue);
 
   /// \sa qSlicerLoadableModule::importModulePythonExtensions
-  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
-                                           const QString& intDir,
-                                           const QString& modulePath,
-                                           bool isEmbedded = false);
+  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager, const QString& intDir, const QString& modulePath, bool isEmbedded = false);
 
 private:
   /// Not implemented
   qSlicerScriptedUtils() = default;
   virtual ~qSlicerScriptedUtils() = default;
-
 };
-
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonCppAPI
 {
@@ -100,14 +93,12 @@ public:
   PyObject* pythonSelf() const;
 
 private:
-
   QString ObjectName;
 
-  QHash<int, QString>   APIMethods;
+  QHash<int, QString> APIMethods;
   QHash<int, PythonQtObjectPtr> PythonAPIMethods;
 
   PythonQtObjectPtr PythonSelf;
 };
-
 
 #endif

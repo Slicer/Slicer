@@ -33,11 +33,9 @@
 /// Otherwise show first poly data representation if any.
 /// Otherwise try converting to closed surface representation
 ///
-class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegmentationsDisplayableManager3D
-  : public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegmentationsDisplayableManager3D : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-
   static vtkMRMLSegmentationsDisplayableManager3D* New();
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -53,7 +51,6 @@ public:
   virtual const char* GetPickedSegmentID();
 
 protected:
-
   vtkMRMLSegmentationsDisplayableManager3D();
   ~vtkMRMLSegmentationsDisplayableManager3D() override;
 
@@ -74,7 +71,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLSegmentationsDisplayableManager3D(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
   void operator=(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
 

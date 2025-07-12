@@ -40,7 +40,7 @@ class vtkMatrix4x4;
 /// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
-  public:
+public:
   static vtkMRMLDiffusionTensorVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode, vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -49,7 +49,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -61,9 +61,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "DiffusionTensorVolumeDisplay";}
+  const char* GetNodeTagName() override { return "DiffusionTensorVolumeDisplay"; }
 
-  //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
+  // virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
   ///
   /// Updates this node if it depends on other nodes
@@ -80,9 +80,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -104,46 +102,31 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Set scalar invariant to trace (sum of eigenvalues).
-  void SetScalarInvariantToTrace() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
-  };
+  void SetScalarInvariantToTrace() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace); };
 
-  //Description:
+  // Description:
   /// Set scalar invariant to relative anisotropy
-  void SetScalarInvariantToRelativeAnisotropy() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
-  };
+  void SetScalarInvariantToRelativeAnisotropy() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy); };
 
   ///
   /// Set scalar invariant to FA (normalized variance of eigenvalues)
-  void SetScalarInvariantToFractionalAnisotropy() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-  };
+  void SetScalarInvariantToFractionalAnisotropy() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy); };
 
   ///
   /// Set scalar invariant to C_L (Westin's linear measure)
-  void SetScalarInvariantToLinearMeasure() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
-  };
+  void SetScalarInvariantToLinearMeasure() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure); };
 
   ///
   /// Set scalar invariant to C_P (Westin's planar measure)
-  void SetScalarInvariantToPlanarMeasure() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
-  };
+  void SetScalarInvariantToPlanarMeasure() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure); };
 
   ///
   /// Set scalar invariant to C_S (Westin's spherical measure)
-  void SetScalarInvariantToSphericalMeasure() {
-    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
-  };
+  void SetScalarInvariantToSphericalMeasure() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure); };
 
   ///
   /// Return a text string describing the ScalarInvariant variable
-  virtual const char* GetScalarInvariantAsString()
-  {
-    return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
-  };
+  virtual const char* GetScalarInvariantAsString() { return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant); };
 
   /// Get the input of the pipeline
   vtkAlgorithmOutput* GetInputImageDataConnection() override;
@@ -165,15 +148,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematics);
   vtkGetObjectMacro(ShiftScale, vtkImageShiftScale);
 
-
   ///
   /// get associated slice glyph display node or nullptr if not set
-  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) override;
-
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes(vtkMRMLVolumeNode* node) override;
 
   ///
   /// add slice glyph display nodes if not already present and return it
-  void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ) override;
+  void AddSliceGlyphDisplayNodes(vtkMRMLVolumeNode* node) override;
 
   ///
   /// Defines the expected range of the output data for given imageData after
@@ -209,10 +190,8 @@ protected:
 
   vtkImageCast* ImageCast;
 
-   /// Scalar display parameters
+  /// Scalar display parameters
   int ScalarInvariant;
-
-
 };
 
 #endif

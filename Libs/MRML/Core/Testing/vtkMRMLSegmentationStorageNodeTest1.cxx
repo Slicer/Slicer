@@ -42,10 +42,8 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 
   if (argc != 5)
   {
-    std::cerr << "Line " << __LINE__
-      << " - Missing or extra parameters!\n"
-      << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
-      << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Missing or extra parameters!\n"
+              << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -55,10 +53,10 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkFractionalLabelmapToClosedSurfaceConversionRule>::New());
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New());
 
-  const char* itkSnapSegmentationFilename = argv[1]; // ITKSnapSegmentation.nii.gz
+  const char* itkSnapSegmentationFilename = argv[1];   // ITKSnapSegmentation.nii.gz
   const char* oldSlicerSegmentationFilename = argv[2]; // OldSlicerSegmentation.seg.nrrd: Segmentation before shared labelmaps implemented.
-  const char* slicerSegmentationFilename = argv[3]; // SlicerSegmentation.seg.nrrd: Segmentation with shared labelmaps.
-  const char* tempDir = argv[4]; // Temporary folder where test segmentation files will be created
+  const char* slicerSegmentationFilename = argv[3];    // SlicerSegmentation.seg.nrrd: Segmentation with shared labelmaps.
+  const char* tempDir = argv[4];                       // Temporary folder where test segmentation files will be created
 
   // Test segmentation exported from ITK-SNAP
   std::cout << "Testing ITK-SNAP segmentation" << std::endl;
@@ -147,8 +145,7 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
     // Check that no valid geometry is found.
     // The segmentation is stored as a single voxel, which would specify a geometry,
     // the storage node should ignore that when reading the file (single-voxel volume is a special case).
-    std::string segmentationGeometryString = segmentation->DetermineCommonLabelmapGeometry(
-      vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY);
+    std::string segmentationGeometryString = segmentation->DetermineCommonLabelmapGeometry(vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY);
     CHECK_STD_STRING(segmentationGeometryString, "");
 
     // Clean up

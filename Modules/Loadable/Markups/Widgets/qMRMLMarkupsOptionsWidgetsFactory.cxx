@@ -32,7 +32,7 @@ qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::Instance =
 class qMRMLMarkupsOptionsWidgetsFactoryCleanup
 {
 public:
-  inline void use()   {   }
+  inline void use() {}
 
   ~qMRMLMarkupsOptionsWidgetsFactoryCleanup()
   {
@@ -42,10 +42,7 @@ public:
     }
   }
 
-  void cleanup()
-  {
-    qMRMLMarkupsOptionsWidgetsFactory::cleanup();
-  }
+  void cleanup() { qMRMLMarkupsOptionsWidgetsFactory::cleanup(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -106,9 +103,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::registerOptionsWidget(qMRMLMarkupsAbstra
   // Check for already registered widget
   if (this->RegisteredWidgets.contains(widget->className()))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << widget->className()
-               << " already registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << widget->className() << " already registered.";
     delete widget;
     return false;
   }
@@ -159,8 +154,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(const QString& c
   // Check for already registered widget
   if (!this->RegisteredWidgets.remove(className))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << className << " not registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << className << " not registered.";
     return false;
   }
 
@@ -180,14 +174,11 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
   // Check for already registered widget
   if (!this->RegisteredWidgets.contains(className))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << className
-               << " not registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << className << " not registered.";
     return nullptr;
   }
 
   return this->RegisteredWidgets[className]->createInstance();
-
 }
 
 //-----------------------------------------------------------------------------

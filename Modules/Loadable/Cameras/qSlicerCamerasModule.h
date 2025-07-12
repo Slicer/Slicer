@@ -31,12 +31,12 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerCamerasModulePrivate;
 
-class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
+
 public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerCamerasModule(QObject* parent = nullptr);
@@ -56,7 +56,6 @@ public:
   QStringList associatedNodeTypes() const override;
 
 protected:
-
   /// Create and return the widget representation associated to this module
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 

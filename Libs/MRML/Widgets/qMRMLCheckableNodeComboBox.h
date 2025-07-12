@@ -31,8 +31,7 @@ class qMRMLCheckableNodeComboBoxPrivate;
 /// information only resides in the combobox.
 /// Nodes are unchecked by default.
 /// \sa qMRMLNodeComboBox
-class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox
-  : public qMRMLNodeComboBox
+class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox : public qMRMLNodeComboBox
 {
   Q_OBJECT
 public:

@@ -21,7 +21,7 @@ int qMRMLMatrixWidgetTest1(int argc, char* argv[])
 
   QWidget widget;
 
-  qMRMLMatrixWidget   mrmlItem( &widget );
+  qMRMLMatrixWidget mrmlItem(&widget);
 
   vtkMRMLTransformNode* nullTransformNode = nullptr;
 

@@ -36,8 +36,7 @@ class vtkMRMLMarkupsNode;
 class qSlicerMarkupsPlaceWidgetPrivate;
 class QToolButton;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qSlicerMarkupsPlaceWidget : public qSlicerWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerMarkupsPlaceWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_ENUMS(PlaceMultipleMarkupsType)
@@ -64,8 +63,8 @@ public:
   {
     ShowPlaceMultipleMarkupsOption, // show a menu on the place button to place multiple markup points
     HidePlaceMultipleMarkupsOption, // don't allow to change persistency of place mode, just use current
-    ForcePlaceSingleMarkup, // always disable persistency when enabling place mode
-    ForcePlaceMultipleMarkups // always enable persistency when enabling place mode
+    ForcePlaceSingleMarkup,         // always disable persistency when enabling place mode
+    ForcePlaceMultipleMarkups       // always enable persistency when enabling place mode
   };
 
   /// Get the currently selected markups node.
@@ -127,7 +126,6 @@ public:
     qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkupsOptionVisible method is deprecated, please use deleteAllControlPointsOptionVisible instead");
     return this->deleteAllControlPointsOptionVisible();
   };
-
 
 public slots:
 
@@ -194,20 +192,20 @@ public slots:
   /// \deprecated Use deleteLastPoint instead.
   void deleteLastMarkup()
   {
-  qWarning("qSlicerMarkupsPlaceWidget::deleteLastMarkup method is deprecated, please use deleteLastPoint instead");
-  this->deleteLastPoint();
+    qWarning("qSlicerMarkupsPlaceWidget::deleteLastMarkup method is deprecated, please use deleteLastPoint instead");
+    this->deleteLastPoint();
   };
   /// \deprecated Use deleteAllPoints instead.
   void deleteAllMarkups()
   {
-  qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkups method is deprecated, please use deleteAllPoints instead");
-  this->deleteAllPoints();
+    qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkups method is deprecated, please use deleteAllPoints instead");
+    this->deleteAllPoints();
   };
   /// \deprecated Use setDeleteAllControlPointsOptionVisible instead.
   void setDeleteAllMarkupsOptionVisible(bool visible)
   {
-  qWarning("qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible method is deprecated, please use setDeleteAllControlPointsOptionVisible instead");
-  this->setDeleteAllControlPointsOptionVisible(visible);
+    qWarning("qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible method is deprecated, please use setDeleteAllControlPointsOptionVisible instead");
+    this->setDeleteAllControlPointsOptionVisible(visible);
   };
 
 protected slots:
@@ -247,7 +245,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsPlaceWidget);
   Q_DISABLE_COPY(qSlicerMarkupsPlaceWidget);
-
 };
 
 #endif

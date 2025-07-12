@@ -22,7 +22,7 @@
 #include "qMRMLColorTableView.h"
 
 qMRMLColorTableViewPlugin::qMRMLColorTableViewPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

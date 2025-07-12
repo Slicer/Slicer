@@ -54,16 +54,14 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Model";};
+  const char* GetNodeTagName() override { return "Model"; };
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLModelNode);
 
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
@@ -212,9 +210,12 @@ public:
   /// Returns 1 on success, 0 on failure.
   /// Based on code from K. Teich, MGH
   /// Warning: Not demand driven pipeline compliant
-  int CompositeScalars(const char* backgroundName, const char* overlayName,
-                       float overlayMin, float overlayMax,
-                       int showOverlayPositive, int showOverlayNegative,
+  int CompositeScalars(const char* backgroundName,
+                       const char* overlayName,
+                       float overlayMin,
+                       float overlayMax,
+                       int showOverlayPositive,
+                       int showOverlayNegative,
                        int reverseOverlay);
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
@@ -282,7 +283,6 @@ protected:
   ///
   /// Called when a node reference ID is modified.
   void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
-
 
   /// Internal function that sets the mesh to all the display nodes.
   /// Can be called if the mesh is changed.

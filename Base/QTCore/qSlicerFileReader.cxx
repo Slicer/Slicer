@@ -82,9 +82,9 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
   }
   QStringList matchingNameFilters;
   QFileInfo file(fileName);
-  if (!file.isFile() || //
-      !file.isReadable() || //
-      file.suffix().contains('~')) //temporary file
+  if (!file.isFile() ||            //
+      !file.isReadable() ||        //
+      file.suffix().contains('~')) // temporary file
   {
     return matchingNameFilters;
   }
@@ -109,7 +109,6 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
   matchingNameFilters.removeDuplicates();
   return matchingNameFilters;
 }
-
 
 //----------------------------------------------------------------------------
 bool qSlicerFileReader::load(const IOProperties& properties)
@@ -140,5 +139,5 @@ bool qSlicerFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileIn
   Q_UNUSED(fileInfoList);
   Q_UNUSED(archetypeFileInfo);
   Q_UNUSED(ioProperties);
-  return(false);
+  return (false);
 }

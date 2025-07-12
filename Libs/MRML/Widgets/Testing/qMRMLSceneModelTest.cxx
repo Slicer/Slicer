@@ -88,7 +88,6 @@ void qMRMLSceneModelTester::testSetsAndGets()
   QCOMPARE(sceneModel.mrmlScene(), scene.GetPointer());
 }
 
-
 // ----------------------------------------------------------------------------
 void qMRMLSceneModelTester::testSetScene()
 {
@@ -150,7 +149,6 @@ void qMRMLSceneModelTester::testSetColumns_data()
   QTest::addColumn<int>("toolTipNameColumn");
   QTest::addColumn<int>("extraItemColumn");
   QTest::addColumn<int>("columnCount");
-
 
   QTest::newRow("name") << 0 << -1 << -1 << -1 << -1 << -1 << 1;
   QTest::newRow("checkable name") << 0 << -1 << 0 << -1 << -1 << -1 << 1;

@@ -36,7 +36,6 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-
 int qMRMLNodeComboBoxTest4(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
@@ -65,7 +64,7 @@ int qMRMLNodeComboBoxTest4(int argc, char* argv[])
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
   }
-  if (strcmp(node->GetName(), "SomeBaseName_1")!=0)
+  if (strcmp(node->GetName(), "SomeBaseName_1") != 0)
   {
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
@@ -77,7 +76,7 @@ int qMRMLNodeComboBoxTest4(int argc, char* argv[])
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
   }
-  if (strcmp(node->GetName(), "SomeBaseName_2")!=0)
+  if (strcmp(node->GetName(), "SomeBaseName_2") != 0)
   {
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
@@ -94,7 +93,7 @@ int qMRMLNodeComboBoxTest4(int argc, char* argv[])
   // Check if base name of a particular class can be changed
   nodeSelector.setBaseName("DifferentBaseName", "vtkMRMLLabelMapVolumeNode");
   node = nodeSelector.addNode("vtkMRMLLabelMapVolumeNode");
-  if (strcmp(node->GetName(), "DifferentBaseName")!=0)
+  if (strcmp(node->GetName(), "DifferentBaseName") != 0)
   {
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;

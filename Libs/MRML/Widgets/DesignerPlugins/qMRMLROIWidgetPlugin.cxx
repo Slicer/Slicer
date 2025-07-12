@@ -22,7 +22,7 @@
 #include "qMRMLROIWidget.h"
 
 qMRMLROIWidgetPlugin::qMRMLROIWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

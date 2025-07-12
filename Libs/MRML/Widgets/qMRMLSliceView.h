@@ -39,8 +39,7 @@ class vtkMRMLSliceViewInteractorStyle;
 /// For performance reasons, the view block refreshes when the scene is in
 /// batch process state.
 /// \sa qMRMLSliceWidget, qMRMLSliceControllerWidget, qMRMLThreeDView
-class QMRML_WIDGETS_EXPORT qMRMLSliceView
-  : public ctkVTKSliceView
+class QMRML_WIDGETS_EXPORT qMRMLSliceView : public ctkVTKSliceView
 {
   Q_OBJECT
 public:
@@ -73,7 +72,7 @@ public:
   Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Return a DisplayableManager given its class name
-  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
+  Q_INVOKABLE vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode() const;
@@ -86,7 +85,7 @@ public:
   /// components of the return value are the positions within a
   /// LightBox pane and the z component of the return value (rounded
   /// to the nearest integer) is the pane in the LightBox
-  Q_INVOKABLE QList<double> convertDeviceToXYZ(const QList<int>&xy) const;
+  Q_INVOKABLE QList<double> convertDeviceToXYZ(const QList<int>& xy) const;
 
   /// Convert RAS to XYZ coordinates. Parameter ras and return value
   /// are of length 3. Z component of the return value is the pane in
@@ -97,7 +96,7 @@ public:
   /// are of length 3. Z component of parameter xyz is the LightBox
   /// pane and the X and Y components of parameter xyz is the position
   /// in the LightBox pane.
-  Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double> &xyz) const;
+  Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double>& xyz) const;
 
   /// Set cursor in the view area
   Q_INVOKABLE void setViewCursor(const QCursor&);

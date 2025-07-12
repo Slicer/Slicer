@@ -84,13 +84,12 @@ public:
   //@}
 
 protected:
-
   bool NormalVisibility{ true };
   double NormalOpacity{ 1.0 };
 
   vtkMRMLMarkupsPlaneDisplayNode();
   ~vtkMRMLMarkupsPlaneDisplayNode() override;
   vtkMRMLMarkupsPlaneDisplayNode(const vtkMRMLMarkupsPlaneDisplayNode&);
-  void operator= (const vtkMRMLMarkupsPlaneDisplayNode&);
+  void operator=(const vtkMRMLMarkupsPlaneDisplayNode&);
 };
 #endif

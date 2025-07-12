@@ -34,10 +34,10 @@ class MRMLIDImageIO_EXPORT MRMLIDImageIOFactory : public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MRMLIDImageIOFactory      Self;
-  typedef ObjectFactoryBase         Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef MRMLIDImageIOFactory Self;
+  typedef ObjectFactoryBase Superclass;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
   const char* GetITKSourceVersion() const override;
@@ -45,7 +45,7 @@ public:
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
-  static MRMLIDImageIOFactory* FactoryNew() { return new MRMLIDImageIOFactory;}
+  static MRMLIDImageIOFactory* FactoryNew() { return new MRMLIDImageIOFactory; }
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MRMLIDImageIOFactory, ObjectFactoryBase);
@@ -64,10 +64,8 @@ protected:
 private:
   MRMLIDImageIOFactory(const Self&) = delete;
   void operator=(const Self&) = delete;
-
 };
 
-
-} /// end namespace itk
+} // namespace itk
 
 #endif

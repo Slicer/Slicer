@@ -30,8 +30,7 @@
 class QSettings;
 class qSlicerSettingsStylesPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsStylesPanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsStylesPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   /// Holds the current style's name for the settings.

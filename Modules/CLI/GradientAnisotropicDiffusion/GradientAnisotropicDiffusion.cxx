@@ -31,48 +31,44 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
 
   PARSE_ARGS;
 
-  typedef    float InputPixelType;
-  typedef    T     OutputPixelType;
+  typedef float InputPixelType;
+  typedef T OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
+  typedef itk::Image<InputPixelType, 3> InputImageType;
   typedef itk::Image<OutputPixelType, 3> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<
-    InputImageType, InputImageType>  FilterType;
+  typedef itk::GradientAnisotropicDiffusionImageFilter<InputImageType, InputImageType> FilterType;
   typedef itk::CastImageFilter<InputImageType, OutputImageType> CastType;
 
   typename ReaderType::Pointer reader = ReaderType::New();
-  itk::PluginFilterWatcher watchReader(reader, "Read Volume",
-                                       CLPProcessInformation);
+  itk::PluginFilterWatcher watchReader(reader, "Read Volume", CLPProcessInformation);
 
-  reader->SetFileName( inputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
 
   typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion",
-                                       CLPProcessInformation);
+  itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion", CLPProcessInformation);
 
-  filter->SetInput( reader->GetOutput() );
-  filter->SetNumberOfIterations( numberOfIterations );
-  filter->SetTimeStep( timeStep );
-  filter->SetConductanceParameter( conductance );
-  filter->SetUseImageSpacing( useImageSpacing );
+  filter->SetInput(reader->GetOutput());
+  filter->SetNumberOfIterations(numberOfIterations);
+  filter->SetTimeStep(timeStep);
+  filter->SetConductanceParameter(conductance);
+  filter->SetUseImageSpacing(useImageSpacing);
 
   typename CastType::Pointer cast = CastType::New();
-  cast->SetInput( filter->GetOutput() );
+  cast->SetInput(filter->GetOutput());
 
   typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume",
-                                       CLPProcessInformation);
-  writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( cast->GetOutput() );
+  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  writer->SetFileName(outputVolume.c_str());
+  writer->SetInput(cast->GetOutput());
   writer->Update();
 
   return EXIT_SUCCESS;
@@ -85,7 +81,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -96,40 +92,18 @@ int main(int argc, char* argv[])
 
     switch (componentType)
     {
-      case itk::IOComponentEnum::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0) );
-        break;
-      case itk::IOComponentEnum::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
-        break;
-      case itk::IOComponentEnum::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0) );
-        break;
-      case itk::IOComponentEnum::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
-        break;
-      case itk::IOComponentEnum::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0) );
-        break;
-      case itk::IOComponentEnum::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
-        break;
-      case itk::IOComponentEnum::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0) );
-        break;
-      case itk::IOComponentEnum::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
-        break;
-      case itk::IOComponentEnum::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
-        break;
-      case itk::IOComponentEnum::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
-        break;
+      case itk::IOComponentEnum::UCHAR: return DoIt(argc, argv, static_cast<unsigned char>(0)); break;
+      case itk::IOComponentEnum::CHAR: return DoIt(argc, argv, static_cast<char>(0)); break;
+      case itk::IOComponentEnum::USHORT: return DoIt(argc, argv, static_cast<unsigned short>(0)); break;
+      case itk::IOComponentEnum::SHORT: return DoIt(argc, argv, static_cast<short>(0)); break;
+      case itk::IOComponentEnum::UINT: return DoIt(argc, argv, static_cast<unsigned int>(0)); break;
+      case itk::IOComponentEnum::INT: return DoIt(argc, argv, static_cast<int>(0)); break;
+      case itk::IOComponentEnum::ULONG: return DoIt(argc, argv, static_cast<unsigned long>(0)); break;
+      case itk::IOComponentEnum::LONG: return DoIt(argc, argv, static_cast<long>(0)); break;
+      case itk::IOComponentEnum::FLOAT: return DoIt(argc, argv, static_cast<float>(0)); break;
+      case itk::IOComponentEnum::DOUBLE: return DoIt(argc, argv, static_cast<double>(0)); break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
+      default: std::cout << "unknown component type" << std::endl; break;
     }
   }
   catch (itk::ExceptionObject& excep)

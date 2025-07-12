@@ -42,9 +42,7 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
     QList<QDesignerCustomWidgetInterface*> plugins;
-    plugins << new qMRMLColorLegendDisplayNodeWidgetPlugin
-      << new qMRMLColorListViewPlugin
-      << new qMRMLColorTableViewPlugin;
+    plugins << new qMRMLColorLegendDisplayNodeWidgetPlugin << new qMRMLColorListViewPlugin << new qMRMLColorTableViewPlugin;
     return plugins;
   }
 };

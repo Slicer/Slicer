@@ -37,10 +37,11 @@
 class qSlicerCropVolumeModuleWidgetPrivate : public Ui_qSlicerCropVolumeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerCropVolumeModuleWidget);
+
 protected:
   qSlicerCropVolumeModuleWidget* const q_ptr;
-public:
 
+public:
   qSlicerCropVolumeModuleWidgetPrivate(qSlicerCropVolumeModuleWidget& object);
   ~qSlicerCropVolumeModuleWidgetPrivate();
 
@@ -58,7 +59,8 @@ public:
 // qSlicerCropVolumeModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerCropVolumeModuleWidgetPrivate::qSlicerCropVolumeModuleWidgetPrivate(qSlicerCropVolumeModuleWidget& object) : q_ptr(&object)
+qSlicerCropVolumeModuleWidgetPrivate::qSlicerCropVolumeModuleWidgetPrivate(qSlicerCropVolumeModuleWidget& object)
+  : q_ptr(&object)
 {
 }
 
@@ -129,7 +131,7 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
     roiExists = false;
     problemsDescription << qSlicerCropVolumeModuleWidget::tr("Select or create a new input ROI.");
   }
-  if (this->ParametersNode->GetOutputVolumeNode() //
+  if (this->ParametersNode->GetOutputVolumeNode()                              //
       && this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode() //
       && !this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
   {
@@ -140,7 +142,7 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
   // Non-interpolated cropping problem
   if (this->ParametersNode->GetVoxelBased())
   {
-    if (this->ParametersNode->GetInputVolumeNode() //
+    if (this->ParametersNode->GetInputVolumeNode()                              //
         && this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode() //
         && !this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
     {
@@ -200,8 +202,8 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
 
 //-----------------------------------------------------------------------------
 qSlicerCropVolumeModuleWidget::qSlicerCropVolumeModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerCropVolumeModuleWidgetPrivate(*this) )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerCropVolumeModuleWidgetPrivate(*this))
 {
 }
 
@@ -217,59 +219,38 @@ void qSlicerCropVolumeModuleWidget::setup()
 
   this->Superclass::setup();
 
-  connect(d->ParametersNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this, SLOT(setParametersNode(vtkMRMLNode*)));
+  connect(d->ParametersNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setParametersNode(vtkMRMLNode*)));
 
-  connect(d->InputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this, SLOT(setInputVolume(vtkMRMLNode*)));
+  connect(d->InputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setInputVolume(vtkMRMLNode*)));
 
-  connect(d->InputROIComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(setInputROI(vtkMRMLNode*)));
-  connect(d->InputROIComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
-          this, SLOT(initializeInputROI(vtkMRMLNode*)));
-  connect(d->InputROIComboBox, SIGNAL(nodeAdded(vtkMRMLNode*)),
-          this, SLOT(onInputROIAdded(vtkMRMLNode*)));
+  connect(d->InputROIComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setInputROI(vtkMRMLNode*)));
+  connect(d->InputROIComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), this, SLOT(initializeInputROI(vtkMRMLNode*)));
+  connect(d->InputROIComboBox, SIGNAL(nodeAdded(vtkMRMLNode*)), this, SLOT(onInputROIAdded(vtkMRMLNode*)));
 
-  connect(d->OutputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this, SLOT(setOutputVolume(vtkMRMLNode*)));
+  connect(d->OutputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setOutputVolume(vtkMRMLNode*)));
 
-  connect(d->VisibilityButton, SIGNAL(toggled(bool)),
-          this, SLOT(onROIVisibilityChanged(bool)));
-  connect(d->ROIFitPushButton, SIGNAL(clicked()),
-    this, SLOT(onROIFit()));
+  connect(d->VisibilityButton, SIGNAL(toggled(bool)), this, SLOT(onROIVisibilityChanged(bool)));
+  connect(d->ROIFitPushButton, SIGNAL(clicked()), this, SLOT(onROIFit()));
 
-  connect(d->InterpolationEnabledCheckBox, SIGNAL(toggled(bool)),
-    this, SLOT(onInterpolationEnabled(bool)));
-  connect(d->SpacingScalingSpinBox, SIGNAL(valueChanged(double)),
-    this, SLOT(onSpacingScalingValueChanged(double)));
-  connect(d->IsotropicCheckbox, SIGNAL(toggled(bool)),
-    this, SLOT(onIsotropicModeChanged(bool)));
+  connect(d->InterpolationEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(onInterpolationEnabled(bool)));
+  connect(d->SpacingScalingSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onSpacingScalingValueChanged(double)));
+  connect(d->IsotropicCheckbox, SIGNAL(toggled(bool)), this, SLOT(onIsotropicModeChanged(bool)));
 
-  connect(d->LinearRadioButton, SIGNAL(toggled(bool)),
-          this, SLOT(onInterpolationModeChanged()));
-  connect(d->NNRadioButton, SIGNAL(toggled(bool)),
-          this, SLOT(onInterpolationModeChanged()));
-  connect(d->WSRadioButton, SIGNAL(toggled(bool)),
-          this, SLOT(onInterpolationModeChanged()));
-  connect(d->BSRadioButton, SIGNAL(toggled(bool)),
-          this, SLOT(onInterpolationModeChanged()));
+  connect(d->LinearRadioButton, SIGNAL(toggled(bool)), this, SLOT(onInterpolationModeChanged()));
+  connect(d->NNRadioButton, SIGNAL(toggled(bool)), this, SLOT(onInterpolationModeChanged()));
+  connect(d->WSRadioButton, SIGNAL(toggled(bool)), this, SLOT(onInterpolationModeChanged()));
+  connect(d->BSRadioButton, SIGNAL(toggled(bool)), this, SLOT(onInterpolationModeChanged()));
 
-  connect(d->FillValueSpinBox, SIGNAL(valueChanged(double)),
-    this, SLOT(onFillValueChanged(double)));
+  connect(d->FillValueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onFillValueChanged(double)));
 
   // Observe info section, only update content if opened
-  this->connect(d->VolumeInformationCollapsibleButton,
-    SIGNAL(clicked(bool)),
-    SLOT(onVolumeInformationSectionClicked(bool)));
+  this->connect(d->VolumeInformationCollapsibleButton, SIGNAL(clicked(bool)), SLOT(onVolumeInformationSectionClicked(bool)));
 
   d->InputErrorLabel->setVisible(false);
   d->InputErrorFixButton->setVisible(false);
-  connect(d->InputErrorFixButton, SIGNAL(clicked()),
-    this, SLOT(onFixAlignment()));
+  connect(d->InputErrorFixButton, SIGNAL(clicked()), this, SLOT(onFixAlignment()));
 
-  connect(d->CropButton, SIGNAL(clicked()),
-    this, SLOT(onApply()));
-
+  connect(d->CropButton, SIGNAL(clicked()), this, SLOT(onApply()));
 }
 
 //-----------------------------------------------------------------------------
@@ -378,9 +359,9 @@ void qSlicerCropVolumeModuleWidget::onApply()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
-  if (!d->ParametersNode.GetPointer() || //
-    !d->ParametersNode->GetInputVolumeNode() || //
-    !d->ParametersNode->GetROINode())
+  if (!d->ParametersNode.GetPointer() ||          //
+      !d->ParametersNode->GetInputVolumeNode() || //
+      !d->ParametersNode->GetROINode())
   {
     qWarning() << Q_FUNC_INFO << ": invalid inputs";
     return;
@@ -409,7 +390,7 @@ void qSlicerCropVolumeModuleWidget::onFixAlignment()
   Q_D(qSlicerCropVolumeModuleWidget);
   bool autoFixAvailable = false;
   QString errorMessages;
-  d->checkInputs(autoFixAvailable, errorMessages, true /* auto-fix problems */ );
+  d->checkInputs(autoFixAvailable, errorMessages, true /* auto-fix problems */);
   this->updateWidgetFromMRML();
 }
 
@@ -581,8 +562,7 @@ void qSlicerCropVolumeModuleWidget::onIsotropicModeChanged(bool isotropic)
 }
 
 //-----------------------------------------------------------------------------
-void
-qSlicerCropVolumeModuleWidget::onInterpolationEnabled(bool interpolationEnabled)
+void qSlicerCropVolumeModuleWidget::onInterpolationEnabled(bool interpolationEnabled)
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
@@ -674,9 +654,7 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
 }
 
 //-----------------------------------------------------------
-bool qSlicerCropVolumeModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                                  QString role /* = QString()*/,
-                                                  QString context /* = QString()*/)
+bool qSlicerCropVolumeModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerCropVolumeModuleWidget);
   Q_UNUSED(role);
@@ -737,14 +715,16 @@ void qSlicerCropVolumeModuleWidget::updateVolumeInfo()
     }
     else
     {
-      d->logic()->GetInterpolatedCropOutputGeometry(d->ParametersNode->GetROINode(), d->ParametersNode->GetInputVolumeNode(),
-        d->ParametersNode->GetIsotropicResampling(), d->ParametersNode->GetSpacingScalingConst(),
-        outputExtent, outputSpacing);
+      d->logic()->GetInterpolatedCropOutputGeometry(d->ParametersNode->GetROINode(),
+                                                    d->ParametersNode->GetInputVolumeNode(),
+                                                    d->ParametersNode->GetIsotropicResampling(),
+                                                    d->ParametersNode->GetSpacingScalingConst(),
+                                                    outputExtent,
+                                                    outputSpacing);
     }
   }
 
-  d->CroppedDimensionsWidget->setCoordinates(outputExtent[1] - outputExtent[0] + 1,
-    outputExtent[3] - outputExtent[2] + 1, outputExtent[5] - outputExtent[4] + 1);
+  d->CroppedDimensionsWidget->setCoordinates(outputExtent[1] - outputExtent[0] + 1, outputExtent[3] - outputExtent[2] + 1, outputExtent[5] - outputExtent[4] + 1);
   d->CroppedSpacingWidget->setCoordinates(outputSpacing);
 }
 

@@ -34,7 +34,7 @@ qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::m_Instance
 class qSlicerSegmentEditorEffectFactoryCleanup
 {
 public:
-  inline void use()   {   }
+  inline void use() {}
 
   ~qSlicerSegmentEditorEffectFactoryCleanup()
   {

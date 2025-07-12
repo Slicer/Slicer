@@ -58,7 +58,7 @@ public:
    * dimensions.  It is also possible to resize the image by setting the
    * output image spacing or by setting a magnification factor.
    */
-  vtkSetClampMacro(Method, int, 0, NUMBER_OF_METHODS-1);
+  vtkSetClampMacro(Method, int, 0, NUMBER_OF_METHODS - 1);
   vtkGetMacro(Method, int);
   void SetMethodToHuang() { this->SetMethod(METHOD_HUANG); }
   void SetMethodToIntermodes() { this->SetMethod(METHOD_INTERMODES); }
@@ -93,6 +93,6 @@ private:
   void operator=(const vtkITKImageThresholdCalculator&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageThresholdCalculator);
+// vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 
 #endif
