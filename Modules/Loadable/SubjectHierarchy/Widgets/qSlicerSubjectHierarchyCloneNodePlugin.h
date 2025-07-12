@@ -30,7 +30,8 @@
 
 class qSlicerSubjectHierarchyCloneNodePluginPrivate;
 
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyCloneNodePlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyCloneNodePlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -45,10 +46,11 @@ public:
 
 public:
   /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  QList<QAction*> itemContextMenuActions() const override;
 
   /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the scene
+  /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the
+  /// scene
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:

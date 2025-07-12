@@ -69,43 +69,41 @@ qSlicerVolumeRenderingModule::qSlicerVolumeRenderingModule(QObject* _parent)
 qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::title()const
+QString qSlicerVolumeRenderingModule::title() const
 {
   return tr("Volume Rendering");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::helpText()const
+QString qSlicerVolumeRenderingModule::helpText() const
 {
-  QString help =
-    tr("Volume Rendering Module provides advanced tools for toggling interactive "
-    "volume rendering of datasets.<br/>"
-    "If supported, hardware accelerated volume rendering is made available."
-    "The module permits selection of preset transfer functions to colorize and set opacity "
-    "of data in a task-appropriate way, and tools to customize the transfer functions that specify "
-    "these parameters.<br/>");
+  QString help = tr("Volume Rendering Module provides advanced tools for toggling interactive "
+                    "volume rendering of datasets.<br/>"
+                    "If supported, hardware accelerated volume rendering is made available."
+                    "The module permits selection of preset transfer functions to colorize and set opacity "
+                    "of data in a task-appropriate way, and tools to customize the transfer functions that specify "
+                    "these parameters.<br/>");
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::acknowledgementText()const
+QString qSlicerVolumeRenderingModule::acknowledgementText() const
 {
-  QString acknowledgement =
-    "<center><table border=\"0\"><tr>"
-    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
-    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
-    "</tr><tr>"
-    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
-    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>"
-    + tr("This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."
-      " Some of the transfer functions were contributed by Kitware Inc. (VolView)");
+  QString acknowledgement = "<center><table border=\"0\"><tr>"
+                            "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+                            "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+                            "</tr><tr>"
+                            "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+                            "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+                            "</tr></table></center>"
+                            + tr("This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."
+                                 " Some of the transfer functions were contributed by Kitware Inc. (VolView)");
   return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumeRenderingModule::contributors()const
+QStringList qSlicerVolumeRenderingModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Julien Finet (Kitware)");
@@ -117,7 +115,7 @@ QStringList qSlicerVolumeRenderingModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerVolumeRenderingModule::icon()const
+QIcon qSlicerVolumeRenderingModule::icon() const
 {
   return QIcon(":/Icons/VolumeRendering.png");
 }
@@ -135,8 +133,7 @@ void qSlicerVolumeRenderingModule::setup()
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
     "vtkMRMLVolumeRenderingDisplayableManager");
 
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
-    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
   {
     qSlicerVolumeRenderingSettingsPanel* panel = new qSlicerVolumeRenderingSettingsPanel;
@@ -147,13 +144,16 @@ void qSlicerVolumeRenderingModule::setup()
   // Register VolumeProperty reader/writer
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
   coreIOManager->registerIO(new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
-  coreIOManager->registerIO(new qSlicerNodeWriter(tr("Transfer Function"), QString("TransferFunctionFile"),
-    QStringList() << "vtkMRMLVolumePropertyNode", true, this));
+  coreIOManager->registerIO(new qSlicerNodeWriter(tr("Transfer Function"),
+                                                  QString("TransferFunctionFile"),
+                                                  QStringList() << "vtkMRMLVolumePropertyNode",
+                                                  true,
+                                                  this));
 
   // Register ShaderProperty reader/writer
-  coreIOManager->registerIO(new qSlicerShaderPropertyReader(volumeRenderingLogic,this));
-  coreIOManager->registerIO(new qSlicerNodeWriter(tr("Shader Property"), QString("ShaderPropertyFile"),
-    QStringList() << "vtkMRMLShaderPropertyNode", true, this ));
+  coreIOManager->registerIO(new qSlicerShaderPropertyReader(volumeRenderingLogic, this));
+  coreIOManager->registerIO(new qSlicerNodeWriter(
+    tr("Shader Property"), QString("ShaderPropertyFile"), QStringList() << "vtkMRMLShaderPropertyNode", true, this));
 
   // Register Subject Hierarchy core plugins
   vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
@@ -163,7 +163,7 @@ void qSlicerVolumeRenderingModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerVolumeRenderingModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerVolumeRenderingModule::createWidgetRepresentation()
 {
   return new qSlicerVolumeRenderingModuleWidget;
 }
@@ -177,9 +177,8 @@ vtkMRMLAbstractLogic* qSlicerVolumeRenderingModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerVolumeRenderingModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLVolumePropertyNode"
-    << "vtkMRMLShaderPropertyNode"
-    << "vtkMRMLVolumeRenderingDisplayNode"
-    << "vtkMRMLMarkupsROINode"; // volume rendering clipping box
+  return QStringList() << "vtkMRMLVolumePropertyNode"
+                       << "vtkMRMLShaderPropertyNode"
+                       << "vtkMRMLVolumeRenderingDisplayNode"
+                       << "vtkMRMLMarkupsROINode"; // volume rendering clipping box
 }

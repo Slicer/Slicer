@@ -33,7 +33,8 @@ class vtkMRMLViewNode;
 class vtkMRMLDisplayNode;
 class vtkSlicerVolumeRenderingLogic;
 
-class Q_SLICER_VOLUMERENDERING_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumeRenderingPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_VOLUMERENDERING_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumeRenderingPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -44,12 +45,14 @@ public:
   ~qSlicerSubjectHierarchyVolumeRenderingPlugin() override;
 
 public:
-  /// Set volume rendering module logic. Required for accessing display nodes and setting up volume rendering related nodes.
+  /// Set volume rendering module logic. Required for accessing display nodes and setting up volume rendering related
+  /// nodes.
   Q_INVOKABLE void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* volumeRenderingLogic);
 
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
-  QList<QAction*> visibilityContextMenuActions()const override;
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
+  QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
@@ -63,7 +66,7 @@ public:
 
   /// Show/hide volume rendering in a view.
   /// If viewNode is nullptr then it is displayed in all 3D views in the current layout.
-  Q_INVOKABLE bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
+  Q_INVOKABLE bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode = nullptr);
 
 protected slots:
   /// Toggle volume rendering option for current volume item
@@ -74,7 +77,7 @@ protected slots:
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumeRenderingPluginPrivate> d_ptr;
 
-  void resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode=nullptr);
+  void resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode = nullptr);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumeRenderingPlugin);

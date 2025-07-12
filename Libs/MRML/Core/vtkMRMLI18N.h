@@ -48,7 +48,10 @@ public:
   static vtkMRMLI18N* New();
 
   /// Translate message with the current translator
-  static std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1);
+  static std::string Translate(const char* context,
+                               const char* sourceText,
+                               const char* disambiguation = nullptr,
+                               int n = -1);
 
   /// Replace placeholders in strings, following Qt internationalization conventions.
   ///
@@ -64,9 +67,15 @@ public:
   ///     volumeType.c_str());
   /// @endcode
   static std::string Format(const std::string& text,
-    const char* arg1 = nullptr, const char* arg2 = nullptr, const char* arg3 = nullptr,
-    const char* arg4 = nullptr, const char* arg5 = nullptr, const char* arg6 = nullptr,
-    const char* arg7 = nullptr, const char* arg8 = nullptr, const char* arg9 = nullptr);
+                            const char* arg1 = nullptr,
+                            const char* arg2 = nullptr,
+                            const char* arg3 = nullptr,
+                            const char* arg4 = nullptr,
+                            const char* arg5 = nullptr,
+                            const char* arg6 = nullptr,
+                            const char* arg7 = nullptr,
+                            const char* arg8 = nullptr,
+                            const char* arg9 = nullptr);
 
   /// Set translator object. This class takes ownership of the translator
   /// and it releases it when the process quits.
@@ -74,7 +83,7 @@ public:
 
   /// Get translator object that can translate text that is displayed to the user
   /// to the currently chosen language.
-  vtkGetObjectMacro (Translator, vtkMRMLTranslator);
+  vtkGetObjectMacro(Translator, vtkMRMLTranslator);
 
 protected:
   vtkMRMLI18N();
@@ -101,6 +110,7 @@ public:
 
   vtkMRMLI18NInitialize();
   ~vtkMRMLI18NInitialize();
+
 private:
   static unsigned int Count;
 };

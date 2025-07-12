@@ -47,8 +47,8 @@ public:
   /// Data types supported by the table. Used in qMRMLTableModel for visualization.
 
 public:
-  static vtkMRMLTableNode *New();
-  vtkTypeMacro(vtkMRMLTableNode,vtkMRMLStorableNode);
+  static vtkMRMLTableNode* New();
+  vtkTypeMacro(vtkMRMLTableNode, vtkMRMLStorableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -60,7 +60,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -76,7 +76,7 @@ public:
 
   ///
   /// Method to propagate events generated in mrml
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   //----------------------------------------------------------------
   /// Get and Set Macros
@@ -92,15 +92,16 @@ public:
   ///   This name is used by modules to look up columns in a table, therefore it must not be translated.
   ///   Column name \<default\> is reserved for defining default properties for new columns.
   /// - type: data type of the column. Supported types: string, double, float, int, unsigned int, bit,
-  ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long, idtype.
-  ///   Default: string.
+  ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long,
+  ///   idtype. Default: string.
   /// - nullValue: value to be used when a value is not specified (new table row is added, blank string is entered, etc)
   /// - title: human-readable name of the column (translatable)
   ///   The property name was formerly called "longName".
   /// - description: detailed description of the column (translatable)
   /// - unitLabel: unit label displayed along with the title (translatable)
   /// - unitCodeMeaning: standard unit definition. Example: Standardized Uptake Value body weight.
-  ///   Should not be translated, as in the future translation of standard terms will be implemented based on code value and scheme.
+  ///   Should not be translated, as in the future translation of standard terms will be implemented based on code value
+  ///   and scheme.
   /// - unitCodeValue: standard unit definition. Example: {SUVbw}g/ml.
   /// - unitCodingSchemeDesignator: standard unit definition. Example: UCUM.
   virtual void SetAndObserveSchema(vtkTable* schema);
@@ -188,7 +189,7 @@ public:
   /// Get column index of the first column by the specified name.
   /// Returns -1 if no such column is found.
   int GetColumnIndex(const char* columnName);
-  int GetColumnIndex(const std::string &columnName);
+  int GetColumnIndex(const std::string& columnName);
   ///@}
 
   /// Get column index from column pointer.
@@ -260,7 +261,9 @@ public:
   /// Property name "columnName" is reserved for internal use.
   /// Property name "type" converts existing values in the column.
   /// \sa SetAndObserveSchema
-  void SetColumnProperty(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
+  void SetColumnProperty(const std::string& columnName,
+                         const std::string& propertyName,
+                         const std::string& propertyValue);
   void SetColumnProperty(int columnIndex, const std::string& propertyName, const std::string& propertyValue);
   ///@}
 
@@ -307,7 +310,7 @@ public:
   /// \param nullValue: this value is used when a new row is added to the column
   /// \return True on success.
   /// \sa SetAndObserveSchema
-  bool SetDefaultColumnType(const std::string& type, const std::string& nullValue="");
+  bool SetDefaultColumnType(const std::string& type, const std::string& nullValue = "");
 
   /// Name of the column that stores default properties that are used when a new column is created.
   static const char* GetDefaultColumnName();
@@ -340,19 +343,20 @@ public:
   //----------------------------------------------------------------
   /// Constructor and destructor
   //----------------------------------------------------------------
- protected:
+protected:
   vtkMRMLTableNode();
   ~vtkMRMLTableNode() override;
   vtkMRMLTableNode(const vtkMRMLTableNode&);
   void operator=(const vtkMRMLTableNode&);
 
- protected:
-
+protected:
   /// Get column property, even for reserved properties
   std::string GetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName);
 
   /// Set column property, even for reserved properties
-  void SetColumnPropertyInternal(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
+  void SetColumnPropertyInternal(const std::string& columnName,
+                                 const std::string& propertyName,
+                                 const std::string& propertyValue);
 
   vtkIdType GetPropertyRowIndex(const std::string& columnName);
 
@@ -366,7 +370,6 @@ public:
   bool UseFirstColumnAsRowHeader;
 
   vtkTable* Schema;
-
 };
 
 #endif

@@ -36,8 +36,7 @@
 bool TestCopyImportedCameras(bool clear, bool legacy);
 
 //----------------------------------------------------------------------------
-int vtkSlicerCamerasModuleLogicCopyImportedCamerasTest(int vtkNotUsed(argc),
-                                                       char* vtkNotUsed(argv)[])
+int vtkSlicerCamerasModuleLogicCopyImportedCamerasTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   bool res = true;
 
@@ -55,14 +54,14 @@ int vtkSlicerCamerasModuleLogicCopyImportedCamerasTest(int vtkNotUsed(argc),
 //----------------------------------------------------------------------------
 bool TestCopyImportedCameras(bool clear, bool legacy)
 {
-  double camera1Pos[3] = {10., 10., 10.};
-  double camera2Pos[3] = {10., 10., 10.};
-  double importedCamera1Pos[3] = {5., 5., 5.};
-  double importedCamera2Pos[3] = {0., 0., 0.};
+  double camera1Pos[3] = { 10., 10., 10. };
+  double camera2Pos[3] = { 10., 10., 10. };
+  double importedCamera1Pos[3] = { 5., 5., 5. };
+  double importedCamera2Pos[3] = { 0., 0., 0. };
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLCameraNode> camera1;
   camera1->SetName("Default Scene Camera");
-  if(!legacy)
+  if (!legacy)
   {
     camera1->SetSingletonTag("1");
   }
@@ -70,7 +69,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   scene->AddNode(camera1.GetPointer());
 
   vtkNew<vtkMRMLCameraNode> camera2;
-  if(!legacy)
+  if (!legacy)
   {
     camera2->SetSingletonTag("2");
   }
@@ -81,48 +80,46 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   vtkNew<vtkSlicerCamerasModuleLogic> logic;
   logic->SetMRMLScene(scene.GetPointer());
 
-  std::string sceneXML =
-"<MRML  version=\"Slicer4.4.0\" userTags=\"\">\n"
-"<View id=\"vtkMRMLViewNode1\" name=\"View\" "
-"singletonTag=\"1\" layoutName=\"1\" "
-"attributes=\"MappedInLayout:1\" layoutLabel=\"1\" active=\"false\" "
-"visibility=\"true\"  fieldOfView=\"200\" letterSize=\"0.05\" "
-"boxVisible=\"true\" fiducialsVisible=\"true\" fiducialLabelsVisible=\"true\" "
-"axisLabelsVisible=\"true\" axisLabelsCameraDependent=\"true\" "
-"backgroundColor=\"0.756863 0.764706 0.909804\" "
-"backgroundColor2=\"0.454902 0.470588 0.745098\" animationMode=\"Off\" "
-"viewAxisMode=\"LookFrom\" spinDegrees=\"2\" spinMs=\"5\" "
-"spinDirection=\"YawLeft\" rotateDegrees=\"5\" rockLength=\"200\" "
-"rockCount=\"0\" stereoType=\"NoStereo\" renderMode=\"Perspective\">"
-"</View>\n"
-"<Camera id=\"vtkMRMLCameraNode1\" name=\"Camera\" description=\"Default Scene Camera\" "
-"position=\"5. 5. 5.\" focalPoint=\"0 0 0\" "
-"viewUp=\"-0.41918 -0.433183 0.797898\" parallelProjection=\"false\" "
-"parallelScale=\"1\" singletonTag=\"1\" "
-"appliedTransform=\"1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1\"  ></Camera>\n"
-"</MRML>";
+  std::string sceneXML = "<MRML  version=\"Slicer4.4.0\" userTags=\"\">\n"
+                         "<View id=\"vtkMRMLViewNode1\" name=\"View\" "
+                         "singletonTag=\"1\" layoutName=\"1\" "
+                         "attributes=\"MappedInLayout:1\" layoutLabel=\"1\" active=\"false\" "
+                         "visibility=\"true\"  fieldOfView=\"200\" letterSize=\"0.05\" "
+                         "boxVisible=\"true\" fiducialsVisible=\"true\" fiducialLabelsVisible=\"true\" "
+                         "axisLabelsVisible=\"true\" axisLabelsCameraDependent=\"true\" "
+                         "backgroundColor=\"0.756863 0.764706 0.909804\" "
+                         "backgroundColor2=\"0.454902 0.470588 0.745098\" animationMode=\"Off\" "
+                         "viewAxisMode=\"LookFrom\" spinDegrees=\"2\" spinMs=\"5\" "
+                         "spinDirection=\"YawLeft\" rotateDegrees=\"5\" rockLength=\"200\" "
+                         "rockCount=\"0\" stereoType=\"NoStereo\" renderMode=\"Perspective\">"
+                         "</View>\n"
+                         "<Camera id=\"vtkMRMLCameraNode1\" name=\"Camera\" description=\"Default Scene Camera\" "
+                         "position=\"5. 5. 5.\" focalPoint=\"0 0 0\" "
+                         "viewUp=\"-0.41918 -0.433183 0.797898\" parallelProjection=\"false\" "
+                         "parallelScale=\"1\" singletonTag=\"1\" "
+                         "appliedTransform=\"1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1\"  ></Camera>\n"
+                         "</MRML>";
 
   if (legacy)
   {
-    sceneXML =
-"<MRML  version=\"Slicer4\" userTags=\"\">\n"
-"<View id=\"vtkMRMLViewNode1\" name=\"View\" "
-"attributes=\"MappedInLayout:1\" layoutLabel=\"1\" active=\"false\" "
-"visibility=\"true\"  fieldOfView=\"200\" letterSize=\"0.05\" "
-"boxVisible=\"true\" fiducialsVisible=\"true\" fiducialLabelsVisible=\"true\" "
-"axisLabelsVisible=\"true\" axisLabelsCameraDependent=\"true\" "
-"backgroundColor=\"0.756863 0.764706 0.909804\" "
-"backgroundColor2=\"0.454902 0.470588 0.745098\" animationMode=\"Off\" "
-"viewAxisMode=\"LookFrom\" spinDegrees=\"2\" spinMs=\"5\" "
-"spinDirection=\"YawLeft\" rotateDegrees=\"5\" rockLength=\"200\" "
-"rockCount=\"0\" stereoType=\"NoStereo\" renderMode=\"Perspective\">"
-"</View>\n"
-"<Camera id=\"vtkMRMLCameraNode1\" name=\"Default Scene Camera\" "
-"position=\"5. 5. 5.\" focalPoint=\"0 0 0\" "
-"viewUp=\"-0.41918 -0.433183 0.797898\" parallelProjection=\"false\" "
-"parallelScale=\"1\" activetag=\"vtkMRMLViewNode1\" "
-"appliedTransform=\"1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1\"  ></Camera>\n"
-"</MRML>";
+    sceneXML = "<MRML  version=\"Slicer4\" userTags=\"\">\n"
+               "<View id=\"vtkMRMLViewNode1\" name=\"View\" "
+               "attributes=\"MappedInLayout:1\" layoutLabel=\"1\" active=\"false\" "
+               "visibility=\"true\"  fieldOfView=\"200\" letterSize=\"0.05\" "
+               "boxVisible=\"true\" fiducialsVisible=\"true\" fiducialLabelsVisible=\"true\" "
+               "axisLabelsVisible=\"true\" axisLabelsCameraDependent=\"true\" "
+               "backgroundColor=\"0.756863 0.764706 0.909804\" "
+               "backgroundColor2=\"0.454902 0.470588 0.745098\" animationMode=\"Off\" "
+               "viewAxisMode=\"LookFrom\" spinDegrees=\"2\" spinMs=\"5\" "
+               "spinDirection=\"YawLeft\" rotateDegrees=\"5\" rockLength=\"200\" "
+               "rockCount=\"0\" stereoType=\"NoStereo\" renderMode=\"Perspective\">"
+               "</View>\n"
+               "<Camera id=\"vtkMRMLCameraNode1\" name=\"Default Scene Camera\" "
+               "position=\"5. 5. 5.\" focalPoint=\"0 0 0\" "
+               "viewUp=\"-0.41918 -0.433183 0.797898\" parallelProjection=\"false\" "
+               "parallelScale=\"1\" activetag=\"vtkMRMLViewNode1\" "
+               "appliedTransform=\"1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1\"  ></Camera>\n"
+               "</MRML>";
   }
 
   scene->SetSceneXMLString(sceneXML);
@@ -154,12 +151,10 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
     expectedFirstCamera = importedCamera1Pos;
   }
 
-  vtkMRMLCameraNode* firstCamera = vtkMRMLCameraNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* firstCamera = vtkMRMLCameraNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLCameraNode"));
 
-  if (camera1->GetPosition()[0] != expectedCamera1Pos[0] ||
-      camera2->GetPosition()[0] != expectedCamera2Pos[0] ||
-      firstCamera->GetPosition()[0] != expectedFirstCamera[0])
+  if (camera1->GetPosition()[0] != expectedCamera1Pos[0] || camera2->GetPosition()[0] != expectedCamera2Pos[0]
+      || firstCamera->GetPosition()[0] != expectedFirstCamera[0])
   {
     std::cout << "vtkSlicerCamerasModuleLogic::CopyImportedCameras failed.\n"
               << "Clear: " << clear << "\n"
@@ -171,8 +166,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
               << "  expected: " << expectedCamera2Pos[0] << "\n"
               << "1st Camera\n"
               << "   current: " << firstCamera->GetPosition()[0] << "\n"
-              << "  expected: " << expectedFirstCamera[0]
-              << std::endl;
+              << "  expected: " << expectedFirstCamera[0] << std::endl;
     return false;
   }
   return true;

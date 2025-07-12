@@ -22,14 +22,17 @@
 #include "qSlicerSegmentEditorEraseEffect.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentEditorEraseEffectPrivate: public QObject
+class qSlicerSegmentEditorEraseEffectPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorEraseEffect);
+
 protected:
   qSlicerSegmentEditorEraseEffect* const q_ptr;
+
 public:
   qSlicerSegmentEditorEraseEffectPrivate(qSlicerSegmentEditorEraseEffect& object);
   ~qSlicerSegmentEditorEraseEffectPrivate() override;
+
 public:
   QIcon EraseIcon;
 };
@@ -49,10 +52,10 @@ qSlicerSegmentEditorEraseEffectPrivate::~qSlicerSegmentEditorEraseEffectPrivate(
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorEraseEffect::qSlicerSegmentEditorEraseEffect(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSegmentEditorEraseEffectPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSegmentEditorEraseEffectPrivate(*this))
 {
-  this->m_Name = QString(/*no tr*/"Erase");
+  this->m_Name = QString(/*no tr*/ "Erase");
   this->m_Title = tr("Erase");
   this->m_AlwaysErase = true;
   this->m_ShowEffectCursorInThreeDView = true;
@@ -70,16 +73,17 @@ QIcon qSlicerSegmentEditorEraseEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorEraseEffect::helpText()const
+QString const qSlicerSegmentEditorEraseEffect::helpText() const
 {
-  return QString("<html>") + tr("Erase from current segment with a round brush<br>."
-    "<p><ul style=\"margin: 0\">"
-    "<li><b>Left-button drag-and-drop:</b> erase from segment around the mouse pointer."
-    "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size."
-    "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out."
-    "</ul><p>"
-    "Editing is available both in slice and 3D views."
-    "<p>");
+  return QString("<html>")
+         + tr("Erase from current segment with a round brush<br>."
+              "<p><ul style=\"margin: 0\">"
+              "<li><b>Left-button drag-and-drop:</b> erase from segment around the mouse pointer."
+              "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size."
+              "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out."
+              "</ul><p>"
+              "Editing is available both in slice and 3D views."
+              "<p>");
 }
 
 //-----------------------------------------------------------------------------

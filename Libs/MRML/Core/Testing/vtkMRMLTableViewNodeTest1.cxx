@@ -26,7 +26,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLTableViewNodeTest1(int , char * [] )
+int vtkMRMLTableViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTableViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -36,7 +36,7 @@ int vtkMRMLTableViewNodeTest1(int , char * [] )
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLTableNode> tableNode1;
   vtkNew<vtkMRMLTableNode> tableNode2;
-  scene->AddNode(tableNode1.GetPointer() );
+  scene->AddNode(tableNode1.GetPointer());
   scene->AddNode(tableNode2.GetPointer());
 
   vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
@@ -44,23 +44,23 @@ int vtkMRMLTableViewNodeTest1(int , char * [] )
 
   callback->ResetNumberOfEvents();
   node1->SetTableNodeID(tableNode1->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetTableNodeID(tableNode2->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetTableNodeID(tableNode2->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),0);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
 
   callback->ResetNumberOfEvents();
   node1->SetTableNodeID(nullptr);
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetTableNodeID(nullptr);
-  CHECK_INT(callback->GetNumberOfModified(),0);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
 
   std::cout << "vtkMRMLTableViewNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;

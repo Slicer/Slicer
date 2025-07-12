@@ -40,7 +40,7 @@
 // Common test driver includes
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
-int qMRMLLayoutManagerTest4(int argc, char * argv[] )
+int qMRMLLayoutManagerTest4(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -65,8 +65,7 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
-  for (int i = vtkMRMLLayoutNode::SlicerLayoutInitialView;
-    i < vtkMRMLLayoutNode::SlicerLayoutFinalView; ++i)
+  for (int i = vtkMRMLLayoutNode::SlicerLayoutInitialView; i < vtkMRMLLayoutNode::SlicerLayoutFinalView; ++i)
   {
     layoutManager.setLayout(i);
     if (!checkViewArrangement(__LINE__, &layoutManager, layoutNode.GetPointer(), i))

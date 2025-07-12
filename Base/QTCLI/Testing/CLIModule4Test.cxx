@@ -41,8 +41,8 @@ bool outputResult(int result, const std::string& outputFile)
 
   if (!myfile.is_open())
   {
-      std::cerr << "Failed to open file:" << outputFile << std::endl;
-      return false;
+    std::cerr << "Failed to open file:" << outputFile << std::endl;
+    return false;
   }
 
   myfile << result << "\n";
@@ -53,8 +53,7 @@ bool outputResult(int result, const std::string& outputFile)
 
 } // end of anonymous namespace
 
-
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;

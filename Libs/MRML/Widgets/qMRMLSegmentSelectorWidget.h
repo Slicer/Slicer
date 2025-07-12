@@ -47,7 +47,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSegmentSelectorWidget : public qMRMLWidget
 public:
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
+  Q_PROPERTY(
+    bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
   Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout)
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
@@ -81,35 +82,35 @@ public:
 
   /// Return true if the "none" is in the segmentation node comboBox list, false otherwise.
   /// \sa noneEnabled, setNoneEnabled()
-  bool noneEnabled()const;
+  bool noneEnabled() const;
   /// Set whether the "none" item should be in the segmentation node comboBox list or not.
   /// \sa noneEnabled, noneEnabled()
   void setNoneEnabled(bool enable);
 
   /// Return true if the edit option is enabled in the segmentation node combobox
   /// \sa noneEnabled, setEditEnabled()
-  bool editEnabled()const;
+  bool editEnabled() const;
   /// Set whether the edit option is enabled in the segmentation node combobox
   /// \sa editEnabled, editEnabled()
   void setEditEnabled(bool enable);
 
   /// Return whether segmentation node selector combobox is visible
   /// \sa segmentationNodeSelectorVisible, setSegmentationNodeSelectorVisible()
-  bool segmentationNodeSelectorVisible()const;
+  bool segmentationNodeSelectorVisible() const;
   /// Set whether segmentation node selector combobox is visible
   /// \sa segmentationNodeSelectorVisible, segmentationNodeSelectorVisible()
   void setSegmentationNodeSelectorVisible(bool visible);
 
   /// Return true if the multi-selection of segments is enabled, false otherwise.
   /// \sa multiSelection, setMultiSelection()
-  bool multiSelection()const;
+  bool multiSelection() const;
   /// Set whether multi-selection of segments is enabled or not. Off by default (single-selection)
   /// \sa multiSelection, multiSelection()
   void setMultiSelection(bool multi);
 
   /// Return true if the current layout is horizontal
   /// \sa horizontalLayout, setHorizontalLayout()
-  bool horizontalLayout()const;
+  bool horizontalLayout() const;
   /// Set whether the widget layout is horizontal (everything in one row) or vertical. False by default
   /// \sa horizontalLayout, horizontalLayout()
   void setHorizontalLayout(bool horizontal);
@@ -117,7 +118,7 @@ public:
   /// if true, when the user create a node using "Add node", the node will be
   /// automatically selected. It doesn't apply if the node is programmatically
   /// added (when the combobox is populated by the scene).
-  bool selectNodeUponCreation()const;
+  bool selectNodeUponCreation() const;
   void setSelectNodeUponCreation(bool value);
 
 public slots:

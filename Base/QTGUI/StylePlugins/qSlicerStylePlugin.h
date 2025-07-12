@@ -43,7 +43,7 @@ public:
   ~qSlicerStylePlugin() override;
 
   // QStyle plugin classes to overloaded when creating custom style plugins
-  QStyle* create(const QString & key) override;
+  QStyle* create(const QString& key) override;
   virtual QStringList keys() const;
 };
 

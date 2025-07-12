@@ -24,17 +24,18 @@
 #include <itkImageSeriesReader.h>
 #include <itkOrientImageFilter.h>
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-#include <itkDCMTKImageIO.h>
-#include <itkGDCMImageIO.h>
+# include <itkDCMTKImageIO.h>
+# include <itkGDCMImageIO.h>
 
 // GDCM includes
-#include "gdcmDict.h"           /// access to dictionary
-#include "gdcmDictEntry.h"      /// access to dictionary
+# include "gdcmDict.h"      /// access to dictionary
+# include "gdcmDictEntry.h" /// access to dictionary
 #endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderSeries);
 
-namespace {
+namespace
+{
 
 template <class T>
 vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
@@ -42,7 +43,7 @@ vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
   return vtkAOSDataArrayTemplate<T>::FastDownCast(a);
 }
 
-};
+}; // namespace
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderSeries::vtkITKArchetypeImageSeriesVectorReaderSeries() = default;
@@ -53,23 +54,20 @@ vtkITKArchetypeImageSeriesVectorReaderSeries::~vtkITKArchetypeImageSeriesVectorR
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesVectorReaderSeries::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtk ITK Archetype Image Series Vector Reader\n";
 }
 
 //----------------------------------------------------------------------------
 template <class T>
-void vtkITKExecuteDataFromSeriesVector(
-  vtkITKArchetypeImageSeriesVectorReaderSeries* self,
-  vtkImageData* data)
+void vtkITKExecuteDataFromSeriesVector(vtkITKArchetypeImageSeriesVectorReaderSeries* self, vtkImageData* data)
 {
   typedef T VectorPixelType;
-  typedef itk::VectorImage<VectorPixelType,3> image;
+  typedef itk::VectorImage<VectorPixelType, 3> image;
   typedef itk::ImageSource<image> FilterType;
   typename FilterType::Pointer filter;
-  typename itk::ImageSeriesReader<image>::Pointer reader =
-    itk::ImageSeriesReader<image>::New();
-  itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New();
+  typename itk::ImageSeriesReader<image>::Pointer reader = itk::ImageSeriesReader<image>::New();
+  itk::CStyleCommand::Pointer pcl = itk::CStyleCommand::New();
   pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&self->ReadProgressCallback);
   pcl->SetClientData(self);
   reader->SetFileNames(self->GetFileNames());
@@ -89,7 +87,9 @@ void vtkITKExecuteDataFromSeriesVector(
   else
 #endif
   {
-    vtkErrorWithObjectMacro(self, <<"vtkITKArchetypeImageSeriesVectorReaderSeries: Unsupported DICOMImageIOApproach: " << self->GetDICOMImageIOApproach());
+    vtkErrorWithObjectMacro(self,
+                            << "vtkITKArchetypeImageSeriesVectorReaderSeries: Unsupported DICOMImageIOApproach: "
+                            << self->GetDICOMImageIOApproach());
     itkGenericExceptionMacro("UnrecognizedFileTypeError");
   }
   if (self->GetUseNativeCoordinateOrientation())
@@ -98,42 +98,41 @@ void vtkITKExecuteDataFromSeriesVector(
   }
   else
   {
-    typename itk::OrientImageFilter<image,image>::Pointer orient =
-        itk::OrientImageFilter<image,image>::New();
+    typename itk::OrientImageFilter<image, image>::Pointer orient = itk::OrientImageFilter<image, image>::New();
     orient->SetDebug(self->GetDebug());
     orient->SetInput(reader->GetOutput());
     orient->UseImageDirectionOn();
-    orient->SetDesiredCoordinateOrientation(
-      self->GetDesiredCoordinateOrientation());
+    orient->SetDesiredCoordinateOrientation(self->GetDesiredCoordinateOrientation());
     filter = orient;
   }
   filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
-  void *ptr = static_cast<void *> (PixelContainer->GetBufferPointer());
+  void* ptr = static_cast<void*>(PixelContainer->GetBufferPointer());
   DownCast<T>(data->GetPointData()->GetScalars())
-    ->SetVoidArray(ptr, PixelContainer->Size(), 0,
-                   vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
+    ->SetVoidArray(ptr, PixelContainer->Size(), 0, vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
   PixelContainer->ContainerManageMemoryOff();
 }
 
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vtkDataObject* output,
+                                                                              vtkInformation* outInfo)
 {
   if (!this->Superclass::Archetype)
   {
-      vtkErrorMacro("An Archetype must be specified.");
-      this->SetErrorCode(vtkErrorCode::NoFileNameError);
-      return;
+    vtkErrorMacro("An Archetype must be specified.");
+    this->SetErrorCode(vtkErrorCode::NoFileNameError);
+    return;
   }
-  vtkImageData *data = this->AllocateOutputData(output, outInfo);
+  vtkImageData* data = this->AllocateOutputData(output, outInfo);
 
-    // If there is only one file in the series, just use an image file reader
+  // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
   {
-    vtkErrorMacro("ImageSeriesVectorReaderSeries: only one file: " << this->FileNames[0].c_str() << " use the VectorReaderFile instead!");
+    vtkErrorMacro("ImageSeriesVectorReaderSeries: only one file: " << this->FileNames[0].c_str()
+                                                                   << " use the VectorReaderFile instead!");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
   }
   else
@@ -158,7 +157,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
           this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
       }
     }
-    catch (itk::ExceptionObject & e)
+    catch (itk::ExceptionObject& e)
     {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -168,15 +167,17 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
   }
 }
 
-
-void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj, const itk::EventObject &, void* data)
+void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj,
+                                                                        const itk::EventObject&,
+                                                                        void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;
   }
-  vtkITKArchetypeImageSeriesVectorReaderSeries* me=reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderSeries*>(data);
+  vtkITKArchetypeImageSeriesVectorReaderSeries* me =
+    reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderSeries*>(data);
   me->Progress = p->GetProgress();
-  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
+  me->InvokeEvent(vtkCommand::ProgressEvent, &me->Progress);
 }

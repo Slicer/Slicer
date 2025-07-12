@@ -37,14 +37,12 @@ class vtkMRMLNode;
 class qSlicerUnitsSettingsPanelPrivate;
 class vtkSlicerUnitsLogic;
 
-class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsSettingsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsSettingsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QStringList quantities READ quantities WRITE setQuantities NOTIFY quantitiesChanged)
 public:
-
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
 

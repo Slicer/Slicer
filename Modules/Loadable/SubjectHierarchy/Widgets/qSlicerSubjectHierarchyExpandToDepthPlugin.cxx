@@ -33,15 +33,18 @@
 #include <QMenu>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyExpandToDepthPluginPrivate: public QObject
+class qSlicerSubjectHierarchyExpandToDepthPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExpandToDepthPlugin);
+
 protected:
   qSlicerSubjectHierarchyExpandToDepthPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyExpandToDepthPluginPrivate(qSlicerSubjectHierarchyExpandToDepthPlugin& object);
   ~qSlicerSubjectHierarchyExpandToDepthPluginPrivate() override;
   void init();
+
 public:
   QAction* ExpandToDepthAction;
 };
@@ -50,9 +53,10 @@ public:
 // qSlicerSubjectHierarchyExpandToDepthPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyExpandToDepthPluginPrivate::qSlicerSubjectHierarchyExpandToDepthPluginPrivate(qSlicerSubjectHierarchyExpandToDepthPlugin& object)
-: q_ptr(&object)
-, ExpandToDepthAction(nullptr)
+qSlicerSubjectHierarchyExpandToDepthPluginPrivate::qSlicerSubjectHierarchyExpandToDepthPluginPrivate(
+  qSlicerSubjectHierarchyExpandToDepthPlugin& object)
+  : q_ptr(&object)
+  , ExpandToDepthAction(nullptr)
 {
 }
 
@@ -63,25 +67,25 @@ void qSlicerSubjectHierarchyExpandToDepthPluginPrivate::init()
 
   // Set up expand to level action and its menu
   this->ExpandToDepthAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Expand tree to level..."), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExpandToDepthAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 10);
-  //sceneMenuActions.append(this->ExpandToDepthAction);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(
+    this->ExpandToDepthAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 10);
+  // sceneMenuActions.append(this->ExpandToDepthAction);
 
   QMenu* expandToDepthSubMenu = new QMenu();
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_1 = new QAction("1",q);
+  QAction* expandToDepth_1 = new QAction("1", q);
   QObject::connect(expandToDepth_1, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_1);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_2 = new QAction("2",q);
+  QAction* expandToDepth_2 = new QAction("2", q);
   QObject::connect(expandToDepth_2, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_2);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_3 = new QAction("3",q);
+  QAction* expandToDepth_3 = new QAction("3", q);
   QObject::connect(expandToDepth_3, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_3);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_4 = new QAction("4",q);
+  QAction* expandToDepth_4 = new QAction("4", q);
   QObject::connect(expandToDepth_4, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_4);
 }
@@ -94,8 +98,8 @@ qSlicerSubjectHierarchyExpandToDepthPluginPrivate::~qSlicerSubjectHierarchyExpan
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyExpandToDepthPlugin::qSlicerSubjectHierarchyExpandToDepthPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyExpandToDepthPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyExpandToDepthPluginPrivate(*this))
 {
   this->m_Name = QString("ExpandToDepth");
 
@@ -107,7 +111,7 @@ qSlicerSubjectHierarchyExpandToDepthPlugin::qSlicerSubjectHierarchyExpandToDepth
 qSlicerSubjectHierarchyExpandToDepthPlugin::~qSlicerSubjectHierarchyExpandToDepthPlugin() = default;
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyExpandToDepthPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyExpandToDepthPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyExpandToDepthPlugin);
 

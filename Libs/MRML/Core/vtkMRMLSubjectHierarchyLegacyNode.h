@@ -61,8 +61,8 @@ public:
   ///   The nodes are created automatically for supported data types when adding
   ///   the data nodes. To set up the node (name, level, parent, associated data)
   ///   call \sa CreateSubjectHierarchyNode method.
-  static vtkMRMLSubjectHierarchyLegacyNode *New();
-  vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode,vtkMRMLHierarchyNode);
+  static vtkMRMLSubjectHierarchyLegacyNode* New();
+  vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode, vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -74,7 +74,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Contour)
   const char* GetNodeTagName() override;
@@ -85,7 +85,9 @@ public:
   /// \param uidName UID string to lookup
   /// \param uidValue UID string that needs to _exactly match_ the UID string of the subject hierarchy node
   /// \sa GetUID()
-  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUID(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
+  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUID(vtkMRMLScene* scene,
+                                                                               const char* uidName,
+                                                                               const char* uidValue);
 
   /// Find subject hierarchy node according to a UID (by containing). For example find UID in instance UID list
   /// \param scene MRML scene
@@ -93,7 +95,9 @@ public:
   /// \param uidValue UID string that needs to be _contained_ in the UID string of the subject hierarchy node
   /// \return First match
   /// \sa GetUID()
-  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
+  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUIDList(vtkMRMLScene* scene,
+                                                                                   const char* uidName,
+                                                                                   const char* uidValue);
 
 public:
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
@@ -121,14 +125,14 @@ public:
   std::string GetUID(std::string uidName);
 
   /// Get UID map for this subject hierarchy node
-  std::map<std::string, std::string> GetUIDs()const;
+  std::map<std::string, std::string> GetUIDs() const;
 
 protected:
   /// Level identifier (default levels are Subject and Study)
-  char* Level{nullptr};
+  char* Level{ nullptr };
 
   /// Name of the owner plugin that claimed this node
-  char* OwnerPluginName{nullptr};
+  char* OwnerPluginName{ nullptr };
 
   /// List of UIDs of this subject hierarchy node
   /// UIDs can be DICOM UIDs, Girder URLs, etc.

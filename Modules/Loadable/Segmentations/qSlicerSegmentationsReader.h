@@ -29,28 +29,28 @@ class qSlicerSegmentationsReaderPrivate;
 class vtkSlicerSegmentationsModuleLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentationsReader
-  : public qSlicerFileReader
+class qSlicerSegmentationsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr, QObject* parent = nullptr);
+  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr,
+                             QObject* parent = nullptr);
   ~qSlicerSegmentationsReader() override;
 
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* segmentationsLogic);
-  vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
+  vtkSlicerSegmentationsModuleLogic* segmentationsLogic() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
-  qSlicerIOOptions* options()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
+  qSlicerIOOptions* options() const override;
 
   /// Returns a positive number (>0) if the reader can load this file.
   /// In case the file uses a generic file extension (such as .nrrd) then the confidence value is adjusted based on
   /// the file content: if the file contains segmentation information then confidence is increased to 0.6,
   /// otherwise the confidence is decreased to 0.4.
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
 

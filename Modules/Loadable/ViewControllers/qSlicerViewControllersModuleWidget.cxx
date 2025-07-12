@@ -49,10 +49,10 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerViewControllersModuleWidgetPrivate:
-    public Ui_qSlicerViewControllersModuleWidget
+class qSlicerViewControllersModuleWidgetPrivate : public Ui_qSlicerViewControllersModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerViewControllersModuleWidget);
+
 protected:
   qSlicerViewControllersModuleWidget* const q_ptr;
 
@@ -61,19 +61,20 @@ public:
   virtual ~qSlicerViewControllersModuleWidgetPrivate();
 
   /// Create a Controller for a Node and pack in the widget
-  void createController(vtkMRMLNode *n, qSlicerLayoutManager *lm);
+  void createController(vtkMRMLNode* n, qSlicerLayoutManager* lm);
 
   /// Remove the Controller for a Node from the widget
-  void removeController(vtkMRMLNode *n);
+  void removeController(vtkMRMLNode* n);
 
-  typedef std::map<vtkSmartPointer<vtkMRMLNode>, qMRMLViewControllerBar* > ControllerMapType;
+  typedef std::map<vtkSmartPointer<vtkMRMLNode>, qMRMLViewControllerBar*> ControllerMapType;
   ControllerMapType ControllerMap;
 
 protected:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerViewControllersModuleWidgetPrivate::qSlicerViewControllersModuleWidgetPrivate(qSlicerViewControllersModuleWidget& object)
+qSlicerViewControllersModuleWidgetPrivate::qSlicerViewControllersModuleWidgetPrivate(
+  qSlicerViewControllersModuleWidget& object)
   : q_ptr(&object)
 {
 }
@@ -82,8 +83,7 @@ qSlicerViewControllersModuleWidgetPrivate::qSlicerViewControllersModuleWidgetPri
 qSlicerViewControllersModuleWidgetPrivate::~qSlicerViewControllersModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
-void
-qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSlicerLayoutManager *layoutManager)
+void qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode* n, qSlicerLayoutManager* layoutManager)
 {
   Q_Q(qSlicerViewControllersModuleWidget);
 
@@ -94,23 +94,20 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
   }
 
   // create the ControllerWidget and wire it to the appropriate node
-  qMRMLViewControllerBar *barWidget = nullptr;
-  vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(n);
+  qMRMLViewControllerBar* barWidget = nullptr;
+  vtkMRMLSliceNode* sn = vtkMRMLSliceNode::SafeDownCast(n);
   if (sn)
   {
-    qMRMLSliceControllerWidget *widget =
-      new qMRMLSliceControllerWidget(this->SliceControllersCollapsibleButton);
-    widget->setSliceViewName( sn->GetName() ); // call before setting slice node
-    widget->setSliceViewLabel( sn->GetLayoutLabel() );
-    QColor layoutColor = QColor::fromRgbF(sn->GetLayoutColor()[0],
-                                          sn->GetLayoutColor()[1],
-                                          sn->GetLayoutColor()[2]);
-    widget->setSliceViewColor( layoutColor );
-    widget->setMRMLSliceNode( sn );
-    widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
+    qMRMLSliceControllerWidget* widget = new qMRMLSliceControllerWidget(this->SliceControllersCollapsibleButton);
+    widget->setSliceViewName(sn->GetName()); // call before setting slice node
+    widget->setSliceViewLabel(sn->GetLayoutLabel());
+    QColor layoutColor = QColor::fromRgbF(sn->GetLayoutColor()[0], sn->GetLayoutColor()[1], sn->GetLayoutColor()[2]);
+    widget->setSliceViewColor(layoutColor);
+    widget->setMRMLSliceNode(sn);
+    widget->setLayoutBehavior(qMRMLViewControllerBar::Panel);
 
     // SliceControllerWidget needs to know the SliceLogic(s)
-    qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sn->GetLayoutName());
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sn->GetLayoutName());
     widget->setSliceLogics(layoutManager->mrmlSliceLogics());
     widget->setSliceLogic(sliceWidget->sliceController()->sliceLogic());
 
@@ -120,18 +117,18 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     barWidget = widget;
   }
 
-  vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(n);
+  vtkMRMLViewNode* vn = vtkMRMLViewNode::SafeDownCast(n);
   if (vn)
   {
     // ThreeDViewController needs to now the ThreeDView
-    qMRMLThreeDWidget *viewWidget = dynamic_cast<qMRMLThreeDWidget*>(layoutManager->viewWidget( vn ));
+    qMRMLThreeDWidget* viewWidget = dynamic_cast<qMRMLThreeDWidget*>(layoutManager->viewWidget(vn));
     if (viewWidget)
     {
       qMRMLThreeDViewControllerWidget* widget =
         new qMRMLThreeDViewControllerWidget(this->ThreeDViewControllersCollapsibleButton);
       widget->setLayoutBehavior(qMRMLViewControllerBar::Panel);
       widget->setMRMLScene(q->mrmlScene());
-      widget->setThreeDView( viewWidget->threeDView() );
+      widget->setThreeDView(viewWidget->threeDView());
       // qMRMLThreeDViewControllerWidget needs to know the ViewLogic(s)
       widget->setViewLogic(viewWidget->threeDController()->viewLogic());
       // add the widget to the display
@@ -140,19 +137,19 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     }
   }
 
-  vtkMRMLPlotViewNode *pn = vtkMRMLPlotViewNode::SafeDownCast(n);
+  vtkMRMLPlotViewNode* pn = vtkMRMLPlotViewNode::SafeDownCast(n);
   if (pn)
   {
-    qMRMLPlotViewControllerWidget *widget =
+    qMRMLPlotViewControllerWidget* widget =
       new qMRMLPlotViewControllerWidget(this->PlotViewControllersCollapsibleButton);
-    widget->setMRMLPlotViewNode( pn );
-    widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
+    widget->setMRMLPlotViewNode(pn);
+    widget->setLayoutBehavior(qMRMLViewControllerBar::Panel);
 
     // PlotViewController needs to now the PlotView
-    qMRMLPlotWidget *viewWidget = dynamic_cast<qMRMLPlotWidget*>(layoutManager->viewWidget( pn ));
+    qMRMLPlotWidget* viewWidget = dynamic_cast<qMRMLPlotWidget*>(layoutManager->viewWidget(pn));
     if (viewWidget)
     {
-      widget->setPlotView( viewWidget->plotView() ) ;
+      widget->setPlotView(viewWidget->plotView());
       widget->setMRMLPlotViewNode(pn);
       widget->setMRMLScene(q->mrmlScene());
     }
@@ -168,31 +165,31 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
 }
 
 //-----------------------------------------------------------------------------
-void
-qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode *n)
+void qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode* n)
 {
   // find the widget for the SliceNode
   ControllerMapType::iterator cit = this->ControllerMap.find(n);
   if (cit == this->ControllerMap.end())
   {
-    qDebug() << "qSlicerViewControllersModuleWidgetPrivate::removeController - Node has no Controller managed by this module.";
+    qDebug()
+      << "qSlicerViewControllersModuleWidgetPrivate::removeController - Node has no Controller managed by this module.";
     return;
   }
 
   // unpack the widget
-  vtkMRMLSliceNode *sn = vtkMRMLSliceNode::SafeDownCast(n);
+  vtkMRMLSliceNode* sn = vtkMRMLSliceNode::SafeDownCast(n);
   if (sn)
   {
     SliceControllersLayout->removeWidget(cit->second);
   }
 
-  vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(n);
+  vtkMRMLViewNode* vn = vtkMRMLViewNode::SafeDownCast(n);
   if (vn)
   {
     ThreeDViewControllersLayout->removeWidget(cit->second);
   }
 
-  vtkMRMLPlotViewNode *pn = vtkMRMLPlotViewNode::SafeDownCast(n);
+  vtkMRMLPlotViewNode* pn = vtkMRMLPlotViewNode::SafeDownCast(n);
   if (pn)
   {
     PlotViewControllersLayout->removeWidget(cit->second);
@@ -205,11 +202,10 @@ qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode *n)
   this->ControllerMap.erase(cit);
 }
 
-
 //-----------------------------------------------------------------------------
 qSlicerViewControllersModuleWidget::qSlicerViewControllersModuleWidget(QWidget* _parentWidget)
-  : Superclass(_parentWidget),
-    d_ptr(new qSlicerViewControllersModuleWidgetPrivate(*this))
+  : Superclass(_parentWidget)
+  , d_ptr(new qSlicerViewControllersModuleWidgetPrivate(*this))
 {
 }
 
@@ -222,14 +218,16 @@ void qSlicerViewControllersModuleWidget::setup()
   Q_D(qSlicerViewControllersModuleWidget);
   d->setupUi(this);
 
-  connect(d->MRMLViewNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this, SLOT(onAdvancedViewNodeChanged(vtkMRMLNode*)));
+  connect(d->MRMLViewNodeComboBox,
+          SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+          this,
+          SLOT(onAdvancedViewNodeChanged(vtkMRMLNode*)));
 
   d->AdvancedCollapsibleButton->setCollapsed(true);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
+void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qSlicerViewControllersModuleWidget);
 
@@ -237,12 +235,12 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   this->Superclass::setMRMLScene(newScene);
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
-  qSlicerLayoutManager * layoutManager = app->layoutManager();
+  qSlicerLayoutManager* layoutManager = app->layoutManager();
   if (!layoutManager)
   {
     return;
@@ -252,9 +250,10 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
   // Controller and connect it up
   std::vector<vtkMRMLNode*> sliceNodes;
   newScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
-  for (std::vector< vtkMRMLNode* >::iterator sliceNodeIt = sliceNodes.begin(); sliceNodeIt != sliceNodes.end(); ++sliceNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator sliceNodeIt = sliceNodes.begin(); sliceNodeIt != sliceNodes.end();
+       ++sliceNodeIt)
   {
-    vtkMRMLSliceNode *snode = vtkMRMLSliceNode::SafeDownCast(*sliceNodeIt);
+    vtkMRMLSliceNode* snode = vtkMRMLSliceNode::SafeDownCast(*sliceNodeIt);
     if (snode)
     {
       d->createController(snode, layoutManager);
@@ -263,9 +262,10 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   std::vector<vtkMRMLNode*> threeDNodes;
   newScene->GetNodesByClass("vtkMRMLViewNode", threeDNodes);
-  for (std::vector< vtkMRMLNode* >::iterator threeDNodeIt = threeDNodes.begin(); threeDNodeIt != threeDNodes.end(); ++threeDNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator threeDNodeIt = threeDNodes.begin(); threeDNodeIt != threeDNodes.end();
+       ++threeDNodeIt)
   {
-    vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast(*threeDNodeIt);
+    vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(*threeDNodeIt);
     if (vnode)
     {
       d->createController(vnode, layoutManager);
@@ -274,9 +274,9 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 
   std::vector<vtkMRMLNode*> plotNodes;
   newScene->GetNodesByClass("vtkMRMLPlotViewNode", plotNodes);
-  for (std::vector< vtkMRMLNode* >::iterator plotNodeIt = plotNodes.begin(); plotNodeIt != plotNodes.end(); ++plotNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator plotNodeIt = plotNodes.begin(); plotNodeIt != plotNodes.end(); ++plotNodeIt)
   {
-    vtkMRMLPlotViewNode *pnode = vtkMRMLPlotViewNode::SafeDownCast(*plotNodeIt);
+    vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast(*plotNodeIt);
     if (pnode)
     {
       d->createController(pnode, layoutManager);
@@ -284,18 +284,16 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
   }
 
   // Need to listen for any new slice or view nodes being added
-  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeAddedEvent,
-                      this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
+  this->qvtkReconnect(
+    oldScene, newScene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
 
   // Need to listen for any slice or view nodes being removed
-  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeRemovedEvent,
-                      this, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
+  this->qvtkReconnect(
+    oldScene, newScene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
   // Listen to changes in the Layout so we only show controllers for
   // the visible nodes
-  QObject::connect(layoutManager, SIGNAL(layoutChanged(int)), this,
-                   SLOT(onLayoutChanged(int)));
-
+  QObject::connect(layoutManager, SIGNAL(layoutChanged(int)), this, SLOT(onLayoutChanged(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -308,12 +306,12 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
     return;
   }
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
-  qSlicerLayoutManager * layoutManager = app->layoutManager();
+  qSlicerLayoutManager* layoutManager = app->layoutManager();
   if (!layoutManager)
   {
     return;
@@ -322,8 +320,8 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode)
   {
-    //QString layoutName = sliceNode->GetLayoutName();
-    //qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
+    // QString layoutName = sliceNode->GetLayoutName();
+    // qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the slice controller
     d->createController(sliceNode, layoutManager);
@@ -332,8 +330,8 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
   if (viewNode)
   {
-    //QString layoutName = viewNode->GetName();
-    //qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
+    // QString layoutName = viewNode->GetName();
+    // qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the view controller
     d->createController(viewNode, layoutManager);
@@ -342,8 +340,8 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(node);
   if (plotViewNode)
   {
-    //QString layoutName = viewNode->GetName();
-    //qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
+    // QString layoutName = viewNode->GetName();
+    // qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the view controller
     d->createController(plotViewNode, layoutManager);
@@ -401,24 +399,24 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
     return;
   }
 
-  //qDebug() << "qSlicerViewControllersModuleWidget::onLayoutChanged";
+  // qDebug() << "qSlicerViewControllersModuleWidget::onLayoutChanged";
 
   // add the controllers for any newly visible SliceNodes and remove
   // the controllers for any SliceNodes no longer visible
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
-  qSlicerLayoutManager * layoutManager = app->layoutManager();
+  qSlicerLayoutManager* layoutManager = app->layoutManager();
   if (!layoutManager)
   {
     return;
   }
 
-  vtkMRMLLayoutLogic *layoutLogic = layoutManager->layoutLogic();
-  vtkCollection *visibleViews = layoutLogic->GetViewNodes();
+  vtkMRMLLayoutLogic* layoutLogic = layoutManager->layoutLogic();
+  vtkCollection* visibleViews = layoutLogic->GetViewNodes();
 
   // hide Controllers for Nodes not currently visible in
   // the layout
@@ -435,12 +433,11 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 
   // show Controllers for Nodes not currently being managed
   // by this widget
-  vtkObject *v = nullptr;
+  vtkObject* v = nullptr;
   vtkCollectionSimpleIterator it;
-  for (visibleViews->InitTraversal(it);
-    (v = visibleViews->GetNextItemAsObject(it));)
+  for (visibleViews->InitTraversal(it); (v = visibleViews->GetNextItemAsObject(it));)
   {
-    vtkMRMLNode *vn = vtkMRMLNode::SafeDownCast(v);
+    vtkMRMLNode* vn = vtkMRMLNode::SafeDownCast(v);
     if (vn)
     {
       // find the controller

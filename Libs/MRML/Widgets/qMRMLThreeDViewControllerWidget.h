@@ -38,8 +38,7 @@ class vtkMRMLViewNode;
 
 // VTK includes
 
-class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
-  : public qMRMLViewControllerBar
+class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget : public qMRMLViewControllerBar
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -54,7 +53,7 @@ public:
   void setQuadBufferStereoSupportEnabled(bool value);
 
   /// Get ViewLogic
-  vtkMRMLViewLogic* viewLogic()const;
+  vtkMRMLViewLogic* viewLogic() const;
 
   /// Set \a newViewLogic
   /// Use if two instances of the controller need to observe the same logic.
@@ -64,7 +63,7 @@ public:
   void setViewLabel(const QString& newViewLabel);
 
   /// Get the label for the view (abbreviation for the view name)
-  QString viewLabel()const;
+  QString viewLabel() const;
 
   /// Get 3D view node associated with this ThreeDViewController.
   Q_INVOKABLE vtkMRMLViewNode* mrmlThreeDViewNode() const;
@@ -111,8 +110,7 @@ public slots:
   void setWhiteBackground();
 
   /// If the second color is not set, the first color is used.
-  void setBackgroundColor(const QColor& color,
-                          QColor color2 = QColor());
+  void setBackgroundColor(const QColor& color, QColor color2 = QColor());
 
   /// Utility function to change color of the box
   void setBoxColor(const QColor& color);

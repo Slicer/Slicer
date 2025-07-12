@@ -28,8 +28,7 @@
 
 class qSlicerSegmentEditorEraseEffectPrivate;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEraseEffect :
-  public qSlicerSegmentEditorPaintEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEraseEffect : public qSlicerSegmentEditorPaintEffect
 {
 public:
   Q_OBJECT
@@ -44,7 +43,7 @@ public:
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE const QString helpText()const override;
+  Q_INVOKABLE const QString helpText() const override;
 
   /// Clone editor effect
   qSlicerSegmentEditorAbstractEffect* clone() override;

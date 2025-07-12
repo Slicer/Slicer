@@ -36,8 +36,8 @@ class vtkInformationVector;
 ///
 class VTK_ITK_EXPORT vtkITKGrowCut : public vtkImageAlgorithm
 {
- public:
-  static vtkITKGrowCut *New();
+public:
+  static vtkITKGrowCut* New();
   vtkTypeMacro(vtkITKGrowCut, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -59,7 +59,8 @@ class VTK_ITK_EXPORT vtkITKGrowCut : public vtkImageAlgorithm
 
   /// Spatial regularization factor, which can force growing in nearby regions.
   /// For each physical unit distance, this much intensity level difference is simulated.
-  /// By default = 0, which means spatial distance does not play a role in the region growing, only intensity value similarity.
+  /// By default = 0, which means spatial distance does not play a role in the region growing, only intensity value
+  /// similarity.
   vtkGetMacro(DistancePenalty, double);
   void SetDistancePenalty(double distancePenalty);
 

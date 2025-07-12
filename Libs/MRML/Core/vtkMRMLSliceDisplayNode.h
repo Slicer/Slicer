@@ -28,8 +28,8 @@
 class VTK_MRML_EXPORT vtkMRMLSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
 public:
-  static vtkMRMLSliceDisplayNode *New();
-  vtkTypeMacro(vtkMRMLSliceDisplayNode,vtkMRMLModelDisplayNode);
+  static vtkMRMLSliceDisplayNode* New();
+  vtkTypeMacro(vtkMRMLSliceDisplayNode, vtkMRMLModelDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Read node attributes from XML file
@@ -45,7 +45,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "SliceDisplay";}
+  const char* GetNodeTagName() override { return "SliceDisplay"; }
 
   //@{
   /// Toggles visibility of intersections of other slices in the slice viewer
@@ -93,7 +93,8 @@ public:
 
   //@{
   /// Enable/disable interaction handles.
-  /// \sa IntersectingSlicesInteractiveMode, SetIntersectingSlicesTranslationEnabled, SetIntersectingSlicesRotationEnabled
+  /// \sa IntersectingSlicesInteractiveMode, SetIntersectingSlicesTranslationEnabled,
+  /// SetIntersectingSlicesRotationEnabled
   void SetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode, bool enabled);
   bool GetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode);
   //@}
@@ -101,9 +102,9 @@ public:
   enum HandlesVisibilityMode
   {
     NeverVisible = 0, ///< Handles are never displayed
-    NearbyVisible, ///< Handles are displayed when mouse pointer gets close
-    AlwaysVisible, ///< Handles are always visible
-    //FadingVisible, // Handles' opacity increases as the mouse gets closer to them
+    NearbyVisible,    ///< Handles are displayed when mouse pointer gets close
+    AlwaysVisible,    ///< Handles are always visible
+    // FadingVisible, // Handles' opacity increases as the mouse gets closer to them
     HandlesVisibilityMode_Last // insert new types above this line
   };
 
@@ -123,8 +124,8 @@ public:
   enum IntersectionMode
   {
     SkipLineCrossings = 0, ///< Lines do not intersect and there is a gap around the intersection point
-    FullLines, ///< Lines intersect
-    IntersectionMode_Last // insert new types above this line
+    FullLines,             ///< Lines intersect
+    IntersectionMode_Last  // insert new types above this line
   };
 
   //@{
@@ -142,9 +143,9 @@ public:
 
   enum LineThicknessMode
   {
-    FineLines = 0, ///< Thin lines
-    MediumLines, ///< Medium lines
-    ThickLines, ///< Thick lines
+    FineLines = 0,         ///< Thin lines
+    MediumLines,           ///< Medium lines
+    ThickLines,            ///< Thick lines
     LineThicknessMode_Last // insert new types above this line
   };
 
@@ -167,11 +168,13 @@ public:
 
   enum ComponentType
   {
-    ComponentNone = 0, ///< no component of the slice or slice intersection widget is active
+    ComponentNone = 0,                          ///< no component of the slice or slice intersection widget is active
     ComponentTranslateIntersectingSlicesHandle, ///< mouse is near the intersection point of slice intersections
-    ComponentRotateIntersectingSlicesHandle, ///< mouse is near the end of the slice intersection (rotation section)
-    ComponentTranslateSingleIntersectingSliceHandle, ///< mouse is near the middle of the slice intersection (translation section)
-    ComponentSliceIntersection, ///< slice intersection is active (not any handle), e.g., because user is interacting with the widget
+    ComponentRotateIntersectingSlicesHandle,    ///< mouse is near the end of the slice intersection (rotation section)
+    ComponentTranslateSingleIntersectingSliceHandle, ///< mouse is near the middle of the slice intersection
+                                                     ///< (translation section)
+    ComponentSliceIntersection, ///< slice intersection is active (not any handle), e.g., because user is interacting
+                                ///< with the widget
     ComponentTranslateIntersectingThickSlabHandle, ///< mouse is near the handle for adjusting a thick slab
     Component_Last
   };
@@ -188,11 +191,12 @@ public:
   /// Index of active component (that the mouse or other interaction context is hovered over).
   /// This property is computed on-the-fly and saved to file.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveComponentIndex(std::string context= vtkMRMLSliceDisplayNode::GetDefaultContextName());
+  int GetActiveComponentIndex(std::string context = vtkMRMLSliceDisplayNode::GetDefaultContextName());
 
   /// Set active component type and index for interaction context (empty by default, meaning mouse)
-  void SetActiveComponent(int componentType, int componentIndex,
-                          std::string context= vtkMRMLSliceDisplayNode::GetDefaultContextName());
+  void SetActiveComponent(int componentType,
+                          int componentIndex,
+                          std::string context = vtkMRMLSliceDisplayNode::GetDefaultContextName());
 
   /// Query if there is an active component for any interaction context
   bool HasActiveComponent();

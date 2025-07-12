@@ -40,8 +40,13 @@
 static const double EPSILON = 1e-4;
 
 //----------------------------------------------------------------------------
-bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], double zAxisExpected_World[3],
-  double originExpected_World[3], double sizeExpected_World[3], vtkMRMLMarkupsROINode* roiNode, double epsilon)
+bool CompareROI(double xAxisExpected_World[3],
+                double yAxisExpected_World[3],
+                double zAxisExpected_World[3],
+                double originExpected_World[3],
+                double sizeExpected_World[3],
+                vtkMRMLMarkupsROINode* roiNode,
+                double epsilon)
 {
   double xAxisActual_World[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetXAxisWorld(xAxisActual_World);
@@ -54,41 +59,27 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
 
   if (vtkMath::Dot(xAxisExpected_World, xAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "X-axis: expected: ["
-      << xAxisExpected_World[0] << ", "
-      << xAxisExpected_World[1] << ", "
-      << xAxisExpected_World[2] << ", "
-      << "] got: ["
-      << xAxisActual_World[0] << ", "
-      << xAxisActual_World[1] << ", "
-      << xAxisActual_World[2] << ", "
-      << "]" << std::endl;
+    std::cerr << "X-axis: expected: [" << xAxisExpected_World[0] << ", " << xAxisExpected_World[1] << ", "
+              << xAxisExpected_World[2] << ", "
+              << "] got: [" << xAxisActual_World[0] << ", " << xAxisActual_World[1] << ", " << xAxisActual_World[2]
+              << ", "
+              << "]" << std::endl;
     return false;
   }
   if (vtkMath::Dot(yAxisExpected_World, yAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "Y-axis: expected: ["
-      << yAxisExpected_World[0] << ", "
-      << yAxisExpected_World[1] << ", "
-      << yAxisExpected_World[2] << ", "
-      << "] got: ["
-      << yAxisActual_World[0] << ", "
-      << yAxisActual_World[1] << ", "
-      << yAxisActual_World[2] << ", "
-      << "]" << std::endl;
+    std::cerr << "Y-axis: expected: [" << yAxisExpected_World[0] << ", " << yAxisExpected_World[1] << ", "
+              << yAxisExpected_World[2] << ", "
+              << "] got: [" << yAxisActual_World[0] << ", " << yAxisActual_World[1] << ", " << yAxisActual_World[2]
+              << ", "
+              << "]" << std::endl;
     return false;
   }
   if (vtkMath::Dot(zAxisExpected_World, zAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "Z-axis: expected: ["
-      << zAxisExpected_World[0] << ", "
-      << zAxisExpected_World[1] << ", "
-      << zAxisExpected_World[2]
-      << "] got: ["
-      << zAxisActual_World[0] << ", "
-      << zAxisActual_World[1] << ", "
-      << zAxisActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Z-axis: expected: [" << zAxisExpected_World[0] << ", " << zAxisExpected_World[1] << ", "
+              << zAxisExpected_World[2] << "] got: [" << zAxisActual_World[0] << ", " << zAxisActual_World[1] << ", "
+              << zAxisActual_World[2] << "]" << std::endl;
     return false;
   }
 
@@ -99,15 +90,9 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
   vtkMath::Subtract(originExpected_World, originActual_World, originDifference_World);
   if (vtkMath::Norm(originDifference_World) > epsilon)
   {
-    std::cerr << "Center: expected: ["
-      << originExpected_World[0] << ", "
-      << originExpected_World[1] << ", "
-      << originExpected_World[2]
-      << "] got: ["
-      << originActual_World[0] << ", "
-      << originActual_World[1] << ", "
-      << originActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Center: expected: [" << originExpected_World[0] << ", " << originExpected_World[1] << ", "
+              << originExpected_World[2] << "] got: [" << originActual_World[0] << ", " << originActual_World[1] << ", "
+              << originActual_World[2] << "]" << std::endl;
     return false;
   }
 
@@ -116,20 +101,12 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
 
   double sizeDifference_World[3] = { 0.0, 0.0, 0.0 };
   vtkMath::Subtract(sizeExpected_World, sizeActual_World, sizeDifference_World);
-  if (std::abs(sizeDifference_World[0]) > EPSILON
-    || std::abs(sizeDifference_World[1]) > EPSILON
-    || std::abs(sizeDifference_World[2]) > EPSILON
-    )
+  if (std::abs(sizeDifference_World[0]) > EPSILON || std::abs(sizeDifference_World[1]) > EPSILON
+      || std::abs(sizeDifference_World[2]) > EPSILON)
   {
-    std::cerr << "Size: expected: ["
-      << sizeExpected_World[0] << ", "
-      << sizeExpected_World[1] << ", "
-      << sizeExpected_World[2]
-      << "] got: ["
-      << sizeActual_World[0] << ", "
-      << sizeActual_World[1] << ", "
-      << sizeActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Size: expected: [" << sizeExpected_World[0] << ", " << sizeExpected_World[1] << ", "
+              << sizeExpected_World[2] << "] got: [" << sizeActual_World[0] << ", " << sizeActual_World[1] << ", "
+              << sizeActual_World[2] << "]" << std::endl;
     return false;
   }
 
@@ -140,8 +117,12 @@ double DisplacementScale = 0.63;
 
 //----------------------------------------------------------------------------
 void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
-  double origin[3], double spacing[3], double direction[3][3], double dims[3],
-  const double bulkMatrix[3][3], const double bulkOffset[3])
+                      double origin[3],
+                      double spacing[3],
+                      double direction[3][3],
+                      double dims[3],
+                      const double bulkMatrix[3][3],
+                      const double bulkOffset[3])
 {
   vtkNew<vtkImageData> bsplineCoefficients;
   bsplineCoefficients->SetExtent(0, dims[0] - 1, 0, dims[1] - 1, 0, dims[2] - 1);
@@ -171,7 +152,7 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsNodeTest5(int , char * [])
+int vtkMRMLMarkupsNodeTest5(int, char*[])
 {
   std::cout << "Testing vtkMRMLMarkupsROINode" << std::endl;
   vtkNew<vtkMRMLScene> scene;
@@ -231,7 +212,8 @@ int vtkMRMLMarkupsNodeTest5(int , char * [])
   double origin_World[3] = { 0.0, 0.0, 0.0 };
 
   vtkNew<vtkMatrix4x4> matrix;
-  vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(xAxis_Node, yAxis_Node, zAxis_Node, origin_Node, matrix, linearTransform);
+  vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(
+    xAxis_Node, yAxis_Node, zAxis_Node, origin_Node, matrix, linearTransform);
   for (int i = 0; i < 3; ++i)
   {
     xAxis_World[i] = matrix->GetElement(i, 0);
@@ -253,11 +235,14 @@ int vtkMRMLMarkupsNodeTest5(int , char * [])
 
   vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
   double bSplineSpacing[3] = { 100, 100, 100 };
-  double bSplineDirection[3][3] = { {0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814} };
-  double bSplineDims[3] = { 7,8,7 };
+  double bSplineDirection[3][3] = { { 0.92128500, -0.36017075, -0.146666625 },
+                                    { 0.31722386, 0.91417248, -0.25230478 },
+                                    { 0.22495105, 0.18591857, 0.95646814 } };
+  double bSplineDims[3] = { 7, 8, 7 };
   const double bSplineBulkMatrix[3][3] = { { 0.7, 0.2, 0.1 }, { 0.1, 0.8, 0.1 }, { 0.05, 0.2, 0.9 } };
   const double bSplineBulkOffset[3] = { -5, 3, 6 };
-  CreateBSplineVtk(bSplineTransform, origin, bSplineSpacing, bSplineDirection, bSplineDims, bSplineBulkMatrix, bSplineBulkOffset);
+  CreateBSplineVtk(
+    bSplineTransform, origin, bSplineSpacing, bSplineDirection, bSplineDims, bSplineBulkMatrix, bSplineBulkOffset);
 
   vtkNew<vtkMRMLBSplineTransformNode> bSplineTransformNode;
   scene->AddNode(bSplineTransformNode);

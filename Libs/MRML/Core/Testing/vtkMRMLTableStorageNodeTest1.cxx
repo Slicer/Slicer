@@ -33,9 +33,9 @@
 //---------------------------------------------------------------------------
 int TestReadWriteWithoutSchema(vtkMRMLScene* scene);
 int TestReadWriteWithSchema(vtkMRMLScene* scene);
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* table, bool schemaExpected);
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkTable* table, bool schemaExpected);
 
-int vtkMRMLTableStorageNodeTest1(int argc, char * argv[])
+int vtkMRMLTableStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {
@@ -114,15 +114,13 @@ int TestReadWriteWithSchema(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* table, bool schemaExpected)
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkTable* table, bool schemaExpected)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) +
-    std::string("/vtkMRMLTableStorageNodeTest1") +
-    std::string(extension);
+  std::string fileName =
+    std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTableStorageNodeTest1") + std::string(extension);
 
-  std::string expectedSchemaFileName = std::string(scene->GetRootDirectory()) +
-    std::string("/vtkMRMLTableStorageNodeTest1.schema") +
-    std::string(extension);
+  std::string expectedSchemaFileName = std::string(scene->GetRootDirectory())
+                                       + std::string("/vtkMRMLTableStorageNodeTest1.schema") + std::string(extension);
 
   vtksys::SystemTools::RemoveFile(fileName);
   vtksys::SystemTools::RemoveFile(expectedSchemaFileName);

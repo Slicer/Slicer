@@ -58,7 +58,7 @@ public:
 
   /// Get \a sliceNode
   /// \sa setMRMLSliceCompositeNode();
-  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
+  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode() const;
 
   /// Set slice offset range
   Q_INVOKABLE void setSliceOffsetRange(double min, double max);
@@ -73,13 +73,13 @@ public:
   Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic();
 
   /// Set \a newSliceLogic
-  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
+  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic* newSliceLogic);
 
   /// Get the slice slider widget (shown in the controller bar).
   Q_INVOKABLE qMRMLSliderWidget* sliceVerticalOffsetSlider();
 
   /// Get the slice offset slider visibility.
-  bool showSliceOffsetSlider()const;
+  bool showSliceOffsetSlider() const;
 
 public slots:
 

@@ -53,14 +53,16 @@ class vtkObject;
 
 //-----------------------------------------------------------------------------
 class qMRMLPlotSeriesPropertiesWidgetPrivate
- : public QObject
- , public Ui_qMRMLPlotSeriesPropertiesWidget
+  : public QObject
+  , public Ui_qMRMLPlotSeriesPropertiesWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLPlotSeriesPropertiesWidget);
+
 protected:
   qMRMLPlotSeriesPropertiesWidget* const q_ptr;
+
 public:
   qMRMLPlotSeriesPropertiesWidgetPrivate(qMRMLPlotSeriesPropertiesWidget& object);
   ~qMRMLPlotSeriesPropertiesWidgetPrivate() override;
@@ -101,7 +103,7 @@ public slots:
   void onMarkersSizeChanged(double size);
 
   /// Change line style for Line and Scatter plots.
-  void onLineStyleChanged(const QString &style);
+  void onLineStyleChanged(const QString& style);
 
   /// Change line width for Line and Scatter plots.
   void onLineWidthChanged(double width);
@@ -110,9 +112,8 @@ public slots:
   void onPlotSeriesColorChanged(const QColor& color);
 
 public:
-  vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
-  vtkWeakPointer<vtkMRMLPlotSeriesNode>    PlotSeriesNode;
-
+  vtkWeakPointer<vtkMRMLPlotViewNode> PlotViewNode;
+  vtkWeakPointer<vtkMRMLPlotSeriesNode> PlotSeriesNode;
 };
 
 #endif

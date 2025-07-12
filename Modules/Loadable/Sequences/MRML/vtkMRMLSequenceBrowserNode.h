@@ -40,8 +40,8 @@ class vtkIntArray;
 class VTK_SLICER_SEQUENCES_MODULE_MRML_EXPORT vtkMRMLSequenceBrowserNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLSequenceBrowserNode *New();
-  vtkTypeMacro(vtkMRMLSequenceBrowserNode,vtkMRMLNode);
+  static vtkMRMLSequenceBrowserNode* New();
+  vtkTypeMacro(vtkMRMLSequenceBrowserNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// ProxyNodeModifiedEvent is invoked when a proxy node is modified
@@ -67,12 +67,14 @@ public:
   enum MissingItemModeType
   {
     MissingItemInvalid = -1, ///< mode is invalid
-    MissingItemCreateFromPrevious = 0, ///< previous item is used for initializing the new item (this is the default mode)
+    MissingItemCreateFromPrevious =
+      0,                          ///< previous item is used for initializing the new item (this is the default mode)
     MissingItemCreateFromDefault, ///< the new item is created from the default node (typically an empty node)
-    MissingItemSetToDefault, ///< the proxy node is set to the default (empty) node; new item is not created
-    MissingItemIgnore, ///< the proxy node is not modified
-    MissingItemDisplayHidden, ///< if it is a vtkMRMLDisplayNode the proxy node is hidden, otherwise behaves as MissingItemIgnore
-    NumberOfMissingItemModes // this line must be the last one
+    MissingItemSetToDefault,      ///< the proxy node is set to the default (empty) node; new item is not created
+    MissingItemIgnore,            ///< the proxy node is not modified
+    MissingItemDisplayHidden,     ///< if it is a vtkMRMLDisplayNode the proxy node is hidden, otherwise behaves as
+                                  ///< MissingItemIgnore
+    NumberOfMissingItemModes      // this line must be the last one
   };
 
   /// Modes displaying index for the user
@@ -87,20 +89,20 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void CopyContent(vtkMRMLNode *node, bool deepCopy=true) override;
+  void CopyContent(vtkMRMLNode* node, bool deepCopy = true) override;
 
   /// Get unique node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "SequenceBrowser";};
+  const char* GetNodeTagName() override { return "SequenceBrowser"; };
 
   /// Set the sequence data node.
   /// Returns the new proxy node postfix.
-  std::string SetAndObserveMasterSequenceNodeID(const char *sequenceNodeID);
+  std::string SetAndObserveMasterSequenceNodeID(const char* sequenceNodeID);
   /// Get the sequence data node
   vtkMRMLSequenceNode* GetMasterSequenceNode();
 
@@ -121,8 +123,9 @@ public:
 
   //@{
   /// Returns all synchronized sequence nodes (does not include the master sequence node)
-  void GetSynchronizedSequenceNodes(std::vector< vtkMRMLSequenceNode* > &synchronizedDataNodes, bool includeMasterNode=false);
-  void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode=false);
+  void GetSynchronizedSequenceNodes(std::vector<vtkMRMLSequenceNode*>& synchronizedDataNodes,
+                                    bool includeMasterNode = false);
+  void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode = false);
   //@}
 
   /// Returns number of synchronized sequence nodes
@@ -193,7 +196,7 @@ public:
   //@{
   /// Get/set the recording sampling mode
   vtkSetMacro(RecordingSamplingMode, int);
-  void SetRecordingSamplingModeFromString(const char *recordingSamplingModeString);
+  void SetRecordingSamplingModeFromString(const char* recordingSamplingModeString);
   vtkGetMacro(RecordingSamplingMode, int);
   virtual std::string GetRecordingSamplingModeAsString();
   //@}
@@ -201,7 +204,7 @@ public:
   //@{
   /// Helper functions for converting between string and code representation of recording sampling modes
   static std::string GetRecordingSamplingModeAsString(int recordingSamplingMode);
-  static int GetRecordingSamplingModeFromString(const std::string &recordingSamplingModeString);
+  static int GetRecordingSamplingModeFromString(const std::string& recordingSamplingModeString);
   //@}
 
   //@{
@@ -213,7 +216,7 @@ public:
   //@{
   /// Get/set index display mode
   vtkSetMacro(IndexDisplayMode, int);
-  void SetIndexDisplayModeFromString(const char *indexDisplayModeString);
+  void SetIndexDisplayModeFromString(const char* indexDisplayModeString);
   vtkGetMacro(IndexDisplayMode, int);
   virtual std::string GetIndexDisplayModeAsString();
   //@}
@@ -227,12 +230,12 @@ public:
   //@{
   /// Helper functions for converting between string and code representation of index display modes
   static std::string GetIndexDisplayModeAsString(int indexDisplayMode);
-  static int GetIndexDisplayModeFromString(const std::string &indexDisplayModeString);
+  static int GetIndexDisplayModeFromString(const std::string& indexDisplayModeString);
   //@}
 
   //@{
   /// Selects a sequence item for display, returns current selected item number.
-  int SelectNextItem(int selectionIncrement=1);
+  int SelectNextItem(int selectionIncrement = 1);
   int SelectFirstItem();
   int SelectLastItem();
   //@}
@@ -241,7 +244,7 @@ public:
   int GetNumberOfItems();
 
   /// Adds proxy nodes from another scene (typically from the main scene). The data node is optionally copied.
-  vtkMRMLNode* AddProxyNode(vtkMRMLNode* sourceProxyNode, vtkMRMLSequenceNode* sequenceNode, bool copy=true);
+  vtkMRMLNode* AddProxyNode(vtkMRMLNode* sourceProxyNode, vtkMRMLSequenceNode* sequenceNode, bool copy = true);
 
   /// Get proxy corresponding to a sequence node.
   vtkMRMLNode* GetProxyNode(vtkMRMLSequenceNode* sequenceNode);
@@ -252,7 +255,8 @@ public:
     static bool warningLogged = false;
     if (!warningLogged)
     {
-      vtkWarningMacro("vtkMRMLSequenceBrowserNode::GetVirtualOutputDataNode is deprecated, use vtkMRMLSequenceBrowserNode::GetProxyNode method instead");
+      vtkWarningMacro("vtkMRMLSequenceBrowserNode::GetVirtualOutputDataNode is deprecated, use "
+                      "vtkMRMLSequenceBrowserNode::GetProxyNode method instead");
       warningLogged = true;
     }
     return this->GetProxyNode(sequenceNode);
@@ -265,7 +269,7 @@ public:
     if (!warningLogged)
     {
       vtkWarningMacro("vtkMRMLSequenceBrowserNode::SetOverwriteTargetNodeName is deprecated,"
-        << " use vtkMRMLSequenceBrowserNode::SetOverwriteProxyName method instead");
+                      << " use vtkMRMLSequenceBrowserNode::SetOverwriteProxyName method instead");
       warningLogged = true;
     }
     this->SetOverwriteProxyName(nullptr, overwrite);
@@ -277,7 +281,8 @@ public:
     static bool warningLogged = false;
     if (!warningLogged)
     {
-      vtkWarningMacro("vtkMRMLSequenceBrowserNode::SetDeepCopyVirtualNodes is deprecated, use vtkMRMLSequenceBrowserNode::SetSaveChanges method instead");
+      vtkWarningMacro("vtkMRMLSequenceBrowserNode::SetDeepCopyVirtualNodes is deprecated, use "
+                      "vtkMRMLSequenceBrowserNode::SetSaveChanges method instead");
       warningLogged = true;
     }
     this->SetSaveChanges(nullptr, !deepcopy);
@@ -286,7 +291,7 @@ public:
   /// Get sequence node corresponding to a proxy node.
   vtkMRMLSequenceNode* GetSequenceNode(vtkMRMLNode* proxyNode);
 
-  void GetAllProxyNodes(std::vector< vtkMRMLNode* > &nodes);
+  void GetAllProxyNodes(std::vector<vtkMRMLNode*>& nodes);
   void GetAllProxyNodes(vtkCollection* nodes);
 
   /// Deprecated method!
@@ -296,7 +301,7 @@ public:
     if (!warningLogged)
     {
       vtkWarningMacro("vtkMRMLSequenceBrowserNode::GetAllVirtualOutputDataNodes is deprecated,"
-        << " use vtkMRMLSequenceBrowserNode::GetAllProxyNodes method instead");
+                      << " use vtkMRMLSequenceBrowserNode::GetAllProxyNodes method instead");
       warningLogged = true;
     }
     this->GetAllProxyNodes(nodes);
@@ -353,7 +358,7 @@ public:
   //@}
 
   /// Process MRML node events for recording of the proxy nodes
-  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Save state of all proxy nodes that recording is enabled for
   virtual void SaveProxyNodesState();
@@ -365,8 +370,11 @@ public:
   /// Parses the requestedFormat string to find a validated format for the types contained in typeString.
   /// validatedFormat is set to the first matching sprintf for the input types
   /// prefix and suffix are set to the non-matching components of requestedFormat
-  static bool ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
-                                   const std::string& requestedFormat, const std::string& typeString);
+  static bool ValidateFormatString(std::string& validatedFormat,
+                                   std::string& prefix,
+                                   std::string& suffix,
+                                   const std::string& requestedFormat,
+                                   const std::string& typeString);
 
 protected:
   vtkMRMLSequenceBrowserNode();
@@ -389,39 +397,39 @@ protected:
   std::string GetSynchronizationPostfixFromSequenceID(const char* sequenceNodeID);
 
 protected:
-  bool PlaybackActive{false};
-  double PlaybackRateFps{10.0};
-  bool PlaybackItemSkippingEnabled{true};
-  bool PlaybackLooped{true};
-  int SelectedItemNumber{-1};
+  bool PlaybackActive{ false };
+  double PlaybackRateFps{ 10.0 };
+  bool PlaybackItemSkippingEnabled{ true };
+  bool PlaybackLooped{ true };
+  int SelectedItemNumber{ -1 };
 
   double RecordingTimeOffsetSec; // difference between universal time and index value
   vtkSetMacro(RecordingTimeOffsetSec, double);
   vtkGetMacro(RecordingTimeOffsetSec, double);
 
-  bool RecordingActive{false};
+  bool RecordingActive{ false };
 
   double LastSaveProxyNodesStateTimeSec;
   vtkSetMacro(LastSaveProxyNodesStateTimeSec, double);
   vtkGetMacro(LastSaveProxyNodesStateTimeSec, double);
 
-  bool RecordMasterOnly{false};
-  int RecordingSamplingMode{vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate};
-  int IndexDisplayMode{vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue};
+  bool RecordMasterOnly{ false };
+  int RecordingSamplingMode{ vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate };
+  int IndexDisplayMode{ vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue };
   std::string IndexDisplayFormat;
 
   // Unique postfixes for storing references to sequence nodes, proxy nodes, and properties
   // For example, a sequence node reference role name is SEQUENCE_NODE_REFERENCE_ROLE_BASE+synchronizationPostfix
-  std::vector< std::string > SynchronizationPostfixes;
+  std::vector<std::string> SynchronizationPostfixes;
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
-  int LastPostfixIndex{0};
+  int LastPostfixIndex{ 0 };
   vtkSetMacro(LastPostfixIndex, int);
   vtkGetMacro(LastPostfixIndex, int);
 
 private:
   struct SynchronizationProperties;
-  std::map< std::string, SynchronizationProperties* > SynchronizationPropertiesMap;
+  std::map<std::string, SynchronizationProperties*> SynchronizationPropertiesMap;
   SynchronizationProperties* GetSynchronizationPropertiesForSequence(vtkMRMLSequenceNode* sequenceNode);
   SynchronizationProperties* GetSynchronizationPropertiesForPostfix(const std::string& rolePostfix);
 };

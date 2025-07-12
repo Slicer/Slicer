@@ -25,16 +25,16 @@
 #include "qSlicerCLIModuleWidgetEventPlayer.h"
 
 // ----------------------------------------------------------------------------
-qSlicerCLIModuleWidgetEventPlayer::qSlicerCLIModuleWidgetEventPlayer(QObject *parent)
+qSlicerCLIModuleWidgetEventPlayer::qSlicerCLIModuleWidgetEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject *Object,
-                                                  const QString &Command,
-                                                  const QString &/*Arguments*/,
-                                                  bool &Error)
+bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject* Object,
+                                                  const QString& Command,
+                                                  const QString& /*Arguments*/,
+                                                  bool& Error)
 {
   // But in the CLI module under Slicer4 when we activate the button apply,
   // we want to do apply and wait instead of apply !
@@ -44,9 +44,9 @@ bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject *Object,
   }
 
   qSlicerCLIModuleWidget* parent = nullptr;
-  for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
+  for (QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
   {
-      parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
+    parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
   }
   // This Command is mainly use for the QPushButton.
   if (!parent || Object->objectName() != "ApplyPushButton")

@@ -35,7 +35,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qMRMLSceneModelTester: public QObject
+class qMRMLSceneModelTester : public QObject
 {
   Q_OBJECT
   void setColumns(qMRMLSceneModel& model);
@@ -87,7 +87,6 @@ void qMRMLSceneModelTester::testSetsAndGets()
   sceneModel.setMRMLScene(scene.GetPointer());
   QCOMPARE(sceneModel.mrmlScene(), scene.GetPointer());
 }
-
 
 // ----------------------------------------------------------------------------
 void qMRMLSceneModelTester::testSetScene()
@@ -151,7 +150,6 @@ void qMRMLSceneModelTester::testSetColumns_data()
   QTest::addColumn<int>("extraItemColumn");
   QTest::addColumn<int>("columnCount");
 
-
   QTest::newRow("name") << 0 << -1 << -1 << -1 << -1 << -1 << 1;
   QTest::newRow("checkable name") << 0 << -1 << 0 << -1 << -1 << -1 << 1;
   QTest::newRow("visible name") << 0 << -1 << -1 << 0 << -1 << -1 << 1;
@@ -175,7 +173,7 @@ void qMRMLSceneModelTester::testSetColumnsWithScene()
   sceneFactory.generateScene();
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
 
-  for (int i=0; i < 100; ++i)
+  for (int i = 0; i < 100; ++i)
   {
     sceneFactory.generateNode();
   }

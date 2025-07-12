@@ -34,7 +34,6 @@ class qSlicerBaseQTBasePythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
-
   qSlicerBaseQTBasePythonQtDecorators()
   {
     PythonQt::self()->registerClass(&qSlicerCoreApplication::staticMetaObject);
@@ -53,24 +52,18 @@ public slots:
 
   //----------------------------------------------------------------------------
   bool static_qSlicerCoreApplication_testingEnabled()
-{
+  {
     return qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
-}
+  }
 
   //----------------------------------------------------------------------------
   // instance methods
 
   //----------------------------------------------------------------------------
-  void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event)
-  {
-    app->sendEvent(_receiver, _event);
-  }
+  void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event) { app->sendEvent(_receiver, _event); }
 
   //----------------------------------------------------------------------------
-  void processEvents(qSlicerCoreApplication* app)
-  {
-    app->processEvents();
-  }
+  void processEvents(qSlicerCoreApplication* app) { app->processEvents(); }
 
   //----------------------------------------------------------------------------
   // qSlicerUtils
@@ -80,8 +73,7 @@ public slots:
 
   /// This method is only for documentation stored on the legacy Slicer wiki.
   /// Instead, use slicer.readthedocs.io and replaceDcumentationUrlVersion.
-  QString static_qSlicerUtils_replaceWikiUrlVersion(const QString& text,
-                                                    const QString& version)
+  QString static_qSlicerUtils_replaceWikiUrlVersion(const QString& text, const QString& version)
   {
     return qSlicerUtils::replaceWikiUrlVersion(text, version);
   }

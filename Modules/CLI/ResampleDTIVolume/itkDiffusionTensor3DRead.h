@@ -35,28 +35,28 @@ template <class TData>
 class ITK_ABI_EXPORT DiffusionTensor3DRead : public Object
 {
 public:
-  typedef TData                                DataType;
-  typedef DiffusionTensor3DRead                Self;
-  typedef Matrix<double, 3, 3>                 MatrixType;
-  typedef DiffusionTensor3D<DataType>          TensorDataType;
-  typedef Image<TensorDataType, 3>             DiffusionImageType;
+  typedef TData DataType;
+  typedef DiffusionTensor3DRead Self;
+  typedef Matrix<double, 3, 3> MatrixType;
+  typedef DiffusionTensor3D<DataType> TensorDataType;
+  typedef Image<TensorDataType, 3> DiffusionImageType;
   typedef typename DiffusionImageType::Pointer DiffusionImagePointer;
-  typedef ImageFileReader<DiffusionImageType>  FileReaderType;
-  typedef MetaDataDictionary                   DictionaryType;
-  typedef MetaDataObject<std::string>          MetaDataStringType;
-  typedef std::vector<std::vector<double> >    DoubleVectorType;
-  typedef MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
-  typedef SmartPointer<Self>                   Pointer;
-  typedef SmartPointer<const Self>             ConstPointer;
+  typedef ImageFileReader<DiffusionImageType> FileReaderType;
+  typedef MetaDataDictionary DictionaryType;
+  typedef MetaDataObject<std::string> MetaDataStringType;
+  typedef std::vector<std::vector<double>> DoubleVectorType;
+  typedef MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DRead, Object);
 
-  itkNewMacro( Self );
-  int Update( const char* input );
+  itkNewMacro(Self);
+  int Update(const char* input);
 
   // /Get the measurement frame of the image
-  itkGetMacro( MeasurementFrame, MatrixType);
+  itkGetMacro(MeasurementFrame, MatrixType);
   // /Get the MetaDataDictionary of the image
   DictionaryType GetMetaDataDictionary() const;
 
@@ -64,22 +64,23 @@ public:
   DiffusionImagePointer GetOutput() const;
 
   // /Set Number Of Threads
-  itkSetMacro( NumberOfThreads, unsigned int);
-  itkGetMacro( HasMeasurementFrame , bool );
+  itkSetMacro(NumberOfThreads, unsigned int);
+  itkGetMacro(HasMeasurementFrame, bool);
+
 private:
   DiffusionTensor3DRead();
 
   typename FileReaderType::Pointer m_Reader;
 
-  MatrixType   m_MeasurementFrame;
+  MatrixType m_MeasurementFrame;
   unsigned int m_NumberOfThreads;
-  bool         m_HasMeasurementFrame;
+  bool m_HasMeasurementFrame;
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DRead.txx"
+# include "itkDiffusionTensor3DRead.txx"
 #endif
 
 #endif

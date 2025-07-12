@@ -26,11 +26,11 @@
 #include "ui_qSlicerAboutDialog.h"
 
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
-#include "qSlicerApplicationUpdateManager.h"
+# include "qSlicerApplicationUpdateManager.h"
 #endif
 
 //-----------------------------------------------------------------------------
-class qSlicerAboutDialogPrivate: public Ui_qSlicerAboutDialog
+class qSlicerAboutDialogPrivate : public Ui_qSlicerAboutDialog
 {
 public:
 };
@@ -38,11 +38,10 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerAboutDialogPrivate methods
 
-
 //-----------------------------------------------------------------------------
 // qSlicerAboutDialog methods
 qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
- :QDialog(parentWidget)
+  : QDialog(parentWidget)
   , d_ptr(new qSlicerAboutDialogPrivate)
 {
   Q_D(qSlicerAboutDialog);
@@ -55,8 +54,8 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->CreditsTextBrowser->append("");
   if (!slicer->isCustomMainApplication())
   {
-    d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->revision()
-      + " / " + slicer->repositoryRevision());
+    d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->revision() + " / "
+                                  + slicer->repositoryRevision());
     d->CreditsTextBrowser->append("");
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
     if (qSlicerApplicationUpdateManager::isApplicationUpdateEnabled())
@@ -64,10 +63,11 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
       qSlicerApplicationUpdateManager* applicationUpdateManager = slicer->applicationUpdateManager();
       if (applicationUpdateManager && applicationUpdateManager->isUpdateAvailable())
       {
-        QString appUpdateText = tr("New application version is available: %1").arg(applicationUpdateManager->latestReleaseVersion());
+        QString appUpdateText =
+          tr("New application version is available: %1").arg(applicationUpdateManager->latestReleaseVersion());
         d->CreditsTextBrowser->insertHtml(QString("<b><a href=\"%1\"><font color=\"orange\">%2</font></a></b>")
-          .arg(applicationUpdateManager->applicationDownloadPageUrl().toString())
-          .arg(appUpdateText));
+                                            .arg(applicationUpdateManager->applicationDownloadPageUrl().toString())
+                                            .arg(appUpdateText));
         d->CreditsTextBrowser->append("");
       }
     }
@@ -80,7 +80,8 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   }
   else
   {
-    d->CreditsTextBrowser->append(slicer->applicationVersion() + " (" + slicer->mainApplicationRepositoryRevision() + ")");
+    d->CreditsTextBrowser->append(slicer->applicationVersion() + " (" + slicer->mainApplicationRepositoryRevision()
+                                  + ")");
     d->CreditsTextBrowser->append("");
   }
   d->CreditsTextBrowser->insertHtml(slicer->acknowledgment());

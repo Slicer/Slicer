@@ -39,25 +39,22 @@ namespace itk
  * \sa TensorFractionalAnisotropyImageFilter
  * \sa DiffusionTensor3D
  */
-template <typename TInputImage,
-          typename TOutputImage = TInputImage>
-class HFieldToDeformationFieldImageFilter :
-  public
-  ImageToImageFilter<TInputImage, TOutputImage>
+template <typename TInputImage, typename TOutputImage = TInputImage>
+class HFieldToDeformationFieldImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef HFieldToDeformationFieldImageFilter           Self;
+  typedef HFieldToDeformationFieldImageFilter Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
 
-  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
   typedef typename Superclass::OutputImageType OutputImageType;
-  typedef typename TOutputImage::PixelType     OutputPixelType;
-  typedef typename Superclass::InputImageType  InputImageType;
-  typedef typename TInputImage::PixelType      InputPixelType;
-  typedef typename InputPixelType::ValueType   InputValueType;
+  typedef typename TOutputImage::PixelType OutputPixelType;
+  typedef typename Superclass::InputImageType InputImageType;
+  typedef typename TInputImage::PixelType InputPixelType;
+  typedef typename InputPixelType::ValueType InputValueType;
 
   typedef typename TInputImage::SpacingType SpacingType;
 
@@ -65,10 +62,7 @@ public:
   itkNewMacro(Self);
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream& os, Indent indent) const override
-  {
-    this->Superclass::PrintSelf( os, indent );
-  }
+  void PrintSelf(std::ostream& os, Indent indent) const override { this->Superclass::PrintSelf(os, indent); }
 
   // need to override GenerateData (This should be threaded)
   void GenerateData() override;
@@ -76,19 +70,20 @@ public:
   OutputPixelType ComputeDisplacement(typename InputImageType::ConstPointer input,
                                       typename InputImageType::IndexType ind,
                                       typename InputImageType::PixelType hvec);
+
 protected:
   HFieldToDeformationFieldImageFilter() = default;
   ~HFieldToDeformationFieldImageFilter() override = default;
-private:
-  HFieldToDeformationFieldImageFilter(const Self &) = delete;
-  void operator=(const Self &) = delete;
 
+private:
+  HFieldToDeformationFieldImageFilter(const Self&) = delete;
+  void operator=(const Self&) = delete;
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkHFieldToDeformationFieldImageFilter.txx"
+# include "itkHFieldToDeformationFieldImageFilter.txx"
 #endif
 
 #endif

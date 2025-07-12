@@ -52,7 +52,8 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
   {
   public:
     vtkMRMLNodeCleanup(vtkMRMLScene* scene, vtkMRMLNode* node)
-      : Scene(scene), Node(node)
+      : Scene(scene)
+      , Node(node)
     {
     }
     ~vtkMRMLNodeCleanup()
@@ -62,9 +63,10 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
         this->Scene->RemoveNode(this->Node);
       }
     }
+
   private:
-    vtkMRMLScene* Scene{nullptr};
-    vtkMRMLNode* Node{nullptr};
+    vtkMRMLScene* Scene{ nullptr };
+    vtkMRMLNode* Node{ nullptr };
   };
 
   vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
@@ -117,21 +119,21 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
 
   switch (interpolationType)
   {
-  case vtkMRMLAbstractVolumeResampler::InterpolationTypeNearestNeighbor:
-    cmdNode->SetParameterAsString("interpolationType", "nn");
-    break;
-  case vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear:
-    cmdNode->SetParameterAsString("interpolationType", "linear");
-    break;
-  case vtkMRMLAbstractVolumeResampler::InterpolationTypeWindowedSinc:
-    cmdNode->SetParameterAsString("interpolationType", "ws");
-    break;
-  case vtkMRMLAbstractVolumeResampler::InterpolationTypeBSpline:
-    cmdNode->SetParameterAsString("interpolationType", "bs");
-    break;
-  case vtkMRMLAbstractVolumeResampler::InterpolationTypeUndefined:
-  default:
-    break;
+    case vtkMRMLAbstractVolumeResampler::InterpolationTypeNearestNeighbor:
+      cmdNode->SetParameterAsString("interpolationType", "nn");
+      break;
+    case vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear:
+      cmdNode->SetParameterAsString("interpolationType", "linear");
+      break;
+    case vtkMRMLAbstractVolumeResampler::InterpolationTypeWindowedSinc:
+      cmdNode->SetParameterAsString("interpolationType", "ws");
+      break;
+    case vtkMRMLAbstractVolumeResampler::InterpolationTypeBSpline:
+      cmdNode->SetParameterAsString("interpolationType", "bs");
+      break;
+    case vtkMRMLAbstractVolumeResampler::InterpolationTypeUndefined:
+    default:
+      break;
   }
 
   if (!resamplingParameter.empty())

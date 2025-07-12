@@ -28,20 +28,18 @@
 // STD includes
 #include <limits>
 
-
 namespace
 {
 int readWrite();
 int piecewiseFunctionFromString();
-}
+} // namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNodeTest1(int argc, char *[] )
+int vtkMRMLVolumePropertyNodeTest1(int argc, char*[])
 {
   if (argc < 2)
   {
-    std::cout << "Usage: vtkMRMLVolumePropertyNodeTest1 scene_file_path.mrml"
-              << std::endl;
+    std::cout << "Usage: vtkMRMLVolumePropertyNodeTest1 scene_file_path.mrml" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -101,8 +99,7 @@ int readWrite()
   scene2->Import();
 
   vtkMRMLVolumePropertyNode* propertyNode2 =
-    vtkMRMLVolumePropertyNode::SafeDownCast(
-    scene2->GetFirstNodeByClass("vtkMRMLVolumePropertyNode"));
+    vtkMRMLVolumePropertyNode::SafeDownCast(scene2->GetFirstNodeByClass("vtkMRMLVolumePropertyNode"));
   CHECK_NOT_NULL(propertyNode2);
 
   vtkPiecewiseFunction* scalarOpacity2 = propertyNode2->GetScalarOpacity();
@@ -114,21 +111,17 @@ int readWrite()
     double value2[4];
     int res = scalarOpacity->GetNodeValue(i, value);
     int res2 = scalarOpacity2->GetNodeValue(i, value2);
-    if (res == -1 || res2 == -1
-        || value[0] != value2[0]
-        || value[1] != value2[1]
-        || value[2] != value2[2]
-        || value[3] != value2[3]
-        )
+    if (res == -1 || res2 == -1 || value[0] != value2[0] || value[1] != value2[1] || value[2] != value2[2]
+        || value[3] != value2[3])
     {
-        std::cout << __FUNCTION__ << ":" << __LINE__ << "failed:" << std::endl
-                  << "  Scalar opacity values are different:" << std::endl
-                  << "     " << res << " " << value[0] << " " << value[1]
-                  << " " << value[2] << " " << value[3] << std::endl
-                  << "  instead of" << std::endl
-                  << "     " << res << " " << value[0] << " " << value[1]
-                  << " " << value[2] << " " << value[3] << std::endl;
-        return EXIT_FAILURE;
+      std::cout << __FUNCTION__ << ":" << __LINE__ << "failed:" << std::endl
+                << "  Scalar opacity values are different:" << std::endl
+                << "     " << res << " " << value[0] << " " << value[1] << " " << value[2] << " " << value[3]
+                << std::endl
+                << "  instead of" << std::endl
+                << "     " << res << " " << value[0] << " " << value[1] << " " << value[2] << " " << value[3]
+                << std::endl;
+      return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
@@ -139,28 +132,26 @@ int piecewiseFunctionFromString()
 {
   std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
                 " 0 154.266067504883 0.699999988079071 228 1");
-  double expectedData[10] = {0, 0, 4.94065645841247e-324, 0, 69.5504608154297,
-                             0, 154.266067504883, 0.699999988079071, 228, 1};
-  vtkSmartPointer<vtkPiecewiseFunction> function =
-    vtkSmartPointer<vtkPiecewiseFunction>::New();
+  double expectedData[10] = {
+    0, 0, 4.94065645841247e-324, 0, 69.5504608154297, 0, 154.266067504883, 0.699999988079071, 228, 1
+  };
+  vtkSmartPointer<vtkPiecewiseFunction> function = vtkSmartPointer<vtkPiecewiseFunction>::New();
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
   CHECK_INT(function->GetSize(), 5);
 
-  for (int i=0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i)
   {
     double node[4];
     function->GetNodeValue(i, node);
-    if (node[0] != expectedData[i*2] ||
-        node[1] != expectedData[i*2+1])
+    if (node[0] != expectedData[i * 2] || node[1] != expectedData[i * 2 + 1])
     {
       std::cout << "Failed to parse value at index " << i << ", "
                 << "found [" << node[0] << "," << node[1] << "] "
-                << "instead of [" << expectedData[i*2] << ","
-                << expectedData[i*2+1] << "]" << std::endl;
+                << "instead of [" << expectedData[i * 2] << "," << expectedData[i * 2 + 1] << "]" << std::endl;
       return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
 }
 
-}
+} // namespace

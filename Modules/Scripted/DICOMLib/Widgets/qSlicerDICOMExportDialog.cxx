@@ -71,16 +71,22 @@
 #include "ctkDICOMIndexer.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerDICOMExportDialogPrivate : public Ui_qSlicerDICOMExportDialog, public QDialog
+class qSlicerDICOMExportDialogPrivate
+  : public Ui_qSlicerDICOMExportDialog
+  , public QDialog
 {
   Q_DECLARE_PUBLIC(qSlicerDICOMExportDialog);
+
 protected:
   qSlicerDICOMExportDialog* const q_ptr;
+
 public:
   qSlicerDICOMExportDialogPrivate(qSlicerDICOMExportDialog& object);
   ~qSlicerDICOMExportDialogPrivate() override;
+
 public:
   void init();
+
 private:
   vtkMRMLScene* Scene;
   vtkIdType ItemToSelect;
@@ -117,18 +123,13 @@ void qSlicerDICOMExportDialogPrivate::init()
   this->ErrorLabel->setText(QString());
 
   // Make connections
-  connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)),
-    q, SLOT(onCurrentItemChanged(vtkIdType)));
-  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)),
-    q, SLOT(onExportableSelectedAtRow(int)));
-  connect(this->DICOMTagEditorWidget, SIGNAL(tagEdited()),
-    q, SLOT(onTagEdited()));
-  connect(this->ExportButton, SIGNAL(clicked()),
-    q, SLOT(onExport()));
-  connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
-  connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onExportToFolderCheckBoxToggled(bool)) );
+  connect(
+    this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SLOT(onCurrentItemChanged(vtkIdType)));
+  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)), q, SLOT(onExportableSelectedAtRow(int)));
+  connect(this->DICOMTagEditorWidget, SIGNAL(tagEdited()), q, SLOT(onTagEdited()));
+  connect(this->ExportButton, SIGNAL(clicked()), q, SLOT(onExport()));
+  connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)), q, SLOT(onSaveTagsCheckBoxToggled(bool)));
+  connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)), q, SLOT(onExportToFolderCheckBoxToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +148,7 @@ qSlicerDICOMExportDialog::qSlicerDICOMExportDialog(QObject* parent)
 qSlicerDICOMExportDialog::~qSlicerDICOMExportDialog() = default;
 
 //-----------------------------------------------------------------------------
-bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)
+bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)
 {
   Q_D(qSlicerDICOMExportDialog);
 
@@ -156,7 +157,7 @@ bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect/*=vtkMRMLSubjectHiera
 
   // Make selection if requested
   d->ItemToSelect = itemToSelect;
-  QTimer::singleShot(0, this, SLOT( makeDialogSelections() ) );
+  QTimer::singleShot(0, this, SLOT(makeDialogSelections()));
 
   // Show dialog
   if (d->exec() != QDialog::Accepted)
@@ -254,36 +255,35 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   }
 
   // Get exportables from DICOM plugins for selection
-  QMultiMap<QString,qSlicerDICOMExportable*> exportablesByPlugin;
+  QMultiMap<QString, qSlicerDICOMExportable*> exportablesByPlugin;
   foreach (vtkIdType selectedSeriesItemID, selectedSeriesItemIDs)
   {
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
     // A plugin should return one exportable for one series, but nevertheless
     // a list is returned for convenient concatenation (without type check etc.)
-    context.evalScript(QString(
-      "exportables = []\n"
-      "for pluginClass in slicer.modules.dicomPlugins:\n"
-      "  plugin = slicer.modules.dicomPlugins[pluginClass]()\n"
-      "  try:\n"
-      "    exportables.extend(plugin.examineForExport(%1))\n"
-      "  except Exception as e:\n"
-      "    logging.error(f'Failed to get exportables from plugin {type(plugin).__name__}')\n"
-      "    import traceback\n"
-      "    traceback.print_exc()\n")
-      .arg(selectedSeriesItemID) );
+    context.evalScript(QString("exportables = []\n"
+                               "for pluginClass in slicer.modules.dicomPlugins:\n"
+                               "  plugin = slicer.modules.dicomPlugins[pluginClass]()\n"
+                               "  try:\n"
+                               "    exportables.extend(plugin.examineForExport(%1))\n"
+                               "  except Exception as e:\n"
+                               "    logging.error(f'Failed to get exportables from plugin {type(plugin).__name__}')\n"
+                               "    import traceback\n"
+                               "    traceback.print_exc()\n")
+                         .arg(selectedSeriesItemID));
 
     // Extract resulting exportables from python
     QVariantList exportablesVariantList = context.getVariable("exportables").toList();
 
     // Group exportables by provider plugin
-    foreach(QVariant exportableVariant, exportablesVariantList)
+    foreach (QVariant exportableVariant, exportablesVariantList)
     {
-      qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(
-        exportableVariant.value<QObject*>() );
+      qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(exportableVariant.value<QObject*>());
       if (!exportable)
       {
-        qCritical() << Q_FUNC_INFO << ": Invalid exportable returned by DICOM plugin for " << shNode->GetItemName(currentItemID).c_str();
+        qCritical() << Q_FUNC_INFO << ": Invalid exportable returned by DICOM plugin for "
+                    << shNode->GetItemName(currentItemID).c_str();
         continue;
       }
       exportable->setParent(this); // Take ownership to prevent destruction
@@ -292,8 +292,8 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     }
   }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
-  QMultiMap<double,QList<qSlicerDICOMExportable*> > exportablesByConfidence;
-  foreach(const QString& plugin, exportablesByPlugin.uniqueKeys())
+  QMultiMap<double, QList<qSlicerDICOMExportable*>> exportablesByConfidence;
+  foreach (const QString& plugin, exportablesByPlugin.uniqueKeys())
   {
     // Geometric mean to emphasize larger values
     double meanConfidenceForPlugin = 0.0;
@@ -313,13 +313,16 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   foreach (double inverseConfidence, exportablesByConfidence.uniqueKeys())
   {
     // Get exportable lists for the confidence number (there might be equality!)
-    QList<QList<qSlicerDICOMExportable*> > exportableLists = exportablesByConfidence.values(inverseConfidence);
-    foreach(QList<qSlicerDICOMExportable*> exportables, exportableLists)
+    QList<QList<qSlicerDICOMExportable*>> exportableLists = exportablesByConfidence.values(inverseConfidence);
+    foreach (QList<qSlicerDICOMExportable*> exportables, exportableLists)
     {
       // Set exportable name as the first one in the list, giving also the
       // confidence number and plugin name in parentheses
-      QString itemText = QString("%1 (%2%, %3 series) (%4)").arg(exportables[0]->name())
-        .arg((1.0-inverseConfidence)*100.0, 0, 'f', 0).arg(exportables.count()).arg(exportables[0]->pluginClass());
+      QString itemText = QString("%1 (%2%, %3 series) (%4)")
+                           .arg(exportables[0]->name())
+                           .arg((1.0 - inverseConfidence) * 100.0, 0, 'f', 0)
+                           .arg(exportables.count())
+                           .arg(exportables[0]->pluginClass());
       QListWidgetItem* exportableItem = new QListWidgetItem(itemText, d->ExportablesListWidget);
       exportableItem->setToolTip(exportables[0]->tooltip());
       // Construct data variant object
@@ -356,8 +359,7 @@ void qSlicerDICOMExportDialog::onExportableSelectedAtRow(int row)
   QList<QVariant> itemData = exportableItem->data(Qt::UserRole).toList();
   foreach (QVariant exportableVariant, itemData)
   {
-    qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(
-      exportableVariant.value<QObject*>() );
+    qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(exportableVariant.value<QObject*>());
     if (!exportable)
     {
       QString errorMessage("Unable to extract exportable");
@@ -419,7 +421,8 @@ void qSlicerDICOMExportDialog::onExport()
     // Force using en-US locale, otherwise for example on a computer with
     // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
     QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
-    QString tempSubDirName = QString("DICOMExportTemp_%1").arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"));
+    QString tempSubDirName =
+      QString("DICOMExportTemp_%1").arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"));
 
     outputFolder.mkdir(tempSubDirName);
     outputFolder.cd(tempSubDirName);
@@ -436,7 +439,8 @@ void qSlicerDICOMExportDialog::onExport()
       ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
       if (!dicomDatabase)
       {
-        d->ErrorLabel->setText("No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
+        d->ErrorLabel->setText(
+          "No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
         return;
       }
       ctkDICOMIndexer indexer;
@@ -444,7 +448,7 @@ void qSlicerDICOMExportDialog::onExport()
       indexer.addDirectory(outputFolder.absolutePath(), true);
     }
     // Remove temporary DICOM folder if exported to the DICOM database folder
-    foreach(QString file, outputFolder.entryList())
+    foreach (QString file, outputFolder.entryList())
     {
       outputFolder.remove(file);
     }
@@ -513,10 +517,9 @@ void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
   // (no direct function for it, so re-set the folder)
   PythonQt::init();
   PythonQtObjectPtr openBrowserContext = PythonQt::self()->getMainModule();
-  openBrowserContext.evalScript(QString(
-    "slicer.util.selectModule('DICOM')\n"
-    "slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()\n"
-    ));
+  openBrowserContext.evalScript(
+    QString("slicer.util.selectModule('DICOM')\n"
+            "slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()\n"));
 }
 
 //-----------------------------------------------------------------------------
@@ -554,16 +557,16 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.addVariable("exportables", exportableList);
-  exportContext.evalScript(QString(
-    "plugin = slicer.modules.dicomPlugins[%1]()\n"
-    "try:\n"
-    "  errorMessage = plugin.export(exportables)\n"
-    "except Exception as e:\n"
-    "  errorMessage = 'DICOM export failed. See application log for details';\n"
-    "  logging.error(f'Failed to export using plugin {type(plugin).__name__}')\n"
-    "  import traceback\n"
-    "  traceback.print_exc()\n")
-    .arg(qSlicerCorePythonManager::toPythonStringLiteral(d->DICOMTagEditorWidget->exportables()[0]->pluginClass())));
+  exportContext.evalScript(
+    QString("plugin = slicer.modules.dicomPlugins[%1]()\n"
+            "try:\n"
+            "  errorMessage = plugin.export(exportables)\n"
+            "except Exception as e:\n"
+            "  errorMessage = 'DICOM export failed. See application log for details';\n"
+            "  logging.error(f'Failed to export using plugin {type(plugin).__name__}')\n"
+            "  import traceback\n"
+            "  traceback.print_exc()\n")
+      .arg(qSlicerCorePythonManager::toPythonStringLiteral(d->DICOMTagEditorWidget->exportables()[0]->pluginClass())));
   QApplication::restoreOverrideCursor();
 
   // Extract error message from python

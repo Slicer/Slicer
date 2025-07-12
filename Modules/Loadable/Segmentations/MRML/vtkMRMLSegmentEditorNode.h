@@ -56,8 +56,9 @@ public:
   enum
   {
     /// Areas added to selected segment will be removed from all other segments. (no overlap)
-    OverwriteAllSegments=0,
-    /// Areas added to selected segment will be removed from all visible segments. (no overlap with visible, overlap possible with hidden)
+    OverwriteAllSegments = 0,
+    /// Areas added to selected segment will be removed from all visible segments. (no overlap with visible, overlap
+    /// possible with hidden)
     OverwriteVisibleSegments,
     /// Areas added to selected segment will not be removed from any segments. (overlap with all other segments)
     OverwriteNone,
@@ -66,7 +67,7 @@ public:
   };
 
 public:
-  static vtkMRMLSegmentEditorNode *New();
+  static vtkMRMLSegmentEditorNode* New();
   vtkTypeMacro(vtkMRMLSegmentEditorNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -74,13 +75,13 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SegmentEditor"; }
@@ -92,7 +93,6 @@ public:
   //@}
 
 public:
-
   //@{
   /// Get/set source volume node.
   /// Source volume node is used when editing requires an underlying image.
@@ -130,7 +130,8 @@ public:
   /// Uses vtkMRMLSegmentationNode::EditAllowed_... constants.
   /// \sa vtkMRMLSegmentationNode::EditAllowedEverywhere, vtkMRMLSegmentationNode::EditAllowedInsideAllSegments,
   /// vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments, vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments,
-  /// vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments, vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+  /// vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments,
+  /// vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
   vtkSetMacro(MaskMode, int);
   vtkGetMacro(MaskMode, int);
   //@}
@@ -171,32 +172,37 @@ public:
   /// Deprecated. Use Get/SetSourceVolumeIntensityMaskRange method instead.
   virtual void SetMasterVolumeIntensityMaskRange(double _arg1, double _arg2)
   {
-    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use "
+                    "SetSourceVolumeIntensityMaskRange method instead");
     this->SetSourceVolumeIntensityMaskRange(_arg1, _arg2);
   }
   void SetMasterVolumeIntensityMaskRange(const double _arg[2])
   {
-    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use "
+                    "SetSourceVolumeIntensityMaskRange method instead");
     this->SetSourceVolumeIntensityMaskRange(_arg);
   }
 
   virtual double* GetMasterVolumeIntensityMaskRange() VTK_SIZEHINT(2)
   {
-    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use "
+                    "GetSourceVolumeIntensityMaskRange method instead");
     return this->GetSourceVolumeIntensityMaskRange();
   }
 
   VTK_WRAPEXCLUDE
   virtual void GetMasterVolumeIntensityMaskRange(double& _arg1, double& _arg2)
   {
-    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use "
+                    "GetSourceVolumeIntensityMaskRange method instead");
     this->GetSourceVolumeIntensityMaskRange(_arg1, _arg2);
   }
 
   VTK_WRAPEXCLUDE
   virtual void GetMasterVolumeIntensityMaskRange(double _arg[2])
   {
-    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
+    vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use "
+                    "GetSourceVolumeIntensityMaskRange method instead");
     this->GetSourceVolumeIntensityMaskRange(_arg);
   }
   //@}
@@ -215,17 +221,17 @@ protected:
   void operator=(const vtkMRMLSegmentEditorNode&);
 
   /// Selected segment ID
-  char* SelectedSegmentID{nullptr};
+  char* SelectedSegmentID{ nullptr };
 
   /// Active effect name
-  char* ActiveEffectName{nullptr};
+  char* ActiveEffectName{ nullptr };
 
-  int MaskMode{vtkMRMLSegmentationNode::EditAllowedEverywhere};
-  char* MaskSegmentID{nullptr};
+  int MaskMode{ vtkMRMLSegmentationNode::EditAllowedEverywhere };
+  char* MaskSegmentID{ nullptr };
 
-  int OverwriteMode{OverwriteAllSegments};
+  int OverwriteMode{ OverwriteAllSegments };
 
-  bool SourceVolumeIntensityMask{false};
+  bool SourceVolumeIntensityMask{ false };
   double SourceVolumeIntensityMaskRange[2];
 };
 

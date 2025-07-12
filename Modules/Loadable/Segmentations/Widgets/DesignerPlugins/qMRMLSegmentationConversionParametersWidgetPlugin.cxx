@@ -22,13 +22,14 @@
 #include "qMRMLSegmentationConversionParametersWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationConversionParametersWidgetPlugin::qMRMLSegmentationConversionParametersWidgetPlugin(QObject* pluginParent)
+qMRMLSegmentationConversionParametersWidgetPlugin::qMRMLSegmentationConversionParametersWidgetPlugin(
+  QObject* pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentationConversionParametersWidget* pluginWidget =
     new qMRMLSegmentationConversionParametersWidget(parentWidget);
@@ -38,11 +39,12 @@ QWidget *qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentationConversionParametersWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSegmentationConversionParametersWidget\" name=\"SegmentationConversionParametersWidget\">\n"
-    "  <property name=\"targetRepresentationName\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSegmentationConversionParametersWidget\" "
+         "name=\"SegmentationConversionParametersWidget\">\n"
+         "  <property name=\"targetRepresentationName\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

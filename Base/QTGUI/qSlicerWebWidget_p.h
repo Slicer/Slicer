@@ -36,41 +36,45 @@ class QWebEngineDownloadItem;
 #include "ui_qSlicerWebWidget.h"
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage: public QWebEnginePage
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage : public QWebEnginePage
 {
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
+
 public:
-  qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr);
+  qSlicerWebEnginePage(QWebEngineProfile* profile, QObject* parent = nullptr);
   ~qSlicerWebEnginePage() override;
 
 protected:
-  bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame) override
+  bool acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame) override
   {
     Q_ASSERT(this->WebWidget);
     return this->WebWidget->acceptNavigationRequest(url, type, isMainFrame);
   }
 
-  bool webEnginePageAcceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+  bool webEnginePageAcceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame)
   {
     return this->QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
   }
 
-  QWebEnginePage *createWindow(QWebEnginePage::WebWindowType type) override
+  QWebEnginePage* createWindow(QWebEnginePage::WebWindowType type) override
   {
     Q_UNUSED(type);
     qWarning() << "qSlicerWebEnginePage: createWindow not implemented";
     return nullptr;
   }
 
-  bool certificateError(const QWebEngineCertificateError &certificateError) override
+  bool certificateError(const QWebEngineCertificateError& certificateError) override
   {
     qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
              << qPrintable(certificateError.errorDescription());
     return false;
   }
 
-  void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString &message, int lineNumber, const QString &sourceID) override
+  void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level,
+                                const QString& message,
+                                int lineNumber,
+                                const QString& sourceID) override
   {
     if (this->JavaScriptConsoleMessageLoggingEnabled)
     {
@@ -96,10 +100,13 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate: public QObject, Ui_qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate
+  : public QObject
+  , Ui_qSlicerWebWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerWebWidget);
+
 protected:
   qSlicerWebWidget* const q_ptr;
 
@@ -142,7 +149,7 @@ public:
   virtual void initializeWebChannel(QWebChannel* /* webChannel */);
 
 protected slots:
-  virtual void handleDownload(QWebEngineDownloadItem *download);
+  virtual void handleDownload(QWebEngineDownloadItem* download);
 
 public:
   /// Convenient method to set "document.webkitHidden" property
@@ -152,7 +159,6 @@ protected slots:
   void onAppAboutToQuit();
 
 public:
-
   QElapsedTimer DownloadTime;
   bool HandleExternalUrlWithDesktopService;
   bool NavigationRequestAccepted;

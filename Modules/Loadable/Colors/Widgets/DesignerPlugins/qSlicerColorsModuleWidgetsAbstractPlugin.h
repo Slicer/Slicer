@@ -16,7 +16,7 @@
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef __qSlicerColorsModuleWidgetsAbstractPlugin_h
 #define __qSlicerColorsModuleWidgetsAbstractPlugin_h
@@ -26,12 +26,12 @@
 #include "qSlicerColorsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qSlicerColorsModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+  : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerColorsModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

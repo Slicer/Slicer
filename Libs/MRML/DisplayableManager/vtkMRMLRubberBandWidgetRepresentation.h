@@ -21,7 +21,7 @@
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLRubberBandWidgetRepresentation_h
 #define vtkMRMLRubberBandWidgetRepresentation_h
@@ -29,13 +29,14 @@
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
 #include "vtkMRMLAbstractWidgetRepresentation.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRubberBandWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRubberBandWidgetRepresentation
+  : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLRubberBandWidgetRepresentation *New();
+  static vtkMRMLRubberBandWidgetRepresentation* New();
 
   //@{
   /**
@@ -55,9 +56,9 @@ public:
   /**
    * Methods to make this class behave as a vtkProp.
    */
-  void GetActors2D(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
+  void GetActors2D(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
   //@}
 
 protected:
@@ -65,7 +66,7 @@ protected:
   ~vtkMRMLRubberBandWidgetRepresentation() override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 
   int CornerPoint1[2];
   int CornerPoint2[2];

@@ -38,7 +38,7 @@ class Q_SLICER_MODULE_TEXTS_WIDGETS_EXPORT qMRMLTextWidget : public qSlicerWidge
 
 public:
   typedef qSlicerWidget Superclass;
-  qMRMLTextWidget(QWidget *parent=nullptr);
+  qMRMLTextWidget(QWidget* parent = nullptr);
   ~qMRMLTextWidget() override;
 
   Q_PROPERTY(bool autoSave READ isAutoSave WRITE setAutoSave);
@@ -84,9 +84,8 @@ public slots:
 
   /// Set the continuous update property of the text editor
   /// If true, the text editor will propagate the text to the vtkMRMLTextNode as it is modified, and vice versa.
-  /// If false, the text editor will only update the node when "Save" is clicked, and changes from the vtkMRMLTextNode will not be propagated
-  /// if the text is being edited.
-  /// When auto update is enabled, only the text edit will be shown.
+  /// If false, the text editor will only update the node when "Save" is clicked, and changes from the vtkMRMLTextNode
+  /// will not be propagated if the text is being edited. When auto update is enabled, only the text edit will be shown.
   /// \sa isAutoSave()
   void setAutoSave(bool autoSave);
 
@@ -166,9 +165,8 @@ private:
   Q_DISABLE_COPY(qMRMLTextWidget);
 
 protected:
-  bool AutoSave{false};
-  bool ReadOnly{false};
-
+  bool AutoSave{ false };
+  bool ReadOnly{ false };
 };
 
 #endif

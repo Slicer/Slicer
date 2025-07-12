@@ -61,7 +61,7 @@ class QAction;
 class QActionGroup;
 class QToolButton;
 
-class qSlicerViewersToolBarPrivate: public QObject
+class qSlicerViewersToolBarPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -102,48 +102,47 @@ public:
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
   /// Crosshair
-  QToolButton* CrosshairToolButton{nullptr};
-  QMenu* CrosshairMenu{nullptr};
+  QToolButton* CrosshairToolButton{ nullptr };
+  QMenu* CrosshairMenu{ nullptr };
 
-  ctkSignalMapper* CrosshairJumpSlicesMapper{nullptr};
-  QAction* CrosshairJumpSlicesDisabledAction{nullptr};
-  QAction* CrosshairJumpSlicesOffsetAction{nullptr};
-  QAction* CrosshairJumpSlicesCenteredAction{nullptr};
+  ctkSignalMapper* CrosshairJumpSlicesMapper{ nullptr };
+  QAction* CrosshairJumpSlicesDisabledAction{ nullptr };
+  QAction* CrosshairJumpSlicesOffsetAction{ nullptr };
+  QAction* CrosshairJumpSlicesCenteredAction{ nullptr };
 
-  ctkSignalMapper* CrosshairMapper{nullptr};
-  QAction* CrosshairNoAction{nullptr};
-  QAction* CrosshairBasicAction{nullptr};
-  QAction* CrosshairBasicIntersectionAction{nullptr};
-  QAction* CrosshairSmallBasicAction{nullptr};
-  QAction* CrosshairSmallBasicIntersectionAction{nullptr};
+  ctkSignalMapper* CrosshairMapper{ nullptr };
+  QAction* CrosshairNoAction{ nullptr };
+  QAction* CrosshairBasicAction{ nullptr };
+  QAction* CrosshairBasicIntersectionAction{ nullptr };
+  QAction* CrosshairSmallBasicAction{ nullptr };
+  QAction* CrosshairSmallBasicIntersectionAction{ nullptr };
 
-  ctkSignalMapper* CrosshairThicknessMapper{nullptr};
-  QAction* CrosshairFineAction{nullptr};
-  QAction* CrosshairMediumAction{nullptr};
-  QAction* CrosshairThickAction{nullptr};
+  ctkSignalMapper* CrosshairThicknessMapper{ nullptr };
+  QAction* CrosshairFineAction{ nullptr };
+  QAction* CrosshairMediumAction{ nullptr };
+  QAction* CrosshairThickAction{ nullptr };
 
-  QAction* CrosshairToggleAction{nullptr};
+  QAction* CrosshairToggleAction{ nullptr };
 
+  QToolButton* SliceIntersectionsToolButton{ nullptr };
+  QMenu* SliceIntersectionsMenu{ nullptr };
 
-  QToolButton* SliceIntersectionsToolButton{nullptr};
-  QMenu* SliceIntersectionsMenu{nullptr};
+  ctkSignalMapper* SliceIntersectionsMapper{ nullptr };
+  QAction* SliceIntersectionsFullIntersectionAction{ nullptr };
+  QAction* SliceIntersectionsSkipIntersectionAction{ nullptr };
 
-  ctkSignalMapper* SliceIntersectionsMapper{nullptr};
-  QAction* SliceIntersectionsFullIntersectionAction{nullptr};
-  QAction* SliceIntersectionsSkipIntersectionAction{nullptr};
+  QAction* IntersectingSlicesVisibleAction{ nullptr };
+  QAction* IntersectingSlicesInteractiveAction{ nullptr };
+  QAction* IntersectingSlicesTranslationEnabledAction{ nullptr };
+  QAction* IntersectingSlicesRotationEnabledAction{ nullptr };
+  QMenu* IntersectingSlicesInteractionModesMenu{ nullptr };
 
-  QAction* IntersectingSlicesVisibleAction{nullptr};
-  QAction* IntersectingSlicesInteractiveAction{nullptr};
-  QAction* IntersectingSlicesTranslationEnabledAction{nullptr};
-  QAction* IntersectingSlicesRotationEnabledAction{nullptr};
-  QMenu* IntersectingSlicesInteractionModesMenu{nullptr};
+  ctkSignalMapper* SliceIntersectionsThicknessMapper{ nullptr };
+  QAction* SliceIntersectionsFineAction{ nullptr };
+  QAction* SliceIntersectionsMediumAction{ nullptr };
+  QAction* SliceIntersectionsThickAction{ nullptr };
 
-  ctkSignalMapper* SliceIntersectionsThicknessMapper{nullptr};
-  QAction* SliceIntersectionsFineAction{nullptr};
-  QAction* SliceIntersectionsMediumAction{nullptr};
-  QAction* SliceIntersectionsThickAction{nullptr};
-
-  int CrosshairLastMode{vtkMRMLCrosshairNode::ShowBasic};
+  int CrosshairLastMode{ vtkMRMLCrosshairNode::ShowBasic };
 };
 
 #endif

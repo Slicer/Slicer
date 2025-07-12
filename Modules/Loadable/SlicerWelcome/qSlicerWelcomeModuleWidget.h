@@ -30,17 +30,14 @@
 
 class qSlicerWelcomeModuleWidgetPrivate;
 
-class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerWelcomeModuleWidget(QWidget *parent=nullptr);
+  qSlicerWelcomeModuleWidget(QWidget* parent = nullptr);
   ~qSlicerWelcomeModuleWidget() override;
-
 
 public slots:
 

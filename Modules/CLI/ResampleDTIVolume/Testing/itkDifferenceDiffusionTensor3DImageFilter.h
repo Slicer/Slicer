@@ -38,15 +38,14 @@ namespace itk
  * developer
  */
 template <class TInputImage, class TOutputImage>
-class DifferenceDiffusionTensor3DImageFilter :
-  public ImageToImageFilter<TInputImage, TOutputImage>
+class DifferenceDiffusionTensor3DImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef DifferenceDiffusionTensor3DImageFilter        Self;
+  typedef DifferenceDiffusionTensor3DImageFilter Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -55,17 +54,17 @@ public:
   itkTypeMacro(DifferenceDiffusionTensor3DImageFilter, ImageToImageFilter);
 
   /** Some convenient typedefs. */
-  typedef TInputImage                                       InputImageType;
-  typedef TOutputImage                                      OutputImageType;
-  typedef typename OutputImageType::PixelType               OutputPixelType;
-  typedef typename InputImageType::PixelType                InputPixelType;
-  typedef typename OutputImageType::RegionType              OutputImageRegionType;
+  typedef TInputImage InputImageType;
+  typedef TOutputImage OutputImageType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
+  typedef typename InputImageType::PixelType InputPixelType;
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
   typedef typename NumericTraits<OutputPixelType>::RealType RealType;
-  typedef typename NumericTraits<RealType>::AccumulateType  AccumulateType;
+  typedef typename NumericTraits<RealType>::AccumulateType AccumulateType;
 
-  typedef std::vector<std::vector<double> >     DoubleVectorType;
+  typedef std::vector<std::vector<double>> DoubleVectorType;
   typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
-  typedef itk::Matrix<double, 3, 3>             MatrixType;
+  typedef itk::Matrix<double, 3, 3> MatrixType;
 
   /** Set the valid image input.  This will be input 0.  */
   virtual void SetValidInput(const InputImageType* validImage);
@@ -93,8 +92,9 @@ public:
   itkGetConstMacro(MeanDifference, RealType);
   itkGetConstMacro(TotalDifference, AccumulateType);
   itkGetConstMacro(NumberOfPixelsWithDifferences, unsigned long);
+
 protected:
-  MatrixType GetMetaDataDictionary( const InputImageType* image );
+  MatrixType GetMetaDataDictionary(const InputImageType* image);
 
   DifferenceDiffusionTensor3DImageFilter();
   ~DifferenceDiffusionTensor3DImageFilter() override = default;
@@ -118,21 +118,22 @@ protected:
 
   void AfterThreadedGenerateData() override;
 
-  InputPixelType ApplyMeasurementFrameToTensor( InputPixelType tensor, const MatrixType & measurementFrame );
+  InputPixelType ApplyMeasurementFrameToTensor(InputPixelType tensor, const MatrixType& measurementFrame);
 
   OutputPixelType m_DifferenceThreshold;
-  RealType        m_MeanDifference;
-  AccumulateType  m_TotalDifference;
-  unsigned long   m_NumberOfPixelsWithDifferences;
-  int             m_ToleranceRadius;
+  RealType m_MeanDifference;
+  AccumulateType m_TotalDifference;
+  unsigned long m_NumberOfPixelsWithDifferences;
+  int m_ToleranceRadius;
 
   Array<AccumulateType> m_ThreadDifferenceSum;
-  Array<unsigned long>  m_ThreadNumberOfPixels;
-  MatrixType            m_MeasurementFrameValid;
-  MatrixType            m_MeasurementFrameTest;
+  Array<unsigned long> m_ThreadNumberOfPixels;
+  MatrixType m_MeasurementFrameValid;
+  MatrixType m_MeasurementFrameTest;
+
 private:
-  DifferenceDiffusionTensor3DImageFilter(const Self &) = delete;
-  void operator=(const Self &) = delete;
+  DifferenceDiffusionTensor3DImageFilter(const Self&) = delete;
+  void operator=(const Self&) = delete;
 
   bool m_IgnoreBoundaryPixels;
 };
@@ -140,7 +141,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDifferenceDiffusionTensor3DImageFilter.txx"
+# include "itkDifferenceDiffusionTensor3DImageFilter.txx"
 #endif
 
 #endif

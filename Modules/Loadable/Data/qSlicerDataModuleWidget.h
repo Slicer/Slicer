@@ -29,13 +29,12 @@ class vtkMRMLNode;
 class qSlicerDataModuleWidgetPrivate;
 class qMRMLSubjectHierarchyModel;
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerDataModuleWidget(QWidget *parentWidget = nullptr);
+  qSlicerDataModuleWidget(QWidget* parentWidget = nullptr);
   ~qSlicerDataModuleWidget() override;
 
   void enter() override;
@@ -71,7 +70,7 @@ public slots:
 
 public:
   /// Assessor function for subject hierarchy model (for python)
-  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel()const;
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel() const;
 
 protected:
   static void onSubjectHierarchyItemEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);

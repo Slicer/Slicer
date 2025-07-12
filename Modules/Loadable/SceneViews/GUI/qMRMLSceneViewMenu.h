@@ -52,7 +52,7 @@ public:
   vtkMRMLScene* mrmlScene() const;
 
   /// This property holds the menu's text displayed when there are no scene views
-  QString noSceneViewText()const;
+  QString noSceneViewText() const;
   void setNoSceneViewText(const QString& newText);
 
   void setSceneViewsLogic(vtkSlicerSceneViewsModuleLogic* logic);
@@ -71,7 +71,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneViewMenu);
   Q_DISABLE_COPY(qMRMLSceneViewMenu);
-
 };
 
 #endif

@@ -19,11 +19,11 @@
 // exclude from VTK wrapping
 #ifndef __VTK_WRAP__
 
-#ifndef FIBHEAP_H
-#define FIBHEAP_H
+# ifndef FIBHEAP_H
+#  define FIBHEAP_H
 
-#include <cstdio>
-#include <iostream>
+#  include <cstdio>
+#  include <iostream>
 
 // type for cost function - single precision is enough
 typedef float NodeKeyValueType;
@@ -73,42 +73,27 @@ public:
   inline NodeKeyValueType GetKeyValue() { return m_Key; }
 
   /// Set key value (that the nodes are sorted based on)
-  inline void operator =(NodeKeyValueType newKeyVal)
-  {
-    m_Key = newKeyVal;
-  }
+  inline void operator=(NodeKeyValueType newKeyVal) { m_Key = newKeyVal; }
 
   /// Set key value from another node
-  inline void operator =(FibHeapNode& RHS)
-  {
-    m_Key = RHS.m_Key;
-  }
+  inline void operator=(FibHeapNode& RHS) { m_Key = RHS.m_Key; }
 
   /// Compare key value
-  inline bool operator ==(FibHeapNode& RHS)
-  {
-    return m_Key == RHS.m_Key;
-  }
+  inline bool operator==(FibHeapNode& RHS) { return m_Key == RHS.m_Key; }
 
   /// Compare key value
-  inline bool operator <(FibHeapNode& RHS)
-  {
-    return m_Key < RHS.m_Key;
-  }
+  inline bool operator<(FibHeapNode& RHS) { return m_Key < RHS.m_Key; }
 
-  void Print()
-  {
-    std::cout << m_Key;
-  }
+  void Print() { std::cout << m_Key; }
 
   NodeIndexType m_Left;
   NodeIndexType m_Right;
   NodeIndexType m_Parent;
   NodeIndexType m_Child;
-  short m_Degree{0};
-  bool m_Mark{false};
+  short m_Degree{ 0 };
+  bool m_Mark{ false };
 
-  NodeKeyValueType m_Key{0};
+  NodeKeyValueType m_Key{ 0 };
   NodeIndexType m_Index;
 };
 
@@ -124,7 +109,6 @@ public:
 //
 // FibHeap class can then be used to Insert(), ExtractMin(), etc.,
 // instances of FibHeapNode class.
-
 
 class FibHeap
 {
@@ -149,19 +133,16 @@ public:
   ///
   /// The child pointer is deliberately not set to nullptr because Insert()
   /// is also used internally to help put whole trees onto the root list.
-  void Insert(FibHeapNode *NewNode);
+  void Insert(FibHeapNode* NewNode);
 
   /// Union() - O(1) actual; O(1) amortized
-  void Union(FibHeap *OtherHeap);
+  void Union(FibHeap* OtherHeap);
 
   /// Minimum - O(1) actual; O(1) amortized
-  inline FibHeapNode *Minimum()
-  {
-    return m_MinRoot;
-  }
+  inline FibHeapNode* Minimum() { return m_MinRoot; }
 
   /// ExtractMin() - O(n) worst-case actual; O(lg n) amortized
-  FibHeapNode *ExtractMin();
+  FibHeapNode* ExtractMin();
 
   /// DecreaseKey() - O(lg n) actual; O(1) amortized
   ///
@@ -174,39 +155,27 @@ public:
   /// Notice that if we don't own the heap nodes, then we clear the
   /// m_NegInfinityFlag on the deleted node.  Presumably, the programmer
   /// will be reusing the node.
-  int Delete(FibHeapNode *theNode);
+  int Delete(FibHeapNode* theNode);
 
-  inline bool IsEmpty()
-  {
-    return (m_MinRoot == nullptr);
-  }
+  inline bool IsEmpty() { return (m_MinRoot == nullptr); }
 
   // Extra utility functions
-  long GetNumNodes()
-  {
-    return m_NumNodes;
-  };
-  long GetNumTrees()
-  {
-    return m_NumTrees;
-  };
-  long GetNumMarkedNodes()
-  {
-    return m_NumMarkedNodes;
-  };
+  long GetNumNodes() { return m_NumNodes; };
+  long GetNumTrees() { return m_NumTrees; };
+  long GetNumMarkedNodes() { return m_NumMarkedNodes; };
 
   /// Print()
   ///
   /// Used internally for debugging purposes.  The function prints the key
   /// value for each node along the root list, then it calls itself on each
   /// child list.
-  void Print(FibHeapNode *Tree = nullptr, FibHeapNode *theParent=nullptr);
+  void Print(FibHeapNode* Tree = nullptr, FibHeapNode* theParent = nullptr);
 
 private:
   // Internal functions that help to implement the Standard Operations
-  inline void Exchange(FibHeapNode* &N1, FibHeapNode* &N2)
+  inline void Exchange(FibHeapNode*& N1, FibHeapNode*& N2)
   {
-    FibHeapNode *Temp;
+    FibHeapNode* Temp;
     Temp = N1;
     N1 = N2;
     N2 = Temp;
@@ -230,11 +199,11 @@ private:
   void Consolidate();
 
   // The node y is removed from the root list and becomes a subtree of node x.
-  void Link(FibHeapNode *, FibHeapNode *);
-  void AddToRootList(FibHeapNode *);
+  void Link(FibHeapNode*, FibHeapNode*);
+  void AddToRootList(FibHeapNode*);
 
   // Remove node x from the child list of its parent node y
-  void Cut(FibHeapNode *, FibHeapNode *);
+  void Cut(FibHeapNode*, FibHeapNode*);
 
   // Cuts each node in parent list, putting successive ancestor nodes on the
   // root list until we either arrive at the root list or until we find an
@@ -243,7 +212,7 @@ private:
   // second subtree is lost later during another cascading cut, then we move
   // the node to the root list so that it can be re-balanced on the next
   // consolidate.
-  void CascadingCut(FibHeapNode *);
+  void CascadingCut(FibHeapNode*);
 
   inline FibHeapNode* HeapNodeFromIndex(NodeIndexType index)
   {
@@ -255,9 +224,8 @@ private:
   long m_NumTrees;
   long m_NumMarkedNodes;
   FibHeapNode* m_HeapNodes; // array containing all the heap nodes
-
 };
 
-#endif
+# endif
 
 #endif //__VTK_WRAP__

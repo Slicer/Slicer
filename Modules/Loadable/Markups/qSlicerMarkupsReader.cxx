@@ -36,7 +36,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerMarkupsReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
 };
 
@@ -66,14 +66,14 @@ void qSlicerMarkupsReader::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic()const
+vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic() const
 {
   Q_D(const qSlicerMarkupsReader);
   return d->MarkupsLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsReader::description()const
+QString qSlicerMarkupsReader::description() const
 {
   return tr("Markups");
 }
@@ -87,14 +87,12 @@ qSlicerIO::IOFileType qSlicerMarkupsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsReader::extensions() const
 {
-  return QStringList()
-         << tr("Markups") + " (*.mrk.json)"
-         << tr("Markups") + " (*.json)"
-         << tr("Markups Fiducials") + " (*.fcsv)";
+  return QStringList() << tr("Markups") + " (*.mrk.json)" << tr("Markups") + " (*.json)"
+                       << tr("Markups Fiducials") + " (*.fcsv)";
 }
 
 //----------------------------------------------------------------------------
-double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
@@ -144,12 +142,12 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
 
   // pass to logic to do the loading
   this->userMessages()->ClearMessages();
-  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
+  char* nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
   if (nodeIDs)
   {
     // returned a comma separated list of ids of the nodes that were loaded
     QStringList nodeIDList;
-    char *ptr = strtok(nodeIDs, ",");
+    char* ptr = strtok(nodeIDs, ",");
 
     while (ptr)
     {

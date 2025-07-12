@@ -14,7 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLBSplineTransformNodeTest1(int , char * [] )
+int vtkMRMLBSplineTransformNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLBSplineTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;

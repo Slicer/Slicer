@@ -42,8 +42,8 @@ public:
     ColorGradient();
     void updatePixmap(vtkScalarsToColors* scalarsToColors);
 
-    vtkMTimeType  MTime;
-    QPixmap       Pixmap;
+    vtkMTimeType MTime;
+    QPixmap Pixmap;
   };
 
   mutable QMap<QString, ColorGradient> GradientCache;
@@ -59,19 +59,18 @@ qMRMLSceneColorTableModelPrivate::ColorGradient::ColorGradient()
 //------------------------------------------------------------------------------
 void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToColors* scalarsToColors)
 {
-  if (!scalarsToColors ||
-      scalarsToColors->GetNumberOfAvailableColors() <= 0)
+  if (!scalarsToColors || scalarsToColors->GetNumberOfAvailableColors() <= 0)
   {
     return;
   }
-  this->Pixmap = QPixmap::fromImage(ctk::scalarsToColorsImage( scalarsToColors, this->Pixmap.size() ));
+  this->Pixmap = QPixmap::fromImage(ctk::scalarsToColorsImage(scalarsToColors, this->Pixmap.size()));
   this->MTime = scalarsToColors->GetMTime();
 }
 
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject *vparent)
+qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject* vparent)
   : qMRMLSceneCategoryModel(vparent)
   , d_ptr(new qMRMLSceneColorTableModelPrivate)
 {
@@ -90,16 +89,15 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   {
     if (this->updateGradientFromNode(colorNode) || item->icon().isNull())
     {
-      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
-        d->GradientCache[colorNode->GetID()];
-      //item->setBackground(colorGradient.Gradient);
+      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[colorNode->GetID()];
+      // item->setBackground(colorGradient.Gradient);
       item->setIcon(colorGradient.Pixmap);
     }
   }
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)const
+bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node) const
 {
   Q_D(const qMRMLSceneColorTableModel);
   Q_ASSERT(node);
@@ -107,8 +105,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)co
   /// between the different qMRMLSceneColorTableModels.
   bool cached = d->GradientCache.contains(node->GetID());
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
-  if (!node->GetScalarsToColors() ||
-      (cached && colorGradient.MTime >= node->GetScalarsToColors()->GetMTime()))
+  if (!node->GetScalarsToColors() || (cached && colorGradient.MTime >= node->GetScalarsToColors()->GetMTime()))
   {
     // pixmap is already up-to-date
     return false;

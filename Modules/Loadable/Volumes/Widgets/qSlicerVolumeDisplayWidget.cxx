@@ -33,15 +33,14 @@ public:
 
   qSlicerWidget* CurrentWidget{ nullptr };
 
-  qSlicerScalarVolumeDisplayWidget*            ScalarVolumeDisplayWidget{ nullptr };
-  qSlicerLabelMapVolumeDisplayWidget*          LabelMapVolumeDisplayWidget{ nullptr };
+  qSlicerScalarVolumeDisplayWidget* ScalarVolumeDisplayWidget{ nullptr };
+  qSlicerLabelMapVolumeDisplayWidget* LabelMapVolumeDisplayWidget{ nullptr };
   qSlicerDiffusionWeightedVolumeDisplayWidget* DWVolumeDisplayWidget{ nullptr };
-  qSlicerDiffusionTensorVolumeDisplayWidget*   DTVolumeDisplayWidget{ nullptr };
+  qSlicerDiffusionTensorVolumeDisplayWidget* DTVolumeDisplayWidget{ nullptr };
 };
 
 // --------------------------------------------------------------------------
-qSlicerVolumeDisplayWidgetPrivate::qSlicerVolumeDisplayWidgetPrivate(
-  qSlicerVolumeDisplayWidget& object)
+qSlicerVolumeDisplayWidgetPrivate::qSlicerVolumeDisplayWidgetPrivate(qSlicerVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
 }

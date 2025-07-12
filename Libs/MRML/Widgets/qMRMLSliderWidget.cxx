@@ -41,8 +41,10 @@
 class qMRMLSliderWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSliderWidget);
+
 protected:
   qMRMLSliderWidget* const q_ptr;
+
 public:
   qMRMLSliderWidgetPrivate(qMRMLSliderWidget& object);
   ~qMRMLSliderWidgetPrivate();
@@ -65,8 +67,8 @@ qMRMLSliderWidgetPrivate::qMRMLSliderWidgetPrivate(qMRMLSliderWidget& object)
   this->Quantity = "";
   this->MRMLScene = nullptr;
   this->SelectionNode = nullptr;
-  this->Flags = qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix
-    | qMRMLSliderWidget::Precision | qMRMLSliderWidget::Scaling;
+  this->Flags =
+    qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix | qMRMLSliderWidget::Precision | qMRMLSliderWidget::Scaling;
   this->Proxy = new ctkLinearValueProxy;
   q->setOrientation(Qt::Horizontal);
 }
@@ -85,13 +87,11 @@ void qMRMLSliderWidgetPrivate::setAndObserveSelectionNode()
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->MRMLScene)
   {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   }
 
-  q->qvtkReconnect(this->SelectionNode, selectionNode,
-    vtkMRMLSelectionNode::UnitModifiedEvent,
-    q, SLOT(updateWidgetFromUnitNode()));
+  q->qvtkReconnect(
+    this->SelectionNode, selectionNode, vtkMRMLSelectionNode::UnitModifiedEvent, q, SLOT(updateWidgetFromUnitNode()));
   this->SelectionNode = selectionNode;
   q->updateWidgetFromUnitNode();
 }
@@ -140,14 +140,14 @@ void qMRMLSliderWidget::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSliderWidget::quantity()const
+QString qMRMLSliderWidget::quantity() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->Quantity;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSliderWidget::mrmlScene()const
+vtkMRMLScene* qMRMLSliderWidget::mrmlScene() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->MRMLScene;
@@ -170,8 +170,7 @@ void qMRMLSliderWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-qMRMLSliderWidget::UnitAwareProperties
-qMRMLSliderWidget::unitAwareProperties()const
+qMRMLSliderWidget::UnitAwareProperties qMRMLSliderWidget::unitAwareProperties() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->Flags;
@@ -197,8 +196,7 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
   if (d->SelectionNode)
   {
     vtkMRMLUnitNode* unitNode =
-      vtkMRMLUnitNode::SafeDownCast(d->MRMLScene->GetNodeByID(
-        d->SelectionNode->GetUnitNodeID(d->Quantity.toUtf8())));
+      vtkMRMLUnitNode::SafeDownCast(d->MRMLScene->GetNodeByID(d->SelectionNode->GetUnitNodeID(d->Quantity.toUtf8())));
 
     if (unitNode)
     {
@@ -208,7 +206,7 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
         // to call it only when it is necessary (without this check,
         // for example a setValue call may be ineffective if the min/max
         // value is changing at the same time)
-        if (this->decimals()!=unitNode->GetPrecision())
+        if (this->decimals() != unitNode->GetPrecision())
         {
           this->setDecimals(unitNode->GetPrecision());
         }
@@ -238,8 +236,8 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
         double range = this->maximum() - this->minimum();
         if (d->Flags.testFlag(qMRMLSliderWidget::Scaling))
         {
-          range = unitNode->GetDisplayValueFromValue(this->maximum()) -
-                  unitNode->GetDisplayValueFromValue(this->minimum());
+          range =
+            unitNode->GetDisplayValueFromValue(this->maximum()) - unitNode->GetDisplayValueFromValue(this->minimum());
         }
         double powerOfTen = ctk::closestPowerOfTen(range);
         if (powerOfTen != 0.)

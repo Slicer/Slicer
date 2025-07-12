@@ -36,7 +36,8 @@ class qSlicerSubjectHierarchyDICOMPluginPrivate;
 /// types. It also supplies the context menu for DICOM export.
 /// This plugin is a subclass of the Folder plugin, in order to be able to
 /// override display properties of their branches.
-class Q_SLICER_DICOMLIB_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyFolderPlugin
+class Q_SLICER_DICOMLIB_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDICOMPlugin
+  : public qSlicerSubjectHierarchyFolderPlugin
 {
 public:
   Q_OBJECT
@@ -51,27 +52,30 @@ public:
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
   /// \param parentItemID Prospective parent of the node to add.
-  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the
+  ///   to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier
+  ///   attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  double canOwnSubjectHierarchyItem(vtkIdType itemID)const override;
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier
+  ///   attribute)
+  double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
-  Q_INVOKABLE const QString roleForPlugin()const override;
+  Q_INVOKABLE const QString roleForPlugin() const override;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
@@ -84,12 +88,12 @@ public:
   void editProperties(vtkIdType itemID) override;
 
   /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  QList<QAction*> itemContextMenuActions() const override;
 
   /// Get scene context menu item actions to add to tree view. Also provides actions for right-click on empty area
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  QList<QAction*> sceneContextMenuActions()const override;
+  QList<QAction*> sceneContextMenuActions() const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for

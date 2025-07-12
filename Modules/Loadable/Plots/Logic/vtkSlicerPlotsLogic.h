@@ -39,12 +39,10 @@ class vtkMRMLPlotSeriesNode;
 /// \brief Slicer logic class for double array manipulation
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the double array nodes
-class VTK_SLICER_PLOTS_MODULE_LOGIC_EXPORT vtkSlicerPlotsLogic
-  : public vtkSlicerModuleLogic
+class VTK_SLICER_PLOTS_MODULE_LOGIC_EXPORT vtkSlicerPlotsLogic : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerPlotsLogic *New();
+  static vtkSlicerPlotsLogic* New();
   vtkTypeMacro(vtkSlicerPlotsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -53,7 +51,7 @@ public:
 
   /// Create a deep copy of a \a source and add it to the current scene.
   /// \sa GetMRMLScene()
-  vtkMRMLPlotSeriesNode* CloneSeries(vtkMRMLPlotSeriesNode* source, const char *name);
+  vtkMRMLPlotSeriesNode* CloneSeries(vtkMRMLPlotSeriesNode* source, const char* name);
 
   /// Show chart in view layout.
   /// Switches to a layout that contains a plot and propagates

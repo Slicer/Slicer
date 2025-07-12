@@ -22,13 +22,13 @@
 #include "qMRMLDisplayNodeWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidgetPlugin::qMRMLDisplayNodeWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+qMRMLDisplayNodeWidgetPlugin::qMRMLDisplayNodeWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLDisplayNodeWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLDisplayNodeWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLDisplayNodeWidget* _widget = new qMRMLDisplayNodeWidget(_parent);
   return _widget;
@@ -39,7 +39,7 @@ QString qMRMLDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLDisplayNodeWidget\" \
           name=\"MRMLDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

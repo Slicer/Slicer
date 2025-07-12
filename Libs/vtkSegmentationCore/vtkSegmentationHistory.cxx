@@ -45,7 +45,7 @@ vtkSegmentationHistory::vtkSegmentationHistory()
   this->RestoreStateInProgress = false;
 
   this->SegmentationModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentationModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->SegmentationModifiedCallbackCommand->SetCallback(vtkSegmentationHistory::OnSegmentationModified);
 }
 
@@ -83,8 +83,10 @@ void vtkSegmentationHistory::SetSegmentation(vtkSegmentation* segmentation)
     this->Segmentation->AddObserver(vtkSegmentation::SegmentAdded, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SegmentRemoved, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SegmentModified, this->SegmentationModifiedCallbackCommand);
-    this->Segmentation->AddObserver(vtkSegmentation::SourceRepresentationModified, this->SegmentationModifiedCallbackCommand);
-    //this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified, this->SegmentationModifiedCallbackCommand);
+    this->Segmentation->AddObserver(vtkSegmentation::SourceRepresentationModified,
+                                    this->SegmentationModifiedCallbackCommand);
+    // this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified,
+    // this->SegmentationModifiedCallbackCommand);
   }
 }
 
@@ -130,7 +132,8 @@ bool vtkSegmentationHistory::SaveState()
   this->Segmentation->GetSegmentIDs(segmentIDs);
   newSegmentationState.SegmentIds = segmentIDs;
   std::map<vtkDataObject*, vtkDataObject*> savedObjects;
-  for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
+  for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end();
+       ++segmentIDIt)
   {
     vtkSegment* segment = this->Segmentation->GetSegment(*segmentIDIt);
     if (segment == nullptr)
@@ -184,7 +187,8 @@ bool vtkSegmentationHistory::RestorePreviousState()
   }
   if (this->SegmentationStates.size() < this->LastRestoredState)
   {
-    vtkErrorMacro("vtkSegmentation::RestorePreviousState failed: There are no previous state available for restore (internal error)");
+    vtkErrorMacro("vtkSegmentation::RestorePreviousState failed: There are no previous state available for restore "
+                  "(internal error)");
     return false;
   }
   int stateToRestore = this->LastRestoredState - 1;
@@ -227,7 +231,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
   std::set<std::string> segmentIDsToKeep;
   std::map<vtkDataObject*, vtkDataObject*> restoredRepresentations;
   for (SegmentsMap::iterator restoredSegmentsIt = restoredState.Segments.begin();
-    restoredSegmentsIt != restoredState.Segments.end(); ++restoredSegmentsIt)
+       restoredSegmentsIt != restoredState.Segments.end();
+       ++restoredSegmentsIt)
   {
     vtkSegment* segmentToRestore = restoredSegmentsIt->second;
     segmentIDsToKeep.insert(restoredSegmentsIt->first);
@@ -252,7 +257,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
     // Remove representations that are not in the restoring segment
     for (std::string representationName : currentRepresentationNames)
     {
-      if (std::find(restoredRepresentationNames.begin(), restoredRepresentationNames.end(), representationName) == restoredRepresentationNames.end())
+      if (std::find(restoredRepresentationNames.begin(), restoredRepresentationNames.end(), representationName)
+          == restoredRepresentationNames.end())
       {
         segment->RemoveRepresentation(representationName);
       }
@@ -262,7 +268,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
   // Removed segments that were not in the restored state
   std::vector<std::string> segmentIDs;
   this->Segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
+  for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end();
+       ++segmentIDIt)
   {
     if (segmentIDsToKeep.find(*segmentIDIt) != segmentIDsToKeep.end())
     {
@@ -349,9 +356,9 @@ void vtkSegmentationHistory::SetMaximumNumberOfStates(unsigned int maximumNumber
 
 //---------------------------------------------------------------------------
 void vtkSegmentationHistory::OnSegmentationModified(vtkObject* vtkNotUsed(caller),
-  unsigned long vtkNotUsed(eid),
-  void* clientData,
-  void* vtkNotUsed(callData))
+                                                    unsigned long vtkNotUsed(eid),
+                                                    void* clientData,
+                                                    void* vtkNotUsed(callData))
 {
   vtkSegmentationHistory* self = reinterpret_cast<vtkSegmentationHistory*>(clientData);
   if (!self)

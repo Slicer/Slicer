@@ -39,7 +39,7 @@
 #include <vtkMRMLUnitNode.h>
 
 //------------------------------------------------------------------------------
-class qMRMLSliceVerticalControllerWidgetPrivate: public Ui_qMRMLSliceVerticalControllerWidget
+class qMRMLSliceVerticalControllerWidgetPrivate : public Ui_qMRMLSliceVerticalControllerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSliceVerticalControllerWidget);
 
@@ -54,15 +54,16 @@ public:
 
 protected:
   qMRMLSliceVerticalControllerWidget* const q_ptr;
-  vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
-  vtkMRMLSelectionNode*               SelectionNode;
+  vtkSmartPointer<vtkMRMLSliceLogic> SliceLogic;
+  vtkMRMLSelectionNode* SelectionNode;
   /// Slicer offset resolution without applying display scaling.
-  double                              SliceOffsetResolution{1.0};
-  bool                                ShowSliceOffsetSlider{true};
+  double SliceOffsetResolution{ 1.0 };
+  bool ShowSliceOffsetSlider{ true };
 };
 
 //---------------------------------------------------------------------------
-qMRMLSliceVerticalControllerWidgetPrivate::qMRMLSliceVerticalControllerWidgetPrivate(qMRMLSliceVerticalControllerWidget& object)
+qMRMLSliceVerticalControllerWidgetPrivate::qMRMLSliceVerticalControllerWidgetPrivate(
+  qMRMLSliceVerticalControllerWidget& object)
   : q_ptr(&object)
 {
 }
@@ -81,13 +82,20 @@ void qMRMLSliceVerticalControllerWidgetPrivate::init()
   this->updateSliceOffsetSliderVisibility();
 
   // Connect Slice offset slider
-  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueChanged(double)),
-                   q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
-  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueIsChanging(double)),
-                   q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
+  QObject::connect(this->SliceVerticalOffsetSlider,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(setSliceOffsetValue(double)),
+                   Qt::QueuedConnection);
+  QObject::connect(this->SliceVerticalOffsetSlider,
+                   SIGNAL(valueIsChanging(double)),
+                   q,
+                   SLOT(trackSliceOffsetValue(double)),
+                   Qt::QueuedConnection);
 
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
-  defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
+  defaultLogic->SetMRMLApplicationLogic(
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
   q->setSliceLogic(defaultLogic.GetPointer());
   q->setFixedWidth(12);
 }
@@ -100,8 +108,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::setSelectionNode()
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (q->mrmlScene())
   {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   }
 
   this->SelectionNode = selectionNode;
@@ -116,7 +123,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
   // Enable/disable widget
   q->setDisabled(newSliceNode == nullptr);
 
-  double offsetRange[2] = {-1.0, 1.0};
+  double offsetRange[2] = { -1.0, 1.0 };
   double offsetResolution = 1.0;
   if (!this->SliceLogic || !this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution))
   {
@@ -145,7 +152,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::updateSliceOffsetSliderVisibilit
 // qMRMLSliceVerticalControllerWidget methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceVerticalControllerWidget::qMRMLSliceVerticalControllerWidget(QWidget *_parent)
+qMRMLSliceVerticalControllerWidget::qMRMLSliceVerticalControllerWidget(QWidget* _parent)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLSliceVerticalControllerWidgetPrivate(*this))
 {
@@ -186,14 +193,14 @@ void qMRMLSliceVerticalControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newS
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceVerticalControllerWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceVerticalControllerWidget::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceVerticalControllerWidget);
   return d->SliceLogic->GetSliceNode();
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic)
+void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic* newSliceLogic)
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   if (d->SliceLogic == newSliceLogic)
@@ -201,8 +208,7 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSl
     return;
   }
 
-  this->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent,
-                      this, SLOT(onSliceLogicModifiedEvent()));
+  this->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent, this, SLOT(onSliceLogicModifiedEvent()));
 
   d->SliceLogic = newSliceLogic;
 
@@ -215,7 +221,7 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSl
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic *qMRMLSliceVerticalControllerWidget::sliceLogic()
+vtkMRMLSliceLogic* qMRMLSliceVerticalControllerWidget::sliceLogic()
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   return d->SliceLogic;
@@ -237,7 +243,8 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetResolution(double resolut
   double displayCoeffiecient = 1.0;
   if (d->SelectionNode && this->mrmlScene())
   {
-    vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->SelectionNode->GetUnitNodeID("length")));
+    vtkMRMLUnitNode* unitNode =
+      vtkMRMLUnitNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->SelectionNode->GetUnitNodeID("length")));
     if (unitNode)
     {
       displayCoeffiecient = unitNode->GetDisplayCoefficient();
@@ -262,7 +269,7 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetValue(double offset)
   {
     return;
   }
-  //qDebug() << "qMRMLSliceVerticalControllerWidget::setSliceOffsetValue:" << offset;
+  // qDebug() << "qMRMLSliceVerticalControllerWidget::setSliceOffsetValue:" << offset;
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
@@ -291,11 +298,11 @@ void qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue(double offset)
   {
     return;
   }
-  //qDebug() << "qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue";
+  // qDebug() << "qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue";
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
-    vtkMRMLApplicationLogic* applicationLogic =
+  vtkMRMLApplicationLogic* applicationLogic =
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   if (applicationLogic)
   {
@@ -326,7 +333,7 @@ qMRMLSliderWidget* qMRMLSliceVerticalControllerWidget::sliceVerticalOffsetSlider
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSliceVerticalControllerWidget::showSliceOffsetSlider()const
+bool qMRMLSliceVerticalControllerWidget::showSliceOffsetSlider() const
 {
   Q_D(const qMRMLSliceVerticalControllerWidget);
   return d->ShowSliceOffsetSlider;

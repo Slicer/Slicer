@@ -37,7 +37,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest5(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -64,24 +64,21 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
   nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
   {
-    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
-              << spy.count() << std::endl;
+    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: " << spy.count() << std::endl;
     return EXIT_FAILURE;
   }
   spy.clear();
   nodeSelector.setCurrentNode(nullptr);
   if (spy.count() != 1)
   {
-    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
-              << spy.count() << std::endl;
+    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: " << spy.count() << std::endl;
     return EXIT_FAILURE;
   }
   spy.clear();
   nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
   {
-    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
-              << spy.count() << std::endl;
+    std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: " << spy.count() << std::endl;
     return EXIT_FAILURE;
   }
 

@@ -141,28 +141,45 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
   if (this->GetActionEnabled(ActionRotateSliceIntersection))
   {
     // Touch gesture slice rotate
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::RotateEvent, vtkEvent::AnyModifier, WidgetEventTouchRotateSliceIntersection);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::StartRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::RotateEvent, vtkEvent::AnyModifier, WidgetEventTouchRotateSliceIntersection);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::EndRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
     // Ctrl-alt-left-click-and-drag rotate
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier + vtkEvent::ControlModifier,
-      WidgetStateRotateIntersectingSlices, WidgetEventRotateIntersectingSlicesStart, WidgetEventRotateIntersectingSlicesEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::AltModifier + vtkEvent::ControlModifier,
+                                          WidgetStateRotateIntersectingSlices,
+                                          WidgetEventRotateIntersectingSlicesStart,
+                                          WidgetEventRotateIntersectingSlicesEnd);
   }
   if (this->GetActionEnabled(ActionTranslateSliceIntersection))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent,
-      vtkEvent::AltModifier + vtkEvent::ShiftModifier, WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::AltModifier + vtkEvent::ShiftModifier,
+                                          WidgetStateTranslate,
+                                          WidgetEventTranslateStart,
+                                          WidgetEventTranslateEnd);
   }
   if (this->GetActionEnabled(ActionSetCrosshairPosition))
   {
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPositionBackground);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPositionBackground);
   }
   if (this->GetActionEnabled(ActionBlend))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent,
-      vtkEvent::ControlModifier, WidgetStateBlend, WidgetEventBlendStart, WidgetEventBlendEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::ControlModifier,
+                                          WidgetStateBlend,
+                                          WidgetEventBlendStart,
+                                          WidgetEventBlendEnd);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "g", WidgetEventToggleLabelOpacity);
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "t", WidgetEventToggleForegroundOpacity);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "t", WidgetEventToggleForegroundOpacity);
   }
   if (this->GetActionEnabled(ActionBrowseSlice))
   {
@@ -172,20 +189,28 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Down", WidgetEventDecrementSlice);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "f", WidgetEventIncrementSlice);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "b", WidgetEventDecrementSlice);
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventIncrementSlice);
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventDecrementSlice);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventIncrementSlice);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventDecrementSlice);
   }
   if (this->GetActionEnabled(ActionShowSlice))
   {
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "v", WidgetEventToggleSliceVisibility);
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "V", WidgetEventToggleAllSlicesVisibility);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "v", WidgetEventToggleSliceVisibility);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "V", WidgetEventToggleAllSlicesVisibility);
   }
   if (this->GetActionEnabled(ActionSelectVolume))
   {
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "bracketleft", WidgetEventShowPreviousBackgroundVolume);
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "bracketright", WidgetEventShowNextBackgroundVolume);
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "braceleft", WidgetEventShowPreviousForegroundVolume);
-    this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "braceright", WidgetEventShowNextForegroundVolume);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "bracketleft", WidgetEventShowPreviousBackgroundVolume);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "bracketright", WidgetEventShowNextBackgroundVolume);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "braceleft", WidgetEventShowPreviousForegroundVolume);
+    this->SetKeyboardEventTranslation(
+      WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "braceright", WidgetEventShowNextForegroundVolume);
   }
   if (this->GetActionEnabled(ActionTranslate) && this->GetActionEnabled(ActionZoom))
   {
@@ -193,78 +218,149 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
   }
   if (this->GetActionEnabled(ActionZoom))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateZoomSlice, WidgetEventZoomSliceStart, WidgetEventZoomSliceEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::RightButtonPressEvent,
+                                          vtkEvent::NoModifier,
+                                          WidgetStateZoomSlice,
+                                          WidgetEventZoomSliceStart,
+                                          WidgetEventZoomSliceEnd);
     // Alt modifier to allow action during markup placement
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-      WidgetStateZoomSlice, WidgetEventZoomSliceStart, WidgetEventZoomSliceEnd);
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::ControlModifier, WidgetEventZoomOutSlice);
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::ControlModifier, WidgetEventZoomInSlice);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::RightButtonPressEvent,
+                                          vtkEvent::AltModifier,
+                                          WidgetStateZoomSlice,
+                                          WidgetEventZoomSliceStart,
+                                          WidgetEventZoomSliceEnd);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::ControlModifier, WidgetEventZoomOutSlice);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::ControlModifier, WidgetEventZoomInSlice);
     // Touch slice zoom
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PinchEvent, vtkEvent::AnyModifier, WidgetEventTouchZoomSlice);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::StartPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::PinchEvent, vtkEvent::AnyModifier, WidgetEventTouchZoomSlice);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::EndPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
   }
 
   if (this->GetActionEnabled(ActionTranslate))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier,
-      WidgetStateTranslateSlice, WidgetEventTranslateSliceStart, WidgetEventTranslateSliceEnd);
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateTranslateSlice, WidgetEventTranslateSliceStart, WidgetEventTranslateSliceEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::ShiftModifier,
+                                          WidgetStateTranslateSlice,
+                                          WidgetEventTranslateSliceStart,
+                                          WidgetEventTranslateSliceEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::MiddleButtonPressEvent,
+                                          vtkEvent::NoModifier,
+                                          WidgetStateTranslateSlice,
+                                          WidgetEventTranslateSliceStart,
+                                          WidgetEventTranslateSliceEnd);
     // Alt modifier to allow action during markup placement
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier + vtkEvent::ShiftModifier,
-      WidgetStateTranslateSlice, WidgetEventTranslateSliceStart, WidgetEventTranslateSliceEnd);
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::AltModifier,
-      WidgetStateTranslateSlice, WidgetEventTranslateSliceStart, WidgetEventTranslateSliceEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::AltModifier + vtkEvent::ShiftModifier,
+                                          WidgetStateTranslateSlice,
+                                          WidgetEventTranslateSliceStart,
+                                          WidgetEventTranslateSliceEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::MiddleButtonPressEvent,
+                                          vtkEvent::AltModifier,
+                                          WidgetStateTranslateSlice,
+                                          WidgetEventTranslateSliceStart,
+                                          WidgetEventTranslateSliceEnd);
     // Touch slice translate
-    this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PanEvent, vtkEvent::AnyModifier, WidgetEventTouchTranslateSlice);
-    this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
+    this->SetEventTranslation(
+      WidgetStateIdle, vtkCommand::StartPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::PanEvent, vtkEvent::AnyModifier, WidgetEventTouchTranslateSlice);
+    this->SetEventTranslation(
+      WidgetStateTouchGesture, vtkCommand::EndPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
   }
 
   // Context menu
-  this->SetEventTranslation(WidgetStateAny, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
+  this->SetEventTranslation(
+    WidgetStateAny, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   // Maximize/restore view
-  this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventMaximizeView);
+  this->SetEventTranslation(
+    WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventMaximizeView);
 
   // Interactions with slice intersection handles
 
   // Update active component
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(
+    WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   // Update active interaction handle component
-  this->SetEventTranslation(WidgetStateOnTranslateIntersectingSlicesHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnTranslateIntersectingSlicesHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingSlicesHandle,
+                            vtkCommand::MouseMoveEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingSlicesHandle,
+                            vtkCommand::Move3DEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnRotateIntersectingSlicesHandle,
+                            vtkCommand::MouseMoveEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(
+    WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle,
+                            vtkCommand::MouseMoveEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle,
+                            vtkCommand::Move3DEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle,
+                            vtkCommand::MouseMoveEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle,
+                            vtkCommand::Move3DEvent,
+                            vtkEvent::NoModifier,
+                            WidgetEventMouseMove);
 
   // Thick slab reconstruction lines
-  this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
+  this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateIntersectingThickSlabHandle,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::NoModifier,
                                         WidgetStateTranslateIntersectingThickSlabHandle,
-                                        WidgetEventTranslateIntersectingThickSlabHandleStart, WidgetEventTranslateIntersectingThickSlabHandleEnd);
+                                        WidgetEventTranslateIntersectingThickSlabHandleStart,
+                                        WidgetEventTranslateIntersectingThickSlabHandleEnd);
   if (this->GetActionEnabled(ActionRotateSliceIntersection))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateRotateIntersectingSlicesHandle, WidgetEventRotateIntersectingSlicesHandleStart, WidgetEventRotateIntersectingSlicesHandleEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateOnRotateIntersectingSlicesHandle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::NoModifier,
+                                          WidgetStateRotateIntersectingSlicesHandle,
+                                          WidgetEventRotateIntersectingSlicesHandleStart,
+                                          WidgetEventRotateIntersectingSlicesHandleEnd);
   }
   if (this->GetActionEnabled(ActionTranslateSliceIntersection))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateIntersectingSlicesHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateTranslateIntersectingSlicesHandle, WidgetEventTranslateIntersectingSlicesHandleStart, WidgetEventTranslateIntersectingSlicesHandleEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateIntersectingSlicesHandle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::NoModifier,
+                                          WidgetStateTranslateIntersectingSlicesHandle,
+                                          WidgetEventTranslateIntersectingSlicesHandleStart,
+                                          WidgetEventTranslateIntersectingSlicesHandleEnd);
   }
   if (this->GetActionEnabled(ActionTranslate))
   {
-    this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateSingleIntersectingSliceHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateTranslateSingleIntersectingSliceHandle,
-      WidgetEventTranslateSingleIntersectingSliceHandleStart, WidgetEventTranslateSingleIntersectingSliceHandleEnd);
+    this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateSingleIntersectingSliceHandle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::NoModifier,
+                                          WidgetStateTranslateSingleIntersectingSliceHandle,
+                                          WidgetEventTranslateSingleIntersectingSliceHandleStart,
+                                          WidgetEventTranslateSingleIntersectingSliceHandleEnd);
   }
 }
 
@@ -276,7 +372,7 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     // already created
     return;
   }
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     vtkWarningMacro("vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation failed: application logic invalid");
@@ -299,11 +395,11 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     newRep->SetSliceNode(this->SliceNode);
     this->WidgetRep = newRep;
   }
-
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData,
+                                                                double& distance2)
 {
   if (!this->SliceLogic)
   {
@@ -345,17 +441,13 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
 
   // If we are currently dragging a point then we interact everywhere
   // (we do not let any other widget take away the focus).
-  if (this->WidgetState == WidgetStateMoveCrosshair
-    || this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateRotateIntersectingSlices
-    || this->WidgetState == WidgetStateBlend
-    || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice
-    || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle
-    )
+  if (this->WidgetState == WidgetStateMoveCrosshair || this->WidgetState == WidgetStateTranslate
+      || this->WidgetState == WidgetStateRotateIntersectingSlices || this->WidgetState == WidgetStateBlend
+      || this->WidgetState == WidgetStateTranslateSlice || this->WidgetState == WidgetStateZoomSlice
+      || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
+      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
+      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
   {
     distance2 = 0.0;
     return true;
@@ -365,21 +457,20 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   // we allow other widgets to perform actions at the same time.
   // For example, this allows markup preview to remain visible in place mode while adjusting slice position
   // with shift + mouse-move.
-  if (this->GetActionEnabled(ActionSetCrosshairPosition)
-    && widgetEvent == WidgetEventSetCrosshairPositionBackground)
+  if (this->GetActionEnabled(ActionSetCrosshairPosition) && widgetEvent == WidgetEventSetCrosshairPositionBackground)
   {
     this->ProcessSetCrosshairBackground(eventData);
   }
 
   // Representation
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
   if (rep)
   {
     // Currently interacting
-    if (this->WidgetState == WidgetStateTranslate
-      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
+    if (this->WidgetState == WidgetStateTranslate || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
+        || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+        || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
     {
       distance2 = 0.0;
       return true;
@@ -390,7 +481,8 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     int foundComponentIndex = -1;
     double closestDistance2 = 0.0;
     double handleOpacity = 0.0;
-    std::string intersectingSliceNodeID = rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2, handleOpacity);
+    std::string intersectingSliceNodeID =
+      rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2, handleOpacity);
 
     if (foundComponentType != vtkMRMLSliceDisplayNode::ComponentNone)
     {
@@ -432,7 +524,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       // click-and-dragging the mouse cursor
       processedEvent = this->ProcessMouseMove(eventData);
       break;
-    case  WidgetEventTouchGestureStart:
+    case WidgetEventTouchGestureStart:
       this->ProcessTouchGestureStart(eventData);
       break;
     case WidgetEventTouchGestureEnd:
@@ -496,7 +588,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     case WidgetEventBlendStart:
     {
       this->SetWidgetState(WidgetStateBlend);
-      vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+      vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       this->LastForegroundOpacity = sliceCompositeNode->GetForegroundOpacity();
       this->LastLabelOpacity = this->GetLabelOpacity();
@@ -506,7 +598,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       // synchronize opacity value. However, since synchronization occurs via GUI widgets
       // (the slider in qMRMLSliceControllerWidget), there is no immediate need to change this.
     }
-      break;
+    break;
     case WidgetEventBlendEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       break;
@@ -529,10 +621,10 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
         this->SetLabelOpacity(this->LastLabelOpacity);
       }
     }
-      break;
+    break;
     case WidgetEventToggleForegroundOpacity:
     {
-      vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+      vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       double opacity = sliceCompositeNode->GetForegroundOpacity();
       if (opacity != 0.0)
@@ -545,7 +637,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
         sliceCompositeNode->SetForegroundOpacity(this->LastForegroundOpacity);
       }
     }
-      break;
+    break;
     case WidgetEventIncrementSlice:
       this->IncrementSlice();
       break;
@@ -569,14 +661,14 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       this->GetSliceNode()->UpdateMatrices();
       this->SliceLogic->EndSliceNodeInteraction();
     }
-      break;
+    break;
     case WidgetEventZoomInSlice:
       this->ScaleZoom(1.2, eventData);
       break;
     case WidgetEventZoomOutSlice:
       this->ScaleZoom(0.8, eventData);
       break;
-    break;
+      break;
     case WidgetEventShowPreviousBackgroundVolume:
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       this->CycleVolumeLayer(LayerBackground, -1);
@@ -644,15 +736,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
 void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventData)
 {
   // Ensure that EndInteractionEvent is invoked, even if interrupted by an unexpected event
-  if (this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice
-    || this->WidgetState == WidgetStateBlend
-    || this->WidgetState == WidgetStateRotateIntersectingSlices
-    || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
+  if (this->WidgetState == WidgetStateTranslate || this->WidgetState == WidgetStateTranslateSlice
+      || this->WidgetState == WidgetStateZoomSlice || this->WidgetState == WidgetStateBlend
+      || this->WidgetState == WidgetStateRotateIntersectingSlices
+      || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
+      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
+      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
   {
     this->ProcessEndMouseDrag(eventData);
   }
@@ -673,7 +763,8 @@ void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventDat
 //-------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* interactiveRep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* interactiveRep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!this->WidgetRep || !eventData)
   {
     return false;
@@ -689,7 +780,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
       const double* worldPos = eventData->GetWorldPosition();
       this->GetSliceNode()->JumpAllSlices(worldPos[0], worldPos[1], worldPos[2]);
     }
-      break;
+    break;
     case WidgetStateMoveCrosshair:
       this->ProcessSetCrosshair(eventData);
       break;
@@ -702,7 +793,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
     case WidgetStateZoomSlice:
       this->ProcessZoomSlice(eventData);
       break;
-    case WidgetStateIdle: // if moving over an intersection in idle mode then this will change the widget state to WidgetStateOn...
+    case WidgetStateIdle: // if moving over an intersection in idle mode then this will change the widget state to
+                          // WidgetStateOn...
     case WidgetStateOnWidget:
     case WidgetStateOnTranslateIntersectingSlicesHandle:
     case WidgetStateOnRotateIntersectingSlicesHandle:
@@ -715,7 +807,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
         int foundComponentIndex = -1;
         double closestDistance2 = 0.0;
         double handleOpacity = 0.0;
-        std::string intersectingSliceNodeID = interactiveRep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2, handleOpacity);
+        std::string intersectingSliceNodeID = interactiveRep->CanInteract(
+          eventData, foundComponentType, foundComponentIndex, closestDistance2, handleOpacity);
         if (foundComponentType == vtkMRMLSliceDisplayNode::ComponentNone)
         {
           if (this->WidgetState != WidgetStateIdle)
@@ -754,10 +847,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
         vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
         if (sliceDisplayNode)
         {
-          sliceDisplayNode->SetActiveComponent(foundComponentType, foundComponentIndex, eventData->GetInteractionContextName());
+          sliceDisplayNode->SetActiveComponent(
+            foundComponentType, foundComponentIndex, eventData->GetInteractionContextName());
         }
       }
-        break;
+      break;
     case WidgetStateTranslateIntersectingSlicesHandle:
     case WidgetStateTranslateSingleIntersectingSliceHandle:
     case WidgetStateTranslateIntersectingThickSlabHandle:
@@ -769,8 +863,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
       // selected), the widget points are modified.
       // First construct a local coordinate system based on the display coordinates
       // of the widget.
-      double eventPos[2]
-      {
+      double eventPos[2]{
         static_cast<double>(eventData->GetDisplayPosition()[0]),
         static_cast<double>(eventData->GetDisplayPosition()[1]),
       };
@@ -780,7 +873,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
       vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
       if (sliceDisplayNode)
       {
-        sliceDisplayNode->SetActiveComponent(vtkMRMLSliceDisplayNode::ComponentSliceIntersection, 0, eventData->GetInteractionContextName());
+        sliceDisplayNode->SetActiveComponent(
+          vtkMRMLSliceDisplayNode::ComponentSliceIntersection, 0, eventData->GetInteractionContextName());
       }
 
       if (this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle)
@@ -839,10 +933,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessStartMouseDrag(vtkMRMLInteractionEve
 //----------------------------------------------------------------------------
 double vtkMRMLSliceIntersectionWidget::GetSliceRotationAngleRad(double eventPos[2])
 {
-  return atan2(eventPos[1] - this->StartRotationCenter[1],
-    eventPos[0] - this->StartRotationCenter[0]);
+  return atan2(eventPos[1] - this->StartRotationCenter[1], eventPos[0] - this->StartRotationCenter[0]);
 }
-
 
 //-------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
@@ -865,8 +957,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEvent
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
 
   // Simulate a mousemove event to update the widget state according to the current position.
-  // Without this, handles would always disappear at the end of drag-and-drop, even if the mouse pointer is over the widget
-  // (which would break Nearby handle visible mode).
+  // Without this, handles would always disappear at the end of drag-and-drop, even if the mouse pointer is over the
+  // widget (which would break Nearby handle visible mode).
   int originalEventType = eventData->GetType();
   eventData->SetType(vtkCommand::MouseMoveEvent);
   this->ProcessMouseMove(eventData);
@@ -926,10 +1018,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTouchTranslate(vtkMRMLInteractionEve
 
   vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
   const double* translate = eventData->GetTranslation();
-  double translation[2] = {
-    xyToSlice->GetElement(0, 0) * translate[0],
-    xyToSlice->GetElement(1, 1) * translate[1]
-  };
+  double translation[2] = { xyToSlice->GetElement(0, 0) * translate[0], xyToSlice->GetElement(1, 1) * translate[1] };
 
   this->TotalTouchTranslation += vtkMath::Norm2D(translate);
 
@@ -947,7 +1036,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTouchTranslate(vtkMRMLInteractionEve
 //----------------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------------
@@ -984,19 +1073,23 @@ void vtkMRMLSliceIntersectionWidget::SetMRMLApplicationLogic(vtkMRMLApplicationL
 
 //----------------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::SliceLogicsModifiedCallback(vtkObject* vtkNotUsed(caller),
-  unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+                                                                 unsigned long vtkNotUsed(eid),
+                                                                 void* clientData,
+                                                                 void* vtkNotUsed(callData))
 {
   vtkMRMLSliceIntersectionWidget* self = vtkMRMLSliceIntersectionWidget::SafeDownCast((vtkObject*)clientData);
   if (!self)
   {
     return;
   }
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(self->WidgetRep);
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+    vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(self->WidgetRep);
   if (rep)
   {
     rep->UpdateIntersectingSliceNodes();
   }
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(self->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(self->WidgetRep);
   if (repInteraction)
   {
     repInteraction->UpdateIntersectingSliceNodes();
@@ -1010,7 +1103,9 @@ void vtkMRMLSliceIntersectionWidget::SliceLogicsModifiedCallback(vtkObject* vtkN
 
 //----------------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::SliceModifiedCallback(vtkObject* vtkNotUsed(caller),
-  unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+                                                           unsigned long vtkNotUsed(eid),
+                                                           void* clientData,
+                                                           void* vtkNotUsed(callData))
 {
   vtkMRMLSliceIntersectionWidget* self = vtkMRMLSliceIntersectionWidget::SafeDownCast((vtkObject*)clientData);
   if (!self)
@@ -1025,7 +1120,6 @@ void vtkMRMLSliceIntersectionWidget::SliceModifiedCallback(vtkObject* vtkNotUsed
   }
 
   bool needToUpdateRepresentation = false;
-
 
   if (self->IsSliceIntersectionInteractive() || self->IsThickSlabInteractive())
   {
@@ -1080,12 +1174,14 @@ void vtkMRMLSliceIntersectionWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
   }
 
   // Update representation
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+    vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
   if (rep)
   {
     rep->SetSliceNode(sliceNode);
   }
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (repInteraction)
   {
     repInteraction->SetSliceNode(sliceNode);
@@ -1101,8 +1197,10 @@ vtkMRMLSliceNode* vtkMRMLSliceIntersectionWidget::GetSliceNode()
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesStart(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+    vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if ((!rep) && (!repInteraction))
   {
     return false;
@@ -1122,7 +1220,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesStart(vtkMRM
   }
   this->StartRotationCenter[0] = sliceIntersectionPoint[0];
   this->StartRotationCenter[1] = sliceIntersectionPoint[1];
-  double startRotationCenterXY[4] = { sliceIntersectionPoint[0] , sliceIntersectionPoint[1], 0.0, 1.0 };
+  double startRotationCenterXY[4] = { sliceIntersectionPoint[0], sliceIntersectionPoint[1], 0.0, 1.0 };
   this->GetSliceNode()->GetXYToRAS()->MultiplyPoint(startRotationCenterXY, this->StartRotationCenter_RAS);
 
   // Save initial rotation angle
@@ -1136,8 +1234,10 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesStart(vtkMRM
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlices(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+    vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if ((!rep) && (!repInteraction))
   {
     return false;
@@ -1150,11 +1250,17 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlices(vtkMRMLInte
   vtkMatrix4x4* sliceToRAS = this->GetSliceNode()->GetSliceToRAS();
   vtkNew<vtkTransform> rotatedSliceToSliceTransform;
 
-  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
-  double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
-  rotatedSliceToSliceTransform->RotateWXYZ(rotationDirection*vtkMath::DegreesFromRadians(sliceRotationAngleRad - this->PreviousRotationAngleRad),
-    sliceToRAS->GetElement(0, 2), sliceToRAS->GetElement(1, 2), sliceToRAS->GetElement(2, 2));
-  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
+  rotatedSliceToSliceTransform->Translate(
+    this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
+  double rotationDirection =
+    vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
+  rotatedSliceToSliceTransform->RotateWXYZ(
+    rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad - this->PreviousRotationAngleRad),
+    sliceToRAS->GetElement(0, 2),
+    sliceToRAS->GetElement(1, 2),
+    sliceToRAS->GetElement(2, 2));
+  rotatedSliceToSliceTransform->Translate(
+    -this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
 
   this->PreviousRotationAngleRad = sliceRotationAngleRad;
   this->PreviousEventPosition[0] = displayPos[0];
@@ -1175,7 +1281,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlices(vtkMRMLInte
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::Rotate(double sliceRotationAngleRad)
 {
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+    vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -1184,14 +1291,19 @@ bool vtkMRMLSliceIntersectionWidget::Rotate(double sliceRotationAngleRad)
   vtkNew<vtkTransform> rotatedSliceToSliceTransform;
 
   double* sliceIntersectionPoint = rep->GetSliceIntersectionPoint();
-  double startRotationCenterXY[4] = { sliceIntersectionPoint[0] , sliceIntersectionPoint[1], 0.0, 1.0 };
+  double startRotationCenterXY[4] = { sliceIntersectionPoint[0], sliceIntersectionPoint[1], 0.0, 1.0 };
   this->GetSliceNode()->GetXYToRAS()->MultiplyPoint(startRotationCenterXY, this->StartRotationCenter_RAS);
 
-  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
-  double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
-  rotatedSliceToSliceTransform->RotateWXYZ(rotationDirection*vtkMath::DegreesFromRadians(sliceRotationAngleRad),
-    sliceToRAS->GetElement(0, 2), sliceToRAS->GetElement(1, 2), sliceToRAS->GetElement(2, 2));
-  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
+  rotatedSliceToSliceTransform->Translate(
+    this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
+  double rotationDirection =
+    vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
+  rotatedSliceToSliceTransform->RotateWXYZ(rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad),
+                                           sliceToRAS->GetElement(0, 2),
+                                           sliceToRAS->GetElement(1, 2),
+                                           sliceToRAS->GetElement(2, 2));
+  rotatedSliceToSliceTransform->Translate(
+    -this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
 
   this->PreviousRotationAngleRad = sliceRotationAngleRad;
 
@@ -1209,10 +1321,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* e
 
   int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
   double offsetY = (2.0 * deltaY) / windowMinSize;
-  double newForegroundOpacity =
-    this->LastForegroundOpacity + offsetY;
+  double newForegroundOpacity = this->LastForegroundOpacity + offsetY;
   newForegroundOpacity = std::min(std::max(newForegroundOpacity, 0.), 1.);
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetForegroundVolumeID() != nullptr)
   {
     sliceCompositeNode->SetForegroundOpacity(newForegroundOpacity);
@@ -1234,12 +1345,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* e
   return true;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::SetLabelOpacity(double opacity)
 {
   // If a labelmap node is selected then adjust opacity of that
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetLabelVolumeID())
   {
     sliceCompositeNode->SetLabelOpacity(opacity);
@@ -1262,7 +1372,7 @@ void vtkMRMLSliceIntersectionWidget::SetLabelOpacity(double opacity)
 double vtkMRMLSliceIntersectionWidget::GetLabelOpacity()
 {
   // If a labelmap node is selected then get opacity of that
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetLabelVolumeID())
   {
     return sliceCompositeNode->GetLabelOpacity();
@@ -1283,16 +1393,15 @@ double vtkMRMLSliceIntersectionWidget::GetLabelOpacity()
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmentationDisplayNode()
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
   std::vector<vtkMRMLNode*> displayNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationDisplayNode", displayNodes) : 0;
   for (int i = 0; i < nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNodes[i]);
-    if (displayNode
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
-      && displayNode->IsDisplayableInView(sliceNode->GetID()))
+    if (displayNode && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
+        && displayNode->IsDisplayableInView(sliceNode->GetID()))
     {
       return displayNode;
     }
@@ -1304,7 +1413,7 @@ vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmen
 double vtkMRMLSliceIntersectionWidget::GetSliceSpacing()
 {
   double spacing;
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
 
   if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {
@@ -1333,7 +1442,7 @@ void vtkMRMLSliceIntersectionWidget::MoveSlice(double delta)
   double offset = this->SliceLogic->GetSliceOffset();
   double newOffset = offset + delta;
 
-  double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
+  double sliceBounds[6] = { 0, -1, 0, -1, 0, -1 };
   this->SliceLogic->GetSliceBounds(sliceBounds);
   if (newOffset >= sliceBounds[4] && newOffset <= sliceBounds[5])
   {
@@ -1347,16 +1456,28 @@ void vtkMRMLSliceIntersectionWidget::MoveSlice(double delta)
 void vtkMRMLSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
 {
   // first, find the current volume index for the given layer (can be nullptr)
-  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-  const char *volumeID = nullptr;
+  vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  const char* volumeID = nullptr;
   switch (layer)
   {
-    case 0: { volumeID = sliceCompositeNode->GetBackgroundVolumeID(); } break;
-    case 1: { volumeID = sliceCompositeNode->GetForegroundVolumeID(); } break;
-    case 2: { volumeID = sliceCompositeNode->GetLabelVolumeID(); } break;
+    case 0:
+    {
+      volumeID = sliceCompositeNode->GetBackgroundVolumeID();
+    }
+    break;
+    case 1:
+    {
+      volumeID = sliceCompositeNode->GetForegroundVolumeID();
+    }
+    break;
+    case 2:
+    {
+      volumeID = sliceCompositeNode->GetLabelVolumeID();
+    }
+    break;
   }
-  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeID));
+  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeID));
 
   // now figure out which one it is in the list
   int volumeCount = scene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
@@ -1381,15 +1502,26 @@ void vtkMRMLSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
   }
 
   // if we found a node, set it in the given layer
-  volumeNode = vtkMRMLVolumeNode::SafeDownCast(
-                  scene->GetNthNodeByClass(volumeIndex, "vtkMRMLVolumeNode"));
+  volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNthNodeByClass(volumeIndex, "vtkMRMLVolumeNode"));
   if (volumeNode)
   {
     switch (layer)
     {
-      case 0: { sliceCompositeNode->SetBackgroundVolumeID(volumeNode->GetID()); } break;
-      case 1: { sliceCompositeNode->SetForegroundVolumeID(volumeNode->GetID()); } break;
-      case 2: { sliceCompositeNode->SetLabelVolumeID(volumeNode->GetID()); } break;
+      case 0:
+      {
+        sliceCompositeNode->SetBackgroundVolumeID(volumeNode->GetID());
+      }
+      break;
+      case 1:
+      {
+        sliceCompositeNode->SetForegroundVolumeID(volumeNode->GetID());
+      }
+      break;
+      case 2:
+      {
+        sliceCompositeNode->SetLabelVolumeID(volumeNode->GetID());
+      }
+      break;
     }
   }
 }
@@ -1397,7 +1529,7 @@ void vtkMRMLSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSlice(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
 
   double xyz[3];
   sliceNode->GetXYZOrigin(xyz);
@@ -1406,8 +1538,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSlice(vtkMRMLInteractionEve
 
   // account for zoom using XYToSlice matrix
   vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
-  double deltaX = xyToSlice->GetElement(0, 0)*(this->PreviousEventPosition[0] - eventPosition[0]);
-  double deltaY = xyToSlice->GetElement(1, 1)*(this->PreviousEventPosition[1] - eventPosition[1]);
+  double deltaX = xyToSlice->GetElement(0, 0) * (this->PreviousEventPosition[0] - eventPosition[0]);
+  double deltaY = xyToSlice->GetElement(1, 1) * (this->PreviousEventPosition[1] - eventPosition[1]);
 
   sliceNode->SetSliceOrigin(xyz[0] + deltaX, xyz[1] + deltaY, 0);
 
@@ -1433,7 +1565,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessZoomSlice(vtkMRMLInteractionEventDat
     double newFOVx = this->StartActionFOV[0] * percent;
     double newFOVy = this->StartActionFOV[1] * percent;
     double newFOVz = this->StartActionFOV[2];
-    vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+    vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
     sliceNode->SetFieldOfView(newFOVx, newFOVy, newFOVz);
     sliceNode->UpdateMatrices();
   }
@@ -1451,18 +1583,15 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
     return;
   }
   this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::FieldOfViewFlag);
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   int wasModifying = sliceNode->StartModify();
 
   // Get distance of event position from slice center
   const int* eventPosition = eventData->GetDisplayPosition();
   const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
   vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
-  double evenPositionDistanceFromOrigin[2] =
-    {
-    (eventPosition[0] - windowSize[0] / 2) * xyToSlice->GetElement(0, 0),
-    (eventPosition[1] - windowSize[1] / 2) * xyToSlice->GetElement(1, 1)
-    };
+  double evenPositionDistanceFromOrigin[2] = { (eventPosition[0] - windowSize[0] / 2) * xyToSlice->GetElement(0, 0),
+                                               (eventPosition[1] - windowSize[1] / 2) * xyToSlice->GetElement(1, 1) };
 
   // Adjust field of view
   double fov[3] = { 1.0 };
@@ -1474,10 +1603,9 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
   // Keep the mouse position at the same place on screen
   double sliceOrigin[3] = { 0 };
   sliceNode->GetXYZOrigin(sliceOrigin);
-  sliceNode->SetSliceOrigin(
-    sliceOrigin[0] + evenPositionDistanceFromOrigin[0] * (1.0 - zoomScaleFactor),
-    sliceOrigin[1] + evenPositionDistanceFromOrigin[1] * (1.0 - zoomScaleFactor),
-    sliceOrigin[2]);
+  sliceNode->SetSliceOrigin(sliceOrigin[0] + evenPositionDistanceFromOrigin[0] * (1.0 - zoomScaleFactor),
+                            sliceOrigin[1] + evenPositionDistanceFromOrigin[1] * (1.0 - zoomScaleFactor),
+                            sliceOrigin[2]);
 
   sliceNode->UpdateMatrices();
   sliceNode->EndModify(wasModifying);
@@ -1514,8 +1642,12 @@ bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEvent
       viewJumpSliceMode = vtkMRMLSliceNode::CenteredJumpSlice;
     }
     sliceNode->JumpAllSlices(sliceNode->GetScene(),
-      worldPos[0], worldPos[1], worldPos[2],
-      viewJumpSliceMode, sliceNode->GetViewGroup(), sliceNode);
+                             worldPos[0],
+                             worldPos[1],
+                             worldPos[2],
+                             viewJumpSliceMode,
+                             sliceNode->GetViewGroup(),
+                             sliceNode);
   }
   return true;
 }
@@ -1523,13 +1655,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEvent
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::IsEventInsideVolume(bool background, vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   if (!sliceNode)
   {
     return false;
   }
-  vtkMRMLSliceLayerLogic* layerLogic = background ?
-    this->SliceLogic->GetBackgroundLayer() : this->SliceLogic->GetForegroundLayer();
+  vtkMRMLSliceLayerLogic* layerLogic =
+    background ? this->SliceLogic->GetBackgroundLayer() : this->SliceLogic->GetForegroundLayer();
   if (!layerLogic)
   {
     return false;
@@ -1541,7 +1673,8 @@ bool vtkMRMLSliceIntersectionWidget::IsEventInsideVolume(bool background, vtkMRM
   }
   const int* eventPosition = eventData->GetDisplayPosition();
   double xyz[3] = { 0 };
-  vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetRenderer(), sliceNode, eventPosition[0], eventPosition[1], xyz);
+  vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
+    this->GetRenderer(), sliceNode, eventPosition[0], eventPosition[1], xyz);
   vtkGeneralTransform* xyToBackgroundIJK = layerLogic->GetXYToIJKTransform();
   double mousePositionIJK[3] = { 0 };
   xyToBackgroundIJK->TransformPoint(xyz, mousePositionIJK);
@@ -1549,7 +1682,7 @@ bool vtkMRMLSliceIntersectionWidget::IsEventInsideVolume(bool background, vtkMRM
   volumeNode->GetImageData()->GetExtent(volumeExtent);
   for (int i = 0; i < 3; i++)
   {
-    if (mousePositionIJK[i]<volumeExtent[i * 2] || mousePositionIJK[i]>volumeExtent[i * 2 + 1])
+    if (mousePositionIJK[i] < volumeExtent[i * 2] || mousePositionIJK[i] > volumeExtent[i * 2 + 1])
     {
       return false;
     }
@@ -1667,7 +1800,8 @@ int vtkMRMLSliceIntersectionWidget::GetMouseCursor()
       return VTK_CURSOR_SIZEALL;
     case WidgetStateOnTranslateSingleIntersectingSliceHandle:
     {
-      vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+      vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+        vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
       if (!rep)
       {
         return VTK_CURSOR_DEFAULT;
@@ -1684,9 +1818,11 @@ int vtkMRMLSliceIntersectionWidget::GetMouseCursor()
 }
 
 //----------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandleStart(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandleStart(
+  vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -1712,7 +1848,6 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandleSta
   return this->ProcessStartMouseDrag(eventData);
 }
 
-
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandle(vtkMRMLInteractionEventData* eventData)
 {
@@ -1735,14 +1870,16 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandle(vt
   this->CurrentTranslationPoint_RAS[2] = eventPos_RAS[2];
 
   // Get representation
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
   if (!rep)
   {
     return false;
   }
 
   // Get intersecting slice node
-  vtkMRMLSliceNode* intersectingSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(this->LastIntersectingSliceNodeID));
+  vtkMRMLSliceNode* intersectingSliceNode =
+    vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(this->LastIntersectingSliceNodeID));
   if (!intersectingSliceNode)
   {
     return false;
@@ -1769,11 +1906,12 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingSlicesHandle(vt
   return true;
 }
 
-
 //----------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHandleStart(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHandleStart(
+  vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -1800,9 +1938,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHand
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandleStart(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandleStart(
+  vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -1848,23 +1988,27 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandle
   this->CurrentThickSlabTranslationPoint_RAS[1] = eventPos_RAS[1];
   this->CurrentThickSlabTranslationPoint_RAS[2] = eventPos_RAS[2];
 
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
   if (!rep)
   {
     return false;
   }
 
   // Get intersecting slice node
-  vtkMRMLSliceNode* intersectingSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(this->LastIntersectingSliceNodeID));
+  vtkMRMLSliceNode* intersectingSliceNode =
+    vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(this->LastIntersectingSliceNodeID));
   if (!intersectingSliceNode)
   {
     return false;
   }
 
   // Get translation offset
-  double translationOffset[3] = { this->CurrentThickSlabTranslationPoint_RAS[0] - this->StartThickSlabTranslationPoint_RAS[0],
-                                  this->CurrentThickSlabTranslationPoint_RAS[1] - this->StartThickSlabTranslationPoint_RAS[1],
-                                  this->CurrentThickSlabTranslationPoint_RAS[2] - this->StartThickSlabTranslationPoint_RAS[2] };
+  double translationOffset[3] = {
+    this->CurrentThickSlabTranslationPoint_RAS[0] - this->StartThickSlabTranslationPoint_RAS[0],
+    this->CurrentThickSlabTranslationPoint_RAS[1] - this->StartThickSlabTranslationPoint_RAS[1],
+    this->CurrentThickSlabTranslationPoint_RAS[2] - this->StartThickSlabTranslationPoint_RAS[2]
+  };
 
   double translationOffsetNorm = vtkMath::Norm(translationOffset);
   double epsilon = 1e-5;
@@ -1876,7 +2020,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandle
   // Find the new distance between the translation point and the intersecting slice,
   // this will be half our new slab thickness
   double distance;
-  bool calculatedDistance = rep->DistanceFromSliceIntersectionToPoint(intersectingSliceNode, this->CurrentThickSlabTranslationPoint_RAS, distance);
+  bool calculatedDistance = rep->DistanceFromSliceIntersectionToPoint(
+    intersectingSliceNode, this->CurrentThickSlabTranslationPoint_RAS, distance);
   if (!calculatedDistance)
   {
     return false;
@@ -1893,7 +2038,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandle
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHandle(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHandle(
+  vtkMRMLInteractionEventData* eventData)
 {
   // Get current slice node and scene
   vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
@@ -1914,7 +2060,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHand
   this->CurrentTranslationPoint_RAS[2] = eventPos_RAS[2];
 
   // Get representation
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
   if (!rep)
   {
     return false;
@@ -1954,7 +2101,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHand
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesHandleStart(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -1987,8 +2135,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesHandleStart(
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessRotate(double sliceRotationAngleRad)
 {
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
-  if (!rep)
+  vtkMRMLSliceIntersectionRepresentation2D* rep =
+vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep); if (!rep)
     {
     return false;
     }
@@ -2008,11 +2156,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotate(double sliceRotationAngleRad)
   this->StartRotationCenter_RAS[1] = sliceIntersectionPoint_RAS[1];
   this->StartRotationCenter_RAS[2] = sliceIntersectionPoint_RAS[2];
 
-  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
-  double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
+  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1],
+this->StartRotationCenter_RAS[2]); double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0],
+sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
   rotatedSliceToSliceTransform->RotateWXYZ(rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad),
     sliceToRAS->GetElement(0, 2), sliceToRAS->GetElement(1, 2), sliceToRAS->GetElement(2, 2));
-  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
+  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1],
+-this->StartRotationCenter_RAS[2]);
 
   this->PreviousRotationAngleRad = sliceRotationAngleRad;
 
@@ -2024,7 +2174,8 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotate(double sliceRotationAngleRad)
 //----------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesHandle(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep =
+    vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
   {
     return false;
@@ -2037,11 +2188,17 @@ bool vtkMRMLSliceIntersectionWidget::ProcessRotateIntersectingSlicesHandle(vtkMR
   vtkMatrix4x4* sliceToRAS = this->GetSliceNode()->GetSliceToRAS();
   vtkNew<vtkTransform> rotatedSliceToSliceTransform;
 
-  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
-  double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
-  rotatedSliceToSliceTransform->RotateWXYZ(rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad - this->PreviousRotationAngleRad),
-    sliceToRAS->GetElement(0, 2), sliceToRAS->GetElement(1, 2), sliceToRAS->GetElement(2, 2));
-  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
+  rotatedSliceToSliceTransform->Translate(
+    this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
+  double rotationDirection =
+    vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
+  rotatedSliceToSliceTransform->RotateWXYZ(
+    rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad - this->PreviousRotationAngleRad),
+    sliceToRAS->GetElement(0, 2),
+    sliceToRAS->GetElement(1, 2),
+    sliceToRAS->GetElement(2, 2));
+  rotatedSliceToSliceTransform->Translate(
+    -this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
 
   this->PreviousRotationAngleRad = sliceRotationAngleRad;
   this->PreviousEventPosition[0] = displayPos[0];

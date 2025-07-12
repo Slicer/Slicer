@@ -25,8 +25,7 @@
 
 #include "vtkSlicerTemplateKeyModuleLogicExport.h"
 
-class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic:
-  public vtkSlicerMarkupsLogic
+class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic : public vtkSlicerMarkupsLogic
 {
 public:
   static vtkSlicerTemplateKeyLogic* New();

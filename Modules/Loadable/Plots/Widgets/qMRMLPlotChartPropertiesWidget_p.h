@@ -52,14 +52,16 @@ class vtkObject;
 
 //-----------------------------------------------------------------------------
 class qMRMLPlotChartPropertiesWidgetPrivate
- : public QObject
- , public Ui_qMRMLPlotChartPropertiesWidget
+  : public QObject
+  , public Ui_qMRMLPlotChartPropertiesWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLPlotChartPropertiesWidget);
+
 protected:
   qMRMLPlotChartPropertiesWidget* const q_ptr;
+
 public:
   qMRMLPlotChartPropertiesWidgetPrivate(qMRMLPlotChartPropertiesWidget& object);
   ~qMRMLPlotChartPropertiesWidgetPrivate() override;
@@ -82,7 +84,6 @@ public slots:
 
 public:
   vtkWeakPointer<vtkMRMLPlotChartNode> PlotChartNode;
-
 };
 
 #endif

@@ -20,8 +20,7 @@ namespace itk
 {
 
 template <class TData>
-DiffusionTensor3DTransform<TData>
-::DiffusionTensor3DTransform()
+DiffusionTensor3DTransform<TData>::DiffusionTensor3DTransform()
 {
   // Initialize the Measurement Frame to Identity
   m_MeasurementFrame.SetIdentity();

@@ -34,9 +34,10 @@
 // qSlicerSettingsPythonPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsPythonPanelPrivate: public Ui_qSlicerSettingsPythonPanel
+class qSlicerSettingsPythonPanelPrivate : public Ui_qSlicerSettingsPythonPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsPythonPanel);
+
 protected:
   qSlicerSettingsPythonPanel* const q_ptr;
 
@@ -45,7 +46,6 @@ public:
   void init();
 
   QPointer<ctkPythonConsole> PythonConsole;
-
 };
 
 // --------------------------------------------------------------------------
@@ -53,7 +53,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsPythonPanelPrivate::qSlicerSettingsPythonPanelPrivate(qSlicerSettingsPythonPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 
@@ -85,32 +85,33 @@ void qSlicerSettingsPythonPanelPrivate::init()
   // Connect panel widgets with associated slots
   //
 
-  QObject::connect(this->ConsoleFontButton, SIGNAL(currentFontChanged(QFont)),
-                   q, SLOT(onFontChanged(QFont)));
-  QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)),
-    q, SLOT(onConsoleLogLevelChanged(QString)));
+  QObject::connect(this->ConsoleFontButton, SIGNAL(currentFontChanged(QFont)), q, SLOT(onFontChanged(QFont)));
+  QObject::connect(
+    this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onConsoleLogLevelChanged(QString)));
 
   //
   // Register settings with their corresponding widgets
   //
 
-  q->registerProperty("Python/Editor", this->EditorPathLineEdit,
-    /*no tr*/"currentPath", SIGNAL(currentPathChanged(QString)),
-    qSlicerSettingsPythonPanel::tr("Python editor."));
+  q->registerProperty("Python/Editor",
+                      this->EditorPathLineEdit,
+                      /*no tr*/ "currentPath",
+                      SIGNAL(currentPathChanged(QString)),
+                      qSlicerSettingsPythonPanel::tr("Python editor."));
 
-  q->registerProperty("Python/DockableWindow", this->DockableWindowCheckBox,
-    /*no tr*/"checked", SIGNAL(toggled(bool)),
+  q->registerProperty(
+    "Python/DockableWindow",
+    this->DockableWindowCheckBox,
+    /*no tr*/ "checked",
+    SIGNAL(toggled(bool)),
     qSlicerSettingsPythonPanel::tr("Display Python console in a window that can be placed inside the main window."),
     ctkSettingsPanel::OptionRequireRestart);
 
-  q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont",
-                      SIGNAL(currentFontChanged(QFont)));
+  q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont", SIGNAL(currentFontChanged(QFont)));
 
-  q->registerProperty("Python/ConsoleLogLevel", q,
-    "consoleLogLevel", SIGNAL(consoleLogLevelChanged(QString)));
-  QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)),
-    q, SIGNAL(consoleLogLevelChanged(QString)));
-
+  q->registerProperty("Python/ConsoleLogLevel", q, "consoleLogLevel", SIGNAL(consoleLogLevelChanged(QString)));
+  QObject::connect(
+    this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(consoleLogLevelChanged(QString)));
 }
 
 // --------------------------------------------------------------------------

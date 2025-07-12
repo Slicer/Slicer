@@ -28,12 +28,13 @@
 #include <QFontDatabase>
 
 //-----------------------------------------------------------------------------
-class qMRMLSequenceBrowserSeekWidgetPrivate
-  : public Ui_qMRMLSequenceBrowserSeekWidget
+class qMRMLSequenceBrowserSeekWidgetPrivate : public Ui_qMRMLSequenceBrowserSeekWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSequenceBrowserSeekWidget);
+
 protected:
   qMRMLSequenceBrowserSeekWidget* const q_ptr;
+
 public:
   qMRMLSequenceBrowserSeekWidgetPrivate(qMRMLSequenceBrowserSeekWidget& object);
   void init();
@@ -64,7 +65,7 @@ void qMRMLSequenceBrowserSeekWidgetPrivate::init()
 // qMRMLSequenceBrowserSeekWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget *newParent)
+qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget* newParent)
   : Superclass(newParent)
   , d_ptr(new qMRMLSequenceBrowserSeekWidgetPrivate(*this))
 {
@@ -86,13 +87,18 @@ void qMRMLSequenceBrowserSeekWidget::setMRMLSequenceBrowserNode(vtkMRMLSequenceB
 {
   Q_D(qMRMLSequenceBrowserSeekWidget);
 
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::IndexDisplayFormatModifiedEvent,
-    this, SLOT(onIndexDisplayFormatModified()));
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SequenceBrowserNode,
+                browserNode,
+                vtkMRMLSequenceBrowserNode::IndexDisplayFormatModifiedEvent,
+                this,
+                SLOT(onIndexDisplayFormatModified()));
+  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   // Update slider when a new item is added to a sequence
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SequenceBrowserNode,
+                browserNode,
+                vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent,
+                this,
+                SLOT(updateWidgetFromMRML()));
 
   d->SequenceBrowserNode = browserNode;
   this->onIndexDisplayFormatModified();
@@ -138,7 +144,8 @@ void qMRMLSequenceBrowserSeekWidget::onIndexDisplayFormatModified()
 void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLSequenceBrowserSeekWidget);
-  vtkMRMLSequenceNode* sequenceNode = d->SequenceBrowserNode.GetPointer() ? d->SequenceBrowserNode->GetMasterSequenceNode() : nullptr;
+  vtkMRMLSequenceNode* sequenceNode =
+    d->SequenceBrowserNode.GetPointer() ? d->SequenceBrowserNode->GetMasterSequenceNode() : nullptr;
   this->setEnabled(sequenceNode != nullptr);
   if (!sequenceNode)
   {
@@ -185,7 +192,8 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
     else
     {
       // display index as item index number (23/37)
-      indexValue = QString::number(selectedItemNumber + 1) + "/" + QString::number(sequenceNode->GetNumberOfDataNodes());
+      indexValue =
+        QString::number(selectedItemNumber + 1) + "/" + QString::number(sequenceNode->GetNumberOfDataNodes());
       indexUnit = "";
     }
 
@@ -195,7 +203,8 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
     d->label_IndexUnit->setText(indexUnit);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
-    d->label_IndexValue->setFixedWidth(std::max(fontMetrics.horizontalAdvance(indexValue), d->label_IndexValue->width()));
+    d->label_IndexValue->setFixedWidth(
+      std::max(fontMetrics.horizontalAdvance(indexValue), d->label_IndexValue->width()));
 #else
     d->label_IndexValue->setFixedWidth(std::max(fontMetrics.width(indexValue), d->label_IndexValue->width()));
 #endif

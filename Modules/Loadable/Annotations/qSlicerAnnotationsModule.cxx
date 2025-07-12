@@ -11,14 +11,14 @@
 
 // PythonQt includes
 #ifdef Slicer_USE_PYTHONQT
-#include "PythonQt.h"
+# include "PythonQt.h"
 #endif
 
 //-----------------------------------------------------------------------------
 class qSlicerAnnotationsModulePrivate
 {
-  public:
-    qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog{nullptr};
+public:
+  qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -66,9 +66,9 @@ vtkMRMLAbstractLogic* qSlicerAnnotationsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationsModule::helpText() const
 {
-  QString help = QString(
-  "Legacy Annotations module, replaced by Markups module."
-   "The module class is only preserved to be able to load old scenes and manage screenshots (snapshots).<br>");
+  QString help =
+    QString("Legacy Annotations module, replaced by Markups module."
+            "The module class is only preserved to be able to load old scenes and manage screenshots (snapshots).<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -77,13 +77,13 @@ QString qSlicerAnnotationsModule::helpText() const
 QString qSlicerAnnotationsModule::acknowledgementText() const
 {
   return "<img src=':/Icons/UPenn_logo.png'><br><br>This module was "
-      "developed by Daniel Haehn, Kilian Pohl and Yong Zhang. "
-      "Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper, Ron Kikinis and Kitware. "
-      "The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
+         "developed by Daniel Haehn, Kilian Pohl and Yong Zhang. "
+         "Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper, Ron Kikinis and Kitware. "
+         "The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAnnotationsModule::contributors()const
+QStringList qSlicerAnnotationsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
@@ -131,9 +131,8 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLAnnotationNode"
-    << "vtkMRMLAnnotationDisplayNode"
-    << "vtkMRMLAnnotationStorageNode"
-    << "vtkMRMLAnnotationHierarchyNode";
+  return QStringList() << "vtkMRMLAnnotationNode"
+                       << "vtkMRMLAnnotationDisplayNode"
+                       << "vtkMRMLAnnotationStorageNode"
+                       << "vtkMRMLAnnotationHierarchyNode";
 }

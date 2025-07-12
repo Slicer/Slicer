@@ -31,9 +31,9 @@
 #include <QToolButton>
 #include <QUrlQuery>
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-#include <QWebEngineHistory>
-#include <QWebEnginePage>
-#include <QWebEngineView>
+# include <QWebEngineHistory>
+# include <QWebEnginePage>
+# include <QWebEngineView>
 #endif
 
 // CTK includes
@@ -45,7 +45,7 @@
 #include "qSlicerExtensionsManagerWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-#include "qSlicerExtensionsServerWidget.h"
+# include "qSlicerExtensionsServerWidget.h"
 #endif
 #include "ui_qSlicerExtensionsActionsWidget.h"
 #include "ui_qSlicerExtensionsManagerWidget.h"
@@ -66,7 +66,7 @@ QString jsQuote(QString text)
 #endif
 
 // --------------------------------------------------------------------------
-void invalidateSizeHint(QToolButton * button)
+void invalidateSizeHint(QToolButton* button)
 {
   // Invalidate cached size hint of QToolButton... this seems to be necessary
   // to get the initially visible button to have the correct hint for having a
@@ -98,33 +98,36 @@ void setThemeIcon(QAction* action, const QString& name)
 }
 
 // --------------------------------------------------------------------------
-class qSlicerExtensionsActionsWidget : public QStackedWidget, public Ui_qSlicerExtensionsActionsWidget
+class qSlicerExtensionsActionsWidget
+  : public QStackedWidget
+  , public Ui_qSlicerExtensionsActionsWidget
 {
 public:
-  qSlicerExtensionsActionsWidget(QWidget * parent = nullptr) : QStackedWidget(parent)
+  qSlicerExtensionsActionsWidget(QWidget* parent = nullptr)
+    : QStackedWidget(parent)
   {
     this->setupUi(this);
   }
 };
 
 // --------------------------------------------------------------------------
-class qSlicerExtensionsToolsWidget : public QWidget, public Ui_qSlicerExtensionsToolsWidget
+class qSlicerExtensionsToolsWidget
+  : public QWidget
+  , public Ui_qSlicerExtensionsToolsWidget
 {
 public:
-  qSlicerExtensionsToolsWidget(QWidget * parent = nullptr) : QWidget(parent)
+  qSlicerExtensionsToolsWidget(QWidget* parent = nullptr)
+    : QWidget(parent)
   {
     this->setupUi(this);
 
     setThemeIcon(this->ConfigureButton, "configure");
     setThemeIcon(this->CheckForUpdatesAction, "view-refresh");
 
-    const QIcon searchIcon =
-      QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
-    const QIcon clearIcon =
-      QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight
-                       ? "edit-clear-locationbar-rtl"
-                       : "edit-clear-locationbar-ltr",
-                       this->SearchBox->clearIcon());
+    const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
+    const QIcon clearIcon = QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight ? "edit-clear-locationbar-rtl"
+                                                                                        : "edit-clear-locationbar-ltr",
+                                             this->SearchBox->clearIcon());
 
     const QFontMetrics fm = this->SearchBox->fontMetrics();
     const int searchWidth = 24 * fm.averageCharWidth() + 40;
@@ -135,7 +138,7 @@ public:
     this->SearchBox->setFixedWidth(searchWidth);
 
     // manage
-    QMenu * configureMenu = new QMenu(this);
+    QMenu* configureMenu = new QMenu(this);
     configureMenu->addAction(this->CheckForUpdatesAction);
     configureMenu->addAction(this->AutoUpdateCheckAction);
     configureMenu->addAction(this->AutoUpdateInstallAction);
@@ -148,12 +151,13 @@ public:
   }
 };
 
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsManagerWidgetPrivate: public Ui_qSlicerExtensionsManagerWidget
+class qSlicerExtensionsManagerWidgetPrivate : public Ui_qSlicerExtensionsManagerWidget
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsManagerWidget);
+
 protected:
   qSlicerExtensionsManagerWidget* const q_ptr;
 
@@ -171,7 +175,9 @@ public:
   QString LastInstallWidgetSearchText;
   QUrl LastInstallWidgetUrl;
   int SearchTimerId;
-  bool IsBatchProcessing{ false }; // in the process of installing or updating multiple extensions - should not close the widget
+  bool IsBatchProcessing{
+    false
+  }; // in the process of installing or updating multiple extensions - should not close the widget
 
   QMessageBox* MessageWidget{ nullptr };
   QStringList Messages;
@@ -208,17 +214,21 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->ExtensionsManageBrowser->setObjectName("ExtensionsManageBrowser");
   this->ManageExtensionsPager->addWidget(this->ExtensionsManageBrowser);
   this->ExtensionsManageBrowser->setBrowsingEnabled(false);
-  this->ExtensionsManageBrowser->webView()->load(QUrl(/*no tr*/"about:"));
+  this->ExtensionsManageBrowser->webView()->load(QUrl(/*no tr*/ "about:"));
 #endif
 
-  qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
+  qSlicerExtensionsActionsWidget* actionsWidget = new qSlicerExtensionsActionsWidget;
 
   // Back and forward buttons
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-  actionsWidget->ManageBackButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Back));
-  actionsWidget->ManageForwardButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Forward));
-  actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsServerWidget->webView()->pageAction(QWebEnginePage::Back));
-  actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsServerWidget->webView()->pageAction(QWebEnginePage::Forward));
+  actionsWidget->ManageBackButton->setDefaultAction(
+    this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Back));
+  actionsWidget->ManageForwardButton->setDefaultAction(
+    this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Forward));
+  actionsWidget->InstallBackButton->setDefaultAction(
+    this->ExtensionsServerWidget->webView()->pageAction(QWebEnginePage::Back));
+  actionsWidget->InstallForwardButton->setDefaultAction(
+    this->ExtensionsServerWidget->webView()->pageAction(QWebEnginePage::Forward));
 #endif
 
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
@@ -226,46 +236,40 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   // Search field and configure button
   this->ToolsWidget = new qSlicerExtensionsToolsWidget;
 
-  QObject::connect(this->ToolsWidget->AutoUpdateCheckAction, SIGNAL(toggled(bool)),
-    q, SLOT(setAutoUpdateCheck(bool)));
-  QObject::connect(this->ToolsWidget->AutoUpdateInstallAction, SIGNAL(toggled(bool)),
-    q, SLOT(setAutoUpdateInstall(bool)));
-  QObject::connect(this->ToolsWidget->AutoInstallDependenciesAction, SIGNAL(toggled(bool)),
-    q, SLOT(setAutoInstallDependencies(bool)));
+  QObject::connect(this->ToolsWidget->AutoUpdateCheckAction, SIGNAL(toggled(bool)), q, SLOT(setAutoUpdateCheck(bool)));
+  QObject::connect(
+    this->ToolsWidget->AutoUpdateInstallAction, SIGNAL(toggled(bool)), q, SLOT(setAutoUpdateInstall(bool)));
+  QObject::connect(
+    this->ToolsWidget->AutoInstallDependenciesAction, SIGNAL(toggled(bool)), q, SLOT(setAutoInstallDependencies(bool)));
 
   this->tabWidget->setCornerWidget(this->ToolsWidget, Qt::TopRightCorner);
 
-  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
-    actionsWidget, SLOT(setCurrentIndex(int)));
-  QObject::connect(this->ExtensionsLocalWidget, SIGNAL(linkActivated(QUrl)),
-    q, SLOT(onManageLinkActivated(QUrl)));
+  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)), actionsWidget, SLOT(setCurrentIndex(int)));
+  QObject::connect(this->ExtensionsLocalWidget, SIGNAL(linkActivated(QUrl)), q, SLOT(onManageLinkActivated(QUrl)));
 
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-  QObject::connect(this->ExtensionsManageBrowser->webView(), SIGNAL(urlChanged(QUrl)),
-    q, SLOT(onManageUrlChanged(QUrl)));
-  QObject::connect(this->ToolsWidget->SearchBox, SIGNAL(textEdited(QString)),
-    q, SLOT(onSearchTextChanged(QString)));
-  QObject::connect(this->ExtensionsServerWidget->webView(), SIGNAL(urlChanged(QUrl)),
-    q, SLOT(onInstallUrlChanged(QUrl)));
+  QObject::connect(
+    this->ExtensionsManageBrowser->webView(), SIGNAL(urlChanged(QUrl)), q, SLOT(onManageUrlChanged(QUrl)));
+  QObject::connect(this->ToolsWidget->SearchBox, SIGNAL(textEdited(QString)), q, SLOT(onSearchTextChanged(QString)));
+  QObject::connect(
+    this->ExtensionsServerWidget->webView(), SIGNAL(urlChanged(QUrl)), q, SLOT(onInstallUrlChanged(QUrl)));
 #endif
 
-  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
-    q, SLOT(onCurrentTabChanged(int)));
-  QObject::connect(this->ToolsWidget->CheckForUpdatesAction, SIGNAL(triggered(bool)),
-    q, SLOT(onCheckForUpdatesTriggered()));
-  QObject::connect(this->ToolsWidget->EditBookmarksAction, SIGNAL(triggered(bool)),
-    q, SLOT(onEditBookmarksTriggered()));
+  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)), q, SLOT(onCurrentTabChanged(int)));
+  QObject::connect(
+    this->ToolsWidget->CheckForUpdatesAction, SIGNAL(triggered(bool)), q, SLOT(onCheckForUpdatesTriggered()));
+  QObject::connect(
+    this->ToolsWidget->EditBookmarksAction, SIGNAL(triggered(bool)), q, SLOT(onEditBookmarksTriggered()));
   qSlicerApplication* app = qSlicerApplication::application();
-  QObject::connect(this->ToolsWidget->OpenExtensionsCatalogWebsiteAction, SIGNAL(triggered(bool)),
-    app, SLOT(openExtensionsCatalogWebsite()));
-  QObject::connect(this->ToolsWidget->CheckForUpdatesButton, SIGNAL(clicked()),
-    q, SLOT(onCheckForUpdatesTriggered()));
-  QObject::connect(this->ToolsWidget->InstallUpdatesButton, SIGNAL(clicked()),
-    q, SLOT(onInstallUpdatesTriggered()));
-  QObject::connect(this->ToolsWidget->InstallBookmarkedButton, SIGNAL(clicked()),
-    q, SLOT(onInstallBookmarkedTriggered()));
-  QObject::connect(this->ToolsWidget->InstallFromFileButton, SIGNAL(clicked()),
-    q, SLOT(onInstallFromFileTriggered()));
+  QObject::connect(this->ToolsWidget->OpenExtensionsCatalogWebsiteAction,
+                   SIGNAL(triggered(bool)),
+                   app,
+                   SLOT(openExtensionsCatalogWebsite()));
+  QObject::connect(this->ToolsWidget->CheckForUpdatesButton, SIGNAL(clicked()), q, SLOT(onCheckForUpdatesTriggered()));
+  QObject::connect(this->ToolsWidget->InstallUpdatesButton, SIGNAL(clicked()), q, SLOT(onInstallUpdatesTriggered()));
+  QObject::connect(
+    this->ToolsWidget->InstallBookmarkedButton, SIGNAL(clicked()), q, SLOT(onInstallBookmarkedTriggered()));
+  QObject::connect(this->ToolsWidget->InstallFromFileButton, SIGNAL(clicked()), q, SLOT(onInstallFromFileTriggered()));
 
   this->MessageWidget = new QMessageBox(q);
   this->MessageWidget->setWindowTitle(qSlicerExtensionsManagerWidget::tr("Extensions Manager"));
@@ -310,12 +314,10 @@ qSlicerExtensionsManagerWidget::qSlicerExtensionsManagerWidget(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerWidget::~qSlicerExtensionsManagerWidget()
-{
-}
+qSlicerExtensionsManagerWidget::~qSlicerExtensionsManagerWidget() {}
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsManagerWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsManagerWidget::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsManagerWidget);
   return d->ExtensionsLocalWidget->extensionsManagerModel();
@@ -346,13 +348,15 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
 
     this->onModelUpdated();
     connect(model, SIGNAL(modelUpdated()), this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(messageLogged(QString, ctkErrorLogLevel::LogLevels)),
-      this, SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
+    connect(model,
+            SIGNAL(messageLogged(QString, ctkErrorLogLevel::LogLevels)),
+            this,
+            SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
     connect(model, SIGNAL(extensionInstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionUninstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionCancelledScheduleForUpdate(QString)), this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionBookmarkedChanged(QString,bool)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionBookmarkedChanged(QString, bool)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionUpdateAvailable(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(autoUpdateSettingsChanged()), this, SLOT(updateAutoUpdateWidgetsFromModel()));
 
@@ -404,7 +408,8 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 
   // Get the list of extensions that have update available but not updated yet
   QStringList extensionsToUpdate = this->extensionsManagerModel()->availableUpdateExtensions();
-  const QStringList& extensionsAlreadyScheduledForUpdate = this->extensionsManagerModel()->scheduledForUpdateExtensions();
+  const QStringList& extensionsAlreadyScheduledForUpdate =
+    this->extensionsManagerModel()->scheduledForUpdateExtensions();
   foreach (const QString& extensionName, extensionsAlreadyScheduledForUpdate)
   {
     extensionsToUpdate.removeAll(extensionName);
@@ -425,7 +430,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 
   int foundNonInstalledBookmarkedExtension = 0;
   QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString & extensionName, bookmarkedExtensions)
+  foreach (const QString& extensionName, bookmarkedExtensions)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -443,7 +448,8 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
   }
   if (foundNonInstalledBookmarkedExtension > 0)
   {
-    d->ToolsWidget->InstallBookmarkedButton->setText(tr("Install bookmarked (%1)").arg(foundNonInstalledBookmarkedExtension));
+    d->ToolsWidget->InstallBookmarkedButton->setText(
+      tr("Install bookmarked (%1)").arg(foundNonInstalledBookmarkedExtension));
     d->ToolsWidget->InstallBookmarkedButton->setEnabled(true);
   }
   else
@@ -483,10 +489,8 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
   Q_D(qSlicerExtensionsManagerWidget);
   bool ok = false;
   QStringList oldList = this->extensionsManagerModel()->bookmarkedExtensions();
-  QString newStr = QInputDialog::getMultiLineText(this,
-    tr("Bookmarked extensions"),
-    tr("List of bookmarked extensions:"),
-    oldList.join("\n"), &ok);
+  QString newStr = QInputDialog::getMultiLineText(
+    this, tr("Bookmarked extensions"), tr("List of bookmarked extensions:"), oldList.join("\n"), &ok);
   if (!ok)
   {
     // Cancel clicked
@@ -502,7 +506,7 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
 
   // Update bookmarks
   QSettings settings;
-  settings.setValue(/*no tr*/"Extensions/Bookmarked", newList);
+  settings.setValue(/*no tr*/ "Extensions/Bookmarked", newList);
   this->extensionsManagerModel()->updateModel();
 }
 
@@ -574,7 +578,7 @@ void qSlicerExtensionsManagerWidget::onManageLinkActivated(const QUrl& link)
 void qSlicerExtensionsManagerWidget::onManageUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  d->ManageExtensionsPager->setCurrentIndex(newUrl.scheme() == /*no tr*/"about" ? 0 : 1);
+  d->ManageExtensionsPager->setCurrentIndex(newUrl.scheme() == /*no tr*/ "about" ? 0 : 1);
 }
 
 // --------------------------------------------------------------------------
@@ -638,8 +642,7 @@ void qSlicerExtensionsManagerWidget::processSearchTextChange()
       int serverAPI = this->extensionsManagerModel()->serverAPI();
       if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
       {
-        d->ExtensionsServerWidget->webView()->page()->runJavaScript(
-          "app.search(" + jsQuote(searchText) + ");");
+        d->ExtensionsServerWidget->webView()->page()->runJavaScript("app.search(" + jsQuote(searchText) + ");");
       }
       else
       {
@@ -671,7 +674,7 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
   // Save last update check time
   bool wasBatchProcessing = d->setBatchProcessing(true);
   QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
-  foreach(const QString & extensionName, extensionNames)
+  foreach (const QString& extensionName, extensionNames)
   {
     this->extensionsManagerModel()->scheduleExtensionForUpdate(extensionName);
   }
@@ -685,7 +688,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
   bool wasBatchProcessing = d->setBatchProcessing(true);
   // Save last update check time
   QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString & extensionName, extensionNames)
+  foreach (const QString& extensionName, extensionNames)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -713,11 +716,11 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
 void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  const QStringList& archiveNames =
-    QFileDialog::getOpenFileNames(
-      this, tr("Select extension archive file(s)..."), QString(),
-      tr("Archives") + " (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;" +
-      tr("All files") + " (*)");
+  const QStringList& archiveNames = QFileDialog::getOpenFileNames(
+    this,
+    tr("Select extension archive file(s)..."),
+    QString(),
+    tr("Archives") + " (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;" + tr("All files") + " (*)");
   if (archiveNames.empty())
   {
     return;
@@ -725,7 +728,7 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 
   bool wasBatchProcessing = d->setBatchProcessing(true);
   qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
-  foreach(const QString & archiveName, archiveNames)
+  foreach (const QString& archiveName, archiveNames)
   {
     model->installExtension(archiveName);
   }
@@ -747,9 +750,9 @@ bool qSlicerExtensionsManagerWidget::confirmClose()
   }
 
   ctkMessageBox confirmDialog;
-  confirmDialog.setText(tr("Install/uninstall/update operations are still in progress:")
-    + "\n- " + pendingOperations.join("\n- ")
-    + "\n\n" + tr("Click OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
+  confirmDialog.setText(
+    tr("Install/uninstall/update operations are still in progress:") + "\n- " + pendingOperations.join("\n- ") + "\n\n"
+    + tr("Click OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
   confirmDialog.setIcon(QMessageBox::Question);
   confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
   bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);

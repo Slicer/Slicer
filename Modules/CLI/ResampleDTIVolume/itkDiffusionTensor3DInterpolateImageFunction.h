@@ -29,35 +29,29 @@ namespace itk
  *
  */
 template <class TData, class TCoordRep = double>
-class DiffusionTensor3DInterpolateImageFunction :
-  public ImageFunction<Image<DiffusionTensor3D<TData>, 3>,
-                       DiffusionTensor3D<TData>,
-                       TCoordRep
-                       >
+class DiffusionTensor3DInterpolateImageFunction
+  : public ImageFunction<Image<DiffusionTensor3D<TData>, 3>, DiffusionTensor3D<TData>, TCoordRep>
 {
 public:
-  typedef TData                                     TensorType;
+  typedef TData TensorType;
   typedef DiffusionTensor3DInterpolateImageFunction Self;
-  typedef DiffusionTensor3D<TensorType>             TensorDataType;
-  typedef Image<TensorDataType, 3>                  DiffusionImageType;
-  typedef typename DiffusionImageType::Pointer      DiffusionImageTypePointer;
-  typedef Point<double, 3>                          PointType;
-  typedef SmartPointer<Self>                        Pointer;
-  typedef SmartPointer<const Self>                  ConstPointer;
-  typedef typename TensorDataType::RealValueType    TensorRealType;
+  typedef DiffusionTensor3D<TensorType> TensorDataType;
+  typedef Image<TensorDataType, 3> DiffusionImageType;
+  typedef typename DiffusionImageType::Pointer DiffusionImageTypePointer;
+  typedef Point<double, 3> PointType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef typename TensorDataType::RealValueType TensorRealType;
 
-  typedef ImageFunction<Image<DiffusionTensor3D<TData>, 3>,
-                        DiffusionTensor3D<TData>,
-                        TCoordRep
-                        > Superclass;
+  typedef ImageFunction<Image<DiffusionTensor3D<TData>, 3>, DiffusionTensor3D<TData>, TCoordRep> Superclass;
 
   typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
-  typedef typename Superclass::IndexType           IndexType;
+  typedef typename Superclass::IndexType IndexType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DInterpolateImageFunction, ImageFunction);
 
-// ///Copied from itkInterpolateImageFunction.h
+  // ///Copied from itkInterpolateImageFunction.h
 
   /** Interpolate the image at a point position
    *
@@ -67,12 +61,12 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  TensorDataType Evaluate( const PointType& point ) const override
+  TensorDataType Evaluate(const PointType& point) const override
   {
     ContinuousIndexType index;
 
-    this->GetInputImage()->TransformPhysicalPointToContinuousIndex( point, index );
-    return this->EvaluateAtContinuousIndex( index );
+    this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point, index);
+    return this->EvaluateAtContinuousIndex(index);
   }
 
   /** Interpolate the image at a continuous index position
@@ -85,7 +79,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override = 0;
+  TensorDataType EvaluateAtContinuousIndex(const ContinuousIndexType& index) const override = 0;
 
   /** Interpolate the image at an index position.
    *
@@ -96,23 +90,23 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
 
-  TensorDataType EvaluateAtIndex( const IndexType & index ) const override
+  TensorDataType EvaluateAtIndex(const IndexType& index) const override
   {
-    return this->GetInputImage()->GetPixel( index );
+    return this->GetInputImage()->GetPixel(index);
   }
 
-//  void SetDefaultPixelValue( TensorRealType defaultPixelValue ) ;
-//  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
+  //  void SetDefaultPixelValue( TensorRealType defaultPixelValue ) ;
+  //  itkGetMacro( DefaultPixelValue , TensorRealType ) ;
 protected:
   DiffusionTensor3DInterpolateImageFunction();
   unsigned long m_LatestTime;
-//  TensorRealType m_DefaultPixelValue ;
-//  TensorDataType m_DefaultPixel ;
+  //  TensorRealType m_DefaultPixelValue ;
+  //  TensorDataType m_DefaultPixel ;
 };
 
 } // end namespace itk
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DInterpolateImageFunction.txx"
+# include "itkDiffusionTensor3DInterpolateImageFunction.txx"
 #endif
 
 #endif

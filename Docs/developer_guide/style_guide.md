@@ -43,9 +43,9 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 - Use VTK naming conventions:
   - Local variable should start with a lower case.
     Use:
-    `void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *foregroundLayer)`
+    `void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic* foregroundLayer)`
     Instead of:
-    ` void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *ForegroundLayer) // wrong!`
+    ` void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic* ForegroundLayer) // wrong!`
   - Member variable should start with a capital letter, and in implementation should be used in conjunction with `this->` convention.
 
 Example:
@@ -78,7 +78,7 @@ Useful information about some coding style decisions: <https://google.github.io/
 
 - Local variables are lowercase and words separated with underscores
 
-  `foreach(file ${FILES_TO_CONFIGURE})...` instead of `foreach(FILE ${FILES_TO_CONFIGURE})...`
+  `foreach (file ${FILES_TO_CONFIGURE})...` instead of `foreach (FILE ${FILES_TO_CONFIGURE})...`
 
 ## Naming conventions
 
@@ -134,7 +134,7 @@ References: [Clean Code](https://www.amazon.com/gp/product/0132350882?ie=UTF8&ta
 
 2. Use STL where you can, but:
 - In VTK classes follow the [https://www.vtk.org/Wiki/VTK_FAQ#Can_I_use_STL_with_VTK.3F VTK guidelines]
-  - Note that a [vtkCollection](https://www.vtk.org/doc/nightly/html/classvtkCollection.html) is somewhat equivalent to `std::list<vtkSmartPointer<vtkObject*> >`
+  - Note that a [vtkCollection](https://www.vtk.org/doc/nightly/html/classvtkCollection.html) is somewhat equivalent to `std::list<vtkSmartPointer<vtkObject*>>`
 - In Qt classes prefer [Qt Container classes](https://doc.qt.io/qt-5/containers.html)
 
 ## File layout

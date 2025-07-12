@@ -14,10 +14,10 @@
 #ifndef _TILG_ISO_3D_H_
 #define _TILG_ISO_3D_H_
 
-#define OBJ  1
-#define BG   0
+#define OBJ 1
+#define BG 0
 
-int Env_Code_3_img(int loc[3], unsigned char *img, int dim[3]);
+int Env_Code_3_img(int loc[3], unsigned char* img, int dim[3]);
 // returns the neighbor code including the center at position loc
 
 int Tilg_Test_3(int c, int d, int type);
@@ -29,7 +29,7 @@ int Tilg_Test_3(int c, int d, int type);
 // if type == 0 -> full tilg
 // d = for parallel tilg -> 0,1,2,3,4,5   N,S,E,W,T,D
 
-void tilg_iso_3D(int dx, int dy, int dz, unsigned char *data, unsigned char *res, int type);
+void tilg_iso_3D(int dx, int dy, int dz, unsigned char* data, unsigned char* res, int type);
 
 // 3D isotropic tilg-procedure that does a 3D thinning
 // dx,dy,dz  are the dimensions of the input (data) and output (res) image

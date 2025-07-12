@@ -30,10 +30,10 @@ class qSlicerAppMainWindowPrivate;
 class qSlicerLayoutManager;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate
-  : public qSlicerMainWindowPrivate
+class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate : public qSlicerMainWindowPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerAppMainWindow);
+
 public:
   typedef qSlicerMainWindowPrivate Superclass;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);
@@ -41,7 +41,7 @@ public:
 
   void init() override;
   /// Reimplemented for custom behavior
-  void setupUi(QMainWindow * mainWindow) override;
+  void setupUi(QMainWindow* mainWindow) override;
 };
 
 #endif

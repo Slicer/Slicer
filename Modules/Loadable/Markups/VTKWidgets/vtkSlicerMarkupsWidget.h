@@ -23,7 +23,7 @@
  * @sa
  * vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
  *
-*/
+ */
 
 #ifndef vtkSlicerMarkupsWidget_h
 #define vtkSlicerMarkupsWidget_h
@@ -50,7 +50,9 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create the default widget representation and initializes the widget and representation.
-  virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) = 0;
+  virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                           vtkMRMLAbstractViewNode* viewNode,
+                                           vtkRenderer* renderer) = 0;
 
   /// Create instance of the markups widget
   virtual vtkSlicerMarkupsWidget* CreateInstance() const = 0;
@@ -59,7 +61,7 @@ public:
   enum
   {
     WidgetStateDefine = WidgetStateUser, // click in empty area will place a new point
-    WidgetStateTranslateControlPoint, // translating the active point by mouse move
+    WidgetStateTranslateControlPoint,    // translating the active point by mouse move
     WidgetStateMarkups_Last
   };
 
@@ -75,7 +77,7 @@ public:
     WidgetEventControlPointDelete,
     WidgetEventControlPointInsert,
     WidgetEventControlPointSnapToSlice,
-    WidgetEventReserved,  // this events is only to prevent other widgets from processing an event
+    WidgetEventReserved, // this events is only to prevent other widgets from processing an event
     WidgetEventMarkups_Last
   };
 
@@ -105,7 +107,7 @@ public:
   virtual int AddNodeOnWidget(const int displayPos[2]);
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
@@ -146,8 +148,10 @@ protected:
   // Returns true on success.
   // refWorldPos is an optional reference position: if point distance from camera cannot be determined then
   // depth of this reference position is used.
-  bool ConvertDisplayPositionToWorld(const int displayPos[2], double worldPos[3], double worldOrientationMatrix[9],
-    double* refWorldPos = nullptr);
+  bool ConvertDisplayPositionToWorld(const int displayPos[2],
+                                     double worldPos[3],
+                                     double worldOrientationMatrix[9],
+                                     double* refWorldPos = nullptr);
 
   /// Index of the control point that is currently being previewed (follows the mouse pointer).
   /// If <0 it means that there is currently no point being previewed.
@@ -182,29 +186,29 @@ private:
 // CREATE INSTANCE MACRO
 
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-#define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const override\
-{ \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if(ret) \
-  { \
-    return static_cast<type *>(ret); \
-  } \
-  type* result = new type; \
-  result->InitializeObjectBase(); \
-  return result; \
-}
+# define vtkSlicerMarkupsWidgetCreateInstanceMacro(type)       \
+   vtkSlicerMarkupsWidget* CreateInstance() const override     \
+   {                                                           \
+     vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
+     if (ret)                                                  \
+     {                                                         \
+       return static_cast<type*>(ret);                         \
+     }                                                         \
+     type* result = new type;                                  \
+     result->InitializeObjectBase();                           \
+     return result;                                            \
+   }
 #else
-#define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsWidget* CreateInstance() const override\
-{ \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if(ret) \
-  { \
-    return static_cast<type *>(ret); \
-  } \
-  return new type; \
-}
+# define vtkSlicerMarkupsWidgetCreateInstanceMacro(type)       \
+   vtkSlicerMarkupsWidget* CreateInstance() const override     \
+   {                                                           \
+     vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
+     if (ret)                                                  \
+     {                                                         \
+       return static_cast<type*>(ret);                         \
+     }                                                         \
+     return new type;                                          \
+   }
 #endif
 
 #endif

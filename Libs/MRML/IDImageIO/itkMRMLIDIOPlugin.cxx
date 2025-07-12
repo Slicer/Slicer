@@ -9,7 +9,6 @@
  */
 itk::ObjectFactoryBase* itkLoad()
 {
-  static itk::MRMLIDImageIOFactory::Pointer f
-    = itk::MRMLIDImageIOFactory::New();
+  static itk::MRMLIDImageIOFactory::Pointer f = itk::MRMLIDImageIOFactory::New();
   return f;
 }

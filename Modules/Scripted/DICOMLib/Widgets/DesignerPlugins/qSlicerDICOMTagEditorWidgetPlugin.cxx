@@ -30,10 +30,9 @@ qSlicerDICOMTagEditorWidgetPlugin::qSlicerDICOMTagEditorWidgetPlugin(QObject* pl
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerDICOMTagEditorWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerDICOMTagEditorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerDICOMTagEditorWidget* pluginWidget =
-    new qSlicerDICOMTagEditorWidget(parentWidget);
+  qSlicerDICOMTagEditorWidget* pluginWidget = new qSlicerDICOMTagEditorWidget(parentWidget);
   return pluginWidget;
 }
 
@@ -42,7 +41,7 @@ QString qSlicerDICOMTagEditorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerDICOMTagEditorWidget\" \
           name=\"DICOMTagEditorWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

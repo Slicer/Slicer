@@ -32,11 +32,10 @@ class qSlicerMarkupsModuleWidgetsPythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
-
   qSlicerMarkupsModuleWidgetsPythonQtDecorators()
   {
-    //PythonQt::self()->registerClass(&qMRMLMarkupsOptionsWidgetsFactory::staticMetaObject);
-    // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
+    // PythonQt::self()->registerClass(&qMRMLMarkupsOptionsWidgetsFactory::staticMetaObject);
+    //  Note: Use registerCPPClassForPythonQt to register pure Cpp classes
   }
 
 public slots:
@@ -49,16 +48,16 @@ public slots:
 
   //----------------------------------------------------------------------------
   qMRMLMarkupsOptionsWidgetsFactory* static_qMRMLMarkupsOptionsWidgetsFactory_instance()
-{
+  {
     return qMRMLMarkupsOptionsWidgetsFactory::instance();
-}
+  }
 
   //----------------------------------------------------------------------------
   // instance methods
 
   //----------------------------------------------------------------------------
   bool registerOptionsWidget(qMRMLMarkupsOptionsWidgetsFactory* factory,
-                                       PythonQtPassOwnershipToCPP<qMRMLMarkupsAbstractOptionsWidget*> plugin)
+                             PythonQtPassOwnershipToCPP<qMRMLMarkupsAbstractOptionsWidget*> plugin)
   {
     return factory->registerOptionsWidget(plugin);
   }

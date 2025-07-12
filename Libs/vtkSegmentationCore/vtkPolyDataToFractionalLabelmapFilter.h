@@ -23,7 +23,6 @@
 #ifndef vtkPolyDataToFractionalLabelmapFilter_h
 #define vtkPolyDataToFractionalLabelmapFilter_h
 
-
 // VTK includes
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkSmartPointer.h>
@@ -40,35 +39,35 @@
 
 #include "vtkSegmentationCoreConfigure.h"
 
-// Define the datatype and fractional constants for fractional labelmap conversion based on the value of VTK_FRACTIONAL_DATA_TYPE
+// Define the datatype and fractional constants for fractional labelmap conversion based on the value of
+// VTK_FRACTIONAL_DATA_TYPE
 #define VTK_FRACTIONAL_DATA_TYPE VTK_CHAR
 
 #if VTK_FRACTIONAL_DATA_TYPE == VTK_UNSIGNED_CHAR
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_UNSIGNED_CHAR
-  #define FRACTIONAL_MIN 0
-  #define FRACTIONAL_MAX 216
-  #define FRACTIONAL_STEP_SIZE 1
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_UNSIGNED_CHAR
+# define FRACTIONAL_MIN 0
+# define FRACTIONAL_MAX 216
+# define FRACTIONAL_STEP_SIZE 1
 #elif VTK_FRACTIONAL_DATA_TYPE == VTK_CHAR
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_CHAR
-  #define FRACTIONAL_MIN -108
-  #define FRACTIONAL_MAX 108
-  #define FRACTIONAL_STEP_SIZE 1
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_CHAR
+# define FRACTIONAL_MIN -108
+# define FRACTIONAL_MAX 108
+# define FRACTIONAL_STEP_SIZE 1
 #elif VTK_FRACTIONAL_DATA_TYPE == VTK_FLOAT
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_FLOAT
-  #define FRACTIONAL_MIN 0.0
-  #define FRACTIONAL_MAX 1.0
-  #define FRACTIONAL_STEP_SIZE (1.0/216.0)
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_FLOAT
+# define FRACTIONAL_MIN 0.0
+# define FRACTIONAL_MAX 1.0
+# define FRACTIONAL_STEP_SIZE (1.0 / 216.0)
 #endif
 
-class vtkSegmentationCore_EXPORT vtkPolyDataToFractionalLabelmapFilter :
-  public vtkPolyDataToImageStencil
+class vtkSegmentationCore_EXPORT vtkPolyDataToFractionalLabelmapFilter : public vtkPolyDataToImageStencil
 {
 private:
-  std::map<double, vtkSmartPointer<vtkCellArray> > LinesCache;
-  std::map<double, vtkSmartPointer<vtkPolyData> > SliceCache;
+  std::map<double, vtkSmartPointer<vtkCellArray>> LinesCache;
+  std::map<double, vtkSmartPointer<vtkPolyData>> SliceCache;
   std::map<double, vtkIdType*> PointIdsCache;
   std::map<double, vtkIdType> NptsCache;
-  std::map<double,  vtkSmartPointer<vtkIdTypeArray> > PointNeighborCountsCache;
+  std::map<double, vtkSmartPointer<vtkIdTypeArray>> PointNeighborCountsCache;
 
   vtkCellLocator* CellLocator;
 
@@ -111,9 +110,8 @@ protected:
   vtkPolyDataToFractionalLabelmapFilter();
   ~vtkPolyDataToFractionalLabelmapFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *) override;
-  vtkOrientedImageData *AllocateOutputData(vtkDataObject *out, int* updateExt);
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  vtkOrientedImageData* AllocateOutputData(vtkDataObject* out, int* updateExt);
   int FillOutputPortInformation(int, vtkInformation*) override;
 
   /// Create a binary image stencil for the closed surface within the current extent
@@ -121,7 +119,7 @@ protected:
   /// \param output Output stencil data
   /// \param closedSurface The input surface to be converted
   /// \param extent The extent region that is being converted
-  void FillImageStencilData(vtkImageStencilData *output, vtkPolyData* closedSurface, int extent[6]);
+  void FillImageStencilData(vtkImageStencilData* output, vtkPolyData* closedSurface, int extent[6]);
 
   /// Add the values of the binary labelmap to the fractional labelmap.
   /// \param binaryLabelMap Binary labelmap that will be added to the fractional labelmap
@@ -133,8 +131,7 @@ protected:
   /// \param input The closed surface that is being cut
   /// \param output Polydata containing the contour lines
   /// \param z The z coordinate for the cutting plane
-  void PolyDataCutter(vtkPolyData *input, vtkPolyData *output,
-                             double z);
+  void PolyDataCutter(vtkPolyData* input, vtkPolyData* output, double z);
 
 private:
   vtkPolyDataToFractionalLabelmapFilter(const vtkPolyDataToFractionalLabelmapFilter&) = delete;

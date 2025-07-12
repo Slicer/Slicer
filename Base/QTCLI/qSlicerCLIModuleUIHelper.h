@@ -40,37 +40,25 @@ class vtkMRMLCommandLineModuleNode;
 class qSlicerCLIModuleUIHelperPrivate;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerWidgetValueWrapper: public QObject
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerWidgetValueWrapper : public QObject
 {
   Q_OBJECT
 public:
   qSlicerWidgetValueWrapper(const QString& _name, const QString& _label, QObject* parent);
   ~qSlicerWidgetValueWrapper() override;
   virtual QVariant value() = 0;
-  QString label(){ return this->Label; }
-  QString name(){ return this->Name; }
+  QString label() { return this->Label; }
+  QString name() { return this->Name; }
 
   virtual void setValue(const QString& _value) = 0;
 
-  static QString toString(const QString& _value)
-  {
-    return _value;
-  }
+  static QString toString(const QString& _value) { return _value; }
 
-  static bool toBool(const QString& _value)
-  {
-    return (_value.compare("true", Qt::CaseInsensitive) == 0);
-  }
+  static bool toBool(const QString& _value) { return (_value.compare("true", Qt::CaseInsensitive) == 0); }
 
-  static int toInt(const QString& _value)
-  {
-    return _value.toInt();
-  }
+  static int toInt(const QString& _value) { return _value.toInt(); }
 
-  static double toDouble(const QString& _value)
-  {
-    return _value.toDouble();
-  }
+  static double toDouble(const QString& _value) { return _value.toDouble(); }
 
 signals:
   void valueChanged();
@@ -81,13 +69,13 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper: public QWidget
+class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper : public QWidget
 {
   Q_OBJECT
 public:
   ButtonGroupWidgetWrapper(QWidget* parentWidget = nullptr);
 
-  QButtonGroup* buttonGroup()const;
+  QButtonGroup* buttonGroup() const;
   QString checkedValue();
 
   void setCheckedValue(const QString& value);
@@ -100,11 +88,10 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper: public QObject
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper : public QObject
 {
   Q_OBJECT
 public:
-
   qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliModuleWidget);
   ~qSlicerCLIModuleUIHelper() override;
 
@@ -122,9 +109,7 @@ public:
   void updateUi(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
 
   /// Set parameter to the command line module node
-  void setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* node,
-                                     const QString& name,
-                                     const QVariant& value);
+  void setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* node, const QString& name, const QVariant& value);
   void setValue(const QString& name, const QVariant& type);
 
 signals:

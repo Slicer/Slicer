@@ -28,7 +28,7 @@
 #include "vtkMRMLAbstractLogic.h"
 
 #include "vtkSlicerSceneViewsModuleLogicExport.h"
-//#include "qSlicerSceneViewsModuleExport.h"
+// #include "qSlicerSceneViewsModuleExport.h"
 
 #include "vtkSlicerModuleLogic.h"
 
@@ -45,11 +45,9 @@ class vtkImageData;
 // STD includes
 #include <string>
 
-class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerSceneViewsModuleLogic* New();
   vtkTypeMacro(vtkSlicerSceneViewsModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -61,31 +59,49 @@ public:
   void RegisterNodes() override;
 
   /// Create a sceneView..
-  void CreateSceneView(std::string name, std::string description = "", int screenshotType = ScreenShotType3D,
-    vtkImageData* screenshot = nullptr, bool saveDisplayNodes = true, bool saveViewNodes = true,
-    vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
-  void CreateSceneView(vtkCollection* savedNodes, std::string name, std::string description = "",
-    int screenshotType = ScreenShotType3D, vtkImageData* screenshot = nullptr,
-    vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
-  void CreateSceneView(std::vector<vtkMRMLNode*> savedNodes, std::string name, std::string description = "",
-    int screenshotType = ScreenShotType3D, vtkImageData* screenshot = nullptr,
-    vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
+  void CreateSceneView(std::string name,
+                       std::string description = "",
+                       int screenshotType = ScreenShotType3D,
+                       vtkImageData* screenshot = nullptr,
+                       bool saveDisplayNodes = true,
+                       bool saveViewNodes = true,
+                       vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
+  void CreateSceneView(vtkCollection* savedNodes,
+                       std::string name,
+                       std::string description = "",
+                       int screenshotType = ScreenShotType3D,
+                       vtkImageData* screenshot = nullptr,
+                       vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
+  void CreateSceneView(std::vector<vtkMRMLNode*> savedNodes,
+                       std::string name,
+                       std::string description = "",
+                       int screenshotType = ScreenShotType3D,
+                       vtkImageData* screenshot = nullptr,
+                       vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
 
   /// Returns the index for a scene view with the given name. If no matching scene view is found, returns -1.
   int GetSceneViewIndexByName(std::string name);
 
   /// Modify the metadata of an existing sceneView.
-  void ModifyNthSceneView(int sceneViewIndex, std::string name, std::string, int screenshotType, vtkImageData* screenshot);
+  void ModifyNthSceneView(int sceneViewIndex,
+                          std::string name,
+                          std::string,
+                          int screenshotType,
+                          vtkImageData* screenshot);
 
   //@{
   /// Update the contents of a sceneView to match the current state of the scene.
   /// If new nodes are specified, they will be added to the scene view.
-  void UpdateNthSceneView(int sceneViewIndex, bool updateExistingNodes = true, bool saveDisplayNodes = true, bool saveViewNodes = true);
+  void UpdateNthSceneView(int sceneViewIndex,
+                          bool updateExistingNodes = true,
+                          bool saveDisplayNodes = true,
+                          bool saveViewNodes = true);
   void UpdateNthSceneView(vtkCollection* savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
   void UpdateNthSceneView(std::vector<vtkMRMLNode*> savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
   //@}
 
-  /// Convert the index of the scene view to the corresponding value index of the sequence browser that holds the snapshot.
+  /// Convert the index of the scene view to the corresponding value index of the sequence browser that holds the
+  /// snapshot.
   int SceneViewIndexToSequenceBrowserIndex(int sceneViewIndex);
 
   //@{
@@ -172,7 +188,7 @@ public:
   };
 
   //@{
-  ///Convert string to/from scene view enum type.
+  /// Convert string to/from scene view enum type.
   std::string GetScreenShotTypeAsString(int type);
   int GetScreenShotTypeFromString(const std::string& type);
   //@}
@@ -182,9 +198,7 @@ public:
   bool IsSceneViewNode(vtkMRMLNode* node);
   //@}
 
-
 protected:
-
   vtkSlicerSceneViewsModuleLogic();
 
   ~vtkSlicerSceneViewsModuleLogic() override;
@@ -221,7 +235,9 @@ protected:
   void ConvertSceneViewNodesToSequenceBrowserNodes(vtkMRMLScene* scene);
 
   /// Convert the specified vtkMRMLSceneViewNode to use sequences.
-  vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneView, vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
+  vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(
+    vtkMRMLSceneViewNode* sceneView,
+    vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
 
   /// Add all display-related nodes to the vector.
   void GetDisplayNodes(std::vector<vtkMRMLNode*>& displayNodes);
@@ -230,10 +246,10 @@ protected:
   void GetViewNodes(std::vector<vtkMRMLNode*>& viewNodes);
 
   /// Returns the sequence node for a given proxy node. Will create a new vtkMRMLSequenceNode if none exists.
-  vtkMRMLSequenceNode* GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser, vtkMRMLNode* proxyNode);
+  vtkMRMLSequenceNode* GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser,
+                                                     vtkMRMLNode* proxyNode);
 
 private:
-
   std::string m_StringHolder;
 
 private:

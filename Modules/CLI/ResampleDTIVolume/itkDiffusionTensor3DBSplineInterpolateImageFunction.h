@@ -26,27 +26,28 @@ namespace itk
  * Implementation of blockwise spline interpolation for diffusion tensor images
  */
 template <class TData, class TCoordRep = double>
-class DiffusionTensor3DBSplineInterpolateImageFunction :
-  public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
+class DiffusionTensor3DBSplineInterpolateImageFunction
+  : public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
 public:
-  typedef TData                                                                          DataType;
-  typedef DiffusionTensor3DBSplineInterpolateImageFunction                               Self;
+  typedef TData DataType;
+  typedef DiffusionTensor3DBSplineInterpolateImageFunction Self;
   typedef DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::ImageType                                                 ImageType;
-  typedef SmartPointer<Self>                                                             Pointer;
-  typedef SmartPointer<const Self>                                                       ConstPointer;
-  typedef BSplineInterpolateImageFunction<ImageType, TCoordRep, double>
-  BSplineInterpolateFunction;
+  typedef typename Superclass::ImageType ImageType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef BSplineInterpolateImageFunction<ImageType, TCoordRep, double> BSplineInterpolateFunction;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DiffusionTensor3DBSplineInterpolateImageFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);
+  itkTypeMacro(DiffusionTensor3DBSplineInterpolateImageFunction,
+               DiffusionTensor3DInterpolateImageFunctionReimplementation);
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
   // /Get the Spline Order, supports 0th - 5th order splines. The default is a 1st order spline.
-  itkGetMacro( SplineOrder, int );
+  itkGetMacro(SplineOrder, int);
   // /Set the Spline Order, supports 0th - 5th order splines. The default is a 1st order spline.
-  itkSetMacro( SplineOrder, unsigned int );
+  itkSetMacro(SplineOrder, unsigned int);
+
 protected:
   void AllocateInterpolator() override;
 
@@ -58,7 +59,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DBSplineInterpolateImageFunction.txx"
+# include "itkDiffusionTensor3DBSplineInterpolateImageFunction.txx"
 #endif
 
 #endif

@@ -22,13 +22,13 @@
 #include "qMRMLVolumeInfoWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLVolumeInfoWidgetPlugin::qMRMLVolumeInfoWidgetPlugin(QObject *parentObject)
+qMRMLVolumeInfoWidgetPlugin::qMRMLVolumeInfoWidgetPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLVolumeInfoWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLVolumeInfoWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLVolumeInfoWidget* newWidget = new qMRMLVolumeInfoWidget(parentWidget);
   return newWidget;
@@ -39,7 +39,7 @@ QString qMRMLVolumeInfoWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLVolumeInfoWidget\" \
           name=\"MRMLVolumeInfoWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

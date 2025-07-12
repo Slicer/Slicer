@@ -24,13 +24,14 @@
 #include <sstream>
 
 // helper methods to check children ordering
-static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
+static void PrintNames(std::vector<vtkMRMLHierarchyNode*> kids)
 {
   for (unsigned int i = 0; i < kids.size(); i++)
   {
     if (kids[i] != nullptr)
     {
-      std::cout << "\t" << i << " name = " << (kids[i]->GetName() != nullptr ? kids[i]->GetName() : "NULL") << std::endl;
+      std::cout << "\t" << i << " name = " << (kids[i]->GetName() != nullptr ? kids[i]->GetName() : "NULL")
+                << std::endl;
       std::cout << "\t\tID = " << (kids[i]->GetID() ? kids[i]->GetID() : "(no id)") << std::endl;
       std::cout << "\t\tnumber of children nodes = " << kids[i]->GetNumberOfChildrenNodes() << std::endl;
     }
@@ -38,7 +39,7 @@ static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
 }
 
 // test more ordered node hierarchy uses
-int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
+int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
 {
 
   vtkNew<vtkMRMLScene> scene;
@@ -84,9 +85,9 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
 
   // now add model nodes which will be children of the level 1 hierarchy
 
-  std::vector<vtkSmartPointer<vtkMRMLModelNode> > modelNodes;
-  std::vector<vtkSmartPointer<vtkMRMLModelDisplayNode> > modelDisplayNodes;
-  std::vector<vtkSmartPointer<vtkMRMLModelHierarchyNode> > modelHierarchyNodes;
+  std::vector<vtkSmartPointer<vtkMRMLModelNode>> modelNodes;
+  std::vector<vtkSmartPointer<vtkMRMLModelDisplayNode>> modelDisplayNodes;
+  std::vector<vtkSmartPointer<vtkMRMLModelHierarchyNode>> modelHierarchyNodes;
   unsigned int numModels = 5;
   for (unsigned int m = 0; m < numModels; m++)
   {
@@ -103,8 +104,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
     modelDisplayNodes.push_back(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
     scene->AddNode(modelNodes[m]);
     scene->AddNode(modelDisplayNodes[m]);
-    if (!modelNodes[m] || !modelDisplayNodes[m] ||
-        !modelDisplayNodes[m]->GetID())
+    if (!modelNodes[m] || !modelDisplayNodes[m] || !modelDisplayNodes[m]->GetID())
     {
       std::cerr << "Error setting up a display node for the " << m << "th model node\n";
       return EXIT_FAILURE;
@@ -126,17 +126,18 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   std::cout << "Model nodes size = " << modelNodes.size() << std::endl;
-  std::cout << "Model display nodes size = " <<  modelDisplayNodes.size() << std::endl;
+  std::cout << "Model display nodes size = " << modelDisplayNodes.size() << std::endl;
   std::cout << "Model hierarchy nodes size = " << modelHierarchyNodes.size() << std::endl;
 
   // check that the top level hierarchy returns all the children
-  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  std::vector<vtkMRMLHierarchyNode*> allChildren;
   hnode1->GetAllChildrenNodes(allChildren);
   std::cout << "Top level hierarchy children:" << std::endl;
   PrintNames(allChildren);
   if (allChildren.size() != 1 + numModels)
   {
-    std::cerr << "ERROR: Top level hierarchy returned  " << allChildren.size() << " total children instead of " << 1 + numModels << std::endl;
+    std::cerr << "ERROR: Top level hierarchy returned  " << allChildren.size() << " total children instead of "
+              << 1 + numModels << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -145,12 +146,13 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check for the immediate children of the top level
-  std::vector< vtkMRMLHierarchyNode *> immediateChildren = hnode1->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
   std::cout << "Top level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren);
   if (immediateChildren.size() != 1)
   {
-    std::cerr << "ERROR: Top level hierarchy returned  " << immediateChildren.size() << " total children instead of " << 1 << std::endl;
+    std::cerr << "ERROR: Top level hierarchy returned  " << immediateChildren.size() << " total children instead of "
+              << 1 << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -159,13 +161,14 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check that the second level hierarchy returns all the children
-  std::vector< vtkMRMLHierarchyNode *> allChildren2;
+  std::vector<vtkMRMLHierarchyNode*> allChildren2;
   hnode2->GetAllChildrenNodes(allChildren2);
   std::cout << "Second level hierarchy children:" << std::endl;
   PrintNames(allChildren2);
   if (allChildren2.size() != numModels)
   {
-    std::cerr << "ERROR: Second level hierarchy has " << allChildren2.size() << " total children instead of " << numModels << std::endl;
+    std::cerr << "ERROR: Second level hierarchy has " << allChildren2.size() << " total children instead of "
+              << numModels << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -174,12 +177,13 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check for the immediate children of the second level
-  std::vector< vtkMRMLHierarchyNode *> immediateChildren2 = hnode2->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> immediateChildren2 = hnode2->GetChildrenNodes();
   std::cout << "Second level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren2);
   if (immediateChildren2.size() != numModels)
   {
-    std::cerr<< "ERROR: Second level hierarchy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
+    std::cerr << "ERROR: Second level hierarchy has " << immediateChildren2.size() << " immediate children instead of "
+              << numModels << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -205,11 +209,11 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
       std::string nameString = ss2.str();
       if (nameString.compare(childHierarchy->GetName()) != 0)
       {
-        std::cerr << "Expected " << i << "th child hierarchy to have the name " << nameString << ", instead have " << childHierarchy->GetName() << std::endl;
+        std::cerr << "Expected " << i << "th child hierarchy to have the name " << nameString << ", instead have "
+                  << childHierarchy->GetName() << std::endl;
         return EXIT_FAILURE;
       }
     }
-
   }
   // now shuffle the nodes so that start with
   // 0 1 2 3 4
@@ -222,9 +226,9 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   modelHierarchyNodes[0]->SetIndexInParent(4);
   // now have 4 3 2 1 0
   immediateChildren2 = hnode2->GetChildrenNodes();
-  std::cout << "Second level hierarchy immediate children after shuffle, expecting reverse order of names:" << std::endl;
+  std::cout << "Second level hierarchy immediate children after shuffle, expecting reverse order of names:"
+            << std::endl;
   PrintNames(immediateChildren2);
-
 
   // now add some nodes out of order
   vtkNew<vtkMRMLModelNode> m6;
@@ -252,10 +256,10 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   std::cout << "Second level hierarchy immediate children after inserting node 6 at index 3:" << std::endl;
   PrintNames(immediateChildren2);
   vtkMRMLHierarchyNode* testInsert = hnode2->GetNthChildNode(3);
-  if (!testInsert ||
-      strcmp("MH6", testInsert->GetName()) != 0)
+  if (!testInsert || strcmp("MH6", testInsert->GetName()) != 0)
   {
-    std::cerr << "Error inserting a hierarchy at index 6, got back nth child named " << testInsert->GetName() << " instead of MH6" << std::endl;
+    std::cerr << "Error inserting a hierarchy at index 6, got back nth child named " << testInsert->GetName()
+              << " instead of MH6" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -271,13 +275,15 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   hnode2->RemoveHierarchyChildrenNodes();
   if (hnode2->GetNumberOfChildrenNodes() != 0)
   {
-    std::cerr << "Error removing hierarchy children nodes from top level, have " << hnode2->GetNumberOfChildrenNodes() << " children left" << std::endl;
+    std::cerr << "Error removing hierarchy children nodes from top level, have " << hnode2->GetNumberOfChildrenNodes()
+              << " children left" << std::endl;
     return EXIT_FAILURE;
   }
   hnode1->RemoveAllHierarchyChildrenNodes();
   if (hnode1->GetNumberOfChildrenNodes() != 0)
   {
-    std::cerr << "Error removing all hierarchy children nodes from top level, have " << hnode1->GetNumberOfChildrenNodes() << " children left" << std::endl;
+    std::cerr << "Error removing all hierarchy children nodes from top level, have "
+              << hnode1->GetNumberOfChildrenNodes() << " children left" << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

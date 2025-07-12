@@ -28,7 +28,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModuleWidget
+class qSlicerEventBrokerModuleWidgetPrivate : public Ui_qSlicerEventBrokerModuleWidget
 {
 public:
   void setupUi(qSlicerWidget* widget);
@@ -38,8 +38,10 @@ public:
 void qSlicerEventBrokerModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   this->Ui_qSlicerEventBrokerModuleWidget::setupUi(widget);
-  QObject::connect(this->EventBrokerWidget, SIGNAL(currentObjectChanged(vtkObject*)),
-          widget, SLOT(onCurrentObjectChanged(vtkObject*)));
+  QObject::connect(this->EventBrokerWidget,
+                   SIGNAL(currentObjectChanged(vtkObject*)),
+                   widget,
+                   SLOT(onCurrentObjectChanged(vtkObject*)));
 }
 
 //-----------------------------------------------------------------------------

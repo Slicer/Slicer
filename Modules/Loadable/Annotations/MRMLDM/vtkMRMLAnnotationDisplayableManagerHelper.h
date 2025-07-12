@@ -35,13 +35,11 @@ class vtkMRMLInteractionNode;
 #include <map>
 #include <vector>
 
-class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
-vtkMRMLAnnotationDisplayableManagerHelper
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLAnnotationDisplayableManagerHelper
   : public vtkObject
 {
 public:
-
-  static vtkMRMLAnnotationDisplayableManagerHelper *New();
+  static vtkMRMLAnnotationDisplayableManagerHelper* New();
   vtkTypeMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -60,23 +58,22 @@ public:
   void UpdateWidget(vtkMRMLAnnotationNode* node);
 
   /// Get a vtkAbstractWidget* given a node
-  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
+  vtkAbstractWidget* GetWidget(vtkMRMLAnnotationNode* node);
   /// ...an its associated vtkAbstractWidget* for Slice intersection representation
-  vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
+  vtkAbstractWidget* GetIntersectionWidget(vtkMRMLAnnotationNode* node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetOverLineProjectionWidget(vtkMRMLAnnotationNode * node);
+  vtkAbstractWidget* GetOverLineProjectionWidget(vtkMRMLAnnotationNode* node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetUnderLineProjectionWidget(vtkMRMLAnnotationNode * node);
+  vtkAbstractWidget* GetUnderLineProjectionWidget(vtkMRMLAnnotationNode* node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetPointProjectionWidget(vtkMRMLAnnotationNode * node);
+  vtkAbstractWidget* GetPointProjectionWidget(vtkMRMLAnnotationNode* node);
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
-  void RemoveWidgetAndNode(vtkMRMLAnnotationNode *node);
-
+  void RemoveWidgetAndNode(vtkMRMLAnnotationNode* node);
 
   /// Search the annotation node list and return the annotation node that has this display node
-  vtkMRMLAnnotationNode * GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode *displayNode);
+  vtkMRMLAnnotationNode* GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode* displayNode);
 
   //----------------------------------------------------------------------------------
   // The Lists!!
@@ -128,33 +125,29 @@ public:
   //
   //----------------------------------------------------------------------------------
 
-
   /// Placement of seeds for widget placement
-  void PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer);
+  void PlaceSeed(double x, double y, vtkRenderWindowInteractor* interactor, vtkRenderer* renderer);
 
   /// Get a placed seed
-  vtkHandleWidget * GetSeed(int index);
+  vtkHandleWidget* GetSeed(int index);
 
   /// Remove all placed seeds
   void RemoveSeeds();
 
-
 protected:
-
   vtkMRMLAnnotationDisplayableManagerHelper();
   ~vtkMRMLAnnotationDisplayableManagerHelper() override;
 
 private:
-
   vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
   void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
 
   /// SeedWidget for point placement
   vtkSmartPointer<vtkSeedWidget> SeedWidget;
   /// List of Handles for the SeedWidget
-  std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
+  std::vector<vtkSmartPointer<vtkHandleWidget>> HandleWidgetList;
   /// .. and its associated convenient typedef
-  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
+  typedef std::vector<vtkSmartPointer<vtkHandleWidget>>::iterator HandleWidgetListIt;
 };
 
 #endif

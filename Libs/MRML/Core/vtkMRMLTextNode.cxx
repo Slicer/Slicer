@@ -35,14 +35,12 @@ vtkMRMLTextNode::vtkMRMLTextNode()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLTextNode::~vtkMRMLTextNode()
-{
-}
+vtkMRMLTextNode::~vtkMRMLTextNode() {}
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextNode::SetText(const std::string &text, int encoding/*-1*/)
+void vtkMRMLTextNode::SetText(const std::string& text, int encoding /*-1*/)
 {
-  vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting Text to " << text);
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Text to " << text);
 
   MRMLNodeModifyBlocker blocker(this);
   if (encoding >= 0)
@@ -137,7 +135,7 @@ void vtkMRMLTextNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLTextNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);

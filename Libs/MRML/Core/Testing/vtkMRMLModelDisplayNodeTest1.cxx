@@ -31,18 +31,16 @@ namespace
 const char* VOXEL_ARRAY_NAME = "ids";
 }
 //---------------------------------------------------------------------------
-int TestSetMesh(bool observeMeshBeforeObserveDisplay,
-                bool observeDisplayBeforeAddToScene,
-                bool meshTypeIsPolyData);
+int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeAddToScene, bool meshTypeIsPolyData);
 
 int TestScalarRange(vtkPointSet* mesh);
 int TestThreshold(vtkPointSet* mesh);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelDisplayNodeTest1(int , char * [] )
+int vtkMRMLModelDisplayNodeTest1(int, char*[])
 {
-  vtkSmartPointer< vtkMRMLModelDisplayNode > node1 = vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> node1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkUnstructuredGrid> ug;
@@ -160,9 +158,7 @@ int TestThreshold(vtkPointSet* mesh)
 }
 
 //---------------------------------------------------------------------------
-int TestSetMesh(bool observeMeshBeforeObserveDisplay,
-                bool observeDisplayBeforeAddToScene,
-                bool meshTypeIsPolyData)
+int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeAddToScene, bool meshTypeIsPolyData)
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -202,19 +198,15 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay,
   }
 
   vtkPointSet* displayInputMesh = display->GetInputMesh();
-  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||
-      (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) ||
-      displayInputMesh != model->GetMesh() ||
-      displayInputMesh != mesh)
+  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData())
+      || (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid())
+      || displayInputMesh != model->GetMesh() || displayInputMesh != mesh)
   {
     std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndobserveMesh failed when "
-              << (meshTypeIsPolyData ? "surface" : "volumetric")
-              << " mesh is set "
+              << (meshTypeIsPolyData ? "surface" : "volumetric") << " mesh is set "
               << (observeMeshBeforeObserveDisplay ? "before" : "after")
               << " the display node is observed and when the display node is "
-              << "added in the scene "
-              << (observeDisplayBeforeAddToScene ? "before" : "after")
-              << " the observation:\n"
+              << "added in the scene " << (observeDisplayBeforeAddToScene ? "before" : "after") << " the observation:\n"
               << "Mesh: " << mesh << ", "
               << "Model: " << model->GetMesh() << ", "
               << "Display: " << display->GetInputMesh() << std::endl;

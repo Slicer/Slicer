@@ -30,16 +30,16 @@
 class qSlicerActionsDialogPrivate;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog: public QDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog : public QDialog
 {
   Q_OBJECT
 public:
   typedef QDialog Superclass;
-  qSlicerActionsDialog(QWidget* parentWidget =nullptr);
+  qSlicerActionsDialog(QWidget* parentWidget = nullptr);
   ~qSlicerActionsDialog() override;
 
-  void addAction(QAction* action, const QString& group=QString());
-  void addActions(const QList<QAction*>& actions, const QString& group=QString());
+  void addAction(QAction* action, const QString& group = QString());
+  void addActions(const QList<QAction*>& actions, const QString& group = QString());
   void clear();
 
   void setActionsWithNoShortcutVisible(bool visible);

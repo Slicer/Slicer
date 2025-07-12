@@ -31,7 +31,7 @@
 // STD includes
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModuleWidgetPrivate: public Ui_qSlicerCamerasModuleWidget
+class qSlicerCamerasModuleWidgetPrivate : public Ui_qSlicerCamerasModuleWidget
 {
 public:
 };
@@ -52,14 +52,13 @@ void qSlicerCamerasModuleWidget::setup()
   Q_D(qSlicerCamerasModuleWidget);
   d->setupUi(this);
 
-  connect(d->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(onCurrentViewNodeChanged(vtkMRMLNode*)));
-  connect(d->CameraNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(setCameraToCurrentView(vtkMRMLNode*)));
-  connect(d->CameraNodeSelector, SIGNAL(nodeAdded(vtkMRMLNode*)),
-          this, SLOT(onCameraNodeAdded(vtkMRMLNode*)));
-  connect(d->CameraNodeSelector, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)),
-          this, SLOT(onCameraNodeRemoved(vtkMRMLNode*)));
+  connect(
+    d->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onCurrentViewNodeChanged(vtkMRMLNode*)));
+  connect(
+    d->CameraNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setCameraToCurrentView(vtkMRMLNode*)));
+  connect(d->CameraNodeSelector, SIGNAL(nodeAdded(vtkMRMLNode*)), this, SLOT(onCameraNodeAdded(vtkMRMLNode*)));
+  connect(
+    d->CameraNodeSelector, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)), this, SLOT(onCameraNodeRemoved(vtkMRMLNode*)));
 }
 
 //-----------------------------------------------------------------------------
@@ -73,8 +72,7 @@ void qSlicerCamerasModuleWidget::onCurrentViewNodeChanged(vtkMRMLNode* mrmlNode)
 void qSlicerCamerasModuleWidget::synchronizeCameraWithView()
 {
   Q_D(qSlicerCamerasModuleWidget);
-  vtkMRMLViewNode* currentViewNode = vtkMRMLViewNode::SafeDownCast(
-    d->ViewNodeSelector->currentNode());
+  vtkMRMLViewNode* currentViewNode = vtkMRMLViewNode::SafeDownCast(d->ViewNodeSelector->currentNode());
   this->synchronizeCameraWithView(currentViewNode);
 }
 
@@ -86,26 +84,21 @@ void qSlicerCamerasModuleWidget::synchronizeCameraWithView(vtkMRMLViewNode* curr
   {
     return;
   }
-  vtkSlicerCamerasModuleLogic* camerasLogic =
-    vtkSlicerCamerasModuleLogic::SafeDownCast(this->logic());
-  vtkMRMLCameraNode *found_camera_node =
-    camerasLogic->GetViewActiveCameraNode(currentViewNode);
+  vtkSlicerCamerasModuleLogic* camerasLogic = vtkSlicerCamerasModuleLogic::SafeDownCast(this->logic());
+  vtkMRMLCameraNode* found_camera_node = camerasLogic->GetViewActiveCameraNode(currentViewNode);
   d->CameraNodeSelector->setCurrentNode(found_camera_node);
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
 {
   Q_D(qSlicerCamerasModuleWidget);
-  vtkMRMLCameraNode *currentCameraNode =
-        vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+  vtkMRMLCameraNode* currentCameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!currentCameraNode)
-  {// if the camera list is empty, there is no current camera
+  { // if the camera list is empty, there is no current camera
     return;
   }
-  vtkMRMLViewNode *currentViewNode = vtkMRMLViewNode::SafeDownCast(
-    d->ViewNodeSelector->currentNode());
+  vtkMRMLViewNode* currentViewNode = vtkMRMLViewNode::SafeDownCast(d->ViewNodeSelector->currentNode());
   if (currentViewNode == nullptr)
   {
     return;
@@ -116,31 +109,29 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
   {
-    //Q_ASSERT(cameraNode);
+    // Q_ASSERT(cameraNode);
     return;
   }
-  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
-                    this, SLOT(synchronizeCameraWithView()));
+  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent, this, SLOT(synchronizeCameraWithView()));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
   {
-    //Q_ASSERT(cameraNode);
+    // Q_ASSERT(cameraNode);
     return;
   }
-  this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
-                       this, SLOT(synchronizeCameraWithView()));
+  this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent, this, SLOT(synchronizeCameraWithView()));
 }
 
 //-----------------------------------------------------------------------------
-void  qSlicerCamerasModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+void qSlicerCamerasModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
 

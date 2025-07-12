@@ -53,7 +53,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLAbstractViewWidget
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
   Q_PROPERTY(QString sliceViewLabel READ sliceViewLabel WRITE setSliceViewLabel)
   Q_PROPERTY(QColor sliceViewColor READ sliceViewColor WRITE setSliceViewColor)
-  Q_PROPERTY(Qt::Orientation sliceOffsetSliderOrientation READ sliceOffsetSliderOrientation WRITE setSliceOffsetSliderOrientation)
+  Q_PROPERTY(Qt::Orientation sliceOffsetSliderOrientation READ sliceOffsetSliderOrientation WRITE
+               setSliceOffsetSliderOrientation)
 
 public:
   /// Superclass typedef
@@ -64,35 +65,35 @@ public:
   ~qMRMLSliceWidget() override;
 
   /// Get slice controller
-  Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
+  Q_INVOKABLE qMRMLSliceControllerWidget* sliceController() const;
   Q_INVOKABLE qMRMLViewControllerBar* controllerWidget() const override;
 
   /// Get vertical slice controller
-  Q_INVOKABLE qMRMLSliceVerticalControllerWidget* sliceVerticalController()const;
+  Q_INVOKABLE qMRMLSliceVerticalControllerWidget* sliceVerticalController() const;
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
   /// \sa setMRMLSliceNode()
-  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
-  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode()const override;
+  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode() const;
+  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode() const override;
 
   /// \sa qMRMLSliceControllerWidget::sliceLogic()
-  Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic()const;
-  Q_INVOKABLE vtkMRMLAbstractLogic* logic()const override;
+  Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic() const;
+  Q_INVOKABLE vtkMRMLAbstractLogic* logic() const override;
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()
   /// \sa setSliceOrientation()
-  Q_INVOKABLE QString sliceOrientation()const;
+  Q_INVOKABLE QString sliceOrientation() const;
 
   /// \sa qMRMLSliceControllerWidget::imageData()
   /// \sa setImageData();
-  Q_INVOKABLE vtkAlgorithmOutput* imageDataConnection()const;
+  Q_INVOKABLE vtkAlgorithmOutput* imageDataConnection() const;
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceCompositeNode()
-  Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
+  Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode() const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewName()
   /// \sa setSliceViewName()
-  QString sliceViewName()const;
+  QString sliceViewName() const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewName()
   /// \sa sliceViewName()
@@ -100,7 +101,7 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::sliceViewLabel()
   /// \sa setSliceViewLabel()
-  QString sliceViewLabel()const;
+  QString sliceViewLabel() const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewLabel()
   /// \sa sliceViewLabel()
@@ -108,7 +109,7 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::sliceViewColor()
   /// \sa setSliceViewColor()
-  QColor sliceViewColor()const;
+  QColor sliceViewColor() const;
 
   /// \sa qMRMLSliceControllerWidget::sliceViewColor()
   /// \sa sliceViewColor()
@@ -118,10 +119,10 @@ public:
   /// A const vtkInteractorObserver pointer is returned as you shouldn't
   /// mess too much with it. If you do, be aware that you are probably
   /// unsynchronizing the view from the nodes/logics.
-  Q_INVOKABLE vtkInteractorObserver* interactorStyle()const;
+  Q_INVOKABLE vtkInteractorObserver* interactorStyle() const;
 
   /// Return the overlay corner annotation of the view
-  Q_INVOKABLE vtkCornerAnnotation* overlayCornerAnnotation()const;
+  Q_INVOKABLE vtkCornerAnnotation* overlayCornerAnnotation() const;
 
   /// propagates the logics to the qMRMLSliceControllerWidget
   Q_INVOKABLE void setSliceLogics(vtkCollection* logics);
@@ -129,15 +130,15 @@ public:
   /// Get a reference to the underlying slice view. It is the widget that
   /// renders the view (contains vtkRenderWindow).
   /// \sa sliceController()
-  Q_INVOKABLE qMRMLSliceView* sliceView()const;
-  Q_INVOKABLE QWidget* viewWidget()const override;
+  Q_INVOKABLE qMRMLSliceView* sliceView() const;
+  Q_INVOKABLE QWidget* viewWidget() const override;
 
   /// This property holds the orientation of the slice offset slider.
   /// The orientation must be Qt::Horizontal (the default) or Qt::Vertical.
   Qt::Orientation sliceOffsetSliderOrientation() const;
 
 public slots:
-  void setMRMLScene(vtkMRMLScene * newScene) override;
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
   /// \sa mrmlSliceNode()
@@ -164,7 +165,7 @@ signals:
   void nodeAboutToBeEdited(vtkMRMLNode* node);
 
 protected:
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 

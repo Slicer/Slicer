@@ -46,11 +46,13 @@
 #include <QMessageBox>
 
 // --------------------------------------------------------------------------
-class qMRMLSegmentationConversionParametersWidgetPrivate: public Ui_qMRMLSegmentationConversionParametersWidget
+class qMRMLSegmentationConversionParametersWidgetPrivate : public Ui_qMRMLSegmentationConversionParametersWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationConversionParametersWidget);
+
 protected:
   qMRMLSegmentationConversionParametersWidget* const q_ptr;
+
 public:
   qMRMLSegmentationConversionParametersWidgetPrivate(qMRMLSegmentationConversionParametersWidget& object);
   void init();
@@ -79,7 +81,8 @@ private:
 };
 
 // --------------------------------------------------------------------------
-qMRMLSegmentationConversionParametersWidgetPrivate::qMRMLSegmentationConversionParametersWidgetPrivate(qMRMLSegmentationConversionParametersWidget& object)
+qMRMLSegmentationConversionParametersWidgetPrivate::qMRMLSegmentationConversionParametersWidgetPrivate(
+  qMRMLSegmentationConversionParametersWidget& object)
   : q_ptr(&object)
 {
   this->SegmentationNode = nullptr;
@@ -92,24 +95,24 @@ void qMRMLSegmentationConversionParametersWidgetPrivate::init()
   this->setupUi(q);
 
   // Make connections
-  QObject::connect(this->PathsTable, SIGNAL(itemSelectionChanged()),
-                   q, SLOT(populateParametersTable()));
-  QObject::connect(this->ParametersTable, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   q, SLOT(onParameterChanged(QTableWidgetItem*)));
-  QObject::connect(this->pushButton_Convert, SIGNAL(clicked()),
-                   q, SLOT(applyConversion()));
+  QObject::connect(this->PathsTable, SIGNAL(itemSelectionChanged()), q, SLOT(populateParametersTable()));
+  QObject::connect(
+    this->ParametersTable, SIGNAL(itemChanged(QTableWidgetItem*)), q, SLOT(onParameterChanged(QTableWidgetItem*)));
+  QObject::connect(this->pushButton_Convert, SIGNAL(clicked()), q, SLOT(applyConversion()));
 
   // Set up initial look of the tables
   this->PathsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   this->PathsTable->horizontalHeader()->setStretchLastSection(true);
   this->PathsTable->setSelectionMode(QAbstractItemView::SingleSelection);
   this->PathsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-  this->PathsColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Cost") << qMRMLSegmentationConversionParametersWidget::tr("Path");
+  this->PathsColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Cost")
+                          << qMRMLSegmentationConversionParametersWidget::tr("Path");
   this->PathsTable->setColumnCount(this->PathsColumnLabels.size());
 
   this->ParametersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   this->ParametersTable->horizontalHeader()->setStretchLastSection(true);
-  this->ParametersColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Name") << qMRMLSegmentationConversionParametersWidget::tr("Value");
+  this->ParametersColumnLabels << qMRMLSegmentationConversionParametersWidget::tr("Name")
+                               << qMRMLSegmentationConversionParametersWidget::tr("Value");
   this->ParametersTable->setColumnCount(this->ParametersColumnLabels.size());
   this->ParametersTable->setSelectionMode(QAbstractItemView::NoSelection);
 }
@@ -243,7 +246,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
 
   int rowCount = d->PossiblePaths->GetNumberOfPaths();
   d->PathsTable->setRowCount(rowCount);
-  for (int row = 0; row< d->PossiblePaths->GetNumberOfPaths(); ++row)
+  for (int row = 0; row < d->PossiblePaths->GetNumberOfPaths(); ++row)
   {
     // Path cost
     vtkSegmentationConversionPath* path = d->PossiblePaths->GetPath(row);
@@ -354,13 +357,12 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
       geometryLayout->addWidget(textValueLabel);
 
       QPushButton* specifyGeometryButton = new QPushButton(tr("Specify geometry"), geometryWidget);
-      //setGeometryFromVolumeButton->setFixedWidth(160);
-      QObject::connect(specifyGeometryButton, SIGNAL(clicked()),
-                       this, SLOT(onSpecifyGeometryButtonClicked()));
+      // setGeometryFromVolumeButton->setFixedWidth(160);
+      QObject::connect(specifyGeometryButton, SIGNAL(clicked()), this, SLOT(onSpecifyGeometryButtonClicked()));
       geometryLayout->addWidget(specifyGeometryButton);
 
-      //QTableWidgetItem* geometryItem = new QTableWidgetItem();
-      //geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
+      // QTableWidgetItem* geometryItem = new QTableWidgetItem();
+      // geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
       geometryWidget->setToolTip(parameterDescription);
       d->ParametersTable->setCellWidget(row, d->parametersColumnIndex(tr("Value")), geometryWidget);
     }
@@ -400,7 +402,8 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
   vtkSegmentationConversionPath* selectedPath = this->selectedPath();
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(selectedPath, this->conversionParameters()))
   {
-    QString message = tr("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
+    QString message =
+      tr("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
   }
   QApplication::restoreOverrideCursor();

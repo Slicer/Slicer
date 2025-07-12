@@ -23,12 +23,13 @@
 #include "qMRMLTreeView.h"
 
 // --------------------------------------------------------------------------
-qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject *_parent):QObject(_parent)
+qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLTreeViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTreeViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTreeView* _widget = new qMRMLTreeView(_parent);
   return _widget;
@@ -37,12 +38,12 @@ QWidget *qMRMLTreeViewPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLTreeViewPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLTreeView\" name=\"MRMLTreeView\">\n"
-    "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"sceneModelType\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLTreeView\" name=\"MRMLTreeView\">\n"
+         "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"sceneModelType\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

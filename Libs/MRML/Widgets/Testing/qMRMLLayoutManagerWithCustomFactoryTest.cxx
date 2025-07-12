@@ -52,13 +52,13 @@
 #include "qMRMLWidget.h"
 
 //------------------------------------------------------------------------------
-class qSlicerLayoutCustomSliceViewFactory
- : public qMRMLLayoutSliceViewFactory
+class qSlicerLayoutCustomSliceViewFactory : public qMRMLLayoutSliceViewFactory
 {
   Q_OBJECT
 public:
   typedef qMRMLLayoutSliceViewFactory Superclass;
-  qSlicerLayoutCustomSliceViewFactory(QObject* parent):Superclass(parent)
+  qSlicerLayoutCustomSliceViewFactory(QObject* parent)
+    : Superclass(parent)
   {
     this->LastNode = nullptr;
   }
@@ -71,7 +71,7 @@ protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override
   {
     if (!this->layoutManager() || !viewNode)
-    {// can't create a slice widget if there is no parent widget
+    { // can't create a slice widget if there is no parent widget
       Q_ASSERT(viewNode);
       return nullptr;
     }
@@ -81,14 +81,13 @@ protected:
 
     this->LastNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
 
-    qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
+    qMRMLSliceWidget* sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
     sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
     QString sliceLayoutName(viewNode->GetLayoutName());
     QString sliceViewLabel(viewNode->GetLayoutLabel());
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
-    QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0],
-                                               sliceNode->GetLayoutColor()[1],
-                                               sliceNode->GetLayoutColor()[2]);
+    QColor sliceLayoutColor =
+      QColor::fromRgbF(sliceNode->GetLayoutColor()[0], sliceNode->GetLayoutColor()[1], sliceNode->GetLayoutColor()[2]);
     sliceWidget->setSliceViewName(sliceLayoutName);
     sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
     sliceWidget->setSliceViewLabel(sliceViewLabel);
@@ -102,11 +101,11 @@ protected:
     QLabel* label = new QLabel();
     label->setText("This is a SliceView customization");
 
-    QVBoxLayout * layout = new QVBoxLayout;
+    QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(sliceWidget);
     layout->addWidget(label);
 
-    QWidget * widget = new QWidget(this->layoutManager()->viewport());
+    QWidget* widget = new QWidget(this->layoutManager()->viewport());
     widget->setObjectName("CustomSliceWidget");
     widget->setLayout(layout);
 
@@ -115,11 +114,10 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class vtkMRMLCustomViewNode
-  : public vtkMRMLAbstractViewNode
+class vtkMRMLCustomViewNode : public vtkMRMLAbstractViewNode
 {
 public:
-  static vtkMRMLCustomViewNode *New();
+  static vtkMRMLCustomViewNode* New();
   vtkTypeMacro(vtkMRMLCustomViewNode, vtkMRMLAbstractViewNode);
 
   //--------------------------------------------------------------------------
@@ -129,10 +127,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override
-  {
-    return "CustomView";
-  }
+  const char* GetNodeTagName() override { return "CustomView"; }
 
 protected:
   vtkMRMLCustomViewNode() = default;
@@ -145,27 +140,23 @@ protected:
 vtkMRMLNodeNewMacro(vtkMRMLCustomViewNode);
 
 //------------------------------------------------------------------------------
-class qMRMLLayoutCustomViewFactory
- : public qMRMLLayoutViewFactory
+class qMRMLLayoutCustomViewFactory : public qMRMLLayoutViewFactory
 {
   Q_OBJECT
 public:
   typedef qMRMLLayoutViewFactory Superclass;
-  qMRMLLayoutCustomViewFactory(QObject* parent) : Superclass(parent)
+  qMRMLLayoutCustomViewFactory(QObject* parent)
+    : Superclass(parent)
   {
     this->LastNode = nullptr;
   }
   ~qMRMLLayoutCustomViewFactory() override = default;
 
-  QString viewClassName()const override
-  {
-    return "vtkMRMLCustomViewNode";
-  }
+  QString viewClassName() const override { return "vtkMRMLCustomViewNode"; }
 
   vtkWeakPointer<vtkMRMLCustomViewNode> LastNode;
 
 protected:
-
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override
   {
     if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
@@ -182,10 +173,10 @@ protected:
     QLabel* label = new QLabel();
     label->setText("This is a custom view");
 
-    QVBoxLayout * layout = new QVBoxLayout;
+    QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(label);
 
-    QWidget * widget = new QWidget(this->layoutManager()->viewport());
+    QWidget* widget = new QWidget(this->layoutManager()->viewport());
     widget->setObjectName("CustomWidget");
     widget->setLayout(layout);
 
@@ -194,7 +185,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
+int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[])
 {
   (void)checkViewArrangement; // Fix -Wunused-function warning
 
@@ -222,36 +213,32 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 
   // Unregister regular SliceView factory and register a custom one
   qMRMLLayoutSliceViewFactory* mrmlSliceViewFactory =
-      qobject_cast<qMRMLLayoutSliceViewFactory*>(
-        layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
+    qobject_cast<qMRMLLayoutSliceViewFactory*>(layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
 
-  qSlicerLayoutCustomSliceViewFactory* customSliceViewFactory =
-      new qSlicerLayoutCustomSliceViewFactory(&layoutManager);
+  qSlicerLayoutCustomSliceViewFactory* customSliceViewFactory = new qSlicerLayoutCustomSliceViewFactory(&layoutManager);
 
   layoutManager.unregisterViewFactory(mrmlSliceViewFactory);
   layoutManager.registerViewFactory(customSliceViewFactory);
 
   // Register a factory for vtkMRMLCustomViewNode
-  qMRMLLayoutCustomViewFactory* customViewFactory =
-      new qMRMLLayoutCustomViewFactory(&layoutManager);
+  qMRMLLayoutCustomViewFactory* customViewFactory = new qMRMLLayoutCustomViewFactory(&layoutManager);
   layoutManager.registerViewFactory(customViewFactory);
 
   int customLayout = vtkMRMLLayoutNode::SlicerLayoutUserView + 1;
   const char* customLayoutDescription =
-      "<layout type=\"horizontal\">"
-      "      <item>"
-      "        <view class=\"vtkMRMLSliceNode\" singletontag=\"CustomSliceView\">"
-      "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
-      "        </view>"
-      "      </item>"
-      "      <item>"
-      "        <view class=\"vtkMRMLCustomViewNode\" singletontag=\"CustomView\">"
-      "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
-      "        </view>"
-      "      </item>"
-      "</layout>";
+    "<layout type=\"horizontal\">"
+    "      <item>"
+    "        <view class=\"vtkMRMLSliceNode\" singletontag=\"CustomSliceView\">"
+    "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
+    "        </view>"
+    "      </item>"
+    "      <item>"
+    "        <view class=\"vtkMRMLCustomViewNode\" singletontag=\"CustomView\">"
+    "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
+    "        </view>"
+    "      </item>"
+    "</layout>";
   layoutNode->AddLayoutDescription(customLayout, customLayoutDescription);
-
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
@@ -259,19 +246,15 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 
   if (!sliceWidget)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Non null sliceWidget is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Non null sliceWidget is expected." << std::endl;
     return EXIT_FAILURE;
   }
 
   if (sliceWidget->objectName() != "CustomSliceWidget")
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Widget with 'CustomSliceWidget' as object name is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Widget with 'CustomSliceWidget' as object name is expected." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -281,19 +264,15 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 
   if (!sliceWidget)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Non null sliceWidget is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Non null sliceWidget is expected." << std::endl;
     return EXIT_FAILURE;
   }
 
   if (sliceWidget->objectName() != "CustomSliceWidget")
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Widget with 'CustomSliceWidget' as object name is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Widget with 'CustomSliceWidget' as object name is expected." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -301,19 +280,15 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 
   if (!customWidget)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Non null customWidget is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Non null customWidget is expected." << std::endl;
     return EXIT_FAILURE;
   }
 
   if (customWidget->objectName() != "CustomWidget")
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qMRMLLayoutManager::viewWidget function: "
-              << "Widget with 'CustomWidget' as object name is expected."
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::viewWidget function: "
+              << "Widget with 'CustomWidget' as object name is expected." << std::endl;
     return EXIT_FAILURE;
   }
 

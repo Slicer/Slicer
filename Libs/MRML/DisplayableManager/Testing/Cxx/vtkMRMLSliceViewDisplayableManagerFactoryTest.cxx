@@ -56,12 +56,12 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   applicationLogic->SetMRMLScene(scene.GetPointer());
 
   // Add ViewNode
-  vtkMRMLSliceNode * viewNode = vtkMRMLSliceNode::New();
+  vtkMRMLSliceNode* viewNode = vtkMRMLSliceNode::New();
   viewNode->SetLayoutName("Red");
   scene->AddNode(viewNode);
   viewNode->Delete();
 
-  vtkMRMLSliceLogic * sliceLogic = vtkMRMLSliceLogic::New();
+  vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->SetSliceNode(viewNode);
   sliceLogic->UpdateSliceNode();
@@ -69,15 +69,14 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   sliceLogic->UpdateSliceCompositeNode();
 
   // Factory
-  vtkMRMLSliceViewDisplayableManagerFactory * factory =
-    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+  vtkMRMLSliceViewDisplayableManagerFactory* factory = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
   {
     std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
-    std::cerr << "Current RegisteredDisplayableManagerCount:"
-        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:" << factory->GetRegisteredDisplayableManagerCount()
+              << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -87,18 +86,18 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
   {
     std::cerr << "Expected RegisteredDisplayableManagerCount: 1" << std::endl;
-    std::cerr << "Current RegisteredDisplayableManagerCount:"
-        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:" << factory->GetRegisteredDisplayableManagerCount()
+              << std::endl;
     return EXIT_FAILURE;
   }
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup =
     factory->InstantiateDisplayableManagers(renderer.GetPointer());
 
   if (!displayableManagerGroup)
   {
     std::cerr << "Failed to instantiate Displayable Managers using "
-        << "InstantiateDisplayableManagers" << std::endl;
+              << "InstantiateDisplayableManagers" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -107,8 +106,8 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   {
     std::cerr << "Check displayableManagerGroup->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "Expected DisplayableManagerCount: 1" << std::endl;
-    std::cerr << "Current DisplayableManagerCount:"
-      << displayableManagerGroup->GetDisplayableManagerCount() << std::endl;
+    std::cerr << "Current DisplayableManagerCount:" << displayableManagerGroup->GetDisplayableManagerCount()
+              << std::endl;
     return EXIT_FAILURE;
   }
 

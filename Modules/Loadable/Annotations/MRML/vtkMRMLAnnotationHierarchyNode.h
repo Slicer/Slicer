@@ -11,20 +11,20 @@
 
 class vtkAbstractTransform;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
-  static vtkMRMLAnnotationHierarchyNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationHierarchyNode,vtkMRMLDisplayableHierarchyNode);
+  static vtkMRMLAnnotationHierarchyNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationHierarchyNode, vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
-  virtual const char* GetIcon() {return ":/Icons/Medium/SlicerHierarchy.png";};
+  virtual const char* GetIcon() { return ":/Icons/Medium/SlicerHierarchy.png"; };
 
   // Description:
   // Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -36,17 +36,17 @@ public:
 
   // Description:
   // Get all top level children associated to this node.
-  virtual void GetDirectChildren(vtkCollection *children);
+  virtual void GetDirectChildren(vtkCollection* children);
 
   /// Add into \a children all the children of the hierarchy node.
   /// \sa GetDirectChildren(), GetChildren()
-  virtual void GetAllChildren(vtkCollection *children);
+  virtual void GetAllChildren(vtkCollection* children);
 
   /// Add into \a children all children of the hierarchy node of the first
   /// \a level nodes.
   /// If \a level is <0, then all levels are added.
   /// \sa GetAllChildren(), GetDirectChildren()
-  virtual void GetChildren(vtkCollection *children, int level);
+  virtual void GetChildren(vtkCollection* children, int level);
 
   // Description:
   // Delete all children of this node
@@ -54,7 +54,7 @@ public:
   virtual void DeleteDirectChildren();
 
   /// From Transformable superclass
-  virtual bool CanApplyNonLinearTransforms()const;
+  virtual bool CanApplyNonLinearTransforms() const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
 protected:
@@ -62,7 +62,6 @@ protected:
   ~vtkMRMLAnnotationHierarchyNode() override;
   vtkMRMLAnnotationHierarchyNode(const vtkMRMLAnnotationHierarchyNode&);
   void operator=(const vtkMRMLAnnotationHierarchyNode&);
-
 };
 
 #endif

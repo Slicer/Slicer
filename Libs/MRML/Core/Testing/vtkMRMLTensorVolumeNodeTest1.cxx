@@ -14,7 +14,7 @@
 #include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLTensorVolumeNodeTest1(int , char * [] )
+int vtkMRMLTensorVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTensorVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;

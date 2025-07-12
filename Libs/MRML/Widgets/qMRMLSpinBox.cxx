@@ -41,8 +41,10 @@
 class qMRMLSpinBoxPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSpinBox);
+
 protected:
   qMRMLSpinBox* const q_ptr;
+
 public:
   qMRMLSpinBoxPrivate(qMRMLSpinBox& object);
   ~qMRMLSpinBoxPrivate();
@@ -59,14 +61,13 @@ public:
 
 // --------------------------------------------------------------------------
 qMRMLSpinBoxPrivate::qMRMLSpinBoxPrivate(qMRMLSpinBox& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->Quantity = "";
   this->MRMLScene = nullptr;
   this->SelectionNode = nullptr;
-  this->Flags = qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix
-    | qMRMLSpinBox::Precision
-    | qMRMLSpinBox::MinimumValue | qMRMLSpinBox::MaximumValue;
+  this->Flags = qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix | qMRMLSpinBox::Precision | qMRMLSpinBox::MinimumValue
+                | qMRMLSpinBox::MaximumValue;
   this->Proxy = new ctkLinearValueProxy();
 }
 
@@ -84,13 +85,11 @@ void qMRMLSpinBoxPrivate::setAndObserveSelectionNode()
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (this->MRMLScene)
   {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   }
 
-  q->qvtkReconnect(this->SelectionNode, selectionNode,
-    vtkMRMLSelectionNode::UnitModifiedEvent,
-    q, SLOT(updateWidgetFromUnitNode()));
+  q->qvtkReconnect(
+    this->SelectionNode, selectionNode, vtkMRMLSelectionNode::UnitModifiedEvent, q, SLOT(updateWidgetFromUnitNode()));
   this->SelectionNode = selectionNode;
   q->updateWidgetFromUnitNode();
 }
@@ -139,14 +138,14 @@ void qMRMLSpinBox::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSpinBox::quantity()const
+QString qMRMLSpinBox::quantity() const
 {
   Q_D(const qMRMLSpinBox);
   return d->Quantity;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSpinBox::mrmlScene()const
+vtkMRMLScene* qMRMLSpinBox::mrmlScene() const
 {
   Q_D(const qMRMLSpinBox);
   return d->MRMLScene;
@@ -169,7 +168,7 @@ void qMRMLSpinBox::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-qMRMLSpinBox::UnitAwareProperties qMRMLSpinBox::unitAwareProperties()const
+qMRMLSpinBox::UnitAwareProperties qMRMLSpinBox::unitAwareProperties() const
 {
   Q_D(const qMRMLSpinBox);
   return d->Flags;
@@ -195,8 +194,7 @@ void qMRMLSpinBox::updateWidgetFromUnitNode()
   if (d->SelectionNode)
   {
     vtkMRMLUnitNode* unitNode =
-      vtkMRMLUnitNode::SafeDownCast(d->MRMLScene->GetNodeByID(
-        d->SelectionNode->GetUnitNodeID(d->Quantity.toUtf8())));
+      vtkMRMLUnitNode::SafeDownCast(d->MRMLScene->GetNodeByID(d->SelectionNode->GetUnitNodeID(d->Quantity.toUtf8())));
 
     if (unitNode)
     {

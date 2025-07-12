@@ -35,7 +35,7 @@
 class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyEntry : public vtkObject
 {
 public:
-  static vtkSlicerTerminologyEntry *New();
+  static vtkSlicerTerminologyEntry* New();
   vtkTypeMacro(vtkSlicerTerminologyEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -91,20 +91,20 @@ protected:
 
 protected:
   /// Terminology context name (SegmentationCategoryTypeContextName in terminology Json)
-  char* TerminologyContextName{nullptr};
+  char* TerminologyContextName{ nullptr };
   /// Category properties
-  vtkSlicerTerminologyCategory* CategoryObject{nullptr};
+  vtkSlicerTerminologyCategory* CategoryObject{ nullptr };
   /// Type properties
-  vtkSlicerTerminologyType* TypeObject{nullptr};
+  vtkSlicerTerminologyType* TypeObject{ nullptr };
   /// Type modifier properties
-  vtkSlicerTerminologyType* TypeModifierObject{nullptr};
+  vtkSlicerTerminologyType* TypeModifierObject{ nullptr };
 
   /// Region context name (AnatomicContextName in anatomy Json) - optional
-  char* RegionContextName{nullptr};
+  char* RegionContextName{ nullptr };
   /// Region properties
-  vtkSlicerTerminologyType* RegionObject{nullptr};
+  vtkSlicerTerminologyType* RegionObject{ nullptr };
   /// Region modifier properties
-  vtkSlicerTerminologyType* RegionModifierObject{nullptr};
+  vtkSlicerTerminologyType* RegionModifierObject{ nullptr };
 };
 
 #endif

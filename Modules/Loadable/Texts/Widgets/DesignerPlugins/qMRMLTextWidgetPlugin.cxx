@@ -22,13 +22,13 @@
 #include "qMRMLTextWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLTextWidgetPlugin::qMRMLTextWidgetPlugin(QObject *_parent)
+qMRMLTextWidgetPlugin::qMRMLTextWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTextWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTextWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTextWidget* _widget = new qMRMLTextWidget(_parent);
   return _widget;
@@ -39,7 +39,7 @@ QString qMRMLTextWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTextWidget\" \
           name=\"TextWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

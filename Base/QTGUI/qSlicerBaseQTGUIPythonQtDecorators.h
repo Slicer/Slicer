@@ -35,7 +35,6 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
-
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
@@ -48,7 +47,6 @@ class qSlicerBaseQTGUIPythonQtDecorators : public QObject
   Q_OBJECT
 
 public:
-
   qSlicerBaseQTGUIPythonQtDecorators()
   {
     PythonQt::self()->registerClass(&qSlicerAbstractModuleWidget::staticMetaObject);
@@ -69,9 +67,9 @@ public slots:
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* widgetRepresentation(qSlicerAbstractModule* _module)
-{
+  {
     return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->widgetRepresentation());
-}
+  }
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* createNewWidgetRepresentation(qSlicerAbstractModule* _module)
@@ -83,7 +81,7 @@ public slots:
   // qSlicerAbstractModule
 
   //----------------------------------------------------------------------------
-  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget * _moduleWidget)
+  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget* _moduleWidget)
   {
     return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
   }

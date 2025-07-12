@@ -45,8 +45,7 @@ qSlicerModelsIOOptionsWidget::qSlicerModelsIOOptionsWidget(QWidget* parentWidget
   Q_D(qSlicerModelsIOOptionsWidget);
   d->setupUi(this);
 
-  connect(d->coordinateSystemComboBox, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(updateProperties()));
+  connect(d->coordinateSystemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProperties()));
 }
 
 //-----------------------------------------------------------------------------

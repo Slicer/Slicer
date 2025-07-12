@@ -31,8 +31,8 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qSlicerUnitsModuleWidgetsAbst
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerUnitsModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

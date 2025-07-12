@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFinderDialog : public QDialog
   Q_PROPERTY(QString currentModuleName READ currentModuleName)
 public:
   typedef QDialog Superclass;
-  qSlicerModuleFinderDialog(QWidget* parent=nullptr);
+  qSlicerModuleFinderDialog(QWidget* parent = nullptr);
   ~qSlicerModuleFinderDialog() override;
 
   QString currentModuleName() const;

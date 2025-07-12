@@ -12,8 +12,8 @@ class vtkPlanes;
 class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 {
 public:
-  static vtkMRMLROINode *New();
-  vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
+  static vtkMRMLROINode* New();
+  vtkTypeMacro(vtkMRMLROINode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -23,9 +23,9 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
-  virtual void ReadXMLString( const char *keyValuePairs);
+  virtual void ReadXMLString(const char* keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -33,15 +33,15 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MRMLROINode";}
+  const char* GetNodeTagName() override { return "MRMLROINode"; }
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// update display node ids
@@ -64,53 +64,53 @@ public:
   /// Note: The ROI Position is the center of the ROI
   void SetXYZ(double X, double Y, double Z);
   void SetXYZ(double* XYZ);
-  vtkGetVectorMacro(XYZ,double,3);
+  vtkGetVectorMacro(XYZ, double, 3);
 
   ///
   /// Get/Set for radius of the ROI in RAS coordinates
   void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
   void SetRadiusXYZ(double* RadiusXYZ);
-  vtkGetVectorMacro(RadiusXYZ,double,3);
+  vtkGetVectorMacro(RadiusXYZ, double, 3);
 
   ///
   /// Get/Set for ROI Position in IJK coordinates
   void SetIJK(double I, double J, double K);
   void SetIJK(double* IJK);
-  vtkGetVectorMacro(IJK,double,3);
+  vtkGetVectorMacro(IJK, double, 3);
 
   ///
   /// Get/Set for radius of the ROI in IJK coordinates
   void SetRadiusIJK(double RadiusI, double RadiusJ, double RadiusK);
   void SetRadiusIJK(double* RadiusIJK);
-  vtkGetVectorMacro(RadiusIJK,double,3);
+  vtkGetVectorMacro(RadiusIJK, double, 3);
 
   ///
   /// Set/Get the InsideOut flag. This data member is used in conjunction
   /// with the GetPlanes() method. When off, the normals point out of the
   /// box. When on, the normals point into the hexahedron.  InsideOut is off
   /// by default.
-  vtkSetMacro(InsideOut,int);
-  vtkGetMacro(InsideOut,int);
-  vtkBooleanMacro(InsideOut,int);
+  vtkSetMacro(InsideOut, int);
+  vtkGetMacro(InsideOut, int);
+  vtkBooleanMacro(InsideOut, int);
 
   ///
   /// Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
 
   ///
   /// transform utility functions
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
   void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Description
   /// get transformed planes for the ROI region
-  void GetTransformedPlanes(vtkPlanes *planes);
+  void GetTransformedPlanes(vtkPlanes* planes);
 
 protected:
   vtkMRMLROINode();
@@ -138,11 +138,11 @@ protected:
   /// Control the orientation of the normals
   int InsideOut;
 
-  char *LabelText;
+  char* LabelText;
 
   ///
   /// The ID of the volume associated with the ROI
-  char *VolumeNodeID;
+  char* VolumeNodeID;
 };
 
 #endif

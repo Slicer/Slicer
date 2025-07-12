@@ -21,7 +21,6 @@
 
 #include "qSlicerBaseQTAppExport.h"
 
-
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
@@ -34,7 +33,6 @@ class qSlicerBaseQTAppPythonQtDecorators : public QObject
   Q_OBJECT
 
 public:
-
   qSlicerBaseQTAppPythonQtDecorators() = default;
 
 public slots:
@@ -43,10 +41,10 @@ public slots:
   // qSlicerApplicationHelper
 
   //----------------------------------------------------------------------------
-  void static_qSlicerApplicationHelper_setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager)
-{
+  void static_qSlicerApplicationHelper_setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager)
+  {
     qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
-}
+  }
 };
 
 //-----------------------------------------------------------------------------

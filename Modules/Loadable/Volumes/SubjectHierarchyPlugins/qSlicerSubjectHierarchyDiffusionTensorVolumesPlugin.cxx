@@ -55,15 +55,19 @@
 #include "qSlicerAbstractCoreModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate: public QObject
+class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
+
 protected:
   qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin* const q_ptr;
+
 public:
-  qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin& object);
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(
+    qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin& object);
   ~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate() override;
   void init();
+
 public:
   QIcon DiffusionTensorVolumeIcon;
 
@@ -75,8 +79,9 @@ public:
 // qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(
+  qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin& object)
+  : q_ptr(&object)
 {
   this->DiffusionTensorVolumeIcon = QIcon(":Icons/DiffusionTensorVolume.png");
 
@@ -89,22 +94,28 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
-  this->TractographyLabelMapSeedingAction = new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography labelmap seeding..."),q);
-  QObject::connect(this->TractographyLabelMapSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyLabelMapSeeding()));
-  this->TractographyInteractiveSeedingAction = new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography interactive seeding..."),q);
-  QObject::connect(this->TractographyInteractiveSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyInteractiveSeeding()));
+  this->TractographyLabelMapSeedingAction =
+    new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography labelmap seeding..."), q);
+  QObject::connect(
+    this->TractographyLabelMapSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyLabelMapSeeding()));
+  this->TractographyInteractiveSeedingAction =
+    new QAction(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tr("Tractography interactive seeding..."), q);
+  QObject::connect(
+    this->TractographyInteractiveSeedingAction, SIGNAL(triggered()), q, SLOT(onTractographyInteractiveSeeding()));
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate() = default;
+qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::
+  ~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(*this) )
+qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin(
+  QObject* parent)
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(*this))
 {
   this->m_Name = QString("DiffusionTensorVolumes");
 
@@ -117,7 +128,8 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::~qSlicerSubjectHierarchyDif
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -134,7 +146,7 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectH
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -159,13 +171,13 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarc
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::roleForPlugin() const
 {
   return "DTI volume";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -183,23 +195,24 @@ QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType i
   QString tooltipString = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->tooltip(itemID);
 
   // Additional DTI-related information
-  vtkMRMLDiffusionTensorVolumeNode* dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLDiffusionTensorVolumeNode* dtiVolumeNode =
+    vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   Q_UNUSED(dtiVolumeNode);
-  //vtkImageData* imageData = (dtiVolumeNode ? dtiVolumeNode->GetImageData() : nullptr);
-  //if (dtiVolumeNode && imageData)
-  //  {
-  //  int dimensions[3] = {0,0,0};
-  //  imageData->GetDimensions(dimensions);
-  //  double spacing[3] = {0.0,0.0,0.0};
-  //  dtiVolumeNode->GetSpacing(spacing);
-  //  tooltipString.append( QString(" (Dimensions: %1x%2x%3  Spacing: %4mm x %5mm x %6mm)")
-  //    .arg(dimensions[0]).arg(dimensions[1]).arg(dimensions[2])
-  //    .arg(spacing[0],0,'g',3).arg(spacing[1],0,'g',3).arg(spacing[2],0,'g',3) );
-  //  }
-  //else
-  //  {
-  //  tooltipString.append(" !Invalid volume!");
-  //  }
+  // vtkImageData* imageData = (dtiVolumeNode ? dtiVolumeNode->GetImageData() : nullptr);
+  // if (dtiVolumeNode && imageData)
+  //   {
+  //   int dimensions[3] = {0,0,0};
+  //   imageData->GetDimensions(dimensions);
+  //   double spacing[3] = {0.0,0.0,0.0};
+  //   dtiVolumeNode->GetSpacing(spacing);
+  //   tooltipString.append( QString(" (Dimensions: %1x%2x%3  Spacing: %4mm x %5mm x %6mm)")
+  //     .arg(dimensions[0]).arg(dimensions[1]).arg(dimensions[2])
+  //     .arg(spacing[0],0,'g',3).arg(spacing[1],0,'g',3).arg(spacing[2],0,'g',3) );
+  //   }
+  // else
+  //   {
+  //   tooltipString.append(" !Invalid volume!");
+  //   }
 
   return tooltipString;
 }
@@ -235,7 +248,7 @@ QIcon qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::visibilityIcon(int vi
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
@@ -246,10 +259,10 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(v
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
@@ -260,7 +273,7 @@ int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vt
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
@@ -303,8 +316,9 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyLabelMapSeeding()
 {
 #ifdef Slicer_BUILD_CLI_SUPPORT
-  //TODO: Select inputs too
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
+  // TODO: Select inputs too
+  qSlicerAbstractModuleWidget* moduleWidget =
+    qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
   Q_UNUSED(moduleWidget);
 #else
   qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
@@ -331,7 +345,9 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyInteract
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdType itemID,
+                                                                         vtkMRMLAbstractViewNode* viewNode,
+                                                                         vtkIdList* allItemsToShow)
 {
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));

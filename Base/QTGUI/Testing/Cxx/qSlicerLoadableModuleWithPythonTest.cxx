@@ -30,32 +30,28 @@ class qSlicerLoadableHelloWorldModule : public qSlicerLoadableModule
 {
   Q_OBJECT
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  qSlicerLoadableHelloWorldModule(QObject *parent=nullptr):Superclass(parent){}
+  qSlicerLoadableHelloWorldModule(QObject* parent = nullptr)
+    : Superclass(parent)
+  {
+  }
   ~qSlicerLoadableHelloWorldModule() override = default;
 
-  QString helpText()const override { return QString("helpText"); }
-  QString acknowledgementText()const override { return QString("acknowledgementText"); }
+  QString helpText() const override { return QString("helpText"); }
+  QString acknowledgementText() const override { return QString("acknowledgementText"); }
 
   qSlicerGetTitleMacro("Loadable Hello world");
 
 protected:
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override
-  {
-    return nullptr;
-  }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }
 
   /// Create and return the logic associated to this module
-  vtkMRMLAbstractLogic* createLogic() override
-  {
-    return nullptr;
-  }
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
 };
 
 // ----------------------------------------------------------------------------
-class qSlicerLoadableModuleWithPythonTester: public QObject
+class qSlicerLoadableModuleWithPythonTester : public QObject
 {
   Q_OBJECT
 
@@ -90,13 +86,11 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   QFETCH(QString, moduleName);
   QFETCH(bool, expectedResult);
 
-  qSlicerAbstractModule * module = this->Modules.value(moduleName);
+  qSlicerAbstractModule* module = this->Modules.value(moduleName);
   QVERIFY(moduleName.isEmpty() ? true : module != nullptr);
 
   bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(
-        validPythonManager ? &this->PythonManager : nullptr,
-        module,
-        moduleName);
+    validPythonManager ? &this->PythonManager : nullptr, module, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)
@@ -126,7 +120,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
   QFETCH(bool, expectedResult);
 
   bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
-        validPythonManager ? &this->PythonManager : nullptr, moduleName);
+    validPythonManager ? &this->PythonManager : nullptr, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)

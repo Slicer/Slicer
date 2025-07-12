@@ -43,34 +43,30 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   QWidget* rangeWidget = new QWidget(this);
   QHBoxLayout* rangeLayout = new QHBoxLayout;
   rangeWidget->setLayout(rangeLayout);
-  rangeLayout->setContentsMargins(0,0,0,0);
+  rangeLayout->setContentsMargins(0, 0, 0, 0);
 
   this->MinSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MinSpinBox->setPrefix("Min: ");
   this->MinSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
   this->MinSpinBox->setValue(this->minimum());
-  connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(updateRange()));
+  connect(this->MinSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateRange()));
   rangeLayout->addWidget(this->MinSpinBox);
 
   this->MaxSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MaxSpinBox->setPrefix("Max: ");
   this->MaxSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
   this->MaxSpinBox->setValue(this->maximum());
-  connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(updateRange()));
+  connect(this->MaxSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateRange()));
   rangeLayout->addWidget(this->MaxSpinBox);
 
-  connect(this->slider(), SIGNAL(rangeChanged(double,double)),
-          this, SLOT(updateSpinBoxRange(double,double)));
+  connect(this->slider(), SIGNAL(rangeChanged(double, double)), this, SLOT(updateSpinBoxRange(double, double)));
 
   QWidgetAction* rangeAction = new QWidgetAction(this);
   rangeAction->setDefaultWidget(rangeWidget);
 
-  this->SymmetricAction = new QAction(tr("Symmetric handles"),this);
+  this->SymmetricAction = new QAction(tr("Symmetric handles"), this);
   this->SymmetricAction->setCheckable(true);
-  connect(this->SymmetricAction, SIGNAL(toggled(bool)),
-          this, SLOT(updateSymmetricMoves(bool)));
+  connect(this->SymmetricAction, SIGNAL(toggled(bool)), this, SLOT(updateSymmetricMoves(bool)));
   this->SymmetricAction->setChecked(this->symmetricMoves());
 
   QMenu* optionsMenu = new QMenu(this);
@@ -82,35 +78,31 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   optionsButton->setMenu(optionsMenu);
   optionsButton->setPopupMode(QToolButton::InstantPopup);
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
-  gridLayout->addWidget(optionsButton,0,3);
+  gridLayout->addWidget(optionsButton, 0, 3);
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeWidget::minimumHandlePalette()const
+QPalette qMRMLRangeWidget::minimumHandlePalette() const
 {
-  return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
-    ->minimumHandlePalette();
+  return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->minimumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeWidget::maximumHandlePalette()const
+QPalette qMRMLRangeWidget::maximumHandlePalette() const
 {
-  return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
-    ->maximumHandlePalette();
+  return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->maximumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::setMinimumHandlePalette(const QPalette& palette)
 {
-  qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
-    ->setMinimumHandlePalette(palette);
+  qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->setMinimumHandlePalette(palette);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::setMaximumHandlePalette(const QPalette& palette)
 {
-  qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
-    ->setMaximumHandlePalette(palette);
+  qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->setMaximumHandlePalette(palette);
 }
 
 // --------------------------------------------------------------------------
@@ -131,8 +123,7 @@ void qMRMLRangeWidget::updateSpinBoxRange(double min, double max)
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::updateRange()
 {
-  this->setRange(this->MinSpinBox->value(),
-                 this->MaxSpinBox->value());
+  this->setRange(this->MinSpinBox->value(), this->MaxSpinBox->value());
 }
 
 // --------------------------------------------------------------------------
@@ -144,7 +135,7 @@ void qMRMLRangeWidget::updateSymmetricMoves(bool symmetric)
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::setSymmetricMoves(bool symmetry)
 {
-  if (symmetry==this->symmetricMoves())
+  if (symmetry == this->symmetricMoves())
   {
     return;
   }
@@ -166,14 +157,14 @@ void qMRMLRangeWidget::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLRangeWidget::quantity()const
+QString qMRMLRangeWidget::quantity() const
 {
   Q_ASSERT(this->MinSpinBox->quantity() == this->MaxSpinBox->quantity());
   return this->MinSpinBox->quantity();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLRangeWidget::mrmlScene()const
+vtkMRMLScene* qMRMLRangeWidget::mrmlScene() const
 {
   Q_ASSERT(this->MinSpinBox->mrmlScene() == this->MaxSpinBox->mrmlScene());
   return this->MinSpinBox->mrmlScene();
@@ -198,37 +189,33 @@ void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
 
 // --------------------------------------------------------------------------
 qMRMLDoubleRangeSlider::qMRMLDoubleRangeSlider(QWidget* parentWidget)
-  :ctkDoubleRangeSlider(parentWidget)
+  : ctkDoubleRangeSlider(parentWidget)
 {
   this->setSlider(new qMRMLRangeSlider(nullptr));
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLDoubleRangeSlider::minimumHandlePalette()const
+QPalette qMRMLDoubleRangeSlider::minimumHandlePalette() const
 {
-  return qobject_cast<qMRMLRangeSlider*>(this->slider())
-    ->minimumHandlePalette();
+  return qobject_cast<qMRMLRangeSlider*>(this->slider())->minimumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLDoubleRangeSlider::maximumHandlePalette()const
+QPalette qMRMLDoubleRangeSlider::maximumHandlePalette() const
 {
-  return qobject_cast<qMRMLRangeSlider*>(this->slider())
-    ->maximumHandlePalette();
+  return qobject_cast<qMRMLRangeSlider*>(this->slider())->maximumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLDoubleRangeSlider::setMinimumHandlePalette(const QPalette& palette)
 {
-  qobject_cast<qMRMLRangeSlider*>(this->slider())
-    ->setMinimumHandlePalette(palette);
+  qobject_cast<qMRMLRangeSlider*>(this->slider())->setMinimumHandlePalette(palette);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLDoubleRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 {
-  qobject_cast<qMRMLRangeSlider*>(this->slider())
-    ->setMaximumHandlePalette(palette);
+  qobject_cast<qMRMLRangeSlider*>(this->slider())->setMaximumHandlePalette(palette);
 }
 
 // --------------------------------------------------------------------------
@@ -239,6 +226,7 @@ void qMRMLDoubleRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 class qMRMLRangeSliderPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLRangeSlider);
+
 protected:
   qMRMLRangeSlider* const q_ptr;
 
@@ -257,8 +245,8 @@ qMRMLRangeSliderPrivate::qMRMLRangeSliderPrivate(qMRMLRangeSlider* pub)
 
 // --------------------------------------------------------------------------
 qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
-  :ctkRangeSlider(parentWidget)
-   ,d_ptr(new qMRMLRangeSliderPrivate(this))
+  : ctkRangeSlider(parentWidget)
+  , d_ptr(new qMRMLRangeSliderPrivate(this))
 {
 }
 
@@ -266,14 +254,14 @@ qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
 qMRMLRangeSlider::~qMRMLRangeSlider() = default;
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeSlider::minimumHandlePalette()const
+QPalette qMRMLRangeSlider::minimumHandlePalette() const
 {
   Q_D(const qMRMLRangeSlider);
   return d->MinimumPalette;
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeSlider::maximumHandlePalette()const
+QPalette qMRMLRangeSlider::maximumHandlePalette() const
 {
   Q_D(const qMRMLRangeSlider);
   return d->MaximumPalette;

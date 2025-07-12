@@ -32,8 +32,7 @@ class vtkMRMLNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerVolumeRenderingPresetComboBoxPrivate;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPresetComboBox
-  : public qSlicerWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPresetComboBox : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
@@ -41,21 +40,21 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPrese
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
-  explicit qSlicerVolumeRenderingPresetComboBox(QWidget* parent=nullptr);
+  explicit qSlicerVolumeRenderingPresetComboBox(QWidget* parent = nullptr);
   ~qSlicerVolumeRenderingPresetComboBox() override;
 
   /// Get selected preset node in the combobox.
   /// Note: This node is not in the main MRML scene, but from the private presets scene
-  Q_INVOKABLE vtkMRMLNode* currentNode()const;
+  Q_INVOKABLE vtkMRMLNode* currentNode() const;
   /// Return the currently selected node id . "" if no node is selected
   /// Utility function that is based on currentNode
-  Q_INVOKABLE QString currentNodeID()const;
+  Q_INVOKABLE QString currentNodeID() const;
 
   /// Get volume property node controlling volume rendering transfer functions.
   /// Its content mirrors the currently selected preset node in the combobox.
-  Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
+  Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode() const;
 
-  bool showIcons()const;
+  bool showIcons() const;
   void setShowIcons(bool show);
 
 public slots:

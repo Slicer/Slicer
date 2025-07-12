@@ -71,7 +71,7 @@ public:
   static QString executableExtension();
 
   /// This function returns ".dll. on windows, ".so" on linux and ".dylib" on Mac
-  //static QString libraryExtension();
+  // static QString libraryExtension();
 
   /// Extract module name given a library name
   /// For example:
@@ -92,7 +92,9 @@ public:
   static bool isPluginInstalled(const QString& filePath, const QString& applicationHomeDir);
 
   /// Return \a true if the plugin identified with its \a filePath is a built-in Slicer module.
-  static bool isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir, const QString& applicationRevision);
+  static bool isPluginBuiltIn(const QString& filePath,
+                              const QString& applicationHomeDir,
+                              const QString& applicationRevision);
 
   /// Return the path without the intermediate directory or return \a path if there is no
   /// expected "IntDir".
@@ -173,7 +175,6 @@ public:
   /// Return \a true if the \a inputPath ends with \a path
   static bool pathEndsWith(const QString& inputPath, const QString& path);
 
-
   /// Set permissions of \a path. If \a path is a directory, permissions will be set to all its descendant.
   /// While recursively traversing the tree structure, if \a path or one of its descendant
   /// is a file, \a filePermissions will be set otherwise \a directoryPermissions will be set.
@@ -181,7 +182,7 @@ public:
   /// traversing will be aborted and the permission already set won't be reverted.
   /// \return \c true on success, \c false otherwise.
   /// \sa QFile::setPermissions()
-  static bool setPermissionsRecursively(const QString &path,
+  static bool setPermissionsRecursively(const QString& path,
                                         QFile::Permissions directoryPermissions,
                                         QFile::Permissions filePermissions);
 
@@ -235,7 +236,6 @@ private:
   /// Not implemented
   qSlicerUtils() = default;
   virtual ~qSlicerUtils() = default;
-
 };
 
 #endif

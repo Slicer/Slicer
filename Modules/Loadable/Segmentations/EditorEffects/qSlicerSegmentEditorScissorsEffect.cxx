@@ -99,7 +99,7 @@ void DebugWritePolyData(vtkPolyData* poly)
 
 //-----------------------------------------------------------------------------
 /// Visualization objects and pipeline for each slice view for drawing cutting outline
-class ScissorsPipeline: public QObject
+class ScissorsPipeline : public QObject
 {
 public:
   ScissorsPipeline()
@@ -112,7 +112,7 @@ public:
     this->Actor->SetMapper(this->Mapper);
     this->Actor->VisibilityOff();
     vtkProperty2D* outlineProperty = this->Actor->GetProperty();
-    outlineProperty->SetColor(1,1,0);
+    outlineProperty->SetColor(1, 1, 0);
     outlineProperty->SetLineWidth(2);
 
     this->PolyDataThin = vtkSmartPointer<vtkPolyData>::New();
@@ -124,10 +124,12 @@ public:
     vtkProperty2D* outlinePropertyThin = this->ActorThin->GetProperty();
     // Make the line a bit thinner and darker to distinguish from the thick line
     outlinePropertyThin->SetColor(0.7, 0.7, 0);
-    outlinePropertyThin->SetLineStipplePattern(0xff00); // Note: line stipple may not be supported in VTK OpenGL2 backend
+    outlinePropertyThin->SetLineStipplePattern(
+      0xff00); // Note: line stipple may not be supported in VTK OpenGL2 backend
     outlinePropertyThin->SetLineWidth(1);
   };
   ~ScissorsPipeline() override = default;
+
 public:
   bool IsDragging;
   vtkSmartPointer<vtkActor2D> Actor;
@@ -139,21 +141,24 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentEditorScissorsEffectPrivate: public QObject
+class qSlicerSegmentEditorScissorsEffectPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorScissorsEffect);
+
 protected:
   qSlicerSegmentEditorScissorsEffect* const q_ptr;
+
 public:
   qSlicerSegmentEditorScissorsEffectPrivate(qSlicerSegmentEditorScissorsEffect& object);
   ~qSlicerSegmentEditorScissorsEffectPrivate() override;
+
 public:
   enum
   {
     ShapeFreeForm,
     ShapeCircle,
     ShapeRectangle,
-    Shape_Last// must be the last item
+    Shape_Last // must be the last item
   };
 
   enum
@@ -203,6 +208,7 @@ protected:
   ScissorsPipeline* scissorsPipelineForWidget(qMRMLWidget* viewWidget);
   /// Delete all scissors pipelines
   void clearScissorsPipelines();
+
 public:
   QIcon ScissorsIcon;
 
@@ -219,7 +225,7 @@ public:
 
   QMap<qMRMLWidget*, ScissorsPipeline*> ScissorsPipelines;
 
-  QGridLayout*  gridLayout;
+  QGridLayout* gridLayout;
 
   QRadioButton* eraseInsideRadioButton;
   QRadioButton* eraseOutsideRadioButton;
@@ -240,11 +246,12 @@ public:
   QButtonGroup* sliceCutModeGroup;
 
   qMRMLSpinBox* sliceCutDepthSpinBox;
-  QCheckBox*    applyToAllVisibleSegmentsCheckBox;
+  QCheckBox* applyToAllVisibleSegmentsCheckBox;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScissorsEffectPrivate::qSlicerSegmentEditorScissorsEffectPrivate(qSlicerSegmentEditorScissorsEffect& object)
+qSlicerSegmentEditorScissorsEffectPrivate::qSlicerSegmentEditorScissorsEffectPrivate(
+  qSlicerSegmentEditorScissorsEffect& object)
   : q_ptr(&object)
 {
   this->ScissorsIcon = QIcon(":Icons/Medium/SlicerEditCut.png");
@@ -317,7 +324,8 @@ ScissorsPipeline* qSlicerSegmentEditorScissorsEffectPrivate::scissorsPipelineFor
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pipeline, const vtkVector2i& eventPosition)
+void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pipeline,
+                                                            const vtkVector2i& eventPosition)
 {
   if (pipeline->IsDragging)
   {
@@ -347,7 +355,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pi
     int previousPointIndex = -1;
     int firstPointIndex = -1;
     int pointIndex = -1;
-    for (int corner = 0; corner<numberOfPoints; ++corner)
+    for (int corner = 0; corner < numberOfPoints; ++corner)
     {
       pointIndex = points->InsertNextPoint(eventPosition[0], eventPosition[1], 0.0);
       if (previousPointIndex != -1)
@@ -403,7 +411,9 @@ void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pi
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(ScissorsPipeline* pipeline, const vtkVector2i& eventPosition, bool finalize)
+void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(ScissorsPipeline* pipeline,
+                                                                           const vtkVector2i& eventPosition,
+                                                                           bool finalize)
 {
   if (pipeline->IsDragging)
   {
@@ -444,8 +454,9 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
           qWarning() << Q_FUNC_INFO << "Circle glyph is expected to have at least 4 points";
           break;
         }
-        double radius = sqrt((eventPosition[0] - this->DragStartPosition[0])*(eventPosition[0] - this->DragStartPosition[0])
-          + (eventPosition[1] - this->DragStartPosition[1])*(eventPosition[1] - this->DragStartPosition[1]));
+        double radius =
+          sqrt((eventPosition[0] - this->DragStartPosition[0]) * (eventPosition[0] - this->DragStartPosition[0])
+               + (eventPosition[1] - this->DragStartPosition[1]) * (eventPosition[1] - this->DragStartPosition[1]));
         double position[3] = { 0 };
         for (int i = 0; i < numberOfPoints; i++)
         {
@@ -457,8 +468,8 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
           }
           else
           {
-            position[0] = (eventPosition[0] + this->DragStartPosition[0])/2 + radius/2 * sin(angle);
-            position[1] = (eventPosition[1] + this->DragStartPosition[1])/2 + radius/2 * cos(angle);
+            position[0] = (eventPosition[0] + this->DragStartPosition[0]) / 2 + radius / 2 * sin(angle);
+            position[1] = (eventPosition[1] + this->DragStartPosition[1]) / 2 + radius / 2 * cos(angle);
           }
           points->SetPoint(i, position);
         }
@@ -537,9 +548,11 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     return false;
   }
   vtkNew<vtkMatrix4x4> segmentationToWorldMatrix;
-  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down
+  // things too much)
   // TODO: show a meaningful error message to the user if attempted
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(segmentationNode->GetParentTransformNode(), nullptr, segmentationToWorldMatrix.GetPointer());
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+    segmentationNode->GetParentTransformNode(), nullptr, segmentationToWorldMatrix.GetPointer());
 
   vtkNew<vtkPoints> closedSurfacePoints; // p0Top, p0Bottom, p1Top, p1Bottom, ...
 
@@ -551,7 +564,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
   if (sliceWidget)
   {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget));
+    vtkMRMLSliceNode* sliceNode =
+      vtkMRMLSliceNode::SafeDownCast(qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget));
     if (!sliceNode)
     {
       qCritical() << Q_FUNC_INFO << ": Failed to get slice node";
@@ -567,8 +581,10 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     segmentationToSliceXYTransform->Concatenate(segmentationToWorldMatrix.GetPointer());
     double segmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
     double originalSegmentationBounds_SliceXY[6] = { 0, -1, 0, -1, 0, -1 };
-    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
-    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), originalSegmentationBounds_SliceXY);
+    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(
+      modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), segmentationBounds_SliceXY);
+    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(
+      modifierLabelmap, segmentationToSliceXYTransform.GetPointer(), originalSegmentationBounds_SliceXY);
     // Extend bounds by half slice to make sure the boundaries are included
     int sliceCutMode = this->ConvertSliceCutModeFromString(q->parameter("SliceCutMode"));
     switch (sliceCutMode)
@@ -583,7 +599,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       {
         vtkNew<vtkMatrix4x4> sliceXYToSegmentationTransform;
         vtkMatrix4x4::Invert(segmentationToSliceXYTransform->GetMatrix(), sliceXYToSegmentationTransform.GetPointer());
-        double sliceNormalVector_SliceXY[4] = { 0, 0, 1, 0};
+        double sliceNormalVector_SliceXY[4] = { 0, 0, 1, 0 };
         double sliceNormalVector_World[4] = { 0, 0, 1, 0 };
         sliceXYToSegmentationTransform->MultiplyPoint(sliceNormalVector_SliceXY, sliceNormalVector_World);
         double sliceThicknessMmPerPixel = vtkMath::Norm(sliceNormalVector_World);
@@ -597,7 +613,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         segmentationBounds_SliceXY[4] = -halfSliceCutDepthPixel;
         segmentationBounds_SliceXY[5] = halfSliceCutDepthPixel;
       }
-        break;
+      break;
       default:
         // unlimited
         break;
@@ -605,7 +621,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     if (sliceCutMode != SliceCutModeSymmetric)
     {
       // Add half slice to make sure the current slice and the last slice are fully included
-      double brushZEpsilon = 0.0; // small offset to make have main and additional brush planes very close but not coincident
+      double brushZEpsilon =
+        0.0; // small offset to make have main and additional brush planes very close but not coincident
       if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
       {
         segmentationBounds_SliceXY[4] -= 0.5;
@@ -626,14 +643,20 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         switch (sliceCutMode)
         {
           case SliceCutModePositive:
-            cube->SetBounds(segmentationBounds_SliceXY[0], segmentationBounds_SliceXY[1],
-              segmentationBounds_SliceXY[2], segmentationBounds_SliceXY[3],
-              originalSegmentationBounds_SliceXY[4], segmentationBounds_SliceXY[4] - brushZEpsilon);
+            cube->SetBounds(segmentationBounds_SliceXY[0],
+                            segmentationBounds_SliceXY[1],
+                            segmentationBounds_SliceXY[2],
+                            segmentationBounds_SliceXY[3],
+                            originalSegmentationBounds_SliceXY[4],
+                            segmentationBounds_SliceXY[4] - brushZEpsilon);
             break;
           case SliceCutModeNegative:
-            cube->SetBounds(segmentationBounds_SliceXY[0], segmentationBounds_SliceXY[1],
-              segmentationBounds_SliceXY[2], segmentationBounds_SliceXY[3],
-              segmentationBounds_SliceXY[5] + brushZEpsilon, originalSegmentationBounds_SliceXY[5]);
+            cube->SetBounds(segmentationBounds_SliceXY[0],
+                            segmentationBounds_SliceXY[1],
+                            segmentationBounds_SliceXY[2],
+                            segmentationBounds_SliceXY[3],
+                            segmentationBounds_SliceXY[5] + brushZEpsilon,
+                            originalSegmentationBounds_SliceXY[5]);
             break;
         }
         vtkNew<vtkTransformPolyDataFilter> transformToRasFilter;
@@ -661,7 +684,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       closedSurfacePoints->InsertNextPoint(pointWorld);
     }
   }
-  else if(threeDWidget)
+  else if (threeDWidget)
   {
     vtkRenderer* renderer = qSlicerSegmentEditorAbstractEffect::renderer(threeDWidget);
     if (!renderer)
@@ -669,7 +692,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       qCritical() << Q_FUNC_INFO << ": Failed to get renderer";
       return false;
     }
-    vtkCamera *camera = renderer->GetActiveCamera();
+    vtkCamera* camera = renderer->GetActiveCamera();
     if (!camera)
     {
       qCritical() << Q_FUNC_INFO << ": Failed to get camera";
@@ -720,12 +743,10 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     segmentationToCameraTransform->Concatenate(worldToCameraMatrix.GetPointer());
     segmentationToCameraTransform->Concatenate(segmentationToWorldMatrix.GetPointer());
     double segmentationBounds_Camera[6] = { 0, -1, 0, -1, 0, -1 };
-    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(modifierLabelmap, segmentationToCameraTransform.GetPointer(), segmentationBounds_Camera);
-    double clipRangeFromModifierLabelmap[2] =
-      {
-      std::min(segmentationBounds_Camera[4], segmentationBounds_Camera[5]),
-      std::max(segmentationBounds_Camera[4], segmentationBounds_Camera[5])
-      };
+    vtkOrientedImageDataResample::TransformOrientedImageDataBounds(
+      modifierLabelmap, segmentationToCameraTransform.GetPointer(), segmentationBounds_Camera);
+    double clipRangeFromModifierLabelmap[2] = { std::min(segmentationBounds_Camera[4], segmentationBounds_Camera[5]),
+                                                std::max(segmentationBounds_Camera[4], segmentationBounds_Camera[5]) };
     // Extend bounds by half slice to make sure the boundaries are included
     clipRangeFromModifierLabelmap[0] -= 0.5;
     clipRangeFromModifierLabelmap[1] += 0.5;
@@ -733,11 +754,10 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     // Clip what we see on the camera but reduce it to the modifier labelmap's range
     // to keep the stencil as small as possible
     double* clipRangeFromCamera = camera->GetClippingRange();
-    double clipRange[2] =
-      {
+    double clipRange[2] = {
       std::max(clipRangeFromModifierLabelmap[0], clipRangeFromCamera[0]),
       std::min(clipRangeFromModifierLabelmap[1], clipRangeFromCamera[1]),
-      };
+    };
 
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
     {
@@ -786,8 +806,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         tB = clipRange[1] - rayLength;
         for (int i = 0; i < 3; i++)
         {
-          p1World[i] = pickPosition[i] + tF*cameraDOP[i];
-          p2World[i] = pickPosition[i] + tB*cameraDOP[i];
+          p1World[i] = pickPosition[i] + tF * cameraDOP[i];
+          p2World[i] = pickPosition[i] + tB * cameraDOP[i];
         }
       }
       else
@@ -796,8 +816,8 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         tB = clipRange[1] / rayLength;
         for (int i = 0; i < 3; i++)
         {
-          p1World[i] = cameraPos[i] + tF*ray[i];
-          p2World[i] = cameraPos[i] + tB*ray[i];
+          p1World[i] = cameraPos[i] + tF * ray[i];
+          p2World[i] = cameraPos[i] + tB * ray[i];
         }
       }
       p1World[3] = p2World[3] = 1.0;
@@ -851,7 +871,6 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
     append->Update();
     DebugWritePolyData(append->GetOutput());
-
   }
   else
   {
@@ -860,7 +879,6 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     // TODO: temporary code, only for debugging
     // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
     DebugWritePolyData(closedSurfacePolyData);
-
   }
 
   return true;
@@ -899,9 +917,11 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushStencil(qMRMLWidget* 
   this->WorldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
   vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
-  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down
+  // things too much)
   // TODO: show a meaningful error message to the user if attempted
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+    nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
   this->WorldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
 
   this->WorldToModifierLabelmapIjkTransformer->Update();
@@ -910,8 +930,12 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushStencil(qMRMLWidget* 
     // Clip modifier labelmap to non-null region to make labelmap modification faster later
     vtkPolyData* brushModel_ModifierLabelmapIjk = this->WorldToModifierLabelmapIjkTransformer->GetOutput();
     double* boundsIjk = brushModel_ModifierLabelmapIjk->GetBounds();
-    this->BrushPolyDataToStencil->SetOutputWholeExtent(floor(boundsIjk[0]) - 1, ceil(boundsIjk[1]) + 1,
-      floor(boundsIjk[2]) - 1, ceil(boundsIjk[3]) + 1, floor(boundsIjk[4]) - 1, ceil(boundsIjk[5]) + 1);
+    this->BrushPolyDataToStencil->SetOutputWholeExtent(floor(boundsIjk[0]) - 1,
+                                                       ceil(boundsIjk[1]) + 1,
+                                                       floor(boundsIjk[2]) - 1,
+                                                       ceil(boundsIjk[3]) + 1,
+                                                       floor(boundsIjk[4]) - 1,
+                                                       ceil(boundsIjk[5]) + 1);
   }
   else
   {
@@ -954,7 +978,8 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
   }
 
   // Create a list of segment IDs that will be processed.
-  std::string selectedSegmentID = q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "";
+  std::string selectedSegmentID =
+    q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "";
   vtkNew<vtkStringArray> allProcessedSegmentIDs;
   bool applyToAllVisibleSegments = (q->integerParameter("ApplyToAllVisibleSegments") != 0);
   if (applyToAllVisibleSegments)
@@ -962,7 +987,8 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
     // Iterate through visible segments
     // set each as selected one by one
     // Paint on modifier labelmap
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)
     {
       displayNode->GetVisibleSegmentIDs(allProcessedSegmentIDs);
@@ -990,9 +1016,11 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
   worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
   vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
-  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down
+  // things too much)
   // TODO: show a meaningful error message to the user if attempted
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+    nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
   worldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
 
   vtkNew<vtkImageStencilToImage> stencilToImage;
@@ -1022,10 +1050,12 @@ void qSlicerSegmentEditorScissorsEffectPrivate::paintApply(qMRMLWidget* viewWidg
   modifierLabelmap->GetImageToWorldMatrix(imageToWorld.GetPointer());
   orientedBrushPositionerOutput->SetImageToWorldMatrix(imageToWorld.GetPointer());
 
-  vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+  vtkOrientedImageDataResample::ModifyImage(
+    modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
 
   // Notify editor about changes
-  qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode = qSlicerSegmentEditorAbstractEffect::ModificationModeAdd;
+  qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode =
+    qSlicerSegmentEditorAbstractEffect::ModificationModeAdd;
   if (this->operationErase())
   {
     modificationMode = qSlicerSegmentEditorAbstractEffect::ModificationModeRemove;
@@ -1065,10 +1095,14 @@ QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertShapeToString(int shap
 {
   switch (shape)
   {
-    case ShapeFreeForm: return "FreeForm";
-    case ShapeCircle: return "Circle";
-    case ShapeRectangle: return "Rectangle";
-    default: return "";
+    case ShapeFreeForm:
+      return "FreeForm";
+    case ShapeCircle:
+      return "Circle";
+    case ShapeRectangle:
+      return "Rectangle";
+    default:
+      return "";
   }
 }
 
@@ -1090,11 +1124,16 @@ QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertOperationToString(int 
 {
   switch (operation)
   {
-    case OperationEraseInside: return "EraseInside";
-    case OperationEraseOutside: return "EraseOutside";
-    case OperationFillInside: return "FillInside";
-    case OperationFillOutside: return "FillOutside";
-    default: return "";
+    case OperationEraseInside:
+      return "EraseInside";
+    case OperationEraseOutside:
+      return "EraseOutside";
+    case OperationFillInside:
+      return "FillInside";
+    case OperationFillOutside:
+      return "FillOutside";
+    default:
+      return "";
   }
 }
 
@@ -1116,11 +1155,16 @@ QString qSlicerSegmentEditorScissorsEffectPrivate::ConvertSliceCutModeToString(i
 {
   switch (operation)
   {
-    case SliceCutModeUnlimited: return "Unlimited";
-    case SliceCutModePositive: return "Positive";
-    case SliceCutModeNegative: return "Negative";
-    case SliceCutModeSymmetric: return "Symmetric";
-    default: return "";
+    case SliceCutModeUnlimited:
+      return "Unlimited";
+    case SliceCutModePositive:
+      return "Positive";
+    case SliceCutModeNegative:
+      return "Negative";
+    case SliceCutModeSymmetric:
+      return "Symmetric";
+    default:
+      return "";
   }
 }
 
@@ -1156,10 +1200,10 @@ int qSlicerSegmentEditorScissorsEffectPrivate::shape()
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSegmentEditorScissorsEffectPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSegmentEditorScissorsEffectPrivate(*this))
 {
-  this->m_Name = QString(/*no tr*/"Scissors");
+  this->m_Name = QString(/*no tr*/ "Scissors");
   this->m_Title = tr("Scissors");
   this->m_ShowEffectCursorInThreeDView = true;
 }
@@ -1176,15 +1220,16 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorScissorsEffect::helpText()const
+QString const qSlicerSegmentEditorScissorsEffect::helpText() const
 {
-  return QString("<html>") + tr("Cut through the entire segment from the current viewpoint<br>."
-    "<p><ul style=\"margin: 0\">"
-    "<li><b>Left-button drag-and-drop:</b> sweep out an outline."
-    "<li><b>Esc:</b> cancel."
-    "</ul><p>"
-    "Editing is available both in slice and 3D views. In slice view cutting will be applied to all slices."
-    "<p>");
+  return QString("<html>")
+         + tr("Cut through the entire segment from the current viewpoint<br>."
+              "<p><ul style=\"margin: 0\">"
+              "<li><b>Left-button drag-and-drop:</b> sweep out an outline."
+              "<li><b>Esc:</b> cancel."
+              "</ul><p>"
+              "Editing is available both in slice and 3D views. In slice view cutting will be applied to all slices."
+              "<p>");
 }
 
 //-----------------------------------------------------------------------------
@@ -1213,21 +1258,25 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   d->operationGroup = new QButtonGroup(this);
   d->operationGroup->setExclusive(true);
-  d->operationGroup->addButton(d->eraseInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside);
-  d->operationGroup->addButton(d->eraseOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseOutside);
-  d->operationGroup->addButton(d->fillInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillInside);
-  d->operationGroup->addButton(d->fillOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillOutside);
+  d->operationGroup->addButton(d->eraseInsideRadioButton,
+                               qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside);
+  d->operationGroup->addButton(d->eraseOutsideRadioButton,
+                               qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseOutside);
+  d->operationGroup->addButton(d->fillInsideRadioButton,
+                               qSlicerSegmentEditorScissorsEffectPrivate::OperationFillInside);
+  d->operationGroup->addButton(d->fillOutsideRadioButton,
+                               qSlicerSegmentEditorScissorsEffectPrivate::OperationFillOutside);
 
   QObject::connect(d->operationGroup, SIGNAL(buttonClicked(int)), this, SLOT(setOperation(int)));
 
   // Shape
 
   d->freeFormRadioButton = new QRadioButton(tr("Free-form"));
-  d->circleRadioButton= new QRadioButton(tr("Circle"));
-  d->rectangleRadioButton= new QRadioButton(tr("Rectangle"));
+  d->circleRadioButton = new QRadioButton(tr("Circle"));
+  d->rectangleRadioButton = new QRadioButton(tr("Rectangle"));
   d->shapeDrawCenteredCheckBox = new QCheckBox(tr("Centered"));
-  d->shapeDrawCenteredCheckBox->setToolTip(
-    tr("If checked, click position sets the circle or rectangle center, otherwise click position is at the shape boundary."));
+  d->shapeDrawCenteredCheckBox->setToolTip(tr("If checked, click position sets the circle or rectangle center, "
+                                              "otherwise click position is at the shape boundary."));
 
   d->gridLayout->addWidget(new QLabel(tr("Shape:")), 0, 1);
   d->gridLayout->addWidget(d->freeFormRadioButton, 1, 1);
@@ -1249,16 +1298,21 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->unlimitedRadioButton = new QRadioButton(tr("Unlimited"));
   d->unlimitedRadioButton->setToolTip(tr("Cut through the entire segmentation. Only used for slice views."));
   d->positiveRadioButton = new QRadioButton(tr("Positive"));
-  d->positiveRadioButton->setToolTip(tr("Only positive side of the slice plane is included in cut region. Only used for slice views."));
+  d->positiveRadioButton->setToolTip(
+    tr("Only positive side of the slice plane is included in cut region. Only used for slice views."));
   d->negativeRadioButton = new QRadioButton(tr("Negative"));
-  d->negativeRadioButton->setToolTip(tr("Only negative side of the slice plane is included in cut region. Only used for slice views."));
+  d->negativeRadioButton->setToolTip(
+    tr("Only negative side of the slice plane is included in cut region. Only used for slice views."));
   d->symmetricRadioButton = new QRadioButton(tr("Symmetric"));
-  d->symmetricRadioButton->setToolTip(tr("Cut region is limited to the specified thickness around the slice plane. Only used for slice views."));
+  d->symmetricRadioButton->setToolTip(
+    tr("Cut region is limited to the specified thickness around the slice plane. Only used for slice views."));
 
   d->sliceCutDepthSpinBox = new qMRMLSpinBox();
-  d->sliceCutDepthSpinBox->setToolTip(tr("Thickness of the cut region. 0 means that only the current slice is included. Only used for slice views."));
+  d->sliceCutDepthSpinBox->setToolTip(
+    tr("Thickness of the cut region. 0 means that only the current slice is included. Only used for slice views."));
   d->sliceCutDepthSpinBox->setQuantity("length"); // scene is not available yet
-  d->sliceCutDepthSpinBox->setUnitAwareProperties(qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix | qMRMLSpinBox::Precision | qMRMLSpinBox::MaximumValue);
+  d->sliceCutDepthSpinBox->setUnitAwareProperties(qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix | qMRMLSpinBox::Precision
+                                                  | qMRMLSpinBox::MaximumValue);
   d->sliceCutDepthSpinBox->setMinimum(0);
   d->sliceCutDepthSpinBox->setValue(0);
   d->sliceCutDepthSpinBox->setEnabled(false);
@@ -1285,10 +1339,14 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 
   d->sliceCutModeGroup = new QButtonGroup(this);
   d->sliceCutModeGroup->setExclusive(true);
-  d->sliceCutModeGroup->addButton(d->unlimitedRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited);
-  d->sliceCutModeGroup->addButton(d->positiveRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModePositive);
-  d->sliceCutModeGroup->addButton(d->negativeRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeNegative);
-  d->sliceCutModeGroup->addButton(d->symmetricRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
+  d->sliceCutModeGroup->addButton(d->unlimitedRadioButton,
+                                  qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited);
+  d->sliceCutModeGroup->addButton(d->positiveRadioButton,
+                                  qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModePositive);
+  d->sliceCutModeGroup->addButton(d->negativeRadioButton,
+                                  qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeNegative);
+  d->sliceCutModeGroup->addButton(d->symmetricRadioButton,
+                                  qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
 
   QObject::connect(d->sliceCutModeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setSliceCutMode(int)));
   QObject::connect(d->sliceCutDepthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onSliceCutDepthChanged(double)));
@@ -1301,9 +1359,11 @@ void qSlicerSegmentEditorScissorsEffect::setMRMLDefaults()
   Q_D(qSlicerSegmentEditorScissorsEffect);
   Superclass::setMRMLDefaults();
   this->setParameterDefault("ApplyToAllVisibleSegments", 0);
-  this->setParameterDefault("Operation", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside));
+  this->setParameterDefault(
+    "Operation", d->ConvertOperationToString(qSlicerSegmentEditorScissorsEffectPrivate::OperationEraseInside));
   this->setParameterDefault("Shape", d->ConvertShapeToString(qSlicerSegmentEditorScissorsEffectPrivate::ShapeFreeForm));
-  this->setParameterDefault("SliceCutMode", d->ConvertSliceCutModeToString(qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited));
+  this->setParameterDefault(
+    "SliceCutMode", d->ConvertSliceCutModeToString(qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeUnlimited));
   this->setParameterDefault("SliceCutDepthMm", 0);
   this->setParameterDefault("ShapeDrawCentered", 0);
 }
@@ -1343,9 +1403,10 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
   }
 
   bool wasBlocked = d->shapeDrawCenteredCheckBox->blockSignals(true);
-  d->shapeDrawCenteredCheckBox->setCheckState(this->integerParameter("ShapeDrawCentered") ? Qt::Checked : Qt::Unchecked );
-  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle ||
-                                            shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
+  d->shapeDrawCenteredCheckBox->setCheckState(this->integerParameter("ShapeDrawCentered") ? Qt::Checked
+                                                                                          : Qt::Unchecked);
+  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle
+                                           || shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
   d->shapeDrawCenteredCheckBox->blockSignals(wasBlocked);
 
   int sliceCutModeIndex = d->ConvertSliceCutModeFromString(QString(this->parameter("SliceCutMode")));
@@ -1359,7 +1420,8 @@ void qSlicerSegmentEditorScissorsEffect::updateGUIFromMRML()
   wasBlocked = d->sliceCutDepthSpinBox->blockSignals(true);
   d->sliceCutDepthSpinBox->setMRMLScene(this->scene());
   d->sliceCutDepthSpinBox->setValue(this->doubleParameter("SliceCutDepthMm"));
-  d->sliceCutDepthSpinBox->setEnabled(sliceCutModeIndex == qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
+  d->sliceCutDepthSpinBox->setEnabled(sliceCutModeIndex
+                                      == qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
   d->sliceCutDepthSpinBox->blockSignals(wasBlocked);
 
   d->applyToAllVisibleSegmentsCheckBox->blockSignals(true);
@@ -1380,9 +1442,8 @@ void qSlicerSegmentEditorScissorsEffect::setShape(int shapeIndex)
   Q_D(qSlicerSegmentEditorScissorsEffect);
   QString shape = d->ConvertShapeToString(shapeIndex);
   this->setParameter("Shape", shape);
-  d->shapeDrawCenteredCheckBox->setEnabled(
-    shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle
-    || shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
+  d->shapeDrawCenteredCheckBox->setEnabled(shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle
+                                           || shapeIndex == qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
 }
 
 //-----------------------------------------------------------------------------
@@ -1439,10 +1500,9 @@ void qSlicerSegmentEditorScissorsEffect::deactivate()
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
-  vtkRenderWindowInteractor* callerInteractor,
-  unsigned long eid,
-  qMRMLWidget* viewWidget )
+bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(vtkRenderWindowInteractor* callerInteractor,
+                                                                  unsigned long eid,
+                                                                  qMRMLWidget* viewWidget)
 {
   Q_D(qSlicerSegmentEditorScissorsEffect);
 
@@ -1462,7 +1522,8 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
     return abortEvent;
   }
 
-  bool anyModifierKeyPressed = (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
+  bool anyModifierKeyPressed =
+    (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
 
   if (eid == vtkCommand::LeftButtonPressEvent && !anyModifierKeyPressed)
   {
@@ -1483,7 +1544,7 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
     }
 
     pipeline->IsDragging = true;
-    //this->cursorOff(viewWidget);
+    // this->cursorOff(viewWidget);
     vtkVector2i eventPosition;
     callerInteractor->GetEventPosition(eventPosition[0], eventPosition[1]);
     d->createGlyph(pipeline, eventPosition);
@@ -1508,7 +1569,7 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
       vtkVector2i eventPosition;
       callerInteractor->GetEventPosition(eventPosition[0], eventPosition[1]);
       d->updateGlyphWithNewPosition(pipeline, eventPosition, true);
-      //this->cursorOn(viewWidget);
+      // this->cursorOn(viewWidget);
 
       // Paint on modifier labelmap
       vtkCellArray* lines = pipeline->PolyData->GetLines();

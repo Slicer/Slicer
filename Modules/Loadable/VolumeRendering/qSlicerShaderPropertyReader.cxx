@@ -41,7 +41,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerShaderPropertyReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
@@ -71,29 +71,28 @@ void qSlicerShaderPropertyReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderi
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic() const
 {
   Q_D(const qSlicerShaderPropertyReader);
   return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerShaderPropertyReader::description()const
+QString qSlicerShaderPropertyReader::description() const
 {
   return tr("GPU Shader Property");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType()const
+qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType() const
 {
   return QString("ShaderPropertyFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerShaderPropertyReader::extensions()const
+QStringList qSlicerShaderPropertyReader::extensions() const
 {
-  return QStringList()
-    << tr("Shader Property") + " (*.sp)";
+  return QStringList() << tr("Shader Property") + " (*.sp)";
 }
 
 //-----------------------------------------------------------------------------
@@ -103,8 +102,8 @@ bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
   // Name is ignored
-  //QString name = QFileInfo(fileName).baseName();
-  //if (properties.contains("name"))
+  // QString name = QFileInfo(fileName).baseName();
+  // if (properties.contains("name"))
   //  {
   //  name = properties["name"].toString();
   //  }
@@ -112,8 +111,7 @@ bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
   {
     return false;
   }
-  vtkMRMLShaderPropertyNode* node =
-    d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toUtf8());
+  vtkMRMLShaderPropertyNode* node = d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
   {

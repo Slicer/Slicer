@@ -34,7 +34,7 @@ class qSlicerModuleManager;
 ///
 /// qSlicerModulesMenu supports a tree hierarchy of modules (based on
 /// module->category() )
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu : public QMenu
 {
   Q_OBJECT
   Q_PROPERTY(QString currentModule READ currentModule WRITE setCurrentModule NOTIFY currentModuleChanged)
@@ -67,7 +67,7 @@ public:
   ~qSlicerModulesMenu() override;
 
   ///
-  Q_INVOKABLE QAction* moduleAction(const QString& moduleName)const;
+  Q_INVOKABLE QAction* moduleAction(const QString& moduleName) const;
 
   /// Add a list of module available for selection.
   inline void addModules(const QStringList& moduleNames);
@@ -76,22 +76,22 @@ public:
   inline void removeModules(const QStringList& moduleNames);
 
   /// Return the last selected module name.
-  QString currentModule()const;
+  QString currentModule() const;
 
   /// Set the module manager to retrieve the modules from.
   void setModuleManager(qSlicerModuleManager* moduleManager);
-  qSlicerModuleManager* moduleManager()const;
+  qSlicerModuleManager* moduleManager() const;
 
   void setDuplicateActions(bool duplicate);
-  bool duplicateActions()const;
+  bool duplicateActions() const;
 
   /// If true, modules with the hidden property set to true are still visible
   /// in the module.
   void setShowHiddenModules(bool show);
-  bool showHiddenModules()const;
+  bool showHiddenModules() const;
 
   void setTopLevelCategoryOrder(const QStringList& categories);
-  QStringList topLevelCategoryOrder()const;
+  QStringList topLevelCategoryOrder() const;
 
   /// Remove a top-level category or sub-category. Return true if it was found and removed.
   ///
@@ -162,7 +162,7 @@ private:
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::addModules(const QStringList& moduleNames)
 {
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     this->addModule(moduleName);
   }
@@ -171,7 +171,7 @@ void qSlicerModulesMenu::addModules(const QStringList& moduleNames)
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::removeModules(const QStringList& moduleNames)
 {
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     this->removeModule(moduleName);
   }

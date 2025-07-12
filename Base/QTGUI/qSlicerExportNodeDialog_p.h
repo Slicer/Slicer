@@ -31,7 +31,8 @@ class qSlicerFileWriterOptionsWidget;
 //-----------------------------------------------------------------------------
 // Helper class to represent widgets that need to be displayed separately for each node type
 // To add NodeTypeWidgetSets to the dialog: use NodeTypeWidgetSets::insertWidgetsAtRow
-// To remove them from the dialog: do manually using QFormLayout::takeRow, and call NodeTypeWidgetSets::notifyRemovedFromDialog
+// To remove them from the dialog: do manually using QFormLayout::takeRow, and call
+// NodeTypeWidgetSets::notifyRemovedFromDialog
 class NodeTypeWidgetSet : public QObject
 {
   Q_OBJECT
@@ -54,8 +55,8 @@ public:
   // Return the actual text of the currently selected option in the format dropdown, e.g. "NRRD (.nrrd)"
   QString formatText() const;
 
-  // Set given options widget to be the current one for this NodeTypeWidgetSet, i.e. the one displayed in the options stacked widget
-  // Passing nullptr is okay: that means there is no options widget, and it blanks out the stacked widget
+  // Set given options widget to be the current one for this NodeTypeWidgetSet, i.e. the one displayed in the options
+  // stacked widget Passing nullptr is okay: that means there is no options widget, and it blanks out the stacked widget
   void changeCurrentOptionsWidget(qSlicerFileWriterOptionsWidget*);
 
   // Set the options stacked widget to a blank widget
@@ -75,8 +76,8 @@ public:
   // prototypeNode must be valid to use this.
   bool updateOptionsWidget();
 
-  // Get display name associated to the node type (e.g. if node type is "vtkMRMLScalarVolumeNode", display name is "Volume")
-  // prototypeNode must be valid to use this.
+  // Get display name associated to the node type (e.g. if node type is "vtkMRMLScalarVolumeNode", display name is
+  // "Volume") prototypeNode must be valid to use this.
   QString getTypeDisplayName() const;
 
   // A node used to represent its node type; helps with initializing some export dialog parameters.
@@ -84,23 +85,27 @@ public:
   vtkMRMLStorableNode* prototypeNode;
 
   // Set different display style and margin for the frame that contains the widgets
-  enum class FrameStyle {NoFrame, Frame};
+  enum class FrameStyle
+  {
+    NoFrame,
+    Frame
+  };
   void setFrameStyle(FrameStyle);
 
   // Node type that the member widgets will be configured for.
   NodeType nodeType;
 
   // Member widgets
-  QLabel* label = nullptr; // The label in front of our frame in the form layout
-  QFrame* frame = nullptr; // The widget that will go into the form layout
-  QVBoxLayout* frameLayout = nullptr; // The layout that frame will have
+  QLabel* label = nullptr;                   // The label in front of our frame in the form layout
+  QFrame* frame = nullptr;                   // The widget that will go into the form layout
+  QVBoxLayout* frameLayout = nullptr;        // The layout that frame will have
   QComboBox* exportFormatComboBox = nullptr; // Goes into frameLayout
-  QStackedWidget* optionsStackedWidget; // Goes into frameLayout
-  qSlicerFileWriterOptionsWidget* optionsWidget = nullptr; // The current options widget, if any, that should be on display by optionsStackedWidget
-
+  QStackedWidget* optionsStackedWidget;      // Goes into frameLayout
+  qSlicerFileWriterOptionsWidget* optionsWidget =
+    nullptr; // The current options widget, if any, that should be on display by optionsStackedWidget
 
   // Mapping from formats to options widgets, to keep track of and reuse options widgets as they get created
-  QHash<QString,qSlicerFileWriterOptionsWidget*> formatToOptionsWidget;
+  QHash<QString, qSlicerFileWriterOptionsWidget*> formatToOptionsWidget;
 
 public slots:
   void formatChangedSlot();
@@ -114,34 +119,34 @@ class qSlicerExportNodeDialogPrivate
   Q_OBJECT
 public:
   typedef qSlicerExportNodeDialogPrivate Self;
-  explicit qSlicerExportNodeDialogPrivate(QWidget* _parent=nullptr);
+  explicit qSlicerExportNodeDialogPrivate(QWidget* _parent = nullptr);
   ~qSlicerExportNodeDialogPrivate() override;
 
   /* Set the nodes being exported and fill out the dialog widgets with a reasonable initial state.
-  Two lists of node pointers must be given, one based on recursively including the storable node child items of the selected node in the
-  subject hierarchy tree, and one based on non-recursively doing so.
-  selectedNode is the single storable node that was selected in the subject hierarchy to trigger this export, if there is one;
-  can be null if there isn't. nodeIdToSubjectHierarchyPath is a mapping from node IDs to lists of subject hierarchy item names, where
-  each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID;
+  Two lists of node pointers must be given, one based on recursively including the storable node child items of the
+  selected node in the subject hierarchy tree, and one based on non-recursively doing so. selectedNode is the single
+  storable node that was selected in the subject hierarchy to trigger this export, if there is one; can be null if there
+  isn't. nodeIdToSubjectHierarchyPath is a mapping from node IDs to lists of subject hierarchy item names, where each
+  list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID;
   it can be left empty, but the "Preserve hierarchy" functionality will not work.
-  The reference parameters of this function are assumed to remain valid references during execution (exec) of this dialog.*/
-  bool setup(
-    vtkMRMLScene* scene,
-    const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
-    const QList<vtkMRMLStorableNode*>& nodesRecursive,
-    vtkMRMLStorableNode* selectedNode,
-    const QHash<QString,QVariant>& nodeIdToSubjectHierarchyPath
-  );
+  The reference parameters of this function are assumed to remain valid references during execution (exec) of this
+  dialog.*/
+  bool setup(vtkMRMLScene* scene,
+             const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
+             const QList<vtkMRMLStorableNode*>& nodesRecursive,
+             vtkMRMLStorableNode* selectedNode,
+             const QHash<QString, QVariant>& nodeIdToSubjectHierarchyPath);
 
-  /// Remove any problem-causing characters from \a fileName, strip off any extension from the end of it if that extension
-  /// is known to be associated with \a node, and then put \a extension back on
+  /// Remove any problem-causing characters from \a fileName, strip off any extension from the end of it if that
+  /// extension is known to be associated with \a node, and then put \a extension back on
   static QString forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLNode* node);
 
   /// Return a reasonable default filename choice for \a node with extension \a extension. It is based on the node name.
   static QString defaultFilename(vtkMRMLNode* node, QString extension);
 
   // Return whether list a has any elements that list b doesn't have.
-  template <typename T> static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b);
+  template <typename T>
+  static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b);
 
   // Return whether all widgets that are part of the given layout are invisible
   // Visibility is considered relative to the given widget relativeTo
@@ -161,7 +166,6 @@ protected slots:
   void onIncludeChildrenCheckBoxStateChanged(int state);
 
 protected:
-
   // Exports nodes based on parameters set in dialog. To be called when the dialog is accepted.
   bool exportNodes();
 
@@ -199,7 +203,7 @@ protected:
 
   // Get an entry from the hash map nodeTypeToNodeTypeWidgetSet, but make sure the key
   // is in the table, returning nullptr if not. Enabling logError prints a message into Qt message handling.
-  NodeTypeWidgetSet* getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError=false) const;
+  NodeTypeWidgetSet* getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError = false) const;
 
   // Validate that there is exactly one node to export, and get that node
   // error if validation fails, returning null result; use this only when it is guaranteed to succeed
@@ -220,8 +224,9 @@ protected:
   QList<vtkMRMLStorableNode*> NodesNonrecursive;
 
   // Mapping from node IDs to lists of subject hierarchy item names, where
-  // each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
-  QHash<QString,QVariant> NodeIdToSubjectHierarchyPath;
+  // each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches
+  // selectedNodeID.
+  QHash<QString, QVariant> NodeIdToSubjectHierarchyPath;
 
   // The storable node that was selected in the subject hierarchy to trigger this export, if there is one;
   // can be empty if there isn't. It is conveniently a list so that a uniform interface can be provided by nodeList().
@@ -234,9 +239,10 @@ protected:
   bool LastUsedIncludeChildren;
 
   // Mapping from node type to widget sets that are specific to a node type
-  QHash<NodeTypeWidgetSet::NodeType,NodeTypeWidgetSet*> NodeTypeToNodeTypeWidgetSet;
+  QHash<NodeTypeWidgetSet::NodeType, NodeTypeWidgetSet*> NodeTypeToNodeTypeWidgetSet;
 
-  // The row of the QFormLayout that contains the placeholder label. This is the row where NodeTypeWidgetSets will be inserted.
+  // The row of the QFormLayout that contains the placeholder label. This is the row where NodeTypeWidgetSets will be
+  // inserted.
   int NodeTypeWidgetSetStartRow = -1;
 
   // List of node types (in the sense of NodeTypeWidgetSet::NodeType) that correspond to node-type-specific widget sets
@@ -249,6 +255,5 @@ protected:
   // modifying file name can change export format and vice versa.
   bool ProtectFilenameLineEdit;
 };
-
 
 #endif

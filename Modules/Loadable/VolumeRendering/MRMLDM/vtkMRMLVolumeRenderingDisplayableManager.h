@@ -38,7 +38,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVol
   : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-  static vtkMRMLVolumeRenderingDisplayableManager *New();
+  static vtkMRMLVolumeRenderingDisplayableManager* New();
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -89,15 +89,15 @@ protected:
 
   int ActiveInteractionModes() override;
 
-  void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
 protected:
-  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic{nullptr};
+  vtkSlicerVolumeRenderingLogic* VolumeRenderingLogic{ nullptr };
   static int Maximum3DTextureSize;
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);                           // Not implemented
 
   class vtkInternal;
   vtkInternal* Internal;

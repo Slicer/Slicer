@@ -28,8 +28,8 @@ class vtkStringArray;
 class VTK_ITK_EXPORT vtkITKImageThresholdCalculator : public vtkImageAlgorithm
 {
 public:
-  static vtkITKImageThresholdCalculator *New();
-  vtkTypeMacro(vtkITKImageThresholdCalculator,vtkImageAlgorithm);
+  static vtkITKImageThresholdCalculator* New();
+  vtkTypeMacro(vtkITKImageThresholdCalculator, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetMacro(Threshold, double);
@@ -58,7 +58,7 @@ public:
    * dimensions.  It is also possible to resize the image by setting the
    * output image spacing or by setting a magnification factor.
    */
-  vtkSetClampMacro(Method, int, 0, NUMBER_OF_METHODS-1);
+  vtkSetClampMacro(Method, int, 0, NUMBER_OF_METHODS - 1);
   vtkGetMacro(Method, int);
   void SetMethodToHuang() { this->SetMethod(METHOD_HUANG); }
   void SetMethodToIntermodes() { this->SetMethod(METHOD_INTERMODES); }
@@ -72,7 +72,7 @@ public:
   void SetMethodToShanbhag() { this->SetMethod(METHOD_SHANBHAG); }
   void SetMethodToTriangle() { this->SetMethod(METHOD_TRIANGLE); }
   void SetMethodToYen() { this->SetMethod(METHOD_YEN); }
-  static const char *GetMethodAsString(int method);
+  static const char* GetMethodAsString(int method);
   //@}
 
   /// Bring vtkAlgorithm::Update methods here
@@ -93,6 +93,6 @@ private:
   void operator=(const vtkITKImageThresholdCalculator&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageThresholdCalculator);
+// vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 
 #endif
