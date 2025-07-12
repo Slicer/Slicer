@@ -15,19 +15,18 @@
 
 #include "itkImageFileReader.h"
 
-class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
-  : public vtkITKArchetypeImageSeriesReader
+class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile : public vtkITKArchetypeImageSeriesReader
 {
- public:
-  static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
-  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
+public:
+  static vtkITKArchetypeDiffusionTensorImageReaderFile* New();
+  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile, vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
- protected:
+protected:
   vtkITKArchetypeDiffusionTensorImageReaderFile();
   ~vtkITKArchetypeDiffusionTensorImageReaderFile() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   static void ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data);
   /// private:
 

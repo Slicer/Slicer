@@ -34,19 +34,19 @@
 
 // STD includes
 
-int qMRMLTreeViewTest1( int argc, char * argv [] )
+int qMRMLTreeViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  if( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
   }
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   vtkTimerLog* timer = vtkTimerLog::New();
   vtkMRMLScene* scene = vtkMRMLScene::New();
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
@@ -62,11 +62,11 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << std::endl << "Deleted: " << timer->GetElapsedTime() << std::endl;
 
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
   applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  qMRMLSceneModel   sceneModel;
+  qMRMLSceneModel sceneModel;
   sceneModel.setMRMLScene(scene);
   scene->SetURL(argv[1]);
   timer->StartTimer();
@@ -79,14 +79,14 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << "qMRMLSceneModel Deleted: " << timer->GetElapsedTime() << std::endl;
 
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
   applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  qMRMLSceneTransformModel   transformModel;
+  qMRMLSceneTransformModel transformModel;
   transformModel.setMRMLScene(scene);
   scene->SetURL(argv[1]);
-   timer->StartTimer();
+  timer->StartTimer();
   scene->Import();
   timer->StopTimer();
   std::cout << "qMRMLSceneTransformModel Loaded: " << timer->GetElapsedTime() << std::endl;
@@ -96,16 +96,16 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << "qMRMLSceneTransformModel Deleted: " << timer->GetElapsedTime() << std::endl;
 
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
   applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  qMRMLSceneTransformModel   transformModel2;
+  qMRMLSceneTransformModel transformModel2;
   transformModel2.setMRMLScene(scene);
-  qMRMLSortFilterProxyModel  sortModel;
+  qMRMLSortFilterProxyModel sortModel;
   sortModel.setSourceModel(&transformModel2);
   scene->SetURL(argv[1]);
-   timer->StartTimer();
+  timer->StartTimer();
   scene->Import();
   timer->StopTimer();
   std::cout << "qMRMLSceneTransformModel(+qMRMLSortFilterProxyModel) Loaded: " << timer->GetElapsedTime() << std::endl;
@@ -115,15 +115,14 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << "qMRMLSceneTransformModel(+qMRMLSortFilterProxyModel) Deleted: " << timer->GetElapsedTime() << std::endl;
 
-
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
   applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  qMRMLTreeView   mrmlItem;
+  qMRMLTreeView mrmlItem;
   mrmlItem.setMRMLScene(scene);
   scene->SetURL(argv[1]);
-   timer->StartTimer();
+  timer->StartTimer();
   scene->Import();
   timer->StopTimer();
   std::cout << "qMRMLTreeView Loaded: " << timer->GetElapsedTime() << std::endl;
@@ -133,11 +132,11 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << "qMRMLTreeView Deleted: " << timer->GetElapsedTime() << std::endl;
 
-  std::cout << std::endl<< "***************************************" << std::endl;
+  std::cout << std::endl << "***************************************" << std::endl;
   scene = vtkMRMLScene::New();
   applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
-  qMRMLTreeView   treeWidget;
+  qMRMLTreeView treeWidget;
   treeWidget.show();
   treeWidget.setMRMLScene(scene);
   scene->SetURL(argv[1]);

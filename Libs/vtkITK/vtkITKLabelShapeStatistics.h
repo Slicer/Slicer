@@ -48,7 +48,7 @@ class vtkPoints;
 class VTK_ITK_EXPORT vtkITKLabelShapeStatistics : public vtkTableAlgorithm
 {
 public:
-  static vtkITKLabelShapeStatistics *New();
+  static vtkITKLabelShapeStatistics* New();
   vtkTypeMacro(vtkITKLabelShapeStatistics, vtkTableAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -97,9 +97,7 @@ protected:
   ~vtkITKLabelShapeStatistics() override;
 
   int FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info) override;
-  int RequestData(vtkInformation* request,
-    vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
 
 protected:
   std::vector<std::string> ComputedStatistics;

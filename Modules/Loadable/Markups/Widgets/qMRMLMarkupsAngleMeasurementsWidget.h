@@ -32,29 +32,27 @@ class qMRMLMarkupsAngleMeasurementsWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
 // ------------------------------------------------------------------------------
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAngleMeasurementsWidget
-  : public qMRMLMarkupsAbstractOptionsWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAngleMeasurementsWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsAngleMeasurementsWidget() override;
 
   /// Gets the name of the additional options widget type
   const QString className() const override { return "qMRMLMarkupsAngleMeasurementsWidget"; }
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Set the MRML node of interest
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsAngleMeasurementsWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsAngleMeasurementsWidget(); }
 
 public slots:
   /// Change angle mode of current angle markup if combobox selection is made.
@@ -65,7 +63,7 @@ public slots:
   void updateWidgetFromMRML() override;
 
 protected:
-  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent, qMRMLMarkupsAngleMeasurementsWidgetPrivate &d);
+  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent, qMRMLMarkupsAngleMeasurementsWidgetPrivate& d);
 
 protected:
   void setup();

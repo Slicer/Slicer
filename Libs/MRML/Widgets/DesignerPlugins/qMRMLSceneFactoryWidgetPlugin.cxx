@@ -26,13 +26,13 @@
 // Qt includes
 
 // --------------------------------------------------------------------------
-qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSceneFactoryWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSceneFactoryWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSceneFactoryWidget* _widget = new qMRMLSceneFactoryWidget(_parent);
   return _widget;
@@ -43,7 +43,7 @@ QString qMRMLSceneFactoryWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSceneFactoryWidget\" \
           name=\"MRMLSceneFactoryWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

@@ -68,12 +68,14 @@ class vtkPolyDataNormals;
 class vtkPolyDataToImageStencil;
 
 /// \brief Private implementation of the segment editor paint effect
-class qSlicerSegmentEditorPaintEffectPrivate: public QObject
+class qSlicerSegmentEditorPaintEffectPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorPaintEffect);
+
 protected:
   qSlicerSegmentEditorPaintEffect* const q_ptr;
+
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorPaintEffectPrivate(qSlicerSegmentEditorPaintEffect& object);
@@ -83,7 +85,7 @@ public:
   /// it up with a marker for later painting.
   /// If lastBrushPosition_World is specified then multiple points are added along a line
   /// that connects the current and last brush position, to ensure a smooth and continuous brush stroke.
-  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3], double* lastBrushPosition_World=nullptr);
+  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3], double* lastBrushPosition_World = nullptr);
 
   /// Update paint circle glyph
   void updateBrush(qMRMLWidget* viewWidget, BrushPipeline* brush);
@@ -106,13 +108,13 @@ protected:
   void clearBrushPipelines();
 
   /// Paint brushes to the modifier labelmap
-  void paintBrushes(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, vtkPoints* pixelPositions_World, int extent[6]=nullptr);
+  void paintBrushes(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, vtkPoints* pixelPositions_World, int extent[6] = nullptr);
 
   /// Paint one pixel at coordinate
   void paintPixel(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, double pixelPosition_World[3]);
 
   /// Paint pixels at the coordinates
-  void paintPixels(vtkOrientedImageData* modifierLabelmap, vtkPoints* pixelPositions_World, int extent[6]=nullptr);
+  void paintPixels(vtkOrientedImageData* modifierLabelmap, vtkPoints* pixelPositions_World, int extent[6] = nullptr);
 
   /// Transform points from World to IJK
   void transformPointsFromWorldToIJK(vtkOrientedImageData* image, vtkMRMLSegmentationNode* segmentationNode, vtkPoints* inputPoints, vtkPoints* outputPoints);
@@ -143,7 +145,8 @@ public:
   vtkSmartPointer<vtkTransform> WorldOriginToWorldTransform;
   vtkSmartPointer<vtkPolyDataNormals> BrushPolyDataNormals;
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldOriginToModifierLabelmapIjkTransformer;
-  vtkSmartPointer<vtkTransform> WorldOriginToModifierLabelmapIjkTransform; // transforms from polydata source to modifierLabelmap's IJK coordinate system (brush origin in IJK origin)
+  vtkSmartPointer<vtkTransform>
+    WorldOriginToModifierLabelmapIjkTransform; // transforms from polydata source to modifierLabelmap's IJK coordinate system (brush origin in IJK origin)
   vtkSmartPointer<vtkPolyDataToImageStencil> BrushPolyDataToStencil;
 
   vtkSmartPointer<vtkGlyph3D> FeedbackGlyphFilter;

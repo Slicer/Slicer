@@ -29,8 +29,7 @@
 class qSlicerSegmentEditorScissorsEffectPrivate;
 class vtkPolyData;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect :
-  public qSlicerSegmentEditorAbstractLabelEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect : public qSlicerSegmentEditorAbstractLabelEffect
 {
 public:
   Q_OBJECT
@@ -45,7 +44,7 @@ public:
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE const QString helpText()const override;
+  Q_INVOKABLE const QString helpText() const override;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
   void setupOptionsFrame() override;
@@ -68,7 +67,7 @@ public:
   // TODO: temporary code, only for debugging
   /// This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
   /// Folder where debug output will be saved when using this effect.
-  Q_INVOKABLE void setDebugOutputFolder(QString folder) { DebugOutputFolder = folder;  };
+  Q_INVOKABLE void setDebugOutputFolder(QString folder) { DebugOutputFolder = folder; };
   static QString DebugOutputFolder;
 
 public slots:

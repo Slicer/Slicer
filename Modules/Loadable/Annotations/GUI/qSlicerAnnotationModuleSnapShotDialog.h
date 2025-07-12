@@ -24,7 +24,7 @@ public:
   void accept() override;
 
 private:
-    vtkSlicerAnnotationModuleLogic* m_Logic;
+  vtkSlicerAnnotationModuleLogic* m_Logic;
 };
 
 #endif

@@ -45,8 +45,7 @@ bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
     double currentIndexValue = atof(seqNode->GetNthIndexValue(i).c_str());
     if (previousIndexValue >= currentIndexValue)
     {
-      std::cout << "Sequence is not sorted: index[" << i - 1 << "] = " << previousIndexValue
-        << ", index[" << i << "] = " << currentIndexValue << "\n";
+      std::cout << "Sequence is not sorted: index[" << i - 1 << "] = " << previousIndexValue << ", index[" << i << "] = " << currentIndexValue << "\n";
       return false;
     }
   }
@@ -54,9 +53,9 @@ bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSequenceNodeTest1( int, char * [] )
+int vtkMRMLSequenceNodeTest1(int, char*[])
 {
-  vtkNew< vtkMRMLSequenceNode > seqNode;
+  vtkNew<vtkMRMLSequenceNode> seqNode;
   EXERCISE_ALL_BASIC_MRML_METHODS(seqNode.GetPointer());
 
   seqNode->SetIndexType(vtkMRMLSequenceNode::NumericIndex);
@@ -68,7 +67,7 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
   for (int i = 0; i < numberOfDataNodes; i++)
   {
     std::ostringstream indexStr;
-    indexStr << i*10.0+5.0;
+    indexStr << i * 10.0 + 5.0;
     transformMatrix->SetElement(1, 3, i * 20.0);
     dataNode->SetMatrixTransformFromParent(transformMatrix.GetPointer());
     seqNode->SetDataNodeAtValue(dataNode.GetPointer(), indexStr.str().c_str());
@@ -92,7 +91,7 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
 
   // Adding new data node
   seqNode->SetDataNodeAtValue(dataNode.GetPointer(), "35.1");
-  CHECK_INT(seqNode->GetNumberOfDataNodes(), numberOfDataNodes+1);
+  CHECK_INT(seqNode->GetNumberOfDataNodes(), numberOfDataNodes + 1);
 
   // Adding a few more data nodes to check sorting
   seqNode->SetDataNodeAtValue(dataNode.GetPointer(), "1.0");
@@ -173,7 +172,7 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
 
 /*
 //-----------------------------------------------------------------------------
-bool testAddInvalidFile(const char * filePath)
+bool testAddInvalidFile(const char* filePath)
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
@@ -182,7 +181,7 @@ bool testAddInvalidFile(const char * filePath)
   int nodeCount = scene->GetNumberOfNodes();
   vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
 
-  if (table != 0 ||
+  if (table != 0 || //
       scene->GetNumberOfNodes() != nodeCount)
     {
     std::cerr << "Line " << __LINE__
@@ -197,7 +196,7 @@ bool testAddInvalidFile(const char * filePath)
 }
 
 //-----------------------------------------------------------------------------
-bool testAddFile(const char * filePath)
+bool testAddFile(const char* filePath)
 {
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -216,7 +215,7 @@ bool testAddFile(const char * filePath)
   int nodeCount = scene->GetNumberOfNodes();
   table = tablesLogic->AddTable(filePath);
 
-  if (table == 0 ||
+  if (table == 0 || //
       scene->GetNumberOfNodes() != nodeCount + 2)
     {
     std::cerr << "Adding an table should create 2 nodes" << std::endl;

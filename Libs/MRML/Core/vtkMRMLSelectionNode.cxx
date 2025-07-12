@@ -135,7 +135,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSelectionNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
   Superclass::Copy(anode);
@@ -150,7 +150,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   Superclass::PrintSelf(os, indent);
 
@@ -163,7 +163,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
     os << "Valid PlaceNode IDs: \n";
     for (unsigned int i = 0; i < this->PlaceNodeClassNameList.size(); ++i)
     {
-      os << indent.GetNextIndent() << i << ": " << this->PlaceNodeClassNameList[i]<< "\n";
+      os << indent.GetNextIndent() << i << ": " << this->PlaceNodeClassNameList[i] << "\n";
     }
   }
   if (this->PlaceNodeResourceList.size() > 0)
@@ -185,7 +185,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassName, const char *resource, const char *iconName)
+void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char* newClassName, const char* resource, const char* iconName)
 {
   if (newClassName == nullptr)
   {
@@ -234,7 +234,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassNa
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *className)
+void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char* className)
 {
   if (className == nullptr)
   {
@@ -251,12 +251,12 @@ void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *classNam
   }
   vtkDebugMacro("Removing placeNode className " << className << ", found at index " << index);
   // erase the className and resource
-  this->PlaceNodeClassNameList.erase(this->PlaceNodeClassNameList.begin()+index);
-  this->PlaceNodeResourceList.erase(this->PlaceNodeResourceList.begin()+index);
-  this->PlaceNodeIconNameList.erase(this->PlaceNodeIconNameList.begin()+index);
+  this->PlaceNodeClassNameList.erase(this->PlaceNodeClassNameList.begin() + index);
+  this->PlaceNodeResourceList.erase(this->PlaceNodeResourceList.begin() + index);
+  this->PlaceNodeIconNameList.erase(this->PlaceNodeIconNameList.begin() + index);
 
   // was it the active one?
-  if (this->GetActivePlaceNodeClassName() &&
+  if (this->GetActivePlaceNodeClassName() && //
       classNameString.compare(this->GetActivePlaceNodeClassName()) == 0)
   {
     // make it inactive
@@ -300,35 +300,31 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeResourceByIndex(int n)
 void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
 {
   this->UpdateNodeReferences();
-  for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
-    it != this->NodeReferences.end(); ++it)
+  for (NodeReferencesType::const_iterator it = this->NodeReferences.begin(); it != this->NodeReferences.end(); ++it)
   {
-    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 && //
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
-      vtkMRMLNodeReference * reference = it->second[0];
+      vtkMRMLNodeReference* reference = it->second[0];
       if (reference)
       {
-        units.push_back(
-          vtkMRMLUnitNode::SafeDownCast(reference->GetReferencedNode()));
+        units.push_back(vtkMRMLUnitNode::SafeDownCast(reference->GetReferencedNode()));
       }
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::GetUnitNodeIDs(std::vector<const char*>& quantities,
-                                          std::vector<const char*>& units)
+void vtkMRMLSelectionNode::GetUnitNodeIDs(std::vector<const char*>& quantities, std::vector<const char*>& units)
 {
-  for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
-    it != this->NodeReferences.end(); ++it)
+  for (NodeReferencesType::const_iterator it = this->NodeReferences.begin(); it != this->NodeReferences.end(); ++it)
   {
-    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 && //
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
-      vtkMRMLNodeReference * reference = it->second[0];
+      vtkMRMLNodeReference* reference = it->second[0];
       if (reference)
       {
         quantities.push_back(&reference->GetReferenceRole()[strlen(UNIT_NODE_REFERENCE_ROLE)]);
@@ -386,19 +382,15 @@ void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSelectionNode::ProcessMRMLEvents(vtkObject *caller,
-                                             unsigned long event,
-                                             void *callData)
+void vtkMRMLSelectionNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(caller);
   if (unitNode && event == vtkCommand::ModifiedEvent)
   {
-    std::string quantity =
-      unitNode->GetQuantity() ? unitNode->GetQuantity() : "";
-    this->InvokeEvent(
-      vtkMRMLSelectionNode::UnitModifiedEvent, &quantity);
+    std::string quantity = unitNode->GetQuantity() ? unitNode->GetQuantity() : "";
+    this->InvokeEvent(vtkMRMLSelectionNode::UnitModifiedEvent, &quantity);
   }
 }
 
@@ -429,7 +421,7 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeResourceByClassName(std::string cl
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char *className)
+void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName(const char* className)
 {
   if (className == this->ActivePlaceNodeClassName)
   {

@@ -50,22 +50,24 @@
 #include <vtkTable.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerTablesModuleWidgetPrivate: public Ui_qSlicerTablesModuleWidget
+class qSlicerTablesModuleWidgetPrivate : public Ui_qSlicerTablesModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTablesModuleWidget);
+
 protected:
   qSlicerTablesModuleWidget* const q_ptr;
+
 public:
   qSlicerTablesModuleWidgetPrivate(qSlicerTablesModuleWidget& object);
-//  static QList<vtkSmartPointer<vtkMRMLTransformableNode> > getSelectedNodes(qMRMLTreeView* tree);
+  //  static QList<vtkSmartPointer<vtkMRMLTransformableNode>> getSelectedNodes(qMRMLTreeView* tree);
 
-  vtkSlicerTablesLogic*      logic()const;
-  vtkTable* table()const;
+  vtkSlicerTablesLogic* logic() const;
+  vtkTable* table() const;
 
   vtkWeakPointer<vtkMRMLTableNode> MRMLTableNode;
-  QAction*                      CopyAction;
-  QAction*                      PasteAction;
-  QAction*                      PlotAction;
+  QAction* CopyAction;
+  QAction* PasteAction;
+  QAction* PlotAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,16 +80,16 @@ qSlicerTablesModuleWidgetPrivate::qSlicerTablesModuleWidgetPrivate(qSlicerTables
   this->PlotAction = nullptr;
 }
 //-----------------------------------------------------------------------------
-vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
+vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerTablesModuleWidget);
   return vtkSlicerTablesLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
-vtkTable* qSlicerTablesModuleWidgetPrivate::table()const
+vtkTable* qSlicerTablesModuleWidgetPrivate::table() const
 {
-  if (this->MRMLTableNode.GetPointer()==nullptr)
+  if (this->MRMLTableNode.GetPointer() == nullptr)
   {
     return nullptr;
   }
@@ -130,8 +132,7 @@ void qSlicerTablesModuleWidget::setup()
   d->PlotAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   // set CTRL+P shortcut
   d->PlotAction->setShortcuts(QKeySequence::Print);
-  d->PlotAction->setToolTip(
-    tr("Generate an Interactive Plot based on user-selection of the columns of the table."));
+  d->PlotAction->setToolTip(tr("Generate an Interactive Plot based on user-selection of the columns of the table."));
   this->addAction(d->PlotAction);
 
   // Connect node selector with module itself
@@ -250,9 +251,7 @@ void qSlicerTablesModuleWidget::setCurrentTableNode(vtkMRMLNode* tableNode)
 }
 
 //-----------------------------------------------------------
-bool qSlicerTablesModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                              QString role /* = QString()*/,
-                                              QString context /* = QString()*/)
+bool qSlicerTablesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerTablesModuleWidget);
   Q_UNUSED(role);

@@ -8,6 +8,7 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
+        exclude: ^\.clang-format$ # check-yaml do not support multi-document file
       - id: debug-statements
         exclude: "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py|Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py"
       - id: end-of-file-fixer
@@ -22,6 +23,19 @@ repos:
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]
+
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: "v20.1.7"
+    hooks:
+      - id: clang-format
+        # Explicitly include ".txx" files, which are not recognized as source files
+        # by the "identify" package used by pre-commit. To work around this,
+        # we manually specify file matching via the "files" regex and set "types_or"
+        # to allow formatting of files treated as plain text.
+        #
+        # Reference: https://github.com/pre-commit/identify/blob/main/identify/extensions.py
+        types_or: [file, text]
+        files: \.(cpp|cxx|h|hpp|txx)$
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.20.0

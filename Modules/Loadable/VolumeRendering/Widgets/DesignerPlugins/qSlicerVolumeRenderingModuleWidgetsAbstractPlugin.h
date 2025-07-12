@@ -16,7 +16,7 @@
   This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef __qSlicerVolumeRenderingModuleWidgetsAbstractPlugin_h
 #define __qSlicerVolumeRenderingModuleWidgetsAbstractPlugin_h
@@ -25,13 +25,12 @@
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #include "qSlicerVolumeRenderingModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
-  : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerVolumeRenderingModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -39,7 +38,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

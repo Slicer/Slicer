@@ -22,7 +22,7 @@
  *
  *
  *
-*/
+ */
 
 #ifndef vtkSlicerPointsWidget_h
 #define vtkSlicerPointsWidget_h
@@ -37,7 +37,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsWidget : public
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerPointsWidget *New();
+  static vtkSlicerPointsWidget* New();
 
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerPointsWidget, vtkSlicerMarkupsWidget);

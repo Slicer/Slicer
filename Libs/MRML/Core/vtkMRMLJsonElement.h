@@ -46,7 +46,8 @@ public:
   /// Returns true if the JSON object contains a member by this name.
   bool HasMember(const char* propertyName);
 
-  enum Type {
+  enum Type
+  {
     UNKNOWN = 0,
     OBJECT = 1,
     ARRAY = 2,
@@ -181,11 +182,9 @@ protected:
   friend class vtkMRMLJsonReader;
 };
 
-
 class VTK_MRML_EXPORT vtkMRMLJsonReader : public vtkObject
 {
 public:
-
   static vtkMRMLJsonReader* New();
   vtkTypeMacro(vtkMRMLJsonReader, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -200,11 +199,11 @@ public:
   /// \return JSON element on success and nullptr on failure.
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
-  vtkMRMLJsonElement* ReadFromString(const std::string &jsonString);
+  vtkMRMLJsonElement* ReadFromString(const std::string& jsonString);
 
   /// Convert JSON to XML string
   /// return string
-  std::string ConvertJsonToXML(const std::string &jsonString, const std::string &nodeTagName);
+  std::string ConvertJsonToXML(const std::string& jsonString, const std::string& nodeTagName);
 
   /// Returns user-displayable messages that may contain details about any failed operation.
   vtkGetObjectMacro(UserMessages, vtkMRMLMessageCollection);
@@ -218,20 +217,18 @@ protected:
   vtkMRMLJsonReader(const vtkMRMLJsonReader&);
   void operator=(const vtkMRMLJsonReader&);
 
-  std::string processJsonElement(vtkMRMLJsonElement* jsonElement, const std::string &elementKey = "");
+  std::string processJsonElement(vtkMRMLJsonElement* jsonElement, const std::string& elementKey = "");
 
   vtkNew<vtkMRMLMessageCollection> UserMessages;
 };
-
 
 /// \brief Writes properties into a JSON stream
 ///
 class VTK_MRML_EXPORT vtkMRMLJsonWriter : public vtkObject
 {
 public:
-
-  static vtkMRMLJsonWriter *New();
-  vtkTypeMacro(vtkMRMLJsonWriter,vtkObject);
+  static vtkMRMLJsonWriter* New();
+  vtkTypeMacro(vtkMRMLJsonWriter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This method must be called before writing any properties to the output file.

@@ -28,10 +28,9 @@ qMRMLSegmentationDisplayNodeWidgetPlugin::qMRMLSegmentationDisplayNodeWidgetPlug
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationDisplayNodeWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationDisplayNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationDisplayNodeWidget* pluginWidget =
-    new qMRMLSegmentationDisplayNodeWidget(parentWidget);
+  qMRMLSegmentationDisplayNodeWidget* pluginWidget = new qMRMLSegmentationDisplayNodeWidget(parentWidget);
   return pluginWidget;
 }
 
@@ -40,7 +39,7 @@ QString qMRMLSegmentationDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationDisplayNodeWidget\" \
           name=\"SegmentationDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

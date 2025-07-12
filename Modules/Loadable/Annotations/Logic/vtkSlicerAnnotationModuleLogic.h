@@ -15,16 +15,16 @@ class vtkMRMLAnnotationTextDisplayNode;
 // STD includes
 #include <string>
 
-class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic
-  :public vtkSlicerModuleLogic
+class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-  enum Events{
+  enum Events
+  {
     RefreshRequestEvent = vtkCommand::UserEvent,
     HierarchyNodeAddedEvent
   };
-  static vtkSlicerAnnotationModuleLogic *New();
-  vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
+  static vtkSlicerAnnotationModuleLogic* New();
+  vtkTypeMacro(vtkSlicerAnnotationModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
@@ -58,7 +58,6 @@ public:
   bool IsSnapshotNode(const char* id);
 
 protected:
-
   vtkSlicerAnnotationModuleLogic();
   ~vtkSlicerAnnotationModuleLogic() override;
 

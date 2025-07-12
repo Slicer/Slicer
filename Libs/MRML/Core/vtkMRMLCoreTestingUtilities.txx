@@ -28,7 +28,7 @@ namespace vtkMRMLCoreTestingUtilities
 {
 
 //----------------------------------------------------------------------------
-template<typename Type>
+template <typename Type>
 std::string ToString(Type value)
 {
   std::ostringstream stream;

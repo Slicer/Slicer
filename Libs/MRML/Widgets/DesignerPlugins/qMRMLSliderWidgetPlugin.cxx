@@ -22,13 +22,13 @@
 #include "qMRMLSliderWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLSliderWidgetPlugin::qMRMLSliderWidgetPlugin(QObject *_parent)
-: QObject(_parent)
+qMRMLSliderWidgetPlugin::qMRMLSliderWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSliderWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSliderWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSliderWidget* _widget = new qMRMLSliderWidget(_parent);
   return _widget;
@@ -37,11 +37,11 @@ QWidget *qMRMLSliderWidgetPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLSliderWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSliderWidget\" name=\"MRMLSliderWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSliderWidget\" name=\"MRMLSliderWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

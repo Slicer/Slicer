@@ -38,7 +38,7 @@ class Q_SLICER_MODULE_TEXTS_WIDGETS_EXPORT qMRMLTextWidget : public qSlicerWidge
 
 public:
   typedef qSlicerWidget Superclass;
-  qMRMLTextWidget(QWidget *parent=nullptr);
+  qMRMLTextWidget(QWidget* parent = nullptr);
   ~qMRMLTextWidget() override;
 
   Q_PROPERTY(bool autoSave READ isAutoSave WRITE setAutoSave);
@@ -166,9 +166,8 @@ private:
   Q_DISABLE_COPY(qMRMLTextWidget);
 
 protected:
-  bool AutoSave{false};
-  bool ReadOnly{false};
-
+  bool AutoSave{ false };
+  bool ReadOnly{ false };
 };
 
 #endif

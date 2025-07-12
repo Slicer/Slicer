@@ -35,7 +35,7 @@
 
 // STD includes
 
-int qMRMLColorTableComboBoxTest1( int argc, char * argv [] )
+int qMRMLColorTableComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

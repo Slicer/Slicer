@@ -47,7 +47,17 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 
   // If it applies, disable import of user site packages
   QString noUserSite = qgetenv("PYTHONNOUSERSITE");
-  Py_NoUserSiteDirectory = noUserSite.toInt();
+
+  PyConfig config;
+  PyConfig_InitPythonConfig(&config);
+
+  config.user_site_directory = noUserSite.toInt(); // disable user site packages
+
+  PyStatus status = Py_InitializeFromConfig(&config);
+  if (PyStatus_Exception(status))
+  {
+    Py_ExitStatusException(status);
+  }
 
   // Import site module to ensure the 'site-packages' directory
   // is added to the python path. (see site.addsitepackages function).
@@ -87,7 +97,7 @@ void qSlicerCorePythonManager::preInitialization()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject * object)
+void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject* object)
 {
   // Split name using '.'
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -99,14 +109,12 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
   // Remove the last part
   QString attributeName = moduleNameList.takeLast();
 
-  bool success = qSlicerScriptedUtils::setModuleAttribute(
-        moduleNameList.join("."),
-        attributeName,
-        vtkPythonUtil::GetObjectFromPointer(object));
+  bool success = qSlicerScriptedUtils::setModuleAttribute(moduleNameList.join("."), attributeName, vtkPythonUtil::GetObjectFromPointer(object));
   if (!success)
   {
     qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "
-                   "Failed to add VTK object:" << name;
+                   "Failed to add VTK object:"
+                << name;
   }
 }
 
@@ -114,19 +122,18 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 {
   // TODO Make sure PYTHONPATH is updated
-  this->executeString(QString(
-    "import sys, os\n"
-    "___path = os.path.abspath(%1)\n"
-    "if ___path not in sys.path:\n"
-    "  sys.path.append(___path)\n"
-    "del sys, os"
-    ).arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
+  this->executeString(QString("import sys, os\n"
+                              "___path = os.path.abspath(%1)\n"
+                              "if ___path not in sys.path:\n"
+                              "  sys.path.append(___path)\n"
+                              "del sys, os")
+                        .arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
 {
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     this->appendPythonPath(path);
   }

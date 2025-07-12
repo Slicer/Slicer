@@ -31,11 +31,12 @@
 class qSlicerObjectPrivate
 {
 public:
-  vtkSmartPointer<vtkMRMLScene>              MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerObject::qSlicerObject(): d_ptr(new qSlicerObjectPrivate)
+qSlicerObject::qSlicerObject()
+  : d_ptr(new qSlicerObjectPrivate)
 {
 }
 
@@ -48,13 +49,13 @@ void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qSlicerObject);
   if (scene == d->MRMLScene)
   {
-    return ;
+    return;
   }
   d->MRMLScene = scene;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerObject::mrmlScene()const
+vtkMRMLScene* qSlicerObject::mrmlScene() const
 {
   Q_D(const qSlicerObject);
   return d->MRMLScene;

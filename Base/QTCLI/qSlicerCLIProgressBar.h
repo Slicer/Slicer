@@ -56,13 +56,12 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
   /// progressVisibility
   Q_PROPERTY(Visibility progressVisibility READ progressVisibility WRITE setProgressVisibility)
 public:
-
   typedef QWidget Superclass;
-  qSlicerCLIProgressBar(QWidget *parent=nullptr);
+  qSlicerCLIProgressBar(QWidget* parent = nullptr);
   ~qSlicerCLIProgressBar() override;
 
   /// Get the \a commandLineModuleNode
-  Q_INVOKABLE vtkMRMLCommandLineModuleNode * commandLineModuleNode()const;
+  Q_INVOKABLE vtkMRMLCommandLineModuleNode* commandLineModuleNode() const;
 
   /// Visibility behavior of the GUI elements of the CLI progress bar.
   enum Visibility
@@ -75,13 +74,13 @@ public:
 
   /// Visibility of the module name.
   /// \sa nameVisibility
-  Visibility nameVisibility()const;
+  Visibility nameVisibility() const;
   /// Visibility of the status label.
   /// \sa statusVisibility
-  Visibility statusVisibility()const;
+  Visibility statusVisibility() const;
   /// Visibility of the progress bar.
   /// \sa progressVisiblity
-  Visibility progressVisibility()const;
+  Visibility progressVisibility() const;
 
 public slots:
 
@@ -109,15 +108,11 @@ protected slots:
   void showDetails(bool show);
 
 protected:
-
   QScopedPointer<qSlicerCLIProgressBarPrivate> d_ptr;
 
 private:
-
   Q_DECLARE_PRIVATE(qSlicerCLIProgressBar);
   Q_DISABLE_COPY(qSlicerCLIProgressBar);
-
 };
-
 
 #endif

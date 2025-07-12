@@ -29,13 +29,13 @@ qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject* parent)
 }
 
 // --------------------------------------------------------------------------
-QWidget *qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerWidget* widget = new qSlicerWidget(parentWidget);
   QPalette slicerPalette = widget->palette();
 
   // Apply Slicer Palette using the non-member function defined in qSlicerApplication
-  //qSlicerApplyPalette(slicerPalette);
+  // qSlicerApplyPalette(slicerPalette);
   qSlicerStyle style;
 
   widget->setPalette(style.standardPalette());
@@ -47,15 +47,15 @@ QWidget *qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
 QString qSlicerWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerWidget\" name=\"SlicerWidget\">\n"
-    " <property name=\"geometry\">\n"
-    "  <rect>\n"
-    "   <x>0</x>\n"
-    "   <y>0</y>\n"
-    "   <width>100</width>\n"
-    "   <height>100</height>\n"
-    "  </rect>\n"
-    " </property>\n"
-    "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>100</width>\n"
+         "   <height>100</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

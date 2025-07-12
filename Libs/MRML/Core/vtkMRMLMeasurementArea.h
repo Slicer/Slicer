@@ -28,7 +28,7 @@
 class VTK_MRML_EXPORT vtkMRMLMeasurementArea : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementArea *New();
+  static vtkMRMLMeasurementArea* New();
   vtkTypeMacro(vtkMRMLMeasurementArea, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

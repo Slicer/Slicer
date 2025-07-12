@@ -9,7 +9,7 @@
 // STD includes
 #include <cstdlib>
 
-int qMRMLWidgetsExportTest1( int argc, char * argv [] )
+int qMRMLWidgetsExportTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

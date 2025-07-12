@@ -42,8 +42,7 @@ class qSlicerSegmentEditorScriptedEffectPrivate;
 ///   and register effect by creating this class and setting python source to implemented
 ///   effect subclass. One example is the ThresholdEffect.
 ///
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedEffect
-  : public qSlicerSegmentEditorAbstractEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedEffect : public qSlicerSegmentEditorAbstractEffect
 {
   Q_OBJECT
 
@@ -52,7 +51,7 @@ public:
   qSlicerSegmentEditorScriptedEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorScriptedEffect() override;
 
-  Q_INVOKABLE QString pythonSource()const;
+  Q_INVOKABLE QString pythonSource() const;
 
   /// Set python source for the implemented effect
   /// \param newPythonSource Python file path
@@ -71,13 +70,13 @@ public:
   /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
   void setRequireSegments(bool requireSegments) override;
 
-// API: Methods that are to be reimplemented in the effect subclasses
+  // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Clone editor effect. Override to return a new instance of the effect sub-class
   qSlicerSegmentEditorAbstractEffect* clone() override;

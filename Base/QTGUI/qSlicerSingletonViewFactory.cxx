@@ -30,8 +30,10 @@ Care Ontario.
 class qSlicerSingletonViewFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerSingletonViewFactory);
+
 protected:
   qSlicerSingletonViewFactory* q_ptr;
+
 public:
   qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object);
   virtual ~qSlicerSingletonViewFactoryPrivate();
@@ -49,8 +51,7 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerSingletonViewFactoryPrivate methods
 
-qSlicerSingletonViewFactoryPrivate
-::qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object)
+qSlicerSingletonViewFactoryPrivate::qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object)
   : q_ptr(&object)
   , Widget(nullptr)
   , InternalWidget(new QWidget())
@@ -65,9 +66,7 @@ qSlicerSingletonViewFactoryPrivate::~qSlicerSingletonViewFactoryPrivate()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSingletonViewFactoryPrivate::init()
-{
-}
+void qSlicerSingletonViewFactoryPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerSingletonViewFactory methods

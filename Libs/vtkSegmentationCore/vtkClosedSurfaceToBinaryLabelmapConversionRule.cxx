@@ -57,19 +57,27 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
   this->ReplaceTargetRepresentation = true;
 
   // Reference image geometry parameter
-  this->ConversionParameters->SetParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), "",
+  this->ConversionParameters->SetParameter( //
+    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(),
+    "",
     "Image geometry description string determining the geometry of the labelmap that is created in course of conversion."
     " Can be copied from a volume, using the button.");
   // Oversampling factor parameter
-  this->ConversionParameters->SetParameter(GetOversamplingFactorParameterName(), "1",
+  this->ConversionParameters->SetParameter( //
+    GetOversamplingFactorParameterName(),
+    "1",
     "Determines the oversampling of the reference image geometry. If it's a number, then all segments are oversampled"
     " with the same value (value of 1 means no oversampling). If it has the value \"A\", then automatic oversampling is calculated.");
   // Crop to reference geometry parameter
-  this->ConversionParameters->SetParameter(GetCropToReferenceImageGeometryParameterName(), "0",
+  this->ConversionParameters->SetParameter( //
+    GetCropToReferenceImageGeometryParameterName(),
+    "0",
     "Crop the model to the extent of reference geometry. 0 (default) = created labelmap will contain the entire model."
     " 1 = created labelmap extent will be within reference image extent.");
   // Collapse labelmaps parameter
-  this->ConversionParameters->SetParameter(GetCollapseLabelmapsParameterName(), "1",
+  this->ConversionParameters->SetParameter( //
+    GetCollapseLabelmapsParameterName(),
+    "1",
     "Merge the labelmaps into as few shared labelmaps as possible"
     " 1 = created labelmaps will be shared if possible without overwriting each other.");
 }
@@ -78,9 +86,8 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
 vtkClosedSurfaceToBinaryLabelmapConversionRule::~vtkClosedSurfaceToBinaryLabelmapConversionRule() = default;
 
 //----------------------------------------------------------------------------
-unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(
-  vtkDataObject* vtkNotUsed(sourceRepresentation)/*=nullptr*/,
-  vtkDataObject* vtkNotUsed(targetRepresentation)/*=nullptr*/)
+unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(vtkDataObject* vtkNotUsed(sourceRepresentation) /*=nullptr*/,
+                                                                               vtkDataObject* vtkNotUsed(targetRepresentation) /*=nullptr*/)
 {
   // Rough input-independent guess (ms)
   return 500;
@@ -89,11 +96,11 @@ unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(
 //----------------------------------------------------------------------------
 vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresentationObjectByRepresentation(std::string representationName)
 {
-  if ( !representationName.compare(this->GetSourceRepresentationName()) )
+  if (!representationName.compare(this->GetSourceRepresentationName()))
   {
     return (vtkDataObject*)vtkPolyData::New();
   }
-  else if ( !representationName.compare(this->GetTargetRepresentationName()) )
+  else if (!representationName.compare(this->GetTargetRepresentationName()))
   {
     return (vtkDataObject*)vtkOrientedImageData::New();
   }
@@ -123,8 +130,7 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment)
 {
-  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(
-    segment->GetRepresentation(this->GetTargetRepresentationName()));
+  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(this->GetTargetRepresentationName()));
   this->CreateTargetRepresentation(segment);
 
   // Check validity of source and target representation objects
@@ -137,8 +143,8 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
 
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
   {
-    vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: "
-      << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
+    vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints()
+                                                                                                << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
   }
 
@@ -179,10 +185,12 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   else
   {
     // Set voxel values to 0
-    int extent[6] = {0,-1,0,-1,0,-1};
+    int extent[6] = { 0, -1, 0, -1, 0, -1 };
     binaryLabelmap->GetExtent(extent);
-    memset(binaryLabelmapVoxelsPointer, 0, ((extent[1]-extent[0]+1)*(extent[3]-extent[2]+1)*(extent[5]-extent[4]+1) *
-      binaryLabelmap->GetScalarSize() * binaryLabelmap->GetNumberOfScalarComponents()));
+    memset(
+      binaryLabelmapVoxelsPointer,
+      0,
+      ((extent[1] - extent[0] + 1) * (extent[3] - extent[2] + 1) * (extent[5] - extent[4] + 1) * binaryLabelmap->GetScalarSize() * binaryLabelmap->GetNumberOfScalarComponents()));
   }
 
   // Perform conversion
@@ -201,8 +209,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   identityMatrix->Identity();
   binaryLabelmap->SetGeometryFromImageToWorldMatrix(identityMatrix);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter =
-    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseOutputLabelmapGeometryTransform);
 
@@ -216,7 +223,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   triangle->SetInputConnection(normalFilter->GetOutputPort());
 
   // Convert to triangle strip
-  vtkSmartPointer<vtkStripper> stripper=vtkSmartPointer<vtkStripper>::New();
+  vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
   stripper->SetInputConnection(triangle->GetOutputPort());
 
   // Convert polydata to stencil
@@ -352,8 +359,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   inverseImageGeometryTransform->SetMatrix(geometryImageToWorldMatrix);
   inverseImageGeometryTransform->Inverse();
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter =
-    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseImageGeometryTransform);
   transformPolyDataFilter->Update();
@@ -377,12 +383,14 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     // Set effective extent to be maximum as large as the reference extent (less memory needed if the extent only covers the non-zero region)
     int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
     geometryImageData->GetExtent(referenceExtent);
+    // clang-format off
     if (surfaceExtent[0] > referenceExtent[0]) { referenceExtent[0] = surfaceExtent[0]; }
     if (surfaceExtent[1] < referenceExtent[1]) { referenceExtent[1] = surfaceExtent[1]; }
     if (surfaceExtent[2] > referenceExtent[2]) { referenceExtent[2] = surfaceExtent[2]; }
     if (surfaceExtent[3] < referenceExtent[3]) { referenceExtent[3] = surfaceExtent[3]; }
     if (surfaceExtent[4] > referenceExtent[4]) { referenceExtent[4] = surfaceExtent[4]; }
     if (surfaceExtent[5] < referenceExtent[5]) { referenceExtent[5] = surfaceExtent[5]; }
+    // clang-format on
     geometryImageData->SetExtent(referenceExtent);
   }
   else
@@ -404,15 +412,15 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   }
 
   // Get poly data bounds
-  double bounds[6] = {0,0,0,0,0,0};
+  double bounds[6] = { 0, 0, 0, 0, 0, 0 };
   polyData->GetBounds(bounds);
 
   // Set origin
   vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   geometryMatrix->Identity(); // Default directions and scaling
-  geometryMatrix->SetElement(0,3,bounds[0]);
-  geometryMatrix->SetElement(1,3,bounds[2]);
-  geometryMatrix->SetElement(2,3,bounds[4]);
+  geometryMatrix->SetElement(0, 3, bounds[0]);
+  geometryMatrix->SetElement(1, 3, bounds[2]);
+  geometryMatrix->SetElement(2, 3, bounds[4]);
 
   // set spacing to have an approximately 250^3 volume
   // this size is not too large for average computing hardware yet
@@ -425,12 +433,9 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   geometryMatrix->SetElement(2, 2, spacing);
 
   // Set extent
-  int extent[6] =
-    {
-    0, (int)((bounds[1] - bounds[0]) / spacing),
-    0, (int)((bounds[3] - bounds[2]) / spacing),
-    0, (int)((bounds[5] - bounds[4]) / spacing)
-    };
+  int extent[6] = { 0, (int)((bounds[1] - bounds[0]) / spacing), //
+                    0, (int)((bounds[3] - bounds[2]) / spacing), //
+                    0, (int)((bounds[5] - bounds[4]) / spacing) };
 
   // Serialize geometry
   std::string serializedGeometry = vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);

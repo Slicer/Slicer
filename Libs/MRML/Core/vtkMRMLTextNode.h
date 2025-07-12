@@ -18,10 +18,9 @@
 // MRML includes
 #include <vtkMRMLStorableNode.h>
 
-class  VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
+class VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
 {
 public:
-
   static vtkMRMLTextNode* New();
   vtkTypeMacro(vtkMRMLTextNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -54,7 +53,7 @@ public:
   /// Set text node contents and encoding.
   /// If the encoding is not specified, then it will not be changed from the current value.
   /// \sa SetEncoding()
-  void SetText(const std::string &text, int encoding=-1);
+  void SetText(const std::string& text, int encoding = -1);
   vtkGetMacro(Text, std::string);
 
   ///
@@ -81,7 +80,7 @@ public:
 
   /// Determines the most appropriate storage node class for the
   /// provided file name and node content.
-  std::string GetDefaultStorageNodeClassName(const char* filename=nullptr) override;
+  std::string GetDefaultStorageNodeClassName(const char* filename = nullptr) override;
 
   enum
   {
@@ -96,9 +95,8 @@ protected:
   void operator=(const vtkMRMLTextNode&);
 
   std::string Text;
-  int Encoding{VTK_ENCODING_US_ASCII};
-  int ForceCreateStorageNode{CreateStorageNodeAuto};
-
+  int Encoding{ VTK_ENCODING_US_ASCII };
+  int ForceCreateStorageNode{ CreateStorageNodeAuto };
 };
 
 #endif

@@ -95,15 +95,15 @@ public:
 
   /// Get MRML scene that has been set by setMRMLScene(). Default is no scene.
   /// \sa setMRMLScene()
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get the quantity property value.
   /// \sa quantity
-  QString quantity()const;
+  QString quantity() const;
 
   /// Get the unitAwareProperties property value.
   /// \sa unitAwareProperties
-  UnitAwareProperties unitAwareProperties()const;
+  UnitAwareProperties unitAwareProperties() const;
 
   /// Reimplemented for internal reasons.
   /// \sa ctkSliderWidget::setMinimum(), ctkSliderWidget::setMaximum(),

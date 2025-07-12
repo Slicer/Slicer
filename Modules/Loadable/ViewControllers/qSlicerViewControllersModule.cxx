@@ -45,7 +45,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
-  :Superclass(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerViewControllersModulePrivate)
 {
 }
@@ -54,7 +54,7 @@ qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
 qSlicerViewControllersModule::~qSlicerViewControllersModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerViewControllersModule::acknowledgementText()const
+QString qSlicerViewControllersModule::acknowledgementText() const
 {
   return "This module was developed by Jean-Christophe Fillion-Robin, Kitware Inc. "
          "This work was supported by NIH grant 3P41RR013218-12S1, "
@@ -107,7 +107,7 @@ void qSlicerViewControllersModule::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerViewControllersModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerViewControllersModule::createWidgetRepresentation()
 {
   return new qSlicerViewControllersModuleWidget;
 }
@@ -123,27 +123,24 @@ void qSlicerViewControllersModule::readCommonViewSettings(vtkMRMLAbstractViewNod
 {
   if (settings.contains("OrientationMarkerType"))
   {
-    defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(
-      settings.value("OrientationMarkerType").toString().toUtf8()));
+    defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(settings.value("OrientationMarkerType").toString().toUtf8()));
   }
   if (settings.contains("OrientationMarkerSize"))
   {
-    defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(
-      settings.value("OrientationMarkerSize").toString().toUtf8()));
+    defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(settings.value("OrientationMarkerSize").toString().toUtf8()));
   }
   if (settings.contains("RulerType"))
   {
-    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(
-      settings.value("RulerType").toString().toUtf8()));
+    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(settings.value("RulerType").toString().toUtf8()));
   }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerViewControllersModule::writeCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings)
 {
-  settings.setValue("OrientationMarkerType",vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(defaultViewNode->GetOrientationMarkerType()));
-  settings.setValue("OrientationMarkerSize",vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(defaultViewNode->GetOrientationMarkerSize()));
-  settings.setValue("RulerType",vtkMRMLAbstractViewNode::GetRulerTypeAsString(defaultViewNode->GetRulerType()));
+  settings.setValue("OrientationMarkerType", vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(defaultViewNode->GetOrientationMarkerType()));
+  settings.setValue("OrientationMarkerSize", vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(defaultViewNode->GetOrientationMarkerSize()));
+  settings.setValue("RulerType", vtkMRMLAbstractViewNode::GetRulerTypeAsString(defaultViewNode->GetRulerType()));
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +204,7 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
   settings.beginGroup("Default3DView");
   settings.setValue("BoxVisibility", bool(defaultViewNode->GetBoxVisible()));
   settings.setValue("AxisLabelsVisibility", bool(defaultViewNode->GetAxisLabelsVisible()));
-  settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
+  settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   settings.setValue("UseDepthPeeling", bool(defaultViewNode->GetUseDepthPeeling()));
   settings.setValue("ShadowsVisibility", defaultViewNode->GetShadowsVisibility());
   settings.setValue("AmbientShadowsSizeScale", defaultViewNode->GetAmbientShadowsSizeScale());
@@ -304,7 +301,7 @@ void qSlicerViewControllersModule::writeDefaultPlotViewSettings(vtkMRMLPlotViewN
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerViewControllersModule::contributors()const
+QStringList qSlicerViewControllersModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Wendy Plesniak (SPL, BWH)");

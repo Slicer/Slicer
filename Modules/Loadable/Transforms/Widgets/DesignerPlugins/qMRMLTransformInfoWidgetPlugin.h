@@ -20,27 +20,25 @@
 
 ==============================================================================*/
 
-
 #ifndef __qMRMLTransformInfoWidgetPlugin_h
 #define __qMRMLTransformInfoWidgetPlugin_h
 
 #include "qSlicerTransformsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_PLUGINS_EXPORT
-qMRMLTransformInfoWidgetPlugin
-  : public QObject, public qSlicerTransformsModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_PLUGINS_EXPORT qMRMLTransformInfoWidgetPlugin
+  : public QObject
+  , public qSlicerTransformsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLTransformInfoWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLTransformInfoWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
-  QString  domXml() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
-
+  QWidget* createWidget(QWidget* _parent) override;
+  QString domXml() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

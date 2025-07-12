@@ -50,14 +50,17 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLThreeDViewInformationWidgetPrivate: public QObject,
-                                   public Ui_qMRMLThreeDViewInformationWidget
+class qMRMLThreeDViewInformationWidgetPrivate
+  : public QObject
+  , public Ui_qMRMLThreeDViewInformationWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLThreeDViewInformationWidget);
+
 protected:
   qMRMLThreeDViewInformationWidget* const q_ptr;
+
 public:
   qMRMLThreeDViewInformationWidgetPrivate(qMRMLThreeDViewInformationWidget& object);
   ~qMRMLThreeDViewInformationWidgetPrivate() override;
@@ -70,7 +73,6 @@ public slots:
 
 public:
   vtkWeakPointer<vtkMRMLViewNode> MRMLViewNode;
-
 };
 
 #endif

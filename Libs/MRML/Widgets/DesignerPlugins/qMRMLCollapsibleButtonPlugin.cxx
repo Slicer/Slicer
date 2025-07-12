@@ -23,12 +23,13 @@
 #include "qMRMLCollapsibleButton.h"
 
 //-----------------------------------------------------------------------------
-qMRMLCollapsibleButtonPlugin::qMRMLCollapsibleButtonPlugin(QObject *_parent):QObject(_parent)
+qMRMLCollapsibleButtonPlugin::qMRMLCollapsibleButtonPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLCollapsibleButtonPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLCollapsibleButtonPlugin::createWidget(QWidget* _parent)
 {
   qMRMLCollapsibleButton* _widget = new qMRMLCollapsibleButton(_parent);
   return _widget;
@@ -39,7 +40,7 @@ QString qMRMLCollapsibleButtonPlugin::domXml() const
 {
   return "<widget class=\"qMRMLCollapsibleButton\" \
           name=\"MRMLCollapsibleButton\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

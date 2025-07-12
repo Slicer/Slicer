@@ -259,7 +259,7 @@ The EventBroker solve this by introducing a singleton that manages all observati
 The EventBroker is a singleton, available as:
 
 ```cpp
-vtkEventBroker *broker = vtkEventBroker::GetInstance();
+vtkEventBroker* broker = vtkEventBroker::GetInstance();
 ```
 
 with the broker, you can make a call like the following:

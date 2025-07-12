@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // Qt includes
 #include <QApplication>
 #include <QTimer>
@@ -41,14 +40,14 @@
 
 // STD includes
 
-int qMRMLTransformDisplayNodeWidgetTest1(int argc, char * argv [] )
+int qMRMLTransformDisplayNodeWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   vtkNew<vtkMRMLScene> scene;
-  vtkNew< vtkMRMLTransformNode > transformNode;
+  vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
   transformNode->CreateDefaultDisplayNodes();
 
@@ -57,7 +56,7 @@ int qMRMLTransformDisplayNodeWidgetTest1(int argc, char * argv [] )
   transformDisplay.setMRMLScene(scene.GetPointer());
   transformDisplay.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

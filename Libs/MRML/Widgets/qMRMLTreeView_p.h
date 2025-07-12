@@ -51,39 +51,40 @@ class vtkCollection;
 class QMRML_WIDGETS_EXPORT qMRMLTreeViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLTreeView);
+
 protected:
   qMRMLTreeView* const q_ptr;
+
 public:
   qMRMLTreeViewPrivate(qMRMLTreeView& object);
   virtual ~qMRMLTreeViewPrivate();
   virtual void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
-  QSize sizeHint()const;
+  QSize sizeHint() const;
   void recomputeSizeHint(bool forceUpdate = false);
   /// Save the current expansion state of children nodes of a
   /// vtkMRMLDisplayableHierarchyNode
   void saveChildrenExpandState(QModelIndex& parentIndex);
   void scrollTo(const QString& name, bool next);
 
-  qMRMLSceneModel*           SceneModel;
+  qMRMLSceneModel* SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
-  QString                    SceneModelType;
-  bool                       FitSizeToVisibleIndexes;
-  mutable QSize              TreeViewSizeHint;
-  QSize                      TreeViewMinSizeHint;
-  bool                       ShowScene;
-  bool                       ShowRootNode;
-  QString                    LastScrollToName;
+  QString SceneModelType;
+  bool FitSizeToVisibleIndexes;
+  mutable QSize TreeViewSizeHint;
+  QSize TreeViewMinSizeHint;
+  bool ShowScene;
+  bool ShowRootNode;
+  QString LastScrollToName;
 
-  QMenu*                     NodeMenu;
-  QAction*                   RenameAction;
-  QAction*                   DeleteAction;
-  QAction*                   EditAction;
-  QMenu*                     SceneMenu;
+  QMenu* NodeMenu;
+  QAction* RenameAction;
+  QAction* DeleteAction;
+  QAction* EditAction;
+  QMenu* SceneMenu;
 
-  vtkCollection*             ExpandedNodes;
-
+  vtkCollection* ExpandedNodes;
 };
 
 #endif

@@ -37,17 +37,17 @@ class vtkSQLiteDatabase;
 class VTK_MRML_EXPORT vtkMRMLTableSQLiteStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLTableSQLiteStorageNode *New();
-  vtkTypeMacro(vtkMRMLTableSQLiteStorageNode,vtkMRMLStorageNode);
+  static vtkMRMLTableSQLiteStorageNode* New();
+  vtkTypeMacro(vtkMRMLTableSQLiteStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "TableSQLightStorage";}
+  const char* GetNodeTagName() override { return "TableSQLightStorage"; }
 
   /// Return true if the node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// SQLite Database password
   vtkSetStringMacro(Password);
@@ -58,7 +58,7 @@ public:
   vtkGetStringMacro(TableName);
 
   /// Drop a specified table from the database
-  static int DropTable(char *tableName, vtkSQLiteDatabase* database);
+  static int DropTable(char* tableName, vtkSQLiteDatabase* database);
 
 protected:
   vtkMRMLTableSQLiteStorageNode();
@@ -73,13 +73,13 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node. Returns 0 on failure.
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node. Returns 0 on failure.
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  char *TableName;
-  char *Password;
+  char* TableName;
+  char* Password;
 };
 
 #endif

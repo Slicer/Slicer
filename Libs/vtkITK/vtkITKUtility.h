@@ -60,35 +60,35 @@ void ConnectPipelines(VTK_Exporter* exporter, ITK_Importer importer)
   importer->SetCallbackUserData(exporter->GetCallbackUserData());
 }
 
+#define DelegateSetMacro(name, arg) DelegateITKInputMacro(Set##name, arg)
+#define DelegateITKInputMacro(name, arg)                                                          \
+  if (1)                                                                                          \
+  {                                                                                               \
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " #name " to " << #arg); \
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer());    \
+    if (tempFilter)                                                                               \
+    {                                                                                             \
+      tempFilter->name(arg);                                                                      \
+      this->Modified();                                                                           \
+    }                                                                                             \
+  }
 
-#define DelegateSetMacro(name,arg) DelegateITKInputMacro(Set##name,arg)
-#define DelegateITKInputMacro(name,arg) \
-if ( 1 ) { \
-  vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting " #name " to " << #arg ); \
-  ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
-  if ( tempFilter ) \
-  { \
-    tempFilter->name ( arg ); \
-    this->Modified(); \
-  } \
-}
-
-#define DelegateGetMacro(name) DelegateITKOutputMacro (Get##name)
-#define DelegateITKOutputMacro(name) \
-if ( 1 ) { \
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning " #name ); \
-  ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
-  if ( tempFilter ) \
-  { \
-    return tempFilter->name (); \
-  } \
-    else \
-    { \
-    vtkErrorMacro ( << this->GetClassName() << " Error getting " #name " Dynamic cast returned 0" ); \
-    return 0; \
-    } \
-}
-
+#define DelegateGetMacro(name) DelegateITKOutputMacro(Get##name)
+#define DelegateITKOutputMacro(name)                                                                \
+  if (1)                                                                                            \
+  {                                                                                                 \
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning " #name);                \
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer());      \
+    if (tempFilter)                                                                                 \
+    {                                                                                               \
+      return tempFilter->name();                                                                    \
+    }                                                                                               \
+    else                                                                                            \
+    {                                                                                               \
+      vtkErrorMacro(<< this->GetClassName() << " Error getting " #name " Dynamic cast returned 0"); \
+      return 0;                                                                                     \
+    }                                                                                               \
+  }
 
 /// struct vtkITKProgressDisplay
 /// {

@@ -41,7 +41,7 @@ int testAddInvalidFile(const char* filePath);
 int testAddFile(const char* filePath);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
+int vtkSlicerTablesLogicAddFileTest(int argc, char* argv[])
 {
   bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -68,7 +68,7 @@ int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
 }
 
 //-----------------------------------------------------------------------------
-int testAddInvalidFile(const char * filePath)
+int testAddInvalidFile(const char* filePath)
 {
   std::cout << "Test loading of invalid file: " << (filePath ? filePath : "(none)") << ". Errors are expected.";
 
@@ -86,7 +86,7 @@ int testAddInvalidFile(const char * filePath)
 }
 
 //-----------------------------------------------------------------------------
-int testAddFile(const char * filePath)
+int testAddFile(const char* filePath)
 {
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

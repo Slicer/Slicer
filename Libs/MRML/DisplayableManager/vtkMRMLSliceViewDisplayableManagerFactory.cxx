@@ -30,8 +30,8 @@
 // vtkMRMLSliceViewDisplayableManagerFactory methods
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceViewDisplayableManagerFactory::
-    vtkMRMLSliceViewDisplayableManagerFactory():Superclass()
+vtkMRMLSliceViewDisplayableManagerFactory::vtkMRMLSliceViewDisplayableManagerFactory()
+  : Superclass()
 {
 }
 

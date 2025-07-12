@@ -37,8 +37,7 @@ class vtkMRMLSegmentationNode;
 /// \brief Base class for all "label" effects.
 ///
 /// This base class provides common GUI and MRML for the options PaintOver and Threshold.
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorAbstractLabelEffect :
-  public qSlicerSegmentEditorAbstractEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorAbstractLabelEffect : public qSlicerSegmentEditorAbstractEffect
 {
 public:
   Q_OBJECT
@@ -72,11 +71,10 @@ public slots:
   /// Update parameter set node from user interface
   void updateMRMLFromGUI() override;
 
-// Utility functions
+  // Utility functions
 public:
-
   /// Rasterize a poly data onto the input image into the slice view
-  Q_INVOKABLE static void appendPolyMask(vtkOrientedImageData* input, vtkPolyData* polyData, qMRMLSliceWidget* sliceWidget, vtkMRMLSegmentationNode* segmentationNode=nullptr);
+  Q_INVOKABLE static void appendPolyMask(vtkOrientedImageData* input, vtkPolyData* polyData, qMRMLSliceWidget* sliceWidget, vtkMRMLSegmentationNode* segmentationNode = nullptr);
 
   /// Create a slice view screen space (2D) mask image for the given polydata
   Q_INVOKABLE static void createMaskImageFromPolyData(vtkPolyData* polyData, vtkOrientedImageData* outputMask, qMRMLSliceWidget* sliceWidget);

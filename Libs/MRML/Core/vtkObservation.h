@@ -42,11 +42,10 @@ class vtkCallbackCommand;
 /// for the event broker.
 class VTK_MRML_EXPORT vtkObservation : public vtkObject
 {
-  public:
-
+public:
   /// The Usual vtk class functions
-  static vtkObservation *New();
-  vtkTypeMacro(vtkObservation,vtkObject);
+  static vtkObservation* New();
+  vtkTypeMacro(vtkObservation, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
@@ -56,39 +55,39 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   ///   observers to these objects and will thereby know when they
   ///   are no longer valid
   virtual void SetEventBroker(vtkEventBroker* eventBroker);
-  vtkGetObjectMacro (EventBroker, vtkEventBroker);
-  vtkGetMacro (InEventQueue, int);
-  vtkSetMacro (InEventQueue, int);
-  vtkGetObjectMacro (ObservationCallbackCommand, vtkCallbackCommand);
-  vtkGetObjectMacro (Subject, vtkObject);
-  void AssignSubject(vtkObject* subject) {this->Subject = subject;};
-  vtkGetMacro (Event, unsigned long);
-  vtkSetMacro (Event, unsigned long);
+  vtkGetObjectMacro(EventBroker, vtkEventBroker);
+  vtkGetMacro(InEventQueue, int);
+  vtkSetMacro(InEventQueue, int);
+  vtkGetObjectMacro(ObservationCallbackCommand, vtkCallbackCommand);
+  vtkGetObjectMacro(Subject, vtkObject);
+  void AssignSubject(vtkObject* subject) { this->Subject = subject; };
+  vtkGetMacro(Event, unsigned long);
+  vtkSetMacro(Event, unsigned long);
   virtual void SetCallbackCommand(vtkCallbackCommand* callbackCommand);
-  vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
-  vtkSetStringMacro (Script);
-  vtkGetStringMacro (Script);
-  vtkGetObjectMacro (Observer, vtkObject);
-  void AssignObserver(vtkObject* observer) {this->Observer = observer;};
-  vtkSetStringMacro (Comment);
-  vtkGetStringMacro (Comment);
+  vtkGetObjectMacro(CallbackCommand, vtkCallbackCommand);
+  vtkSetStringMacro(Script);
+  vtkGetStringMacro(Script);
+  vtkGetObjectMacro(Observer, vtkObject);
+  void AssignObserver(vtkObject* observer) { this->Observer = observer; };
+  vtkSetStringMacro(Comment);
+  vtkGetStringMacro(Comment);
   vtkSetMacro(Priority, float);
   vtkGetMacro(Priority, float);
 
-  vtkGetMacro (EventTag, unsigned long);
-  vtkSetMacro (EventTag, unsigned long);
-  vtkGetMacro (SubjectDeleteEventTag, unsigned long);
-  vtkSetMacro (SubjectDeleteEventTag, unsigned long);
-  vtkGetMacro (ObserverDeleteEventTag, unsigned long);
-  vtkSetMacro (ObserverDeleteEventTag, unsigned long);
+  vtkGetMacro(EventTag, unsigned long);
+  vtkSetMacro(EventTag, unsigned long);
+  vtkGetMacro(SubjectDeleteEventTag, unsigned long);
+  vtkSetMacro(SubjectDeleteEventTag, unsigned long);
+  vtkGetMacro(ObserverDeleteEventTag, unsigned long);
+  vtkSetMacro(ObserverDeleteEventTag, unsigned long);
 
   /// Description
   /// Elapsed time of last invocation and total elapsed time
   /// (in synchronous mode, elapsed time include children)
-  vtkGetMacro (LastElapsedTime, double);
-  vtkSetMacro (LastElapsedTime, double);
-  vtkGetMacro (TotalElapsedTime, double);
-  vtkSetMacro (TotalElapsedTime, double);
+  vtkGetMacro(LastElapsedTime, double);
+  vtkSetMacro(LastElapsedTime, double);
+  vtkGetMacro(TotalElapsedTime, double);
+  vtkSetMacro(TotalElapsedTime, double);
 
   struct CallType
   {
@@ -96,7 +95,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
     unsigned long EventID;
     void* CallData;
   };
-  std::deque<CallType> *GetCallDataList() {return &(this->CallDataList);};
+  std::deque<CallType>* GetCallDataList() { return &(this->CallDataList); };
 
 protected:
   vtkObservation();
@@ -106,12 +105,12 @@ protected:
 
   ///
   /// EventBroker that 'owns' this observation
-  vtkEventBroker *EventBroker;
+  vtkEventBroker* EventBroker;
 
   ///
   /// Holder for callback that this object wants called when either
   /// the subject or the observer triggers and event
-  vtkCallbackCommand *ObservationCallbackCommand;
+  vtkCallbackCommand* ObservationCallbackCommand;
 
   ///
   /// Flag that tells the broker that this observation
@@ -121,7 +120,7 @@ protected:
 
   ///
   /// Holder for Subject
-  vtkObject *Subject;
+  vtkObject* Subject;
 
   ///
   /// Holder for Event
@@ -129,11 +128,11 @@ protected:
 
   ///
   /// Holder for Observer
-  vtkObject *Observer;
+  vtkObject* Observer;
 
   ///
   /// Holder for callback that the Observer wants to have run when Event happens
-  vtkCallbackCommand *CallbackCommand;
+  vtkCallbackCommand* CallbackCommand;
 
   ///
   /// data passed to the observation by the subject
@@ -141,11 +140,11 @@ protected:
 
   ///
   /// Holder for script as an alternative to the callback command
-  char *Script;
+  char* Script;
 
   ///
   /// Holder for comment string
-  char *Comment;
+  char* Comment;
 
   /// Priority of the observer
   float Priority;
@@ -159,7 +158,6 @@ protected:
 
   double LastElapsedTime;
   double TotalElapsedTime;
-
 };
 
 //----------------------------------------------------------------------------
@@ -168,6 +166,5 @@ vtkObservation::CallType::CallType(unsigned long eventID, void* callData)
   , CallData(callData)
 {
 }
-
 
 #endif

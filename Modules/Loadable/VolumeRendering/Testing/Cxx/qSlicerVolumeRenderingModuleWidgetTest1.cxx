@@ -32,7 +32,7 @@
 // MRML includes
 
 //-----------------------------------------------------------------------------
-int qSlicerVolumeRenderingModuleWidgetTest1( int argc, char * argv[] )
+int qSlicerVolumeRenderingModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
 
@@ -40,9 +40,7 @@ int qSlicerVolumeRenderingModuleWidgetTest1( int argc, char * argv[] )
   module.setMRMLScene(app.mrmlScene());
   module.initialize(nullptr);
 
-  qSlicerVolumeRenderingModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(
-      module.widgetRepresentation());
+  qSlicerVolumeRenderingModuleWidget* moduleWidget = dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(module.widgetRepresentation());
 
   moduleWidget->show();
 

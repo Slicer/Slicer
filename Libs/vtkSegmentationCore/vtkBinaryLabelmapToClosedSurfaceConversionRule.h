@@ -34,8 +34,7 @@
 ///   closed surface representation (vtkPolyData type). The conversion algorithm
 ///   performs a marching cubes operation on the image data followed by an optional
 ///   decimation step.
-class vtkSegmentationCore_EXPORT vtkBinaryLabelmapToClosedSurfaceConversionRule
-  : public vtkSegmentationConverterRule
+class vtkSegmentationCore_EXPORT vtkBinaryLabelmapToClosedSurfaceConversionRule : public vtkSegmentationConverterRule
 {
 public:
   /// Conversion parameter: decimation factor
@@ -85,10 +84,10 @@ public:
   bool PostConvert(vtkSegmentation* segmentation) override;
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
-  const char* GetName()  override { return "Binary labelmap to closed surface"; };
+  const char* GetName() override { return "Binary labelmap to closed surface"; };
 
   /// Human-readable name of the source representation
   const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(); };
@@ -108,7 +107,7 @@ protected:
 protected:
   /// Cache for storing merged closed surfaces that have been joint smoothed
   /// The key used is the binary labelmap representation, which maps to the combined vtkPolyData containing surfaces for all segments in the segmentation
-  std::map<vtkOrientedImageData*, vtkSmartPointer<vtkPolyData> > JointSmoothCache;
+  std::map<vtkOrientedImageData*, vtkSmartPointer<vtkPolyData>> JointSmoothCache;
 
 private:
   vtkBinaryLabelmapToClosedSurfaceConversionRule(const vtkBinaryLabelmapToClosedSurfaceConversionRule&) = delete;

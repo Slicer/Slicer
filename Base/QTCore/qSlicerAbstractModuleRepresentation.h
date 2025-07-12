@@ -42,17 +42,16 @@ class qSlicerAbstractModuleRepresentationPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleRepresentation : virtual public qSlicerObject
 {
 public:
-
   typedef qSlicerObject Superclass;
   qSlicerAbstractModuleRepresentation();
   ~qSlicerAbstractModuleRepresentation() override;
 
   /// Set/Get module name
-  QString moduleName()const;
+  QString moduleName() const;
 
   /// Returns the module the representation belongs to.
   /// The module is set right before setup() is called.
-  qSlicerAbstractCoreModule* module()const;
+  qSlicerAbstractCoreModule* module() const;
 
   /// \brief Select input or output nodes in the module's GUI.
   ///
@@ -83,7 +82,7 @@ public:
   /// (for example, they look into the node contents and decide based on that if the node belongs to
   /// this module).
 
- /// \sa setEditedNode
+  /// \sa setEditedNode
   virtual double nodeEditable(vtkMRMLNode* node);
 
 protected:

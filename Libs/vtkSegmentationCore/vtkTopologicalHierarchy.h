@@ -21,7 +21,6 @@
 // .NAME vtkTopologicalHierarchy - Assigns hierarchy level values to the elements of a poly data collection
 // .SECTION Description
 
-
 #ifndef __vtkTopologicalHierarchy_h
 #define __vtkTopologicalHierarchy_h
 
@@ -42,9 +41,8 @@ class vtkIntArray;
 class vtkSegmentationCore_EXPORT vtkTopologicalHierarchy : public vtkObject
 {
 public:
-
-  static vtkTopologicalHierarchy *New();
-  vtkTypeMacro(vtkTopologicalHierarchy, vtkObject );
+  static vtkTopologicalHierarchy* New();
+  vtkTypeMacro(vtkTopologicalHierarchy, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get output topological hierarchy levels

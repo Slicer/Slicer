@@ -16,7 +16,7 @@
   This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef __qSlicerTablesModuleWidgetsAbstractPlugin_h
 #define __qSlicerTablesModuleWidgetsAbstractPlugin_h
@@ -25,13 +25,12 @@
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #include "qSlicerTablesModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT qSlicerTablesModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT qSlicerTablesModuleWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerTablesModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -39,7 +38,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

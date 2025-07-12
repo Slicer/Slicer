@@ -29,12 +29,11 @@ class qSlicerAbstractModuleRepresentationPrivate
 public:
   qSlicerAbstractModuleRepresentationPrivate();
   vtkWeakPointer<vtkMRMLAbstractLogic> Logic;
-  qSlicerAbstractCoreModule*           Module;
+  qSlicerAbstractCoreModule* Module;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentationPrivate
-::qSlicerAbstractModuleRepresentationPrivate()
+qSlicerAbstractModuleRepresentationPrivate::qSlicerAbstractModuleRepresentationPrivate()
 {
   this->Module = nullptr;
 }
@@ -56,21 +55,21 @@ qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModuleRepresentation::moduleName()const
+QString qSlicerAbstractModuleRepresentation::moduleName() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module->name();
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic()const
+vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
+qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module;
@@ -86,9 +85,7 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* m
 }
 
 //-----------------------------------------------------------
-bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node,
-                                                        QString role /* = QString()*/,
-                                                        QString context /* = QString() */)
+bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
 {
   Q_UNUSED(node);
   Q_UNUSED(role);

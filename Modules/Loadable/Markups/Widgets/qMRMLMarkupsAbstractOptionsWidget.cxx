@@ -27,11 +27,11 @@
 #include "vtkMRMLMarkupsNode.h"
 
 //-----------------------------------------------------------------------------
-qMRMLMarkupsAbstractOptionsWidget::
-qMRMLMarkupsAbstractOptionsWidget(QWidget* parent)
-  : Superclass(parent), MarkupsNode(nullptr), MRMLScene(nullptr)
+qMRMLMarkupsAbstractOptionsWidget::qMRMLMarkupsAbstractOptionsWidget(QWidget* parent)
+  : Superclass(parent)
+  , MarkupsNode(nullptr)
+  , MRMLScene(nullptr)
 {
-
 }
 
 // --------------------------------------------------------------------------

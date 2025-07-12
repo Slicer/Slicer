@@ -25,7 +25,7 @@
  * mouse and keyboard interaction events can be dynamically remapped
  * to camera manipulation actions and to process all kinds of interaction
  * events (camera manipulation, markups manipulation, ...) in a similar way.
-*/
+ */
 
 #ifndef vtkMRMLCameraWidget_h
 #define vtkMRMLCameraWidget_h
@@ -37,14 +37,13 @@
 class vtkSliceIntersectionRepresentation2D;
 class vtkMRMLSegmentationDisplayNode;
 
-
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraWidget : public vtkMRMLAbstractWidget
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLCameraWidget *New();
+  static vtkMRMLCameraWidget* New();
 
   //@{
   /**
@@ -63,7 +62,7 @@ public:
   vtkMRMLCameraNode* GetCameraNode();
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
@@ -192,7 +191,6 @@ protected:
   /// Indicates whether the shift key was used during the previous action.
   /// This is used to require shift-up after a click-and-drag before accepting shift+mousemove.
   bool ModifierKeyPressedSinceLastClickAndDrag;
-
 
 private:
   vtkMRMLCameraWidget(const vtkMRMLCameraWidget&) = delete;

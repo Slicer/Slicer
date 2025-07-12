@@ -30,12 +30,13 @@ class vtkMRMLPlotChartNode;
 class VTK_MRML_EXPORT vtkMRMLPlotViewNode : public vtkMRMLAbstractViewNode
 {
 public:
-  static vtkMRMLPlotViewNode *New();
+  static vtkMRMLPlotViewNode* New();
   vtkTypeMacro(vtkMRMLPlotViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Enum of the available plot types
-  enum {
+  enum
+  {
     InteractionModePanView,
     InteractionModeSelectPoints,
     InteractionModeFreehandSelectPoints,
@@ -47,11 +48,11 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-   vtkMRMLNode* CreateNodeInstance()  override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file.
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -67,7 +68,7 @@ public:
 
   ///
   /// Set and Update the PlotChart node id displayed in this PlotView.
-  virtual void SetPlotChartNodeID(const char *PlotChartNodeID);
+  virtual void SetPlotChartNodeID(const char* PlotChartNodeID);
 
   ///
   /// Get the PlotChart node id displayed in this PlotView.
@@ -82,8 +83,8 @@ public:
   /// If DoPropagatePlotChartSelection set to false then this
   /// view will not be affected by PropagatePlotChartSelection.
   /// Default value is true.
-  vtkSetMacro (DoPropagatePlotChartSelection, bool );
-  vtkGetMacro (DoPropagatePlotChartSelection, bool );
+  vtkSetMacro(DoPropagatePlotChartSelection, bool);
+  vtkGetMacro(DoPropagatePlotChartSelection, bool);
 
   /// Get/Set interaction mode for mouse left-click and drag.
   /// InteractionModePanView: pans chart view
@@ -107,14 +108,12 @@ public:
 
   ///
   /// Convert between interaction mode ID and name
-  static const char *GetInteractionModeAsString(int id);
-  static int GetInteractionModeFromString(const char *name);
+  static const char* GetInteractionModeAsString(int id);
+  static int GetInteractionModeFromString(const char* name);
 
   ///
   /// Method to propagate events generated in mrml.
-  void ProcessMRMLEvents(vtkObject *caller,
-                                 unsigned long event,
-                                 void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// PlotModifiedEvent is fired when:
   ///  - a new PlotChart node is observed
@@ -144,21 +143,21 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
-  bool DoPropagatePlotChartSelection{true};
+  bool DoPropagatePlotChartSelection{ true };
 
-  int InteractionMode{InteractionModePanView};
-  bool EnablePointMoveAlongX{true};
-  bool EnablePointMoveAlongY{true};
+  int InteractionMode{ InteractionModePanView };
+  bool EnablePointMoveAlongX{ true };
+  bool EnablePointMoveAlongY{ true };
 };
 
 #endif

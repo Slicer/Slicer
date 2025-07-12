@@ -40,8 +40,12 @@ static const double DISPLACEMENT_SCALE = 0.63;
 
 //----------------------------------------------------------------------------
 void CreateBSplineVtk2(vtkOrientedBSplineTransform* bsplineTransform,
-  double origin[3], double spacing[3], double direction[3][3], double dims[3],
-  const double bulkMatrix[3][3], const double bulkOffset[3])
+                       double origin[3],
+                       double spacing[3],
+                       double direction[3][3],
+                       double dims[3],
+                       const double bulkMatrix[3][3],
+                       const double bulkOffset[3])
 {
   vtkNew<vtkImageData> bsplineCoefficients;
   bsplineCoefficients->SetExtent(0, dims[0] - 1, 0, dims[1] - 1, 0, dims[2] - 1);
@@ -148,7 +152,7 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsNodeTest6(int, char* [])
+int vtkMRMLMarkupsNodeTest6(int, char*[])
 {
 
   std::cout << "Testing vtkMarkupsNode orientation transformation" << std::endl;
@@ -177,7 +181,7 @@ int vtkMRMLMarkupsNodeTest6(int, char* [])
 
   PointOrientation po3;
   po3.Position = vtkVector3d(96.0, 93.0, -35.0);
-  double po3Orientation[9] = { -0.216468, 0.0449462, 0.97525, -0.323356, - 0.945858, - 0.0281809, 0.921185, -0.321455, 0.219281};
+  double po3Orientation[9] = { -0.216468, 0.0449462, 0.97525, -0.323356, -0.945858, -0.0281809, 0.921185, -0.321455, 0.219281 };
   po3.Orientation->DeepCopy(po3Orientation);
   pointOrientation.push_back(po3);
 
@@ -222,8 +226,8 @@ int vtkMRMLMarkupsNodeTest6(int, char* [])
   vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
   double bSplineOrigin[3] = { -100, -100, -100 };
   double bSplineSpacing[3] = { 100, 100, 100 };
-  double bSplineDirection[3][3] = { {0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814} };
-  double bSplineDims[3] = { 7,8,7 };
+  double bSplineDirection[3][3] = { { 0.92128500, -0.36017075, -0.146666625 }, { 0.31722386, 0.91417248, -0.25230478 }, { 0.22495105, 0.18591857, 0.95646814 } };
+  double bSplineDims[3] = { 7, 8, 7 };
   const double bSplineBulkMatrix[3][3] = { { 0.7, 0.2, 0.1 }, { 0.1, 0.8, 0.1 }, { 0.05, 0.2, 0.9 } };
   const double bSplineBulkOffset[3] = { -5, 3, 6 };
   CreateBSplineVtk2(bSplineTransform, bSplineOrigin, bSplineSpacing, bSplineDirection, bSplineDims, bSplineBulkMatrix, bSplineBulkOffset);

@@ -64,16 +64,16 @@ public:
   qSlicerRelativePathMapper(QObject* targetObject, const QByteArray& propertyName, const QByteArray& signal);
   virtual ~qSlicerRelativePathMapper();
 
-  QByteArray propertyName()const;
+  QByteArray propertyName() const;
 
   /// The mapped object (the mapper parent)
-  QObject* targetObject()const;
+  QObject* targetObject() const;
 
-  QString path()const;
-  QStringList paths()const;
+  QString path() const;
+  QStringList paths() const;
 
-  QString relativePath()const;
-  QStringList relativePaths()const;
+  QString relativePath() const;
+  QStringList relativePaths() const;
 public Q_SLOTS:
   void setPath(const QString& path);
   void setPaths(const QStringList& path);

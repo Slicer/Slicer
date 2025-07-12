@@ -20,18 +20,17 @@
 
 ==============================================================================*/
 
-
 #include "qMRMLTransformDisplayNodeWidgetPlugin.h"
 #include "qMRMLTransformDisplayNodeWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidgetPlugin::qMRMLTransformDisplayNodeWidgetPlugin(QObject *_parent)
+qMRMLTransformDisplayNodeWidgetPlugin::qMRMLTransformDisplayNodeWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTransformDisplayNodeWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTransformDisplayNodeWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTransformDisplayNodeWidget* _widget = new qMRMLTransformDisplayNodeWidget(_parent);
   return _widget;
@@ -42,7 +41,7 @@ QString qMRMLTransformDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTransformDisplayNodeWidget\" \
           name=\"MRMLTransformDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

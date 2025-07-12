@@ -24,13 +24,13 @@
 #include "qMRMLTransformInfoWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLTransformInfoWidgetPlugin::qMRMLTransformInfoWidgetPlugin(QObject *_parent)
+qMRMLTransformInfoWidgetPlugin::qMRMLTransformInfoWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTransformInfoWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTransformInfoWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTransformInfoWidget* _widget = new qMRMLTransformInfoWidget(_parent);
   return _widget;
@@ -41,7 +41,7 @@ QString qMRMLTransformInfoWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTransformInfoWidget\" \
           name=\"MRMLTransformInfoWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

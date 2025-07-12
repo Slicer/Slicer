@@ -22,13 +22,13 @@
 #include "qMRMLUnitWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLUnitWidgetPlugin::qMRMLUnitWidgetPlugin(QObject *_parent)
+qMRMLUnitWidgetPlugin::qMRMLUnitWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLUnitWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLUnitWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLUnitWidget* _widget = new qMRMLUnitWidget(_parent);
   return _widget;
@@ -37,11 +37,11 @@ QWidget *qMRMLUnitWidgetPlugin::createWidget(QWidget *_parent)
 //------------------------------------------------------------------------------
 QString qMRMLUnitWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLUnitWidget\" name=\"MRMLUnitWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLUnitWidget\" name=\"MRMLUnitWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //------------------------------------------------------------------------------

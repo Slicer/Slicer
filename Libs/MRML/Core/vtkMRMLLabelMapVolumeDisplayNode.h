@@ -25,16 +25,16 @@ class vtkImageMapToColors;
 /// vtkMRMLLabelMapVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
-  public:
-  static vtkMRMLLabelMapVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLLabelMapVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+public:
+  static vtkMRMLLabelMapVolumeDisplayNode* New();
+  vtkTypeMacro(vtkMRMLLabelMapVolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "LabelMapVolumeDisplay";}
+  const char* GetNodeTagName() override { return "LabelMapVolumeDisplay"; }
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
@@ -42,15 +42,13 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
   ///
   /// set default labels colormap
   void SetDefaultColorMap() override;
 
   /// Set the pipeline input
-  void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
 
   /// Get the pipeline input
   vtkImageData* GetInputImageData() override;
@@ -66,8 +64,7 @@ protected:
   vtkMRMLLabelMapVolumeDisplayNode(const vtkMRMLLabelMapVolumeDisplayNode&);
   void operator=(const vtkMRMLLabelMapVolumeDisplayNode&);
 
-  vtkImageMapToColors *MapToColors;
-
+  vtkImageMapToColors* MapToColors;
 };
 
 #endif

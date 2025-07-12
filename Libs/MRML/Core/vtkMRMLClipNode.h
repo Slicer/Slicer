@@ -99,7 +99,7 @@ public:
   /// Clipping state for each clipping node reference
   enum ClippingStateType
   {
-    ClipOff = 0, // Clipping disabled
+    ClipOff = 0,           // Clipping disabled
     ClipPositiveSpace = 1, // Keep +ve region of the implicit function
     ClipNegativeSpace = 2, // Keep -ve region of the implicit function
   };
@@ -230,10 +230,9 @@ public:
 
   /// Get the list of all clipping planes in the clip node, including from nested clip nodes.
   /// Returns false if not all of the functions in the clip node are planes.
-  bool GetClippingPlanes(vtkPlaneCollection* planeCollection, bool invert=false, vtkMRMLMessageCollection* messages=nullptr);
+  bool GetClippingPlanes(vtkPlaneCollection* planeCollection, bool invert = false, vtkMRMLMessageCollection* messages = nullptr);
 
 protected:
-
   /// Update the implicit function based on the clipping nodes.
   void UpdateImplicitFunction();
 
@@ -243,7 +242,7 @@ protected:
   /// Get the list of all clipping planes in the implicit function.
   /// If invert is true, then the plane normals will be flipped.
   /// Returns false if not all of the functions in the clip node are planes.
-  static bool GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert=false);
+  static bool GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert = false);
 
 protected:
   vtkMRMLClipNode();

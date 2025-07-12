@@ -58,8 +58,7 @@ class qSlicerAbstractModuleWidget;
 /// 0.7 = The plugin is likely be the only one that can handle the item in question, but there is a chance that other plugins can do that too
 /// 1.0 = The item in question can only be handled by the plugin (by node type or identifier attribute)
 ///
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyScriptedPlugin
-  : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyScriptedPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
   Q_OBJECT
 
@@ -68,7 +67,7 @@ public:
   qSlicerSubjectHierarchyScriptedPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyScriptedPlugin() override;
 
-  Q_INVOKABLE QString pythonSource()const;
+  Q_INVOKABLE QString pythonSource() const;
 
   /// Set python source for the implemented plugin
   /// \param filePath Python file path
@@ -81,8 +80,8 @@ public:
   /// \sa name
   void setName(QString name) override;
 
-// Role-related virtual methods
-// If the subclass plugin does not offer a role, these do not need to be overridden
+  // Role-related virtual methods
+  // If the subclass plugin does not offer a role, these do not need to be overridden
 public:
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -90,14 +89,14 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  double canOwnSubjectHierarchyItem(vtkIdType itemID)const override;
+  double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
-  const QString roleForPlugin()const override;
+  const QString roleForPlugin() const override;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, nullptr if nothing to set
@@ -111,30 +110,30 @@ public:
 
   /// Generate displayed name for the owned subject hierarchy item corresponding to its role.
   /// The default implementation returns the associated data node's name if any, otherwise the item name
-  QString displayedItemName(vtkIdType itemID)const override;
+  QString displayedItemName(vtkIdType itemID) const override;
 
   /// Generate tooltip for a owned subject hierarchy item
-  QString tooltip(vtkIdType itemID)const override;
+  QString tooltip(vtkIdType itemID) const override;
 
   /// Set display visibility of a owned subject hierarchy item
   void setDisplayVisibility(vtkIdType itemID, int visible) override;
 
   /// Get display visibility of a owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  int getDisplayVisibility(vtkIdType itemID)const override;
+  int getDisplayVisibility(vtkIdType itemID) const override;
 
-// Function related virtual methods
+  // Function related virtual methods
 public:
   /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  QList<QAction*> itemContextMenuActions() const override;
 
   /// Get view item context menu item actions to add to views
-  QList<QAction*> viewContextMenuActions()const override;
+  QList<QAction*> viewContextMenuActions() const override;
 
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  QList<QAction*> sceneContextMenuActions()const override;
+  QList<QAction*> sceneContextMenuActions() const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
@@ -156,9 +155,7 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.
@@ -168,7 +165,7 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const override;
+  double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const override;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise

@@ -23,8 +23,8 @@ class vtkMRMLModelNode;
 class VTK_MRML_EXPORT vtkMRMLModelHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
-  static vtkMRMLModelHierarchyNode *New();
-  vtkTypeMacro(vtkMRMLModelHierarchyNode,vtkMRMLDisplayableHierarchyNode);
+  static vtkMRMLModelHierarchyNode* New();
+  vtkTypeMacro(vtkMRMLModelHierarchyNode, vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -35,51 +35,41 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, ModelHierarchy)
-  const char* GetNodeTagName() override {return "ModelHierarchy";}
+  const char* GetNodeTagName() override { return "ModelHierarchy"; }
 
-   ///
+  ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   void UpdateReferences() override;
 
   ///
   /// Finds the model node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// String ID of the model MRML node
-  void SetModelNodeID(const char* id)
-  {
-    this->SetDisplayableNodeID(id);
-  }
+  void SetModelNodeID(const char* id) { this->SetDisplayableNodeID(id); }
 
-  char *GetModelNodeID()
-  {
-    return this->GetDisplayableNodeID();
-  }
+  char* GetModelNodeID() { return this->GetDisplayableNodeID(); }
 
   /// Need this for tcl wrapping to call ReferenceStringMacro methods
-  void SetModelNodeIDReference(const char* ref) {
-    this->SetModelNodeID(ref);
-  };
-
+  void SetModelNodeIDReference(const char* ref) { this->SetModelNodeID(ref); };
 
   ///
   /// Get associated model MRML node
@@ -89,21 +79,17 @@ public:
   /// Get associated display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
-
   ///
   /// Get the first parent node in hierarchy which is not expanded
   vtkMRMLModelHierarchyNode* GetCollapsedParentNode();
 
   ///
   /// Find all child model nodes in the hierarchy
-  void GetChildrenModelNodes(vtkCollection *models);
+  void GetChildrenModelNodes(vtkCollection* models);
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
-
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
 protected:
   vtkMRMLModelHierarchyNode();
@@ -111,11 +97,9 @@ protected:
   vtkMRMLModelHierarchyNode(const vtkMRMLModelHierarchyNode&);
   void operator=(const vtkMRMLModelHierarchyNode&);
 
-
   /// Data
 
-  vtkMRMLModelDisplayNode *ModelDisplayNode;
-
+  vtkMRMLModelDisplayNode* ModelDisplayNode;
 };
 
 #endif

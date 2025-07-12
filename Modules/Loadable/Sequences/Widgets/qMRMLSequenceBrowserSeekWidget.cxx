@@ -28,12 +28,13 @@
 #include <QFontDatabase>
 
 //-----------------------------------------------------------------------------
-class qMRMLSequenceBrowserSeekWidgetPrivate
-  : public Ui_qMRMLSequenceBrowserSeekWidget
+class qMRMLSequenceBrowserSeekWidgetPrivate : public Ui_qMRMLSequenceBrowserSeekWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSequenceBrowserSeekWidget);
+
 protected:
   qMRMLSequenceBrowserSeekWidget* const q_ptr;
+
 public:
   qMRMLSequenceBrowserSeekWidgetPrivate(qMRMLSequenceBrowserSeekWidget& object);
   void init();
@@ -64,7 +65,7 @@ void qMRMLSequenceBrowserSeekWidgetPrivate::init()
 // qMRMLSequenceBrowserSeekWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget *newParent)
+qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget* newParent)
   : Superclass(newParent)
   , d_ptr(new qMRMLSequenceBrowserSeekWidgetPrivate(*this))
 {
@@ -86,13 +87,10 @@ void qMRMLSequenceBrowserSeekWidget::setMRMLSequenceBrowserNode(vtkMRMLSequenceB
 {
   Q_D(qMRMLSequenceBrowserSeekWidget);
 
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::IndexDisplayFormatModifiedEvent,
-    this, SLOT(onIndexDisplayFormatModified()));
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::IndexDisplayFormatModifiedEvent, this, SLOT(onIndexDisplayFormatModified()));
+  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   // Update slider when a new item is added to a sequence
-  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->SequenceBrowserNode = browserNode;
   this->onIndexDisplayFormatModified();

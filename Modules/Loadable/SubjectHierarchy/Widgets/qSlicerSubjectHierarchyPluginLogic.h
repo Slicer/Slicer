@@ -45,8 +45,9 @@ class qSlicerSubjectHierarchyAbstractPlugin;
 
 /// \brief Qt-based logic class to exercise Qt-related logic functions. The Subject
 ///   hierarchy plugin mechanism and those are Qt classes
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic :
-  public QObject, public virtual qSlicerObject
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic
+  : public QObject
+  , public virtual qSlicerObject
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -59,7 +60,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 
 public:
   typedef QObject Superclass;
-  qSlicerSubjectHierarchyPluginLogic(QObject *parent=nullptr);
+  qSlicerSubjectHierarchyPluginLogic(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyPluginLogic() override;
 
 public:
@@ -67,10 +68,10 @@ public:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Assessor function for getting subject hierarchy plugin by name (for python)
-  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name)const;
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name) const;
 
   /// Assessor function for getting currently selected subject hierarchy item (for python)
-  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem()const;
+  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem() const;
 
   /// Utility test function to be able to set currently selected subject hierarchy node from python
   /// Only used in python tests!
@@ -112,7 +113,7 @@ public:
   /// \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned that contains
   /// name and "section" value of each action.
   /// \param allowedActions specifies object name of actions may be added to the menu. If the list is empty then it is ignored.
-  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions, const QStringList& allowedActions=QStringList());
+  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList<QAction*> actions, const QStringList& allowedActions = QStringList());
 
 protected:
   /// Add observations for node that was added to subject hierarchy

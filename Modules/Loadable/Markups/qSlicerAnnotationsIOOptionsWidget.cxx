@@ -37,7 +37,7 @@ class qSlicerAnnotationsIOOptionsWidgetPrivate
   , public Ui_qSlicerAnnotationModuleIOOptionsWidget
 {
 public:
-  //void init();
+  // void init();
 };
 
 //-----------------------------------------------------------------------------
@@ -53,13 +53,10 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   this->FileTypeButtonGroup->addButton(d->FiducialRadioButton);
   this->FileTypeButtonGroup->addButton(d->RulerRadioButton);
   this->FileTypeButtonGroup->addButton(d->ROIRadioButton);
-//  this->FileTypeButtonGroup->addButton(d->ListRadioButton);
-  this->connect(this->FileTypeButtonGroup, SIGNAL(buttonClicked(int)),
-                this, SLOT(updateProperties()));
+  //  this->FileTypeButtonGroup->addButton(d->ListRadioButton);
+  this->connect(this->FileTypeButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(updateProperties()));
 
-
-  connect(d->NameLineEdit, SIGNAL(textChanged(QString)),
-          this, SLOT(updateProperties()));
+  connect(d->NameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(updateProperties()));
   /*
   connect(d->FiducialRadioButton, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
@@ -97,7 +94,7 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
   d->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
   d->Properties["ruler"] = d->RulerRadioButton->isChecked();
   d->Properties["roi"] = d->ROIRadioButton->isChecked();
-//  d->Properties["list"] = d->ListRadioButton->isChecked();
+  //  d->Properties["list"] = d->ListRadioButton->isChecked();
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +108,7 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
 {
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   QStringList names;
-  foreach(const QString& fileName, fileNames)
+  foreach (const QString& fileName, fileNames)
   {
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
@@ -124,13 +121,13 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
     QRegExp rulerName("(\\b|_)(M)(\\b|_)");
     QRegExp roiName("(\\b|_)(R)(\\b|_)");
     QAbstractButton* activeButton = nullptr;
-/*    QRegExp listName("(\\b|_)(List)(\\b|_)");
-    if (fileInfo.baseName().contains(listName))
-      {
-      d->ListRadioButton->setChecked(true);
-      }
-    else
-*/
+    /*    QRegExp listName("(\\b|_)(List)(\\b|_)");
+        if (fileInfo.baseName().contains(listName))
+          {
+          d->ListRadioButton->setChecked(true);
+          }
+        else
+    */
     if (fileInfo.baseName().contains(fiducialName))
     {
       activeButton = d->FiducialRadioButton;

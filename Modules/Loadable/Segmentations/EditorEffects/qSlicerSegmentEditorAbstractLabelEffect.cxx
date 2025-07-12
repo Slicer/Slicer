@@ -68,14 +68,13 @@ qSlicerSegmentEditorAbstractLabelEffectPrivate::~qSlicerSegmentEditorAbstractLab
 
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorAbstractLabelEffect methods
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractLabelEffect::qSlicerSegmentEditorAbstractLabelEffect(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSegmentEditorAbstractLabelEffectPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSegmentEditorAbstractLabelEffectPrivate(*this))
 {
 }
 
@@ -83,24 +82,16 @@ qSlicerSegmentEditorAbstractLabelEffect::qSlicerSegmentEditorAbstractLabelEffect
 qSlicerSegmentEditorAbstractLabelEffect::~qSlicerSegmentEditorAbstractLabelEffect() = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged()
-{
-}
+void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged() {}
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::sourceVolumeNodeChanged()
-{
-}
+void qSlicerSegmentEditorAbstractLabelEffect::sourceVolumeNodeChanged() {}
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::setupOptionsFrame()
-{
-}
+void qSlicerSegmentEditorAbstractLabelEffect::setupOptionsFrame() {}
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::setMRMLDefaults()
-{
-}
+void qSlicerSegmentEditorAbstractLabelEffect::setMRMLDefaults() {}
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::updateGUIFromMRML()
@@ -113,12 +104,13 @@ void qSlicerSegmentEditorAbstractLabelEffect::updateGUIFromMRML()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::updateMRMLFromGUI()
-{
-}
+void qSlicerSegmentEditorAbstractLabelEffect::updateMRMLFromGUI() {}
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageData* input, vtkPolyData* polyData, qMRMLSliceWidget* sliceWidget, vtkMRMLSegmentationNode* segmentationNode/*=nullptr*/)
+void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageData* input,
+                                                             vtkPolyData* polyData,
+                                                             qMRMLSliceWidget* sliceWidget,
+                                                             vtkMRMLSegmentationNode* segmentationNode /*=nullptr*/)
 {
   // Rasterize a poly data onto the input image into the slice view
   // - Points are specified in current XY space
@@ -158,8 +150,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::appendImage(vtkOrientedImageData* 
 
   // Make sure appended image has the same lattice as the input image
   vtkSmartPointer<vtkOrientedImageData> resampledAppendedImage = vtkSmartPointer<vtkOrientedImageData>::New();
-  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
-    appendedImage, inputImage, resampledAppendedImage);
+  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(appendedImage, inputImage, resampledAppendedImage);
 
   // Add image created from poly data to input image
   vtkSmartPointer<vtkImageMathematics> imageMath = vtkSmartPointer<vtkImageMathematics>::New();
@@ -178,8 +169,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPol
     qCritical() << Q_FUNC_INFO << ": Invalid inputs!";
     return;
   }
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
-    qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget) );
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget));
   if (!sliceNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get slice node!";
@@ -199,7 +189,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPol
   maskIjkToRasMatrix->DeepCopy(sliceNode->GetXYToRAS());
 
   polyData->GetPoints()->Modified();
-  double bounds[6] = {0,0,0,0,0,0};
+  double bounds[6] = { 0, 0, 0, 0, 0, 0 };
   polyData->GetBounds(bounds);
 
   double xlo = bounds[0] - 1.0;
@@ -207,8 +197,8 @@ void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPol
   double ylo = bounds[2] - 1.0;
   double yhi = bounds[3];
 
-  double originXYZ[3] = {xlo, ylo, 0.0};
-  double originRAS[3] = {0.0,0.0,0.0};
+  double originXYZ[3] = { xlo, ylo, 0.0 };
+  double originRAS[3] = { 0.0, 0.0, 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToRas(originXYZ, originRAS, sliceWidget);
 
   maskIjkToRasMatrix->SetElement(0, 3, originRAS[0]);

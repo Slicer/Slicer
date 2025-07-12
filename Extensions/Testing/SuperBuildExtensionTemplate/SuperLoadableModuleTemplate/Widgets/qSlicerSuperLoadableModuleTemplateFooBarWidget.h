@@ -29,13 +29,12 @@
 
 class qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate;
 
-class Q_SLICER_MODULE_SUPERLOADABLEMODULETEMPLATE_WIDGETS_EXPORT qSlicerSuperLoadableModuleTemplateFooBarWidget
-  : public QWidget
+class Q_SLICER_MODULE_SUPERLOADABLEMODULETEMPLATE_WIDGETS_EXPORT qSlicerSuperLoadableModuleTemplateFooBarWidget : public QWidget
 {
   Q_OBJECT
 public:
   typedef QWidget Superclass;
-  qSlicerSuperLoadableModuleTemplateFooBarWidget(QWidget *parent=0);
+  qSlicerSuperLoadableModuleTemplateFooBarWidget(QWidget* parent = 0);
   ~qSlicerSuperLoadableModuleTemplateFooBarWidget() override;
 
 protected slots:

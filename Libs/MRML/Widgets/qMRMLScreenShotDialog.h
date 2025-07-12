@@ -45,7 +45,8 @@ class QMRML_WIDGETS_EXPORT qMRMLScreenShotDialog : public QDialog
 public:
   typedef QDialog Superclass;
 
-  enum WidgetType{
+  enum WidgetType
+  {
     ThreeD = 0,
     Red = 1,
     Yellow = 2,
@@ -53,36 +54,36 @@ public:
     FullLayout = 4
   };
 
-  qMRMLScreenShotDialog(QWidget *parent = nullptr);
+  qMRMLScreenShotDialog(QWidget* parent = nullptr);
   ~qMRMLScreenShotDialog() override;
 
   /// Set/Get layout manager
   Q_INVOKABLE void setLayoutManager(qMRMLLayoutManager* newlayoutManager);
-  Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;
+  Q_INVOKABLE qMRMLLayoutManager* layoutManager() const;
 
   void setNameEdit(const QString& newName);
-  QString nameEdit()const;
+  QString nameEdit() const;
 
   void setDescription(const QString& description);
-  QString description()const;
+  QString description() const;
 
   /// Setting the data prevent the dialog from automatically taking a screenshot
   /// each time the widgetType or scaleFactor is changed.
   void setData(const QVariant& newData);
-  QVariant data()const;
+  QVariant data() const;
 
   void setWidgetType(WidgetType newType);
-  WidgetType widgetType()const;
+  WidgetType widgetType() const;
 
   void setScaleFactor(const double& newScaleFactor);
-  double scaleFactor()const;
+  double scaleFactor() const;
 
   void setShowScaleFactorSpinBox(const bool& state);
-  bool showScaleFactorSpinBox()const;
+  bool showScaleFactorSpinBox() const;
 
   /// set/return the image data of the screenshot
   void setImageData(vtkImageData* screenshot);
-  vtkImageData* imageData()const;
+  vtkImageData* imageData() const;
 
 protected slots:
 
@@ -97,7 +98,6 @@ protected slots:
 
   /// Present save as dialog to directly save image
   void saveAs();
-
 
 private:
   QString enumToString(int type);

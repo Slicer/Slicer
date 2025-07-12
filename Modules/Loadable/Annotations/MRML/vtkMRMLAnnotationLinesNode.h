@@ -13,12 +13,11 @@
 
 class vtkMRMLAnnotationLineDisplayNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesNode
-  : public vtkMRMLAnnotationControlPointsNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
-  static vtkMRMLAnnotationLinesNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationLinesNode,vtkMRMLAnnotationControlPointsNode);
+  static vtkMRMLAnnotationLinesNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationLinesNode, vtkMRMLAnnotationControlPointsNode);
   // void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
   // Just prints short summary
@@ -31,11 +30,11 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "AnnotationLines";}
+  const char* GetNodeTagName() override { return "AnnotationLines"; }
 
   // Description:
   // Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -45,14 +44,11 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLAnnotationLinesNode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
-
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   // Description:
   // get associated display node or nullptr if not set
@@ -63,14 +59,14 @@ public:
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   // Define line between control points
-  int  AddLine(int ctrlPtIdStart, int ctrlPtIdEnd,int selectedFlag, int visibleFlag);
+  int AddLine(int ctrlPtIdStart, int ctrlPtIdEnd, int selectedFlag, int visibleFlag);
   int SetLine(int id, int ctrlPtIdStart, int ctrlPtIdEnd, int selectedFlag, int visibleFlag);
 
-  int SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag);
+  int SetControlPoint(int id, double newControl[3], int selectedFlag, int visibleFlag);
 
-  int SetControlPointWorldCoordinates(int id, double newControl[3],int selectedFlag, int visibleFlag)
+  int SetControlPointWorldCoordinates(int id, double newControl[3], int selectedFlag, int visibleFlag)
   {
-    double localPoint[4]={0,0,0,1};
+    double localPoint[4] = { 0, 0, 0, 1 };
     this->TransformPointFromWorld(newControl, localPoint);
     return this->SetControlPoint(id, localPoint, selectedFlag, visibleFlag);
   }
@@ -90,7 +86,7 @@ public:
     NUM_LINE_ATTRIBUTE_TYPES
   };
 
-  const char *GetAttributeTypesEnumAsString(int val) override;
+  const char* GetAttributeTypesEnumAsString(int val) override;
 
   // Description:
   // Initializes all variables associated with annotations

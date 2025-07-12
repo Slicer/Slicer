@@ -45,8 +45,7 @@ qSlicerModelsIOOptionsWidget::qSlicerModelsIOOptionsWidget(QWidget* parentWidget
   Q_D(qSlicerModelsIOOptionsWidget);
   d->setupUi(this);
 
-  connect(d->coordinateSystemComboBox, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(updateProperties()));
+  connect(d->coordinateSystemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateProperties()));
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +55,5 @@ qSlicerModelsIOOptionsWidget::~qSlicerModelsIOOptionsWidget() = default;
 void qSlicerModelsIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerModelsIOOptionsWidget);
-  d->Properties["coordinateSystem"] = vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(
-    d->coordinateSystemComboBox->currentText().toLatin1().constData());
+  d->Properties["coordinateSystem"] = vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(d->coordinateSystemComboBox->currentText().toLatin1().constData());
 }

@@ -51,7 +51,7 @@ qSlicerMarkupsWriter::qSlicerMarkupsWriter(QObject* parentObject)
 qSlicerMarkupsWriter::~qSlicerMarkupsWriter() = default;
 
 //----------------------------------------------------------------------------
-QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object))const
+QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object)) const
 {
   QStringList supportedExtensions;
 

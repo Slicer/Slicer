@@ -14,8 +14,8 @@ class vtkMRMLAbstractViewNode;
 class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLAbstractLayoutNode
 {
 public:
-  static vtkMRMLLayoutNode *New();
-  vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLAbstractLayoutNode);
+  static vtkMRMLLayoutNode* New();
+  vtkTypeMacro(vtkMRMLLayoutNode, vtkMRMLAbstractLayoutNode);
   vtkMRMLNode* CreateNodeInstance() override;
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -24,7 +24,7 @@ public:
   //--------------------------------------------------------------------------
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -87,7 +87,7 @@ public:
   bool IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Layout";}
+  const char* GetNodeTagName() override { return "Layout"; }
 
   enum SlicerLayout
   {
@@ -191,14 +191,14 @@ protected:
   int NumberOfCompareViewLightboxRows;
   int NumberOfCompareViewLightboxColumns;
 
-  char *SelectedModule;
+  char* SelectedModule;
 
   int MainPanelSize;
   int SecondaryPanelSize;
 
   std::map<int, std::string> Layouts;
-  char*                      CurrentLayoutDescription;
-  vtkXMLDataElement*         LayoutRootElement;
+  char* CurrentLayoutDescription;
+  vtkXMLDataElement* LayoutRootElement;
 };
 
 #endif

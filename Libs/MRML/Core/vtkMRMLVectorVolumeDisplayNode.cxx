@@ -36,27 +36,27 @@ vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
 {
- this->ScalarMode = this->scalarModeMagnitude;
- this->GlyphMode = this->glyphModeLines;
+  this->ScalarMode = this->scalarModeMagnitude;
+  this->GlyphMode = this->glyphModeLines;
 
- this->ShiftScale = vtkImageShiftScale::New();
- this->RGBToHSI = vtkImageRGBToHSI::New();
- this->ExtractIntensity = vtkImageExtractComponents::New();
+  this->ShiftScale = vtkImageShiftScale::New();
+  this->RGBToHSI = vtkImageRGBToHSI::New();
+  this->ExtractIntensity = vtkImageExtractComponents::New();
 
- this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
- this->ShiftScale->SetClampOverflow(1);
+  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
+  this->ShiftScale->SetClampOverflow(1);
 
- this->ExtractIntensity->SetInputConnection( this->RGBToHSI->GetOutputPort() );
- this->ExtractIntensity->SetComponents( 2 );
+  this->ExtractIntensity->SetInputConnection(this->RGBToHSI->GetOutputPort());
+  this->ExtractIntensity->SetComponents(2);
 
- this->Threshold->SetInputConnection( this->ExtractIntensity->GetOutputPort() );
+  this->Threshold->SetInputConnection(this->ExtractIntensity->GetOutputPort());
 
- this->AppendComponents->RemoveAllInputs();
- this->AppendComponents->AddInputConnection(0, this->ShiftScale->GetOutputPort());
- this->AppendComponents->AddInputConnection(0, this->MultiplyAlpha->GetOutputPort());
+  this->AppendComponents->RemoveAllInputs();
+  this->AppendComponents->AddInputConnection(0, this->ShiftScale->GetOutputPort());
+  this->AppendComponents->AddInputConnection(0, this->MultiplyAlpha->GetOutputPort());
 
- this->MultiplyAlpha->RemoveAllInputs();
- this->MultiplyAlpha->SetInputConnection(0, this->Threshold->GetOutputPort() );
+  this->MultiplyAlpha->RemoveAllInputs();
+  this->MultiplyAlpha->SetInputConnection(0, this->Threshold->GetOutputPort());
 }
 
 //----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->ShiftScale->SetInputConnection(imageDataConnection);
   this->RGBToHSI->SetInputConnection(imageDataConnection);
@@ -77,8 +77,7 @@ void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOut
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetInputImageDataConnection()
 {
-  return this->ShiftScale->GetNumberOfInputConnections(0) ?
-    this->ShiftScale->GetInputConnection(0,0) : nullptr;
+  return this->ShiftScale->GetNumberOfInputConnections(0) ? this->ShiftScale->GetInputConnection(0, 0) : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -94,8 +93,8 @@ void vtkMRMLVectorVolumeDisplayNode::UpdateImageDataPipeline()
 
   double halfWindow = (this->GetWindow() / 2.);
   double min = this->GetLevel() - halfWindow;
-  this->ShiftScale->SetShift ( -min );
-  this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
+  this->ShiftScale->SetShift(-min);
+  this->ShiftScale->SetScale(255. / (this->GetWindow()));
 }
 
 //----------------------------------------------------------------------------
@@ -142,15 +141,14 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
   }
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLVectorVolumeDisplayNode *node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
+  vtkMRMLVectorVolumeDisplayNode* node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -162,18 +160,14 @@ void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Scalar Mode:   " << this->ScalarMode << "\n";
   os << indent << "Glyph Mode:    " << this->GlyphMode << "\n";
 }
 
-
-
 //---------------------------------------------------------------------------
-void vtkMRMLVectorVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLVectorVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }

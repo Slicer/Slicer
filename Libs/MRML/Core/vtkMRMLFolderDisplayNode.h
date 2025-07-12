@@ -54,14 +54,14 @@ class vtkMRMLDisplayableNode;
 class VTK_MRML_EXPORT vtkMRMLFolderDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLFolderDisplayNode *New();
-  vtkTypeMacro(vtkMRMLFolderDisplayNode,vtkMRMLDisplayNode);
+  static vtkMRMLFolderDisplayNode* New();
+  vtkTypeMacro(vtkMRMLFolderDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "FolderDisplay";}
+  const char* GetNodeTagName() override { return "FolderDisplay"; }
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
@@ -77,7 +77,7 @@ public:
   void SetScene(vtkMRMLScene* scene) override;
 
   /// Process events from the MRML scene
-  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Overridden to be able to call modified on branch if necessary
   void Modified() override;
@@ -119,7 +119,7 @@ private:
   /// Flag determining whether the display node is to be applied on the
   /// displayable nodes in the subject hierarchy branch under the item that
   /// has the display node associated.
-  bool ApplyDisplayPropertiesOnBranch{false};
+  bool ApplyDisplayPropertiesOnBranch{ false };
 };
 
 #endif

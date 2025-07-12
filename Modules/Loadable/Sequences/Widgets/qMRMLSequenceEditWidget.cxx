@@ -40,12 +40,13 @@ enum
 };
 
 //-----------------------------------------------------------------------------
-class qMRMLSequenceEditWidgetPrivate
-: public Ui_qMRMLSequenceEditWidget
+class qMRMLSequenceEditWidgetPrivate : public Ui_qMRMLSequenceEditWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSequenceEditWidget);
+
 protected:
   qMRMLSequenceEditWidget* const q_ptr;
+
 public:
   qMRMLSequenceEditWidgetPrivate(qMRMLSequenceEditWidget& object);
   void init();
@@ -56,7 +57,7 @@ public:
   bool isDataNodeCandidate(vtkMRMLNode* node);
 
   /// Get a list of MLRML nodes that are in the scene but not added to the sequences data node at the chosen index value
-  void dataNodeCandidates(std::vector< vtkSmartPointer<vtkMRMLNode> > &foundNodes, vtkMRMLSequenceNode* sequenceNode);
+  void dataNodeCandidates(std::vector<vtkSmartPointer<vtkMRMLNode>>& foundNodes, vtkMRMLSequenceNode* sequenceNode);
 
   void setCurrentDataNodeCandidate(vtkMRMLNode* node);
 
@@ -65,7 +66,7 @@ public:
   vtkWeakPointer<vtkMRMLSequenceNode> SequenceNode;
   // data node class name that was used for populating the candidate node list
   QString DataNodeCandidatesClassName;
-  bool DataNodeCandidatesUpdateNeeded{true};
+  bool DataNodeCandidatesUpdateNeeded{ true };
 };
 
 //-----------------------------------------------------------------------------
@@ -73,7 +74,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qMRMLSequenceEditWidgetPrivate::qMRMLSequenceEditWidgetPrivate(qMRMLSequenceEditWidget& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->SequenceNode = nullptr;
 }
@@ -190,9 +191,9 @@ void qMRMLSequenceEditWidgetPrivate::setCurrentDataNodeCandidate(vtkMRMLNode* no
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector< vtkSmartPointer<vtkMRMLNode> > &foundNodes, vtkMRMLSequenceNode* sequenceNode)
+void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector<vtkSmartPointer<vtkMRMLNode>>& foundNodes, vtkMRMLSequenceNode* sequenceNode)
 {
-  Q_Q( const qMRMLSequenceEditWidget );
+  Q_Q(const qMRMLSequenceEditWidget);
   foundNodes.clear();
   if (!sequenceNode)
   {
@@ -207,7 +208,7 @@ void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector< vtkSmartPoi
 
   std::string dataNodeClassName = sequenceNode->GetDataNodeClassName();
 
-  for ( int i = 0; i < scene->GetNumberOfNodes(); i++ )
+  for (int i = 0; i < scene->GetNumberOfNodes(); i++)
   {
     vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(scene->GetNthNode(i));
     if (!this->isDataNodeCandidate(currentNode))
@@ -238,9 +239,9 @@ void qMRMLSequenceEditWidgetPrivate::scrollToDataNodeByIndexValue(const QString&
 // qMRMLSequenceEditWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceEditWidget::qMRMLSequenceEditWidget(QWidget *newParent)
-: Superclass(newParent)
-, d_ptr(new qMRMLSequenceEditWidgetPrivate(*this))
+qMRMLSequenceEditWidget::qMRMLSequenceEditWidget(QWidget* newParent)
+  : Superclass(newParent)
+  , d_ptr(new qMRMLSequenceEditWidgetPrivate(*this))
 {
   Q_D(qMRMLSequenceEditWidget);
   d->init();
@@ -253,18 +254,12 @@ qMRMLSequenceEditWidget::~qMRMLSequenceEditWidget() = default;
 void qMRMLSequenceEditWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
-    this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeRemovedEvent,
-    this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent,
-    this, SLOT(onMRMLSceneEndImportEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent,
-    this, SLOT(onMRMLSceneEndBatchProcessEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent,
-    this, SLOT(onMRMLSceneEndCloseEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent,
-    this, SLOT(onMRMLSceneEndRestoreEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent, this, SLOT(onMRMLSceneEndImportEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onMRMLSceneEndBatchProcessEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, this, SLOT(onMRMLSceneEndCloseEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent, this, SLOT(onMRMLSceneEndRestoreEvent()));
 
   this->updateWidgetFromMRML();
   this->updateCandidateNodesWidgetFromMRML(true);
@@ -287,8 +282,7 @@ void qMRMLSequenceEditWidget::setMRMLSequenceNode(vtkMRMLSequenceNode* sequenceN
   }
 
   // Reconnect the input node's Modified() event observer
-  this->qvtkReconnect(d->SequenceNode, sequenceNode, vtkCommand::ModifiedEvent,
-    this, SLOT(onSequenceNodeModified()));
+  this->qvtkReconnect(d->SequenceNode, sequenceNode, vtkCommand::ModifiedEvent, this, SLOT(onSequenceNodeModified()));
   d->SequenceNode = sequenceNode;
 
   if (d->SequenceNode && d->SequenceNode->GetIndexType() == vtkMRMLSequenceNode::NumericIndex)
@@ -341,8 +335,7 @@ void qMRMLSequenceEditWidget::updateWidgetFromMRML()
 
   d->LineEdit_IndexName->setText(QString::fromStdString(d->SequenceNode->GetIndexName()));
   d->LineEdit_IndexUnit->setText(QString::fromStdString(d->SequenceNode->GetIndexUnit()));
-  d->ComboBox_IndexType->setCurrentIndex(d->ComboBox_IndexType->findText(
-    QString::fromStdString(d->SequenceNode->GetIndexTypeAsString())));
+  d->ComboBox_IndexType->setCurrentIndex(d->ComboBox_IndexType->findText(QString::fromStdString(d->SequenceNode->GetIndexTypeAsString())));
 
   // Display all of the sequence nodes
   d->TableWidget_DataNodes->clear();
@@ -354,30 +347,30 @@ void qMRMLSequenceEditWidget::updateWidgetFromMRML()
   QStringList SequenceNodesTableHeader;
   SequenceNodesTableHeader.insert(DATA_NODE_VALUE_COLUMN, valueHeader.str().c_str());
   SequenceNodesTableHeader.insert(DATA_NODE_NAME_COLUMN, tr("Name"));
-  d->TableWidget_DataNodes->setHorizontalHeaderLabels( SequenceNodesTableHeader );
+  d->TableWidget_DataNodes->setHorizontalHeaderLabels(SequenceNodesTableHeader);
 
   int numberOfDataNodes = d->SequenceNode->GetNumberOfDataNodes();
-  for ( int dataNodeIndex = 0; dataNodeIndex < numberOfDataNodes; dataNodeIndex++ )
+  for (int dataNodeIndex = 0; dataNodeIndex < numberOfDataNodes; dataNodeIndex++)
   {
-    std::string currentValue = d->SequenceNode->GetNthIndexValue( dataNodeIndex );
-    vtkMRMLNode* currentDataNode = d->SequenceNode->GetNthDataNode( dataNodeIndex );
+    std::string currentValue = d->SequenceNode->GetNthIndexValue(dataNodeIndex);
+    vtkMRMLNode* currentDataNode = d->SequenceNode->GetNthDataNode(dataNodeIndex);
 
-    if (currentDataNode==nullptr)
+    if (currentDataNode == nullptr)
     {
       qCritical() << "qMRMLSequenceEditWidget::updateWidgetFromMRML invalid data node";
       continue;
     }
 
     QTableWidgetItem* valueItem = new QTableWidgetItem(QString::fromStdString(currentValue));
-    valueItem->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+    valueItem->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     QTableWidgetItem* nameItem = new QTableWidgetItem(FROM_CHAR_PTR_SAFE(currentDataNode->GetName()));
 
-    d->TableWidget_DataNodes->setItem( dataNodeIndex, DATA_NODE_VALUE_COLUMN, valueItem );
-    d->TableWidget_DataNodes->setItem( dataNodeIndex, DATA_NODE_NAME_COLUMN, nameItem );
+    d->TableWidget_DataNodes->setItem(dataNodeIndex, DATA_NODE_VALUE_COLUMN, valueItem);
+    d->TableWidget_DataNodes->setItem(dataNodeIndex, DATA_NODE_NAME_COLUMN, nameItem);
   }
 
-  //d->TableWidget_DataNodes->resizeColumnsToContents();
+  // d->TableWidget_DataNodes->resizeColumnsToContents();
   d->TableWidget_DataNodes->resizeRowsToContents();
 }
 
@@ -409,12 +402,12 @@ void qMRMLSequenceEditWidget::updateCandidateNodesWidgetFromMRML(bool forceUpdat
   d->DataNodeCandidatesClassName = newDataNodeCandidatesClassName;
 
   // Display the candidate data nodes
-  std::vector< vtkSmartPointer<vtkMRMLNode> > candidateNodes;
+  std::vector<vtkSmartPointer<vtkMRMLNode>> candidateNodes;
   d->dataNodeCandidates(candidateNodes, d->SequenceNode);
 
   d->ListWidget_CandidateNodes->clear();
 
-  for (vtkSmartPointer<vtkMRMLNode> & currentCandidateNode : candidateNodes)
+  for (vtkSmartPointer<vtkMRMLNode>& currentCandidateNode : candidateNodes)
   {
     d->addNodeToCandidateNodes(currentCandidateNode);
   }
@@ -435,13 +428,13 @@ void qMRMLSequenceEditWidget::onDataNodeEdited(int row, int column)
   {
     return;
   }
-  std::string currentIndexValue = d->SequenceNode->GetNthIndexValue( d->TableWidget_DataNodes->currentRow() );
-  if ( currentIndexValue.empty() )
+  std::string currentIndexValue = d->SequenceNode->GetNthIndexValue(d->TableWidget_DataNodes->currentRow());
+  if (currentIndexValue.empty())
   {
     return;
   }
-  vtkMRMLNode* currentDataNode = d->SequenceNode->GetDataNodeAtValue(currentIndexValue.c_str() );
-  if ( currentDataNode == nullptr )
+  vtkMRMLNode* currentDataNode = d->SequenceNode->GetDataNodeAtValue(currentIndexValue.c_str());
+  if (currentDataNode == nullptr)
   {
     return;
   }
@@ -451,11 +444,11 @@ void qMRMLSequenceEditWidget::onDataNodeEdited(int row, int column)
   QString qText = qItem->text();
   if (column == DATA_NODE_VALUE_COLUMN)
   {
-    d->SequenceNode->UpdateIndexValue( currentIndexValue.c_str(), qText.toStdString().c_str() );
+    d->SequenceNode->UpdateIndexValue(currentIndexValue.c_str(), qText.toStdString().c_str());
   }
   if (column == DATA_NODE_NAME_COLUMN)
   {
-    currentDataNode->SetName( qText.toStdString().c_str() );
+    currentDataNode->SetName(qText.toStdString().c_str());
   }
 
   this->updateWidgetFromMRML();
@@ -591,7 +584,7 @@ void qMRMLSequenceEditWidget::onAddDataNodeButtonClicked()
     return;
   }
   QList<QListWidgetItem*> selectedItems = d->ListWidget_CandidateNodes->selectedItems();
-  std::vector< vtkSmartPointer<vtkMRMLNode> > nodesToAdd;
+  std::vector<vtkSmartPointer<vtkMRMLNode>> nodesToAdd;
   for (QListWidgetItem* item : selectedItems)
   {
     QString currentCandidateNodeId = item->data(Qt::UserRole).toString();
@@ -602,7 +595,7 @@ void qMRMLSequenceEditWidget::onAddDataNodeButtonClicked()
     }
   }
   QString addedNodeIndexValue;
-  for (vtkSmartPointer<vtkMRMLNode> &node : nodesToAdd)
+  for (vtkSmartPointer<vtkMRMLNode>& node : nodesToAdd)
   {
     d->setCurrentDataNodeCandidate(node);
     addedNodeIndexValue = this->onAddCurrentCandidateNode();
@@ -642,7 +635,7 @@ QString qMRMLSequenceEditWidget::onAddCurrentCandidateNode()
     return QString();
   }
   int wasModified = d->SequenceNode->StartModify();
-  d->SequenceNode->SetDataNodeAtValue(currentCandidateNode, currentIndexValue.c_str() );
+  d->SequenceNode->SetDataNodeAtValue(currentCandidateNode, currentIndexValue.c_str());
   d->SequenceNode->EndModify(wasModified);
 
   // Restore candidate node selection / auto-advance to the next node
@@ -661,8 +654,8 @@ QString qMRMLSequenceEditWidget::onAddCurrentCandidateNode()
         // not at the end of the list, so select the next item
         d->ListWidget_CandidateNodes->setCurrentRow(nextItemRowIndex);
         // update index value from the upcoming node's name
-        if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex
-          && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
+        if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex //
+            && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
         {
           this->candidateNodeItemClicked(d->ListWidget_CandidateNodes->currentItem());
         }

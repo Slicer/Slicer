@@ -48,7 +48,7 @@ public:
   ~qMRMLPlotChartPropertiesWidget() override;
 
   /// Get \a PlotViewNode
-  vtkMRMLPlotChartNode* mrmlPlotChartNode()const;
+  vtkMRMLPlotChartNode* mrmlPlotChartNode() const;
 
 public slots:
 

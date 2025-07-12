@@ -14,7 +14,7 @@
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLGridTransformNodeTest1(int , char * [] )
+int vtkMRMLGridTransformNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLGridTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;

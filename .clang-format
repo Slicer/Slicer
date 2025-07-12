@@ -1,0 +1,48 @@
+---
+ColumnLimit: 180
+Language: Cpp
+Standard: c++17
+
+BasedOnStyle: Mozilla # Based on LLVM
+# LLVM: https://github.com/llvm/llvm-project/blob/llvmorg-20.1.7/clang/lib/Format/Format.cpp#L1472-L1693
+# Mozilla: https://github.com/llvm/llvm-project/blob/llvmorg-20.1.7/clang/lib/Format/Format.cpp#L1897-L1921
+
+# LLVM-style overides
+AlignEscapedNewlines: Left
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBinaryOperators: NonAssignment
+ConstructorInitializerIndentWidth: 2
+IndentPPDirectives: AfterHash
+PackConstructorInitializers: Never
+PPIndentWidth: 1
+
+# Mozilla-style overides
+AllowShortFunctionsOnASingleLine: Inline
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BreakBeforeBraces: Allman
+FixNamespaceComments: true
+SpaceAfterTemplateKeyword: true
+
+# A list of macros that should be interpreted as foreach loops instead of as
+# function calls.
+ForEachMacros:
+  - BOOST_FOREACH
+  - foreach
+  - forever
+  - QBENCHMARK
+  - QBENCHMARK_ONCE
+  - Q_FOREACH
+  - Q_FOREVER
+
+SortIncludes: false
+
+---
+Language: JavaScript
+DisableFormat: true
+
+---
+Language: Json
+DisableFormat: true

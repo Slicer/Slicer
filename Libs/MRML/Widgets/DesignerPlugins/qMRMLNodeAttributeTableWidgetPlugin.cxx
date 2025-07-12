@@ -23,13 +23,13 @@
 #include "qMRMLNodeAttributeTableWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLNodeAttributeTableWidgetPlugin::qMRMLNodeAttributeTableWidgetPlugin(QObject *_parent)
+qMRMLNodeAttributeTableWidgetPlugin::qMRMLNodeAttributeTableWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLNodeAttributeTableWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLNodeAttributeTableWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLNodeAttributeTableWidget* _widget = new qMRMLNodeAttributeTableWidget(_parent);
   return _widget;
@@ -40,7 +40,7 @@ QString qMRMLNodeAttributeTableWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLNodeAttributeTableWidget\" \
           name=\"MRMLNodeAttributeTableWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

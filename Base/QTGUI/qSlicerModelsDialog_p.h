@@ -50,8 +50,10 @@ class qSlicerModelsDialogPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerModelsDialog);
+
 protected:
   qSlicerModelsDialog* const q_ptr;
+
 public:
   explicit qSlicerModelsDialogPrivate(qSlicerModelsDialog& object, QWidget* parentWidget = nullptr);
   ~qSlicerModelsDialogPrivate() override;
@@ -61,6 +63,7 @@ public:
 public slots:
   void openAddModelFileDialog();
   void openAddModelDirectoryDialog();
+
 protected:
   QStringList SelectedFiles;
   QStringList LoadedNodeIDs;

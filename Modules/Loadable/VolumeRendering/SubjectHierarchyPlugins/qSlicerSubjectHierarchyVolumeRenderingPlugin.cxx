@@ -57,15 +57,18 @@
 #include "qMRMLThreeDWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate: public QObject
+class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumeRenderingPlugin);
+
 protected:
   qSlicerSubjectHierarchyVolumeRenderingPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(qSlicerSubjectHierarchyVolumeRenderingPlugin& object);
   ~qSlicerSubjectHierarchyVolumeRenderingPluginPrivate() override;
   void init();
+
 public:
   vtkWeakPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 
@@ -78,9 +81,9 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(qSlicerSubjectHierarchyVolumeRenderingPlugin& object)
-: q_ptr(&object)
-, ToggleVolumeRenderingAction(nullptr)
-, VolumeRenderingOptionsAction(nullptr)
+  : q_ptr(&object)
+  , ToggleVolumeRenderingAction(nullptr)
+  , VolumeRenderingOptionsAction(nullptr)
 {
 }
 
@@ -95,8 +98,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
   this->ToggleVolumeRenderingAction->setChecked(false);
 
   this->VolumeRenderingOptionsAction = new QAction(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Volume rendering options..."), q);
-  this->VolumeRenderingOptionsAction->setToolTip(
-    qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering module to manage display options"));
+  this->VolumeRenderingOptionsAction->setToolTip(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering module to manage display options"));
   QObject::connect(this->VolumeRenderingOptionsAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingOptionsForCurrentItem()));
 }
 
@@ -108,8 +110,8 @@ qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::~qSlicerSubjectHierarchyVol
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPlugin::qSlicerSubjectHierarchyVolumeRenderingPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(*this))
 {
   this->m_Name = QString("VolumeRendering");
 
@@ -128,7 +130,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::setVolumeRenderingLogic(vtkSl
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyVolumeRenderingPlugin);
 
@@ -197,18 +199,17 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::toggleVolumeRenderingForCurre
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode/*=nullptr*/)
+void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode /*=nullptr*/)
 {
   Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
   vtkMRMLDisplayableNode* volumeNode = displayNode->GetDisplayableNode();
   double rasBounds[6] = { 0.0 };
   volumeNode->GetRASBounds(rasBounds);
-  double cameraFocalPoint[3] =
-    {
+  double cameraFocalPoint[3] = {
     (rasBounds[0] + rasBounds[1]) / 2.0,
     (rasBounds[2] + rasBounds[3]) / 2.0,
     (rasBounds[4] + rasBounds[5]) / 2.0,
-    };
+  };
 
   // Get list of view nodes that will have their FOV reset
   QList<vtkMRMLViewNode*> viewNodes;
@@ -252,7 +253,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
     qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
     return;
   }
-  foreach(vtkMRMLViewNode* currentViewNode, viewNodes)
+  foreach (vtkMRMLViewNode* currentViewNode, viewNodes)
   {
     // Show the volume in slice view
     vtkMRMLViewLogic* viewLogic = appLogic->GetViewLogic(currentViewNode);
@@ -271,9 +272,8 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
   }
 }
 
-
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode/*=nullptr*/)
+bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode /*=nullptr*/)
 {
   Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 
@@ -406,8 +406,8 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
   else
   {
     // Use volume's module implementation for displaying volume in slice views
-    qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+    qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+      qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
     if (!volumesPlugin)
     {
       qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";

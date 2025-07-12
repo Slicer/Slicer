@@ -141,7 +141,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -165,15 +165,13 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
-                                                unsigned long event,
-                                                void *callData )
+void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
-  if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode()
-    && event == vtkCommand::ModifiedEvent)
+  if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode() //
+      && event == vtkCommand::ModifiedEvent)
   {
     // Slice distance encoded projection color node changed
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
@@ -185,8 +183,7 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
+void vtkMRMLModelDisplayNode::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
 {
   if (this->GetInputMeshConnection() == meshConnection)
   {
@@ -196,16 +193,14 @@ void vtkMRMLModelDisplayNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
+void vtkMRMLModelDisplayNode::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
 {
   // Wrapping `SetInputMeshConnection` for backward compatibility
   this->SetInputMeshConnection(polyDataConnection);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection)
+void vtkMRMLModelDisplayNode::SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection)
 {
   this->PassThrough->SetInputConnection(meshConnection);
   this->AssignAttribute->SetInputConnection(meshConnection);
@@ -233,8 +228,7 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetInputUnstructuredGrid()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputMeshConnection()
 {
-  return this->AssignAttribute->GetNumberOfInputConnections(0) ?
-    this->AssignAttribute->GetInputConnection(0,0) : nullptr;
+  return this->AssignAttribute->GetNumberOfInputConnections(0) ? this->AssignAttribute->GetInputConnection(0, 0) : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -265,8 +259,7 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
   }
 
   producer->Update();
-  return vtkPointSet::SafeDownCast(
-           producer->GetOutputDataObject(outputConnection->GetIndex()));
+  return vtkPointSet::SafeDownCast(producer->GetOutputDataObject(outputConnection->GetIndex()));
 }
 
 //---------------------------------------------------------------------------
@@ -284,7 +277,7 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetOutputUnstructuredGrid()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 {
-  if (this->GetActiveScalarName() &&
+  if (this->GetActiveScalarName() && //
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
   {
@@ -314,8 +307,7 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 {
-  vtkWarningMacro("vtkMRMLModelDisplayNode::GetOutputPolyDataConnection is "
-                  << "deprecated. Favor GetOutputMeshConnection().");
+  vtkWarningMacro("vtkMRMLModelDisplayNode::GetOutputPolyDataConnection is " << "deprecated. Favor GetOutputMeshConnection().");
   return this->GetOutputMeshConnection();
 }
 
@@ -336,7 +328,7 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
   if (enabled && this->GetThresholdMin() > this->GetThresholdMax())
   {
     double dataRange[2] = { 0.0, -1.0 };
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       dataArray->GetRange(dataRange);
@@ -396,7 +388,7 @@ double* vtkMRMLModelDisplayNode::GetThresholdRange()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
+void vtkMRMLModelDisplayNode::SetActiveScalarName(const char* scalarName)
 {
   if (scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
   {
@@ -428,9 +420,9 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
 {
-  this->AssignAttribute->Assign(
-    this->GetActiveScalarName(),
-    vtkDataSetAttributes::SCALARS,
+  this->AssignAttribute->Assign(   //
+    this->GetActiveScalarName(),   //
+    vtkDataSetAttributes::SCALARS, //
     this->GetActiveAttributeLocation() >= 0 ? this->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
 
   if (this->GetActiveAttributeLocation() == vtkAssignAttribute::POINT_DATA)
@@ -454,7 +446,7 @@ vtkDataSet* vtkMRMLModelDisplayNode::GetScalarDataSet()
 //-----------------------------------------------------------
 vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
 {
-  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(), "") == 0)
   {
     return nullptr;
   }
@@ -478,22 +470,15 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   vtkDataSetAttributes* attributes = nullptr;
   switch (this->GetActiveAttributeLocation())
   {
-    case vtkAssignAttribute::POINT_DATA:
-      attributes = mesh->GetPointData();
-      break;
-    case vtkAssignAttribute::CELL_DATA:
-      attributes = mesh->GetCellData();
-      break;
-    default:
-      vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: "
-        << this->GetActiveAttributeLocation());
-      break;
+    case vtkAssignAttribute::POINT_DATA: attributes = mesh->GetPointData(); break;
+    case vtkAssignAttribute::CELL_DATA: attributes = mesh->GetCellData(); break;
+    default: vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: " << this->GetActiveAttributeLocation()); break;
   }
   if (attributes == nullptr)
   {
     return nullptr;
   }
-  vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
+  vtkDataArray* dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
 }
 
@@ -537,7 +522,7 @@ int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
     // invalid name
     return -1;
   }
-  for (int i = 0; i<SliceDisplayMode_Last; i++)
+  for (int i = 0; i < SliceDisplayMode_Last; i++)
   {
     if (strcmp(name, GetSliceDisplayModeAsString(i)) == 0)
     {
@@ -550,7 +535,7 @@ int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetAndObserveDistanceEncodedProjectionColorNodeID(const char *colorNodeID)
+void vtkMRMLModelDisplayNode::SetAndObserveDistanceEncodedProjectionColorNodeID(const char* colorNodeID)
 {
   this->SetAndObserveNodeReferenceID(SliceDistanceEncodedProjectionColorNodeReferenceRole, colorNodeID);
 }

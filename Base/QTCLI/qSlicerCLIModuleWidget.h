@@ -40,20 +40,19 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleWidget : public qSlicerAbstract
   Q_OBJECT
   QVTK_OBJECT
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerCLIModuleWidget(QWidget *parent=nullptr);
+  qSlicerCLIModuleWidget(QWidget* parent = nullptr);
   ~qSlicerCLIModuleWidget() override;
 
   /// Get the current \a commandLineModuleNode
-  Q_INVOKABLE vtkMRMLCommandLineModuleNode * currentCommandLineModuleNode()const;
+  Q_INVOKABLE vtkMRMLCommandLineModuleNode* currentCommandLineModuleNode() const;
 
   // Node editing
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
   double nodeEditable(vtkMRMLNode* node) override;
 
   /// Translate string from source language to current application language
-  QString translate(const std::string& sourceText)const;
+  QString translate(const std::string& sourceText) const;
 
 public slots:
   /// Set the current \a commandLineModuleNode
@@ -68,6 +67,7 @@ public slots:
   void setAutoRunWhenInputModified(bool enable);
   void setAutoRunOnOtherInputEvents(bool enable);
   void setAutoRunCancelsRunningProcess(bool enable);
+
 protected:
   ///
   void setup() override;
@@ -82,6 +82,7 @@ protected:
 
   /// Abort the execution of the module associated with \a node
   void cancel(vtkMRMLCommandLineModuleNode* node);
+
 protected:
   QScopedPointer<qSlicerCLIModuleWidgetPrivate> d_ptr;
 

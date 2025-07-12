@@ -84,7 +84,7 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
 vtkSlicerCurveRepresentation2D::~vtkSlicerCurveRepresentation2D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -100,8 +100,9 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Line display
 
-  double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-    this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+  double diameter =
+    (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
+                                                                                                    : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
@@ -138,8 +139,8 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
   {
-    if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
-      && (markupsNode->GetNthControlPointVisibility(controlPointIndex)))
+    if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex) //
+        && (markupsNode->GetNthControlPointVisibility(controlPointIndex)))
     {
       allNodesHidden = false;
       break;
@@ -174,11 +175,11 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     }
   }
 
-    // Properties label display
+  // Properties label display
 
-  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && this->AnyPointVisibilityOnSlice
-    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()   //
+      && this->AnyPointVisibilityOnSlice                         //
+      && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     int controlPointIndex = 0;
     int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
@@ -192,7 +193,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
       // we only have a preview point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
     }
-    double textPos[3] = { 0.0,  0.0, 0.0 };
+    double textPos[3] = { 0.0, 0.0, 0.0 };
     this->GetNthControlPointDisplayPosition(controlPointIndex, textPos);
     this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
     this->TextActor->SetVisibility(true);
@@ -204,14 +205,12 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+void vtkSlicerCurveRepresentation2D::CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1 //
+      || !interactionEventData)
   {
     return;
   }
@@ -226,27 +225,26 @@ void vtkSlicerCurveRepresentation2D::CanInteract(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::GetActors(vtkPropCollection *pc)
+void vtkSlicerCurveRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   this->LineActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::ReleaseGraphicsResources(
-  vtkWindow *win)
+void vtkSlicerCurveRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->LineActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerCurveRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerCurveRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
-    count +=  this->LineActor->RenderOverlay(viewport);
+    count += this->LineActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
 
@@ -254,10 +252,9 @@ int vtkSlicerCurveRepresentation2D::RenderOverlay(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerCurveRepresentation2D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+int vtkSlicerCurveRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
@@ -268,10 +265,9 @@ int vtkSlicerCurveRepresentation2D::RenderOpaqueGeometry(
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
@@ -296,7 +292,7 @@ vtkTypeBool vtkSlicerCurveRepresentation2D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerCurveRepresentation2D::GetBounds()
+double* vtkSlicerCurveRepresentation2D::GetBounds()
 {
   return nullptr;
 }
@@ -304,7 +300,7 @@ double *vtkSlicerCurveRepresentation2D::GetBounds()
 //-----------------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
@@ -318,7 +314,7 @@ void vtkSlicerCurveRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
   {
@@ -335,15 +331,13 @@ void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &componentIndex, double &closestDistance2)
+void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& componentIndex, double& closestDistance2)
 {
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2
-    || !this->GetVisibility() || !interactionEventData
-    || !this->MarkupsDisplayNode)
+  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2 //
+      || !this->GetVisibility() || !interactionEventData                                                    //
+      || !this->MarkupsDisplayNode)
   {
     return;
   }

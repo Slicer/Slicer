@@ -106,13 +106,13 @@ public:
   /// Segments that have their ID listed in hideSegments are
   /// not shown in the table.
   Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
-  Q_INVOKABLE QStringList hideSegments()const;
+  Q_INVOKABLE QStringList hideSegments() const;
 
   /// Return list of visible segment IDs
-  Q_INVOKABLE QStringList displayedSegmentIDs()const;
+  Q_INVOKABLE QStringList displayedSegmentIDs() const;
 
-  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSegmentsModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSegmentsModel* model() const;
 
   /// The text used to filter the segments in the table
   /// \sa setTextFilter
@@ -122,17 +122,17 @@ public:
   /// Default value is "Segmentations/UseTerminologySelector".
   /// If set to empty then the option will not be saved to and loaded from application settings.
   /// \sa setUseTerminologySelectorSettingsKey
-  QString useTerminologySelectorSettingsKey()const;
+  QString useTerminologySelectorSettingsKey() const;
 
   /// Returns true if standard terminologies are used for choosing segment name and color.
   /// If false then simple selectors are used.
-  bool useTerminologySelector()const;
+  bool useTerminologySelector() const;
 
   /// Returns true if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
-  bool terminologySelectorOptionVisible()const;
+  bool terminologySelectorOptionVisible() const;
 
   /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
-  bool terminologySelectorAutoDisable()const;
+  bool terminologySelectorAutoDisable() const;
 
   // If the specified status should be shown in the table
   /// \sa setStatusShown
@@ -177,7 +177,7 @@ public slots:
   void setJumpToSelectedSegmentEnabled(bool enable);
 
   /// Set the status of the selected segments
-  void setSelectedSegmentsStatus(int status=-1);
+  void setSelectedSegmentsStatus(int status = -1);
 
   /// Erase the contents of the selected segments and set the status to "Not started"
   void clearSelectedSegments();
@@ -205,19 +205,19 @@ public slots:
   void setStatusShown(int status, bool shown);
 
   /// Returns true if automatic jump to current segment is enabled.
-  bool jumpToSelectedSegmentEnabled()const;
+  bool jumpToSelectedSegmentEnabled() const;
 
 signals:
   /// Emitted if selection changes
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Emitted when a segment property (e.g., name) is about to be changed.
   /// Can be used for capturing the current state of the segment, before it is modified.
-  void segmentAboutToBeModified(const QString &segmentID);
+  void segmentAboutToBeModified(const QString& segmentID);
 
 protected slots:
   /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Handles actions on table cell (visibility)
   void onVisibility3DActionToggled(bool visible);

@@ -1,5 +1,5 @@
 // Qt includes
-//#include <QApplication>
+// #include <QApplication>
 //
 // Slicer includes
 #include "vtkSlicerConfigure.h"
@@ -21,22 +21,21 @@
 
 // STD includes
 
-#define CHECK_PLACE_ACTION_TEXT(expected, mouseToolBar) \
-  { \
-  QString activeActionText; \
-  activeActionText = activePlaceActionText(mouseToolBar); \
-  std::cout << "Line " << __LINE__ << " Active place action text = " << qPrintable(activeActionText) << std::endl; \
-  if (activeActionText.compare(QString(expected)) != 0) \
-  { \
-    std::cerr << "Line " << __LINE__ << " Error: Expected active action text of '" << #expected << "', got '" \
-      << qPrintable(activeActionText) << "'" << std::endl; \
-    return EXIT_FAILURE; \
-  } \
+#define CHECK_PLACE_ACTION_TEXT(expected, mouseToolBar)                                                                                                              \
+  {                                                                                                                                                                  \
+    QString activeActionText;                                                                                                                                        \
+    activeActionText = activePlaceActionText(mouseToolBar);                                                                                                          \
+    std::cout << "Line " << __LINE__ << " Active place action text = " << qPrintable(activeActionText) << std::endl;                                                 \
+    if (activeActionText.compare(QString(expected)) != 0)                                                                                                            \
+    {                                                                                                                                                                \
+      std::cerr << "Line " << __LINE__ << " Error: Expected active action text of '" << #expected << "', got '" << qPrintable(activeActionText) << "'" << std::endl; \
+      return EXIT_FAILURE;                                                                                                                                           \
+    }                                                                                                                                                                \
   };
 
 QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
-  foreach(QAction* action, mouseModeToolBar.actions())
+  foreach (QAction* action, mouseModeToolBar.actions())
   {
     if (action->objectName() == QString("PlaceWidgetAction"))
     {
@@ -48,19 +47,19 @@ QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 
 QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
-  foreach(QAction * action, mouseModeToolBar.actions())
+  foreach (QAction* action, mouseModeToolBar.actions())
   {
-    std::cout << "action name: " << qPrintable(action->objectName()) << std::endl;;
+    std::cout << "action name: " << qPrintable(action->objectName()) << std::endl;
+    ;
     if (action->isChecked())
     {
       return action->text();
     }
-
   }
   return QString();
 }
 
-int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
+int qSlicerMouseModeToolBarTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
   qSlicerMouseModeToolBar mouseToolBar;
@@ -75,7 +74,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   // Now reset scene in the toolbar to null and set the scene again now after app logic
   // adds interaction and selection nodes.
   mouseToolBar.setMRMLScene(nullptr);
-  vtkSlicerApplicationLogic *appLogic = vtkSlicerApplicationLogic::New();
+  vtkSlicerApplicationLogic* appLogic = vtkSlicerApplicationLogic::New();
   appLogic->SetMRMLScene(scene);
   mouseToolBar.setApplicationLogic(appLogic);
   mouseToolBar.setMRMLScene(scene);
@@ -93,8 +92,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 
   // get the selection and interaction nodes that the mouse mode tool bar
   // listens to
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   CHECK_NOT_NULL(selectionNode);
 
   // add markups
@@ -116,8 +114,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   selectionNode->SetActivePlaceNodePlacementValid(true);
   CHECK_PLACE_ACTION_TEXT("Point List", mouseToolBar);
 
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   CHECK_NOT_NULL(interactionNode);
 
   interactionNode->SetPlaceModePersistence(1);

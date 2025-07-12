@@ -73,7 +73,7 @@ public:
   void setInteractor(vtkRenderWindowInteractor* interactor) override;
 
   /// Returns the interactor observer of the view
-  Q_INVOKABLE vtkMRMLThreeDViewInteractorStyle* interactorObserver()const;
+  Q_INVOKABLE vtkMRMLThreeDViewInteractorStyle* interactorObserver() const;
 
   /// Add a displayable manager to the view,
   /// the displayable manager is proper to the 3D view and is not shared
@@ -88,10 +88,10 @@ public:
   Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Return a DisplayableManager given its class name
-  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
+  Q_INVOKABLE vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
-  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
+  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode() const;
 
   /// Methods to rotate/reset the camera,
   /// Can defined a view axis by its index (from 0 to 5)
@@ -100,34 +100,32 @@ public:
   /// -X, +X, -Y, +Y, -Z, +Z
   Q_INVOKABLE void rotateToViewAxis(unsigned int axisId);
   Q_INVOKABLE void rotateToViewAxis(const std::string& axisLabel);
-  Q_INVOKABLE void resetCamera(bool resetRotation = true,
-                               bool resetTranslation = true,
-                               bool resetDistance = true);
+  Q_INVOKABLE void resetCamera(bool resetRotation = true, bool resetTranslation = true, bool resetDistance = true);
 
   /// Returns camera node of the 3D view
   Q_INVOKABLE vtkMRMLCameraNode* cameraNode();
 
   /// Set cursor in the view area
-  Q_INVOKABLE void setViewCursor(const QCursor &);
+  Q_INVOKABLE void setViewCursor(const QCursor&);
 
   /// Restore default cursor in the view area
   Q_INVOKABLE void unsetViewCursor();
 
   /// Set default cursor in the view area
-  Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+  Q_INVOKABLE void setDefaultViewCursor(const QCursor& cursor);
 
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
-  bool shadowsVisibility()const;
-  double ambientShadowsSizeScale()const;
-  double ambientShadowsVolumeOpacityThreshold()const;
-  double ambientShadowsIntensityScale()const;
-  double ambientShadowsIntensityShift()const;
+  bool shadowsVisibility() const;
+  double ambientShadowsSizeScale() const;
+  double ambientShadowsVolumeOpacityThreshold() const;
+  double ambientShadowsIntensityScale() const;
+  double ambientShadowsIntensityShift() const;
 
   /// Advanced option to directly access SSAO pass used to render the ambient shadows.
   /// Intended for experimentation and troubleshooting only.
-  Q_INVOKABLE vtkSSAOPass* ssaoPass()const;
+  Q_INVOKABLE vtkSSAOPass* ssaoPass() const;
 
 public slots:
 

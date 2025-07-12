@@ -31,7 +31,7 @@
 #ifndef vtkCapPolyData_h
 #define vtkCapPolyData_h
 
- // VTK includes
+// VTK includes
 #include <vtkAppendPolyData.h>
 #include <vtkImplicitFunction.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -89,8 +89,7 @@ protected:
   ~vtkCapPolyData() override;
 
   /// Generate the end cap for the input polydata cut using planes in the cutFunction.
-  void CreateEndCap(vtkPlaneCollection* planes, vtkPolyData* originalPolyData,
-    vtkImplicitFunction* cutFunction, vtkPolyData* outputEndCap);
+  void CreateEndCap(vtkPlaneCollection* planes, vtkPolyData* originalPolyData, vtkImplicitFunction* cutFunction, vtkPolyData* outputEndCap);
 
   /// Updates the polydata cell scalar array to reflect the cell type.
   void UpdateCellTypeArray(vtkPolyData* polyData);
@@ -98,7 +97,6 @@ protected:
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 protected:
-
   vtkSmartPointer<vtkImplicitFunction> ClipFunction;
 
   bool GenerateOutline{ true };

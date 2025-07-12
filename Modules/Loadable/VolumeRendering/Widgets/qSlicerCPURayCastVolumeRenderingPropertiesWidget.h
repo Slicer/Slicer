@@ -26,13 +26,12 @@
 class qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate;
 class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerCPURayCastVolumeRenderingPropertiesWidget
-  : public qSlicerVolumeRenderingPropertiesWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerCPURayCastVolumeRenderingPropertiesWidget : public qSlicerVolumeRenderingPropertiesWidget
 {
   Q_OBJECT
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
-  qSlicerCPURayCastVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
+  qSlicerCPURayCastVolumeRenderingPropertiesWidget(QWidget* parent = nullptr);
   ~qSlicerCPURayCastVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLCPURayCastVolumeRenderingDisplayNode* mrmlCPURayCastDisplayNode();

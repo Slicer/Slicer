@@ -62,7 +62,7 @@ Version:   $Revision$
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
   {
     std::cout << "The input volume is: " << InputVolume << std::endl;
     std::cout << "The labels are: " << std::endl;
-    for(::size_t l = 0; l < Labels.size(); l++)
+    for (::size_t l = 0; l < Labels.size(); l++)
     {
       std::cout << "\tList element " << l << " = " << Labels[l] << std::endl;
     }
@@ -87,10 +87,8 @@ int main(int argc, char * argv[])
     std::cout << "Calculate point normals? " << PointNormals << std::endl;
     std::cout << "Pad? " << Pad << std::endl;
     std::cout << "Filter type: " << FilterType << std::endl;
-    std::cout << "Input color hierarchy scene file: "
-              << (ModelHierarchyFile.size() > 0 ? ModelHierarchyFile.c_str() : "None")  << std::endl;
-    std::cout << "Output model scene file: "
-              << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
+    std::cout << "Input color hierarchy scene file: " << (ModelHierarchyFile.size() > 0 ? ModelHierarchyFile.c_str() : "None") << std::endl;
+    std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
     std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
     std::cout << "Save intermediate models: " << SaveIntermediateModels << std::endl;
     std::cout << "Debug: " << debug << std::endl;
@@ -99,8 +97,8 @@ int main(int argc, char * argv[])
 
   // get the model hierarchy id from the scene file
   std::string::size_type loc;
-  std::string            sceneFilename;
-  std::string            modelHierarchyID;
+  std::string sceneFilename;
+  std::string modelHierarchyID;
 
   if (InputVolume.size() == 0)
   {
@@ -113,18 +111,15 @@ int main(int argc, char * argv[])
     // make one up from the input volume's name
     sceneFilename = vtksys::SystemTools::GetFilenameWithoutExtension(InputVolume) + std::string(".mrml");
     std::cerr << "********\nERROR: no model scene defined! Using " << sceneFilename << endl;
-    std::cerr
-    <<
-    "WARNING: If you started Model Maker from the Slicer3 GUI, the models will NOT be loaded automatically.\nYou must use File->Import Scene "
-    << sceneFilename << " to see your models (don't use Load or it will close your current scene).\n*****" << std::endl;
+    std::cerr << "WARNING: If you started Model Maker from the Slicer3 GUI, the models will NOT be loaded automatically.\nYou must use File->Import Scene " << sceneFilename
+              << " to see your models (don't use Load or it will close your current scene).\n*****" << std::endl;
   }
   else
   {
     loc = ModelSceneFile[0].find_last_of("#");
     if (loc != std::string::npos)
     {
-      sceneFilename = std::string(ModelSceneFile[0].begin(),
-                                  ModelSceneFile[0].begin() + loc);
+      sceneFilename = std::string(ModelSceneFile[0].begin(), ModelSceneFile[0].begin() + loc);
       loc++;
 
       modelHierarchyID = std::string(ModelSceneFile[0].begin() + loc, ModelSceneFile[0].end());
@@ -150,11 +145,9 @@ int main(int argc, char * argv[])
   }
 
   // get the directory of the scene file
-  std::string rootDir
-    = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
+  std::string rootDir = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
 
   vtkNew<vtkMRMLScene> modelScene;
-
 
   // load the scene that Slicer will re-read
   modelScene->SetURL(sceneFilename.c_str());
@@ -170,22 +163,21 @@ int main(int argc, char * argv[])
   }
   else
   {
-    std::cerr << "Model scene file doesn't exist yet: " <<  sceneFilename.c_str() << std::endl;
+    std::cerr << "Model scene file doesn't exist yet: " << sceneFilename.c_str() << std::endl;
   }
 
   // make sure we have a model hierarchy node
-  vtkMRMLNode *                              rnd = modelScene->GetNodeByID(modelHierarchyID);
+  vtkMRMLNode* rnd = modelScene->GetNodeByID(modelHierarchyID);
   vtkSmartPointer<vtkMRMLModelHierarchyNode> rtnd;
   if (!rnd)
   {
-    std::cerr << "Error: no model hierarchy node at ID \""
-              << modelHierarchyID << "\", creating one" << std::endl;
-//      return EXIT_FAILURE;
+    std::cerr << "Error: no model hierarchy node at ID \"" << modelHierarchyID << "\", creating one" << std::endl;
+    //      return EXIT_FAILURE;
     rtnd = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
     rtnd->SetHideFromEditors(0);
     modelScene->AddNode(rtnd);
     // now get it again as a mrml node so can add things under it
-    rnd =  modelScene->GetNodeByID(rtnd->GetID());
+    rnd = modelScene->GetNodeByID(rtnd->GetID());
   }
   else
   {
@@ -197,7 +189,7 @@ int main(int argc, char * argv[])
   }
 
   // if there's a color based model hierarchy file, import it into the model scene
-  vtkMRMLModelHierarchyNode *topColorHierarchyNode = nullptr;
+  vtkMRMLModelHierarchyNode* topColorHierarchyNode = nullptr;
   if (ModelHierarchyFile.length() > 0)
   {
     // only try importing if the scene file exists
@@ -220,7 +212,7 @@ int main(int argc, char * argv[])
     }
 
     // make sure we have a new model hierarchy node
-    vtkMRMLNode * mnode = modelScene->GetNthNodeByClass(1,"vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* mnode = modelScene->GetNthNodeByClass(1, "vtkMRMLModelHierarchyNode");
     if (mnode != nullptr)
     {
       topColorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mnode);
@@ -233,11 +225,11 @@ int main(int argc, char * argv[])
     {
       if (debug)
       {
-        std::cout << "Loaded a color based model hierarchy scene with top level node = " << topColorHierarchyNode->GetName() << ", id = " << topColorHierarchyNode->GetID() << std::endl;
+        std::cout << "Loaded a color based model hierarchy scene with top level node = " << topColorHierarchyNode->GetName() << ", id = " << topColorHierarchyNode->GetID()
+                  << std::endl;
       }
     }
   }
-
 
   // if have a color hierarchy node, make it a child of the passed in model hierarchy
   if (topColorHierarchyNode != nullptr)
@@ -245,7 +237,7 @@ int main(int argc, char * argv[])
     topColorHierarchyNode->SetParentNodeID(rtnd->GetID());
     // there's also a chance that the parent node refs weren't reset when the top color hierarchy node was re-id'd
     // go through all the hierarchy nodes that are right under the rtnd and reset them to be under the topColorHierarchyNode
-    std::vector< vtkMRMLHierarchyNode* > children = rtnd->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> children = rtnd->GetChildrenNodes();
     for (unsigned int i = 0; i < children.size(); i++)
     {
       // don't touch the top color hierarchy node since you don't want to reset it's parent to itself
@@ -260,42 +252,42 @@ int main(int argc, char * argv[])
     }
   }
 
-  vtkSmartPointer<vtkMRMLColorTableNode>        colorNode;
+  vtkSmartPointer<vtkMRMLColorTableNode> colorNode;
   vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode;
 
   int useColorNode = 0;
-  if (ColorTable !=  "")
+  if (ColorTable != "")
   {
     useColorNode = 1;
   }
 
   // vtk and helper variables
   vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
-  vtkImageData *                                    image;
-  vtkSmartPointer<vtkDiscreteFlyingEdges3D>         cubes;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
-  bool                                              makeMultiple = false;
-  bool                                              useStartEnd = false;
-  vtkSmartPointer<vtkImageAccumulate>               hist;
-  std::vector<int>                                  skippedModels;
-  std::vector<int>                                  madeModels;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smootherSinc;
-  vtkSmartPointer<vtkSmoothPolyDataFilter>          smootherPoly;
+  vtkImageData* image;
+  vtkSmartPointer<vtkDiscreteFlyingEdges3D> cubes;
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother;
+  bool makeMultiple = false;
+  bool useStartEnd = false;
+  vtkSmartPointer<vtkImageAccumulate> hist;
+  std::vector<int> skippedModels;
+  std::vector<int> madeModels;
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter> smootherSinc;
+  vtkSmartPointer<vtkSmoothPolyDataFilter> smootherPoly;
 
-  vtkSmartPointer<vtkImageConstantPad>        padder;
-  vtkSmartPointer<vtkDecimatePro>             decimator;
+  vtkSmartPointer<vtkImageConstantPad> padder;
+  vtkSmartPointer<vtkDecimatePro> decimator;
 
-  vtkSmartPointer<vtkFlyingEdges3D>           mcubes;
-  vtkSmartPointer<vtkImageThreshold>          imageThreshold;
-  vtkSmartPointer<vtkThreshold>               threshold;
+  vtkSmartPointer<vtkFlyingEdges3D> mcubes;
+  vtkSmartPointer<vtkImageThreshold> imageThreshold;
+  vtkSmartPointer<vtkThreshold> threshold;
   vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
-  vtkSmartPointer<vtkGeometryFilter>          geometryFilter;
-  vtkSmartPointer<vtkTransform>               transformIJKtoLPS;
-  vtkSmartPointer<vtkReverseSense>            reverser;
+  vtkSmartPointer<vtkGeometryFilter> geometryFilter;
+  vtkSmartPointer<vtkTransform> transformIJKtoLPS;
+  vtkSmartPointer<vtkReverseSense> reverser;
   vtkSmartPointer<vtkTransformPolyDataFilter> transformer;
-  vtkSmartPointer<vtkPolyDataNormals>         normals;
-  vtkSmartPointer<vtkStripper>                stripper;
-  vtkSmartPointer<vtkPolyDataWriter>          writer;
+  vtkSmartPointer<vtkPolyDataNormals> normals;
+  vtkSmartPointer<vtkStripper> stripper;
+  vtkSmartPointer<vtkPolyDataWriter> writer;
 
   const char modelFileHeader[] = "3D Slicer output. SPACE=LPS"; // models are saved in LPS coordinate system
 
@@ -336,8 +328,7 @@ int main(int argc, char * argv[])
       labelsMax = Labels[Labels.size() - 1];
       if (debug)
       {
-        cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = "
-             << Labels.size() << endl;
+        cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << endl;
       }
     }
   }
@@ -398,15 +389,14 @@ int main(int argc, char * argv[])
 
   if (debug)
   {
-    std::cout << "useStartEnd = " << useStartEnd << ", numModelsToGenerate = " << numModelsToGenerate
-              << ", numFilterSteps " << numFilterSteps << endl;
+    std::cout << "useStartEnd = " << useStartEnd << ", numModelsToGenerate = " << numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
   }
   // check for the input file
   // - strings that start with slicer: are shared memory references, so they won't exist.
   //   The memory address starts with 0x in linux but not on Windows
   if (InputVolume.find(std::string("slicer:")) != 0)
   {
-    FILE * infile;
+    FILE* infile;
     infile = fopen(InputVolume.c_str(), "r");
     if (infile == nullptr)
     {
@@ -418,11 +408,8 @@ int main(int argc, char * argv[])
 
   // Read the file
   reader = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();
-  std::string            comment = "Read Volume";
-  vtkPluginFilterWatcher watchReader(reader,
-                                     comment.c_str(),
-                                     CLPProcessInformation,
-                                     1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
+  std::string comment = "Read Volume";
+  vtkPluginFilterWatcher watchReader(reader, comment.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
   if (debug)
   {
     watchReader.QuietOn();
@@ -464,13 +451,10 @@ int main(int argc, char * argv[])
 
     translator->Update();
     int extent[6];
-    ici->GetOutputInformation(0)->Get(
-      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
+    ici->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
     // now set the output extent to the new size, padded by 2 on the
     // positive side
-    padder->SetOutputWholeExtent(extent[0], extent[1] + 2,
-                                 extent[2], extent[3] + 2,
-                                 extent[4], extent[5] + 2);
+    padder->SetOutputWholeExtent(extent[0], extent[1] + 2, extent[2], extent[3] + 2, extent[4], extent[5] + 2);
   }
   if (useColorNode)
   {
@@ -488,8 +472,7 @@ int main(int argc, char * argv[])
 
     if (debug)
     {
-      std::cout << "Setting the color node's storage node id to " << colorStorageNode->GetID()
-                << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
+      std::cout << "Setting the color node's storage node id to " << colorStorageNode->GetID() << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
     }
     colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     if (!colorStorageNode->ReadData(colorNode))
@@ -538,19 +521,17 @@ int main(int argc, char * argv[])
         std::cout << "Image scalar max as double = " << dImageScalarMax << endl;
       }
       extentMax = (int)(floor(dImageScalarMax - 1.0));
-      int biggestBin = 1000000;     // VTK_INT_MAX - 1;
+      int biggestBin = 1000000; // VTK_INT_MAX - 1;
       if (extentMax < 0 || extentMax > biggestBin)
       {
-        std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of "
-                  << dImageScalarMax << ", using  " << biggestBin << " as the histogram number of bins" << endl;
+        std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of " << dImageScalarMax << ", using  " << biggestBin
+                  << " as the histogram number of bins" << endl;
         extentMax = biggestBin;
       }
       else
       {
-        std::cout
-        <<
-        "\nWARNING: due to lack of color label information, using the full scalar range of the input image when calculating the histogram over the image: "
-        << extentMax << endl;
+        std::cout << "\nWARNING: due to lack of color label information, using the full scalar range of the input image when calculating the histogram over the image: "
+                  << extentMax << endl;
       }
     }
     if (debug)
@@ -564,19 +545,15 @@ int main(int argc, char * argv[])
     // try and update and get the min/max here, as need them for the
     // marching cubes
     comment = "Histogram All Models";
-    vtkPluginFilterWatcher watchImageAccumulate(hist,
-                                                comment.c_str(),
-                                                CLPProcessInformation,
-                                                1.0 / numFilterSteps,
-                                                currentFilterOffset / numFilterSteps);
+    vtkPluginFilterWatcher watchImageAccumulate(hist, comment.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
     currentFilterOffset += 1.0;
     if (debug)
     {
       watchImageAccumulate.QuietOn();
     }
     hist->Update();
-    double *max = hist->GetMax();
-    double *min = hist->GetMin();
+    double* max = hist->GetMax();
+    double* min = hist->GetMin();
     if (min[0] == 0)
     {
       if (debug)
@@ -596,15 +573,14 @@ int main(int argc, char * argv[])
 
     if (debug)
     {
-      std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << " (image scalar type = "
-                << image->GetScalarType() << ", max = " << image->GetScalarTypeMax() << ")" << endl;
+      std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << " (image scalar type = " << image->GetScalarType() << ", max = " << image->GetScalarTypeMax() << ")"
+                << endl;
     }
     if (GenerateAll)
     {
       if (debug)
       {
-        std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and "
-                  << EndLabel << " to " << min[0] << " and " << max[0] << endl;
+        std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and " << EndLabel << " to " << min[0] << " and " << max[0] << endl;
       }
       StartLabel = (int)floor(min[0]);
       EndLabel = (int)floor(max[0]);
@@ -612,7 +588,7 @@ int main(int argc, char * argv[])
       // recalculate the number of filter steps, discount the labels with no
       // voxels
       numModelsToGenerate = 0;
-      for(int i = StartLabel; i <= EndLabel; i++)
+      for (int i = StartLabel; i <= EndLabel; i++)
       {
         if ((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
         {
@@ -655,12 +631,8 @@ int main(int argc, char * argv[])
     }
 
     cubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
-    std::string            comment1 = "Discrete Marching Cubes";
-    vtkPluginFilterWatcher watchDMCubes(cubes,
-                                        comment1.c_str(),
-                                        CLPProcessInformation,
-                                        1.0 / numFilterSteps,
-                                        currentFilterOffset / numFilterSteps);
+    std::string comment1 = "Discrete Marching Cubes";
+    vtkPluginFilterWatcher watchDMCubes(cubes, comment1.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
     if (debug)
     {
       watchDMCubes.QuietOn();
@@ -695,7 +667,7 @@ int main(int argc, char * argv[])
     {
       cubes->Update();
     }
-    catch(...)
+    catch (...)
     {
       std::cerr << "ERROR while updating marching cubes filter." << std::endl;
       return EXIT_FAILURE;
@@ -713,12 +685,8 @@ int main(int argc, char * argv[])
       stream << "Joint Smooth All Models (";
       stream << numModelsToGenerate;
       stream << " to process)";
-      std::string            comment2 = stream.str();
-      vtkPluginFilterWatcher watchSmoother(smoother,
-                                           comment2.c_str(),
-                                           CLPProcessInformation,
-                                           1.0 / numFilterSteps,
-                                           currentFilterOffset / numFilterSteps);
+      std::string comment2 = stream.str();
+      vtkPluginFilterWatcher watchSmoother(smoother, comment2.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -738,66 +706,67 @@ int main(int argc, char * argv[])
       {
         smoother->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while updating smoothing filter." << std::endl;
         return EXIT_FAILURE;
       }
       //        smoother->ReleaseDataFlagOn();
     }
-/*
-      vtkPluginFilterWatcher watchImageAccumulate(hist,
-                                                 "Histogram All Models",
-                                                 CLPProcessInformation,
-                                                 1.0/numFilterSteps,
-                                                 currentFilterOffset/numFilterSteps);
-      currentFilterOffset += 1.0;
-      if (debug)
-        {
-        watchImageAccumulate.QuietOn();
-        }
-      hist->Update();
-      double *max = hist->GetMax();
-      double *min = hist->GetMin();
-      if (min[0] == 0)
-        {
-        if (debug)
-          {
-          std::cout << "Skipping 0" << endl;
-          }
-        min[0]++;
-        }
-       if (debug)
-         {
-         std::cout << "Min = " << min[0] << " and max = " << max[0] << endl;
-         }
-
-      if (GenerateAll)
-        {
-        if (debug)
-          {
-          std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and " << EndLabel << " to " << min[0] << " and " << max[0] << endl;
-          }
-        StartLabel = (int)floor(min[0]);
-        EndLabel = (int)floor(max[0]);
-        // recalculate the number of filter steps, discount the labels with no
-        // voxels
-        numModelsToGenerate = 0;
-        for (int i = StartLabel; i <= EndLabel; i++)
-          {
-          if((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
+    /*
+          vtkPluginFilterWatcher watchImageAccumulate(hist,
+                                                     "Histogram All Models",
+                                                     CLPProcessInformation,
+                                                     1.0/numFilterSteps,
+                                                     currentFilterOffset/numFilterSteps);
+          currentFilterOffset += 1.0;
+          if (debug)
             {
-            if (debug && i < 0 && i > -100) { std::cout << i << " "; }
-            numModelsToGenerate++;
+            watchImageAccumulate.QuietOn();
             }
-          }
-        if (debug)
-          {
-          std::cout << endl << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
-          }
-        numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
-        }
-*/
+          hist->Update();
+          double* max = hist->GetMax();
+          double* min = hist->GetMin();
+          if (min[0] == 0)
+            {
+            if (debug)
+              {
+              std::cout << "Skipping 0" << endl;
+              }
+            min[0]++;
+            }
+           if (debug)
+             {
+             std::cout << "Min = " << min[0] << " and max = " << max[0] << endl;
+             }
+
+          if (GenerateAll)
+            {
+            if (debug)
+              {
+              std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and " << EndLabel << " to " << min[0] << " and " << max[0] <<
+       endl;
+              }
+            StartLabel = (int)floor(min[0]);
+            EndLabel = (int)floor(max[0]);
+            // recalculate the number of filter steps, discount the labels with no
+            // voxels
+            numModelsToGenerate = 0;
+            for (int i = StartLabel; i <= EndLabel; i++)
+              {
+              if ((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
+                {
+                if (debug && i < 0 && i > -100) { std::cout << i << " "; }
+                numModelsToGenerate++;
+                }
+              }
+            if (debug)
+              {
+              std::cout << endl << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
+              }
+            numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+            }
+    */
     if (useColorNode)
     {
       // but if we didn't get a named color node, try to guess
@@ -807,7 +776,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
-  }   // end of make multiple
+  } // end of make multiple
   else
   {
     if (useStartEnd)
@@ -817,7 +786,8 @@ int main(int argc, char * argv[])
   }
 
   // ModelMakerMarch
-  double      labelFrequency = 0.0;;
+  double labelFrequency = 0.0;
+  ;
   std::string labelName;
 
   // get the dimensions, marching cubes only works on 3d
@@ -825,16 +795,14 @@ int main(int argc, char * argv[])
   image->GetExtent(extents);
   if (debug)
   {
-    std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
-              << " " << extents[4] << " " << extents[5] << endl;
+    std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3] << " " << extents[4] << " " << extents[5] << endl;
   }
-  if (extents[0] == extents[1] ||
-      extents[2] == extents[3] ||
+  if (extents[0] == extents[1] || //
+      extents[2] == extents[3] || //
       extents[4] == extents[5])
   {
     std::cerr << "The volume is not 3D." << endl;
-    std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " "
-              << extents[3] << " " << extents[4] << " " << extents[5] << endl;
+    std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3] << " " << extents[4] << " " << extents[5] << endl;
     return EXIT_FAILURE;
   }
   // Get the RAS to IJK matrix and invert it and flip the first to axis directions to get the IJK to LPS which will need
@@ -858,7 +826,7 @@ int main(int argc, char * argv[])
   if (useStartEnd || GenerateAll)
   {
     // set up the loop list with all the labels between start and end
-    for(int i = StartLabel; i <= EndLabel; i++)
+    for (int i = StartLabel; i <= EndLabel; i++)
     {
       loopLabels.push_back(i);
     }
@@ -866,12 +834,12 @@ int main(int argc, char * argv[])
   else
   {
     // just copy the list of labels into the new var
-    for(::size_t i = 0; i < Labels.size(); i++)
+    for (::size_t i = 0; i < Labels.size(); i++)
     {
       loopLabels.push_back(Labels[i]);
     }
   }
-  for(::size_t l = 0; l < loopLabels.size(); l++)
+  for (::size_t l = 0; l < loopLabels.size(); l++)
   {
     // get the label out of the vector
     int i = loopLabels[l];
@@ -899,29 +867,27 @@ int main(int argc, char * argv[])
       // name this model
       // TODO: get the label name from the color look up table
       std::stringstream stream;
-      stream <<    i;
-      std::string stringI =    stream.str();
+      stream << i;
+      std::string stringI = stream.str();
       if (colorNode != nullptr)
       {
         std::string colorName = std::string(colorNode->GetColorNameAsFileName(i));
         if (colorName.c_str() != nullptr)
         {
-          if (!SkipUnNamed ||
+          if (!SkipUnNamed || //
               (SkipUnNamed && (colorName.compare("invalid") != 0 && colorName.compare("(none)") != 0)))
           {
             labelName = Name + std::string("_") + stringI + std::string("_") + colorName;
             if (debug)
             {
-              std::cout << "Got color name, set label name = " << labelName.c_str() << " (color name w/o spaces = "
-                        << colorName.c_str() << ")" << endl;
+              std::cout << "Got color name, set label name = " << labelName.c_str() << " (color name w/o spaces = " << colorName.c_str() << ")" << endl;
             }
           }
           else
           {
             if (debug)
             {
-              std::cout << "Invalid color name for " << stringI.c_str() << " = " << colorName.c_str()
-                        << ", skipping.\n";
+              std::cout << "Invalid color name for " << stringI.c_str() << " = " << colorName.c_str() << ", skipping.\n";
             }
             skippedModels.push_back(i);
             madeModels.pop_back();
@@ -951,14 +917,14 @@ int main(int argc, char * argv[])
       {
         if (!SkipUnNamed)
         {
-          labelName  = Name + std::string("_") + stringI;
+          labelName = Name + std::string("_") + stringI;
         }
         else
         {
           continue;
         }
       }
-    }   // end of making multiples
+    } // end of making multiples
     else
     {
       // just make one
@@ -991,12 +957,8 @@ int main(int argc, char * argv[])
         imageThreshold = nullptr;
       }
       imageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
-      std::string            comment3 = "Threshold " + labelName;
-      vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
-                                                 comment3.c_str(),
-                                                 CLPProcessInformation,
-                                                 1.0 / numFilterSteps,
-                                                 currentFilterOffset / numFilterSteps);
+      std::string comment3 = "Threshold " + labelName;
+      vtkPluginFilterWatcher watchImageThreshold(imageThreshold, comment3.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1029,7 +991,7 @@ int main(int argc, char * argv[])
       {
         imageToStructuredPoints->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while updating image to structured points for label " << i << std::endl;
         return EXIT_FAILURE;
@@ -1045,12 +1007,8 @@ int main(int argc, char * argv[])
         threshold = nullptr;
       }
       threshold = vtkSmartPointer<vtkThreshold>::New();
-      std::string            comment4 = "Threshold " + labelName;
-      vtkPluginFilterWatcher watchThreshold(threshold,
-                                            comment4.c_str(),
-                                            CLPProcessInformation,
-                                            1.0 / numFilterSteps,
-                                            currentFilterOffset / numFilterSteps);
+      std::string comment4 = "Threshold " + labelName;
+      vtkPluginFilterWatcher watchThreshold(threshold, comment4.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1091,12 +1049,8 @@ int main(int argc, char * argv[])
         mcubes = nullptr;
       }
       mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
-      std::string            comment5 = "Marching Cubes " + labelName;
-      vtkPluginFilterWatcher watchThreshold(mcubes,
-                                            comment5.c_str(),
-                                            CLPProcessInformation,
-                                            1.0 / numFilterSteps,
-                                            currentFilterOffset / numFilterSteps);
+      std::string comment5 = "Marching Cubes " + labelName;
+      vtkPluginFilterWatcher watchThreshold(mcubes, comment5.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1112,7 +1066,7 @@ int main(int argc, char * argv[])
       {
         mcubes->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while running marching cubes, for label " << i << std::endl;
         return EXIT_FAILURE;
@@ -1122,10 +1076,9 @@ int main(int argc, char * argv[])
         std::cout << "\n" << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
       }
 
-      if ((mcubes->GetOutput())->GetNumberOfPolys()  == 0)
+      if ((mcubes->GetOutput())->GetNumberOfPolys() == 0)
       {
-        std::cout << "Cannot create a model from label " << i
-                  << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
+        std::cout << "Cannot create a model from label " << i << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
         if (transformIJKtoLPS)
         {
           transformIJKtoLPS = nullptr;
@@ -1139,7 +1092,6 @@ int main(int argc, char * argv[])
           imageThreshold->SetInputData(nullptr);
           imageThreshold->RemoveAllInputs();
           imageThreshold = nullptr;
-
         }
         if (imageToStructuredPoints)
         {
@@ -1160,12 +1112,8 @@ int main(int argc, char * argv[])
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
         // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
         writer->SetFileVersion(42);
-        std::string            commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
-        vtkPluginFilterWatcher watchWriter(writer,
-                                           commentSaveCubes.c_str(),
-                                           CLPProcessInformation,
-                                           1.0 / numFilterSteps,
-                                           currentFilterOffset / numFilterSteps);
+        std::string commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
+        vtkPluginFilterWatcher watchWriter(writer, commentSaveCubes.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(cubes->GetOutputPort());
         writer->SetHeader(modelFileHeader);
@@ -1207,12 +1155,8 @@ int main(int argc, char * argv[])
         decimator = nullptr;
       }
       decimator = vtkSmartPointer<vtkDecimatePro>::New();
-      std::string            comment6 = "Decimate " + labelName;
-      vtkPluginFilterWatcher watchImageThreshold(decimator,
-                                                 comment6.c_str(),
-                                                 CLPProcessInformation,
-                                                 1.0 / numFilterSteps,
-                                                 currentFilterOffset / numFilterSteps);
+      std::string comment6 = "Decimate " + labelName;
+      vtkPluginFilterWatcher watchImageThreshold(decimator, comment6.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1244,7 +1188,7 @@ int main(int argc, char * argv[])
       {
         decimator->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR decimating model " << i << std::endl;
         return EXIT_FAILURE;
@@ -1257,12 +1201,8 @@ int main(int argc, char * argv[])
       if (SaveIntermediateModels)
       {
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        std::string            commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
-        vtkPluginFilterWatcher watchWriter(writer,
-                                           commentSaveDecimation.c_str(),
-                                           CLPProcessInformation,
-                                           1.0 / numFilterSteps,
-                                           currentFilterOffset / numFilterSteps);
+        std::string commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
+        vtkPluginFilterWatcher watchWriter(writer, commentSaveDecimation.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(decimator->GetOutputPort());
         writer->SetHeader(modelFileHeader);
@@ -1289,20 +1229,17 @@ int main(int argc, char * argv[])
         writer->SetInputData(nullptr);
         writer = nullptr;
       }
-      if (transformIJKtoLPS == nullptr ||
+      if (transformIJKtoLPS == nullptr || //
           transformIJKtoLPS->GetMatrix() == nullptr)
       {
-        std::cout << "transformIJKtoLPS is "
-                  << (transformIJKtoLPS ==
-            nullptr ? "null" : "okay") << ", it's matrix is "
+        std::cout << "transformIJKtoLPS is " << (transformIJKtoLPS == nullptr ? "null" : "okay") << ", it's matrix is "
                   << (transformIJKtoLPS->GetMatrix() == nullptr ? "null" : "okay") << endl;
       }
       else if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
       {
         if (debug)
         {
-          std::cout << "Determinant " << (transformIJKtoLPS->GetMatrix())->Determinant()
-                    << " is less than zero, reversing..." << endl;
+          std::cout << "Determinant " << (transformIJKtoLPS->GetMatrix())->Determinant() << " is less than zero, reversing..." << endl;
         }
         if (reverser)
         {
@@ -1310,12 +1247,8 @@ int main(int argc, char * argv[])
           reverser = nullptr;
         }
         reverser = vtkSmartPointer<vtkReverseSense>::New();
-        std::string            comment7 = "Reverse " + labelName;
-        vtkPluginFilterWatcher watchReverser(reverser,
-                                             comment7.c_str(),
-                                             CLPProcessInformation,
-                                             1.0 / numFilterSteps,
-                                             currentFilterOffset / numFilterSteps);
+        std::string comment7 = "Reverse " + labelName;
+        vtkPluginFilterWatcher watchReverser(reverser, comment7.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         if (debug)
         {
@@ -1337,12 +1270,8 @@ int main(int argc, char * argv[])
             smootherSinc = nullptr;
           }
           smootherSinc = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
-          std::string            comment8 = "Smooth " + labelName;
-          vtkPluginFilterWatcher watchSmoother(smootherSinc,
-                                               comment8.c_str(),
-                                               CLPProcessInformation,
-                                               1.0 / numFilterSteps,
-                                               currentFilterOffset / numFilterSteps);
+          std::string comment8 = "Smooth " + labelName;
+          vtkPluginFilterWatcher watchSmoother(smootherSinc, comment8.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (debug)
           {
@@ -1370,7 +1299,7 @@ int main(int argc, char * argv[])
           {
             smootherSinc->Update();
           }
-          catch(...)
+          catch (...)
           {
             std::cerr << "ERROR updating Sinc smoother for model " << i << std::endl;
             return EXIT_FAILURE;
@@ -1384,12 +1313,8 @@ int main(int argc, char * argv[])
             smootherPoly = nullptr;
           }
           smootherPoly = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-          std::string            comment9 = "Smooth " + labelName;
-          vtkPluginFilterWatcher watchSmoother(smootherPoly,
-                                               comment9.c_str(),
-                                               CLPProcessInformation,
-                                               1.0 / numFilterSteps,
-                                               currentFilterOffset / numFilterSteps);
+          std::string comment9 = "Smooth " + labelName;
+          vtkPluginFilterWatcher watchSmoother(smootherPoly, comment9.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (debug)
           {
@@ -1417,7 +1342,7 @@ int main(int argc, char * argv[])
           {
             smootherPoly->Update();
           }
-          catch(...)
+          catch (...)
           {
             std::cerr << "ERROR updating Poly smoother for model " << i << std::endl;
             return EXIT_FAILURE;
@@ -1427,12 +1352,8 @@ int main(int argc, char * argv[])
         if (SaveIntermediateModels)
         {
           writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-          std::string            commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
-          vtkPluginFilterWatcher watchWriter(writer,
-                                             commentSaveSmoothed.c_str(),
-                                             CLPProcessInformation,
-                                             1.0 / numFilterSteps,
-                                             currentFilterOffset / numFilterSteps);
+          std::string commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
+          vtkPluginFilterWatcher watchWriter(writer, commentSaveSmoothed.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (strcmp(FilterType.c_str(), "Sinc") == 0)
           {
@@ -1474,12 +1395,8 @@ int main(int argc, char * argv[])
         transformer = nullptr;
       }
       transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      std::string            comment1 = "Transform " + labelName;
-      vtkPluginFilterWatcher watchTransformer(transformer,
-                                              comment1.c_str(),
-                                              CLPProcessInformation,
-                                              1.0 / numFilterSteps,
-                                              currentFilterOffset / numFilterSteps);
+      std::string comment1 = "Transform " + labelName;
+      vtkPluginFilterWatcher watchTransformer(transformer, comment1.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1521,12 +1438,8 @@ int main(int argc, char * argv[])
         normals = nullptr;
       }
       normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-      std::string            comment2 = "Normals " + labelName;
-      vtkPluginFilterWatcher watchNormals(normals,
-                                          comment2.c_str(),
-                                          CLPProcessInformation,
-                                          1.0 / numFilterSteps,
-                                          currentFilterOffset / numFilterSteps);
+      std::string comment2 = "Normals " + labelName;
+      vtkPluginFilterWatcher watchNormals(normals, comment2.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1553,12 +1466,8 @@ int main(int argc, char * argv[])
         stripper = nullptr;
       }
       stripper = vtkSmartPointer<vtkStripper>::New();
-      std::string            comment3 = "Strip " + labelName;
-      vtkPluginFilterWatcher watchStripper(stripper,
-                                           comment3.c_str(),
-                                           CLPProcessInformation,
-                                           1.0 / numFilterSteps,
-                                           currentFilterOffset / numFilterSteps);
+      std::string comment3 = "Strip " + labelName;
+      vtkPluginFilterWatcher watchStripper(stripper, comment3.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1573,7 +1482,7 @@ int main(int argc, char * argv[])
       {
         stripper->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR updating stripper for model " << i << std::endl;
         return EXIT_FAILURE;
@@ -1581,12 +1490,8 @@ int main(int argc, char * argv[])
 
       // but for now we're just going to write it out
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-      std::string            comment4 = "Write " + labelName;
-      vtkPluginFilterWatcher watchWriter(writer,
-                                         comment4.c_str(),
-                                         CLPProcessInformation,
-                                         1.0 / numFilterSteps,
-                                         currentFilterOffset / numFilterSteps);
+      std::string comment4 = "Write " + labelName;
+      vtkPluginFilterWatcher watchWriter(writer, comment4.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
       {
@@ -1609,7 +1514,7 @@ int main(int argc, char * argv[])
 
       if (debug)
       {
-        std::cout << "Writing model " << " " << labelName << " to file " << writer->GetFileName()  << endl;
+        std::cout << "Writing model " << " " << labelName << " to file " << writer->GetFileName() << endl;
       }
       if (!writer->Write())
       {
@@ -1621,8 +1526,7 @@ int main(int argc, char * argv[])
       {
         if (debug)
         {
-          std::cout << "Adding model " << labelName << " to the output scene, with filename " << fileName.c_str()
-                    << endl;
+          std::cout << "Adding model " << labelName << " to the output scene, with filename " << fileName.c_str() << endl;
         }
         // each model needs a mrml node, a storage node and a display node
         vtkNew<vtkMRMLModelNode> mnode;
@@ -1637,7 +1541,7 @@ int main(int argc, char * argv[])
         }
         vtkNew<vtkMRMLModelDisplayNode> dnode;
         dnode->SetColor(0.5, 0.5, 0.5);
-        double *rgba;
+        double* rgba;
         if (colorNode != nullptr)
         {
           rgba = colorNode->GetLookupTable()->GetTableValue(i);
@@ -1651,8 +1555,7 @@ int main(int argc, char * argv[])
           }
           else
           {
-            std::cerr << "Couldn't get look up table value for " << i << ", display node color is not set (grey)"
-                      << endl;
+            std::cerr << "Couldn't get look up table value for " << i << ", display node color is not set (grey)" << endl;
           }
         }
 
@@ -1661,8 +1564,7 @@ int main(int argc, char * argv[])
         if (debug)
         {
           std::cout << "Added display node: id = " << (dnode->GetID() == nullptr ? "(null)" : dnode->GetID()) << endl;
-          std::cout << "Setting model's storage node: id = "
-                    << (snode->GetID() == nullptr ? "(null)" : snode->GetID()) << endl;
+          std::cout << "Setting model's storage node: id = " << (snode->GetID() == nullptr ? "(null)" : snode->GetID()) << endl;
         }
         mnode->SetAndObserveStorageNodeID(snode->GetID());
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
@@ -1688,17 +1590,17 @@ int main(int argc, char * argv[])
             std::cout << "No color node, guessing at color name being same as label number " << colorName.c_str() << std::endl;
           }
         }
-        vtkMRMLNode *mrmlNode = nullptr;
+        vtkMRMLNode* mrmlNode = nullptr;
         if (colorName.compare("") != 0)
         {
           mrmlNode = modelScene->GetFirstNodeByName(colorName.c_str());
         }
         // if there's no color hierarchy, or no color name or the mrml node
         // named for the color isn't a model hierarchy node, use a flat hierarchy
-        if (topColorHierarchyNode == nullptr ||
-            colorName.compare("") == 0 ||
-            mrmlNode == nullptr ||
-            strcmp(mrmlNode->GetClassName(),"vtkMRMLModelHierarchyNode") != 0)
+        if (topColorHierarchyNode == nullptr || //
+            colorName.compare("") == 0 ||       //
+            mrmlNode == nullptr ||              //
+            strcmp(mrmlNode->GetClassName(), "vtkMRMLModelHierarchyNode") != 0)
         {
           vtkNew<vtkMRMLModelHierarchyNode> mhnd;
           mhnd->SetHideFromEditors(1);
@@ -1709,7 +1611,7 @@ int main(int argc, char * argv[])
         else
         {
           // use the template color hierarchy
-          vtkMRMLModelHierarchyNode *colorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
+          vtkMRMLModelHierarchyNode* colorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
           if (colorHierarchyNode)
           {
             colorHierarchyNode->SetAssociatedNodeID(mnode->GetID());
@@ -1717,7 +1619,8 @@ int main(int argc, char * argv[])
             colorHierarchyNode->SetHideFromEditors(1);
             if (debug)
             {
-              std::cout << "Found a color hierarchy node with name " << colorHierarchyNode->GetName() << ", set it's associated node to this model id: " << mnode->GetID() << std::endl;
+              std::cout << "Found a color hierarchy node with name " << colorHierarchyNode->GetName() << ", set it's associated node to this model id: " << mnode->GetID()
+                        << std::endl;
             }
           }
         }
@@ -1727,7 +1630,7 @@ int main(int argc, char * argv[])
         }
       }
     } // end of skipping an empty label
-  }   // end of loop over labels
+  } // end of loop over labels
   if (debug)
   {
     std::cout << "End of looping over labels" << endl;
@@ -1736,7 +1639,7 @@ int main(int argc, char * argv[])
   if (madeModels.size() > 0)
   {
     std::cout << "Made models from labels:";
-    for(::size_t i = 0; i < madeModels.size(); i++)
+    for (::size_t i = 0; i < madeModels.size(); i++)
     {
       std::cout << " " << madeModels[i];
     }
@@ -1745,7 +1648,7 @@ int main(int argc, char * argv[])
   if (skippedModels.size() > 0)
   {
     std::cout << "Skipped making models from labels:";
-    for(::size_t i = 0; i < skippedModels.size(); i++)
+    for (::size_t i = 0; i < skippedModels.size(); i++)
     {
       std::cout << " " << skippedModels[i];
     }
@@ -1771,11 +1674,11 @@ int main(int argc, char * argv[])
     if (topColorHierarchyNode != nullptr)
     {
       // get all the hierarchies under it, recursively
-      std::vector< vtkMRMLHierarchyNode* > allChildren;
+      std::vector<vtkMRMLHierarchyNode*> allChildren;
       topColorHierarchyNode->GetAllChildrenNodes(allChildren);
       for (unsigned int i = 0; i < allChildren.size(); i++)
       {
-        if (allChildren[i]->GetAssociatedNodeID() == nullptr &&
+        if (allChildren[i]->GetAssociatedNodeID() == nullptr && //
             allChildren[i]->GetNumberOfChildrenNodes() == 0)
         {
           // if this child doesn't have an associated node, nor does it have children nodes (keep the structure of the hierarchy), remove it and it's display node
@@ -1785,7 +1688,7 @@ int main(int argc, char * argv[])
           }
           if (vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]) != nullptr)
           {
-            vtkMRMLDisplayNode *hierarchyDisplayNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i])->GetDisplayNode();
+            vtkMRMLDisplayNode* hierarchyDisplayNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i])->GetDisplayNode();
             if (hierarchyDisplayNode)
             {
               if (debug)
@@ -1804,8 +1707,7 @@ int main(int argc, char * argv[])
     std::cout << "Models saved to scene file " << sceneFilename.c_str() << "\n";
     if (ModelSceneFile.size() == 0)
     {
-      std::cout << "\nIf you ran this from Slicer3's GUI, use File->Import Scene... " << sceneFilename.c_str()
-                << " to load your models.\n";
+      std::cout << "\nIf you ran this from Slicer3's GUI, use File->Import Scene... " << sceneFilename.c_str() << " to load your models.\n";
     }
   }
 

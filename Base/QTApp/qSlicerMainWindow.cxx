@@ -49,7 +49,7 @@
 # include <ctkPythonConsole.h>
 #endif
 #ifdef Slicer_USE_QtTesting
-#include <ctkQtTestingUtility.h>
+# include <ctkQtTestingUtility.h>
 #endif
 #include <ctkVTKSliceView.h>
 #include <ctkVTKWidgetsUtils.h>
@@ -60,13 +60,13 @@
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
-#include "qSlicerCLIModuleWidgetEventPlayer.h"
+# include "qSlicerCLIModuleWidgetEventPlayer.h"
 #endif
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerErrorReportDialog.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-#include "qSlicerExtensionsManagerModel.h"
+# include "qSlicerExtensionsManagerModel.h"
 #endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
@@ -110,9 +110,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowPrivate::~qSlicerMainWindowPrivate()
-{
-}
+qSlicerMainWindowPrivate::~qSlicerMainWindowPrivate() {}
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::init()
@@ -127,21 +125,19 @@ void qSlicerMainWindowPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
+void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 {
   Q_Q(qSlicerMainWindow);
 
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
 
   //----------------------------------------------------------------------------
   // Recently loaded files
   //----------------------------------------------------------------------------
-  QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
-                   q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
-  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)),
-                   q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)), q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)), q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
 
   //----------------------------------------------------------------------------
   // Load DICOM
@@ -154,34 +150,30 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // ModulePanel
   //----------------------------------------------------------------------------
   this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("Show &Module Panel"));
-  this->PanelDockWidget->toggleViewAction()->setToolTip(
-    qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
-          "the entire application window"));
+  this->PanelDockWidget->toggleViewAction()->setToolTip(qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
+                                                                              "the entire application window"));
   this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
-  this->AppearanceMenu->insertAction(this->ShowStatusBarAction,
-                                     this->PanelDockWidget->toggleViewAction());
+  this->AppearanceMenu->insertAction(this->ShowStatusBarAction, this->PanelDockWidget->toggleViewAction());
 
   //----------------------------------------------------------------------------
   // ModuleManager
   //----------------------------------------------------------------------------
   // Update the list of modules when they are loaded
-  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
     qWarning() << "No module manager is created.";
   }
 
-  QObject::connect(moduleManager,SIGNAL(moduleLoaded(QString)),
-                   q, SLOT(onModuleLoaded(QString)));
+  QObject::connect(moduleManager, SIGNAL(moduleLoaded(QString)), q, SLOT(onModuleLoaded(QString)));
 
-  QObject::connect(moduleManager, SIGNAL(moduleAboutToBeUnloaded(QString)),
-                   q, SLOT(onModuleAboutToBeUnloaded(QString)));
+  QObject::connect(moduleManager, SIGNAL(moduleAboutToBeUnloaded(QString)), q, SLOT(onModuleAboutToBeUnloaded(QString)));
 
   //----------------------------------------------------------------------------
   // ModuleSelector ToolBar
   //----------------------------------------------------------------------------
   // Create a Module selector
-  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar(qSlicerMainWindow::tr("Module Selection"),q);
+  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar(qSlicerMainWindow::tr("Module Selection"), q);
   this->ModuleSelectorToolBar->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
   this->ModuleSelectorToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
   this->ModuleSelectorToolBar->setModuleManager(moduleManager);
@@ -190,32 +182,26 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Connect the selector with the module panel
   this->ModulePanel->setModuleManager(moduleManager);
-  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
-                   this->ModulePanel, SLOT(setModule(QString)));
+  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)), this->ModulePanel, SLOT(setModule(QString)));
 
   // Ensure the panel dock widget is visible
-  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
-                   this->PanelDockWidget, SLOT(show()));
+  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)), this->PanelDockWidget, SLOT(show()));
 
   //----------------------------------------------------------------------------
   // MouseMode ToolBar
   //----------------------------------------------------------------------------
   // MouseMode toolBar should listen the MRML scene
-  this->MouseModeToolBar->setApplicationLogic(
-    qSlicerApplication::application()->applicationLogic());
+  this->MouseModeToolBar->setApplicationLogic(qSlicerApplication::application()->applicationLogic());
   this->MouseModeToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->MouseModeToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->MouseModeToolBar, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   QList<QAction*> toolBarActions;
   toolBarActions << this->MainToolBar->toggleViewAction();
-  //toolBarActions << this->UndoRedoToolBar->toggleViewAction();
+  // toolBarActions << this->UndoRedoToolBar->toggleViewAction();
   toolBarActions << this->ModuleSelectorToolBar->toggleViewAction();
   toolBarActions << this->ModuleToolBar->toggleViewAction();
   toolBarActions << this->ViewToolBar->toggleViewAction();
-  //toolBarActions << this->LayoutToolBar->toggleViewAction();
+  // toolBarActions << this->LayoutToolBar->toggleViewAction();
   toolBarActions << this->MouseModeToolBar->toggleViewAction();
   toolBarActions << this->ViewersToolBar->toggleViewAction();
   toolBarActions << this->DialogToolBar->toggleViewAction();
@@ -233,8 +219,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // loading slicer.
   this->UndoRedoToolBar->toggleViewAction()->trigger();
   this->LayoutToolBar->toggleViewAction()->trigger();
-  //q->removeToolBar(this->UndoRedoToolBar);
-  //q->removeToolBar(this->LayoutToolBar);
+  // q->removeToolBar(this->UndoRedoToolBar);
+  // q->removeToolBar(this->LayoutToolBar);
   delete this->UndoRedoToolBar;
   this->UndoRedoToolBar = nullptr;
   delete this->LayoutToolBar;
@@ -254,34 +240,26 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->LayoutManager = new qSlicerLayoutManager(layoutFrame);
   // Prevent updates until the main window is shown to avoid detached viewports appear too early.
   this->LayoutManager->setEnabled(false);
-  this->LayoutManager->setScriptedDisplayableManagerDirectory(
-      qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
+  this->LayoutManager->setScriptedDisplayableManagerDirectory(qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(this->LayoutManager);
 #ifdef Slicer_USE_QtTesting
   // we store this layout manager to the Object state property for QtTesting
-  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
-      qSlicerApplication::application()->layoutManager(), QString(/*no tr*/"layout"));
-  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
-      this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(qSlicerApplication::application()->layoutManager(), QString(/*no tr*/ "layout"));
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
 #endif
   // Layout manager should also listen the MRML scene
   // Note: This creates the OpenGL context for each view, so things like
   // multisampling should probably be configured before this line is executed.
   this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->LayoutManager,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
-                   q, SLOT(onLayoutChanged(int)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->LayoutManager, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)), q, SLOT(onLayoutChanged(int)));
 
   // TODO: When module will be managed by the layoutManager, this should be
   //       revisited.
-  QObject::connect(this->LayoutManager, SIGNAL(selectModule(QString)),
-                   this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
+  QObject::connect(this->LayoutManager, SIGNAL(selectModule(QString)), this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
 
   // Add menus for configuring compare view
-  QMenu *compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
+  QMenu* compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuView");
   compareMenu->addAction(this->ViewLayoutCompare_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompare_3_viewersAction);
@@ -291,8 +269,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   compareMenu->addAction(this->ViewLayoutCompare_7_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompare_8_viewersAction);
   this->ViewLayoutCompareAction->setMenu(compareMenu);
-  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutCompareActionTriggered(QAction*)));
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareActionTriggered(QAction*)));
 
   // ... and for widescreen version of compare view as well
   compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
@@ -305,8 +282,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_7_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_8_viewersAction);
   this->ViewLayoutCompareWidescreenAction->setMenu(compareMenu);
-  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
 
   // ... and for the grid version of the compare views
   compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
@@ -315,8 +291,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   compareMenu->addAction(this->ViewLayoutCompareGrid_3x3_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareGrid_4x4_viewersAction);
   this->ViewLayoutCompareGridAction->setMenu(compareMenu);
-  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutCompareGridActionTriggered(QAction*)));
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareGridActionTriggered(QAction*)));
 
   // Authorize Drops action from outside
   q->setAcceptDrops(true);
@@ -332,33 +307,26 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   this->LayoutButton->setDefaultAction(this->ViewLayoutConventionalAction);
 
-  QObject::connect(this->LayoutMenu, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutActionTriggered(QAction*)));
+  QObject::connect(this->LayoutMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutActionTriggered(QAction*)));
 
   this->ViewToolBar->addWidget(this->LayoutButton);
-  QObject::connect(this->ViewToolBar,
-                   SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
-                   this->LayoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+  QObject::connect(this->ViewToolBar, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), this->LayoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   //----------------------------------------------------------------------------
   // Viewers Toolbar
   //----------------------------------------------------------------------------
   // Viewers toolBar should listen the MRML scene
-  this->ViewersToolBar->setApplicationLogic(
-    qSlicerApplication::application()->applicationLogic());
+  this->ViewersToolBar->setApplicationLogic(qSlicerApplication::application()->applicationLogic());
   this->ViewersToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ViewersToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ViewersToolBar, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   //----------------------------------------------------------------------------
   // Undo/Redo Toolbar
   //----------------------------------------------------------------------------
   // Listen to the scene to enable/disable the undo/redo toolbuttons
-  //q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
+  // q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
   //               q, SLOT(onMRMLSceneModified(vtkObject*)));
-  //q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
+  // q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 
   //----------------------------------------------------------------------------
   // Icons in the menu
@@ -383,8 +351,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
 
   this->ErrorLogWidget = new ctkErrorLogWidget;
-  this->ErrorLogWidget->setErrorLogModel(
-    qSlicerApplication::application()->errorLogModel());
+  this->ErrorLogWidget->setErrorLogModel(qSlicerApplication::application()->errorLogModel());
 
   this->ErrorLogDockWidget = new QDockWidget(qSlicerMainWindow::tr("Error Log"));
   this->ErrorLogDockWidget->setObjectName("ErrorLogDockWidget");
@@ -397,20 +364,17 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ErrorLogToggleViewAction = this->ErrorLogDockWidget->toggleViewAction();
   this->ErrorLogToggleViewAction->setText(qSlicerMainWindow::tr("&Error Log"));
   this->ErrorLogToggleViewAction->setToolTip(qSlicerMainWindow::tr("Show/hide Error Log window"));
-  this->ErrorLogToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+0")});
+  this->ErrorLogToggleViewAction->setShortcuts({ qSlicerMainWindow::tr("Ctrl+0") });
 
-  QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)),
-    q, SLOT(onErrorLogToggled(bool)));
+  QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)), q, SLOT(onErrorLogToggled(bool)));
 
   this->ViewMenu->insertAction(this->ModuleHomeAction, this->ErrorLogToggleViewAction);
 
   // Change orientation depending on where the widget is docked
-  QObject::connect(this->ErrorLogDockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
-    q, SLOT(onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea)));
+  QObject::connect(this->ErrorLogDockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), q, SLOT(onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea)));
 
   // Dismiss the error message notification if the user interacted with the error log.
-  QObject::connect(this->ErrorLogWidget, SIGNAL(userViewed()),
-    q, SLOT(onUserViewedErrorLog()));
+  QObject::connect(this->ErrorLogWidget, SIGNAL(userViewed()), q, SLOT(onUserViewedErrorLog()));
 
   //----------------------------------------------------------------------------
   // Python console
@@ -440,15 +404,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     }
     q->pythonConsole()->setScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->updatePythonConsolePalette();
-    QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
-      q, SLOT(onPythonConsoleUserInput(const QString&)));
+    QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)), q, SLOT(onPythonConsoleUserInput(const QString&)));
     // Set up show/hide action
     this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Console"));
-    this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr(
-      "Show Python Console window for controlling the application's data, user interface, and internals"));
-    this->PythonConsoleToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`")});
-    QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
-      q, SLOT(onPythonConsoleToggled(bool)));
+    this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr("Show Python Console window for controlling the application's data, user interface, and internals"));
+    this->PythonConsoleToggleViewAction->setShortcuts({ qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`") });
+    QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)), q, SLOT(onPythonConsoleToggled(bool)));
     this->ViewMenu->insertAction(this->ModuleHomeAction, this->PythonConsoleToggleViewAction);
     this->PythonConsoleToggleViewAction->setIcon(QIcon(":/python-icon.png"));
     this->DialogToolBar->addAction(this->PythonConsoleToggleViewAction);
@@ -518,7 +479,6 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
 #endif
 }
 
-
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties)
 {
@@ -537,16 +497,14 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
     {
       continue;
     }
-    QAction * action = this->RecentlyLoadedMenu->addAction(
-      fileName, q, SLOT(onFileRecentLoadedActionTriggered()));
+    QAction* action = this->RecentlyLoadedMenu->addAction(fileName, q, SLOT(onFileRecentLoadedActionTriggered()));
     action->setProperty("fileParameters", filePropertie);
     action->setEnabled(QFile::exists(fileName));
   }
 
   // Add separator and clear action
   this->RecentlyLoadedMenu->addSeparator();
-  QAction * clearAction = this->RecentlyLoadedMenu->addAction(
-    qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
+  QAction* clearAction = this->RecentlyLoadedMenu->addAction(qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
   clearAction->setProperty("clearMenu", QVariant(true));
 }
 
@@ -569,7 +527,7 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
 
   QSettings settings;
   int size = settings.beginReadArray("RecentlyLoadedFiles/RecentFiles");
-  for(int i = 0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     settings.setArrayIndex(i);
     QVariant file = settings.value("file");
@@ -608,12 +566,13 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   bool close = false;
   if (sceneModified)
   {
-    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"),
-      qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"), QMessageBox::NoButton, q);
-    QAbstractButton* saveButton =
-       messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
-    QAbstractButton* exitButton =
-       messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning,
+                                              qSlicerMainWindow::tr("Save before exit?"),
+                                              qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"),
+                                              QMessageBox::NoButton,
+                                              q);
+    QAbstractButton* saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
+    QAbstractButton* exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
 
     if (!details.isEmpty())
@@ -743,9 +702,8 @@ void qSlicerMainWindowPrivate::setupStatusBar()
   this->ErrorLogToolButton->setDefaultAction(this->ErrorLogToggleViewAction);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
 
-  QObject::connect(qSlicerApplication::application()->errorLogModel(),
-                   SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)),
-                   q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
+  QObject::connect(
+    qSlicerApplication::application()->errorLogModel(), SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)), q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
 }
 
 //-----------------------------------------------------------------------------
@@ -754,11 +712,10 @@ void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
   Q_Q(qSlicerMainWindow);
   QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
   QIcon icon = defaultIcon;
-  if(!highlighted)
+  if (!highlighted)
   {
     QIcon disabledIcon;
-    disabledIcon.addPixmap(
-          defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
+    disabledIcon.addPixmap(defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
     icon = disabledIcon;
   }
   this->ErrorLogToggleViewAction->setIcon(icon);
@@ -774,15 +731,14 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
     return;
   }
 
-  qSlicerAbstractCoreModule* coreModule =
-    qSlicerApplication::application()->moduleManager()->module(moduleName);
+  qSlicerAbstractCoreModule* coreModule = qSlicerApplication::application()->moduleManager()->module(moduleName);
   qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (!module)
   {
     return;
   }
 
-  QAction * action = module->action();
+  QAction* action = module->action();
   if (!action || action->icon().isNull())
   {
     return;
@@ -794,12 +750,11 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
   // find the location of where to add the action.
   // Note: FavoriteModules is sorted
   QAction* beforeAction = nullptr; // 0 means insert at end
-  foreach(QAction* toolBarAction, this->ModuleToolBar->actions())
+  foreach (QAction* toolBarAction, this->ModuleToolBar->actions())
   {
-    bool isActionAFavoriteModule =
-      (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
-    if (isActionAFavoriteModule &&
-      this->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
+    bool isActionAFavoriteModule = (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
+    if (isActionAFavoriteModule && //
+        this->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
     {
       beforeAction = toolBarAction;
       break;
@@ -813,7 +768,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
 // qSlicerMainWindow methods
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent)
+qSlicerMainWindow::qSlicerMainWindow(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerMainWindowPrivate(*this))
 {
@@ -822,8 +777,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindow::qSlicerMainWindow(qSlicerMainWindowPrivate* pimpl,
-                                     QWidget* windowParent)
+qSlicerMainWindow::qSlicerMainWindow(qSlicerMainWindowPrivate* pimpl, QWidget* windowParent)
   : Superclass(windowParent)
   , d_ptr(pimpl)
 {
@@ -860,7 +814,7 @@ qSlicerMainWindow::~qSlicerMainWindow()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
+qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ModuleSelectorToolBar;
@@ -868,7 +822,7 @@ qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
 
 #ifdef Slicer_USE_PYTHONQT
 //---------------------------------------------------------------------------
-ctkPythonConsole* qSlicerMainWindow::pythonConsole()const
+ctkPythonConsole* qSlicerMainWindow::pythonConsole() const
 {
   return qSlicerCoreApplication::application()->pythonConsole();
 }
@@ -906,14 +860,14 @@ void qSlicerMainWindow::onUserViewedErrorLog()
 }
 
 //---------------------------------------------------------------------------
-ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
+ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogWidget;
 }
 
 //---------------------------------------------------------------------------
-QDockWidget *qSlicerMainWindow::errorLogDockWidget() const
+QDockWidget* qSlicerMainWindow::errorLogDockWidget() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogDockWidget;
@@ -985,9 +939,7 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   // Q_D(qSlicerMainWindow);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QString saveDirName = QFileDialog::getExistingDirectory(
-    this, tr("Slicer Data Bundle Directory (Select Empty Directory)"),
-    tempDir, QFileDialog::ShowDirsOnly);
+  QString saveDirName = QFileDialog::getExistingDirectory(this, tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
   if (saveDirName.isEmpty())
   {
     std::cout << "No directory name chosen!" << std::endl;
@@ -1006,8 +958,7 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   }
 
   properties["fileName"] = saveDirName;
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(QString("SceneFile"), properties);
+  qSlicerCoreApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------
@@ -1017,9 +968,7 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
   // open a file dialog to let the user choose where to save
   // make sure it was selected and add a .mrb to it if needed
   //
-  QString fileName = QFileDialog::getSaveFileName(
-    this, tr("Save Data Bundle File"),
-    "", tr("Medical Reality Bundle (*.mrb)"));
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Data Bundle File"), "", tr("Medical Reality Bundle (*.mrb)"));
 
   if (fileName.isEmpty())
   {
@@ -1027,14 +976,13 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
     return;
   }
 
-  if ( !fileName.endsWith(".mrb") )
+  if (!fileName.endsWith(".mrb"))
   {
     fileName += QString(".mrb");
   }
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(QString("SceneFile"), properties);
+  qSlicerCoreApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------
@@ -1228,9 +1176,7 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
   Q_ASSERT(fileParameters.isValid());
 
   qSlicerIO::IOProperties fileProperties = fileParameters.toMap();
-  qSlicerIO::IOFileType fileType =
-      static_cast<qSlicerIO::IOFileType>(
-        fileProperties.find("fileType").value().toString());
+  qSlicerIO::IOFileType fileType = static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toString());
 
   qSlicerApplication* app = qSlicerApplication::application();
 
@@ -1240,7 +1186,7 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindow::closeEvent(QCloseEvent *event)
+void qSlicerMainWindow::closeEvent(QCloseEvent* event)
 {
   Q_D(qSlicerMainWindow);
 
@@ -1275,7 +1221,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindow::showEvent(QShowEvent *event)
+void qSlicerMainWindow::showEvent(QShowEvent* event)
 {
   Q_D(qSlicerMainWindow);
   this->Superclass::showEvent(event);
@@ -1299,8 +1245,7 @@ void qSlicerMainWindow::showEvent(QShowEvent *event)
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->extensionsManagerModel())
     {
-      connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)),
-        this, SLOT(setExtensionUpdatesAvailable(bool)));
+      connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)), this, SLOT(setExtensionUpdatesAvailable(bool)));
       this->setExtensionUpdatesAvailable(!app->extensionsManagerModel()->availableUpdateExtensions().empty());
     }
 #endif
@@ -1314,7 +1259,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 {
   Q_D(qSlicerMainWindow);
 #ifdef Slicer_USE_PYTHONQT
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return;
@@ -1329,9 +1274,9 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::disclaimer()
 {
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
-      !app->coreCommandOptions()->pythonCode().isEmpty() ||
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) || //
+      !app->coreCommandOptions()->pythonCode().isEmpty() ||           //
       !app->coreCommandOptions()->pythonScript().isEmpty())
   {
     return;
@@ -1348,7 +1293,7 @@ void qSlicerMainWindow::disclaimer()
   message = message.arg(app->applicationName() + " " + app->applicationVersion());
 
   ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
-  disclaimerMessage->setAttribute( Qt::WA_DeleteOnClose, true );
+  disclaimerMessage->setAttribute(Qt::WA_DeleteOnClose, true);
   disclaimerMessage->setText(message);
   disclaimerMessage->setIcon(QMessageBox::Information);
   disclaimerMessage->setDontShowAgainSettingsKey("MainWindow/DontShowDisclaimerMessage");
@@ -1420,18 +1365,17 @@ void qSlicerMainWindow::setupMenuActions()
   }
 #endif
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  d->ViewExtensionsManagerAction->setVisible(
-    app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool());
+  d->ViewExtensionsManagerAction->setVisible(app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool());
 #else
   d->ViewExtensionsManagerAction->setVisible(false);
   d->WindowToolBarsMenu->removeAction(d->ViewExtensionsManagerAction);
 #endif
 
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
-  if (app->commandOptions()->enableQtTesting() ||
+  if (app->commandOptions()->enableQtTesting() || //
       app->userSettings()->value("QtTesting/Enabled").toBool())
   {
     d->EditPlayMacroAction->setVisible(true);
@@ -1445,19 +1389,19 @@ void qSlicerMainWindow::setupMenuActions()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_LoadDICOMAction_triggered()
 {
-  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     return;
   }
-  layoutManager->setCurrentModule(/*no tr*/"DICOM");
+  layoutManager->setCurrentModule(/*no tr*/ "DICOM");
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel)
 {
   Q_D(qSlicerMainWindow);
-  if(logLevel > ctkErrorLogLevel::Info)
+  if (logLevel > ctkErrorLogLevel::Info)
   {
     d->setErrorLogIconHighlighted(true);
   }
@@ -1482,7 +1426,7 @@ void qSlicerMainWindow::addFileToRecentFiles(const qSlicerIO::IOProperties& file
     return;
   }
   QFileInfo newFileInfo(fileName);
-  for (auto propertiesIt = d->RecentlyLoadedFileProperties.begin(); propertiesIt != d->RecentlyLoadedFileProperties.end() ;)
+  for (auto propertiesIt = d->RecentlyLoadedFileProperties.begin(); propertiesIt != d->RecentlyLoadedFileProperties.end();)
   {
     QFileInfo existingFileInfo(propertiesIt->value("fileName").toString());
     if (newFileInfo == existingFileInfo)
@@ -1520,8 +1464,8 @@ void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& filePropertie
   }
   // Adding every saved file to the recent files list could quickly overwrite the entire list,
   // therefore we only add the scene file.
-  if (fileName.endsWith(".mrml", Qt::CaseInsensitive)
-    || fileName.endsWith(".mrb", Qt::CaseInsensitive))
+  if (fileName.endsWith(".mrml", Qt::CaseInsensitive) //
+      || fileName.endsWith(".mrb", Qt::CaseInsensitive))
   {
     // Scene file properties do not contain fileType and it contains screenshot,
     // which can cause complication when attempted to be stored,
@@ -1539,14 +1483,8 @@ void qSlicerMainWindow::on_CopyAction_triggered()
   QWidget* focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyPress,
-                                           Qt::Key_C,
-                                           Qt::ControlModifier));
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyRelease,
-                                           Qt::Key_C,
-                                           Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyRelease, Qt::Key_C, Qt::ControlModifier));
   }
 }
 
@@ -1556,14 +1494,8 @@ void qSlicerMainWindow::on_PasteAction_triggered()
   QWidget* focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyPress,
-                                           Qt::Key_V,
-                                           Qt::ControlModifier));
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyRelease,
-                                           Qt::Key_V,
-                                           Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyRelease, Qt::Key_V, Qt::ControlModifier));
   }
 }
 
@@ -1573,14 +1505,8 @@ void qSlicerMainWindow::on_CutAction_triggered()
   QWidget* focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyPress,
-                                           Qt::Key_X,
-                                           Qt::ControlModifier));
-    QApplication::postEvent(focused,
-                            new QKeyEvent( QEvent::KeyRelease,
-                                           Qt::Key_X,
-                                           Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+    QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyRelease, Qt::Key_X, Qt::ControlModifier));
   }
 }
 
@@ -1588,7 +1514,7 @@ void qSlicerMainWindow::on_CutAction_triggered()
 void qSlicerMainWindow::on_ViewExtensionsManagerAction_triggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   app->openExtensionsManagerDialog();
 #endif
 }
@@ -1614,7 +1540,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
     d->ModuleSelectorToolBar->selectModule("");
   }
 
-  foreach(QAction* action, d->ModuleToolBar->actions())
+  foreach (QAction* action, d->ModuleToolBar->actions())
   {
     if (action->data().toString() == moduleName)
     {
@@ -1628,15 +1554,15 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
 void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 {
   Q_UNUSED(sender);
-  //Q_D(qSlicerMainWindow);
+  // Q_D(qSlicerMainWindow);
   //
-  //vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
-  //if (scene && scene->IsBatchProcessing())
-  //  {
-  //  return;
-  //  }
-  //d->EditUndoAction->setEnabled(scene && scene->GetNumberOfUndoLevels());
-  //d->EditRedoAction->setEnabled(scene && scene->GetNumberOfRedoLevels());
+  // vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
+  // if (scene && scene->IsBatchProcessing())
+  //   {
+  //   return;
+  //   }
+  // d->EditUndoAction->setEnabled(scene && scene->GetNumberOfUndoLevels());
+  // d->EditRedoAction->setEnabled(scene && scene->GetNumberOfRedoLevels());
 }
 
 //---------------------------------------------------------------------------
@@ -1645,7 +1571,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
   Q_D(qSlicerMainWindow);
   bool found = false;
   // std::cerr << "onLayoutActionTriggered: " << action->text().toStdString() << std::endl;
-  foreach(QAction* maction, d->LayoutMenu->actions())
+  foreach (QAction* maction, d->LayoutMenu->actions())
   {
     if (action->text() == maction->text())
     {
@@ -1701,7 +1627,6 @@ void qSlicerMainWindow::onLayoutCompareGridActionTriggered(QAction* action)
   this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }
 
-
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onLayoutChanged(int layout)
 {
@@ -1713,7 +1638,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
   // data assigned, so they should never be triggered (they could be triggered
   // at startup, when layout is set to SlicerLayoutInitialView = 0).
 
-  foreach(QAction* action, d->LayoutMenu->actions())
+  foreach (QAction* action, d->LayoutMenu->actions())
   {
     if (!action->menu() && action->data().toInt() == layout)
     {
@@ -1723,25 +1648,24 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent *event)
+void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
   qSlicerApplication::application()->ioManager()->dragEnterEvent(event);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::dropEvent(QDropEvent *event)
+void qSlicerMainWindow::dropEvent(QDropEvent* event)
 {
   qSlicerApplication::application()->ioManager()->dropEvent(event);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
+void qSlicerMainWindow::restoreGUIState(bool force /*=false*/)
 {
   Q_D(qSlicerMainWindow);
   QSettings settings;
   settings.beginGroup("MainWindow");
-  this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool()
-                        ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
+  this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool() ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
   bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore || force)
   {
@@ -1756,7 +1680,7 @@ void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
   settings.endGroup();
   d->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
 
-  foreach(const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
+  foreach (const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
   {
     d->RecentlyLoadedFileProperties.enqueue(fileProperty);
   }
@@ -1765,7 +1689,7 @@ void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::saveGUIState(bool force/*=false*/)
+void qSlicerMainWindow::saveGUIState(bool force /*=false*/)
 {
   Q_D(qSlicerMainWindow);
   QSettings settings;
@@ -1830,8 +1754,7 @@ void qSlicerMainWindow::changeEvent(QEvent* event)
       d->updatePythonConsolePalette();
       break;
     }
-    default:
-      break;
+    default: break;
   }
 }
 
@@ -1876,7 +1799,7 @@ void qSlicerMainWindow::on_FavoriteModulesChanged()
 
   // Update favorite module toolbar
   d->ModuleToolBar->clear();
-  foreach(QString moduleName, d->FavoriteModules)
+  foreach (QString moduleName, d->FavoriteModules)
   {
     if (d->FavoriteModules.contains(moduleName))
     {

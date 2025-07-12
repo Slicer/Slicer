@@ -63,6 +63,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 
 protected:
   qMRMLSubjectHierarchyModel* const q_ptr;
+
 public:
   qMRMLSubjectHierarchyModelPrivate(qMRMLSubjectHierarchyModel& object);
   virtual ~qMRMLSubjectHierarchyModelPrivate();
@@ -124,7 +125,7 @@ public:
 
   // Keep a list of QStandardItem instead of subject hierarchy item because they are likely to be
   // unreachable when browsing the model
-  QList<QList<QStandardItem*> > Orphans;
+  QList<QList<QStandardItem*>> Orphans;
 
   // Map from subject hierarchy item to row.
   // It just stores the result of the latest lookup by \sa indexFromSubjectHierarchyItem,
