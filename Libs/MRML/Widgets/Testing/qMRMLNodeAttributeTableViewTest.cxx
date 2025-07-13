@@ -493,4 +493,4 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLNodeAttributeTableViewTest)
-#include "moc_qMRMLNodeAttributeTableViewTest.cxx"
+#include "qMRMLNodeAttributeTableViewTest.moc"

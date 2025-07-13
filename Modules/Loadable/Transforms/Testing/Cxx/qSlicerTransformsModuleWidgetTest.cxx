@@ -140,4 +140,4 @@ int qSlicerTransformsModuleWidgetTest(int argc, char* argv[])
   return QTest::qExec(&tc, argc, argv);
 }
 
-#include "moc_qSlicerTransformsModuleWidgetTest.cxx"
+#include "qSlicerTransformsModuleWidgetTest.moc"
