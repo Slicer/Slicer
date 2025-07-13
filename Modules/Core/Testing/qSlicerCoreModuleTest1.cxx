@@ -36,3 +36,5 @@ int qSlicerCoreModuleTest1(int, char*[])
 
   return EXIT_SUCCESS;
 }
+
+#include <qSlicerCoreModuleTest1.moc>

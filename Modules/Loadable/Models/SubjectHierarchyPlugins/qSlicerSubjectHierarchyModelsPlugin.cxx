@@ -239,3 +239,5 @@ QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QM
 {
   return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetaData, false);
 }
+
+#include "qSlicerSubjectHierarchyModelsPlugin.moc"
