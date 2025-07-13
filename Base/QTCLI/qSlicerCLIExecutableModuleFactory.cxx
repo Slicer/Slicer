@@ -141,7 +141,10 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("ITK_AUTOLOAD_PATH", "");
   cli.setProcessEnvironment(env);
-  cli.start(this->path(), QStringList(QString("--xml")));
+  // be compatible with both Qt5.15 and Qt6
+  cli.setProgram(this->path());
+  cli.setArguments(QStringList{ "--xml" });
+  cli.start();
   bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
   {
