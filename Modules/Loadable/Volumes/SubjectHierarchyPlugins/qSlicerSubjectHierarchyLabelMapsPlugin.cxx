@@ -360,3 +360,5 @@ bool qSlicerSubjectHierarchyLabelMapsPlugin::showItemInView(vtkIdType itemID, vt
   }
   return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
 }
+
+#include "qSlicerSubjectHierarchyLabelMapsPlugin.moc"

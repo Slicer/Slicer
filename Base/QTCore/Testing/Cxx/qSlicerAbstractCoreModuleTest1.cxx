@@ -137,3 +137,5 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
 
   return EXIT_SUCCESS;
 }
+
+#include "qSlicerAbstractCoreModuleTest1.moc"

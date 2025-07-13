@@ -1521,3 +1521,5 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(vtkRenderWindo
   }
   return abortEvent;
 }
+
+#include "qSlicerSegmentEditorScissorsEffect.moc"

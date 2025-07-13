@@ -188,3 +188,5 @@ void qSlicerTerminologyEditorDialog::setSaveButtonEnabled(bool enabled)
   Q_D(qSlicerTerminologyEditorDialog);
   d->SaveButton->setEnabled(enabled);
 }
+
+#include "qSlicerTerminologyEditorDialog.moc"

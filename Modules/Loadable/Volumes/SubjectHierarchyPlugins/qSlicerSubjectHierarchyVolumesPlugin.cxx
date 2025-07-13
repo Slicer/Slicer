@@ -1366,3 +1366,5 @@ void qSlicerSubjectHierarchyVolumesPlugin::toggleVisibilityForCurrentItem(bool o
     }
   }
 }
+
+#include "qSlicerSubjectHierarchyVolumesPlugin.moc"

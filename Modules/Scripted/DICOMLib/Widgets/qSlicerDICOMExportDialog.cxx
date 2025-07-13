@@ -581,3 +581,5 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
 
   return true;
 }
+
+#include "qSlicerDICOMExportDialog.moc"

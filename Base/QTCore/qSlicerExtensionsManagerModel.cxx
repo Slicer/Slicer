@@ -3373,3 +3373,5 @@ bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec /*
     }
   }
 }
+
+#include "qSlicerExtensionsManagerModel.moc"

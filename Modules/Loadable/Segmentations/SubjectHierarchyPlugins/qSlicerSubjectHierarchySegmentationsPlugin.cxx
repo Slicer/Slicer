@@ -1504,3 +1504,5 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentsOrderModified(vtkObje
 
   d->SegmentOrderUpdateFromSegmentationNodeInProgress = wasSegmentOrderUpdateFromSegmentationNodeInProgress;
 }
+
+#include "qSlicerSubjectHierarchySegmentationsPlugin.moc"
