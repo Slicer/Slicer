@@ -429,9 +429,9 @@ void qSlicerExtensionsManagerModelTester::testDefaults()
   // No initialization required
 
   QCOMPARE(model.serverUrl().toString(), QLatin1String(""));
-  QCOMPARE(model.extensionsInstallPath(), QString(""));
-  QCOMPARE(model.extensionInstallPath(""), QString(""));
-  QCOMPARE(model.extensionDescriptionFile(""), QString(""));
+  QCOMPARE(model.extensionsInstallPath(), QString());
+  QCOMPARE(model.extensionInstallPath(""), QString());
+  QCOMPARE(model.extensionDescriptionFile(""), QString());
   QCOMPARE(model.newExtensionEnabledByDefault(), true);
   QCOMPARE(model.slicerVersion(), QString(Slicer_VERSION));
 
@@ -2025,9 +2025,9 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements()
   qSlicerExtensionsManagerModel model;
   QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString, QString, QString)));
 
-  QCOMPARE(model.slicerRevision(), QString(""));
-  QCOMPARE(model.slicerOs(), QString(""));
-  QCOMPARE(model.slicerArch(), QString(""));
+  QCOMPARE(model.slicerRevision(), QString());
+  QCOMPARE(model.slicerOs(), QString());
+  QCOMPARE(model.slicerArch(), QString());
 
   QFETCH(QList<QStringList>, requirementsToSetList);
   QFETCH(QList<int>, expectedSlicerRequirementsChangedCounts);

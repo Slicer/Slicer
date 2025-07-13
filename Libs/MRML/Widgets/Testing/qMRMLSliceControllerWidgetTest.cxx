@@ -146,10 +146,10 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
   void* nullPtr = nullptr;
 
   sliceControllerWidget.setSliceViewLabel("R");
-  QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString(""));
+  QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString());
 
   sliceControllerWidget.setSliceViewName("Red");
-  QCOMPARE(sliceControllerWidget.sliceViewName(), QString(""));
+  QCOMPARE(sliceControllerWidget.sliceViewName(), QString());
 
   sliceControllerWidget.setSliceViewColor(Qt::red);
   QCOMPARE(sliceControllerWidget.sliceViewColor(), QColor());

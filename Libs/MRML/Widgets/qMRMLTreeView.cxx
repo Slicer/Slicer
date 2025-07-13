@@ -333,7 +333,7 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
   {
     newModel = new qMRMLSceneDisplayableModel(this);
   }
-  else if (modelName == QString(""))
+  else if (modelName == QString())
   {
     newModel = new qMRMLSceneModel(this);
   }

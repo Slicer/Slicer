@@ -182,12 +182,12 @@ void qSlicerScriptedLoadableModuleWidgetTester::testNodeEdit()
   node->SetName("Some");
 
   QVERIFY(w.nodeEditable(nullptr) == 0.3);
-  QVERIFY(w.property("editableNodeName").toString() == QString(""));
+  QVERIFY(w.property("editableNodeName").toString() == QString());
   QVERIFY(w.nodeEditable(node.GetPointer()) == 0.7);
   QVERIFY(w.property("editableNodeName").toString() == QString("Some"));
 
   QVERIFY(w.setEditedNode(nullptr) == false);
-  QVERIFY(w.property("editedNodeName").toString() == QString(""));
+  QVERIFY(w.property("editedNodeName").toString() == QString());
   QVERIFY(w.setEditedNode(node.GetPointer(), "someRole", "someContext") == true);
   QVERIFY(w.property("editedNodeName").toString() == QString("Some"));
   QVERIFY(w.property("editedNodeRole").toString() == QString("someRole"));

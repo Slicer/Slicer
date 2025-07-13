@@ -140,7 +140,7 @@ QString ButtonGroupWidgetWrapper::checkedValue()
   else
   {
     // Handle case where <string-enumeration> has no <default> element
-    return QString("");
+    return QString();
   }
 }
 

@@ -67,7 +67,7 @@ qSlicerDICOMLoadablePrivate::qSlicerDICOMLoadablePrivate()
 {
   this->Name = QString("Unknown");
   this->Tooltip = QString("No further information available");
-  this->Warning = QString("");
+  this->Warning = QString();
   this->Selected = false;
   this->Confidence = 0.5;
   this->LoadSuccess = false;
