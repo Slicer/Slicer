@@ -68,9 +68,9 @@ public:
     // IEEE‑754 double can exactly represent all integers in the range [–2^53, 2^53], but beyond that,
     // only some integer numbers are representable.
     //  18446744073709551615 (2^64−1) must be rounded to the nearest representable double: 18446744073709551616
-    constexpr double max_closet_representable = static_cast<double>(NumericTraits<TOutput>::max());
+    constexpr double max_closest_representable = static_cast<double>(NumericTraits<TOutput>::max());
 
-    const double cadd1 = (add < max_closet_representable) ? add : max_closet_representable;
+    const double cadd1 = (add < max_closest_representable) ? add : max_closest_representable;
     const double cadd2 = (cadd1 > NumericTraits<TOutput>::NonpositiveMin()) ? cadd1 : NumericTraits<TOutput>::NonpositiveMin();
     return static_cast<TOutput>(cadd2);
   }
