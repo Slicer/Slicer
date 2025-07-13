@@ -734,3 +734,5 @@ void qSlicerSubjectHierarchyFolderPlugin::emptyFolderCreatedFromTreeView(qMRMLSu
     d->TreeViewsToShowEmptyFolderAction.push_back(treeView);
   }
 }
+
+#include "qSlicerSubjectHierarchyFolderPlugin.moc"

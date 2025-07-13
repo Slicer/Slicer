@@ -104,4 +104,4 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerModelsModuleWidgetTest)
-#include "moc_qSlicerModelsModuleWidgetTest.cxx"
+#include "qSlicerModelsModuleWidgetTest.moc"

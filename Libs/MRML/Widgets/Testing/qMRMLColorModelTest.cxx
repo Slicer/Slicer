@@ -88,4 +88,4 @@ void qMRMLColorModelTester::testSetNoneEnabled()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLColorModelTest)
-#include "moc_qMRMLColorModelTest.cxx"
+#include "qMRMLColorModelTest.moc"

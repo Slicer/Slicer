@@ -1109,3 +1109,5 @@ void qSlicerSubjectHierarchySegmentsPlugin::setOpacityForCurrentItem(double opac
 
   displayNode->SetSegmentOpacity(segmentId, opacity);
 }
+
+#include "qSlicerSubjectHierarchySegmentsPlugin.moc"

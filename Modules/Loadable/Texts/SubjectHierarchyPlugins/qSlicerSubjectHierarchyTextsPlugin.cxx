@@ -178,3 +178,5 @@ QIcon qSlicerSubjectHierarchyTextsPlugin::icon(vtkIdType itemID)
   // Item unknown by plugin
   return QIcon();
 }
+
+#include "qSlicerSubjectHierarchyTextsPlugin.moc"

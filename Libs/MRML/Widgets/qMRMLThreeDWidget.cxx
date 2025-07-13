@@ -219,3 +219,5 @@ void qMRMLThreeDWidget::getDisplayableManagers(vtkCollection* displayableManager
   Q_D(qMRMLThreeDWidget);
   d->ThreeDView->getDisplayableManagers(displayableManagers);
 }
+
+#include "qMRMLThreeDWidget.moc"

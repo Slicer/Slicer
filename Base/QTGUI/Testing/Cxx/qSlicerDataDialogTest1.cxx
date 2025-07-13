@@ -90,3 +90,5 @@ int qSlicerDataDialogTest1(int argc, char* argv[])
 
   return dataDialog.exec();
 }
+
+#include "qSlicerDataDialogTest1.moc"
