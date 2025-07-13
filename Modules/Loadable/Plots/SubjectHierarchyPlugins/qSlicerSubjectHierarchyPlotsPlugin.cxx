@@ -396,3 +396,5 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
   // no valid plot view in current layout
   return nullptr;
 }
+
+#include "qSlicerSubjectHierarchyPlotsPlugin.moc"

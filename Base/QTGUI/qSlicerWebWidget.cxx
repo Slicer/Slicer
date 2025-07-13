@@ -497,3 +497,5 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply, const QList<QSslErr
   }
 #endif
 }
+
+#include "qSlicerWebWidget.moc"

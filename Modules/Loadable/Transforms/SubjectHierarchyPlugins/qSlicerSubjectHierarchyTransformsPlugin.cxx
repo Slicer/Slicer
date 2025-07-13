@@ -1445,3 +1445,5 @@ int qSlicerSubjectHierarchyTransformsPlugin::transformListSection() const
   // +20 to allow placing more items between default section and the transform list
   return qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 20;
 }
+
+#include "qSlicerSubjectHierarchyTransformsPlugin.moc"
