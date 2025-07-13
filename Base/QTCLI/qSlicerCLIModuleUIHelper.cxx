@@ -1236,3 +1236,5 @@ void qSlicerCLIModuleUIHelper::onValueChanged()
 
   emit this->valueChanged(name, value);
 }
+
+#include "qSlicerCLIModuleUIHelper.moc"

@@ -100,15 +100,9 @@ void qSlicerSslTester::testHttpsConnection_data()
       << (QList<QSslError::SslError>())
       << QNetworkReply::HostNotFoundError << 0;
 
-  QTest::newRow("slicer-clear-with-redirect-NoError-301")
-      << "http://slicer.org"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 301;
+  QTest::newRow("slicer-clear-with-redirect-NoError-301") << "http://slicer.org" << (QList<QSslError::SslError>()) << QNetworkReply::NoError << 301;
 
-  QTest::newRow("slicer-secured-MovedPermanently-301")
-      << "https://slicer.org"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 301;
+  QTest::newRow("slicer-secured-MovedPermanently-301") << "https://slicer.org" << (QList<QSslError::SslError>()) << QNetworkReply::NoError << 301;
 
   QTest::newRow("other-secured-NoError-200")
       << "https://www.eff.org/https-everywhere"
@@ -119,4 +113,4 @@ void qSlicerSslTester::testHttpsConnection_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerSslTest)
-#include "moc_qSlicerSslTest.cxx"
+#include "qSlicerSslTest.moc"

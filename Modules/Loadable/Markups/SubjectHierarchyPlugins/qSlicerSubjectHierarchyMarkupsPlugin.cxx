@@ -1089,3 +1089,5 @@ void qSlicerSubjectHierarchyMarkupsPlugin::editProperties(vtkIdType itemID)
     qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(itemID));
   }
 }
+
+#include "qSlicerSubjectHierarchyMarkupsPlugin.moc"

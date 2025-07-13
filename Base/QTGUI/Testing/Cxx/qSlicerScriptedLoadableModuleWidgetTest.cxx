@@ -242,4 +242,4 @@ void qSlicerScriptedLoadableModuleWidgetTester::testSetup_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerScriptedLoadableModuleWidgetTest)
-#include "moc_qSlicerScriptedLoadableModuleWidgetTest.cxx"
+#include "qSlicerScriptedLoadableModuleWidgetTest.moc"

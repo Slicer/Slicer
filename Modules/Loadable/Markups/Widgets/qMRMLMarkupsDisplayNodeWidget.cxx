@@ -752,3 +752,5 @@ void qMRMLMarkupsDisplayNodeWidget::onSnapModeWidgetChanged()
   int snapMode = d->SnapModeComboBox->currentData().toInt();
   d->MarkupsDisplayNode->SetSnapMode(snapMode);
 }
+
+#include "qMRMLMarkupsDisplayNodeWidget.moc"
