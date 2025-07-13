@@ -209,19 +209,19 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
   for (int setOnNode = 0; setOnNode < 2; ++setOnNode)
   {
     // null vs empty:
-    //   QString makes a difference between a QString() and QString("")
+    //   QString makes a difference between a QString() and QString()
     //   vtkMRMLNode::SetAttribute() makes a difference between 0 and ""
     QTest::newRow("null null") << (setOnNode != 0) << QString() << QString() << 1 << "Value1";
-    QTest::newRow("null empty") << (setOnNode != 0) << QString() << QString("") << 1 << "Value1";
+    QTest::newRow("null empty") << (setOnNode != 0) << QString() << QString() << 1 << "Value1";
     QTest::newRow("null valid") << (setOnNode != 0) << QString() << QString("Value2") << 1 << "Value1";
-    QTest::newRow("empty null") << (setOnNode != 0) << QString("") << QString() << 1 << "Value1";
-    QTest::newRow("empty empty") << (setOnNode != 0) << QString("") << QString("") << 1 << "Value1";
-    QTest::newRow("empty valid") << (setOnNode != 0) << QString("") << QString("Value2") << 1 << "Value1";
+    QTest::newRow("empty null") << (setOnNode != 0) << QString() << QString() << 1 << "Value1";
+    QTest::newRow("empty empty") << (setOnNode != 0) << QString() << QString() << 1 << "Value1";
+    QTest::newRow("empty valid") << (setOnNode != 0) << QString() << QString("Value2") << 1 << "Value1";
     QTest::newRow("valid null") << (setOnNode != 0) << QString("Attribute2") << QString() << 1 << "Value1";
-    QTest::newRow("valid empty") << (setOnNode != 0) << QString("Attribute2") << QString("") << 2 << "Value1";
+    QTest::newRow("valid empty") << (setOnNode != 0) << QString("Attribute2") << QString() << 2 << "Value1";
     QTest::newRow("valid valid") << (setOnNode != 0) << QString("Attribute2") << QString("Value2") << 2 << "Value1";
     QTest::newRow("replace null") << (setOnNode != 0) << QString("Attribute1") << QString() << 0 << QString();
-    QTest::newRow("replace empty") << (setOnNode != 0) << QString("Attribute1") << QString("") << 1 << QString("");
+    QTest::newRow("replace empty") << (setOnNode != 0) << QString("Attribute1") << QString() << 1 << QString();
     QTest::newRow("replace valid") << (setOnNode != 0) << QString("Attribute1") << QString("Value2") << 1 << QString("Value2");
   }
 
