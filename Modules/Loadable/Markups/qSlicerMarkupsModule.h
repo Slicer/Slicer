@@ -26,8 +26,6 @@
 
 #include "qSlicerMarkupsModuleExport.h"
 
-#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
-
 class qMRMLMarkupsToolBar;
 class vtkMRMLScene;
 class vtkMRMLMarkupsNode;

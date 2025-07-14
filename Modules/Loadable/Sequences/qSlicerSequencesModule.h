@@ -24,8 +24,6 @@
 // Slicer includes
 #include "qSlicerLoadableModule.h"
 
-#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
-
 #include "qSlicerSequencesModuleExport.h"
 
 class qMRMLSequenceBrowserToolBar;
@@ -39,9 +37,7 @@ class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModule : public qSlice
 {
   Q_OBJECT
   QVTK_OBJECT;
-#ifdef Slicer_HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
-#endif
   Q_INTERFACES(qSlicerLoadableModule);
 
   /// Visibility of the sequence browser toolbar
