@@ -75,6 +75,8 @@ struct UpdateDownloadInformation
   qint64 DownloadProgress{ 0 };
 };
 
+} // end of anonymous namespace
+
 // --------------------------------------------------------------------------
 class QStandardItemModelWithRole : public QStandardItemModel
 {
@@ -82,8 +84,6 @@ public:
   QHash<int, QByteArray> roleNames() const override { return this->CustomRoleNames; }
   QHash<int, QByteArray> CustomRoleNames;
 };
-
-} // end of anonymous namespace
 
 // --------------------------------------------------------------------------
 // qSlicerExtensionsManagerModelPrivate methods
