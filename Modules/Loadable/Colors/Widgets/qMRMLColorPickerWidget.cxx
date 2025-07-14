@@ -225,6 +225,7 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     }
     if (event->type() == QEvent::KeyPress)
     {
+      // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       if (keyEvent->key() == Qt::Key_Up || //
           keyEvent->key() == Qt::Key_Down)

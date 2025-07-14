@@ -956,6 +956,7 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
+      // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       QAbstractItemModel* model = d->SegmentsTable->model();
       QModelIndex currentIndex = d->SegmentsTable->currentIndex();
