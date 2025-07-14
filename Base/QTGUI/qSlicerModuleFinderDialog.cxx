@@ -306,6 +306,7 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
+      // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
       if (keyEvent != nullptr && filterModel->rowCount() > 0)
