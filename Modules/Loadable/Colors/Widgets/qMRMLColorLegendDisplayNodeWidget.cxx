@@ -46,6 +46,7 @@ class qMRMLColorLegendDisplayNodeWidgetPrivate
   : public QWidget
   , public Ui_qMRMLColorLegendDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLColorLegendDisplayNodeWidget);
 
 protected:

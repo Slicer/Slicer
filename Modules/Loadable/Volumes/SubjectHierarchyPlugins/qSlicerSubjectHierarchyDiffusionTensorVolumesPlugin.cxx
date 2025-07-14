@@ -57,6 +57,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
 protected:

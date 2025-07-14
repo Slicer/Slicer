@@ -32,6 +32,7 @@ class vtkMRMLScene;
 //------------------------------------------------------------------------------
 class qMRMLEventLoggerPrivate : public QObject
 {
+  Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLEventLogger);
 

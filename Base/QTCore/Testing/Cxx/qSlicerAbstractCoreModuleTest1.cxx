@@ -46,6 +46,7 @@ int AModuleWidgetRepresentation::Count = 0;
 //-----------------------------------------------------------------------------
 class AModule : public qSlicerAbstractCoreModule
 {
+  Q_OBJECT
 public:
   QString title() const override { return "A Title"; }
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return new AModuleWidgetRepresentation(); }

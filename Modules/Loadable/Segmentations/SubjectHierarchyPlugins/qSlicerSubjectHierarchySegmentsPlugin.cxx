@@ -62,6 +62,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchySegmentsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentsPlugin);
 
 protected:

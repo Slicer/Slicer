@@ -144,6 +144,7 @@
 //-----------------------------------------------------------------------------
 class ctkSlicerPythonConsoleCompleter : public ctkPythonConsoleCompleter
 {
+  Q_OBJECT
 public:
   ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
     : ctkPythonConsoleCompleter(pythonManager)
