@@ -61,6 +61,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyViewContextMenuPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyViewContextMenuPlugin);
 
 protected:

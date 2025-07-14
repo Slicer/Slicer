@@ -22,6 +22,7 @@
 
 class ACoreModule : public qSlicerCoreModule
 {
+  Q_OBJECT
 public:
   QString title() const override { return "A title \n\t#$%^&*"; }
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }

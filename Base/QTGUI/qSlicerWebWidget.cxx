@@ -54,6 +54,7 @@ namespace
 {
 class qSlicerWebEngineView : public QWebEngineView
 {
+  Q_OBJECT
 public:
   qSlicerWebEngineView(QWidget* parent = Q_NULLPTR)
     : QWebEngineView(parent)

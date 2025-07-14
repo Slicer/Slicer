@@ -35,6 +35,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorDialog);
 
 protected:

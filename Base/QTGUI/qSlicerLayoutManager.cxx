@@ -50,6 +50,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerLayoutManagerPrivate : public qMRMLLayoutManagerPrivate
 {
+  Q_OBJECT
 public:
   qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
 
