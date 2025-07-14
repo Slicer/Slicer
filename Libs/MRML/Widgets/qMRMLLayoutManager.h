@@ -80,12 +80,14 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutFactory
   /// It can be useful to temporarily disable the manager when loading a scene,
   /// it could otherwise change the layout.
   /// \sa isEnabled(), setEnabled(), setMRMLScene()
-  Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
+  Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged);
   // The following properties are exposed so that they are available within python
   Q_PROPERTY(int layout READ layout WRITE setLayout NOTIFY layoutChanged DESIGNABLE false)
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
   Q_PROPERTY(int tableViewCount READ tableViewCount DESIGNABLE false)
   Q_PROPERTY(int plotViewCount READ plotViewCount DESIGNABLE false)
+Q_SIGNALS:
+  void enabledChanged(bool);
 
 public:
   /// Superclass typedef

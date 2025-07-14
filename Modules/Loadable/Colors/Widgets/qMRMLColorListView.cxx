@@ -115,6 +115,7 @@ vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode() const
 void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 {
   this->sortFilterProxyModel()->setShowEmptyColors(!enable);
+  emit this->showOnlyNamedColorsChanged(enable);
 }
 
 //------------------------------------------------------------------------------

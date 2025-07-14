@@ -446,7 +446,7 @@ void qMRMLSegmentSelectorWidget::setNoneEnabled(bool enable)
 {
   Q_D(qMRMLSegmentSelectorWidget);
   d->MRMLNodeComboBox_Segmentation->setNoneEnabled(enable);
-
+  emit noneEnabledChanged(enable);
   // Re-populate combobox in case of single selection so that none selection is reflected for the segments too
   this->populateSegmentCombobox();
 }
@@ -463,6 +463,7 @@ void qMRMLSegmentSelectorWidget::setEditEnabled(bool enable)
 {
   Q_D(qMRMLSegmentSelectorWidget);
   d->MRMLNodeComboBox_Segmentation->setEditEnabled(enable);
+  emit editEnabledChanged(enable);
 }
 
 //--------------------------------------------------------------------------
@@ -477,6 +478,7 @@ void qMRMLSegmentSelectorWidget::setSegmentationNodeSelectorVisible(bool visible
 {
   Q_D(qMRMLSegmentSelectorWidget);
   d->MRMLNodeComboBox_Segmentation->setVisible(visible);
+  emit segmentationNodeSelectorVisibleChanged(visible);
 }
 
 //--------------------------------------------------------------------------
@@ -499,6 +501,7 @@ void qMRMLSegmentSelectorWidget::setMultiSelection(bool multi)
   Q_D(qMRMLSegmentSelectorWidget);
 
   d->MultiSelection = multi;
+  emit multiSelectionChanged(multi);
   d->CheckableComboBox_Segment->setVisible(multi);
   d->comboBox_Segment->setVisible(!multi);
 
@@ -545,6 +548,7 @@ void qMRMLSegmentSelectorWidget::setHorizontalLayout(bool horizontal)
     d->comboBox_Segment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     d->CheckableComboBox_Segment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   }
+  emit horizontalLayoutChanged(horizontal);
 }
 
 //--------------------------------------------------------------------------
@@ -559,4 +563,5 @@ void qMRMLSegmentSelectorWidget::setSelectNodeUponCreation(bool value)
 {
   Q_D(qMRMLSegmentSelectorWidget);
   d->MRMLNodeComboBox_Segmentation->setSelectNodeUponCreation(value);
+  emit selectNodeUponCreationChanged(value);
 }

@@ -75,6 +75,7 @@ class qSlicerDICOMExportDialogPrivate
   : public QDialog // QObject baseclass must be the first in list of multiple inheritance for automoc to work.
   , public Ui_qSlicerDICOMExportDialog
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerDICOMExportDialog);
 
 protected:
@@ -580,3 +581,5 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
 
   return true;
 }
+
+#include "qSlicerDICOMExportDialog.moc"

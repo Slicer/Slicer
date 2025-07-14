@@ -53,6 +53,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchySegmentationsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentationsPlugin);
 
 protected:
@@ -1378,3 +1379,5 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::showItemInView(vtkIdType itemID
 
   return qSlicerSubjectHierarchyAbstractPlugin::showItemInView(itemID, viewNode, allItemsToShow);
 }
+
+#include "qSlicerSubjectHierarchySegmentationsPlugin.moc"

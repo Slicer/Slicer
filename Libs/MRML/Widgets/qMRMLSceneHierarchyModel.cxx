@@ -78,6 +78,7 @@ void qMRMLSceneHierarchyModel::setExpandColumn(int column)
 {
   Q_D(qMRMLSceneHierarchyModel);
   d->ExpandColumn = column;
+  emit expandColumnChanged(column);
   this->updateColumnCount();
 }
 

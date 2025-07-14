@@ -56,24 +56,24 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString currentNodeID READ currentNodeID WRITE setCurrentNodeID NOTIFY currentNodeIDChanged DESIGNABLE false)
-  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false) // \deprecated
-  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
-  Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
-  Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
-  Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
+  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode NOTIFY currentNodeIDChanged DESIGNABLE false) // \deprecated
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes NOTIFY nodeTypesChanged);
+  Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden NOTIFY showHiddenChanged);
+  Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes NOTIFY showChildNodeTypesChanged);
+  Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes NOTIFY hideChildNodeTypesChanged);
 
-  Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
+  Q_PROPERTY(QString baseName READ baseName WRITE setBaseName NOTIFY baseNameChanged);
   /// This property controls whether an additional item is added into the menu
   /// list, such item allows the user to select none of the nodes in the
   /// combobox list. By default, the display of the item is "None" but it can be
   /// changed with \a noneDisplay.
   /// \sa noneDisplay, addEnabled, removeEnabled, editEnabled, renameEnabled
   /// \sa noneEnabled(), setNoneEnabled()
-  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
-  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
-  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled NOTIFY noneEnabledChanged);
+  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled NOTIFY addEnabledChanged);
+  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled NOTIFY removeEnabledChanged);
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled NOTIFY editEnabledChanged);
+  Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled NOTIFY renameEnabledChanged);
 
   /// Node editing is requested via an interaction node in the scene.
   /// This singleton tag identifies which interaction node should be used.
@@ -81,15 +81,30 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   /// If the value is set to empty then only nodeAboutToBeEdited signal is invoked
   /// but node editing is not requested via interaction node.
   /// \sa nodeAboutToBeEdited
-  Q_PROPERTY(QString interactionNodeSingletonTag READ interactionNodeSingletonTag WRITE setInteractionNodeSingletonTag)
+  Q_PROPERTY(QString interactionNodeSingletonTag READ interactionNodeSingletonTag WRITE setInteractionNodeSingletonTag NOTIFY interactionNodeSingletonTagChanged);
 
-  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation NOTIFY selectNodeUponCreationChanged);
   /// This property controls the name that is displayed for the None item.
   /// "None" by default.
   /// \sa noneEnabled
-  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
+  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay NOTIFY noneDisplayChanged);
 
-  Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
+  Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy NOTIFY sizeAdjustPolicyChanged);
+Q_SIGNALS:
+  void nodeTypesChanged(QStringList);
+  void showHiddenChanged(bool);
+  void showChildNodeTypesChanged(bool);
+  void hideChildNodeTypesChanged(QStringList);
+  void baseNameChanged(QString);
+  void noneEnabledChanged(bool);
+  void addEnabledChanged(bool);
+  void removeEnabledChanged(bool);
+  void editEnabledChanged(bool);
+  void renameEnabledChanged(bool);
+  void interactionNodeSingletonTagChanged(QString);
+  void selectNodeUponCreationChanged(bool);
+  void noneDisplayChanged(QString);
+  void sizeAdjustPolicyChanged(QComboBox::SizeAdjustPolicy);
 
 public:
   typedef QWidget Superclass;
@@ -408,6 +423,7 @@ private:
 void qMRMLNodeComboBox::setShowHidden(bool enable)
 {
   this->sortFilterProxyModel()->setShowHidden(enable);
+  emit showHiddenChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -420,6 +436,7 @@ bool qMRMLNodeComboBox::showHidden() const
 void qMRMLNodeComboBox::setShowChildNodeTypes(bool show)
 {
   this->sortFilterProxyModel()->setShowChildNodeTypes(show);
+  emit showChildNodeTypesChanged(show);
 }
 
 // --------------------------------------------------------------------------
@@ -432,6 +449,7 @@ bool qMRMLNodeComboBox::showChildNodeTypes() const
 void qMRMLNodeComboBox::setHideChildNodeTypes(const QStringList& _nodeTypes)
 {
   this->sortFilterProxyModel()->setHideChildNodeTypes(_nodeTypes);
+  emit hideChildNodeTypesChanged(_nodeTypes);
 }
 
 // --------------------------------------------------------------------------

@@ -59,6 +59,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 
 protected:
@@ -416,3 +417,5 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
     return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
   }
 }
+
+#include "qSlicerSubjectHierarchyVolumeRenderingPlugin.moc"

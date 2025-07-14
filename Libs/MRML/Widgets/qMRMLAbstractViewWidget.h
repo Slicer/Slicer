@@ -38,8 +38,11 @@ class QMRML_WIDGETS_EXPORT qMRMLAbstractViewWidget : public qMRMLWidget
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel)
-  Q_PROPERTY(QColor viewColor READ viewColor WRITE setViewColor)
+  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel NOTIFY viewLabelChanged);
+  Q_PROPERTY(QColor viewColor READ viewColor WRITE setViewColor NOTIFY viewColorChanged);
+Q_SIGNALS:
+  void viewLabelChanged(QString);
+  void viewColorChanged(QColor);
 
 public:
   /// Superclass typedef

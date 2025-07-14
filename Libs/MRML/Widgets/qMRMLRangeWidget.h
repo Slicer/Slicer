@@ -39,10 +39,15 @@ class vtkMRMLScene;
 class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QPalette minimumHandlePalette READ minimumHandlePalette WRITE setMinimumHandlePalette)
-  Q_PROPERTY(QPalette maximumHandlePalette READ maximumHandlePalette WRITE setMaximumHandlePalette)
-  Q_PROPERTY(vtkMRMLScene* mrmlScene READ mrmlScene WRITE setMRMLScene)
-  Q_PROPERTY(QString quantity READ quantity WRITE setQuantity)
+  Q_PROPERTY(QPalette minimumHandlePalette READ minimumHandlePalette WRITE setMinimumHandlePalette NOTIFY minimumHandlePaletteChanged);
+  Q_PROPERTY(QPalette maximumHandlePalette READ maximumHandlePalette WRITE setMaximumHandlePalette NOTIFY maximumHandlePaletteChanged);
+  Q_PROPERTY(vtkMRMLScene* mrmlScene READ mrmlScene WRITE setMRMLScene NOTIFY mrmlSceneChanged)
+  Q_PROPERTY(QString quantity READ quantity WRITE setQuantity NOTIFY quantityChanged);
+Q_SIGNALS:
+  void minimumHandlePaletteChanged(QPalette);
+  void maximumHandlePaletteChanged(QPalette);
+  void mrmlSceneChanged(vtkMRMLScene*);
+  void quantityChanged(QString);
 
 public:
   /// Constructor

@@ -39,7 +39,10 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewMenu : public QMenu
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(QString NoSceneViewText READ noSceneViewText WRITE setNoSceneViewText)
+  Q_PROPERTY(QString NoSceneViewText READ noSceneViewText WRITE setNoSceneViewText NOTIFY NoSceneViewTextChanged);
+Q_SIGNALS:
+  void NoSceneViewTextChanged(QString);
+
 public:
   /// Superclass typedef
   typedef QMenu Superclass;

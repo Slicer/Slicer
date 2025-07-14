@@ -38,10 +38,11 @@ class QMRML_WIDGETS_EXPORT qMRMLScreenShotDialog : public QDialog
 {
   Q_OBJECT
   Q_ENUMS(WidgetType)
-  Q_PROPERTY(WidgetType widgetType READ widgetType WRITE setWidgetType)
-  Q_PROPERTY(QString nameEdit READ nameEdit WRITE setNameEdit)
-  Q_PROPERTY(double scaleFactor READ scaleFactor WRITE setScaleFactor)
-  Q_PROPERTY(bool showScaleFactorSpinBox READ showScaleFactorSpinBox WRITE setShowScaleFactorSpinBox)
+  Q_PROPERTY(WidgetType widgetType READ widgetType WRITE setWidgetType NOTIFY widgetTypeChanged);
+  Q_PROPERTY(QString nameEdit READ nameEdit WRITE setNameEdit NOTIFY nameEditChanged);
+  Q_PROPERTY(double scaleFactor READ scaleFactor WRITE setScaleFactor NOTIFY scaleFactorChanged);
+  Q_PROPERTY(bool showScaleFactorSpinBox READ showScaleFactorSpinBox WRITE setShowScaleFactorSpinBox NOTIFY showScaleFactorSpinBoxChanged);
+
 public:
   typedef QDialog Superclass;
 
@@ -84,6 +85,12 @@ public:
   /// set/return the image data of the screenshot
   void setImageData(vtkImageData* screenshot);
   vtkImageData* imageData() const;
+
+Q_SIGNALS:
+  void widgetTypeChanged(WidgetType);
+  void nameEditChanged(QString);
+  void scaleFactorChanged(double);
+  void showScaleFactorSpinBoxChanged(bool);
 
 protected slots:
 

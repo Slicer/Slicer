@@ -46,10 +46,17 @@ struct QSslError
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
-  Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts)
-  Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE setJavaScriptConsoleMessageLoggingEnabled)
-  Q_PROPERTY(QString url READ url WRITE setUrl)
+  Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService NOTIFY
+               handleExternalUrlWithDesktopServiceChanged)
+  Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts NOTIFY internalHostsChanged);
+  Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE setJavaScriptConsoleMessageLoggingEnabled NOTIFY
+               javaScriptConsoleMessageLoggingEnabledChanged)
+  Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged);
+Q_SIGNALS:
+  void handleExternalUrlWithDesktopServiceChanged(bool);
+  void internalHostsChanged(QStringList);
+  void javaScriptConsoleMessageLoggingEnabledChanged(bool);
+  void urlChanged(QString);
   friend class qSlicerWebEnginePage;
 
 public:

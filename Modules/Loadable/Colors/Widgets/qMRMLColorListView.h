@@ -38,7 +38,10 @@ class vtkMRMLNode;
 class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorListView : public QListView
 {
   Q_OBJECT
-  Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
+  Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors NOTIFY showOnlyNamedColorsChanged);
+Q_SIGNALS:
+  void showOnlyNamedColorsChanged(bool);
+
 public:
   qMRMLColorListView(QWidget* parent = nullptr);
   ~qMRMLColorListView() override;

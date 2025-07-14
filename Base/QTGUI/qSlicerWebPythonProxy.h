@@ -32,7 +32,9 @@ class qSlicerWebPythonProxyPrivate;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose NOTIFY verboseChanged);
+Q_SIGNALS:
+  void verboseChanged(bool);
 
 public:
   typedef QObject Superclass;

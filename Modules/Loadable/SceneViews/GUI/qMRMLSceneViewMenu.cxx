@@ -241,4 +241,5 @@ void qMRMLSceneViewMenu::setNoSceneViewText(const QString& newText)
 {
   Q_D(qMRMLSceneViewMenu);
   d->NoSceneViewText = newText;
+  emit this->NoSceneViewTextChanged(newText);
 }

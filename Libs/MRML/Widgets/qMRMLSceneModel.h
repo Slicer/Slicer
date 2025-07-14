@@ -66,33 +66,34 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// It can be useful when the modified property is displayed
   /// (name, id, visibility...)
   /// OnlyVisibleNodes by default
-  Q_PROPERTY(NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent NOTIFY listenNodeModifiedEventChanged);
 
   /// Control whether the model actively listens to the scene.
   /// If LazyUpdate is true, the model ignores added node events when the
   /// scene is importing/restoring, but synchronize with the scene once its
   /// imported/restored.
-  Q_PROPERTY(bool lazyUpdate READ lazyUpdate WRITE setLazyUpdate)
+  Q_PROPERTY(bool lazyUpdate READ lazyUpdate WRITE setLazyUpdate NOTIFY lazyUpdateChanged);
 
   /// Control in which column vtkMRMLNode names are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. First column (0) by default.
   /// If no property is set in a column, nothing is displayed.
-  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn)
+  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn NOTIFY nameColumnChanged);
   /// Control in which column vtkMRMLNode IDs are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. Hidden by default (value of -1)
-  Q_PROPERTY(int idColumn READ idColumn WRITE setIDColumn)
+  Q_PROPERTY(int idColumn READ idColumn WRITE setIDColumn NOTIFY idColumnChanged);
   /// Control in which column vtkMRMLNode::Selected are displayed (Qt::CheckStateRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
-  Q_PROPERTY(int checkableColumn READ checkableColumn WRITE setCheckableColumn)
+  Q_PROPERTY(int checkableColumn READ checkableColumn WRITE setCheckableColumn NOTIFY checkableColumnChanged);
   /// Control in which column vtkMRMLNode::Visibility are displayed (Qt::DecorationRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
-  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn NOTIFY visibilityColumnChanged);
   /// Control in which column tooltips are displayed (Qt::ToolTipRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
-  Q_PROPERTY(int toolTipNameColumn READ toolTipNameColumn WRITE setToolTipNameColumn)
+  Q_PROPERTY(int toolTipNameColumn READ toolTipNameColumn WRITE setToolTipNameColumn NOTIFY toolTipNameColumnChanged);
   /// Control in which column the extra items are displayed
   /// A value of -1 hides it (not tested). 0 by default
-  Q_PROPERTY(int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn)
+  Q_PROPERTY(int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn NOTIFY extraItemColumnChanged);
+
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject* parent = nullptr);
@@ -215,7 +216,15 @@ public:
   /// Observe node and update item when the node is modified.
   /// \sa listenNodeModifiedEvent
   virtual void observeNode(vtkMRMLNode* node);
-
+Q_SIGNALS:
+  void listenNodeModifiedEventChanged(NodeTypes);
+  void lazyUpdateChanged(bool);
+  void nameColumnChanged(int);
+  void idColumnChanged(int);
+  void checkableColumnChanged(int);
+  void visibilityColumnChanged(int);
+  void toolTipNameColumnChanged(int);
+  void extraItemColumnChanged(int);
 protected slots:
 
   virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);

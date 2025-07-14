@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarInvariantComboBox : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(int scalarInvariant READ scalarInvariant WRITE setScalarInvariant)
+  Q_PROPERTY(int scalarInvariant READ scalarInvariant WRITE setScalarInvariant NOTIFY scalarInvariantChanged);
 
 public:
   qMRMLScalarInvariantComboBox(QWidget* parent = nullptr);

@@ -235,6 +235,7 @@ void qMRMLSceneDisplayableModel::setColorColumn(int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
   d->ColorColumn = column;
+  emit colorColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -250,6 +251,7 @@ void qMRMLSceneDisplayableModel::setOpacityColumn(int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
   d->OpacityColumn = column;
+  emit opacityColumnChanged(column);
   this->updateColumnCount();
 }
 

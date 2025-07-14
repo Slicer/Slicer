@@ -37,12 +37,17 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled NOTIFY noneEnabledChanged);
   Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor NOTIFY currentColorChanged USER true)
   Q_PROPERTY(QString currentColorName READ currentColorName WRITE setCurrentColor NOTIFY currentColorChanged STORED false)
-  Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount)
-  Q_PROPERTY(bool colorNameVisible READ colorNameVisible WRITE setColorNameVisible)
-  Q_PROPERTY(bool labelValueVisible READ labelValueVisible WRITE setLabelValueVisible)
+  Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount NOTIFY maximumColorCountChanged);
+  Q_PROPERTY(bool colorNameVisible READ colorNameVisible WRITE setColorNameVisible NOTIFY colorNameVisibleChanged);
+  Q_PROPERTY(bool labelValueVisible READ labelValueVisible WRITE setLabelValueVisible NOTIFY labelValueVisibleChanged);
+Q_SIGNALS:
+  void noneEnabledChanged(bool);
+  void maximumColorCountChanged(int);
+  void colorNameVisibleChanged(bool);
+  void labelValueVisibleChanged(bool);
 
 public:
   typedef qMRMLWidget Superclass;

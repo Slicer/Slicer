@@ -470,5 +470,6 @@ void qMRMLSegmentationShow3DButton::setLocked(bool locked)
 {
   Q_D(qMRMLSegmentationShow3DButton);
   d->Locked = locked;
+  emit this->lockedChanged(locked);
   this->updateWidgetFromMRML();
 }

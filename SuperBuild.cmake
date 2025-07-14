@@ -338,7 +338,8 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 
 Slicer_Remote_Add(SurfaceToolbox
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/SlicerSurfaceToolbox"
-  GIT_TAG 5fde114b1f950f632e13a658c44ca948e7955e89
+  # GIT_TAG 5fde114b1f950f632e13a658c44ca948e7955e89
+  GIT_TAG add-automoc-paths # Needed for AUTOMOC support until #79 of SlicerSurfaceToolbox is merged
   OPTION_NAME Slicer_BUILD_SurfaceToolbox
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE

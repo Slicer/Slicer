@@ -45,11 +45,16 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget : 
   /// Enable displaying recording control buttons (record and snapshot).
   /// The buttons are only visible if this flag is enabled and there is at least one sequence that
   /// has recording enabled.
-  Q_PROPERTY(bool RecordingControlsVisible READ recordingControlsVisible WRITE setRecordingControlsVisible)
+  Q_PROPERTY(bool RecordingControlsVisible READ recordingControlsVisible WRITE setRecordingControlsVisible NOTIFY RecordingControlsVisibleChanged);
 
-  Q_PROPERTY(QString PlayPauseShortcut READ playPauseShortcut WRITE setPlayPauseShortcut)
-  Q_PROPERTY(QString PreviousFrameShortcut READ previousFrameShortcut WRITE setPreviousFrameShortcut)
-  Q_PROPERTY(QString NextFrameShortcut READ nextFrameShortcut WRITE setNextFrameShortcut)
+  Q_PROPERTY(QString PlayPauseShortcut READ playPauseShortcut WRITE setPlayPauseShortcut NOTIFY PlayPauseShortcutChanged);
+  Q_PROPERTY(QString PreviousFrameShortcut READ previousFrameShortcut WRITE setPreviousFrameShortcut NOTIFY PreviousFrameShortcutChanged);
+  Q_PROPERTY(QString NextFrameShortcut READ nextFrameShortcut WRITE setNextFrameShortcut NOTIFY NextFrameShortcutChanged);
+Q_SIGNALS:
+  void RecordingControlsVisibleChanged(bool);
+  void PlayPauseShortcutChanged(QString);
+  void PreviousFrameShortcutChanged(QString);
+  void NextFrameShortcutChanged(QString);
 
 public:
   typedef qMRMLWidget Superclass;

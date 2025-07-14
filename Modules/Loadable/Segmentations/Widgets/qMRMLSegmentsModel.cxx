@@ -905,6 +905,7 @@ void qMRMLSegmentsModel::setNameColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->NameColumn = column;
+  emit nameColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -920,6 +921,7 @@ void qMRMLSegmentsModel::setVisibilityColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->VisibilityColumn = column;
+  emit visibilityColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -935,6 +937,7 @@ void qMRMLSegmentsModel::setColorColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->ColorColumn = column;
+  emit colorColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -950,6 +953,7 @@ void qMRMLSegmentsModel::setOpacityColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->OpacityColumn = column;
+  emit opacityColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -965,6 +969,7 @@ void qMRMLSegmentsModel::setStatusColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->StatusColumn = column;
+  emit statusColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -980,6 +985,7 @@ void qMRMLSegmentsModel::setLayerColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->LayerColumn = column;
+  emit layerColumnChanged(column);
   this->updateColumnCount();
 }
 

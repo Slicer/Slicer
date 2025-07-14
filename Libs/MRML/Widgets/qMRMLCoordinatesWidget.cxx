@@ -181,6 +181,7 @@ void qMRMLCoordinatesWidget::setUnitAwareProperties(UnitAwareProperties newFlags
   }
 
   d->Flags = newFlags;
+  emit unitAwarePropertiesChanged(d->Flags);
 }
 
 // --------------------------------------------------------------------------

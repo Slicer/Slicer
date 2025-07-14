@@ -62,6 +62,7 @@ void qMRMLAbstractViewWidget::setViewColor(const QColor& newViewColor)
   }
   double layoutColor[3] = { newViewColor.redF(), newViewColor.greenF(), newViewColor.blueF() };
   this->mrmlAbstractViewNode()->SetLayoutColor(layoutColor);
+  emit this->viewColorChanged(newViewColor);
 }
 
 //---------------------------------------------------------------------------
@@ -74,6 +75,7 @@ void qMRMLAbstractViewWidget::setViewLabel(const QString& newViewLabel)
   }
   std::string newViewLabelString = newViewLabel.toStdString();
   this->mrmlAbstractViewNode()->SetLayoutLabel(newViewLabelString.c_str());
+  emit this->viewLabelChanged(newViewLabel);
 }
 
 //---------------------------------------------------------------------------

@@ -37,7 +37,7 @@
 qSlicerWebPythonProxyPrivate::~qSlicerWebPythonProxyPrivate() = default;
 
 CTK_GET_CPP(qSlicerWebPythonProxy, bool, verbose, Verbose);
-CTK_SET_CPP(qSlicerWebPythonProxy, bool, setVerbose, Verbose);
+CTK_SET_CPP_EMIT(qSlicerWebPythonProxy, bool, setVerbose, Verbose, verboseChanged);
 
 // --------------------------------------------------------------------------
 bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()

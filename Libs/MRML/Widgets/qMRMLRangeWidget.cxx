@@ -97,12 +97,14 @@ QPalette qMRMLRangeWidget::maximumHandlePalette() const
 void qMRMLRangeWidget::setMinimumHandlePalette(const QPalette& palette)
 {
   qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->setMinimumHandlePalette(palette);
+  emit minimumHandlePaletteChanged(palette);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::setMaximumHandlePalette(const QPalette& palette)
 {
   qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())->setMaximumHandlePalette(palette);
+  emit maximumHandlePaletteChanged(palette);
 }
 
 // --------------------------------------------------------------------------
@@ -154,6 +156,7 @@ void qMRMLRangeWidget::setQuantity(const QString& quantity)
 
   this->MinSpinBox->setQuantity(quantity);
   this->MaxSpinBox->setQuantity(quantity);
+  emit quantityChanged(quantity);
 }
 
 //-----------------------------------------------------------------------------
@@ -181,6 +184,7 @@ void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
   this->MinSpinBox->setMRMLScene(scene);
   this->MaxSpinBox->setMRMLScene(scene);
   this->setEnabled(this->isEnabled() && scene != nullptr);
+  emit mrmlSceneChanged(scene);
 }
 
 // --------------------------------------------------------------------------

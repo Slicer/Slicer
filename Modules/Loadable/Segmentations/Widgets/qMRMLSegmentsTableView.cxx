@@ -336,16 +336,16 @@ void qMRMLSegmentsTableViewPrivate::setMessage(const QString& message)
 // qMRMLSegmentsTableView methods
 
 CTK_GET_CPP(qMRMLSegmentsTableView, bool, jumpToSelectedSegmentEnabled, JumpToSelectedSegmentEnabled);
-CTK_SET_CPP(qMRMLSegmentsTableView, bool, setJumpToSelectedSegmentEnabled, JumpToSelectedSegmentEnabled);
+CTK_SET_CPP_EMIT(qMRMLSegmentsTableView, bool, setJumpToSelectedSegmentEnabled, JumpToSelectedSegmentEnabled, jumpToSelectedSegmentEnabledChanged);
 
 CTK_GET_CPP(qMRMLSegmentsTableView, QString, useTerminologySelectorSettingsKey, UseTerminologySelectorSettingsKey);
-CTK_SET_CPP(qMRMLSegmentsTableView, QString, setUseTerminologySelectorSettingsKey, UseTerminologySelectorSettingsKey);
+CTK_SET_CPP_EMIT(qMRMLSegmentsTableView, QString, setUseTerminologySelectorSettingsKey, UseTerminologySelectorSettingsKey, useTerminologySelectorSettingsKeyChanged);
 
 CTK_GET_CPP(qMRMLSegmentsTableView, bool, terminologySelectorOptionVisible, TerminologySelectorOptionVisible);
-CTK_SET_CPP(qMRMLSegmentsTableView, bool, setTerminologySelectorOptionVisible, TerminologySelectorOptionVisible);
+CTK_SET_CPP_EMIT(qMRMLSegmentsTableView, bool, setTerminologySelectorOptionVisible, TerminologySelectorOptionVisible, terminologySelectorOptionVisibleChanged);
 
 CTK_GET_CPP(qMRMLSegmentsTableView, bool, terminologySelectorAutoDisable, TerminologySelectorAutoDisable);
-CTK_SET_CPP(qMRMLSegmentsTableView, bool, setTerminologySelectorAutoDisable, TerminologySelectorAutoDisable);
+CTK_SET_CPP_EMIT(qMRMLSegmentsTableView, bool, setTerminologySelectorAutoDisable, TerminologySelectorAutoDisable, terminologySelectorAutoDisableChanged);
 
 //-----------------------------------------------------------------------------
 qMRMLSegmentsTableView::qMRMLSegmentsTableView(QWidget* _parent)
@@ -983,6 +983,7 @@ void qMRMLSegmentsTableView::setSelectionMode(int mode)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setSelectionMode(static_cast<QAbstractItemView::SelectionMode>(mode));
+  emit selectionModeChanged(mode);
 }
 
 //------------------------------------------------------------------------------
@@ -990,6 +991,7 @@ void qMRMLSegmentsTableView::setHeaderVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->horizontalHeader()->setVisible(visible);
+  emit headerVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -997,6 +999,7 @@ void qMRMLSegmentsTableView::setVisibilityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->Model->visibilityColumn(), !visible);
+  emit visibilityColumnVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1004,6 +1007,7 @@ void qMRMLSegmentsTableView::setColorColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->Model->colorColumn(), !visible);
+  emit colorColumnVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1011,6 +1015,7 @@ void qMRMLSegmentsTableView::setOpacityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->Model->opacityColumn(), !visible);
+  emit opacityColumnVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1018,6 +1023,7 @@ void qMRMLSegmentsTableView::setStatusColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->Model->statusColumn(), !visible);
+  emit statusColumnVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1025,6 +1031,7 @@ void qMRMLSegmentsTableView::setLayerColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->Model->layerColumn(), !visible);
+  emit layerColumnVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1039,6 +1046,7 @@ void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
   {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   }
+  emit readOnlyChanged(aReadOnly);
 }
 
 //------------------------------------------------------------------------------
@@ -1047,6 +1055,7 @@ void qMRMLSegmentsTableView::setFilterBarVisible(bool visible)
   Q_D(qMRMLSegmentsTableView);
   d->FilterBar->setVisible(visible);
   d->IsFilterBarVisible = visible;
+  emit filterBarVisibleChanged(visible);
   d->SortFilterModel->setFilterEnabled(visible);
 }
 
@@ -1125,6 +1134,7 @@ void qMRMLSegmentsTableView::setTextFilter(QString filter)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SortFilterModel->setTextFilter(filter);
+  emit textFilterChanged(filter);
 }
 
 //------------------------------------------------------------------------------
@@ -1677,6 +1687,7 @@ void qMRMLSegmentsTableView::setUseTerminologySelector(bool useTerminologySelect
 {
   Q_D(qMRMLSegmentsTableView);
   d->NoSettingsUseTerminologySelector = useTerminologySelector;
+  emit useTerminologySelectorChanged(useTerminologySelector);
   QSettings().setValue(d->UseTerminologySelectorSettingsKey, useTerminologySelector);
 }
 

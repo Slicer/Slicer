@@ -335,4 +335,5 @@ void qSlicerVolumeRenderingPresetComboBox::setShowIcons(bool show)
 {
   Q_D(qSlicerVolumeRenderingPresetComboBox);
   d->PresetComboBox->setShowIcons(show);
+  emit showIconsChanged(show);
 }

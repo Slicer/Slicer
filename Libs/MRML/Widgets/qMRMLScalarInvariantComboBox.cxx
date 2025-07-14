@@ -173,4 +173,5 @@ void qMRMLScalarInvariantComboBox::setScalarInvariant(int value)
     // SetColorGlyphBy will eventually call updateWidgetFromMRML
     d->DisplayPropertiesNode->SetColorGlyphBy(value);
   }
+  emit scalarInvariantChanged(value);
 }

@@ -33,7 +33,9 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationShow3DButton
 
   /// Disables the button. It is useful for preventing segmentation from editing.
   /// Using QWidget::setEnabled would only temporarily disable the button.
-  Q_PROPERTY(bool locked READ locked WRITE setLocked)
+  Q_PROPERTY(bool locked READ locked WRITE setLocked NOTIFY lockedChanged);
+Q_SIGNALS:
+  void lockedChanged(bool);
 
 public:
   explicit qMRMLSegmentationShow3DButton(QWidget* parent = nullptr);

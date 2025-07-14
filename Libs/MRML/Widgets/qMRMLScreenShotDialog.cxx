@@ -45,6 +45,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
 #include <vtkWindowToImageFilter.h>
+#include <ctkWorkflowWidgetStep.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLScreenShotDialogPrivate : public Ui_qMRMLScreenShotDialog
@@ -166,6 +167,7 @@ void qMRMLScreenShotDialog::setNameEdit(const QString& newName)
   d->nameEdit->setText(newName);
   d->nameEdit->setFocus();
   d->nameEdit->selectAll();
+  emit nameEditChanged(newName);
 }
 
 //-----------------------------------------------------------------------------
@@ -209,6 +211,7 @@ void qMRMLScreenShotDialog::setWidgetType(qMRMLScreenShotDialog::WidgetType newT
 {
   Q_D(qMRMLScreenShotDialog);
   d->setCheckedRadioButton(newType);
+  emit widgetTypeChanged(newType);
 }
 
 //-----------------------------------------------------------------------------
@@ -223,6 +226,7 @@ void qMRMLScreenShotDialog::setScaleFactor(const double& newScaleFactor)
 {
   Q_D(qMRMLScreenShotDialog);
   d->scaleFactorSpinBox->setValue(newScaleFactor);
+  emit scaleFactorChanged(newScaleFactor);
 }
 
 //-----------------------------------------------------------------------------
@@ -256,6 +260,7 @@ void qMRMLScreenShotDialog::setShowScaleFactorSpinBox(const bool& state)
   Q_D(qMRMLScreenShotDialog);
   d->scaleFactorSpinBox->setVisible(state);
   d->scaleFactorLabel->setVisible(state);
+  emit showScaleFactorSpinBoxChanged(state);
 }
 
 //-----------------------------------------------------------------------------

@@ -75,6 +75,7 @@ void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordina
   }
 
   d->CoordinateReference = _coordinateReference;
+  emit coordinateReferenceChanged(d->CoordinateReference);
 
   this->updateMatrix();
 }

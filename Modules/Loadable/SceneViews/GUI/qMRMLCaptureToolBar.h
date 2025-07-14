@@ -48,7 +48,9 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLCaptureToolBar : public QToolBar
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(bool popupsTimeOut READ popupsTimeOut WRITE setPopupsTimeOut)
+  Q_PROPERTY(bool popupsTimeOut READ popupsTimeOut WRITE setPopupsTimeOut NOTIFY popupsTimeOutChanged);
+Q_SIGNALS:
+  void popupsTimeOutChanged(bool);
 
 public:
   typedef QToolBar Superclass;

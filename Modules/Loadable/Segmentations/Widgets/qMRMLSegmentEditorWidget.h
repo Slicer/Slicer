@@ -65,25 +65,48 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
-  Q_PROPERTY(bool sourceVolumeNodeSelectorVisible READ sourceVolumeNodeSelectorVisible WRITE setSourceVolumeNodeSelectorVisible)
-  Q_PROPERTY(bool maskingSectionVisible READ maskingSectionVisible WRITE setMaskingSectionVisible)
-  Q_PROPERTY(bool specifyGeometryButtonVisible READ specifyGeometryButtonVisible WRITE setSpecifyGeometryButtonVisible)
-  Q_PROPERTY(bool show3DButtonVisible READ show3DButtonVisible WRITE setShow3DButtonVisible)
-  Q_PROPERTY(bool addRemoveSegmentButtonsVisible READ addRemoveSegmentButtonsVisible WRITE setAddRemoveSegmentButtonsVisible)
-  Q_PROPERTY(bool autoShowSourceVolumeNode READ autoShowSourceVolumeNode WRITE setAutoShowSourceVolumeNode)
-  Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible) // deprecated
-  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode)                      // deprecated
-  Q_PROPERTY(bool switchToSegmentationsButtonVisible READ switchToSegmentationsButtonVisible WRITE setSwitchToSegmentationsButtonVisible)
-  Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
-  Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
-  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
-  Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
-  Q_PROPERTY(int effectColumnCount READ effectColumnCount WRITE setEffectColumnCount)
-  Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
-  Q_PROPERTY(QString defaultTerminologyEntrySettingsKey READ defaultTerminologyEntrySettingsKey WRITE setDefaultTerminologyEntrySettingsKey)
-  Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry)
-  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
+  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible NOTIFY segmentationNodeSelectorVisibleChanged);
+  Q_PROPERTY(bool sourceVolumeNodeSelectorVisible READ sourceVolumeNodeSelectorVisible WRITE setSourceVolumeNodeSelectorVisible NOTIFY sourceVolumeNodeSelectorVisibleChanged);
+  Q_PROPERTY(bool maskingSectionVisible READ maskingSectionVisible WRITE setMaskingSectionVisible NOTIFY maskingSectionVisibleChanged);
+  Q_PROPERTY(bool specifyGeometryButtonVisible READ specifyGeometryButtonVisible WRITE setSpecifyGeometryButtonVisible NOTIFY specifyGeometryButtonVisibleChanged);
+  Q_PROPERTY(bool show3DButtonVisible READ show3DButtonVisible WRITE setShow3DButtonVisible NOTIFY show3DButtonVisibleChanged);
+  Q_PROPERTY(bool addRemoveSegmentButtonsVisible READ addRemoveSegmentButtonsVisible WRITE setAddRemoveSegmentButtonsVisible NOTIFY addRemoveSegmentButtonsVisibleChanged);
+  Q_PROPERTY(bool autoShowSourceVolumeNode READ autoShowSourceVolumeNode WRITE setAutoShowSourceVolumeNode NOTIFY autoShowSourceVolumeNodeChanged);
+  Q_PROPERTY(
+    bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible NOTIFY masterVolumeNodeSelectorVisibleChanged) // deprecated
+  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode NOTIFY autoShowMasterVolumeNodeChanged)                    // deprecated
+  Q_PROPERTY(
+    bool switchToSegmentationsButtonVisible READ switchToSegmentationsButtonVisible WRITE setSwitchToSegmentationsButtonVisible NOTIFY switchToSegmentationsButtonVisibleChanged);
+  Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled NOTIFY undoEnabledChanged);
+  Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates NOTIFY maximumNumberOfUndoStatesChanged);
+  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged);
+  Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle NOTIFY effectButtonStyleChanged);
+  Q_PROPERTY(int effectColumnCount READ effectColumnCount WRITE setEffectColumnCount NOTIFY effectColumnCountChanged);
+  Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible NOTIFY unorderedEffectsVisibleChanged);
+  Q_PROPERTY(QString defaultTerminologyEntrySettingsKey READ defaultTerminologyEntrySettingsKey WRITE setDefaultTerminologyEntrySettingsKey NOTIFY
+               defaultTerminologyEntrySettingsKeyChanged);
+  Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry NOTIFY defaultTerminologyEntryChanged);
+  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled NOTIFY jumpToSelectedSegmentEnabledChanged);
+Q_SIGNALS:
+  void segmentationNodeSelectorVisibleChanged(bool);
+  void sourceVolumeNodeSelectorVisibleChanged(bool);
+  void maskingSectionVisibleChanged(bool);
+  void specifyGeometryButtonVisibleChanged(bool);
+  void show3DButtonVisibleChanged(bool);
+  void autoShowSourceVolumeNodeChanged(bool);
+  void masterVolumeNodeSelectorVisibleChanged(bool);
+  void autoShowMasterVolumeNodeChanged();
+  void undoEnabledChanged(bool);
+  void maximumNumberOfUndoStatesChanged(int);
+  void readOnlyChanged(bool);
+  void effectButtonStyleChanged(Qt::ToolButtonStyle);
+  void effectColumnCountChanged(int);
+  void unorderedEffectsVisibleChanged(bool);
+  void defaultTerminologyEntryChanged(QString);
+  void jumpToSelectedSegmentEnabledChanged(bool);
+  void addRemoveSegmentButtonsVisibleChanged(bool);
+  void switchToSegmentationsButtonVisibleChanged(bool);
+  void defaultTerminologyEntrySettingsKeyChanged(QString);
 
 public:
   typedef qMRMLWidget Superclass;

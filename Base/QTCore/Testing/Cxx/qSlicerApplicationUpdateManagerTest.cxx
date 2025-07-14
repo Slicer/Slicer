@@ -207,4 +207,4 @@ int qSlicerApplicationUpdateManagerTest(int argc, char* argv[])
   qSlicerApplicationUpdateManagerTester tc;
   return QTest::qExec(&tc, argc, argv);
 }
-#include "moc_qSlicerApplicationUpdateManagerTest.cxx"
+#include "qSlicerApplicationUpdateManagerTest.moc"

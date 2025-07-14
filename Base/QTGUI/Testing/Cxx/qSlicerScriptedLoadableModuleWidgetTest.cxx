@@ -208,6 +208,7 @@ namespace
 // ----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleWidgetTestSetup : public qSlicerScriptedLoadableModuleWidget
 {
+  Q_OBJECT
 public:
   void callSetup() { this->setup(); }
 };
@@ -241,4 +242,4 @@ void qSlicerScriptedLoadableModuleWidgetTester::testSetup_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerScriptedLoadableModuleWidgetTest)
-#include "moc_qSlicerScriptedLoadableModuleWidgetTest.cxx"
+#include "qSlicerScriptedLoadableModuleWidgetTest.moc"

@@ -317,6 +317,7 @@ void qMRMLSequenceBrowserPlayWidget::setPlayPauseShortcut(QString keySequence)
   QObject::connect(new QShortcut(QKeySequence(keySequence), this), SIGNAL(activated()), SLOT(onVcrPlayPause()));
   d->pushButton_VcrPlayPause->setToolTip(tr("Play/Pause (%1)").arg(keySequence));
   d->PlayPauseShortcut = keySequence;
+  emit PlayPauseShortcutChanged(keySequence);
 }
 
 //---------------------------------------------------------------------------
@@ -333,6 +334,7 @@ void qMRMLSequenceBrowserPlayWidget::setPreviousFrameShortcut(QString keySequenc
   QObject::connect(new QShortcut(QKeySequence(keySequence), this), SIGNAL(activated()), SLOT(onVcrPrevious()));
   d->pushButton_VcrPrevious->setToolTip(tr("Previous frame (%1)").arg(keySequence));
   d->PreviousFrameShortcut = keySequence;
+  emit PreviousFrameShortcutChanged(keySequence);
 }
 
 //---------------------------------------------------------------------------
@@ -349,6 +351,7 @@ void qMRMLSequenceBrowserPlayWidget::setNextFrameShortcut(QString keySequence)
   QObject::connect(new QShortcut(QKeySequence(keySequence), this), SIGNAL(activated()), SLOT(onVcrNext()));
   d->pushButton_VcrNext->setToolTip(tr("Next frame (%1)").arg(keySequence));
   d->NextFrameShortcut = keySequence;
+  emit NextFrameShortcutChanged(keySequence);
 }
 
 //---------------------------------------------------------------------------
@@ -363,6 +366,7 @@ void qMRMLSequenceBrowserPlayWidget::setRecordingControlsVisible(bool show)
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   d->RecordingControlsVisible = show;
+  emit RecordingControlsVisibleChanged(show);
   this->updateWidgetFromMRML();
 }
 

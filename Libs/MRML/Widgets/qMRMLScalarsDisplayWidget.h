@@ -37,7 +37,9 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarsDisplayWidget : public qMRMLWidget
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(vtkMRMLDisplayNode::ScalarRangeFlagType scalarRangeMode READ scalarRangeMode WRITE setScalarRangeMode)
+  Q_PROPERTY(vtkMRMLDisplayNode::ScalarRangeFlagType scalarRangeMode READ scalarRangeMode WRITE setScalarRangeMode NOTIFY scalarRangeModeChanged);
+Q_SIGNALS:
+  void scalarRangeModeChanged(vtkMRMLDisplayNode::ScalarRangeFlagType);
 
 public:
   /// Constructors

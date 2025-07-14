@@ -155,6 +155,7 @@ void qMRMLColorModel::setNoneEnabled(bool enable)
     return;
   }
   d->NoneEnabled = enable;
+  emit noneEnabledChanged(enable);
   if (enable)
   {
     this->insertRow(0, new QStandardItem(tr("None")));
@@ -185,6 +186,7 @@ void qMRMLColorModel::setColorColumn(int column)
 {
   Q_D(qMRMLColorModel);
   d->ColorColumn = column;
+  emit colorColumnChanged(column);
   d->updateColumnCount();
 }
 
@@ -200,6 +202,7 @@ void qMRMLColorModel::setLabelColumn(int column)
 {
   Q_D(qMRMLColorModel);
   d->LabelColumn = column;
+  emit labelColumnChanged(column);
   d->updateColumnCount();
 }
 
@@ -215,6 +218,7 @@ void qMRMLColorModel::setOpacityColumn(int column)
 {
   Q_D(qMRMLColorModel);
   d->OpacityColumn = column;
+  emit opacityColumnChanged(column);
   d->updateColumnCount();
 }
 
@@ -245,6 +249,7 @@ void qMRMLColorModel::setCheckableColumn(int column)
 {
   Q_D(qMRMLColorModel);
   d->CheckableColumn = column;
+  emit checkableColumnChanged(column);
   d->updateColumnCount();
 }
 

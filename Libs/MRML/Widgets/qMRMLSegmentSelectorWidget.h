@@ -45,12 +45,19 @@ class QMRML_WIDGETS_EXPORT qMRMLSegmentSelectorWidget : public qMRMLWidget
   QVTK_OBJECT
 
 public:
-  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
-  Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
-  Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout)
-  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled NOTIFY noneEnabledChanged);
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled NOTIFY editEnabledChanged);
+  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible NOTIFY segmentationNodeSelectorVisibleChanged);
+  Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection NOTIFY multiSelectionChanged);
+  Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout NOTIFY horizontalLayoutChanged);
+  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation NOTIFY selectNodeUponCreationChanged);
+Q_SIGNALS:
+  void noneEnabledChanged(bool);
+  void segmentationNodeSelectorVisibleChanged(bool);
+  void editEnabledChanged(bool);
+  void multiSelectionChanged(bool);
+  void horizontalLayoutChanged(bool);
+  void selectNodeUponCreationChanged(bool);
 
 public:
   /// Superclass typedef

@@ -43,7 +43,10 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorTableView : public QTableV
   /// This property show/hides the colors that are defined (indicated by flag in color properties)
   /// False by default.
   /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
-  Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
+  Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors NOTIFY showOnlyNamedColorsChanged);
+Q_SIGNALS:
+  void showOnlyNamedColorsChanged(bool);
+
 public:
   qMRMLColorTableView(QWidget* parent = nullptr);
   ~qMRMLColorTableView() override;

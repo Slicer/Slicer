@@ -73,7 +73,7 @@ class QMRML_WIDGETS_EXPORT qMRMLCoordinatesWidget : public ctkCoordinatesWidget
   /// \sa setQuantity(), quantity()
   // \sa setUnitAwareProperties(), unitAwareProperties()
   Q_FLAGS(UnitAwareProperty UnitAwareProperties)
-  Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
+  Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties NOTIFY unitAwarePropertiesChanged);
 
 public:
   typedef ctkCoordinatesWidget Superclass;
@@ -102,6 +102,9 @@ public:
   QString quantity() const;
 
   UnitAwareProperties unitAwareProperties() const;
+
+Q_SIGNALS:
+  void unitAwarePropertiesChanged(UnitAwareProperties);
 
 public slots:
   void setQuantity(const QString& baseName);

@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 class qMRMLSegmentationGeometryDialogPrivate : public QDialog
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSegmentationGeometryDialog);
 
 protected:
@@ -145,6 +146,7 @@ void qMRMLSegmentationGeometryDialog::setEditEnabled(bool aEditEnabled)
   Q_D(qMRMLSegmentationGeometryDialog);
   d->GeometryWidget->setEditEnabled(aEditEnabled);
   d->CancelButton->setVisible(aEditEnabled);
+  emit editEnabledChanged(aEditEnabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -159,6 +161,7 @@ void qMRMLSegmentationGeometryDialog::setResampleLabelmaps(bool aResampleLabelma
 {
   Q_D(qMRMLSegmentationGeometryDialog);
   d->ResampleLabelmaps = aResampleLabelmaps;
+  emit resampleLabelmapsChanged(aResampleLabelmaps);
   if (aResampleLabelmaps)
   {
     d->OKButton->setToolTip(tr("Set reference image geometry and resample all segment labelmaps"));
@@ -207,3 +210,5 @@ bool qMRMLSegmentationGeometryDialog::exec()
   }
   return true;
 }
+
+#include "qMRMLSegmentationGeometryDialog.moc"
