@@ -92,7 +92,7 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTransformsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   if (d->TransformLogic.GetPointer() == nullptr)
   {

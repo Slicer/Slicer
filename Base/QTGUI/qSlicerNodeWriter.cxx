@@ -125,7 +125,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 {
   this->setWrittenNodes(QStringList());
 
-  Q_ASSERT(!properties["nodeID"].toString().isEmpty());
+  Q_ASSERT(!properties.value("nodeID").toString().isEmpty());
 
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
@@ -135,12 +135,12 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   vtkMRMLStorageNode* snode = qSlicerCoreIOManager::createAndAddDefaultStorageNode(node);
   if (snode == nullptr)
   {
-    qDebug() << "No storage node for node" << properties["nodeID"].toString();
+    qDebug() << "No storage node for node" << properties.value("nodeID").toString();
     return false;
   }
 
-  Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QString fileName = properties["fileName"].toString();
+  Q_ASSERT(!properties.value("fileName").toString().isEmpty());
+  QString fileName = properties.value("fileName").toString();
   snode->SetFileName(fileName.toUtf8());
 
   QString fileFormat = properties.value("fileFormat").toString();
@@ -151,10 +151,10 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   snode->SetURI(nullptr);
   if (properties.contains("useCompression"))
   {
-    snode->SetUseCompression(properties["useCompression"].toInt());
+    snode->SetUseCompression(properties.value("useCompression").toInt());
     if (properties.contains("compressionParameter"))
     {
-      snode->SetCompressionParameter(properties["compressionParameter"].toString().toStdString());
+      snode->SetCompressionParameter(properties.value("compressionParameter").toString().toStdString());
     }
   }
   bool res = snode->WriteData(node);

@@ -800,9 +800,9 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       // \todo fileName is wrong as it contains an obsolete directory
       savingParameters = options->properties();
     }
-    savingParameters["nodeID"] = QString(node->GetID());
-    savingParameters["fileName"] = file.absoluteFilePath();
-    savingParameters["fileFormat"] = format;
+    savingParameters.insert("nodeID", QString(node->GetID()));
+    savingParameters.insert("fileName", file.absoluteFilePath());
+    savingParameters.insert("fileFormat", format);
 
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = coreIOManager->saveNodes(fileType, savingParameters);
@@ -937,9 +937,9 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
     qSlicerIOOptions options;
     qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(hiddenNode, extension);
     qSlicerIO::IOProperties savingParameters = options.properties();
-    savingParameters["nodeID"] = QString(hiddenNode->GetID());
-    savingParameters["fileName"] = file.absoluteFilePath();
-    savingParameters["fileFormat"] = extension;
+    savingParameters.insert("nodeID", QString(hiddenNode->GetID()));
+    savingParameters.insert("fileName", file.absoluteFilePath());
+    savingParameters.insert("fileFormat", extension);
 
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = coreIOManager->saveNodes(fileType, savingParameters);
@@ -1108,14 +1108,14 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
 {
   qSlicerIO::IOProperties properties;
   QFileInfo file = this->sceneFile();
-  properties["fileName"] = file.absoluteFilePath();
+  properties.insert("fileName", file.absoluteFilePath());
 
   // create a screenShot of the full layout
   if (qSlicerApplication::application()->layoutManager())
   {
     QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
     QImage screenShot = ctk::grabVTKWidget(widget);
-    properties["screenShot"] = screenShot;
+    properties.insert("screenShot", screenShot);
   }
 
   int row = this->findSceneRow();

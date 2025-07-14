@@ -65,7 +65,7 @@ void qSlicerIOOptionsWidget::setFileName(const QString& fileName)
   // replace the old filename if any
   if (!fileName.isEmpty())
   {
-    d->Properties["fileName"] = fileName;
+    d->Properties.insert("fileName", fileName);
   }
   else
   {
@@ -90,7 +90,7 @@ void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
     }
   this->Properties.remove("fileName");
   */
-  d->Properties["fileName"] = fileNames;
+  d->Properties.insert("fileName", fileNames);
   this->updateValid();
 }
 

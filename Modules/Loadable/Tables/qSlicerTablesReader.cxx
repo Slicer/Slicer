@@ -125,14 +125,14 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTablesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->userMessages()->ClearMessages();
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
   std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toUtf8());
   std::string password;

@@ -245,18 +245,18 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
   qSlicerIO::IOProperties properties{};
   if (selectedStorableNode)
   {
-    properties["selectedNodeID"] = QString(selectedStorableNode->GetID());
+    properties.insert("selectedNodeID", QString(selectedStorableNode->GetID()));
     nodeIdToSubjectHierarchyPath[selectedStorableNode->GetID()] = QVariant(QStringList()); // The path from an item to itself is empty
   }
   if (!childIdsToExportNonrecursive.isEmpty())
   {
-    properties["childIdsNonrecursive"] = QVariant(childIdsToExportNonrecursive);
+    properties.insert("childIdsNonrecursive", QVariant(childIdsToExportNonrecursive));
   }
   if (!childIdsToExportRecursive.isEmpty())
   {
-    properties["childIdsRecursive"] = QVariant(childIdsToExportRecursive);
+    properties.insert("childIdsRecursive", QVariant(childIdsToExportRecursive));
   }
-  properties["nodeIdToSubjectHierarchyPath"] = QVariant(nodeIdToSubjectHierarchyPath);
+  properties.insert("nodeIdToSubjectHierarchyPath", QVariant(nodeIdToSubjectHierarchyPath));
 
   qSlicerApplication::application()->ioManager()->openDialog(QString("GenericNodeExport"), qSlicerFileDialog::Write, properties);
 }

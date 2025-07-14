@@ -90,8 +90,8 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 {
   this->setWrittenNodes(QStringList());
 
-  Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QFileInfo fileInfo(properties["fileName"].toString());
+  Q_ASSERT(!properties.value("fileName").toString().isEmpty());
+  QFileInfo fileInfo(properties.value("fileName").toString());
   QString baseDir = fileInfo.absolutePath();
   if (!QFileInfo(baseDir).isWritable())
   {
@@ -121,8 +121,8 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
   // set the mrml scene url first
-  Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QFileInfo fileInfo(properties["fileName"].toString());
+  Q_ASSERT(!properties.value("fileName").toString().isEmpty());
+  QFileInfo fileInfo(properties.value("fileName").toString());
   QString baseDir = fileInfo.absolutePath();
   QString fullPath = fileInfo.absoluteFilePath();
 
@@ -132,7 +132,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   if (properties.contains("screenShot"))
   {
     // screenshot is provided, save along with the scene mrml file
-    QImage screenShot = properties["screenShot"].value<QImage>();
+    QImage screenShot = properties.value("screenShot").value<QImage>();
     // convert to vtkImageData
     vtkNew<vtkImageData> imageData;
     qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
@@ -159,7 +159,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   // named based on the user's selection.
   //
 
-  QFileInfo fileInfo(properties["fileName"].toString());
+  QFileInfo fileInfo(properties.value("fileName").toString());
   QString baseDir = fileInfo.absolutePath();
   QString fullPath = fileInfo.absoluteFilePath();
 
@@ -180,7 +180,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   vtkSmartPointer<vtkImageData> thumbnail;
   if (properties.contains("screenShot"))
   {
-    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    QPixmap screenShot = properties.value("screenShot").value<QPixmap>();
     // convert to vtkImageData
     thumbnail = vtkSmartPointer<vtkImageData>::New();
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), thumbnail);
@@ -208,7 +208,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
 bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& properties)
 {
   // open a file dialog to let the user choose where to save
-  QString saveDirName = properties["fileName"].toString();
+  QString saveDirName = properties.value("fileName").toString();
 
   QDir saveDir(saveDirName);
   if (!saveDir.exists())
@@ -243,7 +243,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
   vtkSmartPointer<vtkImageData> imageData;
   if (properties.contains("screenShot"))
   {
-    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    QPixmap screenShot = properties.value("screenShot").value<QPixmap>();
     // convert to vtkImageData
     imageData = vtkSmartPointer<vtkImageData>::New();
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);

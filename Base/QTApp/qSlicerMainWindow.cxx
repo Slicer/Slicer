@@ -532,7 +532,7 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
     settings.setArrayIndex(i);
     QVariant file = settings.value("file");
     qSlicerIO::IOProperties properties = file.toMap();
-    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties["fileName"].toString());
+    properties.insert("fileName", qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties.value("fileName").toString()));
     fileProperties << properties;
   }
   settings.endArray();
@@ -549,7 +549,7 @@ void qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(const QList<qSlicerIO::I
   {
     settings.setArrayIndex(i);
     qSlicerIO::IOProperties properties = fileProperties.at(i);
-    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeRelativePath(properties["fileName"].toString());
+    properties.insert("fileName", qSlicerApplication::application()->toSlicerHomeRelativePath(properties.value("fileName").toString()));
     settings.setValue("file", properties);
   }
   settings.endArray();
@@ -954,7 +954,7 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   {
     QWidget* widget = layoutManager->viewport();
     QImage screenShot = ctk::grabVTKWidget(widget);
-    properties["screenShot"] = screenShot;
+    properties.insert("screenShot", screenShot);
   }
 
   properties["fileName"] = saveDirName;
@@ -1457,7 +1457,7 @@ void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& filePrope
 void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& fileProperties)
 {
   Q_D(qSlicerMainWindow);
-  QString fileName = fileProperties["fileName"].toString();
+  QString fileName = fileProperties.value("fileName").toString();
   if (fileName.isEmpty())
   {
     return;
@@ -1471,8 +1471,8 @@ void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& filePropertie
     // which can cause complication when attempted to be stored,
     // therefore we create a new clean property set.
     qSlicerIO::IOProperties properties;
-    properties["fileName"] = fileName;
-    properties["fileType"] = QString("SceneFile");
+    properties.insert("fileName", fileName);
+    properties.insert("fileType", QString("SceneFile"));
     this->addFileToRecentFiles(properties);
   }
 }

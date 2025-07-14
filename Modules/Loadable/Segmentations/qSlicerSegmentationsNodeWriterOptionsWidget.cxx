@@ -82,5 +82,5 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
 void qSlicerSegmentationsNodeWriterOptionsWidget::setCropToMinimumExtent(bool crop)
 {
   Q_D(qSlicerSegmentationsNodeWriterOptionsWidget);
-  d->Properties["cropToMinimumExtent"] = crop;
+  d->Properties.insert("cropToMinimumExtent", crop);
 }

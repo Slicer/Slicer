@@ -1244,11 +1244,11 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   if (properties.contains("childIdsNonrecursive"))
   {
-    childIdsNonrecursive = properties["childIdsNonrecursive"].toList();
+    childIdsNonrecursive = properties.value("childIdsNonrecursive").toList();
   }
   if (properties.contains("childIdsRecursive"))
   {
-    childIdsRecursive = properties["childIdsRecursive"].toList();
+    childIdsRecursive = properties.value("childIdsRecursive").toList();
   }
 
   // This will remain null if there is no "selectedNodeID", or it will become a pointer to the selected node
@@ -1258,7 +1258,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   QList<vtkMRMLStorableNode*> nodesNonrecursive, nodesRecursive;
   if (properties.contains("selectedNodeID"))
   {
-    QString selectedNodeID = properties["selectedNodeID"].toString();
+    QString selectedNodeID = properties.value("selectedNodeID").toString();
     selectedNode = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(selectedNodeID.toUtf8().constData()));
     if (selectedNode)
     {
@@ -1301,7 +1301,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   QHash<QString, QVariant> nodeIdToSubjectHierarchyPath;
   if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString, QVariant>>())
   {
-    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
+    nodeIdToSubjectHierarchyPath = properties.value("nodeIdToSubjectHierarchyPath").toHash();
   }
   else
   {

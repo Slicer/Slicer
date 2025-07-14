@@ -107,12 +107,12 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerAnnotationsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
 
   if (d->MarkupsLogic.GetPointer() == nullptr)
@@ -122,15 +122,15 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
 
   // file type
   int fileType = vtkSlicerMarkupsLogic::AnnotationNone;
-  if (properties.contains("fiducial") && properties["fiducial"].toBool() == true)
+  if (properties.contains("fiducial") && properties.value("fiducial").toBool() == true)
   {
     fileType = vtkSlicerMarkupsLogic::AnnotationFiducial;
   }
-  else if (properties.contains("ruler") && properties["ruler"].toBool() == true)
+  else if (properties.contains("ruler") && properties.value("ruler").toBool() == true)
   {
     fileType = vtkSlicerMarkupsLogic::AnnotationRuler;
   }
-  else if (properties.contains("roi") && properties["roi"].toBool() == true)
+  else if (properties.contains("roi") && properties.value("roi").toBool() == true)
   {
     fileType = vtkSlicerMarkupsLogic::AnnotationROI;
   }

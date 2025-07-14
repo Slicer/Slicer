@@ -127,12 +127,12 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
 
   // get the properties
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   QString name;
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
 
   if (d->MarkupsLogic.GetPointer() == nullptr)

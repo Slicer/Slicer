@@ -85,7 +85,7 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
     {
       names[i] = names[i].trimmed();
     }
-    d->Properties["name"] = names;
+    d->Properties.insert("name", names);
   }
   else
   {

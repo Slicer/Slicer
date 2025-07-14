@@ -350,16 +350,16 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles() const
       continue;
     }
     // TBD: fileType is not good enough to describe what reader to use
-    properties["fileType"] = descriptionComboBox->itemData(descriptionComboBox->currentIndex()).toString();
+    properties.insert("fileType", descriptionComboBox->itemData(descriptionComboBox->currentIndex()).toString());
     qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(this->FileWidget->cellWidget(row, OptionsColumn));
     if (optionsItem)
     {
-      // The optionsItem contains all the file properties including "fileName"
+      // The optionsItem contains all the file properties, including "fileName"
       properties.unite(optionsItem->properties());
     }
     else
     {
-      properties["fileName"] = fileItem->text();
+      properties.insert("fileName", fileItem->text());
     }
     files << properties;
   }
@@ -613,7 +613,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   Q_ASSERT(!readerProperties.contains("fileName"));
   if (readerProperties.contains("fileNames"))
   {
-    QStringList fileNames = readerProperties["fileNames"].toStringList();
+    QStringList fileNames = readerProperties.value("fileNames").toStringList();
     foreach (QString fileName, fileNames)
     {
       d->addFile(QFileInfo(fileName));
