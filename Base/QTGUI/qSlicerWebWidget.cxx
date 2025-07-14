@@ -294,6 +294,7 @@ void qSlicerWebWidget::setHandleExternalUrlWithDesktopService(bool enable)
 {
   Q_D(qSlicerWebWidget);
   d->HandleExternalUrlWithDesktopService = enable;
+  emit handleExternalUrlWithDesktopServiceChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -308,6 +309,7 @@ void qSlicerWebWidget::setInternalHosts(const QStringList& hosts)
 {
   Q_D(qSlicerWebWidget);
   d->InternalHosts = hosts;
+  emit internalHostsChanged(hosts);
 }
 
 // --------------------------------------------------------------------------
@@ -322,6 +324,7 @@ void qSlicerWebWidget::setJavaScriptConsoleMessageLoggingEnabled(bool enable)
 {
   Q_D(qSlicerWebWidget);
   d->WebEnginePage->JavaScriptConsoleMessageLoggingEnabled = enable;
+  emit javaScriptConsoleMessageLoggingEnabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -364,6 +367,7 @@ void qSlicerWebWidget::setUrl(const QString& url)
   Q_D(qSlicerWebWidget);
 
   d->WebView->setUrl(QUrl(url));
+  emit urlChanged(url);
 }
 
 //-----------------------------------------------------------------------------

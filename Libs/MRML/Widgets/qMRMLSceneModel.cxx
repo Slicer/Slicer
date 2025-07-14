@@ -643,6 +643,7 @@ void qMRMLSceneModel::setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes list
     return;
   }
   d->ListenNodeModifiedEvent = listen;
+  emit listenNodeModifiedEventChanged(listen);
   d->listenNodeModifiedEvent();
 }
 
@@ -662,6 +663,7 @@ void qMRMLSceneModel::setLazyUpdate(bool lazy)
     return;
   }
   d->LazyUpdate = lazy;
+  emit lazyUpdateChanged(lazy);
 }
 
 //------------------------------------------------------------------------------
@@ -1521,6 +1523,7 @@ void qMRMLSceneModel::setNameColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->NameColumn = column;
+  emit nameColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -1536,6 +1539,7 @@ void qMRMLSceneModel::setIDColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->IDColumn = column;
+  emit idColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -1551,6 +1555,7 @@ void qMRMLSceneModel::setCheckableColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->CheckableColumn = column;
+  emit checkableColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -1566,6 +1571,7 @@ void qMRMLSceneModel::setVisibilityColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->VisibilityColumn = column;
+  emit visibilityColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -1581,6 +1587,7 @@ void qMRMLSceneModel::setToolTipNameColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->ToolTipNameColumn = column;
+  emit toolTipNameColumnChanged(column);
   this->updateColumnCount();
 }
 
@@ -1596,6 +1603,7 @@ void qMRMLSceneModel::setExtraItemColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->ExtraItemColumn = column;
+  emit extraItemColumnChanged(column);
   this->updateColumnCount();
 }
 

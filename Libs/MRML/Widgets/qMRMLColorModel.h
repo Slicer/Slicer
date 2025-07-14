@@ -44,30 +44,37 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
   Q_ENUMS(ItemDataRole)
-  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled NOTIFY noneEnabledChanged);
 
   /// The color column contains a Qt::DecorationRole with a pixmap of the color,
   /// the ColorRole with the color QColor, the colorName as Qt::TooltipRole
   /// 0 by default.
   /// \sa colorColumn(), setColorColumn(), labelColumn, opacityColumn,
   /// checkableColumn
-  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
+  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn NOTIFY colorColumnChanged);
   /// The label column contains the colorName as Qt::DisplayRole.
   /// 1 by default.
   /// \sa labelColumn(), setLabelColumn(), colorColumn, opacityColumn,
   /// checkableColumn
-  Q_PROPERTY(int labelColumn READ labelColumn WRITE setLabelColumn)
+  Q_PROPERTY(int labelColumn READ labelColumn WRITE setLabelColumn NOTIFY labelColumnChanged);
   /// The opacity column contains the color opacity as Qt::DisplayRole
   /// 2 by default.
   /// \sa opacityColumn(), setOpacityColumn(), colorColumn, labelColumn,
   /// checkableColumn
-  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn)
+  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn NOTIFY opacityColumnChanged);
   /// The checkable column adds a checkbox for each entry.
   /// Note that the checkboxes are unlinked to the color table node.
   /// -1 by default
   /// \sa checkableColumn(), setCheckableColumn(), colorColumn, labelColumn,
   /// opacityColumn
-  Q_PROPERTY(int checkableColumn READ checkableColumn WRITE setCheckableColumn)
+  Q_PROPERTY(int checkableColumn READ checkableColumn WRITE setCheckableColumn NOTIFY checkableColumnChanged);
+
+Q_SIGNALS:
+  void noneEnabledChanged(bool);
+  void colorColumnChanged(int);
+  void labelColumnChanged(int);
+  void opacityColumnChanged(int);
+  void checkableColumnChanged(int);
 
 public:
   typedef QAbstractItemModel Superclass;

@@ -42,10 +42,15 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationGeometryWidg
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(double oversamplingFactor READ oversamplingFactor WRITE setOversamplingFactor)
-  Q_PROPERTY(bool isotropicSpacing READ isotropicSpacing WRITE setIsotropicSpacing)
-  Q_PROPERTY(bool padSegmentation READ padSegmentation WRITE setPadSegmentation)
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled NOTIFY editEnabledChanged);
+  Q_PROPERTY(double oversamplingFactor READ oversamplingFactor WRITE setOversamplingFactor NOTIFY oversamplingFactorChanged);
+  Q_PROPERTY(bool isotropicSpacing READ isotropicSpacing WRITE setIsotropicSpacing NOTIFY isotropicSpacingChanged);
+  Q_PROPERTY(bool padSegmentation READ padSegmentation WRITE setPadSegmentation NOTIFY padSegmentationChanged);
+Q_SIGNALS:
+  void editEnabledChanged(bool);
+  void oversamplingFactorChanged(double);
+  void isotropicSpacingChanged(bool);
+  void padSegmentationChanged(bool);
 
 public:
   typedef qMRMLWidget Superclass;

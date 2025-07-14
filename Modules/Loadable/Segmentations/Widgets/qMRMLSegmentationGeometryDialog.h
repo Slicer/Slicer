@@ -41,12 +41,15 @@ public:
 
   /// Controls for editing (source geometry selector and spacing options box) only appear if editing is enabled
   /// Off by default
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled NOTIFY editEnabledChanged);
   /// If turned on, the existing labelmaps in the segmentation are resampled in addition to setting reference
   /// image geometry conversion parameter
   /// Otherwise only the reference image geometry parameter is set
   /// Off by default
-  Q_PROPERTY(bool resampleLabelmaps READ resampleLabelmaps WRITE setResampleLabelmaps)
+  Q_PROPERTY(bool resampleLabelmaps READ resampleLabelmaps WRITE setResampleLabelmaps NOTIFY resampleLabelmapsChanged);
+Q_SIGNALS:
+  void editEnabledChanged(bool);
+  void resampleLabelmapsChanged(bool);
 
 public:
   typedef QObject Superclass;

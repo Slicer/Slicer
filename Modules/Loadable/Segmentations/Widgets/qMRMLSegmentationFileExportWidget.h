@@ -49,7 +49,9 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationFileExportWi
   /// Key for storing selected options in application settings.
   /// If an empty key string is given, then selections are not saved or loaded in settings.
   /// Empty by default.
-  Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey)
+  Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey NOTIFY settingsKeyChanged);
+Q_SIGNALS:
+  void settingsKeyChanged(QString);
 
 public:
   /// Constructor

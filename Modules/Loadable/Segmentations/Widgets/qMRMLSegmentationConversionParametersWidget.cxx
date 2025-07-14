@@ -185,7 +185,7 @@ void qMRMLSegmentationConversionParametersWidget::setTargetRepresentationName(QS
   {
     d->label_RepresentationName->setText(tr("Invalid representation"));
   }
-
+  emit targetRepresentationNameChanged(representationName);
   this->populatePathsTable();
   this->populateParametersTable();
 }

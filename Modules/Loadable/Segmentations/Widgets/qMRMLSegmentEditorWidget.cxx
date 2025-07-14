@@ -1748,6 +1748,7 @@ void qMRMLSegmentEditorWidget::setEffectColumnCount(int columnCount)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->EffectColumnCount = columnCount;
+  emit effectColumnCountChanged(columnCount);
   this->updateEffectList();
 }
 
@@ -1768,6 +1769,7 @@ void qMRMLSegmentEditorWidget::setUnorderedEffectsVisible(bool visible)
     return;
   }
   d->UnorderedEffectsVisible = visible;
+  emit unorderedEffectsVisibleChanged(visible);
   this->updateEffectList();
 }
 
@@ -2178,6 +2180,7 @@ void qMRMLSegmentEditorWidget::setSegmentationNodeSelectorVisible(bool visible)
       d->SegmentActionsLayout->addWidget(d->SliceRotateWarningButton);
     }
   }
+  emit segmentationNodeSelectorVisibleChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -2194,6 +2197,7 @@ void qMRMLSegmentEditorWidget::setSourceVolumeNodeSelectorVisible(bool visible)
   d->SourceVolumeNodeComboBox->setVisible(visible);
   d->SourceVolumeNodeLabel->setVisible(visible);
   d->SpecifyGeometryButton->setVisible(visible && d->SpecifyGeometryButtonVisible);
+  emit sourceVolumeNodeSelectorVisibleChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -2208,6 +2212,7 @@ void qMRMLSegmentEditorWidget::setSwitchToSegmentationsButtonVisible(bool visibl
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->SwitchToSegmentationsButton->setVisible(visible);
+  emit switchToSegmentationsButtonVisibleChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -2226,6 +2231,7 @@ void qMRMLSegmentEditorWidget::setUndoEnabled(bool enabled)
     d->Logic->ClearUndoState();
   }
   d->UndoRedoGroupBox->setVisible(enabled);
+  emit undoEnabledChanged(enabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -2239,7 +2245,8 @@ int qMRMLSegmentEditorWidget::maximumNumberOfUndoStates() const
 void qMRMLSegmentEditorWidget::setMaximumNumberOfUndoStates(int maxNumberOfStates)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->Logic->SetMaximumNumberOfUndoStates(maxNumberOfStates);
+  d->SegmentationHistory->SetMaximumNumberOfStates(maxNumberOfStates);
+  emit maximumNumberOfUndoStatesChanged(maxNumberOfStates);
 }
 
 //------------------------------------------------------------------------------
@@ -2254,6 +2261,7 @@ void qMRMLSegmentEditorWidget::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->Locked = aReadOnly;
+  emit readOnlyChanged(aReadOnly);
   if (aReadOnly)
   {
     setActiveEffect(nullptr);
@@ -2486,6 +2494,7 @@ void qMRMLSegmentEditorWidget::setEffectButtonStyle(Qt::ToolButtonStyle toolButt
     return;
   }
   d->EffectButtonStyle = toolButtonStyle;
+  emit effectButtonStyleChanged(toolButtonStyle);
   QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
   for (QAbstractButton* const button : effectButtons)
   {
@@ -2683,6 +2692,7 @@ void qMRMLSegmentEditorWidget::setAutoShowSourceVolumeNode(bool autoShow)
     return;
   }
   d->AutoShowSourceVolumeNode = autoShow;
+  emit autoShowSourceVolumeNodeChanged(d->AutoShowSourceVolumeNode);
 }
 
 //---------------------------------------------------------------------------
@@ -2880,7 +2890,8 @@ QString qMRMLSegmentEditorWidget::defaultTerminologyEntry()
 void qMRMLSegmentEditorWidget::setDefaultTerminologyEntry(const QString& terminologyEntry)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->Logic->SetDefaultTerminologyEntry(terminologyEntry.toStdString());
+  d->DefaultTerminologyEntry = terminologyEntry;
+  emit defaultTerminologyEntryChanged(terminologyEntry);
   if (!d->DefaultTerminologyEntrySettingsKey.isEmpty())
   {
     QSettings settings;
@@ -2900,6 +2911,7 @@ void qMRMLSegmentEditorWidget::setDefaultTerminologyEntrySettingsKey(const QStri
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->DefaultTerminologyEntrySettingsKey = terminologyEntrySettingsKey;
+  emit defaultTerminologyEntrySettingsKeyChanged(d->DefaultTerminologyEntrySettingsKey);
 }
 
 // --------------------------------------------------------------------------
@@ -2914,6 +2926,7 @@ void qMRMLSegmentEditorWidget::setJumpToSelectedSegmentEnabled(bool enable)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->SegmentsTableView->setJumpToSelectedSegmentEnabled(enable);
+  emit jumpToSelectedSegmentEnabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -2928,6 +2941,7 @@ void qMRMLSegmentEditorWidget::setMaskingSectionVisible(bool visible)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->MaskingSectionVisible = visible;
+  emit maskingSectionVisibleChanged(visible);
   this->updateEffectsSectionFromMRML();
 }
 
@@ -2936,6 +2950,7 @@ void qMRMLSegmentEditorWidget::setSpecifyGeometryButtonVisible(bool visible)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->SpecifyGeometryButtonVisible = visible;
+  emit specifyGeometryButtonVisibleChanged(visible);
   d->SpecifyGeometryButton->setVisible(d->SourceVolumeNodeComboBox->isVisible() && d->SpecifyGeometryButtonVisible);
 }
 
@@ -2944,6 +2959,7 @@ void qMRMLSegmentEditorWidget::setShow3DButtonVisible(bool visible)
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->Show3DButton->setVisible(visible);
+  emit show3DButtonVisibleChanged(visible);
 }
 
 // --------------------------------------------------------------------------
@@ -2959,6 +2975,7 @@ void qMRMLSegmentEditorWidget::setAddRemoveSegmentButtonsVisible(bool visible)
   Q_D(qMRMLSegmentEditorWidget);
   d->AddSegmentButton->setVisible(visible);
   d->RemoveSegmentButton->setVisible(visible);
+  emit addRemoveSegmentButtonsVisibleChanged(visible);
 }
 
 // --------------------------------------------------------------------------

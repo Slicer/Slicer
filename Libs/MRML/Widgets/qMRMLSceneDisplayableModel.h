@@ -35,11 +35,14 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
   /// more than one display node and their colors are different, it uses
   /// an invalid color.
   /// A value of -1 (default) hides the column
-  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
+  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn NOTIFY colorColumnChanged);
 
   /// This property holds the column ID where the node opacity is shown.
   /// A value of -1 (default) hides the column.
-  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn)
+  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn NOTIFY opacityColumnChanged);
+Q_SIGNALS:
+  void colorColumnChanged(int);
+  void opacityColumnChanged(int);
 
 public:
   typedef qMRMLSceneHierarchyModel Superclass;

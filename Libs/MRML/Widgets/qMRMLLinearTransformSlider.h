@@ -35,9 +35,9 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qMRMLSliderWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(TransformType TypeOfTransform READ typeOfTransform WRITE setTypeOfTransform)
+  Q_PROPERTY(TransformType TypeOfTransform READ typeOfTransform WRITE setTypeOfTransform NOTIFY TypeOfTransformChanged);
   Q_ENUMS(TransformType)
-  Q_PROPERTY(CoordinateReferenceType CoordinateReference READ coordinateReference WRITE setCoordinateReference)
+  Q_PROPERTY(CoordinateReferenceType CoordinateReference READ coordinateReference WRITE setCoordinateReference NOTIFY CoordinateReferenceChanged);
   Q_ENUMS(CoordinateReferenceType)
 
 public:
@@ -81,7 +81,9 @@ public:
   ///
   /// Return the current transform node
   vtkMRMLTransformNode* mrmlTransformNode() const;
-
+Q_SIGNALS:
+  void TypeOfTransformChanged(TransformType);
+  void CoordinateReferenceChanged(CoordinateReferenceType);
 public slots:
   ///
   /// Set the MRML node of interest

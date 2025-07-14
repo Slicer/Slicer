@@ -216,6 +216,22 @@ signals:
   /// Emitted when a segment property (e.g., name) is about to be changed.
   /// Can be used for capturing the current state of the segment, before it is modified.
   void segmentAboutToBeModified(const QString& segmentID);
+Q_SIGNALS:
+  void selectionModeChanged(int);
+  void headerVisibleChanged(bool);
+  void visibilityColumnVisibleChanged(bool);
+  void colorColumnVisibleChanged(bool);
+  void opacityColumnVisibleChanged(bool);
+  void statusColumnVisibleChanged(bool);
+  void layerColumnVisibleChanged(bool);
+  void readOnlyChanged(bool);
+  void filterBarVisibleChanged(bool);
+  void textFilterChanged(QString);
+  void jumpToSelectedSegmentEnabledChanged(bool);
+  void useTerminologySelectorChanged(bool);
+  void terminologySelectorAutoDisableChanged(bool);
+  void useTerminologySelectorSettingsKeyChanged(QString);
+  void terminologySelectorOptionVisibleChanged(bool);
 
 protected slots:
   /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.

@@ -523,6 +523,7 @@ void qMRMLNodeComboBox::setBaseName(const QString& baseName, const QString& node
   {
     d->MRMLNodeFactory->setBaseName(aNodeType, baseName);
   }
+  emit this->baseNameChanged(baseName);
 }
 
 //-----------------------------------------------------------------------------
@@ -876,6 +877,7 @@ void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
     d->RequestedNode = newCurrentNode;
   }
   d->setCurrentNodeIDInternal(newCurrentNode ? newCurrentNode->GetID() : "");
+  emit currentNodeIDChanged(newCurrentNode ? newCurrentNode->GetID() : "");
 }
 
 // --------------------------------------------------------------------------
@@ -957,7 +959,7 @@ void qMRMLNodeComboBox::setCurrentNodeIndex(int index)
 }
 
 //--------------------------------------------------------------------------
-CTK_SET_CPP(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
+CTK_SET_CPP_EMIT(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation, selectNodeUponCreationChanged);
 CTK_GET_CPP(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
 
 // --------------------------------------------------------------------------
@@ -975,6 +977,7 @@ void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
   // Remove empty elements (empty elements may be created accidentally when
   // string lists are constructed in Python)
   QStringList nodeTypesFiltered = _nodeTypes;
+  emit nodeTypesChanged(nodeTypesFiltered);
   nodeTypesFiltered.removeAll("");
 
   this->sortFilterProxyModel()->setNodeTypes(nodeTypesFiltered);
@@ -991,6 +994,7 @@ void qMRMLNodeComboBox::setNoneEnabled(bool enable)
     return;
   }
   d->NoneEnabled = enable;
+  emit noneEnabledChanged(d->NoneEnabled);
   d->updateNoneItem();
 }
 
@@ -1017,6 +1021,7 @@ void qMRMLNodeComboBox::setAddEnabled(bool enable)
     return;
   }
   d->AddEnabled = enable;
+  emit addEnabledChanged(d->AddEnabled);
   d->updateActionItems();
 }
 
@@ -1043,6 +1048,7 @@ void qMRMLNodeComboBox::setRemoveEnabled(bool enable)
     return;
   }
   d->RemoveEnabled = enable;
+  emit removeEnabledChanged(d->RemoveEnabled);
   d->updateActionItems();
 }
 
@@ -1069,6 +1075,7 @@ void qMRMLNodeComboBox::setEditEnabled(bool enable)
     return;
   }
   d->EditEnabled = enable;
+  emit editEnabledChanged(d->EditEnabled);
   d->updateActionItems();
 }
 
@@ -1095,6 +1102,7 @@ void qMRMLNodeComboBox::setRenameEnabled(bool enable)
     return;
   }
   d->RenameEnabled = enable;
+  emit renameEnabledChanged(d->RenameEnabled);
   d->updateActionItems();
 }
 
@@ -1114,6 +1122,7 @@ void qMRMLNodeComboBox::setNoneDisplay(const QString& displayName)
     return;
   }
   d->NoneDisplay = displayName;
+  emit noneDisplayChanged(d->NoneDisplay);
   d->updateNoneItem(false);
 }
 
@@ -1272,6 +1281,7 @@ void qMRMLNodeComboBox::setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)
 {
   Q_D(qMRMLNodeComboBox);
   d->ComboBox->setSizeAdjustPolicy(policy);
+  emit sizeAdjustPolicyChanged(policy);
 }
 
 //--------------------------------------------------------------------------
@@ -1329,4 +1339,5 @@ void qMRMLNodeComboBox::setInteractionNodeSingletonTag(const QString& tag)
 {
   Q_D(qMRMLNodeComboBox);
   d->InteractionNodeSingletonTag = tag;
+  emit interactionNodeSingletonTagChanged(tag);
 }

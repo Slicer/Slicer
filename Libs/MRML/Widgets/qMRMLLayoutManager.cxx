@@ -805,6 +805,7 @@ void qMRMLLayoutManager::setEnabled(bool enable)
 {
   Q_D(qMRMLLayoutManager);
   d->Enabled = enable;
+  emit this->enabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------

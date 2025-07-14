@@ -176,6 +176,7 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
 
   // Will trigger onCurrentIndexChanged
   d->ComboBox->setCurrentIndex(index);
+  emit currentColorChanged(index);
 }
 
 // ------------------------------------------------------------------------------
@@ -207,7 +208,7 @@ void qMRMLLabelComboBox::setNoneEnabled(bool enabled)
     return;
   }
   d->NoneEnabled = enabled;
-
+  emit noneEnabledChanged(enabled);
   if (enabled)
   {
     d->ComboBox->insertItem(0, "None");
@@ -230,6 +231,7 @@ void qMRMLLabelComboBox::setColorNameVisible(bool visible)
     d->ColorNameVisible = visible;
     this->updateWidgetFromMRML();
   }
+  emit colorNameVisibleChanged(visible);
 }
 
 // ------------------------------------------------------------------------------
@@ -243,6 +245,7 @@ void qMRMLLabelComboBox::setLabelValueVisible(bool visible)
   if (visible != d->LabelValueVisible)
   {
     d->LabelValueVisible = visible;
+    emit labelValueVisibleChanged(visible);
     this->updateWidgetFromMRML();
   }
 }
@@ -252,6 +255,7 @@ void qMRMLLabelComboBox::setMaximumColorCount(int maximum)
 {
   Q_D(qMRMLLabelComboBox);
   d->MaximumColorCount = maximum <= 0 ? 0 : maximum;
+  emit maximumColorCountChanged(d->MaximumColorCount);
 }
 
 // ---------------------------------------------------------------------------------
