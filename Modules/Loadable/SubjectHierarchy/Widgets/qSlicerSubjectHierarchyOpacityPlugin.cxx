@@ -48,6 +48,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyOpacityPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyOpacityPlugin);
 
 protected:

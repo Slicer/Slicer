@@ -29,6 +29,7 @@ class qMRMLWindowLevelWidgetPrivate
   : public qMRMLVolumeWidgetPrivate
   , public Ui_qMRMLWindowLevelWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
 
 protected:
