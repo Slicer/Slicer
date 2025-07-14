@@ -40,6 +40,7 @@
 // qMRMLSliceViewPrivate
 class qMRMLPlotWidgetPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLPlotWidget);
 
 protected:

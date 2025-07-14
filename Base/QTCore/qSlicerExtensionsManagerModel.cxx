@@ -80,6 +80,7 @@ struct UpdateDownloadInformation
 // --------------------------------------------------------------------------
 class QStandardItemModelWithRole : public QStandardItemModel
 {
+  Q_OBJECT
 public:
   QHash<int, QByteArray> roleNames() const override { return this->CustomRoleNames; }
   QHash<int, QByteArray> CustomRoleNames;

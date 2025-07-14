@@ -124,6 +124,7 @@ class qSlicerExtensionsButtonBox
   : public QWidget
   , public Ui_qSlicerExtensionsButtonBox
 {
+  Q_OBJECT
 public:
   typedef QWidget Superclass;
   qSlicerExtensionsButtonBox(QListWidgetItem* widgetItem, QWidget* parent = nullptr)
@@ -195,6 +196,7 @@ public:
 // --------------------------------------------------------------------------
 class qSlicerExtensionsItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   qSlicerExtensionsItemDelegate(qSlicerExtensionsLocalWidget* list, QObject* parent = nullptr)
     : QStyledItemDelegate(parent)
@@ -341,6 +343,7 @@ namespace
 // --------------------------------------------------------------------------
 class qSlicerExtensionsDescriptionLabel : public QLabel
 {
+  Q_OBJECT
 public:
   typedef QLabel Superclass;
 
@@ -617,6 +620,7 @@ protected:
 // --------------------------------------------------------------------------
 class qSlicerExtensionsItemWidget : public QWidget
 {
+  Q_OBJECT
 public:
   qSlicerExtensionsItemWidget(qSlicerExtensionsDescriptionLabel* label, QWidget* parent = nullptr)
     : QWidget(parent)

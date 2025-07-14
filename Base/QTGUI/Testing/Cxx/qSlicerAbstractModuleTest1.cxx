@@ -24,6 +24,7 @@
 
 class AModule : public qSlicerAbstractModule
 {
+  Q_OBJECT
 public:
   QString title() const override { return "A Title"; }
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }

@@ -36,6 +36,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerDummyIOOptionsWidget : public qSlicerIOOptionsWidget
 {
+  Q_OBJECT
 public:
   qSlicerDummyIOOptionsWidget(QWidget* parent = nullptr)
     : qSlicerIOOptionsWidget(parent)
@@ -52,6 +53,7 @@ private:
 //-----------------------------------------------------------------------------
 class qSlicerDummyIO : public qSlicerIO
 {
+  Q_OBJECT
 public:
   qSlicerDummyIO(QObject* parent = nullptr)
     : qSlicerIO(parent)
