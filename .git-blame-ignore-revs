@@ -348,3 +348,35 @@ b19d02ac2119b7457c2341e995ad6353235bbbb4
 830c33a34ca6d33dc70a4004f674ed640337eee7
 # STYLE: Convert C++ source files from old-style "Whitesmiths" to "Allman" style
 2762f0c9f3bc442e8665612f62465106d97766cf
+# STYLE: Add missing semicolon after statement macros
+1b8adc03b851d4489ecb18dcc65e9c61393a5818
+# STYLE: Ensure source files line ending is consistent
+51b7c91ad56c9e1857345be2109773b4c057e0b0
+# STYLE: Reformat yml files using prettier
+e4d613659b1ead74008f81a7a77af42abd940258
+# STYLE: Normalize pointer/reference formatting in preparation for clang-format
+83294207db25a5e78150a9cafb28d812fbcc7698
+# STYLE: Normalize spacing in cast expressions and template arguments
+9164d1787eddb29000bd26834d17cd83b6f8af78
+# STYLE: Normalize VTK macros formatting
+0276e1d23a5b0d8aa471ed8b0f1aa5f42072dc15
+# STYLE: Normalize control statement formatting
+c696b6c1aabb9c628e57ae2ae015fc5a38408de3
+# STYLE: Normalize whitespace in C++ assignments and declarations
+ed73eb8f703304d2ff13d44c5ffd6854c3e1b578
+# STYLE: Apply miscellaneous whitespace formatting improvements
+11a1fae3b2f6ce07262b8e6a5ae996125fa79649
+# DOC: Apply miscellaneous whitespace formatting improvements to ".md"
+86eb65a13a65b27816b2703a2d12d585e6a6e00f
+# STYLE: Apply miscellaneous whitespace formatting improvements to ".cxx.in"
+53ff212747211aac66de5bbbd3cfe25bc293af23
+# STYLE: Add `//` comments to preserve wrapping before clang-format integration
+2d10f6bd0addf50af0fc03b1e5f267490a8c9b6a
+# STYLE: Use clang-format off/on to preserve alignment and readability
+a06c4eb3527f0320e5fdecb68566b19cc680a35c
+# STYLE: Consistent formatting of C++ sources using clang-format
+b26d778bcaa0dd357bfaa0b5e312f4e28d198b21
+# COMP: Remove redundant Slicer_HAVE_QT5 definitions
+ff6d80e1b4662ff95ad131d903c3f60ece73b4fb
+# COMP: Revert removal of redundant Slicer_HAVE_QT5 definitions
+c218fa94d4083a9b46ec8e803130c6927b685758
