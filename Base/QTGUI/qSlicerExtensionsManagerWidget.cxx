@@ -102,6 +102,7 @@ class qSlicerExtensionsActionsWidget
   : public QStackedWidget
   , public Ui_qSlicerExtensionsActionsWidget
 {
+  Q_OBJECT
 public:
   qSlicerExtensionsActionsWidget(QWidget* parent = nullptr)
     : QStackedWidget(parent)
@@ -115,6 +116,7 @@ class qSlicerExtensionsToolsWidget
   : public QWidget
   , public Ui_qSlicerExtensionsToolsWidget
 {
+  Q_OBJECT
 public:
   qSlicerExtensionsToolsWidget(QWidget* parent = nullptr)
     : QWidget(parent)

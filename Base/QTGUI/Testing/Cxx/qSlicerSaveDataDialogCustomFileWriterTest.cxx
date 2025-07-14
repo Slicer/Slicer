@@ -39,6 +39,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerDummyFileWriter : public qSlicerFileWriter
 {
+  Q_OBJECT
 public:
   qSlicerDummyFileWriter(qSlicerIO::IOFileType fileType, QObject* parent = nullptr)
     : qSlicerFileWriter(parent)

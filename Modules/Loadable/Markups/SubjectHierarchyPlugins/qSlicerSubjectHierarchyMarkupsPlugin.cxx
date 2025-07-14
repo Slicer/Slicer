@@ -80,6 +80,7 @@ const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyMarkupsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyMarkupsPlugin);
 
 protected:
