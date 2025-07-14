@@ -47,17 +47,7 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 
   // If it applies, disable import of user site packages
   QString noUserSite = qgetenv("PYTHONNOUSERSITE");
-
-  PyConfig config;
-  PyConfig_InitPythonConfig(&config);
-
-  config.user_site_directory = noUserSite.toInt(); // disable user site packages
-
-  PyStatus status = Py_InitializeFromConfig(&config);
-  if (PyStatus_Exception(status))
-  {
-    Py_ExitStatusException(status);
-  }
+  Py_NoUserSiteDirectory = noUserSite.toInt();
 
   // Import site module to ensure the 'site-packages' directory
   // is added to the python path. (see site.addsitepackages function).
