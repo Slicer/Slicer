@@ -236,5 +236,5 @@ void qMRMLCaptureToolBar::setPopupsTimeOut(bool flag)
   Q_D(qMRMLCaptureToolBar);
 
   d->timeOutFlag = flag;
-  emit popupsTimeOutChanged();
+  emit popupsTimeOutChanged(flag);
 }
