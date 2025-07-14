@@ -467,16 +467,12 @@ void qSlicerSegmentationsModuleWidget::onEditSegmentation()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
-  if (!d->MRMLNodeSelector_Segmentation->currentNode())
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->MRMLNodeSelector_Segmentation->currentNode());
+
+  if (!segmentationNode)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
     return;
-  }
-
-  QStringList segmentID;
-  if (d->SegmentsTableView->selectedSegmentIDs().count() > 0)
-  {
-    segmentID << d->SegmentsTableView->selectedSegmentIDs()[0];
   }
 
   // Switch to Segment Editor module, select segmentation node and segment ID
@@ -487,25 +483,30 @@ void qSlicerSegmentationsModuleWidget::onEditSegmentation()
     return;
   }
 
-  if (!segmentID.empty())
+  // Get segmentation selector combobox and set segmentation
+  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
+  if (!nodeSelector)
   {
-    // Get segmentation selector combobox and set segmentation
-    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
-    if (!nodeSelector)
-    {
-      qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
-      return;
-    }
-    nodeSelector->setCurrentNode(d->MRMLNodeSelector_Segmentation->currentNode());
+    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
+    return;
+  }
+  nodeSelector->setCurrentNode(segmentationNode);
 
-    // Get segments table and select segment
+  // Get segments table view and set first selected segment
+  QStringList allSelectedSegmentIDs = d->SegmentsTableView->selectedSegmentIDs();
+  if (allSelectedSegmentIDs.count() > 0)
+  {
+    // Segment Editor can only have one segment selected, so select the first one
+    QStringList firstSelectedSegmentID;
+    firstSelectedSegmentID << allSelectedSegmentIDs[0];
+
     qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
     if (!segmentsTable)
     {
       qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segment Editor module";
       return;
     }
-    segmentsTable->setSelectedSegmentIDs(segmentID);
+    segmentsTable->setSelectedSegmentIDs(firstSelectedSegmentID);
   }
 }
 
@@ -1129,13 +1130,18 @@ void qSlicerSegmentationsModuleWidget::onMRMLSceneEndCloseEvent()
 bool qSlicerSegmentationsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /*=QString()*/, QString context /*=QString()*/)
 {
   Q_D(qSlicerSegmentationsModuleWidget);
-  Q_UNUSED(role);
-  Q_UNUSED(context);
+
   if (vtkMRMLSegmentationNode::SafeDownCast(node))
   {
     d->MRMLNodeSelector_Segmentation->setCurrentNode(node);
+    if (role == "SegmentID" && !context.isEmpty())
+    {
+      // If segment ID is specified, then select the segment in the segments table view
+      d->SegmentsTableView->setSelectedSegmentIDs(QStringList(context));
+    }
     return true;
   }
+
   return false;
 }
 
