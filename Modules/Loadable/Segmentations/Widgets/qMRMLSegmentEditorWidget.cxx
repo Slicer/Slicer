@@ -2288,23 +2288,10 @@ void qMRMLSegmentEditorWidget::onSwitchToSegmentations()
     return;
   }
 
-  // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("MRMLNodeComboBox_Segmentation");
-  if (!nodeSelector)
-  {
-    qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segmentations module";
-    return;
-  }
-  nodeSelector->setCurrentNode(segmentationNode);
-
-  // Get segments table and select segment
-  qMRMLSegmentsTableView* segmentsTable = moduleWidget->findChild<qMRMLSegmentsTableView*>("SegmentsTableView");
-  if (!segmentsTable)
-  {
-    qCritical() << Q_FUNC_INFO << ": SegmentsTableView is not found in Segmentations module";
-    return;
-  }
-  segmentsTable->setSelectedSegmentIDs(d->SegmentsTableView->selectedSegmentIDs());
+  // Go to Segmentations module and select the current segment
+  QStringList selectedSegmentIDs = d->SegmentsTableView->selectedSegmentIDs();
+  QString selectedSegmentID = selectedSegmentIDs.isEmpty() ? QString() : selectedSegmentIDs[0];
+  qSlicerApplication::application()->openNodeModule(segmentationNode, "SegmentID", selectedSegmentID);
 }
 
 //-----------------------------------------------------------------------------

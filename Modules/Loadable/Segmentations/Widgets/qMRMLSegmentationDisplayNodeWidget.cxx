@@ -183,22 +183,26 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
 {
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
-  d->groupBox_SelectedSegment->setEnabled(!d->SelectedSegmentID.isEmpty());
-  if (!d->SegmentationDisplayNode || d->SelectedSegmentID.isEmpty())
+  // Get segment display properties
+  vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+  bool segmentSelected = false;
+  if (d->SegmentationDisplayNode && !d->SelectedSegmentID.isEmpty())
+  {
+    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
+    if (segmentationNode && segmentationNode->GetSegmentation() //
+        && segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toStdString()))
+    {
+      // Get segment display properties for the selected segment
+      segmentSelected = d->SegmentationDisplayNode->GetSegmentDisplayProperties(d->SelectedSegmentID.toUtf8().constData(), properties);
+    }
+    // segmentSelected will be false when the current segmentation node does not have a segment with the specified ID.
+    // This is not an error, it is normal for example when first the segmentation node is set and then the current segment ID.
+  }
+  d->groupBox_SelectedSegment->setEnabled(segmentSelected);
+  if (!segmentSelected)
   {
     d->groupBox_SelectedSegment->setTitle(tr("Selected segment: none"));
     return;
-  }
-
-  // Get segment display properties
-  vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-  if (d->SegmentationDisplayNode)
-  {
-    if (!d->SegmentationDisplayNode->GetSegmentDisplayProperties(d->SelectedSegmentID.toUtf8().constData(), properties))
-    {
-      qCritical() << Q_FUNC_INFO << ": No display properties found for segment ID " << d->SelectedSegmentID;
-      return;
-    }
   }
 
   d->checkBox_VisibilitySliceFill_SelectedSegment->blockSignals(true);
