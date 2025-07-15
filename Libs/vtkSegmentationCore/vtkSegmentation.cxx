@@ -913,6 +913,15 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
     return;
   }
 
+  if (insertBeforeSegmentId.empty())
+  {
+    // This may be a full update. If the requested segments are the same then no change is needed.
+    if (std::equal(segmentIdsToMove.begin(), segmentIdsToMove.end(), this->SegmentIds.begin()))
+    {
+      return;
+    }
+  }
+
   // Remove all segmentIdsToMove from the segment ID list
   for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
        /*upon deletion the increment is done already, so don't increment here*/)

@@ -195,6 +195,7 @@ protected slots:
   virtual void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemModified(vtkIdType itemID);
+  virtual void onSubjectHierarchyItemChildrenReordered(vtkIdType itemID);
 
   virtual void onMRMLSceneImported(vtkMRMLScene* scene);
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);

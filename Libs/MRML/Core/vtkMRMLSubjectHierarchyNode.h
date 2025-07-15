@@ -73,6 +73,8 @@ public:
     SubjectHierarchyItemDisplayModifiedEvent,
     SubjectHierarchyItemTransformModifiedEvent,
     SubjectHierarchyItemReparentedEvent,
+    /// Event invoked when order of child items of an item is modified.
+    SubjectHierarchyItemChildrenReorderedEvent,
     /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
     SubjectHierarchyItemUIDAddedEvent,
@@ -279,6 +281,14 @@ public:
   /// \param beforeItemID Item to move given item before. If INVALID_ITEM_ID then insert to the end
   /// \return Success flag
   bool MoveItem(vtkIdType itemID, vtkIdType beforeItemID);
+
+  /// Reorder child items of a subject hierarchy item
+  /// If a child item was under a different parent then the item is moved under the new parent.
+  /// Current children of the parent item that are not listed in childIDs are moved to the end.
+  /// \param itemID Parent item where the children will be moved to, in the specified order.
+  /// \param childIDs New order of the children.
+  /// \return Success flag
+  bool ReorderItemChildren(vtkIdType parentItemID, vtkIdList* childIDs);
 
   // Item finder methods
 public:

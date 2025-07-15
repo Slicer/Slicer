@@ -79,7 +79,8 @@ public:
   QAction* Toggle2DFillVisibilityAction;
   QAction* Toggle2DOutlineVisibilityAction;
 
-  bool SegmentSubjectHierarchyItemRemovalInProgress;
+  bool SegmentSubjectHierarchyItemRemovalInProgress{ false };
+  bool SegmentOrderUpdateFromSegmentationNodeInProgress{ false };
 };
 
 //-----------------------------------------------------------------------------
@@ -100,7 +101,6 @@ qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmen
   , RemoveClosedSurfaceRepresentationAction(nullptr)
   , Toggle2DFillVisibilityAction(nullptr)
   , Toggle2DOutlineVisibilityAction(nullptr)
-  , SegmentSubjectHierarchyItemRemovalInProgress(false)
 {
 }
 
@@ -978,6 +978,69 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
 }
 
 //---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemChildrenReordered(vtkObject* caller, void* callData)
+{
+  Q_D(qSlicerSubjectHierarchySegmentationsPlugin);
+
+  if (d->SegmentOrderUpdateFromSegmentationNodeInProgress)
+  {
+    return;
+  }
+
+  vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+  }
+  if (!shNode->GetScene() || shNode->GetScene()->IsClosing())
+  {
+    return;
+  }
+
+  // Get item ID
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (callData)
+  {
+    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    if (itemIdPtr)
+    {
+      itemID = *itemIdPtr;
+    }
+  }
+
+  // Get segmentation node
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (!segmentationNode || !segmentationNode->GetSegmentation())
+  {
+    return;
+  }
+
+  // Get all segment subject hierarchy items
+  std::vector<vtkIdType> segmentShItemIDs;
+  shNode->GetItemChildren(itemID, segmentShItemIDs);
+  if (segmentShItemIDs.size() < 2)
+  {
+    // Nothing to reorder
+    return;
+  }
+
+  // Get segment IDs in the new order
+  std::vector<std::string> segmentIds;
+  for (vtkIdType segmentShItemID : segmentShItemIDs)
+  {
+    std::string segmentId = shNode->GetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    if (!segmentId.empty())
+    {
+      segmentIds.push_back(segmentId);
+    }
+  }
+
+  // Reorder segments in the segmentation node
+  segmentationNode->GetSegmentation()->ReorderSegments(segmentIds);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(
@@ -1377,4 +1440,66 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::showItemInView(vtkIdType itemID
   }
 
   return qSlicerSubjectHierarchyAbstractPlugin::showItemInView(itemID, viewNode, allItemsToShow);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentsOrderModified(vtkObject* caller, void* callData)
+{
+  Q_D(qSlicerSubjectHierarchySegmentationsPlugin);
+
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(caller);
+  if (!segmentationNode)
+  {
+    return;
+  }
+
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+  }
+
+  // Get segmentation subject hierarchy item
+  vtkIdType segmentationItemID = shNode->GetItemByDataNode(segmentationNode);
+  if (segmentationItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    return;
+  }
+
+  // Get all segment subject hierarchy items
+  std::vector<vtkIdType> segmentShItemIDs;
+  shNode->GetItemChildren(segmentationItemID, segmentShItemIDs);
+  if (segmentShItemIDs.size() < 2)
+  {
+    // Nothing to reorder
+    return;
+  }
+
+  bool wasSegmentOrderUpdateFromSegmentationNodeInProgress = d->SegmentOrderUpdateFromSegmentationNodeInProgress;
+  d->SegmentOrderUpdateFromSegmentationNodeInProgress = true;
+
+  // Move all segment subject hierarchy items to the end of the list, backwards
+  vtkIdType insertBeforeItemID = segmentShItemIDs[segmentShItemIDs.size() - 1];
+
+  for (int segmentIndex = segmentationNode->GetSegmentation()->GetNumberOfSegments() - 1; segmentIndex >= 0; --segmentIndex)
+  {
+    std::string segmentId = segmentationNode->GetSegmentation()->GetNthSegmentID(segmentIndex);
+    // Find the subject hierarchy item for this segment
+    for (vtkIdType segmentShItemID : segmentShItemIDs)
+    {
+      if (shNode->GetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()) == segmentId)
+      {
+        // Found the segment subject hierarchy item, move it before the previous one (if not already there)
+        if (segmentShItemID != insertBeforeItemID)
+        {
+          shNode->MoveItem(segmentShItemID, insertBeforeItemID);
+          insertBeforeItemID = segmentShItemID;
+        }
+        break;
+      }
+    }
+  }
+
+  d->SegmentOrderUpdateFromSegmentationNodeInProgress = wasSegmentOrderUpdateFromSegmentationNodeInProgress;
 }

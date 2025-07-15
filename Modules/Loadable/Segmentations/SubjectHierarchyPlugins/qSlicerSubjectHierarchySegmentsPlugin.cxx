@@ -211,6 +211,13 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
     return false;
   }
 
+  if (fromSegmentationNode == toSegmentationNode)
+  {
+    // If source and target segmentation are the same, then no reparenting is needed.
+    // The segmentation plugin has already taken care of the item reordering.
+    return true;
+  }
+
   // Get segment ID
   std::string segmentId(shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()));
 

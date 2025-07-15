@@ -134,6 +134,10 @@ public slots:
   ///  Called when segmentation display node is modified
   void onDisplayNodeModified(vtkObject* caller);
 
+  /// Called when segments order is modified in an observed segmentation node.
+  /// Updates subject hierarchy items order to match the segments order
+  void onSegmentsOrderModified(vtkObject* caller, void* callData);
+
   /// Called when a subject hierarchy item is modified.
   /// Renames segment if the modified item belongs to a segment
   void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
@@ -141,6 +145,8 @@ public slots:
   /// Called when a subject hierarchy item is about to be removed.
   /// Removes segment from parent segmentation if the removed item belongs to a segment
   void onSubjectHierarchyItemAboutToBeRemoved(vtkObject* caller, void* callData);
+
+  void onSubjectHierarchyItemChildrenReordered(vtkObject* caller, void* callData);
 
 protected slots:
   /// Export to binary labelmap
