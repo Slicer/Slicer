@@ -123,10 +123,12 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->setTransformColumn(4);
   q->setIDColumn(5);
 
-  q->setHorizontalHeaderLabels(QStringList()                                                                                    //
-                               << qMRMLSubjectHierarchyModel::tr("Node") << qMRMLSubjectHierarchyModel::tr("Description") << "" /*visibility*/
-                               << ""                                                                                            /*color*/
-                               << ""                                                                                            /*transform*/
+  q->setHorizontalHeaderLabels(QStringList()                                    //
+                               << qMRMLSubjectHierarchyModel::tr("Node")        //
+                               << qMRMLSubjectHierarchyModel::tr("Description") //
+                               << ""                                            // visibility
+                               << ""                                            // color
+                               << ""                                            // transform
                                << qMRMLSubjectHierarchyModel::tr("IDs"));
 
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node name and type"));
@@ -199,6 +201,95 @@ vtkSlicerTerminologiesModuleLogic* qMRMLSubjectHierarchyModelPrivate::terminolog
   }
   vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   return terminologiesLogic;
+}
+
+//------------------------------------------------------------------------------
+qSlicerSubjectHierarchyAbstractPlugin* qMRMLSubjectHierarchyModelPrivate::pluginForReparenting( //
+  vtkIdType itemID,
+  vtkIdType oldParentID,
+  vtkIdType newParentID) const
+{
+  Q_Q(const qMRMLSubjectHierarchyModel);
+  auto shPluginHandler = qSlicerSubjectHierarchyPluginHandler::instance();
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins = shPluginHandler->pluginsForReparentingItemInSubjectHierarchy(itemID, newParentID);
+  qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = nullptr;
+  if (foundPlugins.size() > 1)
+  {
+    // Let the user choose a plugin if more than one returned the same non-zero confidence value
+    vtkMRMLNode* dataNode = this->SubjectHierarchyNode->GetItemDataNode(itemID);
+    QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for reparenting.\n\n"
+                                    "Select plugin to reparent item\n'%1'\n(type %2)\nParent item: %3")
+                              .arg(this->SubjectHierarchyNode->GetItemName(itemID).c_str())
+                              .arg(dataNode ? dataNode->GetNodeTagName() : this->SubjectHierarchyNode->GetItemLevel(itemID).c_str())
+                              .arg(this->SubjectHierarchyNode->GetItemName(newParentID).c_str());
+    selectedPlugin = shPluginHandler->selectPluginFromDialog(textToDisplay, foundPlugins);
+  }
+  else if (foundPlugins.size() == 1)
+  {
+    selectedPlugin = foundPlugins[0];
+  }
+  else
+  {
+    // Choose default plugin if all registered plugins returned confidence value 0
+    selectedPlugin = shPluginHandler->defaultPlugin();
+  }
+
+  // If default plugin was chosen to reparent virtual item (an item in a virtual branch), or into a virtual branch,
+  // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual item, so it then
+  // cannot be reparented).
+  std::string virtualBranchAttr = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName();
+  if (((!this->SubjectHierarchyNode->GetItemAttribute(newParentID, virtualBranchAttr.c_str()).empty())
+       || (!this->SubjectHierarchyNode->GetItemAttribute(oldParentID, virtualBranchAttr.c_str()).empty()))
+      && selectedPlugin == shPluginHandler->defaultPlugin())
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to reparent virtual item " << this->SubjectHierarchyNode->GetItemName(itemID).c_str() << " under parent "
+                << this->SubjectHierarchyNode->GetItemName(newParentID).c_str();
+    return nullptr;
+  }
+
+  return selectedPlugin;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::completePendingDragAndDropReverts(QMap<vtkIdType, qMRMLSubjectHierarchyModelPrivate::ItemDragInfo>& itemsDragInfo)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  for (auto itemDragInfoIt = itemsDragInfo.begin(); itemDragInfoIt != itemsDragInfo.end();)
+  {
+    if (!itemDragInfoIt->revert)
+    {
+      ++itemDragInfoIt;
+      continue;
+    }
+
+    QStandardItem* draggedShItem = q->itemFromSubjectHierarchyItem(itemDragInfoIt.key());
+    QStandardItem* parentItem = q->itemFromSubjectHierarchyItem(itemDragInfoIt->parentItemID);
+    if (!draggedShItem || !parentItem)
+    {
+      // could not revert drag-and-drop
+      ++itemDragInfoIt;
+      continue;
+    }
+
+    QStandardItem* newParentItem = q->itemFromSubjectHierarchyItem(itemDragInfoIt->originalParentItemID);
+    if (!newParentItem)
+    {
+      newParentItem = q->subjectHierarchySceneItem();
+    }
+    // If the item has no parent, then it means it hasn't been put into the hierarchy yet and it will do it automatically
+    if (parentItem && parentItem != newParentItem)
+    {
+      int newIndex = itemDragInfoIt->originalIndexUnderParent;
+      if (parentItem != newParentItem || newIndex != draggedShItem->row())
+      {
+        // Reparent items
+        QList<QStandardItem*> children = parentItem->takeRow(draggedShItem->row());
+        newParentItem->insertRow(newIndex, children);
+      }
+    }
+
+    itemDragInfoIt = itemsDragInfo.erase(itemDragInfoIt);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -295,6 +386,7 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, d->CallBack, -10.0);
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, d->CallBack, -10.0);
   }
 }
 
@@ -563,42 +655,9 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
   }
 
   // If dropped from within the subject hierarchy tree
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins = qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForReparentingItemInSubjectHierarchy(itemID, newParentID);
-  qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = nullptr;
-  if (foundPlugins.size() > 1)
+  qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = d->pluginForReparenting(itemID, oldParentID, newParentID);
+  if (!selectedPlugin)
   {
-    // Let the user choose a plugin if more than one returned the same non-zero confidence value
-    vtkMRMLNode* dataNode = d->SubjectHierarchyNode->GetItemDataNode(itemID);
-    QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for reparenting.\n\n"
-                                    "Select plugin to reparent item\n'%1'\n(type %2)\nParent item: %3")
-                              .arg(d->SubjectHierarchyNode->GetItemName(itemID).c_str())
-                              .arg(dataNode ? dataNode->GetNodeTagName() : d->SubjectHierarchyNode->GetItemLevel(itemID).c_str())
-                              .arg(d->SubjectHierarchyNode->GetItemName(newParentID).c_str());
-    selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
-  }
-  else if (foundPlugins.size() == 1)
-  {
-    selectedPlugin = foundPlugins[0];
-  }
-  else
-  {
-    // Choose default plugin if all registered plugins returned confidence value 0
-    selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin();
-  }
-
-  // If default plugin was chosen to reparent virtual item (an item in a virtual branch), or into a virtual branch,
-  // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual item, so it then
-  // cannot be reparented).
-  if (((!d->SubjectHierarchyNode->GetItemAttribute(newParentID,
-                                                   vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str())
-           .empty()) //
-       || (!d->SubjectHierarchyNode->GetItemAttribute(oldParentID,
-                                                      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str())
-              .empty())) //
-      && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin())
-  {
-    qCritical() << Q_FUNC_INFO << ": Failed to reparent virtual item " << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << " under parent "
-                << d->SubjectHierarchyNode->GetItemName(newParentID).c_str();
     return false;
   }
 
@@ -637,8 +696,13 @@ bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow)
     return false;
   }
 
-  // Get item currently next to desired position
-  vtkIdType beforeItemID = d->SubjectHierarchyNode->GetItemByPositionUnderParent(parentItemID, newRow);
+  // Get item currently next to desired position.
+  // If moving item to the last child position then we need to specify vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID as beforeItemID.
+  vtkIdType beforeItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  if (newRow < d->SubjectHierarchyNode->GetNumberOfItemChildren(parentItemID))
+  {
+    beforeItemID = d->SubjectHierarchyNode->GetItemByPositionUnderParent(parentItemID, newRow);
+  }
   if (itemID == beforeItemID)
   {
     return true;
@@ -811,7 +875,30 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
 QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyModel);
-  return d->insertSubjectHierarchyItem(itemID, this->subjectHierarchyItemIndex(itemID));
+  int itemPositionUnderParentInModel = -1;
+
+  // When reparenting an item, there may be temporary items in the model in the parent, above the new item.
+  // Therefore, child index in the subject hierarchy node may not be the same as the child index in the model.
+  // Instead of simply getting the child position from the subject hierarchy node, it is more robust to
+  // get the model index of the previous sibling and increment that by one to get the insertion position in the model.
+  int previousItemIndexInShNode = this->subjectHierarchyItemIndex(itemID) - 1;
+  if (previousItemIndexInShNode >= 0)
+  {
+    vtkIdType parentID = d->SubjectHierarchyNode->GetItemParent(itemID);
+    vtkIdType previousItemID = d->SubjectHierarchyNode->GetItemByPositionUnderParent(parentID, previousItemIndexInShNode);
+    if (previousItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+      // Get the index of the previous item in the model
+      QStandardItem* previousItem = this->itemFromSubjectHierarchyItem(previousItemID);
+      if (previousItem)
+      {
+        // Get the index of the previous item in the model and increment it by one to get the insertion position
+        itemPositionUnderParentInModel = previousItem->row() + 1;
+      }
+    }
+  }
+
+  return d->insertSubjectHierarchyItem(itemID, itemPositionUnderParentInModel);
 }
 
 //------------------------------------------------------------------------------
@@ -838,7 +925,14 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
   // model but we don't know its index yet. This is needed because a custom widget may be notified
   // about row insertion before insertRow() returns (and the RowCache entry is added).
   d->RowCache[itemID] = QModelIndex();
-  parent->insertRow(row, items);
+  if (row >= 0)
+  {
+    parent->insertRow(row, items);
+  }
+  else
+  {
+    parent->appendRow(items);
+  }
   d->RowCache[itemID] = items[0]->index();
 
   return items[0];
@@ -857,8 +951,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     return flags;
   }
 
-  if (column == this->nameColumn() || column == this->colorColumn() //
-      || column == this->descriptionColumn())
+  if (column == this->nameColumn() || column == this->colorColumn() || column == this->descriptionColumn())
   {
     flags |= Qt::ItemIsEditable;
   }
@@ -881,8 +974,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
   }
   // Along the same logic, drop is not enabled to children nodes in virtual branches
   vtkIdType parentItemID = d->SubjectHierarchyNode->GetItemParent(itemID);
-  if (parentItemID //
-      && d->SubjectHierarchyNode->HasItemAttribute(parentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()))
+  if (parentItemID && d->SubjectHierarchyNode->HasItemAttribute(parentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()))
   {
     flags &= ~Qt::ItemIsDropEnabled;
   }
@@ -1063,8 +1155,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
     // it would fire a superfluous itemChanged() signal.
-    if (item->data(VisibilityRole).isNull() //
-        || item->data(VisibilityRole).toInt() != visible)
+    if (item->data(VisibilityRole).isNull() || item->data(VisibilityRole).toInt() != visible)
     {
       item->setData(visible, VisibilityRole);
       if (!visibilityIcon.isNull())
@@ -1110,14 +1201,10 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     item->setData(color, Qt::DecorationRole);
 
     // Assemble and set tooltip
-    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = d->terminologiesModuleLogic();
-    if (!terminologiesLogic)
-    {
-      qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
-    }
-    vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
-    terminologiesLogic->DeserializeTerminologyEntry(item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toUtf8().constData(), terminologyEntry);
-    item->setToolTip(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());
+    vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
+    std::string terminologyStr = item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toStdString();
+    vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(terminologyStr, terminologyEntry);
+    item->setToolTip(QString::fromStdString(vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry(terminologyEntry)));
   }
   // Transform column
   if (column == this->transformColumn())
@@ -1204,6 +1291,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType sh
     }
   }
 
+  // Set item parent
   vtkIdType parentItemID = this->subjectHierarchyItemFromItem(parentItem);
   if (this->parentSubjectHierarchyItem(shItemID) != parentItemID)
   {
@@ -1219,7 +1307,9 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType sh
       this->updateItemFromSubjectHierarchyItem(item, shItemID, item->column());
     }
   }
-  else if (this->subjectHierarchyItemIndex(shItemID) != item->row())
+
+  // Set item position within parent
+  if (this->subjectHierarchyItemIndex(shItemID) != item->row())
   {
     // Moved within parent, need to re-order subject hierarchy item in the node
     int oldRow = this->subjectHierarchyItemIndex(shItemID);
@@ -1227,9 +1317,9 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType sh
     // When moving down, the item before which this item needs to be inserted was one row down
     int insertBeforeRow = (newRow > oldRow ? newRow + 1 : newRow);
     const int numberOfChildren = d->SubjectHierarchyNode->GetNumberOfItemChildren(parentItemID);
-    if (insertBeforeRow >= numberOfChildren)
+    if (insertBeforeRow > numberOfChildren)
     {
-      insertBeforeRow = numberOfChildren - 1;
+      insertBeforeRow = numberOfChildren;
     }
     if (!this->moveToRow(shItemID, insertBeforeRow))
     {
@@ -1451,6 +1541,7 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent: sceneModel->onSubjectHierarchyItemModified(itemID); break;
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent: sceneModel->onSubjectHierarchyItemChildrenReordered(itemID); break;
     case vtkMRMLScene::EndImportEvent: sceneModel->onMRMLSceneImported(scene); break;
     case vtkMRMLScene::EndCloseEvent: sceneModel->onMRMLSceneClosed(scene); break;
     case vtkMRMLScene::StartBatchProcessEvent: sceneModel->onMRMLSceneStartBatchProcess(scene); break;
@@ -1532,6 +1623,53 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemModified(vtkIdType itemID)
 {
   this->updateModelItems(itemID);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdType parentItemID)
+{
+  // reorder child items of itemID to match order of child items in the SH node
+
+  Q_D(qMRMLSubjectHierarchyModel);
+  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsBatchProcessing())
+  {
+    return;
+  }
+
+  QStandardItem* newParentItem = this->itemFromSubjectHierarchyItem(parentItemID);
+  if (!newParentItem)
+  {
+    qWarning() << Q_FUNC_INFO << ": parent item not found by ID" << parentItemID;
+    return;
+  }
+
+  std::vector<vtkIdType> childrenItemIDs;
+  d->SubjectHierarchyNode->GetItemChildren(parentItemID, childrenItemIDs);
+  for (int positionInShNode = 0; positionInShNode < childrenItemIDs.size(); ++positionInShNode)
+  {
+    vtkIdType childItemID = childrenItemIDs[positionInShNode];
+
+    QStandardItem* childItem = this->itemFromSubjectHierarchyItem(childItemID);
+    if (!childItem)
+    {
+      qWarning() << Q_FUNC_INFO << ": child item not found by ID" << childItemID;
+      continue;
+    }
+    QStandardItem* formerParentItem = childItem->parent();
+    if (!formerParentItem)
+    {
+      qWarning() << Q_FUNC_INFO << ": parent not found of item ID" << childItemID;
+      continue;
+    }
+
+    int formerChildPosition = this->indexFromSubjectHierarchyItem(childItemID).row();
+    if (newParentItem != formerParentItem || positionInShNode != formerChildPosition)
+    {
+      // Reparent/reorder item in model
+      QList<QStandardItem*> children = formerParentItem->takeRow(formerChildPosition);
+      newParentItem->insertRow(positionInShNode, children);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1621,10 +1759,145 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
 {
   Q_D(qMRMLSubjectHierarchyModel);
 
-  // Update each dropped item
+  if (!d->SubjectHierarchyNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+  }
+
+  // Update order of items in the subject hierarchy node from the current order in the model.
+  // First collect all information about the drag-and-drops (so that later we can undo the failed ones),
+  // then update the subject hierarchy node with the new order,
+  // finally let plugins finalize or request revert of the drag-and-drop.
+
+  // List to preserve order of drag-and-drops (QMap does not preserve order)
+  QList<vtkIdType> draggedShItemIds;
+  QMap<vtkIdType, qMRMLSubjectHierarchyModelPrivate::ItemDragInfo> itemsDragInfo;
+
+  // Get parents of all dragged items
+  std::vector<QStandardItem*> draggedParentShItems;
   foreach (vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
   {
-    this->updateSubjectHierarchyItemFromItem(draggedShItemID, this->itemFromSubjectHierarchyItem(draggedShItemID));
+    QStandardItem* draggedShItem = this->itemFromSubjectHierarchyItem(draggedShItemID);
+    if (!draggedShItem)
+    {
+      continue;
+    }
+    QStandardItem* draggedParentShItem = draggedShItem->parent();
+    if (!draggedParentShItem)
+    {
+      continue;
+    }
+
+    // Don't do the following if the row is not complete (reparenting an incomplete row might lead to errors;
+    // if there is no child yet for a given column, it will get there next time updateNodeFromItem is called).
+    // updateNodeFromItem is called for every item drag&dropped (we ensure that all the indexes of the row are
+    // reparented when entering the d&d function)
+    bool incompleteItem = false;
+    int columnCount = draggedParentShItem->columnCount();
+    for (int col = 0; col < columnCount; ++col)
+    {
+      if (draggedParentShItem->child(draggedShItem->row(), col) == nullptr)
+      {
+        incompleteItem = true;
+        break;
+      }
+    }
+    if (incompleteItem)
+    {
+      continue;
+    }
+
+    vtkIdType oldParentShItemID = this->parentSubjectHierarchyItem(draggedShItemID);
+    vtkIdType newParentShItemID = this->subjectHierarchyItemFromItem(draggedParentShItem);
+
+    qMRMLSubjectHierarchyModelPrivate::ItemDragInfo dragInfo;
+    dragInfo.parentItemID = newParentShItemID;
+    dragInfo.originalParentItemID = oldParentShItemID;
+    dragInfo.originalIndexUnderParent = this->subjectHierarchyItemIndex(draggedShItemID);
+    itemsDragInfo[draggedShItemID] = dragInfo;
+
+    if (!this->canBeAParent(newParentShItemID))
+    {
+      itemsDragInfo[draggedShItemID].revert = true;
+      continue;
+    }
+
+    // If dropped from within the subject hierarchy tree
+    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = d->pluginForReparenting(draggedShItemID, oldParentShItemID, newParentShItemID);
+    if (!selectedPlugin)
+    {
+      itemsDragInfo[draggedShItemID].revert = true;
+      continue;
+    }
+
+    itemsDragInfo[draggedShItemID].plugin = selectedPlugin;
+    draggedShItemIds.push_back(draggedShItemID);
+
+    // Notify observers before MRML update
+    emit aboutToReparentByDragAndDrop(draggedShItemID, newParentShItemID);
+
+    if (oldParentShItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+      // Skip if already added
+      if (std::find(draggedParentShItems.begin(), draggedParentShItems.end(), draggedParentShItem) != draggedParentShItems.end())
+      {
+        continue;
+      }
+      draggedParentShItems.push_back(draggedParentShItem);
+    }
+  }
+
+  // Revert invalid or unneeded drag-and-drops now to minimize unnecessary item reorderings
+  d->completePendingDragAndDropReverts(itemsDragInfo);
+
+  // Notify plugin about reparenting
+  for (vtkIdType draggedShItemID : draggedShItemIds)
+  {
+    vtkIdType newParentShItemID = itemsDragInfo[draggedShItemID].parentItemID;
+    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = itemsDragInfo[draggedShItemID].plugin;
+
+    // Have the selected plugin reparent the node
+    bool successfullyReparentedByPlugin = selectedPlugin && selectedPlugin->reparentItemInsideSubjectHierarchy(draggedShItemID, newParentShItemID);
+    if (!successfullyReparentedByPlugin)
+    {
+      // The plugin requested revert of the drag-and-drop. This is not necessarily an error, for example drag-and-drop may trigger an import operation that
+      // leaves the original node in place.
+      itemsDragInfo[draggedShItemID].revert = true;
+      continue;
+    }
+
+    // Notify observers after MRML update
+    emit reparentedByDragAndDrop(draggedShItemID, newParentShItemID);
+  }
+
+  // Revert failed drag-and-drops
+  d->completePendingDragAndDropReverts(itemsDragInfo);
+
+  // Update children order in the subject hierarchy node for each parent
+  // All children items of a parent item are reordered at once, because if we only
+  // move a single item then the first change triggers an update of the model from the
+  // subject hierarchy node, overwriting the order in the model.
+  for (QStandardItem* draggedParentShItem : draggedParentShItems)
+  {
+    vtkIdType parentItemID = this->subjectHierarchyItemFromItem(draggedParentShItem);
+    vtkNew<vtkIdList> childIDs;
+    // Get all children of the dragged parent item
+    for (int row = 0; row < draggedParentShItem->rowCount(); ++row)
+    {
+      QStandardItem* childItem = draggedParentShItem->child(row);
+      if (!childItem)
+      {
+        continue;
+      }
+      vtkIdType childItemID = this->subjectHierarchyItemFromItem(childItem);
+      if (childItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+        childIDs->InsertNextId(childItemID);
+      }
+    }
+    // Reorder item children in the subject hierarchy node
+    d->SubjectHierarchyNode->ReorderItemChildren(parentItemID, childIDs);
   }
 
   // Re-select dropped items.
