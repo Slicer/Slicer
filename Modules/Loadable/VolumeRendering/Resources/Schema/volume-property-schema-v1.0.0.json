@@ -1,0 +1,171 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/VolumeRendering/Resources/Schema/volume-property-schema-v1.0.0.json#",
+    "type": "object",
+    "title": "Schema for storing one or more volume property",
+    "description": "Stores one or more volume property objects, which define the appearance of volume rendering.",
+    "required": ["@schema", "volumeProperties"],
+    "additionalProperties": true,
+    "properties": {
+        "@schema": {
+            "type": "string",
+            "title": "Schema",
+            "description": "URL of versioned schema."
+        },
+        "volumeProperties": {
+            "type": "array",
+            "title": "Volume properties",
+            "description": "Stores one or more volume property objects.",
+            "items": {
+              "$ref": "#/definitions/volumeProperty"
+            }
+        }
+    },
+    "definitions": {
+        "volumeProperty" : {
+            "type": "object",
+            "title": "Volume property",
+            "description": "Stores a single volume property object.",
+            "additionalProperties": true,
+            "properties": {
+                "effectiveRange": {
+                    "type": "array",
+                    "title": "Effective range",
+                    "description": "Effective range of the transfer functions. Outside this range the functions are constant.",
+                    "items": { "type": "number" },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "isoSurfaceValues": {
+                    "type": "array",
+                    "title": "Iso-surface values",
+                    "description": "List of iso-surface values for volume rendering.",
+                    "items": { "type": "number" },
+                    "default": []
+                },
+                "independentComponents": {
+                    "type": "boolean",
+                    "title": "Independent components",
+                    "description": "Determines if each component of the data is processed independently.",
+                    "default": false
+                },
+                "interpolationType": {
+                    "type": "string",
+                    "title": "Interpolation type",
+                    "description": "Type of interpolation used for volume rendering.",
+                    "enum": ["nearest", "linear", "cubic"],
+                    "default": "linear"
+                },
+                "useClippedVoxelIntensity": {
+                    "type": "boolean",
+                    "title": "Use clipped voxel intensity",
+                    "description": "Determines if the voxel intensity is clipped to the effective range.",
+                    "default": false
+                },
+                "clippedVoxelIntensity": {
+                    "type": "number",
+                    "title": "Clipped voxel intensity",
+                    "description": "Intensity value used for the clipped voxel intensity.",
+                    "default": 0.0
+                },
+                "scatteringAnisotropy": {
+                    "type": "number",
+                    "title": "Scattering anisotropy",
+                    "description": "Anisotropy factor for scattering in volume rendering.",
+                    "minimum": -1.0,
+                    "maximum": 1.0,
+                    "default": 0.0
+                },
+                "components": {
+                    "type": "array",
+                    "title": "Components",
+                    "description": "List of components for the volume property.",
+                    "items": { "$ref": "#/definitions/component" },
+                    "default": []
+                }
+            }
+        },
+        "component": {
+          "type": "object",
+          "title": "Component",
+          "description": "Stores a single component of a volume property.",
+          "additionalProperties": true,
+          "properties": {
+              "componentWeight": {
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0,
+                  "default": 1.0
+              },
+              "shade": { "type": "boolean", "default": false },
+              "lighting": { "$ref": "#/definitions/lighting" },
+              "disableGradientOpacity": { "type": "boolean", "default": false },
+              "scalarOpacityUnitDistance": { "type": "number", "minimum": 0.0, "default": 1.0 },
+              "grayTransferFunction": { "$ref": "#/definitions/piecewiseLinearFunction" },
+              "scalarOpacity": { "$ref": "#/definitions/piecewiseLinearFunction" },
+              "gradientOpacity": { "$ref": "#/definitions/piecewiseLinearFunction" },
+              "rgbTransferFunction": { "$ref": "#/definitions/colorTransferFunction" }
+              }
+        },
+        "lighting" : {
+            "type": "object",
+            "title": "Lighting",
+            "description": "Stores lighting properties for volume rendering.",
+            "additionalProperties": true,
+            "properties": {
+                "ambient": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.1 },
+                "diffuse": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.7 },
+                "specular": { "type": "number", "minimum": 0.0, "maximum": 1.0, "default": 0.2 },
+                "specularPower": { "type": "number", "minimum": 0.0, "default": 10.0 }
+            },
+            "required": ["ambient", "diffuse", "specular", "specularPower"]
+        },
+        "piecewiseLinearFunction": {
+            "type": "object",
+            "title": "Piecewise Linear Function",
+            "description": "Stores a piecewise linear function.",
+            "properties": {
+                "points": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "x": { "type": "number" },
+                            "y": { "type": "number" },
+                            "midpoint": { "type": "number" },
+                            "sharpness": { "type": "number" }
+                        },
+                        "required": ["x", "y"]
+                    }
+                }
+            },
+            "required": ["points"]
+        },
+        "colorTransferFunction": {
+            "type": "object",
+            "title": "Color Transfer Function",
+            "description": "Stores a color transfer function.",
+            "properties": {
+                "points": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "x": { "type": "number" },
+                            "color": {
+                                "type": "array",
+                                "items": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+                                "minItems": 3,
+                                "maxItems": 3
+                            },
+                            "midpoint": { "type": "number" },
+                            "sharpness": { "type": "number" }
+                        },
+                        "required": ["x", "color"]
+                    }
+                }
+            },
+            "required": ["points"]
+        }
+    }
+}

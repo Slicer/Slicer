@@ -92,9 +92,7 @@ qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerVolumeRenderingReader::extensions() const
 {
-  // pic files are bio-rad images (see itkBioRadImageIO)
-  return QStringList() //
-         << tr("Transfer Function") + " (*.vp)";
+  return QStringList() << tr("Transfer Function") + " (*.vp)" << tr("Volume Property") + " (*.vp.json)";
 }
 
 //-----------------------------------------------------------------------------
@@ -107,12 +105,19 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
   {
     return false;
   }
-  vtkMRMLVolumePropertyNode* node = d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toUtf8());
+
+  vtkNew<vtkCollection> volumePropertyNodes;
+  bool success = d->VolumeRenderingLogic->AddVolumePropertiesFromFile(fileName.toUtf8(), volumePropertyNodes);
+
   QStringList loadedNodes;
-  if (node)
+  for (int i = 0; i < volumePropertyNodes->GetNumberOfItems(); ++i)
   {
-    loadedNodes << QString(node->GetID());
+    vtkMRMLVolumePropertyNode* node = vtkMRMLVolumePropertyNode::SafeDownCast(volumePropertyNodes->GetItemAsObject(i));
+    if (node)
+    {
+      loadedNodes << QString(node->GetID());
+    }
   }
   this->setLoadedNodes(loadedNodes);
-  return node != nullptr;
+  return success;
 }

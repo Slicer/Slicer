@@ -68,6 +68,10 @@ public:
 
   /// Get Boolean property value
   bool GetBoolProperty(const char* propertyName);
+  /// Get Boolean property value.
+  /// If a Boolean property by the specified name is found then set it in propertyValue and return true.
+  /// If a Boolean property by the specified name is not found then return false.
+  bool GetBoolProperty(const char* propertyName, bool& propertyValue);
 
   /// Get double-precision floating point property value.
   /// If a double property by the specified name is found then set it in propertyValue and return true.

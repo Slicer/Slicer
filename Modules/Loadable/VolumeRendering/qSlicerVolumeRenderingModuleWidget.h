@@ -103,6 +103,8 @@ protected slots:
 
   void setMRMLClipNode(vtkMRMLNode* clipNode);
 
+  void updateNumberOfComponents();
+
 protected:
   void setup() override;
 

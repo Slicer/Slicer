@@ -24,6 +24,8 @@ set(${KIT}_SRCS
   vtkMRMLShaderPropertyStorageNode.h
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyNode.h
+  vtkMRMLVolumePropertyJsonStorageNode.cxx
+  vtkMRMLVolumePropertyJsonStorageNode.h
   vtkMRMLVolumePropertyStorageNode.cxx
   vtkMRMLVolumePropertyStorageNode.h
   vtkMRML${MODULE_NAME}DisplayNode.cxx

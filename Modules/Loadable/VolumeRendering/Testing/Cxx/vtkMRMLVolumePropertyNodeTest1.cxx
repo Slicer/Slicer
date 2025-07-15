@@ -30,12 +30,12 @@
 
 namespace
 {
-int readWrite();
+int readOldScene(const char*);
 int piecewiseFunctionFromString();
 } // namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNodeTest1(int argc, char*[])
+int vtkMRMLVolumePropertyNodeTest1(int argc, char* argv[])
 {
   if (argc < 2)
   {
@@ -43,12 +43,14 @@ int vtkMRMLVolumePropertyNodeTest1(int argc, char*[])
     return EXIT_FAILURE;
   }
 
+  const char* sceneFilePath = argv[1];
+
   vtkNew<vtkMRMLVolumePropertyNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  CHECK_EXIT_SUCCESS(readWrite());
+  CHECK_EXIT_SUCCESS(readOldScene(sceneFilePath));
   CHECK_EXIT_SUCCESS(piecewiseFunctionFromString());
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
@@ -67,65 +69,41 @@ namespace
 {
 
 //---------------------------------------------------------------------------
-int readWrite()
+int readOldScene(const char* mrmlScenePath)
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLVolumePropertyNode> propertyNode;
   scene->RegisterNodeClass(propertyNode.GetPointer());
+  scene->SetURL(mrmlScenePath);
+  scene->Connect();
 
-  vtkNew<vtkPiecewiseFunction> scalarOpacity;
-  scalarOpacity->AddPoint(-10000., 0.);
-  scalarOpacity->AddPoint(-10001., 1.);
-  scalarOpacity->AddPoint(0., 0.00001);
-  scalarOpacity->AddPoint(0.1, 1.0000);
-  scalarOpacity->AddPoint(7.0, 0.122);
+  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLVolumePropertyNode"));
+
+  vtkNew<vtkPiecewiseFunction> expectedScalarOpacity;
+  expectedScalarOpacity->AddPoint(-10000., 0.);
+  expectedScalarOpacity->AddPoint(-10001., 1.);
+  expectedScalarOpacity->AddPoint(0., 0.00001);
+  expectedScalarOpacity->AddPoint(0.1, 1.0000);
+  expectedScalarOpacity->AddPoint(7.0, 0.122);
   // precision is important as it is used for "threshold" (points are very
   // close to each other).
-  scalarOpacity->AddPoint(7.0000000000001, 1.0);
-  scalarOpacity->AddPoint(7.0000000000001 + std::numeric_limits<double>::epsilon(), 0.01);
-  scalarOpacity->AddPoint(10., 0.000000001);
+  expectedScalarOpacity->AddPoint(7.000000000001, 1.0);
+  expectedScalarOpacity->AddPoint(10., 0.000000001);
 
-  propertyNode->SetScalarOpacity(scalarOpacity.GetPointer());
-  scene->AddNode(propertyNode.GetPointer());
+  vtkPiecewiseFunction* actualScalarOpacity = vpNode->GetScalarOpacity();
+  CHECK_NOT_NULL(actualScalarOpacity);
 
-  scene->SetSaveToXMLString(1);
-  scene->Commit();
-  std::string sceneXML = scene->GetSceneXMLString();
-
-  vtkNew<vtkMRMLScene> scene2;
-  scene2->RegisterNodeClass(propertyNode.GetPointer());
-  scene2->SetLoadFromXMLString(1);
-  scene2->SetSceneXMLString(sceneXML);
-  scene2->Import();
-
-  vtkMRMLVolumePropertyNode* propertyNode2 = vtkMRMLVolumePropertyNode::SafeDownCast(scene2->GetFirstNodeByClass("vtkMRMLVolumePropertyNode"));
-  CHECK_NOT_NULL(propertyNode2);
-
-  vtkPiecewiseFunction* scalarOpacity2 = propertyNode2->GetScalarOpacity();
-  CHECK_NOT_NULL(scalarOpacity2);
-
-  for (int i = 0; i < scalarOpacity->GetSize(); ++i)
+  CHECK_INT(actualScalarOpacity->GetSize(), expectedScalarOpacity->GetSize());
+  for (int i = 0; i < actualScalarOpacity->GetSize(); ++i)
   {
-    double value[4];
-    double value2[4];
-    int res = scalarOpacity->GetNodeValue(i, value);
-    int res2 = scalarOpacity2->GetNodeValue(i, value2);
-    if (res == -1 || res2 == -1  //
-        || value[0] != value2[0] //
-        || value[1] != value2[1] //
-        || value[2] != value2[2] //
-        || value[3] != value2[3] //
-    )
-    {
-      std::cout << __FUNCTION__ << ":" << __LINE__ << "failed:" << std::endl //
-                << "  Scalar opacity values are different:" << std::endl     //
-                << "     " << res << " " << value[0] << " " << value[1]      //
-                << " " << value[2] << " " << value[3] << std::endl           //
-                << "  instead of" << std::endl                               //
-                << "     " << res << " " << value[0] << " " << value[1]      //
-                << " " << value[2] << " " << value[3] << std::endl;
-      return EXIT_FAILURE;
-    }
+    double actualValue[4];
+    double expectedValue[4];
+    int actual = actualScalarOpacity->GetNodeValue(i, actualValue);
+    int expected = expectedScalarOpacity->GetNodeValue(i, expectedValue);
+    CHECK_DOUBLE_TOLERANCE(actualValue[0], expectedValue[0], std::numeric_limits<double>::epsilon())
+    CHECK_DOUBLE_TOLERANCE(actualValue[1], expectedValue[1], std::numeric_limits<double>::epsilon())
+    CHECK_DOUBLE_TOLERANCE(actualValue[2], expectedValue[2], std::numeric_limits<double>::epsilon())
+    CHECK_DOUBLE_TOLERANCE(actualValue[3], expectedValue[3], std::numeric_limits<double>::epsilon())
   }
   return EXIT_SUCCESS;
 }
@@ -144,13 +122,11 @@ int piecewiseFunctionFromString()
   {
     double node[4];
     function->GetNodeValue(i, node);
-    if (node[0] != expectedData[i * 2] || //
-        node[1] != expectedData[i * 2 + 1])
+    if (node[0] != expectedData[i * 2] || node[1] != expectedData[i * 2 + 1])
     {
-      std::cout << "Failed to parse value at index " << i << ", " //
-                << "found [" << node[0] << "," << node[1] << "] " //
-                << "instead of [" << expectedData[i * 2] << ","   //
-                << expectedData[i * 2 + 1] << "]" << std::endl;
+      std::cout << "Failed to parse value at index " << i << ", "
+                << "found [" << node[0] << "," << node[1] << "] "
+                << "instead of [" << expectedData[i * 2] << "," << expectedData[i * 2 + 1] << "]" << std::endl;
       return EXIT_FAILURE;
     }
   }

@@ -998,9 +998,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     pipeline->ComputeAlphaChannel->RemoveAllInputConnections(0);
     pipeline->MergeAlphaChannelToRGB->RemoveAllInputConnections(0);
   }
-  // Independent component means that the scalar components of the volume
-  // are rendered independently (not as a colored voxel).
-  bool independentComponents = (numberOfChannels != 3 && numberOfChannels != 4);
 
   // Set volume visibility, return if hidden
   pipeline->VolumeActor->SetVisibility(displayNodeVisible);
@@ -1186,12 +1183,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   // Set volume property
   vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
-  vtkVolumeProperty* volumeProperty = volumePropertyNode ? volumePropertyNode->GetVolumeProperty() : nullptr;
-  if (volumeProperty)
-  {
-    volumeProperty->SetIndependentComponents(independentComponents);
-  }
-
   if (volumePropertyNode)
   {
     volumePropertyNode->SetPropertyInVolumeNode(pipeline->VolumeActor);

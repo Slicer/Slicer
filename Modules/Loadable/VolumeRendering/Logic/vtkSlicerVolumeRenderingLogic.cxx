@@ -32,6 +32,7 @@
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
+#include <vtkMRMLVolumePropertyJsonStorageNode.h>
 #include <vtkMRMLVolumePropertyStorageNode.h>
 #include <vtkMRMLShaderPropertyNode.h>
 #include <vtkMRMLShaderPropertyStorageNode.h>
@@ -107,6 +108,9 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 
   vtkNew<vtkMRMLVolumePropertyStorageNode> vpsn;
   this->GetMRMLScene()->RegisterNodeClass(vpsn.GetPointer());
+
+  vtkNew<vtkMRMLVolumePropertyJsonStorageNode> vpjsn;
+  this->GetMRMLScene()->RegisterNodeClass(vpjsn.GetPointer());
 
   vtkNew<vtkMRMLShaderPropertyNode> spn;
   this->GetMRMLScene()->RegisterNodeClass(spn.GetPointer());
@@ -863,6 +867,17 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
     this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode, nullptr, nullptr, false);
     this->SetRecommendedVolumeRenderingProperties(displayNode);
     volumePropertyNode = displayNode->GetVolumePropertyNode();
+
+    if (volumePropertyNode)
+    {
+      int numberOfComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
+      vtkVolumeProperty* volumeProperty = volumePropertyNode->GetVolumeProperty();
+      if (volumeProperty)
+      {
+        bool independentComponents = (numberOfComponents != 3 && numberOfComponents != 4);
+        volumeProperty->SetIndependentComponents(independentComponents);
+      }
+    }
   }
   if (!volumePropertyNode)
   {
@@ -1026,7 +1041,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic ::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
 {
   if (roiNode == nullptr || roiNode->GetScene() == nullptr)
   {
@@ -1075,6 +1090,10 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(vtkMRMLVolum
   if (propNode != nullptr)
   {
     displayNode->SetAndObserveVolumePropertyNodeID(propNode->GetID());
+    int numberOfVolumeComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
+    int numberOfIndependentComponents = propNode->GetNumberOfIndependentComponents();
+    numberOfIndependentComponents = std::max(numberOfIndependentComponents, numberOfVolumeComponents);
+    propNode->SetNumberOfIndependentComponents(numberOfIndependentComponents);
   }
 
   if (roiNode)
@@ -1086,9 +1105,11 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(vtkMRMLVolum
     roiNode = this->CreateROINode(displayNode);
   }
 
-  this->CopyDisplayToVolumeRenderingDisplayNode(displayNode);
-
-  this->FitROIToVolume(displayNode);
+  if (displayNode)
+  {
+    this->CopyDisplayToVolumeRenderingDisplayNode(displayNode);
+    this->FitROIToVolume(displayNode);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1145,8 +1166,12 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLVolumePropertyNode> vpNode = vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
-  vtkSmartPointer<vtkMRMLVolumePropertyStorageNode> vpStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyStorageNode>::New();
+  vtkSmartPointer<vtkMRMLVolumePropertyNode> vpNode =
+    vtkSmartPointer<vtkMRMLVolumePropertyNode>::Take(vtkMRMLVolumePropertyNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyNode")));
+  vtkSmartPointer<vtkMRMLVolumePropertyStorageNode> vpStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyStorageNode>::Take(
+    vtkMRMLVolumePropertyStorageNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode")));
+  vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode> vpJsonStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode>::Take(
+    vtkMRMLVolumePropertyJsonStorageNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyJsonStorageNode")));
 
   // check for local or remote files
   int useURI = 0; // false;
@@ -1159,42 +1184,123 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
   if (useURI)
   {
     vpStorageNode->SetURI(filename);
+    vpJsonStorageNode->SetURI(filename);
     // reset filename to the local file name
     localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
   }
   else
   {
     vpStorageNode->SetFileName(filename);
+    vpJsonStorageNode->SetFileName(filename);
     localFile = filename;
   }
   const std::string fname(localFile);
 
   // check to see which node can read this type of file
-  if (!vpStorageNode->SupportedFileType(fname.c_str()))
+  if (vpStorageNode->SupportedFileType(fname.c_str()))
+  {
+    // the node name is based on the file name
+    const std::string name = vpStorageNode->GetFileNameWithoutExtension(fname.c_str());
+    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    vpNode->SetName(uname.c_str());
+    this->GetMRMLScene()->AddNode(vpNode);
+    this->GetMRMLScene()->AddNode(vpStorageNode);
+    vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
+
+    // now set up the reading
+    int retval = vpStorageNode->ReadData(vpNode);
+    if (retval != 1)
+    {
+      vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
+      this->GetMRMLScene()->RemoveNode(vpNode);
+      this->GetMRMLScene()->RemoveNode(vpStorageNode);
+      return nullptr;
+    }
+  }
+  else if (vpJsonStorageNode->SupportedFileType(fname.c_str()))
+  {
+    // the node name is based on the file name
+    const std::string name = vpJsonStorageNode->GetFileNameWithoutExtension(fname.c_str());
+    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    vpNode->SetName(uname.c_str());
+    this->GetMRMLScene()->AddNode(vpNode);
+    this->GetMRMLScene()->AddNode(vpJsonStorageNode);
+    vpNode->SetAndObserveStorageNodeID(vpJsonStorageNode->GetID());
+
+    // now set up the reading
+    int retval = vpJsonStorageNode->ReadData(vpNode);
+    if (retval != 1)
+    {
+      vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
+      this->GetMRMLScene()->RemoveNode(vpNode);
+      this->GetMRMLScene()->RemoveNode(vpJsonStorageNode);
+      return nullptr;
+    }
+  }
+  else
   {
     vtkDebugMacro("Couldn't read file, returning null volume property node: " << filename);
     return nullptr;
   }
 
-  // the node name is based on the file name
-  const std::string name = vpStorageNode->GetFileNameWithoutExtension(fname.c_str());
-  std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
-  vpNode->SetName(uname.c_str());
-  this->GetMRMLScene()->AddNode(vpNode);
-  this->GetMRMLScene()->AddNode(vpStorageNode);
-  vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
+  return vpNode;
+}
 
-  // now set up the reading
-  int retval = vpStorageNode->ReadData(vpNode);
-  if (retval != 1)
+//----------------------------------------------------------------------------
+bool vtkSlicerVolumeRenderingLogic::AddVolumePropertiesFromFile(const char* filename, vtkCollection* loadedNodes /*=nullptr*/)
+{
+  if (!this->GetMRMLScene())
   {
-    vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
-    this->GetMRMLScene()->RemoveNode(vpNode);
-    this->GetMRMLScene()->RemoveNode(vpStorageNode);
-    return nullptr;
+    vtkErrorMacro("AddVolumePropertiesFromFile: invalid MRML scene");
+    return false;
+  }
+  if (!filename || !strcmp(filename, ""))
+  {
+    vtkErrorMacro("AddVolumePropertiesFromFile: can't load volume properties from empty file name");
+    return false;
   }
 
-  return vpNode;
+  vtkNew<vtkMRMLVolumePropertyStorageNode> vpStorageNode;
+  if (vpStorageNode->SupportedFileType(filename))
+  {
+    vtkMRMLVolumePropertyNode* vpNode = this->AddVolumePropertyFromFile(filename);
+    if (!vpNode)
+    {
+      vtkErrorMacro("AddVolumePropertiesFromFile: error reading " << filename);
+      return false;
+    }
+
+    if (loadedNodes)
+    {
+      loadedNodes->AddItem(vpNode);
+    }
+    return true;
+  }
+
+  vtkNew<vtkMRMLVolumePropertyJsonStorageNode> vpJsonStorageNode;
+  if (vpJsonStorageNode->SupportedFileType(filename))
+  {
+    this->GetMRMLScene()->AddNode(vpJsonStorageNode);
+    int numberOfVolumePropertyNodes = vpJsonStorageNode->GetNumberOfVolumePropertiesInFile(filename);
+    for (int i = 0; i < numberOfVolumePropertyNodes; ++i)
+    {
+      vtkMRMLVolumePropertyNode* vpNode = vpJsonStorageNode->AddNewVolumePropertyNodeFromFile(filename, nullptr, i);
+      if (!vpNode)
+      {
+        vtkErrorMacro("AddVolumePropertiesFromFile: error reading " << filename);
+        return false;
+      }
+
+      if (loadedNodes)
+      {
+        loadedNodes->AddItem(vpNode);
+      }
+    }
+    return true;
+  }
+
+  vtkErrorMacro("AddVolumePropertiesFromFile: file type not supported: " << filename);
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -1255,7 +1361,7 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
     int retval = spStorageNode->ReadData(spNode);
     if (retval != 1)
     {
-      vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
+      vtkErrorMacro("AddShaderPropertyFromFile: error reading " << filename);
       this->GetMRMLScene()->RemoveNode(spNode);
       this->GetMRMLScene()->RemoveNode(spStorageNode);
       return nullptr;

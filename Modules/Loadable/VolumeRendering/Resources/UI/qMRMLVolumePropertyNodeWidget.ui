@@ -6,19 +6,78 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
-    <height>338</height>
+    <width>286</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Volume Property Node</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="IndependentComponentsLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Components:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QRadioButton" name="RGBColorsRadioButton">
+     <property name="text">
+      <string>RGBA</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="5">
     <widget class="ctkVTKVolumePropertyWidget" name="VolumePropertyWidget"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QRadioButton" name="IndependentRadioButton">
+     <property name="text">
+      <string>Independent</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" colspan="2">
+    <widget class="QSpinBox" name="ComponentSpinBox">
+     <property name="maximum">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="ComponentLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Component Index:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
