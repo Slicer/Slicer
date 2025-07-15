@@ -105,8 +105,7 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::vtkInternal::GetValueType(rapidjson
   {
     return vtkMRMLJsonElement::Type::BOOL;
   }
-  else if (item.IsInt() || item.IsUint() || //
-           item.IsInt64() || item.IsUint64())
+  else if (item.IsInt() || item.IsUint() || item.IsInt64() || item.IsUint64())
   {
     return vtkMRMLJsonElement::Type::INT;
   }
@@ -255,6 +254,21 @@ bool vtkMRMLJsonElement::GetBoolProperty(const char* propertyName)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLJsonElement::GetBoolProperty(const char* propertyName, bool& propertyValue)
+{
+  if (!this->Internal->JsonValue.HasMember(propertyName))
+  {
+    return false;
+  }
+  if (!this->Internal->JsonValue[propertyName].IsBool())
+  {
+    return false;
+  }
+  propertyValue = this->Internal->JsonValue[propertyName].GetBool();
+  return true;
+}
+
+//----------------------------------------------------------------------------
 vtkCodedEntry* vtkMRMLJsonElement::GetCodedEntryProperty(const char* propertyName)
 {
   std::vector<std::string> codedEntryVector;
@@ -337,7 +351,7 @@ vtkMRMLJsonElement* vtkMRMLJsonElement::GetObjectProperty(const char* objectName
   }
   if (!this->Internal->JsonValue.HasMember(objectName))
   {
-    vtkErrorMacro("GetObjectProperty: " << objectName << " property is not found");
+    // Property is not found
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonObject;
@@ -1296,8 +1310,8 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
       std::string lineValue;
       std::string delimiter = vtkMRMLJsonElement::XML_SEPARATOR;
       std::string valueDelimiter = vtkMRMLJsonElement::XML_NAME_VALUE_SEPARATOR;
-      if (valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR) != std::string::npos && //
-          valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
+      if (valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR) != std::string::npos
+          && valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
       {
         delimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR;                 // SubjectHierarchyItem uses | as delimiter
         valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem uses ^ as valueDelimiter
@@ -1346,8 +1360,8 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
       this->WriteObjectPropertyEnd();
     }
     // Check if it a double array
-    else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0 && //
-             std::all_of(valueStr.begin(), valueStr.end(), [](char c) { return std::isdigit(c) || c == ' ' || c == '-' || c == '.'; }))
+    else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0
+             && std::all_of(valueStr.begin(), valueStr.end(), [](char c) { return std::isdigit(c) || c == ' ' || c == '-' || c == '.'; }))
     {
       vtkNew<vtkDoubleArray> valueVector;
       std::istringstream iss(valueStr);

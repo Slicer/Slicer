@@ -40,6 +40,7 @@
 #include "vtkMRMLVolumePropertyNode.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkVolumeProperty.h>
 
@@ -213,19 +214,26 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> displayNode = vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode>::Take(logic->CreateVolumeRenderingDisplayNode());
-  displayNode->SetVisibility(0);
-  q->mrmlScene()->AddNode(displayNode);
-
+  vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> displayNode;
+  volumeNode->CreateDefaultDisplayNodes();
   if (volumeNode)
   {
-    volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
+    displayNode = logic->CreateDefaultVolumeRenderingNodes(volumeNode);
+  }
+  else
+  {
+    displayNode = vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode>::Take(logic->CreateVolumeRenderingDisplayNode());
+    q->mrmlScene()->AddNode(displayNode);
   }
 
-  int wasModifying = displayNode->StartModify();
+  MRMLNodeModifyBlocker blocker(displayNode);
+  displayNode->SetVisibility(0);
+  if (!volumeNode)
+  {
+    logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode, nullptr, nullptr, false /*do not create ROI*/);
+  }
   // Initialize volume rendering without the threshold info of the Volumes module
   displayNode->SetIgnoreVolumeDisplayNodeThreshold(1);
-  logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode, nullptr, nullptr, false /*do not create ROI*/);
   // Apply previous selection to the newly selected volume
   displayNode->SetIgnoreVolumeDisplayNodeThreshold(this->IgnoreVolumesThresholdCheckBox->isChecked());
   // Do not show newly selected volume (because it would be triggered by simply selecting it in the combobox,
@@ -235,7 +243,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
   {
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
   }
-  displayNode->EndModify(wasModifying);
+
   return displayNode;
 }
 
@@ -272,6 +280,7 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   d->VolumeNodeSelector->setCurrentNode(volumeNode);
+  this->updateNumberOfComponents();
 }
 
 // --------------------------------------------------------------------------
@@ -405,6 +414,10 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->RenderingMethodComboBox->setEnabled(displayNode != nullptr);
 
   // Advanced section
+
+  // Limit the component count to the max range for volume rendering in VTK
+  int numberOfComponents = volumePropertyNode ? volumePropertyNode->GetNumberOfIndependentComponents() : 1;
+  d->VolumePropertyNodeWidget->setComponentCount(qMin(numberOfComponents, VTK_MAX_VRCOMP));
 
   // Volume properties tab
   d->VolumePropertyNodeWidget->setEnabled(volumePropertyNode != nullptr);
@@ -619,6 +632,29 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumePropertyNodeChanged(
   {
     displayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode ? volumePropertyNode->GetID() : nullptr);
   }
+
+  this->updateNumberOfComponents();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::updateNumberOfComponents()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLVolumeNode* volumeNode = this->mrmlVolumeNode();
+  vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
+  if (volumeNode && volumePropertyNode)
+  {
+    int numberOfVolumeComponents = 1;
+    vtkImageData* imageData = volumeNode->GetImageData();
+    if (imageData)
+    {
+      numberOfVolumeComponents = imageData->GetNumberOfScalarComponents();
+    }
+    int numberOfIndependentComponents = volumePropertyNode->GetNumberOfIndependentComponents();
+    numberOfIndependentComponents = std::max(numberOfIndependentComponents, numberOfVolumeComponents);
+    volumePropertyNode->SetNumberOfIndependentComponents(numberOfIndependentComponents);
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -681,8 +717,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
   QString renderingClassName = d->RenderingMethodComboBox->itemData(index).toString();
   // Display node is already the right type, don't change anything
-  if (!displayNode || renderingClassName.isEmpty() //
-      || renderingClassName == displayNode->GetClassName())
+  if (!displayNode || renderingClassName.isEmpty() || renderingClassName == displayNode->GetClassName())
   {
     return;
   }
@@ -970,8 +1005,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
 //-----------------------------------------------------------
 double qSlicerVolumeRenderingModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
-  if (vtkMRMLVolumePropertyNode::SafeDownCast(node) //
-      || vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node))
+  if (vtkMRMLVolumePropertyNode::SafeDownCast(node) || vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node))
   {
     return 0.5;
   }

@@ -253,8 +253,12 @@ public:
   void FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   /// Load from file and add into the scene a transfer function.
-  /// \sa vtkMRMLVolumePropertyStorageNode
+  /// \sa vtkMRMLVolumePropertyStorageNode, vtkMRMLVolumePropertyJsonStorageNode
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile(const char* filename);
+
+  /// Load from file and add all contained volume properties into the scene
+  /// \sa vtkMRMLVolumePropertyStorageNode, vtkMRMLVolumePropertyJsonStorageNode
+  bool AddVolumePropertiesFromFile(const char* filename, vtkCollection* loadedNodes = nullptr);
 
   /// Load from file and add into the scene a shader property.
   /// \sa vtkMRMLShaderPropertyStorageNode

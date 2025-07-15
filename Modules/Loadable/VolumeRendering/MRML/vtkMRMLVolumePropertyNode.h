@@ -166,6 +166,11 @@ public:
   /// This method sets the property in the volume with suppressing the effect of the superfluous modification events.
   void SetPropertyInVolumeNode(vtkVolume* volume);
 
+  /// Number of independent components.
+  /// This controls the number of components that will be displayed on the GUI or written to json.
+  vtkSetClampMacro(NumberOfIndependentComponents, int, 1, VTK_MAX_VRCOMP);
+  vtkGetMacro(NumberOfIndependentComponents, int);
+
 protected:
   vtkMRMLVolumePropertyNode();
   ~vtkMRMLVolumePropertyNode() override;
@@ -174,25 +179,16 @@ protected:
   static int DataFromString(const std::string& dataString, double*& data);
   static std::string DataToString(double* data, int size);
 
-  // Getter and setter functions for the storable attributes
-  // (protected because only the XML read/write methods need to use these)
-  int GetInterpolationType();
+  // Setter functions for the storable attributes
+  // (protected because only the XML read method needs to use these)
   void SetInterpolationType(int);
-  int GetShade();
   void SetShade(int);
-  double GetDiffuse();
   void SetDiffuse(double);
-  double GetAmbient();
   void SetAmbient(double);
-  double GetSpecular();
   void SetSpecular(double);
-  double GetSpecularPower();
   void SetSpecularPower(double);
-  std::string GetScalarOpacityAsString();
   void SetScalarOpacityAsString(std::string);
-  std::string GetGradientOpacityAsString();
   void SetGradientOpacityAsString(std::string);
-  std::string GetRGBTransferFunctionAsString();
   void SetRGBTransferFunctionAsString(std::string);
 
 protected:
@@ -211,6 +207,9 @@ protected:
   /// Elements: {xMin, xMax}. Other axes not supported because the three transfer functions are
   /// independent value-wise, and they do not have third and fourth axes.
   double EffectiveRange[2]{ 0.0, -1.0 };
+
+  /// The number of independent components that will be displayed on the GUI or written to json.
+  int NumberOfIndependentComponents{ 1 };
 
 private:
   /// Caution: Not implemented
