@@ -10,6 +10,7 @@ import slicer
 
 from slicer import (
     qMRMLSubjectHierarchyTreeView,
+    qMRMLSubjectHierarchyComboBox,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
 )
@@ -818,10 +819,10 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.bravo, pathlib.Path("magnificent/path/bravo"))
         self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("magnificent/path/bravo"))
 
-    def impl_qMRMLToNodeConnector(self, widgettype, currentNodeFunc, clearFunc):
+    def impl_qMRMLToNodeConnector(self, widgettype, clearFunc):
         """
-        The tests for the qMRMLNodeComboBox and the qMRMLSubjectHierarchyTreeView are nearly identical, but their
-        interfaces are just different enough (especially in Python) to make it difficult. In the places where
+        The tests for qMRMLNodeComboBox, qMRMLSubjectHierarchyTreeView, and qMRMLSubjectHierarchyComboBox are nearly identical,
+        but their interfaces are just different enough (especially in Python) to make it difficult. In the places where
         the interfaces differ, a function was added to abstract that away.
         """
 
@@ -848,11 +849,11 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
 
         # alpha
         self.assertIsNone(param.alpha)
-        self.assertIsNone(currentNodeFunc(widgetAlpha))
+        self.assertIsNone(widgetAlpha.currentNode())
         self.assertEqual(widgetAlpha.nodeTypes, ("vtkMRMLModelNode",))
         # bravo
         self.assertIsNone(param.bravo)
-        self.assertIsNone(currentNodeFunc(widgetBravo))
+        self.assertIsNone(widgetBravo.currentNode())
         #    order is unimportant here
         self.assertEqual(sorted(widgetBravo.nodeTypes), sorted(["vtkMRMLModelNode", "vtkMRMLScalarVolumeNode"]))
 
@@ -863,65 +864,60 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
 
         # should not auto add
         self.assertIsNone(param.alpha)
-        self.assertIsNone(currentNodeFunc(widgetAlpha))
+        self.assertIsNone(widgetAlpha.currentNode())
         self.assertIsNone(param.bravo)
-        self.assertIsNone(currentNodeFunc(widgetBravo))
+        self.assertIsNone(widgetBravo.currentNode())
 
         # Phase 1 - write to GUI
         widgetAlpha.setCurrentNode(model2)
         self.assertIs(param.alpha, model2)
-        self.assertIs(currentNodeFunc(widgetAlpha), model2)
+        self.assertIs(widgetAlpha.currentNode(), model2)
 
         clearFunc(widgetAlpha)
         self.assertIsNone(param.alpha)
-        self.assertIsNone(currentNodeFunc(widgetAlpha))
+        self.assertIsNone(widgetAlpha.currentNode())
 
         widgetBravo.setCurrentNode(model1)
         self.assertIs(param.bravo, model1)
-        self.assertIs(currentNodeFunc(widgetBravo), model1)
+        self.assertIs(widgetBravo.currentNode(), model1)
 
         widgetBravo.setCurrentNode(volume2)
-        self.assertIs(currentNodeFunc(widgetBravo), volume2)
+        self.assertIs(widgetBravo.currentNode(), volume2)
         self.assertIs(param.bravo, volume2)
 
         clearFunc(widgetBravo)
         self.assertIs(param.bravo, None)
-        self.assertIs(currentNodeFunc(widgetBravo), None)
+        self.assertIs(widgetBravo.currentNode(), None)
 
         # Phase 2 - write to parameterNode
         param.alpha = model1
         self.assertIs(param.alpha, model1)
-        self.assertIs(currentNodeFunc(widgetAlpha), model1)
+        self.assertIs(widgetAlpha.currentNode(), model1)
 
         param.alpha = None
         self.assertIsNone(param.alpha)
-        self.assertIsNone(currentNodeFunc(widgetAlpha))
+        self.assertIsNone(widgetAlpha.currentNode())
 
         param.bravo = volume1
         self.assertIs(param.bravo, volume1)
-        self.assertIs(currentNodeFunc(widgetBravo), volume1)
+        self.assertIs(widgetBravo.currentNode(), volume1)
 
         param.bravo = model2
         self.assertIs(param.bravo, model2)
-        self.assertIs(currentNodeFunc(widgetBravo), model2)
+        self.assertIs(widgetBravo.currentNode(), model2)
 
         param.bravo = None
         self.assertIs(param.bravo, None)
-        self.assertIs(currentNodeFunc(widgetBravo), None)
+        self.assertIs(widgetBravo.currentNode(), None)
 
     def test_qMRMLNodeComboBoxToNode(self):
-        self.impl_qMRMLToNodeConnector(slicer.qMRMLNodeComboBox, lambda box: box.currentNode(), lambda box: box.setCurrentNode(None))
+        self.impl_qMRMLToNodeConnector(slicer.qMRMLNodeComboBox, lambda box: box.setCurrentNode(None))
 
     def test_qMRMLSubjectHierarchyTreeViewToNode(self):
-        def getNodeFromSubjectTree(tree):
-            itemId = tree.currentItem()
-            shNode = tree.subjectHierarchyNode()
-            if itemId == shNode.GetInvalidItemID():
-                return None
-            else:
-                return shNode.GetItemDataNode(itemId)
+        self.impl_qMRMLToNodeConnector(qMRMLSubjectHierarchyTreeView, lambda shTreeView: shTreeView.clearSelection())
 
-        self.impl_qMRMLToNodeConnector(qMRMLSubjectHierarchyTreeView, getNodeFromSubjectTree, lambda tree: tree.clearSelection())
+    def test_qMRMLSubjectHierarchyComboBox(self):
+        self.impl_qMRMLToNodeConnector(qMRMLSubjectHierarchyComboBox, lambda shComboBox: shComboBox.clearSelection())
 
     def test_parameterPacks_through_dotted_name(self):
         @parameterPack

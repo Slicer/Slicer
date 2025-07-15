@@ -129,7 +129,7 @@ public:
   Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
   /// Convenience method to set current item by associated data node.
-  virtual vtkMRMLNode* currentNode() const;
+  Q_INVOKABLE virtual vtkMRMLNode* currentNode() const;
 
   /// Get root item of the tree
   Q_INVOKABLE vtkIdType rootItem() const;
