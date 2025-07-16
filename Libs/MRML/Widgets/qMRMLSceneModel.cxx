@@ -288,7 +288,7 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
   d->removeAllExtraItems(parent, "preItem");
 
   int row = 0;
-  foreach (QString extraItem, extraItems)
+  for (const QString& extraItem : extraItems)
   {
     d->insertExtraItem(row++, parent, extraItem, "preItem", Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   }
@@ -319,7 +319,7 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
   }
 
   d->removeAllExtraItems(parent, "postItem");
-  foreach (QString extraItem, extraItems)
+  for (const QString& extraItem : extraItems)
   {
     d->insertExtraItem(parent->rowCount(), parent, extraItem, "postItem", Qt::ItemIsEnabled);
   }
@@ -655,7 +655,7 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes) const
     return nullptr;
   }
   QModelIndexList allColumnsIndexes;
-  foreach (const QModelIndex& index, indexes)
+  for (const QModelIndex& index : indexes)
   {
     QModelIndex parent = index.parent();
     for (int column = 0; column < this->columnCount(parent); ++column)
@@ -773,7 +773,7 @@ void qMRMLSceneModel::populateScene()
     index++;
     d->insertNode(node, index);
   }
-  foreach (vtkMRMLNode* misplacedNode, d->MisplacedNodes)
+  for (vtkMRMLNode* const misplacedNode : d->MisplacedNodes)
   {
     this->onMRMLNodeModified(misplacedNode);
   }
@@ -1200,7 +1200,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     }
     // Remove the item from any orphan list if it exist as we don't want to
     // add it back later in onMRMLSceneNodeRemoved
-    foreach (QList<QStandardItem*> orphans, d->Orphans)
+    for (QList<QStandardItem*> orphans : d->Orphans)
     {
       if (orphans.contains(item))
       {
@@ -1224,7 +1224,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   // The removed node may had children, if they haven't been updated, they
   // are likely to be lost (not reachable when browsing the model), we need
   // to reparent them.
-  foreach (QList<QStandardItem*> orphans, d->Orphans)
+  for (QList<QStandardItem*> orphans : d->Orphans)
   {
     QStandardItem* orphan = orphans[0];
     // Make sure that the orphans have not already been reparented.

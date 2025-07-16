@@ -681,9 +681,8 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
   }
   bool removeMRMLRows = d->Transposed ? !removeModelRow : removeModelRow;
 
-  QModelIndex index;
   QList<int> mrmlIndexList; // list of MRML table columns or rows that will be removed
-  foreach (index, selection)
+  for (const QModelIndex index : selection)
   {
     int mrmlIndex = removeMRMLRows ? mrmlTableRowIndex(index) : mrmlTableColumnIndex(index);
     if (!mrmlIndexList.contains(mrmlIndex))
@@ -697,7 +696,7 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
 
   // block modified events to prevent updating of the table during processing
   int wasModified = d->MRMLTableNode->StartModify();
-  foreach (int mrmlIndex, mrmlIndexList)
+  for (const int& mrmlIndex : mrmlIndexList)
   {
     if (removeMRMLRows)
     {

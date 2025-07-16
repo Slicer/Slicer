@@ -924,7 +924,7 @@ bool qMRMLTreeView::isAncestor(const QModelIndex& index, const QModelIndex& pote
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeView::findAncestor(const QModelIndex& index, const QModelIndexList& potentialAncestors)
 {
-  foreach (const QModelIndex& potentialAncestor, potentialAncestors)
+  for (const QModelIndex& potentialAncestor : potentialAncestors)
   {
     if (qMRMLTreeView::isAncestor(index, potentialAncestor))
     {
@@ -938,7 +938,7 @@ QModelIndex qMRMLTreeView::findAncestor(const QModelIndex& index, const QModelIn
 QModelIndexList qMRMLTreeView::removeChildren(const QModelIndexList& indexes)
 {
   QModelIndexList noAncestorIndexList;
-  foreach (QModelIndex index, indexes)
+  for (const QModelIndex& index : indexes)
   {
     if (!qMRMLTreeView::findAncestor(index, indexes).isValid())
     {

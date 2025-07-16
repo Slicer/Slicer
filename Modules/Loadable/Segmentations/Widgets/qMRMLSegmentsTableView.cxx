@@ -1496,7 +1496,7 @@ void qMRMLSegmentsTableView::jumpSlices()
     // application is closing
     return;
   }
-  foreach (QString sliceViewName, layoutManager->sliceViewNames())
+  for (const QString& sliceViewName : layoutManager->sliceViewNames())
   {
     // Check if segmentation is visible in this view
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
@@ -1554,7 +1554,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
 
   QModelIndexList segmentModelIndices;
   QList<int> selectedRows;
-  foreach (QString segmentID, selectedSegmentIDs)
+  for (const QString& segmentID : selectedSegmentIDs)
   {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;
@@ -1598,7 +1598,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
 
   QModelIndexList segmentModelIndices;
   QList<int> selectedRows;
-  foreach (QString segmentID, selectedSegmentIDs)
+  for (const QString& segmentID : selectedSegmentIDs)
   {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;

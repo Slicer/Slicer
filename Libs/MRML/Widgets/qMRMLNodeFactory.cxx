@@ -94,7 +94,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   // Ideally the qMRMLSortFilterProxyModel should listen the all the nodes and
   // when the attribute property is changed, make sure that it doesn't change
   // it's visibility
-  foreach (const QString& attributeName, d->Attributes.keys())
+  for (const QString& attributeName : d->Attributes.keys())
   {
     node->SetAttribute(attributeName.toUtf8(), d->Attributes[attributeName].toUtf8());
   }
@@ -124,7 +124,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
   QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());
   factory->setMRMLScene(scene);
   // Loop over attribute map and update the factory
-  foreach (const QString& key, attributes.keys())
+  for (const QString& key : attributes.keys())
   {
     factory->addAttribute(key, attributes.value(key));
   }

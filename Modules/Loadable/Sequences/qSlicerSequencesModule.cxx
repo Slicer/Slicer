@@ -109,7 +109,7 @@ void qSlicerSequencesModulePrivate::addToolBar()
   mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
   this->SequencesModuleOwnsToolBar = false;
-  foreach (QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
+  for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
     {

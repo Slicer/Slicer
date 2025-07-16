@@ -175,7 +175,7 @@ void qSlicerDataModuleWidget::setup()
   QString aggregatedHelpText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\"> p, li { white-space: pre-wrap; }"
                              "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">");
-  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+  for (qSlicerSubjectHierarchyAbstractPlugin* const plugin : qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
   {
     // Add help text from each plugin
     QString pluginHelpText = plugin->helpText();

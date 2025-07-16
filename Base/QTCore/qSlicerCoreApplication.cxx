@@ -302,7 +302,7 @@ void qSlicerCoreApplicationPrivate::init()
   {
     QProcessEnvironment updatedEnv;
     ctkAppLauncherEnvironment::saveEnvironment(this->Environment, this->Environment.keys(), updatedEnv);
-    foreach (const QString& varname, updatedEnv.keys())
+    for (const QString& varname : updatedEnv.keys())
     {
       q->setEnvironmentVariable(varname, updatedEnv.value(varname));
     }
@@ -320,13 +320,13 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Regular environment variables
   QHash<QString, QString> envVars = appLauncherSettings.envVars();
-  foreach (const QString& key, envVars.keys())
+  for (const QString& key : envVars.keys())
   {
     q->setEnvironmentVariable(key, envVars.value(key));
   }
   // Path environment variables (includes PATH, (DY)LD_LIBRARY_PATH and variables like PYTHONPATH)
   QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
-  foreach (const QString& key, pathsEnvVars.keys())
+  for (const QString& key : pathsEnvVars.keys())
   {
     QString value;
     if (this->Environment.contains(key))
@@ -361,7 +361,7 @@ void qSlicerCoreApplicationPrivate::init()
   // Load default settings if any.
   if (q->defaultSettings())
   {
-    foreach (const QString& key, q->defaultSettings()->allKeys())
+    for (const QString& key : q->defaultSettings()->allKeys())
     {
       if (!q->userSettings()->contains(key))
       {
@@ -523,14 +523,14 @@ void qSlicerCoreApplicationPrivate::init()
 
   QStringList updatedExtensions;
   model->updateScheduledExtensions(updatedExtensions);
-  foreach (const QString& extensionName, updatedExtensions)
+  for (const QString& extensionName : updatedExtensions)
   {
     qDebug() << "Successfully updated extension" << extensionName;
   }
 
   QStringList uninstalledExtensions;
   model->uninstallScheduledExtensions(uninstalledExtensions);
-  foreach (const QString& extensionName, uninstalledExtensions)
+  for (const QString& extensionName : uninstalledExtensions)
   {
     qDebug() << "Successfully uninstalled extension" << extensionName;
   }
@@ -720,7 +720,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   Q_Q(qSlicerCoreApplication);
   if (!this->isInstalled(slicerHome))
   {
-    foreach (const QString& subDir, QStringList() << Slicer_BIN_DIR << Slicer_CLIMODULES_BIN_DIR << "Cxx")
+    for (const QString& subDir : QStringList() << Slicer_BIN_DIR << Slicer_CLIMODULES_BIN_DIR << "Cxx")
     {
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), subDir, this->IntDir);
       if (!this->IntDir.isEmpty())
@@ -1134,7 +1134,7 @@ void qSlicerCoreApplication::handleURIArguments(const QStringList& fileNames)
 {
   QStringList filesToLoad;
 
-  foreach (QString fileName, fileNames)
+  for (const QString& fileName : fileNames)
   {
     QUrl url = QUrl(fileName);
     if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
@@ -2084,7 +2084,7 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
 
   QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->applicationLocaleName());
 
-  foreach (QString qmFile, qmFiles)
+  for (const QString& qmFile : qmFiles)
   {
     QTranslator* translator = new QTranslator();
     QString qmFilePath = QString(dir + QString("/") + qmFile);
@@ -2136,7 +2136,7 @@ void qSlicerCoreApplication::loadLanguage()
     return;
   }
   QStringList qmDirs = qSlicerCoreApplication::translationFolders();
-  foreach (QString qmDir, qmDirs)
+  for (const QString& qmDir : qmDirs)
   {
     app->loadTranslations(qmDir);
   }
@@ -2264,7 +2264,7 @@ QStringList qSlicerCoreApplication::toSlicerHomeAbsolutePaths(const QStringList&
 {
   Q_D(const qSlicerCoreApplication);
   QStringList absolutePaths;
-  foreach (QString path, paths)
+  for (const QString& path : paths)
   {
     absolutePaths << this->toSlicerHomeAbsolutePath(path);
   }
@@ -2276,7 +2276,7 @@ QStringList qSlicerCoreApplication::toSlicerHomeRelativePaths(const QStringList&
 {
   Q_D(const qSlicerCoreApplication);
   QStringList relativePaths;
-  foreach (QString path, paths)
+  for (const QString& path : paths)
   {
     relativePaths << this->toSlicerHomeRelativePath(path);
   }
@@ -2368,7 +2368,7 @@ QString qSlicerCoreApplication::moduleDocumentationUrl(const QString& moduleName
 bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   bool success = true;
-  foreach (QString filePath, filePaths)
+  for (const QString& filePath : filePaths)
   {
     QFileInfo file(filePath);
     qSlicerCoreIOManager* ioManager = this->coreIOManager();

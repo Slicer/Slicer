@@ -208,7 +208,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   do
   {
     QString firstComponent;
-    foreach (QStringList filePath, loadedFilePaths)
+    for (const QStringList& filePath : loadedFilePaths)
     {
       if (filePath.count() == 0)
       {
@@ -274,7 +274,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   }
 
   // Expand generated branches
-  foreach (vtkIdType createdItemID, createdItemIDs)
+  for (const vtkIdType& createdItemID : createdItemIDs)
   {
     emit requestExpandItem(createdItemID);
   }

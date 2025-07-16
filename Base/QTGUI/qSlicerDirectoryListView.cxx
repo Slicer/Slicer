@@ -143,7 +143,7 @@ QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath) c
     role = qSlicerDirectoryListViewPrivate::AbsolutePathRole;
   }
   QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
-  foreach (const QModelIndex& index, selectedIndexes)
+  for (const QModelIndex& index : selectedIndexes)
   {
     directoryList << d->DirectoryListModel.data(index, role).toString();
   }
@@ -222,7 +222,7 @@ void qSlicerDirectoryListView::setDirectoryList(const QStringList& paths)
   if (paths.count() == this->directoryList().count())
   {
     int found = 0;
-    foreach (const QString& path, paths)
+    for (const QString& path : paths)
     {
       if (this->hasDirectory(path))
       {
@@ -237,7 +237,7 @@ void qSlicerDirectoryListView::setDirectoryList(const QStringList& paths)
 
   d->DirectoryListModel.removeRows(0, d->DirectoryListModel.rowCount());
 
-  foreach (const QString& path, paths)
+  for (const QString& path : paths)
   {
     d->addDirectory(path);
   }
@@ -256,7 +256,7 @@ void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent* event)
 //-----------------------------------------------------------------------------
 void qSlicerDirectoryListView::dropEvent(QDropEvent* event)
 {
-  foreach (QUrl url, event->mimeData()->urls())
+  for (const QUrl& url : event->mimeData()->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {

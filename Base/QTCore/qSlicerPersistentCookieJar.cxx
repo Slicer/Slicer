@@ -99,7 +99,7 @@ QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl(const QUrl& url)
   QList<QNetworkCookie> cookieList;
   settings.beginGroup(url.host());
   QStringList keys = settings.childKeys();
-  foreach (const QString& key, keys)
+  for (const QString& key : keys)
   {
     cookieList << QNetworkCookie(key.toUtf8(), settings.value(key).toString().toUtf8());
   }
@@ -112,7 +112,7 @@ bool qSlicerPersistentCookieJar::setCookiesFromUrl(const QList<QNetworkCookie>& 
   Q_D(qSlicerPersistentCookieJar);
   QSettings settings(d->FilePath, QSettings::IniFormat);
   settings.beginGroup(url.host());
-  foreach (const QNetworkCookie& cookie, cookieList)
+  for (const QNetworkCookie& cookie : cookieList)
   {
     settings.setValue(cookie.name(), cookie.value());
   }

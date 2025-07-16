@@ -103,7 +103,7 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
 {
   // Use a map so that we can access readers sorted by confidence.
   QMultiMap<double, qSlicerFileReader*> matchingReadersSortedByConfidence;
-  foreach (qSlicerFileReader* reader, this->Readers)
+  for (qSlicerFileReader* const reader : this->Readers)
   {
     double confidence = reader->canLoadFileConfidence(fileName);
     if (confidence > 0.0)
@@ -152,16 +152,16 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::
   // that writers associated with specific file extension are
   // considered first.
   QList<qSlicerFileWriter*> genericWriters;
-  foreach (qSlicerFileWriter* writer, this->Writers)
+  for (qSlicerFileWriter* const writer : this->Writers)
   {
     if (writer->fileType() != fileType)
     {
       continue;
     }
     QStringList matchingNameFilters;
-    foreach (const QString& nameFilter, writer->extensions(object))
+    for (const QString& nameFilter : writer->extensions(object))
     {
-      foreach (const QString& extension, ctk::nameFilterToExtensions(nameFilter))
+      for (const QString& extension : ctk::nameFilterToExtensions(nameFilter))
       {
         // HACK - See https://github.com/Slicer/Slicer/issues/3322
         QString extensionWithStar(extension);
@@ -182,7 +182,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::
       continue;
     }
     // Generic readers must be added to the end
-    foreach (const QString& nameFilter, matchingNameFilters)
+    for (const QString& nameFilter : matchingNameFilters)
     {
       if (nameFilter.contains("*.*") || nameFilter.contains("(*)"))
       {
@@ -195,7 +195,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::
       }
     }
   }
-  foreach (qSlicerFileWriter* writer, genericWriters)
+  for (qSlicerFileWriter* const writer : genericWriters)
   {
     if (!matchingWriters.contains(writer))
     {
@@ -248,7 +248,7 @@ qSlicerFileWriter* qSlicerCoreIOManager::writer(vtkObject* object, const QString
   qSlicerFileWriter* closestMatch = nullptr;
   double closestMatchConfidence = 0.0;
 
-  foreach (qSlicerFileWriter* writer, d->Writers)
+  for (qSlicerFileWriter* const writer : d->Writers)
   {
     double confidence = writer->canWriteObjectConfidence(object);
     if (confidence > 0.0)
@@ -302,7 +302,7 @@ QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& file
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerIO::IOFileType> matchingFileTypes;
-  foreach (const qSlicerIO* matchingReader, d->readers(fileName))
+  for (const qSlicerIO* matchingReader : d->readers(fileName))
   {
     matchingFileTypes << matchingReader->fileType();
   }
@@ -314,7 +314,7 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName) cons
 {
   Q_D(const qSlicerCoreIOManager);
   QStringList matchingDescriptions;
-  foreach (qSlicerFileReader* reader, d->readers(fileName))
+  for (qSlicerFileReader* const reader : d->readers(fileName))
   {
     matchingDescriptions << reader->description();
   }
@@ -325,7 +325,7 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName) cons
 QStringList qSlicerCoreIOManager::fileDescriptionsByType(const qSlicerIO::IOFileType fileType) const
 {
   QStringList matchingDescriptions;
-  foreach (qSlicerFileReader* reader, this->readers())
+  for (qSlicerFileReader* const reader : this->readers())
   {
     if (reader->fileType() == fileType)
     {
@@ -339,7 +339,7 @@ QStringList qSlicerCoreIOManager::fileDescriptionsByType(const qSlicerIO::IOFile
 QStringList qSlicerCoreIOManager::fileWriterDescriptions(const qSlicerIO::IOFileType& fileType) const
 {
   QStringList matchingDescriptions;
-  foreach (qSlicerFileWriter* writer, this->writers(fileType))
+  for (qSlicerFileWriter* const writer : this->writers(fileType))
   {
     matchingDescriptions << writer->description();
   }
@@ -352,7 +352,7 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(vtkObject* object) const
   Q_D(const qSlicerCoreIOManager);
   // Use a map so that we can access writers sorted by confidence.
   QMultiMap<double, qSlicerFileWriter*> matchingWritersSortedByConfidence;
-  foreach (qSlicerFileWriter* writer, d->Writers)
+  for (qSlicerFileWriter* const writer : d->Writers)
   {
     double confidence = writer->canWriteObjectConfidence(object);
     if (confidence > 0.0)
@@ -492,7 +492,7 @@ QString qSlicerCoreIOManager::forceFileNameMaxLength(const QString& filename, in
 QString qSlicerCoreIOManager::extractKnownExtension(const QString& fileName, vtkObject* object)
 {
   QString longestMatchedExtension;
-  foreach (const QString& nameFilter, this->fileWriterExtensions(object))
+  for (const QString& nameFilter : this->fileWriterExtensions(object))
   {
     QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     if (!extension.isEmpty() && fileName.endsWith(extension))
@@ -604,7 +604,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     QStringList fileNames = parameters["fileName"].toStringList();
     QStringList names = parameters["name"].toStringList();
     int nameId = 0;
-    foreach (const QString& fileName, fileNames)
+    for (const QString& fileName : fileNames)
     {
       qSlicerIO::IOProperties fileParameters = parameters;
       fileParameters["fileName"] = fileName;
@@ -631,7 +631,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   QString userMessagePrefix = tr("Loading %1").arg(parameters["fileName"].toString()) + " - ";
 
   QStringList nodes;
-  foreach (qSlicerFileReader* reader, readers)
+  for (qSlicerFileReader* const reader : readers)
   {
     QElapsedTimer timeProbe;
     timeProbe.start();
@@ -671,7 +671,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 
   if (loadedNodes)
   {
-    foreach (const QString& node, nodes)
+    for (const QString& node : nodes)
     {
       vtkMRMLNode* loadedNode = d->currentScene()->GetNodeByID(node.toUtf8());
       if (!loadedNode)
@@ -690,7 +690,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   bool success = true;
-  foreach (qSlicerIO::IOProperties fileProperties, files)
+  for (qSlicerIO::IOProperties fileProperties : files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
     success = this->loadNodes(                                                             //
@@ -853,7 +853,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
   QStringList nodes;
   bool writeSuccess = false;
-  foreach (qSlicerFileWriter* writer, writers)
+  for (qSlicerFileWriter* const writer : writers)
   {
     writer->setMRMLScene(scene);
     writer->userMessages()->ClearMessages();
@@ -1097,7 +1097,7 @@ QList<qSlicerFileReader*> qSlicerCoreIOManager::readers(const qSlicerIO::IOFileT
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;
-  foreach (qSlicerFileReader* io, d->Readers)
+  for (qSlicerFileReader* const io : d->Readers)
   {
     if (io->fileType() == fileType)
     {
@@ -1112,7 +1112,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManager::writers(const qSlicerIO::IOFileT
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileWriter*> res;
-  foreach (qSlicerFileWriter* io, d->Writers)
+  for (qSlicerFileWriter* const io : d->Writers)
   {
     if (io->fileType() == fileType)
     {
@@ -1127,7 +1127,7 @@ qSlicerFileReader* qSlicerCoreIOManager::reader(const QString& ioDescription) co
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;
-  foreach (qSlicerFileReader* io, d->Readers)
+  for (qSlicerFileReader* const io : d->Readers)
   {
     if (io->description() == ioDescription)
     {
@@ -1192,7 +1192,7 @@ bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList& fileInfoList, QFil
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;
-  foreach (qSlicerFileReader* reader, d->Readers)
+  for (qSlicerFileReader* const reader : d->Readers)
   {
     // TODO: currently the first reader that accepts the list will be used, but nothing
     // guarantees that the first reader is the most suitable choice (e.g., volume reader

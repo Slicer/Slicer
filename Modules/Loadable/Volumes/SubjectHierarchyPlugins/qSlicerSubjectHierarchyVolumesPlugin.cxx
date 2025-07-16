@@ -252,7 +252,7 @@ qMRMLSliceWidget* qSlicerSubjectHierarchyVolumesPluginPrivate::sliceWidgetForSli
   }
 
   QStringList sliceViewNames = layoutManager->sliceViewNames();
-  foreach (QString sliceName, sliceViewNames)
+  for (const QString& sliceName : sliceViewNames)
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceName);
     if (sliceWidget->mrmlSliceCompositeNode() == compositeNode)

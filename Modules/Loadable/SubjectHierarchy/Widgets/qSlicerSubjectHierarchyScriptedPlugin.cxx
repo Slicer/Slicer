@@ -378,7 +378,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
   }
   QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
-  foreach (QVariant actionVariant, resultVariantList)
+  for (const QVariant& actionVariant : resultVariantList)
   {
     QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
@@ -405,7 +405,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
   }
   QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
-  foreach (QVariant actionVariant, resultVariantList)
+  for (const QVariant& actionVariant : resultVariantList)
   {
     QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
@@ -432,7 +432,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
   }
   QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
-  foreach (QVariant actionVariant, resultVariantList)
+  for (const QVariant& actionVariant : resultVariantList)
   {
     QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;

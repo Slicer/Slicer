@@ -162,7 +162,7 @@ private:
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::addModules(const QStringList& moduleNames)
 {
-  foreach (const QString& moduleName, moduleNames)
+  for (const QString& moduleName : moduleNames)
   {
     this->addModule(moduleName);
   }
@@ -171,7 +171,7 @@ void qSlicerModulesMenu::addModules(const QStringList& moduleNames)
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::removeModules(const QStringList& moduleNames)
 {
-  foreach (const QString& moduleName, moduleNames)
+  for (const QString& moduleName : moduleNames)
   {
     this->removeModule(moduleName);
   }

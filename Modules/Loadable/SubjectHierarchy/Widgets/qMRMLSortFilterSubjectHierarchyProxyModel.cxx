@@ -153,7 +153,7 @@ int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter(QList<
                                                                           QString className)
 {
   int index = 0;
-  foreach (AttributeFilter filter, filterList)
+  for (const AttributeFilter& filter : filterList)
   {
     if (filter.AttributeName == attributeName && filter.AttributeValue == attributeValue //
         && filter.Include == include && filter.ClassName == className)
@@ -170,7 +170,7 @@ QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter
 {
   QList<int> foundIndices;
   int index = 0;
-  foreach (AttributeFilter filter, filterList)
+  for (const AttributeFilter& filter : filterList)
   {
     if ((attributeName.isEmpty() || filter.AttributeName == attributeName) && filter.Include == include)
     {
@@ -365,7 +365,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeItemAttributeNamesFilt
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
   d->removeFiltersByIncludeFlag(d->ItemAttributeFilters, true);
-  foreach (QString filter, filterList)
+  for (const QString& filter : filterList)
   {
     this->addItemAttributeFilter(filter);
   }
@@ -395,7 +395,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeNodeAttributeNamesFilt
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
   d->removeFiltersByIncludeFlag(d->NodeAttributeFilters, true);
-  foreach (QString filter, filterList)
+  for (const QString& filter : filterList)
   {
     this->addNodeAttributeFilter(filter);
   }
@@ -425,7 +425,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeItemAttributeNamesFilt
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
   d->removeFiltersByIncludeFlag(d->ItemAttributeFilters, false);
-  foreach (QString filter, filterList)
+  for (const QString& filter : filterList)
   {
     this->addItemAttributeFilter(filter, QString(), false);
   }
@@ -455,7 +455,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeNodeAttributeNamesFilt
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
   d->removeFiltersByIncludeFlag(d->NodeAttributeFilters, false);
-  foreach (QString filter, filterList)
+  for (const QString& filter : filterList)
   {
     this->addNodeAttributeFilter(filter, QString(), false);
   }
@@ -749,7 +749,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
     bool nodeTypeAccepted = false;
     if (!d->NodeTypes.isEmpty())
     {
-      foreach (const QString& nodeType, d->NodeTypes)
+      for (const QString& nodeType : d->NodeTypes)
       {
         if (dataNode->IsA(nodeType.toUtf8().data()))
         {
@@ -764,7 +764,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
     }
     if (nodeTypeAccepted)
     {
-      foreach (const QString& hideChildNodeType, d->HideChildNodeTypes)
+      for (const QString& hideChildNodeType : d->HideChildNodeTypes)
       {
         if (dataNode->IsA(hideChildNodeType.toUtf8().data()))
         {
@@ -887,7 +887,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
   if (!d->LevelFilter.isEmpty())
   {
     QString itemLevel(shNode->GetItemLevel(itemID).c_str());
-    foreach (const QString& levelFilter, d->LevelFilter)
+    for (const QString& levelFilter : d->LevelFilter)
     {
       if (itemLevel == levelFilter)
       {

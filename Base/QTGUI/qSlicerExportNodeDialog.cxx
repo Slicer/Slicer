@@ -88,7 +88,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   // (Checking that storageNode is not null allows us to dodge a warning from completeSlicerWritableFileNameSuffix)
   QString currentExtension = storageNode ? coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
   int suggestedFormatIndex = -1; // will be index corresponding to format corresponding to currentExtension
-  foreach (QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
+  for (const QString& nameFilter : coreIOManager->fileWriterExtensions(storableNode))
   {
     // extract extension (e.g. ".ext") from format description string (e.g. "Blahblahblah (.ext)")
     QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));

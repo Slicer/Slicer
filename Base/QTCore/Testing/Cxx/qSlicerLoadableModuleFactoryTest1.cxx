@@ -38,7 +38,7 @@ int qSlicerLoadableModuleFactoryTest1(int, char*[])
 
   QString expectedModuleName = "Threshold";
 
-  foreach (const QString& libraryName, libraryNames)
+  for (const QString& libraryName : libraryNames)
   {
     QString moduleName = qSlicerLoadableModuleFactory::extractModuleName(libraryName);
     if (moduleName != expectedModuleName)

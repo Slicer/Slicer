@@ -248,7 +248,7 @@ void qSlicerDICOMTagEditorWidgetPrivate::insertTagsTableRow(unsigned int row)
 
   // Update those series header row indices above which the row is inserted
   QMap<unsigned int, qSlicerDICOMExportable*> updatedSeriesTagsHeaderRows;
-  foreach (unsigned int seriesHeaderRow, this->SeriesTagsHeaderRows.keys())
+  for (unsigned int seriesHeaderRow : this->SeriesTagsHeaderRows.keys())
   {
     // If inserted above the series header then increase it
     if (row <= seriesHeaderRow)
@@ -330,7 +330,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   d->StudyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
   // Check if the exportables are in the same study
-  foreach (qSlicerDICOMExportable* exportable, d->Exportables)
+  for (qSlicerDICOMExportable* const exportable : d->Exportables)
   {
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
     if (seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -416,7 +416,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       d->TagsTable->item(row, 0)->setFlags(Qt::ItemIsEnabled);
 
       // Also add it to the exportables (needed there for export)
-      foreach (qSlicerDICOMExportable* exportable, d->Exportables)
+      for (qSlicerDICOMExportable* const exportable : d->Exportables)
       {
         exportable->setTag(tagName, tagValue);
       }
@@ -465,7 +465,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
       d->TagsTable->item(row, 0)->setFlags(Qt::ItemIsEnabled);
 
       // Also add it to the exportables (needed there for export)
-      foreach (qSlicerDICOMExportable* exportable, d->Exportables)
+      for (qSlicerDICOMExportable* const exportable : d->Exportables)
       {
         exportable->setTag(tagName, tagValue);
       }
@@ -473,7 +473,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   }
 
   // Create series sections for each exportable
-  foreach (qSlicerDICOMExportable* exportable, d->Exportables)
+  for (qSlicerDICOMExportable* const exportable : d->Exportables)
   {
     // Get exportable series item
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
@@ -497,7 +497,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
     // Get series tags from exportable and populate table with them
     QMap<QString, QString> exportableTagsMap = exportable->tags();
-    foreach (QString tagName, exportableTagsMap.keys())
+    for (const QString& tagName : exportableTagsMap.keys())
     {
       // Only use series tags
       if (vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData()) //
@@ -628,7 +628,7 @@ void qSlicerDICOMTagEditorWidget::tagsTableCellChanged(int row, int column)
   if (row < (int)d->topSeriesHeaderRow())
   {
     // Set new tag value in each exportable
-    foreach (qSlicerDICOMExportable* exportable, d->Exportables)
+    for (qSlicerDICOMExportable* const exportable : d->Exportables)
     {
       exportable->setTag(d->TagsTable->item(row, 0)->text(), d->TagsTable->item(row, 1)->text());
     }

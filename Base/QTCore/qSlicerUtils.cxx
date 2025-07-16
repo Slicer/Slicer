@@ -40,7 +40,7 @@ bool qSlicerUtils::isExecutableName(const QString& name)
   extensions << ".bat" << ".com" << ".sh" << ".csh" << ".tcsh"
              << ".pl" << ".py" << ".tcl" << ".m" << ".exe";
 
-  foreach (const QString& extension, extensions)
+  for (const QString& extension : extensions)
   {
     if (name.endsWith(extension, Qt::CaseInsensitive))
     {
@@ -103,7 +103,7 @@ bool qSlicerUtils::isLoadableModule(const QString& filePath)
 bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
 {
   const QStringList& categories = module->categories();
-  foreach (const QString& category, categories)
+  for (const QString& category : categories)
   {
     if (category.split('.').takeFirst() != "Testing")
     {
@@ -120,7 +120,7 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
   QStringList intDirs;
   intDirs << "." << "Debug" << "RelWithDebInfo" << "Release" << "MinSizeRel";
   QString intDir = directory + "/%2/" + target;
-  foreach (const QString& subdir, intDirs)
+  for (const QString& subdir : intDirs)
   {
     if (QFile::exists(intDir.arg(subdir)))
     {
@@ -256,7 +256,7 @@ bool qSlicerUtils::setPermissionsRecursively(const QString& path, QFile::Permiss
     return false;
   }
 
-  foreach (const QFileInfo& info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+  for (const QFileInfo& info : QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
   {
     if (info.isDir())
     {

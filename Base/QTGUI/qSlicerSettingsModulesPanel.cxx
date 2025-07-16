@@ -125,7 +125,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
 #endif
   // The separator commas have been removed, but we also need need to remove leading and trailing spaces from the retrieved names.
   QStringList favorites;
-  foreach (QString s, favoritesRaw)
+  for (const QString& s : favoritesRaw)
   {
     favorites << s.trimmed();
   }
@@ -245,7 +245,7 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
   // Update the list of modules to ignore removing the one
   // specified from the command line.
   QStringList updatedModulesToAlwaysIgnore;
-  foreach (const QString& moduleName, moduleNames)
+  for (const QString& moduleName : moduleNames)
   {
     if (!coreApp->coreCommandOptions()->modulesToIgnore().contains(moduleName))
     {
@@ -290,7 +290,7 @@ void qSlicerSettingsModulesPanel::onTemporaryPathChanged(const QString& path)
 void qSlicerSettingsModulesPanel::onShowHiddenModulesChanged(bool show)
 {
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
-  foreach (qSlicerModuleSelectorToolBar* toolBar, mainWindow->findChildren<qSlicerModuleSelectorToolBar*>())
+  for (qSlicerModuleSelectorToolBar* const toolBar : mainWindow->findChildren<qSlicerModuleSelectorToolBar*>())
   {
     toolBar->modulesMenu()->setShowHiddenModules(show);
     // refresh the list

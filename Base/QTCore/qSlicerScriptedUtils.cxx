@@ -203,7 +203,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     return nullptr;
   }
 
-  foreach (int methodId, this->APIMethods.keys())
+  for (const int& methodId : this->APIMethods.keys())
   {
     QString methodName = this->APIMethods.value(methodId);
     if (!PyObject_HasAttrString(self.object(), methodName.toUtf8()))

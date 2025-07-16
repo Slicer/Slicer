@@ -131,7 +131,7 @@ void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& err
       "</div>";
 
   QStringList htmlErrors;
-  foreach (const QString& error, errors)
+  for (const QString& error : errors)
   {
     htmlErrors << QString("<li>%1</li>").arg(error);
   }

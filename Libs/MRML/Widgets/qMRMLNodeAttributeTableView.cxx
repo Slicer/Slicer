@@ -281,7 +281,7 @@ void qMRMLNodeAttributeTableView::removeSelectedAttributes()
   // (there may be more items selected in a row)
   QList<QTableWidgetItem*> selectedItems = d->NodeAttributesTable->selectedItems();
   QSet<int> affectedRowNumbers;
-  foreach (QTableWidgetItem* item, selectedItems)
+  for (QTableWidgetItem* const item : selectedItems)
   {
     affectedRowNumbers.insert(item->row());
   }
@@ -328,7 +328,7 @@ QTableWidgetItem* qMRMLNodeAttributeTableView::findAttributeNameItem(const QStri
   QTableWidgetItem* item = nullptr;
   int numberOfAttributesFound = 0;
   QList<QTableWidgetItem*> itemList = d->NodeAttributesTable->findItems(attributeName, Qt::MatchFixedString);
-  foreach (QTableWidgetItem* currentItem, itemList)
+  for (QTableWidgetItem* const currentItem : itemList)
   {
     // Check if found item is in the name column (there may be values containing the same text)
     if (currentItem != nullptr && currentItem->column() == 0)

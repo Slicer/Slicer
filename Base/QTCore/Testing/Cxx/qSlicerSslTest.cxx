@@ -45,7 +45,7 @@ public slots:
   void onSslErrors(QNetworkReply* reply, const QList<QSslError>& sslErrors)
   {
     Q_UNUSED(reply);
-    foreach (const QSslError& sslError, sslErrors)
+    for (const QSslError& sslError : sslErrors)
     {
       this->SslErrors << sslError.error();
       this->SslErrorStrings << sslError.errorString();

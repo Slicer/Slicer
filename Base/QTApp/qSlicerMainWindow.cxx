@@ -750,7 +750,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
   // find the location of where to add the action.
   // Note: FavoriteModules is sorted
   QAction* beforeAction = nullptr; // 0 means insert at end
-  foreach (QAction* toolBarAction, this->ModuleToolBar->actions())
+  for (QAction* const toolBarAction : this->ModuleToolBar->actions())
   {
     bool isActionAFavoriteModule = (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
     if (isActionAFavoriteModule && //
@@ -1540,7 +1540,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
     d->ModuleSelectorToolBar->selectModule("");
   }
 
-  foreach (QAction* action, d->ModuleToolBar->actions())
+  for (QAction* const action : d->ModuleToolBar->actions())
   {
     if (action->data().toString() == moduleName)
     {
@@ -1571,7 +1571,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
   Q_D(qSlicerMainWindow);
   bool found = false;
   // std::cerr << "onLayoutActionTriggered: " << action->text().toStdString() << std::endl;
-  foreach (QAction* maction, d->LayoutMenu->actions())
+  for (QAction* const maction : d->LayoutMenu->actions())
   {
     if (action->text() == maction->text())
     {
@@ -1638,7 +1638,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
   // data assigned, so they should never be triggered (they could be triggered
   // at startup, when layout is set to SlicerLayoutInitialView = 0).
 
-  foreach (QAction* action, d->LayoutMenu->actions())
+  for (QAction* const action : d->LayoutMenu->actions())
   {
     if (!action->menu() && action->data().toInt() == layout)
     {
@@ -1680,7 +1680,7 @@ void qSlicerMainWindow::restoreGUIState(bool force /*=false*/)
   settings.endGroup();
   d->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
 
-  foreach (const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
+  for (const qSlicerIO::IOProperties& fileProperty : qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
   {
     d->RecentlyLoadedFileProperties.enqueue(fileProperty);
   }
@@ -1799,7 +1799,7 @@ void qSlicerMainWindow::on_FavoriteModulesChanged()
 
   // Update favorite module toolbar
   d->ModuleToolBar->clear();
-  foreach (QString moduleName, d->FavoriteModules)
+  for (const QString& moduleName : d->FavoriteModules)
   {
     if (d->FavoriteModules.contains(moduleName))
     {

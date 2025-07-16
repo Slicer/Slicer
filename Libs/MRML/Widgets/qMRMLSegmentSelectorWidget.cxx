@@ -310,7 +310,7 @@ void qMRMLSegmentSelectorWidget::onSegmentMultiSelectionChanged()
   }
 
   d->SelectedSegmentIDs.clear();
-  foreach (QModelIndex index, d->CheckableComboBox_Segment->checkedIndexes())
+  for (const QModelIndex& index : d->CheckableComboBox_Segment->checkedIndexes())
   {
     d->SelectedSegmentIDs << d->CheckableComboBox_Segment->itemData(index.row()).toString();
   }
@@ -401,7 +401,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
 
   // Make sure all the IDs in the list are valid
   QStringList invalidSegmentIDs;
-  foreach (QString segmentID, segmentIDList)
+  for (const QString& segmentID : segmentIDList)
   {
     if (!d->SegmentationNode->GetSegmentation()->GetSegment(segmentID.toUtf8().constData()))
     {
@@ -409,7 +409,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
       invalidSegmentIDs << segmentID;
     }
   }
-  foreach (QString invalidID, invalidSegmentIDs)
+  for (const QString& invalidID : invalidSegmentIDs)
   {
     segmentIDList.removeAll(invalidID);
   }

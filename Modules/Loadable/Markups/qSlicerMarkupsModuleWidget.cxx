@@ -683,7 +683,7 @@ bool qSlicerMarkupsModuleWidgetPrivate::getPersistanceModeEnabled()
 //-----------------------------------------------------------
 void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 {
-  foreach (auto widget, this->MarkupsOptionsWidgets)
+  for (const auto& widget : this->MarkupsOptionsWidgets)
   {
     widget->setParent(nullptr);
   }
@@ -692,7 +692,7 @@ void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 
   // Create the markups options widgets registered in qMRMLMarkupsOptionsWidgetsFactory.
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
-  foreach (const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
+  for (const auto& widgetClassName : factory->registeredOptionsWidgetsClassNames())
   {
     this->MarkupsOptionsWidgets.append(factory->createWidget(widgetClassName));
   }
@@ -704,7 +704,7 @@ void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsOptionsWidgets()
   Q_Q(qSlicerMarkupsModuleWidget);
 
   // Add the options widgets
-  foreach (const auto& widget, this->MarkupsOptionsWidgets)
+  for (const auto& widget : this->MarkupsOptionsWidgets)
   {
     // If the parent is different from the qSlicerMarkupsModule widget, then add the widget.
     if (widget->parentWidget() != q)
@@ -968,7 +968,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     this->updateRows();
   }
   // Update options widgets
-  foreach (const auto& widget, d->MarkupsOptionsWidgets)
+  for (const auto& widget : d->MarkupsOptionsWidgets)
   {
     widget->updateWidgetFromMRML();
   }
@@ -2560,7 +2560,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
   // SetPointFromString calls various events reporting the id of the point modified.
   // However, already for > 200 points, it gets bad performance. Therefore, we call a simply modified call at the end.
   MRMLNodeModifyBlocker blocker(d->MarkupsNode);
-  foreach (QString line, lines)
+  for (QString line : lines)
   {
     line = line.trimmed();
     if (line.isEmpty() || line.startsWith('#'))
@@ -2622,7 +2622,7 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
   // Setting the internal Markups node
   d->MarkupsNode = markupsNode;
 
-  foreach (const auto& widget, d->MarkupsOptionsWidgets)
+  for (const auto& widget : d->MarkupsOptionsWidgets)
   {
     widget->setMRMLMarkupsNode(markupsNode);
     widget->setVisible(widget->canManageMRMLMarkupsNode(markupsNode));
@@ -3033,7 +3033,7 @@ void qSlicerMarkupsModuleWidget::onMeasurementModified(vtkObject* caller)
     else
     {
       QList<QTableWidgetItem*> nameItemsFound = d->measurementSettingsTableWidget->findItems(measurementName, Qt::MatchExactly);
-      foreach (QTableWidgetItem* nameItem, nameItemsFound)
+      for (QTableWidgetItem* const nameItem : nameItemsFound)
       {
         QCheckBox* checkbox = qobject_cast<QCheckBox*>(d->measurementSettingsTableWidget->cellWidget(nameItem->row(), 1));
         checkbox->setChecked(measurement->GetEnabled());

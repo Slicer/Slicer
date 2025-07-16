@@ -360,7 +360,7 @@ void qMRMLSliceWidget::showEvent(QShowEvent* event)
   // Reset slice view size when screen changes to account for a possible change
   // in the device pixel ratio.
   QWindow* window = nullptr;
-  foreach (QWidget* widget, qApp->topLevelWidgets())
+  for (QWidget* const widget : qApp->topLevelWidgets())
   {
     QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
     if (mainWindow)

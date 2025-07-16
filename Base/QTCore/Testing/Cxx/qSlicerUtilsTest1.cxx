@@ -101,14 +101,14 @@ int isExecutableNameTest()
                   << "Threshold.py" << "Threshold.tcl"
                   << "Threshold.m" << "Threshold.exe";
 
-  foreach (const QString& executableName, executableNames)
+  for (const QString& executableName : executableNames)
   {
     CHECK_BOOL(qSlicerUtils::isExecutableName(executableName), true);
   }
 
   QStringList notExecutableNames;
   notExecutableNames << "Threshold.ini" << "Threshold.txt" << "Threshold";
-  foreach (const QString& notExecutableName, notExecutableNames)
+  for (const QString& notExecutableName : notExecutableNames)
   {
     CHECK_BOOL(qSlicerUtils::isExecutableName(notExecutableName), false);
   }
@@ -125,7 +125,7 @@ int isCLILoadableModuleTest()
                  << "ThresholdLib.DLL"
                  << "libThresholdLib.dylib"
                  << "libThresholdLib.so";
-  foreach (const QString& filePath, validFilePaths)
+  for (const QString& filePath : validFilePaths)
   {
     CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), true);
   }
@@ -138,7 +138,7 @@ int isCLILoadableModuleTest()
                    << "Lib.dll"
                    << "libThresholdlib.so"
                    << "Thresholdlib.so";
-  foreach (const QString& filePath, invalidFilePaths)
+  for (const QString& filePath : invalidFilePaths)
   {
     CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), false);
   }
@@ -155,7 +155,7 @@ int isLoadableModuleTest()
                  << "qSlicerThresholdModule.DLL"
                  << "libqSlicerThresholdModule.dylib"
                  << "libqSlicerThresholdModule.so";
-  foreach (const QString& filePath, validFilePaths)
+  for (const QString& filePath : validFilePaths)
   {
     CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), true);
   }
@@ -167,7 +167,7 @@ int isLoadableModuleTest()
                    << "qSlicerModule.dll"
                    << "libQSlicerThresholdmodule.so"
                    << "QSlicerThresholdmodule.so";
-  foreach (const QString& filePath, invalidFilePaths)
+  for (const QString& filePath : invalidFilePaths)
   {
     CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), false);
   }
@@ -200,7 +200,7 @@ int executableExtensionTest()
 
   QString expectedModuleName = "VR";
 
-  foreach (const QString& libraryName, libraryNames)
+  for (const QString& libraryName : libraryNames)
   {
     QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
     CHECK_QSTRING(moduleName, expectedModuleName);
@@ -247,8 +247,7 @@ int isPluginInstalledBuiltinTest()
 
   createFile(__LINE__, tmp1, ".", "CMakeCache.txt");
 
-  foreach (const QString& relativePath,
-           QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug << fooRelease << fooBar << fooBarDebug << fooBarRelease)
+  for (const QString& relativePath : QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug << fooRelease << fooBar << fooBarDebug << fooBarRelease)
   {
     createFile(__LINE__, tmp1, relativePath, "plugin.txt");
   }
@@ -328,7 +327,7 @@ int isPluginInstalledBuiltinTest()
   tmp3.mkdir(temporaryDirName);
   tmp3.cd(temporaryDirName);
 
-  foreach (const QString& relativePath, QStringList() << foo << fooBar)
+  for (const QString& relativePath : QStringList() << foo << fooBar)
   {
     createFile(__LINE__, tmp1, relativePath, "plugin.txt");
   }
@@ -414,7 +413,7 @@ int isPluginInstalledBuiltinTest()
 #endif
 
   // Clean temporary directories
-  foreach (const QString& dir, directoriesToRemove)
+  for (const QString& dir : directoriesToRemove)
   {
     ctk::removeDirRecursively(dir);
   }
@@ -702,9 +701,8 @@ int setPermissionsRecursivelyTest()
   createFile(__LINE__, tmp, path2, "sol.txt");
 
   // Let's confirm that created file are readable
-  foreach (const QString& relativeFilepath,
-           QStringList() //
-             << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  for (const QString& relativeFilepath : QStringList() //
+                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
   }
@@ -718,9 +716,8 @@ int setPermissionsRecursivelyTest()
   //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
   // Since directory are *NOT* executable, files should *NOT* be readable
-  foreach (const QString& relativeFilepath,
-           QStringList() //
-             << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  for (const QString& relativeFilepath : QStringList() //
+                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, false);
   }
@@ -728,9 +725,8 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
 
   // Since directory are executable, files should be readable
-  foreach (const QString& relativeFilepath,
-           QStringList() //
-             << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  for (const QString& relativeFilepath : QStringList() //
+                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
   }
@@ -739,9 +735,8 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), false);
 #endif
 
-  foreach (const QString& relativeFilepath,
-           QStringList() //
-             << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  for (const QString& relativeFilepath : QStringList() //
+                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
   {
     // Since files are read-only, they should *NOT* be writable
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, false);
@@ -750,9 +745,8 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner, QFile::ReadOwner | QFile::WriteOwner), true);
 
   // Make sure files are readable and writable
-  foreach (const QString& relativeFilepath,
-           QStringList() //
-             << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  for (const QString& relativeFilepath : QStringList() //
+                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, true);
   }

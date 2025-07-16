@@ -497,7 +497,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   QList<QWidget*> widgets;
   widgets << d->AxesWidget << d->CenterButton << d->OrthoButton << d->VisibilityButton << d->ZoomInButton << d->ZoomOutButton << d->ShadowsButton << d->RockButton << d->SpinButton
           << d->MoreToolButton << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
-  foreach (QWidget* w, widgets)
+  for (QWidget* const w : widgets)
   {
     w->setEnabled(viewNode != nullptr);
   }

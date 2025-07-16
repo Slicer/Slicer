@@ -404,11 +404,11 @@ void qMRMLTableView::pasteSelection()
   }
   mrmlModel->updateModelFromMRML();
 
-  foreach (QString line, lines)
+  for (const QString& line : lines)
   {
     int columnIndex = startColumnIndex;
     QStringList cells = line.split('\t');
-    foreach (QString cell, cells)
+    for (const QString& cell : cells)
     {
       // Pre-allocate new columns (enough for at least for storing all the items in the current row)
       if (columnIndex >= mrmlModel->columnCount())
@@ -833,8 +833,7 @@ QList<int> qMRMLTableView::selectedMRMLTableColumnIndices() const
   QList<int> mrmlColumnIndexList;
   QModelIndexList selection = selectionModel()->selectedIndexes();
   qMRMLTableModel* tableModel = this->tableModel();
-  QModelIndex index;
-  foreach (index, selection)
+  for (const QModelIndex index : selection)
   {
     int mrmlColumnIndex = tableModel->mrmlTableColumnIndex(index);
     if (!mrmlColumnIndexList.contains(mrmlColumnIndex))

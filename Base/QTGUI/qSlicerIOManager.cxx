@@ -133,7 +133,7 @@ void qSlicerIOManagerPrivate::readSettings()
   if (!settings.value("favoritesPaths").toList().isEmpty())
   {
     QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
-    foreach (const QString& varUrl, paths)
+    for (const QString& varUrl : paths)
     {
       this->Favorites << QUrl(varUrl);
     }
@@ -153,7 +153,7 @@ void qSlicerIOManagerPrivate::writeSettings()
   QSettings settings;
   settings.beginGroup("ioManager");
   QStringList list;
-  foreach (const QUrl& url, q->favorites())
+  for (const QUrl& url : q->favorites())
   {
     list << url.toString();
   }
@@ -179,7 +179,7 @@ QString qSlicerIOManagerPrivate::createUniqueDialogName(qSlicerIO::IOFileType fi
 qSlicerFileDialog* qSlicerIOManagerPrivate::findDialog(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const
 {
   const QList<qSlicerFileDialog*>& dialogs = (action == qSlicerFileDialog::Read) ? this->ReadDialogs : this->WriteDialogs;
-  foreach (qSlicerFileDialog* dialog, dialogs)
+  for (qSlicerFileDialog* const dialog : dialogs)
   {
     if (dialog->fileType() == fileType)
     {
@@ -246,7 +246,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDia
   bool res = dialog->exec(properties);
   if (loadedNodes)
   {
-    foreach (const QString& nodeID, dialog->loadedNodes())
+    for (const QString& nodeID : dialog->loadedNodes())
     {
       vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
       if (node)
@@ -266,7 +266,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDia
 void qSlicerIOManager::dragEnterEvent(QDragEnterEvent* event)
 {
   Q_D(qSlicerIOManager);
-  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
+  for (qSlicerFileDialog* const dialog : d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -282,7 +282,7 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   Q_D(qSlicerIOManager);
   QStringList supportedReaders;
   QStringList genericReaders; // those must be last in the choice menu
-  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
+  for (qSlicerFileDialog* const dialog : d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -322,7 +322,7 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   {
     return;
   }
-  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
+  for (qSlicerFileDialog* const dialog : d->ReadDialogs)
   {
     if (dialog->description() == selectedReader)
     {
@@ -369,7 +369,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 {
   Q_D(qSlicerIOManager);
   QList<QUrl> newFavorites;
-  foreach (const QUrl& url, urls)
+  for (const QUrl& url : urls)
   {
     newFavorites << url;
   }
@@ -453,7 +453,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vt
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(files.count());
   bool success = true;
-  foreach (qSlicerIO::IOProperties fileProperties, files)
+  for (const qSlicerIO::IOProperties& fileProperties : files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
     success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()), fileProperties, loadedNodes, userMessages) && success;

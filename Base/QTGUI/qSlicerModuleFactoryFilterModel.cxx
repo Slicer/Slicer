@@ -411,7 +411,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   }
 
   // Insert new items
-  foreach (QStandardItem* item, items)
+  for (QStandardItem* const item : items)
   {
     QString moduleName = item->data(Qt::UserRole).toString();
     newShowModules.removeAll(moduleName);
