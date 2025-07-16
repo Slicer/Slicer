@@ -745,7 +745,7 @@ QToolButton* qSlicerMarkupsPlaceWidget::deleteButton() const
 bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  foreach (QWidget* w, d->OptionsWidgets)
+  for (QWidget* const w : d->OptionsWidgets)
   {
     if (!w->isVisible())
     {
@@ -759,7 +759,7 @@ bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 void qSlicerMarkupsPlaceWidget::setButtonsVisible(bool visible)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  foreach (QWidget* w, d->OptionsWidgets)
+  for (QWidget* const w : d->OptionsWidgets)
   {
     w->setVisible(visible);
   }

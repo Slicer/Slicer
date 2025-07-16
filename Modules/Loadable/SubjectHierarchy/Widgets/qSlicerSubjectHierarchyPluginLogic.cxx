@@ -571,7 +571,7 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   }
 
   // Have all plugins show context view menu actions for current item
-  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+  for (qSlicerSubjectHierarchyAbstractPlugin* const plugin : qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
   {
     plugin->hideAllContextMenuActions();
     plugin->showViewContextMenuActionsForItem(itemID, eventDataMap);
@@ -714,7 +714,7 @@ QStringList qSlicerSubjectHierarchyPluginLogic::registeredViewContextMenuActionN
   Q_D(qSlicerSubjectHierarchyPluginLogic);
 
   QStringList registeredActionNames;
-  foreach (QAction* action, d->ViewContextMenuActions)
+  for (QAction* const action : d->ViewContextMenuActions)
   {
     registeredActionNames << action->objectName();
   }
@@ -753,7 +753,7 @@ QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QL
   std::sort(actions.begin(), actions.end(), [](const QAction* a, const QAction* b) -> bool { return a->property("section").toDouble() < b->property("section").toDouble(); });
 
   int lastSection = static_cast<int>(actions.front()->property("section").toDouble() + 0.5);
-  foreach (QAction* action, actions)
+  for (QAction* const action : actions)
   {
     if (!allowedActions.isEmpty() && !allowedActions.contains(action->objectName()))
     {

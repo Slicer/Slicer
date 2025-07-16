@@ -275,7 +275,7 @@ void qSlicerCropVolumeModuleWidget::enter()
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->layoutManager())
     {
-      foreach (QString sliceViewName, app->layoutManager()->sliceViewNames())
+      for (const QString& sliceViewName : app->layoutManager()->sliceViewNames())
       {
         qMRMLSliceWidget* sliceWidget = app->layoutManager()->sliceWidget(sliceViewName);
         const char* backgroundVolumeNodeID = sliceWidget->sliceLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID();

@@ -104,7 +104,7 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes() const
   Q_D(const qMRMLCheckableNodeComboBox);
   QList<vtkMRMLNode*> res;
   const ctkCheckableComboBox* checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
-  foreach (const QModelIndex& checkedIndex, checkableComboBox->checkedIndexes())
+  for (const QModelIndex& checkedIndex : checkableComboBox->checkedIndexes())
   {
     vtkMRMLNode* checkedNode = d->mrmlNodeFromIndex(checkedIndex);
     // MRMLScene or extra items could be checked, we don't want them
@@ -120,7 +120,7 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes() const
 QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes() const
 {
   QList<vtkMRMLNode*> res = this->nodes();
-  foreach (vtkMRMLNode* checkedNode, this->checkedNodes())
+  for (vtkMRMLNode* const checkedNode : this->checkedNodes())
   {
     res.removeAll(checkedNode);
   }

@@ -517,7 +517,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
     return nullptr;
   }
 
-  foreach (QTableWidgetItem* item, items)
+  for (QTableWidgetItem* const item : items)
   {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
@@ -547,7 +547,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
     return nullptr;
   }
 
-  foreach (QTableWidgetItem* item, items)
+  for (QTableWidgetItem* const item : items)
   {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
@@ -687,7 +687,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::populateTypeTable()
   // Collect selected categories. Use current category if selected list is empty and current is valid
   // (selection happens from UI, current is set when setting from outside using setTerminologyEntry)
   QList<vtkSlicerTerminologyCategory*> selectedCategories;
-  foreach (vtkSmartPointer<vtkSlicerTerminologyCategory> category, this->SelectedCategoryObjects)
+  for (const vtkSmartPointer<vtkSlicerTerminologyCategory>& category : this->SelectedCategoryObjects)
   {
     selectedCategories << category.GetPointer();
   }
@@ -724,7 +724,7 @@ void qSlicerTerminologyNavigatorWidgetPrivate::populateTypeTable()
   std::string searchTerm(this->SearchBox_Type->text().toUtf8().constData());
   std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>::iterator typeObjIt;
   std::set<std::string> existingTypesSchemeValue;
-  foreach (vtkSlicerTerminologyCategory* category, selectedCategories)
+  for (vtkSlicerTerminologyCategory* const category : selectedCategories)
   {
     std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typesInCategory;
     std::vector<vtkSmartPointer<vtkSlicerTerminologyType>> typesObjectsInCategory;
@@ -2049,7 +2049,7 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelectionChanged()
   bool showAnatomyOnInAnyCategories = false;
 
   d->SelectedCategoryObjects.clear();
-  foreach (QTableWidgetItem* currentItem, selectedItems)
+  for (QTableWidgetItem* const currentItem : selectedItems)
   {
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(currentItem->data(CodingSchemeDesignatorRole).toString().toUtf8().constData(),
                                                                  currentItem->data(CodeValueRole).toString().toUtf8().constData(),

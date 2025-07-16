@@ -108,7 +108,7 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
 {
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   QStringList names;
-  foreach (const QString& fileName, fileNames)
+  for (const QString& fileName : fileNames)
   {
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())

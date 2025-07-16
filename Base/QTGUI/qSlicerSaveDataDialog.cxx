@@ -311,7 +311,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
   int currentFormat = -1;
   QString currentExtension = coreIOManager->extractKnownExtension(sceneFileInfo.fileName(), this->MRMLScene);
-  foreach (const QString& nameFilter, coreIOManager->fileWriterExtensions(this->MRMLScene))
+  for (const QString& nameFilter : coreIOManager->fileWriterExtensions(this->MRMLScene))
   {
     QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     sceneComboBoxWidget->addItem(nameFilter, extension);
@@ -565,7 +565,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
   int currentFormat = -1;
   QString currentExtension = coreIOManager->completeSlicerWritableFileNameSuffix(node);
-  foreach (QString nameFilter, coreIOManager->fileWriterExtensions(node))
+  for (const QString& nameFilter : coreIOManager->fileWriterExtensions(node))
   {
     QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     fileFormats->addItem(nameFilter, extension);

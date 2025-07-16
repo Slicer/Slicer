@@ -255,7 +255,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
 
   // Get exportables from DICOM plugins for selection
   QMultiMap<QString, qSlicerDICOMExportable*> exportablesByPlugin;
-  foreach (vtkIdType selectedSeriesItemID, selectedSeriesItemIDs)
+  for (const vtkIdType& selectedSeriesItemID : selectedSeriesItemIDs)
   {
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
@@ -276,7 +276,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     QVariantList exportablesVariantList = context.getVariable("exportables").toList();
 
     // Group exportables by provider plugin
-    foreach (QVariant exportableVariant, exportablesVariantList)
+    for (const QVariant& exportableVariant : exportablesVariantList)
     {
       qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(exportableVariant.value<QObject*>());
       if (!exportable)
@@ -291,12 +291,12 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
   QMultiMap<double, QList<qSlicerDICOMExportable*>> exportablesByConfidence;
-  foreach (const QString& plugin, exportablesByPlugin.uniqueKeys())
+  for (const QString& plugin : exportablesByPlugin.uniqueKeys())
   {
     // Geometric mean to emphasize larger values
     double meanConfidenceForPlugin = 0.0;
     QList<qSlicerDICOMExportable*> exportablesForPlugin = exportablesByPlugin.values(plugin);
-    foreach (qSlicerDICOMExportable* exportable, exportablesForPlugin)
+    for (qSlicerDICOMExportable* const exportable : exportablesForPlugin)
     {
       meanConfidenceForPlugin += exportable->confidence();
     }
@@ -308,11 +308,11 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   }
 
   // Populate the exportables list widget
-  foreach (double inverseConfidence, exportablesByConfidence.uniqueKeys())
+  for (const double& inverseConfidence : exportablesByConfidence.uniqueKeys())
   {
     // Get exportable lists for the confidence number (there might be equality!)
     QList<QList<qSlicerDICOMExportable*>> exportableLists = exportablesByConfidence.values(inverseConfidence);
-    foreach (QList<qSlicerDICOMExportable*> exportables, exportableLists)
+    for (const QList<qSlicerDICOMExportable*>& exportables : exportableLists)
     {
       // Set exportable name as the first one in the list, giving also the
       // confidence number and plugin name in parentheses
@@ -325,7 +325,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
       exportableItem->setToolTip(exportables[0]->tooltip());
       // Construct data variant object
       QList<QVariant> itemData;
-      foreach (qSlicerDICOMExportable* exportable, exportables)
+      for (qSlicerDICOMExportable* const exportable : exportables)
       {
         itemData.append(QVariant::fromValue<QObject*>(exportable));
       }
@@ -355,7 +355,7 @@ void qSlicerDICOMExportDialog::onExportableSelectedAtRow(int row)
   // Get exportable object from list item
   QList<qSlicerDICOMExportable*> exportableList;
   QList<QVariant> itemData = exportableItem->data(Qt::UserRole).toList();
-  foreach (QVariant exportableVariant, itemData)
+  for (const QVariant& exportableVariant : itemData)
   {
     qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(exportableVariant.value<QObject*>());
     if (!exportable)
@@ -444,7 +444,7 @@ void qSlicerDICOMExportDialog::onExport()
       indexer.addDirectory(outputFolder.absolutePath(), true);
     }
     // Remove temporary DICOM folder if exported to the DICOM database folder
-    foreach (QString file, outputFolder.entryList())
+    for (const QString& file : outputFolder.entryList())
     {
       outputFolder.remove(file);
     }
@@ -539,7 +539,7 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
   // a composite export where the series are referenced from each other, or if the
   // file naming is static (to avoid overwrite)
   QList<QVariant> exportableList;
-  foreach (qSlicerDICOMExportable* exportable, d->DICOMTagEditorWidget->exportables())
+  for (qSlicerDICOMExportable* const exportable : d->DICOMTagEditorWidget->exportables())
   {
     // Set output directory
     exportable->setDirectory(outputFolder.absolutePath());

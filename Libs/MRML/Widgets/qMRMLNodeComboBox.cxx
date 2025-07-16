@@ -305,7 +305,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     }
     if (this->AddEnabled)
     {
-      foreach (QString nodeType, q->nodeTypes())
+      for (const QString& nodeType : q->nodeTypes())
       {
         QString label = q->nodeTypeLabel(nodeType);
         extraItems.append(createNew + label);
@@ -319,7 +319,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     {
       extraItems.append(qMRMLNodeComboBox::tr("Delete current ") + label);
     }
-    foreach (QAction* action, this->UserMenuActions)
+    for (QAction* const action : this->UserMenuActions)
     {
       extraItems.append(action->text());
     }
@@ -371,7 +371,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 // --------------------------------------------------------------------------
 bool qMRMLNodeComboBoxPrivate::hasPostItem(const QString& name) const
 {
-  foreach (const QString& item, this->MRMLSceneModel->postItems(this->MRMLSceneModel->mrmlSceneItem()))
+  for (const QString& item : this->MRMLSceneModel->postItems(this->MRMLSceneModel->mrmlSceneItem()))
   {
     if (item.startsWith(name))
     {
@@ -475,7 +475,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   else
   {
     // check for user added items
-    foreach (QAction* action, d->UserMenuActions)
+    for (QAction* const action : d->UserMenuActions)
     {
       if (data.startsWith(action->text()))
       {
@@ -520,7 +520,7 @@ void qMRMLNodeComboBox::setBaseName(const QString& baseName, const QString& node
     qWarning("qMRMLNodeComboBox::setBaseName failed: no node types have been set yet");
     return;
   }
-  foreach (QString aNodeType, nodeTypes)
+  for (const QString& aNodeType : nodeTypes)
   {
     d->MRMLNodeFactory->setBaseName(aNodeType, baseName);
   }
@@ -1286,7 +1286,7 @@ void qMRMLNodeComboBox::addMenuAction(QAction* newAction)
   Q_D(qMRMLNodeComboBox);
 
   // is an action with the same text already in the user list?
-  foreach (QAction* action, d->UserMenuActions)
+  for (QAction* const action : d->UserMenuActions)
   {
     if (action->text() == newAction->text())
     {

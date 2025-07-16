@@ -35,7 +35,7 @@
 
 QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
-  foreach (QAction* action, mouseModeToolBar.actions())
+  for (QAction* const action : mouseModeToolBar.actions())
   {
     if (action->objectName() == QString("PlaceWidgetAction"))
     {
@@ -47,7 +47,7 @@ QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 
 QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
-  foreach (QAction* action, mouseModeToolBar.actions())
+  for (QAction* const action : mouseModeToolBar.actions())
   {
     std::cout << "action name: " << qPrintable(action->objectName()) << std::endl;
     ;

@@ -100,7 +100,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   qDebug() << "All writable extensions = ";
-  foreach (QString ext, allWritableExtensions)
+  for (const QString& ext : allWritableExtensions)
   {
     qDebug() << ext;
   }
@@ -113,7 +113,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   qDebug() << "All readable extensions = ";
-  foreach (QString ext, allReadableExtensions)
+  for (const QString& ext : allReadableExtensions)
   {
     qDebug() << ext;
   }

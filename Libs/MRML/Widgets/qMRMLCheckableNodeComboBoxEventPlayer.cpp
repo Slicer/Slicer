@@ -58,7 +58,7 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object, const QSt
     if (Command == "check_indexes")
     {
       QStringList Args = Arguments.split(" ");
-      foreach (QString Arg, Args)
+      for (const QString& Arg : Args)
       {
         const int value = Arg.toInt();
         vtkMRMLNode* node = parent->nodeFromIndex(value);
@@ -70,7 +70,7 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object, const QSt
     if (Command == "uncheck_indexes")
     {
       QStringList Args = Arguments.split(" ");
-      foreach (QString Arg, Args)
+      for (const QString& Arg : Args)
       {
         const int value = Arg.toInt();
         vtkMRMLNode* node = parent->nodeFromIndex(value);

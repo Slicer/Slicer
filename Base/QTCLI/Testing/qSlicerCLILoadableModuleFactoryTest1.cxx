@@ -38,7 +38,7 @@ int qSlicerCLILoadableModuleFactoryTest1(int, char*[])
 
   QString expectedModuleName = "Threshold";
   qSlicerCLILoadableModuleFactory factory;
-  foreach (const QString& libraryName, libraryNames)
+  for (const QString& libraryName : libraryNames)
   {
     QString moduleName = factory.fileNameToKey(libraryName);
     if (moduleName != expectedModuleName)

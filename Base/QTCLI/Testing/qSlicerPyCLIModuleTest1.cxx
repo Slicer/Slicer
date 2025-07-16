@@ -159,7 +159,7 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  foreach (const QString& name, moduleNames)
+  for (const QString& name : moduleNames)
   {
     moduleFactoryManager->loadModule(name);
   }

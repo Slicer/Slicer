@@ -148,7 +148,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
   mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
   this->MarkupsModuleOwnsToolBar = false;
-  foreach (QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
+  for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
     {

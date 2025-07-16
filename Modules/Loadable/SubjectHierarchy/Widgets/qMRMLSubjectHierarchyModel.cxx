@@ -724,7 +724,7 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes) 
   }
   QList<QUrl> selectedShItemUrls;
   QModelIndexList allColumnsIndexes;
-  foreach (const QModelIndex& index, indexes)
+  for (const QModelIndex& index : indexes)
   {
     QModelIndex parent = index.parent();
     for (int column = 0; column < this->columnCount(parent); ++column)
@@ -1576,7 +1576,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAboutToBeRemoved(vtkIdTyp
       d->Orphans.push_back(item->takeRow(0));
     }
     // Remove the item from any orphan list if it exist as we don't want to add it back later in onSubjectHierarchyItemRemoved
-    foreach (QList<QStandardItem*> orphans, d->Orphans)
+    for (QList<QStandardItem*> orphans : d->Orphans)
     {
       if (orphans.contains(item))
       {
@@ -1598,7 +1598,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
   }
   // The removed item may have had children, if they haven't been updated, they are likely to be lost
   // (not reachable when browsing the model), we need to reparent them.
-  foreach (QList<QStandardItem*> orphans, d->Orphans)
+  for (QList<QStandardItem*> orphans : d->Orphans)
   {
     QStandardItem* orphan = orphans[0];
     // Make sure that the orphans have not already been reparented.
@@ -1776,7 +1776,7 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
 
   // Get parents of all dragged items
   std::vector<QStandardItem*> draggedParentShItems;
-  foreach (vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
+  for (const vtkIdType& draggedShItemID : d->DraggedSubjectHierarchyItems)
   {
     QStandardItem* draggedShItem = this->itemFromSubjectHierarchyItem(draggedShItemID);
     if (!draggedShItem)

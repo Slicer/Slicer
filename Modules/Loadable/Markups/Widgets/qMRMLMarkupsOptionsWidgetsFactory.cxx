@@ -184,7 +184,7 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsOptionsWidgetsFactory::unregisterAll()
 {
-  foreach (auto widget, this->RegisteredWidgets)
+  for (const auto& widget : this->RegisteredWidgets)
   {
     if (widget)
     {

@@ -128,7 +128,7 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     qWarning("qSlicerVolumesIOOptionsWidget::setFileNames: mrmlScene is invalid, node name may not be determined accurately");
     snode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
   }
-  foreach (const QString& fileName, fileNames)
+  for (const QString& fileName : fileNames)
   {
     QFileInfo fileInfo(fileName);
     QString fileBaseName = fileInfo.baseName();

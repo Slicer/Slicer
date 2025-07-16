@@ -1146,14 +1146,14 @@ void qSlicerExtensionsLocalWidget::onModelUpdated()
   // Show extensions with available update at the top
   QStringList availableUpdateExtensions = d->ExtensionsManagerModel->availableUpdateExtensions();
   availableUpdateExtensions.sort();
-  foreach (const QString& extensionName, availableUpdateExtensions)
+  for (const QString& extensionName : availableUpdateExtensions)
   {
     d->updateExtensionItem(extensionName);
   }
   // Show all other extensions
   QStringList managedExtensions = d->ExtensionsManagerModel->managedExtensions();
   managedExtensions.sort();
-  foreach (const QString& extensionName, managedExtensions)
+  for (const QString& extensionName : managedExtensions)
   {
     if (availableUpdateExtensions.contains(extensionName))
     {

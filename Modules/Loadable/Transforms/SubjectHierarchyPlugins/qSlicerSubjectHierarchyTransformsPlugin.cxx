@@ -409,7 +409,7 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::showResetCenterOfTransforma
 void qSlicerSubjectHierarchyTransformsPluginPrivate::removeResetCenterOfTransformationForTransformedNodesActions()
 {
   QList<QAction*> transformActions = this->ResetCenterOfTransformationNodeGroup->actions();
-  foreach (QAction* transformAction, transformActions)
+  for (QAction* const transformAction : transformActions)
   {
     this->ResetCenterOfTransformationNodeGroup->removeAction(transformAction);
     this->ResetCenterOfTransformationMenu->removeAction(transformAction);
@@ -506,7 +506,7 @@ vtkMRMLTransformNode* qSlicerSubjectHierarchyTransformsPluginPrivate::firstAppli
   QList<vtkIdType> currentItemIDs;
   currentItemIDs = qSlicerSubjectHierarchyPluginHandler::instance()->currentItems();
 
-  foreach (vtkIdType itemID, currentItemIDs)
+  for (const vtkIdType& itemID : currentItemIDs)
   {
     std::vector<vtkIdType> childItemIDs;
     shNode->GetItemChildren(itemID, childItemIDs, true);
@@ -1192,7 +1192,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::showTransformContextMenuActionsFor
   }
 
   QList<QAction*> transformActions = d->TransformActionGroup->actions();
-  foreach (QAction* transformAction, transformActions)
+  for (QAction* const transformAction : transformActions)
   {
     std::string actionTransformNodeID = transformAction->data().toString().toStdString();
     bool checked = allTransformsAreTheSame && currentTransformNodeID == actionTransformNodeID;
@@ -1278,7 +1278,7 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuAct
     }
 
     QAction* transformAction = nullptr;
-    foreach (QAction* foundTransformAction, originalTransformActions)
+    for (QAction* const foundTransformAction : originalTransformActions)
     {
       if (foundTransformAction->data().toString().toStdString() == transformNode->GetID())
       {
@@ -1310,7 +1310,7 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuAct
   }
 
   // Remove actions that belong to deleted transform nodes
-  foreach (QAction* transformAction, originalTransformActions)
+  for (QAction* const transformAction : originalTransformActions)
   {
     QString actionTransformNodeID = transformAction->data().toString();
     if (actionTransformNodeID.isEmpty())
@@ -1339,7 +1339,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::onTransformActionSelected()
   std::string selectedTransformNodeID = action->data().toString().toStdString();
   QList<vtkIdType> currentItemIDs;
   currentItemIDs = qSlicerSubjectHierarchyPluginHandler::instance()->currentItems();
-  foreach (vtkIdType itemID, currentItemIDs)
+  for (const vtkIdType& itemID : currentItemIDs)
   {
     d->applyTransformToItem(itemID, selectedTransformNodeID.c_str());
   }
@@ -1431,7 +1431,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::onCreateNewTransform()
   }
   QList<vtkIdType> currentItemIDs;
   currentItemIDs = qSlicerSubjectHierarchyPluginHandler::instance()->currentItems();
-  foreach (vtkIdType itemID, currentItemIDs)
+  for (const vtkIdType& itemID : currentItemIDs)
   {
     d->applyTransformToItem(itemID, newTransformNode->GetID());
   }

@@ -214,7 +214,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
                     << "ModuleLogoPixelSize" << "ModuleLogoLength";
     QList<SymbolAddressType> resolvedSymbols;
-    foreach (const QString& symbol, expectedSymbols)
+    for (const QString& symbol : expectedSymbols)
     {
       SymbolAddressType resolvedSymbol = item->symbolAddress(symbol);
       if (resolvedSymbol)

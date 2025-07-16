@@ -113,16 +113,15 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Add all collabsibleWidgetButton to a button group
   QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
-  foreach (ctkCollapsibleButton* collapsible, collapsibles)
+  for (ctkCollapsibleButton* const collapsible : collapsibles)
   {
     group->addButton(collapsible);
   }
 
   // Update occurrences of documentation URLs
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  foreach (QWidget* widget,
-           QWidgetList() << this->FeedbackCollapsibleWidget << this->WelcomeAndAboutCollapsibleWidget << this->OtherUsefulHintsCollapsibleWidget
-                         << this->AcknowledgmentCollapsibleWidget)
+  for (QWidget* const widget : QWidgetList() << this->FeedbackCollapsibleWidget << this->WelcomeAndAboutCollapsibleWidget << this->OtherUsefulHintsCollapsibleWidget
+                                             << this->AcknowledgmentCollapsibleWidget)
   {
     QTextBrowser* textBrowser = widget->findChild<QTextBrowser*>();
     if (!textBrowser)

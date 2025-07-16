@@ -253,7 +253,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
     qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
     return;
   }
-  foreach (vtkMRMLViewNode* currentViewNode, viewNodes)
+  for (vtkMRMLViewNode* const currentViewNode : viewNodes)
   {
     // Show the volume in slice view
     vtkMRMLViewLogic* viewLogic = appLogic->GetViewLogic(currentViewNode);

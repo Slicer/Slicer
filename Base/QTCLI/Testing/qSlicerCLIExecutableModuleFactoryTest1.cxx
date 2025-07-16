@@ -35,7 +35,7 @@ int qSlicerCLIExecutableModuleFactoryTest1(int, char*[])
 
   QString expectedModuleName = "Threshold";
   qSlicerCLIExecutableModuleFactory factory;
-  foreach (const QString& executableName, executableNames)
+  for (const QString& executableName : executableNames)
   {
     QString moduleName = factory.fileNameToKey(executableName);
     if (moduleName != expectedModuleName)

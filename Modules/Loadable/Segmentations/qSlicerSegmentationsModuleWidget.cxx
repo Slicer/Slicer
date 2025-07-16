@@ -523,7 +523,7 @@ void qSlicerSegmentationsModuleWidget::onRemoveSelectedSegments()
   }
 
   QStringList selectedSegmentIds = d->SegmentsTableView->selectedSegmentIDs();
-  foreach (QString segmentId, selectedSegmentIds)
+  for (const QString& segmentId : selectedSegmentIds)
   {
     currentSegmentationNode->GetSegmentation()->RemoveSegment(segmentId.toUtf8().constData());
   }
@@ -830,7 +830,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentsBetweenSegmentations(bool cop
 
   // Copy/move segments
   bool success = true;
-  foreach (QString segmentId, selectedSegmentIds)
+  for (const QString& segmentId : selectedSegmentIds)
   {
     success = success && this->copySegmentBetweenSegmentations(sourceSegmentation, targetSegmentation, segmentId, removeFromSource);
   }

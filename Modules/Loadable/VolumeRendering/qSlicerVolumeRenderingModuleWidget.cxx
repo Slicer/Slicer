@@ -239,7 +239,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
   // Do not show newly selected volume (because it would be triggered by simply selecting it in the combobox,
   // and it would not adhere to the customary Slicer behavior)
   // Set selected views to the display node
-  foreach (vtkMRMLAbstractViewNode* viewNode, this->ViewCheckableNodeComboBox->checkedViewNodes())
+  for (vtkMRMLAbstractViewNode* const viewNode : this->ViewCheckableNodeComboBox->checkedViewNodes())
   {
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
   }

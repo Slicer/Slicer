@@ -174,11 +174,11 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
   }
   else
   {
-    foreach (vtkMRMLAbstractViewNode* viewNode, this->checkedViewNodes())
+    for (vtkMRMLAbstractViewNode* const viewNode : this->checkedViewNodes())
     {
       d->MRMLDisplayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
     }
-    foreach (vtkMRMLAbstractViewNode* viewNode, this->uncheckedViewNodes())
+    for (vtkMRMLAbstractViewNode* const viewNode : this->uncheckedViewNodes())
     {
       d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : nullptr);
     }
@@ -191,7 +191,7 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes() const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach (vtkMRMLNode* checkedNode, this->checkedNodes())
+  for (vtkMRMLNode* const checkedNode : this->checkedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(checkedNode);
   }
@@ -202,7 +202,7 @@ QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()
 QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes() const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach (vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
+  for (vtkMRMLNode* const uncheckedNode : this->uncheckedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(uncheckedNode);
   }

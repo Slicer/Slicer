@@ -141,7 +141,7 @@ void qSlicerDataDialogPrivate::addFiles()
   qSlicerStandardFileDialog fileDialog;
   QStringList files = fileDialog.getOpenFileName();
 
-  foreach (QString file, files)
+  for (const QString& file : files)
   {
     this->addFile(file);
   }
@@ -172,7 +172,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
   // now add any files and directories that weren't filtered
   // out by the ioManager
   //
-  foreach (QFileInfo entry, fileInfoList)
+  for (const QFileInfo& entry : fileInfoList)
   {
     if (entry.isFile())
     {
@@ -238,7 +238,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   this->FileWidget->setItem(row, FileColumn, fileItem);
   // Description
   QComboBox* descriptionComboBox = new QComboBox(this->FileWidget);
-  foreach (const QString& fileDescription, fileDescriptions)
+  for (const QString& fileDescription : fileDescriptions)
   {
     descriptionComboBox->addItem(fileDescription, QVariant(coreIOManager->fileTypeFromDescription(fileDescription)));
   }
@@ -578,7 +578,7 @@ void qSlicerDataDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerDataDialog);
   bool pathAdded = false;
-  foreach (QUrl url, event->mimeData()->urls())
+  for (const QUrl& url : event->mimeData()->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {
@@ -614,7 +614,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   if (readerProperties.contains("fileNames"))
   {
     QStringList fileNames = readerProperties["fileNames"].toStringList();
-    foreach (QString fileName, fileNames)
+    for (const QString& fileName : fileNames)
     {
       d->addFile(QFileInfo(fileName));
     }

@@ -81,7 +81,7 @@ void qSlicerModuleFactoryManager::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 int qSlicerModuleFactoryManager::loadModules()
 {
-  foreach (const QString& name, this->instantiatedModuleNames())
+  for (const QString& name : this->instantiatedModuleNames())
   {
     this->loadModule(name);
   }
@@ -93,13 +93,13 @@ int qSlicerModuleFactoryManager::loadModules()
 bool qSlicerModuleFactoryManager::loadModules(const QStringList& modules)
 {
   // Ensure requested modules are instantiated
-  foreach (const QString& moduleKey, modules)
+  for (const QString& moduleKey : modules)
   {
     this->instantiateModule(moduleKey);
   }
 
   // Load requested modules
-  foreach (const QString& moduleKey, modules)
+  for (const QString& moduleKey : modules)
   {
     if (!this->loadModule(moduleKey))
     {
@@ -163,7 +163,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 
   // Load the modules the module depends on.
   // There is no cycle check, so be careful
-  foreach (const QString& dependency, instance->dependencies())
+  for (const QString& dependency : instance->dependencies())
   {
     // no-op if the module is already loaded
     bool dependencyLoaded = this->loadModule(dependency, name);
@@ -226,7 +226,7 @@ void qSlicerModuleFactoryManager::unloadModules()
   std::reverse(modulesToUnload.begin(), modulesToUnload.end());
   emit this->modulesAboutToBeUnloaded(modulesToUnload);
   emit this->modulesAboutToBeUninstantiated(modulesToUnload);
-  foreach (const QString& name, modulesToUnload)
+  for (const QString& name : modulesToUnload)
   {
     this->unloadModule(name);
   }
@@ -332,7 +332,7 @@ QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
 #endif
   subPaths << Slicer_QTLOADABLEMODULES_LIB_DIR;
 
-  foreach (const QString& subPath, subPaths)
+  for (const QString& subPath : subPaths)
   {
     QString candidatePath = QDir(basePath).filePath(subPath);
     if (QDir(candidatePath).exists())

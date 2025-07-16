@@ -168,7 +168,7 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
 // ---------------------------------------------------------------------------
 void qSlicerUnitsSettingsPanelPrivate::clearQuantities()
 {
-  foreach (QObject* obj, this->GridLayout->children())
+  for (QObject* const obj : this->GridLayout->children())
   {
     delete obj;
   }
@@ -192,7 +192,7 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
   quantities << "length" << "time" << "frequency" << "velocity" << "intensity";
   q->setQuantities(quantities);
 
-  foreach (qMRMLSettingsUnitWidget* widget, this->Quantities.values())
+  for (qMRMLSettingsUnitWidget* const widget : this->Quantities.values())
   {
     widget->unitComboBox()->setMRMLScene(this->MRMLScene);
   }
@@ -256,7 +256,7 @@ void qSlicerUnitsSettingsPanel::setUnitsLogic(vtkSlicerUnitsLogic* logic)
   qvtkReconnect(d->Logic, logic, vtkCommand::ModifiedEvent, this, SLOT(onUnitsLogicModified()));
   d->Logic = logic;
 
-  foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
+  for (qMRMLSettingsUnitWidget* const widget : d->Quantities.values())
   {
     widget->setUnitsLogic(d->Logic);
   }
@@ -289,7 +289,7 @@ void qSlicerUnitsSettingsPanel::setQuantities(const QStringList& newQuantities)
 {
   Q_D(qSlicerUnitsSettingsPanel);
 
-  foreach (QString newQuantity, newQuantities)
+  for (const QString& newQuantity : newQuantities)
   {
     if (!d->Quantities.contains(newQuantity))
     {
@@ -333,7 +333,7 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
 
   d->resize(showAll);
 
-  foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
+  for (qMRMLSettingsUnitWidget* const widget : d->Quantities.values())
   {
     // clang-format off
     qMRMLUnitWidget::UnitProperties allButNameAndQuantity =

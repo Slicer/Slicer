@@ -81,7 +81,7 @@ int qSlicer@MODULENAME@ModuleGenericTest(int argc, char* argv[])
              << moduleFactoryManager->instantiatedModuleNames().count();
 
     // Load all available modules
-    foreach (const QString& name, moduleFactoryManager->instantiatedModuleNames())
+    for (const QString& name: moduleFactoryManager->instantiatedModuleNames())
     {
       Q_ASSERT(!name.isNull());
       moduleFactoryManager->loadModule(name);

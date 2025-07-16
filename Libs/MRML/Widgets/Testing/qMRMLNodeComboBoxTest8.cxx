@@ -230,11 +230,10 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   //  * "Edit current "
   //  * "Rename current "
   //  * "Create and rename "
-  foreach (const QString& actionPrefix,
-           QStringList() << "Create new "
-                         << "Delete current "
-                         << "Edit current "
-                         << "Rename current ")
+  for (const QString& actionPrefix : QStringList() << "Create new "
+                                                   << "Delete current "
+                                                   << "Edit current "
+                                                   << "Rename current ")
   {
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 

@@ -529,7 +529,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions() const
   allActions << this->visibilityContextMenuActions();
   allActions << this->viewContextMenuActions();
 
-  foreach (QAction* action, allActions)
+  for (QAction* const action : allActions)
   {
     action->setVisible(false);
   }

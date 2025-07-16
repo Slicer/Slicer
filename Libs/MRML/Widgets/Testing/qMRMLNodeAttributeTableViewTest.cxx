@@ -111,7 +111,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
-  foreach (const AttributeType& attribute, attributes)
+  for (const AttributeType& attribute : attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -124,7 +124,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
 
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
-  foreach (QString attribute, resultAttributes)
+  for (const QString& attribute : resultAttributes)
   {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute), expectedAttributes[i].second);
@@ -243,7 +243,7 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
     QFETCH(QList<AttributeType>, attributes);
     vtkNew<vtkMRMLModelNode> node;
 
-    foreach (const AttributeType& attribute, attributes)
+    for (const AttributeType& attribute : attributes)
     {
       node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
     }
@@ -294,7 +294,7 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
-  foreach (const AttributeType& attribute, attributes)
+  for (const AttributeType& attribute : attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -307,7 +307,7 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
-  foreach (QString attribute, resultAttributes)
+  for (const QString& attribute : resultAttributes)
   {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute), expectedAttributes[i].second);
@@ -387,7 +387,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
 
   vtkNew<vtkMRMLModelNode> node;
 
-  foreach (const AttributeType& attribute, attributesToAdd)
+  for (const AttributeType& attribute : attributesToAdd)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -399,7 +399,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
   this->NodeAttributeTableView->removeSelectedAttributes();
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterRemove);
 
-  foreach (const AttributeEmptyType& attributeExist, expectedExistingAttributesAfterRemove)
+  for (const AttributeEmptyType& attributeExist : expectedExistingAttributesAfterRemove)
   {
     bool isEmpty = attributeExist.second;
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
@@ -443,7 +443,7 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
   QFETCH(QList<AttributeType>, attributes);
   vtkNew<vtkMRMLModelNode> node;
 
-  foreach (const AttributeType& attribute, attributes)
+  for (const AttributeType& attribute : attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -460,7 +460,7 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
   QFETCH(QList<AttributeType>, expectedAttributes);
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
-  foreach (QString attribute, resultAttributes)
+  for (const QString& attribute : resultAttributes)
   {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute), expectedAttributes[i].second);

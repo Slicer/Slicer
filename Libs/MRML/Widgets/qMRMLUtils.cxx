@@ -194,7 +194,7 @@ void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vt
     return;
   }
   idList->Reset();
-  foreach (QUrl url, mimeData->urls())
+  for (const QUrl& url : mimeData->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {

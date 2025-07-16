@@ -391,7 +391,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
   // Get the list of extensions that have update available but not updated yet
   QStringList extensionsToUpdate = this->extensionsManagerModel()->availableUpdateExtensions();
   const QStringList& extensionsAlreadyScheduledForUpdate = this->extensionsManagerModel()->scheduledForUpdateExtensions();
-  foreach (const QString& extensionName, extensionsAlreadyScheduledForUpdate)
+  for (const QString& extensionName : extensionsAlreadyScheduledForUpdate)
   {
     extensionsToUpdate.removeAll(extensionName);
   }
@@ -411,7 +411,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 
   int foundNonInstalledBookmarkedExtension = 0;
   QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach (const QString& extensionName, bookmarkedExtensions)
+  for (const QString& extensionName : bookmarkedExtensions)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -653,7 +653,7 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
   // Save last update check time
   bool wasBatchProcessing = d->setBatchProcessing(true);
   QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
-  foreach (const QString& extensionName, extensionNames)
+  for (const QString& extensionName : extensionNames)
   {
     this->extensionsManagerModel()->scheduleExtensionForUpdate(extensionName);
   }
@@ -667,7 +667,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
   bool wasBatchProcessing = d->setBatchProcessing(true);
   // Save last update check time
   QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach (const QString& extensionName, extensionNames)
+  for (const QString& extensionName : extensionNames)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -703,7 +703,7 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 
   bool wasBatchProcessing = d->setBatchProcessing(true);
   qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
-  foreach (const QString& archiveName, archiveNames)
+  for (const QString& archiveName : archiveNames)
   {
     model->installExtension(archiveName);
   }

@@ -343,7 +343,7 @@ void qSlicerApplicationPrivate::init()
                                << "slicer.mrmlScene"
                                << "qt.QPushButton";
     q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
-    foreach (QAction* action, q->pythonConsole()->actions())
+    for (QAction* const action : q->pythonConsole()->actions())
     {
       if (action->shortcut() == QKeySequence("Ctrl+H"))
       {
@@ -690,7 +690,7 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager() const
 //-----------------------------------------------------------------------------
 QMainWindow* qSlicerApplication::mainWindow() const
 {
-  foreach (QWidget* widget, this->topLevelWidgets())
+  for (QWidget* const widget : this->topLevelWidgets())
   {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
@@ -799,7 +799,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence /*=
 
   // Modules that support a parent class of the node
   QStringList classNames = this->allModuleAssociatedNodeTypes();
-  foreach (const QString& className, classNames)
+  for (const QString& className : classNames)
   {
     if (node->IsA(className.toUtf8()))
     {
@@ -807,7 +807,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence /*=
     }
   }
 
-  foreach (const QString& moduleName, moduleNames)
+  for (const QString& moduleName : moduleNames)
   {
     qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
     if (!module)
@@ -1075,7 +1075,7 @@ void qSlicerApplication::setupFileLogging()
   userSettings->beginGroup("LogFiles");
   userSettings->setValue("NumberOfFilesToKeep", numberOfFilesToKeep);
 
-  foreach (QString filePath, logFilePaths)
+  for (const QString& filePath : logFilePaths)
   {
     // If the file is to keep then save it in the settings
     if (fileNumber < numberOfFilesToKeep)
@@ -1126,7 +1126,7 @@ void qSlicerApplication::logApplicationInformation() const
          << "Additional module paths ";
 
   int titleWidth = 0;
-  foreach (const QString& title, titles)
+  for (const QString& title : titles)
   {
     if (title.length() > titleWidth)
     {
@@ -1301,7 +1301,7 @@ void qSlicerApplication::logApplicationInformation() const
   QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
 
   qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
-  foreach (const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
+  for (const QString& extensionOrModulePath : this->commandOptions()->additionalModulePaths())
   {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
@@ -1472,7 +1472,7 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime,
   }
   QString prefixedText;
   QStringList lines = text.split('\n');
-  foreach (const QString& line, lines)
+  for (const QString& line : lines)
   {
     if (line.isEmpty())
     {

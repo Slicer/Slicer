@@ -93,7 +93,7 @@ void qMRMLLayoutViewFactoryPrivate::init()
 //------------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate::viewNodeByName(const QString& viewName) const
 {
-  foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
+  for (vtkMRMLAbstractViewNode* const viewNode : this->Views.keys())
   {
     if (viewName == QString(viewNode->GetName()))
     {
@@ -106,7 +106,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate::viewNodeByName(const QSt
 //------------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate::viewNodeByLayoutLabel(const QString& layoutLabel) const
 {
-  foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
+  for (vtkMRMLAbstractViewNode* const viewNode : this->Views.keys())
   {
     if (layoutLabel == QString(viewNode->GetLayoutLabel()))
     {
@@ -160,7 +160,7 @@ vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate::propertyFromXML(
 QList<qMRMLWidget*> qMRMLLayoutViewFactoryPrivate::mrmlWidgets() const
 {
   QList<qMRMLWidget*> res;
-  foreach (QWidget* viewWidget, this->Views.values())
+  for (QWidget* const viewWidget : this->Views.values())
   {
     qMRMLWidget* mrmlWidget = qobject_cast<qMRMLWidget*>(viewWidget);
     if (mrmlWidget)
@@ -308,7 +308,7 @@ QStringList qMRMLLayoutViewFactory::viewNodeNames() const
   Q_D(const qMRMLLayoutViewFactory);
 
   QStringList res;
-  foreach (vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
+  for (vtkMRMLAbstractViewNode* const viewNode : d->Views.keys())
   {
     res << viewNode->GetName();
   }
@@ -328,7 +328,7 @@ void qMRMLLayoutViewFactory::beginSetupLayout()
 {
   Q_D(qMRMLLayoutViewFactory);
   this->Superclass::beginSetupLayout();
-  foreach (vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
+  for (vtkMRMLAbstractViewNode* const viewNode : d->Views.keys())
   {
     viewNode->SetMappedInLayout(false);
   }
@@ -577,7 +577,7 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
   QList<vtkMRMLAbstractViewNode*> viewNodes = this->viewNodesFromXML(viewElement);
 
   QList<QWidget*> res;
-  foreach (vtkMRMLAbstractViewNode* viewNode, viewNodes)
+  for (vtkMRMLAbstractViewNode* const viewNode : viewNodes)
   {
     res << this->viewWidget(viewNode);
     vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);

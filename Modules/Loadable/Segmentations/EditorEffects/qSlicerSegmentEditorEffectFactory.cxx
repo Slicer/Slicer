@@ -78,7 +78,7 @@ qSlicerSegmentEditorEffectFactory::qSlicerSegmentEditorEffectFactory(QObject* pa
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorEffectFactory::~qSlicerSegmentEditorEffectFactory()
 {
-  foreach (qSlicerSegmentEditorAbstractEffect* effect, m_RegisteredEffects)
+  for (qSlicerSegmentEditorAbstractEffect* const effect : m_RegisteredEffects)
   {
     delete effect;
   }
@@ -100,8 +100,7 @@ bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstr
   }
 
   // Check if the same effect has already been registered
-  qSlicerSegmentEditorAbstractEffect* currentEffect = nullptr;
-  foreach (currentEffect, this->m_RegisteredEffects)
+  for (const qSlicerSegmentEditorAbstractEffect* const currentEffect : this->m_RegisteredEffects)
   {
     if (effectToRegister->name().compare(currentEffect->name()) == 0)
     {
@@ -119,11 +118,11 @@ bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstr
 QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects)
 {
   QList<qSlicerSegmentEditorAbstractEffect*> copiedEffects;
-  foreach (qSlicerSegmentEditorAbstractEffect* effect, m_RegisteredEffects)
+  for (qSlicerSegmentEditorAbstractEffect* const effect : m_RegisteredEffects)
   {
     // If effect is added already then skip it
     bool effectAlreadyAdded = false;
-    foreach (qSlicerSegmentEditorAbstractEffect* existingEffect, effects)
+    for (qSlicerSegmentEditorAbstractEffect* const existingEffect : effects)
     {
       if (existingEffect->name() == effect->name())
       {

@@ -471,7 +471,7 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply, const QList<QSslErr
   Q_UNUSED(reply);
   Q_UNUSED(errors);
 #else
-  foreach (QSslError e, errors)
+  for (const QSslError& e : errors)
   {
     qDebug() << "[SSL] [" << qPrintable(reply->url().host().trimmed()) << "]" << qPrintable(e.errorString());
   }

@@ -421,7 +421,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
       QList<qMRMLNodeComboBox*> comboboxes = volumeSelectorDialog->findChildren<qMRMLNodeComboBox*>();
 
       // Set fixed and moving image. Unfortunately currently only the tooltip refers to the role
-      foreach (qMRMLNodeComboBox* combobox, comboboxes)
+      for (qMRMLNodeComboBox* const combobox : comboboxes)
       {
         if (combobox->toolTip().contains("moving", Qt::CaseInsensitive))
         {
