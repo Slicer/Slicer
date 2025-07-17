@@ -1171,7 +1171,7 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorScissorsEffect::helpText() const
+const QString qSlicerSegmentEditorScissorsEffect::helpText() const
 {
   return QString("<html>")
          + tr("Cut through the entire segment from the current viewpoint<br>."

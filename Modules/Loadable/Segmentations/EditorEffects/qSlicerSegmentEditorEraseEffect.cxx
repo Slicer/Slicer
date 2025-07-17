@@ -73,7 +73,7 @@ QIcon qSlicerSegmentEditorEraseEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorEraseEffect::helpText() const
+const QString qSlicerSegmentEditorEraseEffect::helpText() const
 {
   return QString("<html>")
          + tr("Erase from current segment with a round brush<br>."
