@@ -78,7 +78,7 @@ protected:
   long m_statNeighborY;
   long m_statNeighborZ;
 
-  const static long m_numberOfFeature = 3;
+  static const long m_numberOfFeature = 3;
   /* Store the robust stat as the feature at each point
      0: median
      1: interquartile range (IRQ)

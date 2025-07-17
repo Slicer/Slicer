@@ -47,7 +47,7 @@ public:
 
   // /Cast the component values of the tensor
   template <class C>
-  operator DiffusionTensor3DExtended<C> const();
+  operator const DiffusionTensor3DExtended<C>();
 };
 
 } // end namespace itk

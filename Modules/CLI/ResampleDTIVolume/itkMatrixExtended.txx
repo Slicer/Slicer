@@ -45,7 +45,7 @@ MatrixExtended<T, NRows, NColumns>::MatrixExtended(const InternalMatrixType& mat
 
 template <class T, unsigned int NRows, unsigned int NColumns>
 template <class C, unsigned int NRowsC, unsigned int NColumnsC>
-MatrixExtended<T, NRows, NColumns>::operator MatrixExtended<C, NRowsC, NColumnsC> const()
+MatrixExtended<T, NRows, NColumns>::operator const MatrixExtended<C, NRowsC, NColumnsC>()
 {
   MatrixExtended<C, NRowsC, NColumnsC> tmp;
   for (unsigned int i = 0; i < NRows; i++)

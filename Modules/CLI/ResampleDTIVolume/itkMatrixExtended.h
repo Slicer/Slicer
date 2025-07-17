@@ -37,7 +37,7 @@ public:
   MatrixExtended(const Superclass& matrix);
   // /Cast the matrix
   template <class C, unsigned int NRowsC, unsigned int NColumnsC>
-  operator MatrixExtended<C, NRowsC, NColumnsC> const();
+  operator const MatrixExtended<C, NRowsC, NColumnsC>();
   Self operator=(const Self& matrix);
 
   Self operator=(const Superclass& matrix);

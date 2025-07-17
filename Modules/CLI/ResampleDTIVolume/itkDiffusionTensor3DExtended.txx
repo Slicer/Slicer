@@ -58,7 +58,7 @@ void DiffusionTensor3DExtended<T>::SetTensorFromMatrix(Matrix<C, 3, 3> matrix)
 
 template <class T>
 template <class C>
-DiffusionTensor3DExtended<T>::operator DiffusionTensor3DExtended<C> const()
+DiffusionTensor3DExtended<T>::operator const DiffusionTensor3DExtended<C>()
 {
   DiffusionTensor3DExtended<C> tmp;
   for (int i = 0; i < 6; i++)
