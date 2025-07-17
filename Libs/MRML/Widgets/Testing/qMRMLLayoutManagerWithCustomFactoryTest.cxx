@@ -299,4 +299,4 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[])
   }
 }
 
-#include "moc_qMRMLLayoutManagerWithCustomFactoryTest.cxx"
+#include "qMRMLLayoutManagerWithCustomFactoryTest.moc"

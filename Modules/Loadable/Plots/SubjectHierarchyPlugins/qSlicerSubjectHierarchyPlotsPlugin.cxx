@@ -48,6 +48,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyPlotsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPlotsPlugin);
 
 protected:
@@ -395,3 +396,5 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
   // no valid plot view in current layout
   return nullptr;
 }
+
+#include "qSlicerSubjectHierarchyPlotsPlugin.moc"

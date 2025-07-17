@@ -46,6 +46,7 @@
 // qMRMLSliceViewPrivate
 class qMRMLThreeDWidgetPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLThreeDWidget);
 
 protected:
@@ -218,3 +219,5 @@ void qMRMLThreeDWidget::getDisplayableManagers(vtkCollection* displayableManager
   Q_D(qMRMLThreeDWidget);
   d->ThreeDView->getDisplayableManagers(displayableManagers);
 }
+
+#include "qMRMLThreeDWidget.moc"

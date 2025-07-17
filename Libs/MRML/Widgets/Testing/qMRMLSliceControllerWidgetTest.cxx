@@ -351,4 +351,4 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLSliceControllerWidgetTest)
-#include "moc_qMRMLSliceControllerWidgetTest.cxx"
+#include "qMRMLSliceControllerWidgetTest.moc"

@@ -57,6 +57,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
 protected:
@@ -343,3 +344,5 @@ bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdTy
   }
   return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
 }
+
+#include "qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.moc"

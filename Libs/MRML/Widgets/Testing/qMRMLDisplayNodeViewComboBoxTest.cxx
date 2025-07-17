@@ -187,4 +187,4 @@ void qMRMLDisplayNodeViewComboBoxTester::testResetScene()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLDisplayNodeViewComboBoxTest)
-#include "moc_qMRMLDisplayNodeViewComboBoxTest.cxx"
+#include "qMRMLDisplayNodeViewComboBoxTest.moc"

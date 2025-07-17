@@ -61,6 +61,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyViewContextMenuPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyViewContextMenuPlugin);
 
 protected:
@@ -684,3 +685,5 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::setSlabReconstructionInteract
   }
   appLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive, interactive);
 }
+
+#include "qSlicerSubjectHierarchyViewContextMenuPlugin.moc"
