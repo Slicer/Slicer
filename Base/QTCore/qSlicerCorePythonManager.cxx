@@ -30,10 +30,8 @@
 
 // Slicer includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerUtils.h"
 #include "qSlicerCorePythonManager.h"
 #include "qSlicerScriptedUtils_p.h"
-#include "vtkSlicerConfigure.h"
 
 // VTK includes
 #include <vtkPythonUtil.h>
@@ -45,24 +43,35 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 {
   this->Factory = nullptr;
 
-  // If it applies, disable import of user site packages
-  QString noUserSite = qgetenv("PYTHONNOUSERSITE");
-
+  // https://docs.python.org/3/c-api/init_config.html#init-config
+  PyStatus status;
   PyConfig config;
   PyConfig_InitPythonConfig(&config);
 
+  config.parse_argv = 0;
+
+  // If it applies, disable import of user site packages
+  QString noUserSite = qgetenv("PYTHONNOUSERSITE");
   config.user_site_directory = noUserSite.toInt(); // disable user site packages
 
-  PyStatus status = Py_InitializeFromConfig(&config);
+  status = PyConfig_SetString(&config, &config.program_name, L"Slicer");
   if (PyStatus_Exception(status))
   {
+    PyConfig_Clear(&config);
     Py_ExitStatusException(status);
   }
 
-  // Import site module to ensure the 'site-packages' directory
-  // is added to the python path. (see site.addsitepackages function).
+  status = Py_InitializeFromConfig(&config);
+  if (PyStatus_Exception(status))
+  {
+    PyConfig_Clear(&config);
+    Py_ExitStatusException(status);
+  }
+
+  PyConfig_Clear(&config);
+
   int flags = this->initializationFlags();
-  flags &= ~(PythonQt::IgnoreSiteModule); // Clear bit
+  flags |= PythonQt::PythonAlreadyInitialized; // Set bit
   this->setInitializationFlags(flags);
 }
 
