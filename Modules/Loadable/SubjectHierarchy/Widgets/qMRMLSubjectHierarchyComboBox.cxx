@@ -193,6 +193,20 @@ void qMRMLSubjectHierarchyComboBox::setCurrentItem(vtkIdType itemID)
   return d->TreeView->setCurrentItem(itemID);
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSubjectHierarchyComboBox::currentNode() const
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  return d->TreeView->currentNode();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setCurrentNode(vtkMRMLNode* node)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  d->TreeView->setCurrentNode(node);
+}
+
 //--------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel* qMRMLSubjectHierarchyComboBox::sortFilterProxyModel() const
 {
@@ -438,6 +452,13 @@ void qMRMLSubjectHierarchyComboBox::setNodeTypes(const QStringList& types)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   d->TreeView->setNodeTypes(types);
+}
+
+//--------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyComboBox::nodeTypes() const
+{
+  Q_D(const qMRMLSubjectHierarchyComboBox);
+  return d->TreeView->nodeTypes();
 }
 
 //--------------------------------------------------------------------------

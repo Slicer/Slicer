@@ -186,6 +186,7 @@ When connecting an `int` to a `QSpinBox`, if the `Minimum` annotation is used, i
 | ctkDirectoryButton | pathlib.\[Path, PosixPath, WindowsPath,<br/>&emsp;PurePath, PurePosixPath, PureWindowsPath] | Only directories can be represented |
 | qMRMLNodeComboBox | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | To do a Union, need to do something like `typing.Union[vtkMRMLModelNode, vtkMRMLScalarVolumeNode, None]`.<br/>The `None` is necessary for the parameter node wrapper default node of None to work correctly. |
 | qMRMLSubjectHierarchyTreeView | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | See notes for qMRMLNodeComboBox. |
+| qMRMLSubjectHierarchyComboBox | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | See notes for qMRMLNodeComboBox. |
 
 For widgets that are not listed here see [Slicer Issue 7308](https://github.com/Slicer/Slicer/issues/7308) for discussion and progress.
 
