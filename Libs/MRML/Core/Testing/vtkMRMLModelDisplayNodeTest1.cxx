@@ -40,11 +40,11 @@ void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 //---------------------------------------------------------------------------
 int vtkMRMLModelDisplayNodeTest1(int, char*[])
 {
-  vtkSmartPointer<vtkMRMLModelDisplayNode> node1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  const vtkSmartPointer<vtkMRMLModelDisplayNode> node1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  vtkNew<vtkUnstructuredGrid> ug;
-  vtkNew<vtkPolyData> poly;
+  const vtkNew<vtkUnstructuredGrid> ug;
+  const vtkNew<vtkPolyData> poly;
   CreateVoxelMeshes(ug.GetPointer(), poly.GetPointer());
 
   CHECK_EXIT_SUCCESS(TestScalarRange(ug.GetPointer()));
@@ -197,7 +197,7 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeA
     model->UpdateScene(scene.GetPointer());
   }
 
-  vtkPointSet* displayInputMesh = display->GetInputMesh();
+  vtkPointSet* const displayInputMesh = display->GetInputMesh();
   if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||          //
       (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) || //
       displayInputMesh != model->GetMesh() ||                                             //

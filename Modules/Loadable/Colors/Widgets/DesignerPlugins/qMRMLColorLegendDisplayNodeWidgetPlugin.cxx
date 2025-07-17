@@ -45,7 +45,7 @@ QString qMRMLColorLegendDisplayNodeWidgetPlugin::whatsThis() const
 //-----------------------------------------------------------------------------
 QWidget* qMRMLColorLegendDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
-  qMRMLColorLegendDisplayNodeWidget* newWidget = new qMRMLColorLegendDisplayNodeWidget(newParent);
+  qMRMLColorLegendDisplayNodeWidget* const newWidget = new qMRMLColorLegendDisplayNodeWidget(newParent);
   return newWidget;
 }
 

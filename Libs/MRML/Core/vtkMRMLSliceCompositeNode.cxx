@@ -102,7 +102,7 @@ void vtkMRMLSliceCompositeNode::ResetInteractionFlagsModifier()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -125,7 +125,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLSliceCompositeNode* node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
@@ -137,7 +137,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   vtkMRMLCopyFloatMacro(LabelOpacity);
   for (int additionalLayerIndex = 0; additionalLayerIndex < node->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
   {
-    int layerIndex = vtkMRMLSliceCompositeNode::Layer_Last + additionalLayerIndex;
+    const int layerIndex = vtkMRMLSliceCompositeNode::Layer_Last + additionalLayerIndex;
     this->SetNthLayerOpacity(layerIndex, node->GetNthLayerOpacity(layerIndex));
   }
   vtkMRMLCopyIntMacro(LinkedControl);
@@ -257,7 +257,7 @@ void vtkMRMLSliceCompositeNode::SetNthLayerVolume(int layerIndex, vtkMRMLVolumeN
     vtkErrorMacro(<< "SetNthLayerVolume: Non-negative layer index is expected.");
     return;
   }
-  char* volumeNodeID = volumeNode != nullptr ? volumeNode->GetID() : nullptr;
+  char* const volumeNodeID = volumeNode != nullptr ? volumeNode->GetID() : nullptr;
   this->SetNthLayerVolumeID(layerIndex, volumeNodeID);
 }
 
@@ -442,7 +442,7 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceCompositeNode::GetSliceDisplayNode()
   if (this->LastFoundSliceDisplayNode != nullptr //
       && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
   {
-    vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
+    vtkMRMLModelNode* const sliceModelNode = vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
     if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())
     {
       return this->LastFoundSliceDisplayNode;

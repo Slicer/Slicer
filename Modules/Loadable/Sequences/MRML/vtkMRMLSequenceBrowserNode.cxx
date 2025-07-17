@@ -105,7 +105,7 @@ void vtkMRMLSequenceBrowserNode::SynchronizationProperties::FromString(std::stri
       }
       if (!attName.compare("missingItemMode"))
       {
-        MissingItemModeType missingItemMode = vtkMRMLSequenceBrowserNode::GetMissingItemModeFromString(attValue);
+        const MissingItemModeType missingItemMode = vtkMRMLSequenceBrowserNode::GetMissingItemModeFromString(attValue);
         if (this->MissingItemMode != MissingItemInvalid)
         {
           this->MissingItemMode = missingItemMode;
@@ -150,7 +150,7 @@ void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)
 {
   // TODO: Convert to use MRML node macros
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
+  const vtkIndent indent(nIndent);
 
   of << indent << " playbackActive=\"" << (this->PlaybackActive ? "true" : "false") << "\"";
   of << indent << " playbackRateFps=\"" << this->PlaybackRateFps << "\"";
@@ -160,13 +160,13 @@ void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)
   of << indent << " recordingActive=\"" << (this->RecordingActive ? "true" : "false") << "\"";
   of << indent << " recordOnMasterModifiedOnly=\"" << (this->RecordMasterOnly ? "true" : "false") << "\"";
 
-  std::string recordingSamplingModeString = this->GetRecordingSamplingModeAsString();
+  const std::string recordingSamplingModeString = this->GetRecordingSamplingModeAsString();
   if (!recordingSamplingModeString.empty())
   {
     of << indent << " recordingSamplingMode=\"" << recordingSamplingModeString << "\"";
   }
 
-  std::string indexDisplayModeString = this->GetIndexDisplayModeAsString();
+  const std::string indexDisplayModeString = this->GetIndexDisplayModeAsString();
   if (!indexDisplayModeString.empty())
   {
     of << indent << " indexDisplayMode=\"" << indexDisplayModeString << "\"";
@@ -344,7 +344,7 @@ void vtkMRMLSequenceBrowserNode::ReadXMLAttributes(const char** atts)
     {
       SynchronizationProperties* currSyncProps = new SynchronizationProperties();
       currSyncProps->FromString(attValue);
-      std::string rolePostfix = std::string(attName).substr(std::string(attName).find("SynchronizationPropertiesMap") + std::string("SynchronizationPropertiesMap").length());
+      const std::string rolePostfix = std::string(attName).substr(std::string(attName).find("SynchronizationPropertiesMap") + std::string("SynchronizationPropertiesMap").length());
       this->SynchronizationPropertiesMap[rolePostfix] = currSyncProps; // Possibly overwriting the default, but that is ok
     }
   }
@@ -354,14 +354,14 @@ void vtkMRMLSequenceBrowserNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  vtkMRMLSequenceBrowserNode* node = vtkMRMLSequenceBrowserNode::SafeDownCast(anode);
+  vtkMRMLSequenceBrowserNode* const node = vtkMRMLSequenceBrowserNode::SafeDownCast(anode);
   if (!node)
   {
     vtkErrorMacro("Node copy failed: not a vtkMRMLSequenceNode");
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -423,7 +423,7 @@ void vtkMRMLSequenceBrowserNode::PrintSelf(ostream& os, vtkIndent indent)
         os << "(invalid)\n";
         continue;
       }
-      std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+      const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
       vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
       if (sequenceNode != nullptr)
       {
@@ -433,7 +433,7 @@ void vtkMRMLSequenceBrowserNode::PrintSelf(ostream& os, vtkIndent indent)
       {
         os << "Sequence: (none)";
       }
-      std::string proxyNodeReferenceRole = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+      const std::string proxyNodeReferenceRole = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
       vtkMRMLNode* proxyNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(proxyNodeReferenceRole.c_str()));
       if (proxyNode != nullptr)
       {
@@ -444,7 +444,7 @@ void vtkMRMLSequenceBrowserNode::PrintSelf(ostream& os, vtkIndent indent)
         os << ", Proxy: (none)";
       }
 
-      SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForPostfix(*rolePostfixIt);
+      SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForPostfix(*rolePostfixIt);
       if (syncProps != nullptr)
       {
         os << ", Playback: " << syncProps->Playback;
@@ -466,7 +466,7 @@ std::string vtkMRMLSequenceBrowserNode::GenerateSynchronizationPostfix()
     std::stringstream postfix;
     postfix << this->LastPostfixIndex;
     this->LastPostfixIndex++;
-    bool isUnique = (std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), postfix.str()) == this->SynchronizationPostfixes.end());
+    const bool isUnique = (std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), postfix.str()) == this->SynchronizationPostfixes.end());
     if (isUnique)
     {
       return postfix.str();
@@ -497,10 +497,10 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
       return "";
     }
   }
-  std::string masterPostfix = this->GetSynchronizationPostfixFromSequenceID(sequenceNodeID);
+  const std::string masterPostfix = this->GetSynchronizationPostfixFromSequenceID(sequenceNodeID);
   if (masterPostfix.empty() || this->GetMasterSequenceNode() == nullptr)
   {
-    MRMLNodeModifyBlocker blocker(this);
+    const MRMLNodeModifyBlocker blocker(this);
     // Master is not among the browsed nodes, or it is an empty browser node.
     this->RemoveAllSequenceNodes();
     // Master is the first element in the postfixes vector.
@@ -508,11 +508,11 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
     this->SetSelectedItemNumber(this->GetNumberOfItems() > 0 ? 0 : INVALID_ITEM_NUMBER);
     return rolePostfix;
   }
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   // Get the currently selected index value (so that we can restore the closest value with the new master)
-  std::string lastSelectedIndexValue = this->GetMasterSequenceNode()->GetNthIndexValue(this->GetSelectedItemNumber());
+  const std::string lastSelectedIndexValue = this->GetMasterSequenceNode()->GetNthIndexValue(this->GetSelectedItemNumber());
   // Move the new master's postfix to the front of the list
-  std::vector<std::string>::iterator oldMasterPostfixPosition = std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), masterPostfix);
+  const std::vector<std::string>::iterator oldMasterPostfixPosition = std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), masterPostfix);
   iter_swap(oldMasterPostfixPosition, this->SynchronizationPostfixes.begin());
   std::string rolePostfix = this->SynchronizationPostfixes.front();
   this->Modified();
@@ -520,7 +520,7 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
   vtkMRMLSequenceNode* newMasterNode = (this->Scene ? vtkMRMLSequenceNode::SafeDownCast(this->Scene->GetNodeByID(sequenceNodeID)) : nullptr);
   if (newMasterNode != nullptr)
   {
-    int newSelectedIndex = newMasterNode->GetItemNumberFromIndexValue(lastSelectedIndexValue, false);
+    const int newSelectedIndex = newMasterNode->GetItemNumberFromIndexValue(lastSelectedIndexValue, false);
     this->SetSelectedItemNumber(newSelectedIndex);
   }
   else
@@ -538,15 +538,15 @@ vtkMRMLSequenceNode* vtkMRMLSequenceBrowserNode::GetMasterSequenceNode()
   {
     return nullptr;
   }
-  std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + this->SynchronizationPostfixes[0];
-  vtkMRMLSequenceNode* node = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
+  const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + this->SynchronizationPostfixes[0];
+  vtkMRMLSequenceNode* const node = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
   return node;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveAllProxyNodes()
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
     this->RemoveProxyNode(*rolePostfixIt);
@@ -556,18 +556,18 @@ void vtkMRMLSequenceBrowserNode::RemoveAllProxyNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveAllSequenceNodes()
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   // need to make a copy as this->VirtualNodePostfixes changes as we remove nodes
   std::vector<std::string> synchronizationPostfixes = this->SynchronizationPostfixes;
   // start from the end to delete the master sequence node last
   for (std::vector<std::string>::reverse_iterator rolePostfixIt = synchronizationPostfixes.rbegin(); rolePostfixIt != synchronizationPostfixes.rend(); ++rolePostfixIt)
   {
-    std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
     vtkMRMLSequenceNode* node = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
     if (node == nullptr)
     {
       vtkErrorMacro("Invalid sequence node");
-      std::vector<std::string>::iterator rolePostfixInOriginalIt = std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), (*rolePostfixIt));
+      const std::vector<std::string>::iterator rolePostfixInOriginalIt = std::find(this->SynchronizationPostfixes.begin(), this->SynchronizationPostfixes.end(), (*rolePostfixIt));
       if (rolePostfixInOriginalIt != this->SynchronizationPostfixes.end())
       {
         this->SynchronizationPostfixes.erase(rolePostfixInOriginalIt);
@@ -589,7 +589,7 @@ std::string vtkMRMLSequenceBrowserNode::GetSynchronizationPostfixFromSequence(vt
   }
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
     if (this->GetNodeReference(sequenceNodeRef.c_str()) == sequenceNode)
     {
       return (*rolePostfixIt);
@@ -608,8 +608,8 @@ std::string vtkMRMLSequenceBrowserNode::GetSynchronizationPostfixFromSequenceID(
   }
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    const char* foundNodeID = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* const foundNodeID = this->GetNodeReferenceID(sequenceNodeRef.c_str());
     if (!foundNodeID)
     {
       // probably the referenced sequence node was deleted from the scene
@@ -631,12 +631,12 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::GetProxyNode(vtkMRMLSequenceNode* seque
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetVirtualOutputNode failed: sequenceNode is invalid");
     return nullptr;
   }
-  std::string rolePostfix = this->GetSynchronizationPostfixFromSequence(sequenceNode);
+  const std::string rolePostfix = this->GetSynchronizationPostfixFromSequence(sequenceNode);
   if (rolePostfix.empty())
   {
     return nullptr;
   }
-  std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + rolePostfix;
+  const std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + rolePostfix;
   return this->GetNodeReference(proxyNodeRef.c_str());
 }
 
@@ -654,7 +654,7 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
     return nullptr;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   std::string rolePostfix = this->GetSynchronizationPostfixFromSequence(sequenceNode);
   if (rolePostfix.empty())
@@ -670,14 +670,14 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
   }
 
   // Add copy of the data node
-  std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + rolePostfix;
+  const std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + rolePostfix;
   // Create a new one from scratch in the new scene to make sure only the needed parts are copied
   vtkMRMLNode* proxyNode = sourceProxyNode;
   if (copy)
   {
     proxyNode = sourceProxyNode->CreateNodeInstance();
     std::string proxyNodeName = sequenceNode->GetName();
-    const char* sequenceBaseName = sequenceNode->GetAttribute("Sequences.Source");
+    const char* const sequenceBaseName = sequenceNode->GetAttribute("Sequences.Source");
     if (sequenceBaseName != nullptr)
     {
       proxyNodeName = std::string(this->GetName()) + "-" + sequenceBaseName;
@@ -688,7 +688,7 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
     proxyNode->Delete();                                             // ownership transferred to the scene, so we can release the pointer
   }
 
-  vtkMRMLNode* oldProxyNode = this->GetNodeReference(proxyNodeRef.c_str());
+  vtkMRMLNode* const oldProxyNode = this->GetNodeReference(proxyNodeRef.c_str());
   // Remove the old proxy node and refer to the new one
   // It must not be done if the new proxy node is the same as the old one,
   // as it would remove the proxy node from the scene that we still need.
@@ -707,8 +707,8 @@ void vtkMRMLSequenceBrowserNode::GetAllProxyNodes(std::vector<vtkMRMLNode*>& nod
   nodes.clear();
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    vtkMRMLNode* node = this->GetNodeReference(proxyNodeRef.c_str());
+    const std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    vtkMRMLNode* const node = this->GetNodeReference(proxyNodeRef.c_str());
     if (node == nullptr)
     {
       continue;
@@ -759,8 +759,8 @@ bool vtkMRMLSequenceBrowserNode::IsProxyNodeID(const char* nodeId)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveProxyNode(const std::string& postfix)
 {
-  MRMLNodeModifyBlocker blocker(this);
-  std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + postfix;
+  const MRMLNodeModifyBlocker blocker(this);
+  const std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + postfix;
   vtkMRMLNode* proxyNode = this->GetNodeReference(proxyNodeRef.c_str());
   if (proxyNode != nullptr)
   {
@@ -804,8 +804,8 @@ bool vtkMRMLSequenceBrowserNode::IsSynchronizedSequenceNodeID(const char* nodeId
       // the first one is the master sequence node, don't consider as a synchronized sequence node
       continue;
     }
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    const char* foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* const foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
     if (foundNodeId == nullptr)
     {
       continue;
@@ -838,7 +838,7 @@ std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNode(const char* 
 //----------------------------------------------------------------------------
 std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNodeID(const char* synchronizedSequenceNodeId)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   std::string rolePostfix = this->GetSynchronizationPostfixFromSequenceID(synchronizedSequenceNodeId);
   if (!rolePostfix.empty())
   {
@@ -852,7 +852,7 @@ std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNodeID(const char
     this->SetSelectedItemNumber(this->GetNumberOfItems() > 0 ? 0 : INVALID_ITEM_NUMBER);
   }
   this->SynchronizationPostfixes.push_back(rolePostfix);
-  std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + rolePostfix;
+  const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + rolePostfix;
   this->SetAndObserveNodeReferenceID(sequenceNodeReferenceRole.c_str(), synchronizedSequenceNodeId, nullptr, ContentModifiedObserveEnabled);
   this->SynchronizationPropertiesMap[rolePostfix] = new SynchronizationProperties();
   return rolePostfix;
@@ -874,8 +874,8 @@ void vtkMRMLSequenceBrowserNode::RemoveSynchronizedSequenceNode(const char* node
 
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    const char* foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* const foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
     if (foundNodeId == nullptr)
     {
       continue;
@@ -886,8 +886,8 @@ void vtkMRMLSequenceBrowserNode::RemoveSynchronizedSequenceNode(const char* node
       this->SetPlaybackActive(false);
       this->SetRecordingActive(false);
       // the iterator will become invalid, so make a copy of its content
-      std::string rolePostfix = (*rolePostfixIt);
-      MRMLNodeModifyBlocker blocker(this);
+      const std::string rolePostfix = (*rolePostfixIt);
+      const MRMLNodeModifyBlocker blocker(this);
       this->SynchronizationPostfixes.erase(rolePostfixIt);
       this->RemoveNodeReferenceIDs(sequenceNodeRef.c_str());
       this->RemoveProxyNode(rolePostfix);
@@ -924,8 +924,8 @@ void vtkMRMLSequenceBrowserNode::GetSynchronizedSequenceNodes(std::vector<vtkMRM
       // the first one is the master sequence node, don't consider as a synchronized sequence node
       continue;
     }
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeRef.c_str()));
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    vtkMRMLSequenceNode* const synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeRef.c_str()));
     if (synchronizedNode == nullptr)
     {
       // valid case during scene updates
@@ -957,7 +957,7 @@ void vtkMRMLSequenceBrowserNode::SetRecordingActive(bool recording)
 {
   // Before activating the recording, set the initial timestamp to be correct
   this->RecordingTimeOffsetSec = vtkTimerLog::GetUniversalTime();
-  int numberOfItems = this->GetNumberOfItems();
+  const int numberOfItems = this->GetNumberOfItems();
   if (numberOfItems > 0 //
       && this->GetMasterSequenceNode()->GetIndexType() == vtkMRMLSequenceNode::NumericIndex)
   {
@@ -977,7 +977,7 @@ void vtkMRMLSequenceBrowserNode::SetRecordingActive(bool recording)
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceBrowserNode::SelectFirstItem()
 {
-  int selectedItemNumber = (this->GetNumberOfItems() > 0) ? 0 : INVALID_ITEM_NUMBER;
+  const int selectedItemNumber = (this->GetNumberOfItems() > 0) ? 0 : INVALID_ITEM_NUMBER;
   this->SetSelectedItemNumber(selectedItemNumber);
   return selectedItemNumber;
 }
@@ -985,7 +985,7 @@ int vtkMRMLSequenceBrowserNode::SelectFirstItem()
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceBrowserNode::SelectLastItem()
 {
-  int selectedItemNumber = this->GetNumberOfItems() - 1;
+  const int selectedItemNumber = this->GetNumberOfItems() - 1;
   this->SetSelectedItemNumber(selectedItemNumber);
   return selectedItemNumber;
 }
@@ -993,14 +993,14 @@ int vtkMRMLSequenceBrowserNode::SelectLastItem()
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement /*=1*/)
 {
-  int numberOfItems = this->GetNumberOfItems();
+  const int numberOfItems = this->GetNumberOfItems();
   if (numberOfItems == 0)
   {
     // nothing to replay
     return INVALID_ITEM_NUMBER;
   }
   int selectedItemNumber = this->GetSelectedItemNumber();
-  MRMLNodeModifyBlocker blocker(this); // invoke modification event once all the modifications has been completed
+  const MRMLNodeModifyBlocker blocker(this); // invoke modification event once all the modifications has been completed
   if (selectedItemNumber < 0)
   {
     selectedItemNumber = 0;
@@ -1063,7 +1063,7 @@ bool vtkMRMLSequenceBrowserNode::SetSelectedItemByIndexValue(const std::string& 
   {
     return false;
   }
-  int itemNumber = sequenceNode->GetItemNumberFromIndexValue(indexValue, exactMatchRequired);
+  const int itemNumber = sequenceNode->GetItemNumberFromIndexValue(indexValue, exactMatchRequired);
   if (itemNumber < 0)
   {
     return false;
@@ -1115,13 +1115,13 @@ void vtkMRMLSequenceBrowserNode::ProcessMRMLEvents(vtkObject* caller, unsigned l
 void vtkMRMLSequenceBrowserNode::SaveProxyNodesState()
 {
   std::stringstream currTime;
-  bool continuousRecording = this->GetRecordingActive();
+  const bool continuousRecording = this->GetRecordingActive();
   if (continuousRecording)
   {
     // Continuous recording.
     // To maintain syncing, we need to record for all sequences at every given timestamp.
-    double currentTime = vtkTimerLog::GetUniversalTime();
-    double timeElapsedSinceLastSave = currentTime - this->LastSaveProxyNodesStateTimeSec;
+    const double currentTime = vtkTimerLog::GetUniversalTime();
+    const double timeElapsedSinceLastSave = currentTime - this->LastSaveProxyNodesStateTimeSec;
     if (this->RecordingSamplingMode == vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate)
     {
       if (this->GetPlaybackRateFps() > 0 && (timeElapsedSinceLastSave < 1.0 / this->GetPlaybackRateFps()))
@@ -1138,19 +1138,19 @@ void vtkMRMLSequenceBrowserNode::SaveProxyNodesState()
     // Recording a single snapshot
     // TODO: add support for non-numeric index type
     double lastItemTime = 0;
-    int numberOfItems = this->GetNumberOfItems();
+    const int numberOfItems = this->GetNumberOfItems();
     if (numberOfItems > 0)
     {
       std::stringstream timeString;
       timeString << this->GetMasterSequenceNode()->GetNthIndexValue(numberOfItems - 1);
       timeString >> lastItemTime;
     }
-    double playbackRateFps = this->GetPlaybackRateFps() != 0.0 ? this->GetPlaybackRateFps() : 1.0;
+    const double playbackRateFps = this->GetPlaybackRateFps() != 0.0 ? this->GetPlaybackRateFps() : 1.0;
     currTime << lastItemTime + 1.0 / playbackRateFps;
   }
 
   // Record into each sequence
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   std::vector<vtkMRMLSequenceNode*> sequenceNodes;
   this->GetSynchronizedSequenceNodes(sequenceNodes, true);
   bool snapshotAdded = false;
@@ -1194,8 +1194,8 @@ void vtkMRMLSequenceBrowserNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* no
   vtkMRMLNode::OnNodeReferenceRemoved(nodeReference);
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end();)
   {
-    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    const char* foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    const std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* const foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
     if (foundNodeId == nullptr)
     {
       rolePostfixIt = this->SynchronizationPostfixes.erase(rolePostfixIt);
@@ -1210,13 +1210,13 @@ void vtkMRMLSequenceBrowserNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* no
 //---------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::FixSequenceNodeReferenceRoleName()
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string obsoleteSequenceNodeReferenceRole = std::string("rootNodeRef") + (*rolePostfixIt);
-    std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    const char* obsoleteSeqNodeId = this->GetNodeReferenceID(obsoleteSequenceNodeReferenceRole.c_str());
-    const char* seqNodeId = this->GetNodeReferenceID(sequenceNodeReferenceRole.c_str());
+    const std::string obsoleteSequenceNodeReferenceRole = std::string("rootNodeRef") + (*rolePostfixIt);
+    const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* const obsoleteSeqNodeId = this->GetNodeReferenceID(obsoleteSequenceNodeReferenceRole.c_str());
+    const char* const seqNodeId = this->GetNodeReferenceID(sequenceNodeReferenceRole.c_str());
     if (seqNodeId == nullptr && obsoleteSeqNodeId != nullptr)
     {
       // we've found an obsolete reference, move it into the new reference
@@ -1236,12 +1236,12 @@ vtkMRMLSequenceNode* vtkMRMLSequenceBrowserNode::GetSequenceNode(vtkMRMLNode* pr
   }
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    vtkMRMLNode* foundProxyNode = this->GetNodeReference(proxyNodeRef.c_str());
+    const std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    vtkMRMLNode* const foundProxyNode = this->GetNodeReference(proxyNodeRef.c_str());
     if (foundProxyNode == proxyNode)
     {
-      std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-      vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
+      const std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+      vtkMRMLSequenceNode* const sequenceNode = vtkMRMLSequenceNode::SafeDownCast(this->GetNodeReference(sequenceNodeReferenceRole.c_str()));
       return sequenceNode;
     }
   }
@@ -1253,7 +1253,7 @@ bool vtkMRMLSequenceBrowserNode::IsAnySequenceNodeRecording()
 {
   for (std::vector<std::string>::iterator rolePostfixIt = this->SynchronizationPostfixes.begin(); rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForPostfix(*rolePostfixIt);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForPostfix(*rolePostfixIt);
     if (syncProps == nullptr)
     {
       continue;
@@ -1269,7 +1269,7 @@ bool vtkMRMLSequenceBrowserNode::IsAnySequenceNodeRecording()
 //---------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::GetRecording(vtkMRMLSequenceNode* sequenceNode)
 {
-  SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
+  SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
   if (!syncProps)
   {
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetRecording failed: sequence node is invalid or does not belong to this browser node");
@@ -1281,7 +1281,7 @@ bool vtkMRMLSequenceBrowserNode::GetRecording(vtkMRMLSequenceNode* sequenceNode)
 //---------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::GetPlayback(vtkMRMLSequenceNode* sequenceNode)
 {
-  SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
+  SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
   if (!syncProps)
   {
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetPlayback failed: sequence node is invalid or does not belong to this browser node");
@@ -1293,7 +1293,7 @@ bool vtkMRMLSequenceBrowserNode::GetPlayback(vtkMRMLSequenceNode* sequenceNode)
 //---------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::GetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode)
 {
-  SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
+  SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
   if (!syncProps)
   {
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetOverwriteProxyName failed: sequence node is invalid or does not belong to this browser node");
@@ -1305,7 +1305,7 @@ bool vtkMRMLSequenceBrowserNode::GetOverwriteProxyName(vtkMRMLSequenceNode* sequ
 //---------------------------------------------------------------------------
 bool vtkMRMLSequenceBrowserNode::GetSaveChanges(vtkMRMLSequenceNode* sequenceNode)
 {
-  SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
+  SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
   if (!syncProps)
   {
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetSaveChanges failed: sequence node is invalid or does not belong to this browser node");
@@ -1317,7 +1317,7 @@ bool vtkMRMLSequenceBrowserNode::GetSaveChanges(vtkMRMLSequenceNode* sequenceNod
 //---------------------------------------------------------------------------
 vtkMRMLSequenceBrowserNode::MissingItemModeType vtkMRMLSequenceBrowserNode::GetMissingItemMode(vtkMRMLSequenceNode* sequenceNode)
 {
-  SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
+  SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(sequenceNode);
   if (!syncProps)
   {
     vtkErrorMacro("vtkMRMLSequenceBrowserNode::GetSaveChanges failed: sequence node is invalid or does not belong to this browser node");
@@ -1341,7 +1341,7 @@ void vtkMRMLSequenceBrowserNode::SetRecording(vtkMRMLSequenceNode* sequenceNode,
   bool modified = false;
   for (std::vector<vtkMRMLSequenceNode*>::iterator it = synchronizedSequenceNodes.begin(); it != synchronizedSequenceNodes.end(); ++it)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(*it);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(*it);
     if (!syncProps)
     {
       vtkErrorMacro("vtkMRMLSequenceBrowserNode::SetRecording failed: sequence node is invalid or does not belong to this browser node");
@@ -1374,7 +1374,7 @@ void vtkMRMLSequenceBrowserNode::SetPlayback(vtkMRMLSequenceNode* sequenceNode, 
   bool modified = false;
   for (std::vector<vtkMRMLSequenceNode*>::iterator it = synchronizedSequenceNodes.begin(); it != synchronizedSequenceNodes.end(); ++it)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(*it);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(*it);
     if (!syncProps)
     {
       vtkErrorMacro("vtkMRMLSequenceBrowserNode::SetPlayback failed: sequence node is invalid or does not belong to this browser node");
@@ -1407,7 +1407,7 @@ void vtkMRMLSequenceBrowserNode::SetOverwriteProxyName(vtkMRMLSequenceNode* sequ
   bool modified = false;
   for (std::vector<vtkMRMLSequenceNode*>::iterator it = synchronizedSequenceNodes.begin(); it != synchronizedSequenceNodes.end(); ++it)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(*it);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(*it);
     if (!syncProps)
     {
       vtkErrorMacro("vtkMRMLSequenceBrowserNode::SetOverwriteProxyName failed: sequence node is invalid or does not belong to this browser node");
@@ -1440,7 +1440,7 @@ void vtkMRMLSequenceBrowserNode::SetSaveChanges(vtkMRMLSequenceNode* sequenceNod
   bool modified = false;
   for (std::vector<vtkMRMLSequenceNode*>::iterator it = synchronizedSequenceNodes.begin(); it != synchronizedSequenceNodes.end(); ++it)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(*it);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(*it);
     if (!syncProps)
     {
       vtkErrorMacro("vtkMRMLSequenceBrowserNode::SetSaveChanges failed: sequence node is invalid or does not belong to this browser node");
@@ -1473,7 +1473,7 @@ void vtkMRMLSequenceBrowserNode::SetMissingItemMode(vtkMRMLSequenceNode* sequenc
   bool modified = false;
   for (std::vector<vtkMRMLSequenceNode*>::iterator it = synchronizedSequenceNodes.begin(); it != synchronizedSequenceNodes.end(); ++it)
   {
-    SynchronizationProperties* syncProps = this->GetSynchronizationPropertiesForSequence(*it);
+    SynchronizationProperties* const syncProps = this->GetSynchronizationPropertiesForSequence(*it);
     if (!syncProps)
     {
       vtkErrorMacro("vtkMRMLSequenceBrowserNode::SetSaveChanges failed: sequence node is invalid or does not belong to this browser node");
@@ -1494,7 +1494,7 @@ void vtkMRMLSequenceBrowserNode::SetMissingItemMode(vtkMRMLSequenceNode* sequenc
 //-----------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::SetRecordingSamplingModeFromString(const char* recordingSamplingModeString)
 {
-  int recordingSamplingMode = GetRecordingSamplingModeFromString(recordingSamplingModeString);
+  const int recordingSamplingMode = GetRecordingSamplingModeFromString(recordingSamplingModeString);
   this->SetRecordingSamplingMode(recordingSamplingMode);
 }
 
@@ -1572,7 +1572,7 @@ void vtkMRMLSequenceBrowserNode::SetIndexDisplayFormat(std::string indexDisplayN
 //-----------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::SetIndexDisplayModeFromString(const char* indexDisplayModeString)
 {
-  int indexDisplayMode = GetIndexDisplayModeFromString(indexDisplayModeString);
+  const int indexDisplayMode = GetIndexDisplayModeFromString(indexDisplayModeString);
   this->SetIndexDisplayMode(indexDisplayMode);
 }
 
@@ -1628,12 +1628,12 @@ std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
     return indexValue;
   }
 
-  std::string formatString = this->GetIndexDisplayFormat();
+  const std::string formatString = this->GetIndexDisplayFormat();
 
   std::string sprintfSpecifier;
   std::string prefix;
   std::string suffix;
-  bool argFound = vtkMRMLSequenceBrowserNode::ValidateFormatString(sprintfSpecifier, prefix, suffix, formatString, "fFgGeEs");
+  const bool argFound = vtkMRMLSequenceBrowserNode::ValidateFormatString(sprintfSpecifier, prefix, suffix, formatString, "fFgGeEs");
   if (!argFound)
   {
     return indexValue;
@@ -1649,9 +1649,9 @@ std::string vtkMRMLSequenceBrowserNode::GetFormattedIndexValue(int index)
   }
   else if (argFound && regExForFloat.find(sprintfSpecifier))
   {
-    vtkVariant indexVariant = vtkVariant(indexValue.c_str());
+    const vtkVariant indexVariant = vtkVariant(indexValue.c_str());
     bool success = false;
-    float floatValue = indexVariant.ToDouble(&success);
+    const float floatValue = indexVariant.ToDouble(&success);
     if (success)
     {
       SNPRINTF(&formattedString[0], formattedString.size(), sprintfSpecifier.c_str(), floatValue);
@@ -1677,8 +1677,8 @@ bool vtkMRMLSequenceBrowserNode::ValidateFormatString(std::string& validatedForm
 {
   // This regex finds sprintf specifications. Only the first is used to format the index value
   // Regex from: https://stackoverflow.com/a/8915445
-  std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
-  vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
+  const std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
+  const vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
   vtksys::RegularExpressionMatch specifierMatch;
   if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
   {
@@ -1698,7 +1698,7 @@ vtkMRMLSequenceBrowserNode::SynchronizationProperties* vtkMRMLSequenceBrowserNod
   {
     return nullptr;
   }
-  std::string rolePostfix = this->GetSynchronizationPostfixFromSequence(sequenceNode);
+  const std::string rolePostfix = this->GetSynchronizationPostfixFromSequence(sequenceNode);
   if (rolePostfix.empty())
   {
     return nullptr;

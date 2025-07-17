@@ -67,7 +67,7 @@ protected:
     if (event->type() == QEvent::MouseButtonPress && this->Widget)
     {
       // Record the mouse press position for later reference during dragging.
-      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+      QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
       this->PressPosition = mouseEvent->pos();
       this->Dragging = true;
       return true; // do not process the event further
@@ -75,7 +75,7 @@ protected:
     else if (event->type() == QEvent::MouseMove && this->Dragging && this->Widget)
     {
       // Move the widget
-      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+      QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
       this->Widget->move(this->Widget->pos() + mouseEvent->pos() - this->PressPosition);
       return true; // do not process the event further
     }
@@ -157,7 +157,7 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
 
   bool enableMainWindow = !app.commandOptions()->noMainWindow();
   enableMainWindow = enableMainWindow && !app.commandOptions()->runPythonAndExit();
-  bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
+  const bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
 
 // qSlicerApplicationHelper::checkRenderingCapabilities() seems only work reliably
 // on Windows, therefore we skip it on other platforms.
@@ -181,7 +181,7 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     // The application launcher shows the splash screen without DPI scaling (if the screen resolution is higher
     // then the splashscreen icon appears smaller).
     // To match this behavior, we set the same device pixel ratio in the pixmap as the window's device pixel ratio.
-    QGuiApplication* guiApp = qobject_cast<QGuiApplication*>(&app);
+    QGuiApplication* const guiApp = qobject_cast<QGuiApplication*>(&app);
     if (guiApp)
     {
       pixmap.setDevicePixelRatio(guiApp->devicePixelRatio());
@@ -199,12 +199,12 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     splashScreen->installEventFilter(&draggable);
   }
 
-  qSlicerModuleManager* moduleManager = app.moduleManager();
+  qSlicerModuleManager* const moduleManager = app.moduleManager();
   qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   QStringList additionalModulePaths;
   for (const QString& extensionOrModulePath : app.commandOptions()->additionalModulePaths())
   {
-    QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
+    const QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
     {
       additionalModulePaths << modulePaths;
@@ -234,7 +234,7 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
   // Show the name of each module that is being instantiated to make it easier to see if a module
   // inappropriately performs some lengthy operations during instantiation.
-  QMetaObject::Connection moduleAboutToBeInstantiatedConnection =
+  const QMetaObject::Connection moduleAboutToBeInstantiatedConnection =
     QObject::connect(moduleFactoryManager,
                      &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
                      [&splashScreen](QString moduleName) { splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName)); });
@@ -251,7 +251,7 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     qDebug() << "Number of instantiated modules:" << moduleFactoryManager->instantiatedModuleNames().count();
   }
 
-  QStringList failedToBeInstantiatedModuleNames =
+  const QStringList failedToBeInstantiatedModuleNames =
     ctk::qSetToQStringList(ctk::qStringListToQSet(moduleFactoryManager->registeredModuleNames()) - ctk::qStringListToQSet(moduleFactoryManager->instantiatedModuleNames()));
   if (!failedToBeInstantiatedModuleNames.isEmpty())
   {

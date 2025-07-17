@@ -146,7 +146,7 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
   // Use parent directory name as module name
   QDir sourceDir(newPythonSource);
   sourceDir.cdUp();
-  QString moduleName = sourceDir.dirName();
+  const QString moduleName = sourceDir.dirName();
 
   // Use filename as class name
   QString className = QFileInfo(newPythonSource).baseName();
@@ -156,11 +156,11 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject* main_module = PyImport_AddModule("__main__");
-  PyObject* global_dict = PyModule_GetDict(main_module);
+  PyObject* const main_module = PyImport_AddModule("__main__");
+  PyObject* const global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* const sysModules = PyImport_GetModuleDict();
   PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
@@ -203,7 +203,7 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
 
   d->PythonCppAPI.setObjectName(className);
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -248,7 +248,7 @@ void qSlicerSegmentEditorScriptedEffect::setRequireSegments(bool requireSegments
 QIcon qSlicerSegmentEditorScriptedEffect::icon()
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->IconMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -256,7 +256,7 @@ QIcon qSlicerSegmentEditorScriptedEffect::icon()
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
   if (resultVariant.isNull())
   {
     return this->Superclass::icon();
@@ -268,7 +268,7 @@ QIcon qSlicerSegmentEditorScriptedEffect::icon()
 const QString qSlicerSegmentEditorScriptedEffect::helpText() const
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -282,7 +282,7 @@ const QString qSlicerSegmentEditorScriptedEffect::helpText() const
     return this->Superclass::helpText();
   }
 
-  const char* role = PyUnicode_AsUTF8(result);
+  const char* const role = PyUnicode_AsUTF8(result);
   return QString::fromUtf8(role);
 }
 
@@ -290,7 +290,7 @@ const QString qSlicerSegmentEditorScriptedEffect::helpText() const
 qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
   {
     qCritical() << d->PythonSourceFilePath << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
@@ -298,8 +298,8 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result);
-  qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(resultVariant.value<QObject*>());
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result);
+  qSlicerSegmentEditorAbstractEffect* const clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(resultVariant.value<QObject*>());
   if (!clonedEffect)
   {
     qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
@@ -342,9 +342,9 @@ void qSlicerSegmentEditorScriptedEffect::setupOptionsFrame()
 QCursor qSlicerSegmentEditorScriptedEffect::createCursor(qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PythonQtConv::QVariantToPyObject(QVariant::fromValue<QObject*>((QObject*)viewWidget)));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CreateCursorMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CreateCursorMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -353,7 +353,7 @@ QCursor qSlicerSegmentEditorScriptedEffect::createCursor(qMRMLWidget* viewWidget
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Cursor);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Cursor);
   return resultVariant.value<QCursor>();
 }
 
@@ -361,11 +361,11 @@ QCursor qSlicerSegmentEditorScriptedEffect::createCursor(qMRMLWidget* viewWidget
 bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* arguments = PyTuple_New(3);
+  PyObject* const arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)callerInteractor));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(eid));
   PyTuple_SET_ITEM(arguments, 2, PythonQtConv::QVariantToPyObject(QVariant::fromValue<QObject*>((QObject*)viewWidget)));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ProcessInteractionEventsMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ProcessInteractionEventsMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -385,11 +385,11 @@ bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindo
 void qSlicerSegmentEditorScriptedEffect::processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* arguments = PyTuple_New(3);
+  PyObject* const arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)callerViewNode));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(eid));
   PyTuple_SET_ITEM(arguments, 2, PythonQtConv::QVariantToPyObject(QVariant::fromValue<QObject*>((QObject*)viewWidget)));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ProcessViewNodeEventsMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ProcessViewNodeEventsMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -460,9 +460,9 @@ void qSlicerSegmentEditorScriptedEffect::interactionNodeModified(vtkMRMLInteract
   // is activated.
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)interactionNode));
-  PyObject* result = d->PythonCppAPI.callMethod(d->InteractionNodeModifiedMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->InteractionNodeModifiedMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {

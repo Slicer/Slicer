@@ -47,7 +47,7 @@ int test_SceneView_SingletonNode(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleL
 //---------------------------------------------------------------------------
 int vtkSceneViewRestoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;
 
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
@@ -82,21 +82,21 @@ int test_SceneView_SaveAndRestore(vtkMRMLScene* scene, vtkSlicerSceneViewsModule
   scene->AddNode(modelNode);
   modelNode->CreateDefaultDisplayNodes();
 
-  const char* sceneView1Name = "SceneView1";
+  const char* const sceneView1Name = "SceneView1";
   volumeNode->SetDisplayVisibility(true);
   modelNode->SetDisplayVisibility(true);
   sceneViewLogic->CreateSceneView(sceneView1Name, "First scene view");
   CHECK_BOOL(volumeNode->GetDisplayNode()->GetVisibility(), true);
   CHECK_BOOL(modelNode->GetDisplayNode()->GetVisibility(), true);
 
-  const char* sceneView2Name = "SceneView2";
+  const char* const sceneView2Name = "SceneView2";
   volumeNode->SetDisplayVisibility(false);
   modelNode->SetDisplayVisibility(true);
   sceneViewLogic->CreateSceneView(sceneView2Name, "Second scene view");
   CHECK_BOOL(volumeNode->GetDisplayNode()->GetVisibility(), false);
   CHECK_BOOL(modelNode->GetDisplayNode()->GetVisibility(), true);
 
-  const char* sceneView3Name = "SceneView3";
+  const char* const sceneView3Name = "SceneView3";
   volumeNode->SetDisplayVisibility(false);
   modelNode->SetDisplayVisibility(false);
   sceneViewLogic->CreateSceneView(sceneView3Name, "Third scene view");
@@ -148,7 +148,7 @@ int test_SceneView_SingletonNode(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleL
   // Add singleton node
   vtkNew<vtkMRMLScalarVolumeNode> singletonNode;
   singletonNode->SetSingletonTag("Singleton");
-  vtkMRMLNode* addedNode = scene->AddNode(singletonNode);
+  vtkMRMLNode* const addedNode = scene->AddNode(singletonNode);
   CHECK_POINTER(singletonNode, addedNode);
 
   vtkNew<vtkImageData> imageData;
@@ -160,14 +160,14 @@ int test_SceneView_SingletonNode(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleL
   savedNodes.push_back(singletonNode);
 
   // Save scene view with specific nodes
-  std::string sceneView1Name = "SceneView10x10x10";
+  const std::string sceneView1Name = "SceneView10x10x10";
   sceneViewLogic->CreateSceneView(savedNodes, sceneView1Name);
   CHECK_INT(singletonNode->GetImageData()->GetDimensions()[0], 10);
   CHECK_INT(singletonNode->GetImageData()->GetDimensions()[1], 10);
   CHECK_INT(singletonNode->GetImageData()->GetDimensions()[2], 10);
 
   // Change singleton node
-  std::string sceneView2Name = "SceneView20x20x20";
+  const std::string sceneView2Name = "SceneView20x20x20";
   singletonNode->GetImageData()->SetDimensions(20, 20, 20);
   sceneViewLogic->CreateSceneView(savedNodes, sceneView2Name);
   CHECK_INT(singletonNode->GetImageData()->GetDimensions()[0], 20);

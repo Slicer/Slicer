@@ -84,13 +84,13 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
   }
 
   // Mark start time
-  vtkSmartPointer<vtkTimerLog> timer = vtkSmartPointer<vtkTimerLog>::New();
+  const vtkSmartPointer<vtkTimerLog> timer = vtkSmartPointer<vtkTimerLog>::New();
 #ifndef NDEBUG
   double checkpointStart = timer->GetUniversalTime();
 #endif
 
   // Create mass properties algorithm for common use
-  vtkSmartPointer<vtkMassProperties> massProperties = vtkSmartPointer<vtkMassProperties>::New();
+  const vtkSmartPointer<vtkMassProperties> massProperties = vtkSmartPointer<vtkMassProperties>::New();
   this->SetMassPropertiesAlgorithm(massProperties);
   massProperties->SetInputData(this->InputPolyData);
   // Run algorithm so that results can be extracted for relative structure size calculation and complexity measure
@@ -154,11 +154,11 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
   }
 
   // Get structure volume in mm^3
-  double structureVolume = this->MassPropertiesAlgorithm->GetVolume();
+  const double structureVolume = this->MassPropertiesAlgorithm->GetVolume();
 
   // Sanity check
-  double structureProjectedVolume = this->MassPropertiesAlgorithm->GetVolumeProjected();
-  double error = (structureVolume - structureProjectedVolume);
+  const double structureProjectedVolume = this->MassPropertiesAlgorithm->GetVolumeProjected();
+  const double error = (structureVolume - structureProjectedVolume);
   if (error * 10000 > structureVolume)
   {
     vtkDebugMacro("CalculateRelativeStructureSize: Computed structure volume may be invalid according to difference in calculated projected and normal volumes.");
@@ -167,9 +167,9 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
   // Calculate voxel volume in mm^3
   double spacing[3] = { 0.0, 0.0, 0.0 };
   this->ReferenceGeometryImageData->GetSpacing(spacing);
-  double voxelVolume = spacing[0] * spacing[1] * spacing[2];
+  const double voxelVolume = spacing[0] * spacing[1] * spacing[2];
 
-  double relativeStructureSize = structureVolume / voxelVolume;
+  const double relativeStructureSize = structureVolume / voxelVolume;
 
   // Map raw measurement to the fuzzy input scale
   this->OutputRelativeStructureSize = pow(relativeStructureSize, 1.0 / 3.0);
@@ -224,105 +224,105 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   }
 
   // Define input membership functions for relative structure size
-  vtkSmartPointer<vtkPiecewiseFunction> sizeVerySmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> sizeVerySmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
   sizeVerySmall->AddPoint(7, 1);
   sizeVerySmall->AddPoint(12, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> sizeSmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> sizeSmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
   sizeSmall->AddPoint(7, 0);
   sizeSmall->AddPoint(12, 1);
   sizeSmall->AddPoint(14, 1);
   sizeSmall->AddPoint(18, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> sizeMedium = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> sizeMedium = vtkSmartPointer<vtkPiecewiseFunction>::New();
   sizeMedium->AddPoint(14, 0);
   sizeMedium->AddPoint(18, 1);
   sizeMedium->AddPoint(36, 1);
   sizeMedium->AddPoint(72, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> sizeLarge = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> sizeLarge = vtkSmartPointer<vtkPiecewiseFunction>::New();
   sizeLarge->AddPoint(36, 0);
   sizeLarge->AddPoint(72, 1);
 
   // Define input membership functions for complexity measure
-  vtkSmartPointer<vtkPiecewiseFunction> complexityLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> complexityLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
   complexityLow->AddPoint(0.2, 1);
   complexityLow->AddPoint(0.6, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> complexityHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> complexityHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   complexityHigh->AddPoint(0.2, 0);
   complexityHigh->AddPoint(0.6, 1);
 
   // Define output membership functions for oversampling power
   // (the output oversampling factor will be 2 to the power of this number)
-  vtkSmartPointer<vtkPiecewiseFunction> oversamplingLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> oversamplingLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingLow->AddPoint(-1.25, 1);
   oversamplingLow->AddPoint(-0.75, 1);
   oversamplingLow->AddPoint(0.25, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> oversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> oversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingNormal->AddPoint(-0.75, 0);
   oversamplingNormal->AddPoint(0.25, 1);
   oversamplingNormal->AddPoint(0.25, 1);
   oversamplingNormal->AddPoint(0.75, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> oversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> oversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingHigh->AddPoint(0.25, 0);
   oversamplingHigh->AddPoint(0.75, 1);
   oversamplingHigh->AddPoint(1.25, 1);
   oversamplingHigh->AddPoint(1.75, 0);
-  vtkSmartPointer<vtkPiecewiseFunction> oversamplingVeryHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> oversamplingVeryHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingVeryHigh->AddPoint(1.25, 0);
   oversamplingVeryHigh->AddPoint(1.75, 1);
   oversamplingVeryHigh->AddPoint(2.25, 1);
 
   // Fuzzify inputs
-  double sizeVerySmallMembership = sizeVerySmall->GetValue(this->OutputRelativeStructureSize);
-  double sizeSmallMembership = sizeSmall->GetValue(this->OutputRelativeStructureSize);
-  double sizeMediumMembership = sizeMedium->GetValue(this->OutputRelativeStructureSize);
-  double sizeLargeMembership = sizeLarge->GetValue(this->OutputRelativeStructureSize);
+  const double sizeVerySmallMembership = sizeVerySmall->GetValue(this->OutputRelativeStructureSize);
+  const double sizeSmallMembership = sizeSmall->GetValue(this->OutputRelativeStructureSize);
+  const double sizeMediumMembership = sizeMedium->GetValue(this->OutputRelativeStructureSize);
+  const double sizeLargeMembership = sizeLarge->GetValue(this->OutputRelativeStructureSize);
 
-  double complexityLowMembership = complexityLow->GetValue(this->OutputComplexityMeasure);
-  double complexityHighMembership = complexityHigh->GetValue(this->OutputComplexityMeasure);
+  const double complexityLowMembership = complexityLow->GetValue(this->OutputComplexityMeasure);
+  const double complexityHighMembership = complexityHigh->GetValue(this->OutputComplexityMeasure);
 
   // Apply rules and determine consequents
 
   // 1. If RSS is Very small, then Oversampling is Very high
-  double rule1_OversamplingVeryHighClippingValue = sizeVerySmallMembership;
+  const double rule1_OversamplingVeryHighClippingValue = sizeVerySmallMembership;
   // 2. If RSS is Small and Complexity is High then Oversampling is High
-  double rule2_OversamplingHighClippingValue = std::min(sizeSmallMembership, complexityHighMembership);
+  const double rule2_OversamplingHighClippingValue = std::min(sizeSmallMembership, complexityHighMembership);
   // 3. If RSS is Medium and Complexity is High then Oversampling is High
-  double rule3_OversamplingHighClippingValue = std::min(sizeMediumMembership, complexityHighMembership);
+  const double rule3_OversamplingHighClippingValue = std::min(sizeMediumMembership, complexityHighMembership);
   // 4. If RSS is Small and Complexity is Low then Oversampling is Normal
-  double rule4_OversamplingNormalClippingValue = std::min(sizeSmallMembership, complexityLowMembership);
+  const double rule4_OversamplingNormalClippingValue = std::min(sizeSmallMembership, complexityLowMembership);
   // 5. If RSS is Medium and Complexity is Low then Oversampling is Normal
-  double rule5_OversamplingNormalClippingValue = std::min(sizeMediumMembership, complexityLowMembership);
+  const double rule5_OversamplingNormalClippingValue = std::min(sizeMediumMembership, complexityLowMembership);
   // 6. If RSS is Large, then Oversampling is Low
-  double rule6_OversamplingLowClippingValue = sizeLargeMembership;
+  const double rule6_OversamplingLowClippingValue = sizeLargeMembership;
 
   // Determine consequents (clipping output membership functions with rule membership values)
   std::vector<vtkPiecewiseFunction*> consequents;
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule1_oversamplingVeryHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule1_oversamplingVeryHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule1_oversamplingVeryHigh->DeepCopy(oversamplingVeryHigh);
   this->ClipMembershipFunction(rule1_oversamplingVeryHigh, rule1_OversamplingVeryHighClippingValue);
   consequents.push_back(rule1_oversamplingVeryHigh);
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule2_OversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule2_OversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule2_OversamplingHigh->DeepCopy(oversamplingHigh);
   this->ClipMembershipFunction(rule2_OversamplingHigh, rule2_OversamplingHighClippingValue);
   consequents.push_back(rule2_OversamplingHigh);
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule3_OversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule3_OversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule3_OversamplingHigh->DeepCopy(oversamplingHigh);
   this->ClipMembershipFunction(rule3_OversamplingHigh, rule3_OversamplingHighClippingValue);
   consequents.push_back(rule3_OversamplingHigh);
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule4_OversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule4_OversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule4_OversamplingNormal->DeepCopy(oversamplingNormal);
   this->ClipMembershipFunction(rule4_OversamplingNormal, rule4_OversamplingNormalClippingValue);
   consequents.push_back(rule4_OversamplingNormal);
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule5_OversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule5_OversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule5_OversamplingNormal->DeepCopy(oversamplingNormal);
   this->ClipMembershipFunction(rule5_OversamplingNormal, rule5_OversamplingNormalClippingValue);
   consequents.push_back(rule5_OversamplingNormal);
 
-  vtkSmartPointer<vtkPiecewiseFunction> rule6_OversamplingLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const vtkSmartPointer<vtkPiecewiseFunction> rule6_OversamplingLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
   rule6_OversamplingLow->DeepCopy(oversamplingLow);
   this->ClipMembershipFunction(rule6_OversamplingLow, rule6_OversamplingLowClippingValue);
   consequents.push_back(rule6_OversamplingLow);
@@ -342,8 +342,8 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
       currentMembershipFunction->GetNodeValue(nodeIndex, currentNode);
       currentMembershipFunction->GetNodeValue(nodeIndex + 1, nextNode);
 
-      double bottomRectangleArea = (nextNode[0] - currentNode[0]) * std::min(nextNode[1], currentNode[1]);
-      double bottomRectangleCentroid = (nextNode[0] + currentNode[0]) / 2.0;
+      const double bottomRectangleArea = (nextNode[0] - currentNode[0]) * std::min(nextNode[1], currentNode[1]);
+      const double bottomRectangleCentroid = (nextNode[0] + currentNode[0]) / 2.0;
 
       double topTriangleArea = 0.0;
       double topTriangleCentroid = 0.0;
@@ -358,7 +358,7 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
         topTriangleCentroid = currentNode[0] + (nextNode[0] - currentNode[0]) / 3.0;
       }
 
-      double trapezoidArea = bottomRectangleArea + topTriangleArea;
+      const double trapezoidArea = bottomRectangleArea + topTriangleArea;
       double trapezoidCentroid = bottomRectangleCentroid;
       if (topTriangleArea > 0.0)
       {
@@ -367,7 +367,7 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
 
       if (trapezoidArea > 0.0) // Only add if area is non-zero
       {
-        std::pair<double, double> areaCentroidPair(trapezoidArea, trapezoidCentroid);
+        const std::pair<double, double> areaCentroidPair(trapezoidArea, trapezoidCentroid);
         areaCentroidPairs.push_back(areaCentroidPair);
       }
     }
@@ -381,10 +381,10 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
     nominator += trapezoidIt->first * trapezoidIt->second;
     denominator += trapezoidIt->first;
   }
-  double centerOfMass = nominator / denominator;
+  const double centerOfMass = nominator / denominator;
 
   // Defuzzify output
-  double calculatedOversamplingFactorPower = floor(centerOfMass + 0.5);
+  const double calculatedOversamplingFactorPower = floor(centerOfMass + 0.5);
 
   return pow(2.0, calculatedOversamplingFactorPower);
 }
@@ -410,7 +410,7 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
     if ((currentNode[1] < clipValue && nextNode[1] > clipValue) //
         || (currentNode[1] > clipValue && nextNode[1] < clipValue))
     {
-      double newNodeParameterValue = (((nextNode[0] - currentNode[0]) * (currentNode[1] - clipValue)) / (currentNode[1] - nextNode[1])) + currentNode[0];
+      const double newNodeParameterValue = (((nextNode[0] - currentNode[0]) * (currentNode[1] - clipValue)) / (currentNode[1] - nextNode[1])) + currentNode[0];
       newNodeParameterValues.push_back(newNodeParameterValue);
     }
   }
@@ -463,9 +463,9 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   imageData->GetSpacing(spacing);
   for (unsigned int axis = 0; axis < 3; ++axis)
   {
-    int dimension = extent[axis * 2 + 1] - extent[axis * 2] + 1;
-    int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
-    int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor * dimension)) - 1, 0);
+    const int dimension = extent[axis * 2 + 1] - extent[axis * 2] + 1;
+    const int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
+    const int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor * dimension)) - 1, 0);
     newExtent[axis * 2] = extentMin;
     newExtent[axis * 2 + 1] = extentMax;
     newSpacing[axis] = spacing[axis]                                         //
@@ -477,7 +477,7 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
 
   // Origin is given in the center of voxels, but we want to have the corners of the new and old volumes
   // to be in the same position, so we need to shift the origin by a half voxel size difference
-  vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   imageData->GetImageToWorldMatrix(imageToWorld);
   double newOrigin_Image[4] = { 0.5 * (1.0 - spacing[0] / newSpacing[0]), //
                                 0.5 * (1.0 - spacing[1] / newSpacing[1]), //

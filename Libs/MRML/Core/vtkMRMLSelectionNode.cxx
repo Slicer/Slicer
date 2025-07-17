@@ -76,7 +76,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -137,7 +137,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSelectionNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::Copy(anode);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -193,7 +193,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char* newClassNa
   }
   vtkDebugMacro("AddNewPlaceNodeClassNameToList: newClassName = " << newClassName);
 
-  std::string classNameString = std::string(newClassName);
+  const std::string classNameString = std::string(newClassName);
   std::string resourceString;
   if (resource)
   {
@@ -204,7 +204,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char* newClassNa
   {
     iconNameString = std::string(iconName);
   }
-  int index = this->PlaceNodeClassNameInList(classNameString);
+  const int index = this->PlaceNodeClassNameInList(classNameString);
   if (index == -1)
   {
     vtkDebugMacro("PlaceNode class name " << classNameString << " not in list, adding it and invoking placeNode class name list modified event");
@@ -242,9 +242,9 @@ void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char* classNam
   }
   vtkDebugMacro("RemovePlaceNodeClassNameFromList: className = " << className);
 
-  std::string classNameString = std::string(className);
+  const std::string classNameString = std::string(className);
 
-  int index = this->PlaceNodeClassNameInList(classNameString);
+  const int index = this->PlaceNodeClassNameInList(classNameString);
   if (index == -1)
   {
     return;
@@ -306,7 +306,7 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
-      vtkMRMLNodeReference* reference = it->second[0];
+      vtkMRMLNodeReference* const reference = it->second[0];
       if (reference)
       {
         units.push_back(vtkMRMLUnitNode::SafeDownCast(reference->GetReferencedNode()));
@@ -352,16 +352,16 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeIconNameByIndex(int n)
 //----------------------------------------------------------------------------
 const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 {
-  std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
+  const std::string safeQuantity = quantity ? quantity : "";
+  const std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
   return this->GetNodeReferenceID(referenceRole.c_str());
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLUnitNode* vtkMRMLSelectionNode::GetUnitNode(const char* quantity)
 {
-  std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
+  const std::string safeQuantity = quantity ? quantity : "";
+  const std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
   return vtkMRMLUnitNode::SafeDownCast(this->GetNodeReference(referenceRole.c_str()));
 }
 
@@ -369,9 +369,9 @@ vtkMRMLUnitNode* vtkMRMLSelectionNode::GetUnitNode(const char* quantity)
 void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 {
   std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
+  const std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
 
-  vtkMTimeType mTime = this->GetMTime();
+  const vtkMTimeType mTime = this->GetMTime();
   this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
   // \todo a bit too much hackish...
   if (this->GetMTime() > mTime)
@@ -412,7 +412,7 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeResourceByClassName(std::string cl
 {
   std::string resource;
 
-  int placeNodeIndex = this->PlaceNodeClassNameInList(className);
+  const int placeNodeIndex = this->PlaceNodeClassNameInList(className);
   if (placeNodeIndex != -1)
   {
     resource = this->GetPlaceNodeResourceByIndex(placeNodeIndex);
@@ -482,7 +482,7 @@ const char* vtkMRMLSelectionNode::GetActivePlaceNodeID()
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::SetActivePlaceNodeID(const char* id)
 {
-  const char* oldId = this->GetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE);
+  const char* const oldId = this->GetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE);
   if (id == oldId)
   {
     // no change (probably both nullptr)

@@ -36,7 +36,7 @@ int vtkSceneViewTest1(int, char*[])
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   node1->StoreScene();
 
-  vtkMRMLScene* storedScene = node1->GetStoredScene();
+  vtkMRMLScene* const storedScene = node1->GetStoredScene();
   std::cout << "GetStoredScene returned " << (storedScene == nullptr ? "null" : "not null") << std::endl;
 
   node1->SetAbsentStorageFileNames();
@@ -44,7 +44,7 @@ int vtkSceneViewTest1(int, char*[])
   TEST_SET_GET_STD_STRING(node1.GetPointer(), SceneViewDescription);
 
   node1->SetScreenShot(nullptr);
-  vtkImageData* nullImage = node1->GetScreenShot();
+  vtkImageData* const nullImage = node1->GetScreenShot();
   CHECK_NULL(nullImage);
 
   vtkImageData* imageData = vtkImageData::New();

@@ -104,8 +104,8 @@ void qSlicerWebWidgetPrivate::init()
   this->setupUi(q);
   this->WebView = new qSlicerWebEngineView();
 
-  QSettings settings;
-  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  const QSettings settings;
+  const bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   if (developerModeEnabled)
   {
     // Enable dev tools by default for the test browser
@@ -116,7 +116,7 @@ void qSlicerWebWidgetPrivate::init()
   }
 
   this->PythonProxy = new qSlicerWebPythonProxy(q);
-  QWebEngineProfile* profile = QWebEngineProfile::defaultProfile();
+  QWebEngineProfile* const profile = QWebEngineProfile::defaultProfile();
 
   this->WebEnginePage = new qSlicerWebEnginePage(profile, this->WebView);
   this->WebEnginePage->JavaScriptConsoleMessageLoggingEnabled = developerModeEnabled;

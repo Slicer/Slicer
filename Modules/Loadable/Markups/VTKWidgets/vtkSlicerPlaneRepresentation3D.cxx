@@ -66,7 +66,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
 
   std::stringstream arrowFunctionSS;
   arrowFunctionSS << ARROW_COMPONENT;
-  std::string arrowFunction = arrowFunctionSS.str();
+  const std::string arrowFunction = arrowFunctionSS.str();
 
   this->ArrowGlypher->SetSourceConnection(this->ArrowFilter->GetOutputPort());
   this->ArrowGlypher->OrientOn();
@@ -87,7 +87,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
 
   std::stringstream outlineFunctionSS;
   outlineFunctionSS << OUTLINE_COMPONENT;
-  std::string outlineFunction = outlineFunctionSS.str();
+  const std::string outlineFunction = outlineFunctionSS.str();
 
   this->PlaneOutlineColorFilter->SetInputConnection(this->PlaneOutlineFilter->GetOutputPort());
   this->PlaneOutlineColorFilter->SetFunction(outlineFunction.c_str());
@@ -97,7 +97,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
 
   std::stringstream fillFunctionSS;
   fillFunctionSS << FILL_COMPONENT;
-  std::string fillFunction = fillFunctionSS.str();
+  const std::string fillFunction = fillFunctionSS.str();
 
   this->PlaneFillColorFilter->SetInputConnection(this->PlaneFillFilter->GetOutputPort());
   this->PlaneFillColorFilter->SetFunction(fillFunction.c_str());
@@ -183,7 +183,7 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   double zAxis_World[3] = { 0.0, 0.0, 0.0 };
   planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
-  double epsilon = 1e-5;
+  const double epsilon = 1e-5;
   if (vtkMath::Norm(xAxis_World) <= epsilon || //
       vtkMath::Norm(yAxis_World) <= epsilon || //
       vtkMath::Norm(zAxis_World) <= epsilon)
@@ -234,7 +234,7 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   planeBorderPoints_World->InsertNextPoint(planeCornerPoints_World->GetPoint(3));
 
   // Set the order of plane outline points
-  int numberOfBorderPoints = planeBorderPoints_World->GetNumberOfPoints();
+  const int numberOfBorderPoints = planeBorderPoints_World->GetNumberOfPoints();
   vtkNew<vtkIdList> line;
   line->SetNumberOfIds(numberOfBorderPoints + 1);
   for (vtkIdType i = 0; i < numberOfBorderPoints; ++i)
@@ -305,13 +305,13 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   double color[3] = { 0.0 };
   this->GetControlPointsPipeline(controlPointType)->Property->GetColor(color);
-  double opacity = this->GetControlPointsPipeline(controlPointType)->Property->GetOpacity();
+  const double opacity = this->GetControlPointsPipeline(controlPointType)->Property->GetOpacity();
   this->PlaneColorLUT->SetNumberOfTableValues(3);
   this->PlaneColorLUT->SetTableRange(0.0, 2.0);
   this->PlaneColorLUT->Build();
 
-  double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility() ? opacity * displayNode->GetOutlineOpacity() : 0.0;
-  double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility() ? opacity * displayNode->GetFillOpacity() : 0.0;
+  const double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility() ? opacity * displayNode->GetOutlineOpacity() : 0.0;
+  const double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility() ? opacity * displayNode->GetFillOpacity() : 0.0;
   double arrowOpacity = opacity * displayNode->GetFillOpacity();
 
   vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->MarkupsDisplayNode);
@@ -492,7 +492,7 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(vtkMRMLInteractionEven
 
       double t;
       double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
-      double currentDistDisplay = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
+      const double currentDistDisplay = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
       if (currentDistDisplay < dist2Display)
       {
         dist2Display = currentDistDisplay;
@@ -507,7 +507,7 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(vtkMRMLInteractionEven
     this->Renderer->DisplayToWorld();
     this->Renderer->GetWorldPoint(closestPointWorld);
 
-    double pixelTolerance =
+    const double pixelTolerance =
       this->PlaneOutlineFilter->GetRadius() / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(this->Renderer, closestPointWorld)
       + this->PickingTolerance * this->GetScreenScaleFactor();
     if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)

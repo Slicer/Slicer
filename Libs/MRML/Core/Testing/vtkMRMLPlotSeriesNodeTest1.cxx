@@ -47,8 +47,8 @@ int vtkMRMLPlotSeriesNodeTest1(int, char*[])
   table->AddColumn(arrC.GetPointer());
 
   // Fill in the table with some example values
-  int numPoints = 69;
-  float inc = 7.5 / (numPoints - 1);
+  const int numPoints = 69;
+  const float inc = 7.5 / (numPoints - 1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {
@@ -70,7 +70,7 @@ int vtkMRMLPlotSeriesNodeTest1(int, char*[])
   plotSeriesNode->SetYColumnName(arrC->GetName());
 
   // Verify that Copy method creates a true independent copy
-  vtkSmartPointer<vtkMRMLPlotSeriesNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotSeriesNode>::New();
+  const vtkSmartPointer<vtkMRMLPlotSeriesNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotSeriesNode>::New();
   nodeCopy->CopyWithScene(plotSeriesNode.GetPointer());
 
   CHECK_STD_STRING(plotSeriesNode->GetName(), nodeCopy->GetName());

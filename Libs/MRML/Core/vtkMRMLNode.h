@@ -351,7 +351,7 @@ public:
   /// \sa EndModify()
   virtual int StartModify()
   {
-    int disabledModify = this->GetDisableModifiedEvent();
+    const int disabledModify = this->GetDisableModifiedEvent();
     this->DisableModifiedEventOn();
     return disabledModify;
   };
@@ -518,7 +518,7 @@ public:
   /// \sa GetModifiedEventPending()
   int GetCustomModifiedEventPending(int eventId)
   {
-    std::map<int, int>::iterator it = this->CustomModifiedEventPending.find(eventId);
+    const std::map<int, int>::iterator it = this->CustomModifiedEventPending.find(eventId);
     if (it == this->CustomModifiedEventPending.end())
     {
       return 0;

@@ -37,17 +37,17 @@ int vtkMRMLModelStorageNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLModelStorageNode> node1;
+  const vtkNew<vtkMRMLModelStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
   scene->SetRootDirectory(tempDir);
 
-  vtkNew<vtkUnstructuredGrid> ug;
-  vtkNew<vtkPolyData> poly;
+  const vtkNew<vtkUnstructuredGrid> ug;
+  const vtkNew<vtkPolyData> poly;
   CreateVoxelMeshes(ug.GetPointer(), poly.GetPointer());
-  for (int coordinateSystem : { vtkMRMLStorageNode::CoordinateSystemRAS, vtkMRMLStorageNode::CoordinateSystemLPS })
+  for (const int coordinateSystem : { vtkMRMLStorageNode::CoordinateSystemRAS, vtkMRMLStorageNode::CoordinateSystemLPS })
   {
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer(), coordinateSystem));
@@ -65,12 +65,12 @@ int vtkMRMLModelStorageNodeTest1(int argc, char* argv[])
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided /*=false*/)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLModelNodeTest1") + std::string(extension);
+  const std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLModelNodeTest1") + std::string(extension);
 
-  int numberOfPoints = mesh->GetNumberOfPoints();
+  const int numberOfPoints = mesh->GetNumberOfPoints();
   CHECK_BOOL(numberOfPoints > 0, true);
 
-  int numberOfCells = mesh->GetNumberOfCells();
+  const int numberOfCells = mesh->GetNumberOfCells();
   CHECK_BOOL(numberOfCells > 0, true);
 
   // Add model node
@@ -79,7 +79,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* m
   CHECK_NOT_NULL(modelNode->GetMesh());
   CHECK_NOT_NULL(scene->AddNode(modelNode.GetPointer()));
 
-  bool isPoly = (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType);
+  const bool isPoly = (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType);
   std::cout << "Testing " << extension << " for " << (isPoly ? "polydata" : "unstructured grid") << " mesh"
             << " in coordinate system: " << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(coordinateSystem) << std::endl;
 
@@ -128,7 +128,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* m
   CHECK_INT(storageNode->GetCoordinateSystem(), coordinateSystem);
 
   // Check if coordinate system hint is overridden by coordinate system specified in file
-  int someDifferentCoordinateSystem =
+  const int someDifferentCoordinateSystem =
     coordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS ? vtkMRMLStorageNode::CoordinateSystemLPS : vtkMRMLStorageNode::CoordinateSystemRAS;
   storageNode->SetCoordinateSystem(someDifferentCoordinateSystem);
   CHECK_BOOL(storageNode->ReadData(modelNode.GetPointer()), true);

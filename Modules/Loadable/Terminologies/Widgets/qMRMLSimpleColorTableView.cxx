@@ -61,7 +61,7 @@ void qMRMLSimpleColorTableViewPrivate::init()
 
   q->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-  qMRMLColorModel* colorModel = new qMRMLColorModel(q);
+  qMRMLColorModel* const colorModel = new qMRMLColorModel(q);
   qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
@@ -119,7 +119,7 @@ void qMRMLSimpleColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLSimpleColorTableView::mrmlColorNode() const
 {
-  qMRMLColorModel* mrmlModel = this->colorModel();
+  qMRMLColorModel* const mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
   return mrmlModel->mrmlColorNode();
 }
@@ -127,8 +127,8 @@ vtkMRMLColorNode* qMRMLSimpleColorTableView::mrmlColorNode() const
 //------------------------------------------------------------------------------
 bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
 {
-  QSortFilterProxyModel* sortFilterModel = this->sortFilterProxyModel();
-  qMRMLColorModel* colorModel = this->colorModel();
+  QSortFilterProxyModel* const sortFilterModel = this->sortFilterProxyModel();
+  qMRMLColorModel* const colorModel = this->colorModel();
   vtkMRMLColorNode* colorNode = this->mrmlColorNode();
   if (colorNode == nullptr)
   {
@@ -143,11 +143,11 @@ bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
     return false;
   }
 
-  QModelIndex foundIndex = sortFilterModel->mapFromSource(foundIndices[0]);
+  const QModelIndex foundIndex = sortFilterModel->mapFromSource(foundIndices[0]);
   this->selectionModel()->select(foundIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
   // set current index to the found index, but in the label column
-  QModelIndex foundLabelIndex = foundIndex.sibling(foundIndex.row(), colorModel->labelColumn());
+  const QModelIndex foundLabelIndex = foundIndex.sibling(foundIndex.row(), colorModel->labelColumn());
   this->selectionModel()->setCurrentIndex(foundLabelIndex, QItemSelectionModel::Current);
 
   // Scroll to the item to make it visible
@@ -158,16 +158,16 @@ bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
 //------------------------------------------------------------------------------
 int qMRMLSimpleColorTableView::selectedColorIndex() const
 {
-  QSortFilterProxyModel* sortFilterModel = this->sortFilterProxyModel();
+  QSortFilterProxyModel* const sortFilterModel = this->sortFilterProxyModel();
   if (!sortFilterModel)
   {
     return -1;
   }
-  qMRMLColorModel* colorModel = this->colorModel();
+  qMRMLColorModel* const colorModel = this->colorModel();
   if (!colorModel)
   {
     return -1;
   }
-  int colorIndex = colorModel->colorFromIndex(sortFilterModel->mapToSource(this->currentIndex()));
+  const int colorIndex = colorModel->colorFromIndex(sortFilterModel->mapToSource(this->currentIndex()));
   return colorIndex;
 }

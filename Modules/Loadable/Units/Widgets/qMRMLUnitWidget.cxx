@@ -211,7 +211,7 @@ void qMRMLUnitWidget::setCurrentNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLUnitWidget);
 
-  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(node);
+  vtkMRMLUnitNode* const unitNode = vtkMRMLUnitNode::SafeDownCast(node);
   this->qvtkReconnect(d->CurrentUnitNode, unitNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromNode()));
   d->CurrentUnitNode = unitNode;
 
@@ -240,7 +240,7 @@ void qMRMLUnitWidget::updateWidgetFromNode()
   }
 
   // Preset
-  bool modifying = d->PresetNodeComboBox->blockSignals(true);
+  const bool modifying = d->PresetNodeComboBox->blockSignals(true);
   d->PresetNodeComboBox->addAttribute("vtkMRMLUnitNode", "Quantity", d->CurrentUnitNode->GetQuantity());
   d->PresetNodeComboBox->setMRMLScene(this->mrmlScene());
   d->PresetNodeComboBox->setCurrentNode(nullptr);
@@ -447,7 +447,7 @@ void qMRMLUnitWidget::setUnitFromPreset(vtkMRMLNode* presetNode)
     return;
   }
 
-  int disabledModify = d->CurrentUnitNode->StartModify();
+  const int disabledModify = d->CurrentUnitNode->StartModify();
   d->CurrentUnitNode->SetQuantity(presetUnitNode->GetQuantity());
   d->CurrentUnitNode->SetPrefix(presetUnitNode->GetPrefix());
   d->CurrentUnitNode->SetSuffix(presetUnitNode->GetSuffix());

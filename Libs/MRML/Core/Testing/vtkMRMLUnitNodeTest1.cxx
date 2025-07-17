@@ -40,7 +40,7 @@ bool TestUnitNodeAttribute(vtkMRMLScene* scene);
 //---------------------------------------------------------------------------
 int vtkMRMLUnitNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLUnitNode> node1;
+  const vtkNew<vtkMRMLUnitNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   bool res = true;
@@ -101,7 +101,7 @@ bool TestScenesUnitNodeID(vtkMRMLScene* scene)
 bool TestUnitNodeAttribute(vtkMRMLScene* scene)
 {
   assert(scene);
-  int testedNode = 3;
+  const int testedNode = 3;
   vtkMRMLNode* unit = scene->GetNthNodeByClass(testedNode, "vtkMRMLUnitNode");
   if (!unit)
   {

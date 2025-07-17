@@ -57,11 +57,11 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object, const QSt
   {
     if (Command == "check_indexes")
     {
-      QStringList Args = Arguments.split(" ");
+      const QStringList Args = Arguments.split(" ");
       for (const QString& Arg : Args)
       {
         const int value = Arg.toInt();
-        vtkMRMLNode* node = parent->nodeFromIndex(value);
+        vtkMRMLNode* const node = parent->nodeFromIndex(value);
         parent->setCheckState(node, Qt::Checked);
         parent->update();
       }
@@ -69,11 +69,11 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object, const QSt
     }
     if (Command == "uncheck_indexes")
     {
-      QStringList Args = Arguments.split(" ");
+      const QStringList Args = Arguments.split(" ");
       for (const QString& Arg : Args)
       {
         const int value = Arg.toInt();
-        vtkMRMLNode* node = parent->nodeFromIndex(value);
+        vtkMRMLNode* const node = parent->nodeFromIndex(value);
         parent->setCheckState(node, Qt::Unchecked);
         parent->update();
       }

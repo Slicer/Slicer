@@ -56,13 +56,13 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::HistogramMatchingImageFilter<InputImageType, OutputImageType, InputPixelType> FilterType;
 
   // Creation of Reader and Writer filters
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  typename ReaderType::Pointer reader2 = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const typename ReaderType::Pointer reader2 = ReaderType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "Match Histogram", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watcher(filter, "Match Histogram", CLPProcessInformation);
 
   // Setup the input and output files
   reader1->SetFileName(inputVolume.c_str());

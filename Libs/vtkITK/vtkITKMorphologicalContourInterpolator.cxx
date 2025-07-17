@@ -33,7 +33,7 @@ void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInt
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
   typedef itk::Image<T, 3> ImageType;
-  typename ImageType::Pointer inImage = ImageType::New();
+  const typename ImageType::Pointer inImage = ImageType::New();
   inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0] * dims[1] * dims[2], false);
   typename ImageType::RegionType region;
   typename ImageType::IndexType index;
@@ -50,7 +50,7 @@ void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInt
 
   // Calculate the distance transform
   typedef itk::MorphologicalContourInterpolator<ImageType> ContourInterpolatorType;
-  typename ContourInterpolatorType::Pointer interpolatorFilter = ContourInterpolatorType::New();
+  const typename ContourInterpolatorType::Pointer interpolatorFilter = ContourInterpolatorType::New();
 
   interpolatorFilter->SetLabel(static_cast<T>(self->GetLabel()));
   interpolatorFilter->SetAxis(self->GetAxis());
@@ -81,7 +81,7 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
     vtkErrorMacro(<< "PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars = pd->GetScalars();
+  vtkDataArray* const inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for distance transform");
@@ -97,8 +97,8 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
 
 #define CALL vtkITKMorphologicalContourInterpolatorExecute(this, input, output, static_cast<VTK_TT*>(inPtr), static_cast<VTK_TT*>(outPtr));
 
-    void* inPtr = input->GetScalarPointer();
-    void* outPtr = output->GetScalarPointer();
+    void* const inPtr = input->GetScalarPointer();
+    void* const outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
     {

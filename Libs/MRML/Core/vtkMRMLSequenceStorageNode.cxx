@@ -57,7 +57,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLSequenceNode* sequenceNode = dynamic_cast<vtkMRMLSequenceNode*>(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal", "Reading sequence node file failed: file name not specified.");
@@ -73,7 +73,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // compute file prefix
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(
@@ -104,7 +104,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     if (success)
     {
       // Read sequence index information from node embedded in the internal scene
-      vtkMRMLSequenceNode* embeddedSequenceNode = vtkMRMLSequenceNode::SafeDownCast(sequenceScene->GetSingletonNode("SequenceIndex", "vtkMRMLSequenceNode"));
+      vtkMRMLSequenceNode* const embeddedSequenceNode = vtkMRMLSequenceNode::SafeDownCast(sequenceScene->GetSingletonNode("SequenceIndex", "vtkMRMLSequenceNode"));
       if (embeddedSequenceNode)
       {
         sequenceNode->CopySequenceIndex(embeddedSequenceNode);
@@ -141,14 +141,14 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       this->GetUserMessages(), "vtkMRMLSequenceStorageNode::WriteDataInternal", "Writing sequence node failed: cannot register nodes in the sequence node");
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::WriteDataInternal", "Writing sequence node failed: file name not specified");
     return 0;
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   bool success = false;
   if (extension == ".mrb")
@@ -208,7 +208,7 @@ const char* vtkMRMLSequenceStorageNode::GetDefaultWriteFileExtension()
 std::string vtkMRMLSequenceStorageNode::GetSequenceBaseName(const std::string& fileNameName, const std::string& itemName)
 {
   std::string baseNodeName = fileNameName;
-  std::string fileNameNameLowercase = vtksys::SystemTools::LowerCase(fileNameName);
+  const std::string fileNameNameLowercase = vtksys::SystemTools::LowerCase(fileNameName);
 
   // strip known file extensions from filename to get base name
   std::vector<std::string> recognizedExtensions;
@@ -237,7 +237,7 @@ std::string vtkMRMLSequenceStorageNode::GetSequenceBaseName(const std::string& f
   recognizedExtensions.push_back(".nhdr");
   for (std::vector<std::string>::iterator recognizedExtensionIt = recognizedExtensions.begin(); recognizedExtensionIt != recognizedExtensions.end(); ++recognizedExtensionIt)
   {
-    std::string recognizedExtensionLowercase = vtksys::SystemTools::LowerCase(*recognizedExtensionIt);
+    const std::string recognizedExtensionLowercase = vtksys::SystemTools::LowerCase(*recognizedExtensionIt);
     if (fileNameNameLowercase.length() > recognizedExtensionLowercase.length() && //
         fileNameNameLowercase.compare(fileNameNameLowercase.length() - recognizedExtensionLowercase.length(), recognizedExtensionLowercase.length(), recognizedExtensionLowercase)
           == 0)
@@ -286,7 +286,7 @@ void vtkMRMLSequenceStorageNode::ForceUniqueDataNodeFileNames(vtkMRMLSequenceNod
     std::stringstream uniqueFileNameStream;
     uniqueFileNameStream << currStorableNode->GetName(); // Note that special characters are dealt with by the application logic when writing scene
     uniqueFileNameStream << "_" << i;                    // All file names are suffixed by the item number, ensuring uniqueness
-    std::string uniqueFileName = uniqueFileNameStream.str();
+    const std::string uniqueFileName = uniqueFileNameStream.str();
     currStorageNode->SetFileName(uniqueFileName.c_str());
   }
 }

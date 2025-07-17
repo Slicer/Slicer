@@ -38,7 +38,7 @@ QString findPython()
     python_path = QStandardPaths::findExecutable("python");
   }
 
-  QFileInfo python(python_path);
+  const QFileInfo python(python_path);
   if (!(python.exists() && python.isExecutable()))
   {
     return QString();
@@ -62,7 +62,7 @@ bool qSlicerCLIExecutableModuleFactoryItem::load()
 //-----------------------------------------------------------------------------
 QString qSlicerCLIExecutableModuleFactoryItem::xmlModuleDescriptionFilePath()
 {
-  QFileInfo info = QFileInfo(this->path());
+  const QFileInfo info = QFileInfo(this->path());
   return QDir(info.path()).filePath(info.baseName() + ".xml");
 }
 
@@ -79,7 +79,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   // then set up interpreter path in SEM module `Location` parameter.
   if (QFileInfo(this->path()).suffix().toLower() == "py")
   {
-    QString python_path = findPython();
+    const QString python_path = findPython();
     if (python_path.isEmpty())
     {
       this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
@@ -91,7 +91,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
     module->moduleDescription().SetTarget(this->path().toStdString());
   }
 
-  QString xmlFilePath = this->xmlModuleDescriptionFilePath();
+  const QString xmlFilePath = this->xmlModuleDescriptionFilePath();
 
   //
   // If the xml file exists, read it and associate it with the module
@@ -134,15 +134,15 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 //-----------------------------------------------------------------------------
 QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
 {
-  ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
+  const ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
 
-  int cliProcessTimeoutInMs = 5000;
+  const int cliProcessTimeoutInMs = 5000;
   QProcess cli;
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("ITK_AUTOLOAD_PATH", "");
   cli.setProcessEnvironment(env);
   cli.start(this->path(), QStringList(QString("--xml")));
-  bool res = cli.waitForFinished(cliProcessTimeoutInMs);
+  const bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
   {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
@@ -168,7 +168,7 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
     this->appendInstantiateErrorString(errorString);
     return nullptr;
   }
-  QString errors = cli.readAllStandardError();
+  const QString errors = cli.readAllStandardError();
   if (!errors.isEmpty())
   {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
@@ -245,7 +245,7 @@ qSlicerCLIExecutableModuleFactory::~qSlicerCLIExecutableModuleFactory() = defaul
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
-  QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();
+  const QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();
   this->registerAllFileItems(modulePaths);
 }
 

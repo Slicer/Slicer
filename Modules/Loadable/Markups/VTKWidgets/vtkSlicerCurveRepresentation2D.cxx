@@ -100,7 +100,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Line display
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
@@ -114,7 +114,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     this->LineActor->SetVisibility(false);
   }
 
-  bool allControlPointsSelected = this->GetAllControlPointsSelected();
+  const bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
   {
@@ -182,7 +182,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
       && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     int controlPointIndex = 0;
-    int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
+    const int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
     if (numberOfDefinedControlPoints > 0)
     {
       // there is at least one placed point
@@ -333,7 +333,7 @@ void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode* markupsN
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& componentIndex, double& closestDistance2)
 {
-  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* const sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2 //
       || !this->GetVisibility() || !interactionEventData                                                    //
@@ -359,9 +359,9 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(vtkMRMLInteractionEven
   double dist2World = VTK_DOUBLE_MAX;
   if (interactionEventData->IsWorldPositionValid())
   {
-    const double* worldPosition = interactionEventData->GetWorldPosition();
+    const double* const worldPosition = interactionEventData->GetWorldPosition();
     this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
-    double lineVisibilityDistance = this->MarkupsDisplayNode->GetLineColorFadingEnd() * 1.2;
+    const double lineVisibilityDistance = this->MarkupsDisplayNode->GetLineColorFadingEnd() * 1.2;
     if (dist2World > lineVisibilityDistance * lineVisibilityDistance)
     {
       // line not visible at this distance
@@ -372,10 +372,10 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(vtkMRMLInteractionEven
   double closestPointDisplay[3] = { 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
 
-  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
-  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  const double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+  const int* const displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
-  double dist2 = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  const double dist2 = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
   if (dist2 < maxPickingDistanceFromControlPoint2)
   {
     closestDistance2 = dist2;

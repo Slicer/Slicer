@@ -48,7 +48,7 @@ bool createFile(int line, const QDir& dir, const QString& relativePath, const QS
   QDir newDir(dir);
   newDir.mkpath(relativePath);
   newDir.cd(relativePath);
-  QString filePath = QFileInfo(newDir, fileName).filePath();
+  const QString filePath = QFileInfo(newDir, fileName).filePath();
   QFile file(filePath);
   file.open(QIODevice::Text | QIODevice::WriteOnly);
   QTextStream out(&file);
@@ -67,13 +67,13 @@ bool createFile(int line, const QDir& dir, const QString& relativePath, const QS
 //-----------------------------------------------------------------------------
 bool isPluginInstalledTest(int line, bool expectedResult, const QString& path, const QString& applicationHomeDir)
 {
-  bool res = qSlicerUtils::isPluginInstalled(path, applicationHomeDir);
+  const bool res = qSlicerUtils::isPluginInstalled(path, applicationHomeDir);
   if (res != expectedResult)
   {
     //    std::cerr << "Line " << line << " - Problem with isPluginInstalled()\n"
     //              << "\tpath: " << qPrintable(path) << "\n"
     //              << "\tapplicationHomeDir: " << qPrintable(applicationHomeDir) << std::endl;
-    QString msg("Line %1 - Problem with isPluginInstalled()\n\tpath: %2\n\tapplicationHomeDir: %3");
+    const QString msg("Line %1 - Problem with isPluginInstalled()\n\tpath: %2\n\tapplicationHomeDir: %3");
     throw std::runtime_error(qPrintable(msg.arg(line).arg(path).arg(applicationHomeDir)));
   }
   return res;
@@ -82,10 +82,10 @@ bool isPluginInstalledTest(int line, bool expectedResult, const QString& path, c
 //-----------------------------------------------------------------------------
 bool isPluginBuiltInTest(int line, bool expectedResult, const QString& path, const QString& applicationHomeDir)
 {
-  bool res = qSlicerUtils::isPluginBuiltIn(path, applicationHomeDir, QString::fromUtf8(Slicer_REVISION));
+  const bool res = qSlicerUtils::isPluginBuiltIn(path, applicationHomeDir, QString::fromUtf8(Slicer_REVISION));
   if (res != expectedResult)
   {
-    QString msg("Line %1 - Problem with isPluginBuiltIn(). Expected %2 for:\n\tpath: %3\n\tapplicationHomeDir: %4");
+    const QString msg("Line %1 - Problem with isPluginBuiltIn(). Expected %2 for:\n\tpath: %3\n\tapplicationHomeDir: %4");
     throw std::runtime_error(qPrintable(msg.arg(line).arg(expectedResult).arg(path).arg(applicationHomeDir)));
   }
   return res;
@@ -181,9 +181,9 @@ int executableExtensionTest()
 #ifdef _WIN32
   QString expectedExecutableExtension = ".exe";
 #else
-  QString expectedExecutableExtension = "";
+  QString const expectedExecutableExtension = "";
 #endif
-  QString executableExtension = qSlicerUtils::executableExtension();
+  QString const executableExtension = qSlicerUtils::executableExtension();
   CHECK_QSTRING(executableExtension, expectedExecutableExtension);
 
   //-----------------------------------------------------------------------------
@@ -198,11 +198,11 @@ int executableExtensionTest()
                << "qSlicerVRModule.so"
                << "qSlicerVR.dylib";
 
-  QString expectedModuleName = "VR";
+  const QString expectedModuleName = "VR";
 
   for (const QString& libraryName : libraryNames)
   {
-    QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
+    const QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
     CHECK_QSTRING(moduleName, expectedModuleName);
   }
   return EXIT_SUCCESS;
@@ -234,16 +234,16 @@ int isPluginInstalledBuiltinTest()
   tmp1.mkdir(temporaryDirName);
   tmp1.cd(temporaryDirName);
 
-  QString debug("Debug");
-  QString release("Release");
-  QString relWithDebInfo("RelWithDebInfo");
-  QString minSizeRel("MinSizeRel");
-  QString foo("foo");
-  QString fooDebug("foo/Debug");
-  QString fooRelease("foo/Release");
-  QString fooBar("foo/bar");
-  QString fooBarDebug("foo/bar/Debug");
-  QString fooBarRelease("foo/bar/Release");
+  const QString debug("Debug");
+  const QString release("Release");
+  const QString relWithDebInfo("RelWithDebInfo");
+  const QString minSizeRel("MinSizeRel");
+  const QString foo("foo");
+  const QString fooDebug("foo/Debug");
+  const QString fooRelease("foo/Release");
+  const QString fooBar("foo/bar");
+  const QString fooBarDebug("foo/bar/Debug");
+  const QString fooBarRelease("foo/bar/Release");
 
   createFile(__LINE__, tmp1, ".", "CMakeCache.txt");
 
@@ -401,11 +401,11 @@ int isPluginInstalledBuiltinTest()
   createFile(__LINE__, tmp5, ".", "CMakeCache.txt");
 
   {
-    QString extensionInstallDir = QString(Slicer_ORGANIZATION_DOMAIN "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
+    const QString extensionInstallDir = QString(Slicer_ORGANIZATION_DOMAIN "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
     isPluginInstalledTest(__LINE__, true, tmp5.path() + "/" + extensionInstallDir + "/" + foo + "/plugin.txt", tmp5.path());
   }
   {
-    QString extensionInstallDir = QString(Slicer_ORGANIZATION_NAME "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
+    const QString extensionInstallDir = QString(Slicer_ORGANIZATION_NAME "/%1-%2").arg(Slicer_EXTENSIONS_DIRBASENAME, Slicer_REVISION);
     isPluginInstalledTest(__LINE__, true, tmp5.path() + "/" + extensionInstallDir + "/" + foo + "/plugin.txt", tmp5.path());
   }
 
@@ -423,13 +423,13 @@ int isPluginInstalledBuiltinTest()
   //
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  QString macSlicerAppDir("/Applications/Slicer.app");
+  QString const macSlicerAppDir("/Applications/Slicer.app");
   // In this test we use the former method to get the extensions folder, as this is how
   // vtkSlicerApplicationLogic::IsPluginBuiltIn method determines the extension folder.
-  QString macSlicerExtensionsPostfix = QString("/Contents/%1-%2/plugin.txt").arg(Slicer_EXTENSIONS_DIRBASENAME).arg(Slicer_REVISION);
-  QString macSlicerAppExtensionsDir(macSlicerAppDir + macSlicerExtensionsPostfix);
-  QString macRenamedSlicerAppDir("/Applications/Something.app");
-  QString macRenamedSlicerAppExtensionsDir(macRenamedSlicerAppDir + macSlicerExtensionsPostfix);
+  const QString macSlicerExtensionsPostfix = QString("/Contents/%1-%2/plugin.txt").arg(Slicer_EXTENSIONS_DIRBASENAME).arg(Slicer_REVISION);
+  const QString macSlicerAppExtensionsDir(macSlicerAppDir + macSlicerExtensionsPostfix);
+  const QString macRenamedSlicerAppDir("/Applications/Something.app");
+  const QString macRenamedSlicerAppExtensionsDir(macRenamedSlicerAppDir + macSlicerExtensionsPostfix);
 
   isPluginInstalledTest(__LINE__, true, macSlicerAppExtensionsDir, macSlicerAppDir);
   isPluginInstalledTest(__LINE__, true, macRenamedSlicerAppExtensionsDir, macRenamedSlicerAppDir);
@@ -442,9 +442,9 @@ int isPluginInstalledBuiltinTest()
   // 'tmp' directory is common to 'pathWithoutIntDir' and 'pathEndsWith' tests
   //-----------------------------------------------------------------------------
 
-  QString lib = "lib";
-  QString libModule = lib + "/module";
-  QString libModuleRelease = libModule + "/Release";
+  const QString lib = "lib";
+  const QString libModule = lib + "/module";
+  const QString libModuleRelease = libModule + "/Release";
 
   QDir tmp = QDir::temp();
   temporaryDirName = QString("qSlicerUtilsTest1-pathWithoutIntDir.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
@@ -600,7 +600,7 @@ int isPluginInstalledBuiltinTest()
     return EXIT_FAILURE;
   }
 
-  QString fooAppContentsMacOSX("Foo.app/Contents/MacOSX");
+  const QString fooAppContentsMacOSX("Foo.app/Contents/MacOSX");
   tmp.mkpath(fooAppContentsMacOSX);
   QString expectedFilePath = tmp.path() + "/" + fooAppContentsMacOSX;
   if (!QFile::exists(expectedFilePath))
@@ -608,7 +608,7 @@ int isPluginInstalledBuiltinTest()
     std::cerr << "Line " << __LINE__ << " - Failed to create file" << qPrintable(expectedFilePath) << std::endl;
   }
 
-  QString fooAppContentsBin("Foo.app/Contents/bin");
+  const QString fooAppContentsBin("Foo.app/Contents/bin");
   tmp.mkpath(fooAppContentsBin);
   expectedFilePath = tmp.path() + "/" + fooAppContentsMacOSX;
   if (!QFile::exists(expectedFilePath))
@@ -688,12 +688,12 @@ int isPluginInstalledBuiltinTest()
 int setPermissionsRecursivelyTest()
 {
   QDir tmp = QDir::temp();
-  QString temporaryDirName = QString("qSlicerUtilsTest1-setPermissionsRecursively.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  const QString temporaryDirName = QString("qSlicerUtilsTest1-setPermissionsRecursively.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
   tmp.mkdir(temporaryDirName);
   tmp.cd(temporaryDirName);
 
-  QString path1 = QLatin1String("any/foo/bar");
-  QString path2 = QLatin1String("any/foo/bie");
+  const QString path1 = QLatin1String("any/foo/bar");
+  const QString path2 = QLatin1String("any/foo/bie");
 
   createFile(__LINE__, tmp, path1, "sol.txt");
   createFile(__LINE__, tmp, path1, "la.txt");
@@ -776,12 +776,12 @@ int replaceWikiUrlVersionTest()
   //! [replaceWikiUrlVersion example3]
 
   //! [replaceWikiUrlVersion example4]
-  QString input = "Read documentation at "
-                  "https://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
-                  "You will learn how to ...";
-  QString expectedOutput = "Read documentation at "
-                           "https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
-                           "You will learn how to ...";
+  const QString input = "Read documentation at "
+                        "https://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Extensions/SlicerToKiwiExporter."
+                        "You will learn how to ...";
+  const QString expectedOutput = "Read documentation at "
+                                 "https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter."
+                                 "You will learn how to ...";
   CHECK_QSTRING(qSlicerUtils::replaceWikiUrlVersion(input, "Nightly"), expectedOutput);
   //! [replaceWikiUrlVersion example4]
 
@@ -792,7 +792,7 @@ int replaceWikiUrlVersionTest()
 int replaceDocumentationUrlVersionTest()
 {
 
-  QString hostname = "slicer.readthedocs.io";
+  const QString hostname = "slicer.readthedocs.io";
   // Slicer ReadTheDocs -> replacements are done
 
   CHECK_QSTRING(qSlicerUtils::replaceDocumentationUrlVersion("https://slicer.readthedocs.io/en/latest/user_guide/get_help.html", hostname, "5.0"),

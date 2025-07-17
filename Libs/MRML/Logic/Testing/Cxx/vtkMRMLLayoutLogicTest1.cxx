@@ -14,7 +14,7 @@
 
 int vtkMRMLLayoutLogicTest1(int, char*[])
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
@@ -35,10 +35,10 @@ int vtkMRMLLayoutLogicTest1(int, char*[])
     std::cerr << __LINE__ << " Wrong number of views returned:" << layoutLogic->GetViewNodes()->GetNumberOfItems() << std::endl;
     return EXIT_FAILURE;
   }
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(views->GetItemAsObject(0));
-  vtkMRMLSliceNode* redNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(1));
-  vtkMRMLSliceNode* yellowNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(2));
-  vtkMRMLSliceNode* greenNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(3));
+  vtkMRMLViewNode* const viewNode = vtkMRMLViewNode::SafeDownCast(views->GetItemAsObject(0));
+  vtkMRMLSliceNode* const redNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(1));
+  vtkMRMLSliceNode* const yellowNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(2));
+  vtkMRMLSliceNode* const greenNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(3));
 
   if (!viewNode || !redNode || !yellowNode || !greenNode)
   {

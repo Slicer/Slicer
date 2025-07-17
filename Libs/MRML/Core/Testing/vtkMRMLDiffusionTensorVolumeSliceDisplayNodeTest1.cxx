@@ -15,7 +15,7 @@
 
 int vtkMRMLDiffusionTensorVolumeSliceDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> node1;
+  const vtkNew<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> node1;
   // EXERCISE_BASIC_DISPLAY_MRML_METHODS is failing due to set/get ScalarVisibility
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicMRMLMethods(node1.GetPointer()));
   return EXIT_SUCCESS;

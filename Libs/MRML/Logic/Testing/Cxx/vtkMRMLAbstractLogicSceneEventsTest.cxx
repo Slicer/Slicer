@@ -254,7 +254,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(a
   //---------------------------------------------------------------------------
   // SetMRMLScene(other scene)
   //---------------------------------------------------------------------------
-  vtkNew<vtkMRMLScene> scene2;
+  const vtkNew<vtkMRMLScene> scene2;
   testLogic->SetMRMLScene(scene2.GetPointer());
 
   if (testLogic->GetMRMLScene() != scene2.GetPointer() ||           //
@@ -338,7 +338,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(a
   testLogic->CalledMethods.clear();
 
   // Add node into the scene during the import state
-  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+  const vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   scene->AddNode(volumeNode.GetPointer());
 
   if (testLogic->CalledMethods.size() != 1 || //
@@ -373,7 +373,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(a
   //---------------------------------------------------------------------------
   // Add node (outside of batch processing)
   //---------------------------------------------------------------------------
-  vtkNew<vtkMRMLModelNode> modelNode;
+  const vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
   if (testLogic->CalledMethods.size() != 1 || //
       testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent] != 1)

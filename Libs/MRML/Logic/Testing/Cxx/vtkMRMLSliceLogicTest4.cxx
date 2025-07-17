@@ -89,7 +89,7 @@ int vtkMRMLSliceLogicTest4(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume2(argv[1], scene.GetPointer());
   if (scalarNode == nullptr)
@@ -98,7 +98,7 @@ int vtkMRMLSliceLogicTest4(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkImageData* img = scalarNode->GetImageData();
+  vtkImageData* const img = scalarNode->GetImageData();
 
   vtkNew<vtkImageReslice> resliceMask;
   resliceMask->SetOutputExtent(0, 400, 0, 500, 0, 0);

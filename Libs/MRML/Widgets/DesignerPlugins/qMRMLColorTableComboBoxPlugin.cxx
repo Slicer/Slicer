@@ -30,7 +30,7 @@ qMRMLColorTableComboBoxPlugin::qMRMLColorTableComboBoxPlugin(QObject* parentObje
 //-----------------------------------------------------------------------------
 QWidget* qMRMLColorTableComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLColorTableComboBox* widget = new qMRMLColorTableComboBox(parentWidget);
+  qMRMLColorTableComboBox* const widget = new qMRMLColorTableComboBox(parentWidget);
   return widget;
 }
 

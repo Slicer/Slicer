@@ -119,7 +119,7 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -219,7 +219,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -261,8 +261,8 @@ void vtkMRMLAbstractViewNode::Reset(vtkMRMLNode* defaultNode)
   // label (typically associated with the layoutName) is not preserved
   // automatically.
   // This require a custom behavior implemented here.
-  std::string layoutLabel = this->GetLayoutLabel() ? this->GetLayoutLabel() : "";
-  int viewGroup = this->GetViewGroup();
+  const std::string layoutLabel = this->GetLayoutLabel() ? this->GetLayoutLabel() : "";
+  const int viewGroup = this->GetViewGroup();
   this->Superclass::Reset(defaultNode);
   this->DisableModifiedEventOn();
   this->SetLayoutLabel(layoutLabel.c_str());
@@ -668,7 +668,7 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
   {
     return "?";
   }
-  double toleranceRad = vtkMath::RadiansFromDegrees(toleranceDeg);
+  const double toleranceRad = vtkMath::RadiansFromDegrees(toleranceDeg);
 
   // Compute labels and angles
   std::string axisLabels[3];
@@ -676,8 +676,8 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
   {
     double axisDirection[3] = { axisIndex == 0 ? 1.0 : 0.0, axisIndex == 1 ? 1.0 : 0.0, axisIndex == 2 ? 1.0 : 0.0 };
-    double normalAngleDiffRad = (vtkMath::AngleBetweenVectors(direction, axisDirection) - vtkMath::Pi() / 2.0);
-    double absoluteNormalAngleDiffRad = fabs(normalAngleDiffRad);
+    const double normalAngleDiffRad = (vtkMath::AngleBetweenVectors(direction, axisDirection) - vtkMath::Pi() / 2.0);
+    const double absoluteNormalAngleDiffRad = fabs(normalAngleDiffRad);
     if (absoluteNormalAngleDiffRad < toleranceRad)
     {
       // orthogonal to this axis, do not add its label
@@ -691,9 +691,9 @@ std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool
   std::string label;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
   {
-    int axisA = axisIndex;
-    int axisB = (axisIndex + 1) % 3;
-    int axisC = (axisIndex + 2) % 3;
+    const int axisA = axisIndex;
+    const int axisB = (axisIndex + 1) % 3;
+    const int axisC = (axisIndex + 2) % 3;
     if (absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisB] && absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisC])
     {
       label += axisLabels[axisA];

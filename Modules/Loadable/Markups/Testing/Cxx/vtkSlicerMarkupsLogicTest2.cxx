@@ -48,8 +48,8 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
   vtkNew<vtkSlicerMarkupsLogic> logic1;
 
   // Test moving markups between lists
-  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> source = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
-  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> dest = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
+  const vtkSmartPointer<vtkMRMLMarkupsFiducialNode> source = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
+  const vtkSmartPointer<vtkMRMLMarkupsFiducialNode> dest = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
 
   // null cases
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -83,9 +83,9 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
   source->AddNControlPoints(1);
   source->SetNthControlPointLabel(0, "S1");
   source->SetNthControlPointDescription(0, "To be moved");
-  double x = 5.5;
-  double y = -1.2;
-  double z = 10.6;
+  const double x = 5.5;
+  const double y = -1.2;
+  const double z = 10.6;
   source->SetNthControlPointPosition(0, x, y, z);
 
   if (!logic1->MoveNthControlPointToNewListAtIndex(0, source, dest, 0))
@@ -103,8 +103,8 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
     std::cerr << "MoveNthControlPointToNewListAtIndex: failed to move fiducial into dest list, list size = " << dest->GetNumberOfControlPoints() << std::endl;
     return EXIT_FAILURE;
   }
-  std::string movedLabel = dest->GetNthControlPointLabel(0);
-  std::string movedDescription = dest->GetNthControlPointDescription(0);
+  const std::string movedLabel = dest->GetNthControlPointLabel(0);
+  const std::string movedDescription = dest->GetNthControlPointDescription(0);
   double movedPoint[3];
   dest->GetNthControlPointPosition(0, movedPoint);
   if (movedLabel.compare("S1") != 0 ||                //
@@ -136,11 +136,11 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
   dest->SetNthControlPointLabel(4, "D4");
   dest->AddNControlPoints(1);
   dest->SetNthControlPointLabel(5, "D5");
-  int destStartSize = dest->GetNumberOfControlPoints();
+  const int destStartSize = dest->GetNumberOfControlPoints();
   // source should now be S2, S3, S4
   // dest should be S1, D1, D2, D3, D4, D5
   std::cout << "Starting more move testing, source = " << std::endl;
-  vtkIndent indent;
+  const vtkIndent indent;
   PrintLabels(source);
   std::cout << "\tdest, start size = " << destStartSize << std::endl;
   PrintLabels(dest);
@@ -264,8 +264,8 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   source->AddNControlPoints(1);
-  int sourceSize = source->GetNumberOfControlPoints();
-  int destSize = dest->GetNumberOfControlPoints();
+  const int sourceSize = source->GetNumberOfControlPoints();
+  const int destSize = dest->GetNumberOfControlPoints();
   if (!logic1->CopyNthControlPointToNewList(0, source, dest))
   {
     std::cerr << "Failed to copy 0th markup to new list" << std::endl;
@@ -285,7 +285,7 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
 
   // Test CSV export/import
 
-  std::string filename = tempFolder + "/vtkMRMLMarkupsLogicTest2-export-temp.csv";
+  const std::string filename = tempFolder + "/vtkMRMLMarkupsLogicTest2-export-temp.csv";
   CHECK_BOOL(logic1->ExportControlPointsToCSV(dest, filename), true);
 
   vtkNew<vtkMRMLMarkupsCurveNode> importedNode;

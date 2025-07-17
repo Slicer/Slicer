@@ -47,7 +47,7 @@ int qSlicerVolumeRenderingModuleWidgetTest2(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
 
   if (argc < 2)
   {
@@ -61,19 +61,19 @@ int qSlicerVolumeRenderingModuleWidgetTest2(int argc, char* argv[])
 
   qSlicerVolumeRenderingModuleWidget* moduleWidget = dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(module.widgetRepresentation());
 
-  vtkSmartPointer<vtkSlicerVolumesLogic> volumesLogic = vtkSmartPointer<vtkSlicerVolumesLogic>::New();
+  const vtkSmartPointer<vtkSlicerVolumesLogic> volumesLogic = vtkSmartPointer<vtkSlicerVolumesLogic>::New();
   volumesLogic->SetMRMLScene(app.mrmlScene());
 
-  vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "volume");
+  vtkMRMLVolumeNode* const volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "volume");
   if (!volumeNode)
   {
     std::cerr << "Bad volume file:" << argv[1] << std::endl;
     return EXIT_FAILURE;
   }
 
-  vtkSmartPointer<vtkMRMLViewNode> view = vtkSmartPointer<vtkMRMLViewNode>::New();
+  const vtkSmartPointer<vtkMRMLViewNode> view = vtkSmartPointer<vtkMRMLViewNode>::New();
   app.mrmlScene()->AddNode(view);
-  vtkSmartPointer<vtkMRMLViewNode> view2 = vtkSmartPointer<vtkMRMLViewNode>::New();
+  const vtkSmartPointer<vtkMRMLViewNode> view2 = vtkSmartPointer<vtkMRMLViewNode>::New();
   app.mrmlScene()->AddNode(view2);
 
   moduleWidget->show();

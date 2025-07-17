@@ -39,7 +39,7 @@ int TestMarkupsStorageNode(vtkMRMLMarkupsStorageNode* node1)
   TEST_SET_GET_INT(node1, CoordinateSystem, 1);
 
   // manually test invalid values
-  int invalidValues[3] = { -1, 2, 100 };
+  const int invalidValues[3] = { -1, 2, 100 };
   for (int i = 0; i < 3; i++)
   {
     node1->SetCoordinateSystem(invalidValues[i]);
@@ -67,8 +67,8 @@ int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[
 {
   // vtkMRMLMarkupsStorageNodeTest is an abstract class, therefore we test it
   // by instantiating child classes.
-  vtkNew<vtkMRMLMarkupsJsonStorageNode> jsonStorage;
-  vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorage;
+  const vtkNew<vtkMRMLMarkupsJsonStorageNode> jsonStorage;
+  const vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorage;
   CHECK_EXIT_SUCCESS(TestMarkupsStorageNode(jsonStorage));
   CHECK_EXIT_SUCCESS(TestMarkupsStorageNode(fiducialStorage));
   return EXIT_SUCCESS;

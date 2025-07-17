@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: qSlicerCoreApplication is not instantiated");
@@ -58,8 +58,8 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     }
   }
 
-  QSettings* settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QSettings* const settings = app->revisionUserSettings();
+  const QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList cmdLineModulePaths = additionalModulePaths + defaultCmdLineModulePaths;
   for (const QString& path : cmdLineModulePaths)
   {
@@ -71,13 +71,13 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   return app ? qSlicerUtils::isPluginInstalled(path, app->slicerHome()) : false;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleFactoryHelper::isBuiltIn(const QString& path)
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   return app ? qSlicerUtils::isPluginBuiltIn(path, app->slicerHome(), app->revision()) : true;
 }

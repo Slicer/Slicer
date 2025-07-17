@@ -27,7 +27,7 @@ qMRMLMarkupsDisplayNodeWidgetPlugin::qMRMLMarkupsDisplayNodeWidgetPlugin(QObject
 //------------------------------------------------------------------------------
 QWidget* qMRMLMarkupsDisplayNodeWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsDisplayNodeWidget* _widget = new qMRMLMarkupsDisplayNodeWidget(_parent);
+  qMRMLMarkupsDisplayNodeWidget* const _widget = new qMRMLMarkupsDisplayNodeWidget(_parent);
   return _widget;
 }
 

@@ -121,7 +121,7 @@ void qSlicerVolumeDisplayWidgetPrivate::setVolumeInWidget(qSlicerWidget* display
   {
     return;
   }
-  vtkMRMLScene* scene = volumeNode ? volumeNode->GetScene() : nullptr;
+  vtkMRMLScene* const scene = volumeNode ? volumeNode->GetScene() : nullptr;
   // We must remove the node "before" the setting the scene to nullptr.
   // Because removing the scene could modify the observed node (e.g setting
   // the scene to 0 on a colortable combobox will set the color node of the
@@ -195,8 +195,8 @@ qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget() = default;
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* aVolumeNode)
 {
   Q_D(qSlicerVolumeDisplayWidget);
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(aVolumeNode);
-  qSlicerWidget* newWidget = d->widgetForVolume(volumeNode);
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(aVolumeNode);
+  qSlicerWidget* const newWidget = d->widgetForVolume(volumeNode);
 
   if (newWidget == d->CurrentWidget)
   {
@@ -215,6 +215,6 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* aVolumeNode)
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::updateFromMRML(vtkObject* volume)
 {
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volume);
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(volume);
   this->setMRMLVolumeNode(volumeNode);
 }

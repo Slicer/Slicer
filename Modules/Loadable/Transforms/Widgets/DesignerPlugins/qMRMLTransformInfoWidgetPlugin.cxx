@@ -32,7 +32,7 @@ qMRMLTransformInfoWidgetPlugin::qMRMLTransformInfoWidgetPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLTransformInfoWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTransformInfoWidget* _widget = new qMRMLTransformInfoWidget(_parent);
+  qMRMLTransformInfoWidget* const _widget = new qMRMLTransformInfoWidget(_parent);
   return _widget;
 }
 

@@ -99,7 +99,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
   {
     std::cout << "Found hierarchy node for m2 with id " << h2->GetID() << std::endl;
   }
-  int numChildren = h2->GetNumberOfChildrenNodes();
+  const int numChildren = h2->GetNumberOfChildrenNodes();
   if (numChildren != 1)
   {
     std::cerr << "GetNumberOfChildrenNodes failed for h2, expected 1 but got " << numChildren << std::endl;
@@ -110,7 +110,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
     std::cout << "m2's hierarchy node has " << numChildren << " children nodes" << std::endl;
   }
 
-  bool retval = displayableHierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(h2));
+  const bool retval = displayableHierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(h2));
   if (!retval)
   {
     std::cerr << "Failed to delete hierarchy node and children!" << std::endl;

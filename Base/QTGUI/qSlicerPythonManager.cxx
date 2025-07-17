@@ -36,7 +36,7 @@ void qSlicerPythonManager::preInitialization()
 //-----------------------------------------------------------------------------
 void qSlicerPythonManager::executeInitializationScripts()
 {
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app)
   {
     return;

@@ -83,7 +83,7 @@ void vtkMRMLMarkupsAngleNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -218,8 +218,8 @@ double vtkMRMLMarkupsAngleNode::GetAngleDegrees()
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
   vtkMath::Normalize(vector1);
   vtkMath::Normalize(vector2);
-  double angle_Rad = acos(vtkMath::Dot(vector1, vector2));
-  double angle_Deg = vtkMath::DegreesFromRadians(angle_Rad);
+  const double angle_Rad = acos(vtkMath::Dot(vector1, vector2));
+  const double angle_Deg = vtkMath::DegreesFromRadians(angle_Rad);
   if (this->AngleMeasurementMode == Minimal)
   {
     return angle_Deg;
@@ -264,7 +264,7 @@ void vtkMRMLMarkupsAngleNode::UpdateInteractionHandleToWorldMatrix()
   this->GetNthControlPointPositionWorld(1, point1_World);
   this->GetNthControlPointPositionWorld(2, point2_World);
 
-  double epsilon = 1e-5;
+  const double epsilon = 1e-5;
   double handleX_World[3] = { 1.0, 0.0, 0.0 };
   vtkMath::Subtract(point0_World, point1_World, handleX_World);
   if (vtkMath::Norm(handleX_World) < epsilon)

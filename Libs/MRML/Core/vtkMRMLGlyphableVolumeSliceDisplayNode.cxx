@@ -73,7 +73,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeSliceDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -100,10 +100,10 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::ReadXMLAttributes(const char** atts
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLGlyphableVolumeSliceDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLGlyphableVolumeSliceDisplayNode* node = (vtkMRMLGlyphableVolumeSliceDisplayNode*)anode;
+  vtkMRMLGlyphableVolumeSliceDisplayNode* const node = (vtkMRMLGlyphableVolumeSliceDisplayNode*)anode;
 
   this->SetColorMode(node->ColorMode);
 

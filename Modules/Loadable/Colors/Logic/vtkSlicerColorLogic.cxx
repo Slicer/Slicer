@@ -109,7 +109,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
   filesVector.emplace_back(""); // for relative path
   filesVector.push_back(slicerHome);
   filesVector.push_back(std::string(Slicer_SHARE_DIR) + "/ColorFiles");
-  std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
+  const std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in
   std::vector<std::string> DirectoriesToCheck;
@@ -131,12 +131,12 @@ std::vector<std::string> vtkSlicerColorLogic::FindUserColorFiles()
 #ifdef _WIN32
     const char* delim = ";";
 #else
-    const char* delim = ":";
+    const char* const delim = ":";
 #endif
     char* ptr = strtok(this->UserColorFilePaths, delim);
     while (ptr != nullptr)
     {
-      std::string dir = std::string(ptr);
+      const std::string dir = std::string(ptr);
       vtkDebugMacro("FindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
       directoriesToCheck.push_back(dir);
       ptr = strtok(nullptr, delim);
@@ -158,7 +158,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
   // get the list of color files in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
   {
-    std::string dirString = directories[d];
+    const std::string dirString = directories[d];
     vtkDebugMacro("FindColorFiles: checking for color files in dir " << d << " = " << dirString.c_str());
 
     std::vector<std::string> filesVector;
@@ -198,8 +198,8 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
         filesVector.emplace_back(dirp->d_name);
 #endif
 
-        std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
-        int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
+        std::string const fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
+        const int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
         if (fileType == vtksys::SystemTools::FileTypeText)
         {
           // check that it's a supported file type
@@ -242,7 +242,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
 //----------------------------------------------------------------------------
 vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(vtkMRMLDisplayableNode* displayableNode)
 {
-  vtkMRMLDisplayNode* displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
+  vtkMRMLDisplayNode* const displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
   if (!displayNode)
   {
     vtkGenericWarningMacro("AddDefaultColorLegendDisplayNode failed: no valid display node is found.");
@@ -280,7 +280,7 @@ vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::AddDefaultColorLegendDisplay
     return nullptr;
   }
 
-  std::string title = displayableNode->GetName() ? displayableNode->GetName() : "";
+  const std::string title = displayableNode->GetName() ? displayableNode->GetName() : "";
 
   // Create color legend and observe color legend by displayable node
   colorLegendNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(mrmlScene->AddNewNodeByClass("vtkMRMLColorLegendDisplayNode", title + " color legend"));
@@ -324,10 +324,10 @@ vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetNthColorLegendDisplayNode
   }
 
   int colorLegendIndex = 0;
-  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  const int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < numberOfDisplayNodes; ++i)
   {
-    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
+    vtkMRMLColorLegendDisplayNode* const colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
     if (!colorLegendDisplayNode)
     {
       continue;
@@ -351,10 +351,10 @@ int vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes(vtkMRMLDisplayableNo
     return 0;
   }
   int numberOfColorLegendDIsplayNodes = 0;
-  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  const int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < numberOfDisplayNodes; ++i)
   {
-    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
+    vtkMRMLColorLegendDisplayNode* const colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
     if (colorLegendDisplayNode)
     {
       numberOfColorLegendDIsplayNodes++;
@@ -366,7 +366,7 @@ int vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes(vtkMRMLDisplayableNo
 //------------------------------------------------------------------------------
 vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetColorLegendDisplayNode(vtkMRMLDisplayableNode* displayableNode)
 {
-  vtkMRMLDisplayNode* displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
+  vtkMRMLDisplayNode* const displayNode = vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(displayableNode);
   return vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
 }
 
@@ -383,7 +383,7 @@ vtkMRMLColorLegendDisplayNode* vtkSlicerColorLogic::GetColorLegendDisplayNode(vt
     return nullptr;
   }
   vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
-  int nofDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  const int nofDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < nofDisplayNodes; ++i)
   {
     vtkMRMLColorLegendDisplayNode* foundColorLegendNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
@@ -414,11 +414,11 @@ vtkMRMLDisplayNode* vtkSlicerColorLogic::GetFirstNonColorLegendDisplayNode(vtkMR
   {
     return nullptr;
   }
-  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  const int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < numberOfDisplayNodes; ++i)
   {
-    vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
-    vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayNode);
+    vtkMRMLDisplayNode* const displayNode = displayableNode->GetNthDisplayNode(i);
+    vtkMRMLColorLegendDisplayNode* const colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(displayNode);
     if (colorLegendDisplayNode)
     {
       // it is a color legend display node, ignore it

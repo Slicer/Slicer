@@ -147,8 +147,8 @@ void qSlicerModelsModuleWidget::enter()
   Q_D(qSlicerModelsModuleWidget);
 
   // Set minimum models tree height so that it has a reasonable starting size
-  int displayedItemCount = d->SubjectHierarchyTreeView->displayedItemCount();
-  int headerHeight = d->SubjectHierarchyTreeView->header()->sizeHint().height();
+  const int displayedItemCount = d->SubjectHierarchyTreeView->displayedItemCount();
+  const int headerHeight = d->SubjectHierarchyTreeView->header()->sizeHint().height();
   int treeViewHeight = headerHeight * 3; // Approximately three rows when empty (cannot get row height)
   if (displayedItemCount > 0)
   {
@@ -157,14 +157,14 @@ void qSlicerModelsModuleWidget::enter()
   }
 
   // Get height of the whole Models module widget panel
-  int panelHeight = this->sizeHint().height();
+  const int panelHeight = this->sizeHint().height();
   // Set tree view minimum height to be the minimum of the calculated full height and half
   // of the panel height
   d->SubjectHierarchyTreeView->setMinimumHeight(qMin<int>(treeViewHeight, panelHeight / 2.0));
 
   // Connect SH item modified event so that widget state is updated when a display node is created
   // on the currently selected item (when color is set to a folder)
-  vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+  vtkMRMLSubjectHierarchyNode* const shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (shNode)
   {
     qvtkConnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
@@ -180,7 +180,7 @@ void qSlicerModelsModuleWidget::enter()
   // If no node is selected then select the first displayed node to save the user a click
   if (!d->SubjectHierarchyTreeView->currentNode())
   {
-    vtkMRMLNode* node = d->SubjectHierarchyTreeView->findFirstNodeByClass("vtkMRMLModelNode");
+    vtkMRMLNode* const node = d->SubjectHierarchyTreeView->findFirstNodeByClass("vtkMRMLModelNode");
     if (node)
     {
       d->SubjectHierarchyTreeView->setCurrentNode(node);
@@ -194,7 +194,7 @@ void qSlicerModelsModuleWidget::exit()
   Q_D(qSlicerModelsModuleWidget);
 
   // Disconnect SH node modified when module is not active
-  vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+  vtkMRMLSubjectHierarchyNode* const shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (shNode)
   {
     qvtkDisconnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
@@ -237,9 +237,9 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data)
 {
-  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
-  qSlicerModelsModuleWidget* widget = reinterpret_cast<qSlicerModelsModuleWidget*>(client_data);
-  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
+  vtkMRMLScene* const scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  qSlicerModelsModuleWidget* const widget = reinterpret_cast<qSlicerModelsModuleWidget*>(client_data);
+  vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(call_data);
   Q_UNUSED(node);
   Q_ASSERT(scene);
   Q_UNUSED(scene);
@@ -293,7 +293,7 @@ bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /*
   if (vtkMRMLModelDisplayNode::SafeDownCast(node))
   {
     vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
-    vtkMRMLModelNode* displayableNode = vtkMRMLModelNode::SafeDownCast(displayNode->GetDisplayableNode());
+    vtkMRMLModelNode* const displayableNode = vtkMRMLModelNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
     {
       return false;
@@ -326,7 +326,7 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
 {
   Q_D(qSlicerModelsModuleWidget);
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
-  vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
+  vtkMRMLClipNode* const clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
 
   d->ClippingButton->setEnabled(displayNode != nullptr);
 
@@ -379,7 +379,7 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   if (displayNode)
   {
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->SetClipping(toggled);
   }
 }
@@ -391,7 +391,7 @@ void qSlicerModelsModuleWidget::onClippingCapVisibilityToggled(bool toggled)
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   if (displayNode)
   {
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->SetClippingCapSurface(toggled);
   }
 }
@@ -403,7 +403,7 @@ void qSlicerModelsModuleWidget::onClippingCapOpacityChanged(double value)
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   if (displayNode)
   {
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->SetClippingCapOpacity(value);
   }
 }
@@ -415,7 +415,7 @@ void qSlicerModelsModuleWidget::onClippingOutlineVisibilityToggled(bool value)
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   if (displayNode)
   {
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->SetClippingOutline(value);
   }
 }
@@ -450,7 +450,7 @@ void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNot
 {
   Q_D(qSlicerModelsModuleWidget);
 
-  QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
+  const QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
   this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
 }
 
@@ -461,7 +461,7 @@ void qSlicerModelsModuleWidget::onInformationSectionCollapsed(bool collapsed)
 
   if (!collapsed)
   {
-    QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
+    const QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
     this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
   }
 }
@@ -477,7 +477,7 @@ void qSlicerModelsModuleWidget::onColorLegendCollapsibleGroupBoxToggled(bool tog
     return;
   }
 
-  vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
+  vtkMRMLModelDisplayNode* const displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
   if (!colorLegendNode)
   {

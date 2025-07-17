@@ -226,7 +226,7 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
   settings.beginGroup("DefaultSliceView");
   if (settings.contains("Orientation"))
   {
-    QString defaultSliceOrientation = settings.value("Orientation").toString();
+    const QString defaultSliceOrientation = settings.value("Orientation").toString();
     if (defaultSliceOrientation == "PatientRightIsScreenLeft")
     {
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
@@ -259,9 +259,9 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
 
-  vtkNew<vtkMatrix3x3> axialOrientationForPatientRightIsScreenRight;
+  const vtkNew<vtkMatrix3x3> axialOrientationForPatientRightIsScreenRight;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialOrientationForPatientRightIsScreenRight, false);
-  vtkMatrix3x3* axialOrientation = defaultViewNode->GetSliceOrientationPreset("Axial");
+  vtkMatrix3x3* const axialOrientation = defaultViewNode->GetSliceOrientationPreset("Axial");
   QString defaultSliceOrientation("PatientRightIsScreenLeft");
   if (vtkAddonMathUtilities::MatrixAreEqual(axialOrientation, axialOrientationForPatientRightIsScreenRight))
   {

@@ -116,7 +116,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     return;
   }
 
-  const char* tmp = this->MRMLScene->GetClassNameByTag(tagName);
+  const char* const tmp = this->MRMLScene->GetClassNameByTag(tagName);
   std::string className = tmp ? tmp : "";
 
   // CreateNodeByClass should have a chance to instantiate non-registered node
@@ -160,8 +160,8 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   // with new-style vtkMRMLLabelMapVolumeNode
   if (node->IsA("vtkMRMLScalarVolumeNode"))
   {
-    const char* labelMapAttr = node->GetAttribute("LabelMap");
-    bool isLabelMap = labelMapAttr ? (atoi(labelMapAttr) != 0) : false;
+    const char* const labelMapAttr = node->GetAttribute("LabelMap");
+    const bool isLabelMap = labelMapAttr ? (atoi(labelMapAttr) != 0) : false;
     if (isLabelMap)
     {
       // create a copy of the node of the correct class
@@ -178,8 +178,8 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   // attribute) with legacy node type that is handled by the hierarchy
   if (node->IsA("vtkMRMLSubjectHierarchyNode"))
   {
-    const char* shVersionAttr = node->GetAttribute(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME.c_str());
-    bool isOldShNode = shVersionAttr ? (atoi(shVersionAttr) < 2) : true;
+    const char* const shVersionAttr = node->GetAttribute(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_VERSION_ATTRIBUTE_NAME.c_str());
+    const bool isOldShNode = shVersionAttr ? (atoi(shVersionAttr) < 2) : true;
     if (isOldShNode)
     {
       // create a copy of the node of the correct class

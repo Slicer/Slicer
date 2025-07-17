@@ -124,7 +124,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->legendVisibleCheckBox->setChecked(false);
     this->gridVisibleCheckBox->setChecked(false);
 
-    bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);
+    const bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);
     for (int idx = 0; idx < this->plotSeriesComboBox->nodeCount(); idx++)
     {
       this->plotSeriesComboBox->setCheckState(this->plotSeriesComboBox->nodeFromIndex(idx), Qt::Unchecked);
@@ -137,7 +137,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->xAxisManualRangeCheckBox->setChecked(!this->PlotChartNode->GetXAxisRangeAuto());
   if (!this->PlotChartNode->GetXAxisRangeAuto())
   {
-    double* range = this->PlotChartNode->GetXAxisRange();
+    double* const range = this->PlotChartNode->GetXAxisRange();
     this->xAxisRangeMinDoubleSpinBox->setValue(range[0]);
     this->xAxisRangeMaxDoubleSpinBox->setValue(range[1]);
   }
@@ -154,7 +154,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->yAxisManualRangeCheckBox->setChecked(!this->PlotChartNode->GetYAxisRangeAuto());
   if (!this->PlotChartNode->GetYAxisRangeAuto())
   {
-    double* range = this->PlotChartNode->GetYAxisRange();
+    double* const range = this->PlotChartNode->GetYAxisRange();
     this->yAxisRangeMinDoubleSpinBox->setValue(range[0]);
     this->yAxisRangeMaxDoubleSpinBox->setValue(range[1]);
   }
@@ -191,17 +191,17 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->gridVisibleCheckBox->setChecked(this->PlotChartNode->GetGridVisibility());
 
   // Plot series selector
-  bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);
+  const bool plotBlockSignals = this->plotSeriesComboBox->blockSignals(true);
   for (int idx = 0; idx < this->plotSeriesComboBox->nodeCount(); idx++)
   {
-    vtkMRMLNode* node = this->plotSeriesComboBox->nodeFromIndex(idx);
+    vtkMRMLNode* const node = this->plotSeriesComboBox->nodeFromIndex(idx);
     this->plotSeriesComboBox->setCheckState(node, Qt::Unchecked);
   }
   std::vector<std::string> plotSeriesNodesIDs;
   this->PlotChartNode->GetPlotSeriesNodeIDs(plotSeriesNodesIDs);
   for (std::vector<std::string>::iterator it = plotSeriesNodesIDs.begin(); it != plotSeriesNodesIDs.end(); ++it)
   {
-    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(q->mrmlScene()->GetNodeByID(it->c_str()));
+    vtkMRMLPlotSeriesNode* const plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(q->mrmlScene()->GetNodeByID(it->c_str()));
     if (plotSeriesNode == nullptr)
     {
       continue;
@@ -282,7 +282,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodesSelected()
   {
     vtkMRMLPlotSeriesNode* dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
 
-    bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
+    const bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
 
     // is the node in the Plot?
     bool found = false;
@@ -358,7 +358,7 @@ vtkMRMLPlotChartNode* qMRMLPlotChartPropertiesWidget::mrmlPlotChartNode() const
 void qMRMLPlotChartPropertiesWidget::setMRMLPlotChartNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
-  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
+  vtkMRMLPlotChartNode* const plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
   this->setMRMLPlotChartNode(plotChartNode);
 }
 
@@ -445,7 +445,7 @@ void qMRMLPlotChartPropertiesWidget::setMRMLScene(vtkMRMLScene* newScene)
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means
   // that the current node was not in the combo box list menu before.
-  bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
+  const bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
   this->Superclass::setMRMLScene(newScene);
   d->plotSeriesComboBox->blockSignals(plotBlockSignals);
 

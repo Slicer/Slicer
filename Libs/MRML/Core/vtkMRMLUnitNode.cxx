@@ -106,7 +106,7 @@ double StringToDouble(const char* str)
 //----------------------------------------------------------------------------
 void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
@@ -130,27 +130,27 @@ void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "Precision"))
     {
-      int precision = StringToInt(attValue);
+      const int precision = StringToInt(attValue);
       this->SetPrecision(precision);
     }
     else if (!strcmp(attName, "MinimumValue"))
     {
-      double min = StringToDouble(attValue);
+      const double min = StringToDouble(attValue);
       this->SetMinimumValue(min);
     }
     else if (!strcmp(attName, "MaximumValue"))
     {
-      double max = StringToDouble(attValue);
+      const double max = StringToDouble(attValue);
       this->SetMaximumValue(max);
     }
     else if (!strcmp(attName, "DisplayCoefficient"))
     {
-      double coef = StringToDouble(attValue);
+      const double coef = StringToDouble(attValue);
       this->SetDisplayCoefficient(coef);
     }
     else if (!strcmp(attName, "DisplayOffset"))
     {
-      double offset = StringToDouble(attValue);
+      const double offset = StringToDouble(attValue);
       this->SetDisplayOffset(offset);
     }
   }
@@ -192,7 +192,7 @@ double vtkMRMLUnitNode::GetValueFromDisplayValue(double value)
 const char* vtkMRMLUnitNode::GetDisplayStringFromValue(double value)
 {
   const double displayValue = this->GetDisplayValueFromValue(value);
-  std::string displayValueString = this->GetDisplayValueStringFromDisplayValue(displayValue);
+  const std::string displayValueString = this->GetDisplayValueStringFromDisplayValue(displayValue);
   return this->GetDisplayStringFromDisplayValueString(displayValueString.c_str());
 }
 
@@ -276,7 +276,7 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode* anode)
     return;
   }
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->Superclass::Copy(anode);
 
   this->SetQuantity(node->GetQuantity());

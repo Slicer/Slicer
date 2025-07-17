@@ -167,7 +167,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(currentNode);
+  vtkMRMLMarkupsNode* const currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(currentNode);
   if (currentMarkupsNode == d->CurrentMarkupsNode)
   {
     // not changed
@@ -175,7 +175,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
   }
 
   // Don't change the active markups if the current node is changed programmatically
-  bool wasBlocked = d->MarkupsNodeComboBox->blockSignals(true);
+  const bool wasBlocked = d->MarkupsNodeComboBox->blockSignals(true);
   d->MarkupsNodeComboBox->setCurrentNode(currentMarkupsNode);
   d->MarkupsNodeComboBox->blockSignals(wasBlocked);
 
@@ -361,7 +361,7 @@ void qSlicerSimpleMarkupsWidget::placeActive(bool place)
 void qSlicerSimpleMarkupsWidget::onMarkupsNodeChanged()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(d->MarkupsNodeComboBox->currentNode());
+  vtkMRMLMarkupsNode* const currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(d->MarkupsNodeComboBox->currentNode());
   this->setCurrentNode(currentMarkupsNode);
 
   if (d->EnterPlaceModeOnNodeChange)
@@ -402,22 +402,22 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
     return;
   }
 
-  QPoint globalPosition = d->MarkupsControlPointsTableWidget->viewport()->mapToGlobal(position);
+  const QPoint globalPosition = d->MarkupsControlPointsTableWidget->viewport()->mapToGlobal(position);
 
   QMenu* controlPointsMenu = new QMenu(d->MarkupsControlPointsTableWidget);
-  QAction* deleteAction = new QAction(tr("Delete highlighted control points"), controlPointsMenu);
-  QAction* upAction = new QAction(tr("Move current control point up"), controlPointsMenu);
-  QAction* downAction = new QAction(tr("Move current control point down"), controlPointsMenu);
-  QAction* jumpAction = new QAction(tr("Jump slices to control point"), controlPointsMenu);
+  QAction* const deleteAction = new QAction(tr("Delete highlighted control points"), controlPointsMenu);
+  QAction* const upAction = new QAction(tr("Move current control point up"), controlPointsMenu);
+  QAction* const downAction = new QAction(tr("Move current control point down"), controlPointsMenu);
+  QAction* const jumpAction = new QAction(tr("Jump slices to control point"), controlPointsMenu);
 
   controlPointsMenu->addAction(deleteAction);
   controlPointsMenu->addAction(upAction);
   controlPointsMenu->addAction(downAction);
   controlPointsMenu->addAction(jumpAction);
 
-  QAction* selectedAction = controlPointsMenu->exec(globalPosition);
+  QAction* const selectedAction = controlPointsMenu->exec(globalPosition);
 
-  int currentControlPoint = d->MarkupsControlPointsTableWidget->currentRow();
+  const int currentControlPoint = d->MarkupsControlPointsTableWidget->currentRow();
   vtkMRMLMarkupsNode* currentNode = vtkMRMLMarkupsNode::SafeDownCast(d->MarkupsNodeComboBox->currentNode());
 
   if (currentNode == nullptr)
@@ -428,7 +428,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   // Only do this for non-null node
   if (selectedAction == deleteAction)
   {
-    QItemSelectionModel* selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
+    QItemSelectionModel* const selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
     std::vector<int> deleteControlPoints;
     // Need to find selected before removing because removing automatically refreshes the table
     for (int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++)
@@ -439,7 +439,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
       }
     }
     // Do this in batch mode
-    int wasModifying = currentNode->StartModify();
+    const int wasModifying = currentNode->StartModify();
     // Traversing this way should be more efficient and correct
     for (int i = static_cast<int>(deleteControlPoints.size()) - 1; i >= 0; i--)
     {
@@ -515,11 +515,11 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   // Find the control point's current properties
   double currentControlPointPosition[3] = { 0, 0, 0 };
   currentMarkupsNode->GetNthControlPointPosition(row, currentControlPointPosition);
-  std::string currentControlPointLabel = currentMarkupsNode->GetNthControlPointLabel(row);
+  const std::string currentControlPointLabel = currentMarkupsNode->GetNthControlPointLabel(row);
 
   // Find the entry that we changed
-  QTableWidgetItem* qItem = d->MarkupsControlPointsTableWidget->item(row, column);
-  QString qText = qItem->text();
+  QTableWidgetItem* const qItem = d->MarkupsControlPointsTableWidget->item(row, column);
+  const QString qText = qItem->text();
 
   if (column == CONTROL_POINT_LABEL_COLUMN)
   {
@@ -527,7 +527,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   }
 
   // Check if the value can be converted to double is already performed implicitly
-  double newControlPointPosition = qText.toDouble();
+  const double newControlPointPosition = qText.toDouble();
 
   // Change the position values
   if (column == CONTROL_POINT_X_COLUMN)
@@ -572,7 +572,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
   d->MarkupsPlaceWidget->setEnabled(true);
 
   // Update the control points table
-  bool wasBlockedTableWidget = d->MarkupsControlPointsTableWidget->blockSignals(true);
+  const bool wasBlockedTableWidget = d->MarkupsControlPointsTableWidget->blockSignals(true);
 
   if (d->MarkupsControlPointsTableWidget->rowCount() == currentMarkupsNode->GetNumberOfControlPoints())
   {
@@ -611,10 +611,10 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel(i);
       currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
 
-      QTableWidgetItem* labelItem = new QTableWidgetItem(QString::fromStdString(controlPointLabel));
-      QTableWidgetItem* xItem = new QTableWidgetItem(QString::number(controlPointPosition[0], 'f', 3));
-      QTableWidgetItem* yItem = new QTableWidgetItem(QString::number(controlPointPosition[1], 'f', 3));
-      QTableWidgetItem* zItem = new QTableWidgetItem(QString::number(controlPointPosition[2], 'f', 3));
+      QTableWidgetItem* const labelItem = new QTableWidgetItem(QString::fromStdString(controlPointLabel));
+      QTableWidgetItem* const xItem = new QTableWidgetItem(QString::number(controlPointPosition[0], 'f', 3));
+      QTableWidgetItem* const yItem = new QTableWidgetItem(QString::number(controlPointPosition[1], 'f', 3));
+      QTableWidgetItem* const zItem = new QTableWidgetItem(QString::number(controlPointPosition[2], 'f', 3));
 
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_LABEL_COLUMN, labelItem);
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_X_COLUMN, xItem);

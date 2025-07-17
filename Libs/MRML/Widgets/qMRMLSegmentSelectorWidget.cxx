@@ -126,7 +126,7 @@ void qMRMLSegmentSelectorWidget::onCurrentNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentSelectorWidget);
 
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
+  vtkMRMLSegmentationNode* const segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
   if (d->SegmentationNode != segmentationNode)
   {
     // Connect segment added/removed and display modified events to population of the table
@@ -208,11 +208,11 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     segmentation->GetSegmentIDs(segmentIDs);
     for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
-      QString segmentId(segmentIdIt->c_str());
+      const QString segmentId(segmentIdIt->c_str());
       vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
 
       // Segment name
-      QString name(segment->GetName());
+      const QString name(segment->GetName());
       d->CheckableComboBox_Segment->addItem(name, QVariant(segmentId));
     }
 
@@ -241,9 +241,9 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     segmentation->GetSegmentIDs(segmentIDs);
     for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
-      QString segmentId(segmentIdIt->c_str());
+      const QString segmentId(segmentIdIt->c_str());
       // Segment name
-      QString name(segmentation->GetSegment(*segmentIdIt)->GetName());
+      const QString name(segmentation->GetSegment(*segmentIdIt)->GetName());
       d->comboBox_Segment->addItem(name, QVariant(segmentId));
     }
 
@@ -284,7 +284,7 @@ void qMRMLSegmentSelectorWidget::onCurrentSegmentChanged(int index)
   }
 
   // All items contain the segment ID, get that
-  QString currentSegmentID = d->comboBox_Segment->itemData(index).toString();
+  const QString currentSegmentID = d->comboBox_Segment->itemData(index).toString();
   if (currentSegmentID.compare(NONE_DISPLAY))
   {
     d->CurrentSegmentID = currentSegmentID;
@@ -354,7 +354,7 @@ QStringList qMRMLSegmentSelectorWidget::segmentIDs()
   // Update checkbox states in checkable combobox
   for (int row = 0; row < d->CheckableComboBox_Segment->model()->rowCount(); ++row)
   {
-    QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();
+    const QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();
     allSegmentIDs << segmentID;
   }
   return allSegmentIDs;
@@ -377,7 +377,7 @@ void qMRMLSegmentSelectorWidget::setCurrentSegmentID(QString segmentID)
     return;
   }
 
-  int index = d->comboBox_Segment->findData(QVariant(segmentID));
+  const int index = d->comboBox_Segment->findData(QVariant(segmentID));
   if (index != -1 && d->comboBox_Segment->currentIndex() != index)
   {
     d->comboBox_Segment->setCurrentIndex(index);
@@ -414,15 +414,15 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
     segmentIDList.removeAll(invalidID);
   }
 
-  bool selectionChanged = d->SelectedSegmentIDs != segmentIDList;
+  const bool selectionChanged = d->SelectedSegmentIDs != segmentIDList;
   d->SelectedSegmentIDs = segmentIDList;
 
   // Update checkbox states in checkable combobox
-  bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
+  const bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
   for (int row = 0; row < d->CheckableComboBox_Segment->model()->rowCount(); ++row)
   {
-    QModelIndex index = d->CheckableComboBox_Segment->model()->index(row, 0);
-    QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();
+    const QModelIndex index = d->CheckableComboBox_Segment->model()->index(row, 0);
+    const QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();
     if (segmentIDList.contains(segmentID))
     {
       d->CheckableComboBox_Segment->setCheckState(index, Qt::Checked);

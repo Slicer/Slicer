@@ -81,8 +81,8 @@ void qSlicerModuleFinderDialogPrivate::init()
 
   // Only allow to show modules in Testing category if developer mode is enabled
   // to not clutter the module list for regular users with tests
-  QSettings settings;
-  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  const QSettings settings;
+  const bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   if (!developerModeEnabled)
   {
     this->ShowTestingCheckBox->hide();
@@ -114,7 +114,7 @@ void qSlicerModuleFinderDialogPrivate::init()
 // --------------------------------------------------------------------------
 void qSlicerModuleFinderDialogPrivate::makeSelectedItemVisible()
 {
-  qSlicerModuleFactoryFilterModel* filterModel = this->ModuleListView->filterModel();
+  qSlicerModuleFactoryFilterModel* const filterModel = this->ModuleListView->filterModel();
 
   // Make sure that an item is selected
   if (!this->ModuleListView->currentIndex().isValid())
@@ -164,9 +164,9 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
   if (!selected.indexes().empty())
   {
     moduleName = selected.indexes().first().data(Qt::UserRole).toString();
-    qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-    qSlicerModuleManager* moduleManager = coreApp->moduleManager();
-    qSlicerModuleFactoryManager* factoryManager = moduleManager->factoryManager();
+    qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
+    qSlicerModuleManager* const moduleManager = coreApp->moduleManager();
+    qSlicerModuleFactoryManager* const factoryManager = moduleManager->factoryManager();
     if (factoryManager->isLoaded(moduleName))
     {
       module = moduleManager->module(moduleName);
@@ -184,7 +184,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     html.append(QString("<h2>%1</h2>").arg(module->title()));
 
     // Categories
-    QStringList categories = module->categories();
+    const QStringList categories = module->categories();
     QStringList filteredCategories;
     for (QString category : categories)
     {
@@ -202,7 +202,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
 
     // Help
     QString help = module->helpText();
-    qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+    qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
     if (app)
     {
       help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(), QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
@@ -215,7 +215,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     }
 
     // Acknowledgments
-    qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
+    qSlicerAbstractModule* const guiModule = qobject_cast<qSlicerAbstractModule*>(module);
     if (guiModule && !guiModule->logo().isNull())
     {
       d->ModuleDescriptionBrowser->document()->addResource(QTextDocument::ImageResource, QUrl("module://logo.png"), QVariant(guiModule->logo()));
@@ -233,8 +233,8 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     // Contributors
     if (!module->contributors().isEmpty())
     {
-      QString contributors = module->contributors().join(", ");
-      QString contributorsText = "<p><b>" + tr("Contributors:") + "</b> " + contributors + "</p>";
+      const QString contributors = module->contributors().join(", ");
+      const QString contributorsText = "<p><b>" + tr("Contributors:") + "</b> " + contributors + "</p>";
       html.append(contributorsText);
     }
 
@@ -307,11 +307,11 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
     if (event->type() == QEvent::KeyPress)
     {
       // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-      qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
+      QKeyEvent* const keyEvent = static_cast<QKeyEvent*>(event);
+      qSlicerModuleFactoryFilterModel* const filterModel = d->ModuleListView->filterModel();
       if (keyEvent != nullptr && filterModel->rowCount() > 0)
       {
-        int currentRow = d->ModuleListView->currentIndex().row();
+        const int currentRow = d->ModuleListView->currentIndex().row();
         int stepSize = 1;
         if (keyEvent->key() == Qt::Key_PageUp || keyEvent->key() == Qt::Key_PageDown)
         {

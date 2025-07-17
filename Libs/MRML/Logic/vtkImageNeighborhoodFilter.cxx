@@ -86,7 +86,7 @@ void vtkImageNeighborhoodFilter::SetNeighborTo4()
   memset(this->Mask, 0, this->KernelSize[0] * this->KernelSize[1] * this->KernelSize[2]);
 
   // set 4 neighbors in center slice
-  int z = 0;
+  const int z = 0;
   for (int y = -1; y <= 1; y++)
     for (int x = -1; x <= 1; x++)
       if (x * y == 0)

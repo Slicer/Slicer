@@ -130,12 +130,12 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
   }
   for (const QString& fileName : fileNames)
   {
-    QFileInfo fileInfo(fileName);
+    const QFileInfo fileInfo(fileName);
     QString fileBaseName = fileInfo.baseName();
     if (fileInfo.isFile())
     {
-      std::string fileNameStd = fileInfo.fileName().toStdString();
-      std::string filenameWithoutExtension = snode->GetFileNameWithoutExtension(fileNameStd.c_str());
+      const std::string fileNameStd = fileInfo.fileName().toStdString();
+      const std::string filenameWithoutExtension = snode->GetFileNameWithoutExtension(fileNameStd.c_str());
       fileBaseName = QString(filenameWithoutExtension.c_str());
       names << fileBaseName;
       // Single file
@@ -176,7 +176,7 @@ void qSlicerVolumesIOOptionsWidget::updateColorSelector()
   if (qSlicerCoreApplication::application() != nullptr)
   {
     // access the color logic which has information about default color nodes
-    vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();
+    vtkSlicerApplicationLogic* const appLogic = qSlicerCoreApplication::application()->applicationLogic();
     if (appLogic && appLogic->GetColorLogic())
     {
       if (d->LabelMapCheckBox->isChecked())

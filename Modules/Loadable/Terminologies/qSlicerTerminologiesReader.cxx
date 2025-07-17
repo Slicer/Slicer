@@ -95,7 +95,7 @@ double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName
   if (confidence > 0 && confidence < 0.56)
   {
     // Not a composite file extension, inspect the content
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("JSON"))
     {
       QFile file(fileName);
@@ -105,8 +105,8 @@ double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName
         // Markups json files contain a schema URL like /anatomic-context-schema.json
         // or /segment-context-schema.json around position 200, read a bit further
         // to account for slight variations in the header.
-        QString line = in.read(400);
-        bool looksLikeTerminology = line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
+        const QString line = in.read(400);
+        const bool looksLikeTerminology = line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
         confidence = (looksLikeTerminology ? 0.6 : 0.4);
       }
     }
@@ -119,7 +119,7 @@ bool qSlicerTerminologiesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTerminologiesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   this->setLoadedNodes(QStringList());
   if (d->TerminologiesLogic.GetPointer() == nullptr)
@@ -127,7 +127,7 @@ bool qSlicerTerminologiesReader::load(const IOProperties& properties)
     return false;
   }
 
-  bool contextLoaded = d->TerminologiesLogic->LoadContextFromFile(fileName.toUtf8().constData());
+  const bool contextLoaded = d->TerminologiesLogic->LoadContextFromFile(fileName.toUtf8().constData());
   if (!contextLoaded)
   {
     this->setLoadedNodes(QStringList());

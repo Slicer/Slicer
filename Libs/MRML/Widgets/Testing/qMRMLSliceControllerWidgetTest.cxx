@@ -86,7 +86,7 @@ void qMRMLSliceControllerWidgetTester::init()
 
   vtkNew<vtkMRMLSliceNode> sliceNode;
   sliceNode->SetLayoutName("Red");
-  vtkNew<vtkMatrix3x3> axialSliceToRAS;
+  const vtkNew<vtkMatrix3x3> axialSliceToRAS;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialSliceToRAS.GetPointer());
 
   sliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS.GetPointer());
@@ -121,8 +121,8 @@ void qMRMLSliceControllerWidgetTester::cleanup()
 // ----------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetTester::testDefaults()
 {
-  qMRMLSliceControllerWidget sliceControllerWidget;
-  void* nullPtr = nullptr;
+  const qMRMLSliceControllerWidget sliceControllerWidget;
+  void* const nullPtr = nullptr;
   QCOMPARE(reinterpret_cast<void*>(sliceControllerWidget.mrmlScene()), nullPtr);
   QCOMPARE(reinterpret_cast<void*>(sliceControllerWidget.mrmlSliceNode()), nullPtr);
 
@@ -143,7 +143,7 @@ void qMRMLSliceControllerWidgetTester::testDefaults()
 void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
 {
   qMRMLSliceControllerWidget sliceControllerWidget;
-  void* nullPtr = nullptr;
+  void* const nullPtr = nullptr;
 
   sliceControllerWidget.setSliceViewLabel("R");
   QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString());
@@ -192,7 +192,7 @@ void qMRMLSliceControllerWidgetTester::testSetBackgroundVolume()
   sliceControllerWidget.mrmlSliceCompositeNode()->SetBackgroundVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
-  qMRMLNodeComboBox* comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("BackgroundComboBox"));
+  qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("BackgroundComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   // sliceControllerWidget.show();
@@ -224,7 +224,7 @@ void qMRMLSliceControllerWidgetTester::testSetForegroundVolume()
   sliceControllerWidget.mrmlSliceCompositeNode()->SetForegroundVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
-  qMRMLNodeComboBox* comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("ForegroundComboBox"));
+  qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("ForegroundComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   // sliceControllerWidget.show();
@@ -256,7 +256,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolume()
   sliceControllerWidget.mrmlSliceCompositeNode()->SetLabelVolumeID(volumeNode ? volumeNode->GetID() : nullptr);
 
   QFETCH(QString, expectedVolumeNodeID);
-  qMRMLNodeComboBox* comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
+  qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   // sliceControllerWidget.show();
@@ -302,7 +302,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
   sliceCompositeNode->SetLinkedControl(1);
   sliceCompositeNode->Modified();
 
-  qMRMLNodeComboBox* comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
+  qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
   QCOMPARE(comboBox->currentNodeID(), QString(labelmapNode2->GetID()));
 
   // sliceControllerWidget.show();
@@ -335,7 +335,7 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   QCOMPARE(sliceControllerWidget.sliceOrientation(), QString("Reformat"));
 
   // Check that "Reformat" is the last item in the selector
-  QComboBox* orientationSelector = sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
+  QComboBox* const orientationSelector = sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
   QVERIFY(orientationSelector != nullptr);
   QStringList items;
   for (int idx = 0; idx < orientationSelector->count(); ++idx)

@@ -101,7 +101,7 @@ bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerShaderPropertyReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
   // Name is ignored
   // QString name = QFileInfo(fileName).baseName();
   // if (properties.contains("name"))

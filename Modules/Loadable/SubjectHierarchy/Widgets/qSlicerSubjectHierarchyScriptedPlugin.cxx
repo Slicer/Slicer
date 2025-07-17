@@ -144,7 +144,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
   }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(filePath).baseName();
+  const QString moduleName = QFileInfo(filePath).baseName();
 
   // In case the plugin is within the main module file
   QString className = moduleName;
@@ -154,11 +154,11 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject* main_module = PyImport_AddModule("__main__");
-  PyObject* global_dict = PyModule_GetDict(main_module);
+  PyObject* const main_module = PyImport_AddModule("__main__");
+  PyObject* const global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* const sysModules = PyImport_GetModuleDict();
   PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
@@ -201,7 +201,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
 
   d->PythonCppAPI.setObjectName(className);
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -234,9 +234,9 @@ void qSlicerSubjectHierarchyScriptedPlugin::setName(QString name)
 double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyItemMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -258,7 +258,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdTy
 const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->RoleForPluginMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->RoleForPluginMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -272,7 +272,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
     return this->Superclass::roleForPlugin();
   }
 
-  const char* role = PyUnicode_AsUTF8(result);
+  const char* const role = PyUnicode_AsUTF8(result);
   return QString::fromUtf8(role);
 }
 
@@ -280,7 +280,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
 const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -294,7 +294,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
     return this->Superclass::helpText();
   }
 
-  const char* role = PyUnicode_AsUTF8(result);
+  const char* const role = PyUnicode_AsUTF8(result);
   return QString::fromUtf8(role);
 }
 
@@ -302,9 +302,9 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
 QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->IconMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -313,7 +313,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
   if (resultVariant.isNull())
   {
     return this->Superclass::icon(itemID);
@@ -325,9 +325,9 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
 QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLong(visible));
-  PyObject* result = d->PythonCppAPI.callMethod(d->VisibilityIconMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->VisibilityIconMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -336,7 +336,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
   if (resultVariant.isNull())
   {
     return this->Superclass::visibilityIcon(visible);
@@ -348,9 +348,9 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->EditPropertiesMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->EditPropertiesMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -363,7 +363,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkIdType itemID)
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->ItemContextMenuActionsMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ItemContextMenuActionsMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -371,16 +371,16 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
   if (resultVariant.isNull())
   {
     return this->Superclass::itemContextMenuActions();
   }
-  QList<QVariant> resultVariantList = resultVariant.toList();
+  const QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
   for (const QVariant& actionVariant : resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
+    QAction* const action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -390,7 +390,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->ViewContextMenuActionsMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ViewContextMenuActionsMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -398,16 +398,16 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
   if (resultVariant.isNull())
   {
     return this->Superclass::viewContextMenuActions();
   }
-  QList<QVariant> resultVariantList = resultVariant.toList();
+  const QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
   for (const QVariant& actionVariant : resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
+    QAction* const action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -417,7 +417,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* result = d->PythonCppAPI.callMethod(d->SceneContextMenuActionsMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->SceneContextMenuActionsMethod);
   if (!result)
   {
     // Method call failed (probably an omitted function), call default implementation
@@ -425,16 +425,16 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
+  const QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
   if (resultVariant.isNull())
   {
     return this->Superclass::sceneContextMenuActions();
   }
-  QList<QVariant> resultVariantList = resultVariant.toList();
+  const QList<QVariant> resultVariantList = resultVariant.toList();
   QList<QAction*> actionList;
   for (const QVariant& actionVariant : resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
+    QAction* const action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -444,9 +444,9 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
 void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -459,10 +459,10 @@ void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdT
 void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(2);
+  PyObject* const arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PythonQtConv::QVariantMapToPyObject(eventData));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ShowViewContextMenuActionsForItemMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ShowViewContextMenuActionsForItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -475,10 +475,10 @@ void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vt
 double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(2);
+  PyObject* const arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanAddNodeToSubjectHierarchyMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CanAddNodeToSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -500,10 +500,10 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMR
 double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(2);
+  PyObject* const arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanReparentItemInsideSubjectHierarchyMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CanReparentItemInsideSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -525,10 +525,10 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
 bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(2);
+  PyObject* const arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ReparentItemInsideSubjectHierarchyMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ReparentItemInsideSubjectHierarchyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -550,9 +550,9 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(v
 QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->DisplayedItemNameMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->DisplayedItemNameMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -574,9 +574,9 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemI
 QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->TooltipMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->TooltipMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -598,10 +598,10 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID) const
 void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(2);
+  PyObject* const arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(visible));
-  PyObject* result = d->PythonCppAPI.callMethod(d->SetDisplayVisibilityMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->SetDisplayVisibilityMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -614,9 +614,9 @@ void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemI
 int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
-  PyObject* result = d->PythonCppAPI.callMethod(d->GetDisplayVisibilityMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->GetDisplayVisibilityMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {

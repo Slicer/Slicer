@@ -93,7 +93,7 @@ bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* ma
 {
   Q_D(const qMRMLMarkupsTestLineWidget);
 
-  vtkMRMLMarkupsTestLineNode* testLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsTestLineNode* const testLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
   if (!testLineNode)
   {
     return false;

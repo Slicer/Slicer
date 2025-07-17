@@ -137,7 +137,7 @@ bool qSlicerTerminologyEditorDialog::exec()
   d->EditorWidget->setTerminologyInfo(d->TerminologyInfo);
 
   // Show dialog
-  bool result = false;
+  const bool result = false;
   if (d->exec() != QDialog::Accepted)
   {
     return result;
@@ -153,7 +153,7 @@ bool qSlicerTerminologyEditorDialog::getTerminology(qSlicerTerminologyNavigatorW
 {
   // Open terminology dialog and store result
   qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
-  bool result = dialog.exec();
+  const bool result = dialog.exec();
   dialog.terminologyInfo(terminologyInfo);
   return result;
 }

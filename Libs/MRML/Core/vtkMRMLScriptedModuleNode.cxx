@@ -60,7 +60,7 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
     // space is used as separator, so space (and the escape character) have to be encoded
     vtksys::SystemTools::ReplaceString(paramName, "%", "%25");
     vtksys::SystemTools::ReplaceString(paramName, " ", "%20");
-    std::string paramValue = iter->second;
+    const std::string paramValue = iter->second;
     of << " parameter" << i << "= \"" << this->XMLAttributeEncodeString(paramName) << " " << this->XMLAttributeEncodeString(paramValue) << "\"";
     i++;
   }
@@ -84,10 +84,10 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strncmp(attName, "parameter", strlen("parameter")))
     {
-      std::string satt(attValue);
-      int space = (int)satt.find(" ", 0);
+      const std::string satt(attValue);
+      const int space = (int)satt.find(" ", 0);
       std::string sname = satt.substr(0, space);
-      std::string svalue = satt.substr(space + 1, satt.length() - space - 1);
+      const std::string svalue = satt.substr(space + 1, satt.length() - space - 1);
       // decode separator character (space) and escape character
       vtksys::SystemTools::ReplaceString(sname, "%20", " ");
       vtksys::SystemTools::ReplaceString(sname, "%25", "%");
@@ -99,7 +99,7 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLScriptedModuleNode* node = vtkMRMLScriptedModuleNode::SafeDownCast(anode);
@@ -157,7 +157,7 @@ void vtkMRMLScriptedModuleNode::SetParameter(const std::string& name, const std:
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::UnsetParameter(const std::string& name)
 {
-  int count = this->Parameters.erase(name);
+  const int count = this->Parameters.erase(name);
   if (count > 0)
   {
     this->Modified();
@@ -167,7 +167,7 @@ void vtkMRMLScriptedModuleNode::UnsetParameter(const std::string& name)
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::UnsetAllParameters()
 {
-  std::string::size_type count = this->Parameters.size();
+  const std::string::size_type count = this->Parameters.size();
   this->Parameters.clear();
   if (count != this->Parameters.size())
   {

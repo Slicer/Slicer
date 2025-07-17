@@ -101,7 +101,7 @@ void qSlicerTerminologiesModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
+  vtkSlicerTerminologiesModuleLogic* const terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
 
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();

@@ -53,7 +53,7 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter* vtkNotUsed(self)
 
   // Wrap scalars into an ITK image
   typedef itk::Image<T, 3> ImageType;
-  typename ImageType::Pointer image = ImageType::New();
+  const typename ImageType::Pointer image = ImageType::New();
   image->GetPixelContainer()->SetImportPointer(scalars, dims[0] * dims[1] * dims[2], false);
   image->SetOrigin(origin);
   image->SetSpacing(spacing);
@@ -74,7 +74,7 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter* vtkNotUsed(self)
   // Trace the level curve using itk::LevelTracingImageFilter
   typedef itk::Image<unsigned char, 3> LabelImageType;
   typedef itk::LevelTracingImageFilter<ImageType, LabelImageType> LevelTracingType;
-  typename LevelTracingType::Pointer tracing = LevelTracingType::New();
+  const typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   typename ImageType::IndexType seedIndex;
   seedIndex[0] = seed[0];
@@ -107,7 +107,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(vtkInformation* vtkNotUsed(requ
   output->AllocateScalars(outInfo);
 
   vtkUnsignedCharArray* oScalars = vtkUnsignedCharArray::SafeDownCast(output->GetPointData()->GetScalars());
-  void* os = oScalars->GetVoidPointer(0);
+  void* const os = oScalars->GetVoidPointer(0);
 
   vtkDataArray* inScalars;
   int dims[3], extent[6];
@@ -152,7 +152,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(vtkInformation* vtkNotUsed(requ
 #endif
   if (inScalars->GetNumberOfComponents() == 1)
   {
-    void* scalars = inScalars->GetVoidPointer(0);
+    void* const scalars = inScalars->GetVoidPointer(0);
     switch (inScalars->GetDataType())
     {
       vtkTemplateMacro(vtkITKLevelTracing3DTrace(this, static_cast<VTK_TT*>(scalars), dims, extent, origin, spacing, (unsigned char*)os, this->Seed));
@@ -161,7 +161,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(vtkInformation* vtkNotUsed(requ
   else if (inScalars->GetNumberOfComponents() == 3)
   {
     // RGB - convert for now...
-    vtkSmartPointer<vtkUnsignedCharArray> grayScalars = vtkUnsignedCharArray::New();
+    const vtkSmartPointer<vtkUnsignedCharArray> grayScalars = vtkUnsignedCharArray::New();
     grayScalars->SetNumberOfTuples(inScalars->GetNumberOfTuples());
 
     double in[3];

@@ -82,7 +82,7 @@ bool TestCheckNodeInSceneByID()
     return false;
   }
 
-  vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
+  const vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
   if (CheckNodeInSceneByID(__LINE__, scene.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode", node1.GetPointer()))
   {
@@ -107,7 +107,7 @@ bool TestCheckNodeIdAndName()
     return false;
   }
 
-  vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
+  const vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
   if (!CheckNodeIdAndName(__LINE__, node1.GetPointer(), nullptr, nullptr))
   {

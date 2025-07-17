@@ -71,19 +71,19 @@ void qSlicerSubjectHierarchyExpandToDepthPluginPrivate::init()
 
   QMenu* expandToDepthSubMenu = new QMenu();
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_1 = new QAction("1", q);
+  QAction* const expandToDepth_1 = new QAction("1", q);
   QObject::connect(expandToDepth_1, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_1);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_2 = new QAction("2", q);
+  QAction* const expandToDepth_2 = new QAction("2", q);
   QObject::connect(expandToDepth_2, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_2);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_3 = new QAction("3", q);
+  QAction* const expandToDepth_3 = new QAction("3", q);
   QObject::connect(expandToDepth_3, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_3);
   this->ExpandToDepthAction->setMenu(expandToDepthSubMenu);
-  QAction* expandToDepth_4 = new QAction("4", q);
+  QAction* const expandToDepth_4 = new QAction("4", q);
   QObject::connect(expandToDepth_4, SIGNAL(triggered()), q, SLOT(expandToDepthFromContextMenu()));
   expandToDepthSubMenu->addAction(expandToDepth_4);
 }
@@ -140,14 +140,14 @@ void qSlicerSubjectHierarchyExpandToDepthPlugin::showContextMenuActionsForItem(v
 //--------------------------------------------------------------------------
 void qSlicerSubjectHierarchyExpandToDepthPlugin::expandToDepthFromContextMenu()
 {
-  QAction* senderAction = qobject_cast<QAction*>(this->sender());
+  QAction* const senderAction = qobject_cast<QAction*>(this->sender());
   if (!senderAction)
   {
     qCritical() << Q_FUNC_INFO << ": Unable to get sender action";
     return;
   }
 
-  int depth = senderAction->text().toInt();
+  const int depth = senderAction->text().toInt();
 
   qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
   if (currentTreeView)

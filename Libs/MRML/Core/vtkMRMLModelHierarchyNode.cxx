@@ -52,7 +52,7 @@ void vtkMRMLModelHierarchyNode::UpdateReferenceID(const char* oldID, const char*
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -78,7 +78,7 @@ void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLModelHierarchyNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
   //  vtkMRMLModelHierarchyNode* node = (vtkMRMLModelHierarchyNode*) anode;
@@ -112,7 +112,7 @@ void vtkMRMLModelHierarchyNode::UpdateReferences()
 
 vtkMRMLModelNode* vtkMRMLModelHierarchyNode::GetModelNode()
 {
-  vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(this->GetAssociatedNode());
+  vtkMRMLModelNode* const node = vtkMRMLModelNode::SafeDownCast(this->GetAssociatedNode());
   return node;
 }
 
@@ -120,7 +120,7 @@ vtkMRMLModelNode* vtkMRMLModelHierarchyNode::GetModelNode()
 vtkMRMLModelDisplayNode* vtkMRMLModelHierarchyNode::GetModelDisplayNode()
 {
   vtkMRMLModelDisplayNode* node = nullptr;
-  vtkMRMLNode* snode = Superclass::GetDisplayNode();
+  vtkMRMLNode* const snode = Superclass::GetDisplayNode();
   if (snode)
   {
     node = vtkMRMLModelDisplayNode::SafeDownCast(snode);
@@ -133,7 +133,7 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents(vtkObject* caller, unsigned lo
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLModelDisplayNode* dnode = this->GetModelDisplayNode();
+  vtkMRMLModelDisplayNode* const dnode = this->GetModelDisplayNode();
   if (dnode != nullptr && dnode == vtkMRMLModelDisplayNode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
@@ -146,7 +146,7 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents(vtkObject* caller, unsigned lo
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetCollapsedParentNode()
 {
   vtkMRMLModelHierarchyNode* node = nullptr;
-  vtkMRMLDisplayableHierarchyNode* dhnode = Superclass::GetCollapsedParentNode();
+  vtkMRMLDisplayableHierarchyNode* const dhnode = Superclass::GetCollapsedParentNode();
   if (dhnode != nullptr)
   {
     node = vtkMRMLModelHierarchyNode::SafeDownCast(dhnode);

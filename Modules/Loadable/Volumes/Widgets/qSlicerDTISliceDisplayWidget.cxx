@@ -180,7 +180,7 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
   d->GlyphManualScalarRangeCheckBox->setChecked(d->DisplayNode->GetAutoScalarRange() == 0);
   double scalarBounds[2];
   d->computeScalarBounds(scalarBounds);
-  double singleStep = qAbs(scalarBounds[1] - scalarBounds[0]) / 100.;
+  const double singleStep = qAbs(scalarBounds[1] - scalarBounds[0]) / 100.;
   double i = 1.;
   int decimals = 0;
   while (i > singleStep)
@@ -206,7 +206,7 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
     d->GlyphGeometryComboBox->setCurrentIndex(displayPropertiesNode->GetGlyphGeometry());
     d->GlyphScaleSliderWidget->setValue(displayPropertiesNode->GetGlyphScaleFactor());
     d->GlyphSpacingSliderWidget->setValue(displayPropertiesNode->GetLineGlyphResolution());
-    int index = d->LineEigenVectorComboBox->findData(QVariant(displayPropertiesNode->GetGlyphEigenvector()));
+    const int index = d->LineEigenVectorComboBox->findData(QVariant(displayPropertiesNode->GetGlyphEigenvector()));
     d->LineEigenVectorComboBox->setCurrentIndex(index);
     d->TubeEigenVectorComboBox->setCurrentIndex(index);
   }
@@ -342,7 +342,7 @@ void qSlicerDTISliceDisplayWidget::setGlyphEigenVector(int index)
   {
     return;
   }
-  int eigenVector = d->LineEigenVectorComboBox->itemData(index).toInt();
+  const int eigenVector = d->LineEigenVectorComboBox->itemData(index).toInt();
   this->displayPropertiesNode()->SetGlyphEigenvector(eigenVector);
 }
 

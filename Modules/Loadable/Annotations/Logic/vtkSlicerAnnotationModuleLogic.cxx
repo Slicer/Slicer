@@ -72,37 +72,37 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   //
 
   // base nodes
-  vtkNew<vtkMRMLAnnotationNode> annotationNode;
+  const vtkNew<vtkMRMLAnnotationNode> annotationNode;
   scene->RegisterNodeClass(annotationNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationDisplayNode> annotationDisplayNode;
+  const vtkNew<vtkMRMLAnnotationDisplayNode> annotationDisplayNode;
   scene->RegisterNodeClass(annotationDisplayNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationStorageNode> annotationStorageNode;
+  const vtkNew<vtkMRMLAnnotationStorageNode> annotationStorageNode;
   scene->RegisterNodeClass(annotationStorageNode.GetPointer());
 
   // Control Points
-  vtkNew<vtkMRMLAnnotationControlPointsNode> annotationControlPointsNode;
+  const vtkNew<vtkMRMLAnnotationControlPointsNode> annotationControlPointsNode;
   scene->RegisterNodeClass(annotationControlPointsNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationControlPointsStorageNode> annotationControlPointsStorageNode;
+  const vtkNew<vtkMRMLAnnotationControlPointsStorageNode> annotationControlPointsStorageNode;
   scene->RegisterNodeClass(annotationControlPointsStorageNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationPointDisplayNode> annotationControlPointsDisplayNode;
+  const vtkNew<vtkMRMLAnnotationPointDisplayNode> annotationControlPointsDisplayNode;
   scene->RegisterNodeClass(annotationControlPointsDisplayNode.GetPointer());
 
   // Lines
-  vtkNew<vtkMRMLAnnotationLinesNode> annotationLinesNode;
+  const vtkNew<vtkMRMLAnnotationLinesNode> annotationLinesNode;
   scene->RegisterNodeClass(annotationLinesNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationLinesStorageNode> annotationLinesStorageNode;
+  const vtkNew<vtkMRMLAnnotationLinesStorageNode> annotationLinesStorageNode;
   scene->RegisterNodeClass(annotationLinesStorageNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationLineDisplayNode> annotationLinesDisplayNode;
+  const vtkNew<vtkMRMLAnnotationLineDisplayNode> annotationLinesDisplayNode;
   scene->RegisterNodeClass(annotationLinesDisplayNode.GetPointer());
 
   // Text
-  vtkNew<vtkMRMLAnnotationTextDisplayNode> annotationTextDisplayNode;
+  const vtkNew<vtkMRMLAnnotationTextDisplayNode> annotationTextDisplayNode;
   scene->RegisterNodeClass(annotationTextDisplayNode.GetPointer());
 
   //
@@ -110,21 +110,21 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   //
 
   // Snapshot annotation
-  vtkNew<vtkMRMLAnnotationSnapshotNode> annotationSnapshotNode;
+  const vtkNew<vtkMRMLAnnotationSnapshotNode> annotationSnapshotNode;
   scene->RegisterNodeClass(annotationSnapshotNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationSnapshotStorageNode> annotationSnapshotStorageNode;
+  const vtkNew<vtkMRMLAnnotationSnapshotStorageNode> annotationSnapshotStorageNode;
   scene->RegisterNodeClass(annotationSnapshotStorageNode.GetPointer());
 
   // Ruler annotation
-  vtkNew<vtkMRMLAnnotationRulerNode> annotationRulerNode;
+  const vtkNew<vtkMRMLAnnotationRulerNode> annotationRulerNode;
   scene->RegisterNodeClass(annotationRulerNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationRulerStorageNode> annotationRulerStorageNode;
+  const vtkNew<vtkMRMLAnnotationRulerStorageNode> annotationRulerStorageNode;
   scene->RegisterNodeClass(annotationRulerStorageNode.GetPointer());
 
   // ROI annotation
-  vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
+  const vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
   scene->RegisterNodeClass(annotationROINode.GetPointer());
   // ROI annotation backwards compatibility
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
@@ -132,16 +132,16 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 #endif
 
   // Fiducial annotation
-  vtkNew<vtkMRMLAnnotationFiducialNode> annotationFiducialNode;
+  const vtkNew<vtkMRMLAnnotationFiducialNode> annotationFiducialNode;
   scene->RegisterNodeClass(annotationFiducialNode.GetPointer());
 
-  vtkNew<vtkMRMLAnnotationFiducialsStorageNode> annotationFiducialsStorageNode;
+  const vtkNew<vtkMRMLAnnotationFiducialsStorageNode> annotationFiducialsStorageNode;
   scene->RegisterNodeClass(annotationFiducialsStorageNode.GetPointer());
 
   //
   // Annotation hierarchies
   //
-  vtkNew<vtkMRMLAnnotationHierarchyNode> annotationHierarchyNode;
+  const vtkNew<vtkMRMLAnnotationHierarchyNode> annotationHierarchyNode;
   scene->RegisterNodeClass(annotationHierarchyNode.GetPointer());
 }
 
@@ -207,7 +207,7 @@ void vtkSlicerAnnotationModuleLogic::ModifySnapShot(std::string id, const char* 
     vtkErrorMacro("No scene defined");
     return;
   }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id.c_str());
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id.c_str());
 
   if (!node)
   {
@@ -250,7 +250,7 @@ std::string vtkSlicerAnnotationModuleLogic::GetSnapShotName(const char* id)
     vtkErrorMacro("No scene defined");
     return nullptr;
   }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
   {
@@ -279,7 +279,7 @@ std::string vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* i
     vtkErrorMacro("No scene defined");
     return nullptr;
   }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
   {
@@ -308,7 +308,7 @@ int vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshotType(const char* id)
     vtkErrorMacro("No scene defined");
     return 0;
   }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
   {
@@ -337,7 +337,7 @@ double vtkSlicerAnnotationModuleLogic::GetSnapShotScaleFactor(const char* id)
     vtkErrorMacro("No scene defined");
     return 0;
   }
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id);
 
   if (!node)
   {
@@ -361,7 +361,7 @@ double vtkSlicerAnnotationModuleLogic::GetSnapShotScaleFactor(const char* id)
 //---------------------------------------------------------------------------
 vtkImageData* vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshot(const char* id)
 {
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->GetMRMLScene()->GetNodeByID(id);
   if (!this->GetMRMLScene())
   {
     vtkErrorMacro("No scene defined");

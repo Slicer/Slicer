@@ -33,7 +33,7 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 {
   this->ColorTransferFunction = nullptr;
-  vtkNew<vtkColorTransferFunction> ctf;
+  const vtkNew<vtkColorTransferFunction> ctf;
   this->SetAndObserveColorTransferFunction(ctf);
 
   this->ConvertedCTFtoLUT = vtkLookupTable::New();
@@ -74,12 +74,12 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode* anode)
     return;
   }
 
-  int oldModified = this->StartModify();
+  const int oldModified = this->StartModify();
   if (node->GetColorTransferFunction() != nullptr)
   {
     if (this->ColorTransferFunction == nullptr)
     {
-      vtkNew<vtkColorTransferFunction> ctf;
+      const vtkNew<vtkColorTransferFunction> ctf;
       this->SetAndObserveColorTransferFunction(ctf);
     }
     if (this->ColorTransferFunction != node->GetColorTransferFunction())
@@ -132,7 +132,7 @@ vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
   // since setting the range is a no-op on color transfer functions,
   // copy into a color look up table with NumberOfTableValues entries
   vtkColorTransferFunction* ctf = this->GetColorTransferFunction();
-  double* ctfRange = ctf->GetRange();
+  double* const ctfRange = ctf->GetRange();
   std::vector<double> bareTable(this->NumberOfTableValues * 3);
   if (this->NumberOfTableValues > 0)
   {
@@ -146,7 +146,7 @@ vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
   this->ConvertedCTFtoLUT->SetNumberOfTableValues(this->NumberOfTableValues);
   for (vtkIdType i = 0; i < this->NumberOfTableValues; ++i)
   {
-    int baseIndex = i * 3;
+    const int baseIndex = i * 3;
     this->ConvertedCTFtoLUT->SetTableValue(i, bareTable[baseIndex], bareTable[baseIndex + 1], bareTable[baseIndex + 2], 1.0);
   }
   return this->ConvertedCTFtoLUT;
@@ -161,7 +161,7 @@ vtkScalarsToColors* vtkMRMLProceduralColorNode::GetScalarsToColors()
 //---------------------------------------------------------------------------
 const char* vtkMRMLProceduralColorNode::GetTypeAsString()
 {
-  const char* type = Superclass::GetTypeAsString();
+  const char* const type = Superclass::GetTypeAsString();
   if (type && strcmp(type, "(unknown)") != 0)
   {
     return type;
@@ -285,7 +285,7 @@ bool vtkMRMLProceduralColorNode::IsColorMapEqual(vtkColorTransferFunction* tf1, 
   const int NUMBER_OF_VALUES_PER_POINT = 6; // x, red, green, blue, midpoint, sharpness
   double values1[NUMBER_OF_VALUES_PER_POINT] = { 0 };
   double values2[NUMBER_OF_VALUES_PER_POINT] = { 0 };
-  int numberOfPoints = tf1->GetSize();
+  const int numberOfPoints = tf1->GetSize();
   for (int pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
   {
     tf1->GetNodeValue(pointIndex, values1);

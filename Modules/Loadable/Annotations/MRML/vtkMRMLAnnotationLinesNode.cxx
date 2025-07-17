@@ -28,7 +28,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  int n = this->GetNumberOfLines();
+  const int n = this->GetNumberOfLines();
   if (n)
   {
     vtkCellArray* lines = this->GetLines();
@@ -84,14 +84,14 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
 {
   // cout << "vtkMRMLAnnotationLinesNode::ReadXMLAttributes start"<< endl;
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
   while (*atts != nullptr)
   {
-    const char* attName = *(atts++);
-    std::string attValue(*(atts++));
+    const char* const attName = *(atts++);
+    const std::string attValue(*(atts++));
     if (!strcmp(attName, "linePtsID"))
     {
       std::string valStr(attValue);
@@ -169,7 +169,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
 
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
-  int n = this->GetNumberOfLines();
+  const int n = this->GetNumberOfLines();
   if (n)
   {
     vtkCellArray* lines = this->GetLines();
@@ -225,7 +225,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineDisplayNode()
 {
-  int nnodes = this->GetNumberOfDisplayNodes();
+  const int nnodes = this->GetNumberOfDisplayNodes();
   for (int n = 0; n < nnodes; n++)
   {
     vtkMRMLAnnotationLineDisplayNode* node = vtkMRMLAnnotationLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
@@ -310,7 +310,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   }
 
   vtkCellArray* lines = this->GetLines();
-  int n = this->GetNumberOfLines();
+  const int n = this->GetNumberOfLines();
   if (id < 0 || id > n - 1)
   {
     vtkErrorMacro("AnnotationLine " << this->GetName() << " id is out of range !");
@@ -343,7 +343,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
 
   for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)
   {
-    vtkBitArray* dataArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(j));
+    vtkBitArray* const dataArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(j));
     if (!dataArray || dataArray->GetSize() != n)
     {
       vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j) << " is out of sync with number of lines");
@@ -470,7 +470,7 @@ int vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtIdE
       cellLine->SetTraversalLocation(cellLine->GetNumberOfCells() - 1);
     }
 
-    int addCells = id - cellLine->GetNumberOfCells();
+    const int addCells = id - cellLine->GetNumberOfCells();
     for (int i = 0; i < addCells; i++)
     {
       cellLine->InsertNextCell(0, nullptr);
@@ -503,7 +503,7 @@ int vtkMRMLAnnotationLinesNode::AddLine(int ctrlPtIdStart, int ctrlPtIdEnd, int 
   }
 
   // Look if line is already included
-  int n = this->GetNumberOfLines();
+  const int n = this->GetNumberOfLines();
   int id = n;
   for (int i = 0; i < n; i++)
   {
@@ -526,7 +526,7 @@ int vtkMRMLAnnotationLinesNode::AddLine(int ctrlPtIdStart, int ctrlPtIdEnd, int 
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesNode::SetControlPoint(int id, double newControl[3], int selectedFlag, int visibleFlag)
 {
-  int result = vtkMRMLAnnotationControlPointsNode::SetControlPoint(id, newControl, selectedFlag, visibleFlag);
+  const int result = vtkMRMLAnnotationControlPointsNode::SetControlPoint(id, newControl, selectedFlag, visibleFlag);
   // cout << "vtkMRMLAnnotationLinesNode::SetControlPoint "<< id << " " << result << endl;
   return result;
 }

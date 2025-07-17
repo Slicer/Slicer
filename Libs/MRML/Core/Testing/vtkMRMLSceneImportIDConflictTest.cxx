@@ -42,7 +42,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char* vtkNotUsed(argv
   scene->AddNode(modelNode.GetPointer());
 
   // add poly data
-  vtkNew<vtkPolyData> polyData;
+  const vtkNew<vtkPolyData> polyData;
   modelNode->SetAndObservePolyData(polyData.GetPointer());
   std::cout << "Polydata pointer = " << polyData.GetPointer() << std::endl;
 

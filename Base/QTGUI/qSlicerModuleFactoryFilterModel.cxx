@@ -69,7 +69,7 @@ void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream& st
   while (childPos > 0)
   {
     childPos--;
-    QStandardItem* child = new QStandardItem();
+    QStandardItem* const child = new QStandardItem();
     decodeDataRecursive(stream, child);
     item->setChild(childPos / colCount, childPos % colCount, child);
   }
@@ -272,8 +272,8 @@ void qSlicerModuleFactoryFilterModel::setHideAllWhenShowModulesIsEmpty(bool hide
 bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  QString leftModule = this->sourceModel()->data(leftIndex, Qt::UserRole).toString();
-  QString rightModule = this->sourceModel()->data(rightIndex, Qt::UserRole).toString();
+  const QString leftModule = this->sourceModel()->data(leftIndex, Qt::UserRole).toString();
+  const QString rightModule = this->sourceModel()->data(rightIndex, Qt::UserRole).toString();
   if (d->ShowModules.contains(leftModule) && //
       d->ShowModules.contains(rightModule))
   {
@@ -286,7 +286,7 @@ bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex, con
 bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  QModelIndex sourceIndex = this->sourceModel()->index(sourceRow, 0, sourceParent);
+  const QModelIndex sourceIndex = this->sourceModel()->index(sourceRow, 0, sourceParent);
   if (!d->ShowToLoad)
   {
     if (this->sourceModel()->data(sourceIndex, Qt::CheckStateRole).toUInt() == Qt::Checked)
@@ -362,7 +362,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   if (!data || !(action == Qt::CopyAction))
     return false;
   // check if the format is supported
-  QString format = QLatin1String("application/x-qstandarditemmodeldatalist");
+  const QString format = QLatin1String("application/x-qstandarditemmodeldatalist");
   if (!data->hasFormat(format))
   {
     return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
@@ -384,7 +384,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   while (!stream.atEnd())
   {
     int r, c;
-    QStandardItem* item = new QStandardItem;
+    QStandardItem* const item = new QStandardItem;
     stream >> r >> c;
     d->decodeDataRecursive(stream, item);
 
@@ -413,7 +413,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   // Insert new items
   for (QStandardItem* const item : items)
   {
-    QString moduleName = item->data(Qt::UserRole).toString();
+    const QString moduleName = item->data(Qt::UserRole).toString();
     newShowModules.removeAll(moduleName);
     newShowModules.insert(insertionPosition, moduleName);
     insertionPosition++;

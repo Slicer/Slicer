@@ -67,7 +67,7 @@ void qMRMLNodeAttributeTableWidgetTester::cleanup()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableWidgetTester::testSetNode()
 {
-  vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
+  const vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
   node->SetAttribute("Attribute1", "Value1");
   node->SetAttribute("Attribute2", "Value2");
   this->NodeAttributeTableWidget->setMRMLNode(node);

@@ -43,7 +43,7 @@ int testAddFile(const char* filePath);
 //-----------------------------------------------------------------------------
 int vtkSlicerTablesLogicAddFileTest(int argc, char* argv[])
 {
-  bool res = true;
+  const bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   CHECK_EXIT_SUCCESS(testAddInvalidFile(nullptr));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -76,8 +76,8 @@ int testAddInvalidFile(const char* filePath)
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   tablesLogic->SetMRMLScene(scene.GetPointer());
 
-  int nodeCount = scene->GetNumberOfNodes();
-  vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
+  const int nodeCount = scene->GetNumberOfNodes();
+  vtkMRMLTableNode* const table = tablesLogic->AddTable(filePath);
 
   CHECK_NULL(table);
   CHECK_INT(scene->GetNumberOfNodes(), nodeCount);
@@ -99,7 +99,7 @@ int testAddFile(const char* filePath)
   vtkNew<vtkMRMLScene> scene;
   tablesLogic->SetMRMLScene(scene.GetPointer());
 
-  int nodeCount = scene->GetNumberOfNodes();
+  const int nodeCount = scene->GetNumberOfNodes();
   tableNode = tablesLogic->AddTable(filePath);
 
   CHECK_NOT_NULL(tableNode);

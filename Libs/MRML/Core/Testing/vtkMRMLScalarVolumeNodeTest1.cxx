@@ -16,7 +16,7 @@
 
 int vtkMRMLScalarVolumeNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLScalarVolumeNode> node1;
+  const vtkNew<vtkMRMLScalarVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

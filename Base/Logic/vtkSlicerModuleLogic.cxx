@@ -34,7 +34,7 @@ vtkSlicerApplicationLogic* vtkSlicerModuleLogic::GetApplicationLogic()
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* vtkSlicerModuleLogic::GetModuleLogic(const char* moduleName)
 {
-  vtkMRMLApplicationLogic* appLogic = vtkMRMLApplicationLogic::SafeDownCast(this->GetMRMLApplicationLogic());
+  vtkMRMLApplicationLogic* const appLogic = vtkMRMLApplicationLogic::SafeDownCast(this->GetMRMLApplicationLogic());
   if (!appLogic)
   {
     return nullptr;

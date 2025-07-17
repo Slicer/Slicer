@@ -27,7 +27,7 @@ qSlicerScalarVolumeDisplayWidgetPlugin::qSlicerScalarVolumeDisplayWidgetPlugin(Q
 //------------------------------------------------------------------------------
 QWidget* qSlicerScalarVolumeDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerScalarVolumeDisplayWidget* _widget = new qSlicerScalarVolumeDisplayWidget(_parent);
+  qSlicerScalarVolumeDisplayWidget* const _widget = new qSlicerScalarVolumeDisplayWidget(_parent);
   return _widget;
 }
 

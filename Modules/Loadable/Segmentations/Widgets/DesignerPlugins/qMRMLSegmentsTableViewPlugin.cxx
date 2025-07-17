@@ -30,7 +30,7 @@ qMRMLSegmentsTableViewPlugin::qMRMLSegmentsTableViewPlugin(QObject* pluginParent
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentsTableViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentsTableView* pluginWidget = new qMRMLSegmentsTableView(parentWidget);
+  qMRMLSegmentsTableView* const pluginWidget = new qMRMLSegmentsTableView(parentWidget);
   return pluginWidget;
 }
 

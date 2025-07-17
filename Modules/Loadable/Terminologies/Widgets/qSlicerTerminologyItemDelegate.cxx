@@ -48,7 +48,8 @@
 //-----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic* terminologiesLogic()
 {
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  vtkSlicerTerminologiesModuleLogic* const terminologiesLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!terminologiesLogic)
   {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
@@ -68,8 +69,8 @@ qSlicerTerminologyItemDelegate::qSlicerTerminologyItemDelegate(QObject* parent)
 //-----------------------------------------------------------------------------
 QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-  QColor color = index.data(Qt::DecorationRole).value<QColor>();
-  QColor invalidColor = QColor(0, 0, 0, 0);
+  const QColor color = index.data(Qt::DecorationRole).value<QColor>();
+  const QColor invalidColor = QColor(0, 0, 0, 0);
   // QColor(0, 0, 0, 0) is used to discriminate between nodes that have display color properties
   // (which will return QColor != QColor(0, 0, 0, 0)) and nodes without display color properties
   // (which will return a QColor(0, 0, 0, 0))
@@ -78,7 +79,7 @@ QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget* parent, const QSt
     return QStyledItemDelegate::createEditor(parent, option, index);
   }
 
-  bool useTerminologySelector = this->UseTerminologySelectorCallback();
+  const bool useTerminologySelector = this->UseTerminologySelectorCallback();
   if (useTerminologySelector)
   {
     qSlicerTerminologySelectorButton* terminologyButton = new qSlicerTerminologySelectorButton(parent);
@@ -96,7 +97,7 @@ QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget* parent, const QSt
       ctkColorPickerButton* colorPicker = new ctkColorPickerButton(parent);
       colorPicker->setProperty("changeColorOnSet", true);
       colorPicker->setDisplayColorName(false);
-      ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
+      const ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
       colorPicker->setDialogOptions(options);
       connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(commitAndClose()), Qt::QueuedConnection);
       // To Do: add in ctkColorPickerButton a cancel signal and connect it with close method
@@ -113,15 +114,15 @@ QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget* parent, const QSt
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-  ctkColorPickerButton* colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
+  ctkColorPickerButton* const colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
 
-  bool useTerminologySelector = this->UseTerminologySelectorCallback();
+  const bool useTerminologySelector = this->UseTerminologySelectorCallback();
   if (!useTerminologySelector)
   {
     if (colorPickerButton)
     {
-      QColor color = index.data(Qt::DecorationRole).value<QColor>();
+      const QColor color = index.data(Qt::DecorationRole).value<QColor>();
       ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
       if (colorPicker) // colorPicker may be nullptr, don't make the application crash when that happens
       {
@@ -178,27 +179,27 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget* editor, const QModel
       if (!logic->GetFirstCompatibleColorNodeByName(terminologyEntry->GetTerminologyContextName() ? terminologyEntry->GetTerminologyContextName() : ""))
       {
         std::vector<std::string> preferredTerminologyNames;
-        QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+        QSettings* const settings = qSlicerApplication::application()->settingsDialog()->settings();
         if (settings->contains("Terminology/LastTerminologyContexts"))
         {
-          QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
+          const QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
           for (auto& name : lastTerminologyContextNames)
           {
             preferredTerminologyNames.push_back(name.toStdString().c_str());
           }
         }
-        std::vector<std::string> preferredAnatomicalContextNames; // use default order for now
+        const std::vector<std::string> preferredAnatomicalContextNames; // use default order for now
         logic->UpdateEntryFromLoadedTerminologies(terminologyEntry, preferredTerminologyNames, preferredAnatomicalContextNames);
       }
     }
 
     // Get metadata
-    QString name = index.model()->data(index, NameRole).toString();
-    bool nameAutoGenerated = index.model()->data(index, NameAutoGeneratedRole).toBool();
-    int colorRole = (this->UseDecorationRole ? Qt::DecorationRole : ColorRole);
-    QColor color = index.model()->data(index, colorRole).value<QColor>();
-    bool colorAutoGenerated = index.model()->data(index, ColorAutoGeneratedRole).toBool();
-    QColor generatedColor = index.model()->data(index, qSlicerTerminologyItemDelegate::GeneratedColorRole).value<QColor>();
+    const QString name = index.model()->data(index, NameRole).toString();
+    const bool nameAutoGenerated = index.model()->data(index, NameAutoGeneratedRole).toBool();
+    const int colorRole = (this->UseDecorationRole ? Qt::DecorationRole : ColorRole);
+    const QColor color = index.model()->data(index, colorRole).value<QColor>();
+    const bool colorAutoGenerated = index.model()->data(index, ColorAutoGeneratedRole).toBool();
+    const QColor generatedColor = index.model()->data(index, qSlicerTerminologyItemDelegate::GeneratedColorRole).value<QColor>();
 
     qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo(terminologyEntry, name, nameAutoGenerated, color, colorAutoGenerated, generatedColor);
     terminologyButton->setTerminologyInfo(terminologyInfo);
@@ -210,8 +211,8 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget* editor, const QModel
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-  QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
-  ctkColorPickerButton* colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
+  QLineEdit* const lineEdit = qobject_cast<QLineEdit*>(editor);
+  ctkColorPickerButton* const colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
   if (lineEdit)
   {
@@ -221,14 +222,14 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget* editor, QAbstractItem
   }
   else if (colorPickerButton)
   {
-    ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
+    ctkColorPickerButton* const colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
-    QColor color = colorPicker->color();
+    const QColor color = colorPicker->color();
     model->setData(index, color, Qt::DecorationRole);
   }
   else if (terminologyButton)
   {
-    vtkSlicerTerminologiesModuleLogic* logic = terminologiesLogic();
+    vtkSlicerTerminologiesModuleLogic* const logic = terminologiesLogic();
     if (!logic)
     {
       return;
@@ -239,7 +240,7 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget* editor, QAbstractItem
 
     // Set color to model
     model->setData(index, terminologyInfo.ColorAutoGenerated, ColorAutoGeneratedRole);
-    int colorRole = (this->UseDecorationRole ? Qt::DecorationRole : ColorRole);
+    const int colorRole = (this->UseDecorationRole ? Qt::DecorationRole : ColorRole);
     model->setData(index, terminologyInfo.Color, colorRole);
     // Set name to model
     model->setData(index, terminologyInfo.NameAutoGenerated, NameAutoGeneratedRole);
@@ -258,7 +259,7 @@ void qSlicerTerminologyItemDelegate::updateEditorGeometry(QWidget* editor, const
 //------------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::commitSenderData()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
   {
     return;
@@ -269,7 +270,7 @@ void qSlicerTerminologyItemDelegate::commitSenderData()
 //------------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::commitAndClose()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
   {
     return;
@@ -281,7 +282,7 @@ void qSlicerTerminologyItemDelegate::commitAndClose()
 //------------------------------------------------------------------------------
 void qSlicerTerminologyItemDelegate::close()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
   {
     return;

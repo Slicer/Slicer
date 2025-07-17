@@ -79,7 +79,7 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 
   // Create empty segmentations object
   this->Segmentation = nullptr;
-  vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+  const vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
   this->SetAndObserveSegmentation(segmentation);
 
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SourceRepresentationModified);
@@ -119,13 +119,13 @@ void vtkMRMLSegmentationNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
 {
   // Read all MRML node attributes from two arrays of names and values
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
   if (!this->Segmentation)
   {
-    vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+    const vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
     this->SetAndObserveSegmentation(segmentation);
   }
   this->Segmentation->ReadXMLAttributes(atts);
@@ -140,7 +140,7 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(anode);
@@ -158,7 +158,7 @@ void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=t
       }
       else
       {
-        vtkSmartPointer<vtkSegmentation> newSegmentation = vtkSmartPointer<vtkSegmentation>::Take(node->GetSegmentation()->NewInstance());
+        const vtkSmartPointer<vtkSegmentation> newSegmentation = vtkSmartPointer<vtkSegmentation>::Take(node->GetSegmentation()->NewInstance());
         newSegmentation->DeepCopy(node->GetSegmentation());
         this->SetAndObserveSegmentation(newSegmentation);
       }
@@ -333,7 +333,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
     return;
   }
   // If the new UID is empty string, then do not look for the segmentation's referenced UID in its UID list
-  std::string itemUidValueStr = shNode->GetItemUID(itemWithNewUID, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
+  const std::string itemUidValueStr = shNode->GetItemUID(itemWithNewUID, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
   if (itemUidValueStr.empty())
   {
     return;
@@ -348,7 +348,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
   }
 
   // Get associated subject hierarchy item
-  vtkIdType segmentationShItemID = shNode->GetItemByDataNode(this);
+  const vtkIdType segmentationShItemID = shNode->GetItemByDataNode(this);
   if (!segmentationShItemID)
   {
     // If segmentation is not in subject hierarchy, then we cannot find its DICOM references
@@ -356,7 +356,8 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
   }
 
   // Get DICOM references from segmentation subject hierarchy node
-  std::string referencedInstanceUIDsAttribute = shNode->GetItemAttribute(segmentationShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName());
+  const std::string referencedInstanceUIDsAttribute =
+    shNode->GetItemAttribute(segmentationShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName());
   if (referencedInstanceUIDsAttribute.empty())
   {
     // No references
@@ -442,8 +443,8 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
   }
 
   // Apply transform on segmentation
-  bool wasEnabled = this->Segmentation->SetSourceRepresentationModifiedEnabled(false);
-  vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
+  const bool wasEnabled = this->Segmentation->SetSourceRepresentationModifiedEnabled(false);
+  const vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
   if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
   {
     this->Segmentation->ApplyLinearTransform(transform);
@@ -503,7 +504,7 @@ void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
   else
   {
     // Segmentation is transformed
-    vtkNew<vtkGeneralTransform> segmentationToRASTransform;
+    const vtkNew<vtkGeneralTransform> segmentationToRASTransform;
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, segmentationToRASTransform.GetPointer());
     double bounds_Segmentation[6] = { 1, -1, 1, -1, 1, -1 };
     this->GetBounds(bounds_Segmentation);
@@ -652,7 +653,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage,
   }
 
   maskImage->SetExtent(extent);
-  vtkNew<vtkMatrix4x4> referenceImageToWorldMatrix;
+  const vtkNew<vtkMatrix4x4> referenceImageToWorldMatrix;
   referenceGeometry->GetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
   maskImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
 
@@ -693,7 +694,7 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage,
     threshold->Update();
     vtkNew<vtkOrientedImageData> thresholdMask; //  == 0 in editable region
     thresholdMask->ShallowCopy(threshold->GetOutput());
-    vtkNew<vtkMatrix4x4> sourceVolumeToWorldMatrix;
+    const vtkNew<vtkMatrix4x4> sourceVolumeToWorldMatrix;
     sourceVolume->GetImageToWorldMatrix(sourceVolumeToWorldMatrix.GetPointer());
     thresholdMask->SetImageToWorldMatrix(sourceVolumeToWorldMatrix.GetPointer());
 
@@ -716,7 +717,7 @@ vtkIdType vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string se
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   }
 
-  vtkIdType segmentationvtkIdType = shNode->GetItemByDataNode(this);
+  const vtkIdType segmentationvtkIdType = shNode->GetItemByDataNode(this);
   if (!segmentationvtkIdType)
   {
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -729,8 +730,8 @@ vtkIdType vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string se
   std::vector<vtkIdType>::iterator childIt;
   for (childIt = segmentationChildItemIDs.begin(); childIt != segmentationChildItemIDs.end(); ++childIt)
   {
-    vtkIdType childItemID = (*childIt);
-    std::string childSegmentID = shNode->GetItemAttribute(childItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    const vtkIdType childItemID = (*childIt);
+    const std::string childSegmentID = shNode->GetItemAttribute(childItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
     if (!childSegmentID.empty() && !childSegmentID.compare(segmentID))
     {
       return childItemID;
@@ -749,29 +750,29 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
   }
   if (!this->Segmentation)
   {
-    vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+    const vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
     this->SetAndObserveSegmentation(segmentation);
   }
 
   // Get serialized geometry of selected volume
-  vtkSmartPointer<vtkMatrix4x4> volumeIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> volumeIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   volumeNode->GetIJKToRASMatrix(volumeIjkToRasMatrix);
 
   // If there is a linear transform between the reference volume and segmentation then transform the geometry
   // to be aligned with the reference volume.
   if (volumeNode->GetParentTransformNode() != this->GetParentTransformNode())
   {
-    vtkSmartPointer<vtkGeneralTransform> volumeToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    const vtkSmartPointer<vtkGeneralTransform> volumeToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
     vtkMRMLTransformNode::GetTransformBetweenNodes(volumeNode->GetParentTransformNode(), this->GetParentTransformNode(), volumeToSegmentationTransform);
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(volumeToSegmentationTransform))
     {
-      vtkNew<vtkMatrix4x4> volumeToSegmentationMatrix;
+      const vtkNew<vtkMatrix4x4> volumeToSegmentationMatrix;
       vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(volumeNode->GetParentTransformNode(), this->GetParentTransformNode(), volumeToSegmentationMatrix.GetPointer());
       vtkMatrix4x4::Multiply4x4(volumeToSegmentationMatrix.GetPointer(), volumeIjkToRasMatrix, volumeIjkToRasMatrix);
     }
   }
 
-  std::string serializedImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(volumeIjkToRasMatrix, volumeNode->GetImageData());
+  const std::string serializedImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(volumeIjkToRasMatrix, volumeNode->GetImageData());
 
   // Set parameter
   this->Segmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), serializedImageGeometry);
@@ -884,7 +885,7 @@ bool vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string 
     return false;
   }
 
-  vtkOrientedImageData* binaryLabelmap =
+  vtkOrientedImageData* const binaryLabelmap =
     vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
   if (!binaryLabelmap)
   {
@@ -957,7 +958,7 @@ bool vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string s
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segment");
     return false;
   }
-  vtkDataObject* closedSurface = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  vtkDataObject* const closedSurface = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (!closedSurface)
   {
     vtkErrorMacro("GetClosedSurfaceRepresentation: No closed surface representation in segment");
@@ -1035,7 +1036,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
     }
 
     // Labelmap image to world
-    vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+    const vtkNew<vtkMatrix4x4> imageToWorldMatrix;
     labelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
 
     vtkNew<vtkOrientedImageData> effectiveExtentLabelmap;
@@ -1048,16 +1049,16 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
 
     double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
     effectiveExtentLabelmap->GetBounds(bounds);
-    double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
+    const double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
 
     // set spacing to have an approximately 64^3 volume
     const double preferredVolumeSizeInVoxels = 64 * 64 * 64;
 
-    double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
+    const double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
     for (int i = 0; i < 3; ++i)
     {
-      double axisBoundsSize = bounds[2 * i + 1] - bounds[2 * i];
-      int dimension = std::ceil(axisBoundsSize / spacing);
+      const double axisBoundsSize = bounds[2 * i + 1] - bounds[2 * i];
+      const int dimension = std::ceil(axisBoundsSize / spacing);
       resampledSpacing[i] = std::max(axisBoundsSize / dimension, resampledSpacing[i]);
     }
 
@@ -1125,7 +1126,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
 //---------------------------------------------------------------------------
 double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID)
 {
-  double* segmentCenter_Segment = this->GetSegmentCenter(segmentID);
+  double* const segmentCenter_Segment = this->GetSegmentCenter(segmentID);
   if (!segmentCenter_Segment)
   {
     return nullptr;
@@ -1142,7 +1143,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentI
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID, double center[3])
 {
-  double* segmentCenterPosition = this->GetSegmentCenter(segmentID);
+  double* const segmentCenterPosition = this->GetSegmentCenter(segmentID);
   if (segmentCenterPosition)
   {
     center[0] = segmentCenterPosition[0];
@@ -1154,7 +1155,7 @@ void vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID, dou
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3])
 {
-  double* segmentCenterPositionRAS = this->GetSegmentCenterRAS(segmentID);
+  double* const segmentCenterPositionRAS = this->GetSegmentCenterRAS(segmentID);
   if (segmentCenterPositionRAS)
   {
     centerRAS[0] = segmentCenterPositionRAS[0];

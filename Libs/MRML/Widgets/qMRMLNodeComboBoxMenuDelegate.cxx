@@ -58,7 +58,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
   QStyleOptionMenuItem menuOption;
 
   QPalette resolvedpalette = option.palette.resolve(QApplication::palette("QMenu"));
-  QVariant value = index.data(Qt::ForegroundRole);
+  const QVariant value = index.data(Qt::ForegroundRole);
   if (value.canConvert(QMetaType::QBrush))
   {
     resolvedpalette.setBrush(QPalette::WindowText, qvariant_cast<QBrush>(value));
@@ -98,7 +98,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
     unselectedHighlight.setHsv(unselectedHighlight.hue(),                      //
                                qMax(0, unselectedHighlight.saturation() - 50), //
                                qMin(255, unselectedHighlight.value() + 15));
-    QColor unselectedHighlightedText = menuOption.palette.color(QPalette::HighlightedText);
+    const QColor unselectedHighlightedText = menuOption.palette.color(QPalette::HighlightedText);
     menuOption.palette.setColor(QPalette::Highlight, unselectedHighlight);
     menuOption.palette.setColor(QPalette::HighlightedText, unselectedHighlightedText);
   }
@@ -114,7 +114,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
   {
     menuOption.menuItemType = QStyleOptionMenuItem::Normal;
   }
-  QVariant variant = index.model()->data(index, Qt::DecorationRole);
+  const QVariant variant = index.model()->data(index, Qt::DecorationRole);
   switch (variant.type())
   {
     case QVariant::Icon: menuOption.icon = qvariant_cast<QIcon>(variant); break;

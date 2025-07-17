@@ -166,7 +166,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   for (const QString& dependency : instance->dependencies())
   {
     // no-op if the module is already loaded
-    bool dependencyLoaded = this->loadModule(dependency, name);
+    const bool dependencyLoaded = this->loadModule(dependency, name);
     if (!dependencyLoaded)
     {
       qWarning() << "When loading module " << name << ", the dependency" << dependency << "failed to be loaded.";
@@ -334,7 +334,7 @@ QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
 
   for (const QString& subPath : subPaths)
   {
-    QString candidatePath = QDir(basePath).filePath(subPath);
+    const QString candidatePath = QDir(basePath).filePath(subPath);
     if (QDir(candidatePath).exists())
     {
       paths << candidatePath;

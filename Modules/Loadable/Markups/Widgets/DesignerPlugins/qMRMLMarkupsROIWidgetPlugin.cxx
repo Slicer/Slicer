@@ -31,7 +31,7 @@ qMRMLMarkupsROIWidgetPlugin::qMRMLMarkupsROIWidgetPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLMarkupsROIWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsROIWidget* _widget = new qMRMLMarkupsROIWidget(_parent);
+  qMRMLMarkupsROIWidget* const _widget = new qMRMLMarkupsROIWidget(_parent);
   return _widget;
 }
 

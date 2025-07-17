@@ -122,16 +122,16 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   qvtkReconnect(d->VolumePropertyWidget->volumeProperty(), newVolumeProperty, vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
   d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
 
-  bool independentComponents = newVolumeProperty ? newVolumeProperty->GetIndependentComponents() : false;
+  const bool independentComponents = newVolumeProperty ? newVolumeProperty->GetIndependentComponents() : false;
 
-  bool wasBlocking = d->ComponentsButtonGroup->blockSignals(true);
+  const bool wasBlocking = d->ComponentsButtonGroup->blockSignals(true);
   d->RGBColorsRadioButton->setChecked(!independentComponents);
   d->IndependentRadioButton->setChecked(independentComponents);
   d->ComponentsButtonGroup->blockSignals(wasBlocking);
 
   d->RGBColorsRadioButton->setEnabled(d->ComponentCount == 3 || d->ComponentCount == 4);
 
-  bool independentComponentsVisible = newVolumeProperty && d->ComponentCount > 1;
+  const bool independentComponentsVisible = newVolumeProperty && d->ComponentCount > 1;
   d->IndependentComponentsLabel->setVisible(independentComponentsVisible);
   d->RGBColorsRadioButton->setVisible(independentComponentsVisible);
   d->IndependentRadioButton->setVisible(independentComponentsVisible);
@@ -235,8 +235,8 @@ void qMRMLVolumePropertyNodeWidget::updateIndependentComponents()
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
-  bool indepdendentComponents = d->IndependentRadioButton->isChecked();
+  const MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
+  const bool indepdendentComponents = d->IndependentRadioButton->isChecked();
   volumeProperty->SetIndependentComponents(indepdendentComponents);
   if (d->IndependentRadioButton->isChecked())
   {

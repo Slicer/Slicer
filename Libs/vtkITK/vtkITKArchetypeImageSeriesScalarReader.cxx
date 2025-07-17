@@ -75,7 +75,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(vtkInformation* vtkNotUs
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
-  vtkDataObject* output = outInfo->Get(vtkDataObject::DATA_OBJECT());
+  vtkDataObject* const output = outInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkImageData* data = vtkImageData::SafeDownCast(output);
   // removed UpdateInformation: generates an error message
   //   from VTK and doesn't appear to be needed...
@@ -255,7 +255,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(vtkInformation* vtkNotUs
 
 void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
+  const itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

@@ -36,7 +36,7 @@ vtkMRMLMarkupsStorageNode::~vtkMRMLMarkupsStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -71,7 +71,7 @@ void vtkMRMLMarkupsStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::Copy(anode);
 

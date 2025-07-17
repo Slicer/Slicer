@@ -25,15 +25,15 @@ int main(int argc, char** argv)
     exit(-1);
   }
 
-  std::string originalImageFileName(argv[1]);
-  std::string labelImageFileName(argv[2]);
-  std::string segmentedImageFileName(argv[3]);
-  double expectedVolume = atof(argv[4]);
-  double intensityHomogeneity = atof(argv[5]);
-  double curvatureWeight = atof(argv[6]);
+  const std::string originalImageFileName(argv[1]);
+  const std::string labelImageFileName(argv[2]);
+  const std::string segmentedImageFileName(argv[3]);
+  const double expectedVolume = atof(argv[4]);
+  const double intensityHomogeneity = atof(argv[5]);
+  const double curvatureWeight = atof(argv[6]);
 
-  double maxRunningTime = 10000;
-  short labelValue = 1;
+  const double maxRunningTime = 10000;
+  const short labelValue = 1;
 
   typedef short PixelType;
   typedef CSFLSRobustStatSegmentor3DLabelMap<PixelType> SFLSRobustStatSegmentor3DLabelMap_c;
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   typedef SFLSRobustStatSegmentor3DLabelMap_c::TImage Image_t;
 
   typedef itk::ImageFileReader<Image_t> ImageReaderType;
-  ImageReaderType::Pointer reader = ImageReaderType::New();
+  const ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName(originalImageFileName.c_str());
   Image_t::Pointer img;
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
   typedef SFLSRobustStatSegmentor3DLabelMap_c::TLabelImage LabelImage_t;
 
   typedef itk::ImageFileReader<LabelImage_t> LabelImageReader_t;
-  LabelImageReader_t::Pointer readerLabel = LabelImageReader_t::New();
+  const LabelImageReader_t::Pointer readerLabel = LabelImageReader_t::New();
   readerLabel->SetFileName(labelImageFileName.c_str());
   LabelImage_t::Pointer labelImg;
 
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   }
 
   // preprocess label map (labelImg, the naming is confusing.....)
-  LabelImage_t::Pointer newLabelMap = preprocessLabelMap<LabelImage_t::PixelType>(labelImg, labelValue);
+  const LabelImage_t::Pointer newLabelMap = preprocessLabelMap<LabelImage_t::PixelType>(labelImg, labelValue);
 
   // do seg
   SFLSRobustStatSegmentor3DLabelMap_c seg;
@@ -98,11 +98,11 @@ int main(int argc, char** argv)
 
   typedef itk::Image<short, 3> MaskImageType;
 
-  MaskImageType::Pointer finalMask = getFinalMask<float>(seg.mp_phi, labelValue, 2.0);
+  const MaskImageType::Pointer finalMask = getFinalMask<float>(seg.mp_phi, labelValue, 2.0);
   finalMask->CopyInformation(img);
 
   typedef itk::ImageFileWriter<MaskImageType> WriterType;
-  WriterType::Pointer outputWriter = WriterType::New();
+  const WriterType::Pointer outputWriter = WriterType::New();
   outputWriter->SetFileName(segmentedImageFileName.c_str());
   outputWriter->SetInput(finalMask);
   outputWriter->Update();
@@ -128,12 +128,12 @@ itk::Image<short, 3>::Pointer getFinalMask(typename itk::Image<TPixel, 3>::Point
 
   MaskType::SizeType size = img->GetLargestPossibleRegion().GetSize();
 
-  long nx = size[0];
-  long ny = size[1];
-  long nz = size[2];
+  const long nx = size[0];
+  const long ny = size[1];
+  const long nz = size[2];
 
   MaskType::Pointer mask = MaskType::New();
-  MaskType::IndexType start = { { 0, 0, 0 } };
+  const MaskType::IndexType start = { { 0, 0, 0 } };
 
   MaskType::RegionType region;
   region.SetSize(size);
@@ -152,7 +152,7 @@ itk::Image<short, 3>::Pointer getFinalMask(typename itk::Image<TPixel, 3>::Point
     {
       for (long iz = 0; iz < nz; ++iz)
       {
-        MaskType::IndexType idx = { { ix, iy, iz } };
+        const MaskType::IndexType idx = { { ix, iy, iz } };
         TPixel v = img->GetPixel(idx);
 
         mask->SetPixel(idx, v <= thod ? l : 0);

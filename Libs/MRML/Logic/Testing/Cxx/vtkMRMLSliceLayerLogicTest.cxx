@@ -53,10 +53,10 @@ int vtkMRMLSliceLayerLogicTest(int, char*[])
     TEST_GET_OBJECT(logic, Reslice);
     TEST_GET_OBJECT(logic, ResliceUVW);
 
-    vtkNew<vtkMRMLScalarVolumeNode> VolumeNode;
+    const vtkNew<vtkMRMLScalarVolumeNode> VolumeNode;
     TEST_SET_GET_VALUE(logic, VolumeNode, VolumeNode.GetPointer());
 
-    vtkNew<vtkMRMLScene> MRMLScene;
+    const vtkNew<vtkMRMLScene> MRMLScene;
     TEST_SET_GET_VALUE(logic, MRMLScene, MRMLScene.GetPointer());
   }
 
@@ -64,10 +64,10 @@ int vtkMRMLSliceLayerLogicTest(int, char*[])
   {
     vtkNew<vtkMRMLSliceLayerLogic> logic;
 
-    vtkNew<vtkMRMLScene> MRMLScene;
+    const vtkNew<vtkMRMLScene> MRMLScene;
     TEST_SET_GET_VALUE(logic, MRMLScene, MRMLScene.GetPointer());
 
-    vtkNew<vtkMRMLScalarVolumeNode> VolumeNode;
+    const vtkNew<vtkMRMLScalarVolumeNode> VolumeNode;
     TEST_SET_GET_VALUE(logic, VolumeNode, VolumeNode.GetPointer());
   }
 
@@ -104,7 +104,7 @@ bool testDTIPipeline()
   vtkNew<vtkAssignAttribute> tensorsToScalars;
   tensorsToScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);
   tensorsToScalars->SetInputConnection(tp->GetOutputPort());
-  bool verbose = false;
+  const bool verbose = false;
   if (verbose)
   {
     tensorsToScalars->Update();

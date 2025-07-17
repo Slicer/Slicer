@@ -73,7 +73,7 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
     "expanded=\"true\" ></ModelHierarchy>"
     " </MRML>");
   scene->Connect();
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->GetFirstNode(nullptr, "vtkMRMLModelNode"));
+  vtkMRMLModelNode* const modelNode = vtkMRMLModelNode::SafeDownCast(scene->GetFirstNode(nullptr, "vtkMRMLModelNode"));
 
   // Instantiate Models module panel
   qSlicerModelsModule module;

@@ -149,7 +149,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateSliceNode()
       !this->SliceCompositeNode->GetLayoutName() || // the slice composite points to a diff slice node
       strcmp(this->SliceCompositeNode->GetLayoutName(), this->GetSliceNode()->GetLayoutName()))
   {
-    vtkMRMLSliceCompositeNode* sliceCompositeNode = this->FindSliceCompositeNode();
+    vtkMRMLSliceCompositeNode* const sliceCompositeNode = this->FindSliceCompositeNode();
     this->SetSliceCompositeNode(sliceCompositeNode);
   }
 }
@@ -171,8 +171,8 @@ vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInterna
     vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
     if (sliceCompositeNode)
     {
-      const char* compositeLayoutName = sliceCompositeNode->GetLayoutName();
-      const char* sliceLayoutName = this->GetSliceNode()->GetLayoutName();
+      const char* const compositeLayoutName = sliceCompositeNode->GetLayoutName();
+      const char* const sliceLayoutName = this->GetSliceNode()->GetLayoutName();
       if (compositeLayoutName && !strcmp(compositeLayoutName, sliceLayoutName))
       {
         return sliceCompositeNode;
@@ -240,7 +240,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::SetVolumeNodes(cons
   // Removes the volumes that are not into the new volume list
   for (std::vector<vtkMRMLDisplayableNode*>::iterator it = this->VolumeNodes.begin(); it != this->VolumeNodes.end();)
   {
-    vtkMRMLDisplayableNode* volume = *it;
+    vtkMRMLDisplayableNode* const volume = *it;
     // Don't remove the volume if it belongs to the new list
     if (std::find(volumes.begin(), volumes.end(), volume) == volumes.end())
     {
@@ -282,7 +282,7 @@ std::vector<vtkMRMLDisplayableNode*>::iterator vtkMRMLVolumeGlyphSliceDisplayabl
   // Stop listening to events
   volume->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
   // Remove displaynodes and actors
-  DisplayNodesType::iterator it = this->DisplayNodes.find(volume);
+  const DisplayNodesType::iterator it = this->DisplayNodes.find(volume);
   if (it != this->DisplayNodes.end())
   {
     this->RemoveVolumeDisplayNodes(it);
@@ -296,7 +296,7 @@ std::vector<vtkMRMLDisplayableNode*>::iterator vtkMRMLVolumeGlyphSliceDisplayabl
 void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::RemoveVolume(vtkMRMLDisplayableNode* volume)
 {
   // Sanity check: make sure the volume exists in the list
-  std::vector<vtkMRMLDisplayableNode*>::iterator volumeIt = std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume);
+  const std::vector<vtkMRMLDisplayableNode*>::iterator volumeIt = std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume);
   if (volumeIt != this->VolumeNodes.end())
   {
     this->RemoveVolume(volumeIt);
@@ -310,7 +310,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolume(vtkMRM
   assert(std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume) != this->VolumeNodes.end());
   // The volume has just been added to the volume list or has been modified,
   // update its display node list.
-  int nnodes = volume->GetNumberOfDisplayNodes();
+  const int nnodes = volume->GetNumberOfDisplayNodes();
   std::vector<vtkMRMLDisplayNode*> displayNodes;
   for (int i = 0; i < nnodes; i++)
   {
@@ -420,7 +420,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolumeDisplay
   {
     return;
   }
-  DisplayActorsType::const_iterator it = this->Actors.find(displayNode);
+  const DisplayActorsType::const_iterator it = this->Actors.find(displayNode);
   // If the actors haven't been created yet and the actors should not be visible
   // anyway, then don't even create them. However if the actors were created
   // and the visibility has later been turned off, then update the actor by
@@ -447,7 +447,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::AddActor(vtkMRMLDis
   vtkActor2D* actor = vtkActor2D::New();
   if (displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode"))
   {
-    vtkNew<vtkPolyDataMapper2D> mapper;
+    const vtkNew<vtkPolyDataMapper2D> mapper;
     actor->SetMapper(mapper.GetPointer());
   }
   this->External->GetRenderer()->AddActor(actor);

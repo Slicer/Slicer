@@ -30,7 +30,7 @@ qSlicerVolumeRenderingPresetComboBoxPlugin::qSlicerVolumeRenderingPresetComboBox
 //-----------------------------------------------------------------------------
 QWidget* qSlicerVolumeRenderingPresetComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
-  qSlicerVolumeRenderingPresetComboBox* newWidget = new qSlicerVolumeRenderingPresetComboBox(widgetParent);
+  qSlicerVolumeRenderingPresetComboBox* const newWidget = new qSlicerVolumeRenderingPresetComboBox(widgetParent);
   return newWidget;
 }
 

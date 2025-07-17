@@ -38,7 +38,7 @@
 int qMRMLColorTableComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qMRMLColorTableComboBox nodeSelector;
@@ -46,7 +46,7 @@ int qMRMLColorTableComboBoxTest1(int argc, char* argv[])
 
   sceneFactory.generateScene();
 
-  int currentCount = nodeSelector.nodeCount();
+  const int currentCount = nodeSelector.nodeCount();
   if (currentCount != 0)
   {
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;

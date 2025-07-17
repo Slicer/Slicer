@@ -136,9 +136,9 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UpdatePipelineFromD
   // Do not add add the interaction widget if the displayable manager is associated with a VR render
   // window. The interaction renderer instantiated below is not supported in VR.
 
-  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  bool visible = this->UseTransformNode(transformNode) //
-                 && this->UseDisplayNode(displayNode);
+  vtkMRMLTransformNode* const transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
+  const bool visible = this->UseTransformNode(transformNode) //
+                       && this->UseDisplayNode(displayNode);
 
   vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
   InteractionWidgetsCacheType::iterator pipelineIt;
@@ -164,7 +164,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UpdatePipelineFromD
 
   if (widget)
   {
-    unsigned long event = vtkMRMLDisplayableNode::DisplayModifiedEvent;
+    const unsigned long event = vtkMRMLDisplayableNode::DisplayModifiedEvent;
     widget->UpdateFromMRML(displayNode->GetDisplayableNode(), event, displayNode);
     if (widget->GetNeedToRender())
     {
@@ -213,7 +213,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::RemoveObservations(
 void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::RemoveAllObservations()
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  vtkSmartPointer<vtkCollection> observations = vtkSmartPointer<vtkCollection>::Take(broker->GetObservationsForCallback(this->External->GetMRMLNodesCallbackCommand()));
+  const vtkSmartPointer<vtkCollection> observations = vtkSmartPointer<vtkCollection>::Take(broker->GetObservationsForCallback(this->External->GetMRMLNodesCallbackCommand()));
   for (int i = 0; i < observations->GetNumberOfItems(); i++)
   {
     vtkObservation* observation = vtkObservation::SafeDownCast(observations->GetItemAsObject(i));
@@ -271,14 +271,14 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode
     return;
   }
 
-  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
+  vtkMRMLTransformNode* const transformNode = vtkMRMLTransformNode::SafeDownCast(node);
   if (transformNode)
   {
     this->Internal->AddObservations(transformNode);
     return;
   }
 
-  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
+  vtkMRMLTransformDisplayNode* const displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
   if (displayNode)
   {
     this->Internal->UpdatePipelineFromDisplayNode(vtkMRMLTransformDisplayNode::SafeDownCast(node));
@@ -299,7 +299,7 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNo
 
   bool modified = false;
 
-  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
+  vtkMRMLTransformNode* const transformNode = vtkMRMLTransformNode::SafeDownCast(node);
   if (transformNode)
   {
     this->Internal->RemoveObservations(transformNode);
@@ -307,7 +307,7 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNo
   }
   else
   {
-    vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
+    vtkMRMLTransformDisplayNode* const displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
     if (displayNode)
     {
       this->Internal->UpdatePipelineFromDisplayNode(displayNode);
@@ -324,7 +324,7 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNo
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  vtkMRMLScene* scene = this->GetMRMLScene();
+  vtkMRMLScene* const scene = this->GetMRMLScene();
   if (scene == nullptr || scene->IsBatchProcessing())
   {
     return;
@@ -333,8 +333,8 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (transformNode)
   {
-    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
-    vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
+    vtkMRMLNode* const callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
+    vtkMRMLTransformDisplayNode* const displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
 
     if (displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent))
     {
@@ -345,7 +345,7 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
     {
       for (int i = 0; i < transformNode->GetNumberOfDisplayNodes(); i++)
       {
-        vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetNthDisplayNode(i));
+        vtkMRMLTransformDisplayNode* const displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetNthDisplayNode(i));
         if (displayNode)
         {
           this->Internal->UpdatePipelineFromDisplayNode(displayNode);
@@ -507,7 +507,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::SetupRenderer()
 bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
 {
   // New point can be placed anywhere
-  int eventid = eventData->GetType();
+  const int eventid = eventData->GetType();
 
   if (eventid == vtkCommand::LeaveEvent && this->Internal->LastActiveWidget != nullptr)
   {
@@ -521,7 +521,7 @@ bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMR
   }
 
   // Other interactions
-  bool canProcess = (this->Internal->FindClosestWidget(eventData, closestDistance2) != nullptr);
+  const bool canProcess = (this->Internal->FindClosestWidget(eventData, closestDistance2) != nullptr);
   if (!canProcess && this->Internal->LastActiveWidget != nullptr //
       && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent))
   {
@@ -536,7 +536,7 @@ bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLLinearTransformsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  int eventid = eventData->GetType();
+  const int eventid = eventData->GetType();
 
   if (eventid == vtkCommand::LeaveEvent)
   {
@@ -549,7 +549,7 @@ bool vtkMRMLLinearTransformsDisplayableManager::ProcessInteractionEvent(vtkMRMLI
 
   // Find/create active widget
   double closestDistance2 = VTK_DOUBLE_MAX;
-  vtkSmartPointer<vtkMRMLTransformHandleWidget> activeWidget = this->Internal->FindClosestWidget(eventData, closestDistance2);
+  const vtkSmartPointer<vtkMRMLTransformHandleWidget> activeWidget = this->Internal->FindClosestWidget(eventData, closestDistance2);
 
   // Deactivate previous widget
   if (this->Internal->LastActiveWidget != nullptr && this->Internal->LastActiveWidget != activeWidget.GetPointer())
@@ -596,7 +596,7 @@ vtkMRMLTransformHandleWidget* vtkMRMLLinearTransformsDisplayableManager::GetWidg
     return nullptr;
   }
 
-  vtkMRMLTransformDisplayNode* markupsDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+  vtkMRMLTransformDisplayNode* const markupsDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
   if (!markupsDisplayNode)
   {
     return nullptr;

@@ -176,7 +176,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
 
@@ -241,10 +241,10 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLVolumeHeaderlessStorageNode* node = (vtkMRMLVolumeHeaderlessStorageNode*)anode;
+  vtkMRMLVolumeHeaderlessStorageNode* const node = (vtkMRMLVolumeHeaderlessStorageNode*)anode;
 
   this->SetFileScanOrder(node->FileScanOrder);
   this->SetFileSpacing(node->FileSpacing);
@@ -316,7 +316,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     volNode->SetAndObserveImageData(nullptr);
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName.empty())
   {
@@ -325,7 +325,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   vtkNew<vtkStringArray> archNames;
-  itk::ArchetypeSeriesFileNames::Pointer archtypeNames = itk::ArchetypeSeriesFileNames::New();
+  const itk::ArchetypeSeriesFileNames::Pointer archtypeNames = itk::ArchetypeSeriesFileNames::New();
 
   archtypeNames->SetArchetype(fullName);
   itk::ArchetypeSeriesFileNames::StringVectorType names = archtypeNames->GetFileNames();
@@ -353,7 +353,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   vtkNew<vtkImageData> image;
 
-  int result = 1;
+  const int result = 1;
 
   for (unsigned int i = 0; i < names.size(); i++)
   {
@@ -434,7 +434,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 1;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
@@ -450,7 +450,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // set volume attributes
-  vtkNew<vtkMatrix4x4> mat;
+  const vtkNew<vtkMatrix4x4> mat;
   volNode->GetRASToIJKMatrix(mat.GetPointer());
   writer->SetRasToIJKMatrix(mat.GetPointer());
 

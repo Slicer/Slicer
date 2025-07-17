@@ -55,7 +55,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLColorListView* widget = reinterpret_cast<qMRMLColorListView*>(data);
+  qMRMLColorListView* const widget = reinterpret_cast<qMRMLColorListView*>(data);
 
   CTKCOMPARE(widget->currentIndex().row(), 49);
 }
@@ -65,14 +65,14 @@ void checkFinalWidgetState(void* data)
 int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1

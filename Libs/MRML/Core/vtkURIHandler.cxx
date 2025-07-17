@@ -76,7 +76,7 @@ size_t vtkURIHandler::BufferedWrite(char* buffer, size_t size, size_t nitems)
   if (this->LocalFile != nullptr)
   {
     // this->LocalFile->write(buffer,size*nitems);
-    size_t size_written = fwrite(buffer, sizeof(char), size * nitems, this->LocalFile);
+    const size_t size_written = fwrite(buffer, sizeof(char), size * nitems, this->LocalFile);
     if (size_written != size * nitems)
     {
       std::cerr << "Error: BufferedWrite tried to write " << size * nitems << ", only wrote " << size_written << " items" << std::endl;

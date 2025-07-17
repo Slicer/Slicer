@@ -92,7 +92,7 @@ void qMRMLTableViewPrivate::init()
 {
   Q_Q(qMRMLTableView);
 
-  qMRMLTableModel* tableModel = new qMRMLTableModel(q);
+  qMRMLTableModel* const tableModel = new qMRMLTableModel(q);
   QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
   sortFilterModel->setSourceModel(tableModel);
   q->setModel(sortFilterModel);
@@ -225,7 +225,7 @@ void qMRMLTableView::setMRMLTableNode(vtkMRMLTableNode* node)
 //------------------------------------------------------------------------------
 vtkMRMLTableNode* qMRMLTableView::mrmlTableNode() const
 {
-  qMRMLTableModel* mrmlModel = this->tableModel();
+  qMRMLTableModel* const mrmlModel = this->tableModel();
   if (!mrmlModel)
   {
     qCritical("qMRMLTableView::mrmlTableNode failed: model is invalid");
@@ -291,8 +291,8 @@ void qMRMLTableView::copySelection()
     return;
   }
 
-  qMRMLTableModel* mrmlModel = tableModel();
-  QItemSelectionModel* selection = selectionModel();
+  qMRMLTableModel* const mrmlModel = tableModel();
+  QItemSelectionModel* const selection = selectionModel();
   QString textToCopy;
   bool firstLine = true;
   for (int rowIndex = 0; rowIndex < mrmlModel->rowCount(); rowIndex++)
@@ -326,7 +326,7 @@ void qMRMLTableView::copySelection()
       {
         textToCopy.append('\t');
       }
-      QStandardItem* item = mrmlModel->item(rowIndex, columnIndex);
+      QStandardItem* const item = mrmlModel->item(rowIndex, columnIndex);
       if (item->isCheckable())
       {
         textToCopy.append(item->checkState() == Qt::Checked ? "1" : "0");
@@ -347,7 +347,7 @@ void qMRMLTableView::pasteSelection()
   Q_D(qMRMLTableView);
   CTK_CHECK_AND_RETURN_IF_FAIL(d->verifyTableModelAndNode)
 
-  QString text = QApplication::clipboard()->text();
+  const QString text = QApplication::clipboard()->text();
   if (text.isEmpty())
   {
     return;
@@ -387,7 +387,7 @@ void qMRMLTableView::pasteSelection()
   // a table update, which may be very slow in case of large tables, therefore
   // we need to use StartModify/EndModify.
   vtkMRMLTableNode* tableNode = mrmlTableNode();
-  int wasModified = tableNode->StartModify();
+  const int wasModified = tableNode->StartModify();
 
   // Pre-allocate new rows (to reduce number of updateModelFromMRML() calls
   if (tableNode->GetNumberOfColumns() == 0)
@@ -407,7 +407,7 @@ void qMRMLTableView::pasteSelection()
   for (const QString& line : lines)
   {
     int columnIndex = startColumnIndex;
-    QStringList cells = line.split('\t');
+    const QStringList cells = line.split('\t');
     for (const QString& cell : cells)
     {
       // Pre-allocate new columns (enough for at least for storing all the items in the current row)
@@ -460,12 +460,12 @@ void qMRMLTableView::plotSelection()
   // Validate type of selected columns
   int stringColumnIndex = -1; // one string column is allowed (to be used as point labels)
   std::deque<int> columnIndices;
-  QItemSelectionModel* selection = selectionModel();
-  QModelIndexList selectedColumns = selection->selectedIndexes();
+  QItemSelectionModel* const selection = selectionModel();
+  const QModelIndexList selectedColumns = selection->selectedIndexes();
   for (int i = 0; i < selectedColumns.count(); i++)
   {
-    QModelIndex index = selectedColumns.at(i);
-    int columnIndex = index.column();
+    const QModelIndex index = selectedColumns.at(i);
+    const int columnIndex = index.column();
     if (std::find(columnIndices.begin(), columnIndices.end(), columnIndex) == columnIndices.end() //
         && columnIndex != stringColumnIndex)
     {
@@ -473,18 +473,18 @@ void qMRMLTableView::plotSelection()
       vtkAbstractArray* column = tableNode->GetTable()->GetColumn(columnIndex);
       if (!column || !column->GetName())
       {
-        QString message = tr("Column %1 is invalid. Failed to generate a plot").arg(columnIndex);
+        const QString message = tr("Column %1 is invalid. Failed to generate a plot").arg(columnIndex);
         qCritical() << Q_FUNC_INFO << ": " << message;
         QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
         return;
       }
-      int columnDataType = column->GetDataType();
+      const int columnDataType = column->GetDataType();
       if (columnDataType == VTK_BIT)
       {
-        QString message = tr("Type of column %1 is 'bit'. Plotting of these types are currently not supported."
-                             " Please convert the data type of this column to numeric using Table module's Column properties section,"
-                             " or select different columns for plotting.")
-                            .arg(column->GetName());
+        const QString message = tr("Type of column %1 is 'bit'. Plotting of these types are currently not supported."
+                                   " Please convert the data type of this column to numeric using Table module's Column properties section,"
+                                   " or select different columns for plotting.")
+                                  .arg(column->GetName());
         qCritical() << Q_FUNC_INFO << ": " << message;
         QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
         return;
@@ -498,9 +498,9 @@ void qMRMLTableView::plotSelection()
         }
         else
         {
-          QString message = tr("Multiple 'string' type of columns are selected for plotting (%1, %2) but only one is allowed."
-                               " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.")
-                              .arg(tableNode->GetColumnName(stringColumnIndex).c_str(), column->GetName());
+          const QString message = tr("Multiple 'string' type of columns are selected for plotting (%1, %2) but only one is allowed."
+                                     " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.")
+                                    .arg(tableNode->GetColumnName(stringColumnIndex).c_str(), column->GetName());
           qCritical() << Q_FUNC_INFO << ": " << message;
           QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
           return;
@@ -514,8 +514,8 @@ void qMRMLTableView::plotSelection()
   }
   if (columnIndices.size() == 0)
   {
-    QString message = tr("A single 'string' type column is selected."
-                         " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.");
+    const QString message = tr("A single 'string' type column is selected."
+                               " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.");
     qCritical() << Q_FUNC_INFO << ": " << message;
     QMessageBox::warning(nullptr, tr("Failed to plot data"), message);
     return;
@@ -553,7 +553,7 @@ void qMRMLTableView::plotSelection()
     qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
     return;
   }
-  int viewArray = layoutNode->GetViewArrangement();
+  const int viewArray = layoutNode->GetViewArrangement();
   if (viewArray != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView && //
       viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView &&       //
       viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView &&  //
@@ -586,10 +586,10 @@ void qMRMLTableView::plotSelection()
 
   for (std::deque<int>::iterator columnIndexIt = columnIndices.begin(); columnIndexIt != columnIndices.end(); ++columnIndexIt)
   {
-    std::string yColumnName = tableNode->GetColumnName(*columnIndexIt);
+    const std::string yColumnName = tableNode->GetColumnName(*columnIndexIt);
 
     // Check if there is already a PlotSeriesNode that has the same name as this Column and reuse that to avoid node duplication
-    vtkSmartPointer<vtkCollection> colPlots = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClassByName("vtkMRMLPlotSeriesNode", yColumnName.c_str()));
+    const vtkSmartPointer<vtkCollection> colPlots = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClassByName("vtkMRMLPlotSeriesNode", yColumnName.c_str()));
     if (colPlots == nullptr)
     {
       continue;
@@ -622,8 +622,8 @@ void qMRMLTableView::plotSelection()
     plotSeriesNode->SetYColumnName(yColumnName);
     plotSeriesNode->SetAndObserveTableNodeID(tableNode->GetID());
 
-    std::string namePlotSeriesNode = plotSeriesNode->GetName();
-    std::size_t found = namePlotSeriesNode.find("Markups");
+    const std::string namePlotSeriesNode = plotSeriesNode->GetName();
+    const std::size_t found = namePlotSeriesNode.find("Markups");
     if (found != std::string::npos)
     {
       plotChartNode->RemovePlotSeriesNodeID(plotSeriesNode->GetID());
@@ -831,11 +831,11 @@ vtkMRMLScene* qMRMLTableView::mrmlScene() const
 QList<int> qMRMLTableView::selectedMRMLTableColumnIndices() const
 {
   QList<int> mrmlColumnIndexList;
-  QModelIndexList selection = selectionModel()->selectedIndexes();
-  qMRMLTableModel* tableModel = this->tableModel();
+  const QModelIndexList selection = selectionModel()->selectedIndexes();
+  qMRMLTableModel* const tableModel = this->tableModel();
   for (const QModelIndex index : selection)
   {
-    int mrmlColumnIndex = tableModel->mrmlTableColumnIndex(index);
+    const int mrmlColumnIndex = tableModel->mrmlTableColumnIndex(index);
     if (!mrmlColumnIndexList.contains(mrmlColumnIndex))
     {
       // insert unique row/column index only

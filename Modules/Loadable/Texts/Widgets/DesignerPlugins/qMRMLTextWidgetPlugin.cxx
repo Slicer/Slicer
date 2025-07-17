@@ -30,7 +30,7 @@ qMRMLTextWidgetPlugin::qMRMLTextWidgetPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLTextWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTextWidget* _widget = new qMRMLTextWidget(_parent);
+  qMRMLTextWidget* const _widget = new qMRMLTextWidget(_parent);
   return _widget;
 }
 

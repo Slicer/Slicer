@@ -25,7 +25,7 @@ int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 
-  qSlicerCoreApplication* aptr = app.application();
+  qSlicerCoreApplication* const aptr = app.application();
 
   if (aptr != (&app))
   {
@@ -33,7 +33,7 @@ int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerCamerasModuleWidget* cameraModuleWidget = new qSlicerCamerasModuleWidget;
+  qSlicerCamerasModuleWidget* const cameraModuleWidget = new qSlicerCamerasModuleWidget;
 
   delete cameraModuleWidget;
 

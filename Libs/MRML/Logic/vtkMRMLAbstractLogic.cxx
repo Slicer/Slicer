@@ -165,7 +165,7 @@ void vtkMRMLAbstractLogic::MRMLSceneCallback(vtkObject* caller, unsigned long ei
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLSceneCallback");
 
   self->SetInMRMLSceneCallbackFlag(self->GetInMRMLSceneCallbackFlag() + 1);
-  int oldProcessingEvent = self->GetProcessingMRMLSceneEvent();
+  const int oldProcessingEvent = self->GetProcessingMRMLSceneEvent();
   self->SetProcessingMRMLSceneEvent(eid);
   self->ProcessMRMLSceneEvents(caller, eid, callData);
   self->SetProcessingMRMLSceneEvent(oldProcessingEvent);
@@ -486,7 +486,7 @@ void vtkMRMLAbstractLogic::OnMRMLSceneEndBatchProcess()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))
 {
-  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
+  vtkMRMLNode* const node = vtkMRMLNode::SafeDownCast(caller);
   assert(node);
   switch (event)
   {
@@ -534,7 +534,7 @@ int vtkMRMLAbstractLogic::InvokePendingModifiedEvent()
 {
   if (this->Internal->ModifiedEventPending)
   {
-    int oldModifiedEventPending = this->Internal->ModifiedEventPending;
+    const int oldModifiedEventPending = this->Internal->ModifiedEventPending;
     this->Internal->ModifiedEventPending = 0;
     this->Superclass::Modified();
     return oldModifiedEventPending;

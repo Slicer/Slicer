@@ -80,7 +80,7 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
 {
   // cout << "vtkMRMLAnnotationRulerNode::ReadXMLAttributes start"<< endl;
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->ResetAnnotations();
 
@@ -88,8 +88,8 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
 
   while (*atts != nullptr)
   {
-    const char* attName = *(atts++);
-    std::string attValue(*(atts++));
+    const char* const attName = *(atts++);
+    const std::string attValue(*(atts++));
 
     if (!strcmp(attName, "rulerDistanceAnnotationFormat"))
     {
@@ -244,7 +244,7 @@ int vtkMRMLAnnotationRulerNode::SetControlPoint(int id, double newControl[3])
     return 0;
   }
 
-  int flag = Superclass::SetControlPoint(id, newControl, 1, 1);
+  const int flag = Superclass::SetControlPoint(id, newControl, 1, 1);
   if (!flag)
   {
     return 0;
@@ -389,7 +389,7 @@ double vtkMRMLAnnotationRulerNode::GetDistanceMeasurement()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
 {
-  double* tmp = this->GetControlPointCoordinates(0);
+  double* const tmp = this->GetControlPointCoordinates(0);
   if (!tmp)
   {
     vtkErrorMacro("AnnotationRuler - Failed to get first control point");
@@ -404,7 +404,7 @@ void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::GetPosition2(double position[3])
 {
-  double* tmp = this->GetControlPointCoordinates(1);
+  double* const tmp = this->GetControlPointCoordinates(1);
   if (!tmp)
   {
     vtkErrorMacro("AnnotationRuler - Failed to get second control point");

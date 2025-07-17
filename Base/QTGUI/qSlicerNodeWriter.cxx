@@ -113,7 +113,7 @@ QStringList qSlicerNodeWriter::extensions(vtkObject* object) const
     const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
     for (int formatIt = 0; formatIt < formatCount; ++formatIt)
     {
-      std::string format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+      const std::string format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
       supportedExtensions << QString::fromStdString(format);
     }
   }
@@ -140,10 +140,10 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   }
 
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
   snode->SetFileName(fileName.toUtf8());
 
-  QString fileFormat = properties.value("fileFormat").toString();
+  const QString fileFormat = properties.value("fileFormat").toString();
   if (!fileFormat.isEmpty())
   {
     snode->SetWriteFileFormat(fileFormat.toUtf8());
@@ -157,7 +157,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
       snode->SetCompressionParameter(properties["compressionParameter"].toString().toStdString());
     }
   }
-  bool res = snode->WriteData(node);
+  const bool res = snode->WriteData(node);
 
   if (res)
   {
@@ -172,7 +172,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char* id) const
 {
-  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
+  vtkMRMLNode* const node = this->mrmlScene()->GetNodeByID(id);
   return node;
 }
 

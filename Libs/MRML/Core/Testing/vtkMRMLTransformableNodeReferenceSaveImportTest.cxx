@@ -70,7 +70,7 @@ int TestImportIntoEmptyScene()
   // Write scene1 to string
   scene1->SetSaveToXMLString(1);
   scene1->Commit();
-  std::string xmlScene1 = scene1->GetSceneXMLString();
+  const std::string xmlScene1 = scene1->GetSceneXMLString();
   std::cout << xmlScene1 << std::endl;
 
   // Import scene1 into scene2
@@ -115,7 +115,7 @@ int TestImportIntoSceneWithNodeIdConflict()
   // Write scene1 to string
   scene1->SetSaveToXMLString(1);
   scene1->Commit();
-  std::string xmlScene1 = scene1->GetSceneXMLString();
+  const std::string xmlScene1 = scene1->GetSceneXMLString();
 
   // Create scene2
 

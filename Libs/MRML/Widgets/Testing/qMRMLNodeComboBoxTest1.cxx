@@ -40,15 +40,15 @@
 int qMRMLNodeComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qMRMLNodeComboBox nodeSelector;
 
   // default state
-  bool addEnabled = nodeSelector.addEnabled();
-  bool removeEnabled = nodeSelector.removeEnabled();
-  bool editEnabled = nodeSelector.editEnabled();
+  const bool addEnabled = nodeSelector.addEnabled();
+  const bool removeEnabled = nodeSelector.removeEnabled();
+  const bool editEnabled = nodeSelector.editEnabled();
   // Add button should be enabled
   if (!(addEnabled && removeEnabled && !editEnabled))
   {

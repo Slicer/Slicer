@@ -72,7 +72,7 @@ void vtkMRMLPlotViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -89,7 +89,7 @@ void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -136,7 +136,7 @@ void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject* caller, unsigned long eve
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLPlotChartNode* pnode = this->GetPlotChartNode();
+  vtkMRMLPlotChartNode* const pnode = this->GetPlotChartNode();
   if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) && //
       (event == vtkCommand::ModifiedEvent || event == vtkMRMLPlotChartNode::PlotModifiedEvent))
   {

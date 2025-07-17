@@ -30,7 +30,7 @@ public:
 
 int qSlicerCoreModuleTest1(int, char*[])
 {
-  qSlicerCoreModule* module = new ACoreModule;
+  qSlicerCoreModule* const module = new ACoreModule;
   delete module;
 
   return EXIT_SUCCESS;

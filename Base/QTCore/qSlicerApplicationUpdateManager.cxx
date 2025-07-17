@@ -92,7 +92,7 @@ void qSlicerApplicationUpdateManagerPrivate::init()
 {
   Q_Q(qSlicerApplicationUpdateManager);
 
-  QSettings settings;
+  const QSettings settings;
   this->AutoUpdateCheck = settings.value("ApplicationUpdate/AutoUpdateCheck", this->AutoUpdateCheck).toBool();
 
   QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString, QString, QString)), q, SLOT(refreshUpdateAvailable()));
@@ -112,19 +112,19 @@ bool qSlicerApplicationUpdateManagerPrivate::isUpdateCheckDue() const
   }
 
   // stores time of last update check for this Slicer installation
-  QSettings settings;
+  const QSettings settings;
   if (!settings.contains("ApplicationUpdate/LastUpdateCheckTime"))
   {
     // there has never been an update check
     return true;
   }
 
-  QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
-  QDateTime lastUpdateCheckTime = QDateTime::fromString(lastUpdateCheckTimeStr, Qt::ISODate);
-  QDateTime currentTime = QDateTime::currentDateTimeUtc();
+  const QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
+  const QDateTime lastUpdateCheckTime = QDateTime::fromString(lastUpdateCheckTimeStr, Qt::ISODate);
+  const QDateTime currentTime = QDateTime::currentDateTimeUtc();
   // By default, we check for updates once a day
-  int updateFrequencyMinutes = settings.value("ApplicationUpdate/AutoUpdateFrequencyMinutes", 24 * 60).toInt();
-  qint64 updateFrequencyMsec = qint64(updateFrequencyMinutes) * qint64(60000);
+  const int updateFrequencyMinutes = settings.value("ApplicationUpdate/AutoUpdateFrequencyMinutes", 24 * 60).toInt();
+  const qint64 updateFrequencyMsec = qint64(updateFrequencyMinutes) * qint64(60000);
   if (lastUpdateCheckTime.msecsTo(currentTime) < updateFrequencyMsec)
   {
     // not enough time has passed since the last update check
@@ -201,7 +201,7 @@ qSlicerApplicationUpdateManager::~qSlicerApplicationUpdateManager() = default;
 // --------------------------------------------------------------------------
 QUrl qSlicerApplicationUpdateManager::serverUrl() const
 {
-  QSettings settings;
+  const QSettings settings;
   return QUrl(settings.value("ApplicationUpdate/ServerUrl").toString());
 }
 
@@ -237,8 +237,8 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
 {
   Q_D(qSlicerApplicationUpdateManager);
 
-  QSettings settings;
-  QString cachedServerUrl = settings.value("ApplicationUpdate/LastUpdateCheckUrl").toString();
+  const QSettings settings;
+  const QString cachedServerUrl = settings.value("ApplicationUpdate/LastUpdateCheckUrl").toString();
   if (cachedServerUrl.isEmpty() || cachedServerUrl != this->serverUrl().toString())
   {
     // no metadata cached for this server URL
@@ -286,7 +286,7 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
   // because we'll call it directly to get returned result.
   QObject::disconnect(&d->ReleaseInfoAPI, SIGNAL(finished(QUuid)), this, SLOT(onReleaseInfoQueryFinished(QUuid)));
 
-  bool success = this->onReleaseInfoQueryFinished(d->ReleaseInfoQueryUID);
+  const bool success = this->onReleaseInfoQueryFinished(d->ReleaseInfoQueryUID);
 
   QObject::connect(&d->ReleaseInfoAPI, SIGNAL(finished(QUuid)), this, SLOT(onReleaseInfoQueryFinished(QUuid)));
 
@@ -301,13 +301,13 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
 // --------------------------------------------------------------------------
 QDateTime qSlicerApplicationUpdateManager::lastUpdateCheckTime() const
 {
-  QSettings settings;
+  const QSettings settings;
   if (!settings.contains("ApplicationUpdate/LastUpdateCheckTime"))
   {
     // there has never been an update check
     return QDateTime();
   }
-  QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
+  const QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
   QDateTime LastUpdateCheckTime = QDateTime::fromString(lastUpdateCheckTimeStr, Qt::ISODate);
   return LastUpdateCheckTime;
 }
@@ -318,21 +318,21 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
   Q_UNUSED(requestId);
   Q_D(qSlicerApplicationUpdateManager);
 
-  QScopedPointer<qRestResult> restResult(d->ReleaseInfoAPI.takeResult(d->ReleaseInfoQueryUID));
+  const QScopedPointer<qRestResult> restResult(d->ReleaseInfoAPI.takeResult(d->ReleaseInfoQueryUID));
 
   bool success = false;
   QVariantMap releaseInfo;
   if (!restResult.isNull())
   {
-    QString responseString = QString(restResult->response());
+    const QString responseString = QString(restResult->response());
     QJSEngine scriptEngine;
-    QJSValue scriptValue = scriptEngine.evaluate("JSON.parse").callWithInstance(QJSValue(), QJSValueList() << responseString);
+    const QJSValue scriptValue = scriptEngine.evaluate("JSON.parse").callWithInstance(QJSValue(), QJSValueList() << responseString);
 
     QList<QVariantMap> response;
     // e.g. {["key1": "value1", ...]} or {"key1": "value1", ...}
     if (scriptValue.isArray())
     {
-      quint32 length = scriptValue.property("length").toUInt();
+      const quint32 length = scriptValue.property("length").toUInt();
       for (quint32 i = 0; i < length; ++i)
       {
         qRestAPI::appendScriptValueToVariantMapList(response, scriptValue.property(i));
@@ -370,7 +370,7 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
 
   // stores time of last update check for this Slicer installation
   QSettings settings;
-  QDateTime currentTime = QDateTime::currentDateTimeUtc();
+  const QDateTime currentTime = QDateTime::currentDateTimeUtc();
   settings.setValue("ApplicationUpdate/LastUpdateCheckTime", currentTime.toString(Qt::ISODate));
   settings.setValue("ApplicationUpdate/LastUpdateCheckUrl", this->serverUrl().toString());
 
@@ -392,13 +392,13 @@ void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revis
   {
     return;
   }
-  QString previousSlicerRevision = d->SlicerRevision;
+  const QString previousSlicerRevision = d->SlicerRevision;
   d->SlicerRevision = revision;
 
-  QString previousSlicerOs = d->SlicerOs;
+  const QString previousSlicerOs = d->SlicerOs;
   d->SlicerOs = os;
 
-  QString previousSlicerArch = d->SlicerArch;
+  const QString previousSlicerArch = d->SlicerArch;
   d->SlicerArch = arch;
 
   this->refreshUpdateAvailable();
@@ -421,9 +421,9 @@ void qSlicerApplicationUpdateManager::refreshUpdateAvailable()
   if (!d->LatestReleaseRevision.isEmpty() && !d->SlicerRevision.isEmpty())
   {
     bool isIntegerCurrentRevision = false;
-    int currentRevisionNumber = d->SlicerRevision.toInt(&isIntegerCurrentRevision);
+    const int currentRevisionNumber = d->SlicerRevision.toInt(&isIntegerCurrentRevision);
     bool isIntegerLatestRevision = false;
-    int latestRevisionNumber = d->LatestReleaseRevision.toInt(&isIntegerLatestRevision);
+    const int latestRevisionNumber = d->LatestReleaseRevision.toInt(&isIntegerLatestRevision);
     if (isIntegerCurrentRevision && isIntegerLatestRevision)
     {
       isUpdateAvailable = (currentRevisionNumber < latestRevisionNumber);

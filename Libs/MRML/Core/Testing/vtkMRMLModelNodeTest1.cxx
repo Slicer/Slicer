@@ -38,7 +38,7 @@ int vtkMRMLModelNodeTest1(int, char*[])
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods()
 {
-  vtkNew<vtkMRMLModelNode> node1;
+  const vtkNew<vtkMRMLModelNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -61,7 +61,7 @@ int TestActiveScalars()
   testingArray2->SetName("testingArray2");
   node1->AddCellScalars(testingArray2.GetPointer());
 
-  int attribute = vtkDataSetAttributes::SCALARS;
+  const int attribute = vtkDataSetAttributes::SCALARS;
   node1->SetActivePointScalars("testingArray", attribute);
   node1->SetActiveCellScalars("testingArray2", attribute);
 
@@ -77,7 +77,7 @@ int TestActiveScalars()
 //---------------------------------------------------------------------------
 int TestGetSetMesh()
 {
-  vtkNew<vtkUnstructuredGrid> ug;
+  const vtkNew<vtkUnstructuredGrid> ug;
   vtkNew<vtkPolyData> poly;
 
   vtkNew<vtkMRMLModelNode> node1;

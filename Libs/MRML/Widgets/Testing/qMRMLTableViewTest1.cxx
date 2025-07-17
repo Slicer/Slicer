@@ -60,7 +60,7 @@ int qMRMLTableViewTest1(int argc, char* argv[])
   vtkNew<vtkDoubleArray> arrSum;
   arrSum->SetName("Sum");
   table->AddColumn(arrSum.GetPointer());
-  int numPoints = 15;
+  const int numPoints = 15;
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {

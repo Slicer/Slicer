@@ -130,7 +130,7 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment)
 {
-  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(this->GetTargetRepresentationName()));
+  const vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(this->GetTargetRepresentationName()));
   this->CreateTargetRepresentation(segment);
 
   // Check validity of source and target representation objects
@@ -169,14 +169,14 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   }
   else if (outputGeometryLabelmap)
   {
-    std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(outputGeometryLabelmap);
+    const std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(outputGeometryLabelmap);
     vtkSegmentationConverter::DeserializeImageGeometry(geometryString, binaryLabelmap, false);
   }
 
   // Allocate output image data
   binaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
-  void* binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
+  void* const binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
   if (!binaryLabelmapVoxelsPointer)
   {
     vtkErrorMacro("Convert: Failed to allocate memory for output labelmap image!");
@@ -198,18 +198,18 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   // Now the output labelmap image data contains the right geometry.
   // We need to apply inverse of geometry matrix to the input poly data so that we can perform
   // the conversion in IJK space, because the filters do not support oriented image data.
-  vtkSmartPointer<vtkMatrix4x4> outputLabelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> outputLabelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   binaryLabelmap->GetImageToWorldMatrix(outputLabelmapImageToWorldMatrix);
-  vtkSmartPointer<vtkTransform> inverseOutputLabelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
+  const vtkSmartPointer<vtkTransform> inverseOutputLabelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
   inverseOutputLabelmapGeometryTransform->SetMatrix(outputLabelmapImageToWorldMatrix);
   inverseOutputLabelmapGeometryTransform->Inverse();
 
   // Set geometry to identity for the volume so that we can perform the stencil operation in IJK space
-  vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   identityMatrix->Identity();
   binaryLabelmap->SetGeometryFromImageToWorldMatrix(identityMatrix);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  const vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseOutputLabelmapGeometryTransform);
 
@@ -223,7 +223,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   triangle->SetInputConnection(normalFilter->GetOutputPort());
 
   // Convert to triangle strip
-  vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
+  const vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
   stripper->SetInputConnection(triangle->GetOutputPort());
 
   // Convert polydata to stencil
@@ -262,7 +262,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::PostConvert(vtkSegmentation* segmentation)
 {
-  int collapseLabelmaps = this->ConversionParameters->GetValueAsInt(GetCollapseLabelmapsParameterName());
+  const int collapseLabelmaps = this->ConversionParameters->GetValueAsInt(GetCollapseLabelmapsParameterName());
   if (collapseLabelmaps > 0)
   {
     segmentation->CollapseBinaryLabelmaps(false);
@@ -306,12 +306,12 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   }
 
   // Get oversampling factor
-  std::string oversamplingString = this->ConversionParameters->GetValue(GetOversamplingFactorParameterName());
+  const std::string oversamplingString = this->ConversionParameters->GetValue(GetOversamplingFactorParameterName());
   double oversamplingFactor = 1.0;
   if (!oversamplingString.compare("A"))
   {
     // Automatic oversampling factor is used
-    vtkSmartPointer<vtkCalculateOversamplingFactor> oversamplingCalculator = vtkSmartPointer<vtkCalculateOversamplingFactor>::New();
+    const vtkSmartPointer<vtkCalculateOversamplingFactor> oversamplingCalculator = vtkSmartPointer<vtkCalculateOversamplingFactor>::New();
     oversamplingCalculator->SetInputPolyData(closedSurfacePolyData);
     oversamplingCalculator->SetReferenceGeometryImageData(geometryImageData);
     if (oversamplingCalculator->CalculateOversamplingFactor())
@@ -341,7 +341,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
 
   int cropToReferenceImageGeometry = 0;
   {
-    std::string cropToReferenceImageGeometryString = this->ConversionParameters->GetValue(GetCropToReferenceImageGeometryParameterName());
+    const std::string cropToReferenceImageGeometryString = this->ConversionParameters->GetValue(GetCropToReferenceImageGeometryParameterName());
     std::stringstream ss;
     ss << cropToReferenceImageGeometryString;
     ss >> cropToReferenceImageGeometry;
@@ -353,13 +353,13 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
 
   // We need to apply inverse of direction matrix to the input poly data
   // so that we can expand the image in its IJK directions
-  vtkSmartPointer<vtkMatrix4x4> geometryImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> geometryImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   geometryImageData->GetImageToWorldMatrix(geometryImageToWorldMatrix);
-  vtkSmartPointer<vtkTransform> inverseImageGeometryTransform = vtkSmartPointer<vtkTransform>::New();
+  const vtkSmartPointer<vtkTransform> inverseImageGeometryTransform = vtkSmartPointer<vtkTransform>::New();
   inverseImageGeometryTransform->SetMatrix(geometryImageToWorldMatrix);
   inverseImageGeometryTransform->Inverse();
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  const vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseImageGeometryTransform);
   transformPolyDataFilter->Update();
@@ -416,7 +416,7 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   polyData->GetBounds(bounds);
 
   // Set origin
-  vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   geometryMatrix->Identity(); // Default directions and scaling
   geometryMatrix->SetElement(0, 3, bounds[0]);
   geometryMatrix->SetElement(1, 3, bounds[2]);
@@ -426,8 +426,8 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   // this size is not too large for average computing hardware yet
   // it is sufficiently detailed for many applications
   const double preferredVolumeSizeInVoxels = 250 * 250 * 250;
-  double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
-  double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
+  const double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
+  const double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
   geometryMatrix->SetElement(0, 0, spacing);
   geometryMatrix->SetElement(1, 1, spacing);
   geometryMatrix->SetElement(2, 2, spacing);

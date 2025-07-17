@@ -36,7 +36,7 @@ protected:
 
 int qSlicerAbstractModuleTest1(int, char*[])
 {
-  AModule module;
+  const AModule module;
 
   return EXIT_SUCCESS;
 }

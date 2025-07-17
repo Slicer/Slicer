@@ -51,9 +51,9 @@ typename DiffusionTensor3DPPDAffineTransform<TData>::TensorDataType DiffusionTen
   EValuesType eigenValues;
   EVectorsType eigenVectors;
   DiffusionTensor3DExtended<double> tensorDouble(tensor);
-  InternalMatrixTransformType tensorMatrixDouble = tensorDouble.GetTensor2Matrix();
+  const InternalMatrixTransformType tensorMatrixDouble = tensorDouble.GetTensor2Matrix();
   // InternalMatrixDataType tensorMatrix = tensorDouble.GetTensor2Matrix() ;
-  InternalMatrixTransformType MFT = this->m_MeasurementFrame.GetTranspose();
+  const InternalMatrixTransformType MFT = this->m_MeasurementFrame.GetTranspose();
   tensorDouble.SetTensorFromMatrix(this->m_MeasurementFrame * tensorMatrixDouble * MFT);
   tensorDouble.ComputeEigenAnalysis(eigenValues, eigenVectors);
   if (eigenValues[0] == 0 && eigenValues[1] == 0 && eigenValues[2] == 0)
@@ -118,9 +118,9 @@ typename DiffusionTensor3DPPDAffineTransform<TData>::TensorDataType DiffusionTen
   {
     r2 = ComputeMatrixFromAxisAndAngle(axis / norm, costheta);
   }
-  InternalMatrixTransformType R = r2 * r1;
+  const InternalMatrixTransformType R = r2 * r1;
   //  InternalMatrixDataType tensorMatrix = internalTensor.GetTensor2Matrix() ;
-  InternalMatrixTransformType RTranspose = R.GetTranspose();
+  const InternalMatrixTransformType RTranspose = R.GetTranspose();
   //  InternalMatrixTransformType MFT = this->m_MeasurementFrame.GetTranspose() ;
   // InternalMatrixTransformType mat = R * ( InternalMatrixTransformType )tensorMatrix * RTranspose ;
   InternalMatrixTransformType mat = R * tensorDouble.GetTensor2Matrix() * RTranspose;
@@ -136,7 +136,7 @@ template <class TData>
 typename DiffusionTensor3DPPDAffineTransform<TData>::InternalMatrixTransformType DiffusionTensor3DPPDAffineTransform<TData>::ComputeMatrixFromAxisAndAngle(VectorType axis,
                                                                                                                                                            double cosangle)
 {
-  double c = cosangle;
+  const double c = cosangle;
 
   if (cosangle < -1)
   {
@@ -146,17 +146,17 @@ typename DiffusionTensor3DPPDAffineTransform<TData>::InternalMatrixTransformType
   {
     cosangle = 1;
   }
-  double s = sqrt(1 - cosangle * cosangle);
-  double C = 1 - c;
-  double xs = axis[0] * s;
-  double ys = axis[1] * s;
-  double zs = axis[2] * s;
-  double xC = axis[0] * C;
-  double yC = axis[1] * C;
-  double zC = axis[2] * C;
-  double xyC = axis[0] * yC;
-  double yzC = axis[1] * zC;
-  double zxC = axis[2] * xC;
+  const double s = sqrt(1 - cosangle * cosangle);
+  const double C = 1 - c;
+  const double xs = axis[0] * s;
+  const double ys = axis[1] * s;
+  const double zs = axis[2] * s;
+  const double xC = axis[0] * C;
+  const double yC = axis[1] * C;
+  const double zC = axis[2] * C;
+  const double xyC = axis[0] * yC;
+  const double yzC = axis[1] * zC;
+  const double zxC = axis[2] * xC;
   InternalMatrixTransformType mat;
   mat[0][0] = axis[0] * xC + c;
   mat[0][1] = xyC - zs;

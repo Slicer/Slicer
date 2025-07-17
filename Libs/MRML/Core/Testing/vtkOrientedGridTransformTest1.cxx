@@ -100,7 +100,7 @@ itkGridTransformType::Pointer CreateGridTransformItk(const double origin[3], con
   idx[0] = idx[1] = idx[2] = 0;
   region.SetIndex(idx);
 
-  itkDisplacementFieldType::Pointer displacementField = itkDisplacementFieldType::New();
+  const itkDisplacementFieldType::Pointer displacementField = itkDisplacementFieldType::New();
 
   displacementField->SetRegions(region);
   displacementField->SetOrigin(origin);
@@ -120,7 +120,7 @@ itkGridTransformType::Pointer CreateGridTransformItk(const double origin[3], con
 //----------------------------------------------------------------------------
 void SetGridNodeItk(itkGridTransformType::Pointer grid, int nodeIndex[3], double nodeValue[3])
 {
-  itkDisplacementFieldType::Pointer displacementField = grid->GetDisplacementField();
+  const itkDisplacementFieldType::Pointer displacementField = grid->GetDisplacementField();
 
   itkGridTransformType::IndexType pixelIndex;
   pixelIndex[0] = nodeIndex[0];
@@ -151,9 +151,9 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkGridTr
   double outputPoint[3] = { 0 };
   gridVtk->TransformPoint(inputPoint, outputPoint);
 
-  itk::Point<double, 3> inputPointVtk(inputPoint);
-  itk::Point<double, 3> outputPointVtk(outputPoint);
-  double difference = outputPointItk.EuclideanDistanceTo(outputPointVtk);
+  const itk::Point<double, 3> inputPointVtk(inputPoint);
+  const itk::Point<double, 3> outputPointVtk(outputPoint);
+  const double difference = outputPointItk.EuclideanDistanceTo(outputPointVtk);
 
   if (logDetails)
   {
@@ -181,12 +181,12 @@ double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], 
   float floatOutputPoint[3] = { 0 };
   gridVtk->TransformPoint(floatInputPoint, floatOutputPoint);
 
-  itk::Point<double, 3> outputPointVtk(outputPoint);
+  const itk::Point<double, 3> outputPointVtk(outputPoint);
   itk::Point<double, 3> floatOutputPointVtk;
   floatOutputPointVtk[0] = floatOutputPoint[0];
   floatOutputPointVtk[1] = floatOutputPoint[1];
   floatOutputPointVtk[2] = floatOutputPoint[2];
-  double difference = outputPointVtk.EuclideanDistanceTo(floatOutputPointVtk);
+  const double difference = outputPointVtk.EuclideanDistanceTo(floatOutputPointVtk);
 
   if (logDetails)
   {
@@ -206,7 +206,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps = 1e-1; // step size
+  const double eps = 1e-1; // step size
   for (int row = 0; row < 3; row++)
   {
     double xMinus1[3] = { inputPoint[0], inputPoint[1], inputPoint[2] };
@@ -239,7 +239,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
   {
     for (int col = 0; col < 3; col++)
     {
-      double difference = fabs(jacobianVtk[row][col] - jacobianEstimation[row][col]);
+      const double difference = fabs(jacobianVtk[row][col] - jacobianEstimation[row][col]);
       if (difference > maxDifference)
       {
         maxDifference = difference;
@@ -267,9 +267,9 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* 
   gridVtk->TransformPoint(outputPoint, inversePoint);
   gridVtk->Inverse();
 
-  itk::Point<double, 3> inputPointVtk(inputPoint);
-  itk::Point<double, 3> inversePointVtk(inversePoint);
-  double errorOfInverseComputation = inputPointVtk.EuclideanDistanceTo(inversePointVtk);
+  const itk::Point<double, 3> inputPointVtk(inputPoint);
+  const itk::Point<double, 3> inversePointVtk(inversePoint);
+  const double errorOfInverseComputation = inputPointVtk.EuclideanDistanceTo(inversePointVtk);
 
   if (logDetails)
   {
@@ -286,7 +286,7 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* 
 //----------------------------------------------------------------------------
 int vtkOrientedGridTransformTest1(int, char*[])
 {
-  double averageSpacing = 100;
+  const double averageSpacing = 100;
   double origin[3] = { -100, -100, -100 };
   double spacing[3] = { averageSpacing, averageSpacing, averageSpacing };
   double direction[3][3] = { { 0.92128500, -0.36017075, -0.146666625 }, { 0.31722386, 0.91417248, -0.25230478 }, { 0.22495105, 0.18591857, 0.95646814 } };
@@ -302,7 +302,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
   double modifiedGridNodeValue3[3] = { 50.0, 70.0, -60.0 };
 
   // Create an ITK grid transform. It'll serve as the reference.
-  itkGridTransformType::Pointer gridItk = CreateGridTransformItk(origin, spacing, direction, dims);
+  const itkGridTransformType::Pointer gridItk = CreateGridTransformItk(origin, spacing, direction, dims);
   // Modify a grid node
   SetGridNodeItk(gridItk, modifiedGridNodeIndex1, modifiedGridNodeValue1);
   SetGridNodeItk(gridItk, modifiedGridNodeIndex2, modifiedGridNodeValue2);
@@ -352,7 +352,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         inputPoint[1] = origin[1] + direction[1][0] * spacing[0] * i + direction[1][1] * spacing[1] * j + direction[1][2] * spacing[2] * k;
         inputPoint[2] = origin[2] + direction[2][0] * spacing[0] * i + direction[2][1] * spacing[1] * j + direction[2][2] * spacing[2] * k;
         // Compare transformation results computed by ITK and VTK.
-        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
+        const double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
         if (differenceItkVtk > 1e-2)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
@@ -376,7 +376,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         inputPoint[1] = origin[1] + direction[1][0] * spacing[0] * i + direction[1][1] * spacing[1] * j + direction[1][2] * spacing[2] * k;
         inputPoint[2] = origin[2] + direction[2][0] * spacing[0] * i + direction[2][1] * spacing[1] * j + direction[2][2] * spacing[2] * k;
         // Compare transformation results computed by ITK and VTK.
-        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
+        const double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
         // the larger the distance between the grid points, the larger difference is expected between ITK's linear and VTK's cubic
         // interpolation, therefore make the threshold the 20% of the spacing
         if (differenceItkVtk > averageSpacing * 0.20)
@@ -386,7 +386,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
           numberOfItkVtkPointMismatches++;
         }
         // Verify single/double-precision computation difference
-        double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), false);
+        const double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), false);
         if (differenceSingleDoubleVtk > 1e-4)
         {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), true);
@@ -395,7 +395,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
           numberOfSingleDoubleVtkPointMismatches++;
         }
         // Verify VTK derivative
-        double derivativeError = getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), false);
+        const double derivativeError = getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), false);
         if (derivativeError > 1e-2)
         {
           getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), true);
@@ -403,7 +403,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
           numberOfDerivativeMismatches++;
         }
         // Verify VTK inverse transform
-        double inverseError = getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), false);
+        const double inverseError = getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), false);
         // add 10% to the inverse tolerance, as the point is transformed twice, so the error can be slightly higher
         // than a single inverse computation
         if (inverseError > gridVtk->GetInverseTolerance() * 1.10)

@@ -59,9 +59,9 @@ int qMRMLNavigationViewTest1(int argc, char* argv[])
   threeDView.setMRMLScene(scene.GetPointer());
 
   // vtkMRMLAbstractDisplayableManager requires selection and interaction nodes
-  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  const vtkNew<vtkMRMLSelectionNode> selectionNode;
   scene->AddNode(selectionNode.GetPointer());
-  vtkNew<vtkMRMLInteractionNode> interactionNode;
+  const vtkNew<vtkMRMLInteractionNode> interactionNode;
   scene->AddNode(interactionNode.GetPointer());
 
   vtkNew<vtkMRMLViewNode> viewNode;

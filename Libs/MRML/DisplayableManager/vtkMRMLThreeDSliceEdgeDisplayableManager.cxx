@@ -110,7 +110,7 @@ vtkMRMLViewNode* vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::GetViewN
 void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::AddObservations(vtkMRMLSliceNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  vtkEventBroker::ObservationVector observations;
+  const vtkEventBroker::ObservationVector observations;
   if (!broker->GetObservationExist(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
     broker->AddObservation(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
@@ -134,7 +134,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::AddSliceNode(vtkMRML
     return;
   }
 
-  std::string sliceNodeID = sliceNode->GetID();
+  const std::string sliceNodeID = sliceNode->GetID();
   auto widgetRepIt = this->SliceEdgeWidgetRepresentations.find(sliceNodeID);
   if (widgetRepIt == this->SliceEdgeWidgetRepresentations.end())
   {
@@ -154,13 +154,13 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::RemoveSliceNode(vtkM
   {
     return;
   }
-  std::string sliceNodeID = sliceNode->GetID();
+  const std::string sliceNodeID = sliceNode->GetID();
   this->RemoveObservations(sliceNode);
   // The manager has the responsibility to delete the rep.
   auto widgetRepIt = this->SliceEdgeWidgetRepresentations.find(sliceNodeID);
   if (widgetRepIt != this->SliceEdgeWidgetRepresentations.end())
   {
-    vtkMRMLSliceEdgeWidgetRepresentation* rep = widgetRepIt->second;
+    vtkMRMLSliceEdgeWidgetRepresentation* const rep = widgetRepIt->second;
     vtkRenderer* renderer = this->External->GetRenderer();
     if (renderer && rep && renderer->HasViewProp(rep))
     {
@@ -177,7 +177,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::RemoveAllSliceNodes(
   this->RemoveObservations(nullptr);
   for (auto sliceNodeIDToWidgetRep : this->SliceEdgeWidgetRepresentations)
   {
-    vtkMRMLSliceEdgeWidgetRepresentation* rep = sliceNodeIDToWidgetRep.second;
+    vtkMRMLSliceEdgeWidgetRepresentation* const rep = sliceNodeIDToWidgetRep.second;
     vtkRenderer* renderer = this->External->GetRenderer();
     if (renderer && rep && renderer->HasViewProp(rep))
     {
@@ -202,7 +202,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceNodes()
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it)));)
   {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (sliceNode)
     {
       this->AddSliceNode(sliceNode);
@@ -243,10 +243,10 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
     return;
   }
 
-  bool show = sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
-              && sliceNode->GetSliceVisible() && sliceNode->GetSliceEdgeVisibility3D();
+  const bool show = sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
+                    && sliceNode->GetSliceVisible() && sliceNode->GetSliceEdgeVisibility3D();
 
-  bool isShown = renderer->HasViewProp(rep);
+  const bool isShown = renderer->HasViewProp(rep);
   if (show == isShown)
   {
     // no change
@@ -281,7 +281,7 @@ vtkMRMLSliceEdgeWidgetRepresentation* vtkMRMLThreeDSliceEdgeDisplayableManager::
   {
     return nullptr;
   }
-  std::string nodeId = sliceNode->GetID();
+  const std::string nodeId = sliceNode->GetID();
   auto it = this->SliceEdgeWidgetRepresentations.find(nodeId);
   return (it != this->SliceEdgeWidgetRepresentations.end()) ? it->second.Get() : nullptr;
 }
@@ -293,9 +293,9 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
   {
     return;
   }
-  vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* const mrmlAppLogic = this->External->GetMRMLApplicationLogic();
   vtkMRMLSliceLogic* sliceLogic = (mrmlAppLogic ? mrmlAppLogic->GetSliceLogic(sliceNode) : nullptr);
-  vtkMRMLModelNode* sliceModelNode = (sliceLogic ? sliceLogic->GetSliceModelNode() : nullptr);
+  vtkMRMLModelNode* const sliceModelNode = (sliceLogic ? sliceLogic->GetSliceModelNode() : nullptr);
   if (!sliceModelNode)
   {
     return;
@@ -317,7 +317,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateAllSliceEdgePi
   }
   for (auto sliceNodeIDToWidgetRep : this->SliceEdgeWidgetRepresentations)
   {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(sliceNodeIDToWidgetRep.first));
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(sliceNodeIDToWidgetRep.first));
     this->UpdateSliceEdgeWidgetRepresentation(sliceNode, sliceNodeIDToWidgetRep.second);
   }
 }
@@ -334,7 +334,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
   {
     // Instantiate widget and link it if
     // there is no one associated to the sliceNode yet
-    vtkSmartPointer<vtkMRMLSliceEdgeWidgetRepresentation> newRep = this->NewSliceSliceEdgeWidgetRepresentation();
+    const vtkSmartPointer<vtkMRMLSliceEdgeWidgetRepresentation> newRep = this->NewSliceSliceEdgeWidgetRepresentation();
     rep = newRep;
     this->SliceEdgeWidgetRepresentations.find(sliceNode->GetID())->second = rep;
   }
@@ -397,10 +397,10 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNod
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDSliceEdgeDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode)
   {
-    vtkMRMLSliceEdgeWidgetRepresentation* rep = this->Internal->GetSliceEdgeWidgetRepresenatation(sliceNode);
+    vtkMRMLSliceEdgeWidgetRepresentation* const rep = this->Internal->GetSliceEdgeWidgetRepresenatation(sliceNode);
     this->Internal->UpdateSliceEdgeWidgetRepresentation(sliceNode, rep);
   }
 }

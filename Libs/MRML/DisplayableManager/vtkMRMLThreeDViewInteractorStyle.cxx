@@ -94,7 +94,7 @@ void vtkMRMLThreeDViewInteractorStyle::OnLeave()
     // interactor is not initialized
     return;
   }
-  vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+  vtkMRMLScene* const scene = this->GetCameraNode()->GetScene();
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
   if (crosshairNode)
   {
@@ -110,7 +110,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     return false;
   }
   // Get display and world position
-  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
+  int* const displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
   vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
   interactorStyle->SetCurrentRenderer(pokedRenderer);
@@ -135,7 +135,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
         && this->GetCameraNode()->GetScene() != nullptr //
         && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
     {
-      vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+      vtkMRMLScene* const scene = this->GetCameraNode()->GetScene();
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
       if (crosshairNode)
       {
@@ -176,7 +176,7 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     return false;
   }
 
-  bool quickPicked = (this->QuickPicker->Pick(x, y, 0, pokedRenderer) > 0);
+  const bool quickPicked = (this->QuickPicker->Pick(x, y, 0, pokedRenderer) > 0);
   this->QuickPicker->GetPickPosition(pickPoint);
 
   // QuickPicker ignores volume-rendered images, do a volume picking, too.
@@ -202,7 +202,7 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     {
       double volumePickPoint[3] = { 0.0, 0.0, 0.0 };
       this->QuickVolumePicker->GetPickPosition(volumePickPoint);
-      double* cameraPosition = this->CameraNode->GetPosition();
+      double* const cameraPosition = this->CameraNode->GetPosition();
       // Use QuickVolumePicker result instead of QuickPicker result if picked volume point
       // is closer to the camera (or QuickPicker did not find anything).
       if (!quickPicked //

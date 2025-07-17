@@ -66,7 +66,7 @@ void qSlicerPresetComboBoxTester::testSetScene()
   presetComboBox.setMRMLScene(scene.GetPointer());
   QCOMPARE(presetComboBox.nodeCount(), 0);
 
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
   QCOMPARE(presetComboBox.nodeCount(), 0);
 }
@@ -110,7 +110,7 @@ void qSlicerPresetComboBoxTester::testPreview()
   vtkNew<vtkColorTransferFunction> colorFunction;
   colorFunction->AddRGBPoint(0., 0., 0., 0.);
   colorFunction->AddRGBPoint(1., 1., 0., 0.);
-  QImage image = ctk::scalarsToColorsImage(colorFunction.GetPointer(), QSize(32, 32));
+  const QImage image = ctk::scalarsToColorsImage(colorFunction.GetPointer(), QSize(32, 32));
 
   QLabel label;
   QPixmap pixmap;

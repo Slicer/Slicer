@@ -30,7 +30,7 @@ qMRMLVolumeInfoWidgetPlugin::qMRMLVolumeInfoWidgetPlugin(QObject* parentObject)
 //------------------------------------------------------------------------------
 QWidget* qMRMLVolumeInfoWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLVolumeInfoWidget* newWidget = new qMRMLVolumeInfoWidget(parentWidget);
+  qMRMLVolumeInfoWidget* const newWidget = new qMRMLVolumeInfoWidget(parentWidget);
   return newWidget;
 }
 

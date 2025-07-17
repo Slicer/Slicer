@@ -62,7 +62,7 @@ void vtkMRMLMeasurementVolume::Compute()
 
   double size[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(size);
-  double volume = size[0] * size[1] * size[2];
+  const double volume = size[0] * size[1] * size[2];
 
   this->SetValue(volume, "volume");
 }

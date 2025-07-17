@@ -45,10 +45,10 @@ int DoIt(int argc, char* argv[], T)
 
   PARSE_ARGS;
 
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  typename ReaderType::Pointer reader2 = ReaderType::New();
-  typename ResampleType::Pointer resample = ResampleType::New();
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const typename ReaderType::Pointer reader2 = ReaderType::New();
+  const typename ResampleType::Pointer resample = ResampleType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
 
   reader1->SetFileName(inputVolume1.c_str());
   reader2->SetFileName(inputVolume2.c_str());
@@ -57,8 +57,8 @@ int DoIt(int argc, char* argv[], T)
 
   typedef itk::CheckerBoardImageFilter<InputImageType> FilterType;
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "CheckerBoard Image Filter", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watcher(filter, "CheckerBoard Image Filter", CLPProcessInformation);
 
   typename FilterType::PatternArrayType pattern;
 

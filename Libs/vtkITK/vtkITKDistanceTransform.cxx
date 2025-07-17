@@ -40,7 +40,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform* self, vtkImageData*
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
   typedef itk::Image<T, 3> ImageType;
-  typename ImageType::Pointer inImage = ImageType::New();
+  const typename ImageType::Pointer inImage = ImageType::New();
   inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0] * dims[1] * dims[2], false);
   typename ImageType::RegionType region;
   typename ImageType::IndexType index;
@@ -58,7 +58,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform* self, vtkImageData*
   // Calculate the distance transform
   typedef itk::Image<float, 3> DistanceImageType;
   typedef itk::SignedMaurerDistanceMapImageFilter<ImageType, DistanceImageType> DistanceType;
-  typename DistanceType::Pointer dist = DistanceType::New();
+  const typename DistanceType::Pointer dist = DistanceType::New();
 
   dist->SetBackgroundValue(static_cast<T>(self->GetBackgroundValue()));
   dist->SetUseImageSpacing(self->GetUseImageSpacing());
@@ -70,7 +70,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform* self, vtkImageData*
 
   // Copy to the output
   output->AllocateScalars(VTK_FLOAT, 1); // in case the image being worked on is not float type
-  void* oPtr = output->GetScalarPointer();
+  void* const oPtr = output->GetScalarPointer();
   memcpy(oPtr, dist->GetOutput()->GetBufferPointer(), dist->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 }
 
@@ -91,7 +91,7 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData* input, vtkImageData* o
     vtkErrorMacro(<< "PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars = pd->GetScalars();
+  vtkDataArray* const inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for distance transform");
@@ -107,8 +107,8 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData* input, vtkImageData* o
 
 #define CALL vtkITKDistanceTransformExecute(this, input, output, static_cast<VTK_TT*>(inPtr), static_cast<VTK_TT*>(outPtr));
 
-    void* inPtr = input->GetScalarPointer();
-    void* outPtr = output->GetScalarPointer();
+    void* const inPtr = input->GetScalarPointer();
+    void* const outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
     {

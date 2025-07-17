@@ -49,7 +49,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char* argv[])
 
   qMRMLSceneCategoryModel model;
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(nullptr);
   nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.createNode("vtkMRMLROINode");
@@ -68,7 +68,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char* argv[])
   nodeFactory.createNode("vtkMRMLViewNode");
   nodeFactory.createNode("vtkMRMLViewNode");
 
-  QStringList scenePreItems = QStringList() << "pre 1" << "pre 2" << "separator";
+  const QStringList scenePreItems = QStringList() << "pre 1" << "pre 2" << "separator";
   model.setPreItems(scenePreItems, nullptr);
   model.setPreItems(scenePreItems, model.mrmlSceneItem());
 

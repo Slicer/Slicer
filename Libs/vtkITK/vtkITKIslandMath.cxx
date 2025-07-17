@@ -49,7 +49,7 @@ void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 // Note: local function not method - conforms to signature in itkCommand.h
 void vtkITKIslandMathHandleProgressEvent(itk::Object* caller, const itk::EventObject& vtkNotUsed(eventObject), void* clientdata)
 {
-  itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
+  itk::ProcessObject* const itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
   vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if (itkFilter && vtkFilter)
   {
@@ -69,7 +69,7 @@ void vtkITKIslandMathExecute(vtkITKIslandMath* self, vtkImageData* input, vtkIma
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
   typedef itk::Image<T, 3> ImageType;
-  typename ImageType::Pointer inImage = ImageType::New();
+  const typename ImageType::Pointer inImage = ImageType::New();
   typename ImageType::RegionType region;
   typename ImageType::IndexType index;
   typename ImageType::SizeType size;
@@ -86,7 +86,7 @@ void vtkITKIslandMathExecute(vtkITKIslandMath* self, vtkImageData* input, vtkIma
   inImage->SetSpacing(spacing);
 
   // set up the progress callback
-  itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
+  const itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
   progressCommand->SetClientData(static_cast<void*>(self));
   progressCommand->SetCallback(vtkITKIslandMathHandleProgressEvent);
 
@@ -94,9 +94,9 @@ void vtkITKIslandMathExecute(vtkITKIslandMath* self, vtkImageData* input, vtkIma
   // ccfilter - identifies the islands
   // relabel - sorts them by size
   typedef itk::ConnectedComponentImageFilter<ImageType, ImageType> ConnectedComponentType;
-  typename ConnectedComponentType::Pointer ccfilter = ConnectedComponentType::New();
+  const typename ConnectedComponentType::Pointer ccfilter = ConnectedComponentType::New();
   typedef itk::RelabelComponentImageFilter<ImageType, ImageType> RelabelComponentType;
-  typename RelabelComponentType::Pointer relabel = RelabelComponentType::New();
+  const typename RelabelComponentType::Pointer relabel = RelabelComponentType::New();
 
   ccfilter->AddObserver(itk::ProgressEvent(), progressCommand);
   relabel->AddObserver(itk::ProgressEvent(), progressCommand);
@@ -130,7 +130,7 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData* input, vtkImageData* output)
     vtkErrorMacro(<< "PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars = pd->GetScalars();
+  vtkDataArray* const inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for island math");
@@ -146,8 +146,8 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData* input, vtkImageData* output)
 
 #define CALL vtkITKIslandMathExecute(this, input, output, static_cast<VTK_TT*>(inPtr), static_cast<VTK_TT*>(outPtr));
 
-    void* inPtr = input->GetScalarPointer();
-    void* outPtr = output->GetScalarPointer();
+    void* const inPtr = input->GetScalarPointer();
+    void* const outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
     {

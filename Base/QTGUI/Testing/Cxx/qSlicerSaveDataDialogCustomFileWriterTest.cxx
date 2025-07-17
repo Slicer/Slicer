@@ -59,7 +59,7 @@ public:
 //-----------------------------------------------------------------------------
 bool qSlicerDummyFileWriter::write(const IOProperties& properties)
 {
-  QStringList nodeIDs = QStringList() << properties["nodeID"].toString();
+  const QStringList nodeIDs = QStringList() << properties["nodeID"].toString();
   qDebug() << "write" << properties["nodeID"].toString();
   this->setWrittenNodes(nodeIDs);
   return true;

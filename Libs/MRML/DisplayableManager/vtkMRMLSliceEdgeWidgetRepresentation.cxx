@@ -105,8 +105,8 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateSliceEdgePipeline()
     return;
   }
 
-  double radius = this->ViewScaleFactorMmPerPixel * this->SliceEdgeSize;
-  double previousRadius = this->Pipeline->TubeFilter->GetRadius();
+  const double radius = this->ViewScaleFactorMmPerPixel * this->SliceEdgeSize;
+  const double previousRadius = this->Pipeline->TubeFilter->GetRadius();
   if (fabs(radius - previousRadius) < 1e-6)
   {
     return;
@@ -317,7 +317,7 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateSliceEdgeFromSliceNode()
   vtkProperty* prop = this->Pipeline->Actor->GetProperty();
   double rgb[3];
   prop->GetColor(rgb);
-  double* layoutColor = this->GetSliceNode()->GetLayoutColor();
+  double* const layoutColor = this->GetSliceNode()->GetLayoutColor();
   const double tolerance = 1.e-6;
   if (fabs(layoutColor[0] - rgb[0]) < tolerance && //
       fabs(layoutColor[1] - rgb[1]) < tolerance && //
@@ -347,8 +347,8 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateViewScaleFactor()
     return;
   }
 
-  const int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
-  double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+  const int* const screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+  const double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
   if (screenSizePixel < 1.0)
   {
     // render window is not fully initialized yet

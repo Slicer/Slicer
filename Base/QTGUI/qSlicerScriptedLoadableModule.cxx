@@ -118,16 +118,16 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
   }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(filePath).baseName();
+  const QString moduleName = QFileInfo(filePath).baseName();
   this->setName(moduleName);
-  QString className = moduleName;
+  const QString className = moduleName;
 
   // Get a reference to the main module and global dictionary
-  PyObject* main_module = PyImport_AddModule("__main__");
-  PyObject* global_dict = PyModule_GetDict(main_module);
+  PyObject* const main_module = PyImport_AddModule("__main__");
+  PyObject* const global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* const sysModules = PyImport_GetModuleDict();
   PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
@@ -170,7 +170,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
 
   d->PythonCppAPI.setObjectName(className);
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -184,7 +184,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
   }
 
   // Check if there is module widget class
-  QString widgetClassName = className + "Widget";
+  const QString widgetClassName = className + "Widget";
   if (!PyObject_HasAttrString(module, widgetClassName.toLatin1()))
   {
     this->setWidgetRepresentationCreationEnabled(false);
@@ -207,7 +207,7 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
 {
   Q_D(qSlicerScriptedLoadableModule);
   QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
-  bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
+  const bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return;
@@ -244,7 +244,7 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
   }
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
-  bool ret = widget->setPythonSource(d->PythonSourceFilePath);
+  const bool ret = widget->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return nullptr;
@@ -258,7 +258,7 @@ vtkMRMLAbstractLogic* qSlicerScriptedLoadableModule::createLogic()
 {
   //  Q_D(qSlicerScriptedLoadableModule);
 
-  vtkSlicerScriptedLoadableModuleLogic* logic = vtkSlicerScriptedLoadableModuleLogic::New();
+  vtkSlicerScriptedLoadableModuleLogic* const logic = vtkSlicerScriptedLoadableModuleLogic::New();
 
   //  bool ret = logic->SetPythonSource(d->PythonSource.toStdString());
   //  if (!ret)

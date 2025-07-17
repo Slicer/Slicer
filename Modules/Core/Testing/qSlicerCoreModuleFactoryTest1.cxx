@@ -29,10 +29,10 @@
 
 int qSlicerCoreModuleFactoryTest1(int, char*[])
 {
-  QString className = "qSlicerEventBrokerModule";
-  QString expectedModuleName = "EventBroker";
+  const QString className = "qSlicerEventBrokerModule";
+  const QString expectedModuleName = "EventBroker";
 
-  QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);
+  const QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);
   if (moduleName != expectedModuleName)
   {
     std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl

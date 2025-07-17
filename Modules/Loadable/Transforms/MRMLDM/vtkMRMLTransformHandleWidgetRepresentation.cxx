@@ -119,7 +119,7 @@ bool vtkMRMLTransformHandleWidgetRepresentation::IsDisplayable()
 //----------------------------------------------------------------------
 void vtkMRMLTransformHandleWidgetRepresentation::UpdateInteractionPipeline()
 {
-  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->ViewNode);
+  vtkMRMLAbstractViewNode* const viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->ViewNode);
   vtkProp* actor = this->GetInteractionActor();
   if (!viewNode || !this->GetTransformNode())
   {
@@ -203,7 +203,7 @@ bool vtkMRMLTransformHandleWidgetRepresentation::GetHandleVisibility(int type, i
     return false;
   }
 
-  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* const sliceNode = this->GetSliceNode();
 
   bool visible = Superclass::GetHandleVisibility(type, index);
   if (type == InteractionRotationHandle)

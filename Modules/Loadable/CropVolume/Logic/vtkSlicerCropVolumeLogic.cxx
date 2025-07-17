@@ -61,7 +61,7 @@ public:
   vtkInternal();
   static void GetROIXYZ(vtkMRMLDisplayableNode* roi, double* xyz)
   {
-    vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
+    vtkMRMLMarkupsROINode* const markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
     if (markupsROI)
     {
       // We don't call markupsROI->GetXYZ(xyz) here because where
@@ -129,9 +129,9 @@ public:
 
   static void GetObjectToVolumeIJK(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* objectToVolumeIJK)
   {
-    vtkNew<vtkMatrix4x4> objectToVolumeRAS;
+    const vtkNew<vtkMatrix4x4> objectToVolumeRAS;
     GetMatrixTransformFromObjectToNode(roi, volumeNode, objectToVolumeRAS);
-    vtkNew<vtkMatrix4x4> rasToIJK;
+    const vtkNew<vtkMatrix4x4> rasToIJK;
     volumeNode->GetRASToIJKMatrix(rasToIJK);
     vtkMatrix4x4::Multiply4x4(rasToIJK, objectToVolumeRAS, objectToVolumeIJK);
   }
@@ -189,8 +189,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     return -1;
   }
   vtkMRMLVolumeNode* inputVolume = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(pnode->GetInputVolumeNodeID()));
-  vtkMRMLDisplayableNode* inputROI = vtkMRMLDisplayableNode::SafeDownCast(scene->GetNodeByID(pnode->GetROINodeID()));
-  vtkMRMLMarkupsROINode* inputMarkupsROI = vtkMRMLMarkupsROINode::SafeDownCast(inputROI);
+  vtkMRMLDisplayableNode* const inputROI = vtkMRMLDisplayableNode::SafeDownCast(scene->GetNodeByID(pnode->GetROINodeID()));
+  vtkMRMLMarkupsROINode* const inputMarkupsROI = vtkMRMLMarkupsROINode::SafeDownCast(inputROI);
   if (!inputVolume || !inputMarkupsROI)
   {
     vtkErrorMacro("CropVolume: Invalid input volume or ROI");
@@ -216,7 +216,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   else
   {
 
-    vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(this->GetModuleLogic("Volumes"));
+    vtkSlicerVolumesLogic* const volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(this->GetModuleLogic("Volumes"));
 
     // Create compatible output volume
     if (!volumesLogic)
@@ -315,7 +315,7 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableN
     }
   }
 
-  double tolerance = 0.001;
+  const double tolerance = 0.001;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
   {
     outputExtent[axisIndex * 2] = int(ceil(outputExtentDouble[axisIndex * 2] + 0.5 - tolerance));
@@ -323,7 +323,7 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableN
   }
   if (limitToInputExtent)
   {
-    int* inputExtent = inputVolume->GetImageData()->GetExtent();
+    int* const inputExtent = inputVolume->GetImageData()->GetExtent();
     for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
     {
       outputExtent[axisIndex * 2] = std::max(inputExtent[axisIndex * 2], outputExtent[axisIndex * 2]);
@@ -359,7 +359,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLDisplayableNode* roi,
     return -1;
   }
 
-  vtkNew<vtkMatrix4x4> inputIJKToRAS;
+  const vtkNew<vtkMatrix4x4> inputIJKToRAS;
   inputVolume->GetIJKToRASMatrix(inputIJKToRAS.GetPointer());
 
   vtkNew<vtkImageConstantPad> imageClip;
@@ -368,7 +368,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLDisplayableNode* roi,
   imageClip->SetConstant(fillValue);
   imageClip->Update();
 
-  int wasModified = outputVolume->StartModify();
+  const int wasModified = outputVolume->StartModify();
   outputVolume->SetAndObserveImageData(imageClip->GetOutput());
   outputVolume->SetIJKToRASMatrix(inputIJKToRAS.GetPointer());
   outputVolume->ShiftImageDataExtentToZeroStart();
@@ -391,10 +391,10 @@ bool vtkSlicerCropVolumeLogic::GetInterpolatedCropOutputGeometry(vtkMRMLDisplaya
     return false;
   }
 
-  double* inputSpacing = inputVolume->GetSpacing();
+  double* const inputSpacing = inputVolume->GetSpacing();
   if (isotropicResampling)
   {
-    double minSpacing = std::min(std::min(inputSpacing[0], inputSpacing[1]), inputSpacing[2]);
+    const double minSpacing = std::min(std::min(inputSpacing[0], inputSpacing[1]), inputSpacing[2]);
     outputSpacing[0] = minSpacing * spacingScale;
     outputSpacing[1] = minSpacing * spacingScale;
     outputSpacing[2] = minSpacing * spacingScale;
@@ -403,13 +403,13 @@ bool vtkSlicerCropVolumeLogic::GetInterpolatedCropOutputGeometry(vtkMRMLDisplaya
   {
     int inputAxisIndexForROIAxis[3] = { 0, 1, 2 };
     // Find which image axis corresponds to each ROI axis, to get the correct spacing value for each ROI axis
-    vtkNew<vtkGeneralTransform> volumeToObjectTransform;
-    vtkNew<vtkTransform> volumeToObjectTransformLinear;
+    const vtkNew<vtkGeneralTransform> volumeToObjectTransform;
+    const vtkNew<vtkTransform> volumeToObjectTransformLinear;
     vtkMRMLTransformNode::GetTransformBetweenNodes(inputVolume->GetParentTransformNode(), roi->GetParentTransformNode(), volumeToObjectTransform.GetPointer());
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(volumeToObjectTransform.GetPointer(), volumeToObjectTransformLinear.GetPointer()))
     {
       // Transformation between input volume and ROI is linear, therefore we can find matching axes
-      vtkNew<vtkMatrix4x4> objectToVolumeIJKTransformMatrix;
+      const vtkNew<vtkMatrix4x4> objectToVolumeIJKTransformMatrix;
       vtkSlicerCropVolumeLogic::vtkInternal::GetObjectToVolumeIJK(roi, inputVolume, objectToVolumeIJKTransformMatrix);
       vtkNew<vtkMatrix4x4> volumeIJKToObject;
       vtkMatrix4x4::Invert(objectToVolumeIJKTransformMatrix, volumeIJKToObject);
@@ -422,7 +422,7 @@ bool vtkSlicerCropVolumeLogic::GetInterpolatedCropOutputGeometry(vtkMRMLDisplaya
         double largestComponentValue = 0;
         for (int volumeIJKAxisIndex = 0; volumeIJKAxisIndex < 3; volumeIJKAxisIndex++)
         {
-          double currentComponentValue = fabs(volumeIJKToObject->GetElement(roiAxisIndex, volumeIJKAxisIndex));
+          const double currentComponentValue = fabs(volumeIJKToObject->GetElement(roiAxisIndex, volumeIJKAxisIndex));
           if (currentComponentValue > largestComponentValue)
           {
             largestComponentValue = currentComponentValue;
@@ -444,7 +444,7 @@ bool vtkSlicerCropVolumeLogic::GetInterpolatedCropOutputGeometry(vtkMRMLDisplaya
   // add a bit of tolerance in deciding how many voxels the output should contain
   // to make sure that if the ROI size is set to match the image size exactly then we
   // output extent contains the whole image
-  double tolerance = 0.001;
+  const double tolerance = 0.001;
   outputExtent[1] = int(roiRadius[0] / outputSpacing[0] * 2. + tolerance) - 1;
   outputExtent[3] = int(roiRadius[1] / outputSpacing[1] * 2. + tolerance) - 1;
   outputExtent[5] = int(roiRadius[2] / outputSpacing[2] * 2. + tolerance) - 1;
@@ -507,7 +507,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi,
     return -6;
   }
 
-  vtkNew<vtkMatrix4x4> roiMatrix;
+  const vtkNew<vtkMatrix4x4> roiMatrix;
   vtkSlicerCropVolumeLogic::vtkInternal::GetMatrixTransformFromObjectToNode(roi, outputVolume, roiMatrix);
   outputIJKToRAS->Multiply4x4(roiMatrix.GetPointer(), outputIJKToRAS.GetPointer(), outputIJKToRAS.GetPointer());
 
@@ -545,9 +545,9 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi,
 
   // Center the output image in the ROI. For that, compute the size difference between
   // the ROI and the output image.
-  double sizeDifference_IJK[3] = { roiRadius[0] * 2 / outputSpacing[0] - (outputExtent[1] - outputExtent[0] + 1),
-                                   roiRadius[1] * 2 / outputSpacing[1] - (outputExtent[3] - outputExtent[2] + 1),
-                                   roiRadius[2] * 2 / outputSpacing[2] - (outputExtent[5] - outputExtent[4] + 1) };
+  const double sizeDifference_IJK[3] = { roiRadius[0] * 2 / outputSpacing[0] - (outputExtent[1] - outputExtent[0] + 1),
+                                         roiRadius[1] * 2 / outputSpacing[1] - (outputExtent[3] - outputExtent[2] + 1),
+                                         roiRadius[2] * 2 / outputSpacing[2] - (outputExtent[5] - outputExtent[4] + 1) };
   // Origin is in the voxel's center. Shift the origin by half voxel
   // to have the ROI edge at the output image voxel edge.
   double outputOrigin_IJK[4] = { 0.5 + sizeDifference_IJK[0] / 2, 0.5 + sizeDifference_IJK[1] / 2, 0.5 + sizeDifference_IJK[2] / 2, 1.0 };
@@ -583,7 +583,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi,
   vtkMRMLTransformNode* inputToRASTransformNodeToRemove = nullptr;
   if (inputVolume->GetParentTransformNode() != nullptr)
   {
-    vtkNew<vtkGeneralTransform> inputToRASTransform;
+    const vtkNew<vtkGeneralTransform> inputToRASTransform;
     inputVolume->GetParentTransformNode()->GetTransformToNode(outputVolume->GetParentTransformNode(), inputToRASTransform.GetPointer());
     vtkNew<vtkMRMLTransformNode> inputToRASTransformNode;
     inputToRASTransformNode->SetAndObserveTransformToParent(inputToRASTransform.GetPointer());
@@ -640,13 +640,13 @@ bool vtkSlicerCropVolumeLogic::FitROIToInputVolume(vtkMRMLCropVolumeParametersNo
     parametersNode->DeleteROIAlignmentTransformNode();
   }
 
-  vtkNew<vtkMatrix4x4> worldToObject;
+  const vtkNew<vtkMatrix4x4> worldToObject;
   vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, roiTransform, worldToObject.GetPointer());
 
   vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roiNode);
   if (markupsROI)
   {
-    vtkNew<vtkMatrix4x4> localToObjectMatrix;
+    const vtkNew<vtkMatrix4x4> localToObjectMatrix;
     vtkMatrix4x4::Invert(markupsROI->GetObjectToNodeMatrix(), localToObjectMatrix);
     vtkMatrix4x4::Multiply4x4(localToObjectMatrix, worldToObject, worldToObject);
   }
@@ -726,34 +726,34 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
   if (markupsROI)
   {
     // Keep current transforms, use ObjectToNode transform to align
-    vtkNew<vtkMatrix4x4> volumeRasToObjectLocal;
+    const vtkNew<vtkMatrix4x4> volumeRasToObjectLocal;
     vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
       parametersNode->GetInputVolumeNode()->GetParentTransformNode(), markupsROI->GetParentTransformNode(), volumeRasToObjectLocal);
-    vtkNew<vtkMatrix4x4> volumeIJKToRAS;
+    const vtkNew<vtkMatrix4x4> volumeIJKToRAS;
     parametersNode->GetInputVolumeNode()->GetIJKToRASMatrix(volumeIJKToRAS.GetPointer());
-    vtkNew<vtkMatrix4x4> volumeIJKToObjectLocal;
+    const vtkNew<vtkMatrix4x4> volumeIJKToObjectLocal;
     vtkMatrix4x4::Multiply4x4(volumeRasToObjectLocal, volumeIJKToRAS.GetPointer(), volumeIJKToObjectLocal);
     double scale[3] = { 1.0 };
     vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(volumeIJKToObjectLocal, scale);
 
-    MRMLNodeModifyBlocker blocker(markupsROI);
+    const MRMLNodeModifyBlocker blocker(markupsROI);
     markupsROI->GetObjectToNodeMatrix()->DeepCopy(volumeIJKToObjectLocal);
     markupsROI->UpdateControlPointsFromROI();
     markupsROI->Modified();
 
     vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, markupsROI->GetParentTransformNode(), worldToObjectTransformMatrix);
-    vtkNew<vtkMatrix4x4> localToObjectMatrix;
+    const vtkNew<vtkMatrix4x4> localToObjectMatrix;
     vtkMatrix4x4::Invert(markupsROI->GetObjectToNodeMatrix(), localToObjectMatrix);
     vtkMatrix4x4::Multiply4x4(localToObjectMatrix, worldToObjectTransformMatrix, worldToObjectTransformMatrix);
   }
   else
   {
     // Use the ROI alignment transform node to align
-    vtkNew<vtkMatrix4x4> volumeRasToWorld;
+    const vtkNew<vtkMatrix4x4> volumeRasToWorld;
     vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(parametersNode->GetInputVolumeNode()->GetParentTransformNode(), nullptr, volumeRasToWorld.GetPointer());
-    vtkNew<vtkMatrix4x4> volumeIJKToRAS;
+    const vtkNew<vtkMatrix4x4> volumeIJKToRAS;
     parametersNode->GetInputVolumeNode()->GetIJKToRASMatrix(volumeIJKToRAS.GetPointer());
-    vtkNew<vtkMatrix4x4> volumeIJKToWorld;
+    const vtkNew<vtkMatrix4x4> volumeIJKToWorld;
     vtkMatrix4x4::Multiply4x4(volumeRasToWorld.GetPointer(), volumeIJKToRAS.GetPointer(), volumeIJKToWorld.GetPointer());
     double scale[3] = { 1.0 };
     vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(volumeIJKToWorld.GetPointer(), scale);
@@ -784,7 +784,7 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
   vtkBoundingBox boundingBox_ROI;
   for (int i = 0; i < numberOfCornerPoints; i++)
   {
-    double* cornerPoint_ROI = worldToObjectTransformMatrix->MultiplyDoublePoint(cornerPoints_World[i]);
+    double* const cornerPoint_ROI = worldToObjectTransformMatrix->MultiplyDoublePoint(cornerPoints_World[i]);
     boundingBox_ROI.AddPoint(cornerPoint_ROI);
   }
   double roiCenter[3] = { 0 };
@@ -831,7 +831,7 @@ bool vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(vtkMRMLCropVolumePara
     return false;
   }
 
-  vtkNew<vtkMatrix4x4> objectToVolumeIJKTransformMatrix;
+  const vtkNew<vtkMatrix4x4> objectToVolumeIJKTransformMatrix;
   vtkSlicerCropVolumeLogic::vtkInternal::GetObjectToVolumeIJK(parametersNode->GetROINode(), parametersNode->GetInputVolumeNode(), objectToVolumeIJKTransformMatrix);
   vtkNew<vtkMatrix4x4> volumeIJKToObject;
   vtkMatrix4x4::Invert(objectToVolumeIJKTransformMatrix, volumeIJKToObject);
@@ -839,12 +839,12 @@ bool vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(vtkMRMLCropVolumePara
   double scale[3] = { 1.0 };
   vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(volumeIJKToObject.GetPointer(), scale);
 
-  double tolerance = 0.001;
+  const double tolerance = 0.001;
   for (int row = 0; row < 3; row++)
   {
     for (int column = 0; column < 3; column++)
     {
-      double elemAbs = fabs(volumeIJKToObject->GetElement(row, column));
+      const double elemAbs = fabs(volumeIJKToObject->GetElement(row, column));
       if (elemAbs > tolerance && elemAbs < 1 - tolerance)
       {
         // axes are neither orthogonal nor parallel

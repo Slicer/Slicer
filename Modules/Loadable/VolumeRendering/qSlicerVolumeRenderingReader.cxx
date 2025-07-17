@@ -100,14 +100,14 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerVolumeRenderingReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
   if (d->VolumeRenderingLogic.GetPointer() == nullptr)
   {
     return false;
   }
 
   vtkNew<vtkCollection> volumePropertyNodes;
-  bool success = d->VolumeRenderingLogic->AddVolumePropertiesFromFile(fileName.toUtf8(), volumePropertyNodes);
+  const bool success = d->VolumeRenderingLogic->AddVolumePropertiesFromFile(fileName.toUtf8(), volumePropertyNodes);
 
   QStringList loadedNodes;
   for (int i = 0; i < volumePropertyNodes->GetNumberOfItems(); ++i)

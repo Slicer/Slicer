@@ -72,8 +72,8 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
 
   vtkDebugMacro("got a line: \n\"" << line << "\"");
 
-  std::string attValue(line);
-  size_t size = std::string(this->GetAnnotationStorageType()).size();
+  const std::string attValue(line);
+  const size_t size = std::string(this->GetAnnotationStorageType()).size();
 
   if (attValue.compare(0, size, this->GetAnnotationStorageType()))
   {
@@ -144,16 +144,16 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
   }
   vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
 
-  std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
-  size_t pointOffset = preposition.size();
+  const std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
+  const size_t pointOffset = preposition.size();
 
   // this->DebugOn();
   vtkDebugMacro("Have a possible option in line " << line);
-  std::string lineString = std::string(line);
+  const std::string lineString = std::string(line);
 
   if (lineString.find(preposition + "DistanceAnnotationFormat = ") != std::string::npos)
   {
-    std::string str = lineString.substr(27 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(27 + pointOffset, std::string::npos);
     vtkDebugMacro("Getting DistanceAnnotationFormat, substr = " << str);
     refNode->SetDistanceAnnotationFormat(str.c_str());
     // this->DebugOff();
@@ -161,13 +161,13 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
   }
   else if (lineString.find(preposition + "Columns = ") != std::string::npos)
   {
-    std::string str = lineString.substr(10 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(10 + pointOffset, std::string::npos);
 
     vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
     // reset all of them
     typeColumn = line1IDColumn = selColumn = visColumn = -1;
     numColumns = 0;
-    char* columns = (char*)str.c_str();
+    char* const columns = (char*)str.c_str();
     char* ptr = strtok(columns, "|");
     while (ptr != nullptr)
     {
@@ -223,7 +223,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode
   }
 
   // turn off modified events
-  int modFlag = refNode->GetDisableModifiedEvent();
+  const int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
   char line[1024];
   // default column ordering for annotation info - this is exactly the same as for fiducial
@@ -340,8 +340,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtk
     vtkWarningMacro("WriteAnnotationRulerData: reference node is null");
     return 0;
   }
-  int sel = refNode->GetSelected();
-  int vis = refNode->GetDisplayVisibility();
+  const int sel = refNode->GetSelected();
+  const int vis = refNode->GetDisplayVisibility();
   of << this->GetAnnotationStorageType() << "|" << 0 << "|" << sel << "|" << vis << endl;
 
   return 1;
@@ -351,7 +351,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtk
 int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of)
 {
 
-  int retval = this->Superclass::WriteAnnotationDataInternal(refNode, of);
+  const int retval = this->Superclass::WriteAnnotationDataInternal(refNode, of);
   if (!retval)
   {
     vtkWarningMacro("Ruler WriteAnnotationDataInternal: unable to call superclass WriteData, retval = " << retval);
@@ -366,7 +366,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* 
   }
 
   // cast the input nod
-  vtkMRMLAnnotationRulerNode* aNode = dynamic_cast<vtkMRMLAnnotationRulerNode*>(refNode);
+  vtkMRMLAnnotationRulerNode* const aNode = dynamic_cast<vtkMRMLAnnotationRulerNode*>(refNode);
 
   if (aNode == nullptr)
   {

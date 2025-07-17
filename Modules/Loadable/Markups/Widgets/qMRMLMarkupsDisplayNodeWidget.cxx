@@ -123,8 +123,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   if (this->glyphTypeComboBox->count() == 0)
   {
     vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
-    int min = displayNode->GetMinimumGlyphType();
-    int max = displayNode->GetMaximumGlyphType();
+    const int min = displayNode->GetMinimumGlyphType();
+    const int max = displayNode->GetMaximumGlyphType();
     this->glyphTypeComboBox->setEnabled(false);
     for (int i = min; i <= max; i++)
     {
@@ -136,9 +136,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   if (this->glyphTypeComboBox->currentIndex() == 0)
   {
     vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
-    QString glyphType = QString(displayNode->GetGlyphTypeAsString());
+    const QString glyphType = QString(displayNode->GetGlyphTypeAsString());
     this->glyphTypeComboBox->setEnabled(false);
-    int index = this->glyphTypeComboBox->findData(glyphType);
+    const int index = this->glyphTypeComboBox->findData(glyphType);
     if (index != -1)
     {
       this->glyphTypeComboBox->setCurrentIndex(index);
@@ -262,8 +262,8 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->opacitySliderWidget->setValue(markupsDisplayNode->GetOpacity());
 
   // glyph type
-  QString glyphTypeStr = QString(markupsDisplayNode->GetGlyphTypeAsString());
-  int glyphTypeIndex = d->glyphTypeComboBox->findData(glyphTypeStr);
+  const QString glyphTypeStr = QString(markupsDisplayNode->GetGlyphTypeAsString());
+  const int glyphTypeIndex = d->glyphTypeComboBox->findData(glyphTypeStr);
   if (glyphTypeIndex >= 0)
   {
     d->glyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
@@ -272,7 +272,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->glyphSizeIsAbsoluteButton->setChecked(!markupsDisplayNode->GetUseGlyphScale());
 
   // glyph scale
-  double glyphScale = markupsDisplayNode->GetGlyphScale();
+  const double glyphScale = markupsDisplayNode->GetGlyphScale();
   // make sure that the slider can accommodate this scale
   if (glyphScale > d->glyphScaleSliderWidget->maximum())
   {
@@ -281,7 +281,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->glyphScaleSliderWidget->setValue(glyphScale);
 
   // glyph size
-  double glyphSize = markupsDisplayNode->GetGlyphSize();
+  const double glyphSize = markupsDisplayNode->GetGlyphSize();
   // make sure that the slider can accommodate this scale
   if (glyphSize > d->glyphSizeSliderWidget->maximum())
   {
@@ -293,7 +293,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineSizeIsAbsoluteButton->setChecked(markupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter);
 
   // curve thickness
-  double lineThicknessPercentage = markupsDisplayNode->GetLineThickness() * 100.0;
+  const double lineThicknessPercentage = markupsDisplayNode->GetLineThickness() * 100.0;
   // make sure that the slider can accommodate this scale
   if (lineThicknessPercentage > d->curveLineThicknessSliderWidget->maximum())
   {
@@ -302,7 +302,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineThicknessSliderWidget->setValue(lineThicknessPercentage);
 
   // line diameter
-  double lineDiameter = markupsDisplayNode->GetLineDiameter();
+  const double lineDiameter = markupsDisplayNode->GetLineDiameter();
   // make sure that the slider can accommodate this scale
   if (lineDiameter > d->curveLineDiameterSliderWidget->maximum())
   {
@@ -311,7 +311,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineDiameterSliderWidget->setValue(lineDiameter);
 
   // Only enable line size editing if not fiducial node
-  bool lineSizeEnabled = (vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode()) == nullptr);
+  const bool lineSizeEnabled = (vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode()) == nullptr);
   d->curveLineSizeIsAbsoluteButton->setEnabled(lineSizeEnabled);
   d->curveLineDiameterSliderWidget->setEnabled(lineSizeEnabled);
   d->curveLineThicknessSliderWidget->setEnabled(lineSizeEnabled);
@@ -322,7 +322,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
   // text scale
-  double textScale = markupsDisplayNode->GetTextScale();
+  const double textScale = markupsDisplayNode->GetTextScale();
   // make sure that the slider can accommodate this scale
   if (textScale > d->textScaleSliderWidget->maximum())
   {
@@ -352,7 +352,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->OccludedVisibilityCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->SnapModeComboBox->blockSignals(true);
-  int snapModeIndex = d->SnapModeComboBox->findData(markupsDisplayNode->GetSnapMode());
+  const int snapModeIndex = d->SnapModeComboBox->findData(markupsDisplayNode->GetSnapMode());
   d->SnapModeComboBox->setCurrentIndex(snapModeIndex);
   d->SnapModeComboBox->blockSignals(wasBlocking);
 
@@ -363,7 +363,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   vtkTextProperty* property = markupsDisplayNode->GetTextProperty(); // always returns valid pointer
 
   wasBlocking = d->TextFontFamilyComboBox->blockSignals(true);
-  int fontFamilyIndex = d->TextFontFamilyComboBox->findData(property->GetFontFamily());
+  const int fontFamilyIndex = d->TextFontFamilyComboBox->findData(property->GetFontFamily());
   d->TextFontFamilyComboBox->setCurrentIndex(fontFamilyIndex);
   d->TextFontFamilyComboBox->blockSignals(wasBlocking);
 
@@ -722,15 +722,15 @@ void qMRMLMarkupsDisplayNodeWidget::onTextPropertyWidgetsChanged()
     return;
   }
 
-  int fontFamily = d->TextFontFamilyComboBox->currentData().toInt();
-  bool textBold = d->TextBoldCheckBox->isChecked();
-  bool textItalic = d->TextItalicCheckBox->isChecked();
-  bool textShadow = d->TextShadowCheckBox->isChecked();
-  double backgroundOpacity = d->TextBackgroundOpacitySlider->value();
-  QColor backgroundColor = d->TextBackgroundColorPickerButton->color();
+  const int fontFamily = d->TextFontFamilyComboBox->currentData().toInt();
+  const bool textBold = d->TextBoldCheckBox->isChecked();
+  const bool textItalic = d->TextItalicCheckBox->isChecked();
+  const bool textShadow = d->TextShadowCheckBox->isChecked();
+  const double backgroundOpacity = d->TextBackgroundOpacitySlider->value();
+  const QColor backgroundColor = d->TextBackgroundColorPickerButton->color();
   double backgroundColorF[3] = { backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF() };
 
-  MRMLNodeModifyBlocker blocker(d->MarkupsDisplayNode);
+  const MRMLNodeModifyBlocker blocker(d->MarkupsDisplayNode);
   vtkTextProperty* textProperty = d->MarkupsDisplayNode->GetTextProperty(); // always returns valid pointer
   textProperty->SetFontFamily(fontFamily);
   textProperty->SetBold(textBold);
@@ -748,6 +748,6 @@ void qMRMLMarkupsDisplayNodeWidget::onSnapModeWidgetChanged()
   {
     return;
   }
-  int snapMode = d->SnapModeComboBox->currentData().toInt();
+  const int snapMode = d->SnapModeComboBox->currentData().toInt();
   d->MarkupsDisplayNode->SetSnapMode(snapMode);
 }

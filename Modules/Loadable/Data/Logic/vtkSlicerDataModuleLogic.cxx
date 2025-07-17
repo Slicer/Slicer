@@ -98,7 +98,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   std::vector<vtkMRMLNode*> referencingNodes;
   for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
   {
-    vtkMRMLNode* dnode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthDisplayNodeID(i));
+    vtkMRMLNode* const dnode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthDisplayNodeID(i));
 
     // make sure no other nodes reference this display node
     this->GetMRMLScene()->GetReferencingNodes(dnode, referencingNodes);
@@ -111,7 +111,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   }
   for (int i = 0; i < displayableNode->GetNumberOfStorageNodes(); ++i)
   {
-    vtkMRMLNode* snode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthStorageNodeID(i));
+    vtkMRMLNode* const snode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthStorageNodeID(i));
 
     // make sure no other nodes reference this storage node
     this->GetMRMLScene()->GetReferencingNodes(snode, referencingNodes);
@@ -126,8 +126,8 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   // Now remove the collected nodes. Batch process is only used if many nodes will be removed
   // because entering/exiting batch processing is a very expensive operation (the display flickers,
   // lots of things are recomputed), so it should be only done if we save time by skipping many small updates.
-  int toRemove = nodesToRemove.size();
-  bool useBatchMode = toRemove > 10; // Switch to batch mode if more than 10 nodes to remove
+  const int toRemove = nodesToRemove.size();
+  const bool useBatchMode = toRemove > 10; // Switch to batch mode if more than 10 nodes to remove
   int progress = 0;
   if (useBatchMode)
   {

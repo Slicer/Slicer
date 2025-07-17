@@ -37,7 +37,7 @@ vtkStandardNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1);
 //---------------------------------------------------------------------------
 int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -138,7 +138,7 @@ public:
   void InitializeSupportedWriteFileTypes() override { this->SupportedWriteFileTypes->InsertNextValue(".noop"); }
   int ReadDataInternal(vtkMRMLNode* refNode) override
   {
-    vtkMRMLNodeTestHelper1* node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
+    vtkMRMLNodeTestHelper1* const node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if (!node)
     {
       vtkErrorMacro("ReadData: Reference node is expected to be a vtkMRMLNodeTestHelper1");
@@ -148,7 +148,7 @@ public:
   }
   int WriteDataInternal(vtkMRMLNode* refNode) override
   {
-    vtkMRMLNodeTestHelper1* node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
+    vtkMRMLNodeTestHelper1* const node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if (!node)
     {
       vtkErrorMacro("WriteData: Reference node is expected to be a vtkMRMLNodeTestHelper1");
@@ -255,7 +255,7 @@ void vtkMRMLNodeTestHelper1::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLNodeTestHelper1::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStringMacro(OtherNodeRef, OtherNodeID);
@@ -295,7 +295,7 @@ void vtkMRMLStorageNodeTestHelper::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNodeTestHelper::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStringMacro(OtherNodeRef, OtherNodeID);
@@ -341,7 +341,7 @@ bool TestSetAttribute(int line, const char* attribute, const char* value, const 
 //---------------------------------------------------------------------------
 int TestBasicMethods()
 {
-  vtkNew<vtkMRMLNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }
@@ -448,7 +448,7 @@ bool TestCopyWithScene(int line,
   }
 
   // Create a copy
-  const char* name = "BetterThanTheOriginal";
+  const char* const name = "BetterThanTheOriginal";
   vtkNew<vtkMRMLNodeTestHelper1> copy;
 
   // case: x, 1, x
@@ -466,7 +466,7 @@ bool TestCopyWithScene(int line,
     return false;
   }
 
-  std::string uname = scene->GetUniqueNameByString(name);
+  const std::string uname = scene->GetUniqueNameByString(name);
   copy->SetName(uname.c_str());
 
   // case: x, 0, x
@@ -528,7 +528,7 @@ bool CheckNthNodeReferenceID(int line,
                              bool referencingNodeAddedToScene = true,
                              vtkMRMLNode* expectedNodeReference = nullptr)
 {
-  const char* currentNodeReferenceID = referencingNode->GetNthNodeReferenceID(role, n);
+  const char* const currentNodeReferenceID = referencingNode->GetNthNodeReferenceID(role, n);
   bool different = true;
   if (currentNodeReferenceID == nullptr || expectedNodeReferenceID == nullptr)
   {
@@ -553,7 +553,7 @@ bool CheckNthNodeReferenceID(int line,
   {
     expectedNodeReference = nullptr;
   }
-  vtkMRMLNode* currentNodeReference = referencingNode->GetNthNodeReference(role, n);
+  vtkMRMLNode* const currentNodeReference = referencingNode->GetNthNodeReference(role, n);
   if (currentNodeReference != expectedNodeReference)
   {
     std::cerr << "Line " << line << " - " << function << " : CheckNthNodeReferenceID failed" //
@@ -605,7 +605,7 @@ int CheckNumberOfNodeReferences(int line, const char* function, const char* role
 //----------------------------------------------------------------------------
 int CheckReferencedNodeCount(int line, const char* function, vtkMRMLScene* scene, vtkMRMLNode* referencingNode, int expected)
 {
-  int current = GetReferencedNodeCount(scene, referencingNode);
+  const int current = GetReferencedNodeCount(scene, referencingNode);
   if (current != expected)
   {
     std::cerr << "Line " << line << " - " << function << " : CheckReferencedNodeCount failed" //
@@ -679,9 +679,9 @@ int TestSetAndObserveNodeReferenceID()
   vtkMRMLNode* returnNode = nullptr;
   int referencedNodesCount = -1;
 
-  std::string role1("refrole1");
-  std::string role2("refrole2");
-  std::string role3("refrole3");
+  const std::string role1("refrole1");
+  const std::string role2("refrole2");
+  const std::string role3("refrole3");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   scene->AddNode(referencingNode.GetPointer());
@@ -997,7 +997,7 @@ int TestSetAndObserveNodeReferenceID()
   referenceIndices.push_back(-1);
   for (std::vector<int>::iterator it = referenceIndices.begin(); it != referenceIndices.end(); ++it)
   {
-    int nth = *it;
+    const int nth = *it;
     referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
     TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // error is only returned if a negative index is provided and it's fine
     returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), nth, nullptr);
@@ -1026,7 +1026,7 @@ bool TestAddRefrencedNodeIDWithNoScene()
 {
   vtkNew<vtkMRMLScene> scene;
 
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
 
@@ -1133,8 +1133,8 @@ bool TestAddRefrencedNodeIDWithNoScene()
 bool TestAddDelayedReferenceNode()
 {
   vtkNew<vtkMRMLScene> scene;
-  std::string role1("refrole1");
-  std::string role2("refrole2");
+  const std::string role1("refrole1");
+  const std::string role2("refrole2");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   scene->AddNode(referencingNode.GetPointer());
@@ -1184,8 +1184,8 @@ bool TestAddDelayedReferenceNode()
 //----------------------------------------------------------------------------
 bool TestRemoveReferencedNodeID()
 {
-  std::string role1("refrole1");
-  std::string role2("refrole2");
+  const std::string role1("refrole1");
+  const std::string role2("refrole2");
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -1394,7 +1394,7 @@ bool TestRemoveReferencedNodeID()
 //----------------------------------------------------------------------------
 bool TestRemoveReferencedNode()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -1453,7 +1453,7 @@ bool TestRemoveReferencedNode()
 //----------------------------------------------------------------------------
 bool TestRemoveReferencingNode()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -1474,7 +1474,7 @@ bool TestRemoveReferencingNode()
   scene->RemoveNode(referencingNode.GetPointer());
   // Removing the scene from the  node clear the cached referenced
   // nodes.
-  vtkMRMLNode* referencedNode = referencingNode->GetNthNodeReference(role1.c_str(), 0);
+  vtkMRMLNode* const referencedNode = referencingNode->GetNthNodeReference(role1.c_str(), 0);
   std::vector<vtkMRMLNode*> referencedNodes;
   referencingNode->GetNodeReferences(role1.c_str(), referencedNodes);
 
@@ -1487,8 +1487,8 @@ bool TestRemoveReferencingNode()
     return false;
   }
 
-  int expectedReferencedNodeVectorSize = 3;
-  int currentReferencedNodeVectorSize = referencedNodes.size();
+  const int expectedReferencedNodeVectorSize = 3;
+  const int currentReferencedNodeVectorSize = referencedNodes.size();
   if (currentReferencedNodeVectorSize != expectedReferencedNodeVectorSize)
   {
     std::cerr << "Line " << __LINE__ << " - " << "GetNodeReferences" << " failed"             //
@@ -1548,7 +1548,7 @@ bool TestRemoveReferencingNode()
 //----------------------------------------------------------------------------
 bool TestNodeReferences()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
@@ -1609,7 +1609,7 @@ bool TestNodeReferences()
   referencingNode->RemoveNthNodeReferenceID(role1.c_str(), 2);
 
   referencedNodes.TakeReference(scene->GetReferencedNodes(referencingNode));
-  int expectedNumberOfItems = 3;
+  const int expectedNumberOfItems = 3;
   if (referencedNodes->GetNumberOfItems() != expectedNumberOfItems ||        //
       referencedNodes->GetItemAsObject(0) != referencingNode.GetPointer() || //
       referencedNodes->GetItemAsObject(1) != referencedNode1.GetPointer() || //
@@ -1637,7 +1637,7 @@ bool TestNodeReferences()
 //----------------------------------------------------------------------------
 bool TestReferenceModifiedEvent()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -1694,7 +1694,7 @@ bool TestReferenceModifiedEvent()
   }
   spy->ResetNumberOfEvents();
 
-  vtkNew<vtkMRMLNodeTestHelper1> referencedNode3;
+  const vtkNew<vtkMRMLNodeTestHelper1> referencedNode3;
   referencingNode->SetAndObserveNodeReferenceID(role1.c_str(), "vtkMRMLNodeTestHelper14");
 
   // If the referenced node is not yet in the scene then vtkMRMLNode::ReferenceAddedEvent
@@ -1712,7 +1712,7 @@ bool TestReferenceModifiedEvent()
 
   scene->AddNode(referencedNode3.GetPointer());
   // update the reference of the node
-  vtkMRMLNode* referencedNode = referencingNode->GetNodeReference(role1.c_str());
+  vtkMRMLNode* const referencedNode = referencingNode->GetNodeReference(role1.c_str());
 
   if (spy->GetTotalNumberOfEvents() != 1 ||                            //
       spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) != 1 || //
@@ -1731,7 +1731,7 @@ bool TestReferenceModifiedEvent()
 //----------------------------------------------------------------------------
 bool TestReferencesWithEvent()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -1953,8 +1953,8 @@ bool TestReferencesWithEvent()
 //----------------------------------------------------------------------------
 bool TestMultipleReferencesToSameNodeWithEvent()
 {
-  const char* role1 = "refrole1";
-  const char* role2 = "refrole2";
+  const char* const role1 = "refrole1";
+  const char* const role2 = "refrole2";
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -2085,7 +2085,7 @@ bool TestMultipleReferencesToSameNodeWithEvent()
 //----------------------------------------------------------------------------
 bool TestSingletonNodeReferencesUpdate()
 {
-  const char* role1 = "refrole1";
+  const char* const role1 = "refrole1";
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -2118,7 +2118,7 @@ bool TestSingletonNodeReferencesUpdate()
 //----------------------------------------------------------------------------
 bool TestAddReferencedNodeIDEventsWithNoScene()
 {
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   // Make sure that the ReferenceAddedEvent is fired even when the
   // referenced node is observed when the referencing is not in the scene.
@@ -2158,9 +2158,9 @@ int TestSetNodeReferenceID()
   vtkMRMLNode* returnNode = nullptr;
   int referencedNodesCount = -1;
 
-  std::string role1("refrole1");
-  std::string role2("refrole2");
-  std::string role3("refrole3");
+  const std::string role1("refrole1");
+  const std::string role2("refrole2");
+  const std::string role3("refrole3");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   scene->AddNode(referencingNode.GetPointer());
@@ -2476,7 +2476,7 @@ int TestSetNodeReferenceID()
   referenceIndices.push_back(-1);
   for (std::vector<int>::iterator it = referenceIndices.begin(); it != referenceIndices.end(); ++it)
   {
-    int nth = *it;
+    const int nth = *it;
     referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
     TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // error is only returned if a negative index is provided and it's fine
     returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), nth, nullptr);
@@ -2508,7 +2508,7 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString()
   vtkMRMLNode* returnNode = nullptr;
   int referencedNodesCount = -1;
 
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   scene->AddNode(referencingNode.GetPointer());
@@ -2517,10 +2517,10 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString()
 
   std::vector<vtkWeakPointer<vtkMRMLNodeTestHelper1>> referencingNodes;
 
-  int referencingNodeCount = 8;
+  const int referencingNodeCount = 8;
   for (int idx = 0; idx < referencingNodeCount; idx++)
   {
-    vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+    const vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
     scene->AddNode(referencingNode.GetPointer());
     referencingNodes.emplace_back(referencingNode.GetPointer());
   }
@@ -2590,8 +2590,8 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString()
 //----------------------------------------------------------------------------
 bool TestNodeReferenceSerialization()
 {
-  std::string role1("refrole1");
-  std::string role2("refrole2");
+  const std::string role1("refrole1");
+  const std::string role2("refrole2");
 
   vtkNew<vtkMRMLScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
@@ -2610,12 +2610,12 @@ bool TestNodeReferenceSerialization()
   referencingNode->AddNodeReferenceID(role2.c_str(), referencedNode21->GetID());
   referencingNode->AddNodeReferenceID(role2.c_str(), referencedNode22->GetID());
 
-  std::stringstream ss;
+  const std::stringstream ss;
 
   // Write scene to XML string
   scene->SetSaveToXMLString(1);
   scene->Commit();
-  std::string sceneXMLString = scene->GetSceneXMLString();
+  const std::string sceneXMLString = scene->GetSceneXMLString();
 
   vtkNew<vtkMRMLScene> scene2;
   scene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
@@ -2707,7 +2707,7 @@ bool TestClearScene_CheckNumberOfEvents(const char* description,
   vtkNew<vtkMRMLScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
 
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   if (referencingNodeIsSingleton)
@@ -2949,7 +2949,7 @@ int TestReadWriteXMLProperties()
   ss << " />";
   std::cout << "Scene XML: " << ss.str() << std::endl;
 
-  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromStream(ss));
+  const vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromStream(ss));
 
   const char* atts[] = { "TestingStringVector",
                          element->GetAttribute("TestingStringVector"),
@@ -3038,7 +3038,7 @@ bool TestImportSceneReferenceValidDuringImport()
   // Create scene and register node
   //
 
-  std::string role1("refrole1");
+  const std::string role1("refrole1");
 
   vtkNew<vtkMRMLTestScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
@@ -3105,7 +3105,7 @@ bool TestImportSceneReferenceValidDuringImport()
   //
   scene->SetSaveToXMLString(1);
   scene->Commit();
-  std::string sceneXMLString = scene->GetSceneXMLString();
+  const std::string sceneXMLString = scene->GetSceneXMLString();
 
   //  std::cerr << sceneXMLString << std::endl;
 
@@ -3288,12 +3288,12 @@ int TestSaveLoadSpecialCharacters()
   node->SetAttribute("special2Att", special2.c_str());
   node->SetAttribute("special3Att", special3.c_str());
 
-  std::stringstream ss;
+  const std::stringstream ss;
 
   // Write scene to XML string
   scene->SetSaveToXMLString(1);
   CHECK_BOOL(scene->Commit() != 0, true);
-  std::string sceneXMLString = scene->GetSceneXMLString();
+  const std::string sceneXMLString = scene->GetSceneXMLString();
 
   std::cout << sceneXMLString << std::endl;
 

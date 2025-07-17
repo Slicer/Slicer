@@ -61,11 +61,11 @@ int PopulateScene(vtkMRMLScene* scene)
     vtkNew<vtkMRMLModelHierarchyNode> mhn;
     nodes.push_back(mhn.GetPointer());
     scene->AddNode(mhn.GetPointer());
-    std::string idNumberString = ToString(i);
+    const std::string idNumberString = ToString(i);
     mhn->SetName(idNumberString.c_str());
     if (i > 0)
     {
-      std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
+      const std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
       //      std::cout << "Setting parent node id"
       //                << " on node " << mhn->GetID()
       //                << " to " << parentNodeID.c_str() << std::endl;
@@ -79,7 +79,7 @@ int PopulateScene(vtkMRMLScene* scene)
 
   for (int index = 0; index < 5; ++index)
   {
-    std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
+    const std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
     CHECK_NODE_IN_SCENE_BY_ID(scene, nodeID.c_str(), nodes[index]);
   }
 
@@ -90,7 +90,7 @@ int PopulateScene(vtkMRMLScene* scene)
 // Print out the model hierarchy nodes in a scene
 void PrintModelHierarchyNodes(int line, vtkMRMLScene* scene)
 {
-  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+  const int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
 
   std::cerr << "\nLine " << line << " - ModelHierarchyNodes:" << std::endl;
 
@@ -202,10 +202,10 @@ int ImportIDModelHierarchyParentIDConflictTestXMLString()
 
   for (int index = 0; index < 10; ++index)
   {
-    std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
+    const std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
     vtkMRMLModelHierarchyNode* hierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID(nodeID.c_str()));
 
-    std::string expectedParentID = std::string("vtkMRMLModelHierarchyNode") + ToString(index);
+    const std::string expectedParentID = std::string("vtkMRMLModelHierarchyNode") + ToString(index);
     std::cout << "expectedParentID = " << expectedParentID << std::endl;
 
     CHECK_NOT_NULL_ADD_REPORT(hierarchyNode, PrintModelHierarchyNodes(__LINE__, scene.GetPointer()));
@@ -229,7 +229,7 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   vtkNew<vtkMRMLScene> scene1;
 
   // add a single hierarchy node
-  vtkNew<vtkMRMLModelHierarchyNode> mhn;
+  const vtkNew<vtkMRMLModelHierarchyNode> mhn;
   scene1->AddNode(mhn.GetPointer());
 
   // At this point the scene1 should be:
@@ -244,7 +244,7 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   // Save scene1
   //
 
-  std::string filename1 = "ImportIDModelHierarchyParentIDConflictTestFile1.mrml";
+  const std::string filename1 = "ImportIDModelHierarchyParentIDConflictTestFile1.mrml";
   scene1->SetURL(filename1.c_str());
   scene1->Commit();
 
@@ -260,7 +260,7 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   // Save scene2
   //
 
-  std::string filename2 = "ImportIDModelHierarchyParentIDConflictTestFile2.mrml";
+  const std::string filename2 = "ImportIDModelHierarchyParentIDConflictTestFile2.mrml";
   scene2->SetURL(filename2.c_str());
   scene2->Commit();
 
@@ -328,13 +328,13 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   CHECK_STRING_ADD_REPORT(hierarchyNode2->GetParentNodeID(), "vtkMRMLModelHierarchyNode6", PrintModelHierarchyNodes(__LINE__, scene3.GetPointer()));
 
   // clean up
-  int removed1 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename1.c_str()));
+  const int removed1 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename1.c_str()));
   if (!removed1)
   {
     std::cerr << "Unable to remove file " << filename1.c_str() << std::endl;
     return EXIT_FAILURE;
   }
-  int removed2 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename2.c_str()));
+  const int removed2 = static_cast<bool>(itksys::SystemTools::RemoveFile(filename2.c_str()));
   if (!removed2)
   {
     std::cerr << "Unable to remove file " << filename2.c_str() << std::endl;

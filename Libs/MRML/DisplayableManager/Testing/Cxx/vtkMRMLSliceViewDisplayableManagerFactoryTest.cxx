@@ -41,9 +41,9 @@
 int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderer> renderer;
+  const vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
   renderWindow->AddRenderer(renderer.GetPointer());
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());

@@ -55,12 +55,12 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::GrayscaleFillholeImageFilter<InputImageType, OutputImageType> FillholeFilterType;
 
   // Creation of Reader and Writer filters
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename FillholeFilterType::Pointer fillhole = FillholeFilterType::New();
-  itk::PluginFilterWatcher watcher(fillhole, "Fill Hole", CLPProcessInformation);
+  const typename FillholeFilterType::Pointer fillhole = FillholeFilterType::New();
+  const itk::PluginFilterWatcher watcher(fillhole, "Fill Hole", CLPProcessInformation);
 
   // Setup the input and output files
   reader->SetFileName(inputVolume.c_str());

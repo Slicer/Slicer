@@ -36,11 +36,11 @@ int qSlicerCLILoadableModuleFactoryTest1(int, char*[])
                << "libThreshold.so.2.3"
                << "libThreshold.dylib";
 
-  QString expectedModuleName = "Threshold";
-  qSlicerCLILoadableModuleFactory factory;
+  const QString expectedModuleName = "Threshold";
+  const qSlicerCLILoadableModuleFactory factory;
   for (const QString& libraryName : libraryNames)
   {
-    QString moduleName = factory.fileNameToKey(libraryName);
+    const QString moduleName = factory.fileNameToKey(libraryName);
     if (moduleName != expectedModuleName)
     {
       std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl

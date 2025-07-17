@@ -30,7 +30,7 @@ qSlicerTableColumnPropertiesWidgetPlugin::qSlicerTableColumnPropertiesWidgetPlug
 //------------------------------------------------------------------------------
 QWidget* qSlicerTableColumnPropertiesWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerTableColumnPropertiesWidget* _widget = new qSlicerTableColumnPropertiesWidget(_parent);
+  qSlicerTableColumnPropertiesWidget* const _widget = new qSlicerTableColumnPropertiesWidget(_parent);
   return _widget;
 }
 

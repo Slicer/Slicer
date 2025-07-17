@@ -105,8 +105,8 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
 {
   this->CreateTargetRepresentation(segment);
 
-  vtkDataObject* sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
-  vtkDataObject* targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
+  vtkDataObject* const sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
+  vtkDataObject* const targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
 
   // Check validity of source and target representation objects
   vtkOrientedImageData* fractionalLabelMap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
@@ -127,7 +127,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   double minimumValue = 0.0;
   double maximumValue = 1.0;
   fractionalLabelMap->GetFieldData();
-  vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(fractionalLabelMap->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
+  vtkDoubleArray* const scalarRange = vtkDoubleArray::SafeDownCast(fractionalLabelMap->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
   if (scalarRange && scalarRange->GetNumberOfValues() == 2)
   {
     minimumValue = scalarRange->GetValue(0);
@@ -135,7 +135,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   }
 
   // Pad labelmap if it has non-background border voxels
-  bool paddingNecessary = this->IsLabelmapPaddingNecessary(fractionalLabelMap);
+  const bool paddingNecessary = this->IsLabelmapPaddingNecessary(fractionalLabelMap);
   if (paddingNecessary)
   {
     vtkOrientedImageData* paddedLabelmap = vtkOrientedImageData::New();
@@ -145,11 +145,11 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   }
 
   // Get conversion parameters
-  double decimationFactor = this->ConversionParameters->GetValueAsDouble(this->GetDecimationFactorParameterName());
-  double smoothingFactor = this->ConversionParameters->GetValueAsDouble(this->GetSmoothingFactorParameterName());
-  int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
-  double fractionalOversamplingFactor = this->ConversionParameters->GetValueAsDouble(this->GetFractionalLabelMapOversamplingFactorParameterName());
-  double fractionalThreshold = this->ConversionParameters->GetValueAsDouble(this->GetThresholdFractionParameterName());
+  const double decimationFactor = this->ConversionParameters->GetValueAsDouble(this->GetDecimationFactorParameterName());
+  const double smoothingFactor = this->ConversionParameters->GetValueAsDouble(this->GetSmoothingFactorParameterName());
+  const int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
+  const double fractionalOversamplingFactor = this->ConversionParameters->GetValueAsDouble(this->GetFractionalLabelMapOversamplingFactorParameterName());
+  const double fractionalThreshold = this->ConversionParameters->GetValueAsDouble(this->GetThresholdFractionParameterName());
 
   if (fractionalThreshold < 0 || fractionalThreshold > 1)
   {
@@ -158,19 +158,19 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   }
 
   // Save geometry of oriented image data before conversion so that it can be applied on the poly data afterwards
-  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   fractionalLabelMap->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
 
   // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
   // the whole transform can be applied on the poly data to transform it to the world coordinate system
-  vtkSmartPointer<vtkOrientedImageData> fractionalLabelmapWithIdentityGeometry = vtkSmartPointer<vtkOrientedImageData>::New();
+  const vtkSmartPointer<vtkOrientedImageData> fractionalLabelmapWithIdentityGeometry = vtkSmartPointer<vtkOrientedImageData>::New();
   fractionalLabelmapWithIdentityGeometry->ShallowCopy(fractionalLabelMap);
-  vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   identityMatrix->Identity();
   fractionalLabelmapWithIdentityGeometry->SetGeometryFromImageToWorldMatrix(identityMatrix);
 
   // Resize the image with interpolation, this helps the conversion for structures with small labelmaps
-  vtkSmartPointer<vtkImageResize> imageResize = vtkSmartPointer<vtkImageResize>::New();
+  const vtkSmartPointer<vtkImageResize> imageResize = vtkSmartPointer<vtkImageResize>::New();
   imageResize->SetInputData(fractionalLabelmapWithIdentityGeometry);
   imageResize->BorderOn();
   imageResize->SetResizeMethodToMagnificationFactors();
@@ -178,7 +178,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   imageResize->InterpolateOn();
 
   // Run marching cubes
-  vtkSmartPointer<vtkFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
+  const vtkSmartPointer<vtkFlyingEdges3D> marchingCubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
   marchingCubes->SetInputConnection(imageResize->GetOutputPort());
   marchingCubes->SetNumberOfContours(1);
   marchingCubes->SetValue(0, (fractionalThreshold * (maximumValue - minimumValue)) + minimumValue);
@@ -214,7 +214,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   // Decimate
   if (decimationFactor > 0.0)
   {
-    vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+    const vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
     decimator->SetInputData(processingResult);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
@@ -227,7 +227,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
 
   if (smoothingFactor > 0)
   {
-    vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+    const vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
     smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
     // This formula maps:
@@ -235,7 +235,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
     // 0.25 -> 0.1   (average smoothing)
     // 0.5  -> 0.01  (more smoothing)
     // 1.0  -> 0.001 (very strong smoothing)
-    double passBand = pow(10.0, -4.0 * smoothingFactor);
+    const double passBand = pow(10.0, -4.0 * smoothingFactor);
     smoother->SetPassBand(passBand);
     smoother->BoundarySmoothingOff();
     smoother->FeatureEdgeSmoothingOff();
@@ -246,17 +246,17 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   }
 
   // Transform the result surface from labelmap IJK to world coordinate system
-  vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
+  const vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
   labelmapGeometryTransform->SetMatrix(labelmapImageToWorldMatrix);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  const vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
   transformPolyDataFilter->Update();
 
   if (computeSurfaceNormals > 0)
   {
-    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    const vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
     polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
     // We almost always perform smoothing, so splitting would not be able to preserve any sharp features
@@ -286,7 +286,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
 //----------------------------------------------------------------------------
 void vtkFractionalLabelmapToClosedSurfaceConversionRule::PadLabelmap(vtkOrientedImageData* fractionalLabelMap, double paddingConstant)
 {
-  vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+  const vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
   padder->SetInputData(fractionalLabelMap);
   padder->SetConstant(paddingConstant);
   int extent[6] = { 0, -1, 0, -1, 0, -1 };

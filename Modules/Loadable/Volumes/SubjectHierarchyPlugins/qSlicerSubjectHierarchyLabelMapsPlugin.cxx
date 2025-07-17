@@ -211,7 +211,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
     return;
   }
 
-  vtkMRMLLabelMapVolumeNode* associatedLabelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLLabelMapVolumeNode* const associatedLabelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   // Labelmap volume
   if (associatedLabelMapNode)
   {
@@ -254,7 +254,7 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
   }
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+  qSlicerSubjectHierarchyVolumesPlugin* const volumesPlugin =
     qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
@@ -263,7 +263,7 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
   }
 
   // Sanity checks for labelmap
-  vtkMRMLLabelMapVolumeNode* labelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLLabelMapVolumeNode* const labelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!labelMapNode)
   {
     return -1;
@@ -324,7 +324,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsFor
   {
     // Determine current state of the toggle labelmap outline checkbox (from the first slice view)
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
-    int useLabelOutline = sliceNode->GetUseLabelOutline();
+    const int useLabelOutline = sliceNode->GetUseLabelOutline();
     d->ToggleOutlineVisibilityAction->blockSignals(true);
     d->ToggleOutlineVisibilityAction->setChecked(useLabelOutline);
     d->ToggleOutlineVisibilityAction->blockSignals(false);

@@ -48,11 +48,11 @@ void DiffusionTensor3DWrite<TData>::SetSpace(int space)
   while (itr != end)
   {
     // Get Measurement Frame
-    itk::MetaDataObjectBase::Pointer entry = itr->second;
-    MetaDataIntType::Pointer entryvalue = dynamic_cast<MetaDataIntType*>(entry.GetPointer());
+    const itk::MetaDataObjectBase::Pointer entry = itr->second;
+    const MetaDataIntType::Pointer entryvalue = dynamic_cast<MetaDataIntType*>(entry.GetPointer());
     if (entryvalue)
     {
-      int pos = itr->first.find("space");
+      const int pos = itr->first.find("space");
       if (pos != -1)
       {
         entryvalue->SetMetaDataObjectValue(nrrdSpace->str[space]);
@@ -66,16 +66,16 @@ template <class TData>
 void DiffusionTensor3DWrite<TData>::SetMeasurementFrame(Matrix<double, 3, 3> measurementFrame)
 {
   DictionaryType::ConstIterator itr = m_MetaDataDictionary.Begin();
-  DictionaryType::ConstIterator end = m_MetaDataDictionary.End();
+  const DictionaryType::ConstIterator end = m_MetaDataDictionary.End();
 
   while (itr != end)
   {
     // Get Measurement Frame
-    itk::MetaDataObjectBase::Pointer entry = itr->second;
-    MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
+    const itk::MetaDataObjectBase::Pointer entry = itr->second;
+    const MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
     if (entryvalue)
     {
-      int pos = itr->first.find("NRRD_measurement frame");
+      const int pos = itr->first.find("NRRD_measurement frame");
       if (pos != -1)
       {
         DoubleVectorType tagvalue;
@@ -100,7 +100,7 @@ template <class TData>
 int DiffusionTensor3DWrite<TData>::Update(const char* output)
 {
   m_Input->SetMetaDataDictionary(m_MetaDataDictionary);
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
   writer->SetInput(m_Input);
   writer->SetFileName(output);
   writer->SetNumberOfWorkUnits(m_NumberOfThreads);

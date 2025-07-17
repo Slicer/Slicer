@@ -143,9 +143,9 @@ bool vtkCodedEntry::SetFromString(const std::string& content)
   std::string attribute;
   while (std::getline(attributes, attribute, '|'))
   {
-    int colonIndex = attribute.find(':');
-    std::string name = attribute.substr(0, colonIndex);
-    std::string value = attribute.substr(colonIndex + 1);
+    const int colonIndex = attribute.find(':');
+    const std::string name = attribute.substr(0, colonIndex);
+    const std::string value = attribute.substr(colonIndex + 1);
     if (name == "CodeValue")
     {
       this->SetCodeValue(value.c_str());

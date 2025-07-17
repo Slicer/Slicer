@@ -62,7 +62,7 @@ void qMRMLSliceWidgetPrivate::init()
   Q_Q(qMRMLSliceWidget);
   this->setupUi(q);
 
-  vtkMRMLSliceLogic* sliceLogic = this->SliceController->sliceLogic();
+  vtkMRMLSliceLogic* const sliceLogic = this->SliceController->sliceLogic();
 
   this->SliceVerticalController->setSliceLogic(sliceLogic);
   this->SliceView->interactorObserver()->SetSliceLogic(sliceLogic);
@@ -79,7 +79,7 @@ void qMRMLSliceWidgetPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::updateSliceOffsetSliderOrientation()
 {
-  bool horizontal = (this->SliceOffsetSliderOrientation == Qt::Horizontal);
+  const bool horizontal = (this->SliceOffsetSliderOrientation == Qt::Horizontal);
   this->SliceController->setShowSliceOffsetSlider(horizontal);
   this->SliceVerticalController->setShowSliceOffsetSlider(!horizontal);
 }
@@ -87,7 +87,7 @@ void qMRMLSliceWidgetPrivate::updateSliceOffsetSliderOrientation()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setSliceViewSize(const QSize& size)
 {
-  QSizeF scaledSizeF = QSizeF(size) * this->SliceView->devicePixelRatioF();
+  const QSizeF scaledSizeF = QSizeF(size) * this->SliceView->devicePixelRatioF();
   this->SliceController->setSliceViewSize(scaledSizeF.toSize());
 }
 
@@ -161,7 +161,7 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 void qMRMLSliceWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
 {
   Q_D(qMRMLSliceWidget);
-  vtkMRMLSliceNode* sliceViewNode = vtkMRMLSliceNode::SafeDownCast(newViewNode);
+  vtkMRMLSliceNode* const sliceViewNode = vtkMRMLSliceNode::SafeDownCast(newViewNode);
   if (newViewNode && !sliceViewNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLSliceNode";
@@ -362,7 +362,7 @@ void qMRMLSliceWidget::showEvent(QShowEvent* event)
   QWindow* window = nullptr;
   for (QWidget* const widget : qApp->topLevelWidgets())
   {
-    QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
+    QMainWindow* const mainWindow = qobject_cast<QMainWindow*>(widget);
     if (mainWindow)
     {
       window = mainWindow->windowHandle();

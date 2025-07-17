@@ -54,10 +54,10 @@ qSlicerSegmentationsIOOptionsWidget::qSlicerSegmentationsIOOptionsWidget(QWidget
 
   ctkFlowLayout::replaceLayout(this);
 
-  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  QSettings* const settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("Segmentations/AutoOpacities"))
   {
-    bool autoOpacities = settings->value("Segmentations/AutoOpacities").toBool();
+    const bool autoOpacities = settings->value("Segmentations/AutoOpacities").toBool();
     d->AutoOpacitiesCheckBox->setChecked(autoOpacities);
     d->Properties["autoOpacities"] = autoOpacities;
   }

@@ -63,9 +63,9 @@ int vtkMRMLModelSliceDisplayableManagerTest(int vtkNotUsed(argc), char* vtkNotUs
 vtkSmartPointer<vtkRenderWindow> CreateRenderWindow()
 {
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderer> renderer;
+  const vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetSize(600, 600);
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
 
@@ -100,9 +100,9 @@ vtkSmartPointer<vtkMRMLDisplayableManagerGroup> CreateDisplayableManager(vtkMRML
 //----------------------------------------------------------------------------
 bool TestBatchRemoveDisplayNode()
 {
-  vtkSmartPointer<vtkRenderWindow> renderWindow = CreateRenderWindow();
+  const vtkSmartPointer<vtkRenderWindow> renderWindow = CreateRenderWindow();
   vtkNew<vtkMRMLScene> scene;
-  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup = CreateDisplayableManager(scene.GetPointer(), renderWindow->GetRenderers()->GetFirstRenderer());
+  const vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup = CreateDisplayableManager(scene.GetPointer(), renderWindow->GetRenderers()->GetFirstRenderer());
 
   // We observe the model display nodes and we make sure only the mrmlscene
   // has a reference on them (ref count is 1)

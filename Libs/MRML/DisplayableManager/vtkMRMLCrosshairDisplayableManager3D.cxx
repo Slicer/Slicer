@@ -151,7 +151,7 @@ void vtkMRMLCrosshairDisplayableManager3D::vtkInternal::BuildCrosshair()
   this->CrosshairWidget->SetInteractor(interactor);
   this->CrosshairWidget->EnabledOn();
 
-  const int* screenSize = interactor->GetRenderWindow()->GetScreenSize();
+  const int* const screenSize = interactor->GetRenderWindow()->GetScreenSize();
 
   // Handle size is defined a percentage of screen size to accommodate high-DPI screens
   double handleSizeInScreenSizePercent = 5;
@@ -160,12 +160,12 @@ void vtkMRMLCrosshairDisplayableManager3D::vtkInternal::BuildCrosshair()
   {
     handleSizeInScreenSizePercent = 2.5;
   }
-  double handleSizeInPixels = double(screenSize[1]) * (0.01 * handleSizeInScreenSizePercent);
+  const double handleSizeInPixels = double(screenSize[1]) * (0.01 * handleSizeInScreenSizePercent);
   this->CrosshairRepresentation->SetHandleSize(handleSizeInPixels);
 
   // Line Width
   // Base width is 1 on a full HD display.
-  double baseWidth = 1 + int(screenSize[1] / 1000);
+  const double baseWidth = 1 + int(screenSize[1] / 1000);
   switch (this->CrosshairNode->GetCrosshairThickness())
   {
     case vtkMRMLCrosshairNode::Medium: this->CrosshairRepresentation->GetProperty()->SetLineWidth(baseWidth * 2); break;
@@ -214,7 +214,7 @@ void vtkMRMLCrosshairDisplayableManager3D::ObserveMRMLScene()
 void vtkMRMLCrosshairDisplayableManager3D::UpdateFromMRMLScene()
 {
   // search for the Crosshair node
-  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(this->GetMRMLScene());
+  vtkMRMLCrosshairNode* const crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(this->GetMRMLScene());
   this->Internal->SetCrosshairNode(crosshairNode);
 }
 
@@ -245,9 +245,9 @@ void vtkMRMLCrosshairDisplayableManager3D::OnMRMLNodeModified(vtkMRMLNode* node)
   }
 
   // update the position of the actor
-  double* ras = this->Internal->CrosshairNode->GetCrosshairRAS();
-  double* lastRas = this->Internal->CrosshairPosition;
-  double eps = 1.0e-12;
+  double* const ras = this->Internal->CrosshairNode->GetCrosshairRAS();
+  double* const lastRas = this->Internal->CrosshairPosition;
+  const double eps = 1.0e-12;
   if (fabs(lastRas[0] - ras[0]) > eps    //
       || fabs(lastRas[1] - ras[1]) > eps //
       || fabs(lastRas[2] - ras[2]) > eps)

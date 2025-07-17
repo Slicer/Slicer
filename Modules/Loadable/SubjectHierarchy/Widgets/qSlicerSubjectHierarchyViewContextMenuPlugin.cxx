@@ -201,7 +201,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     this->CopyImageAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
-  int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5; // set section to +5 to allow placing other sections above
+  const int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5; // set section to +5 to allow placing other sections above
 
   // Slice intersections
   this->IntersectingSlicesVisibilityAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Slice intersections"), q);
@@ -221,7 +221,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesInteractiveAction, sliceSection, 1);
   QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)), q, SLOT(setIntersectingSlicesHandlesVisible(bool)));
 
-  int thickSlabSection = sliceSection + 5; // set section to +5 to allow placing other sections above
+  const int thickSlabSection = sliceSection + 5; // set section to +5 to allow placing other sections above
 
   // Thick slab reconstruction
   this->EnableSlabReconstructionAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Thick slab reconstruction"), q);
@@ -313,7 +313,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->InteractionModeAdjustWindowLevelAction->setVisible(true);
   d->InteractionModePlaceAction->setVisible(true);
 
-  int interactionMode = interactionNode->GetCurrentInteractionMode();
+  const int interactionMode = interactionNode->GetCurrentInteractionMode();
 
   bool wasBlocked = d->InteractionModeViewTransformAction->blockSignals(true);
   d->InteractionModeViewTransformAction->setChecked(interactionMode == vtkMRMLInteractionNode::ViewTransform);
@@ -353,7 +353,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
 
   // Check tilt lock in camera widget and set menu item accordingly
   vtkMRMLSliceNode* sliceViewNode = vtkMRMLSliceNode::SafeDownCast(d->ViewNode);
-  bool isSliceViewNode = (sliceViewNode != nullptr);
+  const bool isSliceViewNode = (sliceViewNode != nullptr);
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
   d->FitSliceViewAction->setVisible(isSliceViewNode);
   d->RefocusAllCamerasAction->setVisible(isSliceViewNode);
@@ -400,9 +400,9 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
   }
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+  QWidget* const widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+  qMRMLThreeDWidget* const threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
   vtkMRMLCameraWidget* cameraWidget = nullptr;
   if (threeDWidget)
   {
@@ -448,8 +448,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::saveScreenshot()
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
   // Get the inside of the widget (without the view controller bar)
-  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+  qMRMLSliceWidget* const sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
+  qMRMLThreeDWidget* const threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
   if (sliceWidget)
   {
     widget = sliceWidget->sliceView();
@@ -465,7 +465,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::saveScreenshot()
   }
 
   // Grab image
-  QImage screenshot = ctk::grabVTKWidget(widget);
+  const QImage screenshot = ctk::grabVTKWidget(widget);
 
   // Copy to clipboard
   QClipboard* clipboard = QApplication::clipboard();
@@ -497,7 +497,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
   {
     return;
   }
-  bool maximizeView = d->MaximizeViewAction->property("maximize").toBool();
+  const bool maximizeView = d->MaximizeViewAction->property("maximize").toBool();
   if (maximizeView)
   {
     d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
@@ -518,7 +518,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
   }
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+  QWidget* const widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
   if (sliceWidget)
@@ -543,9 +543,9 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::centerThreeDView()
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
   }
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+  QWidget* const widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+  qMRMLThreeDWidget* const threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
   if (threeDWidget)
   {
     qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();

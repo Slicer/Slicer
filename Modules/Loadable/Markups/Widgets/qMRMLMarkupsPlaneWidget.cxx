@@ -161,7 +161,7 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
   d->planeSizeModeComboBox->setCurrentIndex(d->planeSizeModeComboBox->findData(planeNode->GetSizeMode()));
   d->planeSizeModeComboBox->blockSignals(wasBlocked);
 
-  double* size = planeNode->GetSize();
+  double* const size = planeNode->GetSize();
 
   wasBlocked = d->sizeXSpinBox->blockSignals(true);
   d->sizeXSpinBox->setValue(size[0]);
@@ -173,7 +173,7 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
   d->sizeYSpinBox->blockSignals(wasBlocked);
   d->sizeYSpinBox->setEnabled(planeNode->GetSizeMode() != vtkMRMLMarkupsPlaneNode::SizeModeAuto);
 
-  double* bounds = planeNode->GetPlaneBounds();
+  double* const bounds = planeNode->GetPlaneBounds();
 
   wasBlocked = d->boundsXMinSpinBox->blockSignals(true);
   d->boundsXMinSpinBox->setValue(bounds[0]);
@@ -253,10 +253,10 @@ void qMRMLMarkupsPlaneWidget::onPlaneBoundsSpinBoxChanged()
   {
     return;
   }
-  double xMin = std::min(d->boundsXMinSpinBox->value(), d->boundsXMaxSpinBox->value());
-  double xMax = std::max(d->boundsXMinSpinBox->value(), d->boundsXMaxSpinBox->value());
-  double yMin = std::min(d->boundsYMinSpinBox->value(), d->boundsYMaxSpinBox->value());
-  double yMax = std::max(d->boundsYMinSpinBox->value(), d->boundsYMaxSpinBox->value());
+  const double xMin = std::min(d->boundsXMinSpinBox->value(), d->boundsXMaxSpinBox->value());
+  const double xMax = std::max(d->boundsXMinSpinBox->value(), d->boundsXMaxSpinBox->value());
+  const double yMin = std::min(d->boundsYMinSpinBox->value(), d->boundsYMaxSpinBox->value());
+  const double yMax = std::max(d->boundsYMinSpinBox->value(), d->boundsYMaxSpinBox->value());
   planeNode->SetPlaneBounds(xMin, xMax, yMin, yMax);
 }
 
@@ -303,7 +303,7 @@ bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* marku
 {
   Q_D(const qMRMLMarkupsPlaneWidget);
 
-  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsPlaneNode* const planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
   if (!planeNode)
   {
     return false;

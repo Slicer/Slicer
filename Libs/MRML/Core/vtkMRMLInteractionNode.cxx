@@ -106,7 +106,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode(int mode)
   {
     return;
   }
-  bool wasPlacing = (this->CurrentInteractionMode == vtkMRMLInteractionNode::Place);
+  const bool wasPlacing = (this->CurrentInteractionMode == vtkMRMLInteractionNode::Place);
   this->CurrentInteractionMode = mode;
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::InteractionModeChangedEvent);
@@ -163,7 +163,7 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -233,7 +233,7 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLInteractionNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
   vtkMRMLInteractionNode* node = (vtkMRMLInteractionNode*)anode;
@@ -291,7 +291,7 @@ void vtkMRMLInteractionNode::SwitchToPersistentPlaceMode()
   {
     return;
   }
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   this->SetPlaceModePersistence(1);
@@ -307,7 +307,7 @@ void vtkMRMLInteractionNode::SwitchToSinglePlaceMode()
   {
     return;
   }
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   this->SetPlaceModePersistence(0);
@@ -323,7 +323,7 @@ void vtkMRMLInteractionNode::SwitchToViewTransformMode()
   {
     return;
   }
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   // only set transform mode persistence, keep the state of the pick and place
   // mode persistence

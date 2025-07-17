@@ -230,7 +230,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::toggleVisibility()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -244,7 +244,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::toggleVisibility()
   }
 
   // Toggle current item visibility
-  int visible = (ownerPlugin->getDisplayVisibility(currentItemID) > 0 ? 0 : 1);
+  const int visible = (ownerPlugin->getDisplayVisibility(currentItemID) > 0 ? 0 : 1);
   ownerPlugin->setDisplayVisibility(currentItemID, visible);
 }
 
@@ -257,7 +257,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -269,7 +269,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
   std::vector<vtkIdType>::iterator childIt;
   for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
-    vtkIdType childItemID = (*childIt);
+    const vtkIdType childItemID = (*childIt);
     qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
     if (!ownerPlugin)
     {
@@ -290,7 +290,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -302,7 +302,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
   std::vector<vtkIdType>::iterator childIt;
   for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
-    vtkIdType childItemID = (*childIt);
+    const vtkIdType childItemID = (*childIt);
     qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
     if (!ownerPlugin)
     {

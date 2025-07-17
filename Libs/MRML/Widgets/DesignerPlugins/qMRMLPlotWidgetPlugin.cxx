@@ -30,7 +30,7 @@ qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLPlotWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLPlotWidget* _widget = new qMRMLPlotWidget(_parent);
+  qMRMLPlotWidget* const _widget = new qMRMLPlotWidget(_parent);
   return _widget;
 }
 

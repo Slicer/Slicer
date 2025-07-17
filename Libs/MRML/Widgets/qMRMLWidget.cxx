@@ -165,6 +165,6 @@ QPixmap qMRMLWidget::pixmapFromIcon(const QIcon& icon)
   // which is the size of the base image (icon.availableSizes().first(), because for that
   // DevicePixelRatio=1.0), and then we retrieve the pixmap for this size.
 
-  QPixmap pixmap = icon.pixmap(icon.availableSizes().first());
+  const QPixmap pixmap = icon.pixmap(icon.availableSizes().first());
   return pixmap;
 }

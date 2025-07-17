@@ -58,7 +58,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   // Renderer, RenderWindow and Interactor
   vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetSize(600, 600);
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
 
@@ -80,7 +80,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   applicationLogic->SetMRMLScene(scene);
 
   // Add ViewNode
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
 
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
@@ -140,7 +140,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
     }
   }
 
-  int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
+  const int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
   if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();

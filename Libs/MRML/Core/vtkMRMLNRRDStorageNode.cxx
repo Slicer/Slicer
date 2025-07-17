@@ -67,7 +67,7 @@ void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -93,10 +93,10 @@ void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLNRRDStorageNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLNRRDStorageNode* node = (vtkMRMLNRRDStorageNode*)anode;
+  vtkMRMLNRRDStorageNode* const node = (vtkMRMLNRRDStorageNode*)anode;
 
   this->SetCenterImage(node->CenterImage);
 
@@ -169,7 +169,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     volNode->SetAndObserveImageData(nullptr);
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName.empty())
   {
@@ -202,7 +202,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   else if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
     vtkDebugMacro("ReadData: Checking we have right info in file");
-    const char* value = reader->GetHeaderValue("modality");
+    const char* const value = reader->GetHeaderValue("modality");
     if (value == nullptr)
     {
       return 0;
@@ -235,7 +235,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   reader->Update();
   // set volume attributes
-  vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
+  vtkMatrix4x4* const mat = reader->GetRasToIjkMatrix();
   volNode->SetRASToIJKMatrix(mat);
 
   // set measurement frame
@@ -270,8 +270,8 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // parse additional diffusion key-value pairs and handle specially
   if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
-    vtkNew<vtkDoubleArray> grad;
-    vtkNew<vtkDoubleArray> bvalue;
+    const vtkNew<vtkDoubleArray> grad;
+    const vtkNew<vtkDoubleArray> bvalue;
     if (!this->ParseDiffusionInformation(reader.GetPointer(), grad.GetPointer(), bvalue.GetPointer()))
     {
       vtkErrorMacro("vtkMRMLDiffusionWeightedVolumeNode: Cannot parse Diffusion Information");
@@ -303,10 +303,10 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLVolumeNode* volNode = nullptr;
   // Store volume nodes attributes.
-  vtkNew<vtkMatrix4x4> mf;
+  const vtkNew<vtkMatrix4x4> mf;
   vtkDoubleArray* grads = nullptr;
   vtkDoubleArray* bValues = nullptr;
-  vtkNew<vtkMatrix4x4> ijkToRas;
+  const vtkNew<vtkMatrix4x4> ijkToRas;
 
   if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
@@ -358,7 +358,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("WriteData: Cannot write nullptr ImageData");
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("WriteData: File name not specified");
@@ -452,8 +452,8 @@ bool parse_gradient_key(std::string key, size_t& grad_number, size_t& gradkey_pa
 
   // slices key string from `dwmri_grad_tag.size()` to `key.size()`.
   //   e.g.: "DWMRI_gradient_000001" -> "000001"
-  std::string cur_grad_num_str = key.substr(dwmri_grad_tag.size(), key.size());
-  size_t cur_grad_num = atol(cur_grad_num_str.c_str());
+  const std::string cur_grad_num_str = key.substr(dwmri_grad_tag.size(), key.size());
+  const size_t cur_grad_num = atol(cur_grad_num_str.c_str());
 
   // enforce monotonic order
   if (cur_grad_num != grad_number)
@@ -472,7 +472,7 @@ bool parse_gradient_key(std::string key, size_t& grad_number, size_t& gradkey_pa
 int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader* reader, vtkDoubleArray* gradients_array, vtkDoubleArray* bvalues_array)
 {
   // Validate modality tag
-  std::string modality(reader->GetHeaderValue("modality"));
+  const std::string modality(reader->GetHeaderValue("modality"));
   if (modality != "DWMRI")
   {
     vtkErrorMacro(<< "NRRD header missing 'modality: DWMRI' tag!");
@@ -484,13 +484,13 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader* reader,
   /*
       Step 1: get DWMRI_b-value
   */
-  std::string ref_bvalue_str(reader->GetHeaderValue(dwmri_bvalue_tag.c_str()));
+  const std::string ref_bvalue_str(reader->GetHeaderValue(dwmri_bvalue_tag.c_str()));
   if (ref_bvalue_str.empty())
   {
     vtkErrorMacro(<< "Missing 'DWMRI_b-value' tag!");
     return 0;
   }
-  double ref_bvalue = atof(ref_bvalue_str.c_str());
+  const double ref_bvalue = atof(ref_bvalue_str.c_str());
 
   /*
     Step 2: loop over all keys
@@ -505,12 +505,12 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader* reader,
   size_t grad_idx = 0;
   size_t gradkey_pad_width = 0;
   double max_grad_norm = 0;
-  std::string err;
+  const std::string err;
 
   std::map<std::string, std::string>::iterator nrrd_keys_iter = nrrd_keys.begin();
   for (; nrrd_keys_iter != nrrd_keys.end(); nrrd_keys_iter++)
   {
-    std::string key = nrrd_keys_iter->first;
+    const std::string key = nrrd_keys_iter->first;
 
     if (!parse_gradient_key(key, grad_idx, gradkey_pad_width, err))
     {
@@ -549,7 +549,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkTeemNRRDReader* reader,
 
     // note: this is norm^2, per the NA-MIC NRRD DWI convention
     // https://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:Nrrd_format
-    double cur_bval = ref_bvalue * pow(cur_grad.two_norm() / max_grad_norm, 2);
+    const double cur_bval = ref_bvalue * pow(cur_grad.two_norm() / max_grad_norm, 2);
     bvalues_array->SetValue(i, cur_bval);
 
     // normalize gradient vector to unit-length

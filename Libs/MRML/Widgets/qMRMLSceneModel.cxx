@@ -93,7 +93,7 @@ void qMRMLSceneModelPrivate::init()
 QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID) const
 {
   Q_Q(const qMRMLSceneModel);
-  QModelIndex scene = q->mrmlSceneIndex();
+  const QModelIndex scene = q->mrmlSceneIndex();
   if (scene == QModelIndex())
   {
     return QModelIndexList();
@@ -108,7 +108,7 @@ QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID) const
   }
   // Add the QModelIndexes from the other columns
   const int row = nodeIndexes[0].row();
-  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
+  const QModelIndex nodeParentIndex = nodeIndexes[0].parent();
   const int sceneColumnCount = q->columnCount(nodeParentIndex);
   for (int j = 1; j < sceneColumnCount; ++j)
   {
@@ -121,11 +121,11 @@ QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID) const
 void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 {
   Q_Q(qMRMLSceneModel);
-  QModelIndex sceneIndex = q->mrmlSceneIndex();
+  const QModelIndex sceneIndex = q->mrmlSceneIndex();
   const int count = q->rowCount(sceneIndex);
   for (int i = 0; i < count; ++i)
   {
-    vtkMRMLNode* node = q->mrmlNodeFromIndex(ctk::modelChildIndex(q, sceneIndex, i, 0));
+    vtkMRMLNode* const node = q->mrmlNodeFromIndex(ctk::modelChildIndex(q, sceneIndex, i, 0));
     q->qvtkDisconnect(node, vtkCommand::NoEvent, q, nullptr);
     if (this->ListenNodeModifiedEvent == qMRMLSceneModel::AllNodes)
     {
@@ -217,8 +217,8 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
   QModelIndexList indexes = q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
   while (start != QModelIndex() && indexes.size())
   {
-    QModelIndex parentIndex = indexes[0].parent();
-    int row = indexes[0].row();
+    const QModelIndex parentIndex = indexes[0].parent();
+    const int row = indexes[0].row();
     q->removeRow(row, parentIndex);
     // don't start the whole search from scratch, only from where we ended it
     start = ctk::modelChildIndex(q, parentIndex, row, 0);
@@ -231,7 +231,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
 //------------------------------------------------------------------------------
 bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item) const
 {
-  QString uid = item ? item->data(qMRMLSceneModel::UIDRole).toString() : QString();
+  const QString uid = item ? item->data(qMRMLSceneModel::UIDRole).toString() : QString();
   return uid == "preItem" || uid == "postItem";
 }
 
@@ -239,9 +239,9 @@ bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item) const
 void qMRMLSceneModelPrivate::reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParentItem)
 {
   Q_Q(qMRMLSceneModel);
-  int min = q->preItems(newParentItem).count();
-  int max = newParentItem->rowCount() - q->postItems(newParentItem).count();
-  int pos = qMin(min + newIndex, max);
+  const int min = q->preItems(newParentItem).count();
+  const int max = newParentItem->rowCount() - q->postItems(newParentItem).count();
+  const int pos = qMin(min + newIndex, max);
   newParentItem->insertRow(pos, children);
 }
 
@@ -278,7 +278,7 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
     return;
   }
 
-  QStringList currentExtraItems = d->extraItems(parent, "preItem");
+  const QStringList currentExtraItems = d->extraItems(parent, "preItem");
   if (currentExtraItems == extraItems)
   {
     // no change
@@ -311,7 +311,7 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
     return;
   }
 
-  QStringList currentExtraItems = d->extraItems(parent, "postItem");
+  const QStringList currentExtraItems = d->extraItems(parent, "postItem");
   if (currentExtraItems == extraItems)
   {
     // no change
@@ -380,15 +380,15 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
   {
     return nullptr;
   }
-  int count = this->invisibleRootItem()->rowCount();
+  const int count = this->invisibleRootItem()->rowCount();
   for (int i = 0; i < count; ++i)
   {
-    QStandardItem* child = this->invisibleRootItem()->child(i);
+    QStandardItem* const child = this->invisibleRootItem()->child(i);
     if (!child)
     {
       continue;
     }
-    QVariant uid = child->data(qMRMLSceneModel::UIDRole);
+    const QVariant uid = child->data(qMRMLSceneModel::UIDRole);
     if (uid.type() == QVariant::String && //
         uid.toString() == "scene")
     {
@@ -401,7 +401,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::mrmlSceneIndex() const
 {
-  QStandardItem* scene = this->mrmlSceneItem();
+  QStandardItem* const scene = this->mrmlSceneItem();
   if (scene == nullptr)
   {
     return QModelIndex();
@@ -418,7 +418,7 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem) const
   {
     return nullptr;
   }
-  QVariant nodePointer = nodeItem->data(qMRMLSceneModel::PointerRole);
+  const QVariant nodePointer = nodeItem->data(qMRMLSceneModel::PointerRole);
   if (!nodePointer.isValid() || nodeItem->data(qMRMLSceneModel::UIDRole).toString() == "scene")
   {
     return nullptr;
@@ -428,8 +428,8 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem) const
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column) const
 {
-  QModelIndex nodeIndex = this->indexFromNode(node, column);
-  QStandardItem* nodeItem = this->itemFromIndex(nodeIndex);
+  const QModelIndex nodeIndex = this->indexFromNode(node, column);
+  QStandardItem* const nodeItem = this->itemFromIndex(nodeIndex);
   return nodeItem;
 }
 
@@ -446,7 +446,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
   QModelIndex nodeIndex;
 
   // Try to find the nodeIndex in the cache first
-  QMap<vtkMRMLNode*, QPersistentModelIndex>::iterator rowCacheIt = d->RowCache.find(node);
+  const QMap<vtkMRMLNode*, QPersistentModelIndex>::iterator rowCacheIt = d->RowCache.find(node);
   if (rowCacheIt == d->RowCache.end())
   {
     // not found in cache, therefore it cannot be in the model
@@ -456,7 +456,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
   {
     // An entry found in the cache. If the item at the cached index matches the requested node ID
     // then we use it.
-    QStandardItem* nodeItem = this->itemFromIndex(rowCacheIt.value());
+    QStandardItem* const nodeItem = this->itemFromIndex(rowCacheIt.value());
     if (nodeItem != nullptr)
     {
       if (nodeItem->data(qMRMLSceneModel::UIDRole).toString().compare(QString::fromUtf8(node->GetID())) == 0)
@@ -493,7 +493,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
   }
   // Add the QModelIndexes from the other columns
   const int row = nodeIndex.row();
-  QModelIndex nodeParentIndex = nodeIndex.parent();
+  const QModelIndex nodeParentIndex = nodeIndex.parent();
   Q_ASSERT(column < this->columnCount(nodeParentIndex));
   return ctk::modelChildIndex(const_cast<qMRMLSceneModel*>(this), nodeParentIndex, row, column);
 }
@@ -520,7 +520,7 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node) const
   {
     return -1;
   }
-  const char* nodeId = node ? node->GetID() : nullptr;
+  const char* const nodeId = node ? node->GetID() : nullptr;
   if (nodeId == nullptr)
   {
     return -1;
@@ -528,7 +528,7 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node) const
 
   const char* nId = nullptr;
   int index = -1;
-  vtkMRMLNode* parent = this->parentNode(node);
+  vtkMRMLNode* const parent = this->parentNode(node);
 
   // Iterate through the scene and see if there is any matching node.
   // First try to find based on ptr value, as it's much faster than comparing string IDs.
@@ -657,7 +657,7 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes) const
   QModelIndexList allColumnsIndexes;
   for (const QModelIndex& index : indexes)
   {
-    QModelIndex parent = index.parent();
+    const QModelIndex parent = index.parent();
     for (int column = 0; column < this->columnCount(parent); ++column)
     {
       allColumnsIndexes << this->index(index.row(), column, parent);
@@ -679,7 +679,7 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
   Q_UNUSED(column);
   // We want to do drag&drop only into the first item of a line (and not on a
   // random column.
-  bool res = this->Superclass::dropMimeData(data, action, row, 0, parent.sibling(parent.row(), 0));
+  const bool res = this->Superclass::dropMimeData(data, action, row, 0, parent.sibling(parent.row(), 0));
   // Do not clear d->DraggedNodes yet, as node modification events may come
   // in before delayedItemChanged() is executed.
   return res;
@@ -797,7 +797,7 @@ QStandardItem* qMRMLSceneModelPrivate::insertNode(vtkMRMLNode* node, int nodeInd
     // of a child node already inserted.
     return nodeItem;
   }
-  vtkMRMLNode* parentNode = q->parentNode(node);
+  vtkMRMLNode* const parentNode = q->parentNode(node);
   QStandardItem* parentItem = parentNode ? q->itemFromNode(parentNode) : q->mrmlSceneItem();
   if (!parentItem)
   {
@@ -805,8 +805,8 @@ QStandardItem* qMRMLSceneModelPrivate::insertNode(vtkMRMLNode* node, int nodeInd
     parentItem = q->insertNode(parentNode);
     Q_ASSERT(parentItem);
   }
-  int min = q->preItems(parentItem).count();
-  int max = parentItem->rowCount() - q->postItems(parentItem).count();
+  const int min = q->preItems(parentItem).count();
+  const int max = parentItem->rowCount() - q->postItems(parentItem).count();
   int row = min + nodeIndex;
   if (row > max)
   {
@@ -827,7 +827,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
   QList<QStandardItem*> items;
   for (int i = 0; i < this->columnCount(); ++i)
   {
-    QStandardItem* newNodeItem = new QStandardItem();
+    QStandardItem* const newNodeItem = new QStandardItem();
     this->updateItemFromNode(newNodeItem, node, i);
     items.append(newNodeItem);
   }
@@ -873,13 +873,13 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   d->PendingItemModified = 0;
   item->setFlags(this->nodeFlags(node, column));
   // set UIDRole and set PointerRole need to be atomic
-  bool blocked = this->blockSignals(true);
+  const bool blocked = this->blockSignals(true);
   item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(blocked);
   this->updateItemDataFromNode(item, node, column);
 
-  bool itemChanged = (d->PendingItemModified > 0);
+  const bool itemChanged = (d->PendingItemModified > 0);
   d->PendingItemModified = -1;
 
   // Update parent, but only if the item is not being drag-and-dropped
@@ -898,7 +898,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
     // and it will do it automatically.
     if (parentItem && parentItem != newParentItem)
     {
-      int newIndex = this->nodeIndex(node);
+      const int newIndex = this->nodeIndex(node);
       if (parentItem != newParentItem || //
           newIndex != item->row())
       {
@@ -1000,7 +1000,7 @@ void qMRMLSceneModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* n
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 {
-  int wasModifying = node->StartModify();
+  const int wasModifying = node->StartModify();
   this->updateNodeFromItemData(node, item);
   node->EndModify(wasModifying);
 
@@ -1012,8 +1012,8 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 
   Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
 
-  QStandardItem* parentItem = item->parent();
-  int columnCount = parentItem ? parentItem->columnCount() : 0;
+  QStandardItem* const parentItem = item->parent();
+  const int columnCount = parentItem ? parentItem->columnCount() : 0;
 
   // Don't do the following if the row is not complete (reparenting an
   // incomplete row might lead to errors). (if there is no child yet for a given
@@ -1028,7 +1028,7 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
     }
   }
 
-  vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
+  vtkMRMLNode* const parent = this->mrmlNodeFromItem(parentItem);
   int desiredNodeIndex = -1;
   if (this->parentNode(node) != parent)
   {
@@ -1044,7 +1044,7 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
   }
   else if ((desiredNodeIndex = this->nodeIndex(node)) != item->row())
   {
-    QStandardItem* parentItem = item->parent();
+    QStandardItem* const parentItem = item->parent();
     if (parentItem && desiredNodeIndex < (parentItem->rowCount() - this->postItems(parentItem).count()))
     {
       this->updateItemFromNode(item, node, item->column());
@@ -1082,7 +1082,7 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
       displayNode = displayableHierarchyNode->GetDisplayNode();
     }
     Q_ASSERT(!item->data(VisibilityRole).isNull());
-    int visible = item->data(VisibilityRole).toInt();
+    const int visible = item->data(VisibilityRole).toInt();
     if (displayNode)
     {
       displayNode->SetVisibility(visible);
@@ -1097,9 +1097,9 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
 //-----------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data)
 {
-  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  vtkMRMLScene* const scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
   qMRMLSceneModel* sceneModel = reinterpret_cast<qMRMLSceneModel*>(client_data);
-  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
+  vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(call_data);
   Q_ASSERT(scene);
   Q_ASSERT(sceneModel);
   switch (event)
@@ -1173,7 +1173,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     return;
   }
 
-  int connectionsRemoved = qvtkDisconnect(node, vtkCommand::ModifiedEvent, this, SLOT(onMRMLNodeModified(vtkObject*)));
+  const int connectionsRemoved = qvtkDisconnect(node, vtkCommand::ModifiedEvent, this, SLOT(onMRMLNodeModified(vtkObject*)));
 
   Q_ASSERT_X(((d->ListenNodeModifiedEvent == NoNodes) && connectionsRemoved == 0) || //
                (d->ListenNodeModifiedEvent != NoNodes && connectionsRemoved <= 1),
@@ -1200,7 +1200,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     }
     // Remove the item from any orphan list if it exist as we don't want to
     // add it back later in onMRMLSceneNodeRemoved
-    for (QList<QStandardItem*> orphans : d->Orphans)
+    for (const QList<QStandardItem*> orphans : d->Orphans)
     {
       if (orphans.contains(item))
       {
@@ -1226,7 +1226,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   // to reparent them.
   for (QList<QStandardItem*> orphans : d->Orphans)
   {
-    QStandardItem* orphan = orphans[0];
+    QStandardItem* const orphan = orphans[0];
     // Make sure that the orphans have not already been reparented.
     if (orphan->parent())
     {
@@ -1235,8 +1235,8 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
       Q_ASSERT(orphan->parent() == nullptr);
       continue;
     }
-    vtkMRMLNode* node = this->mrmlNodeFromItem(orphan);
-    int newIndex = this->nodeIndex(node);
+    vtkMRMLNode* const node = this->mrmlNodeFromItem(orphan);
+    const int newIndex = this->nodeIndex(node);
     QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
     if (newParentItem == nullptr)
     {
@@ -1305,7 +1305,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLNodeIDChanged(vtkObject* node, void* callData)
 {
-  char* oldID = reinterpret_cast<char*>(callData);
+  char* const oldID = reinterpret_cast<char*>(callData);
   this->updateNodeItems(vtkMRMLNode::SafeDownCast(node), QString(oldID));
 }
 
@@ -1336,19 +1336,19 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
   Q_ASSERT(nodeIndexes.count());
   for (int i = 0; i < nodeIndexes.size(); ++i)
   {
-    QModelIndex index = nodeIndexes[i];
-    QStandardItem* item = this->itemFromIndex(index);
-    int oldRow = item->row();
-    QStandardItem* oldParent = item->parent();
+    const QModelIndex index = nodeIndexes[i];
+    QStandardItem* const item = this->itemFromIndex(index);
+    const int oldRow = item->row();
+    QStandardItem* const oldParent = item->parent();
 
     this->updateItemFromNode(item, node, item->column());
     // maybe the item has been reparented, then we need to rescan the
     // indexes again as they may be wrong.
     if (item->row() != oldRow || item->parent() != oldParent)
     {
-      int oldSize = nodeIndexes.size();
+      const int oldSize = nodeIndexes.size();
       nodeIndexes = this->indexes(node);
-      int newSize = nodeIndexes.size();
+      const int newSize = nodeIndexes.size();
       // the number of columns shouldn't change
       Q_ASSERT(oldSize == newSize);
       Q_UNUSED(oldSize);
@@ -1392,7 +1392,7 @@ void qMRMLSceneModel::onItemChanged(QStandardItem* item)
   }
 
   // Only nodes can be changed, scene and extra items should be not editable
-  vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
+  vtkMRMLNode* const mrmlNode = this->mrmlNodeFromItem(item);
   Q_ASSERT(mrmlNode);
   if (mrmlNode == nullptr)
   {
@@ -1578,8 +1578,8 @@ void qMRMLSceneModel::setExtraItemColumn(int column)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateColumnCount()
 {
-  int max = this->maxColumnId();
-  int oldColumnCount = this->columnCount();
+  const int max = this->maxColumnId();
+  const int oldColumnCount = this->columnCount();
   this->setColumnCount(max + 1);
   if (oldColumnCount == 0)
   {

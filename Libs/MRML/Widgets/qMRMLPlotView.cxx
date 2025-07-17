@@ -186,17 +186,17 @@ vtkMRMLPlotSeriesNode* qMRMLPlotViewPrivate::plotSeriesNodeFromPlot(vtkPlot* plo
   {
     return nullptr;
   }
-  QMap<vtkPlot*, QString>::iterator plotIt = this->MapPlotToPlotSeriesNodeID.find(plot);
+  const QMap<vtkPlot*, QString>::iterator plotIt = this->MapPlotToPlotSeriesNodeID.find(plot);
   if (plotIt == this->MapPlotToPlotSeriesNodeID.end())
   {
     return nullptr;
   }
-  QString plotSeriesNodeID = plotIt.value();
+  const QString plotSeriesNodeID = plotIt.value();
   if (plotSeriesNodeID.isEmpty())
   {
     return nullptr;
   }
-  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(plotSeriesNodeID.toUtf8().constData()));
+  vtkMRMLPlotSeriesNode* const plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(plotSeriesNodeID.toUtf8().constData()));
   if (plotSeriesNode == nullptr)
   {
     // node is not in the scene anymore
@@ -242,24 +242,24 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
     return nullptr;
   }
   vtkTable* table = tableNode->GetTable();
-  std::string yColumnName = plotSeriesNode->GetYColumnName();
+  const std::string yColumnName = plotSeriesNode->GetYColumnName();
   if (yColumnName.empty())
   {
     return nullptr;
   }
-  vtkAbstractArray* yColumn = table->GetColumnByName(yColumnName.c_str());
+  vtkAbstractArray* const yColumn = table->GetColumnByName(yColumnName.c_str());
   if (!yColumn)
   {
     return nullptr;
   }
-  int yColumnType = yColumn->GetDataType();
+  const int yColumnType = yColumn->GetDataType();
   if (yColumnType == VTK_STRING || yColumnType == VTK_BIT)
   {
     qWarning() << Q_FUNC_INFO << ": Y column has unsupported data type: 'string' or 'bit'";
     return nullptr;
   }
 
-  std::string xColumnName = plotSeriesNode->GetXColumnName();
+  const std::string xColumnName = plotSeriesNode->GetXColumnName();
   vtkAbstractArray* xColumn = nullptr;
   if (!xColumnName.empty())
   {
@@ -272,7 +272,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
     {
       return nullptr;
     }
-    int xColumnType = xColumn->GetDataType();
+    const int xColumnType = xColumn->GetDataType();
     if (xColumnType == VTK_STRING || xColumnType == VTK_BIT)
     {
       qWarning() << Q_FUNC_INFO << ": X column has unsupported data type for scatter plot: 'string' or 'bit'";
@@ -281,7 +281,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
   }
 
   vtkSmartPointer<vtkPlot> newPlot = existingPlot;
-  int plotType = plotSeriesNode->GetPlotType();
+  const int plotType = plotSeriesNode->GetPlotType();
   switch (plotType)
   {
     case vtkMRMLPlotSeriesNode::PlotTypeScatter:
@@ -303,7 +303,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
 
   // Common properties
   newPlot->SetWidth(plotSeriesNode->GetLineWidth());
-  double* color = plotSeriesNode->GetColor();
+  double* const color = plotSeriesNode->GetColor();
   newPlot->SetColorF(color[0], color[1], color[2]);
   newPlot->SetOpacity(plotSeriesNode->GetOpacity());
   if (newPlot->GetPen())
@@ -351,7 +351,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
   }
 
   vtkStringArray* labelArray = nullptr;
-  std::string labelColumnName = plotSeriesNode->GetLabelColumnName();
+  const std::string labelColumnName = plotSeriesNode->GetLabelColumnName();
   if (!labelColumnName.empty())
   {
     labelArray = vtkStringArray::SafeDownCast(table->GetColumnByName(labelColumnName.c_str()));
@@ -468,7 +468,7 @@ void qMRMLPlotViewPrivate::RecalculateBounds()
       // skip uninitialized bounds.
       continue;
     }
-    int corner = q->chart()->GetPlotCorner(plot);
+    const int corner = q->chart()->GetPlotCorner(plot);
 
     // Initialize the appropriate ranges, or push out the ranges
     if ((corner == 0 || corner == 3)) // left
@@ -607,9 +607,9 @@ void qMRMLPlotViewPrivate::emitSelection()
     return;
   }
 
-  const char* PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  const char* const PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
 
-  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(PlotChartNodeID));
+  vtkMRMLPlotChartNode* const plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(PlotChartNodeID));
   if (!plotChartNode)
   {
     return;
@@ -625,7 +625,7 @@ void qMRMLPlotViewPrivate::emitSelection()
     {
       continue;
     }
-    vtkIdTypeArray* selection = plot->GetSelection();
+    vtkIdTypeArray* const selection = plot->GetSelection();
     if (!selection)
     {
       continue;
@@ -669,7 +669,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   this->UpdatingWidgetFromMRML = true;
 
   // Set interaction mode
-  int interactionMode = this->MRMLPlotViewNode->GetInteractionMode();
+  const int interactionMode = this->MRMLPlotViewNode->GetInteractionMode();
   switch (interactionMode)
   {
     case vtkMRMLPlotViewNode::InteractionModePanView:
@@ -699,7 +699,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   }
 
   // Get the PlotChartNode
-  const char* plotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  const char* const plotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
   vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(plotChartNodeID));
   if (!plotChartNode)
   {
@@ -729,7 +729,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   q->chart()->SetDragPointAlongY(this->MRMLPlotViewNode->GetEnablePointMoveAlongY() //
                                  && plotChartNode->GetEnablePointMoveAlongY());
 
-  vtkSmartPointer<vtkCollection> allPlotSeriesNodesInScene = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClass("vtkMRMLPlotSeriesNode"));
+  const vtkSmartPointer<vtkCollection> allPlotSeriesNodesInScene = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClass("vtkMRMLPlotSeriesNode"));
 
   std::vector<std::string> plotSeriesNodesIDs;
   plotChartNode->GetPlotSeriesNodeIDs(plotSeriesNodesIDs);
@@ -742,7 +742,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   // Remove plots from chart that are no longer needed or available
   for (int chartPlotSeriesNodesIndex = q->chart()->GetNumberOfPlots() - 1; chartPlotSeriesNodesIndex >= 0; chartPlotSeriesNodesIndex--)
   {
-    vtkPlot* plot = q->chart()->GetPlot(chartPlotSeriesNodesIndex);
+    vtkPlot* const plot = q->chart()->GetPlot(chartPlotSeriesNodesIndex);
     if (!plot)
     {
       continue;
@@ -763,7 +763,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
     bool deletePlot = true;
     if (plotSeriesNode)
     {
-      vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, plot);
+      const vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, plot);
       if (newPlot == plot)
       {
         // keep current plot
@@ -802,7 +802,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
       // node is invalid or need not to be added
       continue;
     }
-    vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, nullptr);
+    const vtkSmartPointer<vtkPlot> newPlot = this->updatePlotFromPlotSeriesNode(plotSeriesNode, nullptr);
     if (!newPlot)
     {
       continue;
@@ -811,7 +811,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
     q->addPlot(newPlot);
   }
 
-  int fontTypeIndex = q->chart()->GetTitleProperties()->GetFontFamilyFromString(plotChartNode->GetFontType() ? plotChartNode->GetFontType() : "Arial");
+  const int fontTypeIndex = q->chart()->GetTitleProperties()->GetFontFamilyFromString(plotChartNode->GetFontType() ? plotChartNode->GetFontType() : "Arial");
 
   // Setting Title
   if (plotChartNode->GetTitleVisibility())
@@ -832,10 +832,10 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 
   // Setting Axes
   const unsigned int numberOfAxisIDs = 4;
-  int axisIDs[numberOfAxisIDs] = { vtkAxis::BOTTOM, vtkAxis::TOP, vtkAxis::LEFT, vtkAxis::RIGHT };
+  const int axisIDs[numberOfAxisIDs] = { vtkAxis::BOTTOM, vtkAxis::TOP, vtkAxis::LEFT, vtkAxis::RIGHT };
   for (unsigned int axisIndex = 0; axisIndex < numberOfAxisIDs; ++axisIndex)
   {
-    int axisID = axisIDs[axisIndex];
+    const int axisID = axisIDs[axisIndex];
     vtkAxis* axis = q->chart()->GetAxis(axisID);
     if (!axis)
     {
@@ -1068,7 +1068,7 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
   {
     return;
   }
-  int wasModified = d->MRMLPlotChartNode->StartModify();
+  const int wasModified = d->MRMLPlotChartNode->StartModify();
   // Setting Axes
   vtkAxis* bottomAxis = this->chart()->GetAxis(vtkAxis::BOTTOM);
   if (bottomAxis)
@@ -1090,8 +1090,8 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
 // ----------------------------------------------------------------------------
 void qMRMLPlotView::saveAsSVG(const QString& fileName)
 {
-  QFileInfo fileInfo(fileName);
-  QString filePathPrefix = fileInfo.absoluteDir().filePath(fileInfo.completeBaseName());
+  const QFileInfo fileInfo(fileName);
+  const QString filePathPrefix = fileInfo.absoluteDir().filePath(fileInfo.completeBaseName());
 
   vtkNew<vtkGL2PSExporter> exporter;
   exporter->SetFileFormatToSVG();

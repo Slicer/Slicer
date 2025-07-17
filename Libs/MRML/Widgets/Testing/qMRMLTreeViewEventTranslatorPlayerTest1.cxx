@@ -61,7 +61,7 @@ QSignalSpy* SpyAction;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLTreeView* widget = reinterpret_cast<qMRMLTreeView*>(data);
+  qMRMLTreeView* const widget = reinterpret_cast<qMRMLTreeView*>(data);
 
   CTKCOMPARE(widget->currentIndex().row(), 1);
   Q_UNUSED(widget);
@@ -69,7 +69,7 @@ void checkFinalWidgetState(void* data)
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
 {
-  qMRMLTreeView* widget = reinterpret_cast<qMRMLTreeView*>(data);
+  qMRMLTreeView* const widget = reinterpret_cast<qMRMLTreeView*>(data);
 
   Q_UNUSED(widget);
 
@@ -81,10 +81,10 @@ void checkFinalWidgetState2(void* data)
 int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -126,7 +126,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
   widget2.setSceneModelType("ModelHierarchy");
   widget2.setMRMLScene(scene2.GetPointer());
 
-  QAction* insertTransformAction = new QAction("Insert transform", nullptr);
+  QAction* const insertTransformAction = new QAction("Insert transform", nullptr);
   widget2.prependNodeMenuAction(insertTransformAction);
   widget2.prependSceneMenuAction(insertTransformAction);
 

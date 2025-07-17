@@ -67,18 +67,18 @@ int TestSaveAndRead(std::string filename, vtkMRMLScene* scene, vtkMatrix4x4* mat
   }
 
   std::cout << "Center of transformation: " << std::endl;
-  double* expectedCenterOfTransformation = writeTransformNode->GetCenterOfTransformation();
+  double* const expectedCenterOfTransformation = writeTransformNode->GetCenterOfTransformation();
   std::cout << "\tExpected: " << std::endl;
   std::cout << "\t" << expectedCenterOfTransformation[0] << "\t" << expectedCenterOfTransformation[1] << "\t" << expectedCenterOfTransformation[2] << std::endl;
-  double* actualCenterOfTransformation = readTransformNode->GetCenterOfTransformation();
+  double* const actualCenterOfTransformation = readTransformNode->GetCenterOfTransformation();
   std::cout << "\tActual: " << std::endl;
   std::cout << "\t" << actualCenterOfTransformation[0] << "\t" << actualCenterOfTransformation[1] << "\t" << actualCenterOfTransformation[2] << std::endl;
 
-  double tolerance = 1e-6;
+  const double tolerance = 1e-6;
   for (int i = 0; i < 3; ++i)
   {
-    double expected = expectedCenterOfTransformation[i];
-    double actual = actualCenterOfTransformation[i];
+    const double expected = expectedCenterOfTransformation[i];
+    const double actual = actualCenterOfTransformation[i];
     CHECK_DOUBLE_TOLERANCE(expected, actual, tolerance);
   }
   std::cout << std::endl << filename << " successfully saved and read." << std::endl;
@@ -173,7 +173,7 @@ int vtkMRMLTransformStorageNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLTransformStorageNode> node1;
+  const vtkNew<vtkMRMLTransformStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1);
 
   vtkNew<vtkMRMLScene> scene;

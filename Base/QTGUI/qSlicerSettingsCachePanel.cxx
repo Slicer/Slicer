@@ -109,7 +109,7 @@ void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)
   // Default values
   this->updateFromCacheManager();
 
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(d->CachePathButton, "directory", SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* const relativePathMapper = new qSlicerRelativePathMapper(d->CachePathButton, "directory", SIGNAL(directoryChanged(QString)));
   this->registerProperty("Cache/Path", relativePathMapper, "relativePath", SIGNAL(relativePathChanged(QString)));
   this->registerProperty("Cache/Size", d->CacheSizeSpinBox, /*no tr*/ "value", SIGNAL(valueChanged(int)));
   this->registerProperty("Cache/FreeBufferSize", d->CacheFreeBufferSpinBox, /*no tr*/ "value", SIGNAL(valueChanged(int)));
@@ -152,7 +152,7 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
   std::vector<std::string> cachedFiles = d->CacheManager->GetCachedFiles();
   for (std::vector<std::string>::const_iterator it = cachedFiles.begin(), end = cachedFiles.end(); it != end; ++it)
   {
-    QFileInfo file(it->c_str());
+    const QFileInfo file(it->c_str());
     QListWidgetItem* fileItem = new QListWidgetItem;
     fileItem->setText(file.fileName());
     // fileItem->setToolTip(it->first.c_str());

@@ -110,7 +110,7 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
   }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(filePath).baseName();
+  const QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -126,8 +126,8 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
   d->PythonCppAPI.setObjectName(className);
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
-  PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
+  PyObject* const sysModules = PyImport_GetModuleDict();
+  PyObject* const module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -153,7 +153,7 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
     return false;
   }
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -176,7 +176,7 @@ QString qSlicerScriptedFileWriter::description() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject* result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
   if (!result)
   {
     return QString();
@@ -196,7 +196,7 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject* result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
   if (!result)
   {
     return IOFileType();
@@ -215,9 +215,9 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -238,9 +238,9 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object) co
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject* result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -261,9 +261,9 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject* result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -275,9 +275,9 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
                << "is expected to return a string list !";
     return QStringList();
   }
-  PyObject* resultAsTuple = PyList_AsTuple(result);
+  PyObject* const resultAsTuple = PyList_AsTuple(result);
   QStringList extensionList;
-  Py_ssize_t size = PyTuple_Size(resultAsTuple);
+  const Py_ssize_t size = PyTuple_Size(resultAsTuple);
   for (Py_ssize_t i = 0; i < size; ++i)
   {
     if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
@@ -296,9 +296,9 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
 bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerScriptedFileWriter);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PythonQtConv::QVariantMapToPyObject(properties));
-  PyObject* result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {

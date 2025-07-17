@@ -76,7 +76,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
   }
 
   // find the best size for the ticks
-  double* range = this->LookupTable->GetRange();
+  double* const range = this->LookupTable->GetRange();
 
   // TODO: this should be optimized, maybe by keeping a list of
   // allocated mappers, in order to avoid creation/destruction of
@@ -86,7 +86,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
   this->Superclass::P->TextActors.resize(this->NumberOfLabels);
 
   // Does this map have its scale set to log?
-  int isLogTable = this->LookupTable->UsingLogScale();
+  const int isLogTable = this->LookupTable->UsingLogScale();
 
   // only print warning once in loop
   bool formatWarningPrinted = false;
@@ -135,7 +135,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
 
     // if the lookuptable uses the new annotation functionality in VTK6.0
     // then use it as labels
-    int numberOfAnnotatedValues = this->LookupTable->GetNumberOfAnnotatedValues();
+    const int numberOfAnnotatedValues = this->LookupTable->GetNumberOfAnnotatedValues();
     if (this->UseAnnotationAsLabel == 1)
     {
       if (numberOfAnnotatedValues > 1)
@@ -184,7 +184,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       if (vtkSlicerScalarBarActor::ValidateFormatString(sprintfSpecifier, prefix, suffix, this->LabelFormat, "fFgGeE"))
       {
         SNPRINTF(labelString, 511, sprintfSpecifier.c_str(), val);
-        std::string labelStdString = prefix + labelString + suffix;
+        const std::string labelStdString = prefix + labelString + suffix;
         strcpy(labelString, labelStdString.c_str());
       }
       else
@@ -336,7 +336,7 @@ void vtkSlicerScalarBarActor::PrepareTitleText()
   if (this->ComponentTitle && strlen(this->ComponentTitle) > 0)
   {
     // need to account for a space between title & component and null term
-    char* combinedTitle = new char[strlen(this->Title) + strlen(this->ComponentTitle) + 2];
+    char* const combinedTitle = new char[strlen(this->Title) + strlen(this->ComponentTitle) + 2];
     strcpy(combinedTitle, this->Title);
     strcat(combinedTitle, " ");
     strcat(combinedTitle, this->ComponentTitle);
@@ -394,8 +394,8 @@ bool vtkSlicerScalarBarActor::ValidateFormatString(std::string& validatedFormat,
 {
   // This regex finds sprintf specifications. Only the first is used to format the value
   // Regex from: https://stackoverflow.com/a/8915445
-  std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
-  vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
+  const std::string regexString = "%([0-9]\\$)?[+-]?([ 0]|'.{1})?-?[0-9]*(\\.[0-9]+)?[" + typeString + "]";
+  const vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
   vtksys::RegularExpressionMatch specifierMatch;
   if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
   {

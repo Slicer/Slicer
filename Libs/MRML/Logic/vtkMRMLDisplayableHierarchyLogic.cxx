@@ -44,7 +44,7 @@ void vtkMRMLDisplayableHierarchyLogic::SetMRMLSceneInternal(vtkMRMLScene* newSce
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* const displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
   if (!displayableNode || this->GetMRMLScene()->IsBatchProcessing())
   {
     return;
@@ -81,7 +81,7 @@ char* vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMR
   hierarchyNode->HideFromEditorsOn();
 
   // give it a unique name based on the node
-  std::string hnodeName = std::string(node->GetName()) + std::string(" Hierarchy");
+  const std::string hnodeName = std::string(node->GetName()) + std::string(" Hierarchy");
   hierarchyNode->SetName(node->GetScene()->GetUniqueNameByString(hnodeName.c_str()));
 
   node->GetScene()->AddNode(hierarchyNode);
@@ -149,10 +149,10 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
     vtkMRMLDisplayableHierarchyNode::SafeDownCast(vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()));
   if (!childHierarchyNode)
   {
-    char* childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);
+    char* const childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);
     if (childHierarchyNodeID)
     {
-      vtkMRMLNode* mrmlNode = child->GetScene()->GetNodeByID(childHierarchyNodeID);
+      vtkMRMLNode* const mrmlNode = child->GetScene()->GetNodeByID(childHierarchyNodeID);
       if (mrmlNode)
       {
         childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(mrmlNode);
@@ -206,14 +206,14 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
     if (dispHierarchyNode)
     {
       // get any associated node
-      vtkMRMLNode* associatedNode = dispHierarchyNode->GetAssociatedNode();
+      vtkMRMLNode* const associatedNode = dispHierarchyNode->GetAssociatedNode();
       if (associatedNode)
       {
         this->GetMRMLScene()->RemoveNode(associatedNode);
       }
       // remove the display node (hierarchy nodes aren't displayable so the
       // scene doesn't do the housekeeping automatically)
-      vtkMRMLDisplayNode* dispDisplayNode = dispHierarchyNode->GetDisplayNode();
+      vtkMRMLDisplayNode* const dispDisplayNode = dispHierarchyNode->GetDisplayNode();
       if (dispDisplayNode)
       {
         this->GetMRMLScene()->RemoveNode(dispDisplayNode);
@@ -229,7 +229,7 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
     retval = false;
   }
   // delete it's display node
-  vtkMRMLDisplayNode* dispNode = hnode->GetDisplayNode();
+  vtkMRMLDisplayNode* const dispNode = hnode->GetDisplayNode();
   if (dispNode)
   {
     this->GetMRMLScene()->RemoveNode(dispNode);

@@ -32,7 +32,7 @@ qMRMLTableViewPlugin::qMRMLTableViewPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLTableViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTableView* _widget = new qMRMLTableView(_parent);
+  qMRMLTableView* const _widget = new qMRMLTableView(_parent);
   return _widget;
 }
 

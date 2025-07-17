@@ -55,7 +55,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
   loadButton->setToolTip(tr("Download the data and open in Slicer"));
   QPushButton* saveButton = messageBox->addButton(tr("Save..."), QMessageBox::AcceptRole);
   saveButton->setToolTip(tr("Save to an arbitrary location"));
-  QPushButton* abortlButton = messageBox->addButton(tr("Cancel"), QMessageBox::AcceptRole);
+  QPushButton* const abortlButton = messageBox->addButton(tr("Cancel"), QMessageBox::AcceptRole);
 
   this->hide();
   messageBox->exec();
@@ -65,11 +65,11 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
     // start the download into Slicer's temp directory
     qDebug() << "Load...";
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-    QString fileName = download->downloadFileName();
+    QString const fileName = download->downloadFileName();
 #else
     QString fileName = QFileInfo(download->path()).fileName();
 #endif
-    QDir directory = QDir(qSlicerCoreApplication::application()->temporaryPath());
+    QDir const directory = QDir(qSlicerCoreApplication::application()->temporaryPath());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     download->setDownloadFileName(fileName);
     download->setDownloadDirectory(directory.absolutePath());
@@ -136,7 +136,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
   buttons->setLayout(buttonLayout);
   layout->addWidget(buttons);
 
-  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+  QPushButton* const cancelButton = new QPushButton(tr("Cancel"));
   buttonLayout->addWidget(cancelButton);
 
   // Progress

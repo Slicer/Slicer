@@ -37,11 +37,11 @@ int vtkMRMLTextStorageNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLTextStorageNode> node1;
+  const vtkNew<vtkMRMLTextStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
   scene->SetRootDirectory(tempDir);
 
   CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".txt", "Hello world!", VTK_ENCODING_US_ASCII));
@@ -55,7 +55,7 @@ int vtkMRMLTextStorageNodeTest1(int argc, char* argv[])
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, std::string text, int encoding)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTextNodeTest1") + std::string(extension);
+  const std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTextNodeTest1") + std::string(extension);
 
   // Add text node
   vtkNew<vtkMRMLTextNode> textNode;

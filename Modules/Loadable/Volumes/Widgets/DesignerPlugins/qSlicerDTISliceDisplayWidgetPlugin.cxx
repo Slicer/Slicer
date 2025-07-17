@@ -27,7 +27,7 @@ qSlicerDTISliceDisplayWidgetPlugin::qSlicerDTISliceDisplayWidgetPlugin(QObject* 
 //------------------------------------------------------------------------------
 QWidget* qSlicerDTISliceDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerDTISliceDisplayWidget* _widget = new qSlicerDTISliceDisplayWidget(_parent);
+  qSlicerDTISliceDisplayWidget* const _widget = new qSlicerDTISliceDisplayWidget(_parent);
   return _widget;
 }
 

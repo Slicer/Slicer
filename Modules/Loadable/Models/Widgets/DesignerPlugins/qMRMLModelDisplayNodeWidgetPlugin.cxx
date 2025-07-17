@@ -30,7 +30,7 @@ qMRMLModelDisplayNodeWidgetPlugin::qMRMLModelDisplayNodeWidgetPlugin(QObject* ne
 //-----------------------------------------------------------------------------
 QWidget* qMRMLModelDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
-  qMRMLModelDisplayNodeWidget* newWidget = new qMRMLModelDisplayNodeWidget(newParent);
+  qMRMLModelDisplayNodeWidget* const newWidget = new qMRMLModelDisplayNodeWidget(newParent);
   return newWidget;
 }
 

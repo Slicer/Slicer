@@ -94,7 +94,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   // Line display
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
@@ -114,7 +114,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     double p2[3] = { 0.0 };
     this->GetNthControlPointDisplayPosition(0, p1);
     this->GetNthControlPointDisplayPosition(1, p2);
-    double textPos[2] = { (p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0 };
+    const double textPos[2] = { (p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0 };
     /*
     l1 = vtkMath::Normalize(vector1);
     l2 = vtkMath::Normalize(vector2);

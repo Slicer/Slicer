@@ -107,7 +107,7 @@ void vtkMRMLWindowLevelWidget::CreateDefaultRepresentation()
     // already created
     return;
   }
-  vtkNew<vtkMRMLRubberBandWidgetRepresentation> newRep;
+  const vtkNew<vtkMRMLRubberBandWidgetRepresentation> newRep;
   this->WidgetRep = newRep;
   this->WidgetRep->SetViewNode(this->GetSliceNode());
 }
@@ -115,13 +115,13 @@ void vtkMRMLWindowLevelWidget::CreateDefaultRepresentation()
 //-----------------------------------------------------------------------------
 bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
+  vtkMRMLSliceLogic* const sliceLogic = this->GetSliceLogic();
   if (!sliceLogic)
   {
     return false;
   }
 
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
   {
     return false;
@@ -155,13 +155,13 @@ bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEven
 //-----------------------------------------------------------------------------
 bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
+  vtkMRMLSliceLogic* const sliceLogic = this->GetSliceLogic();
   if (!sliceLogic)
   {
     return false;
   }
 
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
   bool processedEvent = true;
 
@@ -270,7 +270,7 @@ bool vtkMRMLWindowLevelWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
 //-------------------------------------------------------------------------
 bool vtkMRMLWindowLevelWidget::ProcessStartMouseDrag(vtkMRMLInteractionEventData* eventData)
 {
-  const int* displayPos = eventData->GetDisplayPosition();
+  const int* const displayPos = eventData->GetDisplayPosition();
 
   this->StartEventPosition[0] = displayPos[0];
   this->StartEventPosition[1] = displayPos[1];
@@ -347,18 +347,18 @@ vtkMRMLSliceNode* vtkMRMLWindowLevelWidget::GetSliceNode()
 //----------------------------------------------------------------------------
 void vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevel(vtkMRMLInteractionEventData* eventData)
 {
-  const int* eventPosition = eventData->GetDisplayPosition();
+  const int* const eventPosition = eventData->GetDisplayPosition();
 
-  int deltaX = eventPosition[0] - this->PreviousEventPosition[0];
-  int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
+  const int deltaX = eventPosition[0] - this->PreviousEventPosition[0];
+  const int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
 
-  double rangeLow = this->VolumeScalarRange[0];
-  double rangeHigh = this->VolumeScalarRange[1];
+  const double rangeLow = this->VolumeScalarRange[0];
+  const double rangeHigh = this->VolumeScalarRange[1];
 
-  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
-  double windowMinSize = std::min(windowSize[0], windowSize[1]);
+  const int* const windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  const double windowMinSize = std::min(windowSize[0], windowSize[1]);
 
-  double gain = (rangeHigh - rangeLow) / windowMinSize;
+  const double gain = (rangeHigh - rangeLow) / windowMinSize;
   double newWindow = this->LastVolumeWindowLevel[0] + (gain * deltaX);
   if (newWindow < 0)
   {
@@ -409,12 +409,12 @@ bool vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionE
     return false;
   }
   this->WindowLevelAdjustedLayer = vtkMRMLSliceLogic::LayerNone;
-  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* const sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
   if (!sliceCompositeNode)
   {
     return false;
   }
-  int editedLayer = this->GetEditableLayerAtEventPosition(eventData);
+  const int editedLayer = this->GetEditableLayerAtEventPosition(eventData);
   if (editedLayer != vtkMRMLSliceLogic::LayerForeground //
       && editedLayer != vtkMRMLSliceLogic::LayerBackground)
   {
@@ -481,7 +481,7 @@ bool vtkMRMLWindowLevelWidget::ProcessResetWindowLevel(vtkMRMLInteractionEventDa
     // auto-window/level is already enabled
     return true;
   }
-  vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
+  vtkMRMLSliceLogic* const sliceLogic = this->GetSliceLogic();
   if (sliceLogic)
   {
     sliceLogic->GetMRMLScene()->SaveStateForUndo();
@@ -501,7 +501,7 @@ bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionStart(vtkMRMLInter
   vtkMRMLRubberBandWidgetRepresentation* rubberBand = vtkMRMLRubberBandWidgetRepresentation::SafeDownCast(this->WidgetRep);
   if (rubberBand)
   {
-    const int* displayPos = eventData->GetDisplayPosition();
+    const int* const displayPos = eventData->GetDisplayPosition();
     rubberBand->SetCornerPoint1((int*)displayPos);
     rubberBand->SetCornerPoint2((int*)displayPos);
     rubberBand->SetVisibility(true);
@@ -519,11 +519,11 @@ void vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegion(vtkMRMLInteractio
   {
     return;
   }
-  const int* displayPos = eventData->GetDisplayPosition();
+  const int* const displayPos = eventData->GetDisplayPosition();
 
   if (this->CenteredRubberBand)
   {
-    int radius[2] = { abs(displayPos[0] - this->StartEventPosition[0]), abs(displayPos[1] - this->StartEventPosition[1]) };
+    const int radius[2] = { abs(displayPos[0] - this->StartEventPosition[0]), abs(displayPos[1] - this->StartEventPosition[1]) };
     rubberBand->SetCornerPoint1(this->StartEventPosition[0] - radius[0], this->StartEventPosition[1] - radius[1]);
     rubberBand->SetCornerPoint2(this->StartEventPosition[0] + radius[0], this->StartEventPosition[1] + radius[1]);
   }
@@ -574,7 +574,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   {
     return false;
   }
-  vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* const sliceNode = sliceLogic->GetSliceNode();
   if (!sliceNode)
   {
     return false;
@@ -640,7 +640,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   displayNode->AutoWindowLevelOff();
   // Compute intensity range as 1th and 99th percentile, expanded by 1%.
   // It is more robust than taking the minimum and maximum - a few outlier voxels do not throw off the range.
-  double* intensityRange = stats->GetAutoRange();
+  double* const intensityRange = stats->GetAutoRange();
   displayNode->SetWindowLevelMinMax(intensityRange[0], intensityRange[1]);
   return true;
 }
@@ -660,14 +660,14 @@ bool vtkMRMLWindowLevelWidget::SetVolumeWindowLevel(double window, double level,
   }
   if (isAutoWindowLevel)
   {
-    int disabledModify = volumeDisplayNode->StartModify();
+    const int disabledModify = volumeDisplayNode->StartModify();
     volumeDisplayNode->SetWindowLevel(window, level);
     volumeDisplayNode->SetAutoWindowLevel(1);
     volumeDisplayNode->EndModify(disabledModify);
   }
   else
   {
-    int disabledModify = volumeDisplayNode->StartModify();
+    const int disabledModify = volumeDisplayNode->StartModify();
     volumeDisplayNode->SetAutoWindowLevel(0);
     volumeDisplayNode->SetWindowLevel(window, level);
     volumeDisplayNode->EndModify(disabledModify);

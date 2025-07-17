@@ -33,29 +33,29 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
     return -1;
   }
 
-  int flag = Superclass::ReadAnnotationDisplayProperties(refNode, lineString, preposition);
+  const int flag = Superclass::ReadAnnotationDisplayProperties(refNode, lineString, preposition);
   if (flag)
   {
     return flag;
   }
 
-  size_t pointOffset = preposition.size();
+  const size_t pointOffset = preposition.size();
   preposition.insert(0, "# ");
 
   if (lineString.find(preposition + "GlyphScale = ") != std::string::npos)
   {
-    std::string str = lineString.substr(15 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(15 + pointOffset, std::string::npos);
     vtkDebugMacro("Getting GlyphScale, substr = " << str);
-    float scale = atof(str.c_str());
+    const float scale = atof(str.c_str());
     refNode->SetGlyphScale(scale);
     return 1;
   }
 
   if (lineString.find(preposition + "GlyphType = ") != std::string::npos)
   {
-    std::string str = lineString.substr(14 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(14 + pointOffset, std::string::npos);
     vtkDebugMacro("Getting GlyphType, substr = " << str);
-    int t = atoi(str.c_str());
+    const int t = atoi(str.c_str());
     refNode->SetGlyphType(t);
     return 1;
   }
@@ -94,8 +94,8 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
   }
 
   vtkDebugMacro("got a line: \n\"" << line << "\"");
-  std::string attValue(line);
-  size_t size = std::string(this->GetAnnotationStorageType()).size();
+  const std::string attValue(line);
+  const size_t size = std::string(this->GetAnnotationStorageType()).size();
 
   if (attValue.compare(0, size, this->GetAnnotationStorageType()))
   {
@@ -103,7 +103,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
   }
 
   int sel = 1, vis = 1;
-  std::string annotation;
+  const std::string annotation;
 
   // Jump over type
   size_t startPos = attValue.find("|", 0) + 1;
@@ -177,31 +177,31 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
   vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
   // TODO: parse out the display node settings
   // if there's a space after the hash, try to find options
-  std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
-  vtkIdType pointOffset = std::string(this->GetAnnotationStorageType()).size();
+  const std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
+  const vtkIdType pointOffset = std::string(this->GetAnnotationStorageType()).size();
   ;
 
   vtkDebugMacro("Have a possible option in line " << line);
-  std::string lineString = std::string(line);
+  const std::string lineString = std::string(line);
 
   if (lineString.find(preposition + "NumberingScheme = ") != std::string::npos)
   {
-    std::string str = lineString.substr(19 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(19 + pointOffset, std::string::npos);
     vtkDebugMacro("Getting numberingScheme, substr = " << str.c_str());
-    int val = atoi(str.c_str());
+    const int val = atoi(str.c_str());
     refNode->SetNumberingScheme(val);
     return 1;
   }
 
   if (lineString.find(preposition + "Columns = ") != std::string::npos)
   {
-    std::string str = lineString.substr(12 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(12 + pointOffset, std::string::npos);
 
     vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
     // reset all of them
     typeColumn = xColumn = yColumn = zColumn = selColumn = visColumn = -1;
     numColumns = 0;
-    char* columns = (char*)str.c_str();
+    char* const columns = (char*)str.c_str();
     char* ptr = strtok(columns, "|");
     while (ptr != nullptr)
     {
@@ -263,10 +263,10 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
     return 0;
   }
 
-  vtkMRMLAnnotationPointDisplayNode* aPointDisplayNode = refNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* const aPointDisplayNode = refNode->GetAnnotationPointDisplayNode();
 
   // turn off modified events
-  int modFlag = refNode->GetDisableModifiedEvent();
+  const int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
   char line[1024];
   // default column ordering for annotation info - this is exactly the same as for fiducial
@@ -373,7 +373,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
     return 0;
   }
 
-  vtkMRMLAnnotationPointDisplayNode* annPointDisNode = refNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* const annPointDisNode = refNode->GetAnnotationPointDisplayNode();
 
   of << "# " << this->GetAnnotationStorageType() << "NumberingScheme = " << refNode->GetNumberingScheme() << endl;
   if (!this->WriteAnnotationPointDisplayProperties(of, annPointDisNode, this->GetAnnotationStorageType()))
@@ -395,9 +395,9 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(
   }
   for (int i = 0; i < refNode->GetNumberOfControlPoints(); i++)
   {
-    double* coord = refNode->GetControlPointCoordinates(i);
-    int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_SELECTED);
-    int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_VISIBLE);
+    double* const coord = refNode->GetControlPointCoordinates(i);
+    const int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_SELECTED);
+    const int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_VISIBLE);
     of << this->GetAnnotationStorageType() << "|" << coord[0] << "|" << coord[1] << "|" << coord[2] << "|" << sel << "|" << vis << endl;
   }
 
@@ -413,7 +413,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMR
   }
 
   // cast the input node
-  vtkMRMLAnnotationControlPointsNode* annCPNode = dynamic_cast<vtkMRMLAnnotationControlPointsNode*>(refNode);
+  vtkMRMLAnnotationControlPointsNode* const annCPNode = dynamic_cast<vtkMRMLAnnotationControlPointsNode*>(refNode);
 
   if (annCPNode == nullptr)
   {

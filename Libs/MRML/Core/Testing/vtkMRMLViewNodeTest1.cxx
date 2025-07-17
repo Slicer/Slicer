@@ -17,13 +17,13 @@
 
 int vtkMRMLViewNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLViewNode> node1;
+  const vtkNew<vtkMRMLViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // Test Set/GetInteractionNode without scene
   {
     vtkNew<vtkMRMLViewNode> viewNode;
-    vtkNew<vtkMRMLInteractionNode> interactionNode;
+    const vtkNew<vtkMRMLInteractionNode> interactionNode;
     CHECK_NULL(viewNode->GetInteractionNode());
     viewNode->SetInteractionNode(interactionNode.GetPointer());
     CHECK_NULL(viewNode->GetInteractionNode());
@@ -33,7 +33,7 @@ int vtkMRMLViewNodeTest1(int, char*[])
   {
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLViewNode> viewNode;
-    vtkNew<vtkMRMLInteractionNode> interactionNode; // interaction node is a singleton by default
+    const vtkNew<vtkMRMLInteractionNode> interactionNode; // interaction node is a singleton by default
     scene->AddNode(viewNode.GetPointer());
     scene->AddNode(interactionNode.GetPointer());
     CHECK_POINTER(viewNode->GetInteractionNode(), interactionNode.GetPointer());

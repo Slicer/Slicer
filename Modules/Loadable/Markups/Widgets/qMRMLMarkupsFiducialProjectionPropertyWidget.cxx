@@ -86,7 +86,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidget ::~qMRMLMarkupsFiducialProjectionPr
 void qMRMLMarkupsFiducialProjectionPropertyWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   Q_D(qMRMLMarkupsFiducialProjectionPropertyWidget);
-  vtkMRMLMarkupsDisplayNode* displayNode = (markupsNode ? markupsNode->GetMarkupsDisplayNode() : nullptr);
+  vtkMRMLMarkupsDisplayNode* const displayNode = (markupsNode ? markupsNode->GetMarkupsDisplayNode() : nullptr);
   this->setMRMLMarkupsDisplayNode(displayNode);
 }
 
@@ -205,11 +205,11 @@ void qMRMLMarkupsFiducialProjectionPropertyWidget::updateWidgetFromDisplayNode()
   // -- Projection Color
   double pColor[3];
   d->FiducialDisplayNode->GetSliceProjectionColor(pColor);
-  QColor displayColor = QColor(pColor[0] * 255, pColor[1] * 255, pColor[2] * 255);
+  const QColor displayColor = QColor(pColor[0] * 255, pColor[1] * 255, pColor[2] * 255);
   d->pointProjectionColorPickerButton->setColor(displayColor);
 
   // -- Use Fiducial Color
-  bool useFiducialColor = d->FiducialDisplayNode->GetSliceProjectionUseFiducialColor();
+  const bool useFiducialColor = d->FiducialDisplayNode->GetSliceProjectionUseFiducialColor();
   d->pointUseFiducialColorCheckBox->setChecked(useFiducialColor);
   d->pointProjectionColorLabel->setEnabled(!useFiducialColor);
   d->pointProjectionColorPickerButton->setEnabled(!useFiducialColor);

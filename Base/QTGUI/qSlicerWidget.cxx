@@ -65,7 +65,7 @@ qSlicerWidget::~qSlicerWidget() = default;
 
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  bool emitSignal = this->mrmlScene() != scene;
+  const bool emitSignal = this->mrmlScene() != scene;
   this->qSlicerObject::setMRMLScene(scene);
   if (emitSignal)
   {
@@ -88,7 +88,7 @@ vtkSlicerApplicationLogic* qSlicerWidget::appLogic() const
 vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName) const
 {
   Q_D(const qSlicerWidget);
-  vtkSlicerApplicationLogic* applicationLogic = this->appLogic();
+  vtkSlicerApplicationLogic* const applicationLogic = this->appLogic();
   if (!applicationLogic)
   {
     return nullptr;

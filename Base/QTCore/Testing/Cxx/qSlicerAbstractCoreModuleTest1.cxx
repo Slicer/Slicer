@@ -66,8 +66,8 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
   //
 
   {
-    bool current = module.isWidgetRepresentationCreationEnabled();
-    bool expected = true;
+    const bool current = module.isWidgetRepresentationCreationEnabled();
+    const bool expected = true;
     if (current != expected)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
@@ -78,7 +78,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
   }
 
   {
-    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    const QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (!repr)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
@@ -89,8 +89,8 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
 
   {
     module.setWidgetRepresentationCreationEnabled(false);
-    bool current = module.isWidgetRepresentationCreationEnabled();
-    bool expected = false;
+    const bool current = module.isWidgetRepresentationCreationEnabled();
+    const bool expected = false;
     if (current != expected)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
@@ -101,7 +101,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
   }
 
   {
-    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    const QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (repr)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
@@ -113,7 +113,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
   module.setWidgetRepresentationCreationEnabled(true);
 
   {
-    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    const QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (!repr)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
@@ -123,8 +123,8 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
   }
 
   {
-    int current = AModuleWidgetRepresentation::Count;
-    int expected = 0;
+    const int current = AModuleWidgetRepresentation::Count;
+    const int expected = 0;
     if (current != expected)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with representation destructor !\n"

@@ -18,7 +18,7 @@ int TestScriptedModuleParameterSaveLoadSpecialCharacters();
 
 int vtkMRMLScriptedModuleNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLScriptedModuleNode> node1;
+  const vtkNew<vtkMRMLScriptedModuleNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   CHECK_EXIT_SUCCESS(TestScriptedModuleParameterSaveLoadSpecialCharacters());
   return EXIT_SUCCESS;
@@ -41,12 +41,12 @@ int TestScriptedModuleParameterSaveLoadSpecialCharacters()
   node->SetParameter("special2%Att%20", special2.c_str());
   node->SetParameter("speci\"al3 Att", special3.c_str());
 
-  std::stringstream ss;
+  const std::stringstream ss;
 
   // Write scene to XML string
   scene->SetSaveToXMLString(1);
   CHECK_BOOL(scene->Commit() != 0, true);
-  std::string sceneXMLString = scene->GetSceneXMLString();
+  const std::string sceneXMLString = scene->GetSceneXMLString();
 
   std::cout << sceneXMLString << std::endl;
 

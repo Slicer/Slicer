@@ -134,13 +134,13 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
     controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
   }
 
-  double opacity = this->MarkupsDisplayNode->GetOpacity();
+  const double opacity = this->MarkupsDisplayNode->GetOpacity();
 
-  double fillOpacity = opacity * this->MarkupsDisplayNode->GetFillOpacity();
+  const double fillOpacity = opacity * this->MarkupsDisplayNode->GetFillOpacity();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIProperty->SetOpacity(fillOpacity);
 
-  double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
+  const double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
@@ -194,12 +194,12 @@ void vtkSlicerROIRepresentation2D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
   // and intersecting with one of the faces.
   double epsilon = 1e-6;
 
-  vtkMRMLApplicationLogic* applicationLogic = this->GetApplicationLogic();
+  vtkMRMLApplicationLogic* const applicationLogic = this->GetApplicationLogic();
   vtkMRMLSliceLogic* sliceLogic = applicationLogic ? applicationLogic->GetSliceLogic(this->GetSliceNode()) : nullptr;
   if (sliceLogic)
   {
     // Set the value of epsilon relative to the slice thickness.
-    double sliceThicknessMm = sliceLogic->GetLowestVolumeSliceSpacing()[2];
+    const double sliceThicknessMm = sliceLogic->GetLowestVolumeSliceSpacing()[2];
     epsilon = sliceThicknessMm / 10000.0;
   }
 
@@ -331,7 +331,7 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(vtkMRMLInteractionEventDat
                                                       int& foundComponentIndex,
                                                       double& closestDistance2)
 {
-  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
+  vtkMRMLMarkupsROINode* const roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
   if (!roiNode                            //
       || !this->Visibility                //
       || !this->ROIActor->GetVisibility() //
@@ -349,7 +349,7 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(vtkMRMLInteractionEventDat
   double closestPointWorld[3] = { 0.0, 0.0, 0.0 };
   if (interactionEventData->IsWorldPositionValid())
   {
-    const double* worldPosition = interactionEventData->GetWorldPosition();
+    const double* const worldPosition = interactionEventData->GetWorldPosition();
 
     double dist2World = VTK_DOUBLE_MAX;
 
@@ -370,7 +370,7 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(vtkMRMLInteractionEventDat
 
       double t;
       double currentClosestPointWorld[3] = { 0.0, 0.0, 0.0 };
-      double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
+      const double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
       if (currentDist2World < dist2World)
       {
         dist2World = currentDist2World;
@@ -384,10 +384,10 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(vtkMRMLInteractionEventDat
   double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
 
-  double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
-  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  const double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
+  const int* const displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
-  double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  const double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
   if (dist2Display < pixelTolerance * pixelTolerance)
   {
     closestDistance2 = dist2Display;

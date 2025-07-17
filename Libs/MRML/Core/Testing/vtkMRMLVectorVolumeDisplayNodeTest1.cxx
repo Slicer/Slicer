@@ -15,7 +15,7 @@
 
 int vtkMRMLVectorVolumeDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLVectorVolumeDisplayNode> node1;
+  const vtkNew<vtkMRMLVectorVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

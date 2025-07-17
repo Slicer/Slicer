@@ -62,7 +62,7 @@ qSlicerExtensionsServerWidgetPrivate::~qSlicerExtensionsServerWidgetPrivate()
 void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& errors)
 {
   Q_Q(qSlicerExtensionsServerWidget);
-  QString html = //
+  const QString html = //
     "<style type='text/css'>"
     "  div.viewWrapperSlicer{"
     "    font-family:'Lucida Grande','Lucida Sans Unicode',helvetica,arial,Verdana,sans-serif;"
@@ -153,7 +153,7 @@ void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
   {
     return;
   }
-  int serverAPI = this->ExtensionsManagerModel->serverAPI();
+  const int serverAPI = this->ExtensionsManagerModel->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
   {
     q->evalJS(QString("app.$vuetify.theme.dark = %1;").arg(enabled ? "true" : "false"));
@@ -267,7 +267,7 @@ void qSlicerExtensionsServerWidget::refresh()
   {
     return;
   }
-  QStringList errors = this->extensionsManagerModel()->checkInstallPrerequisites();
+  const QStringList errors = this->extensionsManagerModel()->checkInstallPrerequisites();
   if (!errors.empty())
   {
     d->setFailurePage(errors);
@@ -282,7 +282,7 @@ void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensio
   Q_D(qSlicerExtensionsServerWidget);
   if (d->BrowsingEnabled)
   {
-    int serverAPI = d->ExtensionsManagerModel->serverAPI();
+    const int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'Installed');").arg(extensionName));
@@ -300,7 +300,7 @@ void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QStri
   Q_D(qSlicerExtensionsServerWidget);
   if (d->BrowsingEnabled)
   {
-    int serverAPI = d->ExtensionsManagerModel->serverAPI();
+    const int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'ScheduledForUninstall');").arg(extensionName));
@@ -336,7 +336,7 @@ void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErro
   {
     return;
   }
-  QString escapedText = QString(text).replace("'", "\\'");
+  const QString escapedText = QString(text).replace("'", "\\'");
   QString delay = "2500";
   QString state;
   if (level == ctkErrorLogLevel::Warning)
@@ -349,7 +349,7 @@ void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErro
     delay = "10000";
     state = "error";
   }
-  int serverAPI = d->ExtensionsManagerModel->serverAPI();
+  const int serverAPI = d->ExtensionsManagerModel->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
   {
     this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));

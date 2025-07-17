@@ -58,7 +58,7 @@ int vtkMRMLModelClipDisplayableManagerTest(int argc, char* argv[])
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
   renderWindow->AddRenderer(renderer);
 
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetInteractor(renderWindowInteractor);
 
   // MRML scene
@@ -69,7 +69,7 @@ int vtkMRMLModelClipDisplayableManagerTest(int argc, char* argv[])
   applicationLogic->SetMRMLScene(scene);
 
   // Add ViewNode
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode);
 
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
@@ -110,6 +110,6 @@ int vtkMRMLModelClipDisplayableManagerTest(int argc, char* argv[])
   scene->AddNode(modelDisplayNode);
   modelNode->AddAndObserveDisplayNodeID(modelDisplayNode->GetID());
 
-  int retval = vtkRegressionTestImage(renderWindow);
+  const int retval = vtkRegressionTestImage(renderWindow);
   return retval > 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }

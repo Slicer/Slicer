@@ -49,7 +49,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 
-  qSlicerCoreApplication* aptr = app.application();
+  qSlicerCoreApplication* const aptr = app.application();
 
   if (aptr != (&app))
   {
@@ -63,17 +63,17 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerCoreIOManager* coreIOManager = new qSlicerCoreIOManager;
+  qSlicerCoreIOManager* const coreIOManager = new qSlicerCoreIOManager;
   app.setCoreIOManager(coreIOManager);
 
-  qSlicerCoreIOManager* coreIOManager2 = app.coreIOManager();
+  qSlicerCoreIOManager* const coreIOManager2 = app.coreIOManager();
   if (coreIOManager2 != coreIOManager)
   {
     std::cerr << "Problem with setCoreIOManager()/coreIOManager()" << std::endl;
     return EXIT_FAILURE;
   }
 
-  QSettings* settings = app.userSettings();
+  QSettings* const settings = app.userSettings();
   if (settings == nullptr)
   {
     std::cerr << "Problem with settings()" << std::endl;
@@ -86,10 +86,10 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerCoreCommandOptions* coreCommandOptions = new qSlicerCoreCommandOptions;
+  qSlicerCoreCommandOptions* const coreCommandOptions = new qSlicerCoreCommandOptions;
   app.setCoreCommandOptions(coreCommandOptions);
 
-  qSlicerCoreCommandOptions* coreCommandOptions2 = app.coreCommandOptions();
+  qSlicerCoreCommandOptions* const coreCommandOptions2 = app.coreCommandOptions();
   if (coreCommandOptions2 != coreCommandOptions)
   {
     std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
@@ -104,7 +104,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  bool isInstalled = app.isInstalled();
+  const bool isInstalled = app.isInstalled();
   if (isInstalled)
   {
     std::cerr << "Problem with isInstalled()" << std::endl;
@@ -112,7 +112,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
   }
 
   // Since initialize has been called, the module manager should be available
-  qSlicerModuleManager* moduleManager1 = app.moduleManager();
+  qSlicerModuleManager* const moduleManager1 = app.moduleManager();
 
   if (!moduleManager1)
   {
@@ -120,7 +120,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  QString homeDirectory = app.slicerHome();
+  const QString homeDirectory = app.slicerHome();
 
   if (homeDirectory.isEmpty())
   {
@@ -130,7 +130,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
 
   std::cout << "Slicer Home Directory = " << qPrintable(homeDirectory) << std::endl;
 
-  vtkSlicerApplicationLogic* logic1 = app.applicationLogic();
+  vtkSlicerApplicationLogic* const logic1 = app.applicationLogic();
 
   if (logic1 == nullptr)
   {
@@ -138,7 +138,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkMRMLScene* scene1 = app.mrmlScene();
+  vtkMRMLScene* const scene1 = app.mrmlScene();
 
   if (scene1 == nullptr)
   {

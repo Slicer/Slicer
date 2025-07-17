@@ -98,7 +98,7 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
   }
 
   // Check if the DisplayableManager has already been registered
-  vtkInternal::DisplayableManagerClassNamesIt it =
+  const vtkInternal::DisplayableManagerClassNamesIt it =
     std::find(this->Internal->DisplayableManagerClassNames.begin(), this->Internal->DisplayableManagerClassNames.end(), vtkClassName);
 
   if (it == this->Internal->DisplayableManagerClassNames.end())
@@ -122,7 +122,7 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
   }
 
   // Check if the DisplayableManager has already been registered
-  vtkInternal::DisplayableManagerClassNamesIt it =
+  const vtkInternal::DisplayableManagerClassNamesIt it =
     std::find(this->Internal->DisplayableManagerClassNames.begin(), this->Internal->DisplayableManagerClassNames.end(), vtkClassOrScriptName);
 
   if (it != this->Internal->DisplayableManagerClassNames.end())
@@ -155,7 +155,7 @@ bool vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
   }
 
   // Check if the DisplayableManager is registered
-  vtkInternal::DisplayableManagerClassNamesIt it =
+  const vtkInternal::DisplayableManagerClassNamesIt it =
     std::find(this->Internal->DisplayableManagerClassNames.begin(), this->Internal->DisplayableManagerClassNames.end(), vtkClassOrScriptName);
 
   if (it == this->Internal->DisplayableManagerClassNames.end())

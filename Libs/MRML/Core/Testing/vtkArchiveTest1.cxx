@@ -118,8 +118,8 @@ int vtkArchiveTest1(int argc, char* argv[])
   }
 
   std::cout << "creating archiveTest.zip" << std::endl;
-  std::string zipFilePath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest.zip");
-  std::string zipDirPath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest");
+  const std::string zipFilePath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest.zip");
+  const std::string zipDirPath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest");
   res = vtkArchive::Zip(zipFilePath.c_str(), zipDirPath.c_str());
   if (!res)
   {

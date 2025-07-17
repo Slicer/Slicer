@@ -63,11 +63,11 @@ qSlicerModulePanel::~qSlicerModulePanel()
 qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule() const
 {
   Q_D(const qSlicerModulePanel);
-  QBoxLayout* scrollAreaLayout = qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
+  QBoxLayout* const scrollAreaLayout = qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
 
   QLayoutItem* item = scrollAreaLayout->itemAt(1);
 
-  qSlicerAbstractModuleWidget* currentModuleWidget = item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
+  qSlicerAbstractModuleWidget* const currentModuleWidget = item ? qobject_cast<qSlicerAbstractModuleWidget*>(item->widget()) : 0;
 
   return currentModuleWidget ? currentModuleWidget->module() : nullptr;
 }
@@ -75,7 +75,7 @@ qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule() const
 //---------------------------------------------------------------------------
 QString qSlicerModulePanel::currentModuleName() const
 {
-  qSlicerAbstractCoreModule* module = this->currentModule();
+  qSlicerAbstractCoreModule* const module = this->currentModule();
   return module ? module->name() : QString();
 }
 
@@ -104,7 +104,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
 void qSlicerModulePanel::setModule(qSlicerAbstractCoreModule* module)
 {
   // Retrieve current module associated with the module panel
-  qSlicerAbstractCoreModule* oldModule = this->currentModule();
+  qSlicerAbstractCoreModule* const oldModule = this->currentModule();
   if (module == oldModule)
   {
     return;
@@ -154,7 +154,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
     qWarning() << moduleWidget->moduleName() << "widget doesn't have a top-level layout.";
   }
 
-  QWidget* scrollAreaContents = d->ScrollArea->widget();
+  QWidget* const scrollAreaContents = d->ScrollArea->widget();
   // Insert module in the panel
   QBoxLayout* scrollAreaLayout = qobject_cast<QBoxLayout*>(scrollAreaContents->layout());
   Q_ASSERT(scrollAreaLayout);
@@ -165,7 +165,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
 
   QString help = module->helpText();
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (app)
   {
     help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(), QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
@@ -175,17 +175,17 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   d->HelpCollapsibleButton->setVisible(this->isHelpAndAcknowledgmentVisible() && !help.isEmpty());
   d->HelpLabel->setHtml(help);
   d->AcknowledgementLabel->clear();
-  qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
+  qSlicerAbstractModule* const guiModule = qobject_cast<qSlicerAbstractModule*>(module);
   if (guiModule && !guiModule->logo().isNull())
   {
     d->AcknowledgementLabel->document()->addResource(QTextDocument::ImageResource, QUrl("module://logo.png"), QVariant(guiModule->logo()));
     d->AcknowledgementLabel->append(QString("<center><img src=\"module://logo.png\"/></center><br>"));
   }
-  QString acknowledgement = module->acknowledgementText();
+  const QString acknowledgement = module->acknowledgementText();
   d->AcknowledgementLabel->insertHtml(acknowledgement);
   if (!module->contributors().isEmpty())
   {
-    QString contributors = module->contributors().join(", ");
+    const QString contributors = module->contributors().join(", ");
     QString contributorsText = QString("<br/><u>%1</u> <i>").arg(tr("Contributors:"));
     contributorsText += contributors + "</i><br/>";
     d->AcknowledgementLabel->append(contributorsText);
@@ -211,7 +211,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
 
   QBoxLayout* scrollAreaLayout = qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
   Q_ASSERT(scrollAreaLayout);
-  int index = scrollAreaLayout->indexOf(moduleWidget);
+  const int index = scrollAreaLayout->indexOf(moduleWidget);
   if (index == -1)
   {
     return;

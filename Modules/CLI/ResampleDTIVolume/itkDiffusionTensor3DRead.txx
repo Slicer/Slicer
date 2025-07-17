@@ -50,14 +50,14 @@ int DiffusionTensor3DRead<TData>::Update(const char* input)
     m_Reader->Update();
     const DictionaryType& dictionary = m_Reader->GetMetaDataDictionary();
     DictionaryType::ConstIterator itr = dictionary.Begin();
-    DictionaryType::ConstIterator end = dictionary.End();
+    const DictionaryType::ConstIterator end = dictionary.End();
     while (itr != end)
     {
-      itk::MetaDataObjectBase::Pointer entry = itr->second;
-      MetaDataDoubleVectorType::Pointer entryvalue1 = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
+      const itk::MetaDataObjectBase::Pointer entry = itr->second;
+      const MetaDataDoubleVectorType::Pointer entryvalue1 = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
       if (entryvalue1)
       {
-        int pos = itr->first.find("NRRD_measurement frame");
+        const int pos = itr->first.find("NRRD_measurement frame");
         if (pos != -1)
         {
           DoubleVectorType tagvalue = entryvalue1->GetMetaDataObjectValue();
@@ -72,13 +72,13 @@ int DiffusionTensor3DRead<TData>::Update(const char* input)
         }
       }
       // get the space orientation
-      MetaDataStringType::Pointer entryvalue2 = dynamic_cast<MetaDataStringType*>(entry.GetPointer());
+      const MetaDataStringType::Pointer entryvalue2 = dynamic_cast<MetaDataStringType*>(entry.GetPointer());
       if (entryvalue2)
       {
-        int pos = itr->first.find("NRRD_space");
+        const int pos = itr->first.find("NRRD_space");
         if (pos != -1)
         {
-          std::string tagvalue = entryvalue2->GetMetaDataObjectValue();
+          const std::string tagvalue = entryvalue2->GetMetaDataObjectValue();
         }
       }
       ++itr;

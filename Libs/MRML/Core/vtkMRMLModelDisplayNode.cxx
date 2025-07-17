@@ -123,7 +123,7 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
@@ -143,10 +143,10 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLModelDisplayNode* node = vtkMRMLModelDisplayNode::SafeDownCast(anode);
+  vtkMRMLModelDisplayNode* const node = vtkMRMLModelDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -169,7 +169,7 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
+  vtkMRMLColorNode* const cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode() //
       && event == vtkCommand::ModifiedEvent)
   {
@@ -246,7 +246,7 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
     return nullptr;
   }
 
-  vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
+  vtkAlgorithmOutput* const outputConnection = this->GetOutputMeshConnection();
   if (!outputConnection)
   {
     return nullptr;
@@ -319,7 +319,7 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
     return;
   }
 
-  int wasModified = this->StartModify();
+  const int wasModified = this->StartModify();
 
   this->ThresholdEnabled = enabled;
   this->Modified();
@@ -345,7 +345,7 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetThresholdRange(double min, double max)
 {
-  vtkMTimeType mtime = this->ThresholdFilter->GetMTime();
+  const vtkMTimeType mtime = this->ThresholdFilter->GetMTime();
   this->ThresholdFilter->SetLowerThreshold(min);
   this->ThresholdFilter->SetUpperThreshold(max);
   this->ThresholdFilter->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
@@ -398,7 +398,7 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char* scalarName)
   {
     return;
   }
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->Superclass::SetActiveScalarName(scalarName);
   this->UpdateAssignedAttribute();
   this->EndModify(wasModifying);
@@ -411,7 +411,7 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
   {
     return;
   }
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->Superclass::SetActiveAttributeLocation(location);
   this->UpdateAssignedAttribute();
   this->EndModify(wasModifying);
@@ -478,7 +478,7 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   {
     return nullptr;
   }
-  vtkDataArray* dataArray = attributes->GetArray(this->GetActiveScalarName());
+  vtkDataArray* const dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
 }
 

@@ -125,7 +125,7 @@ void qSlicerSubjectHierarchyModule::setup()
   if (app)
   {
     // Register settings panel
-    qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
+    qSlicerSubjectHierarchySettingsPanel* const panel = new qSlicerSubjectHierarchySettingsPanel();
     app->settingsDialog()->addPanel("Subject hierarchy", panel);
 
     // Explicitly import associated python library to trigger registration of plugins
@@ -144,7 +144,7 @@ vtkMRMLAbstractLogic* qSlicerSubjectHierarchyModule::createLogic()
   Q_D(qSlicerSubjectHierarchyModule);
 
   // Create logic
-  vtkSlicerSubjectHierarchyModuleLogic* logic = vtkSlicerSubjectHierarchyModuleLogic::New();
+  vtkSlicerSubjectHierarchyModuleLogic* const logic = vtkSlicerSubjectHierarchyModuleLogic::New();
   // Handle scene change event if occurs
   qvtkConnect(logic, vtkCommand::ModifiedEvent, this, SLOT(onLogicModified()));
 
@@ -176,7 +176,7 @@ void qSlicerSubjectHierarchyModule::onLogicModified()
 {
   Q_D(qSlicerSubjectHierarchyModule);
 
-  vtkMRMLScene* scene = this->mrmlScene();
+  vtkMRMLScene* const scene = this->mrmlScene();
   if (d->PluginLogic && scene != d->PluginLogic->mrmlScene())
   {
     // Set the new scene to the plugin logic

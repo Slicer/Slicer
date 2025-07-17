@@ -107,7 +107,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerAnnotationsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
@@ -135,7 +135,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
     fileType = vtkSlicerMarkupsLogic::AnnotationROI;
   }
 
-  char* nodeID = d->MarkupsLogic->LoadAnnotation(fileName.toUtf8(), name.toUtf8(), fileType);
+  char* const nodeID = d->MarkupsLogic->LoadAnnotation(fileName.toUtf8(), name.toUtf8(), fileType);
   if (!nodeID)
   {
     this->setLoadedNodes(QStringList());
@@ -144,7 +144,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
   this->setLoadedNodes(QStringList(QString(nodeID)));
   if (properties.contains("name"))
   {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
+    const std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
     this->mrmlScene()->GetNodeByID(nodeID)->SetName(uname.c_str());
   }
   return true;

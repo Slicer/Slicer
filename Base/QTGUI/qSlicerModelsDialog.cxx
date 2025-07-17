@@ -56,7 +56,7 @@ void qSlicerModelsDialogPrivate::init()
 void qSlicerModelsDialogPrivate::openAddModelFileDialog()
 {
   Q_Q(qSlicerModelsDialog);
-  QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
+  const QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
   // TODO add last open directory
   this->SelectedFiles = QFileDialog::getOpenFileNames(this, qSlicerModelsDialog::tr("Select Model file(s)"), "", filters.join(", "));
   if (this->SelectedFiles.count() < 1)
@@ -71,13 +71,13 @@ void qSlicerModelsDialogPrivate::openAddModelDirectoryDialog()
 {
   Q_Q(qSlicerModelsDialog);
   // TODO add last open directory.
-  QString modelDirectory = QFileDialog::getExistingDirectory(this, qSlicerModelsDialog::tr("Select a Model directory"), "", QFileDialog::ReadOnly);
+  const QString modelDirectory = QFileDialog::getExistingDirectory(this, qSlicerModelsDialog::tr("Select a Model directory"), "", QFileDialog::ReadOnly);
   if (modelDirectory.isEmpty())
   {
     return;
   }
 
-  QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
+  const QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
   this->SelectedFiles = QDir(modelDirectory).entryList(filters);
   this->accept();
 }
@@ -125,7 +125,7 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   {
     return res;
   }
-  QStringList files = d->SelectedFiles;
+  const QStringList files = d->SelectedFiles;
   for (const QString& file : files)
   {
     qSlicerIO::IOProperties properties = readerProperties;

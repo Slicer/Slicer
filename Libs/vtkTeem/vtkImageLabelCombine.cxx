@@ -88,7 +88,7 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine* self,
   int rowLength;
   unsigned long count = 0;
   unsigned long target;
-  int op = self->GetOverwriteInput();
+  const int op = self->GetOverwriteInput();
 
   // find the region to loop over
   rowLength = (outExt[1] - outExt[0] + 1) * in1Data->GetNumberOfScalarComponents();

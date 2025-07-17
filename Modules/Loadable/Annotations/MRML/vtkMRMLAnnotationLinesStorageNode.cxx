@@ -51,20 +51,20 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMR
     return -1;
   }
 
-  int flag = Superclass::ReadAnnotationDisplayProperties(refNode, lineString, preposition);
+  const int flag = Superclass::ReadAnnotationDisplayProperties(refNode, lineString, preposition);
   if (flag)
   {
     return flag;
   }
 
-  size_t pointOffset = preposition.size();
+  const size_t pointOffset = preposition.size();
   preposition.insert(0, "# ");
 
   if (lineString.find(preposition + "LineThickness = ") != std::string::npos)
   {
-    std::string str = lineString.substr(18 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(18 + pointOffset, std::string::npos);
     vtkDebugMacro("Getting LineThickness, substr = " << str);
-    float size = atof(str.c_str());
+    const float size = atof(str.c_str());
     refNode->SetLineThickness(size);
     return 1;
   }
@@ -102,8 +102,8 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
   }
 
   vtkDebugMacro("got a line: \n\"" << line << "\"");
-  std::string attValue(line);
-  size_t size = std::string(this->GetAnnotationStorageType()).size();
+  const std::string attValue(line);
+  const size_t size = std::string(this->GetAnnotationStorageType()).size();
 
   if (attValue.compare(0, size, this->GetAnnotationStorageType()))
   {
@@ -111,7 +111,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
   }
 
   int sel = 1, vis = 1;
-  std::string annotation;
+  const std::string annotation;
 
   // Jump over type
   size_t startPos = attValue.find("|", 0) + 1;
@@ -180,22 +180,22 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
   vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
   // TODO: parse out the display node settings
   // if there's a space after the hash, try to find options
-  std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
-  vtkIdType pointOffset = std::string(this->GetAnnotationStorageType()).size();
+  const std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
+  const vtkIdType pointOffset = std::string(this->GetAnnotationStorageType()).size();
   ;
 
   vtkDebugMacro("Have a possible option in line " << line);
-  std::string lineString = std::string(line);
+  const std::string lineString = std::string(line);
 
   if (lineString.find(preposition + "Columns = ") != std::string::npos)
   {
-    std::string str = lineString.substr(12 + pointOffset, std::string::npos);
+    const std::string str = lineString.substr(12 + pointOffset, std::string::npos);
 
     vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
     // reset all of them
     typeColumn = startIDColumn = endIDColumn = selColumn = visColumn = -1;
     numColumns = 0;
-    char* columns = (char*)str.c_str();
+    char* const columns = (char*)str.c_str();
     char* ptr = strtok(columns, "|");
     while (ptr != nullptr)
     {
@@ -253,10 +253,10 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
     return 0;
   }
 
-  vtkMRMLAnnotationLineDisplayNode* aLineDisplayNode = refNode->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* const aLineDisplayNode = refNode->GetAnnotationLineDisplayNode();
 
   // turn off modified events
-  int modFlag = refNode->GetDisableModifiedEvent();
+  const int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
   char line[1024];
   // default column ordering for annotation info - this is exactly the same as for fiducial
@@ -362,7 +362,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
     return 0;
   }
 
-  vtkMRMLAnnotationLineDisplayNode* annDisNode = refNode->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* const annDisNode = refNode->GetAnnotationLineDisplayNode();
 
   this->WriteAnnotationLineDisplayProperties(of, annDisNode, this->GetAnnotationStorageType());
   of << "# " << this->GetAnnotationStorageType() << "Columns = type|startPointID|endPointID|sel|vis" << endl;
@@ -381,8 +381,8 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtk
   {
     vtkIdType pointIDs[2];
     refNode->GetEndPointsId(i, pointIDs);
-    int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_SELECTED);
-    int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_VISIBLE);
+    const int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_SELECTED);
+    const int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_VISIBLE);
     of << this->GetAnnotationStorageType() << "|" << pointIDs[0] << "|" << pointIDs[1] << "|" << sel << "|" << vis << endl;
   }
 
@@ -392,7 +392,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtk
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of)
 {
-  int retval = this->Superclass::WriteAnnotationDataInternal(refNode, of);
+  const int retval = this->Superclass::WriteAnnotationDataInternal(refNode, of);
   if (!retval)
   {
     vtkWarningMacro("WriteAnnotationDataInternal: with stream: can't call WriteAnnotationDataInternal on superclass, retval = " << retval);
@@ -400,7 +400,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* 
   }
 
   // cast the input nod
-  vtkMRMLAnnotationLinesNode* aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
+  vtkMRMLAnnotationLinesNode* const aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
   if (aNode == nullptr)
   {

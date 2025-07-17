@@ -49,7 +49,7 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode,
     {
       std::cout << "CheckCurvePointDistances:" << std::endl;
     }
-    int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
+    const int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
     for (int pointIndex = 0; pointIndex < lastPointIndex; pointIndex++)
     {
       double actualDistance;
@@ -102,9 +102,9 @@ int vtkMRMLMarkupsNodeTest3(int, char*[])
   // Test curve interpolation
   //
 
-  bool verbose = false; // set it to true to help during debugging
+  const bool verbose = false; // set it to true to help during debugging
 
-  double tol = 0.001; // comparison tolerance
+  const double tol = 0.001; // comparison tolerance
   bool distanceOnCurve = false;
 
   // Open curve
@@ -112,7 +112,7 @@ int vtkMRMLMarkupsNodeTest3(int, char*[])
   std::cout << "Open curve" << std::endl;
 
   vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
-  double curveLength = 100.0;
+  const double curveLength = 100.0;
   curveNode->AddControlPoint(vtkVector3d(10, 25, -30));
   curveNode->AddControlPoint(vtkVector3d(10, 25 + curveLength, -30));
   CHECK_DOUBLE_TOLERANCE(curveNode->GetCurveLengthWorld(), curveLength, tol);
@@ -143,10 +143,10 @@ int vtkMRMLMarkupsNodeTest3(int, char*[])
   distanceOnCurve = true;
 
   vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurveNode;
-  double radius = 15;
-  int numberOfControlPoints = 20;
-  double closedCurveLength = 2 * radius * vtkMath::Pi();
-  double circumferenceTol = 0.1; // curve is not straight line, so length can slightly change as we resample
+  const double radius = 15;
+  const int numberOfControlPoints = 20;
+  const double closedCurveLength = 2 * radius * vtkMath::Pi();
+  const double circumferenceTol = 0.1; // curve is not straight line, so length can slightly change as we resample
 
   vtkNew<vtkRegularPolygonSource> polygonSource;
   polygonSource->SetNumberOfSides(numberOfControlPoints);

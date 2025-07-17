@@ -121,14 +121,14 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
 
   // itk import for input itk images
   typedef typename itk::VTKImageImport<ImageType> ImageImportType;
-  typename ImageImportType::Pointer itkImporter = ImageImportType::New();
+  const typename ImageImportType::Pointer itkImporter = ImageImportType::New();
 
   // vtk export for vtk image
   vtkNew<vtkImageExport> vtkExporter;
 
   // writer
   typedef typename itk::ImageFileWriter<ImageType> ImageWriterType;
-  typename ImageWriterType::Pointer itkImageWriter = ImageWriterType::New();
+  const typename ImageWriterType::Pointer itkImageWriter = ImageWriterType::New();
 
   if (self->GetUseCompression())
   {
@@ -147,8 +147,8 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
   // write image
   if (self->GetImageIOClassName())
   {
-    itk::LightObject::Pointer objectType = itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
-    itk::ImageIOBase* imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
+    const itk::LightObject::Pointer objectType = itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
+    itk::ImageIOBase* const imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
     if (imageIOType)
     {
       itkImageWriter->SetImageIO(imageIOType);
@@ -163,16 +163,16 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
     const itk::MetaDataDictionary& dictionary = itkImageWriter->GetMetaDataDictionary();
 
     itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
-    itk::MetaDataDictionary::ConstIterator end = dictionary.End();
+    const itk::MetaDataDictionary::ConstIterator end = dictionary.End();
 
     while (itr != end)
     {
       // Get Measurement Frame
-      itk::MetaDataObjectBase::Pointer entry = itr->second;
-      MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
+      const itk::MetaDataObjectBase::Pointer entry = itr->second;
+      const MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
       if (entryvalue)
       {
-        int pos = itr->first.find("NRRD_measurement frame");
+        const int pos = itr->first.find("NRRD_measurement frame");
         if (pos != -1)
         {
           DoubleVectorType tagvalue;
@@ -212,8 +212,8 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
 template <class TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* fileName, vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix = nullptr)
 {
-  std::string fileExtension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension(fileName));
-  bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
+  const std::string fileExtension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension(fileName));
+  const bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
   if (saveAsJPEG)
   {
     ITKWriteVTKImage<TPixelType, 2>(self, inputImage, fileName, rasToIjkMatrix);
@@ -309,16 +309,16 @@ void vtkITKImageWriter::Write()
   {
     this->GetOutputInformation(0)->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), this->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
   }
-  int inputDataType = pointData->GetScalars()   ? pointData->GetScalars()->GetDataType()
-                      : pointData->GetTensors() ? pointData->GetTensors()->GetDataType()
-                      : pointData->GetVectors() ? pointData->GetVectors()->GetDataType()
-                      : pointData->GetNormals() ? pointData->GetNormals()->GetDataType()
-                                                : 0;
-  int inputNumberOfScalarComponents = pointData->GetScalars()   ? pointData->GetScalars()->GetNumberOfComponents()
-                                      : pointData->GetTensors() ? pointData->GetTensors()->GetNumberOfComponents()
-                                      : pointData->GetVectors() ? pointData->GetVectors()->GetNumberOfComponents()
-                                      : pointData->GetNormals() ? pointData->GetNormals()->GetNumberOfComponents()
-                                                                : 0;
+  const int inputDataType = pointData->GetScalars()   ? pointData->GetScalars()->GetDataType()
+                            : pointData->GetTensors() ? pointData->GetTensors()->GetDataType()
+                            : pointData->GetVectors() ? pointData->GetVectors()->GetDataType()
+                            : pointData->GetNormals() ? pointData->GetNormals()->GetDataType()
+                                                      : 0;
+  const int inputNumberOfScalarComponents = pointData->GetScalars()   ? pointData->GetScalars()->GetNumberOfComponents()
+                                            : pointData->GetTensors() ? pointData->GetTensors()->GetNumberOfComponents()
+                                            : pointData->GetVectors() ? pointData->GetVectors()->GetNumberOfComponents()
+                                            : pointData->GetNormals() ? pointData->GetNormals()->GetNumberOfComponents()
+                                                                      : 0;
 
   if (inputNumberOfScalarComponents == 1)
   {
@@ -553,7 +553,7 @@ void vtkITKImageWriter::Write()
         outImage->SetSpacing(1, 1, 1);
         outImage->AllocateScalars(VTK_FLOAT, 6);
         vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
-        vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
+        vtkFloatArray* const in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];
         float outValue[6];
         for (int i = 0; i < out->GetNumberOfTuples(); i++)

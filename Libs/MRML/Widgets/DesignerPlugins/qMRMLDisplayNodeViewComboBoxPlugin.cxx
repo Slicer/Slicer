@@ -30,7 +30,7 @@ qMRMLDisplayNodeViewComboBoxPlugin::qMRMLDisplayNodeViewComboBoxPlugin(QObject* 
 //-----------------------------------------------------------------------------
 QWidget* qMRMLDisplayNodeViewComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLDisplayNodeViewComboBox* widget = new qMRMLDisplayNodeViewComboBox(parentWidget);
+  qMRMLDisplayNodeViewComboBox* const widget = new qMRMLDisplayNodeViewComboBox(parentWidget);
   return widget;
 }
 

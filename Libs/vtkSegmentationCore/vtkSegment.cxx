@@ -103,12 +103,12 @@ void vtkSegment::PrintSelf(ostream& os, vtkIndent indent)
   for (reprIt = this->Representations.begin(); reprIt != this->Representations.end(); ++reprIt)
   {
     os << indent.GetNextIndent() << reprIt->first << ":";
-    vtkDataObject* dataObject = reprIt->second;
+    vtkDataObject* const dataObject = reprIt->second;
     if (dataObject)
     {
       os << "\n";
       os << indent.GetNextIndent().GetNextIndent() << "ClassName: " << dataObject->GetClassName() << "\n";
-      vtkImageData* imageData = vtkImageData::SafeDownCast(dataObject);
+      vtkImageData* const imageData = vtkImageData::SafeDownCast(dataObject);
       vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataObject);
       if (imageData)
       {
@@ -216,7 +216,7 @@ void vtkSegment::DeepCopy(vtkSegment* source)
     if (representationNamesToKeep.find(reprIt->first) == representationNamesToKeep.end())
     {
       // this representation should not be kept
-      RepresentationMap::iterator reprItToRemove = reprIt;
+      const RepresentationMap::iterator reprItToRemove = reprIt;
       ++reprIt;
       this->Representations.erase(reprItToRemove);
       continue;
@@ -266,7 +266,7 @@ void vtkSegment::GetBounds(double bounds[6])
 vtkDataObject* vtkSegment::GetRepresentation(std::string name)
 {
   // Use find function instead of operator[] not to create empty representation if it is missing
-  RepresentationMap::iterator reprIt = this->Representations.find(name);
+  const RepresentationMap::iterator reprIt = this->Representations.find(name);
   if (reprIt != this->Representations.end())
   {
     return reprIt->second.GetPointer();
@@ -292,7 +292,7 @@ bool vtkSegment::AddRepresentation(std::string name, vtkDataObject* representati
 //---------------------------------------------------------------------------
 bool vtkSegment::RemoveRepresentation(std::string name)
 {
-  vtkDataObject* representation = this->GetRepresentation(name);
+  vtkDataObject* const representation = this->GetRepresentation(name);
   if (!representation)
   {
     return false;
@@ -368,7 +368,7 @@ void vtkSegment::RemoveTag(std::string tag)
 //---------------------------------------------------------------------------
 bool vtkSegment::GetTag(std::string tag, std::string& value)
 {
-  std::map<std::string, std::string>::iterator tagIt = this->Tags.find(tag);
+  const std::map<std::string, std::string>::iterator tagIt = this->Tags.find(tag);
   if (tagIt == this->Tags.end())
   {
     return false;
@@ -409,7 +409,7 @@ std::string vtkSegment::GetTerminology()
 bool vtkSegment::HasTerminology()
 {
   std::string terminologyEntry;
-  bool hasTerminology = this->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry);
+  const bool hasTerminology = this->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry);
   if (!hasTerminology)
   {
     return false;

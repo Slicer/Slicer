@@ -32,7 +32,7 @@ namespace
 std::string GenerateRandomCapitalLetters(int numberOfCharacters)
 {
   std::string id;
-  std::string randomId;
+  const std::string randomId;
   for (int i = 0; i < numberOfCharacters; i++)
   {
     id += static_cast<char>('A' + rand() % 24);
@@ -55,7 +55,7 @@ int DoIt(int argc, char* argv[])
   typedef itk::GDCMImageIO ImageIOType;
 
   typename Image3DType::Pointer image;
-  typename ReaderType::Pointer reader = ReaderType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
 
   try
   {
@@ -81,7 +81,7 @@ int DoIt(int argc, char* argv[])
   {
     reader->ReleaseDataFlagOn();
 
-    typename ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
+    const typename ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
     shiftScale->SetInput(reader->GetOutput());
     shiftScale->SetShift(-rescaleIntercept);
 
@@ -99,9 +99,9 @@ int DoIt(int argc, char* argv[])
   }
 
   typedef itk::MetaDataDictionary DictionaryType;
-  unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
+  const unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
 
-  typename ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  const typename ImageIOType::Pointer gdcmIO = ImageIOType::New();
   DictionaryType dictionary;
 
   // Progress
@@ -117,14 +117,14 @@ int DoIt(int argc, char* argv[])
   std::ostringstream value;
 
   // Get current time (this will be used everywhere where the current date or time is needed)
-  std::time_t t = std::time(nullptr);
-  std::tm tm = *std::localtime(&t);
+  const std::time_t t = std::time(nullptr);
+  const std::tm tm = *std::localtime(&t);
   value.str("");
   value << std::put_time(&tm, "%H%M%S");
-  std::string timeNow = value.str();
+  const std::string timeNow = value.str();
   value.str("");
   value << std::put_time(&tm, "%Y%m%d");
-  std::string dateNow = value.str();
+  const std::string dateNow = value.str();
 
   // -----------------------------------------
   // SOP Common tags
@@ -376,7 +376,7 @@ int DoIt(int argc, char* argv[])
   // -----------------------------------------
   // For each slice
 
-  float progress = 1.0 / (float)numberOfSlices;
+  const float progress = 1.0 / (float)numberOfSlices;
   for (unsigned int i = 0; i < numberOfSlices; i++)
   {
     std::cout << "<filter-progress>" << (i + 1) * progress << "</filter-progress>" << std::endl << std::flush;
@@ -436,7 +436,7 @@ int DoIt(int argc, char* argv[])
     extractRegion.SetIndex(extractIndex);
 
     typedef itk::ExtractImageFilter<Image3DType, Image2DType> ExtractType;
-    typename ExtractType::Pointer extract = ExtractType::New();
+    const typename ExtractType::Pointer extract = ExtractType::New();
     extract->SetDirectionCollapseToGuess(); // ITKv3 compatible, but not recommended
     extract->SetInput(image);
     extract->SetExtractionRegion(extractRegion);
@@ -455,7 +455,7 @@ int DoIt(int argc, char* argv[])
       typename Image2DType::PixelType maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
       for (it.GoToBegin(); !it.IsAtEnd(); ++it)
       {
-        typename Image2DType::PixelType p = it.Get();
+        const typename Image2DType::PixelType p = it.Get();
         if (p > maxValue)
         {
           maxValue = p;
@@ -465,8 +465,8 @@ int DoIt(int argc, char* argv[])
           minValue = p;
         }
       }
-      double windowCenterValue = (static_cast<double>(minValue) + static_cast<double>(maxValue)) / 2.0;
-      double windowWidthValue = (static_cast<double>(maxValue) - static_cast<double>(minValue));
+      const double windowCenterValue = (static_cast<double>(minValue) + static_cast<double>(maxValue)) / 2.0;
+      const double windowWidthValue = (static_cast<double>(maxValue) - static_cast<double>(minValue));
 
       value.str("");
       value << windowCenterValue;
@@ -481,7 +481,7 @@ int DoIt(int argc, char* argv[])
 
     extract->GetOutput()->SetMetaDataDictionary(dictionary);
 
-    typename WriterType::Pointer writer = WriterType::New();
+    const typename WriterType::Pointer writer = WriterType::New();
     char imageNumber[BUFSIZ + 1];
     imageNumber[BUFSIZ] = '\0';
 

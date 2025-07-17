@@ -10,7 +10,7 @@ qMRMLExpandingWebViewPlugin::qMRMLExpandingWebViewPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLExpandingWebViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLExpandingWebView* _widget = new qMRMLExpandingWebView(_parent);
+  qMRMLExpandingWebView* const _widget = new qMRMLExpandingWebView(_parent);
   return _widget;
 }
 

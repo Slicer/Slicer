@@ -40,7 +40,7 @@ private slots:
 // ----------------------------------------------------------------------------
 void qSlicerPersistentCookieJarTester::testDefaults()
 {
-  qSlicerPersistentCookieJar cookieJar;
+  const qSlicerPersistentCookieJar cookieJar;
   // No initialization required
   QVERIFY(cookieJar.filePath().endsWith("cookies.ini"));
 }

@@ -132,7 +132,7 @@ bool vtkSegmentationHistory::SaveState()
   std::map<vtkDataObject*, vtkDataObject*> savedObjects;
   for (std::vector<std::string>::iterator segmentIDIt = segmentIDs.begin(); segmentIDIt != segmentIDs.end(); ++segmentIDIt)
   {
-    vtkSegment* segment = this->Segmentation->GetSegment(*segmentIDIt);
+    vtkSegment* const segment = this->Segmentation->GetSegment(*segmentIDIt);
     if (segment == nullptr)
     {
       vtkErrorMacro("Failed to save state of segment " << *segmentIDIt);
@@ -143,14 +143,14 @@ bool vtkSegmentationHistory::SaveState()
     vtkSegment* baselineSegment = nullptr;
     if (this->SegmentationStates.size() > 0)
     {
-      SegmentsMap::iterator baselineSegmentIt = this->SegmentationStates.back().Segments.find(*segmentIDIt);
+      const SegmentsMap::iterator baselineSegmentIt = this->SegmentationStates.back().Segments.find(*segmentIDIt);
       if (baselineSegmentIt != this->SegmentationStates.back().Segments.end())
       {
         baselineSegment = baselineSegmentIt->second.GetPointer();
       }
     }
 
-    vtkSmartPointer<vtkSegment> segmentClone = vtkSmartPointer<vtkSegment>::New();
+    const vtkSmartPointer<vtkSegment> segmentClone = vtkSmartPointer<vtkSegment>::New();
     vtkSegmentation::CopySegment(segmentClone, segment, baselineSegment, savedObjects);
     newSegmentationState.Segments[*segmentIDIt] = segmentClone;
   }
@@ -249,7 +249,7 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
     vtkSegmentation::CopySegment(segment, segmentToRestore, nullptr, restoredRepresentations);
 
     // Remove representations that are not in the restoring segment
-    for (std::string representationName : currentRepresentationNames)
+    for (const std::string representationName : currentRepresentationNames)
     {
       if (std::find(restoredRepresentationNames.begin(), restoredRepresentationNames.end(), representationName) == restoredRepresentationNames.end())
       {

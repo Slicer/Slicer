@@ -102,7 +102,7 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   this->NoItemLabel->setMargin(4);
 
   // Add tree view to container
-  QFrame* container = qobject_cast<QFrame*>(q->view()->parentWidget());
+  QFrame* const container = qobject_cast<QFrame*>(q->view()->parentWidget());
   container->layout()->addWidget(this->NoItemLabel);
   container->layout()->addWidget(this->TreeView);
 
@@ -554,7 +554,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 
   QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt, QStyle::SC_ComboBoxListBoxPopup, this));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QRect screen = this->screen()->availableGeometry();
+  QRect const screen = this->screen()->availableGeometry();
 #else
   QRect screen = QApplication::desktop()->availableGeometry(QApplication::desktop()->screenNumber(this));
 #endif
@@ -563,22 +563,22 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 
   // Custom Height
   int popupHeight = 0;
-  int displayedItemCount = d->TreeView->displayedItemCount();
+  const int displayedItemCount = d->TreeView->displayedItemCount();
   if (displayedItemCount == 0)
   {
     // If there is no items, find what message to show instead
     vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
     if (shNode)
     {
-      vtkIdType rootItem = d->TreeView->rootItem();
+      const vtkIdType rootItem = d->TreeView->rootItem();
       std::vector<vtkIdType> childItemIDs;
       shNode->GetItemChildren(rootItem, childItemIDs, false);
       if (childItemIDs.empty())
       {
         if (rootItem != shNode->GetSceneItemID())
         {
-          std::string rootName = shNode->GetItemName(rootItem);
-          QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
+          const std::string rootName = shNode->GetItemName(rootItem);
+          const QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
           d->NoItemLabel->setText(label);
         }
         else
@@ -612,7 +612,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     // Add tree view margins for the height
     // NB: not needed for the width as the item labels will be cropped
     // without displaying an horizontal scroll bar
-    QMargins tvMargins = d->TreeView->contentsMargins();
+    const QMargins tvMargins = d->TreeView->contentsMargins();
     popupHeight += tvMargins.top() + tvMargins.bottom();
 
     d->NoItemLabel->hide();
@@ -620,7 +620,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   }
 
   // Add container margins for the height
-  QMargins margins = container->contentsMargins();
+  const QMargins margins = container->contentsMargins();
   popupHeight += margins.top() + margins.bottom();
 
   // Position of the container
@@ -739,7 +739,7 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
   this->setDefaultText(titleText);
 
   // Get icon for selected item
-  std::string ownerPluginName = shNode->GetItemOwnerPluginName(selectedShItemID);
+  const std::string ownerPluginName = shNode->GetItemOwnerPluginName(selectedShItemID);
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName(ownerPluginName.c_str());
   if (ownerPlugin)
   {
@@ -758,7 +758,7 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyComboBox::onMRMLSceneCloseEnded(vtkObject* sceneObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;

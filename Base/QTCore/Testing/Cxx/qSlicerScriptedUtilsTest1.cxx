@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 bool setModuleAttribute(int line, const QString& moduleName, const QString& attributeName, PyObject* expectedAttributeValue, bool expectedResult)
 {
-  bool currentResult = qSlicerScriptedUtils::setModuleAttribute(moduleName, attributeName, expectedAttributeValue);
+  const bool currentResult = qSlicerScriptedUtils::setModuleAttribute(moduleName, attributeName, expectedAttributeValue);
   if (currentResult != expectedResult)
   {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"
@@ -25,7 +25,7 @@ bool setModuleAttribute(int line, const QString& moduleName, const QString& attr
     return true;
   }
 
-  PyObject* module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toUtf8());
+  PyObject* const module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toUtf8());
   if (!module)
   {
     PythonQt::self()->handleError();

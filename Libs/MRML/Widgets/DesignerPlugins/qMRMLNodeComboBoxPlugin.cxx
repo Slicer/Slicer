@@ -28,7 +28,7 @@ qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject* _parent)
 
 QWidget* qMRMLNodeComboBoxPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLNodeComboBox* _widget = new qMRMLNodeComboBox(_parent);
+  qMRMLNodeComboBox* const _widget = new qMRMLNodeComboBox(_parent);
   return _widget;
 }
 

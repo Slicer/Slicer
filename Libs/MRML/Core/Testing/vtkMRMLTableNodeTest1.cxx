@@ -51,7 +51,7 @@ template <class ArrayType, typename ValueType>
 void checkDefaultArrayValue(vtkMRMLTableNode* tableNode, std::string columnType, std::string defaultValueString, ValueType value)
 {
   tableNode->SetDefaultColumnType(columnType, defaultValueString);
-  ArrayType* newArray = ArrayType::SafeDownCast(tableNode->AddColumn());
+  ArrayType* const newArray = ArrayType::SafeDownCast(tableNode->AddColumn());
   if (!newArray)
   {
     std::cerr << "checkDefaultArrayValue failed for '" << columnType << "'. Failed to create array" << std::endl;
@@ -71,7 +71,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 
-  vtkNew<vtkMRMLTableNode> node1;
+  const vtkNew<vtkMRMLTableNode> node1;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
@@ -82,7 +82,8 @@ int vtkMRMLTableNodeTest1(int, char*[])
   CHECK_NOT_NULL(table);
 
   // Verify if a proper storage node is created
-  vtkSmartPointer<vtkMRMLTableStorageNode> storageNode = vtkSmartPointer<vtkMRMLTableStorageNode>::Take(vtkMRMLTableStorageNode::SafeDownCast(node2->CreateDefaultStorageNode()));
+  const vtkSmartPointer<vtkMRMLTableStorageNode> storageNode =
+    vtkSmartPointer<vtkMRMLTableStorageNode>::Take(vtkMRMLTableStorageNode::SafeDownCast(node2->CreateDefaultStorageNode()));
   CHECK_NOT_NULL(storageNode);
 
   // Verify basic add/remove column methods
@@ -90,7 +91,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   CHECK_NOT_NULL(node2->AddColumn());
   CHECK_INT(table->GetNumberOfColumns(), 1);
 
-  vtkSmartPointer<vtkStringArray> newEmptyArray = vtkSmartPointer<vtkStringArray>::New();
+  const vtkSmartPointer<vtkStringArray> newEmptyArray = vtkSmartPointer<vtkStringArray>::New();
   CHECK_NOT_NULL(node2->AddColumn(newEmptyArray));
   CHECK_INT(table->GetNumberOfColumns(), 2);
 
@@ -117,7 +118,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
 
   // Verify that arrays that are shorter than the table size are extended to match the current table size
 
-  vtkSmartPointer<vtkStringArray> newShortArray = vtkSmartPointer<vtkStringArray>::New();
+  const vtkSmartPointer<vtkStringArray> newShortArray = vtkSmartPointer<vtkStringArray>::New();
   newShortArray->InsertNextValue("something");
   CHECK_NOT_NULL(node2->AddColumn(newShortArray));
   CHECK_INT(table->GetNumberOfRows(), 3);
@@ -126,7 +127,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
 
   // Verify that arrays that are shorter than the table extend the table
 
-  vtkSmartPointer<vtkStringArray> newLongArray = vtkSmartPointer<vtkStringArray>::New();
+  const vtkSmartPointer<vtkStringArray> newLongArray = vtkSmartPointer<vtkStringArray>::New();
   newLongArray->InsertNextValue("something1");
   newLongArray->InsertNextValue("something2");
   newLongArray->InsertNextValue("something3");
@@ -294,7 +295,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // Verify that Copy method creates a true independent copy
-  vtkSmartPointer<vtkMRMLTableNode> node2copy = vtkSmartPointer<vtkMRMLTableNode>::New();
+  const vtkSmartPointer<vtkMRMLTableNode> node2copy = vtkSmartPointer<vtkMRMLTableNode>::New();
   node2copy->Copy(node2.GetPointer());
   // After copying the contents of the tables should be the same
   CHECK_STD_STRING(node2->GetCellText(0, 0), node2copy->GetCellText(0, 0));

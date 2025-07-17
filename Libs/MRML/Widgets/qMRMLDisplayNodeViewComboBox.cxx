@@ -124,10 +124,10 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
   {
     return;
   }
-  bool oldUpdating = d->IsUpdatingWidgetFromMRML;
+  const bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
-  bool wasBlocking = this->blockSignals(true);
+  const bool wasBlocking = this->blockSignals(true);
   bool modified = false;
   for (int i = 0; i < this->nodeCount(); ++i)
   {
@@ -138,8 +138,8 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
       this->setCheckState(view, Qt::Unchecked);
       continue;
     }
-    bool check = d->MRMLDisplayNode->IsDisplayableInView(view->GetID());
-    Qt::CheckState viewCheckState = check ? Qt::Checked : Qt::Unchecked;
+    const bool check = d->MRMLDisplayNode->IsDisplayableInView(view->GetID());
+    const Qt::CheckState viewCheckState = check ? Qt::Checked : Qt::Unchecked;
     if (this->checkState(view) != viewCheckState)
     {
       modified = true;
@@ -166,7 +166,7 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
   {
     return;
   }
-  int wasModifying = d->MRMLDisplayNode->StartModify();
+  const int wasModifying = d->MRMLDisplayNode->StartModify();
 
   if (this->allChecked() || this->noneChecked())
   {

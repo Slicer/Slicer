@@ -39,7 +39,7 @@ bool vtkMRMLAnnotationFiducialNode::GetFiducialCoordinates(double coord[3])
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialNode::SetTextFromID()
 {
-  std::string idLabel = this->GetID();
+  const std::string idLabel = this->GetID();
   std::string textLabel;
 
   if (this->NumberingScheme == vtkMRMLAnnotationControlPointsNode::UseID)
@@ -48,8 +48,8 @@ void vtkMRMLAnnotationFiducialNode::SetTextFromID()
   }
   else
   {
-    size_t pos = idLabel.find_last_not_of("0123456789");
-    std::string strippedID = idLabel.substr(0, pos + 1);
+    const size_t pos = idLabel.find_last_not_of("0123456789");
+    const std::string strippedID = idLabel.substr(0, pos + 1);
     std::stringstream ss;
     ss << strippedID;
 

@@ -119,7 +119,7 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
   Q_D(qSlicerAnnotationsModule);
   if (!d->m_SnapShotDialog)
   {
-    QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+    QMainWindow* const mainWindow = qSlicerApplication::application()->mainWindow();
     d->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog(mainWindow);
   }
   d->m_SnapShotDialog->setLogic(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()));

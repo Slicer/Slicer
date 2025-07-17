@@ -32,7 +32,7 @@ int vtkMRMLSliceLogicTest1(int, char*[])
   vtkNew<vtkMRMLSliceLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
@@ -40,19 +40,19 @@ int vtkMRMLSliceLogicTest1(int, char*[])
   logic->SetMRMLScene(scene.GetPointer());
   CHECK_NOT_NULL(logic->AddSliceNode("Green"));
 
-  vtkNew<vtkMRMLSliceNode> SliceNode;
+  const vtkNew<vtkMRMLSliceNode> SliceNode;
   TEST_SET_GET_VALUE(logic, SliceNode, SliceNode.GetPointer());
 
-  vtkNew<vtkMRMLSliceLayerLogic> LabelLayer;
+  const vtkNew<vtkMRMLSliceLayerLogic> LabelLayer;
   TEST_SET_GET_VALUE(logic, LabelLayer, LabelLayer.GetPointer());
 
-  vtkNew<vtkMRMLSliceCompositeNode> SliceCompositeNode;
+  const vtkNew<vtkMRMLSliceCompositeNode> SliceCompositeNode;
   TEST_SET_GET_VALUE(logic, SliceCompositeNode, SliceCompositeNode.GetPointer());
 
-  vtkNew<vtkMRMLSliceLayerLogic> ForegroundLayer;
+  const vtkNew<vtkMRMLSliceLayerLogic> ForegroundLayer;
   TEST_SET_GET_VALUE(logic, ForegroundLayer, ForegroundLayer.GetPointer());
 
-  vtkNew<vtkMRMLSliceLayerLogic> BackgroundLayer;
+  const vtkNew<vtkMRMLSliceLayerLogic> BackgroundLayer;
   TEST_SET_GET_VALUE(logic, BackgroundLayer, BackgroundLayer.GetPointer());
 
   // TODO: need to fix the test.

@@ -107,7 +107,7 @@ void qSlicerVolumeRenderingPresetComboBoxPrivate::populatePresetsIcons()
   for (int i = 0; i < this->PresetComboBox->nodeCount(); ++i)
   {
     vtkMRMLNode* presetNode = this->PresetComboBox->nodeFromIndex(i);
-    QIcon presetIcon(QString(":/presets/") + presetNode->GetName());
+    const QIcon presetIcon(QString(":/presets/") + presetNode->GetName());
     if (!presetIcon.isNull())
     {
       qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->PresetComboBox->sortFilterProxyModel()->sourceModel());
@@ -277,9 +277,9 @@ void qSlicerVolumeRenderingPresetComboBox::updatePresetSliderRange()
     }
     d->VolumePropertyNode->GetEffectiveRange(effectiveRange);
   }
-  double transferFunctionWidth = effectiveRange[1] - effectiveRange[0];
+  const double transferFunctionWidth = effectiveRange[1] - effectiveRange[0];
 
-  bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
+  const bool wasBlocking = d->PresetOffsetSlider->blockSignals(true);
   d->PresetOffsetSlider->setRange(-transferFunctionWidth, transferFunctionWidth);
   d->PresetOffsetSlider->setSingleStep(ctk::closestPowerOfTen(transferFunctionWidth) / 500.0);
   d->PresetOffsetSlider->setPageStep(d->PresetOffsetSlider->singleStep());

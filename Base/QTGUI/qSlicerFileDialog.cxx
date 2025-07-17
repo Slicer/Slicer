@@ -63,12 +63,12 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 {
   QStringList filters;
   QStringList extensions;
-  QList<qSlicerFileReader*> readers = qSlicerApplication::application()->ioManager()->readers(fileType);
-  for (const qSlicerFileReader* reader : readers)
+  const QList<qSlicerFileReader*> readers = qSlicerApplication::application()->ioManager()->readers(fileType);
+  for (const qSlicerFileReader* const reader : readers)
   {
     for (const QString& filter : reader->extensions())
     {
-      QString nameFilter = filter.contains('(') ? filter : reader->description() + " (" + filter + ")";
+      const QString nameFilter = filter.contains('(') ? filter : reader->description() + " (" + filter + ")";
       filters << nameFilter;
       extensions << ctk::nameFilterToExtensions(nameFilter);
     }
@@ -182,7 +182,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(const qSlicerIO::IOPr
     return nullptr;
   }
 
-  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  qSlicerIOManager* const ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog* fileDialog = new ctkFileDialog(parent);
 
   if (ioProperties["fileType"].toBool())
@@ -220,7 +220,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(const qSlicerIO::IOPr
 qSlicerIOOptions* qSlicerStandardFileDialog::options(const qSlicerIO::IOProperties& ioProperties) const
 {
   Q_D(const qSlicerStandardFileDialog);
-  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  qSlicerIOManager* const ioManager = qSlicerApplication::application()->ioManager();
   // warning: we are responsible for the memory of options
   qSlicerIOOptions* options = nullptr;
   if (d->Action == qSlicerFileDialog::Read)
@@ -261,17 +261,17 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 
   qSlicerIO::IOProperties properties = ioProperties;
   properties["fileType"] = d->FileType;
-  qSlicerApplication* app = qSlicerApplication::application();
-  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  qSlicerApplication* const app = qSlicerApplication::application();
+  QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(properties, mainWindow);
-  QFileDialog::AcceptMode acceptMode = (d->Action == qSlicerFileDialog::Read) ? QFileDialog::AcceptOpen : QFileDialog::AcceptSave;
+  const QFileDialog::AcceptMode acceptMode = (d->Action == qSlicerFileDialog::Read) ? QFileDialog::AcceptOpen : QFileDialog::AcceptSave;
   fileDialog->setAcceptMode(acceptMode);
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   qSlicerIOOptions* options = this->options(properties);
   // warning: we are responsible for the memory of options
-  qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
+  qSlicerIOOptionsWidget* const optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
   // options is not necessary a qSlicerIOOptionsWidget (for the case of
   // readers/modules with no UI. If there is a UI then add it inside the file
   // dialog.
@@ -350,8 +350,8 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(qSlicerIO::IOProperties i
   QStringList files;
   ioProperties["multipleFiles"] = QFileDialog::ExistingFiles;
   ioProperties["objectName"] = "getOpenFileName";
-  qSlicerApplication* app = qSlicerApplication::application();
-  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  qSlicerApplication* const app = qSlicerApplication::application();
+  QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(ioProperties, mainWindow);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
@@ -370,8 +370,8 @@ QString qSlicerStandardFileDialog::getExistingDirectory(qSlicerIO::IOProperties 
   QString directory;
   ioProperties["fileMode"] = QFileDialog::Directory;
   ioProperties["objectName"] = "getExistingDirectory";
-  qSlicerApplication* app = qSlicerApplication::application();
-  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  qSlicerApplication* const app = qSlicerApplication::application();
+  QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(ioProperties, mainWindow);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 

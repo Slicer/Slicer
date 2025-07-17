@@ -59,7 +59,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator* self, vtkIm
 
   // itk import for input itk images
   typedef typename itk::VTKImageImport<ImageType> ImageImportType;
-  typename ImageImportType::Pointer itkImporter = ImageImportType::New();
+  const typename ImageImportType::Pointer itkImporter = ImageImportType::New();
 
   // vtk export for  vtk image
   vtkNew<vtkImageExport> vtkExporter;
@@ -69,7 +69,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator* self, vtkIm
   ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
   itkImporter->UpdateLargestPossibleRegion();
 
-  typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
+  const typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
   histGenerator->SetInput(itkImporter->GetOutput());
   typename HistogramGeneratorType::HistogramSizeType hsize(1);
   hsize[0] = 64;
@@ -154,14 +154,14 @@ void vtkITKImageThresholdCalculator::Update()
     vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image is required");
     return;
   }
-  int inputNumberOfScalarComponents = pointData->GetScalars()->GetNumberOfComponents();
+  const int inputNumberOfScalarComponents = pointData->GetScalars()->GetNumberOfComponents();
   if (inputNumberOfScalarComponents != 1)
   {
     vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image with a single component is required");
     return;
   }
 
-  int inputDataType = pointData->GetScalars()->GetDataType();
+  const int inputDataType = pointData->GetScalars()->GetDataType();
   switch (inputDataType)
   {
     vtkTemplateMacro(ITKComputeThresholdFromVTKImage<VTK_TT>(this, inputImage, this->Threshold));

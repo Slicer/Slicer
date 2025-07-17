@@ -72,7 +72,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast<vtkMRMLSceneViewNode*>(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("ReadData: File name not specified");
@@ -85,7 +85,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
   // compute file prefix
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension.empty())
   {
     vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
@@ -158,14 +158,14 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 1;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLSceneViewNode: File name not specified");
     return 0;
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   vtkSmartPointer<vtkImageWriter> writer;
   if (extension == ".png")

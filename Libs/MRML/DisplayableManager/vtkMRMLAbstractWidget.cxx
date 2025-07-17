@@ -197,10 +197,10 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(vtkM
   // Try to process with a state-specific translator
   if (this->WidgetState < static_cast<int>(this->EventTranslators.size()))
   {
-    vtkWidgetEventTranslator* translator = this->EventTranslators[this->WidgetState];
+    vtkWidgetEventTranslator* const translator = this->EventTranslators[this->WidgetState];
     if (translator)
     {
-      unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(translator, eventData);
+      const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(translator, eventData);
       if (widgetEvent != WidgetEventNone)
       {
         return widgetEvent;
@@ -212,7 +212,7 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(vtkM
   unsigned long widgetEvent = WidgetEventNone;
   if (WidgetStateAny < this->EventTranslators.size())
   {
-    vtkWidgetEventTranslator* translator = this->EventTranslators[WidgetStateAny];
+    vtkWidgetEventTranslator* const translator = this->EventTranslators[WidgetStateAny];
     if (translator)
     {
       // There is an event translator for this state
@@ -237,9 +237,9 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(vtkW
   {
     // We package keypress events information into event data,
     // unpack it for the event translator
-    int modifier = eventData->GetModifiers();
-    char keyCode = eventData->GetKeyCode();
-    int repeatCount = eventData->GetKeyRepeatCount();
+    const int modifier = eventData->GetModifiers();
+    const char keyCode = eventData->GetKeyCode();
+    const int repeatCount = eventData->GetKeyRepeatCount();
     const char* keySym = nullptr;
     if (!eventData->GetKeySym().empty())
     {
@@ -388,19 +388,19 @@ const char* vtkMRMLAbstractWidget::GetAssociatedNodeID(vtkMRMLInteractionEventDa
     return nullptr;
   }
   // is there a volume in the background?
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(this->WidgetRep->GetViewNode());
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(this->WidgetRep->GetViewNode());
   if (!sliceNode)
   {
     // this only works for slice views for now
     return nullptr;
   }
   // find the slice composite node in the scene with the matching layout name
-  vtkMRMLApplicationLogic* mrmlAppLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* const mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     return nullptr;
   }
-  vtkMRMLSliceLogic* sliceLogic = mrmlAppLogic->GetSliceLogic(sliceNode);
+  vtkMRMLSliceLogic* const sliceLogic = mrmlAppLogic->GetSliceLogic(sliceNode);
   if (!sliceLogic)
   {
     return nullptr;
@@ -474,9 +474,9 @@ bool vtkMRMLAbstractWidget::CanProcessButtonClickEvent(vtkMRMLInteractionEventDa
   }
 
   // Temporarily change the event ID to click, and process the event
-  int originalEventType = eventData->GetType();
+  const int originalEventType = eventData->GetType();
   eventData->SetType(clickEvent);
-  bool canProcessEvent = this->CanProcessInteractionEvent(eventData, distance2);
+  const bool canProcessEvent = this->CanProcessInteractionEvent(eventData, distance2);
   eventData->SetType(originalEventType);
   return canProcessEvent;
 }
@@ -499,9 +499,9 @@ int vtkMRMLAbstractWidget::ProcessButtonClickEvent(vtkMRMLInteractionEventData* 
   }
 
   // Temporarily change the event ID to click, and process the event
-  int originalEventType = eventData->GetType();
+  const int originalEventType = eventData->GetType();
   eventData->SetType(clickEvent);
-  bool processedEvent = this->ProcessInteractionEvent(eventData);
+  const bool processedEvent = this->ProcessInteractionEvent(eventData);
   eventData->SetType(originalEventType);
   return processedEvent;
 }

@@ -82,9 +82,9 @@ void SnapToPermuteMatrix(vtkTransform* transform)
   linearTransform->GetMatrix(transformMatrix.GetPointer());
   for (int c = 0; c < 3; c++)
   {
-    double absValues[3] = { fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c]) };
-    double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
-    double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
+    const double absValues[3] = { fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c]) };
+    const double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
+    const double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
     for (int r = 0; r < 3; r++)
     {
       if (absValues[r] != 0 && absValues[r] < zeroThreshold)
@@ -215,9 +215,9 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLSceneEvents(vtkObject* caller, unsigned 
       && (event == vtkMRMLScene::NodeAddedEvent ||               //
           event == vtkMRMLScene::NodeRemovedEvent))
   {
-    vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(callData);
-    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(callData);
+    vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (node == nullptr ||
         // Care only about volume and slice nodes
         (!volumeNode && !sliceNode) ||
@@ -237,7 +237,7 @@ void vtkMRMLSliceLayerLogic::UpdateLogic()
 {
   // TBD: make sure UpdateTransforms() is not called for not a good reason as it
   // is expensive.
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->UpdateTransforms();
   this->UpdateImageDisplay();
   this->UpdateGlyphs();
@@ -265,7 +265,7 @@ void vtkMRMLSliceLayerLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   if (node == this->VolumeDisplayNodeObserved)
   {
     this->UpdateVolumeDisplayNode();
-    int wasModifying = this->StartModify();
+    const int wasModifying = this->StartModify();
     this->UpdateImageDisplay();
     // Maybe the pipeline hasn't changed, but we know that the display node has changed
     // so the output has changed.
@@ -286,7 +286,7 @@ void vtkMRMLSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode* sliceNode)
   {
     return;
   }
-  bool wasModifying = this->StartModify();
+  const bool wasModifying = this->StartModify();
   vtkSetAndObserveMRMLNodeMacro(this->SliceNode, sliceNode);
 
   // Update the reslice transform to move this image into XY
@@ -304,7 +304,7 @@ void vtkMRMLSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode* volumeNode)
   {
     return;
   }
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
@@ -328,10 +328,10 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences()
 
   // Store the current volume node in a local variable because this->VolumeNode might change
   // by modules in response to adding a display node to the scene.
-  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = this->VolumeNode;
+  const vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = this->VolumeNode;
   if (volumeNode)
   {
-    const char* id = volumeNode->GetDisplayNodeID();
+    const char* const id = volumeNode->GetDisplayNodeID();
     if (id)
     {
       if (this->GetMRMLScene())
@@ -406,7 +406,7 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences()
   // after UpdateVolumeDisplayNode is called to fire it.
   if (this->VolumeDisplayNodeObserved != displayNode)
   {
-    bool wasModifying = this->StartModify();
+    const bool wasModifying = this->StartModify();
     vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
     this->UpdateVolumeDisplayNode();
     this->EndModify(wasModifying);
@@ -433,7 +433,7 @@ void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
     return;
   }
 
-  int wasDisabling = this->VolumeDisplayNode->StartModify();
+  const int wasDisabling = this->VolumeDisplayNode->StartModify();
   // copy the scene first because Copy() might need the scene
   this->VolumeDisplayNode->SetScene(this->VolumeDisplayNodeObserved->GetScene());
   this->VolumeDisplayNode->Copy(this->VolumeDisplayNodeObserved);
@@ -445,7 +445,7 @@ void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
   }
   this->VolumeDisplayNode->EndModify(wasDisabling);
 
-  int wasDisablingUVW = this->VolumeDisplayNodeUVW->StartModify();
+  const int wasDisablingUVW = this->VolumeDisplayNodeUVW->StartModify();
   // copy the scene first because Copy() might need the scene
   this->VolumeDisplayNodeUVW->SetScene(this->VolumeDisplayNodeObserved->GetScene());
   this->VolumeDisplayNodeUVW->Copy(this->VolumeDisplayNodeObserved);
@@ -520,7 +520,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
       this->UVWToIJKTransform->Concatenate(worldTransform.GetPointer());
     }
 
-    vtkNew<vtkMatrix4x4> rasToIJK;
+    const vtkNew<vtkMatrix4x4> rasToIJK;
     this->VolumeNode->GetRASToIJKMatrix(rasToIJK.GetPointer());
 
     this->XYToIJKTransform->Concatenate(rasToIJK.GetPointer());
@@ -529,7 +529,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     // vtkImageReslice works faster if the input is a linear transform, so try to convert it
     // to a linear transform.
     // Also attempt to make it a permute transform, as it makes reslicing even faster.
-    vtkSmartPointer<vtkTransform> linearXYToIJKTransform = vtkSmartPointer<vtkTransform>::New();
+    const vtkSmartPointer<vtkTransform> linearXYToIJKTransform = vtkSmartPointer<vtkTransform>::New();
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(this->XYToIJKTransform, linearXYToIJKTransform))
     {
       SnapToPermuteMatrix(linearXYToIJKTransform);
@@ -539,7 +539,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     {
       this->Reslice->SetResliceTransform(this->XYToIJKTransform);
     }
-    vtkSmartPointer<vtkTransform> linearUVWToIJKTransform = vtkSmartPointer<vtkTransform>::New();
+    const vtkSmartPointer<vtkTransform> linearUVWToIJKTransform = vtkSmartPointer<vtkTransform>::New();
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(this->UVWToIJKTransform, linearUVWToIJKTransform))
     {
       SnapToPermuteMatrix(linearUVWToIJKTransform);
@@ -645,11 +645,11 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     return;
   }
 
-  vtkMTimeType oldReSliceMTime = this->Reslice->GetMTime();
-  vtkMTimeType oldReSliceUVWMTime = this->ResliceUVW->GetMTime();
-  vtkMTimeType oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
-  vtkMTimeType oldLabel = this->LabelOutline->GetMTime();
-  vtkMTimeType oldLabelUVW = this->LabelOutlineUVW->GetMTime();
+  const vtkMTimeType oldReSliceMTime = this->Reslice->GetMTime();
+  const vtkMTimeType oldReSliceUVWMTime = this->ResliceUVW->GetMTime();
+  const vtkMTimeType oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
+  const vtkMTimeType oldLabel = this->LabelOutline->GetMTime();
+  const vtkMTimeType oldLabelUVW = this->LabelOutlineUVW->GetMTime();
 
   if ((this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) || //
       (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0))
@@ -667,12 +667,12 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   if (volumeNode && volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
     vtkImageData* image = nullptr;
-    vtkAlgorithmOutput* imageDataConnection = volumeNode->GetImageDataConnection();
+    vtkAlgorithmOutput* const imageDataConnection = volumeNode->GetImageDataConnection();
     if (imageDataConnection)
     {
       imageDataConnection->GetProducer()->UpdateInformation();
       image = vtkImageData::SafeDownCast(imageDataConnection->GetProducer()->GetOutputDataObject(imageDataConnection->GetIndex()));
-      vtkDataArray* tensors = image ? image->GetPointData()->GetTensors() : nullptr;
+      vtkDataArray* const tensors = image ? image->GetPointData()->GetTensors() : nullptr;
 
       // HACK: vtkAssignAttribute fails to propagate the tensor array scalar to its
       // output image data scalar type. It reuses what scalar type was
@@ -704,7 +704,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
       this->AssignAttributeScalarsToTensorsUVW->SetInputConnection(nullptr);
     }
-    bool verbose = false;
+    const bool verbose = false;
     if (image && verbose)
     {
       this->AssignAttributeScalarsToTensors->UpdateInformation();
@@ -729,7 +729,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     vtkMRMLDiffusionTensorVolumeNode* tensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode);
     if (tensorDisplayNode && tensorNode)
     {
-      vtkNew<vtkMatrix4x4> rotationMatrix;
+      const vtkNew<vtkMatrix4x4> rotationMatrix;
       tensorNode->GetMeasurementFrameMatrix(rotationMatrix.GetPointer());
       tensorDisplayNode->SetTensorRotationMatrix(rotationMatrix.GetPointer());
     }
@@ -752,7 +752,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
       vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
       this->LabelOutline->SetInputConnection(this->Reslice->GetOutputPort());
-      int outlineThickness = labelMapVolumeDisplayNode->GetSliceIntersectionThickness();
+      const int outlineThickness = labelMapVolumeDisplayNode->GetSliceIntersectionThickness();
       this->LabelOutline->SetOutline(outlineThickness);
       // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
       if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
@@ -848,7 +848,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
   {
     return;
   }
-  vtkAlgorithmOutput* sliceImagePort = this->GetSliceImageDataConnection();
+  vtkAlgorithmOutput* const sliceImagePort = this->GetSliceImageDataConnection();
 
   vtkMRMLGlyphableVolumeDisplayNode* displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast(this->VolumeNode->GetDisplayNode());
   if (!displayNode)
@@ -872,7 +872,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
         transformToWorld->Invert();
       }
 
-      vtkMatrix4x4* xyToRas = this->SliceNode->GetXYToRAS();
+      vtkMatrix4x4* const xyToRas = this->SliceNode->GetXYToRAS();
 
       vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), xyToRas, transformToWorld.GetPointer());
       double dirs[3][3];
@@ -889,7 +889,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       // Calling SetSlicePositionMatrix() and SetSliceGlyphRotationMatrix()
       // would update the glyph filter twice. Fire a modified() event only
       // once
-      int blocked = dnode->StartModify();
+      const int blocked = dnode->StartModify();
       dnode->SetSliceImagePort(sliceImagePort);
       dnode->SetSlicePositionMatrix(transformToWorld.GetPointer());
       dnode->SetSliceGlyphRotationMatrix(trot.GetPointer());

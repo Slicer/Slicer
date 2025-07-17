@@ -150,7 +150,7 @@ void vtkSegmentationConverterFactory::CopyConverterRules(RuleListType& rules)
   rules.clear();
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {
-    vtkSmartPointer<vtkSegmentationConverterRule> rule = vtkSmartPointer<vtkSegmentationConverterRule>::Take((*ruleIt)->Clone());
+    const vtkSmartPointer<vtkSegmentationConverterRule> rule = vtkSmartPointer<vtkSegmentationConverterRule>::Take((*ruleIt)->Clone());
     rules.push_back(rule);
   }
 }
@@ -197,7 +197,7 @@ vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByC
 {
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {
-    vtkDataObject* representationObject = (*ruleIt)->ConstructRepresentationObjectByClass(className);
+    vtkDataObject* const representationObject = (*ruleIt)->ConstructRepresentationObjectByClass(className);
     if (representationObject)
     {
       return representationObject;
@@ -213,7 +213,7 @@ vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByR
 {
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {
-    vtkDataObject* representationObject = (*ruleIt)->ConstructRepresentationObjectByRepresentation(representationName);
+    vtkDataObject* const representationObject = (*ruleIt)->ConstructRepresentationObjectByRepresentation(representationName);
     if (!representationObject)
     {
       continue;

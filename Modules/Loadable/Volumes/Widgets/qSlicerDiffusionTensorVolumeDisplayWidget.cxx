@@ -145,7 +145,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 {
   Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
 
-  vtkMRMLDiffusionTensorVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
+  vtkMRMLDiffusionTensorVolumeDisplayNode* const oldVolumeDisplayNode = this->volumeDisplayNode();
 
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;

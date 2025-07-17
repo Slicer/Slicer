@@ -59,7 +59,7 @@ QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object)) cons
   const int formatCount = jsonStorageNode->GetSupportedWriteFileTypes()->GetNumberOfValues();
   for (int formatIt = 0; formatIt < formatCount; ++formatIt)
   {
-    std::string format = jsonStorageNode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+    const std::string format = jsonStorageNode->GetSupportedWriteFileTypes()->GetValue(formatIt);
     supportedExtensions << QString::fromStdString(format);
   }
 
@@ -67,7 +67,7 @@ QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object)) cons
   const int fidsFormatCount = fcsvStorageNode->GetSupportedWriteFileTypes()->GetNumberOfValues();
   for (int formatIt = 0; formatIt < fidsFormatCount; ++formatIt)
   {
-    std::string format = fcsvStorageNode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+    const std::string format = fcsvStorageNode->GetSupportedWriteFileTypes()->GetValue(formatIt);
     supportedExtensions << QString::fromStdString(format);
   }
 
@@ -90,7 +90,7 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
   }
 
   vtkMRMLStorageNode* currentStorageNode = storableNode->GetStorageNode();
-  std::string storageNodeClassNameStr = storageNodeClassName.toStdString();
+  const std::string storageNodeClassNameStr = storageNodeClassName.toStdString();
   if (currentStorageNode != nullptr && currentStorageNode->IsA(storageNodeClassNameStr.c_str()))
   {
     // requested storage node class is the same as current class, there is nothing to do
@@ -117,10 +117,10 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
 bool qSlicerMarkupsWriter::write(const qSlicerIO::IOProperties& properties)
 {
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
-  std::string fileName = properties["fileName"].toString().toStdString();
+  const std::string fileName = properties["fileName"].toString().toStdString();
 
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> fcsvStorageNode;
-  std::string fcsvCompatibleFileExtension = fcsvStorageNode->GetSupportedFileExtension(fileName.c_str(), false, true);
+  const std::string fcsvCompatibleFileExtension = fcsvStorageNode->GetSupportedFileExtension(fileName.c_str(), false, true);
   if (!fcsvCompatibleFileExtension.empty())
   {
     // fcsv file needs to be written

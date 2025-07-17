@@ -136,12 +136,12 @@ bool qMRMLSegmentationShow3DButtonPrivate::setSurfaceSmoothingFactor(double smoo
     return false;
   }
 
-  MRMLNodeModifyBlocker blocker(this->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(this->SegmentationNode);
 
   this->SegmentationNode->GetSegmentation()->SetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
                                                                     QVariant(smoothingFactor).toString().toUtf8().constData());
 
-  bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  const bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (closedSurfacePresent)
   {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -160,11 +160,11 @@ bool qMRMLSegmentationShow3DButtonPrivate::setConversionMethod(const std::string
     return false;
   }
 
-  MRMLNodeModifyBlocker blocker(this->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(this->SegmentationNode);
 
   this->SegmentationNode->GetSegmentation()->SetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName(), conversionMethod);
 
-  bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  const bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (closedSurfacePresent)
   {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -183,12 +183,12 @@ bool qMRMLSegmentationShow3DButtonPrivate::setInternalSmoothing(int internalSmoo
     return false;
   }
 
-  MRMLNodeModifyBlocker blocker(this->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(this->SegmentationNode);
 
   this->SegmentationNode->GetSegmentation()->SetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSurfaceNetInternalSmoothingParameterName(),
                                                                     QVariant(internalSmoothing).toString().toUtf8().constData());
 
-  bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  const bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (closedSurfacePresent)
   {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -221,7 +221,7 @@ void qMRMLSegmentationShow3DButton::setSegmentationNode(vtkMRMLSegmentationNode*
   qvtkReconnect(d->SegmentationNode, node, vtkSegmentation::SegmentRemoved, this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->SegmentationNode, node, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(updateWidgetFromMRML()));
 
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
+  vtkMRMLSegmentationNode* const segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
   d->SegmentationNode = segmentationNode;
 
   this->updateWidgetFromMRML();
@@ -242,8 +242,8 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
                           vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
 
     // Change button state based on whether it contains closed surface representation
-    bool closedSurfacePresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
-    bool wasBlocked = this->blockSignals(true);
+    const bool closedSurfacePresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+    const bool wasBlocked = this->blockSignals(true);
     this->setChecked(closedSurfacePresent);
     this->blockSignals(wasBlocked);
   }
@@ -314,7 +314,7 @@ void qMRMLSegmentationShow3DButton::onToggled(bool on)
     return;
   }
 
-  MRMLNodeModifyBlocker segmentationNodeBlocker(d->SegmentationNode);
+  const MRMLNodeModifyBlocker segmentationNodeBlocker(d->SegmentationNode);
 
   if (on)
   {
@@ -329,7 +329,8 @@ void qMRMLSegmentationShow3DButton::onToggled(bool on)
         displayNode->SetPreferredDisplayRepresentationName3D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
       }
       // But keep binary labelmap for 2D
-      bool binaryLabelmapPresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+      const bool binaryLabelmapPresent =
+        d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
       if (binaryLabelmapPresent && displayNode)
       {
         displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
@@ -358,7 +359,7 @@ void qMRMLSegmentationShow3DButton::onEnableSurfaceSmoothingToggled(bool smoothi
   }
 
   // Get smoothing factor
-  double originalSmoothingFactor =
+  const double originalSmoothingFactor =
     QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName()).c_str()).toDouble();
   double newSmoothingFactor = fabs(originalSmoothingFactor);
   if (originalSmoothingFactor == 0.0)
@@ -391,7 +392,8 @@ void qMRMLSegmentationShow3DButton::onEnableSurfaceNetsToggled(bool surfaceNetsE
   }
 
   // Get current conversion method
-  std::string originalMethod = d->SegmentationNode->GetSegmentation()->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
+  const std::string originalMethod =
+    d->SegmentationNode->GetSegmentation()->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
   std::string newMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES;
   if (surfaceNetsEnabled)
   {
@@ -419,7 +421,7 @@ void qMRMLSegmentationShow3DButton::onEnableSurfaceNetsSmoothingToggled(bool sur
   // Get current conversion method
   // 0 = use vtkWindowedSincPolyDataFilter for smoothing
   // 1 = Use surface nets internal smoothing
-  int originalMethod =
+  const int originalMethod =
     QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSurfaceNetInternalSmoothingParameterName()).c_str())
       .toInt();
   int newMethod = 0;
@@ -447,7 +449,7 @@ void qMRMLSegmentationShow3DButton::onSurfaceSmoothingFactorChanged(double newSm
   }
 
   // Get smoothing factor
-  double originalSmoothingFactor =
+  const double originalSmoothingFactor =
     QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName()).c_str()).toDouble();
 
   // Sign of smoothing factor is used to indicate that smoothing is enabled or not.

@@ -81,7 +81,7 @@ qMRMLSortFilterSegmentsProxyModel::~qMRMLSortFilterSegmentsProxyModel() = defaul
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* qMRMLSortFilterSegmentsProxyModel::segmentationNode() const
 {
-  qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  qMRMLSegmentsModel* const model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -160,21 +160,21 @@ void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
 //-----------------------------------------------------------------------------
 QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index) const
 {
-  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  qMRMLSegmentsModel* const segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   return segmentsModel->segmentIDFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLSortFilterSegmentsProxyModel::indexFromSegmentID(QString segmentID, int column) const
 {
-  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  qMRMLSegmentsModel* const segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   return this->mapFromSource(segmentsModel->indexFromSegmentID(segmentID, column));
 }
 
 //-----------------------------------------------------------------------------
 QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
-  qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  qMRMLSegmentsModel* const model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -185,7 +185,7 @@ QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& 
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-  QStandardItem* parentItem = this->sourceItem(sourceParent);
+  QStandardItem* const parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
   {
     return false;
@@ -206,8 +206,8 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QM
     return false;
   }
 
-  qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  QString segmentID = model->segmentIDFromItem(item);
+  qMRMLSegmentsModel* const model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  const QString segmentID = model->segmentIDFromItem(item);
   return this->filterAcceptsItem(segmentID);
 }
 
@@ -227,7 +227,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
     return true;
   }
 
-  qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  qMRMLSegmentsModel* const model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   if (!model)
   {
     return false;
@@ -251,7 +251,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
   // Filter by segment name
   if (!d->NameFilter.isEmpty())
   {
-    QString segmentName(segment->GetName());
+    const QString segmentName(segment->GetName());
     if (!segmentName.contains(d->NameFilter, Qt::CaseInsensitive))
     {
       return false;
@@ -262,7 +262,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
   if (!d->TextFilter.isEmpty())
   {
     bool matchFound = false;
-    QString segmentName = segment->GetName();
+    const QString segmentName = segment->GetName();
     if (segmentName.contains(d->TextFilter, Qt::CaseInsensitive))
     {
       matchFound = true;
@@ -273,7 +273,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
       segment->GetTags(tags);
       for (const auto& keyValue : tags)
       {
-        QString value = keyValue.second.c_str();
+        const QString value = keyValue.second.c_str();
         if (value.contains(d->TextFilter))
         {
           matchFound = true;
@@ -300,7 +300,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
 
   if (statusFilterEnabled)
   {
-    int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
+    const int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     if (status >= 0 && status < vtkSlicerSegmentationsModuleLogic::LastStatus && !d->ShowStatus[status])
     {
       return false;
@@ -314,16 +314,16 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex& index) const
 {
-  QString segmentID = this->segmentIDFromIndex(index);
-  bool isSelectable = this->filterAcceptsItem(segmentID);
-  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  QStandardItem* item = segmentsModel->itemFromSegmentID(segmentID, index.column());
+  const QString segmentID = this->segmentIDFromIndex(index);
+  const bool isSelectable = this->filterAcceptsItem(segmentID);
+  qMRMLSegmentsModel* const segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  QStandardItem* const item = segmentsModel->itemFromSegmentID(segmentID, index.column());
   if (!item)
   {
     return Qt::ItemFlags();
   }
 
-  QFlags<Qt::ItemFlag> flags = item->flags();
+  const QFlags<Qt::ItemFlag> flags = item->flags();
   if (isSelectable)
   {
     return flags | Qt::ItemIsSelectable;

@@ -109,7 +109,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
 {
   Q_Q(qMRMLSliceVerticalControllerWidget);
 
-  vtkMRMLSliceNode* newSliceNode = this->SliceLogic ? this->SliceLogic->GetSliceNode() : nullptr;
+  vtkMRMLSliceNode* const newSliceNode = this->SliceLogic ? this->SliceLogic->GetSliceNode() : nullptr;
   // Enable/disable widget
   q->setDisabled(newSliceNode == nullptr);
 
@@ -120,7 +120,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
     return;
   }
 
-  bool wasBlocking = this->SliceVerticalOffsetSlider->blockSignals(true);
+  const bool wasBlocking = this->SliceVerticalOffsetSlider->blockSignals(true);
   q->setSliceOffsetRange(offsetRange[0], offsetRange[1]);
   q->setSliceOffsetResolution(offsetResolution);
   this->SliceVerticalOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());

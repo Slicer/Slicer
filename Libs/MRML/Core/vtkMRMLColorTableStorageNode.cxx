@@ -96,14 +96,14 @@ void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
 int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // cast the input node
-  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(refNode);
+  vtkMRMLColorTableNode* const colorNode = vtkMRMLColorTableNode::SafeDownCast(refNode);
   if (colorNode == nullptr)
   {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a known color table node");
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorToMessageCollectionMacro(
@@ -121,7 +121,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // compute file prefix
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -154,7 +154,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 std::string vtkMRMLColorTableStorageNode::GetFieldDelimiterCharacters(std::string filename)
 {
-  std::string lowercaseFileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
+  const std::string lowercaseFileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
   std::string fieldDelimiterCharacters;
   if (lowercaseFileExt == std::string(".tsv") || lowercaseFileExt == std::string(".txt"))
   {
@@ -219,7 +219,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   std::vector<vtkStringArray*> colorColumns;
   for (const std::string& colorColumnName : colorColumnNames)
   {
-    vtkStringArray* colorColumn = vtkStringArray::SafeDownCast(table->GetColumnByName(colorColumnName.c_str()));
+    vtkStringArray* const colorColumn = vtkStringArray::SafeDownCast(table->GetColumnByName(colorColumnName.c_str()));
     if (!colorColumn && colorColumnName != colorColumnNames[3]) // alpha is optional, do not log warning
     {
       vtkWarningToMessageCollectionMacro(
@@ -233,7 +233,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   }
 
   // clear out the table
-  MRMLNodeModifyBlocker blocker(colorNode);
+  const MRMLNodeModifyBlocker blocker(colorNode);
 
   // Set type to "File" by default if it has not been set yet.
   // It is important to only change type if it has not been set already
@@ -246,13 +246,13 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     colorNode->SetTypeToFile();
   }
 
-  int numberOfTuples = labelValueColumn->GetNumberOfTuples();
+  const int numberOfTuples = labelValueColumn->GetNumberOfTuples();
   bool valid = false;
   int maxLabelValue = -1;
   std::vector<vtkIdType> validLabelValues(numberOfTuples, this->MaximumColorID + 1);
   for (vtkIdType row = 0; row < numberOfTuples; ++row)
   {
-    int fileRow = row + 1; // file starts with a header row
+    const int fileRow = row + 1; // file starts with a header row
     if (labelValueColumn->GetValue(row).empty())
     {
       vtkErrorToMessageCollectionMacro(
@@ -262,7 +262,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
           .c_str());
       continue;
     }
-    int labelValue = labelValueColumn->GetVariantValue(row).ToInt(&valid);
+    const int labelValue = labelValueColumn->GetVariantValue(row).ToInt(&valid);
     if (!valid)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -331,7 +331,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // it as a possibly miswritten file
   for (vtkIdType row = 0; row < numberOfTuples; ++row)
   {
-    vtkIdType lineNumber = row + 2; // +1 because 1-based index, +1 because first row is header
+    const vtkIdType lineNumber = row + 2; // +1 because 1-based index, +1 because first row is header
     if (validLabelValues[row] == this->MaximumColorID + 1)
     {
       // No valid label value in this row
@@ -345,7 +345,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       vtkStringArray* colorColumn = colorColumns[i];
       if (colorColumn && row < colorColumn->GetNumberOfTuples())
       {
-        double color = colorColumn->GetVariantValue(row).ToInt(&valid) / 255.0;
+        const double color = colorColumn->GetVariantValue(row).ToInt(&valid) / 255.0;
         if (valid)
         {
           rgba[i] = color;
@@ -392,11 +392,11 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     //   4: "regionContextName~"
     //   5: "regionSchemeDesignator^regionValue^regionMeaning~"
     //   6: "regionModifierSchemeDesignator^regionModifierValue^regionModifierMeaning"
-    std::string terminologyContextName; // Terminology context name is not saved in the CSV table
+    const std::string terminologyContextName; // Terminology context name is not saved in the CSV table
     std::vector<std::string> categoryComponents(3);
     std::vector<std::string> typeComponents(3);
     std::vector<std::string> typeModifierComponents(3);
-    std::string regionContextName; // Region context name is not saved in the CSV table
+    const std::string regionContextName; // Region context name is not saved in the CSV table
     std::vector<std::string> regionComponents(3);
     std::vector<std::string> regionModifierComponents(3);
     for (const auto& columnName : TERMINOLOGY_COLUMN_NAMES)
@@ -430,13 +430,13 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
         regionModifierComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
       }
     } // For each terminology column name
-    std::vector<std::string> terminologyComponents{ terminologyContextName,
-                                                    vtksys::SystemTools::Join(categoryComponents, "^"),
-                                                    vtksys::SystemTools::Join(typeComponents, "^"),
-                                                    vtksys::SystemTools::Join(typeModifierComponents, "^"),
-                                                    regionContextName,
-                                                    vtksys::SystemTools::Join(regionComponents, "^"),
-                                                    vtksys::SystemTools::Join(regionModifierComponents, "^") };
+    const std::vector<std::string> terminologyComponents{ terminologyContextName,
+                                                          vtksys::SystemTools::Join(categoryComponents, "^"),
+                                                          vtksys::SystemTools::Join(typeComponents, "^"),
+                                                          vtksys::SystemTools::Join(typeModifierComponents, "^"),
+                                                          regionContextName,
+                                                          vtksys::SystemTools::Join(regionComponents, "^"),
+                                                          vtksys::SystemTools::Join(regionModifierComponents, "^") };
     colorNode->SetTerminologyFromString(validLabelValues[row], vtksys::SystemTools::Join(terminologyComponents, "~"));
   } // For each row in the color table
 
@@ -457,7 +457,7 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
   }
 
   // clear out the table
-  MRMLNodeModifyBlocker blocker(colorNode);
+  const MRMLNodeModifyBlocker blocker(colorNode);
 
   // Set type to "File" by default if it has not been set yet.
   // It is important to only change type if it has not been set already
@@ -584,9 +584,9 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
     // them off the string
     if (name.find("'") != std::string::npos)
     {
-      size_t firstnottick = name.find_first_not_of("'");
-      size_t lastnottick = name.find_last_not_of("'");
-      std::string withoutTicks = name.substr(firstnottick, (lastnottick - firstnottick) + 1);
+      const size_t firstnottick = name.find_first_not_of("'");
+      const size_t lastnottick = name.find_last_not_of("'");
+      const std::string withoutTicks = name.substr(firstnottick, (lastnottick - firstnottick) + 1);
       vtkDebugMacro("ReadDataInternal: Single quotation marks around name \"" << name << "\", using name without quotation marks instead:  \"" << withoutTicks << "\"");
       name = withoutTicks;
     }
@@ -612,7 +612,7 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
 //----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("WriteData: File name not specified");
@@ -627,7 +627,7 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string lowercaseFileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(this->GetFileName());
+  const std::string lowercaseFileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(this->GetFileName());
   if (lowercaseFileExt == ".ctbl" || lowercaseFileExt == ".txt")
   {
     return this->WriteCtblFile(this->GetFileName(), colorNode);
@@ -651,7 +651,7 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRMLColorTableNode* colorNode)
 {
-  unsigned int numberOfColors = colorNode->GetLookupTable()->GetNumberOfTableValues();
+  const unsigned int numberOfColors = colorNode->GetLookupTable()->GetNumberOfTableValues();
 
   // Construct table for color node
   vtkNew<vtkTable> colorTable;
@@ -671,7 +671,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
   colorArray->SetNumberOfComponents(4); // RGBA
   colorArray->SetNumberOfTuples(numberOfColors);
   colorTable->AddColumn(colorArray);
-  std::map<vtkIdType, std::vector<std::string>> componentNamesMap = { { colorTable->GetColumnIndex("Color"), { "R", "G", "B", "A" } } };
+  const std::map<vtkIdType, std::vector<std::string>> componentNamesMap = { { colorTable->GetColumnIndex("Color"), { "R", "G", "B", "A" } } };
 
   typedef vtkCodedEntry* (vtkMRMLColorNode::*GetEntryFuncPtr)(int);
   std::vector<GetEntryFuncPtr> terminologyGetEntryFuncVector = {
@@ -711,7 +711,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
 
     for (unsigned int idx = 0; idx < TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
     {
-      GetEntryFuncPtr getTerminologyEntry = terminologyGetEntryFuncVector[idx];
+      const GetEntryFuncPtr getTerminologyEntry = terminologyGetEntryFuncVector[idx];
       vtkCodedEntry* terminologyEntry = (colorNode->*getTerminologyEntry)(colorIdx);
       if (terminologyEntry == nullptr)
       {
@@ -719,7 +719,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
         continue;
       }
 
-      std::string columnName(TERMINOLOGY_COLUMN_NAMES[idx]);
+      const std::string columnName(TERMINOLOGY_COLUMN_NAMES[idx]);
       if (columnName.substr(columnName.size() - 11, 11) == "CodeMeaning")
       {
         terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodeMeaning());
@@ -759,7 +759,7 @@ int vtkMRMLColorTableStorageNode::WriteCtblFile(std::string fullFileName, vtkMRM
   of << "# Color table file " << (!fullFileName.empty() ? fullFileName : "null") << endl;
   if (colorNode->GetLookupTable() != nullptr)
   {
-    unsigned int numberOfColors = colorNode->GetLookupTable()->GetNumberOfTableValues();
+    const unsigned int numberOfColors = colorNode->GetLookupTable()->GetNumberOfTableValues();
     of << "# " << numberOfColors << " values" << endl;
     for (unsigned int i = 0; i < numberOfColors; i++)
     {
@@ -781,7 +781,7 @@ int vtkMRMLColorTableStorageNode::WriteCtblFile(std::string fullFileName, vtkMRM
       }
       of << name << " ";
       // the color look up table uses 0-1, file values are 0-255,
-      double* rgba = colorNode->GetLookupTable()->GetTableValue(i);
+      double* const rgba = colorNode->GetLookupTable()->GetTableValue(i);
       of << rgba[0] * 255.0 << " ";
       of << rgba[1] * 255.0 << " ";
       of << rgba[2] * 255.0 << " ";

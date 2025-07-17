@@ -184,7 +184,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -262,7 +262,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLDisplayNode* node = vtkMRMLDisplayNode::SafeDownCast(anode);
@@ -568,7 +568,7 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long even
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
 
-  vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(caller);
+  vtkMRMLClipNode* const clipNode = vtkMRMLClipNode::SafeDownCast(caller);
   if (clipNode)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
@@ -652,8 +652,8 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID) const
   {
     return false;
   }
-  std::string value(viewNodeID);
-  std::vector<std::string>::const_iterator it = std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
+  const std::string value(viewNodeID);
+  const std::vector<std::string>::const_iterator it = std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
   return it != this->ViewNodeIDs.end();
 }
 
@@ -671,7 +671,7 @@ void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char* viewNodeID)
     return;
   }
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->RemoveAllViewNodeIDs();
   this->AddViewNodeID(viewNodeID);
   this->EndModify(disabledModify);
@@ -723,7 +723,7 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
   // If parent folder visibility is set to false then the markups is not visible
   if (this->GetFolderDisplayOverrideAllowed())
   {
-    vtkMRMLDisplayableNode* displayableNode = this->GetDisplayableNode();
+    vtkMRMLDisplayableNode* const displayableNode = this->GetDisplayableNode();
     // Visibility is applied regardless the fact whether there is override or not.
     // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
     // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
@@ -732,7 +732,7 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
       return false;
     }
   }
-  vtkMRMLNode* viewNode = this->GetScene() ? this->GetScene()->GetNodeByID(viewNodeID) : nullptr;
+  vtkMRMLNode* const viewNode = this->GetScene() ? this->GetScene()->GetNodeByID(viewNodeID) : nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
   {
     if (!this->GetVisibility2D())
@@ -842,7 +842,7 @@ void vtkMRMLDisplayNode::SetScalarRangeFlag(int flag)
   {
     return;
   }
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->ScalarRangeFlag = flag;
   this->Modified();
   this->UpdateScalarRange();
@@ -862,7 +862,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   }
 
   double newScalarRange[2] = { 0.0, -1.0 };
-  int flag = this->GetScalarRangeFlag();
+  const int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
   {
     vtkDataArray* dataArray = this->GetActiveScalarArray();
@@ -878,7 +878,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
       vtkLookupTable* lut = this->GetColorNode()->GetLookupTable();
       if (lut)
       {
-        double* lutRange = lut->GetRange();
+        double* const lutRange = lut->GetRange();
         newScalarRange[0] = lutRange[0];
         newScalarRange[1] = lutRange[1];
       }
@@ -919,7 +919,7 @@ void vtkMRMLDisplayNode::SetActiveScalar(const char* scalarName, int location)
     // no change
     return;
   }
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->SetActiveScalarName(scalarName);
   this->SetActiveAttributeLocation(location);
   this->UpdateAssignedAttribute();
@@ -969,7 +969,7 @@ const char* vtkMRMLDisplayNode::GetActiveAttributeLocationAsString()
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::SetActiveAttributeLocationFromString(const char* str)
 {
-  int id = this->GetAttributeLocationFromString(str);
+  const int id = this->GetAttributeLocationFromString(str);
   if (id < 0)
   {
     vtkWarningMacro("Invalid activeAttributeLocation: " << (str ? str : "(none)"));
@@ -1059,22 +1059,22 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
     return;
   }
 
-  std::vector<std::string> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
-  for (std::string textPropertyString : textProperties)
+  const std::vector<std::string> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
+  for (const std::string textPropertyString : textProperties)
   {
     std::vector<std::string> keyValue = vtksys::SystemTools::SplitString(textPropertyString, ':');
     if (keyValue.empty())
     {
       continue;
     }
-    std::string key = keyValue[0];
+    const std::string key = keyValue[0];
 
     if (keyValue.size() < 2)
     {
       continue;
     }
 
-    std::string value = keyValue[1];
+    const std::string value = keyValue[1];
     if (key == "font-family")
     {
       textProperty->SetFontFamilyAsString(value.c_str());
@@ -1085,9 +1085,9 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
     }
     else if (key == "font-size")
     {
-      size_t pos = value.find("px");
-      std::stringstream ss;
-      vtkVariant size = vtkVariant(value.substr(0, pos));
+      const size_t pos = value.find("px");
+      const std::stringstream ss;
+      const vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFontSize(size.ToInt());
     }
     else if (key == "font-style")
@@ -1121,23 +1121,23 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
     }
     else if (key == "border-width")
     {
-      size_t pos = value.find("px");
-      std::stringstream ss;
-      vtkVariant size = vtkVariant(value.substr(0, pos));
+      const size_t pos = value.find("px");
+      const std::stringstream ss;
+      const vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFrameWidth(size.ToInt());
     }
     else if (key == "text-shadow")
     {
-      std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(keyValue[1], ' ');
+      const std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(keyValue[1], ' ');
       int shadowOffset[2] = { 2, 2 };
       int shadowPropertyIndex = 0;
-      for (std::string shadowProperty : shadowProperties)
+      for (const std::string shadowProperty : shadowProperties)
       {
         if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX || shadowPropertyIndex == SHADOW_V_OFFSET_INDEX)
         {
-          size_t pos = shadowProperty.find("px");
-          std::stringstream ss;
-          vtkVariant offset = vtkVariant(shadowProperty.substr(0, pos));
+          const size_t pos = shadowProperty.find("px");
+          const std::stringstream ss;
+          const vtkVariant offset = vtkVariant(shadowProperty.substr(0, pos));
           if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX)
           {
             shadowOffset[0] = offset.ToInt();
@@ -1167,7 +1167,7 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
 void vtkMRMLDisplayNode::GetColorFromString(const std::string& inputString, double colorF[4])
 {
   std::string colorString = inputString;
-  std::string prefixString = "rgba(";
+  const std::string prefixString = "rgba(";
 
   size_t pos = colorString.find(prefixString);
   if (pos != std::string::npos)

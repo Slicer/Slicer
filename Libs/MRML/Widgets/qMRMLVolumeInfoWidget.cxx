@@ -205,7 +205,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   }
   vtkImageData* image = d->VolumeNode->GetImageData();
   double dimensions[3] = { 0., 0., 0. };
-  int* dims = image ? image->GetDimensions() : nullptr;
+  int* const dims = image ? image->GetDimensions() : nullptr;
   if (dims)
   {
     dimensions[0] = dims[0];
@@ -214,10 +214,10 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   }
   d->ImageDimensionsWidget->setCoordinates(dimensions);
 
-  double* spacing = d->VolumeNode->GetSpacing();
+  double* const spacing = d->VolumeNode->GetSpacing();
   d->ImageSpacingWidget->setCoordinates(spacing);
 
-  double* origin = d->VolumeNode->GetOrigin();
+  double* const origin = d->VolumeNode->GetOrigin();
   d->ImageOriginWidget->setCoordinates(origin);
 
   double IJKToRASDirections[3][3] = { { 1., 0., 0. }, { 0., 1., 0. }, { 0., 0., 1. } };
@@ -232,7 +232,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
 
   d->CenterVolumePushButton->setEnabled(!this->isCentered());
 
-  vtkNew<vtkMatrix4x4> mat;
+  const vtkNew<vtkMatrix4x4> mat;
   d->VolumeNode->GetIJKToRASMatrix(mat.GetPointer());
   d->ScanOrderComboBox->setCurrentIndex(d->ScanOrderComboBox->findData(vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(mat.GetPointer())));
   d->ScanOrderValueLabel->setText(d->ScanOrderComboBox->currentText());
@@ -243,7 +243,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     d->NumberOfScalarsValueLabel->setText(QString::number(image->GetNumberOfScalarComponents()));
     d->ScalarTypeComboBox->setCurrentIndex(d->ScalarTypeComboBox->findData(image->GetScalarType()));
     d->ScalarTypeValueLabel->setText(d->ScalarTypeComboBox->currentText());
-    double* scalarRange = image->GetScalarRange();
+    double* const scalarRange = image->GetScalarRange();
     ;
     d->ScalarRangeValueLabel->setText(QString("%1 to %2").arg(scalarRange[0]).arg(scalarRange[1]));
   }
@@ -295,7 +295,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRMLDisplayNode()
   // populate the win/level presets
   for (int presetIndex = 0; presetIndex < displayNode->GetNumberOfWindowLevelPresets(); ++presetIndex)
   {
-    QString windowLevelPreset = QString("%1 | %2").arg(displayNode->GetWindowPreset(presetIndex), displayNode->GetLevelPreset(presetIndex));
+    const QString windowLevelPreset = QString("%1 | %2").arg(displayNode->GetWindowPreset(presetIndex), displayNode->GetLevelPreset(presetIndex));
     d->WindowLevelPresetsListWidget->addItem(windowLevelPreset);
   }
 }
@@ -351,7 +351,7 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
   {
     return;
   }
-  QString scanOrder = d->ScanOrderComboBox->itemData(index).toString();
+  const QString scanOrder = d->ScanOrderComboBox->itemData(index).toString();
   vtkNew<vtkMatrix4x4> IJKToRAS;
   if (vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
         scanOrder.toUtf8(), d->VolumeNode->GetSpacing(), d->VolumeNode->GetImageData()->GetDimensions(), this->isCentered(), IJKToRAS.GetPointer()))
@@ -370,14 +370,14 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
 void qMRMLVolumeInfoWidget::setNumberOfScalars(int number)
 {
   Q_D(qMRMLVolumeInfoWidget);
-  vtkImageData* imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
+  vtkImageData* const imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
   if (imageData == nullptr)
   {
     return;
   }
   vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
-  vtkInformation* outInfo = tp->GetOutputInformation(0);
+  vtkInformation* const outInfo = tp->GetOutputInformation(0);
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, vtkImageData::GetScalarType(outInfo), number);
 }
 
@@ -385,15 +385,15 @@ void qMRMLVolumeInfoWidget::setNumberOfScalars(int number)
 void qMRMLVolumeInfoWidget::setScalarType(int index)
 {
   Q_D(qMRMLVolumeInfoWidget);
-  vtkImageData* imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
+  vtkImageData* const imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
   if (imageData == nullptr)
   {
     return;
   }
-  int type = d->ScalarTypeComboBox->itemData(index).toInt();
+  const int type = d->ScalarTypeComboBox->itemData(index).toInt();
   vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
-  vtkInformation* outInfo = tp->GetOutputInformation(0);
+  vtkInformation* const outInfo = tp->GetOutputInformation(0);
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, type, vtkImageData::GetNumberOfScalarComponents(outInfo));
 }
 

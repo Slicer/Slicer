@@ -53,7 +53,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLClipNodeWidget* widget = reinterpret_cast<qMRMLClipNodeWidget*>(data);
+  qMRMLClipNodeWidget* const widget = reinterpret_cast<qMRMLClipNodeWidget*>(data);
   CTKCOMPARE(widget->clipType(), vtkMRMLClipModelsNode::ClipUnion);
 }
 } // namespace
@@ -62,20 +62,20 @@ void checkFinalWidgetState(void* data)
 int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   qMRMLClipNodeWidget* widget = new qMRMLClipNodeWidget();
 
-  vtkSmartPointer<vtkMRMLClipModelsNode> clipNode = vtkSmartPointer<vtkMRMLClipModelsNode>::New();
+  const vtkSmartPointer<vtkMRMLClipModelsNode> clipNode = vtkSmartPointer<vtkMRMLClipModelsNode>::New();
 
   widget->setMRMLClipNode(clipNode);
 

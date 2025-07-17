@@ -62,11 +62,11 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
     return;
   }
 
-  QString cid; // connectionId
+  const QString cid; // connectionId
 
   // Set a high priority, doing so will force the Logger to be first to catch and
   // display the event associated with the scene.
-  float priority = 100.0;
+  const float priority = 100.0;
 
   this->EventNameToConnectionIdMap["NodeAdded"] =
     this->qvtkReconnect(this->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent, q, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)), priority);

@@ -241,7 +241,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
     return;
   }
 
-  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLPlotChartNode* const plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(shNode->GetItemDataNode(itemID));
 
   if (!d->PlotsLogic)
@@ -296,7 +296,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
   }
   else if (plotChartNode)
   {
-    vtkMRMLPlotChartNode* associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    vtkMRMLPlotChartNode* const associatedPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
     d->PlotsLogic->ShowChartInLayout(visible ? associatedPlotChartNode : nullptr);
   }
 
@@ -309,16 +309,16 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
   scene->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
   for (std::vector<vtkMRMLNode*>::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
   {
-    vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
-    vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
+    vtkMRMLPlotChartNode* const chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
+    const vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
     shNode->ItemModified(chartNodeId);
   }
   std::vector<vtkMRMLNode*> seriesNodes;
   scene->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
   for (std::vector<vtkMRMLNode*>::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
   {
-    vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesIt);
-    vtkIdType seriesNodeId = shNode->GetItemByDataNode(seriesNode);
+    vtkMRMLPlotSeriesNode* const seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesIt);
+    const vtkIdType seriesNodeId = shNode->GetItemByDataNode(seriesNode);
     shNode->ItemModified(seriesNodeId);
   }
 }
@@ -351,7 +351,7 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID) c
     return (plotViewNode->GetPlotChartNode()->HasPlotSeriesNodeID(plotSeriesNode->GetID()) ? 1 : 0);
   }
 
-  vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLPlotChartNode* const plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (plotChartNode)
   {
     // Return shown if plotLayout in plot view is the examined item's associated data node
@@ -364,14 +364,14 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID) c
 //---------------------------------------------------------------------------
 vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  vtkMRMLScene* const scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return nullptr;
   }
 
-  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qMRMLLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     return nullptr;
@@ -379,13 +379,13 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
 
   for (int i = 0; i < layoutManager->plotViewCount(); i++)
   {
-    qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(i);
+    qMRMLPlotWidget* const plotWidget = layoutManager->plotWidget(i);
     if (!plotWidget)
     {
       // invalid plot widget
       continue;
     }
-    vtkMRMLPlotViewNode* plotView = plotWidget->mrmlPlotViewNode();
+    vtkMRMLPlotViewNode* const plotView = plotWidget->mrmlPlotViewNode();
     if (plotView)
     {
       return plotView;

@@ -152,7 +152,7 @@ void qSlicerSubjectHierarchyColorLegendPlugin::showVisibilityContextMenuActionsF
   }
 
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
-  QSignalBlocker blocker(d->ShowColorLegendAction);
+  const QSignalBlocker blocker(d->ShowColorLegendAction);
   d->ShowColorLegendAction->setChecked(colorLegendDisplayNode && colorLegendDisplayNode->GetVisibility());
   d->ShowColorLegendAction->setVisible(true);
 }
@@ -161,7 +161,7 @@ void qSlicerSubjectHierarchyColorLegendPlugin::showVisibilityContextMenuActionsF
 void qSlicerSubjectHierarchyColorLegendPlugin::toggleVisibilityForCurrentItem(bool on)
 {
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
-  vtkIdType itemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType itemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     return;
@@ -241,7 +241,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, 
   if (viewNode)
   {
     // Show in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     // show
     if (!wasVisible)
     {
@@ -252,7 +252,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, 
   else if (sliceNode)
   {
     // Show in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     // show
     if (!wasVisible)
     {
@@ -263,7 +263,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, 
   else
   {
     // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(true);
   }
@@ -315,7 +315,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView(bool show, 
   if (viewNode)
   {
     // Show/hide in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     if (show)
     {
       // show
@@ -338,7 +338,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView(bool show, 
   else
   {
     // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(show);
   }
@@ -390,7 +390,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice(bool show,
   if (sliceNode)
   {
     // Show/hide in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     if (show)
     {
       // show
@@ -413,7 +413,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice(bool show,
   else
   {
     // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(show);
   }

@@ -125,24 +125,24 @@ void qSlicerReformatModuleWidgetPrivate::updateUi()
 void qSlicerReformatModuleWidgetPrivate::updateVisibilityControllers()
 {
   // Check slice visibility
-  bool wasVisibilityCheckBoxBlocking = this->VisibilityCheckBox->blockSignals(true);
+  const bool wasVisibilityCheckBoxBlocking = this->VisibilityCheckBox->blockSignals(true);
 
   this->VisibilityCheckBox->setEnabled(this->MRMLSliceNode != nullptr);
 
-  int visibility = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetSliceVisible() : 0;
+  const int visibility = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetSliceVisible() : 0;
   this->VisibilityCheckBox->setChecked(visibility);
 
   this->VisibilityCheckBox->blockSignals(wasVisibilityCheckBoxBlocking);
 
   // Check reformat widget visibility
-  bool wasVisibilityReformatWidgetCheckBoxBlocking = this->ShowReformatWidgetToolButton->blockSignals(true);
-  bool wasLockReformatWidgetCheckBoxBlocking = this->actionLockNormalToCamera->blockSignals(true);
-  bool wasLockReformatWidgetCheckBoxButtonBlocking = this->NormalToCameraCheckablePushButton->blockSignals(true);
+  const bool wasVisibilityReformatWidgetCheckBoxBlocking = this->ShowReformatWidgetToolButton->blockSignals(true);
+  const bool wasLockReformatWidgetCheckBoxBlocking = this->actionLockNormalToCamera->blockSignals(true);
+  const bool wasLockReformatWidgetCheckBoxButtonBlocking = this->NormalToCameraCheckablePushButton->blockSignals(true);
 
   this->ShowReformatWidgetToolButton->setEnabled(this->MRMLSliceNode != nullptr);
 
-  int widgetVisibility = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetVisible() : 0;
-  int lockWidgetNormal = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetNormalLockedToCamera() : 0;
+  const int widgetVisibility = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetVisible() : 0;
+  const int lockWidgetNormal = (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetNormalLockedToCamera() : 0;
 
   this->ShowReformatWidgetToolButton->setChecked(widgetVisibility);
   this->actionLockNormalToCamera->setChecked(lockWidgetNormal);
@@ -162,12 +162,12 @@ void qSlicerReformatModuleWidgetPrivate::updateOffsetSlidersGroupBox()
     return;
   }
 
-  bool wasBlocking = this->OffsetSlider->blockSignals(true);
+  const bool wasBlocking = this->OffsetSlider->blockSignals(true);
 
   // Set the scale increments to match the z spacing (rotated into slice space)
-  const double* sliceSpacing = this->MRMLSliceLogic->GetLowestVolumeSliceSpacing();
+  const double* const sliceSpacing = this->MRMLSliceLogic->GetLowestVolumeSliceSpacing();
   Q_ASSERT(sliceSpacing);
-  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
+  const double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
   this->OffsetSlider->setSingleStep(offsetResolution);
   this->OffsetSlider->setPageStep(offsetResolution);
 
@@ -187,7 +187,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
 {
   Q_Q(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* reformatLogic = vtkSlicerReformatLogic::SafeDownCast(q->logic());
+  vtkSlicerReformatLogic* const reformatLogic = vtkSlicerReformatLogic::SafeDownCast(q->logic());
 
   if (!this->MRMLSliceNode || !reformatLogic)
   {
@@ -197,15 +197,15 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
   // Block signals
   // bool wasOnPlaneXBlocking = this->OnPlaneXdoubleSpinBox->blockSignals(true);
   // bool wasOnPlaneYBlocking = this->OnPlaneYdoubleSpinBox->blockSignals(true);
-  bool wasInVolumeBlocking = this->InVolumeCoordinatesWidget->blockSignals(true);
+  const bool wasInVolumeBlocking = this->InVolumeCoordinatesWidget->blockSignals(true);
 
   // Update volumes extremums
   double volumeBounds[6] = { 0, 0, 0, 0, 0, 0 };
   vtkSlicerReformatLogic::GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
 
   /// TODO: set min/max per element
-  double minimum = qMin(volumeBounds[0], qMin(volumeBounds[2], volumeBounds[4]));
-  double maximum = qMax(volumeBounds[1], qMax(volumeBounds[3], volumeBounds[5]));
+  const double minimum = qMin(volumeBounds[0], qMin(volumeBounds[2], volumeBounds[4]));
+  const double maximum = qMax(volumeBounds[1], qMax(volumeBounds[3], volumeBounds[5]));
   this->InVolumeCoordinatesWidget->setMinimum(minimum);
   this->InVolumeCoordinatesWidget->setMaximum(maximum);
 
@@ -221,7 +221,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
   */
 
   // Update volumes origin coordinates
-  vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
+  vtkMatrix4x4* const sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
   this->InVolumeCoordinatesWidget->setCoordinates(sliceToRAS->GetElement(0, 3), sliceToRAS->GetElement(1, 3), sliceToRAS->GetElement(2, 3));
 
   // TODO : Update plane origin coordinates
@@ -244,10 +244,10 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(this->MRMLSliceNode, this->SliceOrientationSelector);
 
   // Update the normal spinboxes
-  bool wasNormalBlocking = this->NormalCoordinatesWidget->blockSignals(true);
+  const bool wasNormalBlocking = this->NormalCoordinatesWidget->blockSignals(true);
 
   double normal[3];
-  vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
+  vtkMatrix4x4* const sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
 
   normal[0] = sliceToRAS->GetElement(0, 2);
   normal[1] = sliceToRAS->GetElement(1, 2);
@@ -260,7 +260,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
 //------------------------------------------------------------------------------
 void qSlicerReformatModuleWidgetPrivate::resetSlider(qMRMLLinearTransformSlider* slider)
 {
-  bool wasSliderBlocking = slider->blockSignals(true);
+  const bool wasSliderBlocking = slider->blockSignals(true);
   slider->reset();
 
   if (slider == this->RotateXSlider)
@@ -363,7 +363,7 @@ void qSlicerReformatModuleWidget::onMRMLSliceNodeModified(vtkObject* caller)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
   if (!sliceNode)
   {
     return;
@@ -377,7 +377,7 @@ void qSlicerReformatModuleWidget::onNodeSelected(vtkMRMLNode* node)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
 
   // Listen for SliceNode changes
   this->qvtkReconnect(d->MRMLSliceNode, sliceNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLSliceNodeModified(vtkObject*)));
@@ -476,7 +476,7 @@ void qSlicerReformatModuleWidget::setWorldPosition(double* worldCoordinates)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
+  vtkSlicerReformatLogic* const reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !reformatLogic)
   {
@@ -499,7 +499,7 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
+  vtkSlicerReformatLogic* const reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!reformatLogic)
   {
@@ -563,7 +563,7 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
+  vtkSlicerReformatLogic* const reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !reformatLogic)
   {
@@ -648,7 +648,7 @@ void qSlicerReformatModuleWidget::centerSliceNode()
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
+  vtkSlicerReformatLogic* const reformatLogic = vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !d->MRMLSliceLogic || !reformatLogic)
   {
@@ -681,8 +681,8 @@ bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node, QString role 
 
   if (vtkMRMLSliceCompositeNode::SafeDownCast(node))
   {
-    vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceLogic::GetSliceNode(sliceCompositeNode);
+    vtkMRMLSliceCompositeNode* const sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceLogic::GetSliceNode(sliceCompositeNode);
     if (!sliceNode)
     {
       return false;

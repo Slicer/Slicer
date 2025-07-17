@@ -96,7 +96,7 @@ QList<vtkMRMLModelDisplayNode*> qMRMLScalarsDisplayWidgetPrivate::currentModelDi
   QList<vtkMRMLModelDisplayNode*> modelDisplayNodes;
   for (vtkMRMLDisplayNode* const displayNode : this->CurrentDisplayNodes)
   {
-    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    vtkMRMLModelDisplayNode* const modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (modelDisplayNode)
     {
       modelDisplayNodes << modelDisplayNode;
@@ -136,7 +136,7 @@ QList<vtkMRMLDisplayNode*> qMRMLScalarsDisplayWidget::mrmlDisplayNodes() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   QList<vtkMRMLDisplayNode*> displayNodes; // this list will only contain valid (non-null) display node pointers
-  for (vtkMRMLDisplayNode* displayNode : d->CurrentDisplayNodes)
+  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
     displayNodes << displayNode;
   }
@@ -158,7 +158,7 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNodes(QList<vtkMRMLDisplayNode*> d
                 SLOT(updateWidgetFromMRML()));
 
   d->CurrentDisplayNodes.clear();
-  for (vtkMRMLDisplayNode* displayNode : displayNodes)
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
     d->CurrentDisplayNodes << displayNode;
   }
@@ -222,14 +222,14 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
 
   for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
-    int wasModified = displayNode->StartModify();
+    const int wasModified = displayNode->StartModify();
 
     displayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
 
     // if there's no color node set for a non empty array name, use a default
     if (!arrayName.isEmpty() && displayNode->GetColorNodeID() == nullptr)
     {
-      const char* colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
+      const char* const colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
       displayNode->SetAndObserveColorNodeID(colorNodeID);
     }
     displayNode->EndModify(wasModified);
@@ -280,7 +280,7 @@ void qMRMLScalarsDisplayWidget::setScalarRangeMode(vtkMRMLDisplayNode::ScalarRan
   bool modified = false;
   for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
-    int currentScalarRangeMode = displayNode->GetScalarRangeFlag();
+    const int currentScalarRangeMode = displayNode->GetScalarRangeFlag();
     if (currentScalarRangeMode != mode)
     {
       displayNode->SetScalarRangeFlag(mode);
@@ -313,7 +313,7 @@ void qMRMLScalarsDisplayWidget::setScalarsDisplayRange(double min, double max)
 
   for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
-    double* range = displayNode->GetScalarRange();
+    double* const range = displayNode->GetScalarRange();
     if (range[0] == min && range[1] == max)
     {
       return;
@@ -327,7 +327,7 @@ void qMRMLScalarsDisplayWidget::setTresholdEnabled(bool b)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
+  const QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
   for (vtkMRMLModelDisplayNode* const modelDisplayNode : currentModelDisplayNodes)
   {
     modelDisplayNode->SetThresholdEnabled(b);
@@ -339,11 +339,11 @@ void qMRMLScalarsDisplayWidget::setThresholdRange(double min, double max)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
+  const QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
   for (vtkMRMLModelDisplayNode* const modelDisplayNode : currentModelDisplayNodes)
   {
-    double oldMin = modelDisplayNode->GetThresholdMin();
-    double oldMax = modelDisplayNode->GetThresholdMax();
+    const double oldMin = modelDisplayNode->GetThresholdMin();
+    const double oldMax = modelDisplayNode->GetThresholdMax();
     if (oldMin == min && oldMax == max)
     {
       return;
@@ -453,13 +453,13 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
     // Use closest power of ten value as a step value
     precision = ctk::closestPowerOfTen(precision);
     // Find significant decimals to show
-    double stepDecimals = ctk::significantDecimals(precision);
-    double minDecimals = ctk::significantDecimals(dataRange[0]);
-    double maxDecimals = ctk::significantDecimals(dataRange[1]);
+    const double stepDecimals = ctk::significantDecimals(precision);
+    const double minDecimals = ctk::significantDecimals(dataRange[0]);
+    const double maxDecimals = ctk::significantDecimals(dataRange[1]);
     decimals = std::max(stepDecimals, std::max(minDecimals, maxDecimals));
   }
 
-  double* displayRange = firstDisplayNode->GetScalarRange();
+  double* const displayRange = firstDisplayNode->GetScalarRange();
 
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
   if (resetSliderRange)

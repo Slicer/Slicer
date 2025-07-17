@@ -30,7 +30,7 @@ qSlicerCLIProgressBarPlugin::qSlicerCLIProgressBarPlugin(QObject* parent)
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIProgressBarPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerCLIProgressBar* widget = new qSlicerCLIProgressBar(parentWidget);
+  qSlicerCLIProgressBar* const widget = new qSlicerCLIProgressBar(parentWidget);
   return widget;
 }
 

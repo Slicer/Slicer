@@ -29,7 +29,7 @@ vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
-  vtkNew<vtkMatrix4x4> matrix;
+  const vtkNew<vtkMatrix4x4> matrix;
   this->SetMatrixTransformToParent(matrix.GetPointer());
 
   this->CenterOfTransformation[0] = 0.0;
@@ -76,7 +76,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 {
   // Temporarily disable all Modified and TransformModified events to make sure that
   // the operations are performed without interruption.
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 

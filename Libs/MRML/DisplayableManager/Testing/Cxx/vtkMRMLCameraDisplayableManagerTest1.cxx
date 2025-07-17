@@ -496,7 +496,7 @@ protected:
 int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 {
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderer> rr;
+  vtkNew<vtkRenderer> const rr;
   vtkNew<vtkRenderWindow> rw;
   vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
@@ -507,7 +507,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkInteractorStyle3D> iStyle;
+  vtkNew<vtkInteractorStyle3D> const iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene
@@ -521,7 +521,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLViewNode> viewNode;
   viewNode->SetLayoutName("1");
   viewNode->SetLayoutLabel("1");
-  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* const nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
@@ -574,7 +574,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
     */
 
-  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup =
+  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> const displayableManagerGroup =
       vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
 
   if (!displayableManagerGroup)
@@ -616,7 +616,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   }
 
   // Interactor style should be vtkMRMLThreeDViewInteractorStyle
-  vtkInteractorObserver* currentInteractoryStyle = ri->GetInteractorStyle();
+  vtkInteractorObserver* const currentInteractoryStyle = ri->GetInteractorStyle();
   if (!vtkInteractorStyle3D::SafeDownCast(currentInteractoryStyle))
   {
     std::cerr << "Expected interactorStyle: vtkInteractorStyle3D" << std::endl;
@@ -709,7 +709,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   }
   recorder->SetInteractor(nullptr);
 
-  int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
+  int const retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
   if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();

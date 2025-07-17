@@ -65,7 +65,7 @@ void vtkMRMLTransformStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -100,7 +100,7 @@ void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode* anode)
   {
     return;
   }
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
   vtkMRMLTransformStorageNode* node = vtkMRMLTransformStorageNode::SafeDownCast(anode);
@@ -141,8 +141,8 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* 
   // BSpline files.  It creates a vtkOrientedBSpline with unfortunate
   // mathematical properties as described in the vtkOrientedBSpline
   // class description.
-  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
-  std::string fullName = this->GetFullNameFromFileName();
+  const TransformReaderType::Pointer reader = itk::TransformFileReader::New();
+  const std::string fullName = this->GetFullNameFromFileName();
   reader->SetFileName(fullName);
   try
   {
@@ -178,7 +178,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* 
                                        "More than two transform in the file: '" << fullName << "'. Using only the first two transforms.");
   }
   TransformListType::iterator it = transforms->begin();
-  TransformType::Pointer transform = (*it);
+  const TransformType::Pointer transform = (*it);
   if (!transform)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -236,8 +236,8 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode* refNode)
   GridImageDoubleType::Pointer gridImage_Lps = nullptr;
 
   typedef itk::ImageFileReader<GridImageDoubleType> ReaderType;
-  std::string fullName = this->GetFullNameFromFileName();
-  ReaderType::Pointer reader = ReaderType::New();
+  const std::string fullName = this->GetFullNameFromFileName();
+  const ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(fullName);
   try
   {
@@ -310,7 +310,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
   typedef typename TransformReaderType::TransformListType TransformListType;
   typedef typename TransformReaderType::TransformType TransformType;
 
-  typename TransformReaderType::Pointer reader = TransformReaderType::New();
+  const typename TransformReaderType::Pointer reader = TransformReaderType::New();
   reader->SetFileName(fullName);
   try
   {
@@ -353,7 +353,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
                                                  << fullName);
     return nullptr;
   }
-  TransformType* firstTransform = transforms->front();
+  TransformType* const firstTransform = transforms->front();
   if (firstTransform == nullptr)
   {
     vtkErrorToMessageCollectionWithObjectMacro(
@@ -362,7 +362,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
   }
 
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
-  std::string firstTransformType = firstTransform->GetTransformTypeAsString();
+  const std::string firstTransformType = firstTransform->GetTransformTypeAsString();
   if (firstTransformType.find("CompositeTransform") == std::string::npos)
   {
     // just a single transform
@@ -391,11 +391,11 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       return nullptr;
     }
 
-    typename ConstTransformListType::const_iterator end = transformList.end();
+    const typename ConstTransformListType::const_iterator end = transformList.end();
     if (transformList.size() == 1)
     {
       // there is only one single transform, so we create a specific VTK transform type instead of a general transform
-      typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(transformList.front().GetPointer());
+      const typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(transformList.front().GetPointer());
       transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS));
     }
     else
@@ -405,7 +405,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       // generalTransform->PostMultiply();
       for (typename ConstTransformListType::const_iterator it = transformList.begin(); it != end; ++it)
       {
-        typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(it->GetPointer());
+        const typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(it->GetPointer());
         vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS);
         if (transformComponent != nullptr)
         {
@@ -434,7 +434,7 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
   double center_RAS[3] = { 0.0, 0.0, 0.0 };
@@ -472,7 +472,7 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("ReadData: File name not specified");
@@ -501,7 +501,7 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // For ITKv3 backward compatibility
-  int success = this->ReadFromITKv3BSplineTransformFile(refNode);
+  const int success = this->ReadFromITKv3BSplineTransformFile(refNode);
   if (success)
   {
     return success;
@@ -521,7 +521,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
   }
 
   // Get VTK transform from the transform node
-  vtkAbstractTransform* transformVtk = transformNode->GetTransformFromParent();
+  vtkAbstractTransform* const transformVtk = transformNode->GetTransformFromParent();
   if (transformVtk == nullptr)
   {
     this->SetWriteStateSkippedNoData();
@@ -535,7 +535,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
   itk::Object::Pointer secondaryTransformItk; // only used for ITKv3 compatibility
   // ITK transform is created without initialization, because initialization may take a long time for certain transform types
   // which would slow down saving. Initialization is only needed for computing transformations, not necessary for file writing.
-  itk::Object::Pointer transformItk =
+  const itk::Object::Pointer transformItk =
     vtkITKTransformConverter::CreateITKTransformFromVTK(this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms, false, center_RAS);
   if (transformItk.IsNull())
   {
@@ -543,7 +543,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
     return 0;
   }
 
-  TransformWriterType::Pointer writer = TransformWriterType::New();
+  const TransformWriterType::Pointer writer = TransformWriterType::New();
   writer->SetInput(transformItk);
 
   // In ITKv3 bulk transform may be added as a second transform in the transform list
@@ -552,7 +552,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
     writer->AddTransform(secondaryTransformItk);
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   writer->SetFileName(fullName);
   try
   {
@@ -609,9 +609,9 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
   GridImageDoubleType::Pointer gridImage_Lps;
   vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(this, gridImage_Lps, gridTransform_Ras);
 
-  itk::ImageFileWriter<GridImageDoubleType>::Pointer writer = itk::ImageFileWriter<GridImageDoubleType>::New();
+  const itk::ImageFileWriter<GridImageDoubleType>::Pointer writer = itk::ImageFileWriter<GridImageDoubleType>::New();
   writer->SetInput(gridImage_Lps);
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   writer->SetFileName(fullName);
 
   // If this image is saved as a NIFTI then setting intent code to 1006 (NIFTI_INTENT_DISPVECT)
@@ -645,13 +645,13 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLTransformNode write data failed: file name not specified");
     return 0;
   }
-  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* const transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode == nullptr)
   {
     vtkErrorMacro("vtkMRMLTransformNode write data failed: invalid transform node");
@@ -687,7 +687,7 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 bool vtkMRMLTransformStorageNode::IsImageFile(const std::string& filename)
 {
   // determine file type
-  std::string extension = this->GetSupportedFileExtension(filename.c_str());
+  const std::string extension = this->GetSupportedFileExtension(filename.c_str());
   if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::IsImageFile", "Filename does not contain extension: '" << filename.c_str() << "'");

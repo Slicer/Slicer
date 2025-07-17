@@ -79,9 +79,9 @@ int testAddEmptyFile(const char* filePath)
 
   vtkNew<vtkMRMLScene> scene;
   modelsLogic->SetMRMLScene(scene);
-  int nodeCountBefore = scene->GetNumberOfNodes();
+  const int nodeCountBefore = scene->GetNumberOfNodes();
   model = modelsLogic->AddModel(filePath);
-  int nodeCountAfter = scene->GetNumberOfNodes();
+  const int nodeCountAfter = scene->GetNumberOfNodes();
 
   // Adding an invalid file shall not return a valid model
   CHECK_NULL(model);
@@ -104,9 +104,9 @@ int testAddFile(const char* filePath)
 
   vtkNew<vtkMRMLScene> scene;
   modelsLogic->SetMRMLScene(scene);
-  int nodeCountBefore = scene->GetNumberOfNodes();
+  const int nodeCountBefore = scene->GetNumberOfNodes();
   model = modelsLogic->AddModel(filePath);
-  int nodeCountAfter = scene->GetNumberOfNodes();
+  const int nodeCountAfter = scene->GetNumberOfNodes();
 
   // Valid model node is expected
   CHECK_NOT_NULL(model);
@@ -119,14 +119,14 @@ int testAddFile(const char* filePath)
 //-----------------------------------------------------------------------------
 int testAddModelWithPolyData(bool withPolyData)
 {
-  vtkNew<vtkPolyData> polyData;
-  vtkPolyData* poly = (withPolyData ? polyData.GetPointer() : nullptr);
+  const vtkNew<vtkPolyData> polyData;
+  vtkPolyData* const poly = (withPolyData ? polyData.GetPointer() : nullptr);
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
 
   // Empty input should fail
   CHECK_NULL(modelsLogic->AddModel(poly));
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   modelsLogic->SetMRMLScene(scene);
   vtkMRMLModelNode* model = modelsLogic->AddModel(poly);
   CHECK_POINTER(model->GetPolyData(), poly);

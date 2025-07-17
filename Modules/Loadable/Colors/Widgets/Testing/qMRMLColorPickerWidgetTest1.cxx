@@ -46,7 +46,7 @@ int qMRMLColorPickerWidgetTest1(int argc, char* argv[])
 
   qMRMLColorPickerWidget colorPickerWidget;
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   colorPickerWidget.setMRMLScene(scene.GetPointer());
   vtkNew<vtkMRMLColorLogic> colorLogic;

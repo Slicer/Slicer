@@ -107,7 +107,7 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
   //     ...\.vscode\extensions\ms-python.python-2023.6.1\pythonFiles\get_output_via_markers.py \
   //     ...\.vscode\extensions\ms-python.python-2023.6.1\pythonFiles\interpreterInfo.py
 
-  QStringList unparsedArguments = this->unparsedArguments();
+  const QStringList unparsedArguments = this->unparsedArguments();
   QString extraPythonScript;
   int extraPythonScriptProcessedArgumentsCount = 0;
   if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
@@ -168,7 +168,7 @@ QStringList qSlicerCoreCommandOptions::additionalModulePaths() const
   QStringList allAdditionalModulePaths;
 
   // note the singular form: 'path' not 'paths'
-  QString additionalModulePath = d->ParsedArgs.value("additional-module-path").toString();
+  const QString additionalModulePath = d->ParsedArgs.value("additional-module-path").toString();
   if (!additionalModulePath.isEmpty())
   {
     allAdditionalModulePaths << additionalModulePath;
@@ -196,7 +196,7 @@ bool qSlicerCoreCommandOptions::disableBuiltInModules() const
 QStringList qSlicerCoreCommandOptions::modulesToIgnore() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  QString modulesToIgnore = d->ParsedArgs.value("modules-to-ignore").toString();
+  const QString modulesToIgnore = d->ParsedArgs.value("modules-to-ignore").toString();
   return modulesToIgnore.size() == 0 ? QStringList() : modulesToIgnore.split(",");
 }
 
@@ -411,7 +411,7 @@ void qSlicerCoreCommandOptions::addArguments()
                     /*no tr*/ "Display available command line arguments.");
 
 #ifdef Slicer_USE_PYTHONQT
-  QString testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings and --ignore-slicerrc.";
+  QString const testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings and --ignore-slicerrc.";
 #else
   QString testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings.";
 #endif

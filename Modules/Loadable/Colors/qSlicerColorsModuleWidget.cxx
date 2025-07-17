@@ -114,8 +114,8 @@ void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
   {
     return;
   }
-  const char* defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
-  vtkMRMLColorNode* defaultNode = vtkMRMLColorNode::SafeDownCast(q->mrmlScene()->GetNodeByID(defaultID));
+  const char* const defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
+  vtkMRMLColorNode* const defaultNode = vtkMRMLColorNode::SafeDownCast(q->mrmlScene()->GetNodeByID(defaultID));
   this->ColorTableComboBox->setCurrentNode(defaultNode);
 }
 
@@ -213,7 +213,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->ColorTableFrame->show();
     d->EditColorsCollapsibleButton->setText(tr("Discrete table"));
 
-    bool editable = (colorNode->GetType() == vtkMRMLColorTableNode::User);
+    const bool editable = (colorNode->GetType() == vtkMRMLColorTableNode::User);
 
     // number of colors
     d->NumberOfColorsSpinBox->setEnabled(editable);
@@ -251,7 +251,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)), this, SLOT(setLookupTableRange(double, double)));
     // update the annotations from the superclass color node since this is a
     // color table or freesurfer color node
-    int numberOfColors = colorNode->GetNumberOfColors();
+    const int numberOfColors = colorNode->GetNumberOfColors();
     vtkNew<vtkIntArray> indexArray;
     indexArray->SetNumberOfValues(numberOfColors);
     vtkNew<vtkStringArray> stringArray;
@@ -274,7 +274,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->EditColorsCollapsibleButton->setText(tr("Continuous scale"));
 
     // set the color transfer function to the widget
-    bool editable = procColorNode->GetType() == vtkMRMLColorNode::User; // only allow editing of user types
+    const bool editable = procColorNode->GetType() == vtkMRMLColorNode::User; // only allow editing of user types
     d->ContinuousScalarsToColorsWidget->view()->setColorTransferFunctionToPlots(procColorNode->GetColorTransferFunction(), editable);
     d->ContinuousScalarsToColorsWidget->setEnabled(editable);
   }
@@ -293,7 +293,7 @@ void qSlicerColorsModuleWidget::updateNumberOfColors()
   {
     return;
   }
-  int newNumber = d->NumberOfColorsSpinBox->value();
+  const int newNumber = d->NumberOfColorsSpinBox->value();
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableComboBox->currentNode());
   if (colorTableNode)
   {
@@ -310,7 +310,7 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
 {
   Q_D(qSlicerColorsModuleWidget);
 
-  vtkMRMLNode* currentNode = d->ColorTableComboBox->currentNode();
+  vtkMRMLNode* const currentNode = d->ColorTableComboBox->currentNode();
   if (!currentNode)
   {
     return;
@@ -329,7 +329,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
   Q_D(qSlicerColorsModuleWidget);
   vtkMRMLColorNode* currentNode = vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
   Q_ASSERT(currentNode);
-  QString newColorName =
+  const QString newColorName =
     QInputDialog::getText(this, "Color node name", "Please select a new name for the color node copy", QLineEdit::Normal, QString(currentNode->GetName()) + QString("Copy"));
   if (newColorName.isEmpty())
   {
@@ -375,15 +375,15 @@ void qSlicerColorsModuleWidget::addNewColorTableNode()
   }
 
   // Get name (it is hard to rename later)
-  std::string nodeName = this->mrmlScene()->GenerateUniqueName("ColorTable");
-  QString newColorName = QInputDialog::getText(this, "Color node name", "Please select a name for the color node", QLineEdit::Normal, QString::fromStdString(nodeName));
+  const std::string nodeName = this->mrmlScene()->GenerateUniqueName("ColorTable");
+  const QString newColorName = QInputDialog::getText(this, "Color node name", "Please select a name for the color node", QLineEdit::Normal, QString::fromStdString(nodeName));
   if (newColorName.isEmpty())
   {
     return;
   }
 
   // Create and add new empty color table node
-  vtkSmartPointer<vtkMRMLColorTableNode> newColorTableNode =
+  const vtkSmartPointer<vtkMRMLColorTableNode> newColorTableNode =
     vtkSmartPointer<vtkMRMLColorTableNode>::Take(vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->CreateNodeByClass("vtkMRMLColorTableNode")));
   if (!newColorTableNode)
   {
@@ -423,7 +423,7 @@ void qSlicerColorsModuleWidget::addNewColorInCurrentNode()
   //: This is the default name for a new color in a color table
   currentNode->SetColor(newNumber - 1, tr("Unnamed").toStdString().c_str(), 0.5, 0.5, 0.5, 1.0);
   // Update spinbox on GUI as well
-  QSignalBlocker blocker(d->NumberOfColorsSpinBox);
+  const QSignalBlocker blocker(d->NumberOfColorsSpinBox);
   d->NumberOfColorsSpinBox->setValue(newNumber);
 }
 
@@ -436,7 +436,7 @@ void qSlicerColorsModuleWidget::removeCurrentColorEntry()
   int colorIndex = -1;
   if (d->ColorTableFrame->isVisible())
   {
-    QModelIndex colorModelIndex = d->ColorView->sortFilterProxyModel()->mapToSource(d->ColorView->currentIndex());
+    const QModelIndex colorModelIndex = d->ColorView->sortFilterProxyModel()->mapToSource(d->ColorView->currentIndex());
     colorIndex = d->ColorView->colorModel()->colorFromIndex(colorModelIndex);
   }
   if (colorIndex >= 0)
@@ -449,7 +449,7 @@ void qSlicerColorsModuleWidget::removeCurrentColorEntry()
 void qSlicerColorsModuleWidget::onDisplayableNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qSlicerColorsModuleWidget);
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* const displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
   qvtkReconnect(d->DisplayableNode, displayableNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateColorLegendFromMRML()));
   d->DisplayableNode = displayableNode;
   updateColorLegendFromMRML();
@@ -490,7 +490,7 @@ void qSlicerColorsModuleWidget::createColorLegend()
     // If there is no color node selected in this display node then choose the current color node
     this->useCurrentColorsForColorLegend();
   }
-  vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(d->DisplayableNode);
+  vtkMRMLColorLegendDisplayNode* const colorLegendDisplayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(d->DisplayableNode);
   if (!colorLegendDisplayNode)
   {
     qWarning() << "createColorLegend: failed to add display node to scene";

@@ -182,7 +182,7 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
 void qMRMLLabelComboBox::setCurrentColor(const QString& color)
 {
   Q_D(qMRMLLabelComboBox);
-  int index = d->ComboBox->findText(color);
+  const int index = d->ComboBox->findText(color);
   // Will trigger onCurrentIndexChanged
   d->ComboBox->setCurrentIndex(index);
 }
@@ -306,13 +306,13 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
   const int numberOfColors = lookupTable->GetNumberOfColors();
   // qDebug() << "updateWidgetFromMRML - NumberOfColors:" << numberOfColors;
 
-  int actualMax = d->MaximumColorCount > 0 ? d->MaximumColorCount : numberOfColors;
+  const int actualMax = d->MaximumColorCount > 0 ? d->MaximumColorCount : numberOfColors;
   for (int i = 0; i < actualMax; ++i)
   {
-    QString colorName = QString::fromUtf8(d->ColorNode->GetColorName(i));
+    const QString colorName = QString::fromUtf8(d->ColorNode->GetColorName(i));
     // qDebug() << QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName);
 
-    QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
+    const QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
 
     QString text = "";
 

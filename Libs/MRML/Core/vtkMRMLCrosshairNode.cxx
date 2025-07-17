@@ -53,7 +53,7 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
@@ -69,10 +69,10 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLCrosshairNode* node = vtkMRMLCrosshairNode::SafeDownCast(anode);
+  vtkMRMLCrosshairNode* const node = vtkMRMLCrosshairNode::SafeDownCast(anode);
   if (!node)
   {
     return;

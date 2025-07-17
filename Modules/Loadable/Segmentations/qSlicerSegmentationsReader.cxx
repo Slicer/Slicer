@@ -90,7 +90,7 @@ qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSegmentationsReader::extensions() const
 {
-  QString extensionText = tr("Segmentation");
+  const QString extensionText = tr("Segmentation");
   return QStringList() //
          << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)" << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)"
          << extensionText + " (*.vtm)" << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)" << extensionText + " (*.stl)"
@@ -117,7 +117,7 @@ double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName
   if (confidence > 0 && confidence < 0.56)
   {
     // Not a composite file extension, inspect the content (for now, only nrrd).
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
     {
       QFile file(fileName);
@@ -127,7 +127,7 @@ double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName
         // Segmentation NRRD files contain ID for each segment (such as Segment0_ID:=...)
         // or common segmentation information (such as Segmentation_ContainedRepresentations:=...).
         // around position 500, read a bit further to account for slight variations in the header.
-        QString line = in.read(800);
+        const QString line = in.read(800);
         // If this appears in the file header then declare higher confidence value.
         confidence = (line.contains("Segment0_ID:=") || line.contains("Segmentation_") ? 0.6 : 0.4);
       }
@@ -141,7 +141,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSegmentationsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   this->setLoadedNodes(QStringList());
   if (d->SegmentationsLogic.GetPointer() == nullptr)
@@ -155,7 +155,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     name = properties["name"].toString();
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
 
   if (extension.compare(".stl") == 0 || extension.compare(".obj") == 0)
   {
@@ -221,7 +221,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     vtkMRMLColorTableNode* colorTableNode = nullptr;
     if (properties.contains("colorNodeID"))
     {
-      std::string nodeID = properties["colorNodeID"].toString().toStdString();
+      const std::string nodeID = properties["colorNodeID"].toString().toStdString();
       colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(nodeID));
     }
 

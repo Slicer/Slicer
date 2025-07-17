@@ -19,7 +19,7 @@ void GetImageType(std::string fileName, IOPixelEnum& pixelType, IOComponentEnum&
 {
   using ImageType = itk::Image<unsigned char, 3>;
   using ReaderType = itk::ImageFileReader<ImageType>;
-  ReaderType::Pointer imageReader = ReaderType::New();
+  const ReaderType::Pointer imageReader = ReaderType::New();
   imageReader->SetFileName(fileName);
   imageReader->UpdateOutputInformation();
 

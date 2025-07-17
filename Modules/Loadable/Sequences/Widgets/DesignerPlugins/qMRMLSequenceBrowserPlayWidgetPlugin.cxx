@@ -27,7 +27,7 @@ qMRMLSequenceBrowserPlayWidgetPlugin::qMRMLSequenceBrowserPlayWidgetPlugin(QObje
 //------------------------------------------------------------------------------
 QWidget* qMRMLSequenceBrowserPlayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceBrowserPlayWidget* _widget = new qMRMLSequenceBrowserPlayWidget(_parent);
+  qMRMLSequenceBrowserPlayWidget* const _widget = new qMRMLSequenceBrowserPlayWidget(_parent);
   return _widget;
 }
 

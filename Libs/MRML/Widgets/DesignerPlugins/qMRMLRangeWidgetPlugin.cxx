@@ -28,7 +28,7 @@ qMRMLRangeWidgetPlugin::qMRMLRangeWidgetPlugin(QObject* parentWidget)
 
 QWidget* qMRMLRangeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLRangeWidget* newWidget = new qMRMLRangeWidget(parentWidget);
+  qMRMLRangeWidget* const newWidget = new qMRMLRangeWidget(parentWidget);
   return newWidget;
 }
 

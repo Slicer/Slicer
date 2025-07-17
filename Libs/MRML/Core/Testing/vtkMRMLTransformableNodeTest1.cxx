@@ -41,7 +41,7 @@ int TestSetAndObserveTransformNodeID();
 //---------------------------------------------------------------------------
 int vtkMRMLTransformableNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLTransformableNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLTransformableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   CHECK_EXIT_SUCCESS(TestSetAndObserveTransformNodeID());
   return EXIT_SUCCESS;

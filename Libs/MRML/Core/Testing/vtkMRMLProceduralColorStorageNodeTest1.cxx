@@ -15,7 +15,7 @@
 
 int vtkMRMLProceduralColorStorageNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLProceduralColorStorageNode> node1;
+  const vtkNew<vtkMRMLProceduralColorStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

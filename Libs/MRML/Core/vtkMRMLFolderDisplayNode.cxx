@@ -59,7 +59,7 @@ void vtkMRMLFolderDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFolderDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
@@ -72,10 +72,10 @@ void vtkMRMLFolderDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLFolderDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLFolderDisplayNode* node = vtkMRMLFolderDisplayNode::SafeDownCast(anode);
+  vtkMRMLFolderDisplayNode* const node = vtkMRMLFolderDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -94,7 +94,7 @@ void vtkMRMLFolderDisplayNode::SetScene(vtkMRMLScene* scene)
   if (scene)
   {
     // Observe subject hierarchy item reparented event
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+    vtkMRMLSubjectHierarchyNode* const shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
     if (!shNode)
     {
       vtkErrorMacro("SetScene: Failed to get subject hierarchy node from current scene");
@@ -122,7 +122,7 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
     vtkIdType reparentedItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     if (callData)
     {
-      vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+      vtkIdType* const itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
       if (itemIdPtr)
       {
         reparentedItemID = *itemIdPtr;
@@ -182,7 +182,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
     vtkErrorMacro("ChildDisplayNodesModified: Failed to get subject hierarchy node from scene");
     return;
   }
-  vtkIdType folderItemId = shNode->GetItemByDataNode(this);
+  const vtkIdType folderItemId = shNode->GetItemByDataNode(this);
   if (!folderItemId)
   {
     return;
@@ -192,7 +192,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(folderItemId, childItemIDs, true);
 
-  bool batchProcessing = (childItemIDs.size() > 10);
+  const bool batchProcessing = (childItemIDs.size() > 10);
   if (batchProcessing)
   {
     this->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
@@ -236,7 +236,7 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
     vtkErrorWithObjectMacro(node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy node from current scene");
     return nullptr;
   }
-  vtkIdType nodeShId = shNode->GetItemByDataNode(node);
+  const vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
   {
     // May happen if an AddNode event is caught before SH had the chance to add the item
@@ -280,8 +280,8 @@ bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* no
     vtkErrorWithObjectMacro(node, "GetHierarchyVisibility: Failed to get subject hierarchy node from current scene");
     return true;
   }
-  vtkIdType sceneItemID = shNode->GetSceneItemID();
-  vtkIdType nodeShId = shNode->GetItemByDataNode(node);
+  const vtkIdType sceneItemID = shNode->GetSceneItemID();
+  const vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
   {
     return true;
@@ -321,8 +321,8 @@ double vtkMRMLFolderDisplayNode::GetHierarchyOpacity(vtkMRMLDisplayableNode* nod
     vtkErrorWithObjectMacro(node, "GetHierarchyOpacity: Failed to get subject hierarchy node from current scene");
     return 1.0;
   }
-  vtkIdType sceneItemID = shNode->GetSceneItemID();
-  vtkIdType nodeShId = shNode->GetItemByDataNode(node);
+  const vtkIdType sceneItemID = shNode->GetSceneItemID();
+  const vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
   {
     return 1.0;

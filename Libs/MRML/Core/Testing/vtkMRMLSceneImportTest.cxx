@@ -33,7 +33,7 @@ int vtkMRMLSceneImportTest(int argc, char* argv[])
     std::cout << "Usage: vtkMRMLSceneImportTest scene_file_path.mrml" << std::endl;
     return EXIT_FAILURE;
   }
-  const char* sceneFilePath = argv[1];
+  const char* const sceneFilePath = argv[1];
 
   //---------------------------------------------------------------------------
   vtkNew<vtkMRMLScene> scene;

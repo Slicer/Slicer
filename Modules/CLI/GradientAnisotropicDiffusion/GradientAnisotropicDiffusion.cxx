@@ -48,13 +48,13 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::GradientAnisotropicDiffusionImageFilter<InputImageType, InputImageType> FilterType;
   typedef itk::CastImageFilter<InputImageType, OutputImageType> CastType;
 
-  typename ReaderType::Pointer reader = ReaderType::New();
-  itk::PluginFilterWatcher watchReader(reader, "Read Volume", CLPProcessInformation);
+  const typename ReaderType::Pointer reader = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader(reader, "Read Volume", CLPProcessInformation);
 
   reader->SetFileName(inputVolume.c_str());
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watchFilter(filter, "Gradient Anisotropic Diffusion", CLPProcessInformation);
 
   filter->SetInput(reader->GetOutput());
   filter->SetNumberOfIterations(numberOfIterations);
@@ -62,11 +62,11 @@ int DoIt(int argc, char* argv[], T)
   filter->SetConductanceParameter(conductance);
   filter->SetUseImageSpacing(useImageSpacing);
 
-  typename CastType::Pointer cast = CastType::New();
+  const typename CastType::Pointer cast = CastType::New();
   cast->SetInput(filter->GetOutput());
 
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(outputVolume.c_str());
   writer->SetInput(cast->GetOutput());
   writer->Update();

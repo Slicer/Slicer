@@ -157,7 +157,7 @@ itkBSplineType::Pointer CreateBSplineItk(const double origin[3],
 //----------------------------------------------------------------------------
 void SetBSplineNodeItk(itkBSplineType::Pointer bspline, int nodeIndex[3], double nodeValue[3])
 {
-  itkBSplineType::RegionType region = bspline->GetGridRegion();
+  const itkBSplineType::RegionType region = bspline->GetGridRegion();
   itkBSplineType::RegionType::SizeType dims = region.GetSize();
   itkBSplineType::ParametersType parameters = bspline->GetParameters();
 
@@ -185,9 +185,9 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
   double outputPoint[3] = { 0 };
   bsplineVtk->TransformPoint(inputPoint, outputPoint);
 
-  itk::Point<double, 3> inputPointVtk(inputPoint);
-  itk::Point<double, 3> outputPointVtk(outputPoint);
-  double difference = outputPointItk.EuclideanDistanceTo(outputPointVtk);
+  const itk::Point<double, 3> inputPointVtk(inputPoint);
+  const itk::Point<double, 3> outputPointVtk(outputPoint);
+  const double difference = outputPointItk.EuclideanDistanceTo(outputPointVtk);
 
   if (logDetails)
   {
@@ -215,12 +215,12 @@ double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], 
   float floatOutputPoint[3] = { 0 };
   bsplineVtk->TransformPoint(floatInputPoint, floatOutputPoint);
 
-  itk::Point<double, 3> outputPointVtk(outputPoint);
+  const itk::Point<double, 3> outputPointVtk(outputPoint);
   itk::Point<double, 3> floatOutputPointVtk;
   floatOutputPointVtk[0] = floatOutputPoint[0];
   floatOutputPointVtk[1] = floatOutputPoint[1];
   floatOutputPointVtk[2] = floatOutputPoint[2];
-  double difference = outputPointVtk.EuclideanDistanceTo(floatOutputPointVtk);
+  const double difference = outputPointVtk.EuclideanDistanceTo(floatOutputPointVtk);
 
   if (logDetails)
   {
@@ -240,7 +240,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps = 1e-3; // step size
+  const double eps = 1e-3; // step size
   for (int row = 0; row < 3; row++)
   {
     double xMinus1[3] = { inputPoint[0], inputPoint[1], inputPoint[2] };
@@ -273,7 +273,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
   {
     for (int col = 0; col < 3; col++)
     {
-      double difference = fabs(jacobianVtk[row][col] - jacobianEstimation[row][col]);
+      const double difference = fabs(jacobianVtk[row][col] - jacobianEstimation[row][col]);
       if (difference > maxDifference)
       {
         maxDifference = difference;
@@ -301,9 +301,9 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransfor
   bsplineVtk->TransformPoint(outputPoint, inversePoint);
   bsplineVtk->Inverse();
 
-  itk::Point<double, 3> inputPointVtk(inputPoint);
-  itk::Point<double, 3> inversePointVtk(inversePoint);
-  double errorOfInverseComputation = inputPointVtk.EuclideanDistanceTo(inversePointVtk);
+  const itk::Point<double, 3> inputPointVtk(inputPoint);
+  const itk::Point<double, 3> inversePointVtk(inversePoint);
+  const double errorOfInverseComputation = inputPointVtk.EuclideanDistanceTo(inversePointVtk);
 
   if (logDetails)
   {
@@ -356,14 +356,14 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
   double modifiedBSplineNodeValue3[3] = { 50.0, 70.0, -60.0 };
 
   // Create an ITK BSpline transform. It'll serve as the reference.
-  itkBSplineType::Pointer bsplineItk = CreateBSplineItk(origin, spacing, direction, dims, bulkMatrix, bulkOffset);
+  const itkBSplineType::Pointer bsplineItk = CreateBSplineItk(origin, spacing, direction, dims, bulkMatrix, bulkOffset);
   // Modify a BSpline node
   SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex1, modifiedBSplineNodeValue1);
   SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex2, modifiedBSplineNodeValue2);
   SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex3, modifiedBSplineNodeValue3);
 
   // Create a VTK BSpline transform with the same parameters.
-  vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
+  const vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
   CreateBSplineVtk(bsplineVtk.GetPointer(), origin, spacing, direction, dims, bulkMatrix, bulkOffset);
   // Modify a BSpline node
   SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex1, modifiedBSplineNodeValue1);
@@ -403,14 +403,14 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
         inputPoint[1] = origin[1] + direction[1][0] * spacing[0] * i + direction[1][1] * spacing[1] * j + direction[1][2] * spacing[2] * k;
         inputPoint[2] = origin[2] + direction[2][0] * spacing[0] * i + direction[2][1] * spacing[1] * j + direction[2][2] * spacing[2] * k;
         // Compare transformation results computed by ITK and VTK.
-        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
+        const double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
         if (differenceItkVtk > 1e-6)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point (" << i << "," << j << "," << k << ")" << std::endl;
           numberOfItkVtkPointMismatches++;
         }
-        double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
+        const double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
         if (differenceSingleDoubleVtk > 1e-4)
         {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), true);
@@ -419,7 +419,7 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
           numberOfSingleDoubleVtkPointMismatches++;
         }
         // Verify VTK derivative
-        double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
+        const double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
         if (derivativeError > 1e-6)
         {
           getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
@@ -427,7 +427,7 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
           numberOfDerivativeMismatches++;
         }
         // Verify VTK inverse transform
-        double inverseError = getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
+        const double inverseError = getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
         if (inverseError > 1e-3)
         {
           getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);

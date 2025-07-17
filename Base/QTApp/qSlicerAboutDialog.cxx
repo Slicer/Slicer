@@ -47,7 +47,7 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   Q_D(qSlicerAboutDialog);
   d->setupUi(this);
 
-  qSlicerApplication* slicer = qSlicerApplication::application();
+  qSlicerApplication* const slicer = qSlicerApplication::application();
   d->CreditsTextBrowser->setFontPointSize(25);
   d->CreditsTextBrowser->append(slicer->applicationName());
   d->CreditsTextBrowser->setFontPointSize(11);
@@ -59,10 +59,10 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
     if (qSlicerApplicationUpdateManager::isApplicationUpdateEnabled())
     {
-      qSlicerApplicationUpdateManager* applicationUpdateManager = slicer->applicationUpdateManager();
+      qSlicerApplicationUpdateManager* const applicationUpdateManager = slicer->applicationUpdateManager();
       if (applicationUpdateManager && applicationUpdateManager->isUpdateAvailable())
       {
-        QString appUpdateText = tr("New application version is available: %1").arg(applicationUpdateManager->latestReleaseVersion());
+        const QString appUpdateText = tr("New application version is available: %1").arg(applicationUpdateManager->latestReleaseVersion());
         d->CreditsTextBrowser->insertHtml(
           QString("<b><a href=\"%1\"><font color=\"orange\">%2</font></a></b>").arg(applicationUpdateManager->applicationDownloadPageUrl().toString()).arg(appUpdateText));
         d->CreditsTextBrowser->append("");

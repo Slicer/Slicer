@@ -139,7 +139,7 @@ vtkMRMLScene* qSlicerVolumeRenderingSettingsPanelPrivate::mrmlScene()
 {
   Q_Q(qSlicerVolumeRenderingSettingsPanel);
 
-  vtkSlicerVolumeRenderingLogic* logic = q->volumeRenderingLogic();
+  vtkSlicerVolumeRenderingLogic* const logic = q->volumeRenderingLogic();
   if (!logic)
   {
     return nullptr;
@@ -224,7 +224,7 @@ void qSlicerVolumeRenderingSettingsPanel::onVolumeRenderingLogicModified()
   {
     defaultRenderingMethod = "vtkMRMLGPURayCastVolumeRenderingDisplayNode";
   }
-  int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(QString(defaultRenderingMethod));
+  const int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(QString(defaultRenderingMethod));
   d->RenderingMethodComboBox->setCurrentIndex(defaultRenderingMethodIndex);
 }
 
@@ -252,7 +252,7 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
     return;
   }
 
-  int memory = d->GPUMemoryComboBox->currentGPUMemoryInMB();
+  const int memory = d->GPUMemoryComboBox->currentGPUMemoryInMB();
 
   // Set to default view node
   vtkMRMLViewNode* defaultViewNode = d->defaultMrmlViewNode();
@@ -285,7 +285,7 @@ QString qSlicerVolumeRenderingSettingsPanel::defaultRenderingMethod() const
 void qSlicerVolumeRenderingSettingsPanel::setDefaultRenderingMethod(const QString& method)
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
-  int methodIndex = d->RenderingMethodComboBox->findData(method);
+  const int methodIndex = d->RenderingMethodComboBox->findData(method);
   d->RenderingMethodComboBox->setCurrentIndex(methodIndex);
 }
 
@@ -312,7 +312,7 @@ void qSlicerVolumeRenderingSettingsPanel::updateVolumeRenderingLogicDefaultRende
 QString qSlicerVolumeRenderingSettingsPanel::defaultQuality() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
-  int qualityIndex = d->QualityControlComboBox->currentIndex();
+  const int qualityIndex = d->QualityControlComboBox->currentIndex();
   QString quality(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
   return quality;
 }
@@ -321,7 +321,7 @@ QString qSlicerVolumeRenderingSettingsPanel::defaultQuality() const
 void qSlicerVolumeRenderingSettingsPanel::setDefaultQuality(const QString& quality)
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
-  int qualityIndex = d->QualityControlComboBox->findText(quality);
+  const int qualityIndex = d->QualityControlComboBox->findText(quality);
   d->QualityControlComboBox->setCurrentIndex(qualityIndex);
 }
 
@@ -350,7 +350,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultQualityChanged(int qualityInd
     viewNode->SetVolumeRenderingQuality(qualityIndex);
   }
 
-  QString quality(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
+  const QString quality(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
   emit defaultQualityChanged(quality);
 }
 
@@ -358,7 +358,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultQualityChanged(int qualityInd
 int qSlicerVolumeRenderingSettingsPanel::defaultInteractiveSpeed() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
-  int interactiveSpeed = d->InteractiveSpeedSlider->value();
+  const int interactiveSpeed = d->InteractiveSpeedSlider->value();
   return interactiveSpeed;
 }
 
@@ -401,7 +401,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultInteractiveSpeedChanged(doubl
 bool qSlicerVolumeRenderingSettingsPanel::defaultSurfaceSmoothing() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
-  bool smoothing = d->SurfaceSmoothingCheckBox->isChecked();
+  const bool smoothing = d->SurfaceSmoothingCheckBox->isChecked();
   return smoothing;
 }
 
@@ -444,7 +444,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultSurfaceSmoothingChanged(bool 
 bool qSlicerVolumeRenderingSettingsPanel::defaultAutoReleaseGraphicsResources() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
-  bool autoRelease = d->AutoReleaseGraphicsResourcesCheckBox->isChecked();
+  const bool autoRelease = d->AutoReleaseGraphicsResourcesCheckBox->isChecked();
   return autoRelease;
 }
 

@@ -10,7 +10,7 @@ qMRMLSliceInformationWidgetPlugin::qMRMLSliceInformationWidgetPlugin(QObject* _p
 // --------------------------------------------------------------------------
 QWidget* qMRMLSliceInformationWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSliceInformationWidget* _widget = new qMRMLSliceInformationWidget(_parent);
+  qMRMLSliceInformationWidget* const _widget = new qMRMLSliceInformationWidget(_parent);
   return _widget;
 }
 

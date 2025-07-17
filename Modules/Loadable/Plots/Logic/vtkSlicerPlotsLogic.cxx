@@ -80,7 +80,7 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
+  const vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
   vtkMRMLPlotSeriesNode* clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
   clonedSeriesNode->CopyWithScene(source);
   std::string nodeName(source->GetName() ? source->GetName() : "");
@@ -98,8 +98,8 @@ void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (layoutNode)
   {
-    int currentLayout = layoutNode->GetViewArrangement();
-    int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
+    const int currentLayout = layoutNode->GetViewArrangement();
+    const int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
     if (currentLayout != layoutWithPlot)
     {
       layoutNode->SetViewArrangement(layoutWithPlot);
@@ -113,7 +113,7 @@ void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
     vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
     if (selectionNode)
     {
-      const char* chartNodeID = (chartNode ? chartNode->GetID() : nullptr);
+      const char* const chartNodeID = (chartNode ? chartNode->GetID() : nullptr);
       selectionNode->SetActivePlotChartID(chartNodeID);
     }
     appLogic->PropagatePlotChartSelection();
@@ -128,7 +128,7 @@ vtkMRMLPlotChartNode* vtkSlicerPlotsLogic::GetFirstPlotChartForSeries(vtkMRMLPlo
     return nullptr;
   }
   std::vector<vtkMRMLNode*> chartNodes;
-  unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
+  const unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
   for (unsigned int chartNodeIndex = 0; chartNodeIndex < numberOfNodes; chartNodeIndex++)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(chartNodes[chartNodeIndex]);

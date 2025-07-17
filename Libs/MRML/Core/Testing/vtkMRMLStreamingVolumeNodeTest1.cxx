@@ -25,14 +25,14 @@ Care Ontario.
 
 int vtkMRMLStreamingVolumeNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLStreamingVolumeNode> node1;
+  const vtkNew<vtkMRMLStreamingVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  int width = 10;
-  int height = 10;
-  vtkSmartPointer<vtkImageData> imageData1 = vtkSmartPointer<vtkImageData>::New();
+  const int width = 10;
+  const int height = 10;
+  const vtkSmartPointer<vtkImageData> imageData1 = vtkSmartPointer<vtkImageData>::New();
   imageData1->SetDimensions(width, height, 1);
   imageData1->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
   unsigned char* originImagePointer = (unsigned char*)imageData1->GetScalarPointer();
@@ -42,28 +42,28 @@ int vtkMRMLStreamingVolumeNodeTest1(int, char*[])
     {
       for (int c = 0; c < 3; c++)
       {
-        unsigned char value = x + y + c;
+        const unsigned char value = x + y + c;
         *originImagePointer = value;
         ++originImagePointer;
       }
     }
   }
 
-  vtkSmartPointer<vtkMRMLStreamingVolumeNode> streamingVolumeNode1 = vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New();
+  const vtkSmartPointer<vtkMRMLStreamingVolumeNode> streamingVolumeNode1 = vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New();
   streamingVolumeNode1->SetCodecFourCC("RV24");
   streamingVolumeNode1->SetAndObserveImageData(imageData1);
   CHECK_NULL(streamingVolumeNode1->GetFrame());
 
   streamingVolumeNode1->EncodeImageData();
 
-  vtkSmartPointer<vtkStreamingVolumeFrame> frameData = streamingVolumeNode1->GetFrame();
+  const vtkSmartPointer<vtkStreamingVolumeFrame> frameData = streamingVolumeNode1->GetFrame();
   CHECK_NOT_NULL(frameData);
 
-  vtkSmartPointer<vtkMRMLStreamingVolumeNode> streamingVolumeNode2 = vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New();
+  const vtkSmartPointer<vtkMRMLStreamingVolumeNode> streamingVolumeNode2 = vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New();
   streamingVolumeNode2->SetAndObserveFrame(frameData);
 
   // Calling GetImageData should decode the frame
-  vtkSmartPointer<vtkImageData> imageData2 = streamingVolumeNode2->GetImageData();
+  const vtkSmartPointer<vtkImageData> imageData2 = streamingVolumeNode2->GetImageData();
   CHECK_NOT_NULL(imageData2);
 
   int image1Dimensions[3] = { 0, 0, 0 };

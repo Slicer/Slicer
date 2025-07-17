@@ -30,7 +30,7 @@ qMRMLModelInfoWidgetPlugin::qMRMLModelInfoWidgetPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLModelInfoWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLModelInfoWidget* _widget = new qMRMLModelInfoWidget(_parent);
+  qMRMLModelInfoWidget* const _widget = new qMRMLModelInfoWidget(_parent);
   return _widget;
 }
 

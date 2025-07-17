@@ -128,7 +128,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
 {
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  vtkMRMLNode* displayNode = d->displayNode(node);
+  vtkMRMLNode* const displayNode = d->displayNode(node);
   if (column == this->visibilityColumn() && //
       displayNode != nullptr)
   {
@@ -156,8 +156,8 @@ void qMRMLSceneDisplayableModel::updateItemDataFromNode(QStandardItem* item, vtk
   {
     if (displayNode)
     {
-      double* rgbF = displayNode->GetColor();
-      QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2], displayNode->GetOpacity());
+      double* const rgbF = displayNode->GetColor();
+      const QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2], displayNode->GetOpacity());
       item->setData(color, Qt::DecorationRole);
       item->setToolTip("Color");
     }
@@ -166,7 +166,7 @@ void qMRMLSceneDisplayableModel::updateItemDataFromNode(QStandardItem* item, vtk
   {
     if (displayNode)
     {
-      QString displayedOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
+      const QString displayedOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
       item->setData(displayedOpacity, Qt::DisplayRole);
       item->setToolTip("Opacity");
     }
@@ -180,20 +180,20 @@ void qMRMLSceneDisplayableModel::updateNodeFromItemData(vtkMRMLNode* node, QStan
   Q_D(qMRMLSceneDisplayableModel);
   if (item->column() == this->colorColumn())
   {
-    QColor color = item->data(Qt::DecorationRole).value<QColor>();
+    const QColor color = item->data(Qt::DecorationRole).value<QColor>();
     // Invalid color can happen when the item hasn't been initialized yet
     if (color.isValid())
     {
       vtkMRMLDisplayNode* displayNode = d->displayNode(node);
       if (displayNode)
       {
-        int wasModifying = displayNode->StartModify();
+        const int wasModifying = displayNode->StartModify();
         // QColor looses precision, don't change color/opacity if not "really"
         // changed.
-        QColor oldColor = QColor::fromRgbF(displayNode->GetColor()[0], //
-                                           displayNode->GetColor()[1], //
-                                           displayNode->GetColor()[2], //
-                                           displayNode->GetOpacity());
+        const QColor oldColor = QColor::fromRgbF(displayNode->GetColor()[0], //
+                                                 displayNode->GetColor()[1], //
+                                                 displayNode->GetColor()[2], //
+                                                 displayNode->GetOpacity());
         if (oldColor != color)
         {
           displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
@@ -205,14 +205,14 @@ void qMRMLSceneDisplayableModel::updateNodeFromItemData(vtkMRMLNode* node, QStan
   }
   if (item->column() == this->opacityColumn())
   {
-    QString displayedOpacity = item->data(Qt::EditRole).toString();
+    const QString displayedOpacity = item->data(Qt::EditRole).toString();
     if (!displayedOpacity.isEmpty())
     {
       vtkMRMLDisplayNode* displayNode = d->displayNode(node);
       // Invalid color can happen when the item hasn't been initialized yet
       if (displayNode)
       {
-        QString currentOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
+        const QString currentOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
         if (displayedOpacity != currentOpacity)
         {
           displayNode->SetOpacity(displayedOpacity.toDouble());

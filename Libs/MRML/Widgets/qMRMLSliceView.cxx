@@ -81,7 +81,7 @@
 // path to the type where needed and the scoped name elsewhere.
 qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy* qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::New()
 {
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkInternalLightBoxRendererManagerProxy");
+  vtkObject* const ret = vtkObjectFactory::CreateInstance("vtkInternalLightBoxRendererManagerProxy");
   if (ret)
   {
     return static_cast<qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy*>(ret);
@@ -166,7 +166,7 @@ void qMRMLSliceViewPrivate::init()
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkInteractorStyleUser> interactorStyle;
+  const vtkNew<vtkInteractorStyleUser> interactorStyle;
 
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
@@ -254,8 +254,8 @@ void qMRMLSliceViewPrivate::updateWidgetFromMRML()
     return;
   }
   q->lightBoxRendererManager()->SetRenderWindowLayout(this->MRMLSliceNode->GetLayoutGridRows(), this->MRMLSliceNode->GetLayoutGridColumns());
-  bool displayLightboxBorders = this->MRMLSliceNode->GetLayoutGridRows() != 1 || //
-                                this->MRMLSliceNode->GetLayoutGridColumns() != 1;
+  const bool displayLightboxBorders = this->MRMLSliceNode->GetLayoutGridRows() != 1 || //
+                                      this->MRMLSliceNode->GetLayoutGridColumns() != 1;
   q->lightBoxRendererManager()->SetHighlighted(0, 0, displayLightboxBorders);
 }
 
@@ -307,7 +307,7 @@ void qMRMLSliceView::getDisplayableManagers(vtkCollection* displayableManagers)
   {
     return;
   }
-  int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
+  const int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
   for (int n = 0; n < num; n++)
   {
     displayableManagers->AddItem(d->DisplayableManagerGroup->GetNthDisplayableManager(n));

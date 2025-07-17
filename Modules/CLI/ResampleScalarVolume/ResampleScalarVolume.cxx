@@ -92,7 +92,7 @@ int DoIt(int argc, char* argv[], T)
   // //////////////////////////////////////////////
   // 1) Read the input series
 
-  typename ReaderType::Pointer reader = ReaderType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(InputVolume.c_str());
 
   try
@@ -108,16 +108,16 @@ int DoIt(int argc, char* argv[], T)
 
   // //////////////////////////////////////////////
   // 2) Resample the series
-  typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
-  typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
-  typename BSplineInterpolatorType::Pointer bsplineInterpolator = BSplineInterpolatorType::New();
-  typename HammingInterpolatorType::Pointer hammingInterpolator = HammingInterpolatorType::New();
-  typename CosineInterpolatorType::Pointer cosineInterpolator = CosineInterpolatorType::New();
-  typename WelchInterpolatorType::Pointer welchInterpolator = WelchInterpolatorType::New();
-  typename LanczosInterpolatorType::Pointer lanczosInterpolator = LanczosInterpolatorType::New();
-  typename BlackmanInterpolatorType::Pointer blackmanInterpolator = BlackmanInterpolatorType::New();
+  const typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
+  const typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
+  const typename BSplineInterpolatorType::Pointer bsplineInterpolator = BSplineInterpolatorType::New();
+  const typename HammingInterpolatorType::Pointer hammingInterpolator = HammingInterpolatorType::New();
+  const typename CosineInterpolatorType::Pointer cosineInterpolator = CosineInterpolatorType::New();
+  const typename WelchInterpolatorType::Pointer welchInterpolator = WelchInterpolatorType::New();
+  const typename LanczosInterpolatorType::Pointer lanczosInterpolator = LanczosInterpolatorType::New();
+  const typename BlackmanInterpolatorType::Pointer blackmanInterpolator = BlackmanInterpolatorType::New();
 
-  typename TransformType::Pointer transform = TransformType::New();
+  const typename TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
 
   const typename InputImageType::SpacingType& inputSpacing = reader->GetOutput()->GetSpacing();
@@ -145,8 +145,8 @@ int DoIt(int argc, char* argv[], T)
   outputSize[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / outputSpacing[1] + .5);
   outputSize[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / outputSpacing[2] + .5);
 
-  typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-  itk::PluginFilterWatcher watcher(resampler, "Resample Volume", CLPProcessInformation);
+  const typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+  const itk::PluginFilterWatcher watcher(resampler, "Resample Volume", CLPProcessInformation);
 
   resampler->SetInput(reader->GetOutput());
   resampler->SetTransform(transform);
@@ -196,7 +196,7 @@ int DoIt(int argc, char* argv[], T)
   // //////////////////////////////////////////////
   // 5) Write the new DICOM series
 
-  typename FileWriterType::Pointer seriesWriter = FileWriterType::New();
+  const typename FileWriterType::Pointer seriesWriter = FileWriterType::New();
   seriesWriter->SetInput(resampler->GetOutput());
   seriesWriter->SetFileName(OutputVolume.c_str());
   try

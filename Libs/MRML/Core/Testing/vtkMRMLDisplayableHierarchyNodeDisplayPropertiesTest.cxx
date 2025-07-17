@@ -205,7 +205,7 @@ bool TestExpand()
 //---------------------------------------------------------------------------
 bool TestDefaults()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
   bool res = true;
   res = TestColors(scene.GetPointer(), DEFAULT_MODEL_COLORS, DEFAULT_HIERARCHY_COLORS) && res;
@@ -216,7 +216,7 @@ bool TestDefaults()
 //---------------------------------------------------------------------------
 bool TestSetVisibilityLevel0()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
 
   // Color and visibility shouldn't be changed when collapsing hierarchy
@@ -233,7 +233,7 @@ bool TestSetVisibilityLevel0()
 //---------------------------------------------------------------------------
 bool TestSetVisibilityLevel1()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
 
   // Color and visibility shouldn't be changed when collapsing hierarchy
@@ -250,7 +250,7 @@ bool TestSetVisibilityLevel1()
 //---------------------------------------------------------------------------
 bool TestCollapseLevel0()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
 
   // Color and visibility shouldn't be changed when collapsing hierarchy
@@ -281,7 +281,7 @@ bool TestCollapseLevel0()
 //---------------------------------------------------------------------------
 bool TestCollapseLevel1()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
 
   // Color and visibility shouldn't be changed when collapsing hierarchy
@@ -312,7 +312,7 @@ bool TestCollapseLevel1()
 //---------------------------------------------------------------------------
 bool TestCollapseLevels0And1()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   PopulateScene(scene.GetPointer(), LEVEL_COUNT);
 
   // Color and visibility shouldn't be changed when collapsing hierarchy

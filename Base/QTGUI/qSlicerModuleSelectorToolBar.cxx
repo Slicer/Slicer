@@ -94,9 +94,9 @@ qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicer
 void qSlicerModuleSelectorToolBarPrivate::init()
 {
   Q_Q(qSlicerModuleSelectorToolBar);
-  QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft);
-  QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
-  QIcon historyIcon(":Icons/ModuleHistory.png");
+  const QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft);
+  const QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
+  const QIcon historyIcon(":Icons/ModuleHistory.png");
 
   // Modules Label
   q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
@@ -114,7 +114,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
   ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
   QObject::connect(ViewFindModuleAction, SIGNAL(triggered()), q, SLOT(showModuleFinder()));
-  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  QMainWindow* const mainWindow = qSlicerApplication::application()->mainWindow();
   for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("ViewMenu"))
@@ -193,7 +193,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 void qSlicerModuleSelectorToolBarPrivate::insertActionOnTop(QAction* action, QMenu* menu)
 {
   menu->removeAction(action);
-  QAction* before = menu->actions().isEmpty() ? 0 : menu->actions().first();
+  QAction* const before = menu->actions().isEmpty() ? 0 : menu->actions().first();
   menu->insertAction(before, action);
   QList<QAction*> actions = menu->actions();
   for (int i = 8; i < actions.size(); ++i)
@@ -278,7 +278,7 @@ void qSlicerModuleSelectorToolBar::moduleRemoved(const QString& moduleName)
   {
     return;
   }
-  QAction* moduleAction = module->action();
+  QAction* const moduleAction = module->action();
   // removing a module consists in retrieving the unique action of the module
   // and removing it from all the possible menus
   d->HistoryMenu->removeAction(moduleAction);
@@ -305,7 +305,7 @@ void qSlicerModuleSelectorToolBar::onModuleSelected(const QString& name)
 void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  QAction* lastAction = d->lastSelectedAction();
+  QAction* const lastAction = d->lastSelectedAction();
   if (action == lastAction)
   {
     return;
@@ -314,8 +314,8 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
   QList<QAction*> nextActions = d->NextHistoryMenu->actions();
   // Remove the activated module from the prev/next list
   // to make sure that one module can appear only once
-  int actionIndexInPreviousMenu = previousActions.indexOf(action);
-  int actionIndexInNextMenu = nextActions.indexOf(action);
+  const int actionIndexInPreviousMenu = previousActions.indexOf(action);
+  const int actionIndexInNextMenu = nextActions.indexOf(action);
   if (actionIndexInNextMenu >= 0)
   {
     nextActions.removeAt(actionIndexInNextMenu);
@@ -366,7 +366,7 @@ void qSlicerModuleSelectorToolBar::showModuleFinder()
   d->ModuleFinder->setWindowFlags(d->NormalModuleFinderFlags);
 #endif
   d->ModuleFinder->setFocusToModuleTitleFilter();
-  int result = d->ModuleFinder->exec();
+  const int result = d->ModuleFinder->exec();
   if (result == QMessageBox::Accepted && !d->ModuleFinder->currentModuleName().isEmpty())
   {
     this->selectModule(d->ModuleFinder->currentModuleName());
@@ -399,7 +399,7 @@ void qSlicerModuleSelectorToolBar::selectNextModule()
   {
     // Add last active module to the previous list
     // (to prevent default placement in actionSelected() )
-    QAction* lastAction = d->lastSelectedAction();
+    QAction* const lastAction = d->lastSelectedAction();
     if (lastAction)
     {
       QList<QAction*> previousActions = d->PreviousHistoryMenu->actions();
@@ -425,7 +425,7 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
   {
     // Add last active module to the next list
     // (to prevent default placement in actionSelected() )
-    QAction* lastAction = d->lastSelectedAction();
+    QAction* const lastAction = d->lastSelectedAction();
     if (lastAction)
     {
       QList<QAction*> nextActions = d->NextHistoryMenu->actions();

@@ -83,16 +83,16 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderWin
     return;
   }
 
-  double windowWidth = interactor->GetRenderWindow()->GetSize()[0];
-  double windowHeight = interactor->GetRenderWindow()->GetSize()[1];
+  const double windowWidth = interactor->GetRenderWindow()->GetSize()[0];
+  const double windowHeight = interactor->GetRenderWindow()->GetSize()[1];
 
-  int numberOfColumns = sliceNode->GetLayoutGridColumns();
-  int numberOfRows = sliceNode->GetLayoutGridRows();
+  const int numberOfColumns = sliceNode->GetLayoutGridColumns();
+  const int numberOfRows = sliceNode->GetLayoutGridRows();
 
-  float tempX = x / windowWidth;
-  float tempY = (windowHeight - 1 - y) / windowHeight;
+  const float tempX = x / windowWidth;
+  const float tempY = (windowHeight - 1 - y) / windowHeight;
 
-  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
+  const float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
 
   vtkRenderer* pokedRenderer = interactor->FindPokedRenderer(x, y);
 
@@ -109,16 +109,16 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderer*
     return;
   }
 
-  double windowWidth = renderer->GetRenderWindow()->GetSize()[0];
-  double windowHeight = renderer->GetRenderWindow()->GetSize()[1];
+  const double windowWidth = renderer->GetRenderWindow()->GetSize()[0];
+  const double windowHeight = renderer->GetRenderWindow()->GetSize()[1];
 
-  int numberOfColumns = sliceNode->GetLayoutGridColumns();
-  int numberOfRows = sliceNode->GetLayoutGridRows();
+  const int numberOfColumns = sliceNode->GetLayoutGridColumns();
+  const int numberOfRows = sliceNode->GetLayoutGridRows();
 
-  float tempX = x / windowWidth;
-  float tempY = (windowHeight - 1 - y) / windowHeight;
+  const float tempX = x / windowWidth;
+  const float tempY = (windowHeight - 1 - y) / windowHeight;
 
-  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
+  const float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
 
   xyz[0] = x - renderer->GetOrigin()[0];
   xyz[1] = y - renderer->GetOrigin()[1];

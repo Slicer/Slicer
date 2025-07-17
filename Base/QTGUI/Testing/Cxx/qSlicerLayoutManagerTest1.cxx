@@ -38,9 +38,9 @@
 int qSlicerLayoutManagerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(nullptr);
+  qSlicerLayoutManager* const layoutManager = new qSlicerLayoutManager(nullptr);
   delete layoutManager;
   return EXIT_SUCCESS;
 }

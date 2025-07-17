@@ -63,8 +63,8 @@ void CSFLSSegmentor3D<TPixel>::setImage(typename ImageType::Pointer img)
 {
   mp_img = img;
 
-  TIndex start = mp_img->GetLargestPossibleRegion().GetIndex();
-  TIndex origin = { { 0, 0, 0 } };
+  const TIndex start = mp_img->GetLargestPossibleRegion().GetIndex();
+  const TIndex origin = { { 0, 0, 0 } };
   if (start != origin)
   {
     std::cout << "Warning: Force image start to be (0, 0, 0)\n";
@@ -195,8 +195,8 @@ bool CSFLSSegmentor3D<TPixel>::getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerClos
    * go through all nbhd who is in the layer of label = mylevel+1
    * pick the LARGEST phi.
    */
-  TIndex idx = { { ix, iy, iz } };
-  char mylevel = mp_label->GetPixel(idx);
+  const TIndex idx = { { ix, iy, iz } };
+  const char mylevel = mp_label->GetPixel(idx);
 
   //  char mylevel = mp_label->get(ix, iy, iz);
   bool foundNbhd = false;
@@ -206,55 +206,55 @@ bool CSFLSSegmentor3D<TPixel>::getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerClos
     // find the SMALLEST phi
     thePhi = 10000;
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if ((ix + 1 < m_nx) && (mp_label->GetPixel(idx1) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx1);
+      const double itsPhi = mp_phi->GetPixel(idx1);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if ((ix - 1 >= 0) && (mp_label->GetPixel(idx2) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx2);
+      const double itsPhi = mp_phi->GetPixel(idx2);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if ((iy + 1 < m_ny) && (mp_label->GetPixel(idx3) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx3);
+      const double itsPhi = mp_phi->GetPixel(idx3);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if (((iy - 1) >= 0) && (mp_label->GetPixel(idx4) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx4);
+      const double itsPhi = mp_phi->GetPixel(idx4);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if ((iz + 1 < m_nz) && (mp_label->GetPixel(idx5) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx5);
+      const double itsPhi = mp_phi->GetPixel(idx5);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if (((iz - 1) >= 0) && (mp_label->GetPixel(idx6) == mylevel - 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx6);
+      const double itsPhi = mp_phi->GetPixel(idx6);
       thePhi = thePhi < itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
@@ -265,55 +265,55 @@ bool CSFLSSegmentor3D<TPixel>::getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerClos
     // find the LARGEST phi
     thePhi = -10000;
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if ((ix + 1 < m_nx) && (mp_label->GetPixel(idx1) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx1);
+      const double itsPhi = mp_phi->GetPixel(idx1);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if ((ix - 1 >= 0) && (mp_label->GetPixel(idx2) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx2);
+      const double itsPhi = mp_phi->GetPixel(idx2);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if ((iy + 1 < m_ny) && (mp_label->GetPixel(idx3) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx3);
+      const double itsPhi = mp_phi->GetPixel(idx3);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if (((iy - 1) >= 0) && (mp_label->GetPixel(idx4) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx4);
+      const double itsPhi = mp_phi->GetPixel(idx4);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if ((iz + 1 < m_nz) && (mp_label->GetPixel(idx5) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx5);
+      const double itsPhi = mp_phi->GetPixel(idx5);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if (((iz - 1) >= 0) && (mp_label->GetPixel(idx6) == mylevel + 1))
     {
-      double itsPhi = mp_phi->GetPixel(idx6);
+      const double itsPhi = mp_phi->GetPixel(idx6);
       thePhi = thePhi > itsPhi ? thePhi : itsPhi;
 
       foundNbhd = true;
@@ -329,7 +329,7 @@ bool CSFLSSegmentor3D<TPixel>::getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerClos
 template <typename TPixel>
 void CSFLSSegmentor3D<TPixel>::normalizeForce()
 {
-  unsigned long nLz = m_lz.size();
+  const unsigned long nLz = m_lz.size();
 
   if (m_force.size() != nLz)
   {
@@ -344,18 +344,18 @@ void CSFLSSegmentor3D<TPixel>::normalizeForce()
 
   // for (std::list<double>::const_iterator itf = m_force.begin(); itf != m_force.end(); ++itf)
   {
-    long nf = m_force.size();
+    const long nf = m_force.size();
     // for (std::list<double>::const_iterator itf = m_force.begin(); itf != m_force.end(); ++itf)
     for (long itf = 0; itf < nf; ++itf)
     {
-      double v = fabs(m_force[itf]);
+      const double v = fabs(m_force[itf]);
       fMax = fMax > v ? fMax : v;
     }
   }
   fMax /= 0.49;
 
   {
-    long nf = m_force.size();
+    const long nf = m_force.size();
     // for (std::list<double>::iterator itf = m_force.begin(); itf != m_force.end(); ++itf)
     for (long itf = 0; itf < nf; ++itf)
     {
@@ -400,7 +400,7 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
   {
     // std::list<double>::const_iterator itf = m_force.begin();
 
-    long nz = m_lz.size();
+    const long nz = m_lz.size();
     std::vector<CSFLSLayer::iterator> m_lzIterVct(nz);
     {
       long iiizzz = 0;
@@ -413,7 +413,7 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     // #pragma omp parallel for
     for (long iiizzz = 0; iiizzz < nz; ++iiizzz)
     {
-      long itf = iiizzz;
+      const long itf = iiizzz;
 
       CSFLSLayer::iterator itz = m_lzIterVct[iiizzz];
 
@@ -421,10 +421,10 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
       long iy = (*itz)[1];
       long iz = (*itz)[2];
 
-      TIndex idx = { { ix, iy, iz } };
+      const TIndex idx = { { ix, iy, iz } };
 
-      double phi_old = mp_phi->GetPixel(idx);
-      double phi_new = phi_old + m_force[itf];
+      const double phi_old = mp_phi->GetPixel(idx);
+      const double phi_new = phi_old + m_force[itf];
 
       /*----------------------------------------------------------------------
         Update the lists of pt who change the state, for faster
@@ -485,14 +485,14 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itn1)[1];
     long iz = (*itn1)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     double thePhi;
-    bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
+    const bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
     if (found)
     {
-      double phi_new = thePhi - 1;
+      const double phi_new = thePhi - 1;
       mp_phi->SetPixel(idx, phi_new);
 
       if (phi_new >= -0.5)
@@ -534,14 +534,14 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itp1)[1];
     long iz = (*itp1)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     double thePhi;
-    bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
+    const bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
     if (found)
     {
-      double phi_new = thePhi + 1;
+      const double phi_new = thePhi + 1;
       mp_phi->SetPixel(idx, phi_new);
 
       if (phi_new <= 0.5)
@@ -584,14 +584,14 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itn2)[1];
     long iz = (*itn2)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     double thePhi;
-    bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
+    const bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
     if (found)
     {
-      double phi_new = thePhi - 1;
+      const double phi_new = thePhi - 1;
       mp_phi->SetPixel(idx, phi_new);
 
       if (phi_new >= -1.5)
@@ -628,14 +628,14 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long ix = (*itp2)[0];
     long iy = (*itp2)[1];
     long iz = (*itp2)[2];
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     double thePhi;
-    bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
+    const bool found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
     if (found)
     {
-      double phi_new = thePhi + 1;
+      const double phi_new = thePhi + 1;
       mp_phi->SetPixel(idx, phi_new);
 
       if (phi_new <= 1.5)
@@ -672,7 +672,7 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long ix = (*itSz)[0];
     long iy = (*itSz)[1];
     long iz = (*itSz)[2];
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     m_lz.push_back(*itSz);
     mp_label->SetPixel(idx, 0);
@@ -688,49 +688,49 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itSn1)[1];
     long iz = (*itSn1)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     m_ln1.push_back(*itSn1);
     // itSn1 = Sn1.erase(itSn1);
 
     mp_label->SetPixel(idx, -1);
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if ((ix + 1 < m_nx) && doubleEqual(mp_phi->GetPixel(idx1), -3.0))
     {
       Sn2.push_back(NodeType(ix + 1, iy, iz));
       mp_phi->SetPixel(idx1, mp_phi->GetPixel(idx) - 1);
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if ((ix - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx2), -3.0))
     {
       Sn2.push_back(NodeType(ix - 1, iy, iz));
       mp_phi->SetPixel(idx2, mp_phi->GetPixel(idx) - 1);
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if ((iy + 1 < m_ny) && doubleEqual(mp_phi->GetPixel(idx3), -3.0))
     {
       Sn2.push_back(NodeType(ix, iy + 1, iz));
       mp_phi->SetPixel(idx3, mp_phi->GetPixel(idx) - 1);
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if ((iy - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx4), -3.0))
     {
       Sn2.push_back(NodeType(ix, iy - 1, iz));
       mp_phi->SetPixel(idx4, mp_phi->GetPixel(idx) - 1);
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if ((iz + 1 < m_nz) && doubleEqual(mp_phi->GetPixel(idx5), -3.0))
     {
       Sn2.push_back(NodeType(ix, iy, iz + 1));
       mp_phi->SetPixel(idx5, mp_phi->GetPixel(idx) - 1);
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if ((iz - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx6), -3.0))
     {
       Sn2.push_back(NodeType(ix, iy, iz - 1));
@@ -748,47 +748,47 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itSp1)[1];
     long iz = (*itSp1)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     m_lp1.push_back(*itSp1);
     mp_label->SetPixel(idx, 1);
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if ((ix + 1 < m_nx) && doubleEqual(mp_phi->GetPixel(idx1), 3.0))
     {
       Sp2.push_back(NodeType(ix + 1, iy, iz));
       mp_phi->SetPixel(idx1, mp_phi->GetPixel(idx) + 1);
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if ((ix - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx2), 3.0))
     {
       Sp2.push_back(NodeType(ix - 1, iy, iz));
       mp_phi->SetPixel(idx2, mp_phi->GetPixel(idx) + 1);
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if ((iy + 1 < m_ny) && doubleEqual(mp_phi->GetPixel(idx3), 3.0))
     {
       Sp2.push_back(NodeType(ix, iy + 1, iz));
       mp_phi->SetPixel(idx3, mp_phi->GetPixel(idx) + 1);
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if ((iy - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx4), 3.0))
     {
       Sp2.push_back(NodeType(ix, iy - 1, iz));
       mp_phi->SetPixel(idx4, mp_phi->GetPixel(idx) + 1);
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if ((iz + 1 < m_nz) && doubleEqual(mp_phi->GetPixel(idx5), 3.0))
     {
       Sp2.push_back(NodeType(ix, iy, iz + 1));
       mp_phi->SetPixel(idx5, mp_phi->GetPixel(idx) + 1);
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if ((iz - 1 >= 0) && doubleEqual(mp_phi->GetPixel(idx6), 3.0))
     {
       Sp2.push_back(NodeType(ix, iy, iz - 1));
@@ -810,7 +810,7 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
       long iy = (*itSn2)[1];
       long iz = (*itSn2)[2];
 
-      TIndex idx = { { ix, iy, iz } };
+      const TIndex idx = { { ix, iy, iz } };
 
       m_ln2.push_back(*itSn2);
 
@@ -828,7 +828,7 @@ void CSFLSSegmentor3D<TPixel>::oneStepLevelSetEvolution()
     long iy = (*itSp2)[1];
     long iz = (*itSp2)[2];
 
-    TIndex idx = { { ix, iy, iz } };
+    const TIndex idx = { { ix, iy, iz } };
 
     m_lp2.push_back(*itSp2);
 
@@ -851,11 +851,11 @@ void CSFLSSegmentor3D<TPixel>::initializeLabel()
   }
 
   // find interface and mark as 0, create Lz
-  char defaultLabel = 0;
+  const char defaultLabel = 0;
   //  mp_label.reset(new cArray3D<char>(m_nx, m_ny, m_nz, defaultLabel) );
 
   mp_label = LabelImageType::New();
-  TRegion region = mp_img->GetLargestPossibleRegion();
+  const TRegion region = mp_img->GetLargestPossibleRegion();
 
   mp_label->SetRegions(region);
   mp_label->Allocate();
@@ -878,11 +878,11 @@ void CSFLSSegmentor3D<TPixel>::initializePhi()
     raise(SIGABRT);
   }
 
-  double arbitraryInitPhi = 1000;
+  const double arbitraryInitPhi = 1000;
   //  mp_phi.reset(new cArray3D<double>(m_nx, m_ny, m_nz, arbitraryInitPhi) );
 
   mp_phi = LSImageType::New();
-  TRegion region = mp_img->GetLargestPossibleRegion();
+  const TRegion region = mp_img->GetLargestPossibleRegion();
 
   mp_phi->SetRegions(region);
   mp_phi->Allocate();
@@ -925,13 +925,13 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
     {
       for (long ix = 0; ix < m_nx; ++ix)
       {
-        TIndex idx = { { ix, iy, iz } };
-        TIndex idx1 = { { ix - 1, iy, iz } };
-        TIndex idx2 = { { ix + 1, iy, iz } };
-        TIndex idx3 = { { ix, iy - 1, iz } };
-        TIndex idx4 = { { ix, iy + 1, iz } };
-        TIndex idx5 = { { ix, iy, iz - 1 } };
-        TIndex idx6 = { { ix, iy, iz + 1 } };
+        const TIndex idx = { { ix, iy, iz } };
+        const TIndex idx1 = { { ix - 1, iy, iz } };
+        const TIndex idx2 = { { ix + 1, iy, iz } };
+        const TIndex idx3 = { { ix, iy - 1, iz } };
+        const TIndex idx4 = { { ix, iy + 1, iz } };
+        const TIndex idx5 = { { ix, iy, iz - 1 } };
+        const TIndex idx6 = { { ix, iy, iz + 1 } };
 
         // mark the inside and outside of label and phi
         if (mp_mask->GetPixel(idx) == 0)
@@ -976,7 +976,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (ix + 1 < m_nx)
     {
-      TIndex idx = { { ix + 1, iy, iz } };
+      const TIndex idx = { { ix + 1, iy, iz } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -996,7 +996,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (ix - 1 >= 0)
     {
-      TIndex idx = { { ix - 1, iy, iz } };
+      const TIndex idx = { { ix - 1, iy, iz } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -1016,7 +1016,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (iy + 1 < m_ny)
     {
-      TIndex idx = { { ix, iy + 1, iz } };
+      const TIndex idx = { { ix, iy + 1, iz } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -1036,7 +1036,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (iy - 1 >= 0)
     {
-      TIndex idx = { { ix, iy - 1, iz } };
+      const TIndex idx = { { ix, iy - 1, iz } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -1056,7 +1056,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (iz + 1 < m_nz)
     {
-      TIndex idx = { { ix, iy, iz + 1 } };
+      const TIndex idx = { { ix, iy, iz + 1 } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -1076,7 +1076,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
 
     if (iz - 1 >= 0)
     {
-      TIndex idx = { { ix, iy, iz - 1 } };
+      const TIndex idx = { { ix, iy, iz - 1 } };
 
       if (mp_label->GetPixel(idx) == 3)
       {
@@ -1101,7 +1101,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
     long iy = (*it)[1];
     long iz = (*it)[2];
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if (ix + 1 < m_nx && mp_label->GetPixel(idx1) == -3)
     {
       mp_label->SetPixel(idx1, -2);
@@ -1110,7 +1110,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_ln2.push_back(NodeType(ix + 1, iy, iz));
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if (ix - 1 >= 0 && mp_label->GetPixel(idx2) == -3)
     {
       mp_label->SetPixel(idx2, -2);
@@ -1119,7 +1119,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_ln2.push_back(NodeType(ix - 1, iy, iz));
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if (iy + 1 < m_ny && mp_label->GetPixel(idx3) == -3)
     {
       mp_label->SetPixel(idx3, -2);
@@ -1128,7 +1128,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_ln2.push_back(NodeType(ix, iy + 1, iz));
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if (iy - 1 >= 0 && mp_label->GetPixel(idx4) == -3)
     {
       mp_label->SetPixel(idx4, -2);
@@ -1137,7 +1137,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_ln2.push_back(NodeType(ix, iy - 1, iz));
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if (iz + 1 < m_nz && mp_label->GetPixel(idx5) == -3)
     {
       mp_label->SetPixel(idx5, -2);
@@ -1146,7 +1146,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_ln2.push_back(NodeType(ix, iy, iz + 1));
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if (iz - 1 >= 0 && mp_label->GetPixel(idx6) == -3)
     {
       mp_label->SetPixel(idx6, -2);
@@ -1162,7 +1162,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
     long iy = (*it)[1];
     long iz = (*it)[2];
 
-    TIndex idx1 = { { ix + 1, iy, iz } };
+    const TIndex idx1 = { { ix + 1, iy, iz } };
     if (ix + 1 < m_nx && mp_label->GetPixel(idx1) == 3)
     {
       mp_label->SetPixel(idx1, 2);
@@ -1171,7 +1171,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_lp2.push_back(NodeType(ix + 1, iy, iz));
     }
 
-    TIndex idx2 = { { ix - 1, iy, iz } };
+    const TIndex idx2 = { { ix - 1, iy, iz } };
     if (ix - 1 >= 0 && mp_label->GetPixel(idx2) == 3)
     {
       mp_label->SetPixel(idx2, 2);
@@ -1180,7 +1180,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_lp2.push_back(NodeType(ix - 1, iy, iz));
     }
 
-    TIndex idx3 = { { ix, iy + 1, iz } };
+    const TIndex idx3 = { { ix, iy + 1, iz } };
     if (iy + 1 < m_ny && mp_label->GetPixel(idx3) == 3)
     {
       mp_label->SetPixel(idx3, 2);
@@ -1189,7 +1189,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_lp2.push_back(NodeType(ix, iy + 1, iz));
     }
 
-    TIndex idx4 = { { ix, iy - 1, iz } };
+    const TIndex idx4 = { { ix, iy - 1, iz } };
     if (iy - 1 >= 0 && mp_label->GetPixel(idx4) == 3)
     {
       mp_label->SetPixel(idx4, 2);
@@ -1198,7 +1198,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_lp2.push_back(NodeType(ix, iy - 1, iz));
     }
 
-    TIndex idx5 = { { ix, iy, iz + 1 } };
+    const TIndex idx5 = { { ix, iy, iz + 1 } };
     if (iz + 1 < m_nz && mp_label->GetPixel(idx5) == 3)
     {
       mp_label->SetPixel(idx5, 2);
@@ -1207,7 +1207,7 @@ void CSFLSSegmentor3D<TPixel>::initializeSFLSFromMask()
       m_lp2.push_back(NodeType(ix, iy, iz + 1));
     }
 
-    TIndex idx6 = { { ix, iy, iz - 1 } };
+    const TIndex idx6 = { { ix, iy, iz - 1 } };
     if (iz - 1 >= 0 && mp_label->GetPixel(idx6) == 3)
     {
       mp_label->SetPixel(idx6, 2);
@@ -1330,13 +1330,13 @@ double CSFLSSegmentor3D<TPixel>::computeKappa(long ix, long iy, long iz)
   char yok = 0;
   char zok = 0;
 
-  TIndex idx = { { ix, iy, iz } };
-  TIndex idx1 = { { ix - 1, iy, iz } };
-  TIndex idx2 = { { ix + 1, iy, iz } };
-  TIndex idx3 = { { ix, iy - 1, iz } };
-  TIndex idx4 = { { ix, iy + 1, iz } };
-  TIndex idx5 = { { ix, iy, iz - 1 } };
-  TIndex idx6 = { { ix, iy, iz + 1 } };
+  const TIndex idx = { { ix, iy, iz } };
+  const TIndex idx1 = { { ix - 1, iy, iz } };
+  const TIndex idx2 = { { ix + 1, iy, iz } };
+  const TIndex idx3 = { { ix, iy - 1, iz } };
+  const TIndex idx4 = { { ix, iy + 1, iz } };
+  const TIndex idx5 = { { ix, iy, iz - 1 } };
+  const TIndex idx6 = { { ix, iy, iz + 1 } };
 
   if (ix + 1 < m_nx && ix - 1 >= 0)
   {
@@ -1376,30 +1376,30 @@ double CSFLSSegmentor3D<TPixel>::computeKappa(long ix, long iy, long iz)
 
   if (xok && yok)
   {
-    TIndex idx_1 = { { ix + 1, iy + 1, iz } };
-    TIndex idx_2 = { { ix - 1, iy - 1, iz } };
-    TIndex idx_3 = { { ix + 1, iy - 1, iz } };
-    TIndex idx_4 = { { ix - 1, iy + 1, iz } };
+    const TIndex idx_1 = { { ix + 1, iy + 1, iz } };
+    const TIndex idx_2 = { { ix - 1, iy - 1, iz } };
+    const TIndex idx_3 = { { ix + 1, iy - 1, iz } };
+    const TIndex idx_4 = { { ix - 1, iy + 1, iz } };
 
     dxy = 0.25 * (mp_phi->GetPixel(idx_1) + mp_phi->GetPixel(idx_2) - mp_phi->GetPixel(idx_3) - mp_phi->GetPixel(idx_4)) / (m_dx * m_dy);
   }
 
   if (xok && zok)
   {
-    TIndex idx_1 = { { ix + 1, iy, iz + 1 } };
-    TIndex idx_2 = { { ix - 1, iy, iz - 1 } };
-    TIndex idx_3 = { { ix + 1, iy, iz - 1 } };
-    TIndex idx_4 = { { ix - 1, iy, iz + 1 } };
+    const TIndex idx_1 = { { ix + 1, iy, iz + 1 } };
+    const TIndex idx_2 = { { ix - 1, iy, iz - 1 } };
+    const TIndex idx_3 = { { ix + 1, iy, iz - 1 } };
+    const TIndex idx_4 = { { ix - 1, iy, iz + 1 } };
 
     dxz = 0.25 * (mp_phi->GetPixel(idx_1) + mp_phi->GetPixel(idx_2) - mp_phi->GetPixel(idx_3) - mp_phi->GetPixel(idx_4)) / (m_dx * m_dz);
   }
 
   if (yok && zok)
   {
-    TIndex idx_1 = { { ix, iy + 1, iz + 1 } };
-    TIndex idx_2 = { { ix, iy - 1, iz - 1 } };
-    TIndex idx_3 = { { ix, iy + 1, iz - 1 } };
-    TIndex idx_4 = { { ix, iy - 1, iz + 1 } };
+    const TIndex idx_1 = { { ix, iy + 1, iz + 1 } };
+    const TIndex idx_2 = { { ix, iy - 1, iz - 1 } };
+    const TIndex idx_3 = { { ix, iy + 1, iz - 1 } };
+    const TIndex idx_4 = { { ix, iy - 1, iz + 1 } };
 
     dyz = 0.25 * (mp_phi->GetPixel(idx_1) + mp_phi->GetPixel(idx_2) - mp_phi->GetPixel(idx_3) - mp_phi->GetPixel(idx_4)) / (m_dy * m_dz);
   }

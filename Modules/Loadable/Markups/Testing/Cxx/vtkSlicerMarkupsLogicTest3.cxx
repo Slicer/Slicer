@@ -94,8 +94,8 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
   // convert and test
   logic1->ConvertAnnotationFiducialsToMarkups();
 
-  int numAnnotationFiducials = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
-  int numMarkupsFiducials = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
+  const int numAnnotationFiducials = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
+  const int numMarkupsFiducials = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
   if (numAnnotationFiducials != 0 || //
       numMarkupsFiducials != 2)
   {
@@ -124,26 +124,26 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
   applicationLogic->Delete();
 
   // check the second list
-  vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsFiducialNode");
+  vtkMRMLNode* const mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsFiducialNode");
   if (mrmlNode)
   {
     vtkMRMLMarkupsFiducialNode* markupsFid = vtkMRMLMarkupsFiducialNode::SafeDownCast(mrmlNode);
     if (markupsFid)
     {
-      std::string desc = markupsFid->GetNthControlPointDescription(3);
+      const std::string desc = markupsFid->GetNthControlPointDescription(3);
       if (desc.compare("testing description") != 0)
       {
         std::cerr << "Failed to get the expected description on markup 3, got: " << desc.c_str() << std::endl;
         return EXIT_FAILURE;
       }
-      std::string assocNodeID = markupsFid->GetNthControlPointAssociatedNodeID(4);
+      const std::string assocNodeID = markupsFid->GetNthControlPointAssociatedNodeID(4);
       if (assocNodeID.compare("vtkMRMLScalarVolumeNode4") != 0)
       {
         std::cerr << "Failed to get the expected associated node id on markup 4, got: " << assocNodeID.c_str() << std::endl;
         return EXIT_FAILURE;
       }
       vtkVector3d posVector = markupsFid->GetNthControlPointPositionVector(0);
-      double* pos = posVector.GetData();
+      double* const pos = posVector.GetData();
       double expectedPos[3] = { 5.5, -6.6, 0.0 };
       if (vtkMath::Distance2BetweenPoints(pos, expectedPos) > 0.01)
       {

@@ -103,10 +103,10 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
   QList<vtkMRMLNode*> res;
-  const ctkCheckableComboBox* checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
+  const ctkCheckableComboBox* const checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
   for (const QModelIndex& checkedIndex : checkableComboBox->checkedIndexes())
   {
-    vtkMRMLNode* checkedNode = d->mrmlNodeFromIndex(checkedIndex);
+    vtkMRMLNode* const checkedNode = d->mrmlNodeFromIndex(checkedIndex);
     // MRMLScene or extra items could be checked, we don't want them
     if (checkedNode)
     {
@@ -131,7 +131,7 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes() const
 bool qMRMLCheckableNodeComboBox::allChecked() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
-  const ctkCheckableComboBox* checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
+  const ctkCheckableComboBox* const checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
   return checkableComboBox->allChecked();
 }
 
@@ -139,7 +139,7 @@ bool qMRMLCheckableNodeComboBox::allChecked() const
 bool qMRMLCheckableNodeComboBox::noneChecked() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
-  const ctkCheckableComboBox* checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
+  const ctkCheckableComboBox* const checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
   return checkableComboBox->noneChecked();
 }
 
@@ -147,7 +147,7 @@ bool qMRMLCheckableNodeComboBox::noneChecked() const
 Qt::CheckState qMRMLCheckableNodeComboBox::checkState(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
-  const ctkCheckableComboBox* checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
+  const ctkCheckableComboBox* const checkableComboBox = qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
   QModelIndexList indexes = d->indexesFromMRMLNodeID(node ? node->GetID() : QString());
   if (indexes.size() == 0)
   {

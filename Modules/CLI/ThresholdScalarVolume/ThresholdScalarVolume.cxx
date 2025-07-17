@@ -50,14 +50,14 @@ int DoIt(int argc, char* argv[])
   typename ChangeFilterType::Pointer changeFilter;
   typename NegateFilterType::Pointer negateFilter;
 
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
 
   reader1->SetFileName(InputVolume.c_str());
 
-  typename FilterType::Pointer filter = FilterType::New();
+  const typename FilterType::Pointer filter = FilterType::New();
   lastFilter = filter;
-  itk::PluginFilterWatcher watchFilter(filter, "Threshold image", CLPProcessInformation);
+  const itk::PluginFilterWatcher watchFilter(filter, "Threshold image", CLPProcessInformation);
 
   filter->SetInput(0, reader1->GetOutput());
   filter->SetOutsideValue(OutsideValue);
@@ -77,10 +77,10 @@ int DoIt(int argc, char* argv[])
 
   if (Negate)
   {
-    InputPixelType outsideValue = (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ? filter->GetLower() - 1 : filter->GetUpper() + 1;
+    const InputPixelType outsideValue = (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ? filter->GetLower() - 1 : filter->GetUpper() + 1;
     filter->SetOutsideValue(outsideValue);
     changeFilter = ChangeFilterType::New();
-    itk::PluginFilterWatcher watchChangeFilter(changeFilter, "Relabel image", CLPProcessInformation);
+    const itk::PluginFilterWatcher watchChangeFilter(changeFilter, "Relabel image", CLPProcessInformation);
     changeFilter->SetInput(0, filter->GetOutput());
     changeFilter->SetChange(0, 1);
     changeFilter->SetChange(outsideValue, 0);
@@ -89,15 +89,15 @@ int DoIt(int argc, char* argv[])
     // a value other than 0 in the mask, set OutsideValue.
     negateFilter = NegateFilterType::New();
     lastFilter = negateFilter;
-    itk::PluginFilterWatcher watchNegateFilter(filter, "Negate threshold", CLPProcessInformation);
+    const itk::PluginFilterWatcher watchNegateFilter(filter, "Negate threshold", CLPProcessInformation);
 
     negateFilter->SetInput(0, reader1->GetOutput());
     negateFilter->SetInput(1, changeFilter->GetOutput()); // filter is the mask
     negateFilter->SetOutsideValue(OutsideValue);
     negateFilter->Update();
   }
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(OutputVolume.c_str());
   writer->SetInput(lastFilter->GetOutput());
   writer->Update();

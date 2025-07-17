@@ -39,17 +39,17 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
 
   reader->SetFileName(inputVolume.c_str());
   writer->SetFileName(outputVolume.c_str());
 
   typedef itk::MedianImageFilter<InputImageType, OutputImageType> FilterType;
 
-  typename FilterType::Pointer filter = FilterType::New();
+  const typename FilterType::Pointer filter = FilterType::New();
 
-  itk::PluginFilterWatcher watcher(filter, "Median Image Filter", CLPProcessInformation);
+  const itk::PluginFilterWatcher watcher(filter, "Median Image Filter", CLPProcessInformation);
 
   typename InputImageType::SizeType indexRadius;
 

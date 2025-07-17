@@ -51,7 +51,7 @@ void vtkSegmentationConverterRule::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule* vtkSegmentationConverterRule::Clone()
 {
-  vtkSegmentationConverterRule* clone = this->CreateRuleInstance();
+  vtkSegmentationConverterRule* const clone = this->CreateRuleInstance();
   clone->ConversionParameters->DeepCopy(this->ConversionParameters);
   return clone;
 }
@@ -80,7 +80,7 @@ void vtkSegmentationConverterRule::GetRuleConversionParameters(vtkSegmentationCo
     vtkErrorMacro("GetRuleConversionParameters failed: invalid conversionParameters");
     return;
   }
-  int numberOfParameters = this->ConversionParameters->GetNumberOfParameters();
+  const int numberOfParameters = this->ConversionParameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
     conversionParameters->CopyParameter(this->ConversionParameters, parameterIndex);

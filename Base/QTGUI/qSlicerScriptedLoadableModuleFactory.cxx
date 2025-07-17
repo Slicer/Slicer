@@ -50,7 +50,7 @@ bool ctkFactoryScriptedItem::load()
     if (!qSlicerCoreApplication::application()->isEmbeddedModule(this->path()))
     {
       QDir modulePathWithoutIntDir = QFileInfo(this->path()).dir();
-      QString intDir = qSlicerCoreApplication::application()->intDir();
+      const QString intDir = qSlicerCoreApplication::application()->intDir();
       if (intDir == modulePathWithoutIntDir.dirName())
       {
         modulePathWithoutIntDir.cdUp();
@@ -73,7 +73,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   module->setPath(this->path());
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -99,7 +99,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
   module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome(), app->revision()));
 
-  bool ret = module->setPythonSource(this->path());
+  const bool ret = module->setPythonSource(this->path());
   if (!ret)
   {
     return nullptr;
@@ -125,7 +125,7 @@ public:
 //-----------------------------------------------------------------------------
 QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     return QStringList();
@@ -139,7 +139,7 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
   QStringList defaultQTModulePaths;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
-  bool appendDefaultQTModulePaths = true;
+  bool const appendDefaultQTModulePaths = true;
 #else
   bool appendDefaultQTModulePaths = app->isInstalled();
 #endif
@@ -157,8 +157,8 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 
   // Add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
-  QSettings* settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QSettings* const settings = app->revisionUserSettings();
+  const QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
   //  qDebug() << "scriptedModulePaths:" << qtModulePaths;
@@ -200,8 +200,8 @@ bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file) co
   // Accept if current file is a pyc file and there is no associated py file
   if (file.suffix().compare("pyc", Qt::CaseInsensitive) == 0)
   {
-    int length = file.filePath().size();
-    QString pyFilePath = file.filePath().remove(length - 1, 1);
+    const int length = file.filePath().size();
+    const QString pyFilePath = file.filePath().remove(length - 1, 1);
     if (!QFile::exists(pyFilePath))
     {
       return true;

@@ -75,8 +75,8 @@ int qMRMLPlotPropertiesWidgetTest1(int argc, char* argv[])
   table->AddColumn(arrS.GetPointer());
 
   // Fill in the table with some example values
-  int numPoints = 69;
-  float inc = 7.5 / (numPoints - 1);
+  const int numPoints = 69;
+  const float inc = 7.5 / (numPoints - 1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {

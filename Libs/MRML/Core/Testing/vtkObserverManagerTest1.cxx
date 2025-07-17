@@ -28,7 +28,7 @@ struct callBackDataStruct
 void TestCallback(vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   std::cout << "TestCallback" << std::endl;
-  callBackDataStruct* myCBStruct = (callBackDataStruct*)clientData;
+  callBackDataStruct* const myCBStruct = (callBackDataStruct*)clientData;
   if (myCBStruct)
   {
     std::cout << "testString = " << myCBStruct->testString << std::endl;
@@ -58,7 +58,7 @@ int vtkObserverManagerTest1(int, char*[])
   vtkNew<vtkMRMLModelNode> modelNode;
   modelNode->SetName("Owner");
   observerManager->AssignOwner(modelNode.GetPointer());
-  vtkObject* owner = observerManager->GetOwner();
+  vtkObject* const owner = observerManager->GetOwner();
   if (vtkMRMLModelNode::SafeDownCast(owner) != modelNode.GetPointer())
   {
     std::cerr << "Error getting owner." << std::endl;
@@ -72,7 +72,7 @@ int vtkObserverManagerTest1(int, char*[])
     std::cerr << "Error getting call back command." << std::endl;
     return EXIT_FAILURE;
   }
-  callBackDataStruct* cbStruct = new callBackDataStruct;
+  callBackDataStruct* const cbStruct = new callBackDataStruct;
   cbStruct->testString = std::string("Testing");
   callbackCommand->SetClientData(cbStruct);
   callbackCommand->SetCallback(TestCallback);

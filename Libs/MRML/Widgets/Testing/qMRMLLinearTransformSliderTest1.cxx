@@ -12,12 +12,12 @@
 int qMRMLLinearTransformSliderTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   QWidget widget;
 
-  qMRMLLinearTransformSlider mrmlItem(&widget);
+  const qMRMLLinearTransformSlider mrmlItem(&widget);
 
   return EXIT_SUCCESS;
 }

@@ -33,12 +33,12 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  vtkMRMLMarkupsDisplayNode* dispNode = node1->GetMarkupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* const dispNode = node1->GetMarkupsDisplayNode();
   std::cout << "Get MarkupsDisplayNode returned " << (dispNode ? "valid" : "null") << " pointer" << std::endl;
 
   // set position
   double inPos[3] = { 0.33, 1.55, -99.0 };
-  int fidIndex = node1->AddControlPoint(vtkVector3d(inPos), std::string());
+  const int fidIndex = node1->AddControlPoint(vtkVector3d(inPos), std::string());
   vtkVector3d posVector = node1->GetNthControlPointPositionVector(0);
   double diff = sqrt(vtkMath::Distance2BetweenPoints(inPos, posVector.GetData()));
   std::cout << "Diff between AddControlPoint and GetNthControlPointPositionVector = " << diff << std::endl;
@@ -47,7 +47,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
     return EXIT_FAILURE;
   }
   inPos[1] = 15.55;
-  int fidIndex2 = node1->AddControlPoint(vtkVector3d(inPos), std::string());
+  const int fidIndex2 = node1->AddControlPoint(vtkVector3d(inPos), std::string());
 
   // selected
   node1->SetNthControlPointSelected(fidIndex2, false);
@@ -69,7 +69,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
 
   // label
   node1->SetNthControlPointLabel(fidIndex2, std::string("TestingLabelHere"));
-  std::string returnLabel = node1->GetNthControlPointLabel(fidIndex2);
+  const std::string returnLabel = node1->GetNthControlPointLabel(fidIndex2);
   if (returnLabel.compare("TestingLabelHere") != 0)
   {
     std::cerr << "Failure to set/get label for fid " << fidIndex2 << ", got '" << returnLabel.c_str() << "'" << std::endl;
@@ -77,9 +77,9 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
   }
 
   // associated node id
-  std::string inID = "vtkMRMLScalarVolumeNode21";
+  const std::string inID = "vtkMRMLScalarVolumeNode21";
   node1->SetNthControlPointAssociatedNodeID(fidIndex2, (inID.c_str() ? std::string(inID.c_str()) : ""));
-  std::string outID = node1->GetNthControlPointAssociatedNodeID(fidIndex2);
+  const std::string outID = node1->GetNthControlPointAssociatedNodeID(fidIndex2);
   if (outID.compare(inID) != 0)
   {
     std::cerr << "Failed to set fid " << fidIndex2 << " assoc node id to " << inID.c_str() << ", got '" << outID << "'" << std::endl;

@@ -50,7 +50,7 @@ int populateScene(vtkMRMLScene* scene)
   scene->Clear(1);
 
   vtkNew<vtkMRMLModelNode> displayableNode;
-  vtkNew<vtkPolyData> polyData;
+  const vtkNew<vtkPolyData> polyData;
   displayableNode->SetAndObserveMesh(polyData);
   scene->AddNode(displayableNode);
 
@@ -73,7 +73,7 @@ int vtkSceneViewImportSceneTest(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
   if (!tempDir)
   {
     std::cerr << "Missing temporary directory argument" << std::endl;
@@ -112,7 +112,7 @@ int vtkSceneViewImportSceneTest(int argc, char* argv[])
   CHECK_INT(sceneViewLogic->GetNumberOfSceneViews(), 1);
 
   // Save the scene
-  std::string fileName = std::string(tempDir) + "/vtkSceneViewNodeImportSceneTest.mrb";
+  const std::string fileName = std::string(tempDir) + "/vtkSceneViewNodeImportSceneTest.mrb";
   CHECK_BOOL(scene->WriteToMRB(fileName.c_str()), true);
 
   scene->Clear(1);

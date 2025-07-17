@@ -28,7 +28,7 @@ qMRMLColorTableViewPlugin::qMRMLColorTableViewPlugin(QObject* _parent)
 
 QWidget* qMRMLColorTableViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLColorTableView* _widget = new qMRMLColorTableView(_parent);
+  qMRMLColorTableView* const _widget = new qMRMLColorTableView(_parent);
   return _widget;
 }
 

@@ -41,21 +41,21 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
     scene->SetRootDirectory(temporaryDirectory);
   }
 
-  std::string longNodeName = "Loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporin"
-                             "cididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudex"
-                             "ercitationullamcolaborisnisiutaliquipexeacommodoconsequatDuisauteir"
-                             "uredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnull"
-                             "apariaturExcepteursintoccaecatcupidatatnonproidentsuntinculpaquioff"
-                             "iciadeseruntmollitanimidestlaborum";
-  std::string extension = ".txt";
-  std::string longFileName = longNodeName + extension;
+  const std::string longNodeName = "Loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporin"
+                                   "cididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudex"
+                                   "ercitationullamcolaborisnisiutaliquipexeacommodoconsequatDuisauteir"
+                                   "uredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnull"
+                                   "apariaturExcepteursintoccaecatcupidatatnonproidentsuntinculpaquioff"
+                                   "iciadeseruntmollitanimidestlaborum";
+  const std::string extension = ".txt";
+  const std::string longFileName = longNodeName + extension;
   std::string safeFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(QString::fromStdString(longFileName)).toStdString();
 
   qSlicerCoreIOManager ioManager;
   ioManager.setDefaultMaximumFileNameLength(25);
   safeFileName = ioManager.forceFileNameMaxLength(QString::fromStdString(longFileName), extension.length()).toStdString();
 
-  vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode", longNodeName));
+  const vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode", longNodeName));
   textNode->SetText(longNodeName);
   textNode->SetForceCreateStorageNode(true);
   textNode->AddDefaultStorageNode();
@@ -79,7 +79,7 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
   storageNode->SetFileName("");
   std::stringstream scenePathSS;
   scenePathSS << scene->GetRootDirectory() << "/" << "Loremipsum.mrb";
-  std::string scenePath = scenePathSS.str();
+  const std::string scenePath = scenePathSS.str();
   CHECK_BOOL(scene->WriteToMRB(scenePath.c_str()), true); // Scene should automatically shorten filename.
 
   return EXIT_SUCCESS;
@@ -88,12 +88,12 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
 int qSlicerCoreIOManagerTest1(int argc, char* argv[])
 {
   // make the core application so that the manager can be instantiated
-  qSlicerCoreApplication app(argc, argv);
+  const qSlicerCoreApplication app(argc, argv);
 
-  qSlicerCoreIOManager manager;
+  const qSlicerCoreIOManager manager;
 
   // get all the writable file extensions
-  QStringList allWritableExtensions = manager.allWritableFileExtensions();
+  const QStringList allWritableExtensions = manager.allWritableFileExtensions();
   if (allWritableExtensions.isEmpty())
   {
     std::cerr << "Failed to get the list of all writable file extensions." << std::endl;
@@ -106,7 +106,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
   }
 
   // get all the readable file extensions
-  QStringList allReadableExtensions = manager.allReadableFileExtensions();
+  const QStringList allReadableExtensions = manager.allReadableFileExtensions();
   if (allReadableExtensions.isEmpty())
   {
     std::cerr << "Failed to get the list of all readable file extensions." << std::endl;
@@ -142,11 +142,11 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
 
   for (int i = 0; i < testFileNames.size(); ++i)
   {
-    vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toUtf8().constData()));
+    const vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toUtf8().constData()));
     app.mrmlScene()->AddNode(node);
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
     storableNode->AddDefaultStorageNode(testFileNames[i].toUtf8().constData());
-    QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
+    const QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
     if (expectedExtensions[i] != ext)
     {
       qWarning() << "Failed on file " << testFileNames[i] << ", expected extension " << expectedExtensions[i] << ", but got " << ext;

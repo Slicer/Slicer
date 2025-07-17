@@ -86,7 +86,7 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel() = default;
 // -----------------------------------------------------------------------------
 QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   if (sceneModel == nullptr)
   {
     // Q_ASSERT(sceneModel);
@@ -98,28 +98,28 @@ QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIn
 //-----------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSortFilterProxyModel::mrmlScene() const
 {
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   return sceneModel->mrmlScene();
 }
 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLSortFilterProxyModel::mrmlSceneIndex() const
 {
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->mrmlSceneIndex());
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNodeFromIndex(const QModelIndex& proxyIndex) const
 {
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   return sceneModel->mrmlNodeFromIndex(this->mapToSource(proxyIndex));
 }
 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLSortFilterProxyModel::indexFromMRMLNode(vtkMRMLNode* node, int column) const
 {
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->indexFromNode(node, column));
 }
 
@@ -163,7 +163,7 @@ QVariant qMRMLSortFilterProxyModel::attributeFilter(const QString& nodeType, con
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
-  QStandardItem* parentItem = this->sourceItem(source_parent);
+  QStandardItem* const parentItem = this->sourceItem(source_parent);
   if (parentItem == nullptr)
   {
     // Q_ASSERT(parentItem);
@@ -185,8 +185,8 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     return false;
   }
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
-  vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
-  AcceptType accept = this->filterAcceptsNode(node);
+  vtkMRMLNode* const node = sceneModel->mrmlNodeFromItem(item);
+  const AcceptType accept = this->filterAcceptsNode(node);
   bool acceptRow = (accept == Accept);
   if (accept == AcceptButPotentiallyRejectable)
   {
@@ -205,7 +205,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
 qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel::filterAcceptsNode(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLSortFilterProxyModel);
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  qMRMLSceneModel* const sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   if (!node || !node->GetID())
   {
     return Accept;
@@ -246,8 +246,8 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel::filterAcceptsNo
 
   if (!d->HideNodesUnaffiliatedWithNodeID.isEmpty())
   {
-    vtkMRMLNode* theNode = sceneModel->mrmlScene()->GetNodeByID(d->HideNodesUnaffiliatedWithNodeID.toUtf8());
-    bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
+    vtkMRMLNode* const theNode = sceneModel->mrmlScene()->GetNodeByID(d->HideNodesUnaffiliatedWithNodeID.toUtf8());
+    const bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
     if (!affiliated)
     {
       return Reject;
@@ -293,10 +293,10 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel::filterAcceptsNo
       const_cast<qMRMLSortFilterProxyModel*>(this)->qvtkConnect(
         node, vtkCommand::ModifiedEvent, const_cast<qMRMLSortFilterProxyModel*>(this), SLOT(invalidate()), 0., Qt::UniqueConnection);
 
-      QString attributeName = d->Attributes[nodeType].first;
-      const char* nodeAttribute = node->GetAttribute(attributeName.toUtf8());
-      QString nodeAttributeQString = node->GetAttribute(attributeName.toUtf8());
-      QString testAttribute = d->Attributes[nodeType].second.toString();
+      const QString attributeName = d->Attributes[nodeType].first;
+      const char* const nodeAttribute = node->GetAttribute(attributeName.toUtf8());
+      const QString nodeAttributeQString = node->GetAttribute(attributeName.toUtf8());
+      const QString testAttribute = d->Attributes[nodeType].second.toString();
 
       // std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString =
       // " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;

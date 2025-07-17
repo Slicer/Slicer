@@ -33,8 +33,8 @@ namespace
 //---------------------------------------------------------------------------
 std::vector<std::string> vector_diff(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
-  std::set<std::string> s_v1(v1.begin(), v1.end());
-  std::set<std::string> s_v2(v2.begin(), v2.end());
+  const std::set<std::string> s_v1(v1.begin(), v1.end());
+  const std::set<std::string> s_v2(v2.begin(), v2.end());
   std::vector<std::string> result;
 
   std::set_difference(s_v1.begin(), s_v1.end(), s_v2.begin(), s_v2.end(), std::back_inserter(result));
@@ -69,11 +69,11 @@ public:
       return;
     }
 
-    vtkMRMLScene* callerScene = vtkMRMLScene::SafeDownCast(caller);
+    vtkMRMLScene* const callerScene = vtkMRMLScene::SafeDownCast(caller);
 
     if (eid == vtkMRMLScene::NodeAboutToBeAddedEvent)
     {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(calldata);
       if (!node)
       {
         SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeAddedEvent - node is NULL");
@@ -97,7 +97,7 @@ public:
     }
     else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
     {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(calldata);
       if (!node)
       {
         SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeRemovedEvent - node is NULL");
@@ -106,7 +106,7 @@ public:
     }
     else if (eid == vtkMRMLScene::NodeRemovedEvent)
     {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      vtkMRMLNode* const node = reinterpret_cast<vtkMRMLNode*>(calldata);
       if (!node)
       {
         SetErrorString(__LINE__, "mrmlEventCallback - NodeRemovedEvent - node is NULL");
@@ -185,7 +185,7 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
   }
-  const char* sceneFilePath = argv[1];
+  const char* const sceneFilePath = argv[1];
 
   // Instantiate scene
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New(); // vtkSmartPointer instead of vtkNew to allow SetPointer
@@ -284,7 +284,7 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
 
   CHECK_BOOL(scene->IsBatchProcessing(), false);
 
-  int currentNumberOfSingletonTag = callback->NumberOfSingletonNodes;
+  const int currentNumberOfSingletonTag = callback->NumberOfSingletonNodes;
 
   //---------------------------------------------------------------------------
   // Clear all node except Singleton ones
@@ -335,7 +335,7 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   // Check if the destructor remove all nodes by checking number of NodeRemovedEvent sent
   //---------------------------------------------------------------------------
   // Expected number of nodes that should removed
-  int numberOfNodes = scene->GetNumberOfNodes();
+  const int numberOfNodes = scene->GetNumberOfNodes();
   callback->ResetNumberOfEvents();
   scene = nullptr;
   CHECK_EXIT_SUCCESS(callback->CheckStatus());

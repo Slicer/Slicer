@@ -54,7 +54,7 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLVolumeDisplayNode* node = vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
   if (node)
@@ -127,7 +127,7 @@ void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* v
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 {
-  vtkAlgorithmOutput* imageConnection = this->GetInputImageDataConnection();
+  vtkAlgorithmOutput* const imageConnection = this->GetInputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
@@ -144,7 +144,7 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilDataConne
 //----------------------------------------------------------------------------
 vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 {
-  vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageStencilDataConnection();
+  vtkAlgorithmOutput* const imageConnection = this->GetBackgroundImageStencilDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageStencilData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
@@ -152,7 +152,7 @@ vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
-  vtkAlgorithmOutput* imageConnection = this->GetOutputImageDataConnection();
+  vtkAlgorithmOutput* const imageConnection = this->GetOutputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }

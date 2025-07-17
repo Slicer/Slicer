@@ -123,8 +123,8 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
     return;
   }
 
-  double angle = markupsNode->GetAngleDegrees();
-  bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
+  const double angle = markupsNode->GetAngleDegrees();
+  const bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
 
   double p1[3] = { 0.0 };
   double c[3] = { 0.0 };
@@ -160,7 +160,7 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
     // Reduce arc size if angle>180deg (it just takes too much space).
     // arcLengthAdjustmentFactor is a sigmoid function that is 1.0 for angle<180 and 0.5 for angle>180,
     // with a smooth transition.
-    double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1 + exp((angle - 180.0) * 0.1));
+    const double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1 + exp((angle - 180.0) * 0.1));
     anglePlacementRatio *= arcLengthAdjustmentFactor;
     angleTextPlacementRatio *= arcLengthAdjustmentFactor;
   }
@@ -196,9 +196,9 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
                         vector1[1] + vector2[1], //
                         vector1[2] + vector2[2] };
   vtkMath::Normalize(vector3);
-  double textPos[3] = { lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0], //
-                        lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1], //
-                        lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2] };
+  const double textPos[3] = { lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0], //
+                              lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1], //
+                              lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2] };
 
   this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), //
                                       static_cast<int>(textPos[1]));
@@ -228,13 +228,13 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Update lines display properties
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
   this->ArcTubeFilter->SetRadius(diameter * 0.5);
 
-  int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
+  const int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
   this->LineActor->SetVisibility(numberOfDefinedControlPoints >= 2);
   this->ArcActor->SetVisibility(numberOfDefinedControlPoints == 3);
 
@@ -268,7 +268,7 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {
     // Update the line color mapping from the colorNode stored in the markups display node
-    vtkColorTransferFunction* colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
+    vtkColorTransferFunction* const colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
     this->LineMapper->SetLookupTable(colormap);
     this->ArcMapper->SetLookupTable(colormap);
   }
@@ -299,12 +299,12 @@ void vtkSlicerAngleRepresentation2D::CanInteract(vtkMRMLInteractionEventData* in
     return;
   }
 
-  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  const int* const displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+  const double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
 
-  vtkIdType numberOfPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
+  const vtkIdType numberOfPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
 
   double pointDisplayPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
   double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -330,7 +330,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(vtkMRMLInteractionEventData* in
     rasToxyMatrix->MultiplyPoint(pointWorldPos2, pointDisplayPos2);
 
     double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
-    double distance2 = vtkLine::DistanceToLine(displayPosition3, pointDisplayPos1, pointDisplayPos2, relativePositionAlongLine);
+    const double distance2 = vtkLine::DistanceToLine(displayPosition3, pointDisplayPos1, pointDisplayPos2, relativePositionAlongLine);
     if (distance2 < maxPickingDistanceFromControlPoint2 && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
     {
       closestDistance2 = distance2;

@@ -298,7 +298,7 @@ void vtkOrientedImageData::ComputeBounds()
   }
 
   // Sanity check
-  const int* extent = this->Extent;
+  const int* const extent = this->Extent;
   if (extent[0] > extent[1] || //
       extent[2] > extent[3] || //
       extent[4] > extent[5])

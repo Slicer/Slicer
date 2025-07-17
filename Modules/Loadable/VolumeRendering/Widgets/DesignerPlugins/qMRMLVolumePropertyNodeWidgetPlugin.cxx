@@ -30,7 +30,7 @@ qMRMLVolumePropertyNodeWidgetPlugin::qMRMLVolumePropertyNodeWidgetPlugin(QObject
 //------------------------------------------------------------------------------
 QWidget* qMRMLVolumePropertyNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLVolumePropertyNodeWidget* newWidget = new qMRMLVolumePropertyNodeWidget(parentWidget);
+  qMRMLVolumePropertyNodeWidget* const newWidget = new qMRMLVolumePropertyNodeWidget(parentWidget);
   return newWidget;
 }
 

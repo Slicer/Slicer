@@ -86,8 +86,8 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
     std::vector<vtkMRMLStorageNode::CompressionPreset>::iterator presetIt;
     for (presetIt = presets.begin(); presetIt != presets.end(); ++presetIt)
     {
-      QString name = QString::fromStdString(presetIt->DisplayName);
-      QString parameter = QString::fromStdString(presetIt->CompressionParameter);
+      const QString name = QString::fromStdString(presetIt->DisplayName);
+      const QString parameter = QString::fromStdString(presetIt->CompressionParameter);
       d->CompressionParameterSelector->addItem(name, parameter);
     }
     this->setCompressionParameter(QString::fromStdString(storageNode->GetCompressionParameter()));
@@ -126,7 +126,7 @@ void qSlicerNodeWriterOptionsWidget::setCompressionParameter(int index)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
 
-  QString parameter = d->CompressionParameterSelector->itemData(index).toString();
+  const QString parameter = d->CompressionParameterSelector->itemData(index).toString();
   d->Properties["compressionParameter"] = parameter;
 }
 
@@ -135,7 +135,7 @@ void qSlicerNodeWriterOptionsWidget::setCompressionParameter(QString parameter)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
 
-  int index = d->CompressionParameterSelector->findData(parameter);
+  const int index = d->CompressionParameterSelector->findData(parameter);
   d->CompressionParameterSelector->setCurrentIndex(index);
   d->Properties["compressionParameter"] = parameter;
 }

@@ -34,7 +34,7 @@ qSlicerSimpleMarkupsWidgetPlugin::qSlicerSimpleMarkupsWidgetPlugin(QObject* _par
 //------------------------------------------------------------------------------
 QWidget* qSlicerSimpleMarkupsWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerSimpleMarkupsWidget* _widget = new qSlicerSimpleMarkupsWidget(_parent);
+  qSlicerSimpleMarkupsWidget* const _widget = new qSlicerSimpleMarkupsWidget(_parent);
   return _widget;
 }
 

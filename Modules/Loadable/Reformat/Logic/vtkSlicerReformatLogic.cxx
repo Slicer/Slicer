@@ -80,9 +80,9 @@ void vtkSlicerReformatLogic::SetSliceOrigin(vtkMRMLSliceNode* node, double x, do
 //------------------------------------------------------------------------------
 void vtkSlicerReformatLogic::SetSliceOrigin(vtkMRMLSliceNode* node, double position[3])
 {
-  double x = position[0];
-  double y = position[1];
-  double z = position[2];
+  const double x = position[0];
+  const double y = position[1];
+  const double z = position[2];
 
   Self::SetSliceOrigin(node, x, y, z);
 }
@@ -122,7 +122,7 @@ void vtkSlicerReformatLogic::SetSliceNormal(vtkMRMLSliceNode* node, double x, do
   double dot = vtkMath::Dot(nodeNormal, normal);
   // Clamp the dot product
   dot = (dot < -1.0) ? -1.0 : (dot > 1.0 ? 1.0 : dot);
-  double rotation = vtkMath::DegreesFromRadians(acos(dot));
+  const double rotation = vtkMath::DegreesFromRadians(acos(dot));
 
   // Apply the rotation
   vtkNew<vtkTransform> transform;
@@ -141,9 +141,9 @@ void vtkSlicerReformatLogic::SetSliceNormal(vtkMRMLSliceNode* node, double x, do
 //------------------------------------------------------------------------------
 void vtkSlicerReformatLogic::SetSliceNormal(vtkMRMLSliceNode* node, double normal[3])
 {
-  double x = normal[0];
-  double y = normal[1];
-  double z = normal[2];
+  const double x = normal[0];
+  const double y = normal[1];
+  const double z = normal[2];
 
   Self::SetSliceNormal(node, x, y, z);
 }
@@ -178,7 +178,7 @@ void vtkSlicerReformatLogic::GetVolumeBounds(vtkMRMLSliceNode* node, double boun
     return;
   }
 
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(volumeNodeID));
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(volumeNodeID));
   if (volumeNode)
   {
     double dimensions[3], center[3];

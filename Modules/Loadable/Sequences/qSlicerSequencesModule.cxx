@@ -123,7 +123,7 @@ void qSlicerSequencesModulePrivate::addToolBar()
   // We need to restore the main window state again, now, that the Sequences toolbar is available.
   QSettings settings;
   settings.beginGroup("MainWindow");
-  bool restore = settings.value("RestoreGeometry", false).toBool();
+  const bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore)
   {
     mainWindow->restoreState(settings.value("windowState").toByteArray());
@@ -144,7 +144,7 @@ qSlicerSequencesModule::qSlicerSequencesModule(QObject* _parent)
   d->UpdateAllVirtualOutputNodesTimer.setSingleShot(true);
   connect(&d->UpdateAllVirtualOutputNodesTimer, SIGNAL(timeout()), this, SLOT(updateAllVirtualOutputNodes()));
 
-  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  vtkMRMLScene* const scene = qSlicerCoreApplication::application()->mrmlScene();
   if (scene)
   {
     // Need to listen for any new sequence browser nodes being added to start/stop timer
@@ -202,7 +202,7 @@ void qSlicerSequencesModule::setup()
   d->addToolBar();
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->logic());
+  vtkSlicerSequencesLogic* const sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->logic());
   ioManager->registerIO(new qSlicerNodeWriter("Sequences", QString("SequenceFile"), QStringList() << "vtkMRMLSequenceNode", true, this));
   ioManager->registerIO(new qSlicerSequencesReader(sequencesLogic, this));
   ioManager->registerIO(new qSlicerNodeWriter("Sequences", QString("VolumeSequenceFile"), QStringList() << "vtkMRMLSequenceNode", true, this));
@@ -225,7 +225,7 @@ void qSlicerSequencesModule::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerSequencesModule);
 
-  vtkMRMLScene* oldScene = this->mrmlScene();
+  vtkMRMLScene* const oldScene = this->mrmlScene();
   this->Superclass::setMRMLScene(scene);
 
   if (scene == nullptr)
@@ -303,11 +303,11 @@ void qSlicerSequencesModule::onNodeRemovedEvent(vtkObject*, vtkObject* node)
 {
   Q_D(qSlicerSequencesModule);
 
-  vtkMRMLSequenceBrowserNode* sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
+  vtkMRMLSequenceBrowserNode* const sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
   if (sequenceBrowserNode)
   {
     // Check if there is any other sequence browser node left in the Scene
-    vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+    vtkMRMLScene* const scene = qSlicerCoreApplication::application()->mrmlScene();
     if (scene)
     {
       vtkMRMLNode* node;
@@ -327,11 +327,11 @@ void qSlicerSequencesModule::updateAllVirtualOutputNodes()
 {
   Q_D(qSlicerSequencesModule);
 
-  vtkMRMLAbstractLogic* l = this->logic();
+  vtkMRMLAbstractLogic* const l = this->logic();
   vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(l);
   if (sequencesLogic)
   {
-    SlicerRenderBlocker renderBlocker;
+    const SlicerRenderBlocker renderBlocker;
     // update proxies then request another singleShot timer
     sequencesLogic->UpdateAllProxyNodes();
     d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
@@ -392,7 +392,7 @@ void qSlicerSequencesModule::setAutoShowToolBar(bool autoShow)
 //-----------------------------------------------------------------------------
 bool qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* browserNode)
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app                     //
       || !app->moduleManager() //
       || !dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences")))

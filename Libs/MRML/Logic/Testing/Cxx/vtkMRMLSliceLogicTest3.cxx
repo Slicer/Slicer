@@ -91,7 +91,7 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
@@ -104,7 +104,7 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
   // vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
 
-  vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
+  const vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
 
   sliceLogic->SetBackgroundLayer(sliceLayerLogic.GetPointer());
 
@@ -118,22 +118,22 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
   // sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
-  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
+  vtkAlgorithmOutput* const imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
-  int* dims = img->GetDimensions();
+  int* const dims = img->GetDimensions();
   std::cout << "Logic dimension" << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   // vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
   for (int i = 0; i < 30; ++i)
   {
-    vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+    const vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
     timerLog->StopTimer();
     std::cout << "vtkMRMLDisplayNode::Modified(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
   }
-  vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
+  const vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
   viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
   // viewer->SetInput(appendComponents->GetOutput());
 
@@ -149,7 +149,7 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
 
   for (int i = 0; i < 30; ++i)
   {
-    vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+    const vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
     rw->Render();

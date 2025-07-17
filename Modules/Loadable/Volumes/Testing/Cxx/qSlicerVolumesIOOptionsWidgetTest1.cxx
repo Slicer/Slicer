@@ -46,7 +46,7 @@ int qSlicerVolumesIOOptionsWidgetTest1(int argc, char* argv[])
   qMRMLWidget::postInitializeApplication();
 
   // set up the color nodes for access from the widget
-  vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();
+  vtkSlicerApplicationLogic* const appLogic = qSlicerCoreApplication::application()->applicationLogic();
   QString defaultLabelColor;
   QString defaultGreyColor;
   if (appLogic && appLogic->GetColorLogic())

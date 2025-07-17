@@ -55,10 +55,10 @@ void vtkFastSelectVisiblePoints::ResetZBuffer()
 void vtkFastSelectVisiblePoints::UpdateZBuffer()
 {
   this->ResetZBuffer();
-  float* zPtr = this->Initialize(true);
+  float* const zPtr = this->Initialize(true);
 
   this->ZBuffer = vtkSmartPointer<vtkFloatArray>::New();
-  vtkIdType size = (this->InternalSelection[1] - this->InternalSelection[0] + 1) * (this->InternalSelection[3] - this->InternalSelection[2] + 1);
+  const vtkIdType size = (this->InternalSelection[1] - this->InternalSelection[0] + 1) * (this->InternalSelection[3] - this->InternalSelection[2] + 1);
   this->ZBuffer->SetArray(zPtr, size, 0);
 }
 
@@ -75,9 +75,9 @@ int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
 
   vtkIdType ptId, cellId;
   int visible;
-  vtkPointData* inPD = input->GetPointData();
+  vtkPointData* const inPD = input->GetPointData();
   vtkPointData* outPD = output->GetPointData();
-  vtkIdType numPts = input->GetNumberOfPoints();
+  const vtkIdType numPts = input->GetNumberOfPoints();
   double x[4];
 
   // Nothing to extract if there are no points in the data set.
@@ -108,7 +108,7 @@ int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
     return 1;
   }
 
-  vtkCamera* cam = this->Renderer->GetActiveCamera();
+  vtkCamera* const cam = this->Renderer->GetActiveCamera();
   if (!cam)
   {
     return 1;
@@ -132,7 +132,7 @@ int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
   }
 
   int abort = 0;
-  vtkIdType progressInterval = numPts / 20 + 1;
+  const vtkIdType progressInterval = numPts / 20 + 1;
   x[3] = 1.0;
   for (cellId = (-1), ptId = 0; ptId < numPts && !abort; ptId++)
   {

@@ -53,19 +53,19 @@ int vtkSlicerTransformLogicTest2(int argc, char* argv[])
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
   // argv1 == cube.vtk
-  vtkSmartPointer<vtkMRMLModelNode> singleChild = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> singleChild = LoadModelInScene(argv[1], scene);
 
-  vtkSmartPointer<vtkMRMLModelNode> child1 = LoadModelInScene(argv[1], scene);
-  vtkSmartPointer<vtkMRMLModelNode> child2 = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> child1 = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> child2 = LoadModelInScene(argv[1], scene);
 
   vtkNew<vtkMRMLTransformNode> childTransform;
   scene->AddNode(childTransform.GetPointer());
-  vtkSmartPointer<vtkMRMLModelNode> grandChild1 = LoadModelInScene(argv[1], scene);
-  vtkSmartPointer<vtkMRMLModelNode> grandChild2 = LoadModelInScene(argv[1], scene);
-  vtkSmartPointer<vtkMRMLModelNode> child3 = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> grandChild1 = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> grandChild2 = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> child3 = LoadModelInScene(argv[1], scene);
 
   // Transform with no descendant
-  vtkNew<vtkMRMLTransformNode> childlessTransform;
+  const vtkNew<vtkMRMLTransformNode> childlessTransform;
   scene->AddNode(childlessTransform.GetPointer());
 
   // Transform with one child:
@@ -93,7 +93,7 @@ int vtkSlicerTransformLogicTest2(int argc, char* argv[])
   grandChild1->SetAndObserveTransformNodeID(childTransform->GetID());
   grandChild2->SetAndObserveTransformNodeID(childTransform->GetID());
 
-  vtkNew<vtkMRMLTransformNode> notInSceneTransform;
+  const vtkNew<vtkMRMLTransformNode> notInSceneTransform;
 
   // Test childlessTransform
   std::vector<vtkMRMLDisplayableNode*> results;

@@ -150,7 +150,7 @@ double vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition
     double maxX = 1;
     double maxY = 1;
     renderer->NormalizedDisplayToDisplay(maxX, maxY);
-    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+    const int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
     // Parallel scale: height of the viewport in world-coordinate distances.
     // Larger numbers produce smaller images.
     viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);

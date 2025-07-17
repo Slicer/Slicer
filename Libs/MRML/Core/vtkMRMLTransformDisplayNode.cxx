@@ -243,9 +243,9 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLTransformDisplayNode* node = vtkMRMLTransformDisplayNode::SafeDownCast(anode);
+  vtkMRMLTransformDisplayNode* const node = vtkMRMLTransformDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -493,7 +493,7 @@ std::string vtkMRMLTransformDisplayNode::GetContourLevelsMmAsString()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetContourLevelsMmFromString(const char* str)
 {
-  std::vector<double> newLevels = this->ConvertContourLevelsFromString(str);
+  const std::vector<double> newLevels = this->ConvertContourLevelsFromString(str);
   if (this->IsContourLevelEqual(newLevels, this->ContourLevelsMm))
   {
     // no change
@@ -617,14 +617,14 @@ vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
       return nullptr;
     }
   }
-  vtkColorTransferFunction* colorMap = colorNode->GetColorTransferFunction();
+  vtkColorTransferFunction* const colorMap = colorNode->GetColorTransferFunction();
   return colorMap;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColorMap)
 {
-  int oldModified = this->StartModify();
+  const int oldModified = this->StartModify();
   vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
   if (colorNode == nullptr)
   {
@@ -636,7 +636,7 @@ void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColor
   {
     if (colorNode->GetColorTransferFunction() == nullptr)
     {
-      vtkNew<vtkColorTransferFunction> ctf;
+      const vtkNew<vtkColorTransferFunction> ctf;
       colorNode->SetAndObserveColorTransferFunction(ctf.GetPointer());
     }
     if (!vtkMRMLProceduralColorNode::IsColorMapEqual(colorNode->GetColorTransferFunction(), newColorMap))

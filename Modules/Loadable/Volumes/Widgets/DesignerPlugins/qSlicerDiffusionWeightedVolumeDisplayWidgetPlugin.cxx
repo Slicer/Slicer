@@ -27,7 +27,7 @@ qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin::qSlicerDiffusionWeightedVolum
 //------------------------------------------------------------------------------
 QWidget* qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerDiffusionWeightedVolumeDisplayWidget* _widget = new qSlicerDiffusionWeightedVolumeDisplayWidget(_parent);
+  qSlicerDiffusionWeightedVolumeDisplayWidget* const _widget = new qSlicerDiffusionWeightedVolumeDisplayWidget(_parent);
   return _widget;
 }
 

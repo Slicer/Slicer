@@ -45,8 +45,8 @@ int TestIndexFormatting()
   const int numberOfDataNodes = 135;
   for (int i = 0; i < numberOfDataNodes; i++)
   {
-    vtkNew<vtkMRMLTransformNode> transform;
-    std::string indexValue = vtkVariant(valueForIndex(i)).ToString();
+    const vtkNew<vtkMRMLTransformNode> transform;
+    const std::string indexValue = vtkVariant(valueForIndex(i)).ToString();
     sequenceNode->SetDataNodeAtValue(transform.GetPointer(), indexValue);
   }
   scene->AddNode(sequenceNode.GetPointer());
@@ -56,7 +56,7 @@ int TestIndexFormatting()
   browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
 
   int numberOfDecimals = 5;
-  std::string prefix = "%%x%t%y";
+  const std::string prefix = "%%x%t%y";
   std::stringstream formatSS;
   formatSS << "%." << numberOfDecimals << "f";
   std::string format = formatSS.str();
@@ -66,13 +66,13 @@ int TestIndexFormatting()
   browserNode->SetIndexDisplayFormat(format);
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
   {
-    std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
+    const std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
     std::stringstream expectedFormatSS;
     expectedFormatSS.precision(numberOfDecimals);
 
     // Perform same conversion as sequence browser node (string to float with vtkVariant)
     expectedFormatSS << std::fixed << vtkVariant(vtkVariant(valueForIndex(i)).ToString()).ToFloat();
-    std::string expectedFormat = expectedFormatSS.str();
+    const std::string expectedFormat = expectedFormatSS.str();
 
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
   }
@@ -81,8 +81,8 @@ int TestIndexFormatting()
   browserNode->SetIndexDisplayFormat("%s");
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
   {
-    std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
-    std::string expectedFormat = sequenceNode->GetNthIndexValue(i);
+    const std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
+    const std::string expectedFormat = sequenceNode->GetNthIndexValue(i);
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
   }
 
@@ -95,13 +95,13 @@ int TestIndexFormatting()
   browserNode->SetIndexDisplayFormat(prefix + format + suffix);
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
   {
-    std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
+    const std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
     std::stringstream expectedFormatSS;
     expectedFormatSS.precision(numberOfDecimals);
 
     // Perform same conversion as sequence browser node (string to float with vtkVariant)
     expectedFormatSS << std::fixed << prefix << vtkVariant(vtkVariant(valueForIndex(i)).ToString()).ToFloat() << suffix;
-    std::string expectedFormat = expectedFormatSS.str();
+    const std::string expectedFormat = expectedFormatSS.str();
 
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
   }
@@ -134,7 +134,7 @@ int TestSelectNextItem()
   CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
 
   // Test with single-item sequence
-  vtkNew<vtkMRMLTransformNode> transform;
+  const vtkNew<vtkMRMLTransformNode> transform;
   sequenceNode->SetDataNodeAtValue(transform, "1");
   CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
   browserNode->SelectNextItem(1);
@@ -177,7 +177,7 @@ int TestRemoveItem()
   browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
 
   // Test with recording mode enabled
-  vtkNew<vtkMRMLTransformNode> transform;
+  const vtkNew<vtkMRMLTransformNode> transform;
 
   browserNode->SetSaveChanges(sequenceNode, true);
   sequenceNode->SetDataNodeAtValue(transform, "1");

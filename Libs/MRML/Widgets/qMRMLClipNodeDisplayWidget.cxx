@@ -119,7 +119,7 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
     return;
   }
 
-  bool oldUpdating = d->IsUpdatingWidgetFromMRML;
+  const bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
   bool wasBlocking = false;
@@ -128,9 +128,9 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(d->MRMLDisplayNode);
   vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
 
-  bool widgetsEnabled = clipNode != nullptr;
-  bool surfaceWidgetsVisible = modelDisplayNode != nullptr || segmentationDisplayNode != nullptr;
-  bool clipping = d->MRMLDisplayNode ? d->MRMLDisplayNode->GetClipping() : false;
+  const bool widgetsEnabled = clipNode != nullptr;
+  const bool surfaceWidgetsVisible = modelDisplayNode != nullptr || segmentationDisplayNode != nullptr;
+  const bool clipping = d->MRMLDisplayNode ? d->MRMLDisplayNode->GetClipping() : false;
   bool capping = false;
   double capOpacity = 0.0;
   bool outline = false;
@@ -193,7 +193,7 @@ void qMRMLClipNodeDisplayWidget::updateMRMLFromWidget()
     return;
   }
 
-  MRMLNodeModifyBlocker displayNodeBlocker(d->MRMLDisplayNode);
+  const MRMLNodeModifyBlocker displayNodeBlocker(d->MRMLDisplayNode);
   d->MRMLDisplayNode->SetClipping(d->checkBox_Clipping->isChecked());
 
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(d->MRMLDisplayNode);
@@ -213,7 +213,7 @@ void qMRMLClipNodeDisplayWidget::updateMRMLFromWidget()
   }
 
   vtkMRMLClipNode* clipNode = d->MRMLDisplayNode->GetClipNode();
-  MRMLNodeModifyBlocker clipNodeBlocker(clipNode);
+  const MRMLNodeModifyBlocker clipNodeBlocker(clipNode);
   if (clipNode)
   {
     clipNode->SetClippingMethod(d->checkBox_ClippingKeepWholeCells->isChecked() ? vtkMRMLClipNode::WholeCells : vtkMRMLClipNode::Straight);

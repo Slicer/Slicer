@@ -126,7 +126,7 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
 
   if (!this->WindowLevelWidget->GetRenderer())
   {
-    vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+    vtkMRMLApplicationLogic* const mrmlAppLogic = this->External->GetMRMLApplicationLogic();
     this->WindowLevelWidget->SetMRMLApplicationLogic(mrmlAppLogic);
     this->WindowLevelWidget->CreateDefaultRepresentation();
     this->WindowLevelWidget->SetRenderer(this->External->GetRenderer());
@@ -187,7 +187,7 @@ void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent() {}
 //---------------------------------------------------------------------------
 bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
 {
-  int eventid = eventData->GetType();
+  const int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeaveEvent)
   {
     this->Internal->WindowLevelWidget->Leave(eventData);
@@ -199,7 +199,7 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
 //---------------------------------------------------------------------------
 bool vtkMRMLScalarBarDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  bool processed = this->Internal->WindowLevelWidget->ProcessInteractionEvent(eventData);
+  const bool processed = this->Internal->WindowLevelWidget->ProcessInteractionEvent(eventData);
   if (this->Internal->WindowLevelWidget->GetNeedToRender())
   {
     this->RequestRender();

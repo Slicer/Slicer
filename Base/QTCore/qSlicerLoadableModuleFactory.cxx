@@ -47,7 +47,7 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
   qSlicerAbstractCoreModule* module = ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
   module->setPath(this->path());
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -85,7 +85,7 @@ public:
 //-----------------------------------------------------------------------------
 QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     return QStringList();
@@ -99,7 +99,7 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   QStringList defaultQTModulePaths;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
-  bool appendDefaultQTModulePaths = true;
+  bool const appendDefaultQTModulePaths = true;
 #else
   bool appendDefaultQTModulePaths = app->isInstalled();
 #endif
@@ -115,8 +115,8 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
     }
   }
 
-  QSettings* settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QSettings* const settings = app->revisionUserSettings();
+  const QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
   // qDebug() << "qtModulePaths:" << qtModulePaths;

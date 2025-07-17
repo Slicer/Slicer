@@ -16,7 +16,7 @@
 
 int vtkMRMLCropVolumeParametersNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLCropVolumeParametersNode> node1;
+  const vtkNew<vtkMRMLCropVolumeParametersNode> node1;
 
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 

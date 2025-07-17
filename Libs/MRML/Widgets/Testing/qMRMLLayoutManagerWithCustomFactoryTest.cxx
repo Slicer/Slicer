@@ -83,10 +83,10 @@ protected:
 
     qMRMLSliceWidget* sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
     sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
-    QString sliceLayoutName(viewNode->GetLayoutName());
-    QString sliceViewLabel(viewNode->GetLayoutLabel());
+    const QString sliceLayoutName(viewNode->GetLayoutName());
+    const QString sliceViewLabel(viewNode->GetLayoutLabel());
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
-    QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0], sliceNode->GetLayoutColor()[1], sliceNode->GetLayoutColor()[2]);
+    const QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0], sliceNode->GetLayoutColor()[1], sliceNode->GetLayoutColor()[2]);
     sliceWidget->setSliceViewName(sliceLayoutName);
     sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
     sliceWidget->setSliceViewLabel(sliceViewLabel);
@@ -211,30 +211,30 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[])
   layoutManager.setMRMLScene(scene.GetPointer());
 
   // Unregister regular SliceView factory and register a custom one
-  qMRMLLayoutSliceViewFactory* mrmlSliceViewFactory = qobject_cast<qMRMLLayoutSliceViewFactory*>(layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
+  qMRMLLayoutSliceViewFactory* const mrmlSliceViewFactory = qobject_cast<qMRMLLayoutSliceViewFactory*>(layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
 
-  qSlicerLayoutCustomSliceViewFactory* customSliceViewFactory = new qSlicerLayoutCustomSliceViewFactory(&layoutManager);
+  qSlicerLayoutCustomSliceViewFactory* const customSliceViewFactory = new qSlicerLayoutCustomSliceViewFactory(&layoutManager);
 
   layoutManager.unregisterViewFactory(mrmlSliceViewFactory);
   layoutManager.registerViewFactory(customSliceViewFactory);
 
   // Register a factory for vtkMRMLCustomViewNode
-  qMRMLLayoutCustomViewFactory* customViewFactory = new qMRMLLayoutCustomViewFactory(&layoutManager);
+  qMRMLLayoutCustomViewFactory* const customViewFactory = new qMRMLLayoutCustomViewFactory(&layoutManager);
   layoutManager.registerViewFactory(customViewFactory);
 
-  int customLayout = vtkMRMLLayoutNode::SlicerLayoutUserView + 1;
-  const char* customLayoutDescription = "<layout type=\"horizontal\">"
-                                        "      <item>"
-                                        "        <view class=\"vtkMRMLSliceNode\" singletontag=\"CustomSliceView\">"
-                                        "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
-                                        "        </view>"
-                                        "      </item>"
-                                        "      <item>"
-                                        "        <view class=\"vtkMRMLCustomViewNode\" singletontag=\"CustomView\">"
-                                        "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
-                                        "        </view>"
-                                        "      </item>"
-                                        "</layout>";
+  const int customLayout = vtkMRMLLayoutNode::SlicerLayoutUserView + 1;
+  const char* const customLayoutDescription = "<layout type=\"horizontal\">"
+                                              "      <item>"
+                                              "        <view class=\"vtkMRMLSliceNode\" singletontag=\"CustomSliceView\">"
+                                              "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
+                                              "        </view>"
+                                              "      </item>"
+                                              "      <item>"
+                                              "        <view class=\"vtkMRMLCustomViewNode\" singletontag=\"CustomView\">"
+                                              "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
+                                              "        </view>"
+                                              "      </item>"
+                                              "</layout>";
   layoutNode->AddLayoutDescription(customLayout, customLayoutDescription);
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
@@ -273,7 +273,7 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  QWidget* customWidget = layoutManager.viewWidget(customViewFactory->LastNode);
+  QWidget* const customWidget = layoutManager.viewWidget(customViewFactory->LastNode);
 
   if (!customWidget)
   {

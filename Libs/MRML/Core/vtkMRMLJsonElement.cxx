@@ -307,11 +307,11 @@ bool vtkMRMLJsonElement::GetArrayItemsStringProperty(const char* arrayName, cons
     vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName << " property is not an array");
     return false;
   }
-  int numberOfItems = jsonArray.GetArray().Size();
+  const int numberOfItems = jsonArray.GetArray().Size();
   for (int itemIndex = 0; itemIndex < numberOfItems; ++itemIndex)
   {
     rapidjson::Value& item = jsonArray.GetArray()[itemIndex];
-    std::string stringProperty = item[propertyName].GetString();
+    const std::string stringProperty = item[propertyName].GetString();
     propertyValues.push_back(stringProperty);
   }
   return true;
@@ -369,7 +369,7 @@ vtkMRMLJsonElement* vtkMRMLJsonElement::GetObjectProperty(const char* objectName
 //----------------------------------------------------------------------------
 vtkMRMLJsonElement* vtkMRMLJsonElement::GetArrayItem(int childItemIndex)
 {
-  int arraySize = this->GetArraySize();
+  const int arraySize = this->GetArraySize();
   if (childItemIndex >= arraySize)
   {
     vtkErrorMacro("GetArrayItem: failed to child item " << childItemIndex << " from element");
@@ -424,7 +424,7 @@ std::string vtkMRMLJsonElement::GetObjectPropertyNameByIndex(int childItemIndex)
 //----------------------------------------------------------------------------
 vtkMRMLJsonElement* vtkMRMLJsonElement::GetObjectItem(int childItemIndex)
 {
-  int obejctSize = this->GetObjectSize();
+  const int obejctSize = this->GetObjectSize();
   if (childItemIndex >= obejctSize)
   {
     vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex << " from element");
@@ -453,7 +453,7 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::GetType()
 //----------------------------------------------------------------------------
 vtkMRMLJsonElement* vtkMRMLJsonElement::GetChildMemberItem(int childItemIndex)
 {
-  int obejctSize = this->GetObjectSize();
+  const int obejctSize = this->GetObjectSize();
   if (childItemIndex >= obejctSize)
   {
     vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex << " from element");
@@ -492,7 +492,7 @@ std::string vtkMRMLJsonElement::GetSchema()
   {
     return "";
   }
-  rapidjson::Value& schema = this->Internal->JsonValue["@schema"];
+  const rapidjson::Value& schema = this->Internal->JsonValue["@schema"];
   return schema.GetString();
 }
 
@@ -578,7 +578,7 @@ vtkDoubleArray* vtkMRMLJsonElement::GetDoubleArrayProperty(const char* propertyN
     return nullptr;
   }
   vtkNew<vtkDoubleArray> values;
-  int numberOfTuples = arrayItem.GetArray().Size();
+  const int numberOfTuples = arrayItem.GetArray().Size();
   if (numberOfTuples < 1)
   {
     // no values stored in the array
@@ -588,8 +588,8 @@ vtkDoubleArray* vtkMRMLJsonElement::GetDoubleArrayProperty(const char* propertyN
   if (firstControlPointValue.IsNumber())
   {
     values->SetNumberOfValues(numberOfTuples);
-    double* valuesPtr = values->GetPointer(0);
-    bool success = this->GetVectorProperty(propertyName, valuesPtr, numberOfTuples);
+    double* const valuesPtr = values->GetPointer(0);
+    const bool success = this->GetVectorProperty(propertyName, valuesPtr, numberOfTuples);
     if (!success)
     {
       vtkErrorToMessageCollectionWithObjectMacro(
@@ -599,13 +599,13 @@ vtkDoubleArray* vtkMRMLJsonElement::GetDoubleArrayProperty(const char* propertyN
   }
   else if (firstControlPointValue.IsArray())
   {
-    int numberOfComponents = firstControlPointValue.GetArray().Size();
+    const int numberOfComponents = firstControlPointValue.GetArray().Size();
     values->SetNumberOfComponents(numberOfComponents);
     values->SetNumberOfTuples(numberOfTuples);
     double* valuesPtr = values->GetPointer(0);
     for (auto& itemValue : arrayItem.GetArray())
     {
-      bool success = this->Internal->ReadVector(itemValue, valuesPtr, numberOfComponents);
+      const bool success = this->Internal->ReadVector(itemValue, valuesPtr, numberOfComponents);
       if (!success)
       {
         vtkErrorToMessageCollectionWithObjectMacro(this,
@@ -659,7 +659,7 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
   }
 
   // Read document from file
-  FILE* fp = fopen(filePath, "r");
+  FILE* const fp = fopen(filePath, "r");
   if (!fp)
   {
     vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromFile", "Error opening the file '" << filePath << "'");
@@ -739,7 +739,7 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromString(const std::string& jsonStr
 //---------------------------------------------------------------------------
 std::string vtkMRMLJsonReader::ConvertJsonToXML(const std::string& jsonString, const std::string& nodeTagName)
 {
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(this->ReadFromString(jsonString));
+  const vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(this->ReadFromString(jsonString));
   if (!jsonElement.GetPointer())
   {
     return "";
@@ -768,11 +768,11 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElemen
     xmlStream << "<" << elementKey;
   }
 
-  int numberOfMembers = jsonElement->GetObjectSize();
+  const int numberOfMembers = jsonElement->GetObjectSize();
   for (int memberIndex = 0; memberIndex < numberOfMembers; ++memberIndex)
   {
-    std::string memberKey = jsonElement->GetObjectPropertyNameByIndex(memberIndex);
-    vtkMRMLJsonElement::Type type = jsonElement->GetMemberType(memberKey.c_str());
+    const std::string memberKey = jsonElement->GetObjectPropertyNameByIndex(memberIndex);
+    const vtkMRMLJsonElement::Type type = jsonElement->GetMemberType(memberKey.c_str());
     if (type == vtkMRMLJsonElement::Type::UNKNOWN)
     {
       continue;
@@ -784,13 +784,13 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElemen
         continue;
       }
 
-      vtkSmartPointer<vtkMRMLJsonElement> memberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetObjectItem(memberIndex));
+      const vtkSmartPointer<vtkMRMLJsonElement> memberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetObjectItem(memberIndex));
       if (!memberElement)
       {
         continue;
       }
       std::ostringstream oss;
-      int numberOfChildMembers = memberElement->GetObjectSize();
+      const int numberOfChildMembers = memberElement->GetObjectSize();
 
       std::string delimiter = vtkMRMLJsonElement::XML_SEPARATOR;
       std::string valueDelimiter = vtkMRMLJsonElement::XML_NAME_VALUE_SEPARATOR;
@@ -806,7 +806,7 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElemen
         {
           oss << delimiter;
         }
-        std::string childPropName = memberElement->GetObjectPropertyNameByIndex(childIndex);
+        const std::string childPropName = memberElement->GetObjectPropertyNameByIndex(childIndex);
         if (memberElement->GetStringProperty(childPropName.c_str()) != "")
         {
           oss << childPropName << valueDelimiter << memberElement->GetStringProperty(childPropName.c_str());
@@ -830,7 +830,7 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElemen
     }
     else if (type == vtkMRMLJsonElement::Type::ARRAY)
     {
-      vtkSmartPointer<vtkMRMLJsonElement> arrayElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
+      const vtkSmartPointer<vtkMRMLJsonElement> arrayElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
       if (!arrayElement)
       {
         continue;
@@ -906,13 +906,13 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElemen
 
   for (int memberIndex = 0; memberIndex < numberOfMembers; ++memberIndex)
   {
-    vtkSmartPointer<vtkMRMLJsonElement> childMemberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
+    const vtkSmartPointer<vtkMRMLJsonElement> childMemberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
     if (!childMemberElement || childMemberElement->GetType() != vtkMRMLJsonElement::Type::OBJECT)
     {
       continue;
     }
 
-    std::string memberKey = jsonElement->GetObjectPropertyNameByIndex(memberIndex);
+    const std::string memberKey = jsonElement->GetObjectPropertyNameByIndex(memberIndex);
     xmlStream << this->processJsonElement(childMemberElement, memberKey);
   }
 
@@ -1010,7 +1010,7 @@ bool vtkMRMLJsonWriter::WriteToFileBegin(const char* filePath, const char* schem
 bool vtkMRMLJsonWriter::WriteToFileEnd()
 {
   this->Internal->Writer->EndObject();
-  int error = fclose(this->Internal->WriteFileHandle);
+  const int error = fclose(this->Internal->WriteFileHandle);
   this->Internal->WriteFileHandle = 0;
   this->Internal->Writer.reset();
   this->Internal->FileWriteStream.reset();
@@ -1148,12 +1148,12 @@ void vtkMRMLJsonWriter::WriteMatrix4x4Property(const std::string& propertyName, 
 void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char* propertyName, vtkDoubleArray* doubleArray)
 {
   this->WriteArrayPropertyStart(propertyName);
-  int numberOfComponents = doubleArray->GetNumberOfComponents();
-  int numberOfTuples = doubleArray->GetNumberOfTuples();
+  const int numberOfComponents = doubleArray->GetNumberOfComponents();
+  const int numberOfTuples = doubleArray->GetNumberOfTuples();
   if (numberOfComponents == 1)
   {
     // write single-component array as single array
-    double* values = doubleArray->GetPointer(0);
+    double* const values = doubleArray->GetPointer(0);
     // WriteVector() method would write all values in a single line, so we do
     // not use it here
     for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
@@ -1166,7 +1166,7 @@ void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char* propertyName, vtkDo
     // write multi-component array as an array of arrays
     for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
     {
-      double* tuple = doubleArray->GetTuple(tupleIndex);
+      double* const tuple = doubleArray->GetTuple(tupleIndex);
       this->Internal->WriteVector(tuple, numberOfComponents);
     }
   }
@@ -1229,7 +1229,7 @@ std::string vtkMRMLJsonWriter::ConvertXMLToJson(vtkXMLDataElement* xmlElement, c
 std::string vtkMRMLJsonWriter::toLower(const std::string& str)
 {
   std::string lowerStr;
-  for (unsigned char c : str)
+  for (const unsigned char c : str)
   {
     if (std::isalpha(c))
     {
@@ -1246,8 +1246,8 @@ std::string vtkMRMLJsonWriter::toLower(const std::string& str)
 //----------------------------------------------------------------------------
 bool vtkMRMLJsonWriter::isBool(const std::string& str)
 {
-  std::stringstream ss(str);
-  std::string lowerStr = toLower(str);
+  const std::stringstream ss(str);
+  const std::string lowerStr = toLower(str);
   if (lowerStr == "true" || lowerStr == "false")
   {
     return true;
@@ -1293,11 +1293,11 @@ bool vtkMRMLJsonWriter::isDouble(const std::string& str)
 //----------------------------------------------------------------------------
 void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
 {
-  int nAttributes = xmlElement->GetNumberOfAttributes();
+  const int nAttributes = xmlElement->GetNumberOfAttributes();
   for (int attrIndex = 0; attrIndex < nAttributes; ++attrIndex)
   {
-    const char* name = xmlElement->GetAttributeName(attrIndex);
-    const char* value = xmlElement->GetAttributeValue(attrIndex);
+    const char* const name = xmlElement->GetAttributeName(attrIndex);
+    const char* const value = xmlElement->GetAttributeValue(attrIndex);
     std::string valueStr = value ? std::string(value) : "";
 
     if (std::string(name) == "attributes" || //
@@ -1318,8 +1318,8 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
       }
       while (std::getline(ss, lineValue, delimiter[0]))
       {
-        int colonIndex = lineValue.find(valueDelimiter);
-        std::string attributeName = lineValue.substr(0, colonIndex);
+        const int colonIndex = lineValue.find(valueDelimiter);
+        const std::string attributeName = lineValue.substr(0, colonIndex);
         std::string attributeValue = lineValue.substr(colonIndex + 1);
         vtksys::SystemTools::ReplaceString(attributeValue, "%", "%25");
         vtksys::SystemTools::ReplaceString(attributeValue, ";", "%3B");

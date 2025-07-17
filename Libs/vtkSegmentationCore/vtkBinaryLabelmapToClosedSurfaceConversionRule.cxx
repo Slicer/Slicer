@@ -151,8 +151,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
 {
   this->CreateTargetRepresentation(segment);
 
-  vtkDataObject* sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
-  vtkDataObject* targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
+  vtkDataObject* const sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
+  vtkDataObject* const targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
 
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(targetRepresentation);
   if (!closedSurfacePolyData)
@@ -175,16 +175,16 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
     return false;
   }
 
-  double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
-  int jointSmoothing = this->ConversionParameters->GetValueAsInt(GetJointSmoothingParameterName());
+  const double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
+  const int jointSmoothing = this->ConversionParameters->GetValueAsInt(GetJointSmoothingParameterName());
 
   if (jointSmoothing > 0 && smoothingFactor > 0)
   {
     if (this->JointSmoothCache.find(orientedBinaryLabelmap) == this->JointSmoothCache.end())
     {
-      double* scalarRange = orientedBinaryLabelmap->GetScalarRange();
-      int lowLabel = (int)(floor(scalarRange[0]));
-      int highLabel = (int)(ceil(scalarRange[1]));
+      double* const scalarRange = orientedBinaryLabelmap->GetScalarRange();
+      const int lowLabel = (int)(floor(scalarRange[0]));
+      const int highLabel = (int)(ceil(scalarRange[1]));
 
       vtkNew<vtkImageAccumulate> imageAccumulate;
       imageAccumulate->SetInputData(orientedBinaryLabelmap);
@@ -198,19 +198,19 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
       for (int labelValue = lowLabel; labelValue <= highLabel; ++labelValue)
       {
         // Add a new threshold for every level in the labelmap
-        double numberOfVoxels = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1((int)labelValue - lowLabel);
+        const double numberOfVoxels = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1((int)labelValue - lowLabel);
         if (numberOfVoxels > 0.0)
         {
           labelValues.push_back(labelValue);
         }
       }
 
-      vtkSmartPointer<vtkPolyData> jointSmoothedSurface = vtkSmartPointer<vtkPolyData>::New();
+      const vtkSmartPointer<vtkPolyData> jointSmoothedSurface = vtkSmartPointer<vtkPolyData>::New();
       this->CreateClosedSurface(orientedBinaryLabelmap, jointSmoothedSurface, labelValues);
       this->JointSmoothCache[orientedBinaryLabelmap] = jointSmoothedSurface;
     }
 
-    vtkDataObject* sharedSurface = this->JointSmoothCache[orientedBinaryLabelmap];
+    vtkDataObject* const sharedSurface = this->JointSmoothCache[orientedBinaryLabelmap];
     if (!sharedSurface)
     {
       vtkErrorMacro("Convert: Could not find cached surface");
@@ -231,12 +231,12 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
     geometry->SetInputConnection(threshold->GetOutputPort());
     geometry->Update();
 
-    vtkPolyData* thresholdedSurface = geometry->GetOutput();
+    vtkPolyData* const thresholdedSurface = geometry->GetOutput();
     closedSurfacePolyData->ShallowCopy(thresholdedSurface);
   }
   else
   {
-    std::vector<int> labelValue = { segment->GetLabelValue() };
+    const std::vector<int> labelValue = { segment->GetLabelValue() };
     this->CreateClosedSurface(orientedBinaryLabelmap, closedSurfacePolyData, labelValue);
   }
 
@@ -277,7 +277,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   }
 
   // Pad labelmap if it has non-background border voxels
-  int* binaryLabelmapExtent = binaryLabelmap->GetExtent();
+  int* const binaryLabelmapExtent = binaryLabelmap->GetExtent();
   if (binaryLabelmapExtent[0] > binaryLabelmapExtent[1]    //
       || binaryLabelmapExtent[2] > binaryLabelmapExtent[3] //
       || binaryLabelmapExtent[4] > binaryLabelmapExtent[5])
@@ -290,10 +290,10 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
   /// If input labelmap has non-background border voxels, then those regions remain open in the output closed surface.
   /// This function adds a 1 voxel padding to the labelmap in these cases.
-  bool paddingNecessary = this->IsLabelmapPaddingNecessary(binaryLabelmap);
+  const bool paddingNecessary = this->IsLabelmapPaddingNecessary(binaryLabelmap);
   if (paddingNecessary)
   {
-    vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+    const vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
     padder->SetInputData(binaryLabelmap);
     int extent[6] = { 0, -1, 0, -1, 0, -1 };
     binaryLabelmap->GetExtent(extent);
@@ -305,23 +305,23 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
   // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
   // the whole transform can be applied on the poly data to transform it to the world coordinate system
-  vtkSmartPointer<vtkImageData> binaryLabelmapWithIdentityGeometry = vtkSmartPointer<vtkImageData>::New();
+  const vtkSmartPointer<vtkImageData> binaryLabelmapWithIdentityGeometry = vtkSmartPointer<vtkImageData>::New();
   binaryLabelmapWithIdentityGeometry->ShallowCopy(binaryLabelmap);
   binaryLabelmapWithIdentityGeometry->SetOrigin(0, 0, 0);
   binaryLabelmapWithIdentityGeometry->SetSpacing(1.0, 1.0, 1.0);
 
   // Get conversion parameters
-  double decimationFactor = this->ConversionParameters->GetValueAsDouble(GetDecimationFactorParameterName());
-  double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
-  int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
+  const double decimationFactor = this->ConversionParameters->GetValueAsDouble(GetDecimationFactorParameterName());
+  const double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
+  const int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
 
   // Conversion method
-  std::string conversionMethod = this->ConversionParameters->GetValue(GetConversionMethodParameterName());
+  const std::string conversionMethod = this->ConversionParameters->GetValue(GetConversionMethodParameterName());
 
   // SurfaceNetInternalSmoothing
   // 0 = use vtkWindowedSincPolyDataFilter
   // 1 = use surface nets internal smoothing filter (vtkConstrainedSmoothingFilter)
-  int surfaceNetsSmoothing = this->ConversionParameters->GetValueAsInt(GetSurfaceNetInternalSmoothingParameterName());
+  const int surfaceNetsSmoothing = this->ConversionParameters->GetValueAsInt(GetSurfaceNetInternalSmoothingParameterName());
 
   vtkSmartPointer<vtkPolyData> processingResult = vtkSmartPointer<vtkPolyData>::New();
 
@@ -334,7 +334,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     // it results in incorrect normals in meshes from shared labelmaps marchingCubes->ComputeScalarsOn();
 
     int valueIndex = 0;
-    for (vtkIdType labelValue : labelValues)
+    for (const vtkIdType labelValue : labelValues)
     {
       flyingEdges->SetValue(valueIndex, labelValue);
       ++valueIndex;
@@ -368,13 +368,13 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
       // 0.5  ->  8   (average smoothing)
       // 0.7  ->  14  (strong smoothing)
       // 1.0  ->  24  (very strong smoothing)
-      double fCount = 15.0 * smoothingFactor * smoothingFactor + 9.0 * smoothingFactor;
-      int iterationCount = floor(fCount);
+      const double fCount = 15.0 * smoothingFactor * smoothingFactor + 9.0 * smoothingFactor;
+      const int iterationCount = floor(fCount);
       surfaceNets->SetNumberOfIterations(iterationCount);
     }
 
     int valueIndex = 0;
-    for (vtkIdType labelValue : labelValues)
+    for (const vtkIdType labelValue : labelValues)
     {
       surfaceNets->SetValue(valueIndex, labelValue);
       ++valueIndex;
@@ -413,7 +413,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   // Decimate
   if (decimationFactor > 0.0)
   {
-    vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+    const vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
     decimator->SetInputData(processingResult);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
@@ -426,7 +426,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
   if (smoothingFactor > 0 && surfaceNetsSmoothing == 0)
   {
-    vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+    const vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
 
     // Smoothing factor is a user-friendly linear scale that we need to maps to low-pass filter parameters.
@@ -441,8 +441,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     //     0.75 (more smoothing, somewhat shrinks) ->   0.001        50
     //     1.0  (very strong smoothing, shrinks)   ->   0.0001       60
     //
-    double passBand = pow(10.0, -4.0 * smoothingFactor);
-    int numberOfIterations = 20 + smoothingFactor * 40;
+    const double passBand = pow(10.0, -4.0 * smoothingFactor);
+    const int numberOfIterations = 20 + smoothingFactor * 40;
 
     smoother->SetNumberOfIterations(numberOfIterations);
     smoother->SetPassBand(passBand);
@@ -455,18 +455,18 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   }
 
   // Transform the result surface from labelmap IJK to world coordinate system
-  vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
-  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
+  const vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   orientedBinaryLabelmap->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
   labelmapGeometryTransform->SetMatrix(labelmapImageToWorldMatrix);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  const vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
   if (computeSurfaceNormals > 0 && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES)
   {
-    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    const vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
     polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
 
@@ -509,14 +509,14 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddi
   int dimensions[3] = { 0, 0, 0 };
   binaryLabelmap->GetDimensions(dimensions);
 
-  ImageScalarType* imagePtr = (ImageScalarType*)binaryLabelmap->GetScalarPointerForExtent(extent);
+  ImageScalarType* const imagePtr = (ImageScalarType*)binaryLabelmap->GetScalarPointerForExtent(extent);
 
   for (long k = 0; k < dimensions[2]; ++k)
   {
-    long offset2 = k * dimensions[0] * dimensions[1];
+    const long offset2 = k * dimensions[0] * dimensions[1];
     for (long j = 0; j < dimensions[1]; ++j)
     {
-      long offset1 = j * dimensions[0] + offset2;
+      const long offset1 = j * dimensions[0] + offset2;
       for (long i = 0; i < dimensions[0]; ++i)
       {
         if (i != 0 && i != dimensions[0] - 1    //

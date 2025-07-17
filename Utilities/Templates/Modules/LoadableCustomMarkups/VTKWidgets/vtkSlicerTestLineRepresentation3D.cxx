@@ -181,7 +181,7 @@ void vtkSlicerTestLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsi
   this->BuildMiddlePoint();
   this->BuildSlicingPlane();
 
-  vtkMRMLMarkupsTestLineNode* liverMarkupsTestLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsTestLineNode* const liverMarkupsTestLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(this->GetMarkupsNode());
 
   if (!liverMarkupsTestLineNode)
   {

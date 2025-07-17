@@ -114,8 +114,8 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
     return;
   }
 
-  double angle = markupsNode->GetAngleDegrees();
-  bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
+  const double angle = markupsNode->GetAngleDegrees();
+  const bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
 
   double p1[3] = { 0.0 };
   double c[3] = { 0.0 };
@@ -139,8 +139,8 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
 
   double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
-  double l1 = vtkMath::Normalize(vector1);
-  double l2 = vtkMath::Normalize(vector2);
+  const double l1 = vtkMath::Normalize(vector1);
+  const double l2 = vtkMath::Normalize(vector2);
 
   // Place the label and place the arc
   const double length = l1 < l2 ? l1 : l2;
@@ -151,7 +151,7 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
     // Reduce arc size if angle>180deg (it just takes too much space).
     // arcLengthAdjustmentFactor is a sigmoid function that is 1.0 for angle<180 and 0.5 for angle>180,
     // with a smooth transition.
-    double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1 + exp((angle - 180.0) * 0.1));
+    const double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1 + exp((angle - 180.0) * 0.1));
     anglePlacementRatio *= arcLengthAdjustmentFactor;
     angleTextPlacementRatio *= arcLengthAdjustmentFactor;
   }
@@ -201,7 +201,7 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
   this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper, this->ArcOccludedMapper);
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
@@ -271,7 +271,7 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   if (this->LineActor->GetVisibility())

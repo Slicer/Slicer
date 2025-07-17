@@ -31,7 +31,7 @@ qMRMLCollapsibleButtonPlugin::qMRMLCollapsibleButtonPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLCollapsibleButtonPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLCollapsibleButton* _widget = new qMRMLCollapsibleButton(_parent);
+  qMRMLCollapsibleButton* const _widget = new qMRMLCollapsibleButton(_parent);
   return _widget;
 }
 

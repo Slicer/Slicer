@@ -34,7 +34,7 @@
 //-----------------------------------------------------------------------------
 int qSlicerVolumeRenderingModuleWidgetTest1(int argc, char* argv[])
 {
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
 
   qSlicerVolumeRenderingModule module;
   module.setMRMLScene(app.mrmlScene());

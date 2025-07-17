@@ -93,8 +93,8 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
 {
   this->CreateTargetRepresentation(segment);
 
-  vtkDataObject* sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
-  vtkDataObject* targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
+  vtkDataObject* const sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
+  vtkDataObject* const targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
 
   // Check validity of source and target representation objects
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(sourceRepresentation);
@@ -134,11 +134,11 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   }
   fractionalLabelMap->SetExtent(extent);
 
-  vtkSmartPointer<vtkMatrix4x4> imageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> imageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   fractionalLabelMap->GetImageToWorldMatrix(imageToWorldMatrix);
 
   // Create a fractional labelmap from the closed surface
-  vtkSmartPointer<vtkPolyDataToFractionalLabelmapFilter> polyDataToLabelmapFilter = vtkSmartPointer<vtkPolyDataToFractionalLabelmapFilter>::New();
+  const vtkSmartPointer<vtkPolyDataToFractionalLabelmapFilter> polyDataToLabelmapFilter = vtkSmartPointer<vtkPolyDataToFractionalLabelmapFilter>::New();
   polyDataToLabelmapFilter->SetInputData(closedSurfacePolyData);
   polyDataToLabelmapFilter->SetOutputImageToWorldMatrix(imageToWorldMatrix);
   polyDataToLabelmapFilter->SetNumberOfOffsets(this->NumberOfOffsets);
@@ -147,20 +147,20 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   fractionalLabelMap->DeepCopy(polyDataToLabelmapFilter->GetOutput());
 
   // Specify the scalar range of values in the labelmap
-  vtkSmartPointer<vtkDoubleArray> scalarRange = vtkSmartPointer<vtkDoubleArray>::New();
+  const vtkSmartPointer<vtkDoubleArray> scalarRange = vtkSmartPointer<vtkDoubleArray>::New();
   scalarRange->SetName(vtkSegmentationConverter::GetScalarRangeFieldName());
   scalarRange->InsertNextValue(FRACTIONAL_MIN);
   scalarRange->InsertNextValue(FRACTIONAL_MAX);
   fractionalLabelMap->GetFieldData()->AddArray(scalarRange);
 
   // Specify the surface threshold value for visualization
-  vtkSmartPointer<vtkDoubleArray> thresholdValue = vtkSmartPointer<vtkDoubleArray>::New();
+  const vtkSmartPointer<vtkDoubleArray> thresholdValue = vtkSmartPointer<vtkDoubleArray>::New();
   thresholdValue->SetName(vtkSegmentationConverter::GetThresholdValueFieldName());
   thresholdValue->InsertNextValue((FRACTIONAL_MIN + FRACTIONAL_MAX) / 2.0);
   fractionalLabelMap->GetFieldData()->AddArray(thresholdValue);
 
   // Specify the interpolation type for visualization
-  vtkSmartPointer<vtkIntArray> interpolationType = vtkSmartPointer<vtkIntArray>::New();
+  const vtkSmartPointer<vtkIntArray> interpolationType = vtkSmartPointer<vtkIntArray>::New();
   interpolationType->SetName(vtkSegmentationConverter::GetInterpolationTypeFieldName());
   interpolationType->InsertNextValue(VTK_LINEAR_INTERPOLATION);
   fractionalLabelMap->GetFieldData()->AddArray(interpolationType);

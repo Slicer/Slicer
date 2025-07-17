@@ -235,7 +235,7 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
         {
           range = unitNode->GetDisplayValueFromValue(this->maximum()) - unitNode->GetDisplayValueFromValue(this->minimum());
         }
-        double powerOfTen = ctk::closestPowerOfTen(range);
+        const double powerOfTen = ctk::closestPowerOfTen(range);
         if (powerOfTen != 0.)
         {
           this->setSingleStep(powerOfTen / 100);

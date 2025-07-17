@@ -72,11 +72,11 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
   ; // Scalars for Coloring
   if (inCScalars == nullptr)
   {
-    vtkDataArray* inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS, inputVector); // Scalars for Scaling
+    vtkDataArray* const inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS, inputVector); // Scalars for Scaling
     inCScalars = inSScalars;
   }
 
-  vtkIdType numPts = input->GetNumberOfPoints();
+  const vtkIdType numPts = input->GetNumberOfPoints();
   if (numPts < 1)
   {
     vtkDebugMacro("No points to glyph!");
@@ -95,18 +95,18 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
   outputPD->CopyTCoordsOff();
 
   vtkPolyData* source = this->GetSource(0, inputVector[1]);
-  vtkPoints* sourcePts = source->GetPoints();
-  vtkIdType numSourcePts = sourcePts->GetNumberOfPoints();
-  vtkIdType numSourceCells = source->GetNumberOfCells();
+  vtkPoints* const sourcePts = source->GetPoints();
+  const vtkIdType numSourcePts = sourcePts->GetNumberOfPoints();
+  const vtkIdType numSourceCells = source->GetNumberOfCells();
 
   // Prepare to copy output.
-  vtkPointData* pd = input->GetPointData();
+  vtkPointData* const pd = input->GetPointData();
   outputPD->CopyAllocate(pd, numPts * numSourcePts);
 
   vtkNew<vtkPoints> newPts;
   newPts->Allocate(numPts * numSourcePts);
 
-  vtkSmartPointer<vtkDataArray> newScalars = vtkSmartPointer<vtkDataArray>::Take(inCScalars->NewInstance());
+  const vtkSmartPointer<vtkDataArray> newScalars = vtkSmartPointer<vtkDataArray>::Take(inCScalars->NewInstance());
   newScalars->SetNumberOfComponents(inCScalars->GetNumberOfComponents());
   newScalars->Allocate(inCScalars->GetNumberOfComponents() * numPts * numSourcePts);
   newScalars->SetName(inCScalars->GetName());
@@ -114,7 +114,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
   // Setting up for calls to PolyData::InsertNextCell()
   output->Allocate(source, 3 * numPts * numSourceCells, numPts * numSourceCells);
 
-  vtkSmartPointer<vtkPoints> transformedSourcePts = vtkSmartPointer<vtkPoints>::New();
+  const vtkSmartPointer<vtkPoints> transformedSourcePts = vtkSmartPointer<vtkPoints>::New();
   transformedSourcePts->SetDataTypeToDouble();
   transformedSourcePts->Allocate(numSourcePts);
 
@@ -140,14 +140,14 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
     }
 
     // Get the scalar and vector data
-    double scalarValue = inCScalars->GetComponent(inPtId, 0);
+    const double scalarValue = inCScalars->GetComponent(inPtId, 0);
     if (this->MagnitudeThresholding && (scalarValue < this->MagnitudeThresholdLower || scalarValue > this->MagnitudeThresholdUpper))
     {
       continue;
     }
 
     inVectors->GetTuple(inPtId, v);
-    double vMag = vtkMath::Norm(v);
+    const double vMag = vtkMath::Norm(v);
 
     // Now begin copying/transforming glyph
     trans->Identity();
@@ -157,7 +157,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
     {
       vtkCell* cell = source->GetCell(cellId);
       vtkIdList* cellPts = cell->GetPointIds();
-      int npts = cellPts->GetNumberOfIds();
+      const int npts = cellPts->GetNumberOfIds();
       pts->Reset();
       for (vtkIdType i = 0; i < npts; i++)
       {
@@ -244,7 +244,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(vtkInformation* vtkNotUsed(reques
 
   if (newScalars)
   {
-    int idx = outputPD->AddArray(newScalars);
+    const int idx = outputPD->AddArray(newScalars);
     outputPD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
   }
 

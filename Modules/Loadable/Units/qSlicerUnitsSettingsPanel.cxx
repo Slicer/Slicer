@@ -102,7 +102,7 @@ void qSlicerUnitsSettingsPanelPrivate::registerProperties(QString quantity, qMRM
 {
   Q_Q(qSlicerUnitsSettingsPanel);
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
 
   // clang-format off
   q->registerProperty(quantity + "/id", unitWidget->unitComboBox(),
@@ -136,7 +136,7 @@ void qSlicerUnitsSettingsPanelPrivate::registerProperties(QString quantity, qMRM
 void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
 {
   Q_Q(qSlicerUnitsSettingsPanel);
-  QString lowerQuantity = quantity.toLower();
+  const QString lowerQuantity = quantity.toLower();
 
   // Add collapsible groupbox
   ctkCollapsibleGroupBox* groupbox = new ctkCollapsibleGroupBox(q);
@@ -315,7 +315,7 @@ void qSlicerUnitsSettingsPanel::updateFromSelectionNode()
   {
     if (*it)
     {
-      QString quantity = (*it)->GetQuantity();
+      const QString quantity = (*it)->GetQuantity();
       if (!d->Quantities.contains(quantity))
       {
         d->addQuantity(quantity);
@@ -336,7 +336,7 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
   for (qMRMLSettingsUnitWidget* const widget : d->Quantities.values())
   {
     // clang-format off
-    qMRMLUnitWidget::UnitProperties allButNameAndQuantity =
+    qMRMLUnitWidget::UnitProperties const allButNameAndQuantity =
       qMRMLUnitWidget::Preset |
       qMRMLUnitWidget::Prefix | qMRMLUnitWidget::Suffix |
       qMRMLUnitWidget::Precision |

@@ -122,7 +122,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   QCOMPARE(static_cast<int>(node->GetAttributeNames().size()), expectedAttributes.count());
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributes.count());
 
-  QStringList resultAttributes = this->NodeAttributeTableView->attributes();
+  const QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   for (const QString& attribute : resultAttributes)
   {
@@ -305,7 +305,7 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 
   QFETCH(QList<AttributeType>, expectedAttributes);
 
-  QStringList resultAttributes = this->NodeAttributeTableView->attributes();
+  const QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   for (const QString& attribute : resultAttributes)
   {
@@ -348,7 +348,7 @@ void qMRMLNodeAttributeTableViewTester::testRename()
   // Make the new attribute name the current so that the view can store its name
   // This way in case of duplicated names, the original name is restored (default behavior)
   this->NodeAttributeTableView->selectItemRange(renamedAttributeRowIndex, 0, renamedAttributeRowIndex, 0);
-  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
+  const QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
   this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
   this->NodeAttributeTableView->renameAttribute(attributeToRename, newAttributeName);
@@ -401,10 +401,10 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
 
   for (const AttributeEmptyType& attributeExist : expectedExistingAttributesAfterRemove)
   {
-    bool isEmpty = attributeExist.second;
+    const bool isEmpty = attributeExist.second;
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
 
-    const char* inspectedNodeAttributeValue = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toUtf8());
+    const char* const inspectedNodeAttributeValue = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toUtf8());
     if (isEmpty)
     {
       QVERIFY(inspectedNodeAttributeValue == nullptr);
@@ -452,13 +452,13 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
 
   QFETCH(QList<int>, rangeToSelect);
   this->NodeAttributeTableView->selectItemRange(rangeToSelect[0], rangeToSelect[1], rangeToSelect[2], rangeToSelect[3]);
-  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
+  const QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
   this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
   this->NodeAttributeTableView->addAttribute();
 
   QFETCH(QList<AttributeType>, expectedAttributes);
-  QStringList resultAttributes = this->NodeAttributeTableView->attributes();
+  const QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   for (const QString& attribute : resultAttributes)
   {

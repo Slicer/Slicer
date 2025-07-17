@@ -63,7 +63,7 @@ vtkMRMLRubberBandWidgetRepresentation::vtkInternal::vtkInternal(vtkMRMLRubberBan
   this->PolyData = vtkSmartPointer<vtkPolyData>::New();
 
   vtkNew<vtkPoints> points;
-  vtkNew<vtkCellArray> lines;
+  const vtkNew<vtkCellArray> lines;
   this->PolyData->SetPoints(points);
   this->PolyData->SetLines(lines);
 

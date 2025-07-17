@@ -28,7 +28,7 @@ qSlicerMouseModeToolBarPlugin::qSlicerMouseModeToolBarPlugin(QObject* parent)
 
 QWidget* qSlicerMouseModeToolBarPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerMouseModeToolBar* widget = new qSlicerMouseModeToolBar(parentWidget);
+  qSlicerMouseModeToolBar* const widget = new qSlicerMouseModeToolBar(parentWidget);
   return widget;
 }
 

@@ -93,7 +93,7 @@ void vtkMRMLShaderPropertyNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -106,10 +106,10 @@ void vtkMRMLShaderPropertyNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLShaderPropertyNode* node = vtkMRMLShaderPropertyNode::SafeDownCast(anode);
+  vtkMRMLShaderPropertyNode* const node = vtkMRMLShaderPropertyNode::SafeDownCast(anode);
   if (!node)
   {
     return;

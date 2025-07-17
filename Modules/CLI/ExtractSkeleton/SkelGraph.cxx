@@ -62,7 +62,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
   m_Spacing[1] = spacing[1];
   m_Spacing[2] = spacing[2];
 
-  int size_image = dim[0] * dim[1] * dim[2];
+  const int size_image = dim[0] * dim[1] * dim[2];
 
   int* label_image = new int[size_image];
   for (int i = 0; i < size_image; i++)
@@ -93,7 +93,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
 
     // add new branch
     std::list<skel_branch> branchesToDo;
-    skel_branch* branch_elem = AddNewBranchToDo(branchesToDo);
+    skel_branch* const branch_elem = AddNewBranchToDo(branchesToDo);
     if (branch_elem->points.empty())
     {
       branch_elem->end_1_point = *act_endpoint;
@@ -103,13 +103,13 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
 
     while (!branchesToDo.empty())
     {
-      std::list<skel_branch>::iterator act_branch = branchesToDo.begin();
+      const std::list<skel_branch>::iterator act_branch = branchesToDo.begin();
 
       // act_branch != branchesToDo->end() && //
       // if  (while) branchesToDo list non-empty -> follow branches
       bool branch_done = false;
       Coord3i act_point = act_branch->end_2_point;
-      int branchID = act_branch->branchID;
+      const int branchID = act_branch->branchID;
       // label endpoint
       label_image[act_point[0] + dim[0] * (act_point[1] + dim[1] * act_point[2])] = branchID;
       while (!branch_done)
@@ -148,7 +148,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
           for (std::deque<Coord3i>::iterator act_neighbor = neighbors.begin(); act_neighbor != neighbors.end(); ++act_neighbor)
           {
             Coord3i pt = *act_neighbor;
-            skel_branch* newElem = AddNewBranchToDo(branchesToDo);
+            skel_branch* const newElem = AddNewBranchToDo(branchesToDo);
             neighborBranches.push_back(newElem);
             // label start Coord3i
             if (newElem->points.empty())
@@ -282,13 +282,13 @@ void SkelGraph::FindMaximalPath()
     while (!wait_list.empty())
     {
       // get next entry in wait_list
-      skel_branch* act_node = *(wait_list.begin());
+      skel_branch* const act_node = *(wait_list.begin());
       wait_list.pop_front();
 
       // add to path
       act_node->acc_length += act_node->length;
       act_node->acc_path.push_back(act_node->branchID);
-      int act_pos_id = act_node->branchID;
+      const int act_pos_id = act_node->branchID;
       std::deque<skel_branch>::iterator act_pos_list = m_Graph.begin();
       // since the graph_id's are the location of its member in the list,
       // we can use advance for random access
@@ -317,10 +317,10 @@ void SkelGraph::FindMaximalPath()
         for (std::deque<int>::iterator neighbors = cont_end->begin(); neighbors != cont_end->end(); ++neighbors)
         {
           // get neighbors entry
-          int distance = *neighbors - act_pos_id;
+          const int distance = *neighbors - act_pos_id;
           std::deque<skel_branch>::iterator act_pos_neigh = act_pos_list;
           advance(act_pos_neigh, distance);
-          skel_branch* act_neighbor = &(*(act_pos_neigh));
+          skel_branch* const act_neighbor = &(*(act_pos_neigh));
           if (!act_neighbor->acc_path.empty())
           {
             // neighbor already treated
@@ -330,13 +330,13 @@ void SkelGraph::FindMaximalPath()
           // update entries of neighbor
           // since act_point[0] - pt[0] is either [-1,0,1] -> abs == ^2
           // add distance between branches to length at preceding branch
-          Coord3i cont_neigh_point;
+          const Coord3i cont_neigh_point;
           act_neighbor->acc_length = act_node->acc_length;
           // determine connection costs -> since we do not know which one is the
           // corresponding endpoint of the neighbor, we have to try out and take
           // the one combination that yields the smallest costs
-          double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point, m_Spacing);
-          double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point, m_Spacing);
+          const double conn_costs1 = pointdistance(act_neighbor->end_1_point, cont_end_point, m_Spacing);
+          const double conn_costs2 = pointdistance(act_neighbor->end_2_point, cont_end_point, m_Spacing);
           act_neighbor->acc_length += (conn_costs1 < conn_costs2 ? conn_costs1 : conn_costs2);
           // copy path
           // initiate with copy of path of preceding branch
@@ -480,7 +480,7 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
     previousPoint = point;
   }
 
-  double minimumDistance = totalLength / (requestedNumberOfPoints - 1);
+  const double minimumDistance = totalLength / (requestedNumberOfPoints - 1);
 
   // Sample the point list
   previousPoint = all_axis_points.front();

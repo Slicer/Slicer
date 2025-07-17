@@ -38,7 +38,7 @@ int SlabReconstructionThicknessTest();
 //----------------------------------------------------------------------------
 int vtkMRMLSliceNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLSliceNode> node1;
+  const vtkNew<vtkMRMLSliceNode> node1;
 
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
@@ -61,21 +61,21 @@ int vtkMRMLSliceNodeTest1(int, char*[])
 void AddSliceOrientationPresets(vtkMRMLSliceNode* sliceNode)
 {
   {
-    vtkNew<vtkMatrix3x3> preset;
+    const vtkNew<vtkMatrix3x3> preset;
     vtkMRMLSliceNode::GetAxialSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Axial", preset.GetPointer());
   }
 
   {
-    vtkNew<vtkMatrix3x3> preset;
+    const vtkNew<vtkMatrix3x3> preset;
     vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Sagittal", preset.GetPointer());
   }
 
   {
-    vtkNew<vtkMatrix3x3> preset;
+    const vtkNew<vtkMatrix3x3> preset;
     vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Coronal", preset.GetPointer());
@@ -143,15 +143,15 @@ int RemoveSliceOrientationPresetTest()
   CHECK_BOOL(sliceNode->RemoveSliceOrientationPreset(""), false);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  vtkNew<vtkMatrix3x3> expectedOnes;
+  const vtkNew<vtkMatrix3x3> expectedOnes;
   InitializeMatrix(expectedOnes.GetPointer(), 1);
   sliceNode->AddSliceOrientationPreset("Ones", expectedOnes.GetPointer());
 
-  vtkNew<vtkMatrix3x3> expectedTwos;
+  const vtkNew<vtkMatrix3x3> expectedTwos;
   InitializeMatrix(expectedTwos.GetPointer(), 2);
   sliceNode->AddSliceOrientationPreset("Twos", expectedTwos.GetPointer());
 
-  vtkNew<vtkMatrix3x3> expectedThrees;
+  const vtkNew<vtkMatrix3x3> expectedThrees;
   InitializeMatrix(expectedThrees.GetPointer(), 3);
   sliceNode->AddSliceOrientationPreset("Threes", expectedThrees.GetPointer());
 
@@ -251,10 +251,10 @@ int GetSliceOrientationPresetTest()
 {
   vtkNew<vtkMRMLSliceNode> sliceNode;
 
-  vtkNew<vtkMatrix3x3> expectedOnes;
+  const vtkNew<vtkMatrix3x3> expectedOnes;
   InitializeMatrix(expectedOnes.GetPointer(), 1);
 
-  vtkNew<vtkMatrix3x3> expectedTwos;
+  const vtkNew<vtkMatrix3x3> expectedTwos;
   InitializeMatrix(expectedTwos.GetPointer(), 2);
 
   {
@@ -269,18 +269,18 @@ int GetSliceOrientationPresetTest()
 
   {
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("");
+    vtkMatrix3x3* const current = sliceNode->GetSliceOrientationPreset("");
     TESTING_OUTPUT_ASSERT_ERRORS_END();
     CHECK_NULL(current);
   }
 
   {
-    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("ones");
+    vtkMatrix3x3* const current = sliceNode->GetSliceOrientationPreset("ones");
     CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(current, expectedOnes.GetPointer()), true);
   }
 
   {
-    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("twos");
+    vtkMatrix3x3* const current = sliceNode->GetSliceOrientationPreset("twos");
     CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(current, expectedTwos.GetPointer()), true);
   }
 
@@ -295,7 +295,7 @@ int GetSliceOrientationPresetNameTest()
   vtkNew<vtkMatrix3x3> originalPreset;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(originalPreset.GetPointer());
 
-  vtkNew<vtkMatrix3x3> preset;
+  const vtkNew<vtkMatrix3x3> preset;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(preset.GetPointer());
   sliceNode->AddSliceOrientationPreset("Axial", preset.GetPointer());
 
@@ -329,7 +329,7 @@ int SetOrientationTest()
 
   // Set a valid orientation
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientation("Sagittal"), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Sagittal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Sagittal");
@@ -338,7 +338,7 @@ int SetOrientationTest()
 
   // Orientation are case sensitive
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
     CHECK_BOOL(sliceNode->SetOrientation("axial"), false);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -349,7 +349,7 @@ int SetOrientationTest()
 
   // The sliceToRAS matrix define the current orientation
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
     CHECK_BOOL(sliceNode->SetOrientation("Reformat"), false);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -366,7 +366,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToAxial
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToAxial(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Axial"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Axial");
@@ -375,7 +375,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToSagittal
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToSagittal(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Sagittal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Sagittal");
@@ -384,7 +384,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToCoronal
   {
-    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    const vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToCoronal(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Coronal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Coronal");
@@ -407,15 +407,15 @@ int SetOrientationTest()
 //----------------------------------------------------------------------------
 int InitializeDefaultMatrixTest()
 {
-  vtkNew<vtkMatrix3x3> axial;
+  const vtkNew<vtkMatrix3x3> axial;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axial.GetPointer());
   CHECK_NOT_NULL(axial.GetPointer());
 
-  vtkNew<vtkMatrix3x3> coronal;
+  const vtkNew<vtkMatrix3x3> coronal;
   vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(coronal.GetPointer());
   CHECK_NOT_NULL(coronal.GetPointer());
 
-  vtkNew<vtkMatrix3x3> sagittal;
+  const vtkNew<vtkMatrix3x3> sagittal;
   vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(sagittal.GetPointer());
   CHECK_NOT_NULL(sagittal.GetPointer());
 

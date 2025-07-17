@@ -106,7 +106,7 @@ bool qMRMLVolumeWidgetPrivate::blockSignals(bool block)
 // --------------------------------------------------------------------------
 void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
 {
-  double interval = max - min;
+  const double interval = max - min;
   int order = ctk::orderOfMagnitude(interval);
   double minRangeSliderMinimumStep = 0.0;
   double maxRangeSliderMinimumStep = 0.0;
@@ -238,7 +238,7 @@ void qMRMLVolumeWidget::updateWidgetFromMRMLVolumeNode()
   Q_D(qMRMLVolumeWidget);
 
   // Make sure the display node reference is up-to-date
-  vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
+  vtkMRMLScalarVolumeDisplayNode* const newVolumeDisplayNode = d->VolumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
   this->setMRMLVolumeDisplayNode(newVolumeDisplayNode);
 
   // We always need to set the slider values and range at the same time

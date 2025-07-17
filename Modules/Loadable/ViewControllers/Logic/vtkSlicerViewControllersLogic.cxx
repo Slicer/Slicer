@@ -53,7 +53,7 @@ void vtkSlicerViewControllersLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerViewControllersLogic::RegisterNodes()
 {
-  vtkMRMLScene* scene = this->GetMRMLScene();
+  vtkMRMLScene* const scene = this->GetMRMLScene();
   if (!scene)
   {
     vtkErrorMacro("vtkSlicerViewControllersLogic::RegisterNodes failed: invalid scene");
@@ -128,7 +128,7 @@ void vtkSlicerViewControllersLogic::ResetAllViewNodesToDefault()
     return;
   }
   scene->StartState(vtkMRMLScene::BatchProcessState);
-  vtkMRMLSliceNode* defaultSliceViewNode = GetDefaultSliceViewNode();
+  vtkMRMLSliceNode* const defaultSliceViewNode = GetDefaultSliceViewNode();
   std::vector<vtkMRMLNode*> viewNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it = viewNodes.begin(); it != viewNodes.end(); ++it)
@@ -142,14 +142,14 @@ void vtkSlicerViewControllersLogic::ResetAllViewNodesToDefault()
     sliceNode->SetOrientationToDefault();
   }
   viewNodes.clear();
-  vtkMRMLViewNode* defaultThreeDViewNode = GetDefaultThreeDViewNode();
+  vtkMRMLViewNode* const defaultThreeDViewNode = GetDefaultThreeDViewNode();
   scene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it = viewNodes.begin(); it != viewNodes.end(); ++it)
   {
     (*it)->Reset(defaultThreeDViewNode);
   }
   viewNodes.clear();
-  vtkMRMLPlotViewNode* defaultPlotViewNode = GetDefaultPlotViewNode();
+  vtkMRMLPlotViewNode* const defaultPlotViewNode = GetDefaultPlotViewNode();
   scene->GetNodesByClass("vtkMRMLPlotViewNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it = viewNodes.begin(); it != viewNodes.end(); ++it)
   {

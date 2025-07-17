@@ -212,18 +212,18 @@ void qMRMLMarkupsCurveSettingsWidget::updateWidgetFromMRML()
   d->curveTypeComboBox->setCurrentIndex(d->curveTypeComboBox->findData(curveNode->GetCurveType()));
   d->curveTypeComboBox->blockSignals(wasBlocked);
 
-  vtkMRMLModelNode* modelNode = curveNode->GetSurfaceConstraintNode();
+  vtkMRMLModelNode* const modelNode = curveNode->GetSurfaceConstraintNode();
   wasBlocked = d->modelNodeSelector->blockSignals(true);
   d->modelNodeSelector->setCurrentNode(modelNode);
   d->modelNodeSelector->blockSignals(wasBlocked);
 
   wasBlocked = d->costFunctionComboBox->blockSignals(true);
-  int costFunction = curveNode->GetSurfaceCostFunctionType();
+  const int costFunction = curveNode->GetSurfaceCostFunctionType();
   d->costFunctionComboBox->setCurrentIndex(d->costFunctionComboBox->findData(costFunction));
   d->costFunctionComboBox->blockSignals(wasBlocked);
 
   wasBlocked = d->scalarFunctionLineEdit->blockSignals(true);
-  int currentCursorPosition = d->scalarFunctionLineEdit->cursorPosition();
+  const int currentCursorPosition = d->scalarFunctionLineEdit->cursorPosition();
   d->scalarFunctionLineEdit->setText(curveNode->GetSurfaceDistanceWeightingFunction());
   d->scalarFunctionLineEdit->setCursorPosition(currentCursorPosition);
   d->scalarFunctionLineEdit->blockSignals(wasBlocked);
@@ -280,10 +280,10 @@ void qMRMLMarkupsCurveSettingsWidget::onCurveTypeParameterChanged()
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(curveNode);
+  const MRMLNodeModifyBlocker blocker(curveNode);
   curveNode->SetCurveType(d->curveTypeComboBox->currentData().toInt());
   curveNode->SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
-  std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
+  const std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
   curveNode->SetSurfaceCostFunctionType(d->costFunctionComboBox->currentData().toInt());
   curveNode->SetSurfaceDistanceWeightingFunction(functionString.c_str());
 }
@@ -293,7 +293,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
 {
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 
-  double resampleNumberOfPoints = d->resampleCurveNumerOfOutputPointsSpinBox->value();
+  const double resampleNumberOfPoints = d->resampleCurveNumerOfOutputPointsSpinBox->value();
   if (resampleNumberOfPoints <= 1)
   {
     return;
@@ -304,7 +304,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
   {
     return;
   }
-  bool isClosed = inputNode->GetCurveClosed();
+  const bool isClosed = inputNode->GetCurveClosed();
   vtkMRMLMarkupsCurveNode* outputNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->resampleCurveOutputNodeSelector->currentNode());
   if (!outputNode)
   {
@@ -312,11 +312,11 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
   }
   if (outputNode != inputNode)
   {
-    MRMLNodeModifyBlocker blocker(outputNode);
-    vtkNew<vtkPoints> originalControlPoints;
+    const MRMLNodeModifyBlocker blocker(outputNode);
+    const vtkNew<vtkPoints> originalControlPoints;
     inputNode->GetControlPointPositionsWorld(originalControlPoints);
     outputNode->SetControlPointPositionsWorld(originalControlPoints);
-    vtkNew<vtkStringArray> originalLabels;
+    const vtkNew<vtkStringArray> originalLabels;
     inputNode->GetControlPointLabels(originalLabels);
     outputNode->SetControlPointLabels(originalLabels, originalControlPoints);
     outputNode->SetCurveType(inputNode->GetCurveType());
@@ -325,8 +325,8 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     outputNode->SetSurfaceCostFunctionType(inputNode->GetSurfaceCostFunctionType());
     outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
   }
-  unsigned int numberOfSegments = (isClosed ? resampleNumberOfPoints : resampleNumberOfPoints - 1);
-  double sampleDist = outputNode->GetCurveLengthWorld() / numberOfSegments;
+  const unsigned int numberOfSegments = (isClosed ? resampleNumberOfPoints : resampleNumberOfPoints - 1);
+  const double sampleDist = outputNode->GetCurveLengthWorld() / numberOfSegments;
   outputNode->ResampleCurveWorld(sampleDist);
 }
 
@@ -348,8 +348,8 @@ bool qMRMLMarkupsCurveSettingsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNod
 {
   Q_D(const qMRMLMarkupsCurveSettingsWidget);
 
-  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(markupsNode);
-  vtkMRMLMarkupsClosedCurveNode* closedCurveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsCurveNode* const curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsClosedCurveNode* const closedCurveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(markupsNode);
   if (!curveNode && !closedCurveNode)
   {
     return false;

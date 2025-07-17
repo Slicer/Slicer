@@ -40,18 +40,18 @@ int DoIt(int argc, char* argv[], Tin, Tout)
 
   typedef itk::CastImageFilter<InputImageType, OutputImageType> FilterType;
 
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
 
   reader1->SetFileName(InputVolume.c_str());
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Cast image", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watchFilter(filter, "Cast image", CLPProcessInformation);
 
   filter->SetInput(0, reader1->GetOutput());
 
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(OutputVolume.c_str());
   writer->SetInput(filter->GetOutput());
   writer->Update();

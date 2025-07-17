@@ -52,7 +52,7 @@ namespace
 //----------------------------------------------------------------------------
 int TestDefaults()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
 
   vtkNew<vtkTimerLog> overallTimer;

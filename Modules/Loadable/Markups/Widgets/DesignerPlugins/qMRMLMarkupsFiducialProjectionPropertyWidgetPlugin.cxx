@@ -34,7 +34,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin::qMRMLMarkupsFiducialProjecti
 //------------------------------------------------------------------------------
 QWidget* qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsFiducialProjectionPropertyWidget* _widget = new qMRMLMarkupsFiducialProjectionPropertyWidget(_parent);
+  qMRMLMarkupsFiducialProjectionPropertyWidget* const _widget = new qMRMLMarkupsFiducialProjectionPropertyWidget(_parent);
   return _widget;
 }
 

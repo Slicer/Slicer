@@ -41,7 +41,7 @@
 int qMRMLNodeFactoryTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qMRMLNodeFactory nodeFactory;
@@ -67,7 +67,7 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
   }
 
   {
-    vtkMRMLNode* createdEmptyNode = nodeFactory.createNode("");
+    vtkMRMLNode* const createdEmptyNode = nodeFactory.createNode("");
     if (createdEmptyNode != nullptr)
     {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() created a bad node" << std::endl;

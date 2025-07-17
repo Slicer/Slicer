@@ -154,18 +154,18 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
     this->TextActor->SetVisibility(false);
   }
 
-  double opacity = displayNode->GetOpacity();
-  double fillOpacity = displayNode->GetFillOpacity();
+  const double opacity = displayNode->GetOpacity();
+  const double fillOpacity = displayNode->GetFillOpacity();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIProperty->SetOpacity(opacity * fillOpacity);
 
-  double occludedOpacity = displayNode->GetOccludedVisibility() ? fillOpacity * displayNode->GetOccludedOpacity() : 0.0;
+  const double occludedOpacity = displayNode->GetOccludedVisibility() ? fillOpacity * displayNode->GetOccludedOpacity() : 0.0;
   this->ROIOccludedProperty->DeepCopy(this->ROIProperty);
   this->ROIOccludedProperty->SetOpacity(opacity * fillOpacity * occludedOpacity);
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->ROIMapper, this->ROIOccludedMapper);
 
-  double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
+  const double outlineOpacity = opacity * this->MarkupsDisplayNode->GetOutlineOpacity();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
@@ -430,14 +430,14 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(vtkMRMLInteractionEventDat
 
       double t;
       double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
-      double currentDist2Display = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
+      const double currentDist2Display = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
       if (currentDist2Display < distance2Display)
       {
         distance2Display = currentDist2Display;
       }
     }
 
-    double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
+    const double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
     if (distance2Display < VTK_DOUBLE_MAX && distance2Display < pixelTolerance * pixelTolerance && distance2Display < closestDistance2)
     {
       closestDistance2 = distance2Display;

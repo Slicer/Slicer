@@ -60,7 +60,7 @@ void vtkMRMLAnnotationPointDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -112,7 +112,7 @@ void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLAnnotationPointDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
   vtkMRMLAnnotationPointDisplayNode* node = (vtkMRMLAnnotationPointDisplayNode*)anode;
@@ -228,7 +228,7 @@ void vtkMRMLAnnotationPointDisplayNode::CreateBackup()
 
   vtkMRMLAnnotationPointDisplayNode* backupNode = vtkMRMLAnnotationPointDisplayNode::New();
 
-  int oldMode = backupNode->GetDisableModifiedEvent();
+  const int oldMode = backupNode->GetDisableModifiedEvent();
   backupNode->DisableModifiedEventOn();
   backupNode->Copy(this);
   backupNode->SetDisableModifiedEvent(oldMode);
@@ -243,7 +243,7 @@ void vtkMRMLAnnotationPointDisplayNode::RestoreBackup()
 
   if (this->m_Backup)
   {
-    MRMLNodeModifyBlocker blocker(this);
+    const MRMLNodeModifyBlocker blocker(this);
     this->Copy(this->m_Backup);
   }
   else

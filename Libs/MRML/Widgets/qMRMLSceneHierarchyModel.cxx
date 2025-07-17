@@ -145,17 +145,17 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node) const
     return -1;
   }
 
-  const char* nodeId = node ? node->GetID() : nullptr;
+  const char* const nodeId = node ? node->GetID() : nullptr;
   if (nodeId == nullptr)
   {
     return -1;
   }
 
   // is there a hierarchy node associated with this node?
-  vtkMRMLHierarchyNode* assocHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, node->GetID());
+  vtkMRMLHierarchyNode* const assocHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, node->GetID());
   if (assocHierarchyNode)
   {
-    int assocHierarchyNodeIndex = this->nodeIndex(assocHierarchyNode);
+    const int assocHierarchyNodeIndex = this->nodeIndex(assocHierarchyNode);
     return assocHierarchyNodeIndex + 1;
   }
 
@@ -165,7 +165,7 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node) const
   // if it's part of a hierarchy, use the GetIndexInParent call
   if (parent)
   {
-    vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
+    vtkMRMLHierarchyNode* const hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
     if (hnode)
     {
       vtkMRMLHierarchyNode* parentHierarchy = vtkMRMLHierarchyNode::SafeDownCast(parent);
@@ -203,7 +203,7 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node) const
   {
     // note: parent can be nullptr, it means that the scene is the parent
     vtkMRMLHierarchyNode* currentHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, n->GetID());
-    vtkMRMLNode* currentParentNode = (currentHierarchyNode ? currentHierarchyNode->GetParentNode() : nullptr);
+    vtkMRMLNode* const currentParentNode = (currentHierarchyNode ? currentHierarchyNode->GetParentNode() : nullptr);
     if (parent == currentParentNode)
     {
       nId = n->GetID();
@@ -371,7 +371,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int 
 void qMRMLSceneHierarchyModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   this->Superclass::updateItemDataFromNode(item, node, column);
-  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+  vtkMRMLHierarchyNode* const hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
   if (hierarchyNode)
   {
     if (column == this->expandColumn())

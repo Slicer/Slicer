@@ -130,7 +130,7 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
   {
     return;
   }
-  vtkMRMLNode* defaultColorNode = this->mrmlScene()->GetNodeByID(d->ColorLogic.GetPointer() != nullptr ? d->ColorLogic->GetDefaultEditorColorNodeID() : nullptr);
+  vtkMRMLNode* const defaultColorNode = this->mrmlScene()->GetNodeByID(d->ColorLogic.GetPointer() != nullptr ? d->ColorLogic->GetDefaultEditorColorNodeID() : nullptr);
   if (defaultColorNode)
   {
     this->setCurrentColorNode(defaultColorNode);
@@ -169,11 +169,11 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
   Q_D(qMRMLColorPickerWidget);
   // Search for the largest item
   QSize maxSizeHint;
-  QModelIndex rootIndex = d->MRMLColorListView->rootIndex();
+  const QModelIndex rootIndex = d->MRMLColorListView->rootIndex();
   const int count = d->MRMLColorListView->model()->rowCount(rootIndex);
   for (int i = 0; i < count; ++i)
   {
-    QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(d->MRMLColorListView->model()->index(i, 0, rootIndex));
+    const QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(d->MRMLColorListView->model()->index(i, 0, rootIndex));
     maxSizeHint.setWidth(qMax(maxSizeHint.width(), sizeHint.width()));
     maxSizeHint.setHeight(qMax(maxSizeHint.height(), sizeHint.height()));
   }
@@ -188,14 +188,14 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
 void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
 {
   Q_D(qMRMLColorPickerWidget);
-  QRegExp regExp(colorText, Qt::CaseInsensitive, QRegExp::RegExp);
+  const QRegExp regExp(colorText, Qt::CaseInsensitive, QRegExp::RegExp);
   d->MRMLColorListView->sortFilterProxyModel()->setFilterRegExp(regExp);
 
   QModelIndex newCurrentIndex;
 
   if (!d->SearchBox->text().isEmpty())
   {
-    QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()->index(0, 0);
+    const QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()->index(0, 0);
     QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()->match(start, 0, d->SearchBox->text(), 1, Qt::MatchStartsWith);
 
     if (indexList.isEmpty())
@@ -226,7 +226,7 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     if (event->type() == QEvent::KeyPress)
     {
       // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+      QKeyEvent* const keyEvent = static_cast<QKeyEvent*>(event);
       if (keyEvent->key() == Qt::Key_Up || //
           keyEvent->key() == Qt::Key_Down)
       {

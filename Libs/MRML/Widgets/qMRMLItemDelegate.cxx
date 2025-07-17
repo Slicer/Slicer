@@ -54,8 +54,8 @@ qMRMLItemDelegate::~qMRMLItemDelegate()
 //------------------------------------------------------------------------------
 bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
-  QVariant decorationData = index.data(Qt::DecorationRole);
+  const QVariant editData = index.data(Qt::EditRole);
+  const QVariant decorationData = index.data(Qt::DecorationRole);
   if (editData.isNull() && //
       decorationData.type() == QVariant::Color)
   {
@@ -73,8 +73,8 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
 //------------------------------------------------------------------------------
 int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 {
-  QVariant decorationData = index.data(Qt::DecorationRole);
-  QVariant colorData = index.data(qMRMLItemDelegate::ColorRole);
+  const QVariant decorationData = index.data(Qt::DecorationRole);
+  const QVariant colorData = index.data(qMRMLItemDelegate::ColorRole);
   if (decorationData.type() == QVariant::Color)
   {
     return Qt::DecorationRole;
@@ -89,13 +89,13 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 //------------------------------------------------------------------------------
 bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index) const
 {
-  QVariant editData = index.data(Qt::EditRole);
+  const QVariant editData = index.data(Qt::EditRole);
   if (editData.type() != QVariant::String)
   {
     return false;
   }
-  QRegExp regExp0To1With2Decimals("[01]\\.[0-9][0-9]");
-  bool res = regExp0To1With2Decimals.exactMatch(editData.toString());
+  const QRegExp regExp0To1With2Decimals("[01]\\.[0-9][0-9]");
+  const bool res = regExp0To1With2Decimals.exactMatch(editData.toString());
   return res;
 }
 
@@ -107,7 +107,7 @@ QWidget* qMRMLItemDelegate::createEditor(QWidget* parent, const QStyleOptionView
     ctkColorPickerButton* colorPicker = new ctkColorPickerButton(parent);
     colorPicker->setProperty("changeColorOnSet", true);
     colorPicker->setDisplayColorName(false);
-    ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
+    const ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
     colorPicker->setDialogOptions(options);
     connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(commitAndClose()), Qt::QueuedConnection);
     return colorPicker;
@@ -135,7 +135,7 @@ void qMRMLItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index)
 {
   if (this->isColor(index))
   {
-    QColor color = index.data(this->colorRole(index)).value<QColor>();
+    const QColor color = index.data(this->colorRole(index)).value<QColor>();
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     if (colorPicker) // colorPicker may be nullptr, don't make the application crash when that happens
     {
@@ -156,7 +156,7 @@ void qMRMLItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index)
   else if (this->is0To1Value(index))
   {
     ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
-    double value = index.data(Qt::EditRole).toDouble();
+    const double value = index.data(Qt::EditRole).toDouble();
     if (sliderWidget) // sliderWidget may be nullptr, don't make the application crash when that happens
     {
       sliderWidget->setValue(value);
@@ -177,16 +177,16 @@ void qMRMLItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 {
   if (this->isColor(index))
   {
-    ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
+    ctkColorPickerButton* const colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
-    QColor color = colorPicker->color();
+    const QColor color = colorPicker->color();
     // the color role depends on what is the underlying model.
     model->setData(index, color, this->colorRole(index));
   }
   else if (this->is0To1Value(index))
   {
-    ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
-    QString value = QString::number(sliderWidget->value(), 'f', 2);
+    ctkSliderWidget* const sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    const QString value = QString::number(sliderWidget->value(), 'f', 2);
     model->setData(index, value, Qt::EditRole);
   }
   else
@@ -198,14 +198,14 @@ void qMRMLItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 //------------------------------------------------------------------------------
 void qMRMLItemDelegate::commitSenderData()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   emit commitData(editor);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLItemDelegate::commitAndClose()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   emit commitData(editor);
   emit closeEditor(editor);
 }
@@ -240,7 +240,7 @@ void qMRMLItemDelegate::updateEditorGeometry(QWidget* editor, const QStyleOption
 //------------------------------------------------------------------------------
 bool qMRMLItemDelegate::eventFilter(QObject* object, QEvent* event)
 {
-  ctkSliderWidget* editor = qobject_cast<ctkSliderWidget*>(object);
+  ctkSliderWidget* const editor = qobject_cast<ctkSliderWidget*>(object);
   if (editor && (event->type() == QEvent::FocusOut || (event->type() == QEvent::Hide && editor->isWindow())))
   {
     // The Hide event will take care of he editors that are in fact complete dialogs
@@ -249,7 +249,7 @@ bool qMRMLItemDelegate::eventFilter(QObject* object, QEvent* event)
       QWidget* widget = QApplication::focusWidget();
       while (widget)
       {
-        ctkPopupWidget* sliderPopupWidget = qobject_cast<ctkPopupWidget*>(widget);
+        ctkPopupWidget* const sliderPopupWidget = qobject_cast<ctkPopupWidget*>(widget);
         if (sliderPopupWidget && sliderPopupWidget == qobject_cast<ctkSliderWidget*>(editor)->popup())
         {
           return false;

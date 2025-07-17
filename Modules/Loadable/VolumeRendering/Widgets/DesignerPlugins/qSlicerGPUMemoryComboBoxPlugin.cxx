@@ -30,7 +30,7 @@ qSlicerGPUMemoryComboBoxPlugin::qSlicerGPUMemoryComboBoxPlugin(QObject* objectPa
 //-----------------------------------------------------------------------------
 QWidget* qSlicerGPUMemoryComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
-  qSlicerGPUMemoryComboBox* newWidget = new qSlicerGPUMemoryComboBox(widgetParent);
+  qSlicerGPUMemoryComboBox* const newWidget = new qSlicerGPUMemoryComboBox(widgetParent);
   return newWidget;
 }
 

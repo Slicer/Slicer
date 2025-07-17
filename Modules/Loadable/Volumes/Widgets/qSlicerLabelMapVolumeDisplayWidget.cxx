@@ -105,7 +105,7 @@ void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
   Q_D(qSlicerLabelMapVolumeDisplayWidget);
-  vtkMRMLLabelMapVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
+  vtkMRMLLabelMapVolumeDisplayNode* const oldVolumeDisplayNode = this->volumeDisplayNode();
 
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;

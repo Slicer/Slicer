@@ -62,7 +62,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
 
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
@@ -83,7 +83,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   this->AutoUpdateInstallCheckBox->setChecked(false);
   this->AutoInstallDependenciesCheckBox->setChecked(true);
 
-  bool extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
+  const bool extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
   this->OpenExtensionsManagerPushButton->setVisible(extensionsManagerEnabled);
 
   // Register settings
@@ -119,7 +119,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                       SIGNAL(toggled(bool)),
                       qSlicerSettingsExtensionsPanel::tr("Automatic install of dependencies"));
 
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* const relativePathMapper = new qSlicerRelativePathMapper(this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty(
     "Extensions/InstallPath", relativePathMapper, "relativePath", SIGNAL(relativePathChanged(QString)), QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
 
@@ -167,14 +167,14 @@ void qSlicerSettingsExtensionsPanel::onExtensionsPathChanged(const QString& path
 void qSlicerSettingsExtensionsPanel::updateAutoUpdateWidgetsFromModel()
 {
   Q_D(qSlicerSettingsExtensionsPanel);
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app->extensionsManagerModel())
   {
     return;
   }
-  QSignalBlocker blocker1(d->AutoUpdateCheckCheckBox);
-  QSignalBlocker blocker2(d->AutoUpdateInstallCheckBox);
-  QSignalBlocker blocker3(d->AutoInstallDependenciesCheckBox);
+  const QSignalBlocker blocker1(d->AutoUpdateCheckCheckBox);
+  const QSignalBlocker blocker2(d->AutoUpdateInstallCheckBox);
+  const QSignalBlocker blocker3(d->AutoInstallDependenciesCheckBox);
   d->AutoUpdateCheckCheckBox->setChecked(app->extensionsManagerModel()->autoUpdateCheck());
   d->AutoUpdateInstallCheckBox->setChecked(app->extensionsManagerModel()->autoUpdateInstall());
   d->AutoInstallDependenciesCheckBox->setChecked(app->extensionsManagerModel()->autoInstallDependencies());

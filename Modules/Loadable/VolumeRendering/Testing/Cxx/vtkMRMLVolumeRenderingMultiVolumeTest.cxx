@@ -56,7 +56,7 @@
 void SetupRenderer(vtkRenderWindow* renderWindow, vtkRenderer* renderer)
 {
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetSize(600, 600);
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
 
@@ -74,7 +74,7 @@ void SetupScene(vtkRenderer* renderer, vtkMRMLScene* scene, vtkMRMLApplicationLo
   }
 
   // Add ViewNode
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
 
   displayableManagerGroup->SetRenderer(renderer);
@@ -111,7 +111,7 @@ void SetupImageData(vtkImageData* imageData)
 //----------------------------------------------------------------------------
 void SetupVolumeNode(vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* volumeNode)
 {
-  vtkNew<vtkImageData> imageData;
+  const vtkNew<vtkImageData> imageData;
   SetupImageData(imageData.GetPointer());
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   scene->AddNode(volumeNode);
@@ -160,7 +160,7 @@ vtkChangeImageCallback::vtkChangeImageCallback()
   const int imageCount = 5;
   for (int i = 0; i < imageCount; ++i)
   {
-    vtkNew<vtkImageData> imageData;
+    const vtkNew<vtkImageData> imageData;
     SetupImageData(imageData.GetPointer());
     this->ImageDataCollection->AddItem(imageData.GetPointer());
   }
@@ -169,7 +169,7 @@ vtkChangeImageCallback::vtkChangeImageCallback()
 //----------------------------------------------------------------------------
 void vtkChangeImageCallback::Execute(vtkObject* caller, unsigned long, void*)
 {
-  vtkMRMLDisplayableManagerGroup* group = vtkMRMLDisplayableManagerGroup::SafeDownCast(caller);
+  vtkMRMLDisplayableManagerGroup* const group = vtkMRMLDisplayableManagerGroup::SafeDownCast(caller);
   if (group)
   {
     if (this->Interactor)
@@ -180,7 +180,7 @@ void vtkChangeImageCallback::Execute(vtkObject* caller, unsigned long, void*)
   }
   assert(vtkRenderWindowInteractor::SafeDownCast(caller));
   this->CurrentImageData = (this->CurrentImageData + 1) % this->ImageDataCollection->GetNumberOfItems();
-  vtkImageData* newImageData = vtkImageData::SafeDownCast(this->ImageDataCollection->GetItemAsObject(this->CurrentImageData));
+  vtkImageData* const newImageData = vtkImageData::SafeDownCast(this->ImageDataCollection->GetItemAsObject(this->CurrentImageData));
   switch (this->ChangeImageBehavior)
   {
     case DeepCopyImage: this->VolumeNode->GetImageData()->DeepCopy(newImageData); break;
@@ -195,8 +195,8 @@ bool TestChangeImageData(int copyBehavior, vtkImageData* screenShot)
   vtkNew<vtkRenderWindow> renderWindow;
   SetupRenderer(renderWindow.GetPointer(), renderer.GetPointer());
 
-  vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  const vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
   SetupScene(renderer.GetPointer(), scene.GetPointer(), applicationLogic.GetPointer(), displayableManagerGroup.GetPointer());
 
@@ -204,7 +204,7 @@ bool TestChangeImageData(int copyBehavior, vtkImageData* screenShot)
   // changeImageCallback )are the same for each TestChangeImageData call.
   srand(1);
 
-  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+  const vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   SetupVolumeNode(scene.GetPointer(), volumeNode.GetPointer());
 
   vtkNew<vtkChangeImageCallback> changeImageCallback;
@@ -241,10 +241,10 @@ int vtkMRMLVolumeRenderingMultiVolumeTest(int vtkNotUsed(argc), char* vtkNotUsed
   bool res = true;
   // Save the output image of the Test and compare each output to make sure
   // the different copy techniques work the same.
-  vtkNew<vtkImageData> referenceScreenShot;
+  const vtkNew<vtkImageData> referenceScreenShot;
   res = TestChangeImageData(vtkChangeImageCallback::DeepCopyImage, referenceScreenShot.GetPointer()) && res;
   vtkNew<vtkCollection> screenShots;
-  vtkNew<vtkImageData> screenShot;
+  const vtkNew<vtkImageData> screenShot;
   res = TestChangeImageData(vtkChangeImageCallback::SetAndObserveImage, screenShot.GetPointer()) && res;
   screenShots->AddItem(screenShot.GetPointer());
   if (!res)
@@ -254,13 +254,13 @@ int vtkMRMLVolumeRenderingMultiVolumeTest(int vtkNotUsed(argc), char* vtkNotUsed
   }
   for (int i = 0; i < screenShots->GetNumberOfItems(); ++i)
   {
-    vtkImageData* screenShotImage = vtkImageData::SafeDownCast(screenShots->GetItemAsObject(i));
+    vtkImageData* const screenShotImage = vtkImageData::SafeDownCast(screenShots->GetItemAsObject(i));
 
     vtkNew<vtkImageDifference> diff;
     diff->SetInputData(referenceScreenShot.GetPointer());
     diff->SetImageData(screenShotImage);
     diff->Update();
-    double error = diff->GetThresholdedError();
+    const double error = diff->GetThresholdedError();
     if (error > 0)
     {
       std::cout << __LINE__ << ": TestChangeImageData failed to give similar "

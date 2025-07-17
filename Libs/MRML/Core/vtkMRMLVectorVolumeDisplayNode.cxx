@@ -91,8 +91,8 @@ void vtkMRMLVectorVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  double halfWindow = (this->GetWindow() / 2.);
-  double min = this->GetLevel() - halfWindow;
+  const double halfWindow = (this->GetWindow() / 2.);
+  const double min = this->GetLevel() - halfWindow;
   this->ShiftScale->SetShift(-min);
   this->ShiftScale->SetScale(255. / (this->GetWindow()));
 }
@@ -116,7 +116,7 @@ void vtkMRMLVectorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -146,9 +146,9 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLVectorVolumeDisplayNode* node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
+  vtkMRMLVectorVolumeDisplayNode* const node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;

@@ -144,8 +144,8 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::ShowActor(vtkSlicerScala
   {
     return false;
   }
-  bool wasInRenderer = this->ColorLegendRenderer->HasViewProp(actor);
-  bool wasVisible = wasInRenderer && actor->GetVisibility();
+  const bool wasInRenderer = this->ColorLegendRenderer->HasViewProp(actor);
+  const bool wasVisible = wasInRenderer && actor->GetVisibility();
   if (show && !wasInRenderer)
   {
     this->ColorLegendRenderer->AddActor2D(actor);
@@ -169,7 +169,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::IsVolumeVisibleInSliceVi
   {
     return false;
   }
-  const char* volumeNodeID = volumeNode->GetID();
+  const char* const volumeNodeID = volumeNode->GetID();
   if (!volumeNodeID)
   {
     return false;
@@ -237,7 +237,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::IsVolumeVisibleInSliceVi
   vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(primaryDisplayNode);
   if (volumeDisplayNode)
   {
-    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeDisplayNode->GetDisplayableNode());
+    vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeDisplayNode->GetDisplayableNode());
     return this->IsVolumeVisibleInSliceView(sliceCompositeNode, volumeNode);
   }
   return false;
@@ -298,7 +298,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(primaryDisplayNode);
     if (volumeDisplayNode)
     {
-      vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeDisplayNode->GetDisplayableNode());
+      vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeDisplayNode->GetDisplayableNode());
       // Volumes are special case, their visibility can be determined from slice view logics
       if (this->SliceCompositeNode)
       {
@@ -310,7 +310,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
         // 3D view
         // We should find a slice view that is displayed in this 3D view and the volume is visible on that slice
         visible = false;
-        vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+        vtkMRMLApplicationLogic* const mrmlAppLogic = this->External->GetMRMLApplicationLogic();
         vtkCollection* sliceLogics = mrmlAppLogic ? mrmlAppLogic->GetSliceLogics() : nullptr;
         if (sliceLogics)
         {
@@ -348,7 +348,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     return this->ShowActor(actor, false);
   }
 
-  std::string title = colorLegendDisplayNode->GetTitleText();
+  const std::string title = colorLegendDisplayNode->GetTitleText();
   actor->SetTitle(title.c_str());
 
   vtkNew<vtkTextProperty> titleTextProperty;
@@ -367,7 +367,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
   }
   actor->SetLabelTextProperty(labelTextProperty);
 
-  std::string format = colorLegendDisplayNode->GetLabelFormat();
+  const std::string format = colorLegendDisplayNode->GetLabelFormat();
   actor->SetLabelFormat(format.c_str());
 
   double size[2] = { 0.5, 0.5 };
@@ -436,8 +436,8 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
   if (scalarVolumeDisplayNode)
   {
     // Scalar volume display node
-    double window = scalarVolumeDisplayNode->GetWindow();
-    double level = scalarVolumeDisplayNode->GetLevel();
+    const double window = scalarVolumeDisplayNode->GetWindow();
+    const double level = scalarVolumeDisplayNode->GetLevel();
     range[0] = level - window / 2.0;
     range[1] = level + window / 2.0;
   }
@@ -488,7 +488,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     vtkNew<vtkLookupTable> invertedLut;
     invertedLut->DeepCopy(lut);
     // Reverse the order of colors in the table
-    int numColors = invertedLut->GetNumberOfTableValues();
+    const int numColors = invertedLut->GetNumberOfTableValues();
     for (int i = 0; i < numColors; i++)
     {
       double rgba[4] = { 0.0, 0.0, 0.0, 0.0 };
@@ -509,7 +509,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     // regardless of how many items were in the original color table.
 
     // Only show colors and labels for valid colors in colorNode
-    int numberOfValidColors = std::accumulate(validColorMask.begin(), validColorMask.end(), 0);
+    const int numberOfValidColors = std::accumulate(validColorMask.begin(), validColorMask.end(), 0);
     actor->SetLookupTable(lut);
     actor->SetNumberOfLabels(numberOfValidColors);
     actor->SetMaximumNumberOfColors(256); // Without it colors on the ColorBar sometimes wrong
@@ -518,7 +518,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     int i = 0;
     for (auto it = validColorMask.begin(); it != validColorMask.end(); ++it)
     {
-      size_t validIndex = it - validColorMask.begin();
+      const size_t validIndex = it - validColorMask.begin();
       if (*it && i < numberOfValidColors)
       {
         actor->GetLookupTable()->SetAnnotation(i++, std::string(colorNode->GetColorName(validIndex)));
@@ -549,14 +549,14 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
 //---------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* vtkMRMLColorLegendDisplayableManager::vtkInternal::FindSliceCompositeNode()
 {
-  vtkMRMLNode* viewNode = this->External->GetMRMLDisplayableNode();
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
+  vtkMRMLNode* const viewNode = this->External->GetMRMLDisplayableNode();
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
   if (!sliceNode)
   {
     // this displayable manager is not of a slice node
     return nullptr;
   }
-  vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* const mrmlAppLogic = this->External->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     vtkGenericWarningMacro("vtkMRMLColorLegendDisplayableManager::vtkInternal::FindSliceCompositeNode failed: invalid mrmlApplogic");
@@ -567,14 +567,14 @@ vtkMRMLSliceCompositeNode* vtkMRMLColorLegendDisplayableManager::vtkInternal::Fi
   {
     return nullptr;
   }
-  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* const sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
   return sliceCompositeNode;
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateSliceNode()
 {
-  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->FindSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* const sliceCompositeNode = this->FindSliceCompositeNode();
   this->SetSliceCompositeNode(sliceCompositeNode);
 }
 
@@ -607,7 +607,7 @@ vtkLookupTable* vtkMRMLColorLegendDisplayableManager::vtkInternal::CreateLookupT
       validColorIndex[i] = true;
     }
   }
-  int nofValidColors = std::accumulate(validColorIndex.begin(), validColorIndex.end(), 0);
+  const int nofValidColors = std::accumulate(validColorIndex.begin(), validColorIndex.end(), 0);
   if (nofValidColors == 0)
   {
     validColorIndex.clear();
@@ -760,7 +760,7 @@ void vtkMRMLColorLegendDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* nod
     // therefore, set it to a bit narrower
     scalarBarActor->SetBarRatio(0.2);
 
-    std::string id(node->GetID());
+    const std::string id(node->GetID());
     this->Internal->ColorLegendActorsMap[id] = scalarBarActor;
 
     this->ProcessMRMLNodesEvents(node, vtkCommand::ModifiedEvent, nullptr);
@@ -785,7 +785,7 @@ void vtkMRMLColorLegendDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* n
     auto it = this->Internal->ColorLegendActorsMap.find(node->GetID());
     if (it != this->Internal->ColorLegendActorsMap.end())
     {
-      vtkSmartPointer<vtkSlicerScalarBarActor> actor = it->second;
+      const vtkSmartPointer<vtkSlicerScalarBarActor> actor = it->second;
       this->Internal->ColorLegendActorsMap.erase(it);
       this->Internal->ColorLegendRenderer->RemoveActor(actor);
     }
@@ -804,7 +804,7 @@ void vtkMRMLColorLegendDisplayableManager::UpdateFromMRML()
   // This is called when the view node is set. Update all actors.
   for (auto& colorBarNodeIdToActorIt : this->Internal->ColorLegendActorsMap)
   {
-    vtkMRMLColorLegendDisplayNode* displayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(colorBarNodeIdToActorIt.first));
+    vtkMRMLColorLegendDisplayNode* const displayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(colorBarNodeIdToActorIt.first));
     if (!displayNode)
     {
       // orphan pipeline, it should have been deleted by the node removed event notification
@@ -825,7 +825,7 @@ void vtkMRMLColorLegendDisplayableManager::ProcessMRMLNodesEvents(vtkObject* cal
     return;
   }
   const int layerChangedFlag = vtkMRMLSliceCompositeNode::ForegroundVolumeFlag + vtkMRMLSliceCompositeNode::BackgroundVolumeFlag + vtkMRMLSliceCompositeNode::LabelVolumeFlag;
-  vtkMRMLColorLegendDisplayNode* dispNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(caller);
+  vtkMRMLColorLegendDisplayNode* const dispNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(caller);
   vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(caller);
   if (dispNode)
   {
@@ -847,8 +847,8 @@ void vtkMRMLColorLegendDisplayableManager::ProcessMRMLNodesEvents(vtkObject* cal
         vtkMRMLColorLegendDisplayNode* clDispNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(colorLegendNodes->GetItemAsObject(i));
         if (clDispNode)
         {
-          bool res = this->Internal->IsVolumeVisibleInSliceView(this->Internal->SliceCompositeNode, clDispNode);
-          vtkSlicerScalarBarActor* actor = this->GetColorLegendActor(clDispNode);
+          const bool res = this->Internal->IsVolumeVisibleInSliceView(this->Internal->SliceCompositeNode, clDispNode);
+          vtkSlicerScalarBarActor* const actor = this->GetColorLegendActor(clDispNode);
           if (!actor)
           {
             vtkNew<vtkIntArray> events;
@@ -862,7 +862,7 @@ void vtkMRMLColorLegendDisplayableManager::ProcessMRMLNodesEvents(vtkObject* cal
             // therefore, set it to a bit narrower
             scalarBarActor->SetBarRatio(0.2);
 
-            std::string id(clDispNode->GetID());
+            const std::string id(clDispNode->GetID());
             this->Internal->ColorLegendActorsMap[id] = scalarBarActor;
           }
           else

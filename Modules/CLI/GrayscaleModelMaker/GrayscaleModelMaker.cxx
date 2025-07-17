@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   if (InputVolume.find(std::string("slicer:")) != 0)
   {
     // check for the input file
-    FILE* infile = fopen(InputVolume.c_str(), "r");
+    FILE* const infile = fopen(InputVolume.c_str(), "r");
     if (infile == nullptr)
     {
       std::cerr << "ERROR: cannot open input volume file " << InputVolume << std::endl;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "Done reading the file " << InputVolume << endl;
     }
-    vtkNew<vtkMatrix4x4> ijkToRasMatrix;
+    const vtkNew<vtkMatrix4x4> ijkToRasMatrix;
     vtkMatrix4x4::Invert(reader->GetRasToIjkMatrix(), ijkToRasMatrix);
     transformIJKtoLPS->Scale(-1.0, -1.0, 1.0); // RAS to LPS
     transformIJKtoLPS->Concatenate(ijkToRasMatrix);
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   }
 
   vtkNew<vtkFlyingEdges3D> mcubes;
-  vtkPluginFilterWatcher watchMCubes(mcubes, "Marching Cubes", CLPProcessInformation, 1.0 / 7.0, 0.0);
+  const vtkPluginFilterWatcher watchMCubes(mcubes, "Marching Cubes", CLPProcessInformation, 1.0 / 7.0, 0.0);
   mcubes->SetInputData(image_IJK);
   mcubes->SetValue(0, Threshold);
   mcubes->ComputeScalarsOff();
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
       transformIJKtoLPS->GetMatrix()->Print(std::cout);
     }
     vtkNew<vtkTransformPolyDataFilter> transformer;
-    vtkPluginFilterWatcher watchTranformer(transformer, "Transformer", CLPProcessInformation, 1.0 / 7.0, 4.0 / 7.0);
+    const vtkPluginFilterWatcher watchTranformer(transformer, "Transformer", CLPProcessInformation, 1.0 / 7.0, 4.0 / 7.0);
     transformer->SetInputConnection(mcubes->GetOutputPort());
     transformer->SetTransform(transformIJKtoLPS);
     transformer->Update();
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
       std::cout << "Determinant " << (transformIJKtoLPS->GetMatrix())->Determinant() << " is less than zero, reversing..." << std::endl;
     }
     vtkNew<vtkReverseSense> reverser;
-    vtkPluginFilterWatcher watchReverser(reverser, "Reversor", CLPProcessInformation, 1.0 / 7.0, 2.0 / 7.0);
+    const vtkPluginFilterWatcher watchReverser(reverser, "Reversor", CLPProcessInformation, 1.0 / 7.0, 2.0 / 7.0);
     reverser->SetInputData(mesh_LPS);
     reverser->ReverseNormalsOn();
     reverser->Update();
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
     }
     // TODO: look at vtkQuadraticDecimation, it produces nicer mesh
     vtkNew<vtkDecimatePro> decimator;
-    vtkPluginFilterWatcher watchDecimator(decimator, "Decimator", CLPProcessInformation, 1.0 / 7.0, 1.0 / 7.0);
+    const vtkPluginFilterWatcher watchDecimator(decimator, "Decimator", CLPProcessInformation, 1.0 / 7.0, 1.0 / 7.0);
     decimator->SetInputData(mesh_LPS);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
       std::cout << "Smoothing..." << std::endl;
     }
     vtkNew<vtkWindowedSincPolyDataFilter> smootherSinc;
-    vtkPluginFilterWatcher watchSmoother(smootherSinc, "Smoother", CLPProcessInformation, 1.0 / 7.0, 3.0 / 7.0);
+    const vtkPluginFilterWatcher watchSmoother(smootherSinc, "Smoother", CLPProcessInformation, 1.0 / 7.0, 3.0 / 7.0);
     smootherSinc->SetPassBand(0.1);
     if (Smooth == 1)
     {
@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
     std::cout << "Computing normals..." << std::endl;
   }
   vtkNew<vtkPolyDataNormals> normals;
-  vtkPluginFilterWatcher watchNormals(normals, "Normals", CLPProcessInformation, 1.0 / 7.0, 5.0 / 7.0);
+  const vtkPluginFilterWatcher watchNormals(normals, "Normals", CLPProcessInformation, 1.0 / 7.0, 5.0 / 7.0);
   normals->SetComputePointNormals(PointNormals);
   normals->SetInputData(mesh_LPS);
   normals->SetFeatureAngle(60);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
     std::cout << "Triangle stripping..." << std::endl;
   }
   vtkNew<vtkStripper> stripper;
-  vtkPluginFilterWatcher watchStripper(stripper, "Stripper", CLPProcessInformation, 1.0 / 7.0, 6.0 / 7.0);
+  const vtkPluginFilterWatcher watchStripper(stripper, "Stripper", CLPProcessInformation, 1.0 / 7.0, 6.0 / 7.0);
   stripper->SetInputConnection(normals->GetOutputPort());
   stripper->Update();
   vtkPolyData* meshToWrite = stripper->GetOutput();

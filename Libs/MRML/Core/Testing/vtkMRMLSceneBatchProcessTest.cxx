@@ -142,7 +142,7 @@ int vtkMRMLSceneBatchProcessTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // 3) NodeAboutToBeAddedEvent
   // 4) NodeAddedEvent
-  vtkNew<vtkMRMLModelNode> modelNode;
+  const vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
 
   if (scene->IsBatchProcessing() != true ||                                 //

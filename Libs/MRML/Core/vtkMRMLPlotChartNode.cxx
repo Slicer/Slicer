@@ -158,7 +158,7 @@ void vtkMRMLPlotChartNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -192,7 +192,7 @@ void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotChartNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -317,11 +317,11 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIndexFromID(const char* plotSeriesNod
     return -1;
   }
 
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    const char* id = this->GetNthNodeReferenceID(this->GetPlotSeriesNodeReferenceRole(), plotIndex);
+    const char* const id = this->GetNthNodeReferenceID(this->GetPlotSeriesNodeReferenceRole(), plotIndex);
     if (id && !strcmp(plotSeriesNodeID, id))
     {
       return plotIndex;
@@ -354,10 +354,10 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller, unsigned long ev
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    vtkMRMLPlotSeriesNode* pnode = this->GetNthPlotSeriesNode(plotIndex);
+    vtkMRMLPlotSeriesNode* const pnode = this->GetNthPlotSeriesNode(plotIndex);
     if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) && //
         (event == vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
     {
@@ -373,7 +373,7 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller, unsigned long ev
 int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string>& plotSeriesNodeNames)
 {
   plotSeriesNodeNames.clear();
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
     vtkMRMLPlotSeriesNode* pnode = this->GetNthPlotSeriesNode(plotIndex);
@@ -391,7 +391,7 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string>& plotS
 int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string>& plotSeriesNodeIDs)
 {
   plotSeriesNodeIDs.clear();
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
     plotSeriesNodeIDs.emplace_back(this->GetNthPlotSeriesNodeID(plotIndex));
@@ -409,7 +409,7 @@ void vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes(PlotSeriesNodePropert
     return;
   }
 
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
   std::vector<int> plotSeriesNodesWasModifying(numPlotSeriesNodes, 0);
 
@@ -463,7 +463,7 @@ bool vtkMRMLPlotChartNode::GetPropertyFromAllPlotSeriesNodes(PlotSeriesNodePrope
     return false;
   }
 
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
+  const int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
   if (numPlotSeriesNodes < 1)
   {

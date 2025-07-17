@@ -120,7 +120,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
+  const vtkIndent indent(nIndent);
 
   const ModuleDescription& module = this->GetModuleDescription();
 
@@ -138,15 +138,15 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
 
   // Loop over the parameter groups, writing each parameter.  Note
   // that the parameter names are unique.
-  std::vector<ModuleParameterGroup>::const_iterator pgbeginit = module.GetParameterGroups().begin();
-  std::vector<ModuleParameterGroup>::const_iterator pgendit = module.GetParameterGroups().end();
+  const std::vector<ModuleParameterGroup>::const_iterator pgbeginit = module.GetParameterGroups().begin();
+  const std::vector<ModuleParameterGroup>::const_iterator pgendit = module.GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::const_iterator pgit;
 
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
   {
     // iterate over each parameter in this group
-    std::vector<ModuleParameter>::const_iterator pbeginit = pgit->GetParameters().begin();
-    std::vector<ModuleParameter>::const_iterator pendit = pgit->GetParameters().end();
+    const std::vector<ModuleParameter>::const_iterator pbeginit = pgit->GetParameters().begin();
+    const std::vector<ModuleParameter>::const_iterator pendit = pgit->GetParameters().end();
     std::vector<ModuleParameter>::const_iterator pit;
 
     for (pit = pbeginit; pit != pendit; ++pit)
@@ -163,7 +163,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 {
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   vtkMRMLNode::ReadXMLAttributes(atts);
 
   // To reconstitute a CommandLineModule node:
@@ -232,8 +232,8 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   // Verify the version
   if (moduleVersion != this->Internal->ModuleDescriptionObject.GetVersion())
   {
-    std::string msg = "Command line module " + moduleTitle + " is version \"" + this->Internal->ModuleDescriptionObject.GetVersion()
-                      + "\" but parameter set from MRML file is version \"" + moduleVersion + "\". Parameter set may not load properly,";
+    const std::string msg = "Command line module " + moduleTitle + " is version \"" + this->Internal->ModuleDescriptionObject.GetVersion()
+                            + "\" but parameter set from MRML file is version \"" + moduleVersion + "\". Parameter set may not load properly,";
 
     vtkWarningMacro(<< msg.c_str());
   }
@@ -243,8 +243,8 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   tatts = atts;
   while (*tatts)
   {
-    std::string sattName = std::string(this->URLDecodeString(*(tatts++)));
-    std::string sattValue = std::string(this->URLDecodeString(*(tatts++)));
+    const std::string sattName = std::string(this->URLDecodeString(*(tatts++)));
+    const std::string sattValue = std::string(this->URLDecodeString(*(tatts++)));
 
     if (this->Internal->ModuleDescriptionObject.HasParameter(attName))
     {
@@ -257,7 +257,7 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(anode);
@@ -279,12 +279,12 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AutoRunMode:" << this->GetAutoRunMode() << "\n";
 
   os << indent << "Parameter values:\n";
-  std::vector<ModuleParameterGroup>::const_iterator pgbeginit = this->GetModuleDescription().GetParameterGroups().begin();
-  std::vector<ModuleParameterGroup>::const_iterator pgendit = this->GetModuleDescription().GetParameterGroups().end();
+  const std::vector<ModuleParameterGroup>::const_iterator pgbeginit = this->GetModuleDescription().GetParameterGroups().begin();
+  const std::vector<ModuleParameterGroup>::const_iterator pgendit = this->GetModuleDescription().GetParameterGroups().end();
   for (std::vector<ModuleParameterGroup>::const_iterator pgit = pgbeginit; pgit != pgendit; ++pgit)
   {
-    std::vector<ModuleParameter>::const_iterator pbeginit = pgit->GetParameters().begin();
-    std::vector<ModuleParameter>::const_iterator pendit = pgit->GetParameters().end();
+    const std::vector<ModuleParameter>::const_iterator pbeginit = pgit->GetParameters().begin();
+    const std::vector<ModuleParameter>::const_iterator pendit = pgit->GetParameters().end();
     for (std::vector<ModuleParameter>::const_iterator pit = pbeginit; pit != pendit; ++pit)
     {
       os << indent << " " << pit->GetName() << " = " << pit->GetValue() << "\n";
@@ -337,7 +337,7 @@ void vtkMRMLCommandLineModuleNode::ProcessMRMLEvents(vtkObject* caller, unsigned
     return;
   }
   // Make sure the caller is an input node.
-  bool isInput = this->IsInputDefaultValue(node->GetID());
+  const bool isInput = this->IsInputDefaultValue(node->GetID());
   // Let the CLI logic know that an input parameter has been modified.
   if (isInput)
   {
@@ -373,7 +373,7 @@ bool vtkMRMLCommandLineModuleNode::IsInputDefaultValue(const std::string& value)
   std::vector<ModuleParameter>::const_iterator it;
   for (it = parameters.begin(); it != parameters.end(); ++it)
   {
-    static std::string output = std::string("output");
+    static const std::string output = std::string("output");
     if (it->GetChannel() == output)
     {
       // A parameter that is output can't trigger InputParameterModifiedEvent
@@ -393,8 +393,8 @@ bool vtkMRMLCommandLineModuleNode::IsInputDefaultValue(const std::string& value)
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::SetParameterAsNode(const char* name, vtkMRMLNode* node)
 {
-  std::string value = node ? node->GetID() : "";
-  std::string oldValue = this->GetParameterAsString(name);
+  const std::string value = node ? node->GetID() : "";
+  const std::string oldValue = this->GetParameterAsString(name);
   // Set the default value of the named parameter with the value
   // specified
   if (value != oldValue)
@@ -501,7 +501,7 @@ bool vtkMRMLCommandLineModuleNode::SetParameterAsInt(const char* name, int value
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::SetParameterAsBool(const char* name, bool value)
 {
-  std::string valueAsString = (value ? "true" : "false");
+  const std::string valueAsString = (value ? "true" : "false");
   return this->SetParameterAsString(name, valueAsString);
 }
 
@@ -673,7 +673,7 @@ void vtkMRMLCommandLineModuleNode::AbortProcess()
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::HasRegisteredModule(const std::string& name)
 {
-  ModuleDescriptionMap::iterator mit = vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
+  const ModuleDescriptionMap::iterator mit = vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
 
   return mit != vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.end();
 }
@@ -704,7 +704,7 @@ const char* vtkMRMLCommandLineModuleNode::GetRegisteredModuleNameByIndex(int idx
 //----------------------------------------------------------------------------
 ModuleDescription vtkMRMLCommandLineModuleNode::GetRegisteredModuleDescription(const std::string& name)
 {
-  ModuleDescriptionMap::iterator mit = vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
+  const ModuleDescriptionMap::iterator mit = vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
 
   if (mit != vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.end())
   {
@@ -995,7 +995,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterCoordinateSystem(unsigned 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::ReadParameterFile(const std::string& filename)
 {
-  bool modified = this->Internal->ModuleDescriptionObject.ReadParameterFile(filename);
+  const bool modified = this->Internal->ModuleDescriptionObject.ReadParameterFile(filename);
 
   if (modified)
   {
@@ -1008,7 +1008,7 @@ bool vtkMRMLCommandLineModuleNode::ReadParameterFile(const std::string& filename
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters)
 {
-  bool modified = this->Internal->ModuleDescriptionObject.WriteParameterFile(filename, withHandlesToBulkParameters);
+  const bool modified = this->Internal->ModuleDescriptionObject.WriteParameterFile(filename, withHandlesToBulkParameters);
 
   if (modified)
   {
@@ -1021,7 +1021,7 @@ bool vtkMRMLCommandLineModuleNode::WriteParameterFile(const std::string& filenam
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::Modified()
 {
-  bool invokeStatusModifiedEvent = this->Internal->InvokeStatusModifiedEvent;
+  const bool invokeStatusModifiedEvent = this->Internal->InvokeStatusModifiedEvent;
   this->Internal->InvokeStatusModifiedEvent = false;
 
   this->Superclass::Modified();
@@ -1037,7 +1037,7 @@ std::string vtkMRMLCommandLineModuleNode::GetErrorText() const
 {
   std::string text;
   {
-    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    const std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     text = this->Internal->ErrorText;
   }
   return text;
@@ -1048,7 +1048,7 @@ std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
 {
   std::string text;
   {
-    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    const std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     text = this->Internal->OutputText;
   }
   return text;
@@ -1058,7 +1058,7 @@ std::string vtkMRMLCommandLineModuleNode::GetOutputText() const
 void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool modify)
 {
   {
-    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    const std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     if (this->Internal->ErrorText == text)
     {
       return;
@@ -1075,7 +1075,7 @@ void vtkMRMLCommandLineModuleNode::SetErrorText(const std::string& text, bool mo
 void vtkMRMLCommandLineModuleNode::SetOutputText(const std::string& text, bool modify)
 {
   {
-    std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
+    const std::lock_guard<std::recursive_mutex> lock(this->Internal->NodeAccessMutex);
     if (this->Internal->OutputText == text)
     {
       return;

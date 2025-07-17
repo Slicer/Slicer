@@ -30,7 +30,7 @@ qMRMLPlotSeriesPropertiesWidgetPlugin::qMRMLPlotSeriesPropertiesWidgetPlugin(QOb
 //------------------------------------------------------------------------------
 QWidget* qMRMLPlotSeriesPropertiesWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLPlotSeriesPropertiesWidget* _widget = new qMRMLPlotSeriesPropertiesWidget(_parent);
+  qMRMLPlotSeriesPropertiesWidget* const _widget = new qMRMLPlotSeriesPropertiesWidget(_parent);
   return _widget;
 }
 

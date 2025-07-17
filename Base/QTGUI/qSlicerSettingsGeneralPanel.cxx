@@ -77,7 +77,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->setupUi(q);
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  bool internationalizationEnabled = qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
+  bool const internationalizationEnabled = qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);
@@ -109,7 +109,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                         SIGNAL(textChanged(QString)),
                         qSlicerSettingsGeneralPanel::tr("Application update server URL"));
 
-    qSlicerApplication* app = qSlicerApplication::application();
+    qSlicerApplication* const app = qSlicerApplication::application();
     if (app && app->applicationUpdateManager())
     {
       QObject::connect(app->applicationUpdateManager(), SIGNAL(autoUpdateCheckChanged()), q, SLOT(updateAutoUpdateApplicationFromManager()));
@@ -129,7 +129,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
     context.evalScript(QString("slicerrcfilename = getSlicerRCFileName()\n"));
-    QVariant slicerrcFileNameVar = context.getVariable("slicerrcfilename");
+    const QVariant slicerrcFileNameVar = context.getVariable("slicerrcfilename");
     this->SlicerRCFileValueLabel->setText(slicerrcFileNameVar.toString());
     this->SlicerRCFileOpenButton->setIcon(QIcon(":Icons/Go.png"));
     QObject::connect(this->SlicerRCFileOpenButton, SIGNAL(clicked()), q, SLOT(openSlicerRCFile()));
@@ -147,9 +147,9 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   // Default values
 
   this->DefaultScenePathButton->setDirectory(qSlicerCoreApplication::application()->defaultScenePath());
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton,
-                                                                                /*no tr*/ "directory",
-                                                                                SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* const relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton,
+                                                                                      /*no tr*/ "directory",
+                                                                                      SIGNAL(directoryChanged(QString)));
   q->registerProperty("DefaultScenePath", relativePathMapper, "relativePath", SIGNAL(relativePathChanged(QString)), qSlicerSettingsGeneralPanel::tr("Default scene path"));
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)), q, SLOT(setDefaultScenePath(QString)));
 
@@ -240,8 +240,8 @@ void qSlicerSettingsGeneralPanel::setDefaultScenePath(const QString& path)
 void qSlicerSettingsGeneralPanel::openSlicerRCFile()
 {
   Q_D(qSlicerSettingsGeneralPanel);
-  QString slicerRcFileName = d->SlicerRCFileValueLabel->text();
-  QFileInfo fileInfo(slicerRcFileName);
+  const QString slicerRcFileName = d->SlicerRCFileValueLabel->text();
+  const QFileInfo fileInfo(slicerRcFileName);
   if (!fileInfo.exists())
   {
     QFile outputFile(slicerRcFileName);
@@ -263,7 +263,7 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
     }
   }
 
-  QString editor = qSlicerApplication::application()->userSettings()->value("Python/Editor").toString();
+  const QString editor = qSlicerApplication::application()->userSettings()->value("Python/Editor").toString();
   if (editor.isEmpty())
   {
     QDesktopServices::openUrl(QUrl("file:///" + slicerRcFileName, QUrl::TolerantMode));
@@ -284,12 +284,12 @@ void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
 {
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   Q_D(qSlicerSettingsGeneralPanel);
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app->applicationUpdateManager())
   {
     return;
   }
-  QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
+  const QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
   d->ApplicationAutoUpdateCheckCheckBox->setChecked(app->applicationUpdateManager()->autoUpdateCheck());
 #endif
 }

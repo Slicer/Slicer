@@ -154,7 +154,7 @@ double ConvertTimeToSeconds(const char* time)
   // --- time will be in format HH:MM:SS.SSSS
   // --- convert to a double count of seconds.
   // ---
-  std::string timeStr = time;
+  const std::string timeStr = time;
   h = timeStr.substr(0, 2);
   hours = atof(h.c_str());
 
@@ -165,7 +165,7 @@ double ConvertTimeToSeconds(const char* time)
   secStr = minAndsecStr.substr(3);
   seconds = atof(secStr.c_str());
 
-  double retval = (seconds + (60.0 * minutes) + (3600.0 * hours));
+  const double retval = (seconds + (60.0 * minutes) + (3600.0 * hours));
   return retval;
 }
 
@@ -729,11 +729,11 @@ double ConvertRadioactivityUnits(double count, const char* fromunits, const char
 double DecayCorrection(parameters& list, double inVal)
 {
 
-  double scanTimeSeconds = ConvertTimeToSeconds(list.seriesReferenceTime.c_str());
-  double startTimeSeconds = ConvertTimeToSeconds(list.injectionTime.c_str());
-  double halfLife = atof(list.radionuclideHalfLife.c_str());
-  double decayTime = scanTimeSeconds - startTimeSeconds;
-  double correctedVal = inVal * (double)pow(2.0, -(decayTime / halfLife));
+  const double scanTimeSeconds = ConvertTimeToSeconds(list.seriesReferenceTime.c_str());
+  const double startTimeSeconds = ConvertTimeToSeconds(list.injectionTime.c_str());
+  const double halfLife = atof(list.radionuclideHalfLife.c_str());
+  const double decayTime = scanTimeSeconds - startTimeSeconds;
+  const double correctedVal = inVal * (double)pow(2.0, -(decayTime / halfLife));
 
   return correctedVal;
 }
@@ -771,9 +771,9 @@ int LoadImagesAndComputeSUV(parameters& list, T)
   //
   // for writing csv output files
   //
-  std::string outputFile = list.SUVOutputTable;
+  const std::string outputFile = list.SUVOutputTable;
   std::ofstream ofile;
-  std::string outputStringFile = list.SUVOutputStringFile;
+  const std::string outputStringFile = list.SUVOutputStringFile;
   std::ofstream stringFile;
   vtkImageData* petVolume;
   vtkImageData* voiVolume;
@@ -870,7 +870,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
   gfn->AddFileNames("*.nia");
 
   int notDICOM = 0;
-  int nFiles = gfn->GetNumberOfFileNames();
+  const int nFiles = gfn->GetNumberOfFileNames();
   if (nFiles > 0)
   {
     notDICOM = 1;
@@ -882,7 +882,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
     return EXIT_FAILURE;
   }
 
-  InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
+  const InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetUseSeriesDetails(true);
   inputNames->SetDirectory(list.PETDICOMPath);
   itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
@@ -1029,7 +1029,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
     if (fileReader.GetElementCS(0x0054, 0x1001, tag, false) == EXIT_SUCCESS)
     {
       //--- I think these are piled together. MBq ml... search for all.
-      std::string units = tag.c_str();
+      const std::string units = tag.c_str();
       if (units.find("BQML") != std::string::npos)
       {
         list.radioactivityUnits = "Bq";
@@ -1338,8 +1338,8 @@ int LoadImagesAndComputeSUV(parameters& list, T)
   vtkImageAccumulate* stataccum = vtkImageAccumulate::New();
   stataccum->SetInputConnection(voiVolumeConnection);
   stataccum->Update();
-  int lo = static_cast<int>(stataccum->GetMin()[0]);
-  int hi = static_cast<int>(stataccum->GetMax()[0]);
+  const int lo = static_cast<int>(stataccum->GetMin()[0]);
+  const int hi = static_cast<int>(stataccum->GetMax()[0]);
   stataccum->Delete();
 
   std::string labelName;
@@ -1390,14 +1390,14 @@ int LoadImagesAndComputeSUV(parameters& list, T)
 
     // --- For how many labels was SUV computed?
 
-    int voxNumber = labelstat->GetVoxelCount();
+    const int voxNumber = labelstat->GetVoxelCount();
     if (voxNumber > 0)
     {
       NumberOfVOIs++;
 
-      double CPETmin = (labelstat->GetMin())[0];
-      double CPETmax = (labelstat->GetMax())[0];
-      double CPETmean = (labelstat->GetMean())[0];
+      const double CPETmin = (labelstat->GetMin())[0];
+      const double CPETmax = (labelstat->GetMax())[0];
+      const double CPETmean = (labelstat->GetMean())[0];
 
       // --- we want to use the following units as noted at file top:
       // --- CPET(t) -- tissue radioactivity in pixels-- kBq/mlunits
@@ -1424,7 +1424,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
         return EXIT_FAILURE;
       }
 
-      double tissueConversionFactor = ConvertRadioactivityUnits(1, list.radioactivityUnits.c_str(), "kBq");
+      const double tissueConversionFactor = ConvertRadioactivityUnits(1, list.radioactivityUnits.c_str(), "kBq");
       dose = ConvertRadioactivityUnits(dose, list.radioactivityUnits.c_str(), "MBq");
       dose = DecayCorrection(list, dose);
       weight = ConvertWeightUnits(weight, list.weightUnits.c_str(), "kg");
@@ -1440,7 +1440,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
       }
       else
       {
-        double weightByDose = weight / dose;
+        const double weightByDose = weight / dose;
         suvmax = (CPETmax * tissueConversionFactor) * weightByDose;
         suvmin = (CPETmin * tissueConversionFactor) * weightByDose;
         suvmean = (CPETmean * tissueConversionFactor) * weightByDose;
@@ -1485,7 +1485,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
         {
           ss.str("");
           ofile.seekp(0, ios::end);
-          long pos = ofile.tellp();
+          const long pos = ofile.tellp();
           if (pos == 0)
           {
             ss << "patientID,studyDate,dose,labelID,suvmin,suvmax,suvmean,labelName" << std::endl;
@@ -1516,7 +1516,7 @@ int LoadImagesAndComputeSUV(parameters& list, T)
     ss << outputSUVMaxString << std::endl;
     ss << outputSUVMeanString << std::endl;
     ss << outputSUVMinString << std::endl;
-    std::string stringOutput = ss.str();
+    const std::string stringOutput = ss.str();
     stringFile.open(outputStringFile.c_str());
     if (!stringFile.is_open())
     {
@@ -1561,13 +1561,13 @@ int main(int argc, char* argv[])
   // ...
   // ... strings used for parsing out DICOM header info
   // ...
-  std::string yearstr;
-  std::string monthstr;
-  std::string daystr;
-  std::string hourstr;
-  std::string minutestr;
-  std::string secondstr;
-  std::string tag;
+  const std::string yearstr;
+  const std::string monthstr;
+  const std::string daystr;
+  const std::string hourstr;
+  const std::string minutestr;
+  const std::string secondstr;
+  const std::string tag;
 
   // convert dicom head to radiopharm data vars
   list.patientName = "MODULE_INIT_NO_VALUE";

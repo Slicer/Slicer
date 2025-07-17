@@ -68,7 +68,7 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
   std::map<vtkObject*, vtkUnsignedLongArray*>::iterator iter;
   for (iter = this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
   {
-    vtkUnsignedLongArray* objTags = iter->second;
+    vtkUnsignedLongArray* const objTags = iter->second;
     os << indent << "Observer tags:             " << objTags << "\n";
   }
 }
@@ -152,8 +152,8 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject** nodePtr,
     }
     // The node is the same - check if the events are the same, too,
     // because then there is no need to update the observations.
-    int numberOfEvents = events ? events->GetNumberOfTuples() : 0;
-    int numberOfPriorities = priorities ? priorities->GetNumberOfTuples() : 0;
+    const int numberOfEvents = events ? events->GetNumberOfTuples() : 0;
+    const int numberOfPriorities = priorities ? priorities->GetNumberOfTuples() : 0;
     vtkNew<vtkIntArray> existingEvents;
     vtkNew<vtkFloatArray> existingPriorities;
     this->GetObjectEvents(*nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
@@ -171,7 +171,7 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject** nodePtr,
           eventsEqual = false;
           break;
         }
-        float priority = (i < numberOfPriorities ? priorities->GetValue(i) : 0.0 /* default priority */);
+        const float priority = (i < numberOfPriorities ? priorities->GetValue(i) : 0.0 /* default priority */);
         if (existingPriorities->GetValue(i) != priority)
         {
           eventsEqual = false;
@@ -198,7 +198,7 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject* nodePtr)
 {
   if (nodePtr)
   {
-    std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
+    const std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
     vtkEventBroker* broker = vtkEventBroker::GetInstance();
     if (it != this->ObserverTags.end())
     {
@@ -248,7 +248,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
   if (nodePtr)
   {
     vtkUnsignedLongArray* objTags = nullptr;
-    std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
+    const std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
     if (it != this->ObserverTags.end())
     {
       objTags = it->second;
@@ -260,7 +260,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
     }
 
     vtkEventBroker* broker = vtkEventBroker::GetInstance();
-    vtkObject* observer = this->GetObserver();
+    vtkObject* const observer = this->GetObserver();
     if (events)
     {
       for (int i = 0; i < events->GetNumberOfTuples(); i++)
@@ -271,10 +271,10 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
         vtkNew<vtkIntArray> existingEvents;
         vtkNew<vtkFloatArray> existingPriorities;
         this->GetObjectEvents(nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
-        int existingEventCount = std::min(existingEvents->GetNumberOfValues(), existingPriorities->GetNumberOfValues());
+        const int existingEventCount = std::min(existingEvents->GetNumberOfValues(), existingPriorities->GetNumberOfValues());
         for (int existingEventIndex = 0; existingEventIndex < existingEventCount; existingEventIndex++)
         {
-          float priority = (priorities ? priorities->GetValue(i) : 0.0);
+          const float priority = (priorities ? priorities->GetValue(i) : 0.0);
           if (existingEvents->GetValue(existingEventIndex) == events->GetValue(i) && (existingPriorities->GetValue(existingEventIndex) == priority))
           {
             if (logWarningIfSameObservationExists)
@@ -300,7 +300,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
           observation = broker->AddObservation(nodePtr, events->GetValue(i), observer, this->CallbackCommand, priorities->GetValue(i));
         }
 
-        unsigned long tag = observation->GetEventTag();
+        const unsigned long tag = observation->GetEventTag();
 
         objTags->InsertNextValue(tag);
       }
@@ -312,8 +312,8 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
 int vtkObserverManager::GetObservationsCount(vtkObject* nodePtr, unsigned long event)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  vtkObject* observer = this->GetObserver();
-  vtkEventBroker::ObservationVector observations = broker->GetObservations(nodePtr, event, observer, this->CallbackCommand);
+  vtkObject* const observer = this->GetObserver();
+  const vtkEventBroker::ObservationVector observations = broker->GetObservations(nodePtr, event, observer, this->CallbackCommand);
   return static_cast<int>(observations.size());
 }
 
@@ -327,17 +327,17 @@ void vtkObserverManager::GetObjectEvents(vtkObject* nodePtr, vtkIntArray* events
     // node is invalid
     return;
   }
-  std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
+  const std::map<vtkObject*, vtkUnsignedLongArray*>::iterator it = this->ObserverTags.find(nodePtr);
   if (it == this->ObserverTags.end())
   {
     // no observations are found
     return;
   }
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  vtkUnsignedLongArray* objTags = it->second;
+  vtkUnsignedLongArray* const objTags = it->second;
   for (int i = 0; i < objTags->GetNumberOfTuples(); i++)
   {
-    vtkEventBroker::ObservationVector observations = broker->GetObservationsForSubjectByTag(nodePtr, objTags->GetValue(i));
+    const vtkEventBroker::ObservationVector observations = broker->GetObservationsForSubjectByTag(nodePtr, objTags->GetValue(i));
     for (vtkEventBroker::ObservationVector::iterator observationIt = observations.begin(); observationIt != observations.end(); ++observationIt)
     {
       events->InsertNextValue((*observationIt)->GetEvent());

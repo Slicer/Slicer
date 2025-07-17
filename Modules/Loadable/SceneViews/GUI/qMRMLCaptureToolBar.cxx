@@ -172,7 +172,7 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
 
   // Ask user for a name
   bool ok = false;
-  QString sceneViewName = QInputDialog::getText(q, qMRMLCaptureToolBar::tr("SceneView Name"), qMRMLCaptureToolBar::tr("SceneView Name:"), QLineEdit::Normal, "View", &ok);
+  const QString sceneViewName = QInputDialog::getText(q, qMRMLCaptureToolBar::tr("SceneView Name"), qMRMLCaptureToolBar::tr("SceneView Name:"), QLineEdit::Normal, "View", &ok);
   if (!ok || sceneViewName.isEmpty())
   {
     return;

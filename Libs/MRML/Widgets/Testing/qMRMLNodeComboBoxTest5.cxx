@@ -49,7 +49,7 @@ int qMRMLNodeComboBoxTest5(int argc, char* argv[])
 
   vtkNew<vtkMRMLScene> scene;
 
-  vtkNew<vtkMRMLCameraNode> camNode;
+  const vtkNew<vtkMRMLCameraNode> camNode;
   scene->AddNode(camNode.GetPointer());
 
   nodeSelector.setMRMLScene(scene.GetPointer());

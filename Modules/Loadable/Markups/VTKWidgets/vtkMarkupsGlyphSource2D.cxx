@@ -78,14 +78,14 @@ int vtkMarkupsGlyphSource2D::RequestData(vtkInformation* vtkNotUsed(request), vt
   // Special options
   if (this->Dash)
   {
-    int filled = this->Filled;
+    const int filled = this->Filled;
     this->Filled = 0;
     this->CreateDash(pts, lines, polys, colors, this->Scale2);
     this->Filled = filled;
   }
   if (this->Cross)
   {
-    int filled = this->Filled;
+    const int filled = this->Filled;
     this->Filled = 0;
     this->CreateCross(pts, lines, polys, colors, this->Scale2);
     this->Filled = filled;
@@ -149,7 +149,7 @@ void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints* pts)
 {
   double x[3];
   int i;
-  int numPts = pts->GetNumberOfPoints();
+  const int numPts = pts->GetNumberOfPoints();
 
   if (this->RotationAngle == 0.0)
   {
@@ -163,7 +163,7 @@ void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints* pts)
   }
   else
   {
-    double angle = vtkMath::RadiansFromDegrees(this->RotationAngle);
+    const double angle = vtkMath::RadiansFromDegrees(this->RotationAngle);
     double xt;
     for (i = 0; i < numPts; i++)
     {
@@ -194,7 +194,7 @@ void vtkMarkupsGlyphSource2D::CreateCross(vtkPoints* pts, vtkCellArray* lines, v
 {
   vtkIdType ptIds[4];
 
-  double radius = 0.5 * scale;
+  const double radius = 0.5 * scale;
   double gapRadius = 0.2 * scale;
   if (dot)
   {
@@ -349,7 +349,7 @@ void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints* pts, vtkCellArray* lines, 
 
   // generate points in a circle
   x[2] = 0.0;
-  double theta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfPoints);
+  const double theta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfPoints);
   for (unsigned int i = 0; i < numberOfPoints; i++)
   {
     x[0] = 0.5 * cos(static_cast<double>(i) * theta);

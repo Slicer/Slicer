@@ -33,19 +33,19 @@ vtkStandardNewMacro(vtkSlicerTerminologyEntry);
 //----------------------------------------------------------------------------
 vtkSlicerTerminologyEntry::vtkSlicerTerminologyEntry()
 {
-  vtkNew<vtkSlicerTerminologyCategory> category;
+  const vtkNew<vtkSlicerTerminologyCategory> category;
   this->SetCategoryObject(category);
 
-  vtkNew<vtkSlicerTerminologyType> type;
+  const vtkNew<vtkSlicerTerminologyType> type;
   this->SetTypeObject(type);
 
-  vtkNew<vtkSlicerTerminologyType> typeModifier;
+  const vtkNew<vtkSlicerTerminologyType> typeModifier;
   this->SetTypeModifierObject(typeModifier);
 
-  vtkNew<vtkSlicerTerminologyType> region;
+  const vtkNew<vtkSlicerTerminologyType> region;
   this->SetRegionObject(region);
 
-  vtkNew<vtkSlicerTerminologyType> regionModifier;
+  const vtkNew<vtkSlicerTerminologyType> regionModifier;
   this->SetRegionModifierObject(regionModifier);
 }
 

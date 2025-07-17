@@ -225,7 +225,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::SetupMarkerRendere
   }
 
   // In 3D viewers we need to follow the renderer and update the orientation marker accordingly
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
   if (threeDViewNode)
   {
     this->AddRendererUpdateObserver(renderer);
@@ -380,7 +380,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
   {
     return;
   }
-  vtkRenderer* renderer = this->External->GetRenderer();
+  vtkRenderer* const renderer = this->External->GetRenderer();
   if (renderer == nullptr)
   {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrientation() failed: renderer is invalid");
@@ -402,7 +402,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
   if (sliceNode)
   {
     // Calculate the camera position and viewup based on XYToRAS matrix
-    vtkMatrix4x4* sliceToRas = sliceNode->GetSliceToRAS();
+    vtkMatrix4x4* const sliceToRas = sliceNode->GetSliceToRAS();
     vtkNew<vtkMatrix3x3> sliceToRasOrientation;
     for (int r = 0; r < 3; r++)
     {
@@ -411,7 +411,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
         sliceToRasOrientation->SetElement(r, c, sliceToRas->GetElement(r, c));
       }
     }
-    double det = sliceToRasOrientation->Determinant();
+    const double det = sliceToRasOrientation->Determinant();
     const double cameraDistance = 100.0; // any positive number works here, as the position will be adjusted at the end by ResetCamera()
     double y[3] = { 0, 0, det > 0 ? -cameraDistance : cameraDistance };
     // Calculating camer position
@@ -430,7 +430,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
     return;
   }
 
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
   if (threeDViewNode && this->ObservedRenderer)
   {
     vtkCamera* cam = this->ObservedRenderer->GetActiveCamera();
@@ -481,7 +481,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
   }
 
   // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
-  double* viewport = this->MarkerRenderer->GetViewport();
+  double* const viewport = this->MarkerRenderer->GetViewport();
   // Determine the available renderer size in pixels
   double minX = 0;
   double minY = 0;
@@ -489,12 +489,12 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
   double maxX = 1;
   double maxY = 1;
   this->MarkerRenderer->NormalizedDisplayToDisplay(maxX, maxY);
-  int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+  const int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
 
   if (rendererSizeInPixels[0] > 0 && rendererSizeInPixels[1] > 0)
   {
     // Compute normalized size for a square-shaped viewport. Square size is defined a percentage of renderer height.
-    double viewPortSizeInPixels = double(rendererSizeInPixels[1]) * (0.01 * sizePercent);
+    const double viewPortSizeInPixels = double(rendererSizeInPixels[1]) * (0.01 * sizePercent);
 
     if (viewNode->GetOrientationMarkerType() == vtkMRMLAbstractViewNode::OrientationMarkerTypeAxes && this->AxesActor)
     {

@@ -205,7 +205,7 @@ bool testSaveAndReloadScene()
   std::cout << "  ...commit" << std::endl;
   scene->SetSaveToXMLString(1);
   scene->Commit();
-  std::string xmlScene = scene->GetSceneXMLString();
+  const std::string xmlScene = scene->GetSceneXMLString();
 
   scene->SetLoadFromXMLString(1);
   scene->SetSceneXMLString(xmlScene);
@@ -322,9 +322,9 @@ bool testGetSIPrefixCoefficient()
 
   for (std::map<std::string, double>::iterator it = coefficients.begin(); it != coefficients.end(); ++it)
   {
-    std::string prefix = it->first;
-    double expectedCoefficient = it->second;
-    double coefficient = vtkSlicerUnitsLogic::GetSIPrefixCoefficient(prefix.c_str());
+    const std::string prefix = it->first;
+    const double expectedCoefficient = it->second;
+    const double coefficient = vtkSlicerUnitsLogic::GetSIPrefixCoefficient(prefix.c_str());
     if (coefficient != expectedCoefficient)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetSIPrefixCoefficient(\"" << prefix << "\")\n"

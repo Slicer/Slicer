@@ -30,15 +30,15 @@ int DoIt(int argc, char* argv[], T)
 
   typedef itk::SmoothingRecursiveGaussianImageFilter<InputImageType, OutputImageType> FilterType;
 
-  typename ReaderType::Pointer reader = ReaderType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
 
   reader->SetFileName(inputVolume.c_str());
 
-  typename FilterType::Pointer filter = FilterType::New();
+  const typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput(reader->GetOutput());
   filter->SetSigma(sigma);
 
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(outputVolume.c_str());
   writer->SetInput(filter->GetOutput());
   writer->Update();

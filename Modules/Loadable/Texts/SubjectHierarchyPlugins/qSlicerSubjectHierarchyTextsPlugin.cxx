@@ -150,7 +150,7 @@ QString qSlicerSubjectHierarchyTextsPlugin::tooltip(vtkIdType itemID) const
   {
     std::stringstream textNodeInfo;
     textNodeInfo << " (Encoding: " << textNode->GetEncodingAsString() << ")" << std::endl << textNode->GetText();
-    QString textInfo = QString::fromStdString(textNodeInfo.str());
+    const QString textInfo = QString::fromStdString(textNodeInfo.str());
     tooltipString.append(textInfo);
   }
 

@@ -50,11 +50,11 @@ int qMRMLSceneColorTableModelTest1(int argc, char* argv[])
 
   qMRMLSceneColorTableModel model;
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(nullptr);
   nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.addAttribute("Category", "First category");
-  vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
+  vtkMRMLNode* const node = nodeFactory.createNode("vtkMRMLColorTableNode");
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
   if (colorNode)
   {

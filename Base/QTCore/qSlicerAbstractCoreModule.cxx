@@ -332,14 +332,14 @@ QStringList qSlicerAbstractCoreModule::associatedNodeTypes() const
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractCoreModule::defaultDocumentationLink() const
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app)
   {
     // base URL stored in application settings, therefore if there is no
     // valid application then we cannot get default documentation link
     return "";
   }
-  QString url = app->moduleDocumentationUrl(this->name());
+  const QString url = app->moduleDocumentationUrl(this->name());
   QString linkText = QString("<p>")                                                                                                          //
                      + tr("For more information see the %1.").arg(QString("<a href=\"%1\">%2</a>").arg(url).arg(tr("online documentation"))) //
                      + QString("</p>");

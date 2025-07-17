@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  TensorReaderType::Pointer reader = TensorReaderType::New();
-  TensorWriterType::Pointer writer = TensorWriterType::New();
+  const TensorReaderType::Pointer reader = TensorReaderType::New();
+  const TensorWriterType::Pointer writer = TensorWriterType::New();
 
   reader->SetFileName(inputVolume.c_str());
   reader->Update();
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   const DictionaryType& dictionary = reader->GetMetaDataDictionary();
 
   DictionaryType::ConstIterator itr = dictionary.Begin();
-  DictionaryType::ConstIterator end = dictionary.End();
+  const DictionaryType::ConstIterator end = dictionary.End();
 
   while (itr != end)
   {

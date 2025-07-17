@@ -30,7 +30,7 @@ vtkImplicitInvertableBoolean::~vtkImplicitInvertableBoolean() = default;
 //----------------------------------------------------------------------------
 double vtkImplicitInvertableBoolean::EvaluateFunction(double x[3])
 {
-  double value = Superclass::EvaluateFunction(x);
+  const double value = Superclass::EvaluateFunction(x);
   return this->Invert ? -value : value;
 }
 

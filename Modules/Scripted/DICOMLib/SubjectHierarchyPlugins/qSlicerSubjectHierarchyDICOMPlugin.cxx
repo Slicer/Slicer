@@ -136,7 +136,7 @@ qSlicerSubjectHierarchyDICOMPluginPrivate::~qSlicerSubjectHierarchyDICOMPluginPr
 void qSlicerSubjectHierarchyDICOMPluginPrivate::onHierarchyItemCreated()
 {
   // Make sure empty folders are shown in the tree view it was created in
-  qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
+  qMRMLSubjectHierarchyTreeView* const currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
   qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
   if (currentTreeView && folderPlugin)
   {
@@ -213,7 +213,7 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin() const
   }
 
   // Get current item to determine tole
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -390,7 +390,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::createSubjectItem()
   name = shNode->GenerateUniqueItemName(name);
 
   // Create patient subject hierarchy item
-  vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), name);
+  const vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), name);
 
   emit requestExpandItem(patientItemID);
 
@@ -409,7 +409,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -420,7 +420,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
   name = shNode->GenerateUniqueItemName(name);
 
   // Create study subject hierarchy item
-  vtkIdType studyItemID = shNode->CreateStudyItem(currentItemID, name);
+  const vtkIdType studyItemID = shNode->CreateStudyItem(currentItemID, name);
 
   emit requestExpandItem(studyItemID);
 
@@ -437,7 +437,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToPatient()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -457,7 +457,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentItemToStudy()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -477,7 +477,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -496,7 +496,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
   }
   else // Item belongs to a data node (i.e. series)
   {
-    vtkIdType studyItemID = shNode->GetItemParent(currentItemID);
+    const vtkIdType studyItemID = shNode->GetItemParent(currentItemID);
     if (studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) //
         && shNode->IsItemLevel(shNode->GetItemParent(studyItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
@@ -506,11 +506,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
   }
   if (!validSelection)
   {
-    QString message = tr("Data to export need to be under a study item, placed under a patient item in the subject hierarchy.\n"
-                         "Default patient and study will be created and the selected data and its related datasets "
-                         "will be moved in it for export.\n\n"
-                         "Click Cancel, to create the patient/study hierarchy manually and drag-and-drop the exportable data under the study.");
-    QMessageBox::StandardButton answer =
+    const QString message = tr("Data to export need to be under a study item, placed under a patient item in the subject hierarchy.\n"
+                               "Default patient and study will be created and the selected data and its related datasets "
+                               "will be moved in it for export.\n\n"
+                               "Click Cancel, to create the patient/study hierarchy manually and drag-and-drop the exportable data under the study.");
+    const QMessageBox::StandardButton answer =
       QMessageBox::question(nullptr, tr("Create new patient and study for DICOM export?"), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
     if (answer == QMessageBox::Ok)
     {
@@ -518,7 +518,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
       if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
       {
         // Create parent patient
-        vtkIdType patientItemID = this->createDefaultPatientItem();
+        const vtkIdType patientItemID = this->createDefaultPatientItem();
         // Move existing study under new patient
         shNode->SetItemParent(currentItemID, patientItemID);
       }
@@ -532,7 +532,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
         referencedNodes.TakeReference(shNode->GetScene()->GetReferencedNodes(shNode->GetItemDataNode(currentItemID)));
         for (int index = 0; index != referencedNodes->GetNumberOfItems(); ++index)
         {
-          vtkIdType nodeItemID = shNode->GetItemByDataNode(vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)));
+          const vtkIdType nodeItemID = shNode->GetItemByDataNode(vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)));
           if (nodeItemID && (std::find(referencedItems.begin(), referencedItems.end(), nodeItemID) == referencedItems.end()))
           {
             referencedItems.push_back(nodeItemID);
@@ -543,7 +543,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
         vtkIdType studyItemID = 0;
         for (std::vector<vtkIdType>::iterator itemIt = referencedItems.begin(); itemIt != referencedItems.end(); itemIt++)
         {
-          vtkIdType currentParentStudyItemID = shNode->GetItemAncestorAtLevel(*itemIt, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
+          const vtkIdType currentParentStudyItemID = shNode->GetItemAncestorAtLevel(*itemIt, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
           if (currentParentStudyItemID && !studyItemID)
           {
             studyItemID = currentParentStudyItemID;
@@ -561,13 +561,13 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
           studyItemID = this->createDefaultStudyItem();
 
           // Create parent patient for new study
-          vtkIdType patientItemID = this->createDefaultPatientItem();
+          const vtkIdType patientItemID = this->createDefaultPatientItem();
           shNode->SetItemParent(studyItemID, patientItemID);
         }
         else if (!shNode->GetItemAncestorAtLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
         {
           // Create parent patient for found study if it had none
-          vtkIdType patientItemID = this->createDefaultPatientItem();
+          const vtkIdType patientItemID = this->createDefaultPatientItem();
           shNode->SetItemParent(studyItemID, patientItemID);
         }
 
@@ -605,7 +605,7 @@ vtkIdType qSlicerSubjectHierarchyDICOMPlugin::createDefaultPatientItem()
   }
 
   // Generate patient name
-  QString patientName = tr("Anonymous");
+  const QString patientName = tr("Anonymous");
 
   // Generate random patient ID
   const int patientIdLength = 6;
@@ -615,8 +615,8 @@ vtkIdType qSlicerSubjectHierarchyDICOMPlugin::createDefaultPatientItem()
     patientID += QChar('A' + char(QRandomGenerator::global()->generate() % ('Z' - 'A')));
   }
 
-  QString patientItemName = QString("%1 (%2)").arg(patientName).arg(patientID);
-  vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), patientItemName.toStdString());
+  const QString patientItemName = QString("%1 (%2)").arg(patientName).arg(patientID);
+  const vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), patientItemName.toStdString());
 
   shNode->SetItemAttribute(patientItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMPatientNameAttributeName(), patientName.toStdString());
   shNode->SetItemAttribute(patientItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMPatientIDAttributeName(), patientID.toStdString());
@@ -633,15 +633,15 @@ vtkIdType qSlicerSubjectHierarchyDICOMPlugin::createDefaultStudyItem()
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   }
 
-  QString studyDescription = tr("No study description");
-  QDateTime studyDateTime = QDateTime::currentDateTime();
-  QString studyDateStr = studyDateTime.toString("yyyyMMdd");
-  QString studyTimeStr = studyDateTime.toString("hhmmss");
+  const QString studyDescription = tr("No study description");
+  const QDateTime studyDateTime = QDateTime::currentDateTime();
+  const QString studyDateStr = studyDateTime.toString("yyyyMMdd");
+  const QString studyTimeStr = studyDateTime.toString("hhmmss");
   char uidBuffer[100]; // must be at least 65 characters long
-  QString studyInstanceUid = QString::fromLatin1(dcmGenerateUniqueIdentifier(uidBuffer, SITE_STUDY_UID_ROOT));
+  const QString studyInstanceUid = QString::fromLatin1(dcmGenerateUniqueIdentifier(uidBuffer, SITE_STUDY_UID_ROOT));
 
   // Create new study
-  vtkIdType studyItemID = shNode->CreateStudyItem(shNode->GetSceneItemID(), QString("%1 (%2)").arg(studyDescription).arg(studyDateStr).toStdString());
+  const vtkIdType studyItemID = shNode->CreateStudyItem(shNode->GetSceneItemID(), QString("%1 (%2)").arg(studyDescription).arg(studyDateStr).toStdString());
   shNode->SetItemUID(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMUIDName(), studyInstanceUid.toStdString());
   shNode->SetItemAttribute(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMStudyInstanceUIDAttributeName(), studyInstanceUid.toStdString());
   shNode->SetItemAttribute(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDescriptionAttributeName(), studyDescription.toStdString());

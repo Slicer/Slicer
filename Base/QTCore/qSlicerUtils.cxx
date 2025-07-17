@@ -87,7 +87,7 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
 bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
 {
   // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
-  QRegExp regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
+  const QRegExp regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
 }
 
@@ -95,7 +95,7 @@ bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
 bool qSlicerUtils::isLoadableModule(const QString& filePath)
 {
   // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
-  QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
+  const QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
 }
 
@@ -147,7 +147,7 @@ QString qSlicerUtils::executableExtension()
 //-----------------------------------------------------------------------------
 QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryName)
 {
-  QFileInfo libraryPath(libraryName);
+  const QFileInfo libraryPath(libraryName);
   QString moduleName = libraryPath.baseName();
 
   // Remove prefix 'lib' if needed
@@ -191,7 +191,7 @@ QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
   }
 
   // Remove suffix 'Module' if needed
-  int index = moduleName.lastIndexOf("Module");
+  const int index = moduleName.lastIndexOf("Module");
   if (index == (moduleName.size() - 6))
   {
     moduleName.remove(index, 6);
@@ -242,7 +242,7 @@ bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
 #ifdef Q_OS_WIN32
   Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive;
 #else
-  Qt::CaseSensitivity sensitivity = Qt::CaseSensitive;
+  Qt::CaseSensitivity const sensitivity = Qt::CaseSensitive;
 #endif
   return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
 }
@@ -316,7 +316,7 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
     // Given an URL matching the regular expression reported above, this second
     // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
     // with "Documentation/<version>/"
-    QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" + version);
+    const QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" + version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
   }

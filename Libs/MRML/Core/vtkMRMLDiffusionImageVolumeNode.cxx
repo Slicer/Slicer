@@ -64,7 +64,7 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  std::stringstream ss;
+  const std::stringstream ss;
   if (this->BaselineNodeID != nullptr)
   {
     of << " baselineNodeRef=\"" << this->BaselineNodeID << "\"";
@@ -82,7 +82,7 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -118,7 +118,7 @@ vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetBaselineNode()
   vtkMRMLVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetBaselineNodeID())
   {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->BaselineNodeID);
+    vtkMRMLNode* const snode = this->GetScene()->GetNodeByID(this->BaselineNodeID);
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
   }
   return node;
@@ -130,7 +130,7 @@ vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetMaskNode()
   vtkMRMLVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetMaskNodeID())
   {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->MaskNodeID);
+    vtkMRMLNode* const snode = this->GetScene()->GetNodeByID(this->MaskNodeID);
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
   }
   return node;
@@ -142,7 +142,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
   vtkMRMLDiffusionWeightedVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetDiffusionWeightedNodeID())
   {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DiffusionWeightedNodeID);
+    vtkMRMLNode* const snode = this->GetScene()->GetNodeByID(this->DiffusionWeightedNodeID);
     node = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(snode);
   }
   return node;

@@ -87,7 +87,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   std::vector<vtkSmartPointer<vtkMRMLModelNode>> modelNodes;
   std::vector<vtkSmartPointer<vtkMRMLModelDisplayNode>> modelDisplayNodes;
   std::vector<vtkSmartPointer<vtkMRMLModelHierarchyNode>> modelHierarchyNodes;
-  unsigned int numModels = 5;
+  const unsigned int numModels = 5;
   for (unsigned int m = 0; m < numModels; m++)
   {
     // first set up a hierarchy for this model
@@ -145,7 +145,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   }
 
   // check for the immediate children of the top level
-  std::vector<vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
+  const std::vector<vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
   std::cout << "Top level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren);
   if (immediateChildren.size() != 1)
@@ -202,7 +202,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
       std::stringstream ss2;
       ss2 << i;
       ss2 << "th Model Hierarchy";
-      std::string nameString = ss2.str();
+      const std::string nameString = ss2.str();
       if (nameString.compare(childHierarchy->GetName()) != 0)
       {
         std::cerr << "Expected " << i << "th child hierarchy to have the name " << nameString << ", instead have " << childHierarchy->GetName() << std::endl;

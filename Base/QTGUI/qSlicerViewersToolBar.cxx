@@ -482,7 +482,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
     for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
     {
-      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+      vtkMRMLCrosshairNode* const crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
       if (crosshairNode)
       {
         this->qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent, this, SLOT(onCrosshairNodeModeChangedEvent()));

@@ -43,7 +43,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  const vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
   qMRMLDisplayNodeWidget displayNodeWidget;
 
@@ -61,35 +61,35 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  bool visibility = displayNode->GetVisibility();
+  const bool visibility = displayNode->GetVisibility();
   if (displayNodeWidget.visibility() != visibility)
   {
     std::cerr << "Wrong visibility: " << displayNodeWidget.visibility() << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool selected = displayNode->GetSelected();
+  const bool selected = displayNode->GetSelected();
   if (displayNodeWidget.selected() != selected)
   {
     std::cerr << "Wrong selected: " << displayNodeWidget.selected() << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool clipping = displayNode->GetClipping();
+  const bool clipping = displayNode->GetClipping();
   if (displayNodeWidget.clipping() != clipping)
   {
     std::cerr << "Wrong clipping: " << displayNodeWidget.clipping() << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool sliceIntersectionVisible = displayNode->GetVisibility2D();
+  const bool sliceIntersectionVisible = displayNode->GetVisibility2D();
   if (displayNodeWidget.sliceIntersectionVisible() != sliceIntersectionVisible)
   {
     std::cerr << "Wrong intersection: " << displayNodeWidget.sliceIntersectionVisible() << std::endl;
     return EXIT_FAILURE;
   }
 
-  int sliceIntersectionThickness = displayNode->GetSliceIntersectionThickness();
+  const int sliceIntersectionThickness = displayNode->GetSliceIntersectionThickness();
   if (displayNodeWidget.sliceIntersectionThickness() != sliceIntersectionThickness)
   {
     std::cerr << "Wrong intersection thickness: " << displayNodeWidget.sliceIntersectionThickness() << std::endl;

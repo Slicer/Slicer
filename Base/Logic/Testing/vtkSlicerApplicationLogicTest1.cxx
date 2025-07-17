@@ -36,12 +36,12 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
   //-----------------------------------------------------------------------------
   // Test GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath);
   //-----------------------------------------------------------------------------
-  std::string inputModulePath1("/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y/qt-loadable-modules/libqSlicerVolumeRenderingModule.so");
-  std::string inputModulePath2("c:\\path\\to\\Slicer-Superbuild\\Slicer-build\\lib\\Slicer-X.Y\\qt-loadable-modules\\Release\\qSlicerVolumeRenderingModule.dll");
-  std::string inputModulePath3("c:\\VolumeRendering\\qSlicerVolumeRenderingModule.dll");
-  std::string expectedModuleSlicerXYShareDirectory1("/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
-  std::string expectedModuleSlicerXYShareDirectory2("c:/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
-  std::string expectedModuleSlicerXYShareDirectory3("");
+  const std::string inputModulePath1("/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y/qt-loadable-modules/libqSlicerVolumeRenderingModule.so");
+  const std::string inputModulePath2("c:\\path\\to\\Slicer-Superbuild\\Slicer-build\\lib\\Slicer-X.Y\\qt-loadable-modules\\Release\\qSlicerVolumeRenderingModule.dll");
+  const std::string inputModulePath3("c:\\VolumeRendering\\qSlicerVolumeRenderingModule.dll");
+  const std::string expectedModuleSlicerXYShareDirectory1("/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
+  const std::string expectedModuleSlicerXYShareDirectory2("c:/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
+  const std::string expectedModuleSlicerXYShareDirectory3("");
   {
     std::string expectedModuleShareDirectory = expectedModuleSlicerXYShareDirectory1 + "/qt-loadable-modules/VolumeRendering";
     std::string currentModuleShareDirectory = vtkSlicerApplicationLogic::GetModuleShareDirectory("VolumeRendering", inputModulePath1);
@@ -103,8 +103,8 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
   // Test GetModuleSlicerXYLibDirectory(const std::string& filePath);
   //-----------------------------------------------------------------------------
   {
-    std::string expectedModuleSlicerXYLibDirectory1("/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y");
-    std::string expectedModuleSlicerXYLibDirectory2("c:/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y");
+    const std::string expectedModuleSlicerXYLibDirectory1("/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y");
+    const std::string expectedModuleSlicerXYLibDirectory2("c:/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y");
 
     std::string expectedModuleLibDirectory = expectedModuleSlicerXYLibDirectory1;
     std::string currentModuleLibDirectory = vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory(inputModulePath1);
@@ -235,13 +235,13 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
     }
     for (TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
     {
-      std::string filePath(data.at(rowIdx).at(0));
-      std::string applicationHomeDir(data.at(rowIdx).at(1));
-      std::string slicerRevision(data.at(rowIdx).at(2));
-      std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(3));
-      bool isEmbeddedExpected = (isEmbeddedExpectedAsStr == "1");
+      const std::string filePath(data.at(rowIdx).at(0));
+      const std::string applicationHomeDir(data.at(rowIdx).at(1));
+      const std::string slicerRevision(data.at(rowIdx).at(2));
+      const std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(3));
+      const bool isEmbeddedExpected = (isEmbeddedExpectedAsStr == "1");
 
-      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision);
+      const bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision);
       if (isEmbeddedExpected != isEmbedded)
       {
         std::cerr << "Line " << __LINE__ << " - Problem with isEmbedded ! - Row:" << rowIdx << "\n"
@@ -275,7 +275,7 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
     sourceIDs.emplace_back(originalModelHierarchy1->GetID());
     // now create a scene to import that has a hierarchy
     vtkNew<vtkMRMLScene> importScene;
-    std::string filename = "applicationLogicModelHierarchyImportTestScene.mrml";
+    const std::string filename = "applicationLogicModelHierarchyImportTestScene.mrml";
     importScene->SetURL(filename.c_str());
     // make a few deep model hierarchy tree
     for (int i = 0; i < 5; i++)
@@ -289,7 +289,7 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
       mhn->SetName(idNumberString.c_str());
       if (i > 0)
       {
-        std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
+        const std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
         std::cout << "Setting parent node id on node " << mhn->GetID() << " to " << parentNodeID.c_str() << std::endl;
         mhn->SetParentNodeID(parentNodeID.c_str());
       }
@@ -297,7 +297,7 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
     importScene->Commit();
     // set up to read the file
     appLogic->CreateProcessingThread();
-    int retval = appLogic->RequestReadScene(filename, targetIDs, sourceIDs, 0, 1);
+    const int retval = appLogic->RequestReadScene(filename, targetIDs, sourceIDs, 0, 1);
     if (retval == 0)
     {
       std::cerr << "Unable to process request read scene" << std::endl;
@@ -305,7 +305,7 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
     }
     appLogic->ProcessReadData();
     // test that the app Logic's scene has the proper hierarchy
-    int numNodes = appLogic->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+    const int numNodes = appLogic->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
     std::cout << "After processing read data, app logic scene has " << numNodes << " model hierarchy nodes" << std::endl;
     // the five nodes that were imported over wrote one
     if (numNodes != 6)

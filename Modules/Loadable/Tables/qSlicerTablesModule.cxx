@@ -109,7 +109,7 @@ QStringList qSlicerTablesModule::dependencies() const
 void qSlicerTablesModule::setup()
 {
   this->Superclass::setup();
-  vtkSlicerTablesLogic* TablesLogic = vtkSlicerTablesLogic::SafeDownCast(this->logic());
+  vtkSlicerTablesLogic* const TablesLogic = vtkSlicerTablesLogic::SafeDownCast(this->logic());
 
   qSlicerCoreIOManager* ioManager = qSlicerCoreApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerTablesReader(TablesLogic, this));

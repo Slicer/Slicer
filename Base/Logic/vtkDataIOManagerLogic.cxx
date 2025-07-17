@@ -218,7 +218,7 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
     return 0;
   }
   //--- find the storage node that's in the scheduled state
-  int numStorageNodes = dnode->GetNumberOfStorageNodes();
+  const int numStorageNodes = dnode->GetNumberOfStorageNodes();
   int storageNodeIndex = -1;
   int numScheduledNodes = 0;
   for (int n = 0; n < numStorageNodes; n++)
@@ -271,8 +271,8 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
     return 0;
   }
 
-  const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
-  const char* dest = cm->GetFilenameFromURI(source);
+  const char* const source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
+  const char* const dest = cm->GetFilenameFromURI(source);
   vtkDebugMacro("QueueRead: got the source " << source << " and dest " << dest);
 
   //--- set the destination filename in the node.
@@ -283,10 +283,10 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
   bool allCachedFilesExist = true;
   for (int uriNum = 0; uriNum < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); uriNum++)
   {
-    const char* sourceN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(uriNum);
+    const char* const sourceN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(uriNum);
     if (sourceN)
     {
-      const char* destN = cm->GetFilenameFromURI(sourceN);
+      const char* const destN = cm->GetFilenameFromURI(sourceN);
       if (destN)
       {
         dnode->GetNthStorageNode(storageNodeIndex)->AddFileName(destN);
@@ -305,7 +305,7 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
   //--- This test has been done in MRML (DataIOManager), but with asynchIO,
   //--- Cache may have become full since the remote read was queued.
   //---
-  float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
+  const float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
   if ((cm->GetCurrentCacheSize() * 1000000.0) >= bufsize)
   {
     //--- No space left in cache.
@@ -432,8 +432,8 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
   // loop over any other files in the storage node
   for (int n = 0; n < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); n++)
   {
-    const char* sourceN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(n);
-    const char* destN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n);
+    const char* const sourceN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(n);
+    const char* const destN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n);
 
     vtkNew<vtkDataTransfer> transfer1;
     transfer1->SetTransferID(this->GetDataIOManager()->GetUniqueTransferID());
@@ -521,7 +521,7 @@ int vtkDataIOManagerLogic::QueueWrite(vtkMRMLNode* node)
   }
 
   //--- if handler is good and there's enough cache space, queue the read
-  vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
+  vtkURIHandler* const handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   if (handler == nullptr)
   {
     vtkErrorMacro("QueueWrite: null URI handler!");
@@ -547,7 +547,7 @@ int vtkDataIOManagerLogic::QueueWrite(vtkMRMLNode* node)
   // Get the number of filenames and URIs associated with this storage node.
   // (assuming they should be equal)
   int numFiles = dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfFileNames();
-  int numURIs = dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs();
+  const int numURIs = dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs();
   //--- Note: the storageNode's FileName is repeated in its FileList, as
   //--- FileListMember0 *if* there are multiple files for the dataset.
   //--- However, the storageNode's URI is *not* repeated in its URIList
@@ -680,8 +680,8 @@ void vtkDataIOManagerLogic::ApplyTransfer(void* clientdata)
     return;
   }
 
-  const char* source = dt->GetSourceURI();
-  const char* dest = dt->GetDestinationURI();
+  const char* const source = dt->GetSourceURI();
+  const char* const dest = dt->GetDestinationURI();
   if (dt->GetTransferType() == vtkDataTransfer::RemoteDownload)
   {
     //---

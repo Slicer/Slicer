@@ -67,7 +67,7 @@ int vtkSceneViewEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   cameraNodeObserver->SetCallback(
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
-      int* cameraModifiedEventCount = static_cast<int*>(clientData);
+      int* const cameraModifiedEventCount = static_cast<int*>(clientData);
       (*cameraModifiedEventCount)++;
     });
   cameraNodeObserver->SetClientData(&cameraModifiedEventCount);

@@ -59,7 +59,7 @@ void vtkMRMLViewLinkLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   vtkNew<vtkIntArray> events;
   vtkNew<vtkFloatArray> priorities;
 
-  float normalPriority = 0.0;
+  const float normalPriority = 0.0;
 
   // Events that use the default priority.  Don't care the order they
   // are triggered
@@ -180,9 +180,9 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     return;
   }
 
-  int sourceViewGroup = sourceViewNode->GetViewGroup();
+  const int sourceViewGroup = sourceViewNode->GetViewGroup();
 
-  vtkSmartPointer<vtkCollection> nodes = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
+  const vtkSmartPointer<vtkCollection> nodes = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
   vtkMRMLCameraNode* cameraNode = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it); (cameraNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
@@ -206,7 +206,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     // Axis selection
     if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::LookFromAxis)
     {
-      int wasModifying = cameraNode->StartModify();
+      const int wasModifying = cameraNode->StartModify();
 
       if (cameraNode->GetParentTransformNode())
       {
@@ -239,8 +239,8 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomInFlag)
     {
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
-      double zoomFactor = 0.05;
-      int wasModifying = cameraNode->StartModify();
+      const double zoomFactor = 0.05;
+      const int wasModifying = cameraNode->StartModify();
 
       if (camera->GetParallelProjection())
       {
@@ -258,8 +258,8 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::ZoomOutFlag)
     {
       // The zoom factor value is defined in the constructor of ctkVTKRenderView
-      double zoomFactor = -0.05;
-      int wasModifying = cameraNode->StartModify();
+      const double zoomFactor = -0.05;
+      const int wasModifying = cameraNode->StartModify();
 
       if (camera->GetParallelProjection())
       {
@@ -276,7 +276,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     // Reset Focal Point
     else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CenterFlag)
     {
-      int wasModifying = cameraNode->StartModify();
+      const int wasModifying = cameraNode->StartModify();
 
       if (cameraNode->GetParentTransformNode())
       {
@@ -303,7 +303,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     // Update vtkCameras (i.e., mouse interactions)
     else if (sourceCameraNode->GetInteractionFlags() == vtkMRMLCameraNode::CameraInteractionFlag)
     {
-      int wasModifying = cameraNode->StartModify();
+      const int wasModifying = cameraNode->StartModify();
 
       if (cameraNode->GetParentTransformNode())
       {
@@ -363,7 +363,7 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
     return;
   }
 
-  int requiredViewGroup = viewNode->GetViewGroup();
+  const int requiredViewGroup = viewNode->GetViewGroup();
   vtkMRMLViewNode* vNode = nullptr;
   vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
@@ -394,7 +394,7 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
     // Box color
     else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BoxColorFlag)
     {
-      int wasModifying = vNode->StartModify();
+      const int wasModifying = vNode->StartModify();
       vNode->SetBoxColor(viewNode->GetBoxColor());
       vNode->EndModify(wasModifying);
     }
@@ -406,7 +406,7 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
     // Background color
     else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BackgroundColorFlag)
     {
-      int wasModifying = vNode->StartModify();
+      const int wasModifying = vNode->StartModify();
       // The ThreeDView displayable manager will change the background color of
       // the renderer.
 

@@ -92,7 +92,7 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTransformsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   if (d->TransformLogic.GetPointer() == nullptr)
   {
@@ -119,13 +119,13 @@ double qSlicerTransformsReader::canLoadFileConfidence(const QString& fileName) c
   if (confidence > 0)
   {
     // Set higher confidence for NIFTI files containing displacement field
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith(".NII") || upperCaseFileName.endsWith(".NII.GZ"))
     {
       // Use lower than default confidence value unless it turns out that this file contains a displacement field.
       confidence = 0.4;
       using ImageIOType = itk::NiftiImageIO;
-      ImageIOType::Pointer niftiIO = ImageIOType::New();
+      const ImageIOType::Pointer niftiIO = ImageIOType::New();
       niftiIO->SetFileName(fileName.toStdString());
       try
       {

@@ -52,10 +52,10 @@ vtkCacheManager::~vtkCacheManager()
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::GetFileFromURIMap(const char* uri)
 {
-  std::string uriString(uri);
+  const std::string uriString(uri);
 
   //--- URI is first, local name is second
-  std::map<std::string, std::string>::iterator iter = this->uriMap.find(uriString);
+  const std::map<std::string, std::string>::iterator iter = this->uriMap.find(uriString);
   if (iter != this->uriMap.end())
   {
     return iter->second.c_str();
@@ -73,8 +73,8 @@ void vtkCacheManager::MapFileToURI(const char* uri, const char* fname)
     return;
   }
 
-  std::string remote(uri);
-  std::string local(fname);
+  const std::string remote(uri);
+  const std::string local(fname);
 
   std::map<std::string, std::string>::iterator iter;
   //--- see if it's already here and update if so.
@@ -100,7 +100,7 @@ void vtkCacheManager::MapFileToURI(const char* uri, const char* fname)
 void vtkCacheManager::SetRemoteCacheDirectory(const char* dir)
 {
   std::string dirstring = dir;
-  size_t len = (int)dirstring.size();
+  const size_t len = (int)dirstring.size();
 
   if (len == 0)
   {
@@ -142,7 +142,7 @@ const char* vtkCacheManager::GetRemoteCacheDirectory()
 int vtkCacheManager::IsRemoteReference(const char* uri)
 {
   int index;
-  std::string uriString(uri);
+  const std::string uriString(uri);
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
@@ -178,7 +178,7 @@ int vtkCacheManager::IsRemoteReference(const char* uri)
 int vtkCacheManager::IsLocalReference(const char* uri)
 {
   int index;
-  std::string uriString(uri);
+  const std::string uriString(uri);
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
@@ -213,7 +213,7 @@ int vtkCacheManager::IsLocalReference(const char* uri)
 int vtkCacheManager::LocalFileExists(const char* uri)
 {
   int index;
-  std::string uriString(uri);
+  const std::string uriString(uri);
   std::string filename;
 
   //--- get all characters up to (and not including) the '://'
@@ -335,7 +335,7 @@ const char* vtkCacheManager::EncodeURI(const char* uri)
   // encode double quote
   vtksys::SystemTools::ReplaceString(kwInString, "\"", "%22");
 
-  const char* inStr = kwInString.c_str();
+  const char* const inStr = kwInString.c_str();
   char* returnString = nullptr;
   size_t n = strlen(inStr) + 1;
   char* cp1 = new char[n];
@@ -351,14 +351,14 @@ const char* vtkCacheManager::EncodeURI(const char* uri)
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::AddCachePathToFilename(const char* filename)
 {
-  std::string cachedir(this->GetRemoteCacheDirectory());
+  const std::string cachedir(this->GetRemoteCacheDirectory());
   if (cachedir.c_str() != nullptr)
   {
     std::string ret = cachedir;
     ret += "/";
     ret += filename;
 
-    const char* outStr = ret.c_str();
+    const char* const outStr = ret.c_str();
     char* absoluteName = nullptr;
     size_t n = strlen(outStr) + 1;
     char* cp1 = new char[n];
@@ -389,7 +389,7 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
     return "(null)";
   }
 
-  const char* mapcheck = this->GetFileFromURIMap(uri);
+  const char* const mapcheck = this->GetFileFromURIMap(uri);
   if (mapcheck != nullptr)
   {
     return (mapcheck);
@@ -397,7 +397,7 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
 
   std::string kwInString = std::string(uri);
 
-  std::string::size_type loc = kwInString.find("?");
+  const std::string::size_type loc = kwInString.find("?");
   if (loc != kwInString.npos)
   {
     kwInString = kwInString.substr(0, loc);
@@ -423,7 +423,7 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
   std::string fileName;
   std::string baseName;
   std::string extensionName;
-  std::string tmpName = vtksys::SystemTools::GetFilenameName(kwInString);
+  const std::string tmpName = vtksys::SystemTools::GetFilenameName(kwInString);
   std::string versionExtension;
 
   vtkDebugMacro("GetFilenameFromURI: got fileName name " << tmpName.c_str());
@@ -468,7 +468,7 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
   pathComponents.push_back(newFileName);
   fileName = vtksys::SystemTools::JoinPath(pathComponents);
 
-  const char* inStr = fileName.c_str();
+  const char* const inStr = fileName.c_str();
   char* returnString = nullptr;
   size_t n = strlen(inStr) + 1;
   char* cp1 = new char[n];
@@ -502,7 +502,7 @@ void vtkCacheManager::UpdateCacheInformation()
 void vtkCacheManager::DeleteFromCachedFileList(const char* target)
 {
 
-  std::string tstring = target;
+  const std::string tstring = target;
   std::vector<std::string> tmp = this->CachedFileList;
   std::vector<std::string>::iterator it;
   this->CachedFileList.clear();
@@ -535,7 +535,7 @@ void vtkCacheManager::DeleteFromCache(const char* target)
     return;
   }
 
-  std::string str = this->FindCachedFile(target, this->GetRemoteCacheDirectory());
+  const std::string str = this->FindCachedFile(target, this->GetRemoteCacheDirectory());
   if (str.c_str() != nullptr)
   {
     this->MarkNodesBeforeDeletingDataFromCache(target);
@@ -581,10 +581,10 @@ int vtkCacheManager::ClearCacheCheck()
   // check to see how many files are in it.
   // if more than... 0? invoke CacheDirtyEvent.
   //
-  std::string cachedir = this->GetRemoteCacheDirectory();
+  const std::string cachedir = this->GetRemoteCacheDirectory();
   if (cachedir.c_str() != nullptr)
   {
-    unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory(cachedir.c_str());
+    const unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory(cachedir.c_str());
     //--- assume method will return . and ..
     if (numFiles > 2)
     {
@@ -627,7 +627,7 @@ float vtkCacheManager::GetCurrentCacheSize()
   {
     return (0.0);
   }
-  float size = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
+  const float size = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
   this->SetCurrentCacheSize(size);
   return (this->CurrentCacheSize);
 }
@@ -639,7 +639,7 @@ void vtkCacheManager::MarkNode(std::string str)
   //--- If such a node exists, mark it as modified since read,
   //--- so that a user will be prompted to save the
   //--- data elsewhere (since it'll be deleted from cache.)
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
+  const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
   vtkMRMLStorableNode* node;
   std::string uri;
   for (int n = 0; n < nnodes; n++)
@@ -647,7 +647,7 @@ void vtkCacheManager::MarkNode(std::string str)
     node = vtkMRMLStorableNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLStorableNode"));
     if (node != nullptr)
     {
-      int numStorageNodes = node->GetNumberOfStorageNodes();
+      const int numStorageNodes = node->GetNumberOfStorageNodes();
       for (int i = 0; i < numStorageNodes; i++)
       {
         if (node->GetNthStorageNode(i) != nullptr)
@@ -780,7 +780,7 @@ float vtkCacheManager::ComputeCacheSize(const char* dirName, unsigned long sz)
     return (-1);
   }
 
-  int byteSize = static_cast<int>(cachesize);
+  const int byteSize = static_cast<int>(cachesize);
   this->CurrentCacheSize = (float)byteSize / MB;
   return (this->CurrentCacheSize);
 }
@@ -803,7 +803,7 @@ void vtkCacheManager::CacheSizeCheck()
 float vtkCacheManager::GetFreeCacheSpaceRemaining()
 {
 
-  float cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
+  const float cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
   // cache limit - current cache size = total space left in cache.
   // total space in cache - free buffer size = amount that can be used.
   float diff = (float(this->RemoteCacheLimit) - cachesize);
@@ -815,7 +815,7 @@ float vtkCacheManager::GetFreeCacheSpaceRemaining()
 void vtkCacheManager::FreeCacheBufferCheck()
 {
 
-  float buf = this->GetFreeCacheSpaceRemaining();
+  const float buf = this->GetFreeCacheSpaceRemaining();
   if ((buf * MB) < (float)(this->RemoteCacheFreeBufferSize) * MB)
   {
     this->InvokeEvent(vtkCacheManager::InsufficientFreeBufferEvent);

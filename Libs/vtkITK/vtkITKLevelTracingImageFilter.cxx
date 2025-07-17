@@ -58,7 +58,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self),
 
   // Wrap scalars into an ITK image
   typedef itk::Image<T, 3> ImageType;
-  typename ImageType::Pointer image = ImageType::New();
+  const typename ImageType::Pointer image = ImageType::New();
   image->GetPixelContainer()->SetImportPointer(scalars, dims[0] * dims[1] * dims[2], false);
   image->SetOrigin(origin);
   image->SetSpacing(spacing);
@@ -79,7 +79,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self),
   // Extract the 2D slice to process
   typedef itk::Image<T, 2> Image2DType;
   typedef itk::ExtractImageFilter<ImageType, Image2DType> ExtractType;
-  typename ExtractType::Pointer extract = ExtractType::New();
+  const typename ExtractType::Pointer extract = ExtractType::New();
   extract->SetDirectionCollapseToIdentity(); // If you don't care about resulting image dimension
 
   typedef typename ExtractType::InputImageRegionType ExtractionRegionType;
@@ -93,7 +93,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self),
 
   // Trace the level curve using itk::LevelTracingImageFilter
   typedef itk::LevelTracingImageFilter<Image2DType, Image2DType> LevelTracingType;
-  typename LevelTracingType::Pointer tracing = LevelTracingType::New();
+  const typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   itk::Index<2> seed2D = { { 0, 0 } };
   switch (plane)
@@ -263,7 +263,7 @@ int vtkITKLevelTracingImageFilter::RequestData(vtkInformation* vtkNotUsed(reques
 #endif
   if (inScalars->GetNumberOfComponents() == 1)
   {
-    void* scalars = inScalars->GetVoidPointer(0);
+    void* const scalars = inScalars->GetVoidPointer(0);
     switch (inScalars->GetDataType())
     {
       vtkTemplateMacro(vtkITKLevelTracingTrace(this, static_cast<VTK_TT*>(scalars), dims, extent, origin, spacing, newPts, newPolys, this->Seed, this->Plane));
@@ -272,7 +272,7 @@ int vtkITKLevelTracingImageFilter::RequestData(vtkInformation* vtkNotUsed(reques
   else if (inScalars->GetNumberOfComponents() == 3)
   {
     // RGB - convert for now...
-    vtkSmartPointer<vtkUnsignedCharArray> grayScalars = vtkUnsignedCharArray::New();
+    const vtkSmartPointer<vtkUnsignedCharArray> grayScalars = vtkUnsignedCharArray::New();
     grayScalars->SetNumberOfTuples(inScalars->GetNumberOfTuples());
 
     double in[3];

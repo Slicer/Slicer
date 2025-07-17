@@ -48,10 +48,10 @@ int qMRMLColorModelTest1(int argc, char* argv[])
 
   qMRMLColorModel model;
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(nullptr);
   nodeFactory.setMRMLScene(scene.GetPointer());
-  vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
+  vtkMRMLNode* const node = nodeFactory.createNode("vtkMRMLColorTableNode");
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
   if (colorNode)
   {

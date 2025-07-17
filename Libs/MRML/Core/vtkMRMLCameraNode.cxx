@@ -106,7 +106,7 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -163,10 +163,10 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::Copy(anode);
 
-  vtkMRMLCameraNode* node = vtkMRMLCameraNode::SafeDownCast(anode);
+  vtkMRMLCameraNode* const node = vtkMRMLCameraNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -176,7 +176,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -397,7 +397,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event
 const char* vtkMRMLCameraNode::GetActiveTag()
 {
   vtkWarningMacro("vtkMRMLCameraNode::GetActiveTag() is deprecated. Use vtkMRMLCameraNode::GetLayoutName() instead.");
-  std::string singletonTag = (this->GetSingletonTag() ? this->GetSingletonTag() : "");
+  const std::string singletonTag = (this->GetSingletonTag() ? this->GetSingletonTag() : "");
   this->InternalActiveTag = "vtkMRMLViewNode" + singletonTag;
   return this->InternalActiveTag.c_str();
 }
@@ -411,7 +411,7 @@ void vtkMRMLCameraNode::SetActiveTag(const char* newActiveTag)
     vtkWarningMacro("vtkMRMLCameraNode::SetActiveTag() is deprecated. Use vtkMRMLCameraNode::SetLayoutName() instead.");
   }
 
-  std::string newActiveTagStr = newActiveTag ? newActiveTag : "";
+  const std::string newActiveTagStr = newActiveTag ? newActiveTag : "";
   if (vtksys::SystemTools::StringStartsWith(newActiveTagStr, "vtkMRMLViewNode"))
   {
     // remove "vtkMRMLViewNode" from the beginning of the view node ID to get its singleton tag,
@@ -467,7 +467,7 @@ void vtkMRMLCameraNode::RotateTo(Direction position)
 {
   double directionOfView[3];
   vtkMath::Subtract(this->GetFocalPoint(), this->GetPosition(), directionOfView);
-  double norm = vtkMath::Norm(directionOfView);
+  const double norm = vtkMath::Norm(directionOfView);
 
   double newDirectionOfView[3] = { 0., 0., 0. };
   double newViewUp[3] = { 0., 0., 0. };
@@ -503,7 +503,7 @@ void vtkMRMLCameraNode::RotateTo(Direction position)
   double newPosition[3];
   vtkMath::Subtract(this->GetFocalPoint(), newDirectionOfView, newPosition);
 
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->SetPosition(newPosition);
   this->SetViewUp(newViewUp);
   this->EndModify(wasModifying);
@@ -540,7 +540,7 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
     case X:
     {
       double* x = offset;
-      double* y = this->GetViewUp();
+      double* const y = this->GetViewUp();
       double z[3];
       this->Camera->GetDirectionOfProjection(z);
       vtkMath::Cross(y, z, x);
@@ -558,10 +558,10 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
     }
   }
   vtkMath::MultiplyScalar(offset, shift);
-  int wasModifying = this->StartModify();
-  const double* position = this->Camera->GetPosition();
+  const int wasModifying = this->StartModify();
+  const double* const position = this->Camera->GetPosition();
   this->SetPosition(position[0] + offset[X], position[1] + offset[Y], position[2] + offset[Z]);
-  const double* focalPoint = this->Camera->GetFocalPoint();
+  const double* const focalPoint = this->Camera->GetFocalPoint();
   this->SetFocalPoint(focalPoint[0] + offset[X], focalPoint[1] + offset[Y], focalPoint[2] + offset[Z]);
 
   this->ResetClippingRange();
@@ -591,7 +591,7 @@ void vtkMRMLCameraNode::Reset(bool resetRotation, bool resetTranslation, bool re
     const double angle = vtkMath::RadiansFromDegrees(this->Camera->GetViewAngle());
     distance = radius / sin(angle / 2.);
   }
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   if (resetRotation)
   {
     double position[3];
@@ -599,8 +599,8 @@ void vtkMRMLCameraNode::Reset(bool resetRotation, bool resetTranslation, bool re
     vtkMath::Normalize(position); // not really needed
     int i = position[0] * position[0] > position[1] * position[1] ? 0 : 1;
     i = (position[i] * position[i] > position[2] * position[2]) ? i : 2;
-    RASAxis closestAxis = (i == 0) ? R : ((i == 1) ? A : S);
-    int direction = position[i] > 0 ? 0 : 1;
+    const RASAxis closestAxis = (i == 0) ? R : ((i == 1) ? A : S);
+    const int direction = position[i] > 0 ? 0 : 1;
     this->RotateTo(static_cast<Direction>(2 * closestAxis + direction));
   }
   if (resetTranslation)

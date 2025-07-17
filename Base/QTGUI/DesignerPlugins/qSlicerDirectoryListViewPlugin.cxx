@@ -28,7 +28,7 @@ qSlicerDirectoryListViewPlugin::qSlicerDirectoryListViewPlugin(QObject* parent)
 
 QWidget* qSlicerDirectoryListViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerDirectoryListView* widget = new qSlicerDirectoryListView(parentWidget);
+  qSlicerDirectoryListView* const widget = new qSlicerDirectoryListView(parentWidget);
   return widget;
 }
 

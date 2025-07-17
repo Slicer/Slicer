@@ -163,7 +163,7 @@ QString qSlicerMarkupsSettingsPanel::defaultGlyphType() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
-  int currentIndex = d->defaultGlyphTypeComboBox->currentIndex();
+  const int currentIndex = d->defaultGlyphTypeComboBox->currentIndex();
   QString glyphType;
   if (currentIndex != -1)
   {
@@ -207,7 +207,7 @@ double qSlicerMarkupsSettingsPanel::defaultGlyphScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
-  double glyphScale = d->defaultGlyphScaleSliderWidget->value();
+  const double glyphScale = d->defaultGlyphScaleSliderWidget->value();
 
   return glyphScale;
 }
@@ -217,7 +217,7 @@ double qSlicerMarkupsSettingsPanel::defaultTextScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
-  double textScale = d->defaultTextScaleSliderWidget->value();
+  const double textScale = d->defaultTextScaleSliderWidget->value();
 
   return textScale;
 }
@@ -227,7 +227,7 @@ double qSlicerMarkupsSettingsPanel::defaultOpacity() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
-  double opacity = d->defaultOpacitySliderWidget->value();
+  const double opacity = d->defaultOpacitySliderWidget->value();
 
   return opacity;
 }
@@ -237,7 +237,7 @@ void qSlicerMarkupsSettingsPanel::setDefaultGlyphType(const QString& glyphType)
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  int glyphTypeIndex = d->defaultGlyphTypeComboBox->findData(glyphType);
+  const int glyphTypeIndex = d->defaultGlyphTypeComboBox->findData(glyphType);
 
   if (glyphTypeIndex != -1)
   {
@@ -329,7 +329,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultUnselectedColor()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  QColor qcolor = this->defaultUnselectedColor();
+  const QColor qcolor = this->defaultUnselectedColor();
 
   double color[3];
 
@@ -355,7 +355,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultSelectedColor()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  QColor qcolor = this->defaultSelectedColor();
+  const QColor qcolor = this->defaultSelectedColor();
 
   double color[3];
 

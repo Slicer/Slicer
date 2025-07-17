@@ -68,8 +68,8 @@ int vtkMRMLTableSQLiteStorageNodeTest(int, char*[])
   table->AddColumn(arrS.GetPointer());
 
   // add few  points...
-  int numPoints = 29;
-  float inc = 7.0 / (numPoints - 1);
+  const int numPoints = 29;
+  const float inc = 7.0 / (numPoints - 1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {

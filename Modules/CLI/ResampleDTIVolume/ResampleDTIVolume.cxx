@@ -95,7 +95,7 @@ bool VectorIsNul(std::vector<double> vec)
 void GetImageType(std::string fileName, itk::IOPixelEnum& pixelType, itk::IOComponentEnum& componentType)
 {
   typedef itk::Image<unsigned char, 3> ImageType;
-  itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
+  const itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str());
   imageReader->UpdateOutputInformation();
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -135,7 +135,7 @@ typename itk::DiffusionTensor3DInterpolateImageFunction<PixelType>::Pointer Inte
   }
   else if (!interpolationType.compare("linear")) // linear
   {
-    typename LinearInterpolatorType::Pointer linearInterpol = LinearInterpolatorType::New();
+    const typename LinearInterpolatorType::Pointer linearInterpol = LinearInterpolatorType::New();
     linearInterpol->SetNumberOfThreads(numberOfThreads);
     interpol = linearInterpol;
   }
@@ -168,7 +168,7 @@ typename itk::DiffusionTensor3DInterpolateImageFunction<PixelType>::Pointer Inte
   }
   else if (!interpolationType.compare("bs")) // BSpline interpolation
   {
-    typename BSplineInterpolateImageFunctionType::Pointer bSplineInterpolator = BSplineInterpolateImageFunctionType::New();
+    const typename BSplineInterpolateImageFunctionType::Pointer bSplineInterpolator = BSplineInterpolateImageFunctionType::New();
     bSplineInterpolator->SetSplineOrder(splineOrder);
     bSplineInterpolator->SetNumberOfThreads(numberOfThreads);
     interpol = bSplineInterpolator;
@@ -289,13 +289,13 @@ typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer FSOrPPD(const
   typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
   if (!ppd.compare("FS"))
   {
-    typename FSAffineTransformType::Pointer affineFS = FSAffineTransformType::New();
+    const typename FSAffineTransformType::Pointer affineFS = FSAffineTransformType::New();
     affine = affineFS;
   }
   // Preservation of principal direction
   else
   {
-    typename PPDAffineTransformType::Pointer affineppd = PPDAffineTransformType::New();
+    const typename PPDAffineTransformType::Pointer affineppd = PPDAffineTransformType::New();
     affine = affineppd;
   }
   if (matrix)
@@ -324,7 +324,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetUpTransform(cons
     // Rigid Transform (rotation+translation)
     if (!list.transformType.compare("rt"))
     {
-      typename RigidTransformType::Pointer rotation = RigidTransformType::New();
+      const typename RigidTransformType::Pointer rotation = RigidTransformType::New();
       rotation->SetPrecisionChecking(precisionChecking);
       rotation->SetMatrix4x4(transformMatrix4x4);
       transform = rotation;
@@ -337,7 +337,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetUpTransform(cons
   }
   else
   {
-    typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New();
+    const typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New();
     nonRigid->SetTransform(nonRigidFile);
     typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
     affine = FSOrPPD<PixelType>(list.ppd);
@@ -362,7 +362,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransformAndOrde
   // Get transformation matrix from the given file
   if (list.transformationFile.compare(""))
   {
-    std::string transformClassName = transform->GetNameOfClass();
+    const std::string transformClassName = transform->GetNameOfClass();
     list.transformMatrix.resize(0);
     list.rotationPoint.resize(0);
     typename itk::MatrixOffsetTransformBase<double, 3, 3>::Pointer matrixOffsetTransform;
@@ -654,9 +654,9 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
     return;
   }
   typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
-  VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
+  const VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
   typedef itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
-  ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
+  const ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType defaultPixel;
   defaultPixel.Fill(0.0);
   resampleFieldFilter->SetDefaultPixelValue(defaultPixel);
@@ -679,14 +679,14 @@ int Do(parameters list)
   typename InputImageType::Pointer image;
   typedef itk::DiffusionTensor3DWrite<PixelType> WriterType;
   typedef typename WriterType::Pointer WriterTypePointer;
-  WriterTypePointer writer = WriterType::New();
+  const WriterTypePointer writer = WriterType::New();
   itk::Matrix<double, 3, 3> measurementFrame;
   bool hasMeasurementFrame;
   try
   {
     typedef itk::DiffusionTensor3DRead<PixelType> ReaderType;
     typedef typename ReaderType::Pointer ReaderTypePointer;
-    ReaderTypePointer reader = ReaderType::New();
+    const ReaderTypePointer reader = ReaderType::New();
     // Read input volume
     if (list.numberOfThread)
     {
@@ -733,7 +733,7 @@ int Do(parameters list)
   typedef itk::DiffusionTensor3DResample<PixelType, PixelType> ResamplerType;
   typedef itk::DiffusionTensor3DNonRigidTransform<PixelType> NonRigidTransformType;
   typedef typename ResamplerType::Pointer ResamplerTypePointer;
-  typename InputImageType::Pointer dummyOutputImage = InputImageType::New();
+  const typename InputImageType::Pointer dummyOutputImage = InputImageType::New();
   {                                                            // local for memory management
     ResamplerTypePointer tempResampler = ResamplerType::New(); // this resampler is just used to be able to use
                                                                // SetOutputParameters and get the origin, size,
@@ -744,7 +744,7 @@ int Do(parameters list)
     dummyOutputImage->SetOrigin(tempResampler->GetOutputOrigin());
     dummyOutputImage->SetRegions(tempResampler->GetOutputSize());
   }
-  itk::Point<double> outputImageCenter = ImageCenter<PixelType>(dummyOutputImage);
+  const itk::Point<double> outputImageCenter = ImageCenter<PixelType>(dummyOutputImage);
   // Check if displacement or h-field transform
   typename DeformationImageType::Pointer fieldPointer;
   if (list.deffield.compare(""))
@@ -769,7 +769,7 @@ int Do(parameters list)
   {
     // Create warp transform
     typedef itk::WarpTransform3D<double> WarpTransformType;
-    typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
+    const typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
     typename DeformationImageType::Pointer field;
     if (list.deffield.compare(""))
     {
@@ -794,7 +794,7 @@ int Do(parameters list)
     while (list.transformationFile.compare("") && transformFile->GetTransformList()->size())
     {
       typedef itk::TransformDeformationFieldFilter<double, double, 3> itkTransformDeformationFieldFilterType;
-      typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New();
+      const typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<PixelType>(list, image, transformFile, outputImageCenter);
       // check if there is a bspline transform and a bulk transform with it
       if (!list.notbulk && transform->GetTransform()->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"
@@ -832,7 +832,7 @@ int Do(parameters list)
 
     // Create the DTI transform
     warpTransform->SetDeformationField(field);
-    typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New();
+    const typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New();
     nonRigid->SetTransform(warpTransform.GetPointer());
     typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
     affine = FSOrPPD<PixelType>(list.ppd);
@@ -888,7 +888,7 @@ int Do(parameters list)
     // only one transform, just load it
     transform = SetTransform<PixelType>(list, image, transformFile, outputImageCenter);
   }
-  double defaultPixelValue = list.defaultPixelValue;
+  const double defaultPixelValue = list.defaultPixelValue;
   // start transform
 
   { // local for memory management: the input image should not stay in
@@ -904,7 +904,7 @@ int Do(parameters list)
     outputImageDirection = SetOutputParameters<PixelType>(list, resampler, image);
     if (!hasMeasurementFrame || list.noMeasurementFrame)
     {
-      itk::Matrix<double, 3, 3> transposeOutputDirection(outputImageDirection.GetTranspose());
+      const itk::Matrix<double, 3, 3> transposeOutputDirection(outputImageDirection.GetTranspose());
       measurementFrame = transposeOutputDirection * measurementFrame;
     }
     resampler->SetDefaultPixelValue(static_cast<PixelType>(defaultPixelValue)); // Could be set directly in the

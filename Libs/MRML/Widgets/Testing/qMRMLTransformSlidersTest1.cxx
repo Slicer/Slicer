@@ -15,7 +15,7 @@
 int qMRMLTransformSlidersTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   QWidget widget;
@@ -27,7 +27,7 @@ int qMRMLTransformSlidersTest1(int argc, char* argv[])
 
   // Check if slider values are updated correctly (not truncated to current slider range)
   // when a matrix with large translation values is set
-  double largeTranslation[3] = { 100, -1500, 500 };
+  const double largeTranslation[3] = { 100, -1500, 500 };
   vtkNew<vtkMatrix4x4> largeTranslationMatrix;
   largeTranslationMatrix->SetElement(0, 3, largeTranslation[0]);
   largeTranslationMatrix->SetElement(1, 3, largeTranslation[1]);

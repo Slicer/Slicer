@@ -328,7 +328,7 @@ void vtkSlicerUnitsLogic::RegisterNodesInternal(vtkMRMLScene* scene)
 {
   assert(scene != nullptr);
 
-  vtkNew<vtkMRMLUnitNode> unitNode;
+  const vtkNew<vtkMRMLUnitNode> unitNode;
   scene->RegisterNodeClass(unitNode.GetPointer());
 }
 
@@ -369,8 +369,8 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
   for (qIt = quantities.begin(), uIt = unitIDs.begin(); uIt != unitIDs.end(); ++qIt, ++uIt)
   {
     assert(qIt != quantities.end());
-    const char* quantity = *qIt;
-    const char* unitID = *uIt;
+    const char* const quantity = *qIt;
+    const char* const unitID = *uIt;
     assert((quantity != nullptr) == (unitID != nullptr));
     if (quantity && unitID)
     {

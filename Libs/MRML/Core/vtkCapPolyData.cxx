@@ -73,10 +73,10 @@ void vtkCapPolyData::GetPlanes(vtkImplicitFunction* function, vtkPlaneCollection
   }
 
   vtkSmartPointer<vtkAbstractTransform> transform = nullptr;
-  vtkAbstractTransform* functionTransform = function->GetTransform();
+  vtkAbstractTransform* const functionTransform = function->GetTransform();
   if (functionTransform && parentTransform)
   {
-    vtkSmartPointer<vtkGeneralTransform> generalTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    const vtkSmartPointer<vtkGeneralTransform> generalTransform = vtkSmartPointer<vtkGeneralTransform>::New();
     generalTransform->Concatenate(parentTransform);
     generalTransform->Concatenate(functionTransform);
     transform = generalTransform;
@@ -96,7 +96,7 @@ void vtkCapPolyData::GetPlanes(vtkImplicitFunction* function, vtkPlaneCollection
     vtkImplicitFunctionCollection* functions = booleanFunction->GetFunction();
     for (int i = 0; i < functions->GetNumberOfItems(); ++i)
     {
-      vtkImplicitFunction* function = vtkImplicitFunction::SafeDownCast(functions->GetItemAsObject(i));
+      vtkImplicitFunction* const function = vtkImplicitFunction::SafeDownCast(functions->GetItemAsObject(i));
       vtkCapPolyData::GetPlanes(function, planes, transform);
     }
     return;
@@ -174,7 +174,7 @@ void vtkCapPolyData::CreateEndCap(vtkPlaneCollection* planes, vtkPolyData* origi
       {
         continue;
       }
-      vtkPlane* plane2 = planes->GetItem(j);
+      vtkPlane* const plane2 = planes->GetItem(j);
       vtkNew<vtkClipPolyData> clipper;
       clipper->SetInputData(endCapPolyData);
       clipper->SetClipFunction(plane2);
@@ -188,7 +188,7 @@ void vtkCapPolyData::CreateEndCap(vtkPlaneCollection* planes, vtkPolyData* origi
     }
 
     // Remove all triangles that do not lie at 0.0.
-    double epsilon = 1e-4;
+    const double epsilon = 1e-4;
     vtkNew<vtkClipPolyData> clipper;
     clipper->SetInputData(endCapPolyData);
     clipper->SetClipFunction(cutFunction);
@@ -281,12 +281,12 @@ int vtkCapPolyData::RequestData(vtkInformation* vtkNotUsed(request), vtkInformat
 
   // get the input and output
   vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* const output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkDebugMacro(<< "Clipping polygonal data");
 
-  vtkIdType numPts = input->GetNumberOfPoints();
-  vtkPoints* inPts = input->GetPoints();
+  const vtkIdType numPts = input->GetNumberOfPoints();
+  vtkPoints* const inPts = input->GetPoints();
   if (numPts < 1 || inPts == nullptr)
   {
     vtkDebugMacro(<< "No data to clip");
@@ -297,7 +297,7 @@ int vtkCapPolyData::RequestData(vtkInformation* vtkNotUsed(request), vtkInformat
     return 1;
   }
 
-  vtkNew<vtkPlaneCollection> planes;
+  const vtkNew<vtkPlaneCollection> planes;
   vtkCapPolyData::GetPlanes(this->ClipFunction, planes);
   vtkCapPolyData::CreateEndCap(planes, input, this->ClipFunction, output);
 

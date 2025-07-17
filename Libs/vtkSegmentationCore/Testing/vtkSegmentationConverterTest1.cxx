@@ -168,7 +168,7 @@ int vtkSegmentationConverterTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[]
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkRepDToRepERule>::New());
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkRepEToRepDRule>::New());
 
-  vtkSmartPointer<vtkSegmentationConverter> converter = vtkSmartPointer<vtkSegmentationConverter>::New();
+  const vtkSmartPointer<vtkSegmentationConverter> converter = vtkSmartPointer<vtkSegmentationConverter>::New();
 
   // A->E paths: ABCE, ABCDE, ADE
   std::cout << "Conversion from RepA to RepE" << std::endl;

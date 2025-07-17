@@ -36,7 +36,7 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char* di
 {
   this->Superclass::SetAndObserveDisplayNodeID(displayNodeID);
   // Make sure the node added is a DiffusionTensorVolumeDisplayNode
-  vtkMRMLNode* displayNode = this->GetDisplayNode();
+  vtkMRMLNode* const displayNode = this->GetDisplayNode();
   if (displayNode && !vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode))
   {
     vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can NOT display diffusion tensors");

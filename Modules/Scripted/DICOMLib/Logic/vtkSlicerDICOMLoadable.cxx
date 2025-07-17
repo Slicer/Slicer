@@ -43,11 +43,11 @@ vtkSlicerDICOMLoadable::vtkSlicerDICOMLoadable()
   this->LoadSuccess = false;
 
   this->Files = nullptr;
-  vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
+  const vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
   this->SetFiles(files);
 
   this->ReferencedInstanceUIDs = nullptr;
-  vtkSmartPointer<vtkStringArray> referencedInstanceUIDs = vtkSmartPointer<vtkStringArray>::New();
+  const vtkSmartPointer<vtkStringArray> referencedInstanceUIDs = vtkSmartPointer<vtkStringArray>::New();
   this->SetReferencedInstanceUIDs(referencedInstanceUIDs);
 }
 

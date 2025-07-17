@@ -72,19 +72,19 @@ void vtkMRMLTransformHandleWidget::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 bool vtkMRMLTransformHandleWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  bool canProcess = Superclass::CanProcessInteractionEvent(eventData, distance2);
+  const bool canProcess = Superclass::CanProcessInteractionEvent(eventData, distance2);
   if (canProcess)
   {
     return true;
   }
 
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
   {
     return false;
   }
 
-  vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLInteractionWidgetRepresentation* const rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!rep)
   {
     return false;
@@ -108,12 +108,12 @@ void vtkMRMLTransformHandleWidget::ApplyTransform(vtkTransform* transformToApply
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this->GetTransformNode());
+  const MRMLNodeModifyBlocker blocker(this->GetTransformNode());
 
   vtkNew<vtkGeneralTransform> newTransformToParent;
   newTransformToParent->PostMultiply();
 
-  vtkNew<vtkMatrix4x4> transformToParent;
+  const vtkNew<vtkMatrix4x4> transformToParent;
   this->GetTransformNode()->GetMatrixTransformToParent(transformToParent);
   newTransformToParent->Concatenate(transformToParent);
 
@@ -121,7 +121,7 @@ void vtkMRMLTransformHandleWidget::ApplyTransform(vtkTransform* transformToApply
   if (parentTransformNode)
   {
     // Perform the transformation in world coordinates
-    vtkNew<vtkGeneralTransform> transformToWorld;
+    const vtkNew<vtkGeneralTransform> transformToWorld;
     parentTransformNode->GetTransformToWorld(transformToWorld);
     newTransformToParent->Concatenate(transformToWorld);
   }
@@ -132,7 +132,7 @@ void vtkMRMLTransformHandleWidget::ApplyTransform(vtkTransform* transformToApply
   if (parentTransformNode)
   {
     // Transform back to local coordinates
-    vtkNew<vtkGeneralTransform> transformFromWorld;
+    const vtkNew<vtkGeneralTransform> transformFromWorld;
     parentTransformNode->GetTransformFromWorld(transformFromWorld);
     newTransformToParent->Concatenate(transformFromWorld);
   }
@@ -160,7 +160,7 @@ void vtkMRMLTransformHandleWidget::ApplyTransform(vtkTransform* transformToApply
 //----------------------------------------------------------------------
 void vtkMRMLTransformHandleWidget::CreateDefaultRepresentation(vtkMRMLTransformDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation> rep = vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation>::New();
+  const vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation> rep = vtkSmartPointer<vtkMRMLTransformHandleWidgetRepresentation>::New();
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -193,7 +193,7 @@ vtkMRMLTransformNode* vtkMRMLTransformHandleWidget::GetTransformNode()
 //-----------------------------------------------------------------------------
 bool vtkMRMLTransformHandleWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
   bool processedEvent = false;
   switch (widgetEvent)
@@ -209,7 +209,7 @@ bool vtkMRMLTransformHandleWidget::ProcessInteractionEvent(vtkMRMLInteractionEve
 //-------------------------------------------------------------------------
 bool vtkMRMLTransformHandleWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLTransformNode* transformNode = this->GetTransformNode();
+  vtkMRMLTransformNode* const transformNode = this->GetTransformNode();
   vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
   if (!transformNode || !displayNode)
   {
@@ -232,7 +232,7 @@ bool vtkMRMLTransformHandleWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventDa
     return Superclass::ProcessEndMouseDrag(eventData);
   }
 
-  int activeComponentType = this->GetActiveComponentType();
+  const int activeComponentType = this->GetActiveComponentType();
   if (activeComponentType == InteractionTranslationHandle)
   {
     this->SetWidgetState(WidgetStateOnTranslationHandle);
@@ -241,7 +241,7 @@ bool vtkMRMLTransformHandleWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventDa
   this->EndWidgetInteraction();
 
   // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
-  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  const bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
   return processedEvent;
 }
 
@@ -261,13 +261,13 @@ bool vtkMRMLTransformHandleWidget::ProcessWidgetTranslateTransformCenterStart(vt
 //-------------------------------------------------------------------------
 bool vtkMRMLTransformHandleWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLInteractionWidgetRepresentation* const rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!rep || !eventData)
   {
     return false;
   }
 
-  int state = this->WidgetState;
+  const int state = this->WidgetState;
 
   if (state != WidgetStateTranslateTransformCenter)
   {
@@ -350,7 +350,7 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
   translationVector_World[1] = eventPos_World[1] - lastEventPos_World[1];
   translationVector_World[2] = eventPos_World[2] - lastEventPos_World[2];
 
-  int index = this->GetActiveComponentIndex();
+  const int index = this->GetActiveComponentIndex();
 
   double translationAxis_World[3] = { 0 };
   rep->GetInteractionHandleAxisWorld(InteractionTranslationHandle, index, translationAxis_World);
@@ -390,13 +390,13 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
 //-------------------------------------------------------------------------
 bool vtkMRMLTransformHandleWidget::ProcessJumpCursor(vtkMRMLInteractionEventData* eventData)
 {
-  int type = this->GetActiveComponentType();
+  const int type = this->GetActiveComponentType();
   if (type != InteractionTranslationHandle)
   {
     return false;
   }
 
-  int index = this->GetActiveComponentIndex();
+  const int index = this->GetActiveComponentIndex();
   if (index != 3)
   {
     return false;

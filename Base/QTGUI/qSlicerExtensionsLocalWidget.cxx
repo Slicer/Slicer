@@ -137,16 +137,16 @@ public:
 
   void updateFromWidgetItem()
   {
-    bool installed = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool();
-    bool compatible = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool();
-    bool loaded = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::LoadedRole).toBool();
-    bool bookmarked = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::BookmarkedRole).toBool();
-    bool enabled = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool();
-    bool scheduledForUpdate = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUpdateRole).toBool();
-    bool scheduledForUninstall = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUninstallRole).toBool();
-    bool updateAvailable = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool();
+    const bool installed = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool();
+    const bool compatible = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool();
+    const bool loaded = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::LoadedRole).toBool();
+    const bool bookmarked = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::BookmarkedRole).toBool();
+    const bool enabled = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool();
+    const bool scheduledForUpdate = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUpdateRole).toBool();
+    const bool scheduledForUninstall = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUninstallRole).toBool();
+    const bool updateAvailable = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool();
     // Available if already installed (e.g., from file) or has found a revision on server
-    bool available = installed || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString().isEmpty();
+    const bool available = installed || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString().isEmpty();
 
     this->InstallButton->setVisible(!installed);
     this->InstallButton->setEnabled(compatible && available);
@@ -310,7 +310,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::extensionItem(const QStrin
 {
   Q_Q(const qSlicerExtensionsLocalWidget);
 
-  QAbstractItemModel* model = q->model();
+  QAbstractItemModel* const model = q->model();
   const QModelIndexList indices = model->match(model->index(0, 0, QModelIndex()), Self::NameRole, extensionName, 2, Qt::MatchExactly);
 
   Q_ASSERT(indices.count() < 2);
@@ -366,7 +366,7 @@ protected:
   {
     // Get formatted date
     QString formattedDate;
-    QDateTime date = QDateTime::fromString(isoDateStr, Qt::ISODate);
+    const QDateTime date = QDateTime::fromString(isoDateStr, Qt::ISODate);
     if (date.isValid())
     {
       formattedDate = date.toString("yyyy-MM-dd");
@@ -388,24 +388,24 @@ protected:
   // --------------------------------------------------------------------------
   void labelText(const QString& elidedDescription)
   {
-    QString extensionDescription = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::DescriptionRole).toString();
+    const QString extensionDescription = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::DescriptionRole).toString();
 
     QString labelText;
 
     labelText += QString("<h2>%1</h2>").arg(this->ExtensionName);
 
     // Warnings/notices
-    bool compatible = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool();
-    bool enabled = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool();
-    bool installed = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool();
+    const bool compatible = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool();
+    const bool enabled = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool();
+    const bool installed = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool();
     // Available if already installed (e.g., from file) or has found a revision on server
-    bool available = installed || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString().isEmpty();
+    const bool available = installed || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString().isEmpty();
     // Confirmed to be missing from server
-    bool missing = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionMissingRole).toBool();
-    bool scheduledForUpdate = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUpdateRole).toBool();
+    const bool missing = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionMissingRole).toBool();
+    const bool scheduledForUpdate = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUpdateRole).toBool();
 
-    QString installedVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionRevisionRole).toString(),
-                                                   this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionUpdatedRole).toString());
+    const QString installedVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionRevisionRole).toString(),
+                                                         this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionUpdatedRole).toString());
 
     // Status line
     QString statusText;
@@ -428,11 +428,11 @@ protected:
     }
     if (this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool() && !scheduledForUpdate)
     {
-      QString onServerVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString(),
-                                                    this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionUpdatedRole).toString());
+      const QString onServerVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString(),
+                                                          this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionUpdatedRole).toString());
 
       QString changeLogText;
-      QString changeLogUrl = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ChangeLogUrlRole).toString();
+      const QString changeLogUrl = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ChangeLogUrlRole).toString();
       if (!changeLogUrl.isEmpty())
       {
         changeLogText = QString(" <a href=\"%1\">%2</a>").arg(changeLogUrl).arg(qSlicerExtensionsLocalWidget::tr("Change log..."));
@@ -478,7 +478,7 @@ protected:
 
     // Description and link
     QString linkText;
-    QString moreLink = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::MoreLinkRole).toString();
+    const QString moreLink = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::MoreLinkRole).toString();
     if (!moreLink.isEmpty() && !missing)
     {
       linkText = QString(" <a href=\"%1\">%2</a>").arg(moreLink).arg(this->MoreLinkText);
@@ -500,18 +500,18 @@ protected:
     {
       // Changed description text or available space, update elided text
       int margin = this->margin() * 2;
-      bool moreLinkSpecified = !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::MoreLinkRole).toString().isEmpty();
+      const bool moreLinkSpecified = !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::MoreLinkRole).toString().isEmpty();
       if (moreLinkSpecified)
       {
-        QString moreLinkText = QString(" %1").arg(this->MoreLinkText);
+        const QString moreLinkText = QString(" %1").arg(this->MoreLinkText);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
         margin += this->fontMetrics().horizontalAdvance(moreLinkText);
 #else
         margin += this->fontMetrics().width(moreLinkText);
 #endif
       }
-      QString extensionDescription = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::DescriptionRole).toString();
-      QString elidedExtensionDescription = this->fontMetrics().elidedText(extensionDescription, Qt::ElideRight, cr.width() - margin);
+      const QString extensionDescription = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::DescriptionRole).toString();
+      const QString elidedExtensionDescription = this->fontMetrics().elidedText(extensionDescription, Qt::ElideRight, cr.width() - margin);
       this->labelText(elidedExtensionDescription);
       this->LastWidth = cr.width();
       this->Text.setTextWidth(this->LastWidth);
@@ -559,7 +559,7 @@ protected:
   {
     Superclass::mouseMoveEvent(e);
 
-    QString href = this->linkUnderCursor(e->pos());
+    const QString href = this->linkUnderCursor(e->pos());
     if (href != this->LinkUnderCursor)
     {
       this->LinkUnderCursor = href;
@@ -581,7 +581,7 @@ protected:
     Superclass::mouseReleaseEvent(e);
     if (e->button() == Qt::LeftButton)
     {
-      QString href = this->linkUnderCursor(e->pos());
+      const QString href = this->linkUnderCursor(e->pos());
       if (!href.isEmpty())
       {
         emit this->linkActivated(href);
@@ -662,7 +662,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     bool includeExtension = extensionName.contains(this->SearchText, Qt::CaseInsensitive);
     if (!includeExtension)
     {
-      QString description = this->ExtensionsManagerModel->extensionDescription(extensionName);
+      const QString description = this->ExtensionsManagerModel->extensionDescription(extensionName);
       includeExtension = description.contains(this->SearchText, Qt::CaseInsensitive);
     }
     if (!includeExtension)
@@ -677,7 +677,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     if (item)
     {
       // this item should not exist
-      QAbstractItemModel* model = q->model();
+      QAbstractItemModel* const model = q->model();
       const QModelIndexList indices = model->match(model->index(0, 0, QModelIndex()), Self::NameRole, extensionName, 1, Qt::MatchExactly);
       if (indices.count() > 0)
       {
@@ -698,7 +698,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
   item->setIcon(this->extensionIcon(extensionName, metadata.value("iconurl").toUrl()));
 
   QString moreLinkTarget;
-  int serverAPI = q->extensionsManagerModel()->serverAPI();
+  const int serverAPI = q->extensionsManagerModel()->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
   {
     moreLinkTarget = QString("slicer:%1").arg(extensionName);
@@ -708,8 +708,8 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
   }
 
-  QString installedRevision = metadata["installed"].toBool() ? metadata["revision"].toString() : QString();
-  QString onServerRevision = metadataFromServer["revision"].toString();
+  const QString installedRevision = metadata["installed"].toBool() ? metadata["revision"].toString() : QString();
+  const QString onServerRevision = metadataFromServer["revision"].toString();
 
   // Generate change log URL - only if repository is hosted on github or gitlab
   QUrl scmUrl = QUrl(metadataFromServer["scmurl"].toString());
@@ -1172,11 +1172,11 @@ void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
   {
     // internal link (extension description page on the frontend server)
     QUrl url(d->ExtensionsManagerModel->frontendServerUrl());
-    int serverAPI = this->extensionsManagerModel()->serverAPI();
+    const int serverAPI = this->extensionsManagerModel()->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
       {
-        QString extensionName = link.mid(7); // remove leading "slicer:"
+        const QString extensionName = link.mid(7); // remove leading "slicer:"
         url.setPath(url.path()
                     + QString("/view/%1/%2/%3")                                //
                         .arg(extensionName)                                    //
@@ -1194,7 +1194,7 @@ void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
   else
   {
     // external link (e.g., change log), open in external browser
-    QUrl url(link);
+    const QUrl url(link);
     QDesktopServices::openUrl(url);
   }
 }

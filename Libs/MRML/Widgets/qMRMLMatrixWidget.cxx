@@ -130,7 +130,7 @@ void qMRMLMatrixWidget::updateMatrix()
     return;
   }
 
-  bool isLinear = d->MRMLTransformNode->IsLinear();
+  const bool isLinear = d->MRMLTransformNode->IsLinear();
   this->setEnabled(isLinear);
   if (!isLinear)
   {
@@ -139,7 +139,7 @@ void qMRMLMatrixWidget::updateMatrix()
 
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode, d->CoordinateReference == qMRMLMatrixWidget::GLOBAL, transform.GetPointer());
-  int oldUserUpdates = d->UserUpdates;
+  const int oldUserUpdates = d->UserUpdates;
   d->UserUpdates = false;
 
   // update the matrix with the new values.

@@ -29,7 +29,7 @@
 
 int vtkSlicerMarkupsLogicTest1(int, char*[])
 {
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
   vtkNew<vtkSlicerMarkupsLogic> logic1;
 
@@ -55,7 +55,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   TESTING_OUTPUT_ASSERT_ERRORS(17); // error messages are expected to be reported due to lack of selection node
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  const char* testName = "Test node 2";
+  const char* const testName = "Test node 2";
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   id = logic1->AddNewFiducialNode(testName);
   TESTING_OUTPUT_ASSERT_ERRORS_END(); // error is expected to be reported due to lack of selection node
@@ -63,7 +63,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
 
   vtkMRMLNode* mrmlNode = scene->GetNodeByID(id.c_str());
   CHECK_NOT_NULL(mrmlNode);
-  char* name = mrmlNode->GetName();
+  char* const name = mrmlNode->GetName();
   CHECK_NOT_NULL(name);
   CHECK_STRING(testName, name);
 
@@ -103,19 +103,19 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   logic1->ToggleAllControlPointsSelected(markupsNode);
 
   // test the default display node settings
-  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> displayNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
+  const vtkSmartPointer<vtkMRMLMarkupsDisplayNode> displayNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
   vtkMRMLMarkupsDisplayNode* defaultDisplayNode = logic1->GetDefaultMarkupsDisplayNode();
   CHECK_NOT_NULL(defaultDisplayNode);
 
   // make a test display node and reset it to defaults
-  int originalGlyphType = defaultDisplayNode->GetGlyphType();
-  double originalGlyphScale = defaultDisplayNode->GetGlyphScale();
-  double originalTextScale = defaultDisplayNode->GetTextScale();
-  int glyphType = 3;
+  const int originalGlyphType = defaultDisplayNode->GetGlyphType();
+  const double originalGlyphScale = defaultDisplayNode->GetGlyphScale();
+  const double originalTextScale = defaultDisplayNode->GetTextScale();
+  const int glyphType = 3;
   displayNode->SetGlyphType(glyphType);
-  double textScale = 3.33;
+  const double textScale = 3.33;
   displayNode->SetTextScale(textScale);
-  double glyphScale = 0.33;
+  const double glyphScale = 0.33;
   displayNode->SetGlyphScale(glyphScale);
 
   // reset the display node to defaults
@@ -170,8 +170,8 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   activeMarkupsNode->SetName("RenamingTest");
   activeMarkupsNode->SetControlPointLabelFormat("T %d %N");
   logic1->RenameAllControlPointsFromCurrentFormat(activeMarkupsNode);
-  std::string newLabel = activeMarkupsNode->GetNthControlPointLabel(0);
-  std::string expectedLabel = std::string("T 1 RenamingTest");
+  const std::string newLabel = activeMarkupsNode->GetNthControlPointLabel(0);
+  const std::string expectedLabel = std::string("T 1 RenamingTest");
   CHECK_STD_STRING(newLabel, expectedLabel);
 
   std::cout << "After renaming:" << std::endl;
@@ -181,7 +181,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   }
 
   // test setting active list id
-  std::string newID = logic1->AddNewFiducialNode("New list", scene);
+  const std::string newID = logic1->AddNewFiducialNode("New list", scene);
   activeListID = logic1->GetActiveListID();
   CHECK_STD_STRING(activeListID, newID);
 

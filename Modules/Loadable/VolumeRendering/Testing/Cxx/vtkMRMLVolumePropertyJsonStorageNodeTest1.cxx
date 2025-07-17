@@ -120,7 +120,7 @@ int vtkMRMLVolumePropertyJsonStorageNodeTest1(int argc, char* argv[])
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
   }
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
 
   vtkNew<vtkMRMLVolumePropertyJsonStorageNode> jsonStorageNode;
   EXERCISE_ALL_BASIC_MRML_METHODS(jsonStorageNode.GetPointer());
@@ -148,7 +148,7 @@ int vtkMRMLVolumePropertyJsonStorageNodeTest1(int argc, char* argv[])
   expectedVolumeProperty->SetClippedVoxelIntensity(0.0);
   for (int i = 0; i < VTK_MAX_VRCOMP; ++i)
   {
-    double fractionalValue = (0.5 + i) / VTK_MAX_VRCOMP;
+    const double fractionalValue = (0.5 + i) / VTK_MAX_VRCOMP;
 
     expectedVolumeProperty->SetComponentWeight(i, fractionalValue);
 
@@ -179,7 +179,7 @@ int vtkMRMLVolumePropertyJsonStorageNodeTest1(int argc, char* argv[])
 
   std::stringstream fileNameStream;
   fileNameStream << tempDir << "/VP1.vp.json";
-  std::string fileNameString = fileNameStream.str();
+  const std::string fileNameString = fileNameStream.str();
   jsonStorageNode->SetFileName(fileNameString.c_str());
   CHECK_INT(jsonStorageNode->WriteData(expectedVolumePropertyNode), 1);
 

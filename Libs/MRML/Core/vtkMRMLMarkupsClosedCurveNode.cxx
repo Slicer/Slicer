@@ -83,7 +83,7 @@ double vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(vtkMRMLMarkupsCl
   {
     surface = vtkSmartPointer<vtkPolyData>::New();
   }
-  vtkPoints* curvePointsWorld = curveNode->GetCurvePointsWorld();
+  vtkPoints* const curvePointsWorld = curveNode->GetCurvePointsWorld();
   if (curvePointsWorld == nullptr || curvePointsWorld->GetNumberOfPoints() == 0)
   {
     return 0.0;
@@ -104,7 +104,7 @@ double vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(vtkMRMLMarkupsCl
 
   vtkNew<vtkMassProperties> metrics;
   metrics->SetInputData(surface);
-  double surfaceArea = metrics->GetSurfaceArea();
+  const double surfaceArea = metrics->GetSurfaceArea();
 
   return surfaceArea;
 }
@@ -161,7 +161,7 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   numberOfCurvePoints = cleanedCurvePoints->GetNumberOfPoints();
 
   // The triangulator requires all points to be on the XY plane
-  vtkNew<vtkMatrix4x4> transformToBestFitPlaneMatrix;
+  const vtkNew<vtkMatrix4x4> transformToBestFitPlaneMatrix;
   if (!vtkAddonMathUtilities::FitPlaneToPoints(inputSurface->GetPoints(), transformToBestFitPlaneMatrix))
   {
     surface->Initialize();
@@ -175,7 +175,7 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   inputSurface->SetPoints(pointsOnPlane);
   for (vtkIdType i = 0; i < numberOfCurvePoints; i++)
   {
-    double* pt = pointsOnPlane->GetPoint(i);
+    double* const pt = pointsOnPlane->GetPoint(i);
     pointsOnPlane->SetPoint(i, pt[0], pt[1], 0.0);
   }
 
@@ -186,7 +186,7 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   polys->GetCell(0, cleanedCurvePointIds);
   if (vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(pointsOnPlane, cleanedCurvePointIds))
   {
-    vtkIdType numberOfCleanedCurvePointIds = cleanedCurvePointIds->GetNumberOfIds();
+    const vtkIdType numberOfCleanedCurvePointIds = cleanedCurvePointIds->GetNumberOfIds();
     vtkNew<vtkCellArray> reversePolys;
     reversePolys->InsertNextCell(numberOfCleanedCurvePointIds);
     for (vtkIdType i = 0; i < numberOfCleanedCurvePointIds; i++)
@@ -205,8 +205,8 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   // By adding random points, the triangulator can create evenly sized triangles.
   double bounds[6] = { 0.0 };
   pointsOnPlane->GetBounds(bounds);
-  double width = bounds[1] - bounds[0];
-  double height = bounds[3] - bounds[2];
+  const double width = bounds[1] - bounds[0];
+  const double height = bounds[3] - bounds[2];
   // Compute the number of grid points along the two axes from these:
   // 1.  rows * cols = numberOfInternalGridPoints
   // 2.  rows/cols = height/width
@@ -224,10 +224,10 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   {
     cols = 1;
   }
-  double colSpacing = width / cols;
-  double rowSpacing = height / rows;
-  double colStart = bounds[0] + 0.5 * colSpacing;
-  double rowStart = bounds[2] + 0.5 * rowSpacing;
+  const double colSpacing = width / cols;
+  const double rowSpacing = height / rows;
+  const double colStart = bounds[0] + 0.5 * colSpacing;
+  const double rowStart = bounds[2] + 0.5 * rowSpacing;
   for (vtkIdType row = 0; row < rows; row++)
   {
     for (vtkIdType col = 0; col < cols; col++)
@@ -246,7 +246,7 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
 
   bool errorFound = false;
   bool warningFound = false;
-  std::string messageStr = messages->GetAllMessagesAsString(&errorFound, &warningFound);
+  const std::string messageStr = messages->GetAllMessagesAsString(&errorFound, &warningFound);
   if (errorFound || warningFound)
   {
     vtkGenericWarningMacro("FitSurfaceProjectWarp failed: error triangulating the surface area of the closed curve. Details: " << messageStr);
@@ -261,8 +261,8 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   vtkNew<vtkPoints> targetLandmarkPoints; // points on the curve
   // Use only the transformed curve points (first numberOfCurvePoints points)
   // We use only every 3rd boundary point as warping transform control point for simpler and faster warping.
-  int step = 3;
-  vtkIdType numberOfRegistrationLandmarkPoints = numberOfCurvePoints / step;
+  const int step = 3;
+  const vtkIdType numberOfRegistrationLandmarkPoints = numberOfCurvePoints / step;
   sourceLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
   targetLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
   for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfRegistrationLandmarkPoints; landmarkPointIndex++)
@@ -298,7 +298,7 @@ bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdL
   {
     return false;
   }
-  vtkIdType numberOfPoints = (pointIds != nullptr ? pointIds->GetNumberOfIds() : points->GetNumberOfPoints());
+  const vtkIdType numberOfPoints = (pointIds != nullptr ? pointIds->GetNumberOfIds() : points->GetNumberOfPoints());
   if (numberOfPoints < 3)
   {
     return false;
@@ -308,14 +308,14 @@ bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdL
   // and check sign of cross-product of the edges before and after that point.
   // (https://en.wikipedia.org/wiki/Curve_orientation#Orientation_of_a_simple_polygon)
 
-  double* point0 = points->GetPoint(0);
+  double* const point0 = points->GetPoint(0);
   double minX = point0[0];
   double minY = point0[1];
   vtkIdType cornerPointIndex = 0;
   for (vtkIdType i = 1; i < numberOfPoints; i++)
   {
-    vtkIdType pointId = (pointIds != nullptr ? pointIds->GetId(i) : i);
-    double* p = points->GetPoint(pointId);
+    const vtkIdType pointId = (pointIds != nullptr ? pointIds->GetId(i) : i);
+    double* const p = points->GetPoint(pointId);
     if ((p[1] < minY) || ((p[1] == minY) && (p[0] < minX)))
     {
       cornerPointIndex = i;
@@ -339,7 +339,7 @@ bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdL
     points->GetPoint(cornerPointIndex, p2);
     points->GetPoint((cornerPointIndex + 1) % numberOfPoints, p3);
   }
-  double det = p2[0] * p3[1] - p2[1] * p3[0] - p1[0] * p3[1] + p1[0] * p2[1] + p1[1] * p3[0] - p1[1] * p2[0];
+  const double det = p2[0] * p3[1] - p2[1] * p3[0] - p1[0] * p3[1] + p1[0] * p2[1] + p1[1] * p3[0] - p1[1] * p2[0];
   return (det < 0);
 }
 
@@ -369,8 +369,8 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceDiskWarp(vtkPoints* curvePoints, v
   targetLandmarkPoints->SetNumberOfPoints(numberOfLandmarkPoints);
   for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfLandmarkPoints; ++landmarkPointIndex)
   {
-    double angle = double(landmarkPointIndex) / double(numberOfLandmarkPoints) * 2.0 * vtkMath::Pi();
-    vtkIdType curvePointIndex = vtkMath::Round(round(double(landmarkPointIndex) / double(numberOfLandmarkPoints) * numberOfCurvePoints));
+    const double angle = double(landmarkPointIndex) / double(numberOfLandmarkPoints) * 2.0 * vtkMath::Pi();
+    const vtkIdType curvePointIndex = vtkMath::Round(round(double(landmarkPointIndex) / double(numberOfLandmarkPoints) * numberOfCurvePoints));
     sourceLandmarkPoints->SetPoint(landmarkPointIndex, cos(angle), sin(angle), 0);
     targetLandmarkPoints->SetPoint(landmarkPointIndex, curvePoints->GetPoint(curvePointIndex));
   }

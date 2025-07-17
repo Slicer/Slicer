@@ -42,12 +42,12 @@ int vtkMRMLShaderPropertyStorageNodeTest1(int argc, char* argv[])
   }
 
   // Test basic methods
-  vtkNew<vtkMRMLShaderPropertyStorageNode> node1;
+  const vtkNew<vtkMRMLShaderPropertyStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // Create scene
   vtkNew<vtkMRMLScene> scene;
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
   scene->SetRootDirectory(tempDir);
 
   // Create shader property node
@@ -123,7 +123,7 @@ int CompareUniforms(vtkUniforms* u1, vtkUniforms* u2)
   CHECK_BOOL(u1->GetNumberOfUniforms() == u2->GetNumberOfUniforms(), true);
   for (int i = 0; i < u1->GetNumberOfUniforms(); ++i)
   {
-    const char* name = u1->GetNthUniformName(i);
+    const char* const name = u1->GetNthUniformName(i);
     CHECK_BOOL(u1->GetUniformScalarType(name) == VTK_INT || u1->GetUniformScalarType(name) == VTK_FLOAT, true);
     CHECK_BOOL(u1->GetUniformScalarType(name) == u2->GetUniformScalarType(name), true);
     if (u1->GetUniformScalarType(name) == VTK_INT)
@@ -181,16 +181,16 @@ int CompareShaderProperty(vtkMRMLShaderPropertyNode* n1, vtkMRMLShaderPropertyNo
   }
 
   // Compare uniform variables
-  vtkUniforms* uv1 = sp1->GetVertexCustomUniforms();
-  vtkUniforms* uv2 = sp2->GetVertexCustomUniforms();
+  vtkUniforms* const uv1 = sp1->GetVertexCustomUniforms();
+  vtkUniforms* const uv2 = sp2->GetVertexCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms(uv1, uv2));
 
-  vtkUniforms* uf1 = sp1->GetFragmentCustomUniforms();
-  vtkUniforms* uf2 = sp2->GetFragmentCustomUniforms();
+  vtkUniforms* const uf1 = sp1->GetFragmentCustomUniforms();
+  vtkUniforms* const uf2 = sp2->GetFragmentCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms(uf1, uf2));
 
-  vtkUniforms* ug1 = sp1->GetGeometryCustomUniforms();
-  vtkUniforms* ug2 = sp2->GetGeometryCustomUniforms();
+  vtkUniforms* const ug1 = sp1->GetGeometryCustomUniforms();
+  vtkUniforms* const ug2 = sp2->GetGeometryCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms(ug1, ug2));
 
   return EXIT_SUCCESS;
@@ -199,7 +199,7 @@ int CompareShaderProperty(vtkMRMLShaderPropertyNode* n1, vtkMRMLShaderPropertyNo
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkMRMLShaderPropertyNode* spNode)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLShaderPropertyStorageNodeTest1") + std::string(extension);
+  const std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLShaderPropertyStorageNodeTest1") + std::string(extension);
 
   vtksys::SystemTools::RemoveFile(fileName);
 
@@ -211,7 +211,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkMRMLShaderP
   CHECK_BOOL(storageNode->WriteData(spNode), true);
 
   // Test reading
-  vtkNew<vtkMRMLShaderPropertyNode> spNodeRead;
+  const vtkNew<vtkMRMLShaderPropertyNode> spNodeRead;
   CHECK_BOOL(storageNode->ReadData(spNodeRead), true);
 
   // Compare read/write nodes

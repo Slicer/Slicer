@@ -48,7 +48,7 @@ bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()
     return true;
   }
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app || qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return false;
@@ -65,7 +65,7 @@ bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()
   confirmationBox->setDontShowAgainVisible(true);
   confirmationBox->setDontShowAgainSettingsKey("WebEngine/AllowPythonExecution");
   confirmationBox->setIcon(QMessageBox::Question);
-  int resultCode = confirmationBox->exec();
+  const int resultCode = confirmationBox->exec();
 
   if (resultCode == QMessageBox::AcceptRole)
   {

@@ -82,7 +82,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object, const QString& Command
     }
     if (Command == "currentNodeDeleted")
     {
-      QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(Arguments, treeView, Error);
+      const QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(Arguments, treeView, Error);
       if (index.isValid())
       {
         treeView->setCurrentIndex(index);
@@ -105,15 +105,15 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object, const QString& Command
       {
         return false;
       }
-      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(nodes[0].toUtf8());
-      vtkMRMLNode* nodeParent = treeView->mrmlScene()->GetNodeByID(nodes[1].toUtf8());
+      vtkMRMLNode* const node = treeView->mrmlScene()->GetNodeByID(nodes[0].toUtf8());
+      vtkMRMLNode* const nodeParent = treeView->mrmlScene()->GetNodeByID(nodes[1].toUtf8());
       treeView->sceneModel()->reparent(node, nodeParent);
       return true;
     }
     if (Command == "decorationClicked")
     {
-      QString str_index = Arguments;
-      QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(str_index, treeView, Error);
+      const QString str_index = Arguments;
+      const QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(str_index, treeView, Error);
       treeView->clickDecoration(index);
       return true;
     }

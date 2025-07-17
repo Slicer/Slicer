@@ -53,7 +53,7 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
     // Hot area for the groove shall be the entire height of the widget
 #ifndef QT_NO_SLIDER
     case CC_Slider:
-      if (const QStyleOptionSlider* slider = qstyleoption_cast<const QStyleOptionSlider*>(opt))
+      if (const QStyleOptionSlider* const slider = qstyleoption_cast<const QStyleOptionSlider*>(opt))
       {
         QRect r = proxy()->subControlRect(cc, slider, SC_SliderHandle, widget);
         if (r.isValid() && r.contains(pt))
@@ -63,7 +63,7 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
         else
         {
           r = proxy()->subControlRect(cc, slider, SC_SliderGroove, widget);
-          QPoint center = r.center();
+          const QPoint center = r.center();
           if (slider->orientation == Qt::Horizontal)
           {
             // If there is no widget, use QStyle::PM_SliderThickness
@@ -234,7 +234,7 @@ int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption* opt, const QWidg
 //------------------------------------------------------------------------------
 bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
 {
-  QWidget* widget = qobject_cast<QWidget*>(obj);
+  QWidget* const widget = qobject_cast<QWidget*>(obj);
   if (!widget)
   {
     return this->Superclass::eventFilter(obj, event);
@@ -250,7 +250,7 @@ bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
       }
       for (QWidget* ancestor = widget->parentWidget(); ancestor; ancestor = ancestor->parentWidget())
       {
-        if (QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(ancestor))
+        if (QAbstractScrollArea* const scrollArea = qobject_cast<QAbstractScrollArea*>(ancestor))
         {
           if (scrollArea->verticalScrollBar()->minimum() != scrollArea->verticalScrollBar()->maximum())
           {

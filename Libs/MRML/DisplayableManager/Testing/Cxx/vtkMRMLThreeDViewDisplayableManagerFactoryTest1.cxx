@@ -54,7 +54,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   //----------------------------------------------------------------------------
   // Since the factory is a singleton, object returned using either New() or GetInstance()
   // should be the same
-  vtkNew<vtkMRMLThreeDViewDisplayableManagerFactory> factoryUsingSmartPointer;
+  const vtkNew<vtkMRMLThreeDViewDisplayableManagerFactory> factoryUsingSmartPointer;
   if (!factoryUsingSmartPointer.GetPointer())
   {
     std::cerr << "Line " << __LINE__ << " - Problem with New() method" << std::endl;
@@ -172,7 +172,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderer> rr;
+  const vtkNew<vtkRenderer> rr;
   vtkNew<vtkRenderWindow> rw;
   vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
@@ -181,13 +181,13 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkInteractorStyle3D> iStyle;
+  const vtkNew<vtkInteractorStyle3D> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene and ViewNode
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLViewNode> viewNode;
-  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
+  const vtkNew<vtkMRMLViewNode> viewNode;
+  vtkMRMLNode* const nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;

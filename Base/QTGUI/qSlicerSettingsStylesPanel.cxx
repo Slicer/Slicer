@@ -89,7 +89,7 @@ void qSlicerSettingsStylesPanelPrivate::init()
 
   // Additional path setting
   QObject::connect(this->AdditionalStylePathsView, SIGNAL(directoryListChanged()), q, SLOT(onAdditionalStylePathsChanged()));
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->AdditionalStylePathsView, "directoryList", SIGNAL(directoryListChanged()));
+  qSlicerRelativePathMapper* const relativePathMapper = new qSlicerRelativePathMapper(this->AdditionalStylePathsView, "directoryList", SIGNAL(directoryListChanged()));
   q->registerProperty("Styles/AdditionalPaths",
                       relativePathMapper,
                       "relativePaths",
@@ -151,9 +151,9 @@ QString toCamelCase(const QString& s)
 void qSlicerSettingsStylesPanelPrivate::populateStyles()
 {
   Q_Q(qSlicerSettingsStylesPanel);
-  QString currentStyle = this->StyleComboBox->currentText();
+  const QString currentStyle = this->StyleComboBox->currentText();
 
-  bool wasBlocking = this->StyleComboBox->blockSignals(true);
+  const bool wasBlocking = this->StyleComboBox->blockSignals(true);
   // Re-populate styles
   this->StyleComboBox->clear();
   for (const QString& style : q->availableSlicerStyles())
@@ -162,7 +162,7 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
   }
 
   // Find the previously set style
-  int currentStyleIndex = this->styleIndex(currentStyle);
+  const int currentStyleIndex = this->styleIndex(currentStyle);
   this->StyleComboBox->blockSignals(wasBlocking);
 
   this->StyleComboBox->setCurrentIndex(currentStyleIndex);
@@ -233,9 +233,9 @@ void qSlicerSettingsStylesPanel::onAdditionalStylePathsChanged()
 void qSlicerSettingsStylesPanel::onAddStyleAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsStylesPanel);
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-  QString extensionInstallPath = coreApp->toSlicerHomeAbsolutePath(coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString());
-  QString path = QFileDialog::getExistingDirectory(this, tr("Select a path containing a \"styles\" plugin directory"), extensionInstallPath);
+  qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
+  const QString extensionInstallPath = coreApp->toSlicerHomeAbsolutePath(coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString());
+  const QString path = QFileDialog::getExistingDirectory(this, tr("Select a path containing a \"styles\" plugin directory"), extensionInstallPath);
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
   {
@@ -287,7 +287,7 @@ void qSlicerSettingsStylesPanel::onStyleChanged(const QString& newStyleName)
   qSlicerApplication* app = qSlicerApplication::application();
   app->removeEventFilter(app->style());
 
-  QStyle* newStyle = QStyleFactory::create(newStyleName);
+  QStyle* const newStyle = QStyleFactory::create(newStyleName);
   if (!newStyle)
   {
     qWarning() << "Style named " << newStyleName << " not found !"

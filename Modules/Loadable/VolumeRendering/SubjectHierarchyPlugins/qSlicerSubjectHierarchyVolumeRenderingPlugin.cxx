@@ -159,7 +159,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActi
   // Volume
   if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyItem(itemID))
   {
-    vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    vtkMRMLScalarVolumeNode* const volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
     vtkMRMLVolumeRenderingDisplayNode* displayNode = nullptr;
     if (!volumeNode)
     {
@@ -188,7 +188,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActi
 void qSlicerSubjectHierarchyVolumeRenderingPlugin::toggleVolumeRenderingForCurrentItem(bool on)
 {
   Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
@@ -221,7 +221,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
   else
   {
     // FOV reset in all views is requested - do it in all views where the volume is visible in
-    qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    qMRMLLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
     if (!layoutManager)
     {
       qCritical() << Q_FUNC_INFO << " failed: invalid layout manager";
@@ -229,7 +229,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
     }
     for (int i = 0; i < layoutManager->threeDViewCount(); i++)
     {
-      qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(i);
+      qMRMLThreeDWidget* const threeDWidget = layoutManager->threeDWidget(i);
       if (!threeDWidget)
       {
         continue;
@@ -247,7 +247,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::resetFieldOfView(vtkMRMLDispl
     }
   }
 
-  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  vtkSlicerApplicationLogic* const appLogic = qSlicerApplication::application()->applicationLogic();
   if (!appLogic)
   {
     qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
@@ -323,7 +323,7 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show
   if (viewNode)
   {
     // Show/hide in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     if (show)
     {
       // show
@@ -346,15 +346,15 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show
   else
   {
     // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(show);
   }
 
   if (show)
   {
-    QSettings settings;
-    bool resetFieldOfView = settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", true).toBool();
+    const QSettings settings;
+    const bool resetFieldOfView = settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", true).toBool();
     if (resetFieldOfView)
     {
       this->resetFieldOfView(displayNode, viewNode);
@@ -374,14 +374,14 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRenderingOptionsFor
     return;
   }
 
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
   }
 
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("VolumeRendering");
+  qSlicerAbstractModuleWidget* const moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("VolumeRendering");
   if (moduleWidget)
   {
     // Get node selector combobox
@@ -398,7 +398,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRenderingOptionsFor
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
   if (threeDViewNode)
   {
     return this->showVolumeRendering(true, itemID, threeDViewNode);

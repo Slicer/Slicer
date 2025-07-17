@@ -8,7 +8,7 @@ qMRMLTransformSlidersPlugin::qMRMLTransformSlidersPlugin(QObject* _parent)
 
 QWidget* qMRMLTransformSlidersPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTransformSliders* _widget = new qMRMLTransformSliders(_parent);
+  qMRMLTransformSliders* const _widget = new qMRMLTransformSliders(_parent);
   return _widget;
 }
 

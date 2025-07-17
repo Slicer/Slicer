@@ -61,7 +61,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
   {
     vtkErrorMacro(<< "vtkMRMLVolumeSequenceStorageNode::ReadDataInternal : File name not specified");
@@ -103,7 +103,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   std::vector<std::string> indexValues;
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
-  int frameAxis = 0;
+  const int frameAxis = 0;
   std::string dataNodeClassName;
   for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
   {
@@ -151,9 +151,9 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
   }
 
-  const char* sequenceAxisLabel = reader->GetAxisLabel(frameAxis);
+  const char* const sequenceAxisLabel = reader->GetAxisLabel(frameAxis);
   volSequenceNode->SetIndexName(sequenceAxisLabel ? sequenceAxisLabel : "frame");
-  const char* sequenceAxisUnit = reader->GetAxisUnit(frameAxis);
+  const char* const sequenceAxisUnit = reader->GetAxisUnit(frameAxis);
   volSequenceNode->SetIndexUnit(sequenceAxisUnit ? sequenceAxisUnit : "");
 
   // Read and copy the data to sequence of volume nodes
@@ -183,7 +183,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: invalid image data");
     return 0;
   }
-  int numberOfFrames = imageData->GetNumberOfScalarComponents();
+  const int numberOfFrames = imageData->GetNumberOfScalarComponents();
   vtkNew<vtkImageExtractComponents> extractComponents;
   extractComponents->SetInputConnection(reader->GetOutputPort());
 #endif
@@ -298,10 +298,10 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* re
       return false;
     }
   }
-  vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
+  const vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
   firstFrameVolume->GetIJKToRASMatrix(firstVolumeIjkToRas.GetPointer());
 
-  int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
+  const int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   for (int frameIndex = 1; frameIndex < numberOfFrameVolumes; frameIndex++)
   {
     vtkMRMLVolumeNode* currentFrameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
@@ -311,7 +311,7 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* re
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volumes can be written in this format."));
       return false;
     }
-    vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
+    const vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
     currentFrameVolume->GetIJKToRASMatrix(currentVolumeIjkToRas.GetPointer());
     if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeIjkToRas, firstVolumeIjkToRas))
     {
@@ -367,10 +367,10 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
+  const vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
   int frameVolumeDimensions[3] = { 0 };
   int frameVolumeScalarType = VTK_VOID;
-  int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
+  const int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   if (numberOfFrameVolumes > 0)
   {
     vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(0));
@@ -398,7 +398,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
       return 0;
     }
-    vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
+    const vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
     frameVolume->GetIJKToRASMatrix(currentVolumeIjkToRas.GetPointer());
     if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeIjkToRas, firstVolumeIjkToRas))
     {
@@ -441,7 +441,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 #endif
 
-  std::string fullName = this->GetFullNameFromFileName();
+  std::string const fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
   {
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("File name not specified."));
@@ -509,7 +509,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // pass down all MRML attributes to NRRD, including "DataNodeClassName", which is used to determine the type of the data node
   // when reading the sequence from file
-  std::vector<std::string> attributeNames = volSequenceNode->GetAttributeNames();
+  const std::vector<std::string> attributeNames = volSequenceNode->GetAttributeNames();
   for (auto& attributeName : attributeNames)
   {
     writer->SetAttribute(attributeName, volSequenceNode->GetAttribute(attributeName.c_str()));
@@ -618,7 +618,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
   //: File format name
-  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
+  const std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
@@ -629,7 +629,7 @@ void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
   //: File format name
-  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
+  const std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");

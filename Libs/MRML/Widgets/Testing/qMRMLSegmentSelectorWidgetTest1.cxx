@@ -52,9 +52,9 @@ int testSingleSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   vtkNew<vtkMRMLSegmentationNode> segmentationNode;
   scene->AddNode(segmentationNode);
 
-  QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
-  QSignalSpy currentSegmentChangedSpy(segmentSelectorWidget, SIGNAL(currentSegmentChanged(QString)));
-  QSignalSpy segmentSelectionChangedSpy(segmentSelectorWidget, SIGNAL(segmentSelectionChanged(QStringList)));
+  const QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
+  const QSignalSpy currentSegmentChangedSpy(segmentSelectorWidget, SIGNAL(currentSegmentChanged(QString)));
+  const QSignalSpy segmentSelectionChangedSpy(segmentSelectorWidget, SIGNAL(segmentSelectionChanged(QStringList)));
 
   segmentSelectorWidget->setCurrentNode(segmentationNode);
 
@@ -62,7 +62,7 @@ int testSingleSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   CHECK_BOOL(segmentSelectorWidget->currentSegmentID().isEmpty(), true);
 
   // With none enabled, adding a new segment should not cause a segment to be selected.
-  QString segment1ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment1ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
   CHECK_INT(currentSegmentChangedSpy.count(), 0);
   CHECK_INT(segmentSelectionChangedSpy.count(), 0);
 
@@ -71,8 +71,8 @@ int testSingleSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   CHECK_QSTRING(segment1ID, segmentSelectorWidget->currentSegmentID());
 
   // Adding additional segments should not change selection
-  QString segment2ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
-  QString segment3ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment2ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment3ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
   CHECK_INT(currentSegmentChangedSpy.count(), 1);
   CHECK_QSTRING(segment1ID, segmentSelectorWidget->currentSegmentID());
 
@@ -110,16 +110,16 @@ int testMultiSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   vtkNew<vtkMRMLSegmentationNode> segmentationNode;
   scene->AddNode(segmentationNode);
 
-  QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
-  QSignalSpy currentSegmentChangedSpy(segmentSelectorWidget, SIGNAL(currentSegmentChanged(QString)));
-  QSignalSpy segmentSelectionChangedSpy(segmentSelectorWidget, SIGNAL(segmentSelectionChanged(QStringList)));
+  const QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
+  const QSignalSpy currentSegmentChangedSpy(segmentSelectorWidget, SIGNAL(currentSegmentChanged(QString)));
+  const QSignalSpy segmentSelectionChangedSpy(segmentSelectorWidget, SIGNAL(segmentSelectionChanged(QStringList)));
 
   segmentSelectorWidget->setCurrentNode(segmentationNode);
 
   CHECK_INT(nodeChangedSpy.count(), 1);
 
   // Adding a new segment should not cause a segment to be selected.
-  QString segment1ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment1ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
   CHECK_INT(segmentSelectionChangedSpy.count(), 0);
   CHECK_INT(segmentSelectorWidget->selectedSegmentIDs().count(), 0);
 
@@ -129,8 +129,8 @@ int testMultiSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   CHECK_QSTRINGLIST(QStringList() << segment1ID, segmentSelectorWidget->selectedSegmentIDs());
 
   // Adding additional segments should not change selection
-  QString segment2ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
-  QString segment3ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment2ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
+  const QString segment3ID = QString::fromStdString(segmentationNode->GetSegmentation()->AddEmptySegment());
   CHECK_INT(segmentSelectionChangedSpy.count(), 1);
   CHECK_QSTRINGLIST(QStringList() << segment1ID, segmentSelectorWidget->selectedSegmentIDs());
 

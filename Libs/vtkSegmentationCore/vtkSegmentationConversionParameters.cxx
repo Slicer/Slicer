@@ -73,7 +73,7 @@ std::string vtkSegmentationConversionParameters::GetDescription(int index)
 //----------------------------------------------------------------------------
 std::string vtkSegmentationConversionParameters::GetDescription(const std::string& name)
 {
-  int index = this->GetIndexFromName(name);
+  const int index = this->GetIndexFromName(name);
   if (index < 0)
   {
     return "";
@@ -98,7 +98,7 @@ void vtkSegmentationConversionParameters::SetDescription(int index, const std::s
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionParameters::SetDescription(const std::string& name, const std::string& description)
 {
-  int index = this->GetIndexFromName(name);
+  const int index = this->GetIndexFromName(name);
   if (index < 0)
   {
     ConversionParameterType parameter;
@@ -125,21 +125,21 @@ std::string vtkSegmentationConversionParameters::GetValue(int index)
 //----------------------------------------------------------------------------
 double vtkSegmentationConversionParameters::GetValueAsDouble(const std::string& name)
 {
-  double value = vtkVariant(this->GetValue(name)).ToDouble();
+  const double value = vtkVariant(this->GetValue(name)).ToDouble();
   return value;
 }
 
 //----------------------------------------------------------------------------
 int vtkSegmentationConversionParameters::GetValueAsInt(const std::string& name)
 {
-  double value = vtkVariant(this->GetValue(name)).ToInt();
+  const double value = vtkVariant(this->GetValue(name)).ToInt();
   return value;
 }
 
 //----------------------------------------------------------------------------
 std::string vtkSegmentationConversionParameters::GetValue(const std::string& name)
 {
-  int index = this->GetIndexFromName(name);
+  const int index = this->GetIndexFromName(name);
   if (index < 0)
   {
     return "";
@@ -164,7 +164,7 @@ void vtkSegmentationConversionParameters::SetValue(int index, const std::string&
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionParameters::SetValue(const std::string& name, const std::string& value)
 {
-  int index = this->GetIndexFromName(name);
+  const int index = this->GetIndexFromName(name);
   if (index < 0)
   {
     ConversionParameterType parameter;
@@ -222,7 +222,7 @@ int vtkSegmentationConversionParameters::SetParameter(const std::string& name, c
   int parameterIndex = this->GetIndexFromName(name);
   if (parameterIndex < 0)
   {
-    ConversionParameterType newParameter;
+    const ConversionParameterType newParameter;
     this->ParameterList.push_back(newParameter);
     parameterIndex = this->ParameterList.size() - 1;
   }
