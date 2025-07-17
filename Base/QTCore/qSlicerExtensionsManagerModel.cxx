@@ -870,7 +870,7 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   QDir topLevelArchiveDir;
   while (extractDirOfFirstFile != extensionsDir)
   {
-    topLevelArchiveDir.setPath(extractDirOfFirstFile.dirName());
+    topLevelArchiveDir.setPath(extractDirOfFirstFile.path());
     extractDirOfFirstFile.cdUp();
   }
 

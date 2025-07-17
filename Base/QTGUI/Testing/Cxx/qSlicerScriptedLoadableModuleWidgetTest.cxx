@@ -80,7 +80,7 @@ bool qSlicerScriptedLoadableModuleWidgetTester::resetTmp()
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
   tmp.cd(this->TemporaryDirName);
-  this->Tmp.setPath(tmp.dirName());
+  this->Tmp.setPath(tmp.path());
   return this->Tmp.exists();
 }
 
