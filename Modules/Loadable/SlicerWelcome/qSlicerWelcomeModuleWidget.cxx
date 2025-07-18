@@ -120,8 +120,13 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Update occurrences of documentation URLs
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  for (QWidget* const widget : QWidgetList() << this->FeedbackCollapsibleWidget << this->WelcomeAndAboutCollapsibleWidget << this->OtherUsefulHintsCollapsibleWidget
-                                             << this->AcknowledgmentCollapsibleWidget)
+
+  QWidgetList widgetList;
+  widgetList << this->FeedbackCollapsibleWidget         //
+             << this->WelcomeAndAboutCollapsibleWidget  //
+             << this->OtherUsefulHintsCollapsibleWidget //
+             << this->AcknowledgmentCollapsibleWidget;
+  for (QWidget* const widget : widgetList)
   {
     QTextBrowser* textBrowser = widget->findChild<QTextBrowser*>();
     if (!textBrowser)

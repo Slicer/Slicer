@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// standard library includes
+// STD includes
 #include <clocale>
 #include <stdexcept>
 
@@ -720,7 +720,12 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   Q_Q(qSlicerCoreApplication);
   if (!this->isInstalled(slicerHome))
   {
-    for (const QString& subDir : QStringList() << Slicer_BIN_DIR << Slicer_CLIMODULES_BIN_DIR << "Cxx")
+    const QStringList subDirs{
+      Slicer_BIN_DIR,
+      Slicer_CLIMODULES_BIN_DIR,
+      "Cxx",
+    };
+    for (const QString& subDir : subDirs)
     {
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), subDir, this->IntDir);
       if (!this->IntDir.isEmpty())

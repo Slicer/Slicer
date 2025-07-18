@@ -247,7 +247,9 @@ int isPluginInstalledBuiltinTest()
 
   createFile(__LINE__, tmp1, ".", "CMakeCache.txt");
 
-  for (const QString& relativePath : QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug << fooRelease << fooBar << fooBarDebug << fooBarRelease)
+  QStringList relativePaths;
+  relativePaths = QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug << fooRelease << fooBar << fooBarDebug << fooBarRelease;
+  for (const QString& relativePath : relativePaths)
   {
     createFile(__LINE__, tmp1, relativePath, "plugin.txt");
   }
@@ -327,7 +329,8 @@ int isPluginInstalledBuiltinTest()
   tmp3.mkdir(temporaryDirName);
   tmp3.cd(temporaryDirName);
 
-  for (const QString& relativePath : QStringList() << foo << fooBar)
+  relativePaths = QStringList() << foo << fooBar;
+  for (const QString& relativePath : relativePaths)
   {
     createFile(__LINE__, tmp1, relativePath, "plugin.txt");
   }
@@ -692,6 +695,8 @@ int setPermissionsRecursivelyTest()
   tmp.mkdir(temporaryDirName);
   tmp.cd(temporaryDirName);
 
+  QStringList relativeFilepaths;
+
   QString path1 = QLatin1String("any/foo/bar");
   QString path2 = QLatin1String("any/foo/bie");
 
@@ -701,8 +706,9 @@ int setPermissionsRecursivelyTest()
   createFile(__LINE__, tmp, path2, "sol.txt");
 
   // Let's confirm that created file are readable
-  for (const QString& relativeFilepath : QStringList() //
-                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  relativeFilepaths = QStringList() //
+                      << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt";
+  for (const QString& relativeFilepath : relativeFilepaths)
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
   }
@@ -716,8 +722,9 @@ int setPermissionsRecursivelyTest()
   //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
   // Since directory are *NOT* executable, files should *NOT* be readable
-  for (const QString& relativeFilepath : QStringList() //
-                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  relativeFilepaths = QStringList() //
+                      << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt";
+  for (const QString& relativeFilepath : relativeFilepaths)
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, false);
   }
@@ -725,8 +732,9 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
 
   // Since directory are executable, files should be readable
-  for (const QString& relativeFilepath : QStringList() //
-                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  relativeFilepaths = QStringList() //
+                      << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt";
+  for (const QString& relativeFilepath : relativeFilepaths)
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
   }
@@ -735,8 +743,9 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), false);
 #endif
 
-  for (const QString& relativeFilepath : QStringList() //
-                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  relativeFilepaths = QStringList() //
+                      << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt";
+  for (const QString& relativeFilepath : relativeFilepaths)
   {
     // Since files are read-only, they should *NOT* be writable
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, false);
@@ -745,8 +754,9 @@ int setPermissionsRecursivelyTest()
   CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner, QFile::ReadOwner | QFile::WriteOwner), true);
 
   // Make sure files are readable and writable
-  for (const QString& relativeFilepath : QStringList() //
-                                           << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt")
+  relativeFilepaths = QStringList() //
+                      << path1 + "/sol.txt" << path1 + "/la.txt" << path2 + "/si.txt" << path2 + "/sol.txt";
+  for (const QString& relativeFilepath : relativeFilepaths)
   {
     CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, true);
   }

@@ -224,16 +224,14 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
     std::cout << "After disabling remove action, new number of actions = " << expected << std::endl;
   }
 
-  // add a custom action starting respectively with:
-  //  * "Create new "
-  //  * "Delete current "
-  //  * "Edit current "
-  //  * "Rename current "
-  //  * "Create and rename "
-  for (const QString& actionPrefix : QStringList() << "Create new "
-                                                   << "Delete current "
-                                                   << "Edit current "
-                                                   << "Rename current ")
+  // add a custom actions
+  const QStringList actionPrefixes = {
+    "Create new ",
+    "Delete current ",
+    "Edit current ",
+    "Rename current ",
+  };
+  for (const QString& actionPrefix : actionPrefixes)
   {
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
