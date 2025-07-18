@@ -88,7 +88,7 @@ void qSlicerDirectoryListViewPrivate::init()
 void qSlicerDirectoryListViewPrivate::addDirectory(const QString& path)
 {
   Q_Q(qSlicerDirectoryListView);
-  QString absolutePath = QFileInfo(path).absoluteFilePath();
+  const QString absolutePath = QFileInfo(path).absoluteFilePath();
   if (!QFile::exists(absolutePath) || q->hasDirectory(absolutePath))
   {
     return;
@@ -142,7 +142,7 @@ QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath) c
   {
     role = qSlicerDirectoryListViewPrivate::AbsolutePathRole;
   }
-  QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
+  const QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
   for (const QModelIndex& index : selectedIndexes)
   {
     directoryList << d->DirectoryListModel.data(index, role).toString();
@@ -154,8 +154,8 @@ QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath) c
 bool qSlicerDirectoryListView::hasDirectory(const QString& path) const
 {
   Q_D(const qSlicerDirectoryListView);
-  QString absolutePath = QFileInfo(path).absoluteFilePath();
-  QModelIndexList foundIndexes = d->DirectoryListModel.match(
+  const QString absolutePath = QFileInfo(path).absoluteFilePath();
+  const QModelIndexList foundIndexes = d->DirectoryListModel.match(
     d->DirectoryListModel.index(0, 0), qSlicerDirectoryListViewPrivate::AbsolutePathRole, QVariant(absolutePath), /* hits = */ 1, Qt::MatchExactly | Qt::MatchWrap);
   Q_ASSERT(foundIndexes.size() < 2);
   return (foundIndexes.size() != 0);
@@ -173,7 +173,7 @@ void qSlicerDirectoryListView::addDirectory(const QString& path)
 void qSlicerDirectoryListView::removeDirectory(const QString& path)
 {
   Q_D(qSlicerDirectoryListView);
-  QList<QStandardItem*> foundItems = d->DirectoryListModel.findItems(path);
+  const QList<QStandardItem*> foundItems = d->DirectoryListModel.findItems(path);
   Q_ASSERT(foundItems.count() < 2);
   if (foundItems.count() == 1)
   {
@@ -188,7 +188,7 @@ void qSlicerDirectoryListView::removeSelectedDirectories()
   Q_D(qSlicerDirectoryListView);
 
   QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
-  bool selectedCount = selectedIndexes.count();
+  const bool selectedCount = selectedIndexes.count();
   while (selectedIndexes.count() > 0)
   {
     d->DirectoryListModel.removeRow(selectedIndexes.at(0).row());
@@ -263,7 +263,7 @@ void qSlicerDirectoryListView::dropEvent(QDropEvent* event)
       continue;
     }
     // convert QUrl to local path
-    QString localPath = url.toLocalFile();
+    const QString localPath = url.toLocalFile();
     QFileInfo pathInfo;
     pathInfo.setFile(localPath);
     if (pathInfo.isDir())

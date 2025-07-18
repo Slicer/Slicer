@@ -28,18 +28,18 @@ int vtkMRMLSubjectHierarchyNodeTest1(int, char*[])
   vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
   CHECK_NOT_NULL(shNode);
 
-  vtkNew<vtkMRMLModelNode> dataNode1;
+  const vtkNew<vtkMRMLModelNode> dataNode1;
   scene->AddNode(dataNode1);
 
   // Create subject hierarchy item
-  vtkIdType itemId1 = shNode->CreateItem(shNode->GetSceneItemID(), dataNode1, "test");
+  const vtkIdType itemId1 = shNode->CreateItem(shNode->GetSceneItemID(), dataNode1, "test");
   CHECK_BOOL(itemId1 == vtkMRMLSubjectHierarchyNode::GetInvalidItemID(), false);
 
   // Test UIDs
   /////////////////////////
 
-  std::string uidName = "TESTID";
-  std::string uidValue = "123";
+  const std::string uidName = "TESTID";
+  const std::string uidValue = "123";
 
   // Test API with missing UID
   CHECK_BOOL(shNode->HasItemUID(itemId1, uidName), false);
@@ -78,8 +78,8 @@ int vtkMRMLSubjectHierarchyNodeTest1(int, char*[])
   // Test attributes
   /////////////////////////
 
-  std::string attributeName = "TESTATT";
-  std::string attributeValue = "987";
+  const std::string attributeName = "TESTATT";
+  const std::string attributeValue = "987";
 
   // Test API with missing attributes
   CHECK_BOOL(shNode->HasItemAttribute(itemId1, attributeName), false);

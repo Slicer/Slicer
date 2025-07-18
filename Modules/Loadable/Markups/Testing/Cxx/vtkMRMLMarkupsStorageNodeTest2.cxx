@@ -73,19 +73,19 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   // add a markup with one point with non default values
-  int modifiedPointIndex = markupsNode->AddNControlPoints(1);
+  const int modifiedPointIndex = markupsNode->AddNControlPoints(1);
   double orientation[4] = { 0.2, 1.0, 0.0, 0.0 };
   markupsNode->SetNthControlPointOrientation(modifiedPointIndex, orientation);
   markupsNode->ResetNthControlPointID(modifiedPointIndex);
-  std::string associatedNodeID = std::string("testingAssociatedID");
+  const std::string associatedNodeID = std::string("testingAssociatedID");
   markupsNode->SetNthControlPointAssociatedNodeID(modifiedPointIndex, associatedNodeID);
   markupsNode->SetNthControlPointSelected(modifiedPointIndex, false);
   markupsNode->SetNthControlPointVisibility(modifiedPointIndex, false);
   markupsNode->SetNthControlPointLocked(modifiedPointIndex, true);
 
-  std::string label = std::string("Testing label");
+  const std::string label = std::string("Testing label");
   markupsNode->SetNthControlPointLabel(modifiedPointIndex, label);
-  std::string desc = std::string("description with spaces");
+  const std::string desc = std::string("description with spaces");
   markupsNode->SetNthControlPointDescription(modifiedPointIndex, desc);
   // NAN should not be present, but we test this case anyway
   // to make sure that having a NAN does not break reading or writing.
@@ -95,14 +95,14 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // and add a markup with 1 point, default values
   if (markupsNode->GetMaximumNumberOfControlPoints() != 1)
   {
-    int defaultPointIndex = markupsNode->AddNControlPoints(1);
+    const int defaultPointIndex = markupsNode->AddNControlPoints(1);
     CHECK_INT(defaultPointIndex, 1);
   }
 
   int emptyLabelIndex = -1;
   int commaIndex = -1;
   int quotesIndex = -1;
-  bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
+  const bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
   if (testManyPoints)
   {
     // and another one unsetting the label
@@ -127,7 +127,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   if (verbose)
   {
     std::cout << "\nWriting this markup to file:" << std::endl;
-    vtkIndent indent;
+    const vtkIndent indent;
     markupsNode->PrintSelf(std::cout, indent);
     std::cout << std::endl;
   }
@@ -140,14 +140,15 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // test read
   //
 
-  vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode2 = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(markupsNode->CreateNodeInstance()));
+  const vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode2 = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(markupsNode->CreateNodeInstance()));
 
   vtkNew<vtkMRMLScene> scene2;
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkNew<vtkMRMLApplicationLogic> applicationLogic2;
   applicationLogic2->SetMRMLScene(scene2);
 
-  vtkSmartPointer<vtkMRMLMarkupsStorageNode> snode2 = vtkSmartPointer<vtkMRMLMarkupsStorageNode>::Take(vtkMRMLMarkupsStorageNode::SafeDownCast(storageNode->CreateNodeInstance()));
+  const vtkSmartPointer<vtkMRMLMarkupsStorageNode> snode2 =
+    vtkSmartPointer<vtkMRMLMarkupsStorageNode>::Take(vtkMRMLMarkupsStorageNode::SafeDownCast(storageNode->CreateNodeInstance()));
 
   scene2->AddNode(snode2);
   scene2->AddNode(markupsNode2);
@@ -160,7 +161,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   if (verbose)
   {
     std::cout << "\nMarkup read from file = " << std::endl;
-    vtkIndent indent;
+    const vtkIndent indent;
     markupsNode2->PrintSelf(std::cout, indent);
     std::cout << std::endl;
   }
@@ -218,7 +219,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   if (verbose)
   {
     std::cout << "\nMarkups specified in RAS read from file: " << storageNode->GetFileName() << std::endl;
-    vtkIndent indent;
+    const vtkIndent indent;
     markupsNode2->PrintSelf(std::cout, indent);
   }
 
@@ -257,7 +258,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
 int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
 {
-  vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNodeFcsv;
+  const vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNodeFcsv;
   EXERCISE_ALL_BASIC_MRML_METHODS(storageNodeFcsv);
 
   vtkNew<vtkMRMLMarkupsJsonStorageNode> storageNodeJson;
@@ -301,31 +302,32 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
 
   scene->AddNode(storageNodeJson);
 
-  vtkMRMLMarkupsNode* fiducialNode2 = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const fiducialNode2 = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.mrk.json").c_str());
   CHECK_NOT_NULL(fiducialNode2);
   CHECK_STRING(fiducialNode2->GetClassName(), "vtkMRMLMarkupsFiducialNode");
 
-  vtkMRMLMarkupsNode* lineNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-line-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const lineNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-line-temp.mrk.json").c_str());
   CHECK_NOT_NULL(lineNode);
   CHECK_STRING(lineNode->GetClassName(), "vtkMRMLMarkupsLineNode");
 
-  vtkMRMLMarkupsNode* angleNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-angle-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const angleNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-angle-temp.mrk.json").c_str());
   CHECK_NOT_NULL(angleNode);
   CHECK_STRING(angleNode->GetClassName(), "vtkMRMLMarkupsAngleNode");
 
-  vtkMRMLMarkupsNode* openCurveNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-opencurve-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const openCurveNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-opencurve-temp.mrk.json").c_str());
   CHECK_NOT_NULL(openCurveNode);
   CHECK_STRING(openCurveNode->GetClassName(), "vtkMRMLMarkupsCurveNode");
 
-  vtkMRMLMarkupsNode* closedurveNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-closedcurve-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const closedurveNode =
+    storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-closedcurve-temp.mrk.json").c_str());
   CHECK_NOT_NULL(closedurveNode);
   CHECK_STRING(closedurveNode->GetClassName(), "vtkMRMLMarkupsClosedCurveNode");
 
-  vtkMRMLMarkupsNode* planeNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const planeNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json").c_str());
   CHECK_NOT_NULL(planeNode);
   CHECK_STRING(planeNode->GetClassName(), "vtkMRMLMarkupsPlaneNode");
 
-  vtkMRMLMarkupsNode* roiNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json").c_str());
+  vtkMRMLMarkupsNode* const roiNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json").c_str());
   CHECK_NOT_NULL(roiNode);
   CHECK_STRING(roiNode->GetClassName(), "vtkMRMLMarkupsROINode");
 

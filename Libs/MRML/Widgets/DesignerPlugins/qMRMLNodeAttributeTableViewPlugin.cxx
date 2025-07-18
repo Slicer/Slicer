@@ -31,7 +31,7 @@ qMRMLNodeAttributeTableViewPlugin::qMRMLNodeAttributeTableViewPlugin(QObject* _p
 //-----------------------------------------------------------------------------
 QWidget* qMRMLNodeAttributeTableViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLNodeAttributeTableView* _widget = new qMRMLNodeAttributeTableView(_parent);
+  qMRMLNodeAttributeTableView* const _widget = new qMRMLNodeAttributeTableView(_parent);
   return _widget;
 }
 

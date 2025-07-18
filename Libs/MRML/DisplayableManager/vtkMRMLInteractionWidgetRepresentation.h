@@ -256,7 +256,7 @@ protected:
     bool ApplyScaleToPosition{ true };
     bool IsVisible()
     {
-      double epsilon = 0.001;
+      const double epsilon = 0.001;
       return this->Color[3] > epsilon;
     }
   };

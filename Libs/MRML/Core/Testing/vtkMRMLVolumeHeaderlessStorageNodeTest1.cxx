@@ -15,7 +15,7 @@
 
 int vtkMRMLVolumeHeaderlessStorageNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLVolumeHeaderlessStorageNode> node1;
+  const vtkNew<vtkMRMLVolumeHeaderlessStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -43,7 +43,7 @@ std::string vtkMRMLLogic::GetApplicationHomeDirectory()
 //----------------------------------------------------------------------------
 std::string vtkMRMLLogic::GetApplicationShareDirectory()
 {
-  std::string applicationHome = vtkMRMLLogic::GetApplicationHomeDirectory();
+  const std::string applicationHome = vtkMRMLLogic::GetApplicationHomeDirectory();
   std::vector<std::string> filesVector;
   filesVector.emplace_back(""); // for relative path
   filesVector.push_back(applicationHome);

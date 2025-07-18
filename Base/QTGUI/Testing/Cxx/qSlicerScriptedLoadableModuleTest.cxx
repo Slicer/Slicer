@@ -100,7 +100,7 @@ void qSlicerScriptedLoadableModuleTester::testSetPythonSource()
   QVERIFY(this->resetTmp());
 
   QFETCH(QString, scriptName);
-  QString scriptPath = this->preparePythonSource(scriptName);
+  const QString scriptPath = this->preparePythonSource(scriptName);
   QVERIFY(QFile::exists(scriptPath));
 
   qSlicerScriptedLoadableModule m;
@@ -108,7 +108,7 @@ void qSlicerScriptedLoadableModuleTester::testSetPythonSource()
 
   m.setPythonSource(scriptPath);
   QFETCH(bool, syntaxErrorExpected);
-  QString expectedScriptPath = syntaxErrorExpected ? QString() : scriptPath;
+  const QString expectedScriptPath = syntaxErrorExpected ? QString() : scriptPath;
   QCOMPARE(m.pythonSource(), expectedScriptPath);
 
   QVERIFY(!PyErr_Occurred());
@@ -141,7 +141,7 @@ void qSlicerScriptedLoadableModuleTester::testSetup()
 {
   QVERIFY(this->resetTmp());
   QFETCH(QString, scriptName);
-  QString scriptPath = this->preparePythonSource(scriptName);
+  const QString scriptPath = this->preparePythonSource(scriptName);
   QVERIFY(QFile::exists(scriptPath));
 
   qSlicerScriptedLoadableModuleSetup m;

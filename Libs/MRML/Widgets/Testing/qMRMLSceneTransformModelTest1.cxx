@@ -107,8 +107,8 @@ int qMRMLSceneTransformModelTest1(int argc, char* argv[])
     sceneFactory.generateNode();
     sceneFactory.generateNode();
 
-    vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
-    vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
+    vtkMRMLNode* const node1 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
+    vtkMRMLNode* const node2 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
     std::cout << "start reparenting node" << std::endl;
     model.reparent(node1, node2);
     std::cout << "end reparenting node" << std::endl;
@@ -157,7 +157,7 @@ int qMRMLSceneTransformModelTest1(int argc, char* argv[])
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
-  int result = app.exec();
+  const int result = app.exec();
 
   delete view;
   delete treeWidget;

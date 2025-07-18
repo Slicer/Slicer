@@ -103,7 +103,7 @@ void DiffusionTensor3DRigidTransform<TData>::SetMatrix3x3(MatrixTransformType& m
   }
   if (ok)
   {
-    double det = this->GetDet(matrix);
+    const double det = this->GetDet(matrix);
     if (det > 1 - PRECISION && det < 1 + PRECISION)
     {
       this->m_TransformMatrix = matrix;
@@ -135,10 +135,10 @@ template <class TData>
 void DiffusionTensor3DRigidTransform<TData>::PreCompute()
 {
   InternalMatrixTransformType m_TransformMatrixInverse;
-  InternalMatrixTransformType MeasurementFrameTranspose = this->m_MeasurementFrame.GetTranspose();
+  const InternalMatrixTransformType MeasurementFrameTranspose = this->m_MeasurementFrame.GetTranspose();
 
   m_TransformMatrixInverse = this->m_TransformMatrix.GetTranspose();
-  InternalMatrixTransformType TransformMatrixTranspose = this->m_TransformMatrix.GetTranspose();
+  const InternalMatrixTransformType TransformMatrixTranspose = this->m_TransformMatrix.GetTranspose();
   this->m_TransformT = MeasurementFrameTranspose * this->m_TransformMatrix;
   this->m_Transform = TransformMatrixTranspose * this->m_MeasurementFrame;
   this->ComputeOffset();

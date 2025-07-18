@@ -72,8 +72,8 @@ int vtkSlicerTransformLogicTest3(int argc, char* argv[])
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
   // argv1 == cube.vtk
-  vtkSmartPointer<vtkMRMLModelNode> cube = LoadModelInScene(argv[1], scene);
-  vtkSmartPointer<vtkMRMLModelNode> tranformedCube = LoadModelInScene(argv[2], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> cube = LoadModelInScene(argv[1], scene);
+  const vtkSmartPointer<vtkMRMLModelNode> tranformedCube = LoadModelInScene(argv[2], scene);
 
   std::vector<vtkMRMLDisplayableNode*> nodes;
   bool success = true;

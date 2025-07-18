@@ -46,7 +46,7 @@ int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
     std::cout << "Missing moduleShare Directory argument !" << std::endl;
     return EXIT_FAILURE;
   }
-  std::string moduleShareDirectory(argv[1]);
+  const std::string moduleShareDirectory(argv[1]);
 
   CHECK_EXIT_SUCCESS(testDefaultRenderingMethod(moduleShareDirectory));
   CHECK_EXIT_SUCCESS(testPresets(moduleShareDirectory));
@@ -63,7 +63,7 @@ int testDefaultRenderingMethod(const std::string& moduleShareDirectory)
   CHECK_NULL(logic->GetDefaultRenderingMethod());
   CHECK_NULL(displayNode);
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   logic->SetMRMLScene(scene);
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   CHECK_NOT_NULL(displayNode);
@@ -113,7 +113,7 @@ int testPresets(const std::string& moduleShareDirectory)
     CHECK_NOT_NULL(iconNode);
     CHECK_POINTER_DIFFERENT(iconNode->GetImageData(), iconImage);
     // Check that the icon has the same content
-    int* dimensions = iconNode->GetImageData()->GetDimensions();
+    int* const dimensions = iconNode->GetImageData()->GetDimensions();
     CHECK_INT(dimensions[0], 128);
     CHECK_INT(dimensions[1], 128);
     CHECK_INT(dimensions[2], 1);
@@ -148,7 +148,7 @@ int testPresets(const std::string& moduleShareDirectory)
     CHECK_NOT_NULL(addedIconNode);
     CHECK_NOT_NULL(addedIconNode->GetImageData());
     // Check that the icon has the same content
-    int* dimensions = addedIconNode->GetImageData()->GetDimensions();
+    int* const dimensions = addedIconNode->GetImageData()->GetDimensions();
     CHECK_INT(dimensions[0], 128);
     CHECK_INT(dimensions[1], 128);
     CHECK_INT(dimensions[2], 1);

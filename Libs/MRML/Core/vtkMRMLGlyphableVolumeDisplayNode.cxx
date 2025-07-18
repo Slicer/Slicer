@@ -100,7 +100,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferenceID(const char* oldID, con
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -130,10 +130,10 @@ void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLGlyphableVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLGlyphableVolumeDisplayNode* node = (vtkMRMLGlyphableVolumeDisplayNode*)anode;
+  vtkMRMLGlyphableVolumeDisplayNode* const node = (vtkMRMLGlyphableVolumeDisplayNode*)anode;
 
   this->SetGlyphColorNodeID(node->GlyphColorNodeID);
 
@@ -182,7 +182,7 @@ vtkMRMLColorNode* vtkMRMLGlyphableVolumeDisplayNode::GetGlyphColorNode()
   vtkMRMLColorNode* node = nullptr;
   if (this->GetScene() && this->GetGlyphColorNodeID())
   {
-    vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->GlyphColorNodeID);
+    vtkMRMLNode* const cnode = this->GetScene()->GetNodeByID(this->GlyphColorNodeID);
     node = vtkMRMLColorNode::SafeDownCast(cnode);
   }
   return node;
@@ -201,7 +201,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(const char
 
   this->SetGlyphColorNodeID(glyphColorNodeID);
 
-  vtkMRMLColorNode* cnode = this->GetGlyphColorNode();
+  vtkMRMLColorNode* const cnode = this->GetGlyphColorNode();
   if (cnode != nullptr)
   {
     vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, cnode);
@@ -217,7 +217,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, uns
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLColorNode* cnode = this->GetGlyphColorNode();
+  vtkMRMLColorNode* const cnode = this->GetGlyphColorNode();
   if (cnode != nullptr && cnode == vtkMRMLColorNode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {

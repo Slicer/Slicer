@@ -177,7 +177,7 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateSliceNodes()
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it)));)
   {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (sliceNode)
     {
       this->AddSliceNode(sliceNode);
@@ -244,7 +244,7 @@ vtkImplicitPlaneWidget2* vtkMRMLThreeDReformatDisplayableManager::vtkInternal::G
     return nullptr;
   }
 
-  SliceNodesLink::iterator it = this->SliceNodes.find(sliceNode);
+  const SliceNodesLink::iterator it = this->SliceNodes.find(sliceNode);
   return (it != this->SliceNodes.end()) ? it->second : 0;
 }
 
@@ -266,7 +266,7 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateWidget(vtkMRMLS
 
   // Update the representation
   vtkImplicitPlaneRepresentation* rep = planeWidget->GetImplicitPlaneRepresentation();
-  vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
+  vtkMatrix4x4* const sliceToRAS = sliceNode->GetSliceToRAS();
 
   // Color the Edge of the plane representation depending on the Slice
   rep->SetEdgeColor(sliceNode->GetLayoutColor());
@@ -286,7 +286,7 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateWidget(vtkMRMLS
   {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetLabelVolumeID() : nullptr;
   }
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->External->GetMRMLScene()->GetNodeByID(volumeNodeID));
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->External->GetMRMLScene()->GetNodeByID(volumeNodeID));
   if (volumeNode)
   {
     double dimensions[3], center[3];
@@ -305,11 +305,11 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateWidget(vtkMRMLS
   rep->SetDrawOutline(sliceNode->GetWidgetOutlineVisible());
 
   // Update the widget itself if necessary
-  bool visible = sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
-                 && sliceNode->GetWidgetVisible();
+  const bool visible = sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
+                       && sliceNode->GetWidgetVisible();
 
   // re-render if it was visible or now becomes visible
-  bool renderingRequired = planeWidget->GetEnabled() || visible;
+  const bool renderingRequired = planeWidget->GetEnabled() || visible;
 
   if ((!planeWidget->GetEnabled() && visible) ||                                       //
       (planeWidget->GetEnabled() && !visible) ||                                       //
@@ -376,9 +376,9 @@ void vtkMRMLThreeDReformatDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   assert(sliceNode);
-  vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
+  vtkImplicitPlaneWidget2* const planeWidget = this->Internal->GetWidget(sliceNode);
   if (this->Internal->UpdateWidget(sliceNode, planeWidget))
   {
     this->RequestRender();
@@ -439,7 +439,7 @@ void vtkMRMLThreeDReformatDisplayableManager::ProcessWidgetsEvents(vtkObject* ca
   transform->GetMatrix(sliceToRAS); // Update the changes within sliceToRAS
 
   // Insert the widget translation
-  double* planeWidgetOrigin = rep->GetOrigin();
+  double* const planeWidgetOrigin = rep->GetOrigin();
   sliceToRAS->SetElement(0, 3, planeWidgetOrigin[0]);
   sliceToRAS->SetElement(1, 3, planeWidgetOrigin[1]);
   sliceToRAS->SetElement(2, 3, planeWidgetOrigin[2]);

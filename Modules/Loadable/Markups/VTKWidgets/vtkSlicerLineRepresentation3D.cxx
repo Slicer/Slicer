@@ -105,7 +105,7 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
-    double diameter =
+    const double diameter =
       (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                       : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
     this->TubeFilter->SetRadius(diameter * 0.5);
@@ -192,7 +192,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);

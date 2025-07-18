@@ -100,7 +100,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::WriteXML(ostream& of, int nInd
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -199,10 +199,10 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = (vtkMRMLDiffusionTensorDisplayPropertiesNode*)anode;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* const node = (vtkMRMLDiffusionTensorDisplayPropertiesNode*)anode;
 
   this->SetScalarInvariant(node->ScalarInvariant);
   this->SetGlyphGeometry(node->GlyphGeometry);

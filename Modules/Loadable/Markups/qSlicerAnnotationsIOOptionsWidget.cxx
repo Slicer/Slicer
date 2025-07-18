@@ -47,7 +47,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   d->setupUi(this);
 
-  ctkFlowLayout* flowLayout = ctkFlowLayout::replaceLayout(this);
+  ctkFlowLayout* const flowLayout = ctkFlowLayout::replaceLayout(this);
 
   this->FileTypeButtonGroup = new QButtonGroup(flowLayout);
   this->FileTypeButtonGroup->addButton(d->FiducialRadioButton);
@@ -110,7 +110,7 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
   QStringList names;
   for (const QString& fileName : fileNames)
   {
-    QFileInfo fileInfo(fileName);
+    const QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
     {
       names << fileInfo.baseName();

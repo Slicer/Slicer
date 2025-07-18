@@ -157,7 +157,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
   }
   Q_ASSERT(d->MRMLTransformNode == transformNode);
 
-  bool isLinear = transformNode->IsLinear();
+  const bool isLinear = transformNode->IsLinear();
   this->setEnabled(isLinear);
   if (!isLinear)
   {
@@ -170,7 +170,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
     qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode, d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
   }
 
-  vtkMatrix4x4* matrix = transform->GetMatrix();
+  vtkMatrix4x4* const matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix)
   {
@@ -203,13 +203,13 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
       // emit signals with the truncated value.
       if (_value < this->minimum())
       {
-        bool wasBlocked = this->blockSignals(true);
+        const bool wasBlocked = this->blockSignals(true);
         this->setValue(this->minimum());
         this->blockSignals(wasBlocked);
       }
       else if (_value > this->maximum())
       {
-        bool wasBlocked = this->blockSignals(true);
+        const bool wasBlocked = this->blockSignals(true);
         this->setValue(this->maximum());
         this->blockSignals(wasBlocked);
       }
@@ -259,7 +259,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
     transform->Translate(centerOfTransformation);
   }
 
-  vtkMatrix4x4* matrix = transform->GetMatrix();
+  vtkMatrix4x4* const matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix)
   {
@@ -272,7 +272,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 
   if (this->typeOfTransform() == ROTATION_LR)
   {
-    double angle = _sliderPosition - d->OldPosition;
+    const double angle = _sliderPosition - d->OldPosition;
     transform->RotateX(angle);
     if (fabs(angle) > rotationChangeTolerance)
     {
@@ -281,7 +281,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   }
   else if (this->typeOfTransform() == ROTATION_PA)
   {
-    double angle = _sliderPosition - d->OldPosition;
+    const double angle = _sliderPosition - d->OldPosition;
     transform->RotateY(angle);
     if (fabs(angle) > rotationChangeTolerance)
     {
@@ -290,7 +290,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   }
   else if (this->typeOfTransform() == ROTATION_IS)
   {
-    double angle = _sliderPosition - d->OldPosition;
+    const double angle = _sliderPosition - d->OldPosition;
     transform->RotateZ(angle);
     if (fabs(angle) > rotationChangeTolerance)
     {

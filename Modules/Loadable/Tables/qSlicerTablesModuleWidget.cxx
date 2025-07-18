@@ -167,7 +167,7 @@ void qSlicerTablesModuleWidget::setup()
 void qSlicerTablesModuleWidget::onNodeSelected(vtkMRMLNode* node)
 {
   Q_D(qSlicerTablesModuleWidget);
-  vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(node);
+  vtkMRMLTableNode* const tableNode = vtkMRMLTableNode::SafeDownCast(node);
 
   this->qvtkReconnect(d->MRMLTableNode, tableNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLTableNodeModified(vtkObject*)));
   d->MRMLTableNode = tableNode;
@@ -188,8 +188,8 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
   Q_UNUSED(caller);
 #endif
 
-  bool validNode = d->MRMLTableNode != nullptr;
-  bool editableNode = d->MRMLTableNode != nullptr && !d->MRMLTableNode->GetLocked();
+  bool const validNode = d->MRMLTableNode != nullptr;
+  const bool editableNode = d->MRMLTableNode != nullptr && !d->MRMLTableNode->GetLocked();
 
   d->DisplayEditCollapsibleWidget->setEnabled(validNode);
   d->LockTableButton->setEnabled(validNode);
@@ -215,14 +215,14 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
 
   if (d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
   {
-    bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
+    const bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
     d->LockFirstRowButton->setChecked(d->MRMLTableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
   }
 
   if (d->MRMLTableNode->GetUseFirstColumnAsRowHeader() != d->LockFirstColumnButton->isChecked())
   {
-    bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
+    const bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
     d->LockFirstColumnButton->setChecked(d->MRMLTableNode->GetUseFirstColumnAsRowHeader());
     d->LockFirstColumnButton->blockSignals(wasBlocked);
   }
@@ -239,7 +239,7 @@ void qSlicerTablesModuleWidget::onLockTableButtonClicked()
   }
 
   // toggle the lock
-  int locked = d->MRMLTableNode->GetLocked();
+  const int locked = d->MRMLTableNode->GetLocked();
   d->MRMLTableNode->SetLocked(!locked);
 }
 

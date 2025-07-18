@@ -12,7 +12,7 @@ qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLLabelComboBoxPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLLabelComboBox* _widget = new qMRMLLabelComboBox(_parent);
+  qMRMLLabelComboBox* const _widget = new qMRMLLabelComboBox(_parent);
   return _widget;
 }
 

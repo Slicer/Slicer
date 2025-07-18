@@ -190,7 +190,7 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
   // Called with high priority so that it is processed here before the model is updated
   qvtkReconnect(scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onSceneBatchProcessEnded(vtkObject*)), 10.0);
 
-  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  vtkSlicerApplicationLogic* const appLogic = qSlicerApplication::application()->applicationLogic();
   if (appLogic)
   {
     qvtkReconnect(appLogic, vtkMRMLApplicationLogic::ShowViewContextMenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*)));
@@ -207,7 +207,7 @@ void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
   // Make observations between the added node and certain plugins
 
   // Observe display modified event so that display node menu events can be managed by subject hierarchy
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* const displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
 
   // qvtkReconnect would delete connections to all other displayable nodes that have been observed, so we need to
   // add connection using qvtkIsConnected and qvtkConnect.
@@ -220,14 +220,14 @@ void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtkObject* nodeObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;
   }
 
   // If subject hierarchy node, then merge it with the already used subject hierarchy node (and remove the new one)
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
+  vtkMRMLSubjectHierarchyNode* const subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
   if (subjectHierarchyNode)
   {
     // Calling this function makes sure that there is exactly one subject hierarchy node in the scene (performs the merge if more found)
@@ -254,10 +254,10 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
     if (foundPlugins.size() > 1)
     {
       // Let the user choose a plugin if more than one returned the same non-zero confidence value
-      QString textToDisplay = tr("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\n"
-                                 "Select plugin to add node named\n'%1'\n(type %2)")
-                                .arg(node->GetName())
-                                .arg(node->GetNodeTagName());
+      const QString textToDisplay = tr("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\n"
+                                       "Select plugin to add node named\n'%1'\n(type %2)")
+                                      .arg(node->GetName())
+                                      .arg(node->GetNodeTagName());
       selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
     }
     else if (foundPlugins.size() == 1)
@@ -275,7 +275,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
         return;
       }
       // Add under subject hierarchy scene item
-      bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, shNode->GetSceneItemID());
+      const bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, shNode->GetSceneItemID());
       if (!successfullyAddedByPlugin)
       {
         // Should never happen! If a plugin answers positively to the canOwn question (condition of
@@ -294,7 +294,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* sceneObject, vtkObject* nodeObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene || scene->IsClosing())
   {
     // Do nothing if scene is closing
@@ -316,11 +316,11 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
   }
 
   // Remove associated subject hierarchy item if any
-  vtkIdType itemID = shNode->GetItemByDataNode(dataNode);
+  const vtkIdType itemID = shNode->GetItemByDataNode(dataNode);
   if (itemID)
   {
     // Block render to avoid unnecessary view updates.
-    SlicerRenderBlocker renderBlocker;
+    const SlicerRenderBlocker renderBlocker;
     shNode->RemoveItem(itemID, false, false);
   }
 }
@@ -328,14 +328,14 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onNodeRemoved(vtkObject* sceneObject, vtkObject* nodeObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene || scene->IsClosing())
   {
     // Do nothing if scene is closing
     return;
   }
 
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
+  vtkMRMLSubjectHierarchyNode* const shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
   if (shNode)
   {
     // Make sure a new quasi-singleton subject hierarchy node is created
@@ -350,7 +350,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeRemoved(vtkObject* sceneObject, v
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onSceneImportEnded(vtkObject* sceneObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;
@@ -371,7 +371,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneImportEnded(vtkObject* sceneObje
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;
@@ -379,7 +379,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
 
   // Trigger creating new subject hierarchy node
   // (scene close removed the pseudo-singleton subject hierarchy node)
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
+  vtkMRMLSubjectHierarchyNode* const shNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << ": There must be a subject hierarchy node in the scene";
@@ -393,7 +393,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onSceneRestoreEnded(vtkObject* sceneObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;
@@ -424,7 +424,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sce
   shNode->GetItemChildren(shNode->GetSceneItemID(), allItemIDs, true);
   for (std::vector<vtkIdType>::iterator itemIt = allItemIDs.begin(); itemIt != allItemIDs.end(); ++itemIt)
   {
-    vtkIdType itemID = (*itemIt);
+    const vtkIdType itemID = (*itemIt);
     if (!shNode->GetItemLevel(itemID).empty())
     {
       continue; // Folder type item
@@ -456,7 +456,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sce
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onDisplayNodeModified(vtkObject* displayableNodeObject, vtkObject* displayNodeObject)
 {
-  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
+  vtkMRMLDisplayNode* const displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
   if (displayNode)
   {
     if (!qvtkIsConnected(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*))))
@@ -471,10 +471,10 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayNodeModified(vtkObject* displa
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(displayableNodeObject);
     if (displayableNode)
     {
-      int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+      const int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
       for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
       {
-        vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(displayNodeIndex);
+        vtkMRMLDisplayNode* const displayNode = displayableNode->GetNthDisplayNode(displayNodeIndex);
         if (!displayNode)
         {
           continue;
@@ -535,7 +535,7 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   }
   else
   {
-    vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+    vtkSlicerApplicationLogic* const appLogic = qSlicerApplication::application()->applicationLogic();
     if (!appLogic || !appLogic->GetMRMLScene())
     {
       qCritical() << Q_FUNC_INFO << ": Failed to access application logic or scene";
@@ -590,7 +590,7 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   d->EditPropertiesAction->setVisible(editActionVisible);
 
   // View context menu actions are filtered by enabledViewContextMenuActions for this item.
-  QStringList allowedViewContextMenuActionListForItem = this->allowedViewContextMenuActionNamesForItem(itemID);
+  const QStringList allowedViewContextMenuActionListForItem = this->allowedViewContextMenuActionNamesForItem(itemID);
   if (!allowedViewContextMenuActionListForItem.empty())
   {
     for (QAction* action : d->ViewContextMenuActions)
@@ -687,7 +687,7 @@ void qSlicerSubjectHierarchyPluginLogic::registerViewContextMenuAction(QAction* 
 void qSlicerSubjectHierarchyPluginLogic::editProperties()
 {
   Q_D(qSlicerSubjectHierarchyPluginLogic);
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  vtkMRMLSubjectHierarchyNode* const shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << " failed: Invalid subject hierarchy node";
@@ -760,8 +760,8 @@ QString qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(QMenu* menu, QL
       // the action is not on the allow-list, skip it
       continue;
     }
-    double sectionValue = action->property("section").toDouble();
-    int currentSection = static_cast<int>(sectionValue + 0.5);
+    const double sectionValue = action->property("section").toDouble();
+    const int currentSection = static_cast<int>(sectionValue + 0.5);
     if (currentSection > lastSection)
     {
       if (menu)
@@ -796,7 +796,7 @@ void qSlicerSubjectHierarchyPluginLogic::setAllowedViewContextMenuActionNamesFor
     qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
     return;
   }
-  std::string allowedViewContextMenuActions = actionObjectNames.join(";").toStdString();
+  const std::string allowedViewContextMenuActions = actionObjectNames.join(";").toStdString();
   shNode->SetItemAttribute(itemID, "allowedViewContextMenuActions", allowedViewContextMenuActions);
 }
 
@@ -809,7 +809,7 @@ QStringList qSlicerSubjectHierarchyPluginLogic::allowedViewContextMenuActionName
     qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
     return QStringList();
   }
-  std::string shNodeEnabledViewContextMenuActions = shNode->GetItemAttribute(itemID, "allowedViewContextMenuActions");
+  const std::string shNodeEnabledViewContextMenuActions = shNode->GetItemAttribute(itemID, "allowedViewContextMenuActions");
   if (shNodeEnabledViewContextMenuActions.empty())
   {
     return QStringList();

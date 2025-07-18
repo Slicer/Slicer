@@ -111,7 +111,7 @@ void vtkMRMLModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -169,7 +169,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorToMessageCollectionMacro(
@@ -187,7 +187,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // compute file prefix
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -326,17 +326,17 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     else if (extension == std::string(".meta")) // model in meta format
     {
       floatMesh::Pointer surfaceMesh = floatMesh::New();
-      MeshReaderType::Pointer readerSH = MeshReaderType::New();
+      const MeshReaderType::Pointer readerSH = MeshReaderType::New();
       try
       {
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
-        MeshReaderType::GroupType::Pointer group = readerSH->GetGroup();
+        const MeshReaderType::GroupType::Pointer group = readerSH->GetGroup();
         MeshReaderType::GroupType::ObjectListType* objList = group->GetChildren(1, nullptr);
 
-        MeshReaderType::GroupType::ObjectListType::iterator it = objList->begin();
-        itk::SpatialObject<3>* curObj = *it;
-        MeshSpatialObjectType::Pointer SOMesh = dynamic_cast<MeshSpatialObjectType*>(curObj);
+        const MeshReaderType::GroupType::ObjectListType::iterator it = objList->begin();
+        itk::SpatialObject<3>* const curObj = *it;
+        const MeshSpatialObjectType::Pointer SOMesh = dynamic_cast<MeshSpatialObjectType*>(curObj);
         surfaceMesh = SOMesh->GetMesh();
       }
       catch (itk::ExceptionObject& ex)
@@ -347,25 +347,25 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       }
       vtkNew<vtkPolyData> vtkMesh;
       // Get the number of points in the mesh
-      int numPoints = surfaceMesh->GetNumberOfPoints();
+      const int numPoints = surfaceMesh->GetNumberOfPoints();
 
       // Create the vtkPoints object and set the number of points
       vtkNew<vtkPoints> vpoints;
       vpoints->SetNumberOfPoints(numPoints);
       // iterate over all the points in the itk mesh filling in
       // the vtkPoints object as we go
-      floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
+      const floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
       for (floatMesh::PointsContainer::Iterator i = points->Begin(); i != points->End(); ++i)
       {
         // Get the point index from the point container iterator
-        int idx = i->Index();
+        const int idx = i->Index();
         vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
       }
       vtkMesh->SetPoints(vpoints.GetPointer());
 
       vtkNew<vtkCellArray> cells;
       floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
-      floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
+      const floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
       for (; itCells != itCellsEnd; ++itCells)
       {
         floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
@@ -481,7 +481,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       // is there an active scalar array?
       if (displayNode && displayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
       {
-        double* scalarRange = modelNode->GetMesh()->GetScalarRange();
+        double* const scalarRange = modelNode->GetMesh()->GetScalarRange();
         if (scalarRange)
         {
           vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
@@ -498,7 +498,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::WriteDataInternal", "Failed to write model: File name not specified.");
@@ -511,7 +511,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 1; // success
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   // We explicitly write the coordinate system into the file header.
   const std::string coordinateSystemTag = "SPACE"; // following NRRD naming convention
@@ -566,7 +566,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII);
 
-    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+    const std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
     {
@@ -607,7 +607,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkFieldData* fieldData = inputData->GetFieldData();
     if (!fieldData)
     {
-      vtkNew<vtkFieldData> newFieldData;
+      const vtkNew<vtkFieldData> newFieldData;
       inputData->SetFieldData(newFieldData.GetPointer());
       fieldData = newFieldData.GetPointer();
     }
@@ -645,7 +645,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII);
     triangulator->SetInputData(meshToWrite);
     writer->SetInputConnection(triangulator->GetOutputPort());
-    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+    const std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
     {
@@ -694,7 +694,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
     triangulator->SetInputData(meshToWrite);
     writer->SetInputConnection(triangulator->GetOutputPort());
-    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+    const std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->AddComment(coordinateSytemSpecification);
     try
     {
@@ -719,7 +719,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       displayNode->GetColor(color);
       // OBJ exporter sets the same color for ambient, diffuse, specular
       // so we scale it by 1/3 to avoid having too bright material.
-      double colorScale = 1.0 / 3.0;
+      const double colorScale = 1.0 / 3.0;
       actor->GetProperty()->SetColor(color[0] * colorScale, color[1] * colorScale, color[2] * colorScale);
       actor->GetProperty()->SetSpecularPower(3.0);
       actor->GetProperty()->SetOpacity(displayNode->GetOpacity());
@@ -737,14 +737,14 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
     }
     exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
-    std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
+    const std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     exporter->SetOBJFileComment(header.c_str());
     try
     {
       exporter->Write();
       // exporter's Write() does not provide a return value but UserMessages will capture any errors
       this->ResetFileNameList();
-      std::string materialFileName = fullNameWithoutExtension + ".mtl";
+      const std::string materialFileName = fullNameWithoutExtension + ".mtl";
       this->AddFileName(materialFileName.c_str());
     }
     catch (...)
@@ -839,13 +839,13 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
   }
 
   std::vector<vtkMRMLNode*> nodes;
-  unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLModelNode", nodes);
+  const unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLModelNode", nodes);
   for (unsigned int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++)
   {
     vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(nodes[nodeIndex]);
     if (node)
     {
-      const char* storageNodeID = node->GetStorageNodeID();
+      const char* const storageNodeID = node->GetStorageNodeID();
       if (storageNodeID && !strcmp(storageNodeID, this->ID))
       {
         return vtkMRMLModelNode::SafeDownCast(node);
@@ -894,7 +894,7 @@ int vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(const char* heade
   {
     return -1;
   }
-  std::string headerStr = header;
+  const std::string headerStr = header;
   if (headerStr.find("SPACE=RAS") != std::string::npos)
   {
     return vtkMRMLStorageNode::CoordinateSystemRAS;
@@ -924,7 +924,7 @@ int vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(vtkPointSet* mesh)
   {
     return -1;
   }
-  std::string headerStr = coordinateSystemArray->GetValue(0);
+  const std::string headerStr = coordinateSystemArray->GetValue(0);
   // We retrieved the value, now delete it, as it would interfere with writing of the file
   // if a coordinate system array is already specified in the mesh.
   fieldData->RemoveArray(coordinateSystemTag.c_str());

@@ -29,14 +29,14 @@
 
 int qSlicerModulePanelTest1(int argc, char* argv[])
 {
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
 
   qSlicerModulePanel modulePanel;
 
   // helpAndAcknowledgmentVisible property
   {
-    bool expected = true;
-    bool current = modulePanel.isHelpAndAcknowledgmentVisible();
+    const bool expected = true;
+    const bool current = modulePanel.isHelpAndAcknowledgmentVisible();
     if (current != expected)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
@@ -49,8 +49,8 @@ int qSlicerModulePanelTest1(int argc, char* argv[])
   modulePanel.setHelpAndAcknowledgmentVisible(false);
 
   {
-    bool expected = false;
-    bool current = modulePanel.isHelpAndAcknowledgmentVisible();
+    const bool expected = false;
+    const bool current = modulePanel.isHelpAndAcknowledgmentVisible();
     if (current != expected)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"

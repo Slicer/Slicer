@@ -93,8 +93,8 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
   logic->SetDefaultModuleDescription(d->Desc);
 
   // In developer mode keep the CLI modules input and output files
-  QSettings settings;
-  bool developerModeEnabled = settings.value("Developer/PreserveCLIModuleDataFiles", false).toBool();
+  const QSettings settings;
+  const bool developerModeEnabled = settings.value("Developer/PreserveCLIModuleDataFiles", false).toBool();
   if (developerModeEnabled)
   {
     logic->DeleteTemporaryFilesOff();
@@ -112,7 +112,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 QString qSlicerCLIModule::translate(const std::string& sourceText) const
 {
   Q_D(const qSlicerCLIModule);
-  QString contextName = QStringLiteral("CLI_") + this->name();
+  const QString contextName = QStringLiteral("CLI_") + this->name();
   return QCoreApplication::translate(contextName.toStdString().c_str(), sourceText.c_str());
 }
 
@@ -130,11 +130,11 @@ QStringList qSlicerCLIModule::categories() const
   // Category names are translated by component (instead of translating
   // "Registration.Specialized", we translate "Registration" and "Specialized").
   QStringList translatedCategoryList;
-  QStringList categoryList = QString::fromStdString(d->Desc.GetCategory()).split(';');
+  const QStringList categoryList = QString::fromStdString(d->Desc.GetCategory()).split(';');
   for (const QString& category : categoryList)
   {
     QStringList translatedCategoryComponentList;
-    QStringList categoryComponentList = category.split('.');
+    const QStringList categoryComponentList = category.split('.');
     for (const QString& categoryComponent : categoryComponentList)
     {
       translatedCategoryComponentList << QCoreApplication::translate("qSlicerAbstractCoreModule", categoryComponent.toStdString().c_str());
@@ -156,7 +156,7 @@ int qSlicerCLIModule::index() const
 {
   Q_D(const qSlicerCLIModule);
   bool ok = false;
-  int index = QString::fromStdString(d->Desc.GetIndex()).toInt(&ok);
+  const int index = QString::fromStdString(d->Desc.GetIndex()).toInt(&ok);
   return (ok ? index : -1);
 }
 
@@ -183,7 +183,7 @@ QString qSlicerCLIModule::helpText() const
   {
     // Translate "For more information, see the online documentation" text
     // so that translators don't need to deal with any HTML tags.
-    QString onlineDocLink = QString("<a href=\"%1\">%2</a>").arg(QString::fromStdString(d->Desc.GetDocumentationURL())).arg(tr("online documentation"));
+    const QString onlineDocLink = QString("<a href=\"%1\">%2</a>").arg(QString::fromStdString(d->Desc.GetDocumentationURL())).arg(tr("online documentation"));
     help += QString("<p>%1</p>").arg(tr("For more information see the %1.").arg(onlineDocLink));
   }
   return help;
@@ -245,7 +245,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
 //-----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic* qSlicerCLIModule::cliModuleLogic()
 {
-  vtkSlicerCLIModuleLogic* myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
+  vtkSlicerCLIModuleLogic* const myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
   return myLogic;
 }
 

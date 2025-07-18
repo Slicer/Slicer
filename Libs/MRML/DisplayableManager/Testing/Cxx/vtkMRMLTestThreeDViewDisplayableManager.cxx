@@ -92,7 +92,7 @@ void vtkMRMLTestThreeDViewDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLTestThreeDViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
+  vtkMRMLCameraNode* const cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)
   {
     return;

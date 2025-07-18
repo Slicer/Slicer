@@ -90,7 +90,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   {
     return false;
   }
-  int max = (steps != 1 ? steps : 100);
+  const int max = (steps != 1 ? steps : 100);
   this->ProgressDialog = new QProgressDialog(qSlicerIOManager::tr("Loading file... "), qSlicerIOManager::tr("Cancel"), 0, max);
   this->ProgressDialog->setWindowTitle(qSlicerIOManager::tr("Loading ..."));
   if (steps == 1)
@@ -132,7 +132,7 @@ void qSlicerIOManagerPrivate::readSettings()
 
   if (!settings.value("favoritesPaths").toList().isEmpty())
   {
-    QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
+    const QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
     for (const QString& varUrl : paths)
     {
       this->Favorites << QUrl(varUrl);
@@ -157,7 +157,7 @@ void qSlicerIOManagerPrivate::writeSettings()
   {
     list << url.toString();
   }
-  QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(list);
+  const QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(list);
   settings.setValue("favoritesPaths", QVariant(paths));
   settings.endGroup();
 }
@@ -231,7 +231,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDia
   bool deleteDialog = false;
   if (properties["objectName"].toString().isEmpty())
   {
-    QString name = d->createUniqueDialogName(fileType, action, properties);
+    const QString name = d->createUniqueDialogName(fileType, action, properties);
     properties["objectName"] = name;
   }
   qSlicerFileDialog* dialog = d->findDialog(fileType, action);
@@ -243,12 +243,12 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDia
     standardDialog->setAction(action);
     dialog = standardDialog;
   }
-  bool res = dialog->exec(properties);
+  const bool res = dialog->exec(properties);
   if (loadedNodes)
   {
     for (const QString& nodeID : dialog->loadedNodes())
     {
-      vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
+      vtkMRMLNode* const node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
       if (node)
       {
         loadedNodes->AddItem(node);
@@ -286,7 +286,7 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
-      QString supportedReader = dialog->description();
+      const QString supportedReader = dialog->description();
       if (dialog->fileType() == "NoFile")
       {
         genericReaders << supportedReader;
@@ -301,13 +301,13 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   QString selectedReader;
   if (supportedReaders.size() > 1)
   {
-    QString title = tr("Select a reader");
-    QString label = tr("Select a reader to use for your data:");
-    int current = 0;
-    bool editable = false;
+    const QString title = tr("Select a reader");
+    const QString label = tr("Select a reader to use for your data:");
+    const int current = 0;
+    const bool editable = false;
     bool ok = false;
-    qSlicerApplication* app = qSlicerApplication::application();
-    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    qSlicerApplication* const app = qSlicerApplication::application();
+    QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
     selectedReader = QInputDialog::getItem(mainWindow, title, label, supportedReaders, current, editable, &ok);
     if (!ok)
     {
@@ -415,7 +415,7 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
 bool qSlicerIOManager::isDialogRegistered(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const
 {
   Q_D(const qSlicerIOManager);
-  qSlicerFileDialog* existingDialog = d->findDialog(fileType, action);
+  qSlicerFileDialog* const existingDialog = d->findDialog(fileType, action);
   return existingDialog != nullptr;
 }
 
@@ -428,15 +428,15 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   Q_D(qSlicerIOManager);
   // speed up data loading by disabling re-rendering
   // (it can make a big difference if hundreds of nodes are loaded)
-  SlicerRenderBlocker renderBlocker;
-  bool needStop = d->startProgressDialog(1);
+  const SlicerRenderBlocker renderBlocker;
+  const bool needStop = d->startProgressDialog(1);
   d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
   if (needStop)
   {
     d->ProgressDialog->setValue(25);
   }
 
-  bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
+  const bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
   if (needStop)
   {
     d->stopProgressDialog();
@@ -450,12 +450,12 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vt
   Q_D(qSlicerIOManager);
   // Speed up data loading by disabling re-rendering
   // (it can make a big difference if hundreds of nodes are loaded)
-  SlicerRenderBlocker renderBlocker;
-  bool needStop = d->startProgressDialog(files.count());
+  const SlicerRenderBlocker renderBlocker;
+  const bool needStop = d->startProgressDialog(files.count());
   bool success = true;
   for (const qSlicerIO::IOProperties& fileProperties : files)
   {
-    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
+    const int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
     success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()), fileProperties, loadedNodes, userMessages) && success;
     if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
     {
@@ -485,7 +485,7 @@ void qSlicerIOManager::updateProgressDialog()
   {
     return;
   }
-  int progress = d->ProgressDialog->value();
+  const int progress = d->ProgressDialog->value();
   d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1));
   // Give time to process graphic events including the progress dialog if needed
   // TBD: Not needed ?
@@ -497,7 +497,7 @@ void qSlicerIOManager::openScreenshotDialog()
 {
   Q_D(qSlicerIOManager);
   // try opening the Annotation module's screen shot
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* const moduleManager = qSlicerApplication::application()->moduleManager();
 
   qSlicerAbstractCoreModule* modulePointer = nullptr;
   if (moduleManager)
@@ -525,14 +525,14 @@ void qSlicerIOManager::openScreenshotDialog()
 void qSlicerIOManager::openSceneViewsDialog()
 {
   //  Q_D(qSlicerIOManager);
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* const moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
     return;
   }
 
-  qSlicerAbstractCoreModule* modulePointer = moduleManager->module("SceneViews");
+  qSlicerAbstractCoreModule* const modulePointer = moduleManager->module("SceneViews");
   if (modulePointer == nullptr)
   {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
@@ -544,7 +544,7 @@ void qSlicerIOManager::openSceneViewsDialog()
 //-----------------------------------------------------------------------------
 void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMessageCollection* userMessages)
 {
-  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  const bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (isTestingEnabled)
   {
     // Do not block the execution with popup windows if testing mode is enabled.
@@ -557,8 +557,8 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
     // Everything is OK, no need to show error popup.
     return;
   }
-  qSlicerApplication* app = qSlicerApplication::application();
-  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  qSlicerApplication* const app = qSlicerApplication::application();
+  QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
   ctkMessageBox* messageBox = new ctkMessageBox(mainWindow);
   QString text;
   if (overallSuccess)
@@ -577,7 +577,7 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
   if (userMessages)
   {
     text += tr("Click 'Show details' button and check the application log for more information.");
-    QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString());
+    const QString messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString());
     messageBox->setDetailedText(messagesStr);
     qWarning() << Q_FUNC_INFO << "Errors occurred while loading nodes:" << messagesStr;
   }

@@ -49,7 +49,7 @@ int SlicerAppMain(int argc, char* argv[])
 
   app.setURIArgumentHandlingEnabled(true);
 
-  int exitCode = qSlicerApplicationHelper::postInitializeApplication<SlicerMainWindowType>(app, splashScreen, window);
+  const int exitCode = qSlicerApplicationHelper::postInitializeApplication<SlicerMainWindowType>(app, splashScreen, window);
   if (exitCode != 0)
   {
     return exitCode;
@@ -57,7 +57,7 @@ int SlicerAppMain(int argc, char* argv[])
 
   if (!window.isNull())
   {
-    QString windowTitle = QString("%1 %2").arg(window->windowTitle()).arg(Slicer_VERSION_FULL);
+    const QString windowTitle = QString("%1 %2").arg(window->windowTitle()).arg(Slicer_VERSION_FULL);
     window->setWindowTitle(windowTitle);
   }
 

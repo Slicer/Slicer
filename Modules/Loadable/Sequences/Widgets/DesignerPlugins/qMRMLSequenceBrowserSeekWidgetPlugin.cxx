@@ -27,7 +27,7 @@ qMRMLSequenceBrowserSeekWidgetPlugin::qMRMLSequenceBrowserSeekWidgetPlugin(QObje
 //------------------------------------------------------------------------------
 QWidget* qMRMLSequenceBrowserSeekWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceBrowserSeekWidget* _widget = new qMRMLSequenceBrowserSeekWidget(_parent);
+  qMRMLSequenceBrowserSeekWidget* const _widget = new qMRMLSequenceBrowserSeekWidget(_parent);
   return _widget;
 }
 

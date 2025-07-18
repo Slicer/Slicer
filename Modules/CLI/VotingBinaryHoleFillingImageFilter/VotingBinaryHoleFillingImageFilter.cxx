@@ -46,16 +46,16 @@ int main(int argc, char* argv[])
   typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  const ReaderType::Pointer reader = ReaderType::New();
+  const WriterType::Pointer writer = WriterType::New();
 
   reader->SetFileName(inputVolume.c_str());
   writer->SetFileName(outputVolume.c_str());
 
   typedef itk::VotingBinaryHoleFillingImageFilter<InputImageType, OutputImageType> FilterType;
 
-  FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling", CLPProcessInformation);
+  const FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling", CLPProcessInformation);
 
   InputImageType::SizeType indexRadius;
 

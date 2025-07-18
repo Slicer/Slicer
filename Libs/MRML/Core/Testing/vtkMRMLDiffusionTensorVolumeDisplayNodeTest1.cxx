@@ -15,7 +15,7 @@
 
 int vtkMRMLDiffusionTensorVolumeDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> node1;
+  const vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

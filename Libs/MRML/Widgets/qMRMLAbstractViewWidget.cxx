@@ -47,7 +47,7 @@ QColor qMRMLAbstractViewWidget::viewColor() const
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return QColor(127, 127, 127);
   }
-  double* layoutColorVtk = this->mrmlAbstractViewNode()->GetLayoutColor();
+  double* const layoutColorVtk = this->mrmlAbstractViewNode()->GetLayoutColor();
   QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   return layoutColor;
 }
@@ -72,7 +72,7 @@ void qMRMLAbstractViewWidget::setViewLabel(const QString& newViewLabel)
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return;
   }
-  std::string newViewLabelString = newViewLabel.toStdString();
+  const std::string newViewLabelString = newViewLabel.toStdString();
   this->mrmlAbstractViewNode()->SetLayoutLabel(newViewLabelString.c_str());
 }
 

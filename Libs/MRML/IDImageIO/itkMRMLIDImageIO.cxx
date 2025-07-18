@@ -128,11 +128,11 @@ vtkMRMLVolumeNode* MRMLIDImageIO::FileNameToVolumeNodePtr(const char* filename)
     // so far so good.  now lookup the node in the scene and see if we
     // can cast down to a MRMLVolumeNode
     //
-    vtkMRMLNode* node = scene->GetNodeByID(this->m_NodeID.c_str());
+    vtkMRMLNode* const node = scene->GetNodeByID(this->m_NodeID.c_str());
 
     if (node)
     {
-      vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(node);
+      vtkMRMLVolumeNode* const vnode = vtkMRMLVolumeNode::SafeDownCast(node);
 
       if (vnode)
       {
@@ -302,7 +302,7 @@ void MRMLIDImageIO::ReadImageInformation()
     // diffusion gradients, and b-values
     if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
     {
-      vtkMRMLDiffusionImageVolumeNode* di = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
+      vtkMRMLDiffusionImageVolumeNode* const di = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
 
       // throw the measurement frame into the meta-data dictionary
       // following NRRD conventions
@@ -315,7 +315,7 @@ void MRMLIDImageIO::ReadImageInformation()
     }
     else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
     {
-      vtkMRMLDiffusionWeightedVolumeNode* dw = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
+      vtkMRMLDiffusionWeightedVolumeNode* const dw = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
 
       // throw the measurement frame, diffusion gradients, and bvalue
       // into the meta-data dictionary following NRRD conventions
@@ -490,7 +490,7 @@ void MRMLIDImageIO::WriteImageInformation(vtkMRMLVolumeNode* node, vtkImageData*
   // diffusion gradients, and bvalues from values in the MetaDataDictionary
   if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
   {
-    vtkMRMLDiffusionImageVolumeNode* di = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
+    vtkMRMLDiffusionImageVolumeNode* const di = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
 
     MetaDataDictionary& thisDic = this->GetMetaDataDictionary();
 
@@ -498,7 +498,7 @@ void MRMLIDImageIO::WriteImageInformation(vtkMRMLVolumeNode* node, vtkImageData*
   }
   else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
   {
-    vtkMRMLDiffusionWeightedVolumeNode* dw = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
+    vtkMRMLDiffusionWeightedVolumeNode* const dw = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
 
     MetaDataDictionary& thisDic = this->GetMetaDataDictionary();
 
@@ -523,7 +523,7 @@ void MRMLIDImageIO::Write(const void* buffer)
   // Prevent firing modified events from this thread (we are not in main thread now), because via event observers a lot of
   // additional methods could be called, which can lead to crashes or other unpredictable behavior.
   // Instead, we disable modification and then request an update on the main thread once all modifications are done.
-  int wasModifying = node->GetDisableModifiedEvent();
+  const int wasModifying = node->GetDisableModifiedEvent();
   node->DisableModifiedEventOn();
   std::map<std::string, int> wereModifyingDisplayNodes;
   for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
@@ -574,7 +574,7 @@ void MRMLIDImageIO::Write(const void* buffer)
   else
   {
     // Tensor image
-    unsigned long imagesizeinpixels = this->GetImageSizeInPixels();
+    const unsigned long imagesizeinpixels = this->GetImageSizeInPixels();
 
     // Allocate tensor image (number of components set in WriteInformation())
     img->GetPointData()->GetTensors()->SetNumberOfTuples(imagesizeinpixels);
@@ -584,7 +584,7 @@ void MRMLIDImageIO::Write(const void* buffer)
     void* mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
     const void* bptr = buffer;
 
-    short csize = img->GetPointData()->GetTensors()->GetDataTypeSize();
+    const short csize = img->GetPointData()->GetTensors()->GetDataTypeSize();
     for (unsigned long i = 0; i < imagesizeinpixels; ++i)
     {
       memcpy((char*)mptr, (char*)bptr, csize);
@@ -619,7 +619,7 @@ void MRMLIDImageIO::Write(const void* buffer)
   // Invoke modified events on the main thread
   for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
   {
-    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+    vtkMRMLDisplayNode* const displayNode = node->GetNthDisplayNode(i);
     if (displayNode)
     {
       this->RequestModified(displayNode);
@@ -638,7 +638,7 @@ void MRMLIDImageIO::RequestModified(vtkMRMLNode* modifiedObject)
     // directly from this thread.
     // Call Start/EndModify instead of a simple Modified()
     // to invoke all other pending modified events.
-    bool wasModified = modifiedObject->StartModify();
+    const bool wasModified = modifiedObject->StartModify();
     modifiedObject->Modified();
     modifiedObject->EndModify(wasModified);
   }
@@ -659,7 +659,7 @@ void MRMLIDImageIO::PrintSelf(std::ostream& os, Indent indent) const
 void MRMLIDImageIO::SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffusionWeightedVolumeNode* dw)
 {
   // Measurement frame
-  std::string measurementFrameKey = "NRRD_measurement frame";
+  const std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
@@ -677,7 +677,7 @@ void MRMLIDImageIO::SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
 
   // copy into something we can serialize, e.g. something with a
   // copy constructor.
-  double rasToLPS[] = { -1.0, -1.0, 1.0 };
+  const double rasToLPS[] = { -1.0, -1.0, 1.0 };
   for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
@@ -692,7 +692,7 @@ void MRMLIDImageIO::SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
   // B value, encapsulate as a string like itkNRRDImageIO would do so
   // that programs can be written the same when using itkNRRDImageIO
   // or itkMRMLIDImageIO
-  std::string bValueKey = "DWMRI_b-value";
+  const std::string bValueKey = "DWMRI_b-value";
   double maxBValue = itk::NumericTraits<double>::NonpositiveMin();
   for (int i = 0; i < dw->GetNumberOfGradients(); ++i)
   {
@@ -710,7 +710,7 @@ void MRMLIDImageIO::SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
   // Diffusion gradients, encapsulate as a string like itkNRRDImageIO
   // would do so that programs can be written the same when using
   // itkNRRDImageIO or itkMRMLIDImageIO
-  std::string diffusionGradientKey = "DWMRI_gradient_";
+  const std::string diffusionGradientKey = "DWMRI_gradient_";
 
   for (int i = 0; i < dw->GetNumberOfGradients(); ++i)
   {
@@ -742,7 +742,7 @@ void MRMLIDImageIO::SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
 void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, MetaDataDictionary& dict)
 {
   // Measurement frame
-  std::string measurementFrameKey = "NRRD_measurement frame";
+  const std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
@@ -754,7 +754,7 @@ void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, Meta
   ExposeMetaData<std::vector<std::vector<double>>>(dict, measurementFrameKey, measurementFrameValue);
 
   // convert from a dictionary value to a data format for the node
-  double lpsToRAS[] = { -1.0, -1.0, 1.0 };
+  const double lpsToRAS[] = { -1.0, -1.0, 1.0 };
   for (unsigned int i = 0; i < 3; i++)
   {
     for (unsigned int j = 0; j < 3; j++)
@@ -778,7 +778,7 @@ void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, Meta
   // B value, just get it from the dictionary for now
   // B value is stored as a string in the MetaDataDictionary in
   // MRMLIDImageIO, just like it is for NRRDImageIO
-  std::string bValueKey = "DWMRI_b-value";
+  const std::string bValueKey = "DWMRI_b-value";
   double maxBValue = 1.0;
 
   // ExposeMetaData<double>(dict, bValueKey, maxBValue);
@@ -793,7 +793,7 @@ void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, Meta
 
   // Diffusion gradients are stored as strings in the
   // MetaDataDictionary in MRMLIDImageIO, just like for NRRDImageIO
-  std::string diffusionGradientKey = "DWMRI_gradient_";
+  const std::string diffusionGradientKey = "DWMRI_gradient_";
 
   // Gradients are keyed as DWMRI_gradient_0001, DWMRI_gradient_0002, etc.
   std::vector<std::string> keys = dict.GetKeys();
@@ -832,7 +832,7 @@ void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, Meta
   }
 
   // convert gradients
-  int disabledModify = dw->StartModify();
+  const int disabledModify = dw->StartModify();
   dw->SetNumberOfGradients(gradients.size());
   for (unsigned int i = 0; i < gradients.size(); ++i)
   {
@@ -846,7 +846,7 @@ void MRMLIDImageIO::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, Meta
 void MRMLIDImageIO::SetDTDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffusionImageVolumeNode* di)
 {
   // Measurement frame
-  std::string measurementFrameKey = "NRRD_measurement frame";
+  const std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
@@ -864,7 +864,7 @@ void MRMLIDImageIO::SetDTDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
 
   // copy into something we can serialize, e.g. something with a
   // copy constructor.
-  double rasToLPS[] = { -1.0, -1.0, 1.0 };
+  const double rasToLPS[] = { -1.0, -1.0, 1.0 };
   for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
@@ -881,7 +881,7 @@ void MRMLIDImageIO::SetDTDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffu
 void MRMLIDImageIO::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode* di, MetaDataDictionary& dict)
 {
   // Measurement frame
-  std::string measurementFrameKey = "NRRD_measurement frame";
+  const std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
@@ -893,7 +893,7 @@ void MRMLIDImageIO::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode* di, MetaDat
   ExposeMetaData<std::vector<std::vector<double>>>(dict, measurementFrameKey, measurementFrameValue);
 
   // convert from a dictionary value to a data format for the node
-  double lpsToRAS[] = { -1.0, -1.0, 1.0 };
+  const double lpsToRAS[] = { -1.0, -1.0, 1.0 };
   for (unsigned int i = 0; i < 3; i++)
   {
     for (unsigned int j = 0; j < 3; j++)

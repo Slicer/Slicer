@@ -30,7 +30,7 @@ qMRMLSliderWidgetPlugin::qMRMLSliderWidgetPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLSliderWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSliderWidget* _widget = new qMRMLSliderWidget(_parent);
+  qMRMLSliderWidget* const _widget = new qMRMLSliderWidget(_parent);
   return _widget;
 }
 

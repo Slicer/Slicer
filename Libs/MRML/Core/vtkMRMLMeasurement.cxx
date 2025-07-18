@@ -436,7 +436,7 @@ void vtkMRMLMeasurement::SetDisplayValue(double displayValue, const char* units 
     vtkErrorMacro("vtkMRMLMeasurement::SetDisplayValue: invalid display coefficient == 0.0, using 1.0 instead");
     displayCoefficient = 1.0;
   }
-  double value = displayValue / displayCoefficient;
+  const double value = displayValue / displayCoefficient;
 
   if (this->Value != value)
   {
@@ -485,7 +485,7 @@ void vtkMRMLMeasurement::SetValue(double value, const char* quantityName)
       modified = true;
     }
 
-    double displayCoefficient = unitNode->GetDisplayCoefficient();
+    const double displayCoefficient = unitNode->GetDisplayCoefficient();
     if (this->DisplayCoefficient != displayCoefficient)
     {
       this->DisplayCoefficient = displayCoefficient;
@@ -503,7 +503,7 @@ void vtkMRMLMeasurement::SetValue(double value, const char* quantityName)
     this->ValueDefined = true;
     modified = true;
   }
-  ComputationResult computationResult = vtkMRMLMeasurement::OK;
+  const ComputationResult computationResult = vtkMRMLMeasurement::OK;
   if (this->LastComputationResult != computationResult)
   {
     this->LastComputationResult = computationResult;
@@ -544,7 +544,7 @@ vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
     vtkWarningMacro("vtkMRMLMeasurement::GetUnitNode failed: selection node not found");
     return nullptr;
   }
-  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(selectionNode->GetUnitNodeID(quantityName)));
+  vtkMRMLUnitNode* const unitNode = vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(selectionNode->GetUnitNodeID(quantityName)));
 
   // Do not log warning if null, because for example there is no 'angle' unit node, and in
   // that case hundreds of warnings would be thrown in a non erroneous situation.

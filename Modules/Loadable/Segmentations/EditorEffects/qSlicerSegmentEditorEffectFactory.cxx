@@ -137,7 +137,7 @@ QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::co
     }
 
     // Effect not in the list yet, clone it and add it
-    qSlicerSegmentEditorAbstractEffect* clonedEffect = effect->clone();
+    qSlicerSegmentEditorAbstractEffect* const clonedEffect = effect->clone();
     if (!clonedEffect)
     {
       // make sure we don't put a nullptr pointer in the effect list

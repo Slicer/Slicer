@@ -29,7 +29,7 @@ int vtkMRMLLayoutLogicCompareTest(int, char*[])
 //----------------------------------------------------------------------------
 bool TestSetSlicerLayoutCompareGridView()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
@@ -71,7 +71,7 @@ bool TestSetSlicerLayoutCompareGridView()
 //----------------------------------------------------------------------------
 bool TestSetSlicerLayoutCompareGridViewEvents()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());

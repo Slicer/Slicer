@@ -49,7 +49,7 @@ int qMRMLNodeComboBoxTest9(int argc, char* argv[])
   vtkNew<vtkMRMLScalarVolumeNode> noAttributeNode;
   scene->AddNode(noAttributeNode.GetPointer());
 
-  const char* testingAttributeName = "testingAttribute";
+  const char* const testingAttributeName = "testingAttribute";
   const char* testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
   std::cout << "Volume node with no call to SetAttribute, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
   CHECK_NULL(testingAttribute);

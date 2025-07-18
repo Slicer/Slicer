@@ -138,8 +138,8 @@ int Env_Code_3_img(int loc[3], unsigned char* img, int dim[3])
   int nc;
   unsigned char* pos;
 
-  int _nzz = dim[0] * dim[1];
-  int _nx = dim[0];
+  const int _nzz = dim[0] * dim[1];
+  const int _nx = dim[0];
 
   pos = &img[loc[0] + dim[0] * (loc[1] + dim[1] * (loc[2] - 1))];
   nc = Q(-1 - _nx, 1) + Q(-_nx, 2) + Q(1 - _nx, 4) + Q(-1, 8) + Q(0, 16) //

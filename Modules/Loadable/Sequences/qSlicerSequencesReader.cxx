@@ -109,7 +109,7 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
     // Not a composite file extension, inspect the content
     // Unzipping the mrb file to inspect if it looks like a sequence would be too time-consuming,
     // therefore we only check NRRD files for now.
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
     {
       QFile file(fileName);
@@ -118,29 +118,29 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
         QTextStream in(&file);
         // The dimension and kinds fields are usually found at around position 500, but we
         // read a bit more just in case there are some extra fields.
-        QString line = in.read(800);
+        const QString line = in.read(800);
 
         bool looksLikeSequence = false;
 
         // Supported 4D NRRD files contain "dimension: 4" line.
         // 2D+t and 3D+color+t files are not yet supported.
-        QRegularExpression dimensionRe("dimension:([^\\n]+)");
-        QRegularExpressionMatch dimensionMatch = dimensionRe.match(line);
+        const QRegularExpression dimensionRe("dimension:([^\\n]+)");
+        const QRegularExpressionMatch dimensionMatch = dimensionRe.match(line);
         if (dimensionMatch.hasMatch())
         {
-          QString dimensionStr = dimensionMatch.captured(1);
+          const QString dimensionStr = dimensionMatch.captured(1);
           bool ok = false;
-          int dimension = dimensionStr.toInt(&ok);
+          const int dimension = dimensionStr.toInt(&ok);
           if (ok && dimension == 4)
           {
             // Supported 4D NRRD files "kinds" field contain "time" or "list" axis.
             // We don't want to load 3D+color images or displacement field volumes.
             // For example: "kinds: space space space list".
-            QRegularExpression kindsRe("kinds:([^\\n]+)");
-            QRegularExpressionMatch kindsMatch = kindsRe.match(line);
+            const QRegularExpression kindsRe("kinds:([^\\n]+)");
+            const QRegularExpressionMatch kindsMatch = kindsRe.match(line);
             if (kindsMatch.hasMatch())
             {
-              QString kindsStr = kindsMatch.captured(1);
+              const QString kindsStr = kindsMatch.captured(1);
               if (kindsStr.contains("list") || kindsStr.contains("time"))
               {
                 looksLikeSequence = true;
@@ -165,7 +165,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSequencesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   this->setLoadedNodes(QStringList());
   if (d->SequencesLogic.GetPointer() == 0)
@@ -182,7 +182,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
 
   if (properties.contains("name"))
   {
-    std::string customName = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toLatin1());
+    const std::string customName = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toLatin1());
     node->SetName(customName.c_str());
   }
 
@@ -197,7 +197,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
   vtkMRMLSequenceBrowserNode* browserNode = nullptr;
   if (show)
   {
-    std::string browserCustomName = std::string(node->GetName()) + " browser";
+    const std::string browserCustomName = std::string(node->GetName()) + " browser";
     browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLSequenceBrowserNode", browserCustomName));
   }
   if (browserNode)
@@ -207,7 +207,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
     qSlicerSequencesModule::showSequenceBrowser(browserNode);
 
     d->SequencesLogic->UpdateProxyNodesFromSequences(browserNode);
-    vtkMRMLNode* proxyNode = browserNode->GetProxyNode(node);
+    vtkMRMLNode* const proxyNode = browserNode->GetProxyNode(node);
 
     // Associate color node
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(proxyNode);
@@ -215,7 +215,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
     {
       if (properties.contains("colorNodeID"))
       {
-        QString colorNodeID = properties["colorNodeID"].toString();
+        const QString colorNodeID = properties["colorNodeID"].toString();
         if (displayableNode->GetDisplayNode())
         {
           displayableNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toUtf8());

@@ -122,7 +122,7 @@ vtkStringArray* vtkDataFileFormatHelper::GetITKSupportedWriteFileFormats()
 void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 {
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
-  int numFiles = sizeof(FileFormatTable) / sizeof(FileFormatTable[0]);
+  int const numFiles = sizeof(FileFormatTable) / sizeof(FileFormatTable[0]);
   typedef std::set<std::string> ArrayOfITKIOClassName;
   ArrayOfITKIOClassName ITKIOClassNames;
 #else
@@ -137,7 +137,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   ArrayOfImageIOType::iterator itr = allobjects.begin();
   while (itr != allobjects.end())
   {
-    IOBaseType* io = dynamic_cast<IOBaseType*>(itr->GetPointer());
+    IOBaseType* const io = dynamic_cast<IOBaseType*>(itr->GetPointer());
     if (!io)
     {
       continue;
@@ -145,7 +145,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
     else
     {
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
-      std::string ioClassName = io->GetNameOfClass();
+      std::string const ioClassName = io->GetNameOfClass();
       ITKIOClassNames.insert(ioClassName);
 #else
       const ArrayOfITKExtensionsType& writeExtensions = io->GetSupportedWriteExtensions();
@@ -168,7 +168,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   for (int idx = 0; idx < numFiles; idx++)
   {
     ITKImageFileFormat structFileFormat = FileFormatTable[idx];
-    std::string ioClassName(structFileFormat.ClassName);
+    const std::string ioClassName(structFileFormat.ClassName);
     if (ITKIOClassNames.find(ioClassName) != ITKIOClassNames.end() ||                            //
         this->SupportedWriteFileClassNames->LookupValue(structFileFormat.ClassName) == -1 ||     //
         this->SupportedWriteFileGenericNames->LookupValue(structFileFormat.GenericName) == -1 || //
@@ -197,9 +197,9 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(const char
   // also supports: ".EXT" however this is deprecated
   //                and use will print warning.
 
-  std::string fileformat(format);
+  const std::string fileformat(format);
   std::string::size_type pos1 = fileformat.find("(");
-  std::string::size_type pos2 = fileformat.find(")");
+  const std::string::size_type pos2 = fileformat.find(")");
   if (pos1 != std::string::npos && //
       pos2 != std::string::npos)
   {
@@ -245,25 +245,25 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(const char
 //----------------------------------------------------------------------------
 const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(const char* format)
 {
-  std::string fileformat(format);
-  std::string fileExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileformat.c_str());
+  const std::string fileformat(format);
+  const std::string fileExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileformat.c_str());
   // if no extension found
   if (fileExt.empty())
   {
     return nullptr;
   }
-  std::string::size_type pos1 = fileformat.find("(");
+  const std::string::size_type pos1 = fileformat.find("(");
   if (pos1 != std::string::npos)
   {
     // remove trailing space too
-    std::string genericName = fileformat.substr(0, pos1 - 1);
+    const std::string genericName = fileformat.substr(0, pos1 - 1);
 
     vtkStringArray* itkFileExtensions = this->GetITKSupportedWriteFileExtensions();
 
     for (int idx = 0; idx < itkFileExtensions->GetNumberOfTuples(); idx++)
     {
-      const char* extFormat = this->GetITKSupportedExtensionGenericNameByIndex(idx);
-      std::string strExt = vtksys::SystemTools::LowerCase(itkFileExtensions->GetValue(idx));
+      const char* const extFormat = this->GetITKSupportedExtensionGenericNameByIndex(idx);
+      const std::string strExt = vtksys::SystemTools::LowerCase(itkFileExtensions->GetValue(idx));
 
       if ((!strExt.empty() && strExt.compare(fileExt) == 0) //
           && (extFormat && strcmp(extFormat, genericName.c_str()) == 0))

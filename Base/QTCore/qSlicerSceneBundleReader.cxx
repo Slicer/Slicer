@@ -96,11 +96,11 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   vtkCollection* nodes = this->mrmlScene()->GetNodes();
   for (int index = 0; index < nodes->GetNumberOfItems(); ++index)
   {
-    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index));
+    vtkMRMLNode* const node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index));
     nodesPresentBeforeLoading.insert(node);
   }
 
-  bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear, this->userMessages());
+  const bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear, this->userMessages());
 
   // Get all the new nodes
   QStringList loadedNodeIds;

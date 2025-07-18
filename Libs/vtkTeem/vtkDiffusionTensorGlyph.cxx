@@ -405,7 +405,7 @@ int vtkDiffusionTensorGlyph::RequestData(vtkInformation* vtkNotUsed(request), vt
 
     // Decide whether this tensor will be glyphed:
     // Threshold by trace ( must be > 0)
-    double trace = vtkDiffusionTensorMathematics::Trace(tensor);
+    const double trace = vtkDiffusionTensorMathematics::Trace(tensor);
 
     // Only display this glyph if either:
     // a) we are masking and the mask is 1 at this location.
@@ -723,7 +723,7 @@ int vtkDiffusionTensorGlyph::RequestData(vtkInformation* vtkNotUsed(request), vt
 
   if (newScalars)
   {
-    int idx = outPD->AddArray(newScalars);
+    const int idx = outPD->AddArray(newScalars);
     outPD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
     newScalars->Delete();
   }

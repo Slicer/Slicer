@@ -29,7 +29,7 @@
 
 int qSlicerErrorReportDialogTest1(int argc, char* argv[])
 {
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
 
   qSlicerErrorReportDialog errorReport;
 

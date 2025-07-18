@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     std::cerr << "Failed to read input model file " << surface << std::endl;
     return EXIT_FAILURE;
   }
-  vtkSmartPointer<vtkPolyData> closedSurfacePolyData_RAS = modelNode->GetPolyData();
+  const vtkSmartPointer<vtkPolyData> closedSurfacePolyData_RAS = modelNode->GetPolyData();
   if (!closedSurfacePolyData_RAS || closedSurfacePolyData_RAS->GetNumberOfPoints() < 2 || closedSurfacePolyData_RAS->GetNumberOfCells() < 2)
   {
     std::cerr << "Invalid polydata in model file " << surface << std::endl;
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     std::cerr << "Invalid input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;
   }
-  int* referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
+  int* const referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
   if (referenceVolumeExtent[0] >= referenceVolumeExtent[1]    //
       || referenceVolumeExtent[2] >= referenceVolumeExtent[3] //
       || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   vtkNew<vtkOrientedImageData> binaryLabelmap;
   binaryLabelmap->SetExtent(referenceVolumeExtent);
   binaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
-  void* binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
+  void* const binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
   if (!binaryLabelmapVoxelsPointer)
   {
     std::cerr << "Failed to allocate memory for output labelmap image" << std::endl;
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   // Now the output labelmap image data contains the right geometry.
   // We need to apply inverse of geometry matrix to the input poly data so that we can perform
   // the conversion in IJK space, because the filters do not support oriented image data.
-  vtkNew<vtkMatrix4x4> ijkToRASMatrix;
+  const vtkNew<vtkMatrix4x4> ijkToRASMatrix;
   referenceVolumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
   vtkNew<vtkTransform> rasToIJKTransform;
   rasToIJKTransform->SetMatrix(ijkToRASMatrix);

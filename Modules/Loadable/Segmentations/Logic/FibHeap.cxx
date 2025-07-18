@@ -85,10 +85,10 @@ void FibHeap::Union(FibHeap* OtherHeap)
   // min node and the node after the min.  This code just pulls those
   // nodes into temporary variables so we don't get lost as changes
   // are made.
-  FibHeapNode* Min1 = m_MinRoot;
-  FibHeapNode* Min2 = OtherHeap->m_MinRoot;
-  FibHeapNode* Next1 = HeapNodeFromIndex(Min1->m_Right);
-  FibHeapNode* Next2 = HeapNodeFromIndex(Min2->m_Right);
+  FibHeapNode* const Min1 = m_MinRoot;
+  FibHeapNode* const Min2 = OtherHeap->m_MinRoot;
+  FibHeapNode* const Next1 = HeapNodeFromIndex(Min1->m_Right);
+  FibHeapNode* const Next2 = HeapNodeFromIndex(Min2->m_Right);
 
   // To join the two circles, we join the minimum nodes to the next
   // nodes on the opposite chains.  Conceptually, it looks like the way
@@ -205,7 +205,7 @@ int FibHeap::DecreaseKey(FibHeapNode* theNode, NodeKeyValueType keyValue)
 
   (*theNode) = keyValue;
 
-  FibHeapNode* theParent = HeapNodeFromIndex(theNode->m_Parent);
+  FibHeapNode* const theParent = HeapNodeFromIndex(theNode->m_Parent);
   if (theParent != nullptr && *theNode < *theParent)
   {
     Cut(theNode, theParent);

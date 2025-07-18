@@ -91,8 +91,8 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
   this->setWrittenNodes(QStringList());
 
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QFileInfo fileInfo(properties["fileName"].toString());
-  QString baseDir = fileInfo.absolutePath();
+  const QFileInfo fileInfo(properties["fileName"].toString());
+  const QString baseDir = fileInfo.absolutePath();
   if (!QFileInfo(baseDir).isWritable())
   {
     qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
@@ -122,9 +122,9 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
   // set the mrml scene url first
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QFileInfo fileInfo(properties["fileName"].toString());
-  QString baseDir = fileInfo.absolutePath();
-  QString fullPath = fileInfo.absoluteFilePath();
+  const QFileInfo fileInfo(properties["fileName"].toString());
+  const QString baseDir = fileInfo.absolutePath();
+  const QString fullPath = fileInfo.absoluteFilePath();
 
   this->mrmlScene()->SetURL(fullPath.toUtf8());
   this->mrmlScene()->SetRootDirectory(baseDir.toUtf8());
@@ -132,9 +132,9 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   if (properties.contains("screenShot"))
   {
     // screenshot is provided, save along with the scene mrml file
-    QImage screenShot = properties["screenShot"].value<QImage>();
+    const QImage screenShot = properties["screenShot"].value<QImage>();
     // convert to vtkImageData
-    vtkNew<vtkImageData> imageData;
+    const vtkNew<vtkImageData> imageData;
     qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
     vtkSlicerApplicationLogic* applicationLogic = qSlicerCoreApplication::application()->applicationLogic();
     Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
@@ -142,7 +142,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   }
 
   // write out the mrml file
-  bool res = this->mrmlScene()->Commit();
+  const bool res = this->mrmlScene()->Commit();
   if (!res)
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent, tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()).toStdString());
@@ -159,9 +159,9 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   // named based on the user's selection.
   //
 
-  QFileInfo fileInfo(properties["fileName"].toString());
-  QString baseDir = fileInfo.absolutePath();
-  QString fullPath = fileInfo.absoluteFilePath();
+  const QFileInfo fileInfo(properties["fileName"].toString());
+  const QString baseDir = fileInfo.absolutePath();
+  const QString fullPath = fileInfo.absoluteFilePath();
 
   // Save URL and root directory so next time when the scene is saved,
   // again, the same folder and filename is used by default.
@@ -180,13 +180,13 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   vtkSmartPointer<vtkImageData> thumbnail;
   if (properties.contains("screenShot"))
   {
-    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    const QPixmap screenShot = properties["screenShot"].value<QPixmap>();
     // convert to vtkImageData
     thumbnail = vtkSmartPointer<vtkImageData>::New();
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), thumbnail);
   }
 
-  bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail, this->userMessages());
+  const bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail, this->userMessages());
   if (!success)
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent, tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()).toStdString());
@@ -208,18 +208,18 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
 bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& properties)
 {
   // open a file dialog to let the user choose where to save
-  QString saveDirName = properties["fileName"].toString();
+  const QString saveDirName = properties["fileName"].toString();
 
-  QDir saveDir(saveDirName);
+  const QDir saveDir(saveDirName);
   if (!saveDir.exists())
   {
     QDir().mkpath(saveDir.absolutePath());
   }
-  int numFiles = saveDir.count() - 2;
+  const int numFiles = saveDir.count() - 2;
   if (numFiles != 0)
   {
-    qSlicerApplication* app = qSlicerApplication::application();
-    QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+    qSlicerApplication* const app = qSlicerApplication::application();
+    QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
     ctkMessageBox* emptyMessageBox = new ctkMessageBox(mainWindow);
     QString error;
     switch (numFiles)
@@ -229,10 +229,10 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
       case 1: error = tr("contains 1 file or directory"); break;
       default: error = tr("contains %1 files or directories").arg(numFiles); break;
     }
-    QString message = tr("Selected directory\n\"%1\"\n%2.\n"
-                         "Please choose an empty directory.")
-                        .arg(saveDirName)
-                        .arg(error);
+    const QString message = tr("Selected directory\n\"%1\"\n%2.\n"
+                               "Please choose an empty directory.")
+                              .arg(saveDirName)
+                              .arg(error);
     emptyMessageBox->setIcon(QMessageBox::Warning);
     emptyMessageBox->setText(message);
     emptyMessageBox->exec();
@@ -243,7 +243,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
   vtkSmartPointer<vtkImageData> imageData;
   if (properties.contains("screenShot"))
   {
-    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    const QPixmap screenShot = properties["screenShot"].value<QPixmap>();
     // convert to vtkImageData
     imageData = vtkSmartPointer<vtkImageData>::New();
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
@@ -251,7 +251,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
 
   vtkSlicerApplicationLogic* applicationLogic = qSlicerCoreApplication::application()->applicationLogic();
   Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
-  bool retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(saveDirName.toUtf8(), imageData);
+  const bool retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(saveDirName.toUtf8(), imageData);
   if (retval)
   {
     qDebug() << "Saved scene to dir" << saveDirName;

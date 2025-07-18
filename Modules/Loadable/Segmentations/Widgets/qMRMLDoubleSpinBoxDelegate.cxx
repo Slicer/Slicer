@@ -47,7 +47,7 @@ QWidget* qMRMLDoubleSpinBoxDelegate::createEditor(QWidget* parent, const QStyleO
 //-----------------------------------------------------------------------------
 void qMRMLDoubleSpinBoxDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-  double value = index.model()->data(index, Qt::EditRole).toDouble();
+  const double value = index.model()->data(index, Qt::EditRole).toDouble();
   QDoubleSpinBox* spinBox = static_cast<QDoubleSpinBox*>(editor);
   spinBox->setValue(value);
 }
@@ -57,7 +57,7 @@ void qMRMLDoubleSpinBoxDelegate::setModelData(QWidget* editor, QAbstractItemMode
 {
   QDoubleSpinBox* spinBox = static_cast<QDoubleSpinBox*>(editor);
   spinBox->interpretText();
-  double value = spinBox->value();
+  const double value = spinBox->value();
   model->setData(index, value, Qt::EditRole);
 }
 
@@ -70,6 +70,6 @@ void qMRMLDoubleSpinBoxDelegate::updateEditorGeometry(QWidget* editor, const QSt
 //------------------------------------------------------------------------------
 void qMRMLDoubleSpinBoxDelegate::commitSenderData()
 {
-  QWidget* editor = qobject_cast<QWidget*>(this->sender());
+  QWidget* const editor = qobject_cast<QWidget*>(this->sender());
   emit commitData(editor);
 }

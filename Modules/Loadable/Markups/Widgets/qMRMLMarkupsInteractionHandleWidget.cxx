@@ -155,7 +155,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   }
 
   // Scale handles currently not implemented for all representations
-  bool canDisplayScaleHandles = d->DisplayNode->GetCanDisplayScaleHandles();
+  const bool canDisplayScaleHandles = d->DisplayNode->GetCanDisplayScaleHandles();
   d->scaleVisibilityCheckBox->setEnabled(canDisplayScaleHandles);
   d->scaleXCheckBox->setEnabled(canDisplayScaleHandles);
   d->scaleYCheckBox->setEnabled(canDisplayScaleHandles);
@@ -177,7 +177,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->translateVisibilityCheckBox->setChecked(d->DisplayNode->GetTranslationHandleVisibility());
   d->translateVisibilityCheckBox->blockSignals(wasBlocking);
 
-  bool* translationHandleAxes = d->DisplayNode->GetTranslationHandleComponentVisibility();
+  bool* const translationHandleAxes = d->DisplayNode->GetTranslationHandleComponentVisibility();
   wasBlocking = d->translateXCheckBox->blockSignals(true);
   d->translateXCheckBox->setChecked(translationHandleAxes[0]);
   d->translateXCheckBox->blockSignals(wasBlocking);
@@ -200,7 +200,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->rotateVisibilityCheckBox->setChecked(d->DisplayNode->GetRotationHandleVisibility());
   d->rotateVisibilityCheckBox->blockSignals(wasBlocking);
 
-  bool* rotationHandleAxes = d->DisplayNode->GetRotationHandleComponentVisibility();
+  bool* const rotationHandleAxes = d->DisplayNode->GetRotationHandleComponentVisibility();
   wasBlocking = d->rotateXCheckBox->blockSignals(true);
   d->rotateXCheckBox->setChecked(rotationHandleAxes[0]);
   d->rotateXCheckBox->blockSignals(wasBlocking);
@@ -223,7 +223,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->scaleVisibilityCheckBox->setChecked(d->DisplayNode->GetScaleHandleVisibility() && canDisplayScaleHandles);
   d->scaleVisibilityCheckBox->blockSignals(wasBlocking);
 
-  bool* scaleHandleAxes = d->DisplayNode->GetScaleHandleComponentVisibility();
+  bool* const scaleHandleAxes = d->DisplayNode->GetScaleHandleComponentVisibility();
   wasBlocking = d->scaleXCheckBox->blockSignals(true);
   d->scaleXCheckBox->setChecked(scaleHandleAxes[0] && canDisplayScaleHandles);
   d->scaleXCheckBox->blockSignals(wasBlocking);
@@ -258,7 +258,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
     return;
   }
 
-  MRMLNodeModifyBlocker displayNodeBlocker(d->DisplayNode);
+  const MRMLNodeModifyBlocker displayNodeBlocker(d->DisplayNode);
   d->DisplayNode->SetHandlesInteractive(d->overallVisibilityCheckBox->isChecked());
 
   bool translationHandleAxes[4] = {

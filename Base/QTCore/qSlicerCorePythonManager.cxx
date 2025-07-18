@@ -51,7 +51,7 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
   config.parse_argv = 0;
 
   // If it applies, disable import of user site packages
-  QString noUserSite = qgetenv("PYTHONNOUSERSITE");
+  const QString noUserSite = qgetenv("PYTHONNOUSERSITE");
   config.user_site_directory = noUserSite.toInt(); // disable user site packages
 
   status = PyConfig_SetString(&config, &config.program_name, L"Slicer");
@@ -97,7 +97,7 @@ void qSlicerCorePythonManager::preInitialization()
   Superclass::preInitialization();
   this->Factory = new ctkVTKPythonQtWrapperFactory;
   this->addWrapperFactory(this->Factory);
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (app)
   {
     // Add object to python interpreter context
@@ -116,9 +116,9 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 #endif
 
   // Remove the last part
-  QString attributeName = moduleNameList.takeLast();
+  const QString attributeName = moduleNameList.takeLast();
 
-  bool success = qSlicerScriptedUtils::setModuleAttribute(moduleNameList.join("."), attributeName, vtkPythonUtil::GetObjectFromPointer(object));
+  const bool success = qSlicerScriptedUtils::setModuleAttribute(moduleNameList.join("."), attributeName, vtkPythonUtil::GetObjectFromPointer(object));
   if (!success)
   {
     qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "

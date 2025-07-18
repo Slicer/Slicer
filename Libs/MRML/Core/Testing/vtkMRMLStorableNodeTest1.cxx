@@ -39,7 +39,7 @@ vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);
 //---------------------------------------------------------------------------
 int vtkMRMLStorableNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLStorableNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLStorableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

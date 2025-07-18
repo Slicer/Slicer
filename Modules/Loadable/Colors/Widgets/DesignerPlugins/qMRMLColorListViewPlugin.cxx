@@ -28,7 +28,7 @@ qMRMLColorListViewPlugin::qMRMLColorListViewPlugin(QObject* _parent)
 
 QWidget* qMRMLColorListViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLColorListView* _widget = new qMRMLColorListView(_parent);
+  qMRMLColorListView* const _widget = new qMRMLColorListView(_parent);
   return _widget;
 }
 

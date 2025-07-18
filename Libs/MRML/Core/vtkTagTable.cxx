@@ -79,8 +79,8 @@ void vtkTagTable::AddOrUpdateTag(const char* attribute, const char* value)
     {
       //--- otherwise...
       //--- add tag in a new column and deselect it
-      std::string att(attribute);
-      std::string val(value);
+      const std::string att(attribute);
+      const std::string val(value);
       this->TagTable.insert(std::make_pair(att, val));
       this->TagSelectionTable.insert(std::make_pair(att, 0));
     }
@@ -110,8 +110,8 @@ void vtkTagTable::AddOrUpdateTag(const char* attribute, const char* value, int s
     {
       //--- otherwise...
       //--- add tag in a new column and deselect it
-      std::string att(attribute);
-      std::string val(value);
+      const std::string att(attribute);
+      const std::string val(value);
       this->TagTable.insert(std::make_pair(att, val));
       this->TagSelectionTable.insert(std::make_pair(att, selected));
     }
@@ -160,8 +160,8 @@ void vtkTagTable::AddUniqueTag(const char* attribute, const char* value)
       value = "NULL";
     }
 
-    std::string att(attribute);
-    std::string val(value);
+    const std::string att(attribute);
+    const std::string val(value);
     std::map<std::string, std::string>::iterator iter;
     int unique = 1;
     for (iter = this->TagTable.begin(); iter != this->TagTable.end(); iter++)
@@ -177,7 +177,7 @@ void vtkTagTable::AddUniqueTag(const char* attribute, const char* value)
     {
       //--- otherwise...
       //--- add tag in a new column and deselect it
-      std::string val2(value);
+      const std::string val2(value);
       this->TagTable.insert(std::make_pair(att, val2));
       this->TagSelectionTable.insert(std::make_pair(att, 0));
     }
@@ -188,8 +188,8 @@ void vtkTagTable::AddUniqueTag(const char* attribute, const char* value)
 int vtkTagTable::UpdateTag(const char* attribute, const char* value)
 {
 
-  std::string att = attribute;
-  std::string val = value;
+  const std::string att = attribute;
+  const std::string val = value;
 
   //--- try to do a case insensitive comparison.
   //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
@@ -216,8 +216,8 @@ int vtkTagTable::UpdateTag(const char* attribute, const char* value)
 int vtkTagTable::UpdateTag(const char* attribute, const char* value, int selected)
 {
 
-  std::string att = attribute;
-  std::string val = value;
+  const std::string att = attribute;
+  const std::string val = value;
 
   //--- try to do a case insensitive comparison.
   //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
@@ -251,7 +251,7 @@ int vtkTagTable::UpdateTag(const char* attribute, const char* value, int selecte
 //----------------------------------------------------------------------------
 void vtkTagTable::SelectTag(const char* attribute)
 {
-  std::string att(attribute);
+  const std::string att(attribute);
 
   std::map<std::string, int>::iterator iter;
   for (iter = this->TagSelectionTable.begin(); iter != this->TagSelectionTable.end(); iter++)
@@ -267,7 +267,7 @@ void vtkTagTable::SelectTag(const char* attribute)
 void vtkTagTable::DeselectTag(const char* attribute)
 {
 
-  std::string att(attribute);
+  const std::string att(attribute);
 
   std::map<std::string, int>::iterator iter;
   for (iter = this->TagSelectionTable.begin(); iter != this->TagSelectionTable.end(); iter++)
@@ -283,7 +283,7 @@ void vtkTagTable::DeselectTag(const char* attribute)
 int vtkTagTable::IsTagSelected(const char* attribute)
 {
 
-  std::string att(attribute);
+  const std::string att(attribute);
 
   std::map<std::string, int>::iterator iter;
   for (iter = this->TagSelectionTable.begin(); iter != this->TagSelectionTable.end(); iter++)
@@ -338,7 +338,7 @@ const char* vtkTagTable::GetTagValue(int index)
 //----------------------------------------------------------------------------
 const char* vtkTagTable::GetTagValue(const char* attribute)
 {
-  std::string att(attribute);
+  const std::string att(attribute);
   std::map<std::string, std::string>::iterator iter;
   int i = 0;
 
@@ -416,7 +416,7 @@ void vtkTagTable::ClearTagTable()
 void vtkTagTable::DeleteTag(const char* attribute)
 {
 
-  std::string att(attribute);
+  const std::string att(attribute);
 
   this->TagTable.erase(att);
   this->TagSelectionTable.erase(att);

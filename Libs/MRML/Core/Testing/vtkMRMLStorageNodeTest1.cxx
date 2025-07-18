@@ -76,7 +76,7 @@ int vtkMRMLStorageNodeTest1(int, char*[])
 //---------------------------------------------------------------------------
 int TestBasics()
 {
-  vtkNew<vtkMRMLStorageNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLStorageNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }
@@ -88,8 +88,8 @@ int TestReadData(TestReadReferenceType referenceNodeType, const char* supportedC
   storageNode->SupportedClass = supportedClass;
   storageNode->ReadDataReturnValue = readDataReturn;
   storageNode->SetFileName("file.ext");
-  vtkNew<vtkMRMLLinearTransformNode> transformNode;
-  vtkNew<vtkMRMLModelNode> modelNode;
+  const vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  const vtkNew<vtkMRMLModelNode> modelNode;
   vtkMRMLNode* referenceNode = nullptr;
   switch (referenceNodeType)
   {
@@ -97,7 +97,7 @@ int TestReadData(TestReadReferenceType referenceNodeType, const char* supportedC
     case TransformNodeAsReference: referenceNode = transformNode; break;
     case ModelNodeAsReference: referenceNode = modelNode; break;
   }
-  int res = storageNode->ReadData(referenceNode);
+  const int res = storageNode->ReadData(referenceNode);
   std::cout << "StoredTime: " << storageNode->GetStoredTime() << std::endl;
   CHECK_INT(res, expectedRes);
   return EXIT_SUCCESS;
@@ -158,7 +158,7 @@ int TestWriteData()
 //---------------------------------------------------------------------------
 int TestExtensionFormatHelper()
 {
-  vtkNew<vtkDataFileFormatHelper> helper;
+  const vtkNew<vtkDataFileFormatHelper> helper;
 
   CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("VTK File (.vtk)"), ".vtk");
   CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("Segmentation (.seg.nrrd)"), ".seg.nrrd");

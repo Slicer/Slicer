@@ -90,7 +90,7 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   {
     if (this->updateGradientFromNode(colorNode) || item->icon().isNull())
     {
-      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[colorNode->GetID()];
+      const qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[colorNode->GetID()];
       // item->setBackground(colorGradient.Gradient);
       item->setIcon(colorGradient.Pixmap);
     }
@@ -104,7 +104,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node) c
   Q_ASSERT(node);
   /// TODO: Improve the cache of the pixmaps, right now, they are not shared
   /// between the different qMRMLSceneColorTableModels.
-  bool cached = d->GradientCache.contains(node->GetID());
+  const bool cached = d->GradientCache.contains(node->GetID());
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
   if (!node->GetScalarsToColors() || //
       (cached && colorGradient.MTime >= node->GetScalarsToColors()->GetMTime()))

@@ -201,7 +201,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -283,7 +283,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -679,7 +679,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointInd
   bool addNewControlPoint = false;
   // Get index of point to update. If active index is not valid, use the next undefined point,
   // if none, create new point.
-  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+  const int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
   if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints                                          //
       || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined) //
       || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionMissing))
@@ -691,8 +691,8 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointInd
     int undefinedIndex = -1;
     for (int offset = 0; offset < markupsNode->GetNumberOfControlPoints(); offset++)
     {
-      int i = (controlPointIndex + offset) % numberOfControlPoints; // check all points, starting from controlPointIndex and wrap around
-      int pointStatus = markupsNode->GetNthControlPointPositionStatus(i);
+      const int i = (controlPointIndex + offset) % numberOfControlPoints; // check all points, starting from controlPointIndex and wrap around
+      const int pointStatus = markupsNode->GetNthControlPointPositionStatus(i);
       if (pointStatus == vtkMRMLMarkupsNode::PositionUndefined)
       {
         undefinedIndex = i;
@@ -714,7 +714,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointInd
   // point is not created/updated yet in the markups node.
   // TODO: Allow other interaction contexts to place markups
   bool activeComponentChanged = false;
-  std::string interactionContext = eventData->GetInteractionContextName();
+  const std::string interactionContext = eventData->GetInteractionContextName();
   if (this->ActiveComponents[interactionContext].Index != controlPointIndex //
       || this->ActiveComponents[interactionContext].Type != ComponentControlPoint)
   {
@@ -725,7 +725,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointInd
 
   // AddControlPoint will fire modified events anyway, so we temporarily disable events
   // to add a new point with a minimum number of events.
-  bool wasDisabled = markupsNode->GetDisableModifiedEvent();
+  const bool wasDisabled = markupsNode->GetDisableModifiedEvent();
   markupsNode->DisableModifiedEventOn();
   if (positionStatus == vtkMRMLMarkupsNode::PositionPreview)
   {
@@ -756,7 +756,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(int controlPointInd
   if (addNewControlPoint)
   {
     // Add new control point
-    vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
+    vtkMRMLMarkupsNode::ControlPoint* const controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
     markupsNode->TransformPointFromWorld(pointWorld, controlPoint->Position);
     // TODO: transform orientation to world before copying
     std::copy_n(orientationMatrixWorld, 9, controlPoint->OrientationMatrix);
@@ -830,13 +830,13 @@ void vtkMRMLMarkupsDisplayNode::SetTextPropertyFromString(std::string textProper
     return;
   }
 
-  std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->TextProperty);
+  const std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->TextProperty);
   if (textPropertyString == currentTextPropertyString)
   {
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->UpdateTextPropertyFromString(textPropertyString, this->TextProperty);
   this->Modified();
 }
@@ -896,7 +896,7 @@ void vtkMRMLMarkupsDisplayNode::SetScalarVisibility(int visibility)
   {
     return;
   }
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::SetScalarVisibility(visibility);
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)

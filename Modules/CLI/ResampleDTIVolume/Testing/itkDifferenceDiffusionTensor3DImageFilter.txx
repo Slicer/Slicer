@@ -119,7 +119,7 @@ typename DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::Matr
 template <class TInputImage, class TOutputImage>
 void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateData()
 {
-  int numberOfThreads = this->GetNumberOfWorkUnits();
+  const int numberOfThreads = this->GetNumberOfWorkUnits();
 
   // Initialize statistics about difference image.
   m_MeanDifference = NumericTraits<RealType>::ZeroValue();
@@ -183,9 +183,9 @@ void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::Threaded
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
 
   // Get a pointer to each image.
-  const InputImageType* validImage = this->GetInput(0);
-  const InputImageType* testImage = this->GetInput(1);
-  OutputImageType* outputPtr = this->GetOutput();
+  const InputImageType* const validImage = this->GetInput(0);
+  const InputImageType* const testImage = this->GetInput(1);
+  OutputImageType* const outputPtr = this->GetOutput();
 
   // Create a radius of pixels.
   RadiusType radius;
@@ -237,7 +237,7 @@ void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::Threaded
         // If center pixel isn't good enough, then test the neighborhood
         if (minimumDifference > m_DifferenceThreshold)
         {
-          unsigned int neighborhoodSize = test.Size();
+          const unsigned int neighborhoodSize = test.Size();
           // Find the closest-valued pixel in the neighborhood of the test
           // image.
           for (unsigned int i = 0; i < neighborhoodSize; ++i)
@@ -256,7 +256,7 @@ void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::Threaded
               sumdifference += difference;
             }
 
-            OutputPixelType d = static_cast<OutputPixelType>(sumdifference);
+            const OutputPixelType d = static_cast<OutputPixelType>(sumdifference);
             if (d < minimumDifference)
             {
               minimumDifference = d;
@@ -303,7 +303,7 @@ template <class TInputImage, class TOutputImage>
 void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::AfterThreadedGenerateData()
 {
   // Set statistics about difference image.
-  int numberOfThreads = this->GetNumberOfWorkUnits();
+  const int numberOfThreads = this->GetNumberOfWorkUnits();
 
   for (int i = 0; i < numberOfThreads; ++i)
   {
@@ -314,8 +314,8 @@ void DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::AfterThr
   // This is different from the m_TotalNumberOfPixels which
   // is the number of pixels that actually have differences
   // above the intensity threshold.
-  OutputImageRegionType region = this->GetOutput()->GetRequestedRegion();
-  AccumulateType numberOfPixels = region.GetNumberOfPixels();
+  const OutputImageRegionType region = this->GetOutput()->GetRequestedRegion();
+  const AccumulateType numberOfPixels = region.GetNumberOfPixels();
 
   // Calculate the mean difference.
   m_MeanDifference = m_TotalDifference / numberOfPixels;

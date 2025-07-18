@@ -125,7 +125,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTablesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   this->userMessages()->ClearMessages();
 
@@ -138,7 +138,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   std::string password;
 
   // Check if the file is sqlite
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
   if (extension.empty())
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent, (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
@@ -150,12 +150,12 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
       || !extension.compare(".sqlite3"))
   {
     uname = "";
-    std::string dbname = std::string("sqlite://") + fileName.toStdString();
-    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+    const std::string dbname = std::string("sqlite://") + fileName.toStdString();
+    const vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
     if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
     {
       bool ok;
-      QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"), tr("Database Password:"), QLineEdit::Normal, "", &ok);
+      const QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"), tr("Database Password:"), QLineEdit::Normal, "", &ok);
       if (ok && !text.isEmpty())
       {
         password = text.toStdString();

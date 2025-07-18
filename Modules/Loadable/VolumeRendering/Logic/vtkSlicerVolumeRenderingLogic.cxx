@@ -103,22 +103,22 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
     return;
   }
 
-  vtkNew<vtkMRMLVolumePropertyNode> vpn;
+  const vtkNew<vtkMRMLVolumePropertyNode> vpn;
   this->GetMRMLScene()->RegisterNodeClass(vpn.GetPointer());
 
-  vtkNew<vtkMRMLVolumePropertyStorageNode> vpsn;
+  const vtkNew<vtkMRMLVolumePropertyStorageNode> vpsn;
   this->GetMRMLScene()->RegisterNodeClass(vpsn.GetPointer());
 
-  vtkNew<vtkMRMLVolumePropertyJsonStorageNode> vpjsn;
+  const vtkNew<vtkMRMLVolumePropertyJsonStorageNode> vpjsn;
   this->GetMRMLScene()->RegisterNodeClass(vpjsn.GetPointer());
 
-  vtkNew<vtkMRMLShaderPropertyNode> spn;
+  const vtkNew<vtkMRMLShaderPropertyNode> spn;
   this->GetMRMLScene()->RegisterNodeClass(spn.GetPointer());
 
-  vtkNew<vtkMRMLShaderPropertyStorageNode> spsn;
+  const vtkNew<vtkMRMLShaderPropertyStorageNode> spsn;
   this->GetMRMLScene()->RegisterNodeClass(spsn.GetPointer());
 
-  vtkNew<vtkMRMLCPURayCastVolumeRenderingDisplayNode> cpuVRNode;
+  const vtkNew<vtkMRMLCPURayCastVolumeRenderingDisplayNode> cpuVRNode;
   this->GetMRMLScene()->RegisterNodeClass(cpuVRNode.GetPointer());
   // Volume rendering nodes used to have the tag "VolumeRenderingParameters"
   // in scenes prior to Slicer 4.2
@@ -126,10 +126,10 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(cpuVRNode.GetPointer(), "VolumeRenderingParameters");
 #endif
 
-  vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> gpuNode;
+  vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> const gpuNode;
   this->GetMRMLScene()->RegisterNodeClass(gpuNode.GetPointer());
 
-  vtkNew<vtkMRMLMultiVolumeRenderingDisplayNode> multiNode;
+  const vtkNew<vtkMRMLMultiVolumeRenderingDisplayNode> multiNode;
   this->GetMRMLScene()->RegisterNodeClass(multiNode.GetPointer());
 }
 
@@ -170,7 +170,7 @@ void vtkSlicerVolumeRenderingLogic::AddVolumeRenderingDisplayNode(vtkMRMLVolumeR
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node)
 {
-  DisplayNodesType::iterator it = std::find(this->DisplayNodes.begin(), this->DisplayNodes.end(), node);
+  const DisplayNodesType::iterator it = std::find(this->DisplayNodes.begin(), this->DisplayNodes.end(), node);
   if (it == this->DisplayNodes.end())
   {
     return;
@@ -249,7 +249,7 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
       // node may have been deleted
       continue;
     }
-    vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> newDisplayNode =
+    const vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> newDisplayNode =
       vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode>::Take(this->CreateVolumeRenderingDisplayNode(displayNodeClassName));
     if (!newDisplayNode)
     {
@@ -285,7 +285,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumeRenderingDisplayNode(vtkMRMLVolu
   {
     return;
   }
-  vtkMRMLVolumeDisplayNode* volumeDisplayNode = volumeNode->GetVolumeDisplayNode();
+  vtkMRMLVolumeDisplayNode* const volumeDisplayNode = volumeNode->GetVolumeDisplayNode();
   if (!volumeDisplayNode)
   {
     return;
@@ -303,10 +303,10 @@ void vtkSlicerVolumeRenderingLogic::UpdateVolumeRenderingDisplayNode(vtkMRMLVolu
   {
     // unobserve display node if no volume rendering display nodes follow it anymore
     bool needToObserveVolumeDisplayNode = false;
-    int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+    const int ndnodes = volumeNode->GetNumberOfDisplayNodes();
     for (int i = 0; i < ndnodes; i++)
     {
-      vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+      vtkMRMLVolumeRenderingDisplayNode* const vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
       if (vrDisplayNode && node->GetFollowVolumeDisplayNode())
       {
         needToObserveVolumeDisplayNode = true;
@@ -340,7 +340,7 @@ void vtkSlicerVolumeRenderingLogic::ObserveMRMLScene()
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
+  vtkMRMLVolumeRenderingDisplayNode* const vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
   if (vrDisplayNode)
   {
     this->AddVolumeRenderingDisplayNode(vrDisplayNode);
@@ -350,7 +350,7 @@ void vtkSlicerVolumeRenderingLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
+  vtkMRMLVolumeRenderingDisplayNode* const vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
   if (vrDisplayNode)
   {
     this->RemoveVolumeRenderingDisplayNode(vrDisplayNode);
@@ -370,7 +370,7 @@ void vtkSlicerVolumeRenderingLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   }
 
   // If volume display node is changed then update all volume rendering display nodes that follow it
-  vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
+  vtkMRMLVolumeDisplayNode* const volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
   if (volumeDisplayNode)
   {
     for (unsigned int i = 0; i < this->DisplayNodes.size(); ++i)
@@ -454,7 +454,7 @@ void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[
     opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[0], previous), 1.0);
   }
   opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[1], previous), 1.0);
-  double endValue = stayUpAtUpperLimit ? 1.0 : 0.0;
+  const double endValue = stayUpAtUpperLimit ? 1.0 : 0.0;
   if (!stayUpAtUpperLimit)
   {
     opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[1], previous), endValue);
@@ -479,7 +479,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
 
   // Note that window can be negative, which means that the color lookup table should be reversed
   // (low voxel values are assigned to high values in the color lookup table).
-  bool invertColorTable = (windowLevel[0] < 0.0);
+  const bool invertColorTable = (windowLevel[0] < 0.0);
 
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
@@ -496,14 +496,14 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     double color_X_RGB_MS[6] = { 0., 0., 0., 0., 0.5, 1.0 }; // x, RGB, midpoint, sharpness
     for (vtkIdType i = 0; i < colorCount; ++i)
     {
-      vtkIdType colorIndex = (invertColorTable ? colorCount - 1 - i : i);
+      const vtkIdType colorIndex = (invertColorTable ? colorCount - 1 - i : i);
       inputColorTransfer->GetNodeValue(colorIndex, color_X_RGB_MS);
       colorTransfer->AddRGBPoint(offset + color_X_RGB_MS[0] * scale, color_X_RGB_MS[1], color_X_RGB_MS[2], color_X_RGB_MS[3], color_X_RGB_MS[4], color_X_RGB_MS[5]);
     }
   }
   else
   {
-    double outputRange[2] = {
+    const double outputRange[2] = {
       windowLevel[1] - 0.5 * fabs(windowLevel[0]),
       windowLevel[1] + 0.5 * fabs(windowLevel[0]),
     };
@@ -534,7 +534,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     else // if (numberOfColors > 1)
     {
       double color[4] = { 0.0, 0.0, 0.0, 1.0 };
-      vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
+      const vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
       lut->GetTableValue(firstColorTableIndex, color);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
 
@@ -545,19 +545,19 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
 
       const vtkIdType numberOfPoints = std::min(numberOfColors, maxNumberOfPoints);
       // convert from point index to color index
-      double pointIndexScale = static_cast<double>(numberOfColors - 1) / (numberOfPoints - 1);
-      double offset = outputRange[0];
-      double scale = fabs(windowLevel[0]) / (numberOfColors - 1);
+      const double pointIndexScale = static_cast<double>(numberOfColors - 1) / (numberOfPoints - 1);
+      const double offset = outputRange[0];
+      const double scale = fabs(windowLevel[0]) / (numberOfColors - 1);
       for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
       {
-        vtkIdType colorIndex = pointIndex * pointIndexScale;
+        const vtkIdType colorIndex = pointIndex * pointIndexScale;
         const double value = offset + colorIndex * scale;
-        vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
+        const vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
         lut->GetTableValue(colorTableIndex, color);
         colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous), color[0], color[1], color[2]);
       }
 
-      vtkIdType lastColorTableIndex = (invertColorTable ? 0 : numberOfColors - 1);
+      const vtkIdType lastColorTableIndex = (invertColorTable ? 0 : numberOfColors - 1);
       lut->GetTableValue(lastColorTableIndex, color);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
@@ -615,7 +615,7 @@ void vtkSlicerVolumeRenderingLogic::SetLabelMapToVolumeProp(vtkScalarsToColors* 
   vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
   const int colorCount = colors->GetNumberOfAvailableColors();
   double value = colors->GetRange()[0];
-  double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
+  const double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
   double color[4] = { 0., 0., 0., 1. };
   const double midPoint = 0.5;
   const double sharpness = 1.0;
@@ -712,7 +712,7 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
     return;
   }
 
-  bool ignoreVolumeDisplayNodeThreshold = vspNode->GetIgnoreVolumeDisplayNodeThreshold();
+  const bool ignoreVolumeDisplayNodeThreshold = vspNode->GetIgnoreVolumeDisplayNodeThreshold();
   double scalarRange[2];
   vpNode->GetDisplayScalarRange(scalarRange);
 
@@ -732,11 +732,11 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
     threshold[1] = vpNode->GetWindowLevelMax();
   }
 
-  vtkScalarsToColors* lut = vpNode->GetColorNode() ? vpNode->GetColorNode()->GetScalarsToColors() : nullptr;
-  vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  vtkScalarsToColors* const lut = vpNode->GetColorNode() ? vpNode->GetColorNode()->GetScalarsToColors() : nullptr;
+  vtkVolumeProperty* const prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
-  int disabledModify = vspNode->StartModify();
-  int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
+  const int disabledModify = vspNode->StartModify();
+  const int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
 
   this->SetThresholdToVolumeProp(scalarRange, threshold, prop, this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
 
@@ -777,10 +777,10 @@ void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayN
 
   vtkScalarsToColors* colors = vpNode->GetColorNode() ? vpNode->GetColorNode()->GetScalarsToColors() : nullptr;
 
-  vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  vtkVolumeProperty* const prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
-  int disabledModify = vspNode->StartModify();
-  int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
+  const int disabledModify = vspNode->StartModify();
+  const int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
 
   this->SetLabelMapToVolumeProp(colors, prop);
   this->SetGradientOpacityToVolumeProp(colors->GetRange(), prop);
@@ -798,7 +798,7 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
     vtkErrorMacro("vtkSlicerVolumeRenderingLogic::FitROIToVolume failed: invalid input displat node");
     return;
   }
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+  vtkMRMLScalarVolumeNode* const volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
   if (!volumeNode)
   {
     return;
@@ -807,7 +807,7 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
   vtkMRMLMarkupsROINode* markupsROINode = vspNode->GetMarkupsROINode();
   if (markupsROINode)
   {
-    MRMLNodeModifyBlocker blocker(markupsROINode);
+    const MRMLNodeModifyBlocker blocker(markupsROINode);
 
     double xyz[3] = { 0.0 };
     double center[3] = { 0.0 };
@@ -870,11 +870,11 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
 
     if (volumePropertyNode)
     {
-      int numberOfComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
+      const int numberOfComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
       vtkVolumeProperty* volumeProperty = volumePropertyNode->GetVolumeProperty();
       if (volumeProperty)
       {
-        bool independentComponents = (numberOfComponents != 3 && numberOfComponents != 4);
+        const bool independentComponents = (numberOfComponents != 3 && numberOfComponents != 4);
         volumeProperty->SetIndependentComponents(independentComponents);
       }
     }
@@ -929,7 +929,7 @@ void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(vtkMRMLVolu
     return;
   }
 
-  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  const int ndnodes = volumeNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
@@ -950,7 +950,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
     return nullptr;
   }
 
-  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  const int ndnodes = volumeNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
@@ -971,7 +971,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolume
   {
     return nullptr;
   }
-  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  const int ndnodes = volumeNode->GetNumberOfDisplayNodes();
   for (int displayNodeIndex = 0; displayNodeIndex < ndnodes; displayNodeIndex++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(displayNodeIndex));
@@ -1003,10 +1003,10 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   {
     return nullptr;
   }
-  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  const int ndnodes = volumeNode->GetNumberOfDisplayNodes();
   for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+    vtkMRMLVolumeRenderingDisplayNode* const dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
 
     if (dnode // display node is not necessarily volume rendering display node.
         && dnode->IsDisplayableInView(viewNode->GetID()))
@@ -1031,7 +1031,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 
   for (unsigned int i = 0; i < nodes.size(); i++)
   {
-    vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]);
+    vtkMRMLVolumeRenderingDisplayNode* const dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]);
     if (dnode && dnode->IsViewNodeIDPresent(viewNode->GetID()))
     {
       return dnode;
@@ -1090,7 +1090,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(vtkMRMLVolum
   if (propNode != nullptr)
   {
     displayNode->SetAndObserveVolumePropertyNodeID(propNode->GetID());
-    int numberOfVolumeComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
+    const int numberOfVolumeComponents = volumeNode->GetImageData() ? volumeNode->GetImageData()->GetNumberOfScalarComponents() : 1;
     int numberOfIndependentComponents = propNode->GetNumberOfIndependentComponents();
     numberOfIndependentComponents = std::max(numberOfIndependentComponents, numberOfVolumeComponents);
     propNode->SetNumberOfIndependentComponents(numberOfIndependentComponents);
@@ -1166,11 +1166,11 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLVolumePropertyNode> vpNode =
+  const vtkSmartPointer<vtkMRMLVolumePropertyNode> vpNode =
     vtkSmartPointer<vtkMRMLVolumePropertyNode>::Take(vtkMRMLVolumePropertyNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyNode")));
-  vtkSmartPointer<vtkMRMLVolumePropertyStorageNode> vpStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyStorageNode>::Take(
+  const vtkSmartPointer<vtkMRMLVolumePropertyStorageNode> vpStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyStorageNode>::Take(
     vtkMRMLVolumePropertyStorageNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode")));
-  vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode> vpJsonStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode>::Take(
+  const vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode> vpJsonStorageNode = vtkSmartPointer<vtkMRMLVolumePropertyJsonStorageNode>::Take(
     vtkMRMLVolumePropertyJsonStorageNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumePropertyJsonStorageNode")));
 
   // check for local or remote files
@@ -1201,14 +1201,14 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
   {
     // the node name is based on the file name
     const std::string name = vpStorageNode->GetFileNameWithoutExtension(fname.c_str());
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     vpNode->SetName(uname.c_str());
     this->GetMRMLScene()->AddNode(vpNode);
     this->GetMRMLScene()->AddNode(vpStorageNode);
     vpNode->SetAndObserveStorageNodeID(vpStorageNode->GetID());
 
     // now set up the reading
-    int retval = vpStorageNode->ReadData(vpNode);
+    const int retval = vpStorageNode->ReadData(vpNode);
     if (retval != 1)
     {
       vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
@@ -1221,14 +1221,14 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
   {
     // the node name is based on the file name
     const std::string name = vpJsonStorageNode->GetFileNameWithoutExtension(fname.c_str());
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     vpNode->SetName(uname.c_str());
     this->GetMRMLScene()->AddNode(vpNode);
     this->GetMRMLScene()->AddNode(vpJsonStorageNode);
     vpNode->SetAndObserveStorageNodeID(vpJsonStorageNode->GetID());
 
     // now set up the reading
-    int retval = vpJsonStorageNode->ReadData(vpNode);
+    const int retval = vpJsonStorageNode->ReadData(vpNode);
     if (retval != 1)
     {
       vtkErrorMacro("AddVolumePropertyFromFile: error reading " << filename);
@@ -1263,7 +1263,7 @@ bool vtkSlicerVolumeRenderingLogic::AddVolumePropertiesFromFile(const char* file
   vtkNew<vtkMRMLVolumePropertyStorageNode> vpStorageNode;
   if (vpStorageNode->SupportedFileType(filename))
   {
-    vtkMRMLVolumePropertyNode* vpNode = this->AddVolumePropertyFromFile(filename);
+    vtkMRMLVolumePropertyNode* const vpNode = this->AddVolumePropertyFromFile(filename);
     if (!vpNode)
     {
       vtkErrorMacro("AddVolumePropertiesFromFile: error reading " << filename);
@@ -1281,10 +1281,10 @@ bool vtkSlicerVolumeRenderingLogic::AddVolumePropertiesFromFile(const char* file
   if (vpJsonStorageNode->SupportedFileType(filename))
   {
     this->GetMRMLScene()->AddNode(vpJsonStorageNode);
-    int numberOfVolumePropertyNodes = vpJsonStorageNode->GetNumberOfVolumePropertiesInFile(filename);
+    const int numberOfVolumePropertyNodes = vpJsonStorageNode->GetNumberOfVolumePropertiesInFile(filename);
     for (int i = 0; i < numberOfVolumePropertyNodes; ++i)
     {
-      vtkMRMLVolumePropertyNode* vpNode = vpJsonStorageNode->AddNewVolumePropertyNodeFromFile(filename, nullptr, i);
+      vtkMRMLVolumePropertyNode* const vpNode = vpJsonStorageNode->AddNewVolumePropertyNodeFromFile(filename, nullptr, i);
       if (!vpNode)
       {
         vtkErrorMacro("AddVolumePropertiesFromFile: error reading " << filename);
@@ -1345,7 +1345,7 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
   // check to see which node can read this type of file
   if (spStorageNode->SupportedFileType(fname.c_str()))
   {
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
 
     spNode->SetName(uname.c_str());
 
@@ -1358,7 +1358,7 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
     this->GetMRMLScene()->AddNode(spNode);
 
     // now set up the reading
-    int retval = spStorageNode->ReadData(spNode);
+    const int retval = spStorageNode->ReadData(spNode);
     if (retval != 1)
     {
       vtkErrorMacro("AddShaderPropertyFromFile: error reading " << filename);
@@ -1414,9 +1414,9 @@ bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
     return false;
   }
 
-  std::string presetFileName = this->GetModuleShareDirectory() + "/presets.xml";
+  const std::string presetFileName = this->GetModuleShareDirectory() + "/presets.xml";
   scene->SetURL(presetFileName.c_str());
-  int connected = scene->Connect();
+  const int connected = scene->Connect();
   if (!connected)
   {
     vtkErrorMacro(<< "Failed to load presets [" << presetFileName << "]");
@@ -1550,7 +1550,7 @@ void vtkSlicerVolumeRenderingLogic::RemovePreset(vtkMRMLVolumePropertyNode* pres
     return;
   }
   vtkMRMLScene* presetScene = this->GetPresetsScene();
-  vtkMRMLNode* iconNode = preset->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole());
+  vtkMRMLNode* const iconNode = preset->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole());
   if (iconNode != nullptr)
   {
     presetScene->RemoveNode(iconNode);
@@ -1594,8 +1594,8 @@ bool vtkSlicerVolumeRenderingLogic::SetRecommendedVolumeRenderingProperties(vtkM
     return false;
   }
 
-  double* scalarRange = volumeNode->GetImageData()->GetScalarRange();
-  double scalarRangeSize = scalarRange[1] - scalarRange[0];
+  double* const scalarRange = volumeNode->GetImageData()->GetScalarRange();
+  const double scalarRangeSize = scalarRange[1] - scalarRange[0];
 
   if (volumeNode->GetImageData()->GetScalarType() == VTK_UNSIGNED_CHAR)
   {

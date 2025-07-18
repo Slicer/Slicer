@@ -157,11 +157,11 @@ void qSlicerVolumesModuleWidget::convertVolume()
     qWarning() << Q_FUNC_INFO << " failed: Invalid volumes logic";
     return;
   }
-  vtkMRMLLabelMapVolumeNode* currentLabelMapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentVolume);
+  vtkMRMLLabelMapVolumeNode* const currentLabelMapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentVolume);
 
   // If there is no target labelmap node selected, then perform in-place conversion
   vtkMRMLVolumeNode* targetVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertVolumeTargetSelector->currentNode());
-  bool inPlaceConversion = (targetVolumeNode == nullptr);
+  const bool inPlaceConversion = (targetVolumeNode == nullptr);
   if (inPlaceConversion)
   {
     if (currentLabelMapVolumeNode)
@@ -219,7 +219,7 @@ bool qSlicerVolumesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /
   if (vtkMRMLVolumeDisplayNode::SafeDownCast(node))
   {
     vtkMRMLVolumeDisplayNode* displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
-    vtkMRMLVolumeNode* displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+    vtkMRMLVolumeNode* const displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
     {
       return false;
@@ -240,7 +240,7 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
     return;
   }
 
-  vtkMRMLVolumeNode* currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
+  vtkMRMLVolumeNode* const currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
   vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolume);
   if (!colorLegendNode && currentVolume)
   {
@@ -275,7 +275,7 @@ void qSlicerVolumesModuleWidget::enter()
   // If no node is selected then select the first displayed node to save the user a click
   if (!d->ActiveVolumeNodeSelector->currentNode())
   {
-    vtkMRMLNode* node = d->ActiveVolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
+    vtkMRMLNode* const node = d->ActiveVolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
     if (node)
     {
       d->ActiveVolumeNodeSelector->setCurrentNode(node);

@@ -38,7 +38,7 @@ int vtkMRMLSceneIDTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   //---------------------------------------------------------------------------
   // GenerateUniqueName
   //---------------------------------------------------------------------------
-  std::string baseName("Node Name");
+  const std::string baseName("Node Name");
   std::string nodeName = scene->GenerateUniqueName(baseName);
   if (nodeName != std::string(baseName))
   {
@@ -61,7 +61,7 @@ int vtkMRMLSceneIDTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   // "Node Name_1" is considered as a different basename
-  std::string baseName_1 = baseName + "_1";
+  const std::string baseName_1 = baseName + "_1";
   nodeName = scene->GenerateUniqueName(baseName_1);
   if (nodeName != baseName_1)
   {

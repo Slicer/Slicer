@@ -10,7 +10,7 @@ qMRMLSliceControllerWidgetPlugin::qMRMLSliceControllerWidgetPlugin(QObject* _par
 // --------------------------------------------------------------------------
 QWidget* qMRMLSliceControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSliceControllerWidget* _widget = new qMRMLSliceControllerWidget(_parent);
+  qMRMLSliceControllerWidget* const _widget = new qMRMLSliceControllerWidget(_parent);
   return _widget;
 }
 

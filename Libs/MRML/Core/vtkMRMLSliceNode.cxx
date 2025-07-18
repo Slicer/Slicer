@@ -251,8 +251,8 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID) const
   {
     return false;
   }
-  std::string value(viewNodeID);
-  std::vector<std::string>::const_iterator it = std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
+  const std::string value(viewNodeID);
+  const std::vector<std::string>::const_iterator it = std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
   return it != this->ThreeDViewIDs.end();
 }
 
@@ -272,7 +272,7 @@ bool vtkMRMLSliceNode::SetOrientation(const char* orientation)
     return false;
   }
 
-  vtkMatrix3x3* orientationPreset = this->GetSliceOrientationPreset(orientation);
+  vtkMatrix3x3* const orientationPreset = this->GetSliceOrientationPreset(orientation);
   if (orientationPreset == nullptr)
   {
     return false;
@@ -302,7 +302,7 @@ std::string vtkMRMLSliceNode::GetOrientation()
 //----------------------------------------------------------------------------
 const char* vtkMRMLSliceNode::GetOrientationString()
 {
-  std::string current = this->GetOrientation();
+  const std::string current = this->GetOrientation();
   if (current != this->OrientationString)
   {
     this->OrientationString = current;
@@ -369,7 +369,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
   for (it = this->OrientationMatrices.rbegin(); it != this->OrientationMatrices.rend(); ++it)
   {
     std::string presetName = it->first;
-    vtkMatrix3x3* presetOrientationMatrix = this->GetSliceOrientationPreset(presetName);
+    vtkMatrix3x3* const presetOrientationMatrix = this->GetSliceOrientationPreset(presetName);
     if (vtkAddonMathUtilities::MatrixAreEqual(orientationMatrix, presetOrientationMatrix))
     {
       return presetName;
@@ -381,7 +381,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
 //----------------------------------------------------------------------------
 std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4* sliceToRAS)
 {
-  vtkNew<vtkMatrix3x3> orientationMatrix;
+  const vtkNew<vtkMatrix3x3> orientationMatrix;
   vtkAddonMathUtilities::GetOrientationMatrix(sliceToRAS, orientationMatrix.GetPointer());
 
   std::string orientation = this->GetSliceOrientationPresetName(orientationMatrix.GetPointer());
@@ -625,13 +625,13 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bo
   }
 
   // Setting Orientation Matrices presets
-  vtkNew<vtkMatrix3x3> axialSliceToRAS;
+  const vtkNew<vtkMatrix3x3> axialSliceToRAS;
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialSliceToRAS, patientRightIsScreenLeft);
 
-  vtkNew<vtkMatrix3x3> sagittalSliceToRAS;
+  const vtkNew<vtkMatrix3x3> sagittalSliceToRAS;
   vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(sagittalSliceToRAS, patientRightIsScreenLeft);
 
-  vtkNew<vtkMatrix3x3> coronalSliceToRAS;
+  const vtkNew<vtkMatrix3x3> coronalSliceToRAS;
   vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(coronalSliceToRAS, patientRightIsScreenLeft);
 
   // Setting a Slice Default Node
@@ -760,9 +760,9 @@ void vtkMRMLSliceNode::UpdateMatrices()
   double spacing[3];
   unsigned int i;
   vtkNew<vtkMatrix4x4> xyToSlice;
-  vtkNew<vtkMatrix4x4> xyToRAS;
+  const vtkNew<vtkMatrix4x4> xyToRAS;
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   // the mapping from XY output slice pixels to Slice Plane coordinate
   xyToSlice->Identity();
@@ -824,7 +824,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     this->UVWToSlice->SetElement(2, 3, 0.);
   }
 
-  vtkNew<vtkMatrix4x4> uvwToRAS;
+  const vtkNew<vtkMatrix4x4> uvwToRAS;
 
   vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
 
@@ -920,7 +920,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -945,7 +945,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   // render window's aspect ratio. It is particularly important when loading or restoring
   // slice configurations that were saved with a different render window aspect ratio,
   // as mismatched aspect ratios could lead to distorted or improperly scaled slice views.
-  double windowAspect = (this->Dimensions[0] != 0 ? double(this->Dimensions[1]) / double(this->Dimensions[0]) : 1.);
+  const double windowAspect = (this->Dimensions[0] != 0 ? double(this->Dimensions[1]) / double(this->Dimensions[0]) : 1.);
   this->FieldOfView[0] = fabs(windowAspect) > 1.e-6 ? this->FieldOfView[1] / windowAspect : this->FieldOfView[0];
   // Dimensions is not copied since it is set using the geometry of the qwidget.
 
@@ -1020,7 +1020,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
   if (!layoutColorFound)
   {
-    std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
+    const std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
     // Slicer3 scene file. Grok a color
     if (layoutName.find("Compare") == 0)
     {
@@ -1046,12 +1046,12 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
   if (!layoutLabelFound)
   {
-    std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
+    const std::string layoutName(this->GetLayoutName() ? this->GetLayoutName() : "");
     // Slicer3 scene file. Grok a label
     if (layoutName.find("Compare") == 0)
     {
-      std::string name(this->GetLayoutName());
-      std::string number(name.substr(7, name.size() - 7));
+      const std::string name(this->GetLayoutName());
+      const std::string number(name.substr(7, name.size() - 7));
       this->SetLayoutLabel(number.c_str());
     }
     else if (layoutName == "Red")
@@ -1076,7 +1076,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(anode);
   if (!node)
@@ -1096,7 +1096,7 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
     this->AddSliceOrientationPreset(namedOrientations->GetValue(i), node->GetSliceOrientationPreset(namedOrientations->GetValue(i)));
   }
 
-  std::string orientation = node->GetOrientation();
+  const std::string orientation = node->GetOrientation();
   if (orientation != vtkMRMLSliceNode::GetReformatOrientationName())
   {
     this->SetOrientation(orientation.c_str());
@@ -1127,7 +1127,7 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
   // render window's aspect ratio. It is particularly important when loading or restoring
   // slice configurations that were saved with a different render window aspect ratio,
   // as mismatched aspect ratios could lead to distorted or improperly scaled slice views.
-  double windowAspect = (this->Dimensions[0] != 0 ? double(this->Dimensions[1]) / double(this->Dimensions[0]) : 1.);
+  const double windowAspect = (this->Dimensions[0] != 0 ? double(this->Dimensions[1]) / double(this->Dimensions[0]) : 1.);
   this->FieldOfView[0] = fabs(windowAspect) > 1.e-6 ? this->FieldOfView[1] / windowAspect : this->FieldOfView[0];
   // Dimensions is not copied since it is set using the geometry of the qwidget.
 
@@ -1155,12 +1155,12 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
   // and the layout color (typically associated with the layoutName) are not
   // preserved automatically.
   // This require a custom behavior implemented here.
-  std::string orientation = this->GetOrientation();
-  std::string defaultOrientation = (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "");
+  const std::string orientation = this->GetOrientation();
+  const std::string defaultOrientation = (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "");
   double layoutColor[3] = { 0.0, 0.0, 0.0 };
   this->GetLayoutColor(layoutColor);
   this->Superclass::Reset(defaultNode);
-  int wasModified = this->StartModify();
+  const int wasModified = this->StartModify();
   if (orientation != vtkMRMLSliceNode::GetReformatOrientationName())
   {
     this->SetOrientation(orientation.c_str());
@@ -1264,9 +1264,9 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
 void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 {
   vtkMatrix4x4* sliceToRAS = this->GetSliceToRAS();
-  double sr = sliceToRAS->GetElement(0, 3);
-  double sa = sliceToRAS->GetElement(1, 3);
-  double ss = sliceToRAS->GetElement(2, 3);
+  const double sr = sliceToRAS->GetElement(0, 3);
+  const double sa = sliceToRAS->GetElement(1, 3);
+  const double ss = sliceToRAS->GetElement(2, 3);
 
   // deduce the slice spacing
   vtkMatrix4x4* xyzToRAS = this->GetXYToRAS();
@@ -1279,7 +1279,7 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
   xyzToRAS->MultiplyPoint(p1xyz, p1ras);
   xyzToRAS->MultiplyPoint(p2xyz, p2ras);
 
-  double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
+  const double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
 
   if (r != sr || a != sa || s != ss //
       || this->XYZOrigin[0] != 0 || this->XYZOrigin[1] != 0 || this->XYZOrigin[2] != 0)
@@ -1311,7 +1311,7 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   xyzToRAS->MultiplyPoint(p1xyz, p1ras);
   xyzToRAS->MultiplyPoint(p2xyz, p2ras);
 
-  double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
+  const double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
 
   double d;
   d = (r - sr) * sliceToRAS->GetElement(0, 2)   //
@@ -1365,7 +1365,7 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene,
     return;
   }
 
-  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+  const int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
   for (int n = 0; n < nnodes; n++)
   {
     vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
@@ -1872,7 +1872,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   // - this preserves whatever translation was already in place
   //
 
-  double oldOffset = this->GetSliceOffset();
+  const double oldOffset = this->GetSliceOffset();
   if (fabs(offset - oldOffset) <= 1.0e-6)
   {
     return;
@@ -1902,7 +1902,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   sliceToRAS->MultiplyPoint(v2, v3);
 
   // if the translation has changed, update the rest of the matrices
-  double eps = 1.0e-6;
+  const double eps = 1.0e-6;
   if (fabs(v1[0] - v3[0]) > eps || //
       fabs(v1[1] - v3[1]) > eps || //
       fabs(v1[2] - v3[2]) > eps)
@@ -1925,7 +1925,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool f
     return;
   }
 
-  vtkNew<vtkMatrix4x4> ijkToRAS;
+  const vtkNew<vtkMatrix4x4> ijkToRAS;
   volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
 
   // apply the transform
@@ -1981,7 +1981,7 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
   // we need to determine it here and reproduce in the end result later.
   vtkNew<vtkMatrix3x3> sliceToRasOrientation;
   vtkAddonMathUtilities::GetOrientationMatrix(this->SliceToRAS, sliceToRasOrientation.GetPointer());
-  bool sliceToRasRightHanded = (sliceToRasOrientation->Determinant() >= 0);
+  const bool sliceToRasRightHanded = (sliceToRasOrientation->Determinant() >= 0);
 
   // background is a single-slice volume
   // find combination of volume axis directions that are closest to current slice X, Y
@@ -1997,7 +1997,7 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
   double minAngleDiff = -1;
   for (int testedDirectionIndexX = 0; testedDirectionIndexX < 6; testedDirectionIndexX++)
   {
-    int volumeAxisAsSliceX = testedDirectionIndexX / 2;
+    const int volumeAxisAsSliceX = testedDirectionIndexX / 2;
     if (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceX == sliceNormalAxisIndex)
     {
       // X slice axis must not be snapped to volume plane normal axis
@@ -2005,7 +2005,7 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
     }
     for (int testedDirectionIndexY = 0; testedDirectionIndexY < 6; testedDirectionIndexY++)
     {
-      int volumeAxisAsSliceY = testedDirectionIndexY / 2;
+      const int volumeAxisAsSliceY = testedDirectionIndexY / 2;
       if (volumeAxisAsSliceY == volumeAxisAsSliceX //
           || (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceY == sliceNormalAxisIndex))
       {
@@ -2026,7 +2026,7 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
         // we ignore z axis flip (we will compute final z direction from on x and y axes and sliceToRasRightHanded)
         zAxisAngleDiff = vtkMath::Pi() - zAxisAngleDiff;
       }
-      double angleDiff =                                                                         //
+      const double angleDiff =                                                                   //
         fabs(vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection))   //
         + fabs(vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection)) //
         + zAxisAngleDiff;

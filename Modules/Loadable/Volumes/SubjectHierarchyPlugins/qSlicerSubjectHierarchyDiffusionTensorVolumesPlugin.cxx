@@ -186,7 +186,7 @@ QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType i
   QString tooltipString = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->tooltip(itemID);
 
   // Additional DTI-related information
-  vtkMRMLDiffusionTensorVolumeNode* dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLDiffusionTensorVolumeNode* const dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   Q_UNUSED(dtiVolumeNode);
   // vtkImageData* imageData = (dtiVolumeNode ? dtiVolumeNode->GetImageData() : nullptr);
   // if (dtiVolumeNode && imageData)
@@ -251,7 +251,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(v
 //-----------------------------------------------------------------------------
 int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+  qSlicerSubjectHierarchyVolumesPlugin* const volumesPlugin =
     qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
@@ -292,10 +292,10 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
       return;
     }
 
-    qSlicerAbstractCoreModule* tractographyInteractiveSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
+    qSlicerAbstractCoreModule* const tractographyInteractiveSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
     d->TractographyInteractiveSeedingAction->setVisible(tractographyInteractiveSeedingModule);
 
-    qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
+    qSlicerAbstractCoreModule* const tractographyLabelMapSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
     d->TractographyLabelMapSeedingAction->setVisible(tractographyLabelMapSeedingModule);
   }
 }
@@ -305,7 +305,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyLabelMap
 {
 #ifdef Slicer_BUILD_CLI_SUPPORT
   // TODO: Select inputs too
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
+  qSlicerAbstractModuleWidget* const moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
   Q_UNUSED(moduleWidget);
 #else
   qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
@@ -321,7 +321,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyInteract
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";

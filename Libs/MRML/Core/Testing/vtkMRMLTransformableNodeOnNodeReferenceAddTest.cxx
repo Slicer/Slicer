@@ -50,7 +50,7 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int, char*[])
   CHECK_EXIT_SUCCESS(testScene(scene.GetPointer()));
 
   // Test with a freshly created scene (node reference added _before_ node added to the scene)
-  vtkNew<vtkMRMLScene> scene1;
+  const vtkNew<vtkMRMLScene> scene1;
   populateScene_nodeRefBeforeAddNode(scene1.GetPointer());
   CHECK_EXIT_SUCCESS(testScene(scene1.GetPointer()));
 
@@ -58,7 +58,7 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int, char*[])
   // Write scene to XML
   scene->SetSaveToXMLString(1);
   scene->Commit();
-  std::string xmlScene = scene->GetSceneXMLString();
+  const std::string xmlScene = scene->GetSceneXMLString();
   std::cout << xmlScene << std::endl;
   // Load scene from XML
   vtkNew<vtkMRMLScene> scene2;

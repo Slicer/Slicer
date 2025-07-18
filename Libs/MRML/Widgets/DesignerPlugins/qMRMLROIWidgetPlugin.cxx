@@ -28,7 +28,7 @@ qMRMLROIWidgetPlugin::qMRMLROIWidgetPlugin(QObject* _parent)
 
 QWidget* qMRMLROIWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLROIWidget* _widget = new qMRMLROIWidget(_parent);
+  qMRMLROIWidget* const _widget = new qMRMLROIWidget(_parent);
   return _widget;
 }
 

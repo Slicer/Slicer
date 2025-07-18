@@ -52,7 +52,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(vtkITKArchetypeDiffusionTensorIm
   typedef itk::ImageSource<ImageType> FilterType;
   typename FilterType::Pointer filter;
   typedef itk::ImageFileReader<ImageType> ReaderType;
-  typename ReaderType::Pointer reader = ReaderType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())
   {
@@ -60,7 +60,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(vtkITKArchetypeDiffusionTensorIm
   }
   else
   {
-    typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orient2 = itk::OrientImageFilter<ImageType, ImageType>::New();
+    const typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orient2 = itk::OrientImageFilter<ImageType, ImageType>::New();
     orient2->SetDebug(self->GetDebug());
     orient2->SetInput(reader->GetOutput());
     orient2->UseImageDirectionOn();
@@ -72,7 +72,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(vtkITKArchetypeDiffusionTensorIm
 
   // This is a conservative test for dti. It filters out most non-dti
   // data without having to read the entire file
-  unsigned int numberOfComponents = reader->GetImageIO()->GetNumberOfComponents();
+  const unsigned int numberOfComponents = reader->GetImageIO()->GetNumberOfComponents();
   if (numberOfComponents != 9 && numberOfComponents != 6)
   {
     ::itk::InvalidArgumentError e_(__FILE__, __LINE__);
@@ -91,7 +91,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(vtkITKArchetypeDiffusionTensorIm
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     const itk::Index<3u> index = it.GetIndex();
-    vtkIdType position = data->FindPoint(index[0], index[1], index[2]);
+    const vtkIdType position = data->FindPoint(index[0], index[1], index[2]);
     if (position == static_cast<vtkIdType>(-1) || //
         position >= tensors->GetNumberOfTuples())
     {
@@ -178,7 +178,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(vtkInformation* v
 //----------------------------------------------------------------------------
 void vtkITKArchetypeDiffusionTensorImageReaderFile::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
+  const itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

@@ -39,7 +39,7 @@
 int qMRMLSceneTransformModelTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
   if (argc < 2)
   {

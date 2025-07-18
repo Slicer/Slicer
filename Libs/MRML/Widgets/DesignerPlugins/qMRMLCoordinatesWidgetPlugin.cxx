@@ -30,7 +30,7 @@ qMRMLCoordinatesWidgetPlugin::qMRMLCoordinatesWidgetPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLCoordinatesWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLCoordinatesWidget* _widget = new qMRMLCoordinatesWidget(_parent);
+  qMRMLCoordinatesWidget* const _widget = new qMRMLCoordinatesWidget(_parent);
   return _widget;
 }
 

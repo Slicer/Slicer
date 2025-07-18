@@ -54,7 +54,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
   vtkCollection* deleteList = vtkCollection::New();
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
-  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+  const int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
@@ -76,7 +76,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
       else
       {
         // it must be a 1-1 hierarchy node coming directly with an annotation
-        vtkMRMLAnnotationNode* anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
+        vtkMRMLAnnotationNode* const anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
         if (anode)
         {
           // this->GetScene()->RemoveNode(hnode);
@@ -95,7 +95,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
   for (int j = 0; j < deleteList->GetNumberOfItems(); ++j)
   {
 
-    vtkMRMLNode* dNode = vtkMRMLNode::SafeDownCast(deleteList->GetItemAsObject(j));
+    vtkMRMLNode* const dNode = vtkMRMLNode::SafeDownCast(deleteList->GetItemAsObject(j));
 
     if (dNode)
     {
@@ -137,7 +137,7 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
   }
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
-  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+  const int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
@@ -159,7 +159,7 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
       else
       {
         // it must be a 1-1 hierarchy node coming directly with an annotation
-        vtkMRMLAnnotationNode* anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
+        vtkMRMLAnnotationNode* const anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
         if (anode)
         {
           children->AddItem(anode);

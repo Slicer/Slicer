@@ -73,14 +73,14 @@ int main(int argc, char** argv)
     typedef OutputImageType::PointType OutputPointType;
     typedef OutputImageType::IndexType OutputIndexType;
 
-    ReaderType::Pointer Reader = ReaderType::New();
+    const ReaderType::Pointer Reader = ReaderType::New();
     Reader->SetFileName(InputImageFileName.c_str());
     Reader->Update();
-    InputImageType::Pointer inputImage = Reader->GetOutput();
+    const InputImageType::Pointer inputImage = Reader->GetOutput();
 
     std::cout << "Read image." << std::endl;
 
-    OutputImageType::Pointer outputImage = OutputImageType::New();
+    const OutputImageType::Pointer outputImage = OutputImageType::New();
     outputImage->SetRegions(Reader->GetOutput()->GetLargestPossibleRegion());
     outputImage->SetSpacing(Reader->GetOutput()->GetSpacing());
     outputImage->SetOrigin(Reader->GetOutput()->GetOrigin());
@@ -93,9 +93,9 @@ int main(int argc, char** argv)
     dim[1] = itkSize[1];
     dim[2] = itkSize[2];
 
-    InputPixelType* inputImageBuffer = inputImage->GetBufferPointer();
+    InputPixelType* const inputImageBuffer = inputImage->GetBufferPointer();
 
-    OutputPixelType* outputImageBuffer = outputImage->GetBufferPointer();
+    OutputPixelType* const outputImageBuffer = outputImage->GetBufferPointer();
     memset(outputImageBuffer, 0, dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType));
 
     std::cout << "Initialized output image." << std::endl;
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
     graph.SampleAlongMaximalPath(NumberOfPoints, axisPoints);
 
     std::ofstream writeOutputFile;
-    bool writeSeedsFile = !OutputPointsFileName.empty();
+    const bool writeSeedsFile = !OutputPointsFileName.empty();
     if (writeSeedsFile)
     {
       writeOutputFile.open(OutputPointsFileName.c_str());
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 
     if (!OutputImageFileName.empty())
     {
-      WriterType::Pointer writer = WriterType::New();
+      const WriterType::Pointer writer = WriterType::New();
       writer->SetFileName(OutputImageFileName.c_str());
       writer->SetInput(outputImage);
       writer->Update();

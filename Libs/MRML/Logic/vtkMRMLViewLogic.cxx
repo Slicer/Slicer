@@ -121,10 +121,10 @@ void vtkMRMLViewLogic::UpdateMRMLNodes()
   }
   this->UpdatingMRMLNodes = true;
 
-  vtkMRMLViewNode* updatedViewNode = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
+  vtkMRMLViewNode* const updatedViewNode = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
   this->SetViewNode(updatedViewNode);
 
-  vtkMRMLCameraNode* updatedCameraNode = vtkMRMLViewLogic::GetCameraNode(this->GetMRMLScene(), this->GetName());
+  vtkMRMLCameraNode* const updatedCameraNode = vtkMRMLViewLogic::GetCameraNode(this->GetMRMLScene(), this->GetName());
   this->SetCameraNode(updatedCameraNode);
 
   this->UpdatingMRMLNodes = false;
@@ -138,7 +138,7 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
     return nullptr;
   }
 
-  vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLViewNode"));
+  const vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLViewNode"));
   for (int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
   {
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
@@ -159,7 +159,7 @@ vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const ch
   {
     return nullptr;
   }
-  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* const cameraNode = vtkMRMLCameraNode::SafeDownCast(scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
   return cameraNode;
 }
 
@@ -264,7 +264,7 @@ vtkMRMLViewNode* vtkMRMLViewLogic::AddViewNode(const char* layoutName)
     vtkErrorMacro("vtkMRMLViewLogic::AddViewNode failed: scene is not set");
     return nullptr;
   }
-  vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
+  const vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
   node->SetLayoutName(layoutName);
   this->GetMRMLScene()->AddNode(node);
   this->SetViewNode(node);
@@ -309,7 +309,7 @@ void vtkMRMLViewLogic::EndCameraNodeInteraction()
 //----------------------------------------------------------------------------
 void vtkMRMLViewLogic::SetName(const char* name)
 {
-  std::string newName = (name ? name : "");
+  const std::string newName = (name ? name : "");
   if (newName == this->Name)
   {
     return;

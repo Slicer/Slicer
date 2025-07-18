@@ -66,7 +66,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(vtkMRMLJsonWriter*
 
   writer->WriteDoubleProperty("autoScalingFactor", planeNode->GetAutoSizeScalingFactor());
 
-  int coordinateSystem = this->GetCoordinateSystem();
+  const int coordinateSystem = this->GetCoordinateSystem();
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   planeNode->GetOrigin(center_Node);
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -85,10 +85,10 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(vtkMRMLJsonWriter*
   }
   writer->WriteVectorProperty("normal", normal_Node);
 
-  double* objectToBase = planeNode->GetObjectToBaseMatrix()->GetData();
+  double* const objectToBase = planeNode->GetObjectToBaseMatrix()->GetData();
   writer->WriteMatrix4x4Property("objectToBase", objectToBase, coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
 
-  double* baseToNode = planeNode->GetBaseToNodeMatrix()->GetData();
+  double* const baseToNode = planeNode->GetBaseToNodeMatrix()->GetData();
   writer->WriteMatrix4x4Property("baseToNode", baseToNode, coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
 
   double orientation[9] = { 0.0 };
@@ -135,7 +135,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLM
     return false;
   }
 
-  MRMLNodeModifyBlocker blocker(planeNode);
+  const MRMLNodeModifyBlocker blocker(planeNode);
 
   if (markupObject->HasMember("planeType"))
   {
@@ -152,7 +152,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLM
     return false;
   }
 
-  int coordinateSystem = this->GetCoordinateSystem();
+  const int coordinateSystem = this->GetCoordinateSystem();
 
   if (markupObject->HasMember("objectToBase"))
   {

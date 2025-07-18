@@ -83,7 +83,7 @@ int vtkMRMLHierarchyNodeTest3(int, char*[])
   std::vector<vtkSmartPointer<vtkMRMLModelNode>> modelNodes;
   std::vector<vtkSmartPointer<vtkMRMLModelDisplayNode>> modelDisplayNodes;
   std::vector<vtkSmartPointer<vtkMRMLModelHierarchyNode>> modelHierarchyNodes;
-  unsigned int numModels = 5;
+  const unsigned int numModels = 5;
   for (unsigned int m = 0; m < numModels; m++)
   {
     modelNodes.push_back(vtkSmartPointer<vtkMRMLModelNode>::New());
@@ -140,7 +140,7 @@ int vtkMRMLHierarchyNodeTest3(int, char*[])
   }
 
   // check for the immediate children of the top level
-  std::vector<vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
+  const std::vector<vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
   std::cout << "Top level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren);
   if (immediateChildren.size() != 1)
@@ -169,7 +169,7 @@ int vtkMRMLHierarchyNodeTest3(int, char*[])
   }
 
   // check for the immediate children of the second level
-  std::vector<vtkMRMLHierarchyNode*> immediateChildren2 = hnode2->GetChildrenNodes();
+  const std::vector<vtkMRMLHierarchyNode*> immediateChildren2 = hnode2->GetChildrenNodes();
   std::cout << "Second level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren2);
   if (immediateChildren2.size() != numModels)
@@ -185,7 +185,7 @@ int vtkMRMLHierarchyNodeTest3(int, char*[])
   // now check that the children are in the order they were added
   for (unsigned int i = 0; i < numModels; i++)
   {
-    int indexInParent = modelHierarchyNodes[i]->GetIndexInParent();
+    const int indexInParent = modelHierarchyNodes[i]->GetIndexInParent();
     std::cout << "Model hierarchy node " << i << " is at index " << indexInParent << std::endl;
     if (indexInParent != (int)i)
     {

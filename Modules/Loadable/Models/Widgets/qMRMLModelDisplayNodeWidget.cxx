@@ -160,7 +160,7 @@ QList<vtkMRMLModelDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::modelDisplay
     if (modelNode)
     {
       // Note: Formerly the last display node was chosen that was model display node type (or the proper fiber type)
-      vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+      vtkMRMLModelDisplayNode* const modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
       if (modelDisplayNode)
       {
         modelDisplayNodes << modelDisplayNode;
@@ -387,7 +387,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->ClippingCheckBox->setChecked(d->CurrentDisplayNode->GetClipping());
   d->SliceIntersectionVisibilityCheckBox->setChecked(d->CurrentDisplayNode->GetVisibility2D());
   d->SliceIntersectionThicknessSpinBox->setValue(d->CurrentDisplayNode->GetSliceIntersectionThickness());
-  bool showSliceIntersectionThickness =
+  const bool showSliceIntersectionThickness =
     (d->CurrentModelDisplayNode ? d->CurrentModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayIntersection : true);
   d->SliceIntersectionThicknessSpinBox->setEnabled(showSliceIntersectionThickness);
   d->SliceIntersectionOpacitySlider->setValue(d->CurrentDisplayNode->GetSliceIntersectionOpacity());
@@ -398,7 +398,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->SliceDisplayModeComboBox->setCurrentIndex(d->CurrentModelDisplayNode->GetSliceDisplayMode());
   }
 
-  bool wasBlocking = d->DistanceToColorNodeComboBox->blockSignals(true);
+  const bool wasBlocking = d->DistanceToColorNodeComboBox->blockSignals(true);
   if (d->DistanceToColorNodeComboBox->mrmlScene() != this->mrmlScene())
   {
     d->DistanceToColorNodeComboBox->setMRMLScene(this->mrmlScene());
@@ -430,15 +430,15 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   }
 
   d->PointSizeSliderWidget->setValue(d->CurrentDisplayNode->GetPointSize());
-  bool showPointSize = d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_POINTS;
+  const bool showPointSize = d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_POINTS;
   d->PointSizeSliderWidget->setEnabled(showPointSize);
 
   d->LineWidthSliderWidget->setValue(d->CurrentDisplayNode->GetLineWidth());
   // Enable line width editing in REPRESENTATION_SURFACE mode regardless of edge visibility,
   // because if the model consists only of lines then line width will make a difference
   // even if edge visibility is disabled.
-  bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME //
-                        || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
+  const bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME //
+                              || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
   d->LineWidthSliderWidget->setEnabled(showLineWidth);
 
   if (!d->CurrentDisplayNode->GetFrontfaceCulling() && d->CurrentDisplayNode->GetBackfaceCulling())
@@ -457,24 +457,24 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->ShowFacesComboBox->setCurrentIndex(0);
   }
 
-  double* c = d->CurrentDisplayNode->GetColor();
-  bool wasBlocked = d->ColorPickerButton->blockSignals(true);
+  double* const c = d->CurrentDisplayNode->GetColor();
+  const bool wasBlocked = d->ColorPickerButton->blockSignals(true);
   d->ColorPickerButton->setColor(QColor::fromRgbF(qMin(c[0], 1.), qMin(c[1], 1.), qMin(c[2], 1.)));
   d->ColorPickerButton->blockSignals(wasBlocked);
 
   d->OpacitySliderWidget->setValue(d->CurrentDisplayNode->GetOpacity());
-  double* ec = d->CurrentDisplayNode->GetEdgeColor();
+  double* const ec = d->CurrentDisplayNode->GetEdgeColor();
   d->EdgeColorPickerButton->setColor(QColor::fromRgbF(qMin(ec[0], 1.), qMin(ec[1], 1.), qMin(ec[2], 1.)));
-  bool showEdgeColor = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
+  const bool showEdgeColor = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
   d->EdgeColorPickerButton->setEnabled(showEdgeColor);
 
   if (d->CurrentModelDisplayNode)
   {
     double hsvOffset[3];
     d->CurrentModelDisplayNode->GetBackfaceColorHSVOffset(hsvOffset);
-    QSignalBlocker blocker1(d->BackfaceHueOffsetSpinBox);
-    QSignalBlocker blocker2(d->BackfaceSaturationOffsetSpinBox);
-    QSignalBlocker blocker3(d->BackfaceSaturationOffsetSpinBox);
+    const QSignalBlocker blocker1(d->BackfaceHueOffsetSpinBox);
+    const QSignalBlocker blocker2(d->BackfaceSaturationOffsetSpinBox);
+    const QSignalBlocker blocker3(d->BackfaceSaturationOffsetSpinBox);
     d->BackfaceHueOffsetSpinBox->setValue(hsvOffset[0]);
     d->BackfaceSaturationOffsetSpinBox->setValue(hsvOffset[1]);
     d->BackfaceBrightnessOffsetSpinBox->setValue(hsvOffset[2]);
@@ -507,7 +507,7 @@ void qMRMLModelDisplayNodeWidget::setVisibility(bool visible)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetVisibility(visible);
@@ -526,7 +526,7 @@ void qMRMLModelDisplayNodeWidget::setClipping(bool clip)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetClipping(clip);
@@ -546,7 +546,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetVisibility2D(visible);
@@ -565,7 +565,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetSliceIntersectionThickness(thickness);
@@ -584,7 +584,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetSliceIntersectionOpacity(opacity);
@@ -608,10 +608,10 @@ void qMRMLModelDisplayNodeWidget::updateDisplayNodesFromProperty()
     return;
   }
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
-    int wasModifying = displayNode->StartModify();
+    const int wasModifying = displayNode->StartModify();
     // Lighting
     displayNode->SetLighting(d->Property->GetLighting());
     displayNode->SetInterpolation(d->Property->GetInterpolation());
@@ -632,7 +632,7 @@ void qMRMLModelDisplayNodeWidget::setRepresentation(int newRepresentation)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     switch (newRepresentation)
@@ -646,7 +646,7 @@ void qMRMLModelDisplayNodeWidget::setRepresentation(int newRepresentation)
       case 2: // surface
       case 3: // surface with edges
       {
-        int wasModified = displayNode->StartModify();
+        const int wasModified = displayNode->StartModify();
         displayNode->SetRepresentation(REPRESENTATION_SURFACE);
         displayNode->SetEdgeVisibility(newRepresentation == 3);
         displayNode->EndModify(wasModified);
@@ -661,10 +661,10 @@ void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLModelDisplayNode*> modelDisplayNodesInSelection = d->modelDisplayNodesFromSelection();
+  const QList<vtkMRMLModelDisplayNode*> modelDisplayNodesInSelection = d->modelDisplayNodesFromSelection();
   for (vtkMRMLModelDisplayNode* const modelDisplayNode : modelDisplayNodesInSelection)
   {
-    int wasModified = modelDisplayNode->StartModify();
+    const int wasModified = modelDisplayNode->StartModify();
     // Select a color node if none is selected yet
     if (modelDisplayNode->GetSliceDisplayMode() != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
         && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection                              //
@@ -682,7 +682,7 @@ void qMRMLModelDisplayNodeWidget::setPointSize(double newPointSize)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetPointSize(newPointSize);
@@ -694,7 +694,7 @@ void qMRMLModelDisplayNodeWidget::setLineWidth(double newLineWidth)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetLineWidth(newLineWidth);
@@ -705,7 +705,7 @@ void qMRMLModelDisplayNodeWidget::setLineWidth(double newLineWidth)
 void qMRMLModelDisplayNodeWidget::setBackfaceHueOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
@@ -723,7 +723,7 @@ void qMRMLModelDisplayNodeWidget::setBackfaceHueOffset(double newOffset)
 void qMRMLModelDisplayNodeWidget::setBackfaceSaturationOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
@@ -741,7 +741,7 @@ void qMRMLModelDisplayNodeWidget::setBackfaceSaturationOffset(double newOffset)
 void qMRMLModelDisplayNodeWidget::setBackfaceBrightnessOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
@@ -760,10 +760,10 @@ void qMRMLModelDisplayNodeWidget::setShowFaces(int newShowFaces)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
-    int wasModified = displayNode->StartModify();
+    const int wasModified = displayNode->StartModify();
     switch (newShowFaces)
     {
       case 0: // show all
@@ -788,11 +788,11 @@ void qMRMLModelDisplayNodeWidget::setColor(const QColor& newColor)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
-    double* oldColorArray = displayNode->GetColor();
-    QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
+    double* const oldColorArray = displayNode->GetColor();
+    const QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
     if (oldColor != newColor)
     {
       displayNode->SetColor(newColor.redF(), newColor.greenF(), newColor.blueF());
@@ -808,7 +808,7 @@ void qMRMLModelDisplayNodeWidget::setOpacity(double newOpacity)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetOpacity(newOpacity);
@@ -831,7 +831,7 @@ void qMRMLModelDisplayNodeWidget::setEdgeColor(const QColor& newColor)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  const QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetEdgeColor(newColor.redF(), newColor.greenF(), newColor.blueF());

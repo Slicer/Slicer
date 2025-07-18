@@ -113,14 +113,14 @@ int vtkSlicerMarkupsInteractionWidgetRepresentation::MarkupsComponentToInteracti
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsInteractionWidgetRepresentation::GetActiveComponentType()
 {
-  int activeComponentType = this->DisplayNode->GetActiveComponentType();
+  const int activeComponentType = this->DisplayNode->GetActiveComponentType();
   return this->MarkupsComponentToInteractionComponent(activeComponentType);
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidgetRepresentation::SetActiveComponentType(int type)
 {
-  int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
+  const int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
   this->DisplayNode->SetActiveComponent(markupsComponentType, this->GetActiveComponentIndex());
 }
 
@@ -168,7 +168,7 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
   // If parent folder visibility is set to false then the markups is not visible
   if (displayNode->GetFolderDisplayOverrideAllowed())
   {
-    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    vtkMRMLDisplayableNode* const displayableNode = displayNode->GetDisplayableNode();
     // Visibility is applied regardless the fact whether there is override or not.
     // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
     // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
@@ -190,8 +190,8 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline()
 {
-  bool currentVisibility = this->GetVisibility();
-  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->ViewNode);
+  const bool currentVisibility = this->GetVisibility();
+  vtkMRMLAbstractViewNode* const viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->ViewNode);
   if (!viewNode || !this->GetMarkupsNode() || !this->IsDisplayable())
   {
     this->SetVisibility(false);
@@ -215,7 +215,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline(
 
   for (int type = InteractionNone + 1; type < Interaction_Last; ++type)
   {
-    int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
+    const int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
     vtkPolyData* handlePolyData = this->GetHandlePolydata(type);
     if (!handlePolyData)
     {
@@ -228,7 +228,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline(
     }
     visibilityArray->SetNumberOfValues(handlePolyData->GetNumberOfPoints());
 
-    bool handleVisibility = displayNode->GetHandleVisibility(markupsComponentType);
+    const bool handleVisibility = displayNode->GetHandleVisibility(markupsComponentType);
     for (int i = 0; i < handlePolyData->GetNumberOfPoints(); ++i)
     {
       visibilityArray->SetValue(i, handleVisibility);
@@ -315,7 +315,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdatePlaneScaleHandles()
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateROIScaleHandles()
 {
-  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsROINode* const roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
   if (!roiNode)
   {
     return;
@@ -385,7 +385,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateROIScaleHandles2D()
   double viewPlaneNormal_World[3] = { 0.0, 0.0, 1.0 };
   this->SlicePlane->GetNormal(viewPlaneNormal_World);
 
-  vtkMatrix4x4* objectToWorldMatrix = roiNode->GetObjectToWorldMatrix();
+  vtkMatrix4x4* const objectToWorldMatrix = roiNode->GetObjectToWorldMatrix();
   vtkNew<vtkTransform> worldToObjectTransform;
   worldToObjectTransform->Concatenate(objectToWorldMatrix);
   worldToObjectTransform->Inverse();
@@ -626,7 +626,7 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleVisibility(int ty
     return false;
   }
 
-  int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
+  const int markupsComponentType = this->InteractionComponentToMarkupsComponent(type);
   if (!this->GetDisplayNode()->GetHandleVisibility(markupsComponentType))
   {
     return false;
@@ -684,9 +684,9 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleVisibility(int ty
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidgetRepresentation::CreateScaleHandles()
 {
-  double distance = 1.5;
-  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
+  const double distance = 1.5;
+  vtkMRMLMarkupsPlaneNode* const planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsROINode* const roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
   if (planeNode || roiNode)
   {
     vtkNew<vtkPoints> points;
@@ -809,8 +809,8 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleColor(int type, i
     return;
   }
 
-  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsPlaneNode* const planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsROINode* const roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
   if (!planeNode && !roiNode)
   {
     Superclass::GetHandleColor(type, index, color);
@@ -949,7 +949,7 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetApplyScaleToPosition(in
     return Superclass::GetApplyScaleToPosition(type, index);
   }
 
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsNode* const markupsNode = this->GetMarkupsNode();
   if (vtkMRMLMarkupsROINode::SafeDownCast(markupsNode) || vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode))
   {
     return false;

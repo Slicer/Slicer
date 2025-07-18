@@ -95,7 +95,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -286,7 +286,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num, const dou
     return;
   }
 
-  vnl_double_3 tmp_grad(grad[0], grad[1], grad[2]);
+  const vnl_double_3 tmp_grad(grad[0], grad[1], grad[2]);
   if (!valid_grad_length(tmp_grad))
   {
     vtkErrorMacro(<< "vtkMRMLDiffusionWeightedVolumeNode only accepts gradient vectors with length 0.0 or 1.0!"
@@ -378,10 +378,10 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionWeightedVolumeNode* node = (vtkMRMLDiffusionWeightedVolumeNode*)anode;
+  vtkMRMLDiffusionWeightedVolumeNode* const node = (vtkMRMLDiffusionWeightedVolumeNode*)anode;
 
   // Matrices
   for (int i = 0; i < 3; i++)

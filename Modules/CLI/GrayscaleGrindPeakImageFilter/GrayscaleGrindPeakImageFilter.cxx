@@ -55,12 +55,12 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::GrayscaleGrindPeakImageFilter<InputImageType, OutputImageType> GrindPeakFilterType;
 
   // Creation of Reader and Writer filters
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
+  const typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename GrindPeakFilterType::Pointer grindpeak = GrindPeakFilterType::New();
-  itk::PluginFilterWatcher watcher(grindpeak, "Grid Peak", CLPProcessInformation);
+  const typename GrindPeakFilterType::Pointer grindpeak = GrindPeakFilterType::New();
+  const itk::PluginFilterWatcher watcher(grindpeak, "Grid Peak", CLPProcessInformation);
 
   // Setup the input and output files
   reader->SetFileName(inputVolume.c_str());

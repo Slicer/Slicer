@@ -194,7 +194,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   vtkNew<vtkIdList> linePoints;
 
   lines->GetCell(0, linePoints);
-  vtkIdType numberOfPoints = // Last point in closed curve line is the first point
+  const vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)
   {
@@ -389,7 +389,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   vtkNew<vtkIdList> linePoints;
 
   lines->GetCell(0, linePoints);
-  vtkIdType numberOfPoints = // Last point in closed curve line is the first point
+  const vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)
   {
@@ -535,12 +535,12 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
   {
     return false;
   }
-  vtkIdType numberOfPoints = outputPolyData->GetNumberOfPoints();
+  const vtkIdType numberOfPoints = outputPolyData->GetNumberOfPoints();
   if (numberOfPoints == 0 || outputPolyData->GetNumberOfLines() == 0)
   {
     return false;
   }
-  vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetAbstractArray("PedigreeIDs"));
+  vtkDoubleArray* const pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetAbstractArray("PedigreeIDs"));
   if (!pedigreeIdsArray)
   {
     vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Missing PedigreeIDs array in the curve poly data");
@@ -575,11 +575,11 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
 
     // Observe control point data array. If it is modified, then interpolation needs to be re-run
     controlPointValues->AddObserver(vtkCommand::ModifiedEvent, this->ControlPointArrayModifiedCallbackCommand);
-    vtkWeakPointer<vtkDoubleArray> controlPointArrayWeakPointer(controlPointValues);
+    const vtkWeakPointer<vtkDoubleArray> controlPointArrayWeakPointer(controlPointValues);
     this->ObservedControlPointArrays->AddItem(controlPointArrayWeakPointer);
 
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
-    std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
+    const std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
 
     if (!vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, this->CurveIsClosed, interpolatedMeasurement, pedigreeIdsArray, 1.0))
@@ -606,7 +606,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: invalid input array");
     return false;
   }
-  vtkIdType numberOfValues = pedigreeIdsArray->GetNumberOfValues();
+  const vtkIdType numberOfValues = pedigreeIdsArray->GetNumberOfValues();
   if (inputValues->GetNumberOfComponents() != 1)
   {
     // TODO: Add support for more components
@@ -619,7 +619,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     return true;
   }
   // Pedigree IDs wrap around if curve is closed. IDs of the last segment are between go up to the number of control points.
-  vtkIdType lastValidControlPointIndex = (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
+  const vtkIdType lastValidControlPointIndex = (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
   double pedigreeRange[2] = { 0.0, 0.0 };
   pedigreeIdsArray->GetValueRange(pedigreeRange);
   if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON //
@@ -639,10 +639,10 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
   for (vtkIdType pointIdx = 0; pointIdx < numberOfValues; ++pointIdx)
   {
     // Based on the pedigree IDs calculate the interpolated value for each point in the polydata
-    double pedigreeID = pedigreeIdsArray->GetValue(pointIdx) * pedigreeIdsValueScale;
-    vtkIdType controlPointIndex = vtkIdType(pedigreeID);
-    double fractionValue = pedigreeID - controlPointIndex;
-    double currentControlPointValue = inputValues->GetValue(controlPointIndex % inputValues->GetNumberOfTuples());
+    const double pedigreeID = pedigreeIdsArray->GetValue(pointIdx) * pedigreeIdsValueScale;
+    const vtkIdType controlPointIndex = vtkIdType(pedigreeID);
+    const double fractionValue = pedigreeID - controlPointIndex;
+    const double currentControlPointValue = inputValues->GetValue(controlPointIndex % inputValues->GetNumberOfTuples());
     if (fractionValue < VTK_DBL_EPSILON)
     {
       // Point corresponds to a control point
@@ -651,8 +651,8 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     else
     {
       // Need to interpolate
-      double nextControlPointValue = inputValues->GetValue((controlPointIndex + 1) % inputValues->GetNumberOfTuples());
-      double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue - currentControlPointValue);
+      const double nextControlPointValue = inputValues->GetValue((controlPointIndex + 1) % inputValues->GetNumberOfTuples());
+      const double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue - currentControlPointValue);
       interpolatedValues->InsertValue(pointIdx, interpolatedValue);
     }
   }
@@ -676,7 +676,7 @@ vtkMTimeType vtkCurveMeasurementsCalculator::GetMTime()
     for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
     {
       vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
-      vtkMTimeType measurementMTime = currentMeasurement->GetMTime();
+      const vtkMTimeType measurementMTime = currentMeasurement->GetMTime();
       if (measurementMTime > mTime)
       {
         mTime = measurementMTime;

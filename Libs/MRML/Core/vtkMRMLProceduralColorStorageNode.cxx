@@ -56,7 +56,7 @@ bool vtkMRMLProceduralColorStorageNode::CanReadInReferenceNode(vtkMRMLNode* refN
 //----------------------------------------------------------------------------
 int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   // cast the input node
   vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(refNode);
@@ -74,7 +74,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension == std::string(".txt"))
   {
     // open the file for reading input
@@ -89,7 +89,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
 
     // clear out the node
-    int wasModifying = colorNode->StartModify();
+    const int wasModifying = colorNode->StartModify();
     colorNode->SetTypeToFile();
     ctf->RemoveAllPoints();
 
@@ -140,7 +140,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLProceduralColorStorageNode: File name not specified");
@@ -167,7 +167,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension == std::string(".txt"))
   {
     // open the file for writing
@@ -183,7 +183,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
     // put down a header
     of << "# Color procedural file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
-    int numPoints = ctf->GetSize();
+    const int numPoints = ctf->GetSize();
     of << "# " << numPoints << " points" << endl;
     of << "# position R G B" << endl;
     for (int i = 0; i < numPoints; ++i)

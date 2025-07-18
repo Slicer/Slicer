@@ -56,9 +56,9 @@ void qMRMLCheckableNodeComboBoxTester::init()
   this->ComboBox = new qMRMLCheckableNodeComboBox;
   vtkMRMLScene* scene = vtkMRMLScene::New();
   this->ComboBox->setMRMLScene(scene);
-  vtkNew<vtkMRMLViewNode> node;
+  const vtkNew<vtkMRMLViewNode> node;
   scene->AddNode(node.GetPointer());
-  vtkNew<vtkMRMLViewNode> node2;
+  const vtkNew<vtkMRMLViewNode> node2;
   scene->AddNode(node2.GetPointer());
 }
 
@@ -91,7 +91,7 @@ vtkMRMLNode* qMRMLCheckableNodeComboBoxTester::node(int index)
 // ----------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBoxTester::testDefaults()
 {
-  qMRMLCheckableNodeComboBox comboBox;
+  const qMRMLCheckableNodeComboBox comboBox;
   QVERIFY(comboBox.checkedNodes().count() == 0);
   QCOMPARE(comboBox.allChecked(), true);
   QCOMPARE(comboBox.noneChecked(), true);
@@ -121,7 +121,7 @@ void qMRMLCheckableNodeComboBoxTester::testCheck()
 // ----------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBoxTester::testRename()
 {
-  vtkNew<vtkMRMLViewNode> node3;
+  const vtkNew<vtkMRMLViewNode> node3;
   this->ComboBox->mrmlScene()->AddNode(node3.GetPointer());
 
   this->ComboBox->check(this->node(0));

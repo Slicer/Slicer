@@ -242,7 +242,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNode(vtkMRMLNode* currentNode)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(currentNode);
+  vtkMRMLMarkupsNode* const currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(currentNode);
   if (currentMarkupsNode == d->CurrentMarkupsNode)
   {
     // not changed
@@ -312,7 +312,7 @@ void qSlicerMarkupsPlaceWidget::unsetLastDefinedPoint()
     return;
   }
 
-  int pointNumber = currentMarkupsNode->GetNumberOfControlPoints();
+  const int pointNumber = currentMarkupsNode->GetNumberOfControlPoints();
   for (int index = pointNumber - 1; index >= 0; index--)
   {
     if (currentMarkupsNode->GetNthControlPointPositionStatus(index) != vtkMRMLMarkupsNode::PositionUndefined)
@@ -358,9 +358,9 @@ bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
   {
     return false;
   }
-  bool currentNodeActive = (d->MarkupsLogic->GetActiveListID().compare(currentMarkupsNode->GetID()) == 0);
-  const char* activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
-  bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName()) == 0;
+  const bool currentNodeActive = (d->MarkupsLogic->GetActiveListID().compare(currentMarkupsNode->GetID()) == 0);
+  const char* const activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
+  const bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName()) == 0;
   return placeNodeClassNameMatches && currentNodeActive;
 }
 
@@ -377,7 +377,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
     }
     return;
   }
-  bool wasActive = this->currentNodeActive();
+  const bool wasActive = this->currentNodeActive();
   if (wasActive != active)
   {
     if (active)
@@ -400,14 +400,14 @@ bool qSlicerMarkupsPlaceWidget::placeModeEnabled() const
   {
     return false;
   }
-  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
+  vtkMRMLMarkupsNode* const currentMarkupsNode = this->currentMarkupsNode();
   if (d->SelectionNode == nullptr || d->InteractionNode == nullptr || this->mrmlScene() == nullptr || currentMarkupsNode == nullptr)
   {
     return false;
   }
-  bool placeMode = d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place;
-  const char* activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
-  bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName()) == 0;
+  const bool placeMode = d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place;
+  const char* const activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
+  const bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName()) == 0;
   return placeMode && placeNodeClassNameMatches;
 }
 
@@ -425,7 +425,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     }
     return;
   }
-  bool wasActive = this->currentNodeActive();
+  const bool wasActive = this->currentNodeActive();
   if (placeEnable)
   {
     // activate and set place mode
@@ -494,7 +494,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->PlaceButton->setEnabled(false);
     d->DeleteButton->setEnabled(false);
     d->MoreButton->setEnabled(false);
-    bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
+    const bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
     d->ColorButton->setColor(d->DefaultNodeColor);
     d->ColorButton->blockSignals(wasBlockedColorButton);
     if (d->LastSignaledPlaceModeEnabled)
@@ -507,7 +507,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     return;
   }
 
-  bool activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
+  const bool activePlaceNodePlacementValid = !currentMarkupsNode->GetControlPointPlacementComplete();
   d->PlaceButton->setEnabled(activePlaceNodePlacementValid);
 
   d->ColorButton->setEnabled(true);
@@ -515,13 +515,13 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   d->MoreButton->setEnabled(true);
 
   // Set the button indicating if this list is active
-  bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
-  bool wasBlockedVisibilityButton = d->ActionVisibility->blockSignals(true);
-  bool wasBlockedLockButton = d->ActionLocked->blockSignals(true);
+  const bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
+  const bool wasBlockedVisibilityButton = d->ActionVisibility->blockSignals(true);
+  const bool wasBlockedLockButton = d->ActionLocked->blockSignals(true);
 
   if (currentMarkupsNode->GetDisplayNode() != nullptr)
   {
-    double* color = currentMarkupsNode->GetDisplayNode()->GetSelectedColor();
+    double* const color = currentMarkupsNode->GetDisplayNode()->GetSelectedColor();
     QColor qColor;
     qMRMLUtils::colorToQColor(color, qColor);
     d->ColorButton->setColor(qColor);
@@ -536,7 +536,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->ActionLocked->setIcon(QIcon(":/Icons/Small/SlicerUnlock.png"));
   }
 
-  bool fixedNumberControlPoints = currentMarkupsNode->GetFixedNumberOfControlPoints();
+  const bool fixedNumberControlPoints = currentMarkupsNode->GetFixedNumberOfControlPoints();
   if (fixedNumberControlPoints)
   {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberLock.png"));
@@ -570,16 +570,16 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   d->ActionVisibility->blockSignals(wasBlockedVisibilityButton);
   d->ActionLocked->blockSignals(wasBlockedLockButton);
 
-  bool wasBlockedPlaceButton = d->PlaceButton->blockSignals(true);
+  const bool wasBlockedPlaceButton = d->PlaceButton->blockSignals(true);
   d->PlaceButton->setChecked(placeModeEnabled());
   d->PlaceButton->blockSignals(wasBlockedPlaceButton);
   d->PlaceButton->setIcon(QIcon(currentMarkupsNode->GetAddIcon()));
 
-  bool wasBlockedPersistencyAction = d->ActionPlacePersistentPoint->blockSignals(true);
+  const bool wasBlockedPersistencyAction = d->ActionPlacePersistentPoint->blockSignals(true);
   d->ActionPlacePersistentPoint->setChecked(placeModePersistency());
   d->ActionPlacePersistentPoint->blockSignals(wasBlockedPersistencyAction);
 
-  bool currentPlaceModeEnabled = placeModeEnabled();
+  const bool currentPlaceModeEnabled = placeModeEnabled();
   if (d->LastSignaledPlaceModeEnabled != currentPlaceModeEnabled)
   {
     emit activeMarkupsFiducialPlaceModeChanged(currentPlaceModeEnabled);
@@ -596,7 +596,7 @@ void qSlicerMarkupsPlaceWidget::updateDeleteButton()
   Q_D(qSlicerMarkupsPlaceWidget);
   if (d->DeleteButton)
   {
-    bool showMenu = (d->ActionDeleteAll->isVisible() || d->ActionUnsetLast->isVisible() || d->ActionUnsetAll->isVisible());
+    const bool showMenu = (d->ActionDeleteAll->isVisible() || d->ActionUnsetLast->isVisible() || d->ActionUnsetAll->isVisible());
     d->DeleteButton->setMenu(showMenu ? d->DeleteMenu : nullptr);
     d->DeleteButton->setPopupMode(showMenu ? QToolButton::MenuButtonPopup : QToolButton::DelayedPopup);
 

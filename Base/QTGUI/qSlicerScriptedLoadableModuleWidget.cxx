@@ -109,7 +109,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
   }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(filePath).baseName();
+  const QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -122,11 +122,11 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject* main_module = PyImport_AddModule("__main__");
-  PyObject* global_dict = PyModule_GetDict(main_module);
+  PyObject* const main_module = PyImport_AddModule("__main__");
+  PyObject* const global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* const sysModules = PyImport_GetModuleDict();
   PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
@@ -169,7 +169,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
 
   d->PythonCppAPI.setObjectName(className);
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -232,11 +232,11 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
-  PyObject* arguments = PyTuple_New(3);
+  PyObject* const arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, PyUnicode_FromString(role.toUtf8()));
   PyTuple_SET_ITEM(arguments, 2, PyUnicode_FromString(context.toUtf8()));
-  PyObject* result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -258,9 +258,9 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QStri
 double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyObject* result = d->PythonCppAPI.callMethod(d->NodeEditableMethod, arguments);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->NodeEditableMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {

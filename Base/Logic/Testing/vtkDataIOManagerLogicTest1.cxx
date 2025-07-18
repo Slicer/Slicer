@@ -19,10 +19,10 @@ int vtkDataIOManagerLogicTest1(int, char*[])
   vtkNew<vtkDataIOManagerLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
-  vtkNew<vtkDataIOManager> dataIOManager;
+  const vtkNew<vtkDataIOManager> dataIOManager;
   logic->SetAndObserveDataIOManager(dataIOManager.GetPointer());
 
-  vtkNew<vtkSlicerApplicationLogic> slicerApplicationLogic;
+  const vtkNew<vtkSlicerApplicationLogic> slicerApplicationLogic;
   logic->SetMRMLApplicationLogic(slicerApplicationLogic.GetPointer());
   logic->GetApplicationLogic()->Print(std::cout);
 

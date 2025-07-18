@@ -61,7 +61,7 @@ QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 
 int qSlicerMouseModeToolBarTest1(int argc, char* argv[])
 {
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
   qSlicerMouseModeToolBar mouseToolBar;
 
   // set the scene without the app logic

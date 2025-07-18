@@ -10,7 +10,7 @@ qMRMLSliceVerticalControllerWidgetPlugin::qMRMLSliceVerticalControllerWidgetPlug
 // --------------------------------------------------------------------------
 QWidget* qMRMLSliceVerticalControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSliceVerticalControllerWidget* _widget = new qMRMLSliceVerticalControllerWidget(_parent);
+  qMRMLSliceVerticalControllerWidget* const _widget = new qMRMLSliceVerticalControllerWidget(_parent);
   return _widget;
 }
 

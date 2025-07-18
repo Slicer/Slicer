@@ -112,15 +112,15 @@ void qMRMLROIWidget::onMRMLNodeModified()
   d->DisplayClippingBoxButton->setChecked(d->ROINode->GetVisibility());
 
   // Interactive Mode
-  bool interactive = d->ROINode->GetInteractiveMode();
+  const bool interactive = d->ROINode->GetInteractiveMode();
   d->LRRangeWidget->setTracking(interactive);
   d->PARangeWidget->setTracking(interactive);
   d->ISRangeWidget->setTracking(interactive);
   d->InteractiveModeCheckBox->setChecked(interactive);
 
   // ROI
-  double* xyz = d->ROINode->GetXYZ();
-  double* rxyz = d->ROINode->GetRadiusXYZ();
+  double* const xyz = d->ROINode->GetXYZ();
+  double* const rxyz = d->ROINode->GetRadiusXYZ();
   double bounds[6];
   for (int i = 0; i < 3; ++i)
   {
@@ -164,7 +164,7 @@ void qMRMLROIWidget::updateROI()
   d->PARangeWidget->values(bounds[2], bounds[3]);
   d->ISRangeWidget->values(bounds[4], bounds[5]);
 
-  int disabledModify = d->ROINode->StartModify();
+  const int disabledModify = d->ROINode->StartModify();
 
   d->ROINode->SetXYZ(0.5 * (bounds[1] + bounds[0]), 0.5 * (bounds[3] + bounds[2]), 0.5 * (bounds[5] + bounds[4]));
   d->ROINode->SetRadiusXYZ(0.5 * (bounds[1] - bounds[0]), 0.5 * (bounds[3] - bounds[2]), 0.5 * (bounds[5] - bounds[4]));

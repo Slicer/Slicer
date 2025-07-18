@@ -32,7 +32,7 @@ public:
 
   void Execute(const itk::Object* object, const itk::EventObject& event) override
   {
-    const TFilter* filter = dynamic_cast<const TFilter*>(object);
+    const TFilter* const filter = dynamic_cast<const TFilter*>(object);
 
     if (typeid(event) != typeid(itk::IterationEvent))
     {
@@ -45,7 +45,7 @@ public:
 int SaveIt(ImageType::Pointer img, const char* fname)
 {
   typedef itk::ImageFileWriter<ImageType> WriterType;
-  WriterType::Pointer writer = WriterType::New();
+  const WriterType::Pointer writer = WriterType::New();
   writer->SetInput(img);
   writer->SetFileName(fname);
   writer->Update();
@@ -66,10 +66,10 @@ int main(int argc, char** argv)
   MaskImageType::Pointer maskImage = nullptr;
 
   typedef itk::N4BiasFieldCorrectionImageFilter<ImageType, MaskImageType, ImageType> CorrecterType;
-  CorrecterType::Pointer correcter = CorrecterType::New();
+  const CorrecterType::Pointer correcter = CorrecterType::New();
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
-  ReaderType::Pointer reader = ReaderType::New();
+  const ReaderType::Pointer reader = ReaderType::New();
 
   reader->SetFileName(inputImageName.c_str());
   reader->Update();
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
   if (maskImageName != "")
   {
     typedef itk::ImageFileReader<MaskImageType> ReaderType;
-    ReaderType::Pointer maskreader = ReaderType::New();
+    const ReaderType::Pointer maskreader = ReaderType::New();
     maskreader->SetFileName(maskImageName.c_str());
     maskreader->Update();
     maskImage = maskreader->GetOutput();
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
   {
     std::cout << "Mask no read.  Creating Otsu mask." << std::endl;
     typedef itk::OtsuThresholdImageFilter<ImageType, MaskImageType> ThresholderType;
-    ThresholderType::Pointer otsu = ThresholderType::New();
+    const ThresholderType::Pointer otsu = ThresholderType::New();
     otsu->SetInput(inputImage);
     otsu->SetNumberOfHistogramBins(200);
     otsu->SetInsideValue(0);
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
   if (weightImageName != "")
   {
     typedef itk::ImageFileReader<ImageType> ReaderType;
-    ReaderType::Pointer weightreader = ReaderType::New();
+    const ReaderType::Pointer weightreader = ReaderType::New();
     weightreader->SetFileName(weightImageName.c_str());
     weightreader->Update();
     weightImage = weightreader->GetOutput();
@@ -155,8 +155,8 @@ int main(int argc, char** argv)
    * the user wants to specify things in terms of the spline distance.
    */
 
-  ImageType::IndexType inputImageIndex = inputImage->GetLargestPossibleRegion().GetIndex();
-  ImageType::SizeType inputImageSize = inputImage->GetLargestPossibleRegion().GetSize();
+  const ImageType::IndexType inputImageIndex = inputImage->GetLargestPossibleRegion().GetIndex();
+  const ImageType::SizeType inputImageSize = inputImage->GetLargestPossibleRegion().GetSize();
 
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
@@ -173,9 +173,9 @@ int main(int argc, char** argv)
     itk::SizeValueType upperBound[ImageDimension];
     for (unsigned d = 0; d < 3; d++)
     {
-      float domain = static_cast<RealType>(inputImage->GetLargestPossibleRegion().GetSize()[d] - 1) * inputImage->GetSpacing()[d];
-      unsigned int numberOfSpans = static_cast<unsigned int>(std::ceil(domain / splineDistance));
-      itk::SizeValueType extraPadding = static_cast<itk::SizeValueType>((numberOfSpans * splineDistance - domain) / inputImage->GetSpacing()[d] + 0.5);
+      const float domain = static_cast<RealType>(inputImage->GetLargestPossibleRegion().GetSize()[d] - 1) * inputImage->GetSpacing()[d];
+      const unsigned int numberOfSpans = static_cast<unsigned int>(std::ceil(domain / splineDistance));
+      const itk::SizeValueType extraPadding = static_cast<itk::SizeValueType>((numberOfSpans * splineDistance - domain) / inputImage->GetSpacing()[d] + 0.5);
       lowerBound[d] = static_cast<itk::SizeValueType>(0.5 * extraPadding);
       upperBound[d] = extraPadding - lowerBound[d];
       newOrigin[d] -= (static_cast<RealType>(lowerBound[d]) * inputImage->GetSpacing()[d]);
@@ -183,7 +183,7 @@ int main(int argc, char** argv)
     }
 
     typedef itk::ConstantPadImageFilter<ImageType, ImageType> PadderType;
-    PadderType::Pointer padder = PadderType::New();
+    const PadderType::Pointer padder = PadderType::New();
     padder->SetInput(inputImage);
     padder->SetPadLowerBound(lowerBound);
     padder->SetPadUpperBound(upperBound);
@@ -192,7 +192,7 @@ int main(int argc, char** argv)
     inputImage = padder->GetOutput();
 
     typedef itk::ConstantPadImageFilter<MaskImageType, MaskImageType> MaskPadderType;
-    MaskPadderType::Pointer maskPadder = MaskPadderType::New();
+    const MaskPadderType::Pointer maskPadder = MaskPadderType::New();
     maskPadder->SetInput(maskImage);
     maskPadder->SetPadLowerBound(lowerBound);
     maskPadder->SetPadUpperBound(upperBound);
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
 
     if (weightImage)
     {
-      PadderType::Pointer weightPadder = PadderType::New();
+      const PadderType::Pointer weightPadder = PadderType::New();
       weightPadder->SetInput(weightImage);
       weightPadder->SetPadLowerBound(lowerBound);
       weightPadder->SetPadUpperBound(upperBound);
@@ -222,12 +222,12 @@ int main(int argc, char** argv)
   }
 
   typedef itk::ShrinkImageFilter<ImageType, ImageType> ShrinkerType;
-  ShrinkerType::Pointer shrinker = ShrinkerType::New();
+  const ShrinkerType::Pointer shrinker = ShrinkerType::New();
   shrinker->SetInput(inputImage);
   shrinker->SetShrinkFactors(1);
 
   typedef itk::ShrinkImageFilter<MaskImageType, MaskImageType> MaskShrinkerType;
-  MaskShrinkerType::Pointer maskshrinker = MaskShrinkerType::New();
+  const MaskShrinkerType::Pointer maskshrinker = MaskShrinkerType::New();
   maskshrinker->SetInput(maskImage);
   maskshrinker->SetShrinkFactors(1);
 
@@ -244,7 +244,7 @@ int main(int argc, char** argv)
   if (weightImage)
   {
     typedef itk::ShrinkImageFilter<ImageType, ImageType> WeightShrinkerType;
-    WeightShrinkerType::Pointer weightshrinker = WeightShrinkerType::New();
+    const WeightShrinkerType::Pointer weightshrinker = WeightShrinkerType::New();
     weightshrinker->SetInput(weightImage);
     weightshrinker->SetShrinkFactors(1);
     weightshrinker->SetShrinkFactors(shrinkFactor);
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
   }
 
   typedef CommandIterationUpdate<CorrecterType> CommandType;
-  CommandType::Pointer observer = CommandType::New();
+  const CommandType::Pointer observer = CommandType::New();
   correcter->AddObserver(itk::IterationEvent(), observer);
 
   /**
@@ -274,7 +274,7 @@ int main(int argc, char** argv)
 
   try
   {
-    itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0 / 1.0, 0.0);
+    const itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0 / 1.0, 0.0);
     correcter->Update();
   }
   catch (itk::ExceptionObject& err)
@@ -304,7 +304,7 @@ int main(int argc, char** argv)
      * corrected image.
      */
     typedef itk::BSplineControlPointImageFilter<CorrecterType::BiasFieldControlPointLatticeType, CorrecterType::ScalarImageType> BSplinerType;
-    BSplinerType::Pointer bspliner = BSplinerType::New();
+    const BSplinerType::Pointer bspliner = BSplinerType::New();
     bspliner->SetInput(correcter->GetLogBiasFieldControlPointLattice());
     bspliner->SetSplineOrder(correcter->GetSplineOrder());
     bspliner->SetSize(inputImage->GetLargestPossibleRegion().GetSize());
@@ -313,7 +313,7 @@ int main(int argc, char** argv)
     bspliner->SetSpacing(inputImage->GetSpacing());
     bspliner->Update();
 
-    ImageType::Pointer logField = ImageType::New();
+    const ImageType::Pointer logField = ImageType::New();
     logField->SetOrigin(inputImage->GetOrigin());
     logField->SetSpacing(inputImage->GetSpacing());
     logField->SetRegions(inputImage->GetLargestPossibleRegion());
@@ -328,12 +328,12 @@ int main(int argc, char** argv)
     }
 
     typedef itk::ExpImageFilter<ImageType, ImageType> ExpFilterType;
-    ExpFilterType::Pointer expFilter = ExpFilterType::New();
+    const ExpFilterType::Pointer expFilter = ExpFilterType::New();
     expFilter->SetInput(logField);
     expFilter->Update();
 
     typedef itk::DivideImageFilter<ImageType, ImageType, ImageType> DividerType;
-    DividerType::Pointer divider = DividerType::New();
+    const DividerType::Pointer divider = DividerType::New();
     divider->SetInput1(inputImage);
     divider->SetInput2(expFilter->GetOutput());
     divider->Update();
@@ -343,13 +343,13 @@ int main(int argc, char** argv)
     inputRegion.SetSize(inputImageSize);
 
     typedef itk::ExtractImageFilter<ImageType, ImageType> CropperType;
-    CropperType::Pointer cropper = CropperType::New();
+    const CropperType::Pointer cropper = CropperType::New();
     cropper->SetInput(divider->GetOutput());
     cropper->SetExtractionRegion(inputRegion);
     cropper->SetDirectionCollapseToSubmatrix();
     cropper->Update();
 
-    CropperType::Pointer biasFieldCropper = CropperType::New();
+    const CropperType::Pointer biasFieldCropper = CropperType::New();
     biasFieldCropper->SetInput(expFilter->GetOutput());
     biasFieldCropper->SetExtractionRegion(inputRegion);
     biasFieldCropper->SetDirectionCollapseToSubmatrix();
@@ -358,7 +358,7 @@ int main(int argc, char** argv)
     if (outputBiasFieldName != "")
     {
       typedef itk::ImageFileWriter<ImageType> WriterType;
-      WriterType::Pointer writer = WriterType::New();
+      const WriterType::Pointer writer = WriterType::New();
       writer->SetFileName(outputBiasFieldName.c_str());
       writer->SetInput(biasFieldCropper->GetOutput());
       writer->SetUseCompression(true);
@@ -375,7 +375,7 @@ int main(int argc, char** argv)
 
       // This filter handles all types on input, but only produces
       // signed types
-      const char* fname = outputImageName.c_str();
+      const char* const fname = outputImageName.c_str();
 
       return SaveIt(cropper->GetOutput(), fname);
     }

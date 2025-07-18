@@ -8,7 +8,7 @@ qMRMLWindowLevelWidgetPlugin::qMRMLWindowLevelWidgetPlugin(QObject* _parent)
 
 QWidget* qMRMLWindowLevelWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLWindowLevelWidget* _widget = new qMRMLWindowLevelWidget(_parent);
+  qMRMLWindowLevelWidget* const _widget = new qMRMLWindowLevelWidget(_parent);
   return _widget;
 }
 

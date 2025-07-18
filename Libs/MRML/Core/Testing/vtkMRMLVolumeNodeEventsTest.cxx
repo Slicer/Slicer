@@ -120,7 +120,7 @@ int vtkMRMLVolumeNodeEventsTest(int, char*[])
   callback->ResetNumberOfEvents();
 
   // StartModify
-  int wasModifying = volumeNode->StartModify();
+  const int wasModifying = volumeNode->StartModify();
   volumeNode->Modified();
   imageData->Modified();
   if (!callback->GetErrorString().empty() ||                         //

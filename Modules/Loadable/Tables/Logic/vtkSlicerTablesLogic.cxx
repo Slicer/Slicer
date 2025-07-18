@@ -78,7 +78,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
   vtkMRMLTableNode* tableNode = nullptr;
 
   // Check if the file is sqlite
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
   if (extension.empty())
   {
     vtkErrorMacro("AddTable: no file extension specified: " << fileName);
@@ -90,8 +90,8 @@ vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
       || !extension.compare(".sqlite3"))
   {
     // SQLite
-    std::string dbname = std::string("sqlite://") + std::string(fileName);
-    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+    const std::string dbname = std::string("sqlite://") + std::string(fileName);
+    const vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
     if (!database->Open(password ? password : "", vtkSQLiteDatabase::USE_EXISTING))
     {
@@ -101,7 +101,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
     vtkStringArray* tables = database->GetTables();
     for (int i = 0; i < tables->GetNumberOfTuples(); i++)
     {
-      std::string table = tables->GetValue(i);
+      const std::string table = tables->GetValue(i);
 
       // Storage node
       vtkNew<vtkMRMLTableSQLiteStorageNode> tableStorageNode;
@@ -111,12 +111,12 @@ vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
 
       // Storable node
       vtkNew<vtkMRMLTableNode> tableNode1;
-      std::string uname = std::string(table.c_str());
+      const std::string uname = std::string(table.c_str());
       tableNode1->SetName(uname.c_str());
 
       this->GetMRMLScene()->AddNode(tableNode1.GetPointer());
       // Read
-      int res = tableStorageNode->ReadData(tableNode1.GetPointer());
+      const int res = tableStorageNode->ReadData(tableNode1.GetPointer());
       if (res == 0) // failed to read
       {
         vtkErrorMacro("Failed to read tables from " << fileName);
@@ -147,7 +147,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic::AddTable(const char* fileName,
     this->GetMRMLScene()->AddNode(tableNode1.GetPointer());
 
     // Read
-    int res = tableStorageNode->ReadData(tableNode1.GetPointer());
+    const int res = tableStorageNode->ReadData(tableNode1.GetPointer());
     if (userMessages)
     {
       userMessages->AddMessages(tableStorageNode->GetUserMessages());

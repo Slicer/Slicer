@@ -70,8 +70,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-  qSlicerAbstractModuleFactoryManager* factoryManager = coreApp->moduleManager()->factoryManager();
+  qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
+  qSlicerAbstractModuleFactoryManager* const factoryManager = coreApp->moduleManager()->factoryManager();
 
   // Show Hidden
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)), q, SLOT(onShowHiddenModulesChanged(bool)));
@@ -80,7 +80,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->AdditionalModulePathMoreButton->setChecked(false);
 
   // Modules
-  qSlicerModuleFactoryFilterModel* filterModel = this->DisableModulesListView->filterModel();
+  qSlicerModuleFactoryFilterModel* const filterModel = this->DisableModulesListView->filterModel();
   QObject::connect(this->FilterToLoadPushButton, SIGNAL(toggled(bool)), filterModel, SLOT(setShowToLoad(bool)));
   QObject::connect(this->FilterToIgnorePushButton, SIGNAL(toggled(bool)), filterModel, SLOT(setShowToIgnore(bool)));
   QObject::connect(this->FilterLoadedPushButton, SIGNAL(toggled(bool)), filterModel, SLOT(setShowLoaded(bool)));
@@ -119,7 +119,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   // Slicer_DEFAULT_FAVORITE_MODULES contains module names in a comma-separated list
   // (chosen this format because the same format is used for storing the favorites list in the .ini file).
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QStringList favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", Qt::SkipEmptyParts);
+  QStringList const favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", Qt::SkipEmptyParts);
 #else
   QStringList favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", QString::SkipEmptyParts);
 #endif
@@ -164,13 +164,13 @@ void qSlicerSettingsModulesPanelPrivate::init()
   // (e.g., favorite module toolbar)
   QObject::connect(this->FavoritesModulesListView->filterModel(), SIGNAL(showModulesChanged(QStringList)), q, SIGNAL(favoriteModulesChanged()));
 
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->TemporaryDirectoryButton, /*no tr*/ "directory", SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* const relativePathMapper = new qSlicerRelativePathMapper(this->TemporaryDirectoryButton, /*no tr*/ "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("TemporaryPath", relativePathMapper, "relativePath", SIGNAL(relativePathChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules",
                       this->ShowHiddenModulesCheckBox,
                       /*no tr*/ "checked",
                       SIGNAL(toggled(bool)));
-  qSlicerRelativePathMapper* relativePathMapper2 = new qSlicerRelativePathMapper(this->AdditionalModulePathsView, "directoryList", SIGNAL(directoryListChanged()));
+  qSlicerRelativePathMapper* const relativePathMapper2 = new qSlicerRelativePathMapper(this->AdditionalModulePathsView, "directoryList", SIGNAL(directoryListChanged()));
   q->registerProperty("Modules/AdditionalPaths",
                       relativePathMapper2,
                       "relativePaths",
@@ -239,7 +239,7 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
 
   // Ensure the ModulesListView observing the factoryManager is updated
   // when settings are restored.
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
   coreApp->moduleManager()->factoryManager()->setModulesToIgnore(moduleNames);
 
   // Update the list of modules to ignore removing the one
@@ -274,7 +274,7 @@ QStringList qSlicerSettingsModulesPanel::modulesToAlwaysIgnore() const
 void qSlicerSettingsModulesPanel::onHomeModuleChanged(const QString& moduleName)
 {
   Q_D(qSlicerSettingsModulesPanel);
-  QAction* moduleAction = d->ModulesMenu->moduleAction(moduleName);
+  QAction* const moduleAction = d->ModulesMenu->moduleAction(moduleName);
   Q_ASSERT(moduleAction);
   d->HomeModuleButton->setText(moduleAction->text());
   d->HomeModuleButton->setIcon(moduleAction->icon());
@@ -289,7 +289,7 @@ void qSlicerSettingsModulesPanel::onTemporaryPathChanged(const QString& path)
 // --------------------------------------------------------------------------
 void qSlicerSettingsModulesPanel::onShowHiddenModulesChanged(bool show)
 {
-  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  QMainWindow* const mainWindow = qSlicerApplication::application()->mainWindow();
   for (qSlicerModuleSelectorToolBar* const toolBar : mainWindow->findChildren<qSlicerModuleSelectorToolBar*>())
   {
     toolBar->modulesMenu()->setShowHiddenModules(show);
@@ -309,9 +309,9 @@ void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
 void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsModulesPanel);
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-  QString mostRecentPath = coreApp->toSlicerHomeAbsolutePath(coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
-  QString path = QFileDialog::getExistingDirectory(this, tr("Select folder"), mostRecentPath);
+  qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
+  const QString mostRecentPath = coreApp->toSlicerHomeAbsolutePath(coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
+  const QString path = QFileDialog::getExistingDirectory(this, tr("Select folder"), mostRecentPath);
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
   {

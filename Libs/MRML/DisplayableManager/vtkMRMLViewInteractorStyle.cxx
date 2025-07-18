@@ -56,7 +56,7 @@ vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
 
   if (this->DisplayableManagers)
   {
-    int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+    const int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
     for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
     {
       vtkMRMLAbstractDisplayableManager* displayableManager = this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex);
@@ -282,7 +282,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(u
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(event);
 
-  bool delegated = this->DelegateInteractionEventToDisplayableManagers(ed);
+  const bool delegated = this->DelegateInteractionEventToDisplayableManagers(ed);
   if (delegated)
   {
     this->EventCallbackCommand->SetAbortFlag(1);
@@ -297,7 +297,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(v
   {
     return false;
   }
-  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
+  int* const displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
   if (!pokedRenderer)
   {
@@ -311,7 +311,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(v
   ed->SetDisplayPosition(displayPositionCorrected);
   ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAttributesFromInteractor(this->GetInteractor());
-  vtkEventDataDevice3D* inputEventDataDevice3D = inputEventData->GetAsEventDataDevice3D();
+  vtkEventDataDevice3D* const inputEventDataDevice3D = inputEventData->GetAsEventDataDevice3D();
   if (inputEventDataDevice3D)
   {
     ed->SetDevice(inputEventDataDevice3D->GetDevice());
@@ -342,7 +342,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
   bool canProcessEvent = false;
   double closestDistance2 = VTK_DOUBLE_MAX;
   vtkMRMLAbstractDisplayableManager* closestDisplayableManager = nullptr;
-  int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+  const int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
 
   // Find the most suitable displayable manager
   for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
@@ -404,12 +404,12 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
-  vtkMRMLApplicationLogic* appLogic = this->FocusedDisplayableManager->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* const appLogic = this->FocusedDisplayableManager->GetMRMLApplicationLogic();
   if (appLogic)
   {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->PauseRender();
   }
-  bool processed = this->FocusedDisplayableManager->ProcessInteractionEvent(eventData);
+  const bool processed = this->FocusedDisplayableManager->ProcessInteractionEvent(eventData);
   int cursor = VTK_CURSOR_DEFAULT;
   if (processed)
   {
@@ -530,7 +530,7 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor* intera
 
   if (interactor)
   {
-    float priority = 0.0f;
+    const float priority = 0.0f;
 
     // Mouse
     interactor->AddObserver(vtkCommand::MouseMoveEvent, this->EventCallbackCommand, priority);

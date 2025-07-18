@@ -8,7 +8,7 @@ qMRMLVolumeThresholdWidgetPlugin::qMRMLVolumeThresholdWidgetPlugin(QObject* _par
 
 QWidget* qMRMLVolumeThresholdWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLVolumeThresholdWidget* _widget = new qMRMLVolumeThresholdWidget(_parent);
+  qMRMLVolumeThresholdWidget* const _widget = new qMRMLVolumeThresholdWidget(_parent);
   return _widget;
 }
 

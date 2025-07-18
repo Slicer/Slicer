@@ -113,7 +113,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(filePath).baseName();
+  const QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -129,8 +129,8 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   d->PythonClassName = className;
 
   // Get actual module from sys.modules
-  PyObject* sysModules = PyImport_GetModuleDict();
-  PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
+  PyObject* const sysModules = PyImport_GetModuleDict();
+  PyObject* const module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -187,7 +187,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
     return false;
   }
 
-  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
+  PyObject* const self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
   {
     return false;
@@ -210,7 +210,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 {
   Q_D(qSlicerScriptedFileDialog);
   d->Properties = ioProperties;
-  PyObject* result = d->PythonCppAPI.callMethod(d->ExecMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->ExecMethod);
   if (!result)
   {
     return false;
@@ -230,7 +230,7 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) co
   Q_D(const qSlicerScriptedFileDialog);
   d->MimeData = mimeData;
   d->MimeDataAccepted = false;
-  PyObject* result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
+  PyObject* const result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
   if (!result)
   {
     return false;

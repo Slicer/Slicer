@@ -43,7 +43,7 @@ vtkStandardNewMacro(vtkMRMLVolumeDisplayNodeTestHelper1);
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLVolumeDisplayNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLVolumeDisplayNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

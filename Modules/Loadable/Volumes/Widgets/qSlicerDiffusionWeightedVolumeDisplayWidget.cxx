@@ -106,7 +106,7 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffu
 {
   Q_D(qSlicerDiffusionWeightedVolumeDisplayWidget);
 
-  vtkMRMLDiffusionWeightedVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* const oldVolumeDisplayNode = this->volumeDisplayNode();
 
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromDisplayNode()));
   qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromVolumeNode()));
@@ -127,14 +127,14 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
   {
     return;
   }
-  int maxRange = d->VolumeNode->GetImageData() ? d->VolumeNode->GetImageData()->GetNumberOfScalarComponents() - 1 : 0;
+  const int maxRange = d->VolumeNode->GetImageData() ? d->VolumeNode->GetImageData()->GetNumberOfScalarComponents() - 1 : 0;
   // we save the component here, as changing the range of the slider/spinbox
   // can change the component value. We want to set it back.
   vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode = this->volumeDisplayNode();
 
-  int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value();
-  bool sliderWasBlocking = d->DWIComponentSlider->blockSignals(true);
-  bool spinBoxWasBlocking = d->DWIComponentSpinBox->blockSignals(true);
+  const int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value();
+  const bool sliderWasBlocking = d->DWIComponentSlider->blockSignals(true);
+  const bool spinBoxWasBlocking = d->DWIComponentSpinBox->blockSignals(true);
   d->DWIComponentSlider->setRange(0, maxRange);
   d->DWIComponentSpinBox->setRange(0, maxRange);
   d->DWIComponentSlider->blockSignals(sliderWasBlocking);

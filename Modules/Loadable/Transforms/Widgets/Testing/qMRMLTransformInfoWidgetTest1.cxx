@@ -45,7 +45,7 @@ int qMRMLTransformInfoWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkNew<vtkMRMLTransformNode> transformNode;
+  const vtkNew<vtkMRMLTransformNode> transformNode;
 
   qMRMLTransformInfoWidget transformInfo;
   transformInfo.setMRMLTransformNode(transformNode.GetPointer());

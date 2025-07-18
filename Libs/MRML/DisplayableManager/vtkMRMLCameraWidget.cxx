@@ -196,7 +196,7 @@ bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData
     }
   }
 
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
   {
     // If this event is not recognized then give a chance to process it as a click event.
@@ -234,7 +234,7 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
   {
     return false;
   }
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
   bool processedEvent = true;
 
@@ -454,7 +454,7 @@ bool vtkMRMLCameraWidget::ProcessStartMouseDrag(vtkMRMLInteractionEventData* eve
     }
   }
 
-  const int* displayPos = eventData->GetDisplayPosition();
+  const int* const displayPos = eventData->GetDisplayPosition();
 
   this->StartEventPosition[0] = displayPos[0];
   this->StartEventPosition[1] = displayPos[1];
@@ -491,7 +491,7 @@ bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* event
   this->ModifierKeyPressedSinceLastClickAndDrag = false;
 
   // only claim this as processed if the mouse was moved (this lets the event interpreted as button click)
-  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  const bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
   return processedEvent;
 }
 
@@ -591,21 +591,21 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
     return false;
   }
 
-  const int* eventPosition = eventData->GetDisplayPosition();
-  int dx = eventPosition[0] - this->PreviousEventPosition[0];
-  int dy = eventPosition[1] - this->PreviousEventPosition[1];
+  const int* const eventPosition = eventData->GetDisplayPosition();
+  const int dx = eventPosition[0] - this->PreviousEventPosition[0];
+  const int dy = eventPosition[1] - this->PreviousEventPosition[1];
   if (dx == 0 && dy == 0)
   {
     return true;
   }
 
-  const int* size = this->Renderer->GetRenderWindow()->GetSize();
+  const int* const size = this->Renderer->GetRenderWindow()->GetSize();
 
-  double delta_elevation = -20.0 / size[1];
-  double delta_azimuth = -20.0 / size[0];
+  const double delta_elevation = -20.0 / size[1];
+  const double delta_azimuth = -20.0 / size[0];
 
-  double rxf = (double)dx * delta_azimuth * this->MotionFactor;
-  double ryf = (double)dy * delta_elevation * this->MotionFactor;
+  const double rxf = (double)dx * delta_azimuth * this->MotionFactor;
+  const double ryf = (double)dy * delta_elevation * this->MotionFactor;
 
   vtkCamera* camera = this->GetCamera();
   if (!camera)
@@ -613,7 +613,7 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
     return false;
   }
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
 
   if (this->CameraTiltLocked == true)
   {
@@ -642,15 +642,15 @@ bool vtkMRMLCameraWidget::ProcessSpin(vtkMRMLInteractionEventData* eventData)
     return false;
   }
 
-  const int* eventPosition = eventData->GetDisplayPosition();
-  int dx = eventPosition[0] - this->PreviousEventPosition[0];
-  int dy = eventPosition[1] - this->PreviousEventPosition[1];
+  const int* const eventPosition = eventData->GetDisplayPosition();
+  const int dx = eventPosition[0] - this->PreviousEventPosition[0];
+  const int dy = eventPosition[1] - this->PreviousEventPosition[1];
   if (dx == 0 && dy == 0)
   {
     return true;
   }
 
-  double* center = this->Renderer->GetCenter();
+  double* const center = this->Renderer->GetCenter();
 
   double newAngle = atan2((double)eventPosition[1] - (double)center[1], (double)eventPosition[0] - (double)center[0]);
 
@@ -664,7 +664,7 @@ bool vtkMRMLCameraWidget::ProcessSpin(vtkMRMLInteractionEventData* eventData)
     return false;
   }
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
 
   camera->Roll(newAngle - oldAngle);
   camera->OrthogonalizeViewUp();
@@ -685,9 +685,9 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
     return false;
   }
 
-  const int* eventPosition = eventData->GetDisplayPosition();
-  int dx = eventPosition[0] - this->PreviousEventPosition[0];
-  int dy = eventPosition[1] - this->PreviousEventPosition[1];
+  const int* const eventPosition = eventData->GetDisplayPosition();
+  const int dx = eventPosition[0] - this->PreviousEventPosition[0];
+  const int dy = eventPosition[1] - this->PreviousEventPosition[1];
   if (dx == 0 && dy == 0)
   {
     return true;
@@ -704,7 +704,7 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
   camera->GetFocalPoint(viewFocus);
   vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer, viewFocus[0], viewFocus[1], viewFocus[2], viewFocus);
 
-  double focalDepth = viewFocus[2];
+  const double focalDepth = viewFocus[2];
 
   double newPickPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, (double)eventPosition[0], (double)eventPosition[1], focalDepth, newPickPoint);
@@ -733,7 +733,7 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
   double viewPoint[3] = { 0.0 };
   camera->GetPosition(viewPoint);
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
 
   camera->SetFocalPoint(motionVector[0] + viewFocus[0], motionVector[1] + viewFocus[1], motionVector[2] + viewFocus[2]);
 
@@ -755,16 +755,16 @@ bool vtkMRMLCameraWidget::ProcessScale(vtkMRMLInteractionEventData* eventData)
     return false;
   }
 
-  const int* eventPosition = eventData->GetDisplayPosition();
-  int dx = eventPosition[0] - this->PreviousEventPosition[0];
-  int dy = eventPosition[1] - this->PreviousEventPosition[1];
+  const int* const eventPosition = eventData->GetDisplayPosition();
+  const int dx = eventPosition[0] - this->PreviousEventPosition[0];
+  const int dy = eventPosition[1] - this->PreviousEventPosition[1];
   if (dx == 0 && dy == 0)
   {
     return true;
   }
 
-  double* center = this->Renderer->GetCenter();
-  double dyf = this->MotionFactor * (double)(dy) / (double)(center[1]);
+  double* const center = this->Renderer->GetCenter();
+  const double dyf = this->MotionFactor * (double)(dy) / (double)(center[1]);
   // Slicer: pull mouse towards you to bring models closer (opposite of vtk)
   this->Dolly(pow((double)1.1, -1. * dyf));
 
@@ -796,7 +796,7 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraSpin(vtkMRMLInteractionEventData* ev
     return false;
   }
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
 
   int pinchPostionDisplay[2] = { 0, 0 };
   eventData->GetDisplayPosition(pinchPostionDisplay);
@@ -841,7 +841,7 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraZoom(vtkMRMLInteractionEventData* ev
     return false;
   }
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
 
   int pinchPostionDisplay[3] = { 0, 0, 0 };
   eventData->GetDisplayPosition(pinchPostionDisplay);
@@ -887,8 +887,8 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraTranslate(vtkMRMLInteractionEventDat
     return false;
   }
 
-  const double* translation = eventData->GetTranslation();
-  double deltaView[3] = { -translation[0], -translation[1], 0.0 };
+  const double* const translation = eventData->GetTranslation();
+  const double deltaView[3] = { -translation[0], -translation[1], 0.0 };
 
   double worldFocus[4];
   camera->GetFocalPoint(worldFocus);
@@ -923,7 +923,7 @@ bool vtkMRMLCameraWidget::Dolly(double factor)
     return false;
   }
 
-  bool wasCameraNodeModified = this->CameraModifyStart();
+  const bool wasCameraNodeModified = this->CameraModifyStart();
   bool updateClippingRange = false;
   if (camera->GetParallelProjection())
   {

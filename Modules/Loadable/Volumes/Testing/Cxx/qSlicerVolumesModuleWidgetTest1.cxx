@@ -59,11 +59,11 @@ int qSlicerVolumesModuleWidgetTest1(int argc, char* argv[])
   qSlicerVolumesModule module;
   module.initialize(nullptr);
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerVolumesLogic> volumesLogic;
   volumesLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "volume");
+  vtkMRMLVolumeNode* const volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "volume");
   if (!volumeNode)
   {
     std::cerr << "Bad volume file:" << argv[1] << std::endl;

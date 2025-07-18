@@ -31,12 +31,12 @@
 
 int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
 {
-  qSlicerCoreApplication app(argc, argv);
+  const qSlicerCoreApplication app(argc, argv);
   Q_UNUSED(app);
 
   qSlicerModuleFactoryManager moduleFactoryManager;
 
-  vtkNew<vtkSlicerApplicationLogic> appLogic;
+  const vtkNew<vtkSlicerApplicationLogic> appLogic;
   moduleFactoryManager.setAppLogic(appLogic);
 
   // Register factories
@@ -45,7 +45,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
   // Register core modules
   moduleFactoryManager.registerModules();
 
-  QString moduleName = "EventBroker";
+  const QString moduleName = "EventBroker";
 
   moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();

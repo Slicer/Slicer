@@ -49,7 +49,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLCheckableNodeComboBox* widget = reinterpret_cast<qMRMLCheckableNodeComboBox*>(data);
+  qMRMLCheckableNodeComboBox* const widget = reinterpret_cast<qMRMLCheckableNodeComboBox*>(data);
 
   Q_UNUSED(widget);
 }
@@ -59,9 +59,9 @@ void checkFinalWidgetState(void* data)
 int qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
   ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);

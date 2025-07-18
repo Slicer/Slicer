@@ -37,7 +37,7 @@ namespace
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods()
 {
-  vtkNew<vtkMRMLCameraNode> node1;
+  const vtkNew<vtkMRMLCameraNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

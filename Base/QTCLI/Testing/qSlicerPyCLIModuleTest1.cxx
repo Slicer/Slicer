@@ -65,8 +65,8 @@ void runCli(void* data)
   vtkMRMLCommandLineModuleNode* cliModuleNode = CLIModule->cliModuleLogic()->CreateNodeInScene();
 
   // Values
-  int inputValue1 = 4;
-  int inputValue2 = 3;
+  const int inputValue1 = 4;
+  const int inputValue2 = 3;
 
   // Set node parameters
   cliModuleNode->SetParameterAsInt("InputValue1", inputValue1);
@@ -79,9 +79,9 @@ void runCli(void* data)
 
   // Read outputFile
   QTextStream stream(&outputFile);
-  QString operationResult = stream.readAll().trimmed();
+  const QString operationResult = stream.readAll().trimmed();
 
-  QString expectedResult = QString::number(inputValue1 + inputValue2);
+  const QString expectedResult = QString::number(inputValue1 + inputValue2);
   if (operationResult.compare(expectedResult) != 0)
   {
     ErrorString = QString("OutputFile doesn't contain the expected result !\n"
@@ -103,12 +103,12 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
   // The PyCLI4Test module (PyCLIModule4Test) has already been installed as
   // a normal Python CLI module.
   // Slicer-build/lib/Slicer-X.Y/cli-modules[/Debug|Release]
-  QString cliModuleName("PyCLI4Test");
+  const QString cliModuleName("PyCLI4Test");
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
   qSlicerApplication app(argc, argv);
 
-  qSlicerModuleManager* moduleManager = app.moduleManager();
+  qSlicerModuleManager* const moduleManager = app.moduleManager();
   if (!moduleManager)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerApplication::moduleManager()" << std::endl;
@@ -122,8 +122,8 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
-  QStringList loadPaths = { cliPath, cliPath + app.intDir() };
+  const QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
+  const QStringList loadPaths = { cliPath, cliPath + app.intDir() };
 
   //===========================================================================
   // Ensure that PyCLI is not recognized by the scripted factory.
@@ -164,7 +164,7 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
     moduleFactoryManager->loadModule(name);
   }
 
-  qSlicerAbstractCoreModule* module = moduleManager->module(cliModuleName);
+  qSlicerAbstractCoreModule* const module = moduleManager->module(cliModuleName);
   if (!module)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerModuleManager::module()"
@@ -180,7 +180,7 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModuleRepresentation* widgetRepresentation = cliModule->widgetRepresentation();
+  qSlicerAbstractModuleRepresentation* const widgetRepresentation = cliModule->widgetRepresentation();
   if (!widgetRepresentation)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLIModule::widgetRepresentation()"
@@ -214,7 +214,7 @@ int qSlicerPyCLIModuleTest1(int argc, char* argv[])
     checkResult = true;
   }
 
-  int status = app.exec();
+  const int status = app.exec();
   if (status == EXIT_FAILURE)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerApplication::exec()";

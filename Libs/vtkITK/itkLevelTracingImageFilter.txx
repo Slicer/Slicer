@@ -104,7 +104,7 @@ public:
     // Set the iterator at the desired location
     it.SetLocation(index);
 
-    PixelType threshold = this->GetThreshold();
+    const PixelType threshold = this->GetThreshold();
 
     // check the center pixel first
     if (it.GetCenterPixel() < threshold)
@@ -166,7 +166,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>::LevelTracingImageFilter()
   m_Min = 0;
   m_Max = 0;
 
-  typename ChainCodePathType::Pointer chainCode = ChainCodePathType::New();
+  const typename ChainCodePathType::Pointer chainCode = ChainCodePathType::New();
   this->ProcessObject::SetNthOutput(1, chainCode.GetPointer());
   chainCode->Initialize();
 }
@@ -205,7 +205,7 @@ void LevelTracingImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedR
   Superclass::GenerateInputRequestedRegion();
   if (this->GetInput())
   {
-    InputImagePointer image = const_cast<InputImageType*>(this->GetInput());
+    const InputImagePointer image = const_cast<InputImageType*>(this->GetInput());
     image->SetRequestedRegionToLargestPossibleRegion();
   }
 }
@@ -243,17 +243,17 @@ template <class TInputImage, class TOutputImage>
 void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const Dispatch<2>&)
 {
 
-  InputImageConstPointer inputImage = this->GetInput();
-  OutputImagePointer outputImage = this->GetOutput();
-  ChainCodePathPointer outputPath = this->GetPathOutput();
+  const InputImageConstPointer inputImage = this->GetInput();
+  const OutputImagePointer outputImage = this->GetOutput();
+  const ChainCodePathPointer outputPath = this->GetPathOutput();
 
-  typename InputImageType::RegionType region = inputImage->GetBufferedRegion();
+  const typename InputImageType::RegionType region = inputImage->GetBufferedRegion();
 
   // We may move the seed point to the boundary if it is off by a pixel
   m_MovedSeed = false;
 
   // Zero the output
-  OutputImageRegionType regionOut = outputImage->GetRequestedRegion();
+  const OutputImageRegionType regionOut = outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion(regionOut);
   outputImage->Allocate();
   outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
@@ -261,7 +261,7 @@ void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const Dispatch<2>
   outputPath->Initialize();
 
   //
-  InputImagePixelType threshold = inputImage->GetPixel(m_Seed);
+  const InputImagePixelType threshold = inputImage->GetPixel(m_Seed);
   OffsetType offset;
 
   IndexType pix, pixTemp, seed;
@@ -275,7 +275,7 @@ void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const Dispatch<2>
   pixTemp.Fill(0);
 
   // 8 connected neighbor offsets
-  int neighbors[8][2] = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 } };
+  const int neighbors[8][2] = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 } };
 
   int noOfPixels = 0;
 
@@ -341,7 +341,7 @@ void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const Dispatch<2>
       // a 4 connected neighbor of the original seed (at this point,
       // said neighbor is implicitly foreground) which is also a 4
       // connected neighbor of the background point found.
-      int newSeedIndex = (zeroIndex + 1) % 8;
+      const int newSeedIndex = (zeroIndex + 1) % 8;
       seed[0] = pix[0] + neighbors[newSeedIndex][0];
       seed[1] = pix[1] + neighbors[newSeedIndex][1];
       pix[0] = seed[0];
@@ -417,13 +417,13 @@ template <class TInputImage, class TOutputImage>
 void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const DispatchBase&)
 {
   // N-dimensional version
-  InputImageConstPointer inputImage = this->GetInput();
-  OutputImagePointer outputImage = this->GetOutput();
+  const InputImageConstPointer inputImage = this->GetInput();
+  const OutputImagePointer outputImage = this->GetOutput();
 
-  InputImagePixelType threshold = inputImage->GetPixel(m_Seed);
+  const InputImagePixelType threshold = inputImage->GetPixel(m_Seed);
 
   // Zero the output
-  OutputImageRegionType region = outputImage->GetRequestedRegion();
+  const OutputImageRegionType region = outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion(region);
   outputImage->Allocate();
   outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
@@ -431,7 +431,7 @@ void LevelTracingImageFilter<TInputImage, TOutputImage>::Trace(const DispatchBas
   typedef LevelTracingImageFunction<InputImageType, double> FunctionType;
   typedef FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType> IteratorType;
 
-  typename FunctionType::Pointer function = FunctionType::New();
+  const typename FunctionType::Pointer function = FunctionType::New();
   function->SetInputImage(inputImage);
   function->SetThreshold(threshold);
 

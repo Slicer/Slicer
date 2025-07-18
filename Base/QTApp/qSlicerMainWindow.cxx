@@ -131,7 +131,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
 
   //----------------------------------------------------------------------------
   // Recently loaded files
@@ -159,7 +159,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   // ModuleManager
   //----------------------------------------------------------------------------
   // Update the list of modules when they are loaded
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* const moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
     qWarning() << "No module manager is created.";
@@ -444,7 +444,7 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
   {
     return;
   }
-  QPalette palette = qSlicerApplication::application()->palette();
+  const QPalette palette = qSlicerApplication::application()->palette();
 
   // pythonConsole->setBackgroundColor is not called, because by default
   // the background color of the current palette is used, which is good.
@@ -459,7 +459,7 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
   pythonConsole->setOutputTextColor(palette.color(QPalette::WindowText));
 
   // Color of error messages. Red in both bright and dark styles, but slightly brighter in dark style.
-  QColor textColor = q->palette().color(QPalette::Normal, QPalette::Text);
+  const QColor textColor = q->palette().color(QPalette::Normal, QPalette::Text);
   if (textColor.lightnessF() < 0.5)
   {
     // Light theme
@@ -491,8 +491,8 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
   iterator.toBack();
   while (iterator.hasPrevious())
   {
-    qSlicerIO::IOProperties filePropertie = iterator.previous();
-    QString fileName = filePropertie.value("fileName").toString();
+    const qSlicerIO::IOProperties filePropertie = iterator.previous();
+    const QString fileName = filePropertie.value("fileName").toString();
     if (fileName.isEmpty())
     {
       continue;
@@ -511,7 +511,7 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::filterRecentlyLoadedFileProperties()
 {
-  int numberOfFilesToKeep = QSettings().value("RecentlyLoadedFiles/NumberToKeep").toInt();
+  const int numberOfFilesToKeep = QSettings().value("RecentlyLoadedFiles/NumberToKeep").toInt();
 
   // Remove extra element
   while (this->RecentlyLoadedFileProperties.size() > numberOfFilesToKeep)
@@ -526,11 +526,11 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
   QList<qSlicerIO::IOProperties> fileProperties;
 
   QSettings settings;
-  int size = settings.beginReadArray("RecentlyLoadedFiles/RecentFiles");
+  const int size = settings.beginReadArray("RecentlyLoadedFiles/RecentFiles");
   for (int i = 0; i < size; ++i)
   {
     settings.setArrayIndex(i);
-    QVariant file = settings.value("file");
+    const QVariant file = settings.value("file");
     qSlicerIO::IOProperties properties = file.toMap();
     properties["fileName"] = qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties["fileName"].toString());
     fileProperties << properties;
@@ -561,7 +561,7 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   Q_Q(qSlicerMainWindow);
 
   QString details;
-  bool sceneModified = isSceneContentModifiedSinceRead(details);
+  const bool sceneModified = isSceneContentModifiedSinceRead(details);
 
   bool close = false;
   if (sceneModified)
@@ -571,8 +571,8 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
                                               qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"),
                                               QMessageBox::NoButton,
                                               q);
-    QAbstractButton* saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
-    QAbstractButton* exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+    QAbstractButton* const saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
+    QAbstractButton* const exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
 
     if (!details.isEmpty())
@@ -679,7 +679,7 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
   confirmCloseMsgBox->setDontShowAgainVisible(true);
   confirmCloseMsgBox->setDontShowAgainSettingsKey("MainWindow/DontConfirmSceneClose");
   confirmCloseMsgBox->setIcon(QMessageBox::Question);
-  int resultCode = confirmCloseMsgBox->exec();
+  const int resultCode = confirmCloseMsgBox->exec();
   if (resultCode == QMessageBox::Cancel)
   {
     return false;
@@ -710,7 +710,7 @@ void qSlicerMainWindowPrivate::setupStatusBar()
 void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
 {
   Q_Q(qSlicerMainWindow);
-  QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
+  const QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
   QIcon icon = defaultIcon;
   if (!highlighted)
   {
@@ -725,13 +725,13 @@ void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
 void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
 {
   Q_Q(qSlicerMainWindow);
-  int index = this->FavoriteModules.indexOf(moduleName);
+  const int index = this->FavoriteModules.indexOf(moduleName);
   if (index < 0)
   {
     return;
   }
 
-  qSlicerAbstractCoreModule* coreModule = qSlicerApplication::application()->moduleManager()->module(moduleName);
+  qSlicerAbstractCoreModule* const coreModule = qSlicerApplication::application()->moduleManager()->module(moduleName);
   qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (!module)
   {
@@ -752,7 +752,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
   QAction* beforeAction = nullptr; // 0 means insert at end
   for (QAction* const toolBarAction : this->ModuleToolBar->actions())
   {
-    bool isActionAFavoriteModule = (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
+    const bool isActionAFavoriteModule = (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
     if (isActionAFavoriteModule && //
         this->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
     {
@@ -795,7 +795,7 @@ qSlicerMainWindow::~qSlicerMainWindow()
   // There is no need to render anything so remove the volumes from the views.
   // It is maybe not the best place to do that but I couldn't think of anywhere
   // else.
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
   vtkCollection* sliceLogics = layoutManager ? layoutManager->mrmlSliceLogics() : nullptr;
   if (sliceLogics)
   {
@@ -938,8 +938,8 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
 {
   // Q_D(qSlicerMainWindow);
   // open a file dialog to let the user choose where to save
-  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QString saveDirName = QFileDialog::getExistingDirectory(this, tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
+  const QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
+  const QString saveDirName = QFileDialog::getExistingDirectory(this, tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
   if (saveDirName.isEmpty())
   {
     std::cout << "No directory name chosen!" << std::endl;
@@ -949,11 +949,11 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   qSlicerIO::IOProperties properties;
 
   // pass in a screen shot
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
   if (layoutManager)
   {
-    QWidget* widget = layoutManager->viewport();
-    QImage screenShot = ctk::grabVTKWidget(widget);
+    QWidget* const widget = layoutManager->viewport();
+    const QImage screenShot = ctk::grabVTKWidget(widget);
     properties["screenShot"] = screenShot;
   }
 
@@ -1161,7 +1161,7 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
 {
   Q_D(qSlicerMainWindow);
 
-  QAction* loadRecentFileAction = qobject_cast<QAction*>(this->sender());
+  QAction* const loadRecentFileAction = qobject_cast<QAction*>(this->sender());
   Q_ASSERT(loadRecentFileAction);
 
   // Clear menu if it applies
@@ -1172,16 +1172,16 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
     return;
   }
 
-  QVariant fileParameters = loadRecentFileAction->property("fileParameters");
+  const QVariant fileParameters = loadRecentFileAction->property("fileParameters");
   Q_ASSERT(fileParameters.isValid());
 
   qSlicerIO::IOProperties fileProperties = fileParameters.toMap();
-  qSlicerIO::IOFileType fileType = static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toString());
+  const qSlicerIO::IOFileType fileType = static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toString());
 
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
 
-  vtkNew<vtkMRMLMessageCollection> userMessages;
-  bool success = app->coreIOManager()->loadNodes(fileType, fileProperties, nullptr, userMessages);
+  const vtkNew<vtkMRMLMessageCollection> userMessages;
+  const bool success = app->coreIOManager()->loadNodes(fileType, fileProperties, nullptr, userMessages);
   qSlicerIOManager::showLoadNodesResultDialog(success, userMessages);
 }
 
@@ -1242,7 +1242,7 @@ void qSlicerMainWindow::showEvent(QShowEvent* event)
     this->pythonConsoleInitialDisplay();
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-    qSlicerApplication* app = qSlicerApplication::application();
+    qSlicerApplication* const app = qSlicerApplication::application();
     if (app && app->extensionsManagerModel())
     {
       connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)), this, SLOT(setExtensionUpdatesAvailable(bool)));
@@ -1259,7 +1259,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 {
   Q_D(qSlicerMainWindow);
 #ifdef Slicer_USE_PYTHONQT
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return;
@@ -1274,7 +1274,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::disclaimer()
 {
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) || //
       !app->coreCommandOptions()->pythonCode().isEmpty() ||           //
       !app->coreCommandOptions()->pythonScript().isEmpty())
@@ -1420,15 +1420,15 @@ void qSlicerMainWindow::addFileToRecentFiles(const qSlicerIO::IOProperties& file
 
   // Remove previous instance of the same file name. Since the file name can be slightly different
   // (different directory separator, etc.) we don't do a binary compare but compare QFileInfo.
-  QString fileName = fileProperties.value("fileName").toString();
+  const QString fileName = fileProperties.value("fileName").toString();
   if (fileName.isEmpty())
   {
     return;
   }
-  QFileInfo newFileInfo(fileName);
+  const QFileInfo newFileInfo(fileName);
   for (auto propertiesIt = d->RecentlyLoadedFileProperties.begin(); propertiesIt != d->RecentlyLoadedFileProperties.end();)
   {
-    QFileInfo existingFileInfo(propertiesIt->value("fileName").toString());
+    const QFileInfo existingFileInfo(propertiesIt->value("fileName").toString());
     if (newFileInfo == existingFileInfo)
     {
       // remove previous instance
@@ -1457,7 +1457,7 @@ void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& filePrope
 void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& fileProperties)
 {
   Q_D(qSlicerMainWindow);
-  QString fileName = fileProperties["fileName"].toString();
+  const QString fileName = fileProperties["fileName"].toString();
   if (fileName.isEmpty())
   {
     return;
@@ -1480,7 +1480,7 @@ void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& filePropertie
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_CopyAction_triggered()
 {
-  QWidget* focused = QApplication::focusWidget();
+  QWidget* const focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
     QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
@@ -1491,7 +1491,7 @@ void qSlicerMainWindow::on_CopyAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_PasteAction_triggered()
 {
-  QWidget* focused = QApplication::focusWidget();
+  QWidget* const focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
     QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
@@ -1502,7 +1502,7 @@ void qSlicerMainWindow::on_PasteAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_CutAction_triggered()
 {
-  QWidget* focused = QApplication::focusWidget();
+  QWidget* const focused = QApplication::focusWidget();
   if (focused != nullptr)
   {
     QApplication::postEvent(focused, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
@@ -1666,7 +1666,7 @@ void qSlicerMainWindow::restoreGUIState(bool force /*=false*/)
   QSettings settings;
   settings.beginGroup("MainWindow");
   this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool() ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
-  bool restore = settings.value("RestoreGeometry", false).toBool();
+  const bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore || force)
   {
     this->restoreGeometry(settings.value("geometry").toByteArray());
@@ -1694,12 +1694,12 @@ void qSlicerMainWindow::saveGUIState(bool force /*=false*/)
   Q_D(qSlicerMainWindow);
   QSettings settings;
   settings.beginGroup("MainWindow");
-  bool restore = settings.value("RestoreGeometry", false).toBool();
+  const bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore || force)
   {
     settings.setValue("geometry", this->saveGeometry());
     settings.setValue("windowState", this->saveState());
-    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+    qSlicerLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
     if (layoutManager)
     {
       settings.setValue("layout", layoutManager->layout());
@@ -1713,8 +1713,8 @@ void qSlicerMainWindow::saveGUIState(bool force /*=false*/)
 void qSlicerMainWindow::setHomeModuleCurrent()
 {
   Q_D(qSlicerMainWindow);
-  QSettings settings;
-  QString homeModule = settings.value("Modules/HomeModule").toString();
+  const QSettings settings;
+  const QString homeModule = settings.value("Modules/HomeModule").toString();
   d->ModuleSelectorToolBar->selectModule(homeModule);
 }
 
@@ -1734,7 +1734,7 @@ bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
   {
     if (event->type() == QEvent::Hide)
     {
-      bool wasBlocked = d->PythonConsoleToggleViewAction->blockSignals(true);
+      const bool wasBlocked = d->PythonConsoleToggleViewAction->blockSignals(true);
       d->PythonConsoleToggleViewAction->setChecked(false);
       d->PythonConsoleToggleViewAction->blockSignals(wasBlocked);
     }
@@ -1763,7 +1763,7 @@ void qSlicerMainWindow::setExtensionUpdatesAvailable(bool updateAvailable)
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Q_D(qSlicerMainWindow);
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app || !app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool())
   {
     return;

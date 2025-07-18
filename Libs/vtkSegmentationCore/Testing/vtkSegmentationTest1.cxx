@@ -50,7 +50,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   // operations and conversion to labelmap with and without reference geometry
 
   // Generate sphere model
-  vtkNew<vtkPolyData> spherePolyData;
+  const vtkNew<vtkPolyData> spherePolyData;
   CreateSpherePolyData(spherePolyData);
 
   // Create segment
@@ -75,19 +75,19 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Convert to binary labelmap without reference geometry
   sphereSegmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-  vtkOrientedImageData* defaultImageData =
+  vtkOrientedImageData* const defaultImageData =
     vtkOrientedImageData::SafeDownCast(sphereSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
   if (!defaultImageData)
   {
     std::cerr << __LINE__ << ": Failed to convert closed surface representation to binary labelmap without reference geometry!" << std::endl;
     return EXIT_FAILURE;
   }
-  std::string defaultGeometryString = vtkSegmentationConverter::SerializeImageGeometry(defaultImageData);
-  std::string expectedDefaultGeometryString = "0.23597152210841135;0;0;20.75216293334961;"
-                                              "0;0.23597152210841135;0;20.75216293334961;"
-                                              "0;0;0.23597152210841135;20;"
-                                              "0;0;0;1;"
-                                              "0;248;0;248;-1;255;";
+  const std::string defaultGeometryString = vtkSegmentationConverter::SerializeImageGeometry(defaultImageData);
+  const std::string expectedDefaultGeometryString = "0.23597152210841135;0;0;20.75216293334961;"
+                                                    "0;0.23597152210841135;0;20.75216293334961;"
+                                                    "0;0;0.23597152210841135;20;"
+                                                    "0;0;0;1;"
+                                                    "0;248;0;248;-1;255;";
   if (defaultGeometryString != expectedDefaultGeometryString)
   {
     std::cerr << __LINE__ << ": Default reference geometry mismatch. Expected: " << expectedDefaultGeometryString << ". Actual: " << defaultGeometryString << "." << std::endl;
@@ -101,7 +101,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     std::cerr << __LINE__ << ": Binary labelmap converted without reference geometry has no foreground voxels!" << std::endl;
     return EXIT_FAILURE;
   }
-  int expectedVoxelCount = 15934257;
+  const int expectedVoxelCount = 15934257;
   if (imageAccumulate->GetVoxelCount() != expectedVoxelCount)
   {
     std::cerr << __LINE__ << ": Binary labelmap voxel count mismatch after converting without reference geometry."
@@ -124,8 +124,8 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   referenceGeometryMatrix->SetElement(1, 1, 2.0);
   referenceGeometryMatrix->SetElement(2, 2, 2.0);
   int referenceGeometryExtent[6] = { 0, 99, 0, 99, 0, 99 };
-  std::string referenceGeometryString = vtkSegmentationConverter::SerializeImageGeometry(referenceGeometryMatrix, referenceGeometryExtent);
-  std::string expectedReferenceGeometryString = "2;0;0;0;0;2;0;0;0;0;2;0;0;0;0;1;0;99;0;99;0;99;";
+  const std::string referenceGeometryString = vtkSegmentationConverter::SerializeImageGeometry(referenceGeometryMatrix, referenceGeometryExtent);
+  const std::string expectedReferenceGeometryString = "2;0;0;0;0;2;0;0;0;0;2;0;0;0;0;1;0;99;0;99;0;99;";
   if (referenceGeometryString != expectedReferenceGeometryString)
   {
     std::cerr << __LINE__ << ": Failed to serialize reference geometry. Expected: " << expectedReferenceGeometryString << ". Actual: " << referenceGeometryString << "."
@@ -136,7 +136,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Convert to binary labelmap with reference geometry
   sphereSegmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-  vtkOrientedImageData* customImageData =
+  vtkOrientedImageData* const customImageData =
     vtkOrientedImageData::SafeDownCast(sphereSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
   if (!customImageData)
   {
@@ -157,7 +157,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   // Add second segment
-  vtkNew<vtkPolyData> spherePolyData2;
+  const vtkNew<vtkPolyData> spherePolyData2;
   CreateSpherePolyData(spherePolyData2);
   vtkNew<vtkSegment> sphereSegment2;
   sphereSegment2->SetName("sphere2");
@@ -196,7 +196,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   // Try to add segment with unsupported representation
-  vtkNew<vtkPolyData> unsupportedPolyData;
+  const vtkNew<vtkPolyData> unsupportedPolyData;
   CreateSpherePolyData(unsupportedPolyData);
   vtkNew<vtkSegment> unsupportedSegment;
   unsupportedSegment->SetName("unsupported");
@@ -213,7 +213,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   // to closed surface model
 
   // Generate cube image data
-  vtkNew<vtkOrientedImageData> cubeImageData;
+  const vtkNew<vtkOrientedImageData> cubeImageData;
   CreateCubeLabelmap(cubeImageData);
 
   // Create segment
@@ -238,7 +238,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Convert to closed surface model
   cubeSegmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
-  vtkPolyData* closedSurfaceModel = vtkPolyData::SafeDownCast(cubeSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
+  vtkPolyData* const closedSurfaceModel = vtkPolyData::SafeDownCast(cubeSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
   if (!closedSurfaceModel)
   {
     std::cerr << __LINE__ << ": Failed to convert binary labelmap representation to closed surface model!" << std::endl;
@@ -246,7 +246,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   // Add segment with closed surface representation, see if it is converted to master
-  vtkNew<vtkPolyData> nonMasterPolyData;
+  const vtkNew<vtkPolyData> nonMasterPolyData;
   CreateSpherePolyData(nonMasterPolyData);
   vtkNew<vtkSegment> nonMasterSegment;
   nonMasterSegment->SetName("non master");
@@ -267,7 +267,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   // Copy and move segments between segmentations
 
   // Copy
-  std::string sphereSegmentID = sphereSegmentation->GetSegmentIdBySegment(sphereSegment);
+  const std::string sphereSegmentID = sphereSegmentation->GetSegmentIdBySegment(sphereSegment);
   cubeSegmentation->CopySegmentFromSegmentation(sphereSegmentation, sphereSegmentID);
   if (sphereSegmentation->GetNumberOfSegments() != 2 || cubeSegmentation->GetNumberOfSegments() != 3)
   {
@@ -276,7 +276,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   // Move
-  std::string cubeSegmentID = cubeSegmentation->GetSegmentIdBySegment(cubeSegment);
+  const std::string cubeSegmentID = cubeSegmentation->GetSegmentIdBySegment(cubeSegment);
   sphereSegmentation->CopySegmentFromSegmentation(cubeSegmentation, cubeSegmentID, true);
   if (sphereSegmentation->GetNumberOfSegments() != 3 || cubeSegmentation->GetNumberOfSegments() != 2)
   {
@@ -311,21 +311,21 @@ void CreateCubeLabelmap(vtkOrientedImageData* imageData)
     return;
   }
 
-  unsigned int size = 100;
+  const unsigned int size = 100;
 
   // Create new one because by default the direction is identity, origin is zeros and spacing is ones
   vtkNew<vtkOrientedImageData> identityImageData;
   identityImageData->SetExtent(0, size - 1, 0, size, 0, size - 1);
   identityImageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
-  unsigned char* imagePtr = (unsigned char*)identityImageData->GetScalarPointer();
+  unsigned char* const imagePtr = (unsigned char*)identityImageData->GetScalarPointer();
   for (unsigned int x = 0; x < size; ++x)
   {
     for (unsigned int y = 0; y < size; ++y)
     {
       for (unsigned int z = 0; z < size; ++z)
       {
-        unsigned char* currentPtr = imagePtr + z * size * size + y * size + x;
+        unsigned char* const currentPtr = imagePtr + z * size * size + y * size + x;
         if (x > 100 / 4 && x < size * 3 / 4 && y > 100 / 4 && y < size * 3 / 4 && z > 100 / 4 && z < size * 3 / 4)
         {
           (*currentPtr) = 1;

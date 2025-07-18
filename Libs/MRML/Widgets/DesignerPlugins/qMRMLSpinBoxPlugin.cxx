@@ -30,7 +30,7 @@ qMRMLSpinBoxPlugin::qMRMLSpinBoxPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLSpinBoxPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSpinBox* _widget = new qMRMLSpinBox(_parent);
+  qMRMLSpinBox* const _widget = new qMRMLSpinBox(_parent);
   return _widget;
 }
 

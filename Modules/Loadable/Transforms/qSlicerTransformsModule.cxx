@@ -121,12 +121,12 @@ QStringList qSlicerTransformsModule::contributors() const
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::setup()
 {
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
-  vtkSlicerTransformLogic* transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
+  vtkSlicerTransformLogic* const transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
   app->coreIOManager()->registerIO(new qSlicerTransformsReader(transformLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter("Transforms", QString("TransformFile"), QStringList() << "vtkMRMLTransformNode", true, this));
 

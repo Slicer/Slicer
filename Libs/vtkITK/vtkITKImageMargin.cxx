@@ -63,7 +63,7 @@ itk::SmartPointer<itk::Image<float, Dimension>> sdf(itk::SmartPointer<itk::Image
   using LabelImageType = itk::Image<InputPixelType, Dimension>;
   using DistanceFieldType = itk::SignedMaurerDistanceMapImageFilter<LabelImageType, RealImageType>;
 
-  typename DistanceFieldType::Pointer distF = DistanceFieldType::New();
+  const typename DistanceFieldType::Pointer distF = DistanceFieldType::New();
   distF->SetInput(labelImage);
   distF->SetSquaredDistance(true);
   distF->SetBackgroundValue(backgroundValue);
@@ -80,7 +80,7 @@ itk::SmartPointer<ImageType> sdfMargin(itk::SmartPointer<ImageType> labelImage, 
 
   using RealImageType = itk::Image<float, ImageType::ImageDimension>;
   using FloatThresholdType = itk::BinaryThresholdImageFilter<RealImageType, ImageType>;
-  typename FloatThresholdType::Pointer sdfTh = FloatThresholdType::New();
+  const typename FloatThresholdType::Pointer sdfTh = FloatThresholdType::New();
   sdfTh->SetInput(sdf<typename ImageType::PixelType, ImageType::ImageDimension>(labelImage, backgroundValue));
   if (innerMarginMM > vtkMath::NegInf())
   {
@@ -105,7 +105,7 @@ void vtkITKImageMarginExecute(vtkITKImageMargin* self, vtkImageData* input, vtkI
     // Wrap scalars into an ITK image
     // - mostly rely on defaults for spacing, origin etc for this filter
     typedef itk::Image<T, 3> ImageType;
-    typename ImageType::Pointer inImage = ImageType::New();
+    const typename ImageType::Pointer inImage = ImageType::New();
     typename ImageType::RegionType region;
     typename ImageType::IndexType index;
     typename ImageType::SizeType size;
@@ -161,7 +161,7 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData* input, vtkImageData* output)
     vtkErrorMacro(<< "PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars = pd->GetScalars();
+  vtkDataArray* const inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for image margin");
@@ -177,8 +177,8 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData* input, vtkImageData* output)
 
 #define CALL vtkITKImageMarginExecute(this, input, output, static_cast<VTK_TT*>(inPtr), static_cast<VTK_TT*>(outPtr));
 
-    void* inPtr = input->GetScalarPointer();
-    void* outPtr = output->GetScalarPointer();
+    void* const inPtr = input->GetScalarPointer();
+    void* const outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
     {

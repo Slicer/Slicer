@@ -60,13 +60,13 @@ void qMRMLDisplayNodeViewComboBoxTester::init()
   this->ComboBox = new qMRMLDisplayNodeViewComboBox;
   vtkMRMLScene* scene = vtkMRMLScene::New();
   this->ComboBox->setMRMLScene(scene);
-  vtkNew<vtkMRMLViewNode> node;
+  const vtkNew<vtkMRMLViewNode> node;
   scene->AddNode(node.GetPointer());
-  vtkNew<vtkMRMLViewNode> node2;
+  const vtkNew<vtkMRMLViewNode> node2;
   scene->AddNode(node2.GetPointer());
-  vtkNew<vtkMRMLSliceNode> sliceNode;
+  const vtkNew<vtkMRMLSliceNode> sliceNode;
   scene->AddNode(sliceNode.GetPointer());
-  vtkNew<vtkMRMLModelDisplayNode> displayNode;
+  const vtkNew<vtkMRMLModelDisplayNode> displayNode;
   scene->AddNode(displayNode.GetPointer());
   this->ComboBox->setMRMLDisplayNode(displayNode.GetPointer());
 
@@ -102,7 +102,7 @@ vtkMRMLNode* qMRMLDisplayNodeViewComboBoxTester::node(int index)
 // ----------------------------------------------------------------------------
 void qMRMLDisplayNodeViewComboBoxTester::testDefaults()
 {
-  qMRMLDisplayNodeViewComboBox comboBox;
+  const qMRMLDisplayNodeViewComboBox comboBox;
   QCOMPARE(comboBox.isEnabled(), false);
   QCOMPARE(comboBox.checkedViewNodes().count(), 0);
   QCOMPARE(comboBox.allChecked(), true);
@@ -164,7 +164,7 @@ void qMRMLDisplayNodeViewComboBoxTester::testObserveNode()
 void qMRMLDisplayNodeViewComboBoxTester::testAddNode()
 {
   vtkMRMLScene* scene = this->ComboBox->mrmlScene();
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
   QCOMPARE(this->ComboBox->allChecked(), true);
   QCOMPARE(this->ComboBox->noneChecked(), false);

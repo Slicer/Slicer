@@ -27,7 +27,7 @@ qMRMLSequenceBrowserToolBarPlugin::qMRMLSequenceBrowserToolBarPlugin(QObject* _p
 // --------------------------------------------------------------------------
 QWidget* qMRMLSequenceBrowserToolBarPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceBrowserToolBar* _widget = new qMRMLSequenceBrowserToolBar(_parent);
+  qMRMLSequenceBrowserToolBar* const _widget = new qMRMLSequenceBrowserToolBar(_parent);
   return _widget;
 }
 

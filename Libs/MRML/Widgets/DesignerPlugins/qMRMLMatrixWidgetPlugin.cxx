@@ -28,7 +28,7 @@ qMRMLMatrixWidgetPlugin::qMRMLMatrixWidgetPlugin(QObject* _parent)
 
 QWidget* qMRMLMatrixWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLMatrixWidget* _widget = new qMRMLMatrixWidget(_parent);
+  qMRMLMatrixWidget* const _widget = new qMRMLMatrixWidget(_parent);
   return _widget;
 }
 

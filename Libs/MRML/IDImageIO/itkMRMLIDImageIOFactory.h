@@ -53,7 +53,7 @@ public:
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
-    MRMLIDImageIOFactory::Pointer nrrdFactory = MRMLIDImageIOFactory::New();
+    const MRMLIDImageIOFactory::Pointer nrrdFactory = MRMLIDImageIOFactory::New();
     ObjectFactoryBase::RegisterFactory(nrrdFactory);
   }
 

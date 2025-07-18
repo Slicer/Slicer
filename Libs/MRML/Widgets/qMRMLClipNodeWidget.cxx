@@ -139,7 +139,7 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
     return;
   }
 
-  bool oldUpdating = d->IsUpdatingWidgetFromMRML;
+  const bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
   bool wasBlocking = d->UnionRadioButton->blockSignals(true);
@@ -150,14 +150,14 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
   d->IntersectionRadioButton->setChecked(d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection);
   d->IntersectionRadioButton->blockSignals(wasBlocking);
 
-  bool needToUpdateReferences = this->needToUpdateClippingNodeFrame();
+  const bool needToUpdateReferences = this->needToUpdateClippingNodeFrame();
   if (needToUpdateReferences)
   {
     this->updateClippingNodeFrame();
   }
 
-  QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
-  for (QButtonGroup* clipButtonGroup : clipButtonGroups)
+  const QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
+  for (QButtonGroup* const clipButtonGroup : clipButtonGroups)
   {
     std::map<QAbstractButton*, bool> buttonWasBlocking;
     for (QAbstractButton* button : clipButtonGroup->buttons())
@@ -165,8 +165,8 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
       buttonWasBlocking[button] = button->blockSignals(true);
     }
 
-    int nodeIndex = clipButtonGroup->property("Index").toInt();
-    int clipState = d->MRMLClipNode->GetNthClippingNodeState(nodeIndex);
+    const int nodeIndex = clipButtonGroup->property("Index").toInt();
+    const int clipState = d->MRMLClipNode->GetNthClippingNodeState(nodeIndex);
     for (QAbstractButton* button : clipButtonGroup->buttons())
     {
       switch (clipState)
@@ -300,7 +300,7 @@ void qMRMLClipNodeWidget::updateMRMLFromWidget()
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
+  const MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
   d->MRMLClipNode->SetClipType(this->clipType());
   this->updateClippingNodeFromWidget();
 }
@@ -314,15 +314,15 @@ void qMRMLClipNodeWidget::updateClippingNodeFromWidget()
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
+  const MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
 
   if (this->needToUpdateClippingNodeFrame())
   {
     std::vector<vtkMRMLNode*> widgetClippingNodes;
-    QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
-    for (qMRMLNodeComboBox* clipNodeComboBox : clipNodeComboBoxes)
+    const QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
+    for (qMRMLNodeComboBox* const clipNodeComboBox : clipNodeComboBoxes)
     {
-      vtkMRMLNode* clippingNode = clipNodeComboBox->currentNode();
+      vtkMRMLNode* const clippingNode = clipNodeComboBox->currentNode();
       if (!clippingNode)
       {
         continue;
@@ -337,23 +337,23 @@ void qMRMLClipNodeWidget::updateClippingNodeFromWidget()
     }
   }
 
-  QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
-  for (QButtonGroup* clipButtonGroup : clipButtonGroups)
+  const QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
+  for (QButtonGroup* const clipButtonGroup : clipButtonGroups)
   {
-    QAbstractButton* checkedButton = clipButtonGroup->checkedButton();
+    QAbstractButton* const checkedButton = clipButtonGroup->checkedButton();
     if (!checkedButton)
     {
       continue;
     }
 
-    std::string clipNodeID = checkedButton->property("ID").toString().toStdString();
+    const std::string clipNodeID = checkedButton->property("ID").toString().toStdString();
     if (clipNodeID.empty())
     {
       continue;
     }
 
-    int clipNodeIndex = checkedButton->property("Index").toInt();
-    vtkMRMLNode* clippingNode = this->mrmlClipNode()->GetNthClippingNode(clipNodeIndex);
+    const int clipNodeIndex = checkedButton->property("Index").toInt();
+    vtkMRMLNode* const clippingNode = this->mrmlClipNode()->GetNthClippingNode(clipNodeIndex);
     if (!clippingNode)
     {
       continue;
@@ -389,16 +389,16 @@ bool qMRMLClipNodeWidget::needToUpdateClippingNodeFrame() const
     currentClippingNodes.push_back(d->MRMLClipNode->GetNthClippingNode(i));
   }
 
-  QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
+  const QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
   if (clipNodeComboBoxes.size() == 0)
   {
     return true;
   }
 
   std::vector<vtkMRMLNode*> widgetClippingNodes;
-  for (qMRMLNodeComboBox* clipNodeComboBox : clipNodeComboBoxes)
+  for (qMRMLNodeComboBox* const clipNodeComboBox : clipNodeComboBoxes)
   {
-    vtkMRMLNode* clipNode = clipNodeComboBox->currentNode();
+    vtkMRMLNode* const clipNode = clipNodeComboBox->currentNode();
     if (clipNodeComboBox->property("NewSelector").toBool())
     {
       if (clipNode)

@@ -77,7 +77,7 @@ void DiffusionTensor3DResample<TInput, TOutput>::BeforeThreadedGenerateData()
 template <class TInput, class TOutput>
 void DiffusionTensor3DResample<TInput, TOutput>::DynamicThreadedGenerateData(const OutputImageRegionType& outputRegionForThread)
 {
-  OutputImageType* outputImagePtr = this->GetOutput(0);
+  OutputImageType* const outputImagePtr = this->GetOutput(0);
   IteratorType it(outputImagePtr, outputRegionForThread);
   InputTensorDataType inputTensor;
   OutputTensorDataType outputTensor;
@@ -122,7 +122,7 @@ void DiffusionTensor3DResample<TInput, TOutput>::GenerateOutputInformation()
   // call the superclass' implementation of this method
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
-  OutputImagePointerType outputPtr = this->GetOutput(0);
+  const OutputImagePointerType outputPtr = this->GetOutput(0);
   if (!outputPtr)
   {
     return;
@@ -170,7 +170,7 @@ void DiffusionTensor3DResample<TInput, TOutput>::GenerateInputRequestedRegion()
     return;
   }
   // get pointers to the input and output
-  InputImagePointerType inputPtr = const_cast<InputImageType*>(this->GetInput());
+  const InputImagePointerType inputPtr = const_cast<InputImageType*>(this->GetInput());
 
   // Request the entire input image
   typename InputImageType::RegionType inputRegion;

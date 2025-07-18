@@ -107,7 +107,7 @@ void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkPr
   QString applicationName("Slicer");
   if (argv0)
   {
-    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
+    const std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
     applicationName = QString::fromLocal8Bit(name.c_str());
     applicationName.remove(QString("App-real"));
   }
@@ -127,11 +127,11 @@ void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkPr
 //----------------------------------------------------------------------------
 void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager)
 {
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   // Register module factories
   moduleFactoryManager->registerFactory(new qSlicerCoreModuleFactory);
 
-  qSlicerCommandOptions* options = qSlicerApplication::application()->commandOptions();
+  qSlicerCommandOptions* const options = qSlicerApplication::application()->commandOptions();
 
   if (options->disableModules())
   {
@@ -145,7 +145,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
         !options->disableBuiltInLoadableModules() && //
         !options->runPythonAndExit())
     {
-      QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
+      const QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(loadablePath);
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
@@ -163,7 +163,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
         !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython) && //
         !options->runPythonAndExit())
     {
-      QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
+      const QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(scriptedPath);
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
@@ -176,7 +176,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 #ifdef Slicer_BUILD_CLI_SUPPORT
   if (!options->disableCLIModules())
   {
-    QString tempDirectory = qSlicerCoreApplication::application()->temporaryPath();
+    const QString tempDirectory = qSlicerCoreApplication::application()->temporaryPath();
 
     // Always prefer executable CLIs. While launching a new process and transfer data via files may take slightly
     // longer, the file transfer is more robust, the CLI module can be stopped at any time (while a thread may be
@@ -197,7 +197,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
         !options->disableBuiltInCLIModules() && //
         !options->runPythonAndExit())
     {
-      QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
+      const QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(cliPath);
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
@@ -218,7 +218,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   {
     modulesToTemporarlyIgnore.removeAll(moduleToAlwaysIgnore);
   }
-  QStringList modulesToIgnore = modulesToAlwaysIgnore << modulesToTemporarlyIgnore;
+  const QStringList modulesToIgnore = modulesToAlwaysIgnore << modulesToTemporarlyIgnore;
   moduleFactoryManager->setModulesToIgnore(modulesToIgnore);
 
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
@@ -249,8 +249,8 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 
   qWarning("Graphics capability of this computer is not sufficient to run this application");
 
-  QString message = tr("Graphics capability of this computer is not sufficient to "
-                       "run this application. The application most likely will not function properly.");
+  const QString message = tr("Graphics capability of this computer is not sufficient to "
+                             "run this application. The application most likely will not function properly.");
 
   QString details = tr("See more information and help at:\n%1/user_guide/get_help.html#slicer-application-does-not-start\n\n"
                        "Graphics capabilities of this computer:\n\n")
@@ -275,7 +275,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
   messageBox->setStandardButtons(QMessageBox::Close | QMessageBox::Ignore);
 #endif
   messageBox->setDefaultButton(QMessageBox::Close);
-  int result = messageBox->exec();
+  const int result = messageBox->exec();
 
 #if defined(_WIN32)
   if (result == QMessageBox::Retry)

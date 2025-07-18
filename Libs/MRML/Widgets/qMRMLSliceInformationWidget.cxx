@@ -165,7 +165,7 @@ vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode() const
 //---------------------------------------------------------------------------
 void qMRMLSliceInformationWidget::setMRMLSliceNode(vtkMRMLNode* newNode)
 {
-  vtkMRMLSliceNode* newSliceNode = vtkMRMLSliceNode::SafeDownCast(newNode);
+  vtkMRMLSliceNode* const newSliceNode = vtkMRMLSliceNode::SafeDownCast(newNode);
   if (!newSliceNode)
   {
     return;

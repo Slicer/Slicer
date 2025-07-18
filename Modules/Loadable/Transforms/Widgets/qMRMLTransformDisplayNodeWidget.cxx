@@ -186,7 +186,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GridShowNonWarped, SIGNAL(toggled(bool)), q, SLOT(setGridShowNonWarped(bool)));
 
   // Contour Parameters
-  QRegExp rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
+  const QRegExp rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
   this->ContourLevelsMm->setValidator(new QRegExpValidator(rx, q));
   QObject::connect(this->ContourLevelsMm, SIGNAL(textChanged(QString)), q, SLOT(setContourLevelsMm(QString)));
   QObject::connect(this->ContourResolutionMm, SIGNAL(valueChanged(double)), q, SLOT(setContourResolutionMm(double)));
@@ -287,7 +287,7 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   d->ContourResolutionMm->setValue(d->TransformDisplayNode->GetContourResolutionMm());
   d->ContourOpacityPercent->setValue(d->TransformDisplayNode->GetContourOpacity() * 100.0);
   // Only update the text in the editbox if it is changed (to not interfere with editing of the values)
-  std::vector<double> levelsInWidget = vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(d->ContourLevelsMm->text().toUtf8());
+  const std::vector<double> levelsInWidget = vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(d->ContourLevelsMm->text().toUtf8());
   std::vector<double> levelsInMRML;
   d->TransformDisplayNode->GetContourLevelsMm(levelsInMRML);
   if (!vtkMRMLTransformDisplayNode::IsContourLevelEqual(levelsInWidget, levelsInMRML))
@@ -296,7 +296,7 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   }
 
   // Update ColorMap
-  vtkColorTransferFunction* colorTransferFunctionInNode = d->TransformDisplayNode->GetColorMap();
+  vtkColorTransferFunction* const colorTransferFunctionInNode = d->TransformDisplayNode->GetColorMap();
   if (colorTransferFunctionInNode)
   {
     if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction, colorTransferFunctionInNode))
@@ -343,12 +343,12 @@ void qMRMLTransformDisplayNodeWidget::updateInteraction3DWidgetsFromDisplayNode(
 
   bool wasBlocking = false;
 
-  bool enabled3D = d->TransformDisplayNode->GetEditorVisibility3D();
+  const bool enabled3D = d->TransformDisplayNode->GetEditorVisibility3D();
 
   //////////////
   // Translation
   wasBlocking = d->InteractiveTranslation3DCheckBox->blockSignals(true);
-  bool translationEnabled = d->TransformDisplayNode->GetEditorTranslationEnabled();
+  const bool translationEnabled = d->TransformDisplayNode->GetEditorTranslationEnabled();
   d->InteractiveTranslation3DCheckBox->setChecked(translationEnabled);
   d->InteractiveTranslation3DCheckBox->blockSignals(wasBlocking);
   d->InteractiveTranslation3DCheckBox->setEnabled(enabled3D);
@@ -378,7 +378,7 @@ void qMRMLTransformDisplayNodeWidget::updateInteraction3DWidgetsFromDisplayNode(
   //////////////
   // Rotation
   wasBlocking = d->InteractiveRotation3DCheckBox->blockSignals(true);
-  bool rotationEnabled = d->TransformDisplayNode->GetEditorRotationEnabled();
+  const bool rotationEnabled = d->TransformDisplayNode->GetEditorRotationEnabled();
   d->InteractiveRotation3DCheckBox->setChecked(rotationEnabled);
   d->InteractiveRotation3DCheckBox->blockSignals(wasBlocking);
   d->InteractiveRotation3DCheckBox->setEnabled(enabled3D);
@@ -408,7 +408,7 @@ void qMRMLTransformDisplayNodeWidget::updateInteraction3DWidgetsFromDisplayNode(
   //////////////
   // Scaling
   wasBlocking = d->InteractiveScaling3DCheckBox->blockSignals(true);
-  bool scalingEnabled = d->TransformDisplayNode->GetEditorScalingEnabled();
+  const bool scalingEnabled = d->TransformDisplayNode->GetEditorScalingEnabled();
   d->InteractiveScaling3DCheckBox->setChecked(scalingEnabled);
   d->InteractiveScaling3DCheckBox->blockSignals(wasBlocking);
   d->InteractiveScaling3DCheckBox->setEnabled(enabled3D);
@@ -448,12 +448,12 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
 
   bool wasBlocking = false;
 
-  bool enabledSlice = d->TransformDisplayNode->GetEditorSliceIntersectionVisibility();
+  const bool enabledSlice = d->TransformDisplayNode->GetEditorSliceIntersectionVisibility();
 
   //////////////
   // Translation
   wasBlocking = d->InteractiveTranslationSliceCheckBox->blockSignals(true);
-  bool translationEnabled = d->TransformDisplayNode->GetEditorTranslationSliceEnabled();
+  const bool translationEnabled = d->TransformDisplayNode->GetEditorTranslationSliceEnabled();
   d->InteractiveTranslationSliceCheckBox->setChecked(translationEnabled);
   d->InteractiveTranslationSliceCheckBox->blockSignals(wasBlocking);
   d->InteractiveTranslationSliceCheckBox->setEnabled(enabledSlice);
@@ -483,7 +483,7 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
   //////////////
   // Rotation
   wasBlocking = d->InteractiveRotationSliceCheckBox->blockSignals(true);
-  bool rotationEnabled = d->TransformDisplayNode->GetEditorRotationSliceEnabled();
+  const bool rotationEnabled = d->TransformDisplayNode->GetEditorRotationSliceEnabled();
   d->InteractiveRotationSliceCheckBox->setChecked(rotationEnabled);
   d->InteractiveRotationSliceCheckBox->blockSignals(wasBlocking);
   d->InteractiveRotationSliceCheckBox->setEnabled(enabledSlice);
@@ -513,7 +513,7 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
   //////////////
   // Scaling
   wasBlocking = d->InteractiveScalingSliceCheckBox->blockSignals(true);
-  bool scalingEnabled = d->TransformDisplayNode->GetEditorScalingSliceEnabled();
+  const bool scalingEnabled = d->TransformDisplayNode->GetEditorScalingSliceEnabled();
   d->InteractiveScalingSliceCheckBox->setChecked(scalingEnabled);
   d->InteractiveScalingSliceCheckBox->blockSignals(wasBlocking);
   d->InteractiveScalingSliceCheckBox->setEnabled(enabledSlice);
@@ -627,7 +627,7 @@ void qMRMLTransformDisplayNodeWidget::setGlyphDisplayRangeMm(double min, double 
   {
     return;
   }
-  int oldModify = d->TransformDisplayNode->StartModify();
+  const int oldModify = d->TransformDisplayNode->StartModify();
   d->TransformDisplayNode->SetGlyphDisplayRangeMinMm(min);
   d->TransformDisplayNode->SetGlyphDisplayRangeMaxMm(max);
   d->TransformDisplayNode->EndModify(oldModify);
@@ -1094,6 +1094,6 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionHandleScale()
     return;
   }
 
-  double scale = d->interactionHandleScaleSlider->value();
+  const double scale = d->interactionHandleScaleSlider->value();
   d->TransformDisplayNode->SetInteractionScalePercent(scale);
 }

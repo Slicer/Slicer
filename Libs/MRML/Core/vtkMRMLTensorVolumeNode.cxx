@@ -67,7 +67,7 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -179,10 +179,10 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr,
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLTensorVolumeNode* node = vtkMRMLTensorVolumeNode::SafeDownCast(anode);
+  vtkMRMLTensorVolumeNode* const node = vtkMRMLTensorVolumeNode::SafeDownCast(anode);
   if (!node)
   {
     return;

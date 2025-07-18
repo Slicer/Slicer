@@ -151,10 +151,10 @@ void vtkMRMLColorLegendDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLColorLegendDisplayNode* node = vtkMRMLColorLegendDisplayNode::SafeDownCast(anode);
+  vtkMRMLColorLegendDisplayNode* const node = vtkMRMLColorLegendDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -258,13 +258,13 @@ void vtkMRMLColorLegendDisplayNode::SetTitleTextPropertyFromString(std::string t
     return;
   }
 
-  std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->TitleTextProperty);
+  const std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->TitleTextProperty);
   if (textPropertyString == currentTextPropertyString)
   {
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->UpdateTextPropertyFromString(textPropertyString, this->TitleTextProperty);
   this->Modified();
 }
@@ -284,13 +284,13 @@ void vtkMRMLColorLegendDisplayNode::SetLabelTextPropertyFromString(std::string t
     return;
   }
 
-  std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->LabelTextProperty);
+  const std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->LabelTextProperty);
   if (textPropertyString == currentTextPropertyString)
   {
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->UpdateTextPropertyFromString(textPropertyString, this->LabelTextProperty);
   this->Modified();
 }

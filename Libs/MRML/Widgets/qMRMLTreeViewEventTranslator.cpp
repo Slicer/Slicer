@@ -72,10 +72,10 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event
   {
     if (Event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* e = static_cast<QKeyEvent*>(Event);
+      QKeyEvent* const e = static_cast<QKeyEvent*>(Event);
       if (e->key() == Qt::Key_Enter)
       {
-        QAction* action = menu->activeAction();
+        QAction* const action = menu->activeAction();
         if (action)
         {
           QString which = action->objectName();
@@ -92,10 +92,10 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event
     }
     if (Event->type() == QEvent::MouseButtonRelease)
     {
-      QMouseEvent* e = static_cast<QMouseEvent*>(Event);
+      QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
       if (e->button() == Qt::LeftButton)
       {
-        QAction* action = menu->actionAt(e->pos());
+        QAction* const action = menu->actionAt(e->pos());
         if (action && !action->menu())
         {
           QString which = action->objectName();
@@ -186,8 +186,8 @@ void qMRMLTreeViewEventTranslator::onAboutToReparentByDnD(vtkMRMLNode* node, vtk
 {
   if (node)
   {
-    QString parentID = newParent ? QString::fromUtf8(newParent->GetID()) : nullptr;
-    QString args = QString("%1.%2").arg(QString::fromUtf8(node->GetID()), parentID);
+    const QString parentID = newParent ? QString::fromUtf8(newParent->GetID()) : nullptr;
+    const QString args = QString("%1.%2").arg(QString::fromUtf8(node->GetID()), parentID);
     emit recordEvent(this->CurrentObject, "reParentByDragnDrop", args);
   }
 }

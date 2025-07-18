@@ -80,8 +80,8 @@ vtkMRMLInteractionWidget::vtkMRMLInteractionWidget()
     this->SetEventTranslation(interactionHandleState, vtkCommand::Move3DEvent, vtkEvent::AltModifier, WidgetEventMouseMove);
   }
 
-  int interactionStates[4] = { WidgetStateTranslate, WidgetStateRotate, WidgetStateScale, WidgetStateUniformScale };
-  for (int interactionState : interactionStates)
+  const int interactionStates[4] = { WidgetStateTranslate, WidgetStateRotate, WidgetStateScale, WidgetStateUniformScale };
+  for (const int interactionState : interactionStates)
   {
     this->SetEventTranslation(interactionState, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventCancel);
     this->SetKeyboardEventTranslation(interactionState, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventCancel);
@@ -148,7 +148,7 @@ bool vtkMRMLInteractionWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
     return false;
   }
 
-  int state = this->WidgetState;
+  const int state = this->WidgetState;
   if (state == WidgetStateIdle                   //
       || state == WidgetStateOnTranslationHandle //
       || state == WidgetStateOnRotationHandle    //
@@ -224,7 +224,7 @@ void vtkMRMLInteractionWidget::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 bool vtkMRMLInteractionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
   {
     // If this event is not recognized then give a chance to process it as a click event.
@@ -326,7 +326,7 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
     return false;
   }
 
-  int activeComponentType = this->GetActiveComponentType();
+  const int activeComponentType = this->GetActiveComponentType();
   if (activeComponentType == InteractionTranslationHandle)
   {
     this->SetWidgetState(WidgetStateOnTranslationHandle);
@@ -343,15 +343,15 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
   this->EndWidgetInteraction();
 
   // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
-  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  const bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
   return processedEvent;
 }
 
 //-------------------------------------------------------------------------
 bool vtkMRMLInteractionWidget::ProcessJumpCursor(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
-  int type = this->GetActiveComponentType();
-  int index = this->GetActiveComponentIndex();
+  const int type = this->GetActiveComponentType();
+  const int index = this->GetActiveComponentIndex();
   return this->JumpToHandlePosition(type, index);
 }
 
@@ -370,7 +370,7 @@ bool vtkMRMLInteractionWidget::JumpToHandlePosition(int type, int index)
     return false;
   }
 
-  vtkMRMLScene* scene = viewNode->GetScene();
+  vtkMRMLScene* const scene = viewNode->GetScene();
   if (!scene)
   {
     return false;
@@ -379,7 +379,7 @@ bool vtkMRMLInteractionWidget::JumpToHandlePosition(int type, int index)
   double jumpPosition_World[3] = { 0.0, 0.0, 0.0 };
   rep->GetInteractionHandlePositionWorld(type, index, jumpPosition_World);
 
-  int viewGroup = rep->GetViewNode()->GetViewGroup();
+  const int viewGroup = rep->GetViewNode()->GetViewGroup();
   vtkMRMLSliceNode::JumpAllSlices(scene, jumpPosition_World[0], jumpPosition_World[1], jumpPosition_World[2], -1, viewGroup, vtkMRMLSliceNode::SafeDownCast(viewNode));
 
   return true;
@@ -388,7 +388,7 @@ bool vtkMRMLInteractionWidget::JumpToHandlePosition(int type, int index)
 //-----------------------------------------------------------------------------
 bool vtkMRMLInteractionWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
   if (this->ApplicationLogic)
   {
@@ -447,7 +447,7 @@ void vtkMRMLInteractionWidget::StartWidgetInteraction(vtkMRMLInteractionEventDat
 
   this->SaveInitialState();
 
-  double startEventPos[2]{ static_cast<double>(eventData->GetDisplayPosition()[0]), static_cast<double>(eventData->GetDisplayPosition()[1]) };
+  const double startEventPos[2]{ static_cast<double>(eventData->GetDisplayPosition()[0]), static_cast<double>(eventData->GetDisplayPosition()[1]) };
 
   // save the cursor position
   this->LastEventPosition[0] = startEventPos[0];
@@ -508,7 +508,7 @@ void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
   translationVector_World[1] = eventPos_World[1] - previousEventPos_World[1];
   translationVector_World[2] = eventPos_World[2] - previousEventPos_World[2];
 
-  int index = this->GetActiveComponentIndex();
+  const int index = this->GetActiveComponentIndex();
   double translationAxis_World[3] = { 0.0, 0.0, 0.0 };
   rep->GetInteractionHandleAxisWorld(InteractionTranslationHandle, index, translationAxis_World);
   if (translationAxis_World[0] != 0.0 || translationAxis_World[1] != 0.0 || translationAxis_World[2] != 0)
@@ -578,17 +578,17 @@ void vtkMRMLInteractionWidget::ScaleWidget(double eventPos[2], bool uniformScale
 
   rep->GetTransformationReferencePoint(center);
 
-  double r2 = vtkMath::Distance2BetweenPoints(lastEventPos_World, center);
-  double d2 = vtkMath::Distance2BetweenPoints(eventPos_World, center);
+  const double r2 = vtkMath::Distance2BetweenPoints(lastEventPos_World, center);
+  const double d2 = vtkMath::Distance2BetweenPoints(eventPos_World, center);
   if (d2 < 0.0000001)
   {
     return;
   }
 
-  double ratio = sqrt(d2 / r2);
+  const double ratio = sqrt(d2 / r2);
 
   vtkTransform* handleToWorldTransform = rep->GetHandleToWorldTransform();
-  vtkSmartPointer<vtkTransform> worldToHandleTransform = vtkTransform::SafeDownCast(handleToWorldTransform->GetInverse());
+  const vtkSmartPointer<vtkTransform> worldToHandleTransform = vtkTransform::SafeDownCast(handleToWorldTransform->GetInverse());
 
   double scaleVector_Local[3] = { 1.0, 1.0, 1.0 };
   if (!uniformScale)
@@ -657,8 +657,8 @@ void vtkMRMLInteractionWidget::RotateWidget(double eventPos[2])
   double origin_World[3] = { 0.0, 0.0, 0.0 };
   rep->GetInteractionHandleOriginWorld(origin_World);
 
-  double epsilon = 1e-5;
-  double distance2 = vtkMath::Distance2BetweenPoints(eventPos_World, origin_World);
+  const double epsilon = 1e-5;
+  const double distance2 = vtkMath::Distance2BetweenPoints(eventPos_World, origin_World);
   if (distance2 < epsilon)
   {
     return;
@@ -670,8 +670,8 @@ void vtkMRMLInteractionWidget::RotateWidget(double eventPos[2])
     eventPos_World[i] -= origin_World[i];
   }
 
-  int type = this->GetActiveComponentType();
-  int index = this->GetActiveComponentIndex();
+  const int type = this->GetActiveComponentType();
+  const int index = this->GetActiveComponentIndex();
   double eventPositionOnAxisPlane_World[3] = { 0.0, 0.0, 0.0 };
   if (!this->GetIntersectionOnAxisPlane(type, index, eventPos, eventPositionOnAxisPlane_World))
   {
@@ -745,12 +745,12 @@ bool vtkMRMLInteractionWidget::GetIntersectionOnAxisPlane(int type, int index, c
 
     renderer->SetWorldPoint(cameraFP_World[0], cameraFP_World[1], cameraFP_World[2], cameraFP_World[3]);
     renderer->WorldToDisplay();
-    double* cameraFP_Display = renderer->GetDisplayPoint();
-    double selectionZ_Display = cameraFP_Display[2];
+    double* const cameraFP_Display = renderer->GetDisplayPoint();
+    const double selectionZ_Display = cameraFP_Display[2];
 
     renderer->SetDisplayPoint(input_Display[0], input_Display[1], selectionZ_Display);
     renderer->DisplayToWorld();
-    double* input_World = renderer->GetWorldPoint();
+    double* const input_World = renderer->GetWorldPoint();
     if (input_World[3] == 0.0)
     {
       vtkWarningMacro("Bad homogeneous coordinates");
@@ -795,7 +795,7 @@ bool vtkMRMLInteractionWidget::GetIntersectionOnAxisPlane(int type, int index, c
 
     vtkNew<vtkTransform> displayToWorldTransform;
     vtkMRMLSliceNode* sliceNode = rep->GetSliceNode();
-    vtkMatrix4x4* xyToRASMatrix = sliceNode->GetXYToRAS();
+    vtkMatrix4x4* const xyToRASMatrix = sliceNode->GetXYToRAS();
     displayToWorldTransform->SetMatrix(xyToRASMatrix);
     displayToWorldTransform->TransformPoint(inputPoint0_Display, inputPoint0_World);
     displayToWorldTransform->TransformPoint(inputPoint1_Display, inputPoint1_World);
@@ -834,13 +834,13 @@ bool vtkMRMLInteractionWidget::GetClosestPointOnInteractionAxis(int type, int in
 
     renderer->SetWorldPoint(cameraFP_World[0], cameraFP_World[1], cameraFP_World[2], cameraFP_World[3]);
     renderer->WorldToDisplay();
-    double* displayCoords = renderer->GetDisplayPoint();
-    double selectionZ = displayCoords[2];
+    double* const displayCoords = renderer->GetDisplayPoint();
+    const double selectionZ = displayCoords[2];
 
     renderer->SetDisplayPoint(input_Display[0], input_Display[1], selectionZ);
     renderer->DisplayToWorld();
 
-    double* input_World = renderer->GetWorldPoint();
+    double* const input_World = renderer->GetWorldPoint();
     if (input_World[3] == 0.0)
     {
       vtkWarningMacro("Bad homogeneous coordinates");
@@ -888,7 +888,7 @@ bool vtkMRMLInteractionWidget::GetClosestPointOnInteractionAxis(int type, int in
 
     vtkNew<vtkTransform> displayToWorldTransform;
     vtkMRMLSliceNode* sliceNode = rep->GetSliceNode();
-    vtkMatrix4x4* xyToRASMatrix = sliceNode->GetXYToRAS();
+    vtkMatrix4x4* const xyToRASMatrix = sliceNode->GetXYToRAS();
     displayToWorldTransform->SetMatrix(xyToRASMatrix);
     displayToWorldTransform->TransformPoint(inputPoint0_Display, inputPoint0_World);
     displayToWorldTransform->TransformPoint(inputPoint1_Display, inputPoint1_World);
@@ -933,28 +933,28 @@ int vtkMRMLInteractionWidget::GetMouseCursor()
 //----------------------------------------------------------------------
 int vtkMRMLInteractionWidget::GetActiveComponentType()
 {
-  vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentType();
 }
 
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidget::SetActiveComponentType(int type)
 {
-  vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentType(type);
 }
 
 //----------------------------------------------------------------------
 int vtkMRMLInteractionWidget::GetActiveComponentIndex()
 {
-  vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentIndex();
 }
 
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidget::SetActiveComponentIndex(int index)
 {
-  vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentIndex(index);
 }
 

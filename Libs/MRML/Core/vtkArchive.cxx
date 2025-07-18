@@ -219,7 +219,7 @@ void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::string>& files)
 {
-  struct archive* a = archive_read_new();
+  struct archive* const a = archive_read_new();
 
   archive_read_support_filter_all(a);
   archive_read_support_format_all(a);
@@ -252,8 +252,8 @@ bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::strin
 //-----------------------------------------------------------------------------
 bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string>* extracted_files)
 {
-  struct archive* a = archive_read_new();
-  struct archive* ext = archive_write_disk_new();
+  struct archive* const a = archive_read_new();
+  struct archive* const ext = archive_write_disk_new();
   archive_read_support_filter_all(a);
   archive_read_support_format_all(a);
   struct archive_entry* entry;
@@ -360,12 +360,12 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
 
   std::vector<std::string> directoryParts;
   directoryParts = vtksys::SystemTools::SplitString(directoryToZip, '/', true);
-  std::string directoryName = directoryParts.back();
+  const std::string directoryName = directoryParts.back();
 
   vtksys::Glob glob;
   glob.RecurseOn();
   glob.RecurseThroughSymlinksOff();
-  std::string globPattern(directoryToZip);
+  const std::string globPattern(directoryToZip);
   if (!glob.FindFiles(globPattern + "/*"))
   {
     vtkArchiveTools::Error("Zip:", "Could not find files in directory");
@@ -374,13 +374,13 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   std::vector<std::string> files = glob.GetFiles();
 
   // now zip it up using LibArchive
-  struct archive* zipArchive = archive_write_new();
+  struct archive* const zipArchive = archive_write_new();
 
   // create a zip archive
 #ifdef HAVE_ZLIB_H
   std::string compression_type = "deflate";
 #else
-  std::string compression_type = "store";
+  std::string const compression_type = "store";
 #endif
 
   archive_write_set_format_zip(zipArchive);
@@ -400,7 +400,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   }
 
   // add the data directory
-  struct archive_entry* dirEntry = archive_entry_new();
+  struct archive_entry* const dirEntry = archive_entry_new();
   archive_entry_set_mtime(dirEntry, 11, 110);
   archive_entry_copy_pathname(dirEntry, directoryName.c_str());
   archive_entry_set_mode(dirEntry, S_IFDIR | 0755);
@@ -421,21 +421,21 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   while (sit != files.end() && success)
   {
     vtkArchiveTools::Message("Zip: adding:", sit->c_str());
-    const char* fileName = sit->c_str();
+    const char* const fileName = sit->c_str();
     ++sit;
 
     //
     // add an entry for this file
     //
-    struct archive_entry* entry = archive_entry_new();
+    struct archive_entry* const entry = archive_entry_new();
     // use a relative path for the entry file name, including the top
     // directory so it unzips into a directory of it's own
-    std::string relFileName = vtksys::SystemTools::RelativePath(vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), fileName);
+    const std::string relFileName = vtksys::SystemTools::RelativePath(vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), fileName);
     vtkArchiveTools::Message("Zip: adding rel:", relFileName.c_str());
     archive_entry_set_pathname(entry, relFileName.c_str());
     // size is required, for now use the vtksys call though it uses struct stat
     // and may not be portable
-    unsigned long fileLength = vtksys::SystemTools::FileLength(fileName);
+    const unsigned long fileLength = vtksys::SystemTools::FileLength(fileName);
     archive_entry_set_size(entry, fileLength);
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);
@@ -448,7 +448,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     //
     // add the data for this entry
     //
-    FILE* fd = fopen(fileName, "rb");
+    FILE* const fd = fopen(fileName, "rb");
     if (!fd)
     {
       vtkArchiveTools::Error("Zip: cannot open input file:", sit->c_str());
@@ -517,7 +517,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     return false;
   }
 
-  std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
+  const std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
 
   if (!vtksys::SystemTools::ChangeDirectory(destinationDirectory))
   {

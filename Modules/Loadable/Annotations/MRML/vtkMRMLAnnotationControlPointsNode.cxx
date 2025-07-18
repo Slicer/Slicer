@@ -50,12 +50,12 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   if (this->GetPoints())
   {
     vtkPoints* points = this->GetPoints();
-    int n = points->GetNumberOfPoints();
+    const int n = points->GetNumberOfPoints();
 
     of << " ctrlPtsCoord=\"";
     for (int i = 0; i < n; i++)
     {
-      double* ptr = points->GetPoint(i);
+      double* const ptr = points->GetPoint(i);
       of << ptr[0] << " " << ptr[1] << " " << ptr[2];
       if (i < n - 1)
       {
@@ -104,7 +104,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::vector<std::string>& comm
   if (this->GetPoints())
   {
     vtkPoints* points = this->GetPoints();
-    int n = points->GetNumberOfPoints();
+    const int n = points->GetNumberOfPoints();
 
     if (multipleFlag == false && //
         n > 1)
@@ -116,7 +116,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::vector<std::string>& comm
     std::stringstream ss;
     for (int i = 0; i < n; i++)
     {
-      double* ptr = points->GetPoint(i);
+      double* const ptr = points->GetPoint(i);
       if (i == 0 && prefix.compare("") != 0)
       {
         ss << prefix << " ";
@@ -149,15 +149,15 @@ void vtkMRMLAnnotationControlPointsNode::ReadXMLAttributes(const char** atts)
 {
   // cout << "vtkMRMLAnnotationControlPointsNode::ReadXMLAttributes start"<< endl;
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   // this->ResetAnnotations();
   Superclass::ReadXMLAttributes(atts);
 
   while (*atts != nullptr)
   {
-    const char* attName = *(atts++);
-    std::string attValue(*(atts++));
+    const char* const attName = *(atts++);
+    const std::string attValue(*(atts++));
 
     if (!strcmp(attName, "ctrlPtsCoord"))
     {
@@ -249,10 +249,10 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
   {
     os << indent << "ctrlPtsCoord: ";
     vtkPoints* points = this->GetPoints();
-    int n = points->GetNumberOfPoints();
+    const int n = points->GetNumberOfPoints();
     for (int i = 0; i < n; i++)
     {
-      double* ptr = points->GetPoint(i);
+      double* const ptr = points->GetPoint(i);
       os << ptr[0] << " " << ptr[1] << " " << ptr[2];
       if (i < n - 1)
       {
@@ -286,7 +286,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnotationPointDisplayNode()
 {
-  int nnodes = this->GetNumberOfDisplayNodes();
+  const int nnodes = this->GetNumberOfDisplayNodes();
   vtkMRMLAnnotationPointDisplayNode* node = nullptr;
   for (int n = 0; n < nnodes; n++)
   {
@@ -366,7 +366,7 @@ int vtkMRMLAnnotationControlPointsNode::GetNumberOfControlPoints()
   {
     this->ResetControlPoints();
   }
-  vtkPoints* points = this->GetPoints();
+  vtkPoints* const points = this->GetPoints();
   return points->GetNumberOfPoints();
 }
 
@@ -379,7 +379,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
   }
 
   vtkPoints* points = this->GetPoints();
-  int n = points->GetNumberOfPoints();
+  const int n = points->GetNumberOfPoints();
   if (id < 0 || id > n - 1)
   {
     vtkErrorMacro("Annotation " << this->GetName() << " id is out of range !");
@@ -395,7 +395,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 
   for (int j = NUM_TEXT_ATTRIBUTE_TYPES; j < NUM_CP_ATTRIBUTE_TYPES; j++)
   {
-    vtkBitArray* dataArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(j));
+    vtkBitArray* const dataArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(j));
     if (!dataArray || dataArray->GetSize() != n)
     {
       vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j)
@@ -438,7 +438,7 @@ void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdTy
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id);
     return;
   }
-  double* p = this->GetPoints()->GetPoint(id);
+  double* const p = this->GetPoints()->GetPoint(id);
   double localPoint[] = { p[0], p[1], p[2], 1 };
   this->TransformPointToWorld(localPoint, point);
 }
@@ -498,7 +498,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   else if (points->GetNumberOfPoints() > id)
   {
     // check if is different to prevent recursive event loops
-    double* pnt = points->GetPoint(id);
+    double* const pnt = points->GetPoint(id);
     if (pnt && fabs(pnt[0] - newControl[0]) < NUMERIC_ZERO && //
         fabs(pnt[1] - newControl[1]) < NUMERIC_ZERO &&        //
         fabs(pnt[2] - newControl[2]) < NUMERIC_ZERO)
@@ -605,8 +605,8 @@ int vtkMRMLAnnotationControlPointsNode::AddControlPoint(double newControl[3], in
     this->ResetControlPoints();
   }
 
-  vtkPoints* points = this->GetPoints();
-  int n = points->GetNumberOfPoints();
+  vtkPoints* const points = this->GetPoints();
+  const int n = points->GetNumberOfPoints();
   if (this->SetControlPoint(n, newControl, selectedFlag, visibleFlag))
   {
     return n;

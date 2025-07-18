@@ -34,7 +34,7 @@ qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLSceneFactoryWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSceneFactoryWidget* _widget = new qMRMLSceneFactoryWidget(_parent);
+  qMRMLSceneFactoryWidget* const _widget = new qMRMLSceneFactoryWidget(_parent);
   return _widget;
 }
 

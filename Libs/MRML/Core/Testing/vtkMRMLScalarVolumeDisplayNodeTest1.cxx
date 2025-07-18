@@ -15,7 +15,7 @@
 
 int vtkMRMLScalarVolumeDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLScalarVolumeDisplayNode> node1;
+  const vtkNew<vtkMRMLScalarVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

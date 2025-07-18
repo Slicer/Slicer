@@ -8,7 +8,7 @@ qMRMLScalarsDisplayWidgetPlugin::qMRMLScalarsDisplayWidgetPlugin(QObject* _paren
 
 QWidget* qMRMLScalarsDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLScalarsDisplayWidget* _widget = new qMRMLScalarsDisplayWidget(_parent);
+  qMRMLScalarsDisplayWidget* const _widget = new qMRMLScalarsDisplayWidget(_parent);
   return _widget;
 }
 

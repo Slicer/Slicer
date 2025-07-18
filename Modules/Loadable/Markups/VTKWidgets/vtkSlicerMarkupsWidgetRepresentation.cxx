@@ -245,13 +245,13 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(const int dis
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp1);
 
-  double wt2 = vtkMath::Distance2BetweenPoints(tmp1, tmp2);
+  const double wt2 = vtkMath::Distance2BetweenPoints(tmp1, tmp2);
 
   // Now loop through all lines and look for closest one within tolerance
   double p3[4] = { 0.0, 0.0, 0.0, 1.0 };
   double p4[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkPoints* curvePointsWorld = this->GetMarkupsNode()->GetCurvePointsWorld();
-  vtkIdType numberOfPoints = curvePointsWorld->GetNumberOfPoints();
+  const vtkIdType numberOfPoints = curvePointsWorld->GetNumberOfPoints();
   for (vtkIdType i = 0; i < numberOfPoints; i++)
   {
     curvePointsWorld->GetPoint(i, p3);
@@ -281,7 +281,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(const int dis
       p6[1] = p3[1] + v * (p4[1] - p3[1]);
       p6[2] = p3[2] + v * (p4[2] - p3[2]);
 
-      double d = vtkMath::Distance2BetweenPoints(p5, p6);
+      const double d = vtkMath::Distance2BetweenPoints(p5, p6);
 
       if (d < wt2 && d < closestDistance2)
       {
@@ -351,7 +351,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
     centerWorldPos[1] += p[1];
     centerWorldPos[2] += p[2];
   }
-  double inv_N = 1. / static_cast<double>(markupsNode->GetNumberOfControlPoints());
+  const double inv_N = 1. / static_cast<double>(markupsNode->GetNumberOfControlPoints());
   centerWorldPos[0] *= inv_N;
   centerWorldPos[1] *= inv_N;
   centerWorldPos[2] *= inv_N;
@@ -442,9 +442,9 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
     linePolyData->SetLines(line);
     return;
   }
-  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+  const int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
   vtkIdType numberOfLines = numberOfControlPoints - 1;
-  bool loop = (markupsNode->GetCurveClosed() && numberOfControlPoints > 2);
+  const bool loop = (markupsNode->GetCurveClosed() && numberOfControlPoints > 2);
   if (loop)
   {
     numberOfLines++;
@@ -524,7 +524,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(vtkMRMLNode* v
     {
       labelText = this->MarkupsNode->GetName();
     }
-    std::string properties = this->MarkupsNode->GetPropertiesLabelText();
+    const std::string properties = this->MarkupsNode->GetPropertiesLabelText();
     if (!properties.empty())
     {
       labelText += ":" + properties;
@@ -592,7 +592,7 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
   // If a folder is overriding display properties then return the color defined by the folder
   if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
   {
-    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    vtkMRMLDisplayableNode* const displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
     vtkMRMLDisplayNode* overrideHierarchyDisplayNode = vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
     if (overrideHierarchyDisplayNode)
     {
@@ -716,7 +716,7 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
   // If parent folder visibility is set to false then the markups is not visible
   if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
   {
-    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    vtkMRMLDisplayableNode* const displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
     // Visibility is applied regardless the fact whether there is override or not.
     // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
     // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)

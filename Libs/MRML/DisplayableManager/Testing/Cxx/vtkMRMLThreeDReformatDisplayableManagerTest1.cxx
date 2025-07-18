@@ -906,7 +906,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkInteractorStyle3D> iStyle;
+  const vtkNew<vtkInteractorStyle3D> iStyle;
   renderWindowInteractor->SetInteractorStyle(iStyle.GetPointer());
 
   renderWindow->Render();
@@ -920,7 +920,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   // Add ViewNode
   vtkNew<vtkMRMLViewLogic> viewLogic;
   viewLogic->SetMRMLScene(scene);
-  vtkMRMLViewNode* viewNode = viewLogic->AddViewNode("1");
+  vtkMRMLViewNode* const viewNode = viewLogic->AddViewNode("1");
 
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
   displayableManagerGroup->SetRenderer(renderer.GetPointer());
@@ -1036,7 +1036,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
     }
   }
 
-  int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
+  const int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
   if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();

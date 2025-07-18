@@ -47,8 +47,8 @@ int qMRMLSequenceBrowserWidgetsTest1(int argc, char* argv[])
   const int numberOfDataNodes = 135;
   for (int i = 0; i < numberOfDataNodes; i++)
   {
-    vtkNew<vtkMRMLTransformNode> transform;
-    QString indexValue = QString::number(i * 1322.345);
+    const vtkNew<vtkMRMLTransformNode> transform;
+    const QString indexValue = QString::number(i * 1322.345);
     sequenceNode->SetDataNodeAtValue(transform.GetPointer(), indexValue.toLatin1().constData());
   }
   scene->AddNode(sequenceNode.GetPointer());

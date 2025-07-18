@@ -74,13 +74,13 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // keeping track of settings will allow us to display the "RestartRequestedLabel"
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
-  QSettings* settings = qSlicerCoreApplication::application()->revisionUserSettings();
+  QSettings* const settings = qSlicerCoreApplication::application()->revisionUserSettings();
   // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
   this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
   this->PreviousExtensionsScheduledForUpdate = settings->value("Extensions/ScheduledForUpdate").toMap();
 
-  qSlicerSettingsExtensionsPanel* extensionsPanel = qobject_cast<qSlicerSettingsExtensionsPanel*>(qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
+  qSlicerSettingsExtensionsPanel* const extensionsPanel = qobject_cast<qSlicerSettingsExtensionsPanel*>(qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
   Q_ASSERT(extensionsPanel);
   if (extensionsPanel)
   {
@@ -94,7 +94,7 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
   Q_Q(qSlicerExtensionsManagerDialog);
   Q_ASSERT(q->extensionsManagerModel());
   bool shouldRestart = false;
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const coreApp = qSlicerCoreApplication::application();
   // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   if (this->PreviousModulesAdditionalPaths != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||                   //
       this->PreviousExtensionsScheduledForUninstall != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() || //
@@ -102,7 +102,7 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
   {
     shouldRestart = true;
   }
-  bool isInBatchMode = this->ExtensionsManagerWidget->isInBatchProcessing();
+  const bool isInBatchMode = this->ExtensionsManagerWidget->isInBatchProcessing();
 
   this->ButtonBox->setEnabled(!isInBatchMode);
   q->setRestartRequested(shouldRestart);

@@ -197,10 +197,10 @@ QString qSlicerTableColumnPropertiesWidget::columnProperty(QString propertyName)
   {
     return "";
   }
-  std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
+  const std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
   for (const QString& columnName : d->ColumnNames)
   {
-    std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
+    const std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
     if (currentPropertyValue != commonPropertyValue)
     {
       // not all column types are the same
@@ -224,7 +224,7 @@ void qSlicerTableColumnPropertiesWidget::updateWidget()
     return;
   }
 
-  bool componentRowsVisible = vtkVariant(this->columnProperty("componentCount").toStdString()) > 1;
+  const bool componentRowsVisible = vtkVariant(this->columnProperty("componentCount").toStdString()) > 1;
   d->ComponentCountLabel->setVisible(componentRowsVisible);
   d->ComponentCountLineEdit->setVisible(componentRowsVisible);
   d->ComponentNamesLabel->setVisible(componentRowsVisible);
@@ -232,8 +232,8 @@ void qSlicerTableColumnPropertiesWidget::updateWidget()
 
   d->NameLineEdit->setText(d->ColumnNames.join(", "));
 
-  QString columnType = this->columnProperty("type");
-  int columnTypeIndex = d->DataTypeComboBox->findText(columnType);
+  const QString columnType = this->columnProperty("type");
+  const int columnTypeIndex = d->DataTypeComboBox->findText(columnType);
   d->DataTypeComboBox->setCurrentIndex(columnTypeIndex);
 
   for (QLineEdit* const widget : d->PropertyEditWidgets)
@@ -302,7 +302,7 @@ void qSlicerTableColumnPropertiesWidget::tableViewSelectionChanged()
   if (d->TableViewForSelection && d->TableViewForSelection->mrmlTableNode())
   {
     vtkMRMLTableNode* tableNode = d->TableViewForSelection->mrmlTableNode();
-    QList<int> selectedColumns = d->TableViewForSelection->selectedMRMLTableColumnIndices();
+    const QList<int> selectedColumns = d->TableViewForSelection->selectedMRMLTableColumnIndices();
     for (const int& columnIndex : selectedColumns)
     {
       selectedColumnNames << tableNode->GetColumnName(columnIndex).c_str();
@@ -357,10 +357,10 @@ void qSlicerTableColumnPropertiesWidget::onDataTypeChanged(const QString& newDat
 //------------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidget::onPropertyChanged(const QString& newPropertyValue)
 {
-  QLineEdit* propertyWidget = qobject_cast<QLineEdit*>(sender());
+  QLineEdit* const propertyWidget = qobject_cast<QLineEdit*>(sender());
   if (propertyWidget != nullptr)
   {
-    QString propertyName = propertyWidget->property(SCHEMA_PROPERTY_NAME).toString();
+    const QString propertyName = propertyWidget->property(SCHEMA_PROPERTY_NAME).toString();
     this->setColumnProperty(propertyName, newPropertyValue);
   }
 }

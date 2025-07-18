@@ -55,7 +55,7 @@ void qMRMLListWidgetPrivate::init()
   // p->QListView::setModel(new qMRMLSceneModel(p));
   /// new ctkModelTester(p->model(), p);
 
-  qMRMLSceneTransformModel* sceneModel = new qMRMLSceneTransformModel(q);
+  qMRMLSceneTransformModel* const sceneModel = new qMRMLSceneTransformModel(q);
   QSortFilterProxyModel* sortModel = new QSortFilterProxyModel(q);
   sortModel->setSourceModel(sceneModel);
   sortModel->setDynamicSortFilter(true);
@@ -105,7 +105,7 @@ void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLListWidget::mrmlScene() const
 {
-  QSortFilterProxyModel* sortModel = qobject_cast<QSortFilterProxyModel*>(this->model());
+  QSortFilterProxyModel* const sortModel = qobject_cast<QSortFilterProxyModel*>(this->model());
   Q_ASSERT(qobject_cast<const qMRMLSceneModel*>(sortModel->sourceModel()));
   return qobject_cast<const qMRMLSceneModel*>(sortModel->sourceModel())->mrmlScene();
 }

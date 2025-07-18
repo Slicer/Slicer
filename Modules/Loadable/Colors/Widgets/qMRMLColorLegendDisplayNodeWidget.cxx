@@ -160,7 +160,7 @@ vtkMRMLColorLegendDisplayNode* qMRMLColorLegendDisplayNodeWidget::mrmlColorLegen
 //-----------------------------------------------------------------------------
 void qMRMLColorLegendDisplayNodeWidget::setMRMLColorLegendDisplayNode(vtkMRMLNode* node)
 {
-  vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(node);
+  vtkMRMLColorLegendDisplayNode* const colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(node);
   this->setMRMLColorLegendDisplayNode(colorLegendDisplayNode);
 }
 
@@ -176,12 +176,12 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   }
 
   // Set visibility checkbox
-  QSignalBlocker blocker1(d->ColorLegendVisibilityCheckBox);
+  const QSignalBlocker blocker1(d->ColorLegendVisibilityCheckBox);
   d->ColorLegendVisibilityCheckBox->setChecked(d->ColorLegendDisplayNode->GetVisibility());
 
   // Setup color legend orientation
-  QSignalBlocker blocker2(d->VerticalOrientationRadioButton);
-  QSignalBlocker blocker3(d->HorizontalOrientationRadioButton);
+  const QSignalBlocker blocker2(d->VerticalOrientationRadioButton);
+  const QSignalBlocker blocker3(d->HorizontalOrientationRadioButton);
   if (d->ColorLegendDisplayNode->GetOrientation() == vtkMRMLColorLegendDisplayNode::Vertical)
   {
     d->VerticalOrientationRadioButton->setChecked(true);
@@ -191,9 +191,9 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
     d->HorizontalOrientationRadioButton->setChecked(true);
   }
 
-  QSignalBlocker blocker4(d->UseColorNameAsLabelTextRadioButton);
-  QSignalBlocker blocker5(d->UseScalarValueAsLabelTextRadioButton);
-  bool useColorNamesForLabels = d->ColorLegendDisplayNode->GetUseColorNamesForLabels();
+  const QSignalBlocker blocker4(d->UseColorNameAsLabelTextRadioButton);
+  const QSignalBlocker blocker5(d->UseScalarValueAsLabelTextRadioButton);
+  const bool useColorNamesForLabels = d->ColorLegendDisplayNode->GetUseColorNamesForLabels();
   if (useColorNamesForLabels)
   {
     d->UseColorNameAsLabelTextRadioButton->setChecked(true);
@@ -209,43 +209,43 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   d->MaxNumberOfColorsSpinBox->setEnabled(!useColorNamesForLabels);
   d->NumberOfLabelsSpinBox->setEnabled(!useColorNamesForLabels);
 
-  QSignalBlocker blocker6(d->ShortSideSizeSlider);
-  QSignalBlocker blocker7(d->LongSideSizeSlider);
+  const QSignalBlocker blocker6(d->ShortSideSizeSlider);
+  const QSignalBlocker blocker7(d->LongSideSizeSlider);
   d->ShortSideSizeSlider->setValue(d->ColorLegendDisplayNode->GetSize()[0]);
   d->LongSideSizeSlider->setValue(d->ColorLegendDisplayNode->GetSize()[1]);
 
-  QSignalBlocker blocker8(d->PositionXSlider);
-  QSignalBlocker blocker9(d->PositionYSlider);
+  const QSignalBlocker blocker8(d->PositionXSlider);
+  const QSignalBlocker blocker9(d->PositionYSlider);
   d->PositionXSlider->setValue(d->ColorLegendDisplayNode->GetPosition()[0]);
   d->PositionYSlider->setValue(d->ColorLegendDisplayNode->GetPosition()[1]);
 
   // Title parameters
-  std::string newTitle = d->ColorLegendDisplayNode->GetTitleText();
-  QString currentTitle = d->TitleTextLineEdit->text();
+  const std::string newTitle = d->ColorLegendDisplayNode->GetTitleText();
+  const QString currentTitle = d->TitleTextLineEdit->text();
   if (currentTitle.compare(QString::fromStdString(newTitle)))
   {
-    QSignalBlocker blocker10(d->TitleTextLineEdit);
+    const QSignalBlocker blocker10(d->TitleTextLineEdit);
     d->TitleTextLineEdit->setText(newTitle.c_str());
   }
 
   // Label parameters
-  std::string newFormat = d->ColorLegendDisplayNode->GetLabelFormat();
-  QString currentFormat = d->LabelTextPropertyWidget->text();
+  const std::string newFormat = d->ColorLegendDisplayNode->GetLabelFormat();
+  const QString currentFormat = d->LabelTextPropertyWidget->text();
   if (currentFormat.compare(QString::fromStdString(newFormat)))
   {
-    QSignalBlocker blocker11(d->LabelTextPropertyWidget);
+    const QSignalBlocker blocker11(d->LabelTextPropertyWidget);
     d->LabelTextPropertyWidget->setText(newFormat.c_str());
   }
 
   // Number of colors and labels
-  QSignalBlocker blocker12(d->MaxNumberOfColorsSpinBox);
-  QSignalBlocker blocker13(d->NumberOfLabelsSpinBox);
+  const QSignalBlocker blocker12(d->MaxNumberOfColorsSpinBox);
+  const QSignalBlocker blocker13(d->NumberOfLabelsSpinBox);
   d->MaxNumberOfColorsSpinBox->setValue(d->ColorLegendDisplayNode->GetMaxNumberOfColors());
   d->NumberOfLabelsSpinBox->setValue(d->ColorLegendDisplayNode->GetNumberOfLabels());
 
   // Labels naming and arrangement
-  QSignalBlocker blocker14(d->UseColorNameAsLabelTextRadioButton);
-  QSignalBlocker blocker15(d->UseScalarValueAsLabelTextRadioButton);
+  const QSignalBlocker blocker14(d->UseColorNameAsLabelTextRadioButton);
+  const QSignalBlocker blocker15(d->UseScalarValueAsLabelTextRadioButton);
   if (d->ColorLegendDisplayNode->GetUseColorNamesForLabels())
   {
     d->UseColorNameAsLabelTextRadioButton->setChecked(true);
@@ -300,7 +300,7 @@ void qMRMLColorLegendDisplayNodeWidget::onLabelTextButtonClicked(QAbstractButton
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(d->ColorLegendDisplayNode);
+  const MRMLNodeModifyBlocker blocker(d->ColorLegendDisplayNode);
   if (button == d->UseColorNameAsLabelTextRadioButton)
   {
     d->ColorLegendDisplayNode->SetUseColorNamesForLabels(true);

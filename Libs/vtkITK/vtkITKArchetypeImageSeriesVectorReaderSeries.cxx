@@ -66,8 +66,8 @@ void vtkITKExecuteDataFromSeriesVector(vtkITKArchetypeImageSeriesVectorReaderSer
   typedef itk::VectorImage<VectorPixelType, 3> image;
   typedef itk::ImageSource<image> FilterType;
   typename FilterType::Pointer filter;
-  typename itk::ImageSeriesReader<image>::Pointer reader = itk::ImageSeriesReader<image>::New();
-  itk::CStyleCommand::Pointer pcl = itk::CStyleCommand::New();
+  const typename itk::ImageSeriesReader<image>::Pointer reader = itk::ImageSeriesReader<image>::New();
+  const itk::CStyleCommand::Pointer pcl = itk::CStyleCommand::New();
   pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&self->ReadProgressCallback);
   pcl->SetClientData(self);
   reader->SetFileNames(self->GetFileNames());
@@ -96,7 +96,7 @@ void vtkITKExecuteDataFromSeriesVector(vtkITKArchetypeImageSeriesVectorReaderSer
   }
   else
   {
-    typename itk::OrientImageFilter<image, image>::Pointer orient = itk::OrientImageFilter<image, image>::New();
+    const typename itk::OrientImageFilter<image, image>::Pointer orient = itk::OrientImageFilter<image, image>::New();
     orient->SetDebug(self->GetDebug());
     orient->SetInput(reader->GetOutput());
     orient->UseImageDirectionOn();
@@ -106,7 +106,7 @@ void vtkITKExecuteDataFromSeriesVector(vtkITKArchetypeImageSeriesVectorReaderSer
   filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
-  void* ptr = static_cast<void*>(PixelContainer->GetBufferPointer());
+  void* const ptr = static_cast<void*>(PixelContainer->GetBufferPointer());
   DownCast<T>(data->GetPointData()->GetScalars())->SetVoidArray(ptr, PixelContainer->Size(), 0, vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
   PixelContainer->ContainerManageMemoryOff();
 }
@@ -122,7 +122,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return;
   }
-  vtkImageData* data = this->AllocateOutputData(output, outInfo);
+  vtkImageData* const data = this->AllocateOutputData(output, outInfo);
 
   // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
@@ -162,7 +162,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
 
 void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
+  const itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

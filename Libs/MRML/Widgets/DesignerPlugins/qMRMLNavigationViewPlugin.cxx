@@ -31,7 +31,7 @@ qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLNavigationViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLNavigationView* _widget = new qMRMLNavigationView(_parent);
+  qMRMLNavigationView* const _widget = new qMRMLNavigationView(_parent);
   return _widget;
 }
 

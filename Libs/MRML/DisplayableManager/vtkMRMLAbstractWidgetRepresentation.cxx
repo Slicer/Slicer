@@ -121,7 +121,7 @@ void vtkMRMLAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boundi
     {
       continue;
     }
-    double* bounds = actor->GetBounds();
+    double* const bounds = actor->GetBounds();
     if (!bounds)
     {
       continue;

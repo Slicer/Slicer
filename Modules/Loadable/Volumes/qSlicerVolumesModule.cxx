@@ -129,7 +129,7 @@ void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(this->logic());
+  vtkSlicerVolumesLogic* const volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(this->logic());
 
   qSlicerCoreIOManager* ioManager = qSlicerCoreApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerVolumesReader(volumesLogic, this));

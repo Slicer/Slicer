@@ -92,8 +92,8 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
     return;
   }
 
-  vtkNew<vtkMatrix4x4> matrix;
-  int matrixDefined = transformNode->GetMatrixTransformToParent(matrix.GetPointer());
+  const vtkNew<vtkMatrix4x4> matrix;
+  const int matrixDefined = transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   Q_ASSERT(matrixDefined);
   if (!matrixDefined)
   {
@@ -117,8 +117,8 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
 {
   Q_ASSERT(scene);
   int numberOfVisibleNodes = 0;
-  const char* className = "vtkMRMLViewNode";
-  int nnodes = scene->GetNumberOfNodesByClass(className);
+  const char* const className = "vtkMRMLViewNode";
+  const int nnodes = scene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
   {
     vtkMRMLViewNode* node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
@@ -204,7 +204,7 @@ void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vt
     {
       continue;
     }
-    QUrlQuery query(url.query());
+    const QUrlQuery query(url.query());
     idList->InsertNextId(query.queryItemValue("id").toLong());
   }
 }

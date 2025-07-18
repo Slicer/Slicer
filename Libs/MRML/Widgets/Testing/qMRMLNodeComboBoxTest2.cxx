@@ -40,7 +40,7 @@
 int qMRMLNodeComboBoxTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qMRMLNodeComboBox nodeSelector;

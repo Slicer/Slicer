@@ -92,7 +92,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     appLogic->PauseRender();
   }
   // Get display and world position
-  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
+  int* const displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
   if (!pokedRenderer)
   {
@@ -120,7 +120,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     if (inputEventData->GetType() == vtkCommand::MouseMoveEvent)
     {
       // Update the cursor position (show coordinates of current position in the data probe, etc.)
-      vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+      vtkMRMLScene* const scene = this->SliceLogic->GetMRMLScene();
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
       if (crosshairNode)
       {
@@ -131,7 +131,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     }
     else if (inputEventData->GetType() == vtkCommand::LeaveEvent)
     {
-      vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+      vtkMRMLScene* const scene = this->SliceLogic->GetMRMLScene();
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
       if (crosshairNode)
       {
@@ -140,7 +140,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     }
   }
 
-  bool result = this->DelegateInteractionEventDataToDisplayableManagers(ed);
+  const bool result = this->DelegateInteractionEventDataToDisplayableManagers(ed);
   if (appLogic)
   {
     appLogic->ResumeRender();
@@ -214,10 +214,10 @@ bool vtkMRMLSliceViewInteractorStyle::GetActionEnabled(int actionsMask)
 //----------------------------------------------------------------------------
 vtkMRMLCrosshairDisplayableManager* vtkMRMLSliceViewInteractorStyle::GetCrosshairDisplayableManager()
 {
-  int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+  const int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
   for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
   {
-    vtkMRMLCrosshairDisplayableManager* displayableManager =
+    vtkMRMLCrosshairDisplayableManager* const displayableManager =
       vtkMRMLCrosshairDisplayableManager::SafeDownCast(this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
     if (displayableManager)
     {
@@ -230,10 +230,10 @@ vtkMRMLCrosshairDisplayableManager* vtkMRMLSliceViewInteractorStyle::GetCrosshai
 //----------------------------------------------------------------------------
 vtkMRMLScalarBarDisplayableManager* vtkMRMLSliceViewInteractorStyle::GetScalarBarDisplayableManager()
 {
-  int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+  const int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
   for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
   {
-    vtkMRMLScalarBarDisplayableManager* displayableManager =
+    vtkMRMLScalarBarDisplayableManager* const displayableManager =
       vtkMRMLScalarBarDisplayableManager::SafeDownCast(this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
     if (displayableManager)
     {

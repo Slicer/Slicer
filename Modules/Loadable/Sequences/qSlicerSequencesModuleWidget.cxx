@@ -227,16 +227,16 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
     return;
   }
   double croshairPosition_RAS[4] = { 0, 0, 0, 1 }; // homogeneous coordinate to allow transform by matrix multiplication
-  bool validPosition = this->CrosshairNode->GetCursorPositionRAS(croshairPosition_RAS);
+  const bool validPosition = this->CrosshairNode->GetCursorPositionRAS(croshairPosition_RAS);
   if (!validPosition)
   {
     resetInteractiveCharting();
     return;
   }
-  vtkMRMLNode* proxyNode = this->ActiveBrowserNode->GetProxyNode(sequenceNode);
+  vtkMRMLNode* const proxyNode = this->ActiveBrowserNode->GetProxyNode(sequenceNode);
   vtkMRMLTransformableNode* transformableProxyNode = vtkMRMLTransformableNode::SafeDownCast(proxyNode);
 
-  int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
+  const int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   this->ChartTable->SetNumberOfRows(numberOfDataNodes);
 
   vtkMRMLScalarVolumeNode* vNode = vtkMRMLScalarVolumeNode::SafeDownCast(sequenceNode->GetNthDataNode(0));
@@ -265,26 +265,27 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
       vtkNew<vtkGeneralTransform> worldToIjkTransform;
       worldToIjkTransform->PostMultiply();
       worldToIjkTransform->Identity();
-      vtkNew<vtkMatrix4x4> rasToIjkMatrix;
+      const vtkNew<vtkMatrix4x4> rasToIjkMatrix;
       vNode->GetRASToIJKMatrix(rasToIjkMatrix.GetPointer());
       worldToIjkTransform->Concatenate(rasToIjkMatrix.GetPointer());
       worldToIjkTransform->Concatenate(worldTransform.GetPointer());
 
-      double* crosshairPositionDouble_IJK = worldToIjkTransform->TransformDoublePoint(croshairPosition_RAS);
-      int croshairPosition_IJK[3] = { vtkMath::Round(crosshairPositionDouble_IJK[0]),
-                                      vtkMath::Round(crosshairPositionDouble_IJK[1]),
-                                      vtkMath::Round(crosshairPositionDouble_IJK[2]) };
-      int* imageExtent = vNode->GetImageData()->GetExtent();
-      bool isCrosshairInsideImage = imageExtent[0] <= croshairPosition_IJK[0] && croshairPosition_IJK[0] <= imageExtent[1]    //
-                                    && imageExtent[2] <= croshairPosition_IJK[1] && croshairPosition_IJK[1] <= imageExtent[3] //
-                                    && imageExtent[4] <= croshairPosition_IJK[2] && croshairPosition_IJK[2] <= imageExtent[5];
+      double* const crosshairPositionDouble_IJK = worldToIjkTransform->TransformDoublePoint(croshairPosition_RAS);
+      const int croshairPosition_IJK[3] = { vtkMath::Round(crosshairPositionDouble_IJK[0]),
+                                            vtkMath::Round(crosshairPositionDouble_IJK[1]),
+                                            vtkMath::Round(crosshairPositionDouble_IJK[2]) };
+      int* const imageExtent = vNode->GetImageData()->GetExtent();
+      const bool isCrosshairInsideImage = imageExtent[0] <= croshairPosition_IJK[0] && croshairPosition_IJK[0] <= imageExtent[1]    //
+                                          && imageExtent[2] <= croshairPosition_IJK[1] && croshairPosition_IJK[1] <= imageExtent[3] //
+                                          && imageExtent[4] <= croshairPosition_IJK[2] && croshairPosition_IJK[2] <= imageExtent[5];
       if (isCrosshairInsideImage)
       {
         numberOfValidPoints++;
       }
       for (int c = 0; c < numOfScalarComponents; c++)
       {
-        double val = isCrosshairInsideImage ? vNode->GetImageData()->GetScalarComponentAsDouble(croshairPosition_IJK[0], croshairPosition_IJK[1], croshairPosition_IJK[2], c) : 0;
+        const double val =
+          isCrosshairInsideImage ? vNode->GetImageData()->GetScalarComponentAsDouble(croshairPosition_IJK[0], croshairPosition_IJK[1], croshairPosition_IJK[2], c) : 0;
         this->ChartTable->SetValue(i, c + 1, val);
       }
     }
@@ -314,7 +315,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
       tNode = vtkMRMLTransformNode::SafeDownCast(sequenceNode->GetNthDataNode(i));
       vtkAbstractTransform* trans2Parent = tNode->GetTransformToParent();
 
-      double* transformedcroshairPosition_RAS = trans2Parent->TransformDoublePoint(croshairPosition_RAS);
+      double* const transformedcroshairPosition_RAS = trans2Parent->TransformDoublePoint(croshairPosition_RAS);
 
       this->ChartTable->SetValue(i, 0, i);
       this->ChartTable->SetValue(i, 1, transformedcroshairPosition_RAS[0] - croshairPosition_RAS[0]);
@@ -416,7 +417,7 @@ void qSlicerSequencesModuleWidget::enter()
       connect(d->pushButton_AddSequenceNode, SIGNAL(clicked()), this, SLOT(onAddSequenceNodeButtonClicked()));
       connect(d->pushButton_RemoveSequenceNode, SIGNAL(clicked()), this, SLOT(onRemoveSequenceNodesButtonClicked()));
       // Toolbar
-      qMRMLSequenceBrowserToolBar* toolBar = d->toolBar();
+      qMRMLSequenceBrowserToolBar* const toolBar = d->toolBar();
       if (toolBar)
       {
         connect(toolBar, SIGNAL(activeBrowserNodeChanged(vtkMRMLNode*)), this, SLOT(activeBrowserNodeChanged(vtkMRMLNode*)));
@@ -425,10 +426,10 @@ void qSlicerSequencesModuleWidget::enter()
     }
 
     // For the user's convenience, create a browser node by default, when entering to the module and no browser node exists in the scene yet
-    vtkMRMLNode* node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLSequenceBrowserNode");
+    vtkMRMLNode* const node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLSequenceBrowserNode");
     if (node == nullptr)
     {
-      vtkSmartPointer<vtkMRMLSequenceBrowserNode> newBrowserNode = vtkSmartPointer<vtkMRMLSequenceBrowserNode>::New();
+      const vtkSmartPointer<vtkMRMLSequenceBrowserNode> newBrowserNode = vtkSmartPointer<vtkMRMLSequenceBrowserNode>::New();
       this->mrmlScene()->AddNode(newBrowserNode);
       this->activeBrowserNodeChanged(newBrowserNode);
     }
@@ -475,10 +476,10 @@ void qSlicerSequencesModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   d->SupportedProxyNodeTypes.clear();
   if (scene)
   {
-    int numberOfRegisteredNodeClasses = scene->GetNumberOfRegisteredNodeClasses();
+    const int numberOfRegisteredNodeClasses = scene->GetNumberOfRegisteredNodeClasses();
     for (int nodeClassIndex = 0; nodeClassIndex < numberOfRegisteredNodeClasses; ++nodeClassIndex)
     {
-      vtkMRMLNode* registeredNode = scene->GetNthRegisteredNodeClass(nodeClassIndex);
+      vtkMRMLNode* const registeredNode = scene->GetNthRegisteredNodeClass(nodeClassIndex);
       if (registeredNode->HasCopyContent())
       {
         d->SupportedProxyNodeTypes << registeredNode->GetClassName();
@@ -550,7 +551,7 @@ void qSlicerSequencesModuleWidget::onMRMLSceneEndCloseEvent()
 void qSlicerSequencesModuleWidget::onSequenceNodeSelectionChanged()
 {
   Q_D(qSlicerSequencesModuleWidget);
-  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(d->MRMLNodeComboBox_Sequence->currentNode());
+  vtkMRMLSequenceNode* const sequenceNode = vtkMRMLSequenceNode::SafeDownCast(d->MRMLNodeComboBox_Sequence->currentNode());
   this->setActiveSequenceNode(sequenceNode);
 }
 
@@ -558,14 +559,14 @@ void qSlicerSequencesModuleWidget::onSequenceNodeSelectionChanged()
 void qSlicerSequencesModuleWidget::activeBrowserNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qSlicerSequencesModuleWidget);
-  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
+  vtkMRMLSequenceBrowserNode* const browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
   this->setActiveBrowserNode(browserNode);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSequencesModuleWidget::sequenceNodeChanged(vtkMRMLNode* inputNode)
 {
-  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(inputNode);
+  vtkMRMLSequenceNode* const sequenceNode = vtkMRMLSequenceNode::SafeDownCast(inputNode);
   this->setMasterSequenceNode(sequenceNode);
 }
 
@@ -682,12 +683,12 @@ void qSlicerSequencesModuleWidget::setMasterSequenceNode(vtkMRMLSequenceNode* se
   }
   if (sequenceNode != d->ActiveBrowserNode->GetMasterSequenceNode())
   {
-    bool oldModify = d->ActiveBrowserNode->StartModify();
+    const bool oldModify = d->ActiveBrowserNode->StartModify();
 
     // Reconnect the input node's Modified() event observer
     this->qvtkReconnect(d->ActiveBrowserNode->GetMasterSequenceNode(), sequenceNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLInputSequenceInputNodeModified(vtkObject*)));
 
-    char* sequenceNodeId = sequenceNode == nullptr ? nullptr : sequenceNode->GetID();
+    char* const sequenceNodeId = sequenceNode == nullptr ? nullptr : sequenceNode->GetID();
 
     d->ActiveBrowserNode->SetAndObserveMasterSequenceNodeID(sequenceNodeId);
 
@@ -715,8 +716,8 @@ void qSlicerSequencesModuleWidget::onAddSequenceNodeButtonClicked()
     qWarning() << Q_FUNC_INFO << " failed: no browser node is selected";
     return;
   }
-  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(d->MRMLNodeComboBox_SynchronizeSequenceNode->currentNode());
-  vtkMRMLSequenceNode* addedSequenceNode = d->logic()->AddSynchronizedNode(sequenceNode, nullptr, browserNode);
+  vtkMRMLSequenceNode* const sequenceNode = vtkMRMLSequenceNode::SafeDownCast(d->MRMLNodeComboBox_SynchronizeSequenceNode->currentNode());
+  vtkMRMLSequenceNode* const addedSequenceNode = d->logic()->AddSynchronizedNode(sequenceNode, nullptr, browserNode);
   if (addedSequenceNode)
   {
     if (browserNode->GetNumberOfSynchronizedSequenceNodes() == 0)
@@ -744,8 +745,8 @@ void qSlicerSequencesModuleWidget::onRemoveSequenceNodesButtonClicked()
   std::vector<std::string> selectedSequenceIDs;
   for (QModelIndexList::iterator index = modelIndexList.begin(); index != modelIndexList.end(); index++)
   {
-    QWidget* proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget(index->row(), SYNCH_NODES_PROXY_COLUMN);
-    std::string currSelectedSequenceID = proxyNodeComboBox->property("MRMLNodeID").toString().toStdString().c_str();
+    QWidget* const proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget(index->row(), SYNCH_NODES_PROXY_COLUMN);
+    const std::string currSelectedSequenceID = proxyNodeComboBox->property("MRMLNodeID").toString().toStdString().c_str();
     selectedSequenceIDs.push_back(currSelectedSequenceID);
     disconnect(proxyNodeComboBox,
                SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -775,7 +776,7 @@ void qSlicerSequencesModuleWidget::updateWidgetFromMRML()
     return;
   }
 
-  vtkMRMLSequenceNode* sequenceNode = d->ActiveBrowserNode->GetMasterSequenceNode();
+  vtkMRMLSequenceNode* const sequenceNode = d->ActiveBrowserNode->GetMasterSequenceNode();
 
   bool wasBlocked = d->MRMLNodeComboBox_MasterSequence->blockSignals(true);
   d->MRMLNodeComboBox_MasterSequence->setCurrentNode(sequenceNode);
@@ -798,7 +799,7 @@ void qSlicerSequencesModuleWidget::updateWidgetFromMRML()
   d->comboBox_IndexDisplayMode->blockSignals(wasBlocked);
 
   wasBlocked = d->lineEdit_IndexDisplayFormat->blockSignals(true);
-  int position = d->lineEdit_IndexDisplayFormat->cursorPosition();
+  const int position = d->lineEdit_IndexDisplayFormat->cursorPosition();
   d->lineEdit_IndexDisplayFormat->setText(QString::fromStdString(d->ActiveBrowserNode->GetIndexDisplayFormat()));
   d->lineEdit_IndexDisplayFormat->setCursorPosition(position);
   d->lineEdit_IndexDisplayFormat->blockSignals(wasBlocked);
@@ -822,15 +823,15 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
   // Clear the table
   for (int row = 0; row < d->tableWidget_SynchronizedSequenceNodes->rowCount(); row++)
   {
-    QCheckBox* playbackCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PLAYBACK_COLUMN));
+    QCheckBox* const playbackCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PLAYBACK_COLUMN));
     disconnect(playbackCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodePlaybackStateChanged(int)));
-    QCheckBox* recordingCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_RECORDING_COLUMN));
+    QCheckBox* const recordingCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_RECORDING_COLUMN));
     disconnect(recordingCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeRecordingStateChanged(int)));
-    QCheckBox* overwriteProxyNameCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_OVERWRITE_PROXY_NAME_COLUMN));
+    QCheckBox* const overwriteProxyNameCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_OVERWRITE_PROXY_NAME_COLUMN));
     disconnect(overwriteProxyNameCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeOverwriteProxyNameStateChanged(int)));
-    QCheckBox* saveChangesCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_SAVE_CHANGES_COLUMN));
+    QCheckBox* const saveChangesCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_SAVE_CHANGES_COLUMN));
     disconnect(saveChangesCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeSaveChangesStateChanged(int)));
-    qMRMLNodeComboBox* proxyNodeComboBox = dynamic_cast<qMRMLNodeComboBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PROXY_COLUMN));
+    qMRMLNodeComboBox* const proxyNodeComboBox = dynamic_cast<qMRMLNodeComboBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PROXY_COLUMN));
     disconnect(proxyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onProxyNodeChanged(vtkMRMLNode*)));
   }
 
@@ -840,7 +841,7 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
     return;
   }
   // A valid active browser node is selected
-  vtkMRMLSequenceNode* sequenceNode = d->ActiveBrowserNode->GetMasterSequenceNode();
+  vtkMRMLSequenceNode* const sequenceNode = d->ActiveBrowserNode->GetMasterSequenceNode();
   if (sequenceNode == nullptr)
   {
     d->tableWidget_SynchronizedSequenceNodes->setRowCount(0); // clear() would not actually remove the rows
@@ -893,16 +894,16 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
     recordingCheckbox->setProperty("MRMLNodeID", QString(syncedNode->GetID()));
 
     // Set previous checked state of the checkbox
-    bool playbackChecked = d->ActiveBrowserNode->GetPlayback(syncedNode);
+    const bool playbackChecked = d->ActiveBrowserNode->GetPlayback(syncedNode);
     playbackCheckbox->setChecked(playbackChecked);
 
-    bool overwriteProxyNameChecked = d->ActiveBrowserNode->GetOverwriteProxyName(syncedNode);
+    const bool overwriteProxyNameChecked = d->ActiveBrowserNode->GetOverwriteProxyName(syncedNode);
     overwriteProxyNameCheckbox->setChecked(overwriteProxyNameChecked);
 
-    bool saveChangesChecked = d->ActiveBrowserNode->GetSaveChanges(syncedNode);
+    const bool saveChangesChecked = d->ActiveBrowserNode->GetSaveChanges(syncedNode);
     saveChangesCheckbox->setChecked(saveChangesChecked);
 
-    bool recordingChecked = d->ActiveBrowserNode->GetRecording(syncedNode);
+    const bool recordingChecked = d->ActiveBrowserNode->GetRecording(syncedNode);
     recordingCheckbox->setChecked(recordingChecked);
 
     connect(playbackCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodePlaybackStateChanged(int)));
@@ -915,10 +916,10 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
     d->tableWidget_SynchronizedSequenceNodes->setCellWidget(i, SYNCH_NODES_OVERWRITE_PROXY_NAME_COLUMN, overwriteProxyNameCheckbox);
     d->tableWidget_SynchronizedSequenceNodes->setCellWidget(i, SYNCH_NODES_SAVE_CHANGES_COLUMN, saveChangesCheckbox);
 
-    QTableWidgetItem* nameItem = new QTableWidgetItem(QString(syncedNode->GetName()));
+    QTableWidgetItem* const nameItem = new QTableWidgetItem(QString(syncedNode->GetName()));
     d->tableWidget_SynchronizedSequenceNodes->setItem(i, SYNCH_NODES_NAME_COLUMN, nameItem);
 
-    vtkMRMLNode* proxyNode = d->ActiveBrowserNode->GetProxyNode(syncedNode);
+    vtkMRMLNode* const proxyNode = d->ActiveBrowserNode->GetProxyNode(syncedNode);
     qMRMLNodeComboBox* proxyNodeComboBox = new qMRMLNodeComboBox();
     if (!syncedNode->GetDataNodeClassName().empty())
     {
@@ -960,10 +961,10 @@ void qSlicerSequencesModuleWidget::sequenceNodeNameEdited(int row, int column)
     return;
   }
 
-  std::string newSequenceNodeName = d->tableWidget_SynchronizedSequenceNodes->item(row, column)->text().toStdString();
+  const std::string newSequenceNodeName = d->tableWidget_SynchronizedSequenceNodes->item(row, column)->text().toStdString();
 
-  QWidget* proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PROXY_COLUMN);
-  std::string synchronizedNodeID = proxyNodeComboBox->property("MRMLNodeID").toString().toStdString().c_str();
+  QWidget* const proxyNodeComboBox = d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PROXY_COLUMN);
+  const std::string synchronizedNodeID = proxyNodeComboBox->property("MRMLNodeID").toString().toStdString().c_str();
   vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
 
   synchronizedNode->SetName(newSequenceNodeName.c_str());
@@ -980,15 +981,15 @@ void qSlicerSequencesModuleWidget::synchronizedSequenceNodePlaybackStateChanged(
     return;
   }
 
-  QCheckBox* senderCheckbox = dynamic_cast<QCheckBox*>(sender());
+  QCheckBox* const senderCheckbox = dynamic_cast<QCheckBox*>(sender());
   if (!senderCheckbox)
   {
     qCritical() << "qSlicerSequencesModuleWidget::synchronizedSequenceNodePlaybackStateChanged: Invalid sender checkbox";
     return;
   }
 
-  std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
-  vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
+  const std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
+  vtkMRMLSequenceNode* const synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
   d->ActiveBrowserNode->SetPlayback(synchronizedNode, aState);
 }
 
@@ -1003,15 +1004,15 @@ void qSlicerSequencesModuleWidget::synchronizedSequenceNodeRecordingStateChanged
     return;
   }
 
-  QCheckBox* senderCheckbox = dynamic_cast<QCheckBox*>(sender());
+  QCheckBox* const senderCheckbox = dynamic_cast<QCheckBox*>(sender());
   if (!senderCheckbox)
   {
     qCritical() << "qSlicerSequencesModuleWidget::synchronizedSequenceNodeRecordingStateChanged: Invalid sender checkbox";
     return;
   }
 
-  std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
-  vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
+  const std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
+  vtkMRMLSequenceNode* const synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
   d->ActiveBrowserNode->SetRecording(synchronizedNode, aState);
 }
 
@@ -1026,15 +1027,15 @@ void qSlicerSequencesModuleWidget::synchronizedSequenceNodeOverwriteProxyNameSta
     return;
   }
 
-  QCheckBox* senderCheckbox = dynamic_cast<QCheckBox*>(sender());
+  QCheckBox* const senderCheckbox = dynamic_cast<QCheckBox*>(sender());
   if (!senderCheckbox)
   {
     qCritical() << "qSlicerSequencesModuleWidget::synchronizedSequenceNodeOverwriteProxyNameStateChanged: Invalid sender checkbox";
     return;
   }
 
-  std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
-  vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
+  const std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
+  vtkMRMLSequenceNode* const synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
   d->ActiveBrowserNode->SetOverwriteProxyName(synchronizedNode, aState);
 }
 
@@ -1049,15 +1050,15 @@ void qSlicerSequencesModuleWidget::synchronizedSequenceNodeSaveChangesStateChang
     return;
   }
 
-  QCheckBox* senderCheckbox = dynamic_cast<QCheckBox*>(sender());
+  QCheckBox* const senderCheckbox = dynamic_cast<QCheckBox*>(sender());
   if (!senderCheckbox)
   {
     qCritical() << "qSlicerSequencesModuleWidget::synchronizedSequenceNodeSaveChangesStateChanged: Invalid sender checkbox";
     return;
   }
 
-  std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
-  vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
+  const std::string synchronizedNodeID = senderCheckbox->property("MRMLNodeID").toString().toStdString().c_str();
+  vtkMRMLSequenceNode* const synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
   d->ActiveBrowserNode->SetSaveChanges(synchronizedNode, aState);
 }
 
@@ -1072,14 +1073,14 @@ void qSlicerSequencesModuleWidget::onProxyNodeChanged(vtkMRMLNode* newProxyNode)
     return;
   }
 
-  qMRMLNodeComboBox* senderComboBox = dynamic_cast<qMRMLNodeComboBox*>(sender());
+  qMRMLNodeComboBox* const senderComboBox = dynamic_cast<qMRMLNodeComboBox*>(sender());
   if (!senderComboBox)
   {
     qCritical() << "qSlicerSequencesModuleWidget::onProxyNodeChanged: Invalid sender checkbox";
     return;
   }
 
-  std::string synchronizedNodeID = senderComboBox->property("MRMLNodeID").toString().toStdString().c_str();
+  const std::string synchronizedNodeID = senderComboBox->property("MRMLNodeID").toString().toStdString().c_str();
   vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
 
   // If name sync is enabled between sequence and proxy node then update the sequence node name based on the proxy node
@@ -1096,7 +1097,7 @@ void qSlicerSequencesModuleWidget::onProxyNodeChanged(vtkMRMLNode* newProxyNode)
       baseName = newProxyNode->GetName();
     }
     baseName += " sequence";
-    std::string proxyNodeName = this->mrmlScene()->GetUniqueNameByString(baseName.c_str());
+    const std::string proxyNodeName = this->mrmlScene()->GetUniqueNameByString(baseName.c_str());
     synchronizedNode->SetName(proxyNodeName.c_str());
   }
 

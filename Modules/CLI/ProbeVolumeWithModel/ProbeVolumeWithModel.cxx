@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   readerVol->SetDataArrayName(OutputArrayName);
   readerVol->Update();
   vtkImageData* volume = readerVol->GetOutput();
-  int* extent = volume->GetExtent();
+  int* const extent = volume->GetExtent();
   if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
   {
     std::cerr << "Input image file is empty: " << InputVolume << std::endl;
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   ici->SetOutputSpacing(1, 1, 1);
   ici->SetOutputOrigin(0, 0, 0);
   ici->Update();
-  vtkImageData* volume_Ijk = ici->GetOutput();
+  vtkImageData* const volume_Ijk = ici->GetOutput();
 
   vtkNew<vtkMRMLModelStorageNode> modelStorageNode;
   vtkNew<vtkMRMLModelNode> modelNode;

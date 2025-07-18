@@ -114,7 +114,7 @@ void qSlicerTemplateKeyModule::setup()
 
   // This is a test class, therefore we do not register anything if
   // not in testing mode (to avoid cluttering the markups module).
-  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  const bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (!isTestingEnabled)
   {
     return;
@@ -136,7 +136,7 @@ vtkMRMLAbstractLogic* qSlicerTemplateKeyModule::createLogic()
 {
   // This is a test class, therefore we do not register anything (to avoid cluttering the markups module)
   // unless the application is in testing mode.
-  bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  const bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (!isTestingEnabled)
   {
     return nullptr;

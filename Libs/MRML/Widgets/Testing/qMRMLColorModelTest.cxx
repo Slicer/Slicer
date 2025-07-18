@@ -67,7 +67,7 @@ void qMRMLColorModelTester::testSetMRMLColorNode()
 {
   QVERIFY(this->ColorModel->mrmlColorNode() == nullptr);
 
-  vtkNew<vtkMRMLColorTableNode> colorTableNode;
+  const vtkNew<vtkMRMLColorTableNode> colorTableNode;
   this->ColorModel->setMRMLColorNode(colorTableNode.GetPointer());
   QCOMPARE(this->ColorModel->mrmlColorNode(), colorTableNode.GetPointer());
 

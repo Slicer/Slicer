@@ -138,7 +138,7 @@ void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
     return;
   }
 
-  int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
+  const int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
 
   std::vector<int> wasModifying(numberOfDisplayNodes);
   for (int index = 0; index < numberOfDisplayNodes; index++)
@@ -207,7 +207,7 @@ void qMRMLMarkupsROIWidget::updateROI()
   d->PARangeWidget->values(bounds[2], bounds[3]);
   d->ISRangeWidget->values(bounds[4], bounds[5]);
 
-  MRMLNodeModifyBlocker blocker(roiNode);
+  const MRMLNodeModifyBlocker blocker(roiNode);
   roiNode->SetXYZ(0.5 * (bounds[1] + bounds[0]), 0.5 * (bounds[3] + bounds[2]), 0.5 * (bounds[5] + bounds[4]));
   roiNode->SetRadiusXYZ(0.5 * (bounds[1] - bounds[0]), 0.5 * (bounds[3] - bounds[2]), 0.5 * (bounds[5] - bounds[4]));
 }
@@ -253,7 +253,7 @@ void qMRMLMarkupsROIWidget::onROITypeParameterChanged()
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(roiNode);
+  const MRMLNodeModifyBlocker blocker(roiNode);
   roiNode->SetROIType(d->roiTypeComboBox->currentData().toInt());
 }
 
@@ -281,7 +281,7 @@ void qMRMLMarkupsROIWidget::setInsideOut(bool insideOut)
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(roiNode);
+  const MRMLNodeModifyBlocker blocker(roiNode);
   roiNode->SetInsideOut(insideOut);
 }
 

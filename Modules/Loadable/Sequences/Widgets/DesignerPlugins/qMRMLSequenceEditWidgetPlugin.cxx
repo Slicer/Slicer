@@ -27,7 +27,7 @@ qMRMLSequenceEditWidgetPlugin::qMRMLSequenceEditWidgetPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLSequenceEditWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceEditWidget* _widget = new qMRMLSequenceEditWidget(_parent);
+  qMRMLSequenceEditWidget* const _widget = new qMRMLSequenceEditWidget(_parent);
   return _widget;
 }
 

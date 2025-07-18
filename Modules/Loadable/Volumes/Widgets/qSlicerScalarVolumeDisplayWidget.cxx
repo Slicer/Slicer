@@ -79,9 +79,9 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 
   ctkTransferFunctionScene* scene = qobject_cast<ctkTransferFunctionScene*>(this->TransferFunctionView->scene());
   // Transfer Function
-  ctkVTKColorTransferFunction* transferFunction = new ctkVTKColorTransferFunction(this->ColorTransferFunction, q);
+  ctkVTKColorTransferFunction* const transferFunction = new ctkVTKColorTransferFunction(this->ColorTransferFunction, q);
 
-  ctkTransferFunctionGradientItem* gradientItem = new ctkTransferFunctionGradientItem(transferFunction);
+  ctkTransferFunctionGradientItem* const gradientItem = new ctkTransferFunctionGradientItem(transferFunction);
   scene->addItem(gradientItem);
   // Histogram
   // scene->setTransferFunction(this->Histogram);
@@ -102,12 +102,12 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
       volumeDisplayPresetsLayout = new QHBoxLayout;
       this->PresetsGroupBox->setLayout(volumeDisplayPresetsLayout);
     }
-    std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
+    const std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
     for (const auto& presetId : presetIds)
     {
-      vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
-      QString presetIdStr = QString::fromStdString(presetId);
-      QString presetName = qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str());
+      const vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
+      const QString presetIdStr = QString::fromStdString(presetId);
+      const QString presetName = qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str());
       QToolButton* presetButton = new QToolButton();
       presetButton->setObjectName(presetIdStr);
       presetButton->setToolTip(qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str()) + "\n" + qSlicerScalarVolumeDisplayWidget::tr(preset.description.c_str()));
@@ -200,7 +200,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
 {
   Q_D(qSlicerScalarVolumeDisplayWidget);
 
-  vtkMRMLScalarVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
+  vtkMRMLScalarVolumeDisplayNode* const oldVolumeDisplayNode = this->volumeDisplayNode();
 
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
@@ -219,9 +219,9 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
   vtkMRMLScalarVolumeDisplayNode* displayNode = this->volumeDisplayNode();
   if (displayNode)
   {
-    QSignalBlocker blocker1(d->ColorTableComboBox);
-    QSignalBlocker blocker2(d->InterpolateCheckbox);
-    QSignalBlocker blocker3(d->InvertDisplayScalarRangeCheckbox);
+    const QSignalBlocker blocker1(d->ColorTableComboBox);
+    const QSignalBlocker blocker2(d->InterpolateCheckbox);
+    const QSignalBlocker blocker3(d->InvertDisplayScalarRangeCheckbox);
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
     d->InvertDisplayScalarRangeCheckbox->setChecked(displayNode->GetInvertDisplayScalarRange());
@@ -268,7 +268,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
     }
     else
     {
-      double* range = voxelValues->GetRange();
+      double* const range = voxelValues->GetRange();
       int binCount = static_cast<int>(range[1] - range[0] + 1);
       if (binCount > maxBinCount)
       {
@@ -283,8 +283,8 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
     d->Histogram->build();
 
     // Update min, center, max labels
-    double* range = voxelValues->GetRange();
-    double center = (range[0] + range[1]) / 2.0;
+    double* const range = voxelValues->GetRange();
+    const double center = (range[0] + range[1]) / 2.0;
 
     d->MinValueLabel->setText(QString::number(range[0], 'g', 5));
     d->CenterValueLabel->setText(QString::number(center, 'g', 5));
@@ -313,7 +313,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   d->ColorTransferFunction->AdjustRange(histogramRange);
   d->ColorTransferFunction->RemoveAllPoints();
 
-  double colorTableRange[2] = { displayNode->GetWindowLevelMin(), displayNode->GetWindowLevelMax() };
+  const double colorTableRange[2] = { displayNode->GetWindowLevelMin(), displayNode->GetWindowLevelMax() };
   double thresholdRange[2] = { histogramRange[0], histogramRange[1] };
   if (displayNode->GetApplyThreshold())
   {
@@ -330,7 +330,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   }
 
   // Background color for thresholded region
-  double thresholdedRGB[3] = { 0.2, 0.2, 0.2 };
+  const double thresholdedRGB[3] = { 0.2, 0.2, 0.2 };
 
   const double eps = (histogramRange[1] - histogramRange[0]) / 1e5;
 
@@ -345,7 +345,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   // Draw color gradient between thresholded regions
   if (currentPosition + eps < thresholdRange[1])
   {
-    double colorTableVisibleRange[2] = { qBound(thresholdRange[0], colorTableRange[0], thresholdRange[1]), qBound(thresholdRange[0], colorTableRange[1], thresholdRange[1]) };
+    const double colorTableVisibleRange[2] = { qBound(thresholdRange[0], colorTableRange[0], thresholdRange[1]), qBound(thresholdRange[0], colorTableRange[1], thresholdRange[1]) };
     double colorTableIndexRange[2] = { 0, 0 };
     if (colorTableRange[1] - colorTableRange[0] > eps)
     {
@@ -369,7 +369,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
     {
       if (mapToColors)
       {
-        int resolution = 50;
+        const int resolution = 50;
         double rgb[3] = { 0.0, 0.0, 0.0 };
         for (int i = 0; i < resolution; i++)
         {
@@ -461,7 +461,7 @@ void qSlicerScalarVolumeDisplayWidget::setColorNode(vtkMRMLNode* colorNode)
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::onPresetButtonClicked()
 {
-  QToolButton* preset = qobject_cast<QToolButton*>(this->sender());
+  QToolButton* const preset = qobject_cast<QToolButton*>(this->sender());
   this->setPreset(preset->objectName());
 }
 

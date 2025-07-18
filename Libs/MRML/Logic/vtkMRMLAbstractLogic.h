@@ -432,7 +432,7 @@ private:
 //---------------------------------------------------------------------------
 bool vtkMRMLAbstractLogic::StartModify()
 {
-  bool disabledModify = this->GetDisableModifiedEvent();
+  const bool disabledModify = this->GetDisableModifiedEvent();
   this->SetDisableModifiedEvent(true);
   return disabledModify;
 }

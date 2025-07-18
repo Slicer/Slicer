@@ -135,7 +135,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   this->CenterAxisLabelTexts.clear();
 
   // default labels, will be overridden by view node AxisLabels
-  const char* labels[6] = { "R", "A", "S", "L", "P", "I" };
+  const char* const labels[6] = { "R", "A", "S", "L", "P", "I" };
 
   for (int i = 0; i < 6; ++i)
   {
@@ -171,7 +171,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer* renderer)
 
   for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
   {
-    vtkFollower* actor = this->AxisLabelActors[i];
+    vtkFollower* const actor = this->AxisLabelActors[i];
     renderer->AddViewProp(actor);
   }
 }
@@ -193,7 +193,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
   }
 
   std::vector<vtkMRMLNode*> nodes;
-  int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
+  const int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
   for (int n = 0; n < nnodes; n++)
   {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
@@ -204,7 +204,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
     bool isDisplayableNodeVisibleInView = false;
     for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
     {
-      vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+      vtkMRMLDisplayNode* const displayNode = displayableNode->GetNthDisplayNode(i);
       if (displayNode && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID()))
       {
         isDisplayableNodeVisibleInView = true;
@@ -256,7 +256,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
   this->BoxAxisActor->GetProperty()->SetColor(this->External->GetMRMLViewNode()->GetBoxColor());
 
   // Turn off box and axis labels to compute bounds
-  int boxVisibility = this->BoxAxisActor->GetVisibility();
+  const int boxVisibility = this->BoxAxisActor->GetVisibility();
   this->BoxAxisActor->VisibilityOff();
 
   int axisLabelVisibility = 0;
@@ -284,7 +284,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
     newBBox.SetBounds(bounds);
 
     // Check for degenerate bounds
-    double maxLength = newBBox.GetMaxLength();
+    const double maxLength = newBBox.GetMaxLength();
     double minPoint[3], maxPoint[3];
     newBBox.GetMinPoint(minPoint[0], minPoint[1], minPoint[2]);
     newBBox.GetMaxPoint(maxPoint[0], maxPoint[1], maxPoint[2]);
@@ -319,9 +319,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
     this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);
 
     // Letter size as fraction of bounding box size
-    double letterSize = viewNode->GetLetterSize();
+    const double letterSize = viewNode->GetLetterSize();
     // Letter size in world coordinate system
-    double letterSizeWorld = this->BoxAxisBoundingBox->GetMaxLength() * letterSize;
+    const double letterSizeWorld = this->BoxAxisBoundingBox->GetMaxLength() * letterSize;
 
     for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
@@ -355,7 +355,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
 
     // Offset the center of the label by 1.5-letter distance
     // (to have an approximately one-letter space between the label and the box).
-    double offset = letterSizeWorld * 1.5;
+    const double offset = letterSizeWorld * 1.5;
     this->AxisLabelActors[0]->SetPosition( // R
       bounds[1] + offset,
       center[1],
@@ -396,7 +396,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 {
-  int visible = this->External->GetMRMLViewNode()->GetBoxVisible();
+  const int visible = this->External->GetMRMLViewNode()->GetBoxVisible();
   vtkDebugWithObjectMacro(this->External, << "UpdateAxisVisibility:" << visible);
   this->BoxAxisActor->SetVisibility(visible);
   this->External->RequestRender();
@@ -423,15 +423,15 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
     return;
   }
 
-  double orient[] = { -1, 1 };
+  const double orient[] = { -1, 1 };
   double dir[4];
   camera->GetDirectionOfProjection(dir);
   vtkMath::Normalize(dir);
 
-  int visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
-  int cameraBasedVilibility = this->External->GetMRMLViewNode()->GetAxisLabelsCameraDependent();
+  const int visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
+  const int cameraBasedVilibility = this->External->GetMRMLViewNode()->GetAxisLabelsCameraDependent();
 
-  double s2 = 0.5 * sqrt(2.0);
+  const double s2 = 0.5 * sqrt(2.0);
   for (int j = 0; j < 2; j++)
   {
     for (int i = 0; i < 3; i++)
@@ -441,7 +441,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
       {
         double axis[] = { 0, 0, 0 };
         axis[i] = orient[j];
-        double dot = vtkMath::Dot(axis, dir);
+        const double dot = vtkMath::Dot(axis, dir);
         if (dot > s2)
         {
           actor->SetVisibility(false);
@@ -527,7 +527,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
   vtkDebugWithObjectMacro(this->External, << "UpdateStereoType:" << this->External->GetMRMLViewNode()->GetStereoType());
 
   vtkRenderWindow* renderWindow = this->External->GetRenderer()->GetRenderWindow();
-  int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
+  const int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
   if (stereoType == vtkMRMLViewNode::RedBlue)
   {
     renderWindow->SetStereoTypeToRedBlue();
@@ -572,9 +572,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
   vtkDebugWithObjectMacro(this->External, << "UpdateBackgroundColor (" << backgroundColor[0] << ", " << backgroundColor[1] << ", " << backgroundColor[2] << ")");
   this->External->GetRenderer()->SetBackground(backgroundColor);
   this->External->GetRenderer()->SetBackground2(backgroundColor2);
-  bool gradient = backgroundColor[0] != backgroundColor2[0] || //
-                  backgroundColor[1] != backgroundColor2[1] || //
-                  backgroundColor[2] != backgroundColor2[2];
+  const bool gradient = backgroundColor[0] != backgroundColor2[0] || //
+                        backgroundColor[1] != backgroundColor2[1] || //
+                        backgroundColor[2] != backgroundColor2[2];
   this->External->GetRenderer()->SetGradientBackground(gradient);
 
   // If new background color is White, switch axis color label to black

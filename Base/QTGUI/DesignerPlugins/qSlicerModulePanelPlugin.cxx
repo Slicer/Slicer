@@ -28,7 +28,7 @@ qSlicerModulePanelPlugin::qSlicerModulePanelPlugin(QObject* parent)
 
 QWidget* qSlicerModulePanelPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerModulePanel* widget = new qSlicerModulePanel(parentWidget);
+  qSlicerModulePanel* const widget = new qSlicerModulePanel(parentWidget);
   return widget;
 }
 

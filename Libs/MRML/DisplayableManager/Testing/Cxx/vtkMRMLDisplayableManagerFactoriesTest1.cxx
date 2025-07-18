@@ -82,7 +82,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   }
 
   // Renderer, RenderWindow and Interactor
-  vtkNew<vtkRenderer> rr;
+  const vtkNew<vtkRenderer> rr;
   vtkNew<vtkRenderWindow> rw;
   vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
@@ -91,7 +91,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkInteractorStyle3D> iStyle;
+  const vtkNew<vtkInteractorStyle3D> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // ThreeD - Instantiate displayable managers
@@ -112,7 +112,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   }
 
   // ThreeD - Instantiate and add node to the scene
-  vtkNew<vtkMRMLViewNode> viewNode;
+  const vtkNew<vtkMRMLViewNode> viewNode;
   vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
@@ -155,7 +155,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   sliceViewGroup->SetMRMLDisplayableNode(sliceNode.GetPointer());
 
   // Add node to the scene
-  vtkNew<vtkMRMLCameraNode> cameraNode;
+  const vtkNew<vtkMRMLCameraNode> cameraNode;
   scene->AddNode(cameraNode.GetPointer());
 
   // Check if both displayable manager caught the event
@@ -191,8 +191,8 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView = 0;
 
   // Load scene
-  std::string dataRoot = testHelper->GetDataRoot();
-  std::string mrmlFiletoLoad = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-load.mrml";
+  const std::string dataRoot = testHelper->GetDataRoot();
+  const std::string mrmlFiletoLoad = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-load.mrml";
   scene->SetURL(mrmlFiletoLoad.c_str());
   bool success = scene->Connect() != 0;
   if (!success)
@@ -238,7 +238,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   }
 
   // Import scene
-  std::string mrmlFiletoImport = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-import.mrml";
+  const std::string mrmlFiletoImport = dataRoot + "/Data/vtkMRMLDisplayableManagerFactoriesTest1-import.mrml";
   scene->SetURL(mrmlFiletoImport.c_str());
   success = scene->Import() != 0;
   if (!success)

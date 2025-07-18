@@ -96,12 +96,12 @@ void DecodeTuple(const Json::Value& json, std::vector<ScalarType>& tuple)
 template <typename ScalarType>
 void DecodeMatrix(const Json::Value& json, std::vector<ScalarType>& values)
 {
-  Json::ArrayIndex nbRows = json.size();
+  const Json::ArrayIndex nbRows = json.size();
   for (Json::ArrayIndex rowIndex = 0; rowIndex < nbRows; ++rowIndex)
   {
     const Json::Value& row = json[rowIndex];
 
-    Json::ArrayIndex nbCols = row.size();
+    const Json::ArrayIndex nbCols = row.size();
     for (Json::ArrayIndex columnIndex = 0; columnIndex < nbCols; ++columnIndex)
     {
       ScalarType value;
@@ -167,11 +167,11 @@ void ReadUniforms(Json::Value& uniformsJson, vtkUniforms* uniforms)
   for (Json::ArrayIndex index = 0; index < uniformsJson.size(); ++index)
   {
     Json::Value uniformJson = uniformsJson[index];
-    std::string uName = uniformJson["name"].asString();
-    int scalarType = vtkUniforms::StringToScalarType(uniformJson["scalarType"].asString());
-    vtkUniforms::TupleType tupleType = vtkUniforms::StringToTupleType(uniformJson["tupleType"].asString());
-    int nbComponents = uniformJson["numberOfComponents"].asInt();
-    int nbTuples = uniformJson["numberOfTuples"].asInt();
+    const std::string uName = uniformJson["name"].asString();
+    const int scalarType = vtkUniforms::StringToScalarType(uniformJson["scalarType"].asString());
+    const vtkUniforms::TupleType tupleType = vtkUniforms::StringToTupleType(uniformJson["tupleType"].asString());
+    const int nbComponents = uniformJson["numberOfComponents"].asInt();
+    const int nbTuples = uniformJson["numberOfTuples"].asInt();
     if (scalarType == VTK_INT)
     {
       std::vector<int> values;
@@ -194,7 +194,7 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLShaderPropertyNode* spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("ReadData: File name not specified");
@@ -218,21 +218,21 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkShaderProperty* sp = spNode->GetShaderProperty();
 
   // Read vertex shader code
-  std::string vertexShaderCode = root["VertexShaderCode"].asString();
+  const std::string vertexShaderCode = root["VertexShaderCode"].asString();
   if (!vertexShaderCode.empty())
   {
     sp->SetVertexShaderCode(vertexShaderCode.c_str());
   }
 
   // Read fragment shader code
-  std::string fragmentShaderCode = root["FragmentShaderCode"].asString();
+  const std::string fragmentShaderCode = root["FragmentShaderCode"].asString();
   if (!fragmentShaderCode.empty())
   {
     sp->SetFragmentShaderCode(fragmentShaderCode.c_str());
   }
 
   // Read geometry shader code
-  std::string geometryShaderCode = root["GeometryShaderCode"].asString();
+  const std::string geometryShaderCode = root["GeometryShaderCode"].asString();
   if (!geometryShaderCode.empty())
   {
     sp->SetGeometryShaderCode(geometryShaderCode.c_str());
@@ -255,11 +255,11 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   for (Json::ArrayIndex i = 0; i < shaderReplacement.size(); ++i)
   {
     Json::Value spv = shaderReplacement[i];
-    std::string shaderType = spv["ShaderType"].asString();
-    std::string replacementSpec = spv["ReplacementSpec"].asString();
-    bool replaceFirst = spv["replaceFirst"].asBool();
-    std::string replacementValue = spv["ReplacementValue"].asString();
-    bool replaceAll = spv["replaceAll"].asBool();
+    const std::string shaderType = spv["ShaderType"].asString();
+    const std::string replacementSpec = spv["ReplacementSpec"].asString();
+    const bool replaceFirst = spv["replaceFirst"].asBool();
+    const std::string replacementValue = spv["ReplacementValue"].asString();
+    const bool replaceAll = spv["replaceAll"].asBool();
     if (shaderType == std::string("Vertex"))
     {
       sp->AddVertexShaderReplacement(replacementSpec, replaceFirst, replacementValue, replaceAll);
@@ -326,7 +326,7 @@ void EncodeValues(const std::vector<scalarT>& values, Json::ArrayIndex nbCompone
     }
     else if (tt == vtkUniforms::TupleTypeMatrix)
     {
-      Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
+      const Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
       json["value"] = EncodeMatrix(values, matrixWidth);
     }
   }
@@ -346,7 +346,7 @@ void EncodeValues(const std::vector<scalarT>& values, Json::ArrayIndex nbCompone
     }
     else if (tt == vtkUniforms::TupleTypeMatrix)
     {
-      Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
+      const Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
       json["value"].resize(nbTuples);
       for (Json::ArrayIndex index = 0; index < nbTuples; ++index)
       {
@@ -362,12 +362,12 @@ void WriteUniforms(vtkUniforms* uniforms, Json::Value& root)
   root.resize(static_cast<Json::ArrayIndex>(uniforms->GetNumberOfUniforms()));
   for (int i = 0; i < uniforms->GetNumberOfUniforms(); ++i)
   {
-    std::string uName = uniforms->GetNthUniformName(i);
+    const std::string uName = uniforms->GetNthUniformName(i);
 
-    vtkUniforms::TupleType tupleType = uniforms->GetUniformTupleType(uName.c_str());
-    Json::ArrayIndex nbTuples = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfTuples(uName.c_str()));
-    Json::ArrayIndex nbComponents = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfComponents(uName.c_str()));
-    int scalarType = uniforms->GetUniformScalarType(uName.c_str());
+    const vtkUniforms::TupleType tupleType = uniforms->GetUniformTupleType(uName.c_str());
+    const Json::ArrayIndex nbTuples = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfTuples(uName.c_str()));
+    const Json::ArrayIndex nbComponents = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfComponents(uName.c_str()));
+    const int scalarType = uniforms->GetUniformScalarType(uName.c_str());
 
     Json::Value uniformsJson;
     uniformsJson["name"] = uName;
@@ -403,7 +403,7 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLShaderPropertyNode* spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLShaderPropertyStorageNode: File name not specified");
@@ -424,17 +424,17 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkShaderProperty* shaderProperty = spNode->GetShaderProperty();
   if (shaderProperty->HasVertexShaderCode())
   {
-    std::string vertexShaderCode(shaderProperty->GetVertexShaderCode());
+    const std::string vertexShaderCode(shaderProperty->GetVertexShaderCode());
     root["VertexShaderCode"] = vertexShaderCode;
   }
   if (shaderProperty->HasFragmentShaderCode())
   {
-    std::string fragmentShaderCode(shaderProperty->GetFragmentShaderCode());
+    const std::string fragmentShaderCode(shaderProperty->GetFragmentShaderCode());
     root["FragmentShaderCode"] = fragmentShaderCode;
   }
   if (shaderProperty->HasGeometryShaderCode())
   {
-    std::string geometryShaderCode(shaderProperty->GetGeometryShaderCode());
+    const std::string geometryShaderCode(shaderProperty->GetGeometryShaderCode());
     root["GeometryShaderCode"] = geometryShaderCode;
   }
 

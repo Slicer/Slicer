@@ -52,7 +52,7 @@ int DoIt(int argc, char* argv[], T)
 
   typedef itk::VectorImage<double, ImageDimension> GridType;
 
-  GridType::Pointer grid = GridType::New();
+  const GridType::Pointer grid = GridType::New();
 
   // Set up the grid volume
   {
@@ -80,8 +80,8 @@ int DoIt(int argc, char* argv[], T)
   // Read fixed and moving images
   //
   //
-  typename FixedImageReaderType::Pointer fixedImageReader = FixedImageReaderType::New();
-  typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
+  const typename FixedImageReaderType::Pointer fixedImageReader = FixedImageReaderType::New();
+  const typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
 
   fixedImageReader->SetFileName(FixedImageFileName.c_str());
   movingImageReader->SetFileName(MovingImageFileName.c_str());
@@ -104,7 +104,7 @@ int DoIt(int argc, char* argv[], T)
   // points span the image dimensions.
   GridType::SpacingType spacing = fixedImageReader->GetOutput()->GetSpacing();
 
-  typename InputImageType::RegionType fixedRegion = fixedImageReader->GetOutput()->GetLargestPossibleRegion();
+  const typename InputImageType::RegionType fixedRegion = fixedImageReader->GetOutput()->GetLargestPossibleRegion();
   typename InputImageType::SizeType fixedImageSize = fixedRegion.GetSize();
   for (unsigned int r = 0; r < ImageDimension; r++)
   {
@@ -141,7 +141,7 @@ int DoIt(int argc, char* argv[], T)
   {
     typedef itk::ImageFileWriter<GridType> GridWriterType;
 
-    GridWriterType::Pointer gridWriter = GridWriterType::New();
+    const GridWriterType::Pointer gridWriter = GridWriterType::New();
     gridWriter->SetFileName(OutputTransform);
     gridWriter->SetInput(grid);
 

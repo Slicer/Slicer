@@ -178,7 +178,7 @@ void qSlicerDataModuleWidget::setup()
   for (qSlicerSubjectHierarchyAbstractPlugin* const plugin : qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
   {
     // Add help text from each plugin
-    QString pluginHelpText = plugin->helpText();
+    const QString pluginHelpText = plugin->helpText();
     if (!pluginHelpText.isEmpty())
     {
       aggregatedHelpText.append(QString("\n") + pluginHelpText);
@@ -201,7 +201,7 @@ void qSlicerDataModuleWidget::setup()
   // Edit properties
   connect(d->TransformMRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)), qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));
   // Insert transform
-  QAction* insertTransformAction = new QAction(tr("Insert transform"), this);
+  QAction* const insertTransformAction = new QAction(tr("Insert transform"), this);
   d->TransformMRMLTreeView->prependNodeMenuAction(insertTransformAction);
   d->TransformMRMLTreeView->prependSceneMenuAction(insertTransformAction);
   connect(insertTransformAction, SIGNAL(triggered()), this, SLOT(insertTransformNode()));
@@ -366,7 +366,7 @@ void qSlicerDataModuleWidget::insertTransformNode()
 void qSlicerDataModuleWidget::hardenTransformOnCurrentNode()
 {
   Q_D(qSlicerDataModuleWidget);
-  vtkMRMLNode* node = d->TransformMRMLTreeView->currentNode();
+  vtkMRMLNode* const node = d->TransformMRMLTreeView->currentNode();
   vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
   if (transformableNode)
   {
@@ -379,11 +379,11 @@ void qSlicerDataModuleWidget::setTransformsVisible(bool visible)
 {
   Q_D(qSlicerDataModuleWidget);
 
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(d->SubjectHierarchyTreeView->model());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(d->SubjectHierarchyTreeView->model());
   d->SubjectHierarchyTreeView->setColumnHidden(model->transformColumn(), !visible);
   d->SubjectHierarchyTreeView->header()->resizeSection(model->transformColumn(), 60);
 
-  bool wereSignalsBlocked = d->SubjectHierarchyDisplayTransformsCheckBox->blockSignals(true);
+  const bool wereSignalsBlocked = d->SubjectHierarchyDisplayTransformsCheckBox->blockSignals(true);
   d->SubjectHierarchyDisplayTransformsCheckBox->setChecked(visible);
   d->SubjectHierarchyDisplayTransformsCheckBox->blockSignals(wereSignalsBlocked);
 }
@@ -445,7 +445,7 @@ void qSlicerDataModuleWidget::setInfoLabelFromSubjectHierarchyItem(vtkIdType ite
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::onSubjectHierarchyItemEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData)
 {
-  vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
+  vtkMRMLSubjectHierarchyNode* const shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
   qSlicerDataModuleWidget* widget = reinterpret_cast<qSlicerDataModuleWidget*>(clientData);
   if (!widget || !shNode)
   {
@@ -457,7 +457,7 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemEvent(vtkObject* caller, uns
   vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   if (callData)
   {
-    vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
+    vtkIdType* const itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
     if (itemIdPtr)
     {
       itemID = *itemIdPtr;
@@ -476,7 +476,7 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemModified(vtkIdType itemID)
   Q_D(qSlicerDataModuleWidget);
 
   // Get displayed item's ID from label object
-  vtkIdType displayedItemID = d->SubjectHierarchyItemInfoLabel->property("itemID").toLongLong();
+  const vtkIdType displayedItemID = d->SubjectHierarchyItemInfoLabel->property("itemID").toLongLong();
 
   // Update label if the displayed item is the one that changed
   if (displayedItemID == itemID && displayedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -499,7 +499,7 @@ qMRMLSubjectHierarchyModel* qSlicerDataModuleWidget::subjectHierarchySceneModel(
 {
   Q_D(const qSlicerDataModuleWidget);
 
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(d->SubjectHierarchyTreeView->model());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(d->SubjectHierarchyTreeView->model());
   return model;
 }
 

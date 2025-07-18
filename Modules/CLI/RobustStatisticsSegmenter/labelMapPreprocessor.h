@@ -51,7 +51,7 @@ typename itk::Image<pixel_t, 3>::Pointer preprocessLabelMap(typename itk::Image<
   }
 
   std::sort(uniqueLabels.begin(), uniqueLabels.end());
-  typename std::vector<pixel_t>::iterator itl = std::unique(uniqueLabels.begin(), uniqueLabels.end());
+  const typename std::vector<pixel_t>::iterator itl = std::unique(uniqueLabels.begin(), uniqueLabels.end());
   uniqueLabels.resize(itl - uniqueLabels.begin());
 
   if (uniqueLabels[0] != 0)
@@ -60,7 +60,7 @@ typename itk::Image<pixel_t, 3>::Pointer preprocessLabelMap(typename itk::Image<
     raise(SIGABRT);
   }
 
-  short numOfLabels = uniqueLabels.size() - 1; // 0 not count
+  const short numOfLabels = uniqueLabels.size() - 1; // 0 not count
 
   // 2.
   if (1 == numOfLabels)

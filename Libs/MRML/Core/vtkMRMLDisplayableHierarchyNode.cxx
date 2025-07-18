@@ -79,7 +79,7 @@ void vtkMRMLDisplayableHierarchyNode::UpdateReferenceID(const char* oldID, const
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -119,10 +119,10 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDisplayableHierarchyNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDisplayableHierarchyNode* node = (vtkMRMLDisplayableHierarchyNode*)anode;
+  vtkMRMLDisplayableHierarchyNode* const node = (vtkMRMLDisplayableHierarchyNode*)anode;
 
   this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetExpanded(node->Expanded);
@@ -139,7 +139,7 @@ void vtkMRMLDisplayableHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 
   vtkNew<vtkCollection> col;
   this->GetChildrenDisplayableNodes(col.GetPointer());
-  unsigned int numChildren = col->GetNumberOfItems();
+  const unsigned int numChildren = col->GetNumberOfItems();
   os << indent << "Number of children displayable nodes = " << numChildren << "\n";
   for (unsigned int i = 0; i < numChildren; i++)
   {
@@ -176,7 +176,7 @@ void vtkMRMLDisplayableHierarchyNode::UpdateReferences()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode* vtkMRMLDisplayableHierarchyNode::GetDisplayableNode()
 {
-  vtkMRMLDisplayableNode* node = vtkMRMLDisplayableNode::SafeDownCast(this->GetAssociatedNode());
+  vtkMRMLDisplayableNode* const node = vtkMRMLDisplayableNode::SafeDownCast(this->GetAssociatedNode());
   return node;
 }
 
@@ -186,7 +186,7 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableHierarchyNode::GetDisplayNode()
   vtkMRMLDisplayNode* node = nullptr;
   if (this->GetScene() && this->GetDisplayNodeID())
   {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
+    vtkMRMLNode* const snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
     node = vtkMRMLDisplayNode::SafeDownCast(snode);
   }
   return node;
@@ -199,7 +199,7 @@ void vtkMRMLDisplayableHierarchyNode::SetAndObserveDisplayNodeID(const char* dis
 
   this->SetDisplayNodeID(displayNodeID);
 
-  vtkMRMLDisplayNode* dnode = this->GetDisplayNode();
+  vtkMRMLDisplayNode* const dnode = this->GetDisplayNode();
 
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNode, dnode);
 
@@ -214,7 +214,7 @@ void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents(vtkObject* caller, unsig
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLDisplayNode* dnode = this->GetDisplayNode();
+  vtkMRMLDisplayNode* const dnode = this->GetDisplayNode();
   if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
@@ -273,13 +273,13 @@ void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
     vtkMRMLDisplayableHierarchyNode* child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
     if (child)
     {
-      std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
-      vtkMRMLDisplayableNode* dnode = child->GetDisplayableNode();
+      const std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
+      vtkMRMLDisplayableNode* const dnode = child->GetDisplayableNode();
       if (dnode)
       {
         this->GetScene()->RemoveNode(dnode);
       }
-      vtkMRMLDisplayNode* disnode = child->GetDisplayNode();
+      vtkMRMLDisplayNode* const disnode = child->GetDisplayNode();
       if (disnode)
       {
         this->GetScene()->RemoveNode(disnode);
@@ -305,13 +305,13 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
     {
       child->RemoveAllChildrenNodes();
 
-      std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
-      vtkMRMLDisplayableNode* dnode = child->GetDisplayableNode();
+      const std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
+      vtkMRMLDisplayableNode* const dnode = child->GetDisplayableNode();
       if (dnode)
       {
         this->GetScene()->RemoveNode(dnode);
       }
-      vtkMRMLDisplayNode* disnode = child->GetDisplayNode();
+      vtkMRMLDisplayNode* const disnode = child->GetDisplayNode();
       if (disnode)
       {
         this->GetScene()->RemoveNode(disnode);

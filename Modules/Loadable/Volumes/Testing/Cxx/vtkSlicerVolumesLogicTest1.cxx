@@ -78,9 +78,9 @@ int vtkSlicerVolumesLogicTest1(int argc, char* argv[])
   }
 
   logic->SetMRMLScene(scene.GetPointer());
-  const char* volumeName = argv[1];
+  const char* const volumeName = argv[1];
 
-  vtkMRMLScalarVolumeNode* scalarVolume = TestScalarVolumeLoading(volumeName, logic.GetPointer());
+  vtkMRMLScalarVolumeNode* const scalarVolume = TestScalarVolumeLoading(volumeName, logic.GetPointer());
   CHECK_NOT_NULL(scalarVolume);
 
   vtkMRMLLabelMapVolumeNode* labelMapVolume = TestLabelMapVolumeLoading(volumeName, logic.GetPointer());
@@ -115,14 +115,14 @@ bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection)
   }
 
   imageDataConnection->GetProducer()->Update();
-  vtkInformation* info = imageDataConnection->GetProducer()->GetOutputInformation(0);
+  vtkInformation* const info = imageDataConnection->GetProducer()->GetOutputInformation(0);
   if (!info)
   {
     std::cerr << "Line " << line << " - No output information !" << std::endl;
     return false;
   }
 
-  vtkInformation* scalarInfo = vtkDataObject::GetActiveFieldInformation(info, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
+  vtkInformation* const scalarInfo = vtkDataObject::GetActiveFieldInformation(info, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   if (!scalarInfo)
   {
     std::cerr << "Line " << line << " - No scalar information !" << std::endl;
@@ -147,7 +147,7 @@ vtkMRMLScalarVolumeNode* TestScalarVolumeLoading(const char* volumeName, vtkSlic
     return nullptr;
   }
 
-  vtkMRMLScalarVolumeNode* scalarVolume = vtkMRMLScalarVolumeNode::SafeDownCast(volume);
+  vtkMRMLScalarVolumeNode* const scalarVolume = vtkMRMLScalarVolumeNode::SafeDownCast(volume);
   if (!scalarVolume)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to read as scalar volume !" << std::endl;
@@ -172,7 +172,7 @@ vtkMRMLLabelMapVolumeNode* TestLabelMapVolumeLoading(const char* volumeName, vtk
     return nullptr;
   }
 
-  vtkMRMLLabelMapVolumeNode* labelMapVolume = vtkMRMLLabelMapVolumeNode::SafeDownCast(volume);
+  vtkMRMLLabelMapVolumeNode* const labelMapVolume = vtkMRMLLabelMapVolumeNode::SafeDownCast(volume);
   if (!labelMapVolume)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to read as label map volume !" << std::endl;
@@ -255,7 +255,7 @@ int TestCloneVolume(vtkMRMLScalarVolumeNode* scalarVolume, vtkMRMLScene* scene, 
     }
   }
 
-  std::string warnings = logic->CompareVolumeGeometry(scalarVolume, clonedVolume);
+  const std::string warnings = logic->CompareVolumeGeometry(scalarVolume, clonedVolume);
   if (!warnings.empty())
   {
     std::cerr << "Line " << __LINE__ << " - CompareVolumeGeometry returned a warning when comparing the original and the cloned volumes: " << warnings.c_str() << std::endl;

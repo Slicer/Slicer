@@ -65,7 +65,7 @@ void saveScene(void* vtkNotUsed(data))
   label->setAttribute(Qt::WA_DeleteOnClose);
   QTimer::singleShot(500, label, SLOT(close()));
   std::cout << "output: " << myNode->GetName() << std::endl;
-  const char* tmpScene = "scene-utf8.mrml";
+  const char* const tmpScene = "scene-utf8.mrml";
   myScene->Commit(tmpScene);
 }
 
@@ -97,10 +97,10 @@ int qMRMLUtf8Test1(int argc, char* argv[])
   // Check if node name that contains special characters is loaded correctly
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1"));
   CHECK_NOT_NULL(volumeDisplayNode);
-  QString actualDisplayNodeName = QString::fromUtf8(volumeDisplayNode->GetName());
+  const QString actualDisplayNodeName = QString::fromUtf8(volumeDisplayNode->GetName());
   // expectedDisplayNodeName contains a number of unicode characters that are not found in Latin1 character set
   // (the word is "a'rvi'ztu"ro" tu:ko:rfu'ro'ge'p" - https://en.wikipedia.org/wiki/Mojibake#Examples)
-  QString expectedDisplayNodeName =
+  const QString expectedDisplayNodeName =
     QString::fromUtf8(u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070");
   CHECK_BOOL(actualDisplayNodeName == expectedDisplayNodeName, true);
 
@@ -108,7 +108,7 @@ int qMRMLUtf8Test1(int argc, char* argv[])
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   CHECK_NOT_NULL(volumeNode);
   vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(volumeNode->GetStorageNode());
-  QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
+  const QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
   storageNode->SetFileName(filenameWithSpecialChars.toUtf8().constData());
   QFile::remove(QString::fromUtf8(myScene->GetRootDirectory()) + QDir::separator() + filenameWithSpecialChars);
 
@@ -134,9 +134,9 @@ int qMRMLUtf8Test1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  std::string newName = cameraName.erase(0, std::strlen("camera"));
+  const std::string newName = cameraName.erase(0, std::strlen("camera"));
   myNode->SetName(newName.c_str());
-  QString name = QString::fromUtf8(myNode->GetName());
+  const QString name = QString::fromUtf8(myNode->GetName());
 
   myLineEdit = new QLineEdit(nullptr);
   myLineEdit->setText(name);

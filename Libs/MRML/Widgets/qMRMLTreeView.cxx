@@ -222,7 +222,7 @@ QSize qMRMLTreeViewPrivate::sizeHint() const
 void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
 {
   Q_Q(qMRMLTreeView);
-  vtkMRMLNode* parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
+  vtkMRMLNode* const parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
 
   // Check if the node is currently present in the scene.
   // When a node/hierarchy is being deleted from the vtkMRMLScene, there is
@@ -240,7 +240,7 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
     this->ExpandedNodes->AddItem(parentNode);
   }
   // Iterate over children nodes recursively to save their expansion state
-  unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
+  const unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
   for (unsigned int row = 0; row < numChildrenRows; ++row)
   {
     QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
@@ -253,7 +253,7 @@ void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
 {
   Q_Q(qMRMLTreeView);
   this->LastScrollToName = name;
-  QModelIndex startIndex = q->model()->index(0, 0);
+  const QModelIndex startIndex = q->model()->index(0, 0);
   QModelIndexList matchingModels = q->model()->match( //
     startIndex,                                       //
     Qt::DisplayRole,
@@ -269,8 +269,8 @@ void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
   {
     ++lastSearch;
   }
-  int newSearch = lastSearch % matchingModels.size();
-  QModelIndex modelIndex = matchingModels[newSearch];
+  const int newSearch = lastSearch % matchingModels.size();
+  const QModelIndex modelIndex = matchingModels[newSearch];
   q->scrollTo(modelIndex, QAbstractItemView::PositionAtTop);
   q->selectionModel()->setCurrentIndex(modelIndex, QItemSelectionModel::Current);
 }
@@ -303,7 +303,7 @@ void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
-  vtkMRMLNode* rootNode = this->rootNode();
+  vtkMRMLNode* const rootNode = this->rootNode();
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
   this->setRootNode(rootNode);
@@ -394,7 +394,7 @@ vtkMRMLNode* qMRMLTreeView::currentNode() const
 void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
 {
   Q_D(const qMRMLTreeView);
-  QModelIndex nodeIndex = d->SortFilterModel->indexFromMRMLNode(node);
+  const QModelIndex nodeIndex = d->SortFilterModel->indexFromMRMLNode(node);
   this->setCurrentIndex(nodeIndex);
 }
 
@@ -533,7 +533,7 @@ void qMRMLTreeView::prependSceneMenuAction(QAction* action)
 {
   Q_D(qMRMLTreeView);
   // Prepend the action in the menu
-  QAction* beforeAction = d->SceneMenu->actions().size() ? d->SceneMenu->actions()[0] : 0;
+  QAction* const beforeAction = d->SceneMenu->actions().size() ? d->SceneMenu->actions()[0] : 0;
   d->SceneMenu->insertAction(beforeAction, action);
 }
 
@@ -564,7 +564,7 @@ void qMRMLTreeView::setShowScene(bool show)
   {
     return;
   }
-  vtkMRMLNode* oldRootNode = this->rootNode();
+  vtkMRMLNode* const oldRootNode = this->rootNode();
   d->ShowScene = show;
   this->setRootNode(oldRootNode);
 }
@@ -584,7 +584,7 @@ void qMRMLTreeView::setShowRootNode(bool show)
   {
     return;
   }
-  vtkMRMLNode* oldRootNode = this->rootNode();
+  vtkMRMLNode* const oldRootNode = this->rootNode();
   d->ShowRootNode = show;
   this->setRootNode(oldRootNode);
 }
@@ -631,7 +631,7 @@ void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
 vtkMRMLNode* qMRMLTreeView::rootNode() const
 {
   Q_D(const qMRMLTreeView);
-  vtkMRMLNode* treeRootNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
+  vtkMRMLNode* const treeRootNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
   if (d->ShowRootNode      //
       && this->mrmlScene() //
       && this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().isEmpty())
@@ -740,11 +740,11 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
   if (e->button() == Qt::LeftButton)
   {
     // get the index of the current column
-    QModelIndex index = this->indexAt(e->pos());
+    const QModelIndex index = this->indexAt(e->pos());
     QStyleOptionViewItem opt = this->viewOptions();
     opt.rect = this->visualRect(index);
     qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt, index);
-    QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+    const QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
     // decorationElement.translate(this->visualRect(index).topLeft());
     if (decorationElement.contains(e->pos()))
     {
@@ -764,7 +764,7 @@ void qMRMLTreeView::keyPressEvent(QKeyEvent* e)
 #ifndef _NDEBUG
   if (e->key() == Qt::Key_Exclam)
   {
-    qMRMLSortFilterProxyModel::FilterType filter = static_cast<qMRMLSortFilterProxyModel::FilterType>((this->sortFilterProxyModel()->filterType() + 1) % 3);
+    const qMRMLSortFilterProxyModel::FilterType filter = static_cast<qMRMLSortFilterProxyModel::FilterType>((this->sortFilterProxyModel()->filterType() + 1) % 3);
     qDebug() << "Filter type: " << filter;
     this->sortFilterProxyModel()->setFilterType(filter);
   }
@@ -776,7 +776,7 @@ void qMRMLTreeView::keyPressEvent(QKeyEvent* e)
 bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 {
   bool res = false;
-  QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
+  const QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
   if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
   {
     res = false;
@@ -797,7 +797,7 @@ bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 //------------------------------------------------------------------------------
 void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
 {
-  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  vtkMRMLNode* const node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
 
@@ -806,7 +806,7 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
     displayNode = displayableNode->GetDisplayNode();
   }
 
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* const selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
   if (selectionNode && displayNode)
   {
@@ -819,23 +819,23 @@ void qMRMLTreeView::saveTreeExpandState()
 {
   Q_D(qMRMLTreeView);
   // Check if there is a scene loaded
-  QStandardItem* sceneItem = this->sceneModel()->mrmlSceneItem();
+  QStandardItem* const sceneItem = this->sceneModel()->mrmlSceneItem();
   if (!sceneItem)
   {
     return;
   }
   // Erase previous tree expand state
   d->ExpandedNodes->RemoveAllItems();
-  QModelIndex sceneIndex = this->sortFilterProxyModel()->mrmlSceneIndex();
+  const QModelIndex sceneIndex = this->sortFilterProxyModel()->mrmlSceneIndex();
 
   // First pass for the scene node
-  vtkMRMLNode* sceneNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(sceneIndex);
+  vtkMRMLNode* const sceneNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(sceneIndex);
   if (this->isExpanded(sceneIndex))
   {
     if (sceneNode && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(sceneNode))
       d->ExpandedNodes->AddItem(sceneNode);
   }
-  unsigned int numChildrenRows = this->sortFilterProxyModel()->rowCount(sceneIndex);
+  const unsigned int numChildrenRows = this->sortFilterProxyModel()->rowCount(sceneIndex);
   for (unsigned int row = 0; row < numChildrenRows; ++row)
   {
     QModelIndex childIndex = this->sortFilterProxyModel()->index(row, 0, sceneIndex);
@@ -848,7 +848,7 @@ void qMRMLTreeView::loadTreeExpandState()
 {
   Q_D(qMRMLTreeView);
   // Check if there is a scene loaded
-  QStandardItem* sceneItem = this->sceneModel()->mrmlSceneItem();
+  QStandardItem* const sceneItem = this->sceneModel()->mrmlSceneItem();
   if (!sceneItem)
   {
     return;
@@ -857,12 +857,12 @@ void qMRMLTreeView::loadTreeExpandState()
   vtkCollectionIterator* iter = d->ExpandedNodes->NewIterator();
   for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
   {
-    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
+    vtkMRMLNode* const node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
     // Check if the node is currently present in the scene.
     if (node && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(node))
     {
       // Expand the node
-      QModelIndex nodeIndex = this->sortFilterProxyModel()->indexFromMRMLNode(node);
+      const QModelIndex nodeIndex = this->sortFilterProxyModel()->indexFromMRMLNode(node);
       this->expand(nodeIndex);
     }
   }
@@ -880,10 +880,10 @@ void qMRMLTreeView::renameCurrentNode()
     return;
   }
   // pop up an entry box for the new name, with the old name as default
-  QString oldName = this->currentNode()->GetName();
+  const QString oldName = this->currentNode()->GetName();
 
   bool ok = false;
-  QString newName = QInputDialog::getText(this, "Rename " + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
+  const QString newName = QInputDialog::getText(this, "Rename " + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
   if (!ok)
   {
     return;
@@ -978,7 +978,7 @@ void qMRMLTreeView::showEvent(QShowEvent* event)
 bool qMRMLTreeView::eventFilter(QObject* object, QEvent* e)
 {
   Q_D(qMRMLTreeView);
-  bool res = this->QTreeView::eventFilter(object, e);
+  const bool res = this->QTreeView::eventFilter(object, e);
   // When the horizontal scroll bar is shown/hidden, the sizehint should be
   // updated ?
   if (d->FitSizeToVisibleIndexes               //
@@ -996,10 +996,10 @@ void qMRMLTreeView::onCustomContextMenu(const QPoint& point)
   Q_D(qMRMLTreeView);
 
   // get the index of the current column
-  QModelIndex index = this->indexAt(point);
+  const QModelIndex index = this->indexAt(point);
 
-  QPoint globalPoint = this->viewport()->mapToGlobal(point);
-  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  const QPoint globalPoint = this->viewport()->mapToGlobal(point);
+  vtkMRMLNode* const node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   if (node)
   {
     d->NodeMenu->exec(globalPoint);

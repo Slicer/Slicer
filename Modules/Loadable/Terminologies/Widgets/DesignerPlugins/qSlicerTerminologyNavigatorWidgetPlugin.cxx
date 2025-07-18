@@ -30,7 +30,7 @@ qSlicerTerminologyNavigatorWidgetPlugin::qSlicerTerminologyNavigatorWidgetPlugin
 //-----------------------------------------------------------------------------
 QWidget* qSlicerTerminologyNavigatorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerTerminologyNavigatorWidget* pluginWidget = new qSlicerTerminologyNavigatorWidget(parentWidget);
+  qSlicerTerminologyNavigatorWidget* const pluginWidget = new qSlicerTerminologyNavigatorWidget(parentWidget);
   return pluginWidget;
 }
 

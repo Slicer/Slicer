@@ -363,8 +363,8 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(vtkObject* command
   d->NameLabel->setText(node->GetName());
 
   // Update Progress
-  ModuleProcessInformation* info = node->GetModuleDescription().GetProcessInformation();
-  QString statusLabelFormat = tr("%1 (%2s)");
+  ModuleProcessInformation* const info = node->GetModuleDescription().GetProcessInformation();
+  const QString statusLabelFormat = tr("%1 (%2s)");
   switch (node->GetStatus())
   {
     case vtkMRMLCommandLineModuleNode::Cancelled: d->ProgressBar->setMaximum(0); break;
@@ -396,20 +396,20 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(vtkObject* command
   }
 
   // If user chose to show details then all
-  std::string errorText = node->GetErrorText();
-  bool showDetails = (d->DetailsTextExpandButton->isChecked()                                    //
-                      || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors //
-                          && !errorText.empty()));
+  const std::string errorText = node->GetErrorText();
+  const bool showDetails = (d->DetailsTextExpandButton->isChecked()                                    //
+                            || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors //
+                                && !errorText.empty()));
   d->DetailsTextBrowser->setVisible(showDetails);
 
   // While the module is running, avoid too frequent updates of the process output
   // as long output can cause slowdowns.
   const double minRefreshTimeMsec = 3000.0;
-  bool updateDetails = showDetails                                                    //
-                       && (                                                           //
-                         (node->GetStatus() != vtkMRMLCommandLineModuleNode::Running) //
-                         ||                                                           //
-                         (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
+  const bool updateDetails = showDetails                                                    //
+                             && (                                                           //
+                               (node->GetStatus() != vtkMRMLCommandLineModuleNode::Running) //
+                               ||                                                           //
+                               (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
 
   if (showDetails && updateDetails)
   {
@@ -421,7 +421,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(vtkObject* command
       maxNumberOfLinesShown = 15;
     }
     // Limit number of text lines shown (more shown if user clicked to show more details)
-    int lineSpacing = QFontMetrics(d->DetailsTextBrowser->document()->defaultFont()).lineSpacing();
+    const int lineSpacing = QFontMetrics(d->DetailsTextBrowser->document()->defaultFont()).lineSpacing();
     d->DetailsTextBrowser->setMinimumHeight(lineSpacing * maxNumberOfLinesShown);
     d->DetailsTextBrowser->setMaximumHeight(lineSpacing * maxNumberOfLinesShown);
 

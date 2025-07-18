@@ -50,7 +50,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLListWidget* widget = reinterpret_cast<qMRMLListWidget*>(data);
+  qMRMLListWidget* const widget = reinterpret_cast<qMRMLListWidget*>(data);
 
   Q_UNUSED(widget);
 }
@@ -60,14 +60,14 @@ void checkFinalWidgetState(void* data)
 int qMRMLListWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1

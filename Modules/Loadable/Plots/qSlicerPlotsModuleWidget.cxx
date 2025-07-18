@@ -124,7 +124,7 @@ void qSlicerPlotsModuleWidget::setup()
 void qSlicerPlotsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 {
   Q_D(qSlicerPlotsModuleWidget);
-  vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
+  vtkMRMLPlotChartNode* const chartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
 
   this->qvtkReconnect(d->MRMLPlotChartNode, chartNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLPlotChartNodeModified(vtkObject*)));
   d->MRMLPlotChartNode = chartNode;

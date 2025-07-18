@@ -140,7 +140,7 @@ void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 void qMRMLThreeDWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNode)
 {
   Q_D(qMRMLThreeDWidget);
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(newViewNode);
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !threeDViewNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLViewNode";

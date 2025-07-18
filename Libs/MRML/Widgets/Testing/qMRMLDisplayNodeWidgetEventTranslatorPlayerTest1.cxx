@@ -53,7 +53,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLDisplayNodeWidget* widget = reinterpret_cast<qMRMLDisplayNodeWidget*>(data);
+  qMRMLDisplayNodeWidget* const widget = reinterpret_cast<qMRMLDisplayNodeWidget*>(data);
 
   CTKCOMPARE(widget->visibility(), false);
   CTKCOMPARE(widget->selected(), true);
@@ -66,20 +66,20 @@ void checkFinalWidgetState(void* data)
 int qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   qMRMLDisplayNodeWidget* widget = new qMRMLDisplayNodeWidget();
 
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  const vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
   widget->setMRMLDisplayNode(displayNode);
 

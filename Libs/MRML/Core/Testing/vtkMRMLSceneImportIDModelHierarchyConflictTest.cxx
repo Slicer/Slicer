@@ -55,7 +55,7 @@ int ImportIDModelHierarchyConflictTest()
   scene->AddNode(modelNode.GetPointer());
 
   // add poly data
-  vtkNew<vtkPolyData> polyData;
+  const vtkNew<vtkPolyData> polyData;
   modelNode->SetAndObservePolyData(polyData.GetPointer());
 
   // Add display node
@@ -244,7 +244,7 @@ int ImportModelHierarchyTwiceTest()
 
   scene->SetSaveToXMLString(1);
   scene->Commit();
-  std::string xmlScene = scene->GetSceneXMLString();
+  const std::string xmlScene = scene->GetSceneXMLString();
   //  std::cerr << xmlScene << std::endl;
 
   // Load same scene into scene
@@ -289,7 +289,7 @@ int ImportModelHierarchyTwiceTest()
 
   vtkMRMLModelHierarchyNode* modelHierarchyNode2 = vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode2"));
 
-  vtkMRMLHierarchyNode* hierarchyNode2 = vtkMRMLHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLHierarchyNode2"));
+  vtkMRMLHierarchyNode* const hierarchyNode2 = vtkMRMLHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLHierarchyNode2"));
 
   CHECK_NOT_NULL(modelHierarchyNode2);
   CHECK_NOT_NULL(hierarchyNode2);

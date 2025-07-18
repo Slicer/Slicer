@@ -52,7 +52,7 @@ private slots:
 // ----------------------------------------------------------------------------
 void qMRMLSceneModelTester::testDefaults()
 {
-  qMRMLSceneModel sceneModel;
+  const qMRMLSceneModel sceneModel;
   QCOMPARE(sceneModel.listenNodeModifiedEvent(), qMRMLSceneModel::OnlyVisibleNodes);
   QCOMPARE(sceneModel.lazyUpdate(), false);
   QCOMPARE(sceneModel.nameColumn(), 0);
@@ -83,7 +83,7 @@ void qMRMLSceneModelTester::testSetsAndGets()
   sceneModel.setLazyUpdate(false);
   QCOMPARE(sceneModel.lazyUpdate(), false);
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   sceneModel.setMRMLScene(scene.GetPointer());
   QCOMPARE(sceneModel.mrmlScene(), scene.GetPointer());
 }
@@ -101,7 +101,7 @@ void qMRMLSceneModelTester::testSetScene()
   QVERIFY(!sceneModel.mrmlSceneIndex().parent().isValid());
   QCOMPARE(sceneModel.columnCount(), 1);
   QCOMPARE(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 1);
-  vtkNew<vtkMRMLViewNode> node;
+  const vtkNew<vtkMRMLViewNode> node;
   scene->AddNode(node.GetPointer());
   QCOMPARE(sceneModel.columnCount(), 1);
   QCOMPARE(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 1);

@@ -312,7 +312,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     case qMRMLScreenShotDialog::ThreeD:
     {
       // Create a screenshot of the first 3DView
-      qMRMLThreeDView* threeDView = d->LayoutManager.data()->threeDWidget(0)->threeDView();
+      qMRMLThreeDView* const threeDView = d->LayoutManager.data()->threeDWidget(0)->threeDView();
       widget = threeDView;
       renderWindow = threeDView->renderWindow();
     }
@@ -322,9 +322,9 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     case qMRMLScreenShotDialog::Green:
       // Create a screenshot of a specific sliceView
       {
-        QString name = this->enumToString(screenshotWindow);
-        qMRMLSliceWidget* sliceWidget = d->LayoutManager.data()->sliceWidget(name);
-        qMRMLSliceView* sliceView = sliceWidget->sliceView();
+        const QString name = this->enumToString(screenshotWindow);
+        qMRMLSliceWidget* const sliceWidget = d->LayoutManager.data()->sliceWidget(name);
+        qMRMLSliceView* const sliceView = sliceWidget->sliceView();
         widget = sliceView;
         renderWindow = sliceView->renderWindow();
       }
@@ -336,14 +336,14 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
       break;
   }
 
-  double scaleFactor = d->scaleFactorSpinBox->value();
+  const double scaleFactor = d->scaleFactorSpinBox->value();
 
   vtkNew<vtkImageData> newImageData;
   if (!qFuzzyCompare(scaleFactor, 1.0) && //
       screenshotWindow == qMRMLScreenShotDialog::ThreeD)
   {
     // use off screen rendering to magnifiy the VTK widget's image without interpolation
-    vtkRenderer* renderer = renderWindow->GetRenderers()->GetFirstRenderer();
+    vtkRenderer* const renderer = renderWindow->GetRenderers()->GetFirstRenderer();
     vtkNew<vtkRenderLargeImage> renderLargeImage;
     renderLargeImage->SetInput(renderer);
     renderLargeImage->SetMagnification(scaleFactor);
@@ -358,11 +358,11 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     renderWindow->OffScreenRenderingOn();
 
     // Resize render window and slice widget
-    const int* renderWindowSize = renderWindow->GetSize();
-    int width = renderWindowSize[0];
-    int height = renderWindowSize[1];
-    int scaledWidth = width * scaleFactor;
-    int scaledHeight = height * scaleFactor;
+    const int* const renderWindowSize = renderWindow->GetSize();
+    const int width = renderWindowSize[0];
+    const int height = renderWindowSize[1];
+    const int scaledWidth = width * scaleFactor;
+    const int scaledHeight = height * scaleFactor;
     renderWindow->SetSize(scaledWidth, scaledHeight);
     widget->resize(scaledWidth, scaledHeight);
 
@@ -382,12 +382,12 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   else
   {
     // no scaling, or for not just the 3D window
-    QImage screenShot = ctk::grabVTKWidget(widget);
+    const QImage screenShot = ctk::grabVTKWidget(widget);
 
     if (!qFuzzyCompare(scaleFactor, 1.0))
     {
       // Rescale the image which gets saved
-      QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width() * scaleFactor, screenShot.size().height() * scaleFactor);
+      const QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width() * scaleFactor, screenShot.size().height() * scaleFactor);
 
       // convert the scaled screenshot from QPixmap to vtkImageData
       qMRMLUtils::qImageToVtkImageData(rescaledScreenShot, newImageData.GetPointer());
@@ -415,7 +415,7 @@ void qMRMLScreenShotDialog::saveAs()
   {
     name = "Slicer Screen Capture";
   }
-  QString savePath = QFileDialog::getSaveFileName(this, tr("Save File"), name, tr("Images (*.png *.jpg)"));
+  const QString savePath = QFileDialog::getSaveFileName(this, tr("Save File"), name, tr("Images (*.png *.jpg)"));
 
   if (savePath != "")
   {
@@ -428,8 +428,8 @@ void qMRMLScreenShotDialog::saveAs()
 //-----------------------------------------------------------------------------
 QString qMRMLScreenShotDialog::enumToString(int type)
 {
-  int propIndex = this->metaObject()->indexOfProperty("widgetType");
-  QMetaProperty widgetTypeProperty = this->metaObject()->property(propIndex);
-  QMetaEnum widgetTypeEnum = widgetTypeProperty.enumerator();
+  const int propIndex = this->metaObject()->indexOfProperty("widgetType");
+  const QMetaProperty widgetTypeProperty = this->metaObject()->property(propIndex);
+  const QMetaEnum widgetTypeEnum = widgetTypeProperty.enumerator();
   return widgetTypeEnum.valueToKey(type);
 }

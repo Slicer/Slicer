@@ -46,7 +46,7 @@ bool vtkMRMLHierarchyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName.empty())
   {
@@ -75,7 +75,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   if (fstr.is_open())
   {
     // turn off modified events
-    int modFlag = hierarchyNode->GetDisableModifiedEvent();
+    const int modFlag = hierarchyNode->GetDisableModifiedEvent();
     hierarchyNode->DisableModifiedEventOn();
 
     // do the reading here if necessary, but it's not right now
@@ -99,7 +99,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLHierarchyStorageNode: File name not specified");

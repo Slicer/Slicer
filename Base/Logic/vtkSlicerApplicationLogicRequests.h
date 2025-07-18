@@ -70,12 +70,12 @@ public:
     vtkMRMLCommandLineModuleNode* clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
 #endif
 
-    bool useURI = appLogic->GetMRMLScene()->GetCacheManager()->IsRemoteReference(m_Filename.c_str());
+    bool const useURI = appLogic->GetMRMLScene()->GetCacheManager()->IsRemoteReference(m_Filename.c_str());
 
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
     if (storableNode)
     {
-      int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+      const int numStorageNodes = storableNode->GetNumberOfStorageNodes();
       for (int n = 0; n < numStorageNodes; n++)
       {
         vtkMRMLStorageNode* testStorageNode = storableNode->GetNthStorageNode(n);
@@ -304,7 +304,7 @@ public:
 
     while (sit != m_SourceNodes.end())
     {
-      vtkMRMLNode* source = miniscene->GetNodeByID(sit->c_str());
+      vtkMRMLNode* const source = miniscene->GetNodeByID(sit->c_str());
       vtkMRMLNode* target = appLogic->GetMRMLScene()->GetNodeByID(tit->c_str());
 
       if (source && target)
@@ -315,7 +315,7 @@ public:
         vtkMRMLStorableNode* storableTarget = vtkMRMLStorableNode::SafeDownCast(target);
         if (storableTarget)
         {
-          const char* oldStorageNodeID = storableTarget->GetStorageNodeID();
+          const char* const oldStorageNodeID = storableTarget->GetStorageNodeID();
           target->Copy(source);
           storableTarget->SetAndObserveStorageNodeID(oldStorageNodeID);
         }
@@ -335,7 +335,7 @@ public:
           // get the model node and display node BEFORE we add nodes to
           // the target scene
           vtkMRMLModelNode* smnd = smhnd->GetModelNode();
-          vtkMRMLDisplayNode* sdnd = smhnd->GetDisplayNode();
+          vtkMRMLDisplayNode* const sdnd = smhnd->GetDisplayNode();
 
           // add the model and display referenced by source model hierarchy node
           if (smnd)
@@ -344,9 +344,9 @@ public:
             // location
             // smnd->SetModifiedSinceRead(1);
             // get display node BEFORE we add nodes to the target scene
-            vtkMRMLDisplayNode* sdnd1 = smnd->GetDisplayNode();
+            vtkMRMLDisplayNode* const sdnd1 = smnd->GetDisplayNode();
 
-            vtkMRMLNode* tmodel = appLogic->GetMRMLScene()->CopyNode(smnd);
+            vtkMRMLNode* const tmodel = appLogic->GetMRMLScene()->CopyNode(smnd);
             vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(nullptr);
             vtkMRMLModelNode* mnd = vtkMRMLModelNode::SafeDownCast(tmodel);
             tmhnd->SetModelNodeID(mnd->GetID());
@@ -378,7 +378,7 @@ public:
             {
               // is this model hierarchy node in our source list
               // already? if so skip it
-              std::vector<std::string>::const_iterator ssit = std::find(m_SourceNodes.begin(), m_SourceNodes.end(), mhnd->GetID());
+              const std::vector<std::string>::const_iterator ssit = std::find(m_SourceNodes.begin(), m_SourceNodes.end(), mhnd->GetID());
               if (ssit == m_SourceNodes.end())
               {
                 // not in source list, so we may need to add it,
@@ -388,7 +388,7 @@ public:
                   // get the model and display node BEFORE we add nodes
                   // to the target scene
                   vtkMRMLModelNode* smnd1 = mhnd->GetModelNode();
-                  vtkMRMLDisplayNode* sdnd1 = mhnd->GetDisplayNode();
+                  vtkMRMLDisplayNode* const sdnd1 = mhnd->GetDisplayNode();
 
                   vtkMRMLNode* tchild = appLogic->GetMRMLScene()->CopyNode(mhnd);
                   // keep track of any node id change in case other nodes use this as a parent
@@ -400,7 +400,7 @@ public:
                   if (tcmhd->GetParentNodeID() != nullptr && //
                       strcmp(tcmhd->GetParentNodeID(), smhnd->GetID()) != 0)
                   {
-                    std::map<std::string, std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));
+                    const std::map<std::string, std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));
                     if (pIt != parentNodeIDMapper.end())
                     {
                       parentNodeID = pIt->second;
@@ -418,9 +418,9 @@ public:
                     // set it as modified
                     // smnd1->SetModifiedSinceRead(1);
                     // get display node BEFORE we add nodes to the target scene
-                    vtkMRMLDisplayNode* sdnd2 = smnd1->GetDisplayNode();
+                    vtkMRMLDisplayNode* const sdnd2 = smnd1->GetDisplayNode();
 
-                    vtkMRMLNode* tmodel = appLogic->GetMRMLScene()->CopyNode(smnd1);
+                    vtkMRMLNode* const tmodel = appLogic->GetMRMLScene()->CopyNode(smnd1);
                     vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(nullptr);
                     vtkMRMLModelNode* mnd = vtkMRMLModelNode::SafeDownCast(tmodel);
                     tcmhd->SetModelNodeID(mnd->GetID());
@@ -446,7 +446,7 @@ public:
             // iterate through all the imported hierarchies that failed and double check their parent node ids
             for (unsigned int i = 0; i < childNodesThatNeedParentsIDsRemapped.size(); i++)
             {
-              std::map<std::string, std::string>::iterator pIt = parentNodeIDMapper.find(childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID());
+              const std::map<std::string, std::string>::iterator pIt = parentNodeIDMapper.find(childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID());
               if (pIt != parentNodeIDMapper.end())
               {
                 vtkDebugWithObjectMacro(appLogic,
@@ -540,15 +540,15 @@ public:
   {
     vtkMRMLScene* scene = appLogic->GetMRMLScene();
 
-    vtkMRMLNode* siblingNode = scene->GetNodeByID(m_SubjectHierarchySiblingNode);
-    vtkMRMLNode* updatedNode = scene->GetNodeByID(m_UpdatedNode);
+    vtkMRMLNode* const siblingNode = scene->GetNodeByID(m_SubjectHierarchySiblingNode);
+    vtkMRMLNode* const updatedNode = scene->GetNodeByID(m_UpdatedNode);
     vtkMRMLSubjectHierarchyNode* shnd = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
-    vtkIdType siblingNodeShItemID = shnd->GetItemByDataNode(siblingNode);
-    vtkIdType updatedNodeShItemID = shnd->GetItemByDataNode(updatedNode);
+    const vtkIdType siblingNodeShItemID = shnd->GetItemByDataNode(siblingNode);
+    const vtkIdType updatedNodeShItemID = shnd->GetItemByDataNode(updatedNode);
 
     if (updatedNodeShItemID && siblingNodeShItemID)
     {
-      vtkIdType parentItemID = shnd->GetItemParent(siblingNodeShItemID);
+      const vtkIdType parentItemID = shnd->GetItemParent(siblingNodeShItemID);
       shnd->SetItemParent(updatedNodeShItemID, parentItemID);
       shnd->SetItemLevel(updatedNodeShItemID, shnd->GetItemLevel(siblingNodeShItemID));
     }
@@ -576,7 +576,7 @@ public:
     vtkMRMLScene* scene = appLogic->GetMRMLScene();
 
     vtkMRMLNode* referencingNode = scene->GetNodeByID(m_ReferencingNode);
-    vtkMRMLNode* referencedNode = scene->GetNodeByID(m_ReferencedNode);
+    vtkMRMLNode* const referencedNode = scene->GetNodeByID(m_ReferencedNode);
     if (referencingNode && referencedNode)
     {
       referencingNode->AddNodeReferenceID(m_Role.c_str(), m_ReferencedNode.c_str());

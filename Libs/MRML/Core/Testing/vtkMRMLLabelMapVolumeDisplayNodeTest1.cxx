@@ -15,7 +15,7 @@
 
 int vtkMRMLLabelMapVolumeDisplayNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> node1;
+  const vtkNew<vtkMRMLLabelMapVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

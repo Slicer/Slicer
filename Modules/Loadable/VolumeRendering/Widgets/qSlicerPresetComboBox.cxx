@@ -75,11 +75,11 @@ void qSlicerIconComboBox::showPopup()
   QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt, QStyle::SC_ComboBoxListBoxPopup, this));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QRect screen = this->screen()->availableGeometry();
+  QRect const screen = this->screen()->availableGeometry();
 #else
   QRect screen = QApplication::desktop()->availableGeometry(QApplication::desktop()->screenNumber(this));
 #endif
-  QPoint above = mapToGlobal(listRect.topLeft());
+  QPoint const above = mapToGlobal(listRect.topLeft());
 
   // CustomSize
   // Screens are usually wide, therefore we allocate space for about 8 columns and up to 5 rows.
@@ -94,11 +94,11 @@ void qSlicerIconComboBox::showPopup()
   {
     verticalScrollBarWidth = this->view()->verticalScrollBar()->width();
   }
-  QMargins margins = container->contentsMargins();
+  const QMargins margins = container->contentsMargins();
   // Item size is not exactly the icon size, so we'll add 10% and 20% margin.
   // We don't need exact match, just approximate size match is sufficient.
-  QSize itemSize = this->view()->iconSize();
-  bool labelShown = (this->count() > 0) && (!this->itemText(0).isEmpty());
+  const QSize itemSize = this->view()->iconSize();
+  const bool labelShown = (this->count() > 0) && (!this->itemText(0).isEmpty());
   listRect.setWidth(itemsPerRow * itemSize.width() * 1.1 + margins.left() + margins.right() + 2.0 * container->frameWidth() + verticalScrollBarWidth);
   listRect.setHeight(itemsPerColumns * itemSize.height() * (labelShown ? 1.2 : 1.05) + margins.top() + margins.bottom() + 2.0 * container->frameWidth());
 
@@ -145,7 +145,7 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setRemoveEnabled(false);
   q->setBaseName(qSlicerPresetComboBox::tr("Preset"));
 
-  int iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize) * 4;
+  const int iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize) * 4;
   q->setIconSizeInPopup(QSize(iconSize, iconSize));
 
   this->updateLabelsIconsVisibility();
@@ -158,7 +158,7 @@ void qSlicerPresetComboBoxPrivate::init()
 void qSlicerPresetComboBoxPrivate::updateLabelsIconsVisibility()
 {
   Q_Q(qSlicerPresetComboBox);
-  vtkMRMLScene* scene = q->mrmlScene();
+  vtkMRMLScene* const scene = q->mrmlScene();
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
 
   if (this->ShowIcons)
@@ -178,7 +178,7 @@ void qSlicerPresetComboBoxPrivate::updateLabelsIconsVisibility()
   }
 
   // Update from scene
-  QString currentNodeID = q->currentNodeID();
+  const QString currentNodeID = q->currentNodeID();
   q->setMRMLScene(nullptr);
   q->setMRMLScene(scene);
   q->updateComboBoxTitleAndIcon(nullptr);
@@ -219,7 +219,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
       QImage qimage;
       qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(), qimage);
       // vtkITK loads 3D images with y axis flipped (compared to loading 2D images), flip it back now
-      QImage qimageFlipped(qimage.mirrored(false, true));
+      const QImage qimageFlipped(qimage.mirrored(false, true));
       presetIcon.addPixmap(QPixmap::fromImage(qimageFlipped));
     }
     if (presetIcon.availableSizes().size() == 0)
@@ -242,12 +242,12 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
   if (volumePropertyNode)
   {
-    int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
-    vtkScalarsToColors* colors = volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : nullptr;
+    const int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
+    vtkScalarsToColors* const colors = volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : nullptr;
     assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
-    QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
-    QString imgSrc = ctk::base64HTMLImageTagSrc(img);
-    QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
+    const QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
+    const QString imgSrc = ctk::base64HTMLImageTagSrc(img);
+    const QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
     sceneModel->setData(itemIndex, toolTip, Qt::ToolTipRole);
   }
 }

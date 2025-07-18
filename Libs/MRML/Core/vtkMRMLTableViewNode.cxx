@@ -64,7 +64,7 @@ void vtkMRMLTableViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
   const char* attName;
   const char* attValue;
@@ -85,7 +85,7 @@ void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLTableViewNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::Copy(anode);
   vtkMRMLTableViewNode* node = vtkMRMLTableViewNode::SafeDownCast(anode);
   if (node)

@@ -15,7 +15,7 @@
 
 int vtkMRMLSnapshotClipNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLSnapshotClipNode> node1;
+  const vtkNew<vtkMRMLSnapshotClipNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

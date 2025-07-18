@@ -98,8 +98,8 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& kind, 
       case 3: kind = nrrdKindRGBColor; break;
       case 4: kind = nrrdKindRGBAColor; break;
       default:
-        size_t numGrad = this->DiffusionGradients->GetNumberOfTuples();
-        size_t numBValues = this->BValues->GetNumberOfTuples();
+        const size_t numGrad = this->DiffusionGradients->GetNumberOfTuples();
+        const size_t numBValues = this->BValues->GetNumberOfTuples();
         if (numGrad == numBValues && numGrad == numComp && numGrad > 6)
         {
           kind = nrrdKindList;
@@ -210,7 +210,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   {
     baseDim = 0;
   }
-  unsigned int nrrdDim = baseDim + spaceDim;
+  const unsigned int nrrdDim = baseDim + spaceDim;
 
   vtkNew<vtkMatrix4x4> rasToSpaceMatrix;
   switch (this->Space)
@@ -245,7 +245,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
       || nrrdSpaceDimensionSet(nrrd, spaceDim)                                                        //
       || nrrdSpaceOriginSet(nrrd, origin))
   {
-    char* err = biffGetDone(NRRD); // would be nice to free(err)
+    char* const err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Write: Error wrapping nrrd for " << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
@@ -316,26 +316,26 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
   // use double-conversion library (via ITK) for better
   // float64 string representation.
-  itk::NumberToString<double> DoubleConvert;
+  const itk::NumberToString<double> DoubleConvert;
 
   // 2. Take care about diffusion data
   if (this->DiffusionWeightedData)
   {
-    unsigned int numGrad = this->DiffusionGradients->GetNumberOfTuples();
-    unsigned int numBValues = this->BValues->GetNumberOfTuples();
+    const unsigned int numGrad = this->DiffusionGradients->GetNumberOfTuples();
+    const unsigned int numBValues = this->BValues->GetNumberOfTuples();
 
     if (kind[0] == nrrdKindList && numGrad == size[0] && numBValues == size[0])
     {
       // This is diffusion Data
       vnl_double_3 grad;
       double bVal, factor;
-      double maxbVal = this->BValues->GetRange()[1];
+      const double maxbVal = this->BValues->GetRange()[1];
 
-      std::string modality_key("modality");
-      std::string modality_value("DWMRI");
+      const std::string modality_key("modality");
+      const std::string modality_value("DWMRI");
       nrrdKeyValueAdd(nrrd, modality_key.c_str(), modality_value.c_str());
 
-      std::string bval_key("DWMRI_b-value");
+      const std::string bval_key("DWMRI_b-value");
       std::stringstream bval_value;
       bval_value << DoubleConvert(maxbVal);
       nrrdKeyValueAdd(nrrd, bval_key.c_str(), bval_value.str().c_str());
@@ -396,7 +396,7 @@ void vtkTeemNRRDWriter::WriteData()
   }
   else
   {
-    int fileType = this->GetFileType();
+    const int fileType = this->GetFileType();
     switch (fileType)
     {
       default:
@@ -411,7 +411,7 @@ void vtkTeemNRRDWriter::WriteData()
   // Write the nrrd to file.
   if (nrrdSave(this->GetFileName(), nrrd, nio))
   {
-    char* err = biffGetDone(NRRD); // would be nice to free(err)
+    char* const err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Write: Error writing " << this->GetFileName() << ":\n" << err);
     this->WriteErrorOn();
   }

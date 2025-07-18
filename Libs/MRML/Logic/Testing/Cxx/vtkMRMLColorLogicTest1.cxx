@@ -65,7 +65,7 @@ namespace
 //----------------------------------------------------------------------------
 bool TestPerformance()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
 
   vtkNew<vtkTimerLog> overallTimer;
@@ -102,7 +102,7 @@ bool TestNodeIDs()
   for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(*nodeIt);
-    const char* nodeID = vtkMRMLColorLogic::GetColorTableNodeID(colorNode->GetType());
+    const char* const nodeID = vtkMRMLColorLogic::GetColorTableNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)
     {
       std::cerr << "Line " << __LINE__ << " - Failed to generate color table node ID for " << colorNode->GetType() << std::endl;
@@ -114,7 +114,7 @@ bool TestNodeIDs()
   for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLPETProceduralColorNode* colorNode = vtkMRMLPETProceduralColorNode::SafeDownCast(*nodeIt);
-    const char* nodeID = vtkMRMLColorLogic::GetPETColorNodeID(colorNode->GetType());
+    const char* const nodeID = vtkMRMLColorLogic::GetPETColorNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)
     {
       std::cerr << "Line " << __LINE__ << " - Failed to generate color table node ID for " << colorNode->GetType() << std::endl;
@@ -126,7 +126,7 @@ bool TestNodeIDs()
   for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLdGEMRICProceduralColorNode* colorNode = vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(*nodeIt);
-    const char* nodeID = vtkMRMLColorLogic::GetdGEMRICColorNodeID(colorNode->GetType());
+    const char* const nodeID = vtkMRMLColorLogic::GetdGEMRICColorNodeID(colorNode->GetType());
     if (strcmp(colorNode->GetID(), nodeID) != 0)
     {
       std::cerr << "Line " << __LINE__ << " - Failed to generate color table node ID for " << colorNode->GetType() << std::endl;
@@ -173,7 +173,7 @@ bool TestDefaults()
 //----------------------------------------------------------------------------
 bool TestCopy()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
 
@@ -198,7 +198,7 @@ bool TestCopy()
   // check the copy
   double originalColor[4];
   double copyColor[4];
-  int numToTest = originalNode->GetNumberOfColors();
+  const int numToTest = originalNode->GetNumberOfColors();
   for (int i = 0; i < numToTest; ++i)
   {
     if (!originalNode->GetColor(i, originalColor))
@@ -220,8 +220,8 @@ bool TestCopy()
                 << originalColor[3] << ", but got " << copyColor[0] << "," << copyColor[1] << "," << copyColor[2] << "," << copyColor[3] << std::endl;
       return false;
     }
-    const char* originalColorName = originalNode->GetColorName(i);
-    const char* copyColorName = copiedNode->GetColorName(i);
+    const char* const originalColorName = originalNode->GetColorName(i);
+    const char* const copyColorName = copiedNode->GetColorName(i);
     if (originalColorName != nullptr && copyColorName != nullptr && //
         strcmp(originalColorName, copyColorName) != 0)
     {
@@ -237,7 +237,7 @@ bool TestCopy()
 //----------------------------------------------------------------------------
 bool TestProceduralCopy()
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
 
@@ -264,7 +264,7 @@ bool TestProceduralCopy()
   // check the copy
   double originalColor[4];
   double copyColor[4];
-  int numToTest = originalNode->GetNumberOfColors();
+  const int numToTest = originalNode->GetNumberOfColors();
   for (int i = 0; i < numToTest; ++i)
   {
     if (!originalNode->GetColor(i, originalColor))
@@ -286,8 +286,8 @@ bool TestProceduralCopy()
                 << originalColor[3] << ", but got " << copyColor[0] << "," << copyColor[1] << "," << copyColor[2] << "," << copyColor[3] << std::endl;
       return false;
     }
-    const char* originalColorName = originalNode->GetColorName(i);
-    const char* copyColorName = copiedNode->GetColorName(i);
+    const char* const originalColorName = originalNode->GetColorName(i);
+    const char* const copyColorName = copiedNode->GetColorName(i);
     if (originalColorName != nullptr && copyColorName != nullptr && //
         strcmp(originalColorName, copyColorName) != 0)
     {

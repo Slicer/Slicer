@@ -16,7 +16,7 @@
 
 int vtkMRMLdGEMRICProceduralColorNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLdGEMRICProceduralColorNode> node1;
+  const vtkNew<vtkMRMLdGEMRICProceduralColorNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

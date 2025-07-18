@@ -154,8 +154,8 @@ int vtkMRMLSceneTest1(int, char*[])
   vtkSmartPointer<vtkCollection> transformNodes;
   transformNodes.TakeReference(scene1->GetNodesByClass("vtkMRMLCustomNode"));
   {
-    int expectedTotalNodeCount = 2;
-    int currentTotalNodeCount = transformNodes->GetNumberOfItems();
+    const int expectedTotalNodeCount = 2;
+    const int currentTotalNodeCount = transformNodes->GetNumberOfItems();
     if (currentTotalNodeCount != expectedTotalNodeCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -166,8 +166,8 @@ int vtkMRMLSceneTest1(int, char*[])
   }
 
   {
-    vtkMRMLNode* expectedNode = node1;
-    vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(transformNodes->GetItemAsObject(0));
+    vtkMRMLNode* const expectedNode = node1;
+    vtkMRMLNode* const currentNode = vtkMRMLNode::SafeDownCast(transformNodes->GetItemAsObject(0));
     if (currentNode != expectedNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -178,8 +178,8 @@ int vtkMRMLSceneTest1(int, char*[])
   }
 
   {
-    vtkMRMLNode* expectedNode = node4;
-    vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(transformNodes->GetItemAsObject(1));
+    vtkMRMLNode* const expectedNode = node4;
+    vtkMRMLNode* const currentNode = vtkMRMLNode::SafeDownCast(transformNodes->GetItemAsObject(1));
     if (currentNode != expectedNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -193,8 +193,8 @@ int vtkMRMLSceneTest1(int, char*[])
   vtkSmartPointer<vtkCollection> selectionNodes;
   selectionNodes.TakeReference(scene1->GetNodesByClass("vtkMRMLAnotherCustomNode"));
   {
-    int expectedTotalNodeCount = 2;
-    int currentTotalNodeCount = selectionNodes->GetNumberOfItems();
+    const int expectedTotalNodeCount = 2;
+    const int currentTotalNodeCount = selectionNodes->GetNumberOfItems();
     if (currentTotalNodeCount != expectedTotalNodeCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -205,8 +205,8 @@ int vtkMRMLSceneTest1(int, char*[])
   }
 
   {
-    vtkMRMLNode* expectedNode = node2;
-    vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(selectionNodes->GetItemAsObject(0));
+    vtkMRMLNode* const expectedNode = node2;
+    vtkMRMLNode* const currentNode = vtkMRMLNode::SafeDownCast(selectionNodes->GetItemAsObject(0));
     if (currentNode != expectedNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -217,8 +217,8 @@ int vtkMRMLSceneTest1(int, char*[])
   }
 
   {
-    vtkMRMLNode* expectedNode = node3;
-    vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(selectionNodes->GetItemAsObject(1));
+    vtkMRMLNode* const expectedNode = node3;
+    vtkMRMLNode* const currentNode = vtkMRMLNode::SafeDownCast(selectionNodes->GetItemAsObject(1));
     if (currentNode != expectedNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
@@ -230,8 +230,8 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byClass works as expected
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node1;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node1;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ nullptr, /* byClass= */ "vtkMRMLCustomNode");
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -242,8 +242,8 @@ int vtkMRMLSceneTest1(int, char*[])
     }
   }
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node2;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node2;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ nullptr, /* byClass= */ "vtkMRMLAnotherCustomNode");
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -256,8 +256,8 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byName works as expected
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node1;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node1;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node");
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -270,8 +270,8 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byName + [exactNameMatch=false] works as expected
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node2;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node2;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node.+",
       /* byClass= */ nullptr,
       /* byHideFromEditors= */ nullptr,
@@ -287,9 +287,9 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byHideFromEditors works as expected
   {
-    int hideFromEditors = 1;
-    vtkMRMLNode* expectedFirstNodeByClass = node3;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    const int hideFromEditors = 1;
+    vtkMRMLNode* const expectedFirstNodeByClass = node3;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ nullptr, /* byClass= */ nullptr, /* byHideFromEditors= */ &hideFromEditors);
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -302,8 +302,8 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byClass + byName works as expected
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node3;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node3;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node", /* byClass= */ "vtkMRMLAnotherCustomNode");
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -314,8 +314,8 @@ int vtkMRMLSceneTest1(int, char*[])
     }
   }
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node1;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node1;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node", /* byClass= */ "vtkMRMLCustomNode");
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
     {
@@ -328,8 +328,8 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byClass + byName + [exactNameMatch=false] works as expected
   {
-    vtkMRMLNode* expectedFirstNodeByClass = node4;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    vtkMRMLNode* const expectedFirstNodeByClass = node4;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node.+",
       /* byClass= */ "vtkMRMLCustomNode",
       /* byHideFromEditors= */ nullptr,
@@ -345,9 +345,9 @@ int vtkMRMLSceneTest1(int, char*[])
 
   // Check that byClass + byName + byHideFromEditors works as expected
   {
-    int hideFromEditors = 1;
-    vtkMRMLNode* expectedFirstNodeByClass = node4;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    const int hideFromEditors = 1;
+    vtkMRMLNode* const expectedFirstNodeByClass = node4;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "NodeWithSuffix",
       /* byClass= */ "vtkMRMLCustomNode",
       /* byHideFromEditors= */ &hideFromEditors);
@@ -360,9 +360,9 @@ int vtkMRMLSceneTest1(int, char*[])
     }
   }
   {
-    int hideFromEditors = 1;
-    vtkMRMLNode* expectedFirstNodeByClass = node3;
-    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+    const int hideFromEditors = 1;
+    vtkMRMLNode* const expectedFirstNodeByClass = node3;
+    vtkMRMLNode* const currentFirstNodeByClass = scene1->GetFirstNode(
       /* byName= */ "Node",
       /* byClass= */ "vtkMRMLAnotherCustomNode",
       /* byHideFromEditors= */ &hideFromEditors);
@@ -387,12 +387,12 @@ int vtkMRMLSceneTest1(int, char*[])
     privateScene->AddNode(nodeFromPrivateScene);
     nodeFromPrivateScene->SetName("NodeFromPrivateScene");
     // Copy to std::string because pointer becomes invalid when adding to other scene
-    std::string nodeInPrivateSceneID(nodeFromPrivateScene->GetID());
+    const std::string nodeInPrivateSceneID(nodeFromPrivateScene->GetID());
     privateScene->Clear(0);
 
     scene1->AddNode(nodeFromPrivateScene);
-    const char* nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
-    const char* changedIDFromPrivateScene = scene1->GetChangedID(nodeInPrivateSceneID.c_str());
+    const char* const nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
+    const char* const changedIDFromPrivateScene = scene1->GetChangedID(nodeInPrivateSceneID.c_str());
     if (changedIDFromPrivateScene                                          //
         || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID || //
         !nodeInPrivateSceneID.compare(nodeAddedFromPrivateSceneID))
@@ -414,14 +414,14 @@ int vtkMRMLSceneTest1(int, char*[])
     importedNode->SetName("ImportedNode");
     importedScene->SetSaveToXMLString(1);
     importedScene->Commit();
-    std::string sceneXMLString = importedScene->GetSceneXMLString();
-    const char* importedNodeID = importedNode->GetID();
+    const std::string sceneXMLString = importedScene->GetSceneXMLString();
+    const char* const importedNodeID = importedNode->GetID();
 
     scene1->RegisterNodeClass(vtkSmartPointer<vtkMRMLCustomNode>::New());
     scene1->SetLoadFromXMLString(1);
     scene1->SetSceneXMLString(sceneXMLString);
     scene1->Import();
-    const char* changedIDFromImportedScene = scene1->GetChangedID(importedNodeID);
+    const char* const changedIDFromImportedScene = scene1->GetChangedID(importedNodeID);
     if (!importedNodeID || !changedIDFromImportedScene || //
         !strcmp(changedIDFromImportedScene, importedNodeID))
     {

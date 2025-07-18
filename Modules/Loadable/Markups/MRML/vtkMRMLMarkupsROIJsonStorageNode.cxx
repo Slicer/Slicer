@@ -61,7 +61,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(vtkMRMLJsonWriter* w
 
   writer->WriteStringProperty("roiType", roiNode->GetROITypeAsString(roiNode->GetROIType()));
 
-  int coordinateSystem = this->GetCoordinateSystem();
+  const int coordinateSystem = this->GetCoordinateSystem();
 
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetCenter(center_Node);
@@ -73,7 +73,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(vtkMRMLJsonWriter* w
   writer->WriteVectorProperty("center", center_Node);
 
   double orientationMatrix[9] = { 0.0 };
-  vtkMatrix4x4* objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
+  vtkMatrix4x4* const objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
   for (int i = 0; i < 3; ++i)
   {
     orientationMatrix[3 * i] = objectToNodeMatrix->GetElement(i, 0);
@@ -105,14 +105,14 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
     return false;
   }
 
-  MRMLNodeModifyBlocker blocker(markupsNode);
+  const MRMLNodeModifyBlocker blocker(markupsNode);
 
   if (markupsObject->HasMember("roiType"))
   {
     roiNode->SetROIType(roiNode->GetROITypeFromString(markupsObject->GetStringProperty("roiType").c_str()));
   }
 
-  int coordinateSystem = this->GetCoordinateSystem();
+  const int coordinateSystem = this->GetCoordinateSystem();
 
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   if (markupsObject->HasMember("center"))

@@ -62,7 +62,7 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -100,11 +100,11 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         ss >> a;
         // might have a version of a mrml file that has tick marks around
         // the name
-        const char* tickPtr = strstr(name.c_str(), "'");
+        const char* const tickPtr = strstr(name.c_str(), "'");
         if (tickPtr)
         {
-          size_t firstValidChar = name.find_first_not_of("'");
-          size_t lastValidChar = name.find_last_not_of("'");
+          const size_t firstValidChar = name.find_first_not_of("'");
+          const size_t lastValidChar = name.find_last_not_of("'");
           name = name.substr(firstValidChar, 1 + lastValidChar - firstValidChar);
         }
 
@@ -157,7 +157,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
 #endif
     return;
   }
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
   vtkMRMLColorTableNode* node = (vtkMRMLColorTableNode*)anode;
@@ -167,7 +167,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
   {
     if (this->LookupTable == nullptr)
     {
-      vtkNew<vtkLookupTable> lut;
+      const vtkNew<vtkLookupTable> lut;
       // By setting 'setAllColorsToDefined' to false, prevent this->SetAndObserveLookupTable()
       // overwriting color properties that have been already correctly set by Superclass::Copy.
       const bool setAllColorsToDefined = false;
@@ -413,7 +413,7 @@ void vtkMRMLColorTableNode::SetTypeToCoolTint3()
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsString()
 {
-  const char* type = Superclass::GetTypeAsString();
+  const char* const type = Superclass::GetTypeAsString();
   if (type && strcmp(type, "(unknown)") != 0)
   {
     return type;
@@ -1025,7 +1025,7 @@ void vtkMRMLColorTableNode::SetType(int type)
 
   else if (this->Type == this->FMRIPA)
   {
-    int size = 20;
+    const int size = 20;
     this->GetLookupTable()->SetNumberOfTableValues(size);
     this->GetLookupTable()->SetTableRange(0, 255);
     this->GetLookupTable()->SetHueRange(0, 0.16667);
@@ -1142,7 +1142,7 @@ void vtkMRMLColorTableNode::SetType(int type)
   }
   else if (this->Type == this->Random)
   {
-    int size = 255;
+    const int size = 255;
     std::default_random_engine randomGenerator(std::random_device{}());
 
     this->GetLookupTable()->SetNumberOfTableValues(size + 1);
@@ -1151,9 +1151,9 @@ void vtkMRMLColorTableNode::SetType(int type)
     for (int i = 1; i <= size; i++)
     {
       // table values have to be 0-1
-      double r = static_cast<double>(randomGenerator()) / randomGenerator.max();
-      double g = static_cast<double>(randomGenerator()) / randomGenerator.max();
-      double b = static_cast<double>(randomGenerator()) / randomGenerator.max();
+      const double r = static_cast<double>(randomGenerator()) / randomGenerator.max();
+      const double g = static_cast<double>(randomGenerator()) / randomGenerator.max();
+      const double b = static_cast<double>(randomGenerator()) / randomGenerator.max();
 
       this->GetLookupTable()->SetTableValue(i, r, g, b, 1.0);
     }
@@ -1203,10 +1203,10 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     return;
   }
 
-  int numberOfTableValuesBefore = this->GetLookupTable()->GetNumberOfTableValues();
+  const int numberOfTableValuesBefore = this->GetLookupTable()->GetNumberOfTableValues();
   if (numberOfTableValuesBefore != n)
   {
-    MRMLNodeModifyBlocker blocker(this);
+    const MRMLNodeModifyBlocker blocker(this);
     this->GetLookupTable()->SetNumberOfTableValues(n);
     // Initialize new elements (needed if color table is made larger).
     this->RemoveColors(numberOfTableValuesBefore, n - 1);
@@ -1277,7 +1277,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
     return 0;
   }
 
-  double* rgba = this->GetLookupTable()->GetTableValue(entry);
+  double* const rgba = this->GetLookupTable()->GetTableValue(entry);
   if (rgba[0] == r && rgba[1] == g && rgba[2] == b && rgba[3] == a)
   {
     return 1;
@@ -1304,15 +1304,15 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char* 
     return 0;
   }
 
-  vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
+  const vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
   if (vtkIdType(this->Properties.size()) < numberOfValues)
   {
     this->Properties.resize(numberOfValues);
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
-  std::string nameStr = name ? name : "";
+  const std::string nameStr = name ? name : "";
   vtkLookupTable* lut = this->GetLookupTable();
   // Setting color values using the pointer returned by WritePointer()
   // works similarly to vtkLookupTable::SetTableValue().
@@ -1346,13 +1346,13 @@ bool vtkMRMLColorTableNode::RemoveColors(int firstEntry, int lastEntry)
   {
     return false;
   }
-  vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
+  const vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
   if (vtkIdType(this->Properties.size()) < numberOfValues)
   {
     this->Properties.resize(numberOfValues);
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   vtkLookupTable* lut = this->GetLookupTable();
   // Setting color values using the pointer returned by WritePointer()
@@ -1382,7 +1382,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
   {
     return 0;
   }
-  double* rgba = this->GetLookupTable()->GetTableValue(entry);
+  double* const rgba = this->GetLookupTable()->GetTableValue(entry);
   return this->SetColor(entry, r, g, b, rgba[3]);
 }
 
@@ -1417,7 +1417,7 @@ int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
   {
     return 0;
   }
-  double* rgba = this->GetLookupTable()->GetTableValue(entry);
+  double* const rgba = this->GetLookupTable()->GetTableValue(entry);
   return this->SetColor(entry, rgba[0], rgba[1], rgba[2], opacity);
 }
 
@@ -1447,12 +1447,12 @@ void vtkMRMLColorTableNode::ClearNames()
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::Reset(vtkMRMLNode* defaultNode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   // only call reset if this is a user node
   if (this->GetType() == vtkMRMLColorTableNode::User)
   {
-    int type = this->GetType();
+    const int type = this->GetType();
     Superclass::Reset(defaultNode);
     this->SetType(type);
   }

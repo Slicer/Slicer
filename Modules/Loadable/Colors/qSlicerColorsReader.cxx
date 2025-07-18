@@ -95,7 +95,7 @@ double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName) const
   if (confidence > 0 && confidence < 0.55)
   {
     // Generic file extension, inspect the content
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("TXT"))
     {
       QFile file(fileName);
@@ -103,7 +103,7 @@ double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName) const
       {
         QTextStream in(&file);
         // Color table text files start with "# Color table file"
-        QString line = in.read(100);
+        const QString line = in.read(100);
         confidence = (line.contains("# Color table file") ? 0.6 : 0.4);
       }
     }
@@ -116,7 +116,7 @@ bool qSlicerColorsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerColorsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   if (d->ColorLogic.GetPointer() == nullptr)
   {

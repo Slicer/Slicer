@@ -54,14 +54,14 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
   }
 
-  int result = 1;
+  const int result = 1;
 
   std::ifstream ifs;
 #ifdef _WIN32
@@ -134,14 +134,14 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkNew<vtkPiecewiseFunction> scalarOpacity;
+    const vtkNew<vtkPiecewiseFunction> scalarOpacity;
     vpNode->GetPiecewiseFunctionFromString(line, scalarOpacity), vpNode->SetScalarOpacity(scalarOpacity);
   }
 
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkNew<vtkPiecewiseFunction> gradientOpacity;
+    const vtkNew<vtkPiecewiseFunction> gradientOpacity;
     vpNode->GetPiecewiseFunctionFromString(line, gradientOpacity);
     vpNode->SetGradientOpacity(gradientOpacity);
   }
@@ -149,7 +149,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkNew<vtkColorTransferFunction> colorTransfer;
+    const vtkNew<vtkColorTransferFunction> colorTransfer;
     vpNode->GetColorTransferFunctionFromString(line, colorTransfer);
     vpNode->SetColor(colorTransfer);
   }
@@ -163,7 +163,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLVolumePropertyStorageNode: File name not specified");
@@ -194,7 +194,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   ofs.close();
 
-  int result = 1;
+  const int result = 1;
   return result;
 }
 

@@ -124,7 +124,7 @@ void qMRMLSequenceBrowserSeekWidget::onIndexDisplayFormatModified()
 {
   Q_D(qMRMLSequenceBrowserSeekWidget);
   // Reset the fixed width of the label
-  QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
+  const QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   d->label_IndexValue->setFixedWidth(fontMetrics.horizontalAdvance(d->label_IndexValue->text()));
 #else
@@ -150,8 +150,8 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
 
   // Setting the min/max could trigger an index change (if current index is out of the new range),
   // therefore we have to block signals.
-  bool sliderBlockSignals = d->slider_IndexValue->blockSignals(true);
-  int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
+  const bool sliderBlockSignals = d->slider_IndexValue->blockSignals(true);
+  const int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   if (numberOfDataNodes > 0 && !d->SequenceBrowserNode->GetRecordingActive())
   {
     d->slider_IndexValue->setEnabled(true);
@@ -164,7 +164,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
   }
   d->slider_IndexValue->blockSignals(sliderBlockSignals);
 
-  int selectedItemNumber = d->SequenceBrowserNode->GetSelectedItemNumber();
+  const int selectedItemNumber = d->SequenceBrowserNode->GetSelectedItemNumber();
   if (selectedItemNumber >= 0 && selectedItemNumber < numberOfDataNodes)
   {
     QString indexValue;
@@ -187,7 +187,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
       indexUnit = "";
     }
 
-    QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
+    const QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
 
     d->label_IndexValue->setText(indexValue);
     d->label_IndexUnit->setText(indexUnit);

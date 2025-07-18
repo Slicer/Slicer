@@ -30,7 +30,7 @@ qSlicerPresetComboBoxPlugin::qSlicerPresetComboBoxPlugin(QObject* objectParent)
 //-----------------------------------------------------------------------------
 QWidget* qSlicerPresetComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
-  qSlicerPresetComboBox* newWidget = new qSlicerPresetComboBox(widgetParent);
+  qSlicerPresetComboBox* const newWidget = new qSlicerPresetComboBox(widgetParent);
   return newWidget;
 }
 

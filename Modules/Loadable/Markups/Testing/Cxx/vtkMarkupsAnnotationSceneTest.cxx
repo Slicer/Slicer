@@ -101,7 +101,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   std::cerr << "Reading scene from file: " << fileName.c_str() << std::endl;
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
-  bool readSuccess = (scene->Connect() != 0);
+  const bool readSuccess = (scene->Connect() != 0);
   TESTING_OUTPUT_ASSERT_ERRORS(0);
   TESTING_OUTPUT_ASSERT_WARNINGS(0);
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
@@ -128,7 +128,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   {
     double actualPosition[3] = { 0.0, 0.0, 0.0 };
     mfnode->GetNthControlPointPosition(i, actualPosition);
-    double diff = vtkMath::Distance2BetweenPoints(expectedPosition[i], actualPosition);
+    const double diff = vtkMath::Distance2BetweenPoints(expectedPosition[i], actualPosition);
     if (diff > 0.01)
     {
       std::cerr << "Failed to parse the first fiducial location, expected: " << expectedPosition[i][0] << "," << expectedPosition[i][1] << "," << expectedPosition[i][2] << ","
@@ -148,7 +148,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   vtkMRMLMarkupsFiducialDisplayNode* markupsFiducialDisplayNode1 = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mfnode->GetDisplayNode());
   CHECK_NOT_NULL(markupsFiducialDisplayNode1);
 
-  double* color = markupsFiducialDisplayNode1->GetColor();
+  double* const color = markupsFiducialDisplayNode1->GetColor();
   double expectedColor[3] = { 0.862745, 0.960784, 0.0784314 };
   double diff = vtkMath::Distance2BetweenPoints(color, expectedColor);
   if (diff > 0.01)
@@ -158,7 +158,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  double* selectedColor = markupsFiducialDisplayNode1->GetSelectedColor();
+  double* const selectedColor = markupsFiducialDisplayNode1->GetSelectedColor();
   double expectedSelectedColor[3] = { 0.2667, 0.6745, 0.3922 };
   diff = vtkMath::Distance2BetweenPoints(selectedColor, expectedSelectedColor);
   if (diff > 0.01)

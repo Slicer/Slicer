@@ -30,7 +30,7 @@ template <class FieldData>
 ::itk::LightObject::Pointer WarpTransform3D<FieldData>::CreateAnother() const
 {
   ::itk::LightObject::Pointer smartPtr;
-  Pointer copyPtr = Self::New().GetPointer();
+  const Pointer copyPtr = Self::New().GetPointer();
 
   copyPtr->SetDeformationField(this->GetDeformationField());
 

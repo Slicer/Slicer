@@ -89,7 +89,7 @@ void vtkSegmentationConverter::DeepCopy(vtkSegmentationConverter* aConverter)
   // Copy all conversion parameters
   for (auto& rule : aConverter->ConverterRules)
   {
-    int numberOfParameters = rule->ConversionParameters->GetNumberOfParameters();
+    const int numberOfParameters = rule->ConversionParameters->GetNumberOfParameters();
     for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
     {
       this->SetConversionParameter(rule->ConversionParameters->GetName(parameterIndex), rule->ConversionParameters->GetValue(parameterIndex));
@@ -107,7 +107,7 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkOrientedImageDat
     return "";
   }
 
-  vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   orientedImageData->GetImageToWorldMatrix(geometryMatrix);
 
   return vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, orientedImageData);
@@ -172,7 +172,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
         return false;
       }
 
-      double element = vtkVariant(geometryString.substr(0, separatorPosition)).ToDouble();
+      const double element = vtkVariant(geometryString.substr(0, separatorPosition)).ToDouble();
       geometryMatrix->SetElement(i, j, element);
 
       geometryString = geometryString.substr(separatorPosition + SERIALIZED_GEOMETRY_SEPARATOR.size());
@@ -211,7 +211,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
   }
 
   // Parse image geometry matrix in geometry string
-  vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   int extent[6] = { 0, -1, 0, -1, 0, -1 };
   if (!vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryMatrix, extent))
   {
@@ -224,8 +224,8 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
 
   if (allocateScalars)
   {
-    int allocateScalarType = ((scalarType == VTK_VOID) ? orientedImageData->GetScalarType() : scalarType);
-    int allocateNumberOfScalarsComponents = ((numberOfScalarsComponents < 0) ? orientedImageData->GetNumberOfScalarComponents() : numberOfScalarsComponents);
+    const int allocateScalarType = ((scalarType == VTK_VOID) ? orientedImageData->GetScalarType() : scalarType);
+    const int allocateNumberOfScalarsComponents = ((numberOfScalarsComponents < 0) ? orientedImageData->GetNumberOfScalarComponents() : numberOfScalarsComponents);
     orientedImageData->AllocateScalars(allocateScalarType, allocateNumberOfScalarsComponents);
   }
 
@@ -235,7 +235,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::SetConversionParameters(vtkSegmentationConversionParameters* parameters)
 {
-  int numberOfParameters = parameters->GetNumberOfParameters();
+  const int numberOfParameters = parameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
     this->SetConversionParameter(parameters->GetName(parameterIndex), parameters->GetValue(parameterIndex));
@@ -325,7 +325,7 @@ vtkSegmentationConversionPath* vtkSegmentationConverter::GetCheapestPath(vtkSegm
   {
     if (path->GetCost() <= cheapestPathCost)
     {
-      size_t numberOfConversions = path->GetNumberOfRules();
+      const size_t numberOfConversions = path->GetNumberOfRules();
       if (path->GetCost() == cheapestPathCost)
       {
         // If the path cost is exactly the same then compare the number of conversions too
@@ -349,7 +349,7 @@ void vtkSegmentationConverter::GetPossibleConversions(const std::string& sourceR
                                                       vtkSegmentationConversionPaths* paths)
 {
   paths->RemoveAllItems();
-  vtkNew<vtkStringArray> skipRepresentations;
+  const vtkNew<vtkStringArray> skipRepresentations;
   this->FindPath(sourceRepresentationName, targetRepresentationName, paths, skipRepresentations);
 }
 
@@ -488,7 +488,7 @@ void vtkSegmentationConverter::GetAvailableRepresentationNames(std::set<std::str
 void vtkSegmentationConverter::GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters, vtkSegmentationConversionPath* path)
 {
   conversionParameters->RemoveAllParameters();
-  int numberOfRules = path->GetNumberOfRules();
+  const int numberOfRules = path->GetNumberOfRules();
   for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
   {
     path->GetRule(ruleIndex)->GetRuleConversionParameters(conversionParameters);
@@ -500,7 +500,7 @@ void vtkSegmentationConverter::GetAllConversionParameters(vtkSegmentationConvers
 {
   conversionParameters->RemoveAllParameters();
   // Get all custom conversion parameters
-  int numberOfParameters = this->CustomConversionParameters->GetNumberOfParameters();
+  const int numberOfParameters = this->CustomConversionParameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
     conversionParameters->CopyParameter(this->CustomConversionParameters, parameterIndex);
@@ -519,7 +519,7 @@ std::string vtkSegmentationConverter::SerializeAllConversionParameters()
   vtkNew<vtkSegmentationConversionParameters> parameters;
   this->GetAllConversionParameters(parameters);
 
-  int numberOfParameters = parameters->GetNumberOfParameters();
+  const int numberOfParameters = parameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
     ssParameters << parameters->GetName(parameterIndex) << SERIALIZATION_SEPARATOR_INNER << parameters->GetValue(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
@@ -538,13 +538,13 @@ void vtkSegmentationConverter::DeserializeConversionParameters(std::string conve
     std::string parameterString = conversionParametersString.substr(0, separatorPosition);
 
     size_t innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
-    std::string name = parameterString.substr(0, innerSeparatorPosition);
+    const std::string name = parameterString.substr(0, innerSeparatorPosition);
     parameterString = parameterString.substr(innerSeparatorPosition + 1);
     innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
-    std::string value = parameterString.substr(0, innerSeparatorPosition);
+    const std::string value = parameterString.substr(0, innerSeparatorPosition);
     parameterString = parameterString.substr(innerSeparatorPosition + 1);
     innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
-    std::string description = parameterString.substr(0, innerSeparatorPosition);
+    const std::string description = parameterString.substr(0, innerSeparatorPosition);
     this->SetConversionParameter(name, value, description);
 
     conversionParametersString = conversionParametersString.substr(separatorPosition + 1);
@@ -560,7 +560,7 @@ void vtkSegmentationConverter::ApplyTransformOnReferenceImageGeometry(vtkAbstrac
     return;
   }
   // Get current reference geometry parameter
-  std::string geometryString = this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
+  const std::string geometryString = this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   if (geometryString.empty())
   {
     vtkDebugMacro("ApplyTransformOnReferenceImageGeometry: Reference image geometry conversion parameter is empty");
@@ -568,7 +568,7 @@ void vtkSegmentationConverter::ApplyTransformOnReferenceImageGeometry(vtkAbstrac
   }
 
   // Deserialize parameter string into oriented image data
-  vtkSmartPointer<vtkOrientedImageData> geometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
+  const vtkSmartPointer<vtkOrientedImageData> geometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
   if (!vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImage))
   {
     vtkErrorMacro("ApplyTransformOnReferenceImageGeometry: Failed to get reference image geometry");
@@ -579,7 +579,7 @@ void vtkSegmentationConverter::ApplyTransformOnReferenceImageGeometry(vtkAbstrac
   vtkOrientedImageDataResample::TransformOrientedImage(geometryImage, transform, true);
 
   // Set reference image geometry parameter from oriented image data
-  std::string newGeometryString = vtkSegmentationConverter::SerializeImageGeometry(geometryImage);
+  const std::string newGeometryString = vtkSegmentationConverter::SerializeImageGeometry(geometryImage);
   if (newGeometryString.empty())
   {
     vtkErrorMacro("ApplyTransformOnReferenceImageGeometry: Failed to serialize new image geometry");

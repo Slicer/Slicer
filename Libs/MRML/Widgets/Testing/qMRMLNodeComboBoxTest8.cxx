@@ -42,7 +42,7 @@ namespace
 // --------------------------------------------------------------------------
 bool checkActionCount(int line, qMRMLSceneModel* sceneModel, int expected)
 {
-  int current = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  const int current = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
   if (current != expected)
   {
     std::cerr << "Line " << line
@@ -78,17 +78,17 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   // add some test nodes
   for (int i = 0; i < 5; i++)
   {
-    vtkNew<vtkMRMLScalarVolumeNode> cnode;
+    const vtkNew<vtkMRMLScalarVolumeNode> cnode;
     scene->AddNode(cnode.GetPointer());
   }
 
   std::cout << "Before adding new actions size policy = " << nodeSelector.sizeAdjustPolicy() << std::endl;
 
-  qMRMLSceneModel* sceneModel = nodeSelector.sceneModel();
+  qMRMLSceneModel* const sceneModel = nodeSelector.sceneModel();
 
   int startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
-  QAction* action1 = new QAction("Action one", &nodeSelector);
+  QAction* const action1 = new QAction("Action one", &nodeSelector);
   nodeSelector.addMenuAction(action1);
 
   int actionsPlusOne = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -103,7 +103,7 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   }
 
   // test a conflict with one of the default actions
-  QAction* action2 = new QAction("Create new type of action that conflicts with create new node", &nodeSelector);
+  QAction* const action2 = new QAction("Create new type of action that conflicts with create new node", &nodeSelector);
   nodeSelector.addMenuAction(action2);
 
   actionsPlusOne = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -134,7 +134,7 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   }
 
   // add a new action with duplicate text
-  QAction* action3 = new QAction("Action one", &nodeSelector);
+  QAction* const action3 = new QAction("Action one", &nodeSelector);
   nodeSelector.addMenuAction(action3);
 
   actionsPlusOne = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -150,10 +150,10 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   }
 
   // add a valid action
-  QAction* action4 = new QAction("Another action text addition", &nodeSelector);
+  QAction* const action4 = new QAction("Another action text addition", &nodeSelector);
   nodeSelector.addMenuAction(action4);
 
-  int actionsPlusTwo = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  const int actionsPlusTwo = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
   if (startingActions + 2 != actionsPlusTwo)
   {
     std::cout << "After adding a new user action with valid text, new number of actions " << actionsPlusTwo << " != " << startingActions << " + 2" << std::endl;
@@ -166,13 +166,13 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
 
   // Check if "Create new" and "Create new node as..." actions are added if multiple node types are enabled
 
-  int actionsWithOneNodeType = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  const int actionsWithOneNodeType = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
   // don't use the view node as that has an attribute filter on it
   nodeSelector.setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode" << "vtkMRMLCameraNode");
 
   // Two new actions should have been added (Create new node; Create new node as...)
-  int actionsWithTwoNodeTypes = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  const int actionsWithTwoNodeTypes = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
   if (actionsWithTwoNodeTypes - actionsWithOneNodeType != 2)
   {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: 2 new actions are expected for each new node type, but actually " << actionsWithTwoNodeTypes - actionsWithOneNodeType
@@ -237,8 +237,8 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   {
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
-    QString actionName = QString("%1node using custom action").arg(actionPrefix);
-    QAction* action = new QAction(actionName, &nodeSelector);
+    const QString actionName = QString("%1node using custom action").arg(actionPrefix);
+    QAction* const action = new QAction(actionName, &nodeSelector);
     nodeSelector.addMenuAction(action);
 
     expected = startingActions + 1;
@@ -340,9 +340,9 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   nodeSelector2.setShowHidden(true);
   nodeSelector2.setMRMLScene(scene.GetPointer());
 
-  qMRMLSceneModel* sceneModel2 = nodeSelector2.sceneModel();
+  qMRMLSceneModel* const sceneModel2 = nodeSelector2.sceneModel();
 
-  QAction* action = new QAction("Rename current node using custom action", &nodeSelector2);
+  QAction* const action = new QAction("Rename current node using custom action", &nodeSelector2);
 
   startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
   nodeSelector2.addMenuAction(action);

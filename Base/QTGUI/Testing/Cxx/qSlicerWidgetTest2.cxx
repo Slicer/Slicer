@@ -109,7 +109,7 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   // get the output slice and put it into the render window
   //
   // vtkImageData* slice = 0;
-  vtkAlgorithmOutput* slicePort = sliceLogic->GetImageDataConnection();
+  vtkAlgorithmOutput* const slicePort = sliceLogic->GetImageDataConnection();
 
   vtkImageMapper* mapper = vtkImageMapper::New();
   mapper->SetColorWindow(255.);
@@ -150,7 +150,7 @@ int qSlicerWidgetTest2(int argc, char* argv[])
   // Create a simple gui with a quit button and render window
   //
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   QWidget parentWidget;

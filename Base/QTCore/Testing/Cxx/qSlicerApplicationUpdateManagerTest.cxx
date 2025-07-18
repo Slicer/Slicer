@@ -69,7 +69,7 @@ bool qSlicerApplicationUpdateManagerTester::prepareJson(const QString& jsonFile)
     success = tmp.mkdir(this->TemporaryDirName);
   }
   success = tmp.cd(this->TemporaryDirName);
-  QString filename = QLatin1String("find");
+  const QString filename = QLatin1String("find");
   success = success && QFile::copy(jsonFile, tmp.filePath(filename));
   success = success && QFile::setPermissions(tmp.filePath(filename), QFile::ReadOwner | QFile::WriteOwner);
   return success;
@@ -129,9 +129,9 @@ void qSlicerApplicationUpdateManagerTester::testServerUrl()
   QFETCH(QString, serverUrl);
 
   QSettings().setValue("ApplicationUpdate/ServerUrl", serverUrl);
-  qSlicerApplicationUpdateManager model;
+  const qSlicerApplicationUpdateManager model;
 
-  QUrl currentServerUrl = model.serverUrl();
+  const QUrl currentServerUrl = model.serverUrl();
   QVERIFY(currentServerUrl.isValid());
   QCOMPARE(currentServerUrl.toString(), serverUrl);
 }
@@ -166,8 +166,8 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck()
   qSlicerApplicationUpdateManager updateManager;
   updateManager.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
 
-  QSignalSpy spyUpdateCheckCompleted(&updateManager, SIGNAL(updateCheckCompleted(bool)));
-  QSignalSpy spyUpdateAvailable(&updateManager, SIGNAL(updateAvailable(bool)));
+  const QSignalSpy spyUpdateCheckCompleted(&updateManager, SIGNAL(updateCheckCompleted(bool)));
+  const QSignalSpy spyUpdateAvailable(&updateManager, SIGNAL(updateAvailable(bool)));
 
   updateManager.checkForUpdate(/* force= */ true, /* waitForCompletion= */ true);
 
@@ -202,7 +202,7 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck_data()
 // ----------------------------------------------------------------------------
 int qSlicerApplicationUpdateManagerTest(int argc, char* argv[])
 {
-  qSlicerCoreApplication app(argc, argv);
+  const qSlicerCoreApplication app(argc, argv);
   QTEST_DISABLE_KEYPAD_NAVIGATION
   qSlicerApplicationUpdateManagerTester tc;
   return QTest::qExec(&tc, argc, argv);

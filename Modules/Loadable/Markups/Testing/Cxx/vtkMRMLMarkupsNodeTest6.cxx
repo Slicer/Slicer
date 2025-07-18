@@ -94,8 +94,8 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
 
   for (auto pointOrientation : originalOrientations)
   {
-    int index = markupsNode->AddControlPoint(pointOrientation.Position);
-    double* matrix = pointOrientation.Orientation->GetData();
+    const int index = markupsNode->AddControlPoint(pointOrientation.Position);
+    double* const matrix = pointOrientation.Orientation->GetData();
     markupsNode->SetNthControlPointOrientationMatrix(index, matrix);
 
     // ------------------
@@ -223,7 +223,7 @@ int vtkMRMLMarkupsNodeTest6(int, char*[])
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "Testing orientation with b-spline transform" << std::endl;
 
-  vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
+  const vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
   double bSplineOrigin[3] = { -100, -100, -100 };
   double bSplineSpacing[3] = { 100, 100, 100 };
   double bSplineDirection[3][3] = { { 0.92128500, -0.36017075, -0.146666625 }, { 0.31722386, 0.91417248, -0.25230478 }, { 0.22495105, 0.18591857, 0.95646814 } };

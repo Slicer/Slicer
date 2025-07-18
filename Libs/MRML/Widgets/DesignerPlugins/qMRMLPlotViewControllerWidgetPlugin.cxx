@@ -29,7 +29,7 @@ qMRMLPlotViewControllerWidgetPlugin::qMRMLPlotViewControllerWidgetPlugin(QObject
 // --------------------------------------------------------------------------
 QWidget* qMRMLPlotViewControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLPlotViewControllerWidget* _widget = new qMRMLPlotViewControllerWidget(_parent);
+  qMRMLPlotViewControllerWidget* const _widget = new qMRMLPlotViewControllerWidget(_parent);
   return _widget;
 }
 

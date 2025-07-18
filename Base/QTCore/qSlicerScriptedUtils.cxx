@@ -40,14 +40,14 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName, const Q
 
   if (filePath.endsWith(".py") || filePath.endsWith(".pyc"))
   {
-    QString pyRunStr = QString("import importlib.util;"
-                               "import sys;"
-                               "spec = importlib.util.spec_from_file_location(%2, %1);"
-                               "module = importlib.util.module_from_spec(spec);"
-                               "sys.modules[%2] = module;"
-                               "spec.loader.exec_module(module)")
-                         .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
-                         .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName));
+    const QString pyRunStr = QString("import importlib.util;"
+                                     "import sys;"
+                                     "spec = importlib.util.spec_from_file_location(%2, %1);"
+                                     "module = importlib.util.module_from_spec(spec);"
+                                     "sys.modules[%2] = module;"
+                                     "spec.loader.exec_module(module)")
+                               .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
+                               .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName));
 
     pyRes = PyRun_String(pyRunStr.toUtf8(), Py_file_input, global_dict, local_dict);
   }
@@ -82,7 +82,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName, const Q
   }
 
   // Add the object to the imported module
-  int ret = PyObject_SetAttrString(module, attributeName.toUtf8(), attributeValue);
+  const int ret = PyObject_SetAttrString(module, attributeName.toUtf8(), attributeValue);
   if (ret != 0)
   {
     PythonQt::self()->handleError();
@@ -108,7 +108,7 @@ bool qSlicerScriptedUtils::importModulePythonExtensions(qSlicerCorePythonManager
   }
 
   // Update current application directory, so that *PythonD modules can be loaded
-  ctkScopedCurrentDir scopedCurrentDir(pythonModuleDir);
+  const ctkScopedCurrentDir scopedCurrentDir(pythonModuleDir);
 
   if (!isEmbedded)
   {
@@ -166,7 +166,7 @@ void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
 //-----------------------------------------------------------------------------
 PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate)
 {
-  PyObject* wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
+  PyObject* const wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
   if (!wrappedThis)
   {
     PythonQt::self()->handleError();
@@ -176,7 +176,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     return nullptr;
   }
 
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, wrappedThis);
 
   // Attempt to instantiate the associated python class
@@ -205,7 +205,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
 
   for (const int& methodId : this->APIMethods.keys())
   {
-    QString methodName = this->APIMethods.value(methodId);
+    const QString methodName = this->APIMethods.value(methodId);
     if (!PyObject_HasAttrString(self.object(), methodName.toUtf8()))
     {
       continue;
@@ -227,9 +227,9 @@ PyObject* qSlicerPythonCppAPI::callMethod(int id, PyObject* arguments)
   {
     return nullptr;
   }
-  PyObject* method = this->PythonAPIMethods.value(id).object();
+  PyObject* const method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
-  PyObject* result = PyObject_CallObject(method, arguments);
+  PyObject* const result = PyObject_CallObject(method, arguments);
   if (PythonQt::self()->handleError())
   {
     return nullptr;

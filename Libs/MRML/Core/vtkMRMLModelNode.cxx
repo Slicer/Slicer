@@ -73,7 +73,7 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(anode);
@@ -92,7 +92,7 @@ void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
       }
       else
       {
-        vtkSmartPointer<vtkPointSet> newMesh = vtkSmartPointer<vtkPointSet>::Take(node->GetMesh()->NewInstance());
+        const vtkSmartPointer<vtkPointSet> newMesh = vtkSmartPointer<vtkPointSet>::Take(node->GetMesh()->NewInstance());
         newMesh->DeepCopy(node->GetMesh());
         this->SetAndObserveMesh(newMesh);
       }
@@ -156,7 +156,7 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet* mesh)
   else
   {
     // Check that mesh is polydata or unstructuredgrid
-    vtkPolyData* polydata = vtkPolyData::SafeDownCast(mesh);
+    vtkPolyData* const polydata = vtkPolyData::SafeDownCast(mesh);
     if (!polydata && !vtkUnstructuredGrid::SafeDownCast(mesh))
     {
       vtkErrorMacro("SetAndObserveMesh: mesh should be a"
@@ -258,8 +258,8 @@ vtkPointSet* vtkMRMLModelNode::GetMesh()
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelNode::GetPolyData()
 {
-  vtkPointSet* mesh = this->GetMesh();
-  vtkPolyData* poly = vtkPolyData::SafeDownCast(mesh);
+  vtkPointSet* const mesh = this->GetMesh();
+  vtkPolyData* const poly = vtkPolyData::SafeDownCast(mesh);
   if (poly && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType)
   {
     vtkWarningMacro("GetPolyData() successfully returned a vtkPolyData while " << "the MeshType was set to UnstructuredGridMeshType. This "
@@ -282,8 +282,8 @@ vtkPolyData* vtkMRMLModelNode::GetPolyData()
 //---------------------------------------------------------------------------
 vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
 {
-  vtkPointSet* mesh = this->GetMesh();
-  vtkUnstructuredGrid* ug = vtkUnstructuredGrid::SafeDownCast(mesh);
+  vtkPointSet* const mesh = this->GetMesh();
+  vtkUnstructuredGrid* const ug = vtkUnstructuredGrid::SafeDownCast(mesh);
   if (ug && this->MeshType == vtkMRMLModelNode::PolyDataMeshType)
   {
     vtkWarningMacro("GetUnstructuredGrid() successfully returned a vtkUnstructuredGrid" << "while the MeshType was set to PolyDataMeshType. This "
@@ -388,7 +388,7 @@ void vtkMRMLModelNode::AddScalars(vtkDataArray* array, int location)
   vtkDataSetAttributes* data = (location == vtkAssignAttribute::POINT_DATA ? vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetPointData())
                                                                            : vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetCellData()));
 
-  int numScalars = data->GetNumberOfArrays();
+  const int numScalars = data->GetNumberOfArrays();
   vtkDebugMacro("Model node has " << numScalars << " scalars now, "
                                   << "adding " << array->GetName());
 
@@ -569,7 +569,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName,
   ss << backgroundName;
   ss << "+";
   ss << overlayName;
-  std::string composedName = std::string(ss.str());
+  const std::string composedName = std::string(ss.str());
   composedScalars->SetName(composedName.c_str());
   composedScalars->Allocate(cValues);
   composedScalars->SetNumberOfComponents(1);
@@ -579,7 +579,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName,
   // value. If we're not showing one side, use the background
   // value. If we are showing curvature (and have it), the
   // background value is our curvature value.
-  float overlayMid = 0.5 * (overlayMax - overlayMin) + overlayMin; // 2.0;
+  const float overlayMid = 0.5 * (overlayMax - overlayMin) + overlayMin; // 2.0;
   vtkDebugMacro("CompositeScalars: using overlay mid = " << overlayMid);
   float overlay = 0.0;
   float background = 0.0;
@@ -713,7 +713,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetInputConnection(this->MeshConnection);
   transformFilter->SetTransform(transform);
 
-  bool isInPipeline = !vtkTrivialProducer::SafeDownCast(this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
+  const bool isInPipeline = !vtkTrivialProducer::SafeDownCast(this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
 
   // If mesh was set through pipeline (SetMeshConnection), append
   // transform filter to that pipeline
@@ -957,7 +957,7 @@ void vtkMRMLModelNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::UpdateDisplayNodeMesh(vtkMRMLDisplayNode* dnode)
 {
-  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(dnode);
+  vtkMRMLModelDisplayNode* const modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(dnode);
   if (modelDisplayNode)
   {
     this->SetMeshToDisplayNode(modelDisplayNode);
@@ -967,10 +967,10 @@ void vtkMRMLModelNode::UpdateDisplayNodeMesh(vtkMRMLDisplayNode* dnode)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::SetMeshToDisplayNodes()
 {
-  int ndisp = this->GetNumberOfDisplayNodes();
+  const int ndisp = this->GetNumberOfDisplayNodes();
   for (int n = 0; n < ndisp; n++)
   {
-    vtkMRMLModelDisplayNode* dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
+    vtkMRMLModelDisplayNode* const dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
     if (dnode)
     {
       this->SetMeshToDisplayNode(dnode);

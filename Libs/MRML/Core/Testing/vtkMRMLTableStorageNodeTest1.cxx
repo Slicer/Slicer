@@ -43,11 +43,11 @@ int vtkMRMLTableStorageNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLTableStorageNode> node1;
+  const vtkNew<vtkMRMLTableStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
   scene->SetRootDirectory(tempDir);
 
   CHECK_EXIT_SUCCESS(TestReadWriteWithoutSchema(scene.GetPointer()));
@@ -116,14 +116,14 @@ int TestReadWriteWithSchema(vtkMRMLScene* scene)
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkTable* table, bool schemaExpected)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTableStorageNodeTest1") + std::string(extension);
+  const std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTableStorageNodeTest1") + std::string(extension);
 
-  std::string expectedSchemaFileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTableStorageNodeTest1.schema") + std::string(extension);
+  const std::string expectedSchemaFileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTableStorageNodeTest1.schema") + std::string(extension);
 
   vtksys::SystemTools::RemoveFile(fileName);
   vtksys::SystemTools::RemoveFile(expectedSchemaFileName);
 
-  int numberOfColumns = table->GetNumberOfColumns();
+  const int numberOfColumns = table->GetNumberOfColumns();
   CHECK_BOOL(numberOfColumns > 0, true);
 
   // Add table node
@@ -141,7 +141,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkTable* tabl
   // Test writing
   CHECK_BOOL(storageNode->WriteData(tableNode.GetPointer()), true);
 
-  bool schemaExists = vtksys::SystemTools::FileExists(expectedSchemaFileName);
+  const bool schemaExists = vtksys::SystemTools::FileExists(expectedSchemaFileName);
   CHECK_BOOL(schemaExists, schemaExpected);
 
   // Clear data from model node
@@ -175,8 +175,8 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkTable* tabl
     CHECK_BOOL(componentNames.size() == componentNames2.size(), true);
     for (size_t i = 0; i < componentNames.size(); ++i)
     {
-      std::string componentName = componentNames[i];
-      std::string componentName2 = componentNames2[i];
+      const std::string componentName = componentNames[i];
+      const std::string componentName2 = componentNames2[i];
       CHECK_STD_STRING(componentName, componentName2);
     }
   }

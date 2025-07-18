@@ -30,7 +30,7 @@ qMRMLSegmentationConversionParametersWidgetPlugin::qMRMLSegmentationConversionPa
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationConversionParametersWidget* pluginWidget = new qMRMLSegmentationConversionParametersWidget(parentWidget);
+  qMRMLSegmentationConversionParametersWidget* const pluginWidget = new qMRMLSegmentationConversionParametersWidget(parentWidget);
   return pluginWidget;
 }
 

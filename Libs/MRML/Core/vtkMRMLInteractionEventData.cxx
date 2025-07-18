@@ -366,7 +366,7 @@ bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force /*=fal
     return false;
   }
   vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
-  int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
+  const int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
   if (numberOfPickedPositions < 1)
   {
     return false;
@@ -378,7 +378,7 @@ bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force /*=fal
   double minDist2 = vtkMath::Distance2BetweenPoints(this->WorldPosition, cameraPosition);
   for (int i = 1; i < numberOfPickedPositions; i++)
   {
-    double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
+    const double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
     if (currentMinDist2 < minDist2)
     {
       pickPositions->GetPoint(i, this->WorldPosition);
@@ -393,7 +393,7 @@ bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force /*=fal
 //---------------------------------------------------------------------------
 bool vtkMRMLInteractionEventData::Equivalent(const vtkEventData* e) const
 {
-  const vtkMRMLInteractionEventData* edd = static_cast<const vtkMRMLInteractionEventData*>(e);
+  const vtkMRMLInteractionEventData* const edd = static_cast<const vtkMRMLInteractionEventData*>(e);
   if (this->Type != edd->Type)
   {
     return false;
@@ -469,8 +469,8 @@ void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], 
   }
 
   // get view to display scaling and put in 4x4 matrix
-  const double* viewport = this->Renderer->GetViewport();
-  const int* displaySize = this->Renderer->GetVTKWindow()->GetSize();
+  const double* const viewport = this->Renderer->GetViewport();
+  const int* const displaySize = this->Renderer->GetVTKWindow()->GetSize();
 
   const double homogeneousWorldPosition[] = { worldPosition[0], worldPosition[1], worldPosition[2], 1.0 };
   double viewPosition[4];

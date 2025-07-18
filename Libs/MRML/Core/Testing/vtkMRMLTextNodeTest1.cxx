@@ -28,15 +28,15 @@ int vtkMRMLTextNodeTest1(int, char*[])
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(textNode.GetPointer());
 
-  std::string complicatedXMLString = "$ <\" > &lgt; =";
+  const std::string complicatedXMLString = "$ <\" > &lgt; =";
   textNode->SetText(complicatedXMLString);
   EXERCISE_ALL_BASIC_MRML_METHODS(textNode.GetPointer());
 
-  std::string basicString = "Hello world!";
+  const std::string basicString = "Hello world!";
   textNode->SetText(basicString);
   CHECK_STD_STRING(textNode->GetText(), basicString);
 
-  std::string emptyString = "";
+  const std::string emptyString = "";
   textNode->SetText(emptyString);
   CHECK_STD_STRING(textNode->GetText(), emptyString);
 

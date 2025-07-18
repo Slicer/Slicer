@@ -93,7 +93,7 @@ int vtkMRMLSliceLogicTest5(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
@@ -108,7 +108,7 @@ int vtkMRMLSliceLogicTest5(int argc, char* argv[])
 
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
 
-  vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
+  const vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
 
   sliceLogic->SetBackgroundLayer(sliceLayerLogic.GetPointer());
 
@@ -123,14 +123,14 @@ int vtkMRMLSliceLogicTest5(int argc, char* argv[])
   // sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
 
-  vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection();
+  vtkAlgorithmOutput* const textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection();
   vtkImageData* textureImage = vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
-  int* tdims = textureImage->GetDimensions();
+  int* const tdims = textureImage->GetDimensions();
   std::cout << "Texture dimension" << tdims[0] << " " << tdims[1] << " " << tdims[2] << std::endl;
 
-  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
+  vtkAlgorithmOutput* const imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
-  int* dims = img->GetDimensions();
+  int* const dims = img->GetDimensions();
   std::cout << "Logic dimension" << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   // vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
@@ -160,7 +160,7 @@ int vtkMRMLSliceLogicTest5(int argc, char* argv[])
 
   for (int i = 0; i < 30; ++i)
   {
-    vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+    const vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
     rw->Render();

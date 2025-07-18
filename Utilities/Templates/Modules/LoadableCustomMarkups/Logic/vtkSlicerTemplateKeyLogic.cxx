@@ -56,7 +56,7 @@ void vtkSlicerTemplateKeyLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerTemplateKeyLogic::RegisterNodes()
 {
-  vtkMRMLScene* scene = this->GetMRMLScene();
+  vtkMRMLScene* const scene = this->GetMRMLScene();
   if (!scene)
   {
     vtkErrorMacro("RegisterNodes failed: invalid scene");
@@ -70,7 +70,7 @@ void vtkSlicerTemplateKeyLogic::RegisterNodes()
     return;
   }
 
-  vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
-  vtkNew<vtkSlicerTestLineWidget> testLineWidget;
+  const vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
+  const vtkNew<vtkSlicerTestLineWidget> testLineWidget;
   markupsLogic->RegisterMarkupsNode(markupsTestLineNode, testLineWidget);
 }

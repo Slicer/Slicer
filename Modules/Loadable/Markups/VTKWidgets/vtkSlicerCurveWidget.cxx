@@ -70,7 +70,7 @@ void vtkSlicerCurveWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode
 bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData)
 {
   vtkMRMLMarkupsCurveNode* markupsNode = this->GetMarkupsCurveNode();
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* const markupsDisplayNode = this->GetMarkupsDisplayNode();
   if (!markupsNode || !markupsDisplayNode)
   {
     return false;
@@ -102,14 +102,14 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
 
   // Determine point position in local coordinate system
   double worldPos[3] = { 0.0 };
-  const int* displayPos = eventData->GetDisplayPosition();
+  const int* const displayPos = eventData->GetDisplayPosition();
   if (rep3d)
   {
     if (!eventData->IsWorldPositionValid())
     {
       return false;
     }
-    vtkIdType lineIndex = markupsNode->GetClosestPointPositionAlongCurveWorld(eventData->GetWorldPosition(), worldPos);
+    const vtkIdType lineIndex = markupsNode->GetClosestPointPositionAlongCurveWorld(eventData->GetWorldPosition(), worldPos);
     if (lineIndex < 0)
     {
       return false;
@@ -124,8 +124,8 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   markupsNode->GetScene()->SaveStateForUndo();
 
   // Create new control point and insert
-  vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
-  vtkMRMLMarkupsNode::ControlPoint* foundControlPoint = markupsNode->GetNthControlPoint(foundComponentIndex);
+  vtkMRMLMarkupsNode::ControlPoint* const controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
+  vtkMRMLMarkupsNode::ControlPoint* const foundControlPoint = markupsNode->GetNthControlPoint(foundComponentIndex);
   if (foundControlPoint)
   {
     (*controlPoint) = (*foundControlPoint);

@@ -110,7 +110,7 @@ void vtkMRMLVolumePropertyNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::ReadXMLAttributes(atts);
 
@@ -134,7 +134,7 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   this->CopyParameterSet(anode);
 }
@@ -235,7 +235,7 @@ int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, dou
 //---------------------------------------------------------------------------
 int vtkMRMLVolumePropertyNode::NodesFromString(const std::string& dataString, double*& nodes, int nodeSize)
 {
-  int size = vtkMRMLVolumePropertyNode::DataFromString(dataString, nodes);
+  const int size = vtkMRMLVolumePropertyNode::DataFromString(dataString, nodes);
   if (size % nodeSize)
   {
     vtkGenericWarningMacro("vtkMRMLVolumePropertyNode::NodesFromString: Error parsing data string");
@@ -266,7 +266,7 @@ std::string vtkMRMLVolumePropertyNode::GetColorTransferFunctionString(vtkColorTr
 void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(const std::string& str, vtkPiecewiseFunction* result)
 {
   double* data = nullptr;
-  int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 2);
+  const int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 2);
   if (size)
   {
     result->FillFromDataPointer(size, data);
@@ -278,7 +278,7 @@ void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(const std::string
 void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(const std::string& str, vtkColorTransferFunction* result)
 {
   double* data = nullptr;
-  int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 4);
+  const int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 4);
   if (size)
   {
     result->FillFromDataPointer(size, data);
@@ -483,7 +483,7 @@ void vtkMRMLVolumePropertyNode::SetSpecularPower(double specularPower)
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::SetScalarOpacityAsString(std::string scalarOpacityFunctionStr)
 {
-  vtkNew<vtkPiecewiseFunction> scalarOpacity;
+  const vtkNew<vtkPiecewiseFunction> scalarOpacity;
   this->GetPiecewiseFunctionFromString(scalarOpacityFunctionStr.c_str(), scalarOpacity);
   this->VolumeProperty->SetScalarOpacity(scalarOpacity);
 }
@@ -491,7 +491,7 @@ void vtkMRMLVolumePropertyNode::SetScalarOpacityAsString(std::string scalarOpaci
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::SetGradientOpacityAsString(std::string gradientOpacityFunctionStr)
 {
-  vtkNew<vtkPiecewiseFunction> gradientOpacity;
+  const vtkNew<vtkPiecewiseFunction> gradientOpacity;
   this->GetPiecewiseFunctionFromString(gradientOpacityFunctionStr.c_str(), gradientOpacity);
   this->SetGradientOpacity(gradientOpacity);
 }
@@ -499,7 +499,7 @@ void vtkMRMLVolumePropertyNode::SetGradientOpacityAsString(std::string gradientO
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::SetRGBTransferFunctionAsString(std::string rgbTransferFunctionStr)
 {
-  vtkNew<vtkColorTransferFunction> colorTransfer;
+  const vtkNew<vtkColorTransferFunction> colorTransfer;
   this->GetColorTransferFunctionFromString(rgbTransferFunctionStr.c_str(), colorTransfer);
   this->SetColor(colorTransfer);
 }
@@ -512,15 +512,15 @@ void vtkMRMLVolumePropertyNode::SetPropertyInVolumeNode(vtkVolume* volume)
     vtkGenericWarningMacro("SetPropertyInVolumeNodeWithoutModifications: Invalid volume");
     return;
   }
-  vtkVolumeProperty* volumeProperty = this->GetVolumeProperty();
+  vtkVolumeProperty* const volumeProperty = this->GetVolumeProperty();
 
   // vtkVolume::SetProperty(vtkVolumeProperty*) calls Modified() on the input property argument
   // (it is a bug in VTK, as a setter function should not have such side effects).
   // We need to temporarily ignore Modified events to avoid unnecessary scene modifications.
 
-  bool oldIgnoreVolumePropertyChanges = this->IgnoreVolumePropertyChanges;
+  const bool oldIgnoreVolumePropertyChanges = this->IgnoreVolumePropertyChanges;
   this->IgnoreVolumePropertyChanges = true;
-  bool oldDisableModifiedEvent = this->GetDisableModifiedEvent();
+  const bool oldDisableModifiedEvent = this->GetDisableModifiedEvent();
   this->DisableModifiedEventOn();
 
   volume->SetProperty(volumeProperty);

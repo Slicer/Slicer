@@ -58,8 +58,8 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* slidersParent)
 
   d->setupUi(this);
 
-  ctkDoubleSpinBox::DecimalsOptions decimalsOptions(ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::InsertDecimals
-                                                    | ctkDoubleSpinBox::DecimalsAsMin);
+  const ctkDoubleSpinBox::DecimalsOptions decimalsOptions(ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::InsertDecimals
+                                                          | ctkDoubleSpinBox::DecimalsAsMin);
   d->LRSlider->spinBox()->setDecimalsOption(decimalsOptions);
   d->PASlider->spinBox()->setDecimalsOption(decimalsOptions);
   d->ISSlider->spinBox()->setDecimalsOption(decimalsOptions);
@@ -94,7 +94,7 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
 {
   Q_D(qMRMLTransformSliders);
 
-  qMRMLLinearTransformSlider::CoordinateReferenceType ref = static_cast<qMRMLLinearTransformSlider::CoordinateReferenceType>(_coordinateReference);
+  const qMRMLLinearTransformSlider::CoordinateReferenceType ref = static_cast<qMRMLLinearTransformSlider::CoordinateReferenceType>(_coordinateReference);
 
   if (this->coordinateReference() != _coordinateReference)
   {
@@ -131,7 +131,7 @@ qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinate
   Q_D(const qMRMLTransformSliders);
 
   // Assumes settings of the sliders are all the same
-  qMRMLLinearTransformSlider::CoordinateReferenceType ref = d->LRSlider->coordinateReference();
+  const qMRMLLinearTransformSlider::CoordinateReferenceType ref = d->LRSlider->coordinateReference();
   return (ref == qMRMLLinearTransformSlider::GLOBAL) ? GLOBAL : LOCAL;
 }
 
@@ -219,7 +219,7 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
     return;
   }
   Q_ASSERT(transformNode);
-  bool isLinear = transformNode->IsLinear();
+  const bool isLinear = transformNode->IsLinear();
   this->setEnabled(isLinear);
   if (!isLinear)
   {
@@ -245,7 +245,7 @@ void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* trans
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(transformNode, this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
 
-  vtkMatrix4x4* matrix = transform->GetMatrix();
+  vtkMatrix4x4* const matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix)
   {
@@ -451,19 +451,19 @@ void qMRMLTransformSliders::resetUnactiveSliders()
 
   if (!d->ActiveSliders.contains(d->LRSlider) && !d->LRSlider->isSettingValueFromSpinBox())
   {
-    bool blocked = d->LRSlider->blockSignals(true);
+    const bool blocked = d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
     d->LRSlider->blockSignals(blocked);
   }
   if (!d->ActiveSliders.contains(d->PASlider) && !d->PASlider->isSettingValueFromSpinBox())
   {
-    bool blocked = d->PASlider->blockSignals(true);
+    const bool blocked = d->PASlider->blockSignals(true);
     d->PASlider->reset();
     d->PASlider->blockSignals(blocked);
   }
   if (!d->ActiveSliders.contains(d->ISSlider) && !d->ISSlider->isSettingValueFromSpinBox())
   {
-    bool blocked = d->ISSlider->blockSignals(true);
+    const bool blocked = d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
     d->ISSlider->blockSignals(blocked);
   }
@@ -523,7 +523,7 @@ QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(vtkMa
     minmax.first = qMin(minmax.first, mat->GetElement(i, 3));
     minmax.second = qMax(minmax.second, mat->GetElement(i, 3));
   }
-  double range = minmax.second - minmax.first;
+  const double range = minmax.second - minmax.first;
   minmax.first = minmax.first - pad * range;
   minmax.second = minmax.second + pad * range;
   return minmax;

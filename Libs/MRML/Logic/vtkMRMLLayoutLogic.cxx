@@ -1258,7 +1258,7 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
     // input when the input is a singleton node (vtkMRMLNode::SingletonTag is 1)
     // As we observe the MRML scene, this->MRMLLayoutNode will be set in
     // onNodeAdded
-    vtkMRMLNode* nodeCreated = this->GetMRMLScene()->AddNode(sceneLayoutNode);
+    vtkMRMLNode* const nodeCreated = this->GetMRMLScene()->AddNode(sceneLayoutNode);
     // as we checked that there was no vtkMRMLLayoutNode in the scene, the
     // returned node by vtkMRMLScene::AddNode() should be layoutNode
     if (nodeCreated != sceneLayoutNode)
@@ -1292,7 +1292,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     return;
   }
 
-  int wasModifying = this->LayoutNode->StartModify();
+  const int wasModifying = this->LayoutNode->StartModify();
 
   // Horizontal compare viewers
   std::stringstream compareView;
@@ -1513,7 +1513,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
   {
     return;
   }
-  int wasModifying = this->LayoutNode->StartModify();
+  const int wasModifying = this->LayoutNode->StartModify();
   // clang-format off
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutInitialView,
                                          fourUpView);
@@ -1591,7 +1591,7 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
 {
   // filter on the class name, that remove a lot of options
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
-  ViewAttributes::const_iterator end = attributes.end();
+  const ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
   {
     return nullptr;
@@ -1632,7 +1632,7 @@ void vtkMRMLLayoutLogic::ApplyProperties(const ViewProperties& properties, vtkMR
   for (unsigned int i = 0; i < properties.size(); ++i)
   {
     ViewProperty property = properties[i];
-    ViewProperty::const_iterator it = property.find("action");
+    const ViewProperty::const_iterator it = property.find("action");
     if (it != property.end() && //
         it->second != action)
     {
@@ -1744,7 +1744,7 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutLogic::MaximizeView(vtkMRMLAbstractViewNode* viewToMaximize)
 {
-  int layout = vtkMRMLLayoutNode::SlicerLayoutMaximizedView;
+  const int layout = vtkMRMLLayoutNode::SlicerLayoutMaximizedView;
   this->CreateMaximizedViewLayoutDescription(layout, viewToMaximize);
   vtkMRMLLayoutNode* layoutNode = this->GetLayoutNode();
   if (layoutNode)
@@ -1761,7 +1761,7 @@ void vtkMRMLLayoutLogic::CreateMaximizedViewLayoutDescription(int layout, vtkMRM
   {
     vtkErrorMacro(<< "No layout node");
   }
-  std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize, layoutNode->GetCurrentLayoutDescription());
+  const std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize, layoutNode->GetCurrentLayoutDescription());
   if (layoutNode->IsLayoutDescription(layout))
   {
     layoutNode->SetLayoutDescription(layout, layoutDescription.c_str());
@@ -1783,7 +1783,7 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetViewportElementForView(vtkXMLDataEleme
   vtkXMLDataElement* viewElement = layoutRootElement;
   while ((viewElement = this->GetNextViewElement(viewElement)))
   {
-    vtkMRMLNode* foundViewNode = this->GetViewFromElement(viewElement);
+    vtkMRMLNode* const foundViewNode = this->GetViewFromElement(viewElement);
     if (viewNode == foundViewNode)
     {
       // we have found the view node in the tree, now look up the viewport element,
@@ -1868,7 +1868,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
   }
   // filter on the class name to remove a lot of options.
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
-  ViewAttributes::const_iterator end = attributes.end();
+  const ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
   {
     return nullptr;
@@ -1892,8 +1892,8 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
   for (it = attributes.begin(); it != end; ++it)
   {
     nodes->InitTraversal(nodesIt);
-    std::string attributeName = it->first;
-    std::string attributeValue = it->second;
+    const std::string attributeName = it->first;
+    const std::string attributeValue = it->second;
     if (attributeName == "class")
     {
       continue;
@@ -1902,7 +1902,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
     {
       for (; (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
       {
-        std::string singletonTag = node->GetSingletonTag() ? node->GetSingletonTag() : "";
+        const std::string singletonTag = node->GetSingletonTag() ? node->GetSingletonTag() : "";
         if (attributeValue != singletonTag)
         {
           nodes->RemoveItem(node);
@@ -1927,7 +1927,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
       }
       for (; (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
       {
-        std::string viewType = node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
+        const std::string viewType = node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
 
         if (attributeValue != viewType && // if there is no viewType, it's a main view.
             !(attributeValue == "main" && viewType != std::string()))
@@ -1960,7 +1960,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayout(vtkXMLDataElement* root)
   vtkXMLDataElement* viewElement = root;
   while ((viewElement = this->GetNextViewElement(viewElement)))
   {
-    vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
+    vtkMRMLNode* const viewNode = this->GetViewFromElement(viewElement);
     if (!viewNode)
     {
       vtkWarningMacro("Can't find node for element: " << viewElement->GetName());
@@ -1991,11 +1991,11 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
     {
       // View already exists, just apply the "relayout" properties for
       // the layout
-      ViewProperties properties = this->GetViewElementProperties(viewElement);
+      const ViewProperties properties = this->GetViewElementProperties(viewElement);
       this->ApplyProperties(properties, viewNode, "relayout");
       continue;
     }
-    ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
+    const ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
     viewNode = this->CreateViewFromAttributes(attributes);
     if (!viewNode)
     {
@@ -2003,7 +2003,7 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
       viewElement->PrintXML(std::cerr, vtkIndent(0));
     }
     // New View, apply the "default" properties for the layout.
-    ViewProperties properties = this->GetViewElementProperties(viewElement);
+    const ViewProperties properties = this->GetViewElementProperties(viewElement);
     this->ApplyProperties(properties, viewNode, "default");
     this->GetMRMLScene()->AddNode(viewNode);
     viewNode->Delete();
@@ -2068,7 +2068,7 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextViewElement(vtkXMLDataElement* vie
   }
   while (viewElement)
   {
-    vtkXMLDataElement* nextViewElement = viewElement->LookupElementWithName("view");
+    vtkXMLDataElement* const nextViewElement = viewElement->LookupElementWithName("view");
     if (nextViewElement)
     {
       return nextViewElement;

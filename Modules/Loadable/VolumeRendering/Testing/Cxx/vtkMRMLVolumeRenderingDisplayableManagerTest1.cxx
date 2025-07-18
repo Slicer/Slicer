@@ -68,12 +68,12 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   {
     std::cerr << "Must pass share directory as first argument to test" << std::endl;
   }
-  const char* moduleShareDirectory = argv[1];
+  const char* const moduleShareDirectory = argv[1];
 
   // Renderer, RenderWindow and Interactor
   vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
-  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+  const vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetSize(600, 600);
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
 
@@ -87,7 +87,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   // move back far enough to see the reformat widgets
   // renderer->GetActiveCamera()->SetPosition(0,0,-500.);
 
-  vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
+  const vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
 
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
@@ -121,7 +121,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     {
       for (int x = 0; x < 3; ++x)
       {
-        double normalizedIntensity = (static_cast<double>(x + (y * 3) + (z * 3 * 3)) / static_cast<double>(3 * 3 * 3 - 1));
+        const double normalizedIntensity = (static_cast<double>(x + (y * 3) + (z * 3 * 3)) / static_cast<double>(3 * 3 * 3 - 1));
         std::cout << x << " " << y << " " << z << ": " << normalizedIntensity << std::endl;
         *(ptr++) = 255 - static_cast<unsigned char>(255. * normalizedIntensity);
       }
@@ -189,7 +189,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     }
   }
 
-  int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
+  const int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
   if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();

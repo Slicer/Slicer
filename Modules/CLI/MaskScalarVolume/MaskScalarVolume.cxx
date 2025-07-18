@@ -48,11 +48,11 @@ int DoIt(int argc, char* argv[])
 
   typedef itk::ThresholdImageFilter<InputImageType> ThresholdFilterType;
 
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Input Volume", CLPProcessInformation);
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader1(reader1, "Read Input Volume", CLPProcessInformation);
 
-  typename ReaderType::Pointer reader2 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader2(reader2, "Read Mask Volume", CLPProcessInformation);
+  const typename ReaderType::Pointer reader2 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader2(reader2, "Read Mask Volume", CLPProcessInformation);
   reader1->SetFileName(InputVolume.c_str());
   reader2->SetFileName(MaskVolume.c_str());
   reader2->ReleaseDataFlagOn();
@@ -61,35 +61,35 @@ int DoIt(int argc, char* argv[])
   reader2->Update();
 
   // have to threshold the mask volume
-  typename ThresholdFilterType::Pointer thresholdFilter = ThresholdFilterType::New();
-  itk::PluginFilterWatcher watchThresholdFilter(thresholdFilter, "Threshold Image", CLPProcessInformation);
+  const typename ThresholdFilterType::Pointer thresholdFilter = ThresholdFilterType::New();
+  const itk::PluginFilterWatcher watchThresholdFilter(thresholdFilter, "Threshold Image", CLPProcessInformation);
 
   thresholdFilter->SetInput(0, reader2->GetOutput());
   thresholdFilter->SetOutsideValue(0);
   thresholdFilter->ThresholdOutside(Label, Label);
   thresholdFilter->ReleaseDataFlagOn();
 
-  typename Interpolator::Pointer interp = Interpolator::New();
+  const typename Interpolator::Pointer interp = Interpolator::New();
   interp->SetInputImage(thresholdFilter->GetOutput());
 
-  typename ResampleType::Pointer resample = ResampleType::New();
+  const typename ResampleType::Pointer resample = ResampleType::New();
   resample->SetInput(thresholdFilter->GetOutput());
   resample->SetOutputParametersFromImage(reader1->GetOutput());
   resample->SetInterpolator(interp);
   resample->SetDefaultPixelValue(0);
   resample->ReleaseDataFlagOn();
 
-  itk::PluginFilterWatcher watchResample(resample, "Resampling", CLPProcessInformation);
+  const itk::PluginFilterWatcher watchResample(resample, "Resampling", CLPProcessInformation);
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Masking", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watchFilter(filter, "Masking", CLPProcessInformation);
 
   filter->SetInput(0, reader1->GetOutput());
   filter->SetInput(1, resample->GetOutput());
   filter->SetOutsideValue(Replace);
 
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(OutputVolume.c_str());
   writer->SetInput(filter->GetOutput());
   writer->Update();

@@ -52,10 +52,10 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   QString instructionsText = d->InstructionsLabel->text();
-  QString appNameVersionPlatform = QString("%1 %2 %3")
-                                     .arg(qSlicerApplication::application()->applicationName())
-                                     .arg(qSlicerApplication::application()->applicationVersion())
-                                     .arg(qSlicerApplication::application()->platform());
+  const QString appNameVersionPlatform = QString("%1 %2 %3")
+                                           .arg(qSlicerApplication::application()->applicationName())
+                                           .arg(qSlicerApplication::application()->applicationVersion())
+                                           .arg(qSlicerApplication::application()->platform());
   instructionsText.replace(QString("[appname-version-platform]"), QUrl::toPercentEncoding(appNameVersionPlatform));
   d->InstructionsLabel->setText(instructionsText);
 
@@ -68,8 +68,8 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   {
     d->RecentLogFilesComboBox->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
   }
-  QLocale locale = qSlicerCoreApplication::application()->applicationLocale();
-  QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
+  const QLocale locale = qSlicerCoreApplication::application()->applicationLocale();
+  const QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
   for (const QString& path : logFilePaths)
   {
     QTableWidgetItem* itemApp = new QTableWidgetItem(path);
@@ -79,11 +79,11 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     QTableWidgetItem* itemTime = new QTableWidgetItem(path);
     QTableWidgetItem* itemPath = new QTableWidgetItem(path);
 
-    QVariant fileString(path);
-    QFileInfo fi(path);
-    QString fileName = fi.fileName();
+    const QVariant fileString(path);
+    const QFileInfo fi(path);
+    const QString fileName = fi.fileName();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-    QStringList stringList = fileName.split("_", Qt::SkipEmptyParts);
+    QStringList const stringList = fileName.split("_", Qt::SkipEmptyParts);
 #else
     QStringList stringList = fileName.split("_", QString::SkipEmptyParts);
 #endif
@@ -91,8 +91,8 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     itemApp->setData(Qt::UserRole, fileString);
     if (stringList.size() >= 6) // compatibility for log files with and without app version in filename
     {
-      QDateTime dt = QDateTime::fromString(QString(stringList.at(3)), "yyyyMMdd");
-      QDateTime tm = QDateTime::fromString(QString(stringList.at(4)), "hhmmss");
+      const QDateTime dt = QDateTime::fromString(QString(stringList.at(3)), "yyyyMMdd");
+      const QDateTime tm = QDateTime::fromString(QString(stringList.at(4)), "hhmmss");
       itemVersion->setText(stringList.at(1));
       itemRevision->setText(stringList.at(2));
       itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
@@ -100,8 +100,8 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     }
     else
     {
-      QDateTime dt = QDateTime::fromString(QString(stringList.at(2)), "yyyyMMdd");
-      QDateTime tm = QDateTime::fromString(QString(stringList.at(3)), "hhmmss");
+      const QDateTime dt = QDateTime::fromString(QString(stringList.at(2)), "yyyyMMdd");
+      const QDateTime tm = QDateTime::fromString(QString(stringList.at(3)), "hhmmss");
       itemVersion->setText(QString("unknown"));
       itemRevision->setText(stringList.at(1));
       itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
@@ -115,7 +115,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     itemVersion->setToolTip(path);
 
     // Create a new entry
-    int row = d->RecentLogFilesComboBox->rowCount();
+    const int row = d->RecentLogFilesComboBox->rowCount();
     d->RecentLogFilesComboBox->insertRow(row);
     d->RecentLogFilesComboBox->setItem(row, 0, itemApp);
     d->RecentLogFilesComboBox->setItem(row, 1, itemVersion);
@@ -155,13 +155,13 @@ void qSlicerErrorReportDialog::onLogCopy()
 void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 {
   Q_D(qSlicerErrorReportDialog);
-  int row = d->RecentLogFilesComboBox->currentRow();
-  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  const int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* const eventItem = d->RecentLogFilesComboBox->item(row, 0);
   QFile f(eventItem->data(Qt::UserRole).toString());
   if (f.open(QFile::ReadOnly | QFile::Text))
   {
     QTextStream in(&f);
-    QString logText = in.readAll();
+    const QString logText = in.readAll();
     d->LogText->setPlainText(logText);
   }
   else
@@ -174,9 +174,9 @@ void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 void qSlicerErrorReportDialog::onLogFileLocationOpen()
 {
   Q_D(qSlicerErrorReportDialog);
-  int row = d->RecentLogFilesComboBox->currentRow();
-  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
-  QFileInfo fileInfo(eventItem->data(Qt::UserRole).toString());
+  const int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* const eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  const QFileInfo fileInfo(eventItem->data(Qt::UserRole).toString());
   QDesktopServices::openUrl(QUrl(fileInfo.absolutePath(), QUrl::TolerantMode));
 }
 
@@ -184,9 +184,9 @@ void qSlicerErrorReportDialog::onLogFileLocationOpen()
 void qSlicerErrorReportDialog::onLogFileOpen()
 {
   Q_D(qSlicerErrorReportDialog);
-  int row = d->RecentLogFilesComboBox->currentRow();
-  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
-  QString f(eventItem->data(Qt::UserRole).toString());
+  const int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* const eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  const QString f(eventItem->data(Qt::UserRole).toString());
   QDesktopServices::openUrl(QUrl::fromLocalFile(f));
 }
 

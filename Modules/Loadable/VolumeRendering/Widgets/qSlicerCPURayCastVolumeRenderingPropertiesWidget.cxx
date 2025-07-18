@@ -104,7 +104,7 @@ void qSlicerCPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
     return;
   }
 
-  int technique = firstViewNode->GetRaycastTechnique();
+  const int technique = firstViewNode->GetRaycastTechnique();
   int index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
   if (index == -1)
   {
@@ -122,7 +122,7 @@ void qSlicerCPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int
   {
     return;
   }
-  int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
+  const int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
 
   std::vector<vtkMRMLNode*> viewNodes;
   displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);

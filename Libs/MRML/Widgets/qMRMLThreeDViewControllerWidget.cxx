@@ -325,7 +325,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
 
   // Reset settings button
   this->ShadowsMenu->addSeparator();
-  QAction* resetAction = new QAction(qMRMLThreeDViewControllerWidget::tr("Reset settings to default"), this->ShadowsMenu);
+  QAction* const resetAction = new QAction(qMRMLThreeDViewControllerWidget::tr("Reset settings to default"), this->ShadowsMenu);
   QObject::connect(resetAction, SIGNAL(triggered()), q, SLOT(resetAmbientShadows()));
   this->ShadowsMenu->addAction(resetAction);
 
@@ -346,7 +346,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
   this->BarLayout->addStretch(1);
 
-  vtkNew<vtkMRMLViewLogic> defaultLogic;
+  const vtkNew<vtkMRMLViewLogic> defaultLogic;
   q->setViewLogic(defaultLogic.GetPointer());
 }
 
@@ -471,7 +471,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
   }
 
   // Update camera node connection
-  vtkMRMLCameraNode* cameraNode = (d->ViewLogic ? d->ViewLogic->GetCameraNode() : nullptr);
+  vtkMRMLCameraNode* const cameraNode = (d->ViewLogic ? d->ViewLogic->GetCameraNode() : nullptr);
   if (cameraNode != d->CameraNode)
   {
     this->qvtkReconnect(d->CameraNode, cameraNode, vtkMRMLCameraNode::CameraInteractionEvent, this, SLOT(updateViewFromMRMLCamera()));
@@ -480,7 +480,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
   }
 
   // Update view node connection
-  vtkMRMLViewNode* viewNode = (d->ViewLogic ? d->ViewLogic->GetViewNode() : nullptr);
+  vtkMRMLViewNode* const viewNode = (d->ViewLogic ? d->ViewLogic->GetViewNode() : nullptr);
   if (viewNode != this->mrmlThreeDViewNode())
   {
     this->setMRMLViewNode(viewNode);
@@ -536,8 +536,8 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   d->actionUseDepthPeeling->setChecked(viewNode->GetUseDepthPeeling());
   d->actionSetFPSVisible->setChecked(viewNode->GetFPSVisible());
 
-  double* color = viewNode->GetBackgroundColor();
-  QColor backgroundColor = QColor::fromRgbF(color[0], color[1], color[2]);
+  double* const color = viewNode->GetBackgroundColor();
+  const QColor backgroundColor = QColor::fromRgbF(color[0], color[1], color[2]);
   d->actionSetBlackBackground->setChecked(backgroundColor == Qt::black);
   d->actionSetWhiteBackground->setChecked(backgroundColor == Qt::white);
   d->actionSetLightBlueBackground->setChecked(!d->actionSetBlackBackground->isChecked() && //
@@ -572,8 +572,8 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
 
   d->ViewLabel->setText(viewNode->GetLayoutLabel());
 
-  double* layoutColorVtk = viewNode->GetLayoutColor();
-  QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
+  double* const layoutColorVtk = viewNode->GetLayoutColor();
+  const QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   d->setColor(layoutColor);
 
   d->actionShadowsVisibility->setChecked(viewNode->GetShadowsVisibility());
@@ -864,7 +864,7 @@ void qMRMLThreeDViewControllerWidget::setBackgroundColor(const QColor& newColor,
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BackgroundColorFlag);
 
-  int wasModifying = this->mrmlThreeDViewNode()->StartModify();
+  const int wasModifying = this->mrmlThreeDViewNode()->StartModify();
   // The ThreeDView displayable manager will change the background color of
   // the renderer.
   this->mrmlThreeDViewNode()->SetBackgroundColor(newColor.redF(), newColor.greenF(), newColor.blueF());
@@ -889,7 +889,7 @@ void qMRMLThreeDViewControllerWidget::setBoxColor(const QColor& newColor)
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxColorFlag);
 
-  int wasModifying = this->mrmlThreeDViewNode()->StartModify();
+  const int wasModifying = this->mrmlThreeDViewNode()->StartModify();
   // The ThreeDView displayable manager will change the color of BoxAxisActor
   this->mrmlThreeDViewNode()->SetBoxColor(newColor.redF(), newColor.greenF(), newColor.blueF());
   this->mrmlThreeDViewNode()->EndModify(wasModifying);
@@ -1058,10 +1058,10 @@ void qMRMLThreeDViewControllerWidget::resetAmbientShadows()
   // Read default values from application settings
   QSettings settings;
   settings.beginGroup("Default3DView");
-  double sizeScale = settings.value("AmbientShadowsSizeScale", 0.0).toDouble();
-  double opacityThreshold = settings.value("AmbientShadowsVolumeOpacityThreshold", 0.0).toDouble();
-  double intensityScale = settings.value("AmbientShadowsIntensityScale", 1.0).toDouble();
-  double intensityShift = settings.value("AmbientShadowsIntensityShift", 0.0).toDouble();
+  const double sizeScale = settings.value("AmbientShadowsSizeScale", 0.0).toDouble();
+  const double opacityThreshold = settings.value("AmbientShadowsVolumeOpacityThreshold", 0.0).toDouble();
+  const double intensityScale = settings.value("AmbientShadowsIntensityScale", 1.0).toDouble();
+  const double intensityShift = settings.value("AmbientShadowsIntensityShift", 0.0).toDouble();
   settings.endGroup();
 
   d->AmbientShadowsSizeScaleSlider->setValue(sizeScale);

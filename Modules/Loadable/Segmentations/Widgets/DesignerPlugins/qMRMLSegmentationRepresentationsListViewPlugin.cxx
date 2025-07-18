@@ -30,7 +30,7 @@ qMRMLSegmentationRepresentationsListViewPlugin::qMRMLSegmentationRepresentations
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationRepresentationsListViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationRepresentationsListView* pluginWidget = new qMRMLSegmentationRepresentationsListView(parentWidget);
+  qMRMLSegmentationRepresentationsListView* const pluginWidget = new qMRMLSegmentationRepresentationsListView(parentWidget);
   return pluginWidget;
 }
 

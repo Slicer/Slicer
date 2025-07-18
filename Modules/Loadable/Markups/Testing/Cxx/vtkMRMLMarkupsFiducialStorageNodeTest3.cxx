@@ -61,7 +61,7 @@ int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char* argv[])
   //
   std::cout << "Reading from " << node1->GetFileName() << std::endl;
 
-  int retval = node1->ReadData(markupsFiducialNode.GetPointer());
+  const int retval = node1->ReadData(markupsFiducialNode.GetPointer());
   if (!retval)
   {
     std::cerr << "Failed to read into Markups fiducial node from Slicer4 Annotations Fiducials file " << node1->GetFileName() << std::endl;
@@ -69,15 +69,15 @@ int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char* argv[])
   }
 
   std::cout << "\nMarkup read from file = " << std::endl;
-  vtkIndent indent;
+  const vtkIndent indent;
   markupsFiducialNode->PrintSelf(std::cout, indent);
   std::cout << std::endl;
 
   // test values on the first markup
-  double inputPoint[3] = { 64.2531, 3.69, 62.886 };
+  const double inputPoint[3] = { 64.2531, 3.69, 62.886 };
   vtkVector3d posVector = markupsFiducialNode->GetNthControlPointPositionVector(0);
-  double* outputPoint = posVector.GetData();
-  double diff = fabs(outputPoint[0] - inputPoint[0]) + fabs(outputPoint[1] - inputPoint[1]) + fabs(outputPoint[2] - inputPoint[2]);
+  double* const outputPoint = posVector.GetData();
+  const double diff = fabs(outputPoint[0] - inputPoint[0]) + fabs(outputPoint[1] - inputPoint[1]) + fabs(outputPoint[2] - inputPoint[2]);
   if (diff > 0.1)
   {
     std::cerr << "After reading in, expected markup point " << inputPoint[0] << "," << inputPoint[1] << "," << inputPoint[2] << " but got a diff of " << diff

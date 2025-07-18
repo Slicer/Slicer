@@ -226,7 +226,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
     q->mrmlScene()->AddNode(displayNode);
   }
 
-  MRMLNodeModifyBlocker blocker(displayNode);
+  const MRMLNodeModifyBlocker blocker(displayNode);
   displayNode->SetVisibility(0);
   if (!volumeNode)
   {
@@ -288,7 +288,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
 
   vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   if (!logic)
@@ -312,8 +312,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
   vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
   if (volumePropertyNode)
   {
-    vtkMRMLVolumePropertyNode* presetNode = logic->GetPresetByName(volumePropertyNode->GetName());
-    bool wasBlocking = d->PresetComboBox->blockSignals(true);
+    vtkMRMLVolumePropertyNode* const presetNode = logic->GetPresetByName(volumePropertyNode->GetName());
+    const bool wasBlocking = d->PresetComboBox->blockSignals(true);
     d->PresetComboBox->setCurrentNode(presetNode);
     d->PresetComboBox->blockSignals(wasBlocking);
   }
@@ -378,7 +378,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   // Update shift slider range and set transfer function extents when volume property node is modified
   vtkMRMLVolumePropertyNode* volumePropertyNode = (displayNode ? displayNode->GetVolumePropertyNode() : nullptr);
   this->qvtkReconnect(d->VolumePropertyNode, volumePropertyNode, vtkMRMLVolumePropertyNode::EffectiveRangeModified, this, SLOT(onEffectiveRangeModified()));
-  bool volumePropertyNodeChanged = (d->VolumePropertyNode != volumePropertyNode);
+  const bool volumePropertyNodeChanged = (d->VolumePropertyNode != volumePropertyNode);
   d->VolumePropertyNode = volumePropertyNode;
   if (volumePropertyNodeChanged)
   {
@@ -388,8 +388,8 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->VolumePropertyNodeComboBox->setCurrentNode(volumePropertyNode);
 
   // ROI selector
-  vtkMRMLMarkupsROINode* markupsROINode = (displayNode ? displayNode->GetMarkupsROINode() : nullptr);
-  vtkMRMLDisplayableNode* roiNode = markupsROINode;
+  vtkMRMLMarkupsROINode* const markupsROINode = (displayNode ? displayNode->GetMarkupsROINode() : nullptr);
+  vtkMRMLDisplayableNode* const roiNode = markupsROINode;
   this->qvtkReconnect(d->CropROINode, roiNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromROINode()));
   d->CropROINode = roiNode;
   this->updateWidgetFromROINode();
@@ -416,7 +416,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   // Advanced section
 
   // Limit the component count to the max range for volume rendering in VTK
-  int numberOfComponents = volumePropertyNode ? volumePropertyNode->GetNumberOfIndependentComponents() : 1;
+  const int numberOfComponents = volumePropertyNode ? volumePropertyNode->GetNumberOfIndependentComponents() : 1;
   d->VolumePropertyNodeWidget->setComponentCount(qMin(numberOfComponents, VTK_MAX_VRCOMP));
 
   // Volume properties tab
@@ -427,9 +427,9 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->MarkupsROIWidget->setVisible(markupsROINode != nullptr);
 
   // Techniques tab
-  QSettings settings;
-  QString defaultRenderingMethod = settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLGPURayCastVolumeRenderingDisplayNode")).toString();
-  QString currentRenderingMethod = displayNode ? QString(displayNode->GetClassName()) : defaultRenderingMethod;
+  const QSettings settings;
+  const QString defaultRenderingMethod = settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLGPURayCastVolumeRenderingDisplayNode")).toString();
+  const QString currentRenderingMethod = displayNode ? QString(displayNode->GetClassName()) : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex(d->RenderingMethodComboBox->findData(currentRenderingMethod));
   d->MemorySizeComboBox->setCurrentGPUMemory(firstViewNode ? firstViewNode->GetGPUMemorySize() : 0);
   d->QualityControlComboBox->setCurrentIndex(firstViewNode ? firstViewNode->GetVolumeRenderingQuality() : -1);
@@ -456,7 +456,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 
   // Volume properties tab
   d->SynchronizeScalarDisplayNodeButton->setEnabled(displayNode != nullptr);
-  bool follow = displayNode ? displayNode->GetFollowVolumeDisplayNode() != 0 : false;
+  const bool follow = displayNode ? displayNode->GetFollowVolumeDisplayNode() != 0 : false;
   if (follow)
   {
     d->SynchronizeScalarDisplayNodeButton->setCheckState(Qt::Checked);
@@ -464,7 +464,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked(displayNode ? displayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
 
-  vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
+  vtkMRMLClipNode* const clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
 
   wasBlocking = d->ClipNodeSelector->blockSignals(true);
   d->ClipNodeSelector->setCurrentNode(clipNode);
@@ -514,7 +514,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
     }
     else
     {
-      std::string messages = userMessages->GetAllMessagesAsString();
+      const std::string messages = userMessages->GetAllMessagesAsString();
       message = tr("Using slow clipping method.\n%1").arg(messages.c_str());
       clippingInfoIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
     }
@@ -534,7 +534,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromROINode()
   {
     roiVisible = d->CropROINode->GetDisplayVisibility();
   }
-  QSignalBlocker blocker(d->ROICropDisplayCheckBox);
+  const QSignalBlocker blocker(d->ROICropDisplayCheckBox);
   d->ROICropDisplayCheckBox->setChecked(roiVisible);
 }
 
@@ -577,7 +577,7 @@ void qSlicerVolumeRenderingModuleWidget::fitROIToVolume()
   // Fit ROI to volume
   vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic())->FitROIToVolume(displayNode);
 
-  vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
+  vtkMRMLMarkupsROINode* const markupsROINode = displayNode->GetMarkupsROINode();
   if (markupsROINode &&                                                 //
       (d->MarkupsROIWidget->mrmlROINode() != this->mrmlMarkupsROINode() //
        || d->MarkupsROIWidget->mrmlROINode() != markupsROINode))
@@ -705,8 +705,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode
 vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget::mrmlDisplayNode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
-  vtkMRMLVolumeNode* volumeNode = this->mrmlVolumeNode();
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = d->displayNodeForVolumeNode(volumeNode);
+  vtkMRMLVolumeNode* const volumeNode = this->mrmlVolumeNode();
+  vtkMRMLVolumeRenderingDisplayNode* const displayNode = d->displayNodeForVolumeNode(volumeNode);
   return displayNode;
 }
 
@@ -714,8 +714,8 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget::mrmlDispl
 void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int index)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  QString renderingClassName = d->RenderingMethodComboBox->itemData(index).toString();
+  vtkMRMLVolumeRenderingDisplayNode* const displayNode = this->mrmlDisplayNode();
+  const QString renderingClassName = d->RenderingMethodComboBox->itemData(index).toString();
   // Display node is already the right type, don't change anything
   if (!displayNode || renderingClassName.isEmpty() || renderingClassName == displayNode->GetClassName())
   {
@@ -739,7 +739,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMemorySizeChanged()
   {
     return;
   }
-  int gpuMemorySize = d->MemorySizeComboBox->currentGPUMemoryInMB();
+  const int gpuMemorySize = d->MemorySizeComboBox->currentGPUMemoryInMB();
 
   std::vector<vtkMRMLNode*> viewNodes;
   displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
@@ -823,7 +823,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentFramerateChanged(double fps)
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::synchronizeScalarDisplayNode()
 {
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  vtkMRMLVolumeRenderingDisplayNode* const displayNode = this->mrmlDisplayNode();
   if (!displayNode)
   {
     return;
@@ -891,7 +891,7 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
     return;
   }
 
-  int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
+  const int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
 
   std::vector<int> wasModifying(numberOfDisplayNodes);
 
@@ -936,7 +936,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
   {
     vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
 
-    vtkMRMLVolumeNode* displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+    vtkMRMLVolumeNode* const displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
     {
       return false;
@@ -967,7 +967,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
       {
         continue;
       }
-      vtkMRMLVolumeNode* displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+      vtkMRMLVolumeNode* const displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
       if (!displayableNode)
       {
         return false;
@@ -990,7 +990,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
     {
       return false;
     }
-    vtkMRMLVolumeNode* displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+    vtkMRMLVolumeNode* const displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
     {
       return false;
@@ -1043,7 +1043,7 @@ void qSlicerVolumeRenderingModuleWidget::onChartsExtentChanged()
   double effectiveRange[4] = { 0.0 };
   d->VolumePropertyNodeWidget->chartsExtent(effectiveRange);
 
-  int wasDisabled = volumePropertyNode->GetDisableModifiedEvent();
+  const int wasDisabled = volumePropertyNode->GetDisableModifiedEvent();
   volumePropertyNode->DisableModifiedEventOn();
   volumePropertyNode->SetEffectiveRange(effectiveRange[0], effectiveRange[1]);
   volumePropertyNode->SetDisableModifiedEvent(wasDisabled);
@@ -1074,7 +1074,7 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
     }
     volumePropertyNode->GetEffectiveRange(effectiveRange);
   }
-  bool wasBlocking = d->VolumePropertyNodeWidget->blockSignals(true);
+  const bool wasBlocking = d->VolumePropertyNodeWidget->blockSignals(true);
   d->VolumePropertyNodeWidget->setChartsExtent(effectiveRange[0], effectiveRange[1]);
   d->VolumePropertyNodeWidget->blockSignals(wasBlocking);
 
@@ -1149,7 +1149,7 @@ void qSlicerVolumeRenderingModuleWidget::enter()
   // If no node is selected then select the first displayed node to save the user a click
   if (!d->VolumeNodeSelector->currentNode())
   {
-    vtkMRMLNode* node = d->VolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
+    vtkMRMLNode* const node = d->VolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
     if (node)
     {
       d->VolumeNodeSelector->setCurrentNode(node);

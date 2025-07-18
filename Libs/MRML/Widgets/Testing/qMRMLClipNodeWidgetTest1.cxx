@@ -47,18 +47,18 @@ int qMRMLClipNodeWidgetTest1(int argc, char* argv[])
 
   vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer<vtkMRMLClipModelsNode> clipNode = vtkSmartPointer<vtkMRMLClipModelsNode>::New();
+  const vtkSmartPointer<vtkMRMLClipModelsNode> clipNode = vtkSmartPointer<vtkMRMLClipModelsNode>::New();
   scene->AddNode(clipNode);
 
-  vtkSmartPointer<vtkMRMLSliceNode> redSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  const vtkSmartPointer<vtkMRMLSliceNode> redSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
   redSlice->SetSingletonTag("Red");
   scene->AddNode(redSlice);
 
-  vtkSmartPointer<vtkMRMLSliceNode> yellowSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  const vtkSmartPointer<vtkMRMLSliceNode> yellowSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
   yellowSlice->SetSingletonTag("Yellow");
   scene->AddNode(yellowSlice);
 
-  vtkSmartPointer<vtkMRMLSliceNode> greenSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
+  const vtkSmartPointer<vtkMRMLSliceNode> greenSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();
   greenSlice->SetSingletonTag("Green");
   scene->AddNode(greenSlice);
 
@@ -71,10 +71,10 @@ int qMRMLClipNodeWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  int clipType = clipNode->GetClipType();
-  int redSliceClipState = clipNode->GetRedSliceClipState();
-  int yellowSliceClipState = clipNode->GetYellowSliceClipState();
-  int greenSliceClipState = clipNode->GetGreenSliceClipState();
+  const int clipType = clipNode->GetClipType();
+  const int redSliceClipState = clipNode->GetRedSliceClipState();
+  const int yellowSliceClipState = clipNode->GetYellowSliceClipState();
+  const int greenSliceClipState = clipNode->GetGreenSliceClipState();
 
   clipNodeWidget.setMRMLClipNode(clipNode);
 

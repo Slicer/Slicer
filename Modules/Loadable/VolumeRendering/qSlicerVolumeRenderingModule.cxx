@@ -132,7 +132,7 @@ void qSlicerVolumeRenderingModule::setup()
   this->Superclass::setup();
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  vtkSlicerVolumeRenderingLogic* const volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
   {
     qSlicerVolumeRenderingSettingsPanel* panel = new qSlicerVolumeRenderingSettingsPanel;
@@ -150,7 +150,7 @@ void qSlicerVolumeRenderingModule::setup()
   coreIOManager->registerIO(new qSlicerNodeWriter(tr("Shader Property"), QString("ShaderPropertyFile"), QStringList() << "vtkMRMLShaderPropertyNode", true, this));
 
   // Register Subject Hierarchy core plugins
-  vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  vtkSlicerVolumeRenderingLogic* const logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   qSlicerSubjectHierarchyVolumeRenderingPlugin* shPlugin = new qSlicerSubjectHierarchyVolumeRenderingPlugin();
   shPlugin->setVolumeRenderingLogic(logic);
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(shPlugin);

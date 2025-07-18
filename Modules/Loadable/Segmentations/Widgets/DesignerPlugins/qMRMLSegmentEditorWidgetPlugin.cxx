@@ -30,7 +30,7 @@ qMRMLSegmentEditorWidgetPlugin::qMRMLSegmentEditorWidgetPlugin(QObject* pluginPa
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentEditorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentEditorWidget* pluginWidget = new qMRMLSegmentEditorWidget(parentWidget);
+  qMRMLSegmentEditorWidget* const pluginWidget = new qMRMLSegmentEditorWidget(parentWidget);
   return pluginWidget;
 }
 

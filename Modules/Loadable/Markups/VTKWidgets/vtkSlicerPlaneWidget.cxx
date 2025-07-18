@@ -75,7 +75,7 @@ void vtkSlicerPlaneWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode
 //-----------------------------------------------------------------------------
 bool vtkSlicerPlaneWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
+  vtkSlicerMarkupsWidgetRepresentation* const rep = this->GetMarkupsRepresentation();
   if (!rep)
   {
     return false;
@@ -109,7 +109,7 @@ bool vtkSlicerPlaneWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventDat
 //-----------------------------------------------------------------------------
 bool vtkSlicerPlaneWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   this->ApplicationLogic->PauseRender();
 
   bool processedEvent = false;
@@ -219,7 +219,7 @@ bool vtkSlicerPlaneWidget::ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEv
     eventData->GetDisplayPosition(displayPos);
     double pickPos[3] = { 0.0, 0.0, 0.0 };
     double zAxis_World[3] = { 0.0, 0.0, 0.0 };
-    bool pickSuccessful = rep3d->AccuratePick(displayPos[0], displayPos[1], pickPos, zAxis_World);
+    const bool pickSuccessful = rep3d->AccuratePick(displayPos[0], displayPos[1], pickPos, zAxis_World);
 
     double yAxis_World[3] = { 0.0, 1.0, 0.0 };
     vtkCamera* camera = this->Renderer->GetActiveCamera();
@@ -237,7 +237,7 @@ bool vtkSlicerPlaneWidget::ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEv
     }
     vtkMath::Normalize(zAxis_World);
 
-    double epsilon = 1e-2;
+    const double epsilon = 1e-2;
     if (vtkMath::Dot(zAxis_World, yAxis_World) >= 1.0 - epsilon)
     {
       // If the up vector and normal vector are pointing in the same direction, then just set the normal.
@@ -308,7 +308,7 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
     return false;
   }
 
-  double eventPos[2]{
+  const double eventPos[2]{
     static_cast<double>(eventData->GetDisplayPosition()[0]),
     static_cast<double>(eventData->GetDisplayPosition()[1]),
   };
@@ -317,7 +317,7 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
   double worldPos[3], worldOrient[9];
 
   vtkSlicerPlaneRepresentation2D* rep2d = vtkSlicerPlaneRepresentation2D::SafeDownCast(this->WidgetRep);
-  vtkSlicerPlaneRepresentation3D* rep3d = vtkSlicerPlaneRepresentation3D::SafeDownCast(this->WidgetRep);
+  vtkSlicerPlaneRepresentation3D* const rep3d = vtkSlicerPlaneRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)
   {
     // 2D view
@@ -360,13 +360,13 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
   vector_World[1] = worldPos[1] - ref[1];
   vector_World[2] = worldPos[2] - ref[2];
 
-  bool lockToNormal = false;
+  const bool lockToNormal = false;
   if (lockToNormal)
   {
     double normal[3] = { 0 };
     markupsNode->GetNormal(normal);
 
-    double magnitude = vtkMath::Dot(vector_World, normal);
+    const double magnitude = vtkMath::Dot(vector_World, normal);
     vtkMath::MultiplyScalar(normal, magnitude);
     for (int i = 0; i < 3; ++i)
     {
@@ -374,7 +374,7 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
     }
   }
 
-  MRMLNodeModifyBlocker blocker(markupsNode);
+  const MRMLNodeModifyBlocker blocker(markupsNode);
 
   vtkNew<vtkMatrix4x4> worldToObjectMatrix;
   markupsNode->GetObjectToWorldMatrix(worldToObjectMatrix);
@@ -450,7 +450,7 @@ bool vtkSlicerPlaneWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
     planeNode->SetNormalPointRequired(false);
   }
 
-  bool success = Superclass::PlacePoint(eventData);
+  const bool success = Superclass::PlacePoint(eventData);
   if (!success)
   {
     return false;

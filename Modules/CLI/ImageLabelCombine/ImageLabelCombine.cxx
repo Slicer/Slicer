@@ -33,10 +33,10 @@ int main(int argc, char* argv[])
   typedef itk::ImageRegionIterator<ImageType> IteratorType;
   typedef itk::ImageDuplicator<ImageType> DuplicatorType;
 
-  ReaderType::Pointer readerA = ReaderType::New();
-  ReaderType::Pointer readerB = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
-  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  const ReaderType::Pointer readerA = ReaderType::New();
+  const ReaderType::Pointer readerB = ReaderType::New();
+  const WriterType::Pointer writer = WriterType::New();
+  const DuplicatorType::Pointer duplicator = DuplicatorType::New();
   ImageType::Pointer input, output;
 
   readerA->SetFileName(InputLabelMap_A.c_str());
@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
   }
 
   // Check dimensions equality
-  unsigned int inputDim = input->GetImageDimension();
-  unsigned int outputDim = output->GetImageDimension();
+  const unsigned int inputDim = input->GetImageDimension();
+  const unsigned int outputDim = output->GetImageDimension();
   if (inputDim != outputDim)
   {
     std::cerr << "Input images dimensionality is not be the same" << std::endl;

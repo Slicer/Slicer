@@ -245,7 +245,7 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {
     // Update the line color mapping from the colorNode stored in the markups display node
-    vtkColorTransferFunction* colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
+    vtkColorTransferFunction* const colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
     this->PlaneFillMapper->SetLookupTable(colormap);
     this->PlaneOutlineMapper->SetLookupTable(colormap);
   }
@@ -265,9 +265,9 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 void vtkSlicerPlaneRepresentation2D::UpdatePlaneFillColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3])
 {
   Superclass::UpdateDistanceColorMap(colormap, color);
-  double opacity = this->MarkupsDisplayNode->GetFillVisibility() ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetFillOpacity() : 0.0;
-  double limit = this->MarkupsDisplayNode->GetLineColorFadingEnd();
-  double tolerance = this->MarkupsDisplayNode->GetLineColorFadingStart();
+  const double opacity = this->MarkupsDisplayNode->GetFillVisibility() ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetFillOpacity() : 0.0;
+  const double limit = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+  const double tolerance = this->MarkupsDisplayNode->GetLineColorFadingStart();
   vtkPiecewiseFunction* opacityFunction = colormap->GetScalarOpacityFunction();
   opacityFunction->RemoveAllPoints();
   opacityFunction->AddPoint(-limit, opacity * 0.2);
@@ -280,7 +280,7 @@ void vtkSlicerPlaneRepresentation2D::UpdatePlaneFillColorMap(vtkDiscretizableCol
 void vtkSlicerPlaneRepresentation2D::UpdatePlaneOutlineColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3])
 {
   Superclass::UpdateDistanceColorMap(colormap, color);
-  double opacity = this->MarkupsDisplayNode->GetOutlineVisibility() ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
+  const double opacity = this->MarkupsDisplayNode->GetOutlineVisibility() ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
   vtkPiecewiseFunction* opacityFunction = colormap->GetScalarOpacityFunction();
   opacityFunction->RemoveAllPoints();
   opacityFunction->AddPoint(0.0, opacity);
@@ -342,7 +342,7 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(vtkMRMLInteractionEven
     plane->SetOrigin(planeOrigin);
     plane->SetNormal(planeNormal);
 
-    const double* worldPosition0 = interactionEventData->GetWorldPosition();
+    const double* const worldPosition0 = interactionEventData->GetWorldPosition();
     double worldPosition1[3] = { worldPosition0[0], worldPosition0[1], worldPosition0[2] };
     vtkMath::Add(worldPosition1, this->SlicePlane->GetNormal(), worldPosition1);
 
@@ -369,7 +369,7 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(vtkMRMLInteractionEven
 
       double t;
       double currentClosestPointWorld[3] = { 0.0, 0.0, 0.0 };
-      double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
+      const double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
       if (currentDist2World < dist2World)
       {
         dist2World = currentDist2World;
@@ -383,10 +383,10 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(vtkMRMLInteractionEven
   double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
 
-  double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
-  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  const double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
+  const int* const displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
-  double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  const double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
   if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
   {
     closestDistance2 = dist2Display;
@@ -547,7 +547,7 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   double zAxis_World[3] = { 0.0, 0.0, 0.0 };
   planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
-  double epsilon = 1e-5;
+  const double epsilon = 1e-5;
   if (vtkMath::Norm(xAxis_World) <= epsilon || //
       vtkMath::Norm(yAxis_World) <= epsilon || //
       vtkMath::Norm(zAxis_World) <= epsilon)
@@ -563,7 +563,7 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   double origin_World[3] = { 0.0 };
   planeNode->GetOriginWorld(origin_World);
 
-  vtkNew<vtkMatrix4x4> objectToWorldMatrix;
+  const vtkNew<vtkMatrix4x4> objectToWorldMatrix;
   planeNode->GetObjectToWorldMatrix(objectToWorldMatrix);
 
   vtkNew<vtkTransform> objectToWorldTransform;
@@ -576,7 +576,7 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   this->PlaneFilter->SetPoint1(planeCornerPoints_World->GetPoint(1));
   this->PlaneFilter->SetPoint2(planeCornerPoints_World->GetPoint(3));
 
-  double* arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(zAxis_World);
+  double* const arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(zAxis_World);
 
   // Update the normal vector
   if (vtkMath::Dot(this->SlicePlane->GetNormal(), zAxis_World) > 1.0 - epsilon)

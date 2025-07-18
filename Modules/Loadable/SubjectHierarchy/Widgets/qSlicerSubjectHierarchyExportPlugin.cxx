@@ -93,7 +93,7 @@ void qSlicerSubjectHierarchyExportPluginPrivate::init()
 bool qSlicerSubjectHierarchyExportPluginPrivate::getSubjectHierarchyPath(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType fromItemID, vtkIdType toItemID, QStringList& path)
 {
   path.clear();
-  vtkIdType endItemID = shNode->GetItemParent(toItemID); // One item above the highest we want to go
+  const vtkIdType endItemID = shNode->GetItemParent(toItemID); // One item above the highest we want to go
   std::vector<vtkIdType> encounteredItemIds;
   for (vtkIdType itemID = shNode->GetItemParent(fromItemID); itemID != endItemID; itemID = shNode->GetItemParent(itemID))
   {
@@ -168,14 +168,14 @@ void qSlicerSubjectHierarchyExportPlugin::showContextMenuActionsForItem(vtkIdTyp
     return; // skip the case of invalid item ID
   }
 
-  vtkIdType parentItemID = shNode->GetItemParent(itemID);
+  const vtkIdType parentItemID = shNode->GetItemParent(itemID);
   if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
   {
     return; // no export for virtual branch items
   }
 
-  vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
-  vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+  vtkMRMLNode* const node = shNode->GetItemDataNode(itemID);
+  vtkMRMLStorableNode* const storableNode = vtkMRMLStorableNode::SafeDownCast(node);
 
   std::vector<vtkIdType> children;
   shNode->GetItemChildren(itemID, children);
@@ -197,7 +197,7 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
-  vtkIdType selectedItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  const vtkIdType selectedItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!selectedItemID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
@@ -215,7 +215,7 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
   std::vector<vtkIdType> childrenRecursive;
   shNode->GetItemChildren(selectedItemID, childrenNonrecursive, false);
   shNode->GetItemChildren(selectedItemID, childrenRecursive, true);
-  for (vtkIdType childItemID : childrenNonrecursive)
+  for (const vtkIdType childItemID : childrenNonrecursive)
   {
     vtkMRMLStorableNode* childStorableNode = vtkMRMLStorableNode::SafeDownCast(shNode->GetItemDataNode(childItemID));
     if (childStorableNode)
@@ -223,7 +223,7 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
       childIdsToExportNonrecursive.push_back(childStorableNode->GetID());
     }
   }
-  for (vtkIdType childItemID : childrenRecursive)
+  for (const vtkIdType childItemID : childrenRecursive)
   {
     vtkMRMLStorableNode* childStorableNode = vtkMRMLStorableNode::SafeDownCast(shNode->GetItemDataNode(childItemID));
     if (childStorableNode)

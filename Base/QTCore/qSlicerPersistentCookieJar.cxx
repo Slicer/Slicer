@@ -56,7 +56,7 @@ qSlicerPersistentCookieJarPrivate::qSlicerPersistentCookieJarPrivate(qSlicerPers
 // --------------------------------------------------------------------------
 void qSlicerPersistentCookieJarPrivate::init()
 {
-  QSettings::Format savedFormat = QSettings::defaultFormat();
+  const QSettings::Format savedFormat = QSettings::defaultFormat();
   QSettings::setDefaultFormat(QSettings::IniFormat);
   this->FilePath = QFileInfo(QFileInfo(QSettings().fileName()).dir(), "cookies.ini").filePath();
   QSettings::setDefaultFormat(savedFormat);
@@ -98,7 +98,7 @@ QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl(const QUrl& url)
   QSettings settings(d->FilePath, QSettings::IniFormat);
   QList<QNetworkCookie> cookieList;
   settings.beginGroup(url.host());
-  QStringList keys = settings.childKeys();
+  const QStringList keys = settings.childKeys();
   for (const QString& key : keys)
   {
     cookieList << QNetworkCookie(key.toUtf8(), settings.value(key).toString().toUtf8());

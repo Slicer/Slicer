@@ -90,7 +90,7 @@ void qSlicerDataModule::setup()
 
   this->Superclass::setup();
 
-  vtkSlicerCamerasModuleLogic* camerasLogic = vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic(/*no tr*/ "Cameras"));
+  vtkSlicerCamerasModuleLogic* const camerasLogic = vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic(/*no tr*/ "Cameras"));
   // NOTE: here we assume that camerasLogic with a nullptr value can be passed
   // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
   // immediately.
@@ -117,7 +117,7 @@ void qSlicerDataModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerDataModule::createWidgetRepresentation()
 {
-  qSlicerDataModuleWidget* widget = new qSlicerDataModuleWidget;
+  qSlicerDataModuleWidget* const widget = new qSlicerDataModuleWidget;
   return widget;
 }
 

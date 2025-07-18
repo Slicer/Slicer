@@ -88,7 +88,7 @@ int vtkSegmentationConversionPath::AddRule(vtkSegmentationConverterRule* rule)
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionPath::AddRules(vtkSegmentationConversionPath* path)
 {
-  int numberOfRules = path->GetNumberOfRules();
+  const int numberOfRules = path->GetNumberOfRules();
   for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
   {
     this->AddRule(path->GetRule(ruleIndex));

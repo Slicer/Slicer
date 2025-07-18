@@ -78,8 +78,8 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char* argv[])
     std::cerr << "Can't load scene:" << argv[1] << " error: " << userMessages->GetAllMessagesAsString() << std::endl;
     return EXIT_FAILURE;
   }
-  vtkMRMLNode* node = scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
-  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+  vtkMRMLNode* const node = scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
+  vtkMRMLVolumeNode* const volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   if (!volumeNode)
   {
     std::cerr << "Scene must contain a valid vtkMRMLVolumeNode:" << node << std::endl;

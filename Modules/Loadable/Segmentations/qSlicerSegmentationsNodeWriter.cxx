@@ -53,7 +53,7 @@ bool qSlicerSegmentationsNodeWriter::write(const qSlicerIO::IOProperties& proper
 {
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
 
-  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
+  vtkMRMLStorableNode* const node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
   {
     return false;

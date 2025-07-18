@@ -134,16 +134,16 @@ struct SegmentListFilterParameters
   {
     this->init();
 
-    QStringList attributes = filterString.split(this->AttributeSeparator);
-    for (QString attribute : attributes)
+    const QStringList attributes = filterString.split(this->AttributeSeparator);
+    for (const QString attribute : attributes)
     {
       QStringList keyValue = attribute.split(this->KeyValueSeparator);
       if (keyValue.size() != 2)
       {
         continue;
       }
-      QString key = keyValue[0];
-      QString value = keyValue[1];
+      const QString key = keyValue[0];
+      const QString value = keyValue[1];
 
       if (key == this->TextFilterKey)
       {
@@ -151,10 +151,10 @@ struct SegmentListFilterParameters
       }
       else if (key == this->StatusFilterKey)
       {
-        QStringList statusFilters = value.split(this->ValueSeparator);
-        for (QString statusString : statusFilters)
+        const QStringList statusFilters = value.split(this->ValueSeparator);
+        for (const QString statusString : statusFilters)
         {
-          int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusFromMachineReadableString(statusString.toStdString());
+          const int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusFromMachineReadableString(statusString.toStdString());
           if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
           {
             continue;
@@ -305,7 +305,7 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(this->SegmentsTable, &QTableView::clicked, q, &qMRMLSegmentsTableView::onSegmentsTableClicked);
   QObject::connect(this->SegmentsTable, &QTableView::doubleClicked, q, &qMRMLSegmentsTableView::onSegmentsTableDoubleClicked);
   QObject::connect(this->FilterLineEdit, &ctkSearchBox::textEdited, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
-  for (QPushButton* button : this->ShowStatusButtons)
+  for (QPushButton* const button : this->ShowStatusButtons)
   {
     if (!button)
     {
@@ -364,7 +364,7 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentsTableView);
 
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
+  vtkMRMLSegmentationNode* const segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
   d->SegmentationNode = segmentationNode;
   d->Model->setSegmentationNode(d->SegmentationNode);
 
@@ -380,12 +380,12 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
 void qMRMLSegmentsTableView::onShowStatusButtonClicked()
 {
   Q_D(qMRMLSegmentsTableView);
-  QPushButton* button = qobject_cast<QPushButton*>(sender());
+  QPushButton* const button = qobject_cast<QPushButton*>(sender());
   if (!button)
   {
     return;
   }
-  int status = button->property(STATUS_PROPERTY).toInt();
+  const int status = button->property(STATUS_PROPERTY).toInt();
   d->SortFilterModel->setShowStatus(status, button->isChecked());
 }
 
@@ -394,7 +394,7 @@ void qMRMLSegmentsTableView::onSegmentsFilterModified()
 {
   Q_D(qMRMLSegmentsTableView);
 
-  QString textFilter = d->SortFilterModel->textFilter();
+  const QString textFilter = d->SortFilterModel->textFilter();
   if (d->FilterLineEdit->text() != textFilter)
   {
     d->FilterLineEdit->setText(textFilter);
@@ -430,13 +430,13 @@ void qMRMLSegmentsTableView::updateMRMLFromFilterParameters()
   filterParameters.TextFilter = d->SortFilterModel->textFilter();
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
   {
-    bool showStatus = d->SortFilterModel->showStatus(status);
+    const bool showStatus = d->SortFilterModel->showStatus(status);
     filterParameters.ShowStatusFilter[status] = showStatus;
   }
 
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationNode->SetSegmentListFilterEnabled(d->IsFilterBarVisible);
-  std::string filterString = filterParameters.serializeStatusFilter().toStdString();
+  const std::string filterString = filterParameters.serializeStatusFilter().toStdString();
   d->SegmentationNode->SetSegmentListFilterOptions(filterString);
 }
 
@@ -444,14 +444,14 @@ void qMRMLSegmentsTableView::updateMRMLFromFilterParameters()
 void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelIndex)
 {
   Q_D(qMRMLSegmentsTableView);
-  QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
-  QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
+  const QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
+  QStandardItem* const item = d->Model->itemFromSegmentID(segmentId);
   if (!d->SegmentationNode || !item)
   {
     return;
   }
 
-  Qt::ItemFlags flags = item->flags();
+  const Qt::ItemFlags flags = item->flags();
   if (!flags.testFlag(Qt::ItemIsSelectable))
   {
     return;
@@ -460,12 +460,12 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
   if (modelIndex.column() == d->Model->visibilityColumn())
   {
     // Toggle segment visibility
-    bool visible = (item->data(qMRMLSegmentsModel::VisibilityRole).toInt() != 0);
+    const bool visible = (item->data(qMRMLSegmentsModel::VisibilityRole).toInt() != 0);
     this->setSegmentVisibility(segmentId, !visible, -1, -1, -1);
   }
   else if (modelIndex.column() == d->Model->statusColumn())
   {
-    vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
+    vtkSegment* const segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     switch (status)
     {
@@ -486,14 +486,14 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
 void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& modelIndex)
 {
   Q_D(qMRMLSegmentsTableView);
-  QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
-  QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
+  const QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
+  QStandardItem* const item = d->Model->itemFromSegmentID(segmentId);
   if (!d->SegmentationNode || !item)
   {
     return;
   }
 
-  Qt::ItemFlags flags = item->flags();
+  const Qt::ItemFlags flags = item->flags();
   if (!flags.testFlag(Qt::ItemIsSelectable))
   {
     return;
@@ -511,24 +511,24 @@ void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& mod
       }
 
       // Get terminology from segment. Do not check success, as an empty terminology is also a valid starting point
-      vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
-      std::string serializedTerminology = segment->GetTerminology();
+      const vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
+      const std::string serializedTerminology = segment->GetTerminology();
       if (!serializedTerminology.empty())
       {
         terminologiesLogic->DeserializeTerminologyEntry(serializedTerminology, terminologyEntry);
       }
 
       // Get current metadata to show in the terminology popup from the name item (which contains the terminology metadata)
-      QModelIndex nameIndex = modelIndex.siblingAtColumn(d->Model->nameColumn());
-      QString name = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::NameRole).toString();
-      bool nameAutoGenerated = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::NameAutoGeneratedRole).toBool();
-      QColor color = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::ColorRole).value<QColor>();
-      bool colorAutoGenerated = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole).toBool();
-      QColor generatedColor = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::GeneratedColorRole).value<QColor>();
+      const QModelIndex nameIndex = modelIndex.siblingAtColumn(d->Model->nameColumn());
+      const QString name = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::NameRole).toString();
+      const bool nameAutoGenerated = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::NameAutoGeneratedRole).toBool();
+      const QColor color = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::ColorRole).value<QColor>();
+      const bool colorAutoGenerated = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole).toBool();
+      const QColor generatedColor = modelIndex.model()->data(nameIndex, qSlicerTerminologyItemDelegate::GeneratedColorRole).value<QColor>();
 
       qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo(terminologyEntry, name, nameAutoGenerated, color, colorAutoGenerated, generatedColor);
 
-      bool usedCustomNameOrColor = (terminologyInfo.NameAutoGenerated == false || terminologyInfo.ColorAutoGenerated == false);
+      const bool usedCustomNameOrColor = (terminologyInfo.NameAutoGenerated == false || terminologyInfo.ColorAutoGenerated == false);
 
       if (qSlicerTerminologySelectorDialog::getTerminology(terminologyInfo, d->SegmentsTable))
       {
@@ -539,7 +539,7 @@ void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& mod
         segment->SetColorAutoGenerated(terminologyInfo.ColorAutoGenerated);
         segment->SetTerminology(terminologiesLogic->SerializeTerminologyEntry(terminologyInfo.GetTerminologyEntry()));
 
-        bool nowUsingCustomNameOrColor = (terminologyInfo.NameAutoGenerated == false || terminologyInfo.ColorAutoGenerated == false);
+        const bool nowUsingCustomNameOrColor = (terminologyInfo.NameAutoGenerated == false || terminologyInfo.ColorAutoGenerated == false);
         if (nowUsingCustomNameOrColor && !usedCustomNameOrColor)
         {
           // When terminology is selected from color table, the name and color are always set as custom (not auto-generated).
@@ -547,7 +547,7 @@ void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& mod
           bool isTerminology = true;
           if (terminologyInfo.GetTerminologyEntry())
           {
-            const char* contextName = terminologyInfo.GetTerminologyEntry()->GetTerminologyContextName();
+            const char* const contextName = terminologyInfo.GetTerminologyEntry()->GetTerminologyContextName();
             if (contextName)
             {
               isTerminology = terminologiesLogic->IsTerminologyContextLoaded(contextName);
@@ -563,8 +563,8 @@ void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& mod
     }
     else
     {
-      QColor color = modelIndex.model()->data(modelIndex, Qt::DecorationRole).value<QColor>();
-      QColor newColor = ctkColorDialog::getColor(color, d->SegmentsTable, tr("Choose new segment color"));
+      const QColor color = modelIndex.model()->data(modelIndex, Qt::DecorationRole).value<QColor>();
+      const QColor newColor = ctkColorDialog::getColor(color, d->SegmentsTable, tr("Choose new segment color"));
       if (newColor.isValid()) // Do not set color if user cancelled
       {
         segment->SetColor(newColor.redF(), newColor.greenF(), newColor.blueF());
@@ -652,13 +652,13 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     return;
   }
 
-  bool wasUpdatingFromMRML = d->IsUpdatingWidgetFromMRML;
+  const bool wasUpdatingFromMRML = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
-  bool listFilterEnabled = d->SegmentationNode->GetSegmentListFilterEnabled();
+  const bool listFilterEnabled = d->SegmentationNode->GetSegmentListFilterEnabled();
   this->setFilterBarVisible(listFilterEnabled);
 
-  QString filterOptions = QString::fromStdString(d->SegmentationNode->GetSegmentListFilterOptions());
+  const QString filterOptions = QString::fromStdString(d->SegmentationNode->GetSegmentListFilterOptions());
 
   SegmentListFilterParameters filterParameters;
   filterParameters.deserializeStatusFilter(filterOptions);
@@ -746,7 +746,7 @@ void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection& sel
 //-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::onVisibility3DActionToggled(bool visible)
 {
-  QAction* senderAction = qobject_cast<QAction*>(sender());
+  QAction* const senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
   {
     return;
@@ -759,7 +759,7 @@ void qMRMLSegmentsTableView::onVisibility3DActionToggled(bool visible)
 //-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::onVisibility2DFillActionToggled(bool visible)
 {
-  QAction* senderAction = qobject_cast<QAction*>(sender());
+  QAction* const senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
   {
     return;
@@ -772,7 +772,7 @@ void qMRMLSegmentsTableView::onVisibility2DFillActionToggled(bool visible)
 //-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::onVisibility2DOutlineActionToggled(bool visible)
 {
-  QAction* senderAction = qobject_cast<QAction*>(sender());
+  QAction* const senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
   {
     return;
@@ -802,7 +802,7 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QObject* senderObject, int vis
     return;
   }
 
-  QString segmentId = senderObject->property(ID_PROPERTY).toString();
+  const QString segmentId = senderObject->property(ID_PROPERTY).toString();
   this->setSegmentVisibility(segmentId, visible, visible3D, visible2DFill, visible2DOutline);
 }
 
@@ -911,12 +911,12 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   }
 
   bool validSelection = false;
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   // First segment selection should also clear other selections
   QItemSelectionModel::SelectionFlag itemSelectionFlag = QItemSelectionModel::ClearAndSelect;
-  for (QString segmentID : segmentIDs)
+  for (const QString segmentID : segmentIDs)
   {
-    QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+    const QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     if (!index.isValid())
     {
       continue;
@@ -957,9 +957,9 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
     if (event->type() == QEvent::KeyPress)
     {
       // type is already checked, so we can use static_cast instead of dynamic_cast for efficiency
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-      QAbstractItemModel* model = d->SegmentsTable->model();
-      QModelIndex currentIndex = d->SegmentsTable->currentIndex();
+      QKeyEvent* const keyEvent = static_cast<QKeyEvent*>(event);
+      QAbstractItemModel* const model = d->SegmentsTable->model();
+      const QModelIndex currentIndex = d->SegmentsTable->currentIndex();
 
       if (model
           && (                                                                                         //
@@ -1136,7 +1136,7 @@ bool qMRMLSegmentsTableView::statusShown(int status)
     return false;
   }
 
-  QPushButton* button = d->ShowStatusButtons[status];
+  QPushButton* const button = d->ShowStatusButtons[status];
   if (!button)
   {
     return false;
@@ -1170,7 +1170,7 @@ int qMRMLSegmentsTableView::rowForSegmentID(QString segmentID)
 //------------------------------------------------------------------------------
 QString qMRMLSegmentsTableView::segmentIDForRow(int row)
 {
-  QModelIndex index = this->sortFilterProxyModel()->index(row, 0);
+  const QModelIndex index = this->sortFilterProxyModel()->index(row, 0);
   return this->sortFilterProxyModel()->segmentIDFromIndex(index);
 }
 
@@ -1181,31 +1181,31 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   QMenu* contextMenu = new QMenu(this);
 
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  const QStringList selectedSegmentIDs = this->selectedSegmentIDs();
 
   if (selectedSegmentIDs.size() > 0)
   {
-    QAction* toggleSelectedAction = new QAction(tr("Toggle selected segments visibility"), this);
+    QAction* const toggleSelectedAction = new QAction(tr("Toggle selected segments visibility"), this);
     QObject::connect(toggleSelectedAction, SIGNAL(triggered()), this, SLOT(toggleSelectedSegmentsVisibility()));
     contextMenu->addAction(toggleSelectedAction);
 
-    QAction* showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
+    QAction* const showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
 
     contextMenu->addSeparator();
 
-    QAction* jumpSlicesAction = new QAction(tr("Jump slices"), this);
+    QAction* const jumpSlicesAction = new QAction(tr("Jump slices"), this);
     QObject::connect(jumpSlicesAction, SIGNAL(triggered()), this, SLOT(jumpSlices()));
     contextMenu->addAction(jumpSlicesAction);
 
     contextMenu->addSeparator();
 
-    QAction* moveUpAction = new QAction(tr("Move selected segments up"), this);
+    QAction* const moveUpAction = new QAction(tr("Move selected segments up"), this);
     QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
     contextMenu->addAction(moveUpAction);
 
-    QAction* moveDownAction = new QAction(tr("Move selected segments down"), this);
+    QAction* const moveDownAction = new QAction(tr("Move selected segments down"), this);
     QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
     contextMenu->addAction(moveDownAction);
   }
@@ -1224,10 +1224,10 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
   QObject::connect(showLayerColumnAction, SIGNAL(triggered(bool)), this, SLOT(setLayerColumnVisible(bool)));
   contextMenu->addAction(showLayerColumnAction);
 
-  QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
+  const QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
   if (d->AdvancedSegmentVisibility && index.isValid())
   {
-    QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
+    const QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
@@ -1266,8 +1266,8 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     contextMenu->addSeparator();
     for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
     {
-      QString name = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsHumanReadableString(status);
-      QIcon icon = d->StatusIcons[status];
+      const QString name = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsHumanReadableString(status);
+      const QIcon icon = d->StatusIcons[status];
 
       QAction* setStatusAction = new QAction(name);
       setStatusAction->setIcon(icon);
@@ -1277,7 +1277,7 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     }
 
     contextMenu->addSeparator();
-    QAction* clearSelectedSegmentAction = new QAction(tr("Clear selected segments"), this);
+    QAction* const clearSelectedSegmentAction = new QAction(tr("Clear selected segments"), this);
     QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
     contextMenu->addAction(clearSelectedSegmentAction);
   }
@@ -1303,7 +1303,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentsStatus(int aStatus)
   int status = aStatus;
   if (status == -1)
   {
-    QAction* setStatusAction = qobject_cast<QAction*>(sender());
+    QAction* const setStatusAction = qobject_cast<QAction*>(sender());
     Q_ASSERT(setStatusAction);
     if (!setStatusAction)
     {
@@ -1324,11 +1324,11 @@ void qMRMLSegmentsTableView::setSelectedSegmentsStatus(int aStatus)
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
-  for (QString segmentID : selectedSegmentIDs)
+  const MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  const QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  for (const QString segmentID : selectedSegmentIDs)
   {
-    vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
+    vtkSegment* const segment = segmentation->GetSegment(segmentID.toStdString());
     if (segment)
     {
       vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
@@ -1341,7 +1341,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
 {
   Q_D(qMRMLSegmentsTableView);
 
-  QAction* clearSegmentAction = qobject_cast<QAction*>(sender());
+  QAction* const clearSegmentAction = qobject_cast<QAction*>(sender());
   Q_ASSERT(clearSegmentAction);
 
   if (!d->SegmentationNode)
@@ -1349,7 +1349,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
     qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
     return;
   }
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  vtkSegmentation* const segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
   {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation";
@@ -1358,7 +1358,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
 
   QMessageBox messageBox;
   messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
-  QPushButton* cancelButton = messageBox.addButton(tr("Cancel"), QMessageBox::ButtonRole::RejectRole);
+  QPushButton* const cancelButton = messageBox.addButton(tr("Cancel"), QMessageBox::ButtonRole::RejectRole);
   messageBox.setDefaultButton(cancelButton);
   messageBox.setText(tr("Are you sure you want to clear the contents of the selected segments?"));
   if (messageBox.exec() == QMessageBox::ButtonRole::RejectRole)
@@ -1366,8 +1366,8 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
     return;
   }
 
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
-  for (QString segmentID : selectedSegmentIDs)
+  const QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  for (const QString segmentID : selectedSegmentIDs)
   {
     vtkSlicerSegmentationsModuleLogic::ClearSegment(d->SegmentationNode, segmentID.toStdString());
   }
@@ -1376,7 +1376,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::showOnlySelectedSegments()
 {
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  const QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
   {
     qWarning() << Q_FUNC_INFO << ": No segment selected";
@@ -1406,13 +1406,13 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
   std::vector<std::string> displayedSegmentIDs;
   segmentation->GetSegmentIDs(displayedSegmentIDs);
 
-  QStringList hiddenSegmentIDs = d->SortFilterModel->hideSegments();
+  const QStringList hiddenSegmentIDs = d->SortFilterModel->hideSegments();
 
   // Hide all segments except the selected ones
-  MRMLNodeModifyBlocker blocker(displayNode);
-  for (std::string displayedID : displayedSegmentIDs)
+  const MRMLNodeModifyBlocker blocker(displayNode);
+  for (const std::string displayedID : displayedSegmentIDs)
   {
-    QString segmentID = QString::fromStdString(displayedID);
+    const QString segmentID = QString::fromStdString(displayedID);
     if (hiddenSegmentIDs.contains(segmentID))
     {
       continue;
@@ -1431,7 +1431,7 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::toggleSelectedSegmentsVisibility()
 {
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  const QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
   {
     qWarning() << Q_FUNC_INFO << ": No segment selected";
@@ -1451,7 +1451,7 @@ void qMRMLSegmentsTableView::toggleSelectedSegmentsVisibility()
     return;
   }
 
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  vtkSegmentation* const segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
   {
     qCritical() << Q_FUNC_INFO << ": No segmentation";
@@ -1459,10 +1459,10 @@ void qMRMLSegmentsTableView::toggleSelectedSegmentsVisibility()
   }
 
   // Toggle visibility of the selected segments
-  MRMLNodeModifyBlocker blocker(displayNode);
+  const MRMLNodeModifyBlocker blocker(displayNode);
   for (const QString& segmentID : selectedSegmentIDs)
   {
-    bool currentVisibility = displayNode->GetSegmentVisibility(segmentID.toStdString());
+    const bool currentVisibility = displayNode->GetSegmentVisibility(segmentID.toStdString());
     displayNode->SetSegmentVisibility(segmentID.toStdString(), !currentVisibility);
   }
 }
@@ -1484,13 +1484,13 @@ void qMRMLSegmentsTableView::jumpSlices()
     return;
   }
 
-  double* segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toUtf8().constData());
+  double* const segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toUtf8().constData());
   if (!segmentCenterPosition)
   {
     return;
   }
 
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     // application is closing
@@ -1499,17 +1499,17 @@ void qMRMLSegmentsTableView::jumpSlices()
   for (const QString& sliceViewName : layoutManager->sliceViewNames())
   {
     // Check if segmentation is visible in this view
-    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    qMRMLSliceWidget* const sliceWidget = layoutManager->sliceWidget(sliceViewName);
     vtkMRMLSliceNode* sliceNode = sliceWidget->mrmlSliceNode();
     if (!sliceNode || !sliceNode->GetID())
     {
       continue;
     }
     bool visibleInView = false;
-    int numberOfDisplayNodes = d->SegmentationNode->GetNumberOfDisplayNodes();
+    const int numberOfDisplayNodes = d->SegmentationNode->GetNumberOfDisplayNodes();
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
-      vtkMRMLDisplayNode* segmentationDisplayNode = d->SegmentationNode->GetNthDisplayNode(displayNodeIndex);
+      vtkMRMLDisplayNode* const segmentationDisplayNode = d->SegmentationNode->GetNthDisplayNode(displayNodeIndex);
       if (segmentationDisplayNode && segmentationDisplayNode->IsDisplayableInView(sliceNode->GetID()))
       {
         visibleInView = true;
@@ -1522,7 +1522,7 @@ void qMRMLSegmentsTableView::jumpSlices()
     }
     sliceNode->JumpSliceByCentering(segmentCenterPosition[0], segmentCenterPosition[1], segmentCenterPosition[2]);
     // snap to IJK to make sure slice is not positioned at the boundary of two voxels
-    vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+    vtkSlicerApplicationLogic* const appLogic = qSlicerApplication::application()->applicationLogic();
     if (appLogic)
     {
       vtkMRMLSliceLogic* sliceLogic = appLogic->GetSliceLogic(sliceNode);
@@ -1556,11 +1556,11 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
   QList<int> selectedRows;
   for (const QString& segmentID : selectedSegmentIDs)
   {
-    QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+    const QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;
     selectedRows << index.row();
   }
-  int minIndex = *(std::min_element(selectedRows.begin(), selectedRows.end()));
+  const int minIndex = *(std::min_element(selectedRows.begin(), selectedRows.end()));
   if (minIndex == 0)
   {
     qDebug() << Q_FUNC_INFO << ": Cannot move top segment up";
@@ -1569,10 +1569,10 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
 
   for (int i = 0; i < selectedSegmentIDs.size(); ++i)
   {
-    QModelIndex selectedModelIndex = segmentModelIndices[i];
-    QModelIndex previousModelIndex = d->SortFilterModel->index(selectedModelIndex.row() - 1, 0);
-    QString previousSegmentID = d->SortFilterModel->segmentIDFromIndex(previousModelIndex);
-    int previousSegmentIndex = segmentation->GetSegmentIndex(previousSegmentID.toStdString());
+    const QModelIndex selectedModelIndex = segmentModelIndices[i];
+    const QModelIndex previousModelIndex = d->SortFilterModel->index(selectedModelIndex.row() - 1, 0);
+    const QString previousSegmentID = d->SortFilterModel->segmentIDFromIndex(previousModelIndex);
+    const int previousSegmentIndex = segmentation->GetSegmentIndex(previousSegmentID.toStdString());
     segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), previousSegmentIndex);
   }
   this->setSelectedSegmentIDs(selectedSegmentIDs);
@@ -1600,11 +1600,11 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
   QList<int> selectedRows;
   for (const QString& segmentID : selectedSegmentIDs)
   {
-    QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+    const QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;
     selectedRows << index.row();
   }
-  int maxIndex = *(std::max_element(selectedRows.begin(), selectedRows.end()));
+  const int maxIndex = *(std::max_element(selectedRows.begin(), selectedRows.end()));
   if (maxIndex == d->SortFilterModel->rowCount() - 1)
   {
     qDebug() << Q_FUNC_INFO << ": Cannot move bottom segment down";
@@ -1613,10 +1613,10 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
 
   for (int i = selectedSegmentIDs.count() - 1; i >= 0; --i)
   {
-    QModelIndex selectedModelIndex = segmentModelIndices[i];
-    QModelIndex nextModelIndex = d->SortFilterModel->index(selectedModelIndex.row() + 1, 0);
-    QString nextSegmentID = d->SortFilterModel->segmentIDFromIndex(nextModelIndex);
-    int nextSegmentIndex = segmentation->GetSegmentIndex(nextSegmentID.toStdString());
+    const QModelIndex selectedModelIndex = segmentModelIndices[i];
+    const QModelIndex nextModelIndex = d->SortFilterModel->index(selectedModelIndex.row() + 1, 0);
+    const QString nextSegmentID = d->SortFilterModel->segmentIDFromIndex(nextModelIndex);
+    const int nextSegmentIndex = segmentation->GetSegmentIndex(nextSegmentID.toStdString());
     segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), nextSegmentIndex);
   }
   this->setSelectedSegmentIDs(selectedSegmentIDs);

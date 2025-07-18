@@ -43,13 +43,13 @@ int main(int argc, char* argv[])
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   typedef itk::CastImageFilter<InternalImageType, OutputImageType> CastingFilterType;
-  CastingFilterType::Pointer caster = CastingFilterType::New();
+  const CastingFilterType::Pointer caster = CastingFilterType::New();
 
   typedef itk::ImageFileReader<InternalImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writer = WriterType::New();
+  const ReaderType::Pointer reader = ReaderType::New();
+  const WriterType::Pointer writer = WriterType::New();
 
   reader->SetFileName(inputVolume.c_str());
   reader->Update();
@@ -57,12 +57,12 @@ int main(int argc, char* argv[])
   writer->SetFileName(outputVolume.c_str());
 
   typedef itk::CurvatureFlowImageFilter<InternalImageType, InternalImageType> CurvatureFlowImageFilterType;
-  CurvatureFlowImageFilterType::Pointer smoothing = CurvatureFlowImageFilterType::New();
-  itk::PluginFilterWatcher watcher1(smoothing, "Smoothing", CLPProcessInformation, 0.5, 0.0);
+  const CurvatureFlowImageFilterType::Pointer smoothing = CurvatureFlowImageFilterType::New();
+  const itk::PluginFilterWatcher watcher1(smoothing, "Smoothing", CLPProcessInformation, 0.5, 0.0);
 
   typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType> ConnectedFilterType;
-  ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
-  itk::PluginFilterWatcher watcher2(confidenceConnected, "Segmenting", CLPProcessInformation, 0.5, 0.5);
+  const ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
+  const itk::PluginFilterWatcher watcher2(confidenceConnected, "Segmenting", CLPProcessInformation, 0.5, 0.5);
 
   smoothing->SetInput(reader->GetOutput());
   confidenceConnected->SetInput(smoothing->GetOutput());

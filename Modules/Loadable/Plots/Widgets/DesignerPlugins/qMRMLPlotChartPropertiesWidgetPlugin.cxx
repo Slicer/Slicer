@@ -30,7 +30,7 @@ qMRMLPlotChartPropertiesWidgetPlugin::qMRMLPlotChartPropertiesWidgetPlugin(QObje
 //------------------------------------------------------------------------------
 QWidget* qMRMLPlotChartPropertiesWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLPlotChartPropertiesWidget* _widget = new qMRMLPlotChartPropertiesWidget(_parent);
+  qMRMLPlotChartPropertiesWidget* const _widget = new qMRMLPlotChartPropertiesWidget(_parent);
   return _widget;
 }
 

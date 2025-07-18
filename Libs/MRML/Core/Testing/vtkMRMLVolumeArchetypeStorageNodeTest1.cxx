@@ -180,7 +180,7 @@ int TestFlipsLeftHandedVolumes(const std::string& tempDir)
   CHECK_BOOL(storageNode->ReadData(volumeNode2), true);
 
   // Check that in the saved and loaded image IJK is right-handed
-  vtkNew<vtkMatrix4x4> ijkToRas2;
+  const vtkNew<vtkMatrix4x4> ijkToRas2;
   volumeNode2->GetIJKToRASMatrix(ijkToRas2);
   CHECK_BOOL(vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(ijkToRas2), true);
 
@@ -199,17 +199,17 @@ int TestFlipsLeftHandedVolumes(const std::string& tempDir)
         ijkToRasTransform->MultiplyPoint(ijk, ras);
         double ijk2[4] = { 0, 0, 0, 1 };
         rasToIjk2->MultiplyPoint(ras, ijk2);
-        double i2 = static_cast<int>(ijk2[0] + 0.5);
-        double j2 = static_cast<int>(ijk2[1] + 0.5);
-        double k2 = static_cast<int>(ijk2[2] + 0.5);
+        const double i2 = static_cast<int>(ijk2[0] + 0.5);
+        const double j2 = static_cast<int>(ijk2[1] + 0.5);
+        const double k2 = static_cast<int>(ijk2[2] + 0.5);
         if (i != i2 || j != j2 || k != (volumeNode2->GetImageData()->GetDimensions()[2] - 1 - k2))
         {
           std::cerr << "IJK mismatch: volume[" << i << ", " << j << ", " << k << "] != volume2[" << i2 << ", " << j2 << ", " << k2 << "]" << std::endl;
           return EXIT_FAILURE;
         }
         // Check voxel values
-        double voxelValue = volumeNode->GetImageData()->GetScalarComponentAsDouble(i, j, k, 0);
-        double voxelValue2 = volumeNode2->GetImageData()->GetScalarComponentAsDouble(i2, j2, k2, 0);
+        const double voxelValue = volumeNode->GetImageData()->GetScalarComponentAsDouble(i, j, k, 0);
+        const double voxelValue2 = volumeNode2->GetImageData()->GetScalarComponentAsDouble(i2, j2, k2, 0);
         if (voxelValue != voxelValue2)
         {
           std::cerr << "Voxel value mismatch: volume[" << i << ", " << j << ", " << k << "]=" << voxelValue << " != volume2[" << i2 << ", " << j2 << ", " << k2
@@ -230,9 +230,9 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
   }
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
 
-  vtkNew<vtkMRMLVolumeArchetypeStorageNode> node1;
+  const vtkNew<vtkMRMLVolumeArchetypeStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // tested vector types ->                               undefined  spatial  RGB    RGBA

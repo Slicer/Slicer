@@ -32,7 +32,7 @@ qMRMLSubjectHierarchyTreeViewPlugin::qMRMLSubjectHierarchyTreeViewPlugin(QObject
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSubjectHierarchyTreeViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSubjectHierarchyTreeView* pluginWidget = new qMRMLSubjectHierarchyTreeView(parentWidget);
+  qMRMLSubjectHierarchyTreeView* const pluginWidget = new qMRMLSubjectHierarchyTreeView(parentWidget);
   return pluginWidget;
 }
 

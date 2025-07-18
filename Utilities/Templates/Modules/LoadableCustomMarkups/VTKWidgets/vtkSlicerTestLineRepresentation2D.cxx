@@ -81,7 +81,7 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
     double p2[3] = { 0.0 };
     this->GetNthControlPointDisplayPosition(0, p1);
     this->GetNthControlPointDisplayPosition(1, p2);
-    double middlePointPos[2] = { (p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0 };
+    const double middlePointPos[2] = { (p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0 };
     // this->MiddlePointActor->SetDisplayPosition(static_cast<int>(middlePointPos[0]),
     //                                            static_cast<int>(middlePointPos[1]));
     this->MiddlePointSource->SetCenter(middlePointPos[0], middlePointPos[1], 0.0);

@@ -31,7 +31,7 @@ qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLTreeViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTreeView* _widget = new qMRMLTreeView(_parent);
+  qMRMLTreeView* const _widget = new qMRMLTreeView(_parent);
   return _widget;
 }
 

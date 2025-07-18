@@ -54,7 +54,7 @@ int storePerformance(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneV
 //---------------------------------------------------------------------------
 int vtkSceneViewStoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;
 
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
@@ -111,12 +111,12 @@ int storeAndRestore(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneVi
 {
   populateScene(scene);
 
-  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* const volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
 
   sceneViewLogic->CreateSceneView("SceneView1");
   sceneViewLogic->RestoreSceneView("SceneView1");
 
-  vtkMRMLNode* restoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* const restoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   // Restoring the volume should reuse the same node.
   CHECK_POINTER(restoredVolumeNode, volumeNode);
 
@@ -131,7 +131,7 @@ int storeAndRemoveVolume(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sc
   sceneViewLogic->CreateSceneView("SceneView1");
 
   // Remove node from the scene to see if it gets restored.
-  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* const volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   scene->RemoveNode(volumeNode);
 
   sceneViewLogic->RestoreSceneView("SceneView1");
@@ -173,7 +173,7 @@ int storeTwiceAndRemoveVolume(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogi
   sceneViewLogic->CreateSceneView("SceneView1");
   sceneViewLogic->CreateSceneView("SceneView2");
 
-  vtkMRMLNode* node = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* const node = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   scene->RemoveNode(node);
 
   sceneViewLogic->RestoreSceneView("SceneView1");
@@ -187,7 +187,7 @@ int references(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLog
 {
   populateScene(scene);
 
-  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* const volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   vtkSmartPointer<vtkCollection> sceneReferencedNodes;
   sceneReferencedNodes.TakeReference(scene->GetReferencedNodes(volumeNode));
   CHECK_INT(sceneReferencedNodes->GetNumberOfItems(), 2);

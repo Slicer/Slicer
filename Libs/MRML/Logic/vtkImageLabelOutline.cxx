@@ -61,7 +61,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline* self, vtkImageData
   // Other
   T backgroundLabelValue = (T)(self->GetBackground());
   T inLabelValue;
-  T* outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
+  T* const outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
   unsigned long count = 0;
   unsigned long target;
 
@@ -94,7 +94,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline* self, vtkImageData
   hoodMax1 = hoodMin1 + kernelSize[1];
   hoodMax2 = hoodMin2 + kernelSize[2];
 
-  int outline = self->GetOutline();
+  const int outline = self->GetOutline();
   hoodMin0 = -outline;
   hoodMin1 = -outline;
   hoodMin2 = 0;
@@ -210,7 +210,7 @@ void vtkImageLabelOutline::ThreadedExecute(vtkImageData* inData, vtkImageData* o
     return;
   }
 
-  void* inPtr = inData->GetScalarPointerForExtent(outExt);
+  void* const inPtr = inData->GetScalarPointerForExtent(outExt);
 
   switch (inData->GetScalarType())
   {
@@ -260,7 +260,7 @@ void vtkImageLabelOutline::SetOutline(int outline)
   this->Outline = outline;
 
   // also set the kernel size for 2D
-  int kernelSize = (outline * 2) + 1;
+  const int kernelSize = (outline * 2) + 1;
   this->SetKernelSize(kernelSize, kernelSize, 1);
 
   this->Modified();

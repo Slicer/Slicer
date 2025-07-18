@@ -34,11 +34,11 @@ vtkStandardNewMacro(vtkTopologicalHierarchy);
 vtkTopologicalHierarchy::vtkTopologicalHierarchy()
 {
   this->InputPolyDataCollection = nullptr;
-  vtkSmartPointer<vtkPolyDataCollection> inputPolyData = vtkSmartPointer<vtkPolyDataCollection>::New();
+  const vtkSmartPointer<vtkPolyDataCollection> inputPolyData = vtkSmartPointer<vtkPolyDataCollection>::New();
   this->SetInputPolyDataCollection(inputPolyData);
 
   this->OutputLevels = nullptr;
-  vtkSmartPointer<vtkIntArray> outputLevels = vtkSmartPointer<vtkIntArray>::New();
+  const vtkSmartPointer<vtkIntArray> outputLevels = vtkSmartPointer<vtkIntArray>::New();
   this->SetOutputLevels(outputLevels);
 
   this->ContainConstraintFactor = 0.0;
@@ -103,12 +103,12 @@ void vtkTopologicalHierarchy::Update()
   }
 
   this->OutputLevels->Initialize();
-  unsigned int numberOfPolyData = this->InputPolyDataCollection->GetNumberOfItems();
+  const unsigned int numberOfPolyData = this->InputPolyDataCollection->GetNumberOfItems();
 
   // Check input polydata collection
   for (unsigned int polyOutIndex = 0; polyOutIndex < numberOfPolyData; ++polyOutIndex)
   {
-    vtkPolyData* polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
+    vtkPolyData* const polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
     if (!polyOut)
     {
       vtkErrorMacro("Update: Input collection contains invalid object at item " << polyOutIndex);
@@ -125,7 +125,7 @@ void vtkTopologicalHierarchy::Update()
   this->InputPolyDataCollection->InitTraversal();
   for (unsigned int polyOutIndex = 0; polyOutIndex < numberOfPolyData; ++polyOutIndex)
   {
-    vtkPolyData* polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
+    vtkPolyData* const polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
 
     for (unsigned int polyInIndex = 0; polyInIndex < numberOfPolyData; ++polyInIndex)
     {
@@ -134,7 +134,7 @@ void vtkTopologicalHierarchy::Update()
         continue;
       }
 
-      vtkPolyData* polyIn = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyInIndex));
+      vtkPolyData* const polyIn = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyInIndex));
 
       if (this->Contains(polyOut, polyIn))
       {
@@ -149,7 +149,7 @@ void vtkTopologicalHierarchy::Update()
   }
 
   // Step 2: Set level of the polydata containing other polydata to one bigger than the highest contained level
-  vtkSmartPointer<vtkIntArray> outputLevelsSnapshot = vtkSmartPointer<vtkIntArray>::New();
+  const vtkSmartPointer<vtkIntArray> outputLevelsSnapshot = vtkSmartPointer<vtkIntArray>::New();
   unsigned int currentLevel = 1;
   while (this->OutputContainsEmptyLevels() && currentLevel < this->MaximumLevel)
   {

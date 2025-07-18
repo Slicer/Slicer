@@ -46,13 +46,13 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   vtkNew<vtkMRMLVolumeNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  vtkNew<vtkMRMLVolumeNodeTestHelper1> node2;
+  const vtkNew<vtkMRMLVolumeNodeTestHelper1> node2;
 
   node1->CopyOrientation(node2.GetPointer());
 
   // Scan Order
   vtkNew<vtkMatrix4x4> ijkToRAS;
-  const char* scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
+  const char* const scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
   if (!scanOrder || strcmp(scanOrder, "") == 0)
   {
     std::cerr << "Failed to compute scan order from identity matrix: '" << (scanOrder ? scanOrder : "null") << "'" << std::endl;
@@ -75,7 +75,7 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
     ijkToRAS->Identity();
     vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(it->c_str(), spacing, dimensions, /* centerImage= */ false, ijkToRAS.GetPointer());
 
-    const char* computedScanOrder = vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
+    const char* const computedScanOrder = vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
 
     if (!computedScanOrder ||                 //
         strcmp(computedScanOrder, "") == 0 || //
@@ -124,9 +124,9 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node1, Origin, -100.0, 100.0);
 
   // Origin and Spacing
-  double minSpacing = node1->GetMinSpacing();
+  const double minSpacing = node1->GetMinSpacing();
   std::cout << "Got min spacing = " << minSpacing << std::endl;
-  double maxSpacing = node1->GetMaxSpacing();
+  const double maxSpacing = node1->GetMaxSpacing();
   std::cout << "Got max spacing = " << maxSpacing << std::endl;
 
   // matrices
@@ -177,7 +177,7 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   retIJKToRASDir->PrintSelf(std::cout, indent.GetNextIndent());
 
   // Image Data
-  vtkNew<vtkImageData> imageData;
+  const vtkNew<vtkImageData> imageData;
   node1->SetAndObserveImageData(nullptr);
   if (node1->GetImageData() != nullptr)
   {
@@ -185,7 +185,7 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
     return EXIT_FAILURE;
   }
   node1->SetAndObserveImageData(imageData.GetPointer());
-  vtkImageData* retImageData = node1->GetImageData();
+  vtkImageData* const retImageData = node1->GetImageData();
   if (!retImageData)
   {
     std::cerr << "Get image data returned null" << std::endl;

@@ -277,9 +277,9 @@ int DefineX(int* c1, int* c2, int y)
   if ((Min(c1[1], c2[1]) > y) || (Max(c1[1], c2[1]) < y))
     return -1;
 
-  double lenY = c2[1] - c1[1];
-  int lenX = c2[0] - c1[0];
-  double Scale = double(lenX) / double(lenY);
+  const double lenY = c2[1] - c1[1];
+  const int lenX = c2[0] - c1[0];
+  const double Scale = double(lenX) / double(lenY);
 
   return int(c1[0] + double(y - c1[1]) * Scale);
 }
@@ -287,7 +287,7 @@ int DefineX(int* c1, int* c2, int y)
 template <class T>
 T CalculateGraySlope(int length, double center, int pos, T inVal, T outVal)
 {
-  double grad = (2.0 * fabs(float(pos - center))) / double(length);
+  const double grad = (2.0 * fabs(float(pos - center))) / double(length);
   return T((1.0 - grad) * double(inVal)) + T(grad * double(outVal));
 }
 
@@ -307,8 +307,8 @@ void DefineLine(int MinInX, int MaxInX, int LineLength, T inVal, T outVal, int I
   if (MaxInX >= LineLength)
     MaxInX = LineLength - 1;
 
-  int inLength = MaxInX - MinInX + 1;
-  double inCenter = double(MinInX) + double(inLength) / 2.0;
+  const int inLength = MaxInX - MinInX + 1;
+  const double inCenter = double(MinInX) + double(inLength) / 2.0;
 
   // Otherwise everything is just black
   if (inLength < 2)
@@ -459,14 +459,14 @@ void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal
       if ((inMinX1 <= inMinX2) && (inMaxX2 <= inMaxX1))
       {
         DefineLine(inMinX1, inMinX2 - 1, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
-        int inMaxX3 = inMaxX1 - inMaxX2 - 1;
+        const int inMaxX3 = inMaxX1 - inMaxX2 - 1;
         if (inMaxX3 > -1)
           DefineLine(0, inMaxX3, LineLength, inVal, outVal, InsideGraySlopeFlag, Result + (inMaxX2 + 1));
       }
       else if ((inMinX2 <= inMinX1) && (inMaxX1 <= inMaxX2))
       {
         DefineLine(inMinX2, inMinX1 - 1, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
-        int inMaxX3 = inMaxX2 - inMaxX1 - 1;
+        const int inMaxX3 = inMaxX2 - inMaxX1 - 1;
         if (inMaxX3 > -1)
           DefineLine(0, inMaxX3, LineLength, inVal, outVal, InsideGraySlopeFlag, Result + (inMaxX1 + 1));
       }

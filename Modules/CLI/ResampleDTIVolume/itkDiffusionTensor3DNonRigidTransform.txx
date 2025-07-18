@@ -65,8 +65,8 @@ typename DiffusionTensor3DNonRigidTransform<TData>::TensorDataType DiffusionTens
       }
     }
     // ITKv4 does not require locking, because ComputeJacobianWithRespectToParameters is thread-safe
-    LightObject::Pointer newTransform = m_Affine->CreateAnother();
-    typename AffineTransform::Pointer newAffine = dynamic_cast<AffineTransform*>(newTransform.GetPointer());
+    const LightObject::Pointer newTransform = m_Affine->CreateAnother();
+    const typename AffineTransform::Pointer newAffine = dynamic_cast<AffineTransform*>(newTransform.GetPointer());
     /*m_Affine->SetMatrix3x3( matrix ) ;
     return m_Affine->EvaluateTransformedTensor( tensor ) ;*/
     newAffine->SetMeasurementFrame(this->m_MeasurementFrame);

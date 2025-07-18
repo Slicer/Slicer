@@ -50,7 +50,7 @@ bool qSlicerIOOptionsWidget::isValid() const
 void qSlicerIOOptionsWidget::updateValid()
 {
   Q_D(const qSlicerIOOptions);
-  bool wasValid = d->ArePropertiesValid;
+  const bool wasValid = d->ArePropertiesValid;
   this->Superclass::updateValid();
   if (wasValid != d->ArePropertiesValid)
   {

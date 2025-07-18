@@ -49,7 +49,7 @@ int vtkMRMLI18NTest1(int, char*[])
   CHECK_STD_STRING(vtkMRMLI18N::Translate("SomeContext", "SomeMessage"), "SomeMessage");
 
   // Set custom translator
-  vtkNew<vtkTestTranslator> translator;
+  const vtkNew<vtkTestTranslator> translator;
   vtkMRMLI18N::GetInstance()->SetTranslator(translator);
 
   // Check translation with custom translator

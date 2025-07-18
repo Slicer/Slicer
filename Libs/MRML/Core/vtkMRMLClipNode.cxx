@@ -76,7 +76,7 @@ void vtkMRMLClipNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLClipNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLEnumMacro(clipType, ClipType);
@@ -87,7 +87,7 @@ void vtkMRMLClipNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLClipNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(ClipType);
@@ -296,11 +296,11 @@ int vtkMRMLClipNode::GetClippingNodeIndexFromID(const char* clipNodeID)
     return -1;
   }
 
-  int numClipNodes = this->GetNumberOfNodeReferences(this->GetClippingNodeReferenceRole());
+  const int numClipNodes = this->GetNumberOfNodeReferences(this->GetClippingNodeReferenceRole());
 
   for (int plotIndex = 0; plotIndex < numClipNodes; plotIndex++)
   {
-    const char* id = this->GetNthNodeReferenceID(this->GetClippingNodeReferenceRole(), plotIndex);
+    const char* const id = this->GetNthNodeReferenceID(this->GetClippingNodeReferenceRole(), plotIndex);
     if (id && !strcmp(clipNodeID, id))
     {
       return plotIndex;
@@ -378,12 +378,12 @@ void vtkMRMLClipNode::UpdateImplicitFunction()
   vtkImplicitFunctionCollection* functions = this->ImplicitFunction->GetFunction();
   functions->RemoveAllItems();
 
-  int numClipNodes = this->GetNumberOfClippingNodes();
+  const int numClipNodes = this->GetNumberOfClippingNodes();
   for (int n = 0; n < numClipNodes; n++)
   {
-    vtkMRMLNode* clippingNode = this->GetNthClippingNode(n);
+    vtkMRMLNode* const clippingNode = this->GetNthClippingNode(n);
 
-    int clippingState = this->GetNthClippingNodeState(n);
+    const int clippingState = this->GetNthClippingNodeState(n);
     if (clippingState == ClipOff)
     {
       continue;
@@ -406,7 +406,7 @@ void vtkMRMLClipNode::UpdateImplicitFunction()
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(clippingNode);
     if (sliceNode)
     {
-      vtkImplicitFunction* implicitFunction = sliceNode->GetImplicitFunctionWorld();
+      vtkImplicitFunction* const implicitFunction = sliceNode->GetImplicitFunctionWorld();
       if (implicitFunction)
       {
         invertableBoolean->AddFunction(implicitFunction);
@@ -417,7 +417,7 @@ void vtkMRMLClipNode::UpdateImplicitFunction()
     vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(clippingNode);
     if (clipNode)
     {
-      vtkImplicitFunction* implicitFunction = clipNode->GetImplicitFunctionWorld();
+      vtkImplicitFunction* const implicitFunction = clipNode->GetImplicitFunctionWorld();
       if (implicitFunction)
       {
         invertableBoolean->AddFunction(implicitFunction);
@@ -450,7 +450,7 @@ void vtkMRMLClipNode::SetClipType(int clipType)
 //----------------------------------------------------------------------------
 int vtkMRMLClipNode::GetClipType()
 {
-  int clipType = this->ImplicitFunction->GetOperationType();
+  const int clipType = this->ImplicitFunction->GetOperationType();
   switch (clipType)
   {
     case vtkImplicitBoolean::VTK_INTERSECTION: return ClipIntersection;
@@ -489,7 +489,7 @@ void vtkMRMLClipNode::GetPlanes(vtkPlaneCollection* planes)
 int vtkMRMLClipNode::GetClippingNodeIndex(const char* nodeID)
 {
   int i = -1;
-  NodeReferenceListType& references = this->NodeReferences[std::string(ClippingNodeReferenceRole)];
+  const NodeReferenceListType& references = this->NodeReferences[std::string(ClippingNodeReferenceRole)];
   for (vtkMRMLNodeReference* reference : references)
   {
     ++i;
@@ -520,7 +520,7 @@ int vtkMRMLClipNode::GetClippingNodeState(const char* nodeID)
     return ClipOff;
   }
 
-  NodeReferenceListType& references = this->NodeReferences[std::string(ClippingNodeReferenceRole)];
+  const NodeReferenceListType& references = this->NodeReferences[std::string(ClippingNodeReferenceRole)];
   if (references.size() == 0)
   {
     return ClipOff;
@@ -531,7 +531,7 @@ int vtkMRMLClipNode::GetClippingNodeState(const char* nodeID)
   {
     if (strcmp(nodeReference->GetReferencedNodeID(), nodeID) == 0)
     {
-      std::string clipStateString = nodeReference->GetProperty(this->GetClippingNodeStatePropertyName());
+      const std::string clipStateString = nodeReference->GetProperty(this->GetClippingNodeStatePropertyName());
       if (!clipStateString.empty())
       {
         clipState = GetClippingStateFromString(clipStateString.c_str());
@@ -551,7 +551,7 @@ int vtkMRMLClipNode::GetNthClippingNodeState(int n)
     return ClipOff;
   }
 
-  std::string clipNodeStateString = references[n]->GetProperty(GetClippingNodeStatePropertyName());
+  const std::string clipNodeStateString = references[n]->GetProperty(GetClippingNodeStatePropertyName());
   return GetClippingStateFromString(clipNodeStateString.c_str());
 }
 
@@ -573,7 +573,7 @@ void vtkMRMLClipNode::SetClippingNodeState(const char* nodeID, int state)
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   int clipIndex = this->GetClippingNodeIndex(nodeID);
   if (clipIndex < 0)
@@ -599,7 +599,7 @@ void vtkMRMLClipNode::SetNthClippingNodeState(int n, int state)
     return;
   }
 
-  std::string clipStateString = GetClippingStateAsString(state);
+  const std::string clipStateString = GetClippingStateAsString(state);
   if (references[n]->SetProperty(GetClippingNodeStatePropertyName(), clipStateString))
   {
     this->UpdateImplicitFunction();
@@ -618,7 +618,7 @@ void vtkMRMLClipNode::CopyReferences(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 int vtkMRMLClipNode::GetSliceClipState(const char* nodeID)
 {
-  int nodeIndex = this->GetClippingNodeIndex(nodeID);
+  const int nodeIndex = this->GetClippingNodeIndex(nodeID);
   if (nodeIndex < 0)
   {
     return ClipOff;
@@ -634,8 +634,8 @@ void vtkMRMLClipNode::SetSliceClipState(const char* nodeID, int state)
     this->AddAndObserveClippingNodeID(nodeID);
   }
 
-  int nodeIndex = this->GetClippingNodeIndex(nodeID);
-  int oldState = this->GetNthClippingNodeState(nodeIndex);
+  const int nodeIndex = this->GetClippingNodeIndex(nodeID);
+  const int oldState = this->GetNthClippingNodeState(nodeIndex);
   if (state == oldState)
   {
     return;
@@ -686,7 +686,7 @@ bool vtkMRMLClipNode::GetClippingPlanes(vtkPlaneCollection* planeCollection, boo
   bool clippingPlanesOnly = true;
   for (int n = 0; n < this->GetNumberOfClippingNodes(); ++n)
   {
-    int clippingState = this->GetNthClippingNodeState(n);
+    const int clippingState = this->GetNthClippingNodeState(n);
     if (clippingState == ClipOff)
     {
       continue;
@@ -695,7 +695,7 @@ bool vtkMRMLClipNode::GetClippingPlanes(vtkPlaneCollection* planeCollection, boo
     bool currentClippingNodePlanesOnly = true;
 
     vtkMRMLNode* clippingNode = this->GetNthClippingNode(n);
-    bool currentInvert = this->GetNthClippingNodeState(n) == ClipNegativeSpace ? !invert : invert;
+    const bool currentInvert = this->GetNthClippingNodeState(n) == ClipNegativeSpace ? !invert : invert;
 
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(clippingNode);
     if (transformableNode && transformableNode->GetImplicitFunctionWorld())
@@ -706,7 +706,7 @@ bool vtkMRMLClipNode::GetClippingPlanes(vtkPlaneCollection* planeCollection, boo
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(clippingNode);
     if (sliceNode)
     {
-      vtkImplicitFunction* implicitFunction = sliceNode->GetImplicitFunctionWorld();
+      vtkImplicitFunction* const implicitFunction = sliceNode->GetImplicitFunctionWorld();
       if (implicitFunction)
       {
         currentClippingNodePlanesOnly = this->GetClippingPlanesFromFunction(sliceNode->GetImplicitFunctionWorld(), planeCollection, currentInvert);
@@ -746,7 +746,7 @@ bool vtkMRMLClipNode::GetClippingPlanesFromFunction(vtkImplicitFunction* functio
     vtkImplicitFunctionCollection* subFunctions = implicitBoolean->GetFunction();
     for (int i = 0; i < subFunctions->GetNumberOfItems(); ++i)
     {
-      vtkImplicitFunction* subFunction = vtkImplicitFunction::SafeDownCast(subFunctions->GetItemAsObject(i));
+      vtkImplicitFunction* const subFunction = vtkImplicitFunction::SafeDownCast(subFunctions->GetItemAsObject(i));
       if (subFunction)
       {
         planesOnly &= vtkMRMLClipNode::GetClippingPlanesFromFunction(subFunction, planeCollection, invertableBoolean && invertableBoolean->GetInvert() ? !invert : invert);

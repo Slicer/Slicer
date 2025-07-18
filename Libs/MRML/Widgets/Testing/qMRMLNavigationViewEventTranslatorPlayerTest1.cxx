@@ -58,7 +58,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLNavigationView* widget = reinterpret_cast<qMRMLNavigationView*>(data);
+  qMRMLNavigationView* const widget = reinterpret_cast<qMRMLNavigationView*>(data);
 
   Q_UNUSED(widget);
 }
@@ -68,14 +68,14 @@ void checkFinalWidgetState(void* data)
 int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
@@ -97,9 +97,9 @@ int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLScene> scene;
 
   // vtkMRMLAbstractDisplayableManager requires selection and interaction nodes
-  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  const vtkNew<vtkMRMLSelectionNode> selectionNode;
   scene->AddNode(selectionNode.GetPointer());
-  vtkNew<vtkMRMLInteractionNode> interactionNode;
+  const vtkNew<vtkMRMLInteractionNode> interactionNode;
   scene->AddNode(interactionNode.GetPointer());
 
   navigationView.setMRMLScene(scene.GetPointer());

@@ -34,13 +34,13 @@ int TestLogicWithoutScene()
   // Testing sequences logic without setting a scene.
   // Errors are be returned but there should be no crash.
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
-  vtkNew<vtkMRMLSequenceBrowserNode> browserNode;
-  vtkNew<vtkMRMLSequenceNode> sequenceNode;
-  vtkNew<vtkMRMLTextNode> proxyNode;
-  vtkNew<vtkMRMLSequenceNode> sequenceNode2;
+  const vtkNew<vtkMRMLSequenceBrowserNode> browserNode;
+  const vtkNew<vtkMRMLSequenceNode> sequenceNode;
+  const vtkNew<vtkMRMLTextNode> proxyNode;
+  const vtkNew<vtkMRMLSequenceNode> sequenceNode2;
 
   CHECK_NULL(sequencesLogic->AddSequence(nullptr /*filename*/));
 
@@ -97,7 +97,7 @@ int TestAddSequence()
 {
   // Basic test of creating and browsing a sequence
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
   sequencesLogic->SetMRMLScene(scene);
 
@@ -133,7 +133,7 @@ int TestSparseSequence()
 {
   // Test sparse sequences, where not all sequences have items for all index values
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
   sequencesLogic->SetMRMLScene(scene);
 
@@ -143,7 +143,7 @@ int TestSparseSequence()
   vtkNew<vtkMRMLTextNode> proxyNodeTemp;
 
   // Add some nodes to the master sequence
-  vtkMRMLTextNode* masterProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLTextNode* const masterProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
   vtkMRMLSequenceNode* masterSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, masterProxyNode, browserNode);
   proxyNodeTemp->SetText("ZeroM");
   masterSequenceNode->SetDataNodeAtValue(proxyNodeTemp, "0");

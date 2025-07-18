@@ -32,11 +32,11 @@ qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject* parent)
 QWidget* qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerWidget* widget = new qSlicerWidget(parentWidget);
-  QPalette slicerPalette = widget->palette();
+  const QPalette slicerPalette = widget->palette();
 
   // Apply Slicer Palette using the non-member function defined in qSlicerApplication
   // qSlicerApplyPalette(slicerPalette);
-  qSlicerStyle style;
+  const qSlicerStyle style;
 
   widget->setPalette(style.standardPalette());
   widget->setAutoFillBackground(true);

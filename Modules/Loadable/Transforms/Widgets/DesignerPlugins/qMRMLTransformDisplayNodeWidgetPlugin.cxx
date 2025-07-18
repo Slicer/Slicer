@@ -32,7 +32,7 @@ qMRMLTransformDisplayNodeWidgetPlugin::qMRMLTransformDisplayNodeWidgetPlugin(QOb
 //------------------------------------------------------------------------------
 QWidget* qMRMLTransformDisplayNodeWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLTransformDisplayNodeWidget* _widget = new qMRMLTransformDisplayNodeWidget(_parent);
+  qMRMLTransformDisplayNodeWidget* const _widget = new qMRMLTransformDisplayNodeWidget(_parent);
   return _widget;
 }
 

@@ -222,8 +222,8 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
   if (associatedTableNode && visible)
   {
     // Switch to a layout that contains table
-    int currentLayout = qSlicerApplication::application()->layoutManager()->layout();
-    int layoutWithTable = vtkSlicerTablesLogic::GetLayoutWithTable(currentLayout);
+    const int currentLayout = qSlicerApplication::application()->layoutManager()->layout();
+    const int layoutWithTable = vtkSlicerTablesLogic::GetLayoutWithTable(currentLayout);
     layoutNode->SetViewArrangement(layoutWithTable);
 
     // Make sure we have a valid table view node (if we want to show the table, but there was
@@ -242,7 +242,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     if (tableViewNode->GetTableNodeID() //
         && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
     {
-      vtkIdType tableItemID = shNode->GetItemByDataNode(scene->GetNodeByID(tableViewNode->GetTableNodeID()));
+      const vtkIdType tableItemID = shNode->GetItemByDataNode(scene->GetNodeByID(tableViewNode->GetTableNodeID()));
       if (tableItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
       {
         tableViewNode->SetTableNodeID(nullptr);
@@ -301,14 +301,14 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID) 
 //---------------------------------------------------------------------------
 vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() const
 {
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  vtkMRMLScene* const scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return nullptr;
   }
 
-  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qMRMLLayoutManager* const layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     return nullptr;
@@ -316,13 +316,13 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() co
 
   for (int i = 0; i < layoutManager->tableViewCount(); i++)
   {
-    qMRMLTableWidget* tableWidget = layoutManager->tableWidget(i);
+    qMRMLTableWidget* const tableWidget = layoutManager->tableWidget(i);
     if (!tableWidget)
     {
       // invalid plot widget
       continue;
     }
-    vtkMRMLTableViewNode* tableView = tableWidget->mrmlTableViewNode();
+    vtkMRMLTableViewNode* const tableView = tableWidget->mrmlTableViewNode();
     if (tableView)
     {
       return tableView;

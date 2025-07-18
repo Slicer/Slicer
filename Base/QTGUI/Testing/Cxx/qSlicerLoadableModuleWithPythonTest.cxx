@@ -86,10 +86,10 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   QFETCH(QString, moduleName);
   QFETCH(bool, expectedResult);
 
-  qSlicerAbstractModule* module = this->Modules.value(moduleName);
+  qSlicerAbstractModule* const module = this->Modules.value(moduleName);
   QVERIFY(moduleName.isEmpty() ? true : module != nullptr);
 
-  bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(validPythonManager ? &this->PythonManager : nullptr, module, moduleName);
+  const bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(validPythonManager ? &this->PythonManager : nullptr, module, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)
@@ -118,7 +118,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
   QFETCH(QString, moduleName);
   QFETCH(bool, expectedResult);
 
-  bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(validPythonManager ? &this->PythonManager : nullptr, moduleName);
+  const bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(validPythonManager ? &this->PythonManager : nullptr, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)

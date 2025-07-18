@@ -51,7 +51,7 @@ int qMRMLModelDisplayNodeWidgetTest2(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   scene->SetURL(argv[1]);
   scene->Connect();
 

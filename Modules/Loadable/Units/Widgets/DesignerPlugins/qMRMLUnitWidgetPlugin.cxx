@@ -30,7 +30,7 @@ qMRMLUnitWidgetPlugin::qMRMLUnitWidgetPlugin(QObject* _parent)
 //------------------------------------------------------------------------------
 QWidget* qMRMLUnitWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLUnitWidget* _widget = new qMRMLUnitWidget(_parent);
+  qMRMLUnitWidget* const _widget = new qMRMLUnitWidget(_parent);
   return _widget;
 }
 

@@ -70,7 +70,7 @@ void vtkMRMLTextStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -83,10 +83,10 @@ void vtkMRMLTextStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLTextStorageNode* node = vtkMRMLTextStorageNode::SafeDownCast(anode);
+  vtkMRMLTextStorageNode* const node = vtkMRMLTextStorageNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -124,7 +124,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
 
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
@@ -134,7 +134,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // compute file extension
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  const std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension.empty())
   {
     vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
@@ -153,7 +153,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   std::stringstream ss;
   ss << inputFile.rdbuf();
-  std::string inputString = ss.str();
+  const std::string inputString = ss.str();
   textNode->SetText(inputString.c_str());
 
   // success
@@ -163,7 +163,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
-  vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
+  vtkMRMLTextNode* const textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
   {
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only text nodes can written in this format."));
@@ -182,7 +182,7 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
   {
     vtkErrorMacro("WriteData: File name not specified");

@@ -28,7 +28,7 @@ qMRMLEventBrokerWidgetPlugin::qMRMLEventBrokerWidgetPlugin(QObject* parentWidget
 
 QWidget* qMRMLEventBrokerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLEventBrokerWidget* newWidget = new qMRMLEventBrokerWidget(parentWidget);
+  qMRMLEventBrokerWidget* const newWidget = new qMRMLEventBrokerWidget(parentWidget);
   return newWidget;
 }
 

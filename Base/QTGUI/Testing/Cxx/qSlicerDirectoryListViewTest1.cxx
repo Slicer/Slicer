@@ -36,12 +36,12 @@
 int qSlicerDirectoryListViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qSlicerDirectoryListView widget;
 
-  QSignalSpy spy(&widget, SIGNAL(directoryListChanged()));
+  const QSignalSpy spy(&widget, SIGNAL(directoryListChanged()));
 
   //
   // Test directoryList() / setDirectoryList()

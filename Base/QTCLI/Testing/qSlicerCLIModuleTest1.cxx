@@ -64,8 +64,8 @@ void runCli(void* data)
   vtkMRMLCommandLineModuleNode* cliModuleNode = CLIModule->cliModuleLogic()->CreateNodeInScene();
 
   // Values
-  int inputValue1 = 4;
-  int inputValue2 = 3;
+  const int inputValue1 = 4;
+  const int inputValue2 = 3;
 
   // Set node parameters
   cliModuleNode->SetParameterAsInt("InputValue1", inputValue1);
@@ -78,9 +78,9 @@ void runCli(void* data)
 
   // Read outputFile
   QTextStream stream(&outputFile);
-  QString operationResult = stream.readAll().trimmed();
+  const QString operationResult = stream.readAll().trimmed();
 
-  QString expectedResult = QString::number(inputValue1 + inputValue2);
+  const QString expectedResult = QString::number(inputValue1 + inputValue2);
   if (operationResult.compare(expectedResult) != 0)
   {
     ErrorString = QString("OutputFile doesn't contain the expected result !\n"
@@ -102,12 +102,12 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   // The CLI4Test module (CLIModule4Test) has already been built as a normal
   // CLI library. It can be found in
   // Slicer-build/lib/Slicer-X.Y/cli-modules[/Debug|Release]
-  QString cliModuleName("CLI4Test");
+  const QString cliModuleName("CLI4Test");
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
   qSlicerApplication app(argc, argv);
 
-  qSlicerModuleManager* moduleManager = app.moduleManager();
+  qSlicerModuleManager* const moduleManager = app.moduleManager();
   if (!moduleManager)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerApplication::moduleManager()" << std::endl;
@@ -122,7 +122,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   }
 
   moduleFactoryManager->registerFactory(new qSlicerCLILoadableModuleFactory);
-  QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
+  const QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
   moduleFactoryManager->addSearchPath(cliPath);
   moduleFactoryManager->addSearchPath(cliPath + app.intDir());
 
@@ -130,7 +130,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   moduleFactoryManager->registerModules();
   moduleFactoryManager->instantiateModules();
 
-  QStringList moduleNames = moduleFactoryManager->instantiatedModuleNames();
+  const QStringList moduleNames = moduleFactoryManager->instantiatedModuleNames();
   if (!moduleNames.contains(cliModuleName))
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLILoadableModuleFactory"
@@ -143,7 +143,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
     moduleFactoryManager->loadModule(name);
   }
 
-  qSlicerAbstractCoreModule* module = moduleManager->module("CLI4Test");
+  qSlicerAbstractCoreModule* const module = moduleManager->module("CLI4Test");
   if (!module)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerModuleManager::module()"
@@ -159,7 +159,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModuleRepresentation* widgetRepresentation = cliModule->widgetRepresentation();
+  qSlicerAbstractModuleRepresentation* const widgetRepresentation = cliModule->widgetRepresentation();
   if (!widgetRepresentation)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLIModule::widgetRepresentation()"
@@ -193,7 +193,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
     checkResult = true;
   }
 
-  int status = app.exec();
+  const int status = app.exec();
   if (status == EXIT_FAILURE)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerApplication::exec()";

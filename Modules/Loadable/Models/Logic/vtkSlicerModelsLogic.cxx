@@ -77,7 +77,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator mhIt;
   vtkCollection* mhNodes = scene->GetNodesByClass("vtkMRMLModelHierarchyNode");
-  std::string newFolderName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
+  const std::string newFolderName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   std::map<std::string, vtkIdType> mhNodeIdToShItemIdMap;
   std::map<std::string, std::string> mhNodeIdToParentNodeIdMap;
   for (mhNodes->InitTraversal(mhIt); (node = (vtkMRMLNode*)mhNodes->GetNextItemAsObject(mhIt));)
@@ -118,10 +118,10 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     {
       for (std::vector<vtkMRMLHierarchyNode*>::iterator it = childHierarchyNodes.begin(); it != childHierarchyNodes.end(); ++it)
       {
-        vtkMRMLNode* associatedNode = (*it)->GetAssociatedNode();
+        vtkMRMLNode* const associatedNode = (*it)->GetAssociatedNode();
         if (associatedNode)
         {
-          vtkIdType associatedItemID = shNode->GetItemByDataNode(associatedNode);
+          const vtkIdType associatedItemID = shNode->GetItemByDataNode(associatedNode);
           if (associatedItemID)
           {
             shNode->SetItemParent(associatedItemID, folderItemID, true);
@@ -138,8 +138,8 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
   for (std::map<std::string, std::string>::iterator it = mhNodeIdToParentNodeIdMap.begin(); it != mhNodeIdToParentNodeIdMap.end(); ++it)
   {
     // Get SH item IDs for the nodes
-    vtkIdType currentItemID = mhNodeIdToShItemIdMap[it->first];
-    vtkIdType parentItemID = mhNodeIdToShItemIdMap[it->second];
+    const vtkIdType currentItemID = mhNodeIdToShItemIdMap[it->first];
+    const vtkIdType parentItemID = mhNodeIdToShItemIdMap[it->second];
 
     // Set parent in subject hierarchy
     shNode->SetItemParent(currentItemID, parentItemID, true);
@@ -158,7 +158,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
   std::vector<vtkMRMLNode*> modelDisplayNodes;
   scene->GetNodesByClass("vtkMRMLModelDisplayNode", modelDisplayNodes);
 
-  for (vtkMRMLNode* node : clipModelsNodes)
+  for (vtkMRMLNode* const node : clipModelsNodes)
   {
     vtkMRMLClipModelsNode* clipModelsNode = vtkMRMLClipModelsNode::SafeDownCast(node);
     if (!clipModelsNode)
@@ -166,7 +166,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
       continue;
     }
 
-    vtkSmartPointer<vtkMRMLClipNode> clipNode = vtkSmartPointer<vtkMRMLClipNode>::Take(vtkMRMLClipNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLClipNode")));
+    const vtkSmartPointer<vtkMRMLClipNode> clipNode = vtkSmartPointer<vtkMRMLClipNode>::Take(vtkMRMLClipNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLClipNode")));
     clipNode->SetSingletonTag(clipModelsNode->GetSingletonTag());
     clipModelsNode->SetSingletonOff();
 
@@ -176,7 +176,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     scene->RemoveNode(clipModelsNode);
 
     // Update model display nodes to use the new clip node
-    for (vtkMRMLNode* displayNode : modelDisplayNodes)
+    for (vtkMRMLNode* const displayNode : modelDisplayNodes)
     {
       vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
       if (!modelDisplayNode)
@@ -232,21 +232,21 @@ int vtkSlicerModelsLogic::AddModels(const char* dirname,
                                     int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/,
                                     vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
-  std::string ssuf = suffix;
+  const std::string ssuf = suffix;
   itksys::Directory dir;
   dir.Load(dirname);
 
-  int nfiles = dir.GetNumberOfFiles();
+  const int nfiles = dir.GetNumberOfFiles();
   int res = 1;
   for (int i = 0; i < nfiles; i++)
   {
-    const char* filename = dir.GetFile(i);
-    std::string sname = filename;
+    const char* const filename = dir.GetFile(i);
+    const std::string sname = filename;
     if (!itksys::SystemTools::FileIsDirectory(filename))
     {
       if (sname.find(ssuf) != std::string::npos)
       {
-        std::string fullPath = std::string(dir.GetPath()) + "/" + filename;
+        const std::string fullPath = std::string(dir.GetPath()) + "/" + filename;
         if (this->AddModel(fullPath.c_str(), coordinateSystem, userMessages) == nullptr)
         {
           res = 0;
@@ -281,7 +281,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   {
     storageNode->SetURI(filename);
     // reset filename to the local file name
-    const char* localFilePtr = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
+    const char* const localFilePtr = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
     if (localFilePtr)
     {
       localFile = localFilePtr;
@@ -296,7 +296,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   // Check if we can read this type of file.
   // The model name is based on the file name (itksys call should work even if
   // file is not on disk yet).
-  std::string name = itksys::SystemTools::GetFilenameName(localFile);
+  const std::string name = itksys::SystemTools::GetFilenameName(localFile);
   vtkDebugMacro("AddModel: got model name = " << name.c_str());
   if (!storageNode->SupportedFileType(name.c_str()))
   {
@@ -305,8 +305,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   }
 
   // Create model node
-  std::string baseName = storageNode->GetFileNameWithoutExtension(localFile.c_str());
-  std::string uniqueName(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
+  const std::string baseName = storageNode->GetFileNameWithoutExtension(localFile.c_str());
+  const std::string uniqueName(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode", uniqueName.c_str()));
   if (!modelNode)
   {
@@ -316,7 +316,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   // Read the model file
   vtkDebugMacro("AddModel: calling read on the storage node");
   storageNode->SetCoordinateSystem(coordinateSystem);
-  int success = storageNode->ReadData(modelNode);
+  const int success = storageNode->ReadData(modelNode);
   if (!success)
   {
     vtkErrorMacro("AddModel: error reading " << filename);
@@ -351,7 +351,7 @@ int vtkSlicerModelsLogic::SaveModel(const char* filename, vtkMRMLModelNode* mode
   }
 
   vtkMRMLModelStorageNode* storageNode = nullptr;
-  vtkMRMLStorageNode* snode = modelNode->GetStorageNode();
+  vtkMRMLStorageNode* const snode = modelNode->GetStorageNode();
   if (snode != nullptr)
   {
     storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
@@ -378,7 +378,7 @@ int vtkSlicerModelsLogic::SaveModel(const char* filename, vtkMRMLModelNode* mode
     storageNode->SetFileName(filename);
   }
 
-  int success = storageNode->WriteData(modelNode);
+  const int success = storageNode->WriteData(modelNode);
   if (!success)
   {
     vtkErrorMacro("vtkSlicerModelsLogic::SaveModel: error saving " << filename);
@@ -412,7 +412,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode* tnode, vtkMRMLMo
 
   vtkMRMLTransformNode* mtnode = modelNode->GetParentTransformNode();
 
-  vtkAbstractTransform* transform = tnode->GetTransformToParent();
+  vtkAbstractTransform* const transform = tnode->GetTransformToParent();
   modelOut->ApplyTransform(transform);
 
   if (transformNormals)
@@ -453,13 +453,13 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     return;
   }
 
-  int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
+  const int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
 
   // go into batch processing mode
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
   for (int i = 0; i < numModels; i++)
   {
-    vtkMRMLNode* mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
+    vtkMRMLNode* const mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
     // Exclude volume slice model nodes.
     // Exclude vtkMRMLModelNode subclasses by comparing classname.
     // Doing so will avoid updating annotation and fiber bundle node
@@ -481,7 +481,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode))
     {
       vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
-      int ndnodes = modelNode->GetNumberOfDisplayNodes();
+      const int ndnodes = modelNode->GetNumberOfDisplayNodes();
       for (int i = 0; i < ndnodes; i++)
       {
         vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);

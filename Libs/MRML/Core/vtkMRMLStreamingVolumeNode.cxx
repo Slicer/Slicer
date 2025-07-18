@@ -131,7 +131,7 @@ vtkImageData* vtkMRMLStreamingVolumeNode::GetImageData()
     this->DecodeFrame();
   }
 
-  vtkImageData* imageData = Superclass::GetImageData();
+  vtkImageData* const imageData = Superclass::GetImageData();
   return imageData;
 }
 
@@ -266,7 +266,7 @@ bool vtkMRMLStreamingVolumeNode::DecodeFrame()
 //---------------------------------------------------------------------------
 bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame /*=false*/)
 {
-  vtkImageData* imageData = Superclass::GetImageData();
+  vtkImageData* const imageData = Superclass::GetImageData();
   if (!imageData)
   {
     vtkErrorMacro("No image data to encode!");
@@ -279,7 +279,7 @@ bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame /*=false*/)
     return false;
   }
 
-  vtkSmartPointer<vtkStreamingVolumeFrame> frame = vtkSmartPointer<vtkStreamingVolumeFrame>::New();
+  const vtkSmartPointer<vtkStreamingVolumeFrame> frame = vtkSmartPointer<vtkStreamingVolumeFrame>::New();
   if (!this->Codec->EncodeImageData(imageData, frame, forceKeyFrame))
   {
     vtkErrorMacro("Could not encode frame!");
@@ -326,7 +326,7 @@ void vtkMRMLStreamingVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStdStringMacro(codecFourCC, CodecFourCC);
@@ -338,7 +338,7 @@ void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   vtkMRMLStreamingVolumeNode* streamingVolumeNode = vtkMRMLStreamingVolumeNode::SafeDownCast(anode);
   if (!streamingVolumeNode)
@@ -356,7 +356,7 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /
 
     /// Duplicated from vtkMRMLVolumeNode::CopyContent()
     vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ? streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
-    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
+    vtkImageData* const sourceImageData = vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
 
     vtkSmartPointer<vtkImageData> targetImageData = sourceImageData;
     if (deepCopy && sourceImageData)
@@ -368,7 +368,7 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /
     this->CopyOrientation(streamingVolumeNode);
 
     /// Duplicated from vtkMRMLTensorVolumeNode::CopyContent()
-    vtkNew<vtkMatrix4x4> measurementFrameMatrix;
+    const vtkNew<vtkMatrix4x4> measurementFrameMatrix;
     streamingVolumeNode->GetMeasurementFrameMatrix(measurementFrameMatrix);
     this->SetMeasurementFrameMatrix(measurementFrameMatrix);
     this->Order = streamingVolumeNode->GetOrder();

@@ -16,18 +16,18 @@
 int qMRMLMatrixWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   QWidget widget;
 
   qMRMLMatrixWidget mrmlItem(&widget);
 
-  vtkMRMLTransformNode* nullTransformNode = nullptr;
+  vtkMRMLTransformNode* const nullTransformNode = nullptr;
 
   {
-    vtkMRMLTransformNode* expectedTransformNode = nullTransformNode;
-    vtkMRMLTransformNode* currentTransformNode = mrmlItem.mrmlTransformNode();
+    vtkMRMLTransformNode* const expectedTransformNode = nullTransformNode;
+    vtkMRMLTransformNode* const currentTransformNode = mrmlItem.mrmlTransformNode();
     if (expectedTransformNode != currentTransformNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with mrmlTransformNode()\n"
@@ -40,8 +40,8 @@ int qMRMLMatrixWidgetTest1(int argc, char* argv[])
   mrmlItem.setMRMLTransformNode(nullTransformNode);
 
   {
-    vtkMRMLTransformNode* expectedTransformNode = nullTransformNode;
-    vtkMRMLTransformNode* currentTransformNode = mrmlItem.mrmlTransformNode();
+    vtkMRMLTransformNode* const expectedTransformNode = nullTransformNode;
+    vtkMRMLTransformNode* const currentTransformNode = mrmlItem.mrmlTransformNode();
     if (expectedTransformNode != currentTransformNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with mrmlTransformNode()\n"
@@ -51,12 +51,12 @@ int qMRMLMatrixWidgetTest1(int argc, char* argv[])
     }
   }
 
-  vtkNew<vtkMRMLTransformNode> transformNode;
+  const vtkNew<vtkMRMLTransformNode> transformNode;
   mrmlItem.setMRMLTransformNode(transformNode.GetPointer());
 
   {
-    vtkMRMLTransformNode* expectedTransformNode = transformNode.GetPointer();
-    vtkMRMLTransformNode* currentTransformNode = mrmlItem.mrmlTransformNode();
+    vtkMRMLTransformNode* const expectedTransformNode = transformNode.GetPointer();
+    vtkMRMLTransformNode* const currentTransformNode = mrmlItem.mrmlTransformNode();
     if (expectedTransformNode != currentTransformNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with mrmlTransformNode()\n"
@@ -69,8 +69,8 @@ int qMRMLMatrixWidgetTest1(int argc, char* argv[])
   mrmlItem.setMRMLTransformNode(nullTransformNode);
 
   {
-    vtkMRMLTransformNode* expectedTransformNode = nullTransformNode;
-    vtkMRMLTransformNode* currentTransformNode = mrmlItem.mrmlTransformNode();
+    vtkMRMLTransformNode* const expectedTransformNode = nullTransformNode;
+    vtkMRMLTransformNode* const currentTransformNode = mrmlItem.mrmlTransformNode();
     if (expectedTransformNode != currentTransformNode)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with mrmlTransformNode()\n"

@@ -432,7 +432,7 @@ public:
 
   int ExistSliceLocation(float sliceLocation)
   {
-    std::vector<float>::iterator iter = std::find(this->SliceLocation.begin(), this->SliceLocation.end(), sliceLocation);
+    const std::vector<float>::iterator iter = std::find(this->SliceLocation.begin(), this->SliceLocation.end(), sliceLocation);
     return iter != this->SliceLocation.end() ? std::distance(this->SliceLocation.begin(), iter) : -1;
   }
 
@@ -539,7 +539,7 @@ public:
     {
       return nullptr;
     }
-    float* dgo = new float[3];
+    float* const dgo = new float[3];
     for (int k = 0; k < 3; k++)
     {
       dgo[k] = this->DiffusionGradientOrientation[n][k];
@@ -562,7 +562,7 @@ public:
     {
       return nullptr;
     }
-    float* dgo = new float[6];
+    float* const dgo = new float[6];
     for (int k = 0; k < 6; k++)
     {
       dgo[k] = this->ImageOrientationPatient[n][k];
@@ -576,7 +576,7 @@ public:
     {
       return nullptr;
     }
-    float* ipp = new float[3];
+    float* const ipp = new float[3];
     for (int k = 0; k < 3; k++)
     {
       ipp[k] = this->ImagePositionPatient[n][k];
@@ -588,52 +588,52 @@ public:
   /// TODO: need to clean up
   int InsertSeriesInstanceUIDs(const char* aUID)
   {
-    int k = ExistSeriesInstanceUID(aUID);
+    const int k = ExistSeriesInstanceUID(aUID);
     if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector(aUID);
+    const std::string aVector(aUID);
     this->SeriesInstanceUIDs.push_back(aVector);
     return (this->SeriesInstanceUIDs.size() - 1);
   }
 
   int InsertContentTime(const char* aTime)
   {
-    int k = ExistContentTime(aTime);
+    const int k = ExistContentTime(aTime);
     if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector(aTime);
+    const std::string aVector(aTime);
     this->ContentTime.push_back(aVector);
     return (this->ContentTime.size() - 1);
   }
 
   int InsertTriggerTime(const char* aTime)
   {
-    int k = ExistTriggerTime(aTime);
+    const int k = ExistTriggerTime(aTime);
     if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector(aTime);
+    const std::string aVector(aTime);
     this->TriggerTime.push_back(aVector);
     return (this->TriggerTime.size() - 1);
   }
 
   int InsertEchoNumbers(const char* aEcho)
   {
-    int k = ExistEchoNumbers(aEcho);
+    const int k = ExistEchoNumbers(aEcho);
     if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector(aEcho);
+    const std::string aVector(aEcho);
     this->EchoNumbers.push_back(aVector);
     return (this->EchoNumbers.size() - 1);
   }
@@ -646,7 +646,7 @@ public:
       return k;
     }
     std::vector<float> aVector(3);
-    float aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    const float aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
     for (k = 0; k < 3; k++)
     {
       aVector[k] = a[k] / aMag;
@@ -661,7 +661,7 @@ public:
   /// \sa InsertNextSliceLocation()
   int InsertSliceLocation(float a)
   {
-    int k = ExistSliceLocation(a);
+    const int k = ExistSliceLocation(a);
     if (k >= 0)
     {
       return k;
@@ -674,7 +674,7 @@ public:
   /// \sa InsertSliceLocation()
   int InsertNextSliceLocation()
   {
-    int size = this->SliceLocation.size();
+    const int size = this->SliceLocation.size();
     this->SliceLocation.push_back(size > 0 ? this->SliceLocation.back() + 1 : 0.f);
     return size;
   }
@@ -687,8 +687,8 @@ public:
       return k;
     }
     std::vector<float> aVector(6);
-    float aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
-    float bMag = sqrt(a[3] * a[3] + a[4] * a[4] + a[5] * a[5]);
+    const float aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    const float bMag = sqrt(a[3] * a[3] + a[4] * a[4] + a[5] * a[5]);
     for (k = 0; k < 3; k++)
     {
       aVector[k] = a[k] / aMag;
@@ -701,7 +701,7 @@ public:
 
   int InsertImagePositionPatient(float* a)
   {
-    int k = ExistImagePositionPatient(a);
+    const int k = ExistImagePositionPatient(a);
     if (k >= 0)
     {
       return k;

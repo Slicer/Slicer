@@ -88,7 +88,7 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkInteractorStyle3D> iStyle;
+  const vtkNew<vtkInteractorStyle3D> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene
@@ -102,7 +102,7 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   vtkNew<vtkMRMLViewNode> viewNode;
   viewNode->SetLayoutName("1");
   viewNode->SetLayoutLabel("1");
-  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* const nodeAdded = scene->AddNode(viewNode.GetPointer());
   CHECK_NOT_NULL(nodeAdded);
 
   // Factory
@@ -114,7 +114,7 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   CHECK_INT(factory->GetRegisteredDisplayableManagerCount(), 2);
 
   // Instantiate DisplayableManagerGroup
-  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> group = vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
+  const vtkSmartPointer<vtkMRMLDisplayableManagerGroup> group = vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
   CHECK_NOT_NULL(group);
 
   vtkNew<vtkMRMLThreeDViewInteractorStyle> iObserver;

@@ -44,7 +44,7 @@ int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
     std::cout << "Missing temporary directory argument !" << std::endl;
     return EXIT_FAILURE;
   }
-  std::string temporaryDirectory(argv[1]);
+  const std::string temporaryDirectory(argv[1]);
 
   CHECK_EXIT_SUCCESS(testAddVolumePropertyFromFile(temporaryDirectory));
 
@@ -59,14 +59,14 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   std::cout << "temporaryDirectory = " << temporaryDirectory.c_str() << std::endl;
 
   // write out a defaults file
-  vtkNew<vtkMRMLVolumePropertyNode> defaultVolumePropertyNode;
+  const vtkNew<vtkMRMLVolumePropertyNode> defaultVolumePropertyNode;
   vtkNew<vtkMRMLVolumePropertyStorageNode> volumePropertyStorageNode;
 
   // set up the temporary file name
   std::vector<std::string> components;
   components.push_back(temporaryDirectory);
   components.emplace_back("VolumeRenderingLogicVolumeProperty.vp");
-  std::string fileName = vtksys::SystemTools::JoinPath(components);
+  const std::string fileName = vtksys::SystemTools::JoinPath(components);
   std::cout << "fileName = " << fileName.c_str() << std::endl;
 
   volumePropertyStorageNode->SetFileName(fileName.c_str());
@@ -78,7 +78,7 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   CHECK_NULL(vpNode);
 
   // set the scene
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   logic->SetMRMLScene(scene.GetPointer());
 
   // null file name

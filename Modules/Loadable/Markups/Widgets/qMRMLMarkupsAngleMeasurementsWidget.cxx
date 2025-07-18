@@ -96,7 +96,7 @@ void qMRMLMarkupsAngleMeasurementsWidget::updateWidgetFromMRML()
 
   double axisVector[3] = { 0.0, 0.0, 0.0 };
   angleNode->GetOrientationRotationAxis(axisVector);
-  bool wasBlocked = d_ptr->rotationAxisCoordinatesWidget->blockSignals(true);
+  const bool wasBlocked = d_ptr->rotationAxisCoordinatesWidget->blockSignals(true);
   d_ptr->rotationAxisCoordinatesWidget->setCoordinates(axisVector);
   d_ptr->rotationAxisCoordinatesWidget->setEnabled(angleNode->GetAngleMeasurementMode() != vtkMRMLMarkupsAngleNode::Minimal);
   d_ptr->rotationAxisCoordinatesWidget->blockSignals(wasBlocked);
@@ -130,7 +130,7 @@ void qMRMLMarkupsAngleMeasurementsWidget::onRotationAxisChanged()
 //-----------------------------------------------------------------------------
 bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
-  vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsAngleNode* const angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
   if (!angleNode)
   {
     return false;

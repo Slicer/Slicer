@@ -71,7 +71,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::WriteXML(ostream& of, int nIn
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -95,10 +95,10 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode*)anode;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* const node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode*)anode;
 
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
 
@@ -302,7 +302,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeSliceDi
   // Find the node corresponding to the ID we have saved.
   if (this->GetScene() && this->GetDiffusionTensorDisplayPropertiesNodeID())
   {
-    vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID);
+    vtkMRMLNode* const cnode = this->GetScene()->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID);
     node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(cnode);
   }
 
@@ -328,7 +328,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
   this->SetDiffusionTensorDisplayPropertiesNodeID(id);
 
   // Get the node corresponding to the ID. This pointer is only to observe the object.
-  vtkMRMLNode* cnode = this->GetDiffusionTensorDisplayPropertiesNode();
+  vtkMRMLNode* const cnode = this->GetDiffusionTensorDisplayPropertiesNode();
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro(this->DiffusionTensorDisplayPropertiesNode, cnode);
@@ -409,7 +409,7 @@ std::vector<int> vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColor
 //----------------------------------------------------------------------------
 int vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants()
 {
-  static std::vector<int> modes = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColorModes();
+  static const std::vector<int> modes = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColorModes();
   return modes.size();
 }
 

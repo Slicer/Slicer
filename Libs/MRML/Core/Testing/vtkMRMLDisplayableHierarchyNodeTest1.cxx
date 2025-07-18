@@ -73,15 +73,15 @@ int TestBasics()
   node1->SetAndObserveDisplayNodeID("testingDisplayNodeID");
   std::cout << "DisplayNodeID = " << (node1->GetDisplayNodeID() == nullptr ? "NULL" : node1->GetDisplayNodeID()) << std::endl;
 
-  vtkMRMLDisplayableNode* pnode = node1->GetDisplayableNode();
+  vtkMRMLDisplayableNode* const pnode = node1->GetDisplayableNode();
   std::cout << "GetDisplayableNode returned " << (pnode == nullptr ? "null" : "not null") << std::endl;
 
-  vtkMRMLDisplayNode* dnode1 = node1->GetDisplayNode();
+  vtkMRMLDisplayNode* const dnode1 = node1->GetDisplayNode();
   std::cout << "GetDisplayNode returned " << (dnode1 == nullptr ? "null" : "not null") << std::endl;
 
   TEST_SET_GET_BOOLEAN(node1, Expanded);
 
-  vtkMRMLDisplayableHierarchyNode* pnode1 = node1->GetCollapsedParentNode();
+  vtkMRMLDisplayableHierarchyNode* const pnode1 = node1->GetCollapsedParentNode();
   std::cout << "GetUnexpandedParentNode = " << (pnode1 == nullptr ? "NULL" : "not null") << std::endl;
   return EXIT_SUCCESS;
 }

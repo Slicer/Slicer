@@ -115,7 +115,7 @@ void vtkMRMLAnnotationROINode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 {
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->ResetAnnotations();
 
@@ -225,7 +225,7 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   //  vtkObject::Copy(anode);
@@ -375,7 +375,7 @@ int vtkMRMLAnnotationROINode::SetControlPoint(int id, double newControl[3])
     return 0;
   }
 
-  int flag = Superclass::SetControlPoint(id, newControl, 1, 1);
+  const int flag = Superclass::SetControlPoint(id, newControl, 1, 1);
   if (!flag)
   {
     return 0;
@@ -480,7 +480,7 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
   vtkBoundingBox boundingBox_Transformed;
   for (int i = 0; i < numberOfCornerPoints; i++)
   {
-    double* cornerPoint_Transformed = transformMatrix->MultiplyDoublePoint(cornerPoints_Local[i]);
+    double* const cornerPoint_Transformed = transformMatrix->MultiplyDoublePoint(cornerPoints_Local[i]);
     boundingBox_Transformed.AddPoint(cornerPoint_Transformed);
   }
 
@@ -490,7 +490,7 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
   double diameters_Transformed[3] = { 0 };
   boundingBox_Transformed.GetLengths(diameters_Transformed);
 
-  int modify = this->StartModify();
+  const int modify = this->StartModify();
   this->SetXYZ(center_Transformed);
   this->SetRadiusXYZ(diameters_Transformed[0] / 2, diameters_Transformed[1] / 2, diameters_Transformed[2] / 2);
   this->EndModify(modify);
@@ -526,7 +526,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes* planes)
     bounds[2 * i] = XYZ[i] - RadiusXYZ[i];
     bounds[2 * i + 1] = XYZ[i] + RadiusXYZ[i];
   }
-  vtkSmartPointer<vtkPoints> boxPoints = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
+  const vtkSmartPointer<vtkPoints> boxPoints = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   boxPoints->SetNumberOfPoints(8);
 
   boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]); // origin
@@ -555,10 +555,10 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes* planes)
     }
   }
 
-  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
+  const vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   points->SetNumberOfPoints(6);
 
-  double* pts = static_cast<vtkDoubleArray*>(boxPoints->GetData())->GetPointer(0);
+  double* const pts = static_cast<vtkDoubleArray*>(boxPoints->GetData())->GetPointer(0);
 
   // these 3 planes contain pts[0]
   points->SetPoint(0, pts);
@@ -571,7 +571,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes* planes)
 
   planes->SetPoints(points);
 
-  double factor = (this->InsideOut ? -1.0 : 1.0);
+  const double factor = (this->InsideOut ? -1.0 : 1.0);
 
   // compute normals
   vtkNew<vtkDoubleArray> normals;
@@ -583,7 +583,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes* planes)
   vtkVector3d pointV;
   vtkVector3d normal;
 
-  double* p0 = pts;
+  double* const p0 = pts;
   origin.Set(p0[0], p0[1], p0[2]);
 
   // x plane

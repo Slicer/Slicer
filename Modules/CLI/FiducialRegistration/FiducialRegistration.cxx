@@ -107,16 +107,16 @@ int main(int argc, char* argv[])
   std::transform(movingLandmarks.begin(), movingLandmarks.end(), movingPoints.begin(), convertStdVectorToITKPoint);
 
   typedef itk::AffineTransform<double, 3> AffineTransform;
-  AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
+  const AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
 
   if (transformType == "Translation" || transformType == "Rigid")
   {
     typedef itk::VersorRigid3DTransform<double> TransformType;
-    TransformType::Pointer transform = TransformType::New();
+    const TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
     typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
-    InitializerType::Pointer initializer = InitializerType::New();
+    const InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
     initializer->SetMovingLandmarks(movingPoints);
@@ -138,11 +138,11 @@ int main(int argc, char* argv[])
   else if (transformType == "Similarity")
   {
     typedef itk::Similarity3DTransform<double> TransformType;
-    TransformType::Pointer transform = TransformType::New();
+    const TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
     typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
-    InitializerType::Pointer initializer = InitializerType::New();
+    const InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
     initializer->SetMovingLandmarks(movingPoints);
@@ -156,11 +156,11 @@ int main(int argc, char* argv[])
   else if (transformType == "Affine")
   {
     typedef itk::AffineTransform<double> TransformType;
-    TransformType::Pointer transform = TransformType::New();
+    const TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
     typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
-    InitializerType::Pointer initializer = InitializerType::New();
+    const InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
     initializer->SetMovingLandmarks(movingPoints);
@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
 
   // Compute RMS error in the target coordinate system.
 
-  AffineTransform::Pointer movingToFixedT = AffineTransform::New();
+  const AffineTransform::Pointer movingToFixedT = AffineTransform::New();
   fixedToMovingT->GetInverse(movingToFixedT);
 
   typedef PointList LandmarkPointContainerType;
@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
 
   rms = sqrt(sum / counter);
 
-  itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
+  const itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
   twriter->SetInput(fixedToMovingT);
   twriter->SetFileName(saveTransform);
 

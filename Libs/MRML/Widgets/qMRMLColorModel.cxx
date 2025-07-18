@@ -257,7 +257,7 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem) const
   {
     return -1;
   }
-  QVariant colorIndex = colorItem->data(qMRMLItemDelegate::ColorEntryRole);
+  const QVariant colorIndex = colorItem->data(qMRMLItemDelegate::ColorEntryRole);
   if (!colorIndex.isValid())
   {
     return -1;
@@ -348,7 +348,7 @@ void qMRMLColorModel::updateNode()
 
   // Note: Adding a signal blocker or temporarily disconnecting signals could improve update performance
   // (similarly to how it is done in qMRMLTableModel::updateModelFromMRML()).
-  int startIndex = (this->noneEnabled() ? 1 : 0);
+  const int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
   {
     for (int j = 0; j < this->columnCount(); ++j)
@@ -363,7 +363,7 @@ void qMRMLColorModel::updateNode()
 //------------------------------------------------------------------------------
 void qMRMLColorModel::updateRowForColor(int color)
 {
-  int startIndex = (this->noneEnabled() ? 1 : 0);
+  const int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int col = 0; col < this->columnCount(); ++col)
   {
     QStandardItem* colorItem = this->invisibleRootItem()->child(color + startIndex, col);
@@ -386,7 +386,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   }
   item->setData(color, qMRMLItemDelegate::ColorEntryRole);
 
-  QString colorName = this->nameFromColor(color);
+  const QString colorName = this->nameFromColor(color);
 
   if (column == d->ColorColumn)
   {
@@ -448,7 +448,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
   }
   if (item->column() == d->ColorColumn)
   {
-    QColor rgba(item->data(qMRMLItemDelegate::ColorRole).value<QColor>());
+    const QColor rgba(item->data(qMRMLItemDelegate::ColorRole).value<QColor>());
     colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF());
   }
   else if (item->column() == d->LabelColumn)
@@ -464,7 +464,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
 //-----------------------------------------------------------------------------
 void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* vtkNotUsed(call_data))
 {
-  vtkMRMLColorNode* colorNode = reinterpret_cast<vtkMRMLColorNode*>(vtk_obj);
+  vtkMRMLColorNode* const colorNode = reinterpret_cast<vtkMRMLColorNode*>(vtk_obj);
   qMRMLColorModel* colorModel = reinterpret_cast<qMRMLColorModel*>(client_data);
   Q_ASSERT(colorNode);
   Q_ASSERT(colorModel);
@@ -479,7 +479,7 @@ void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, v
 void qMRMLColorModel::onMRMLColorNodeModified(vtkObject* node)
 {
   Q_D(qMRMLColorModel);
-  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
+  vtkMRMLColorNode* const colorNode = vtkMRMLColorNode::SafeDownCast(node);
   Q_UNUSED(colorNode);
   Q_UNUSED(d);
   Q_ASSERT(colorNode == d->MRMLColorNode);
@@ -493,7 +493,7 @@ void qMRMLColorModel::onItemChanged(QStandardItem* item)
   {
     return;
   }
-  int color = this->colorFromItem(item);
+  const int color = this->colorFromItem(item);
   this->updateColorFromItem(color, item);
 }
 

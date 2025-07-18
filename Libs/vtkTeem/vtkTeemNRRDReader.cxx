@@ -125,7 +125,7 @@ const std::vector<std::string> vtkTeemNRRDReader::GetHeaderKeysVector()
 //----------------------------------------------------------------------------
 const char* vtkTeemNRRDReader::GetHeaderValue(const char* key)
 {
-  std::map<std::string, std::string>::iterator i = HeaderKeyValue.find(key);
+  const std::map<std::string, std::string>::iterator i = HeaderKeyValue.find(key);
   if (i != HeaderKeyValue.end())
   {
     return (i->second.c_str());
@@ -174,7 +174,7 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
   //  return true;
   //  }
 
-  std::string extension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension(filename));
+  const std::string extension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension(filename));
   if (extension != ".nrrd" && extension != ".nhdr")
   {
     vtkDebugMacro("The filename extension is not recognized");
@@ -207,8 +207,8 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
   inputStream.close();
 
   // Look into the file to avoid claiming the file is readable when it's actually not
-  Nrrd* nrrdTemp = nrrdNew();
-  NrrdIoState* nio = nrrdIoStateNew();
+  Nrrd* const nrrdTemp = nrrdNew();
+  NrrdIoState* const nio = nrrdIoStateNew();
   // Tell nrrdLoad to read just the header, and none of the data
   nrrdIoStateSet(nio, nrrdIoStateSkipData, 1);
 
@@ -219,7 +219,7 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
     // We have already checked the magic, so the file should be readable.
     // If it is not readable then it is an error, which we should report
     // to make troubleshooting easier.
-    char* err = biffGetDone(NRRD);
+    char* const err = biffGetDone(NRRD);
     if (err)
     {
       vtkErrorMacro("CanReadFile failed: " << err);
@@ -255,7 +255,7 @@ bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& nu
   }
 
   unsigned int rangeAxisIdx[NRRD_DIM_MAX];
-  unsigned int rangeAxisNum = nrrdRangeAxesGet(nrrdTemp, rangeAxisIdx);
+  const unsigned int rangeAxisNum = nrrdRangeAxesGet(nrrdTemp, rangeAxisIdx);
 
   // 3D volumes
   if (nrrdTemp->dim == 3)
@@ -279,8 +279,8 @@ bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& nu
     return false;
   }
 
-  unsigned int rangeAxisKind = nrrdTemp->axis[rangeAxisIdx[0]].kind;
-  int sizeAlongRangeAxis = static_cast<int>(nrrdTemp->axis[rangeAxisIdx[0]].size);
+  const unsigned int rangeAxisKind = nrrdTemp->axis[rangeAxisIdx[0]].kind;
+  const int sizeAlongRangeAxis = static_cast<int>(nrrdTemp->axis[rangeAxisIdx[0]].size);
   // NOTE: it is the NRRD readers responsibility to make sure that
   // the size (# of components) associated with a specific kind is
   // matches the actual size of the axis.
@@ -414,7 +414,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
 
   // Set the number of image dimensions and bail if needed
   unsigned int domainAxisIdx[NRRD_DIM_MAX];
-  unsigned int domainAxisNum = nrrdDomainAxesGet(this->nrrd, domainAxisIdx);
+  const unsigned int domainAxisNum = nrrdDomainAxesGet(this->nrrd, domainAxisIdx);
   if (this->nrrd->spaceDim && this->nrrd->spaceDim != domainAxisNum)
   {
     vtkErrorMacro("ReadImageInformation: this->nrrd's # independent axes (" << domainAxisNum
@@ -456,13 +456,13 @@ void vtkTeemNRRDReader::ExecuteInformation()
   }
   for (unsigned int axii = 0; axii < domainAxisNum; axii++)
   {
-    unsigned int naxi = domainAxisIdx[axii];
+    const unsigned int naxi = domainAxisIdx[axii];
     dataExtent[2 * axii] = 0;
     dataExtent[2 * axii + 1] = static_cast<int>(this->nrrd->axis[naxi].size) - 1;
 
     double spaceDir[NRRD_SPACE_DIM_MAX];
     double axisSpacing = 1.0;
-    int spacingStatus = nrrdSpacingCalculate(this->nrrd, naxi, &axisSpacing, spaceDir);
+    const int spacingStatus = nrrdSpacingCalculate(this->nrrd, naxi, &axisSpacing, spaceDir);
     switch (spacingStatus)
     {
       case nrrdSpacingStatusNone: spacing[axii] = 1.0; break;
@@ -545,7 +545,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
   else
   {
     double spaceOrigin[NRRD_DIM_MAX];
-    int originStatus = nrrdOriginCalculate(this->nrrd, domainAxisIdx, domainAxisNum, nrrdCenterCell, spaceOrigin);
+    const int originStatus = nrrdOriginCalculate(this->nrrd, domainAxisIdx, domainAxisNum, nrrdCenterCell, spaceOrigin);
     for (unsigned int saxi = 0; saxi < domainAxisNum; saxi++)
     {
       switch (originStatus)
@@ -816,7 +816,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd* nout, const Nrrd* nin, doub
 
   double tenMeasr[9];
   double tenSlice[9];
-  size_t nn = nrrdElementNumber(nout) / nout->axis[0].size;
+  const size_t nn = nrrdElementNumber(nout) / nout->axis[0].size;
   switch (this->DataType)
   {
     case VTK_FLOAT:
@@ -876,7 +876,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
   // twice: once by ExecuteInformation, and once here
   if (nrrdLoad(this->nrrd, this->GetFileName(), nullptr) != 0)
   {
-    char* err = biffGetDone(NRRD); // would be nice to free(err)
+    char* const err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Read: Error reading " << this->GetFileName() << ":\n" << err);
     return;
   }
@@ -912,7 +912,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
   this->ComputeDataIncrements();
 
   unsigned int rangeAxisIdx[NRRD_DIM_MAX] = { 0 };
-  unsigned int rangeAxisNum = nrrdRangeAxesGet(this->nrrd, rangeAxisIdx);
+  const unsigned int rangeAxisNum = nrrdRangeAxesGet(this->nrrd, rangeAxisIdx);
   if (rangeAxisNum > 1)
   {
     vtkErrorMacro("Read: handling more than one non-scalar axis not currently handled");
@@ -923,7 +923,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     // the range (dependent variable) is not on the fastest axis,
     // so we have to permute axes to put it there, since that is
     // how we set things up in ReadImageInformation() above
-    Nrrd* ntmp = nrrdNew();
+    Nrrd* const ntmp = nrrdNew();
     unsigned int axmap[NRRD_DIM_MAX] = { 0 };
     axmap[0] = rangeAxisIdx[0];
     for (unsigned int axi = 1; axi < this->nrrd->dim; axi++)
@@ -935,7 +935,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     if (nrrdCopy(ntmp, this->nrrd) //
         || nrrdAxesPermute(this->nrrd, ntmp, axmap))
     {
-      char* err = biffGetDone(NRRD); // would be nice to free(err)
+      char* const err = biffGetDone(NRRD); // would be nice to free(err)
       vtkErrorMacro("Read: Error permuting independent axis in " << this->GetFileName() << ":\n" << err);
       return;
     }
@@ -961,7 +961,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     if (nrrdKind3DSymMatrix == this->nrrd->axis[0].kind)
     {
       // we pad on a constant value 1 mask, then
-      Nrrd* ntmp = nrrdNew();
+      Nrrd* const ntmp = nrrdNew();
       ptrdiff_t minIdx[4] = { -1, 0, 0, 0 };
       ptrdiff_t maxIdx[4] = { static_cast<ptrdiff_t>(this->nrrd->axis[0].size - 1),
                               static_cast<ptrdiff_t>(this->nrrd->axis[1].size - 1),
@@ -970,7 +970,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
       if (nrrdCopy(ntmp, this->nrrd) //
           || nrrdPad_nva(this->nrrd, ntmp, minIdx, maxIdx, nrrdBoundaryPad, 1.0))
       {
-        char* err = biffGetDone(NRRD); // would be nice to free(err)
+        char* const err = biffGetDone(NRRD); // would be nice to free(err)
         vtkErrorMacro("Read: Error padding on conf mask in " << this->GetFileName() << ":\n" << err);
         return;
       }
@@ -979,7 +979,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     vtkDebugMacro("Kind: Masked Sym Matrix");
     // Call tendExpand(nout,nin,scale,threshold)
     // Set up threshold to -1 to avoid this
-    Nrrd* ntmp = nrrdNew();
+    Nrrd* const ntmp = nrrdNew();
     int errorCode = 0;
     const char* key = NRRD;
     errorCode |= nrrdCopy(ntmp, this->nrrd);
@@ -1032,7 +1032,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     }
     if (errorCode)
     {
-      char* err = biffGetDone(key); // would be nice to free(err)
+      char* const err = biffGetDone(key); // would be nice to free(err)
       vtkErrorMacro("Read: Error copying, crapping or cropping:\n" << err);
       return;
     }

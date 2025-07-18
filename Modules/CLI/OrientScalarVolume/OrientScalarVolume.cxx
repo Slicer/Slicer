@@ -105,19 +105,19 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::OrientImageFilter<ImageType, ImageType> FilterType;
 
   // Read the input volume
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2", CLPProcessInformation);
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2", CLPProcessInformation);
 
   reader1->SetFileName(inputVolume1.c_str());
   reader1->Update();
 
   // change the orientation of the volume
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter, "Orient image", CLPProcessInformation);
+  const typename FilterType::Pointer filter = FilterType::New();
+  const itk::PluginFilterWatcher watchFilter(filter, "Orient image", CLPProcessInformation);
 
   std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations> orientationMap;
   CreateOrientationMap(orientationMap);
-  std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations>::iterator o = orientationMap.find(orientation);
+  const std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations>::iterator o = orientationMap.find(orientation);
 
   filter->SetInput(reader1->GetOutput());
   filter->UseImageDirectionOn();
@@ -133,14 +133,14 @@ int DoIt(int argc, char* argv[], T)
   itk::AlignVolumeCenters<ImageType>(reader1->GetOutput(), filter->GetOutput(), newOrigin);
 
   // Now change the origin of the output volume
-  typename ChangeType::Pointer change = ChangeType::New();
+  const typename ChangeType::Pointer change = ChangeType::New();
   change->SetInput(filter->GetOutput());
   change->ChangeOriginOn();
   change->SetOutputOrigin(newOrigin);
   change->Update();
 
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(outputVolume.c_str());
   writer->SetInput(change->GetOutput());
   writer->Update();

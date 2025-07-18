@@ -176,7 +176,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
         && i != vtkMRMLColorTableNode::Obsolete)
     {
       // std::string id = std::string(this->GetColorTableNodeID(i));
-      const char* id = this->GetColorTableNodeID(i);
+      const char* const id = this->GetColorTableNodeID(i);
       vtkDebugMacro("vtkMRMLColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
       node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
       if (node != nullptr)
@@ -189,7 +189,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
 
   // remove the procedural color nodes (after the fs proc nodes as getting them by class)
   std::vector<vtkMRMLNode*> procNodes;
-  int numProcNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLProceduralColorNode", procNodes);
+  const int numProcNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLProceduralColorNode", procNodes);
   for (int i = 0; i < numProcNodes; i++)
   {
     vtkMRMLProceduralColorNode* procNode = vtkMRMLProceduralColorNode::SafeDownCast(procNodes[i]);
@@ -207,7 +207,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
   for (int i = basicPETNode->GetFirstType(); i <= basicPETNode->GetLastType(); i++)
   {
     basicPETNode->SetType(i);
-    const char* id = this->GetPETColorNodeID(i);
+    const char* const id = this->GetPETColorNodeID(i);
     vtkDebugMacro("vtkMRMLColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
     PETnode = vtkMRMLPETProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
     if (PETnode != nullptr)
@@ -223,7 +223,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
   for (int i = basicdGEMRICNode->GetFirstType(); i <= basicdGEMRICNode->GetLastType(); i++)
   {
     basicdGEMRICNode->SetType(i);
-    const char* id = this->GetdGEMRICColorNodeID(i);
+    const char* const id = this->GetdGEMRICColorNodeID(i);
     vtkDebugMacro("vtkMRMLColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
     dGEMRICnode = vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
     if (dGEMRICnode != nullptr)
@@ -281,7 +281,7 @@ const char* vtkMRMLColorLogic::GetdGEMRICColorNodeID(int type)
 const char* vtkMRMLColorLogic::GetColorNodeID(vtkMRMLColorNode* colorNode)
 {
   assert(colorNode);
-  std::string id = std::string(colorNode->GetClassName()) + std::string(colorNode->GetTypeAsString());
+  const std::string id = std::string(colorNode->GetClassName()) + std::string(colorNode->GetTypeAsString());
   vtkMRMLColorLogic::TempColorNodeID = id;
   return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
@@ -289,7 +289,7 @@ const char* vtkMRMLColorLogic::GetColorNodeID(vtkMRMLColorNode* colorNode)
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorLogic::GetProceduralColorNodeID(const char* name)
 {
-  std::string id = std::string("vtkMRMLProceduralColorNode") + std::string(name);
+  const std::string id = std::string("vtkMRMLProceduralColorNode") + std::string(name);
   vtkMRMLColorLogic::TempColorNodeID = id;
   return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
@@ -304,7 +304,7 @@ std::string vtkMRMLColorLogic::GetFileColorNodeSingletonTag(const char* fileName
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorLogic::GetFileColorNodeID(const char* fileName)
 {
-  std::string id = std::string("vtkMRMLColorTableNode") + vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName);
+  const std::string id = std::string("vtkMRMLColorTableNode") + vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName);
   vtkMRMLColorLogic::TempColorNodeID = id;
   return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
@@ -369,7 +369,7 @@ void vtkMRMLColorLogic::AddColorFile(const char* fileName, std::vector<std::stri
     return;
   }
   // check if it's in the vector already
-  std::string fileNameStr = std::string(fileName);
+  const std::string fileNameStr = std::string(fileName);
   for (unsigned int i = 0; i < Files->size(); i++)
   {
     std::string fileToCheck;
@@ -419,7 +419,7 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char* fileName, const c
   addedNode->SetSingletonTag(nullptr);
   if (nodeName)
   {
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(nodeName));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(nodeName));
     addedNode->SetName(uname.c_str());
   }
   addedNode = vtkMRMLColorNode::SafeDownCast(this->GetMRMLScene()->AddNode(addedNode));
@@ -445,7 +445,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultTableNode(int type)
 {
   vtkMRMLColorTableNode* node = vtkMRMLColorTableNode::New();
   node->SetType(type);
-  const char* typeName = node->GetTypeAsString();
+  const char* const typeName = node->GetTypeAsString();
   if (strstr(typeName, "Tint") != nullptr)
   {
     node->SetAttribute("Category", "Tint");
@@ -640,10 +640,10 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName, v
   }
 
   ctnode->GetStorageNode()->SetFileName(fileName);
-  std::string basename = ctnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
+  const std::string basename = ctnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
   if (this->GetMRMLScene())
   {
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
     ctnode->SetName(uname.c_str());
   }
   else
@@ -652,7 +652,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName, v
   }
   vtkDebugMacro("CreateFileNode: About to read user file " << fileName);
 
-  int success = ctnode->GetStorageNode()->ReadData(ctnode);
+  const int success = ctnode->GetStorageNode()->ReadData(ctnode);
   if (userMessages)
   {
     userMessages->AddMessages(ctnode->GetStorageNode()->GetUserMessages());
@@ -704,10 +704,10 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
   colorStorageNode->Delete();
 
   cpnode->GetStorageNode()->SetFileName(fileName);
-  std::string basename = cpnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
+  const std::string basename = cpnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
   if (this->GetMRMLScene())
   {
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
+    const std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
     cpnode->SetName(uname.c_str());
   }
   else
@@ -717,7 +717,7 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 
   vtkDebugMacro("CreateProceduralFileNode: About to read user file " << fileName);
 
-  int success = cpnode->GetStorageNode()->ReadData(cpnode);
+  const int success = cpnode->GetStorageNode()->ReadData(cpnode);
   if (userMessages)
   {
     userMessages->AddMessages(cpnode->GetStorageNode()->GetUserMessages());
@@ -914,7 +914,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
   colorNode->SetHideFromEditors(false);
   if (nodeToCopy->GetLookupTable())
   {
-    double* range = nodeToCopy->GetLookupTable()->GetRange();
+    double* const range = nodeToCopy->GetLookupTable()->GetRange();
     colorNode->GetLookupTable()->SetRange(range[0], range[1]);
   }
   colorNode->SetNumberOfColors(nodeToCopy->GetNumberOfColors());
@@ -924,7 +924,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
     nodeToCopy->GetColor(i, color);
     colorNode->SetColor(i, nodeToCopy->GetColorName(i), color[0], color[1], color[2], color[3]);
     // Copy terminologies
-    std::string terminologyString = nodeToCopy->GetTerminologyAsString(i);
+    const std::string terminologyString = nodeToCopy->GetTerminologyAsString(i);
     colorNode->SetTerminologyFromString(i, terminologyString);
   }
   return colorNode;

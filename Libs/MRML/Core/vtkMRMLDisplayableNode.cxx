@@ -95,7 +95,7 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -107,7 +107,7 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDisplayableNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   this->Superclass::Copy(anode);
 
@@ -119,11 +119,11 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
+  const int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
 
   for (int i = 0; i < numDisplayNodes; i++)
   {
-    const char* id = this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), i);
+    const char* const id = this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), i);
     os << indent << "DisplayNodeIDs[" << i << "]: " << (id ? id : "(none)") << "\n";
   }
 }
@@ -198,10 +198,10 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetDisplayNode()
 void vtkMRMLDisplayableNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
+  const int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
   for (int i = 0; i < numDisplayNodes; i++)
   {
-    vtkMRMLDisplayNode* dnode = this->GetNthDisplayNode(i);
+    vtkMRMLDisplayNode* const dnode = this->GetNthDisplayNode(i);
     if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller))
     {
       this->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
@@ -226,12 +226,12 @@ void vtkMRMLDisplayableNode::CreateDefaultSequenceDisplayNodes()
 //---------------------------------------------------------------------------
 int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
-  int ndnodes = this->GetNumberOfDisplayNodes();
+  const int ndnodes = this->GetNumberOfDisplayNodes();
   if (ndnodes == 0 || this->GetNthDisplayNode(0) == nullptr)
   {
     return 0;
   }
-  int visible = this->GetNthDisplayNode(0)->GetVisibility();
+  const int visible = this->GetNthDisplayNode(0)->GetVisibility();
   if (visible == 2)
   {
     return 2;
@@ -256,7 +256,7 @@ int vtkMRMLDisplayableNode::GetDisplayClassVisibility(const char* nodeClass)
   {
     return this->GetDisplayVisibility();
   }
-  int ndnodes = this->GetNumberOfDisplayNodes();
+  const int ndnodes = this->GetNumberOfDisplayNodes();
   int visible = 0;
   for (int i = 0; i < ndnodes; i++)
   {
@@ -278,7 +278,7 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
     return;
   }
 
-  int ndnodes = this->GetNumberOfDisplayNodes();
+  const int ndnodes = this->GetNumberOfDisplayNodes();
   for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
@@ -302,7 +302,7 @@ void vtkMRMLDisplayableNode::SetDisplayClassVisibility(const char* nodeClass, in
     return;
   }
 
-  int ndnodes = this->GetNumberOfDisplayNodes();
+  const int ndnodes = this->GetNumberOfDisplayNodes();
   for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
@@ -329,7 +329,7 @@ void vtkMRMLDisplayableNode::GetBounds(double bounds[6])
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::SetSelectable(int selectable)
 {
-  bool modified = (selectable != this->Selectable);
+  const bool modified = (selectable != this->Selectable);
   Superclass::SetSelectable(selectable);
   if (modified)
   {

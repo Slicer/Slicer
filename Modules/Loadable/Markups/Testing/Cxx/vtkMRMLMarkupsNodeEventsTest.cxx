@@ -42,7 +42,7 @@ public:
 
   void Execute(vtkObject* caller, unsigned long event, void*) override
   {
-    vtkMRMLDisplayableNode* dispNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
+    vtkMRMLDisplayableNode* const dispNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
     if (!dispNode)
     {
       return;
@@ -71,7 +71,7 @@ void addEventsToObserver(vtkMRMLMarkupsNode* node, vtkMRMLMarkupNodeObserver* ob
 
 bool containsEvent(vtkMRMLMarkupNodeObserver* observer, int eventId)
 {
-  bool found = std::find(observer->invokedEvents.begin(), observer->invokedEvents.end(), eventId) != observer->invokedEvents.end();
+  const bool found = std::find(observer->invokedEvents.begin(), observer->invokedEvents.end(), eventId) != observer->invokedEvents.end();
   observer->invokedEvents.clear();
   return found;
 }
@@ -82,7 +82,7 @@ int vtkMRMLMarkupsNodeEventsTest(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node;
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLMarkupNodeObserver> observer;
+  const vtkNew<vtkMRMLMarkupNodeObserver> observer;
 
   addEventsToObserver(node, observer);
 

@@ -65,15 +65,15 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
+    vtkMRMLLayoutNode* const layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
 
     if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
     {
       return EXIT_FAILURE;
     }
 
-    int expectedThreeDViewCout = 1;
-    int currentThreeDViewCount = layoutManager->threeDViewCount();
+    const int expectedThreeDViewCout = 1;
+    const int currentThreeDViewCount = layoutManager->threeDViewCount();
     if (expectedThreeDViewCout != currentThreeDViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
@@ -82,8 +82,8 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    int expectedSliceViewCout = 3;
-    int currentSliceViewCount = layoutManager->sliceViewNames().count();
+    const int expectedSliceViewCout = 3;
+    const int currentSliceViewCount = layoutManager->sliceViewNames().count();
     if (expectedSliceViewCout != currentSliceViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
@@ -92,8 +92,8 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    int expectedTableViewCout = 0;
-    int currentTableViewCount = layoutManager->tableViewCount();
+    const int expectedTableViewCout = 0;
+    const int currentTableViewCount = layoutManager->tableViewCount();
     if (expectedTableViewCout != currentTableViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
@@ -105,8 +105,8 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
     layoutManager->setMRMLScene(nullptr);
     applicationLogic->SetMRMLScene(nullptr);
 
-    int current = scene->GetReferenceCount();
-    int expected = 1;
+    const int current = scene->GetReferenceCount();
+    const int expected = 1;
     if (current != expected)
     {
       std::cerr << __LINE__ << " Problem with MRMLScene reference count !\n"
@@ -118,18 +118,18 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
 
   {
     // Setting a new scene is expected to reset the factories
-    vtkNew<vtkMRMLScene> scene;
+    const vtkNew<vtkMRMLScene> scene;
     applicationLogic->SetMRMLScene(scene.GetPointer());
     layoutManager->setMRMLScene(scene.GetPointer());
-    vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
+    vtkMRMLLayoutNode* const layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
 
     if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
     {
       return EXIT_FAILURE;
     }
 
-    int expectedThreeDViewCout = 1;
-    int currentThreeDViewCount = layoutManager->threeDViewCount();
+    const int expectedThreeDViewCout = 1;
+    const int currentThreeDViewCount = layoutManager->threeDViewCount();
     if (expectedThreeDViewCout != currentThreeDViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
@@ -138,8 +138,8 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    int expectedSliceViewCout = 3;
-    int currentSliceViewCount = layoutManager->sliceViewNames().count();
+    const int expectedSliceViewCout = 3;
+    const int currentSliceViewCount = layoutManager->sliceViewNames().count();
     if (expectedSliceViewCout != currentSliceViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
@@ -148,8 +148,8 @@ int qMRMLLayoutManagerTest2(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    int expectedTableViewCout = 0;
-    int currentTableViewCount = layoutManager->tableViewCount();
+    const int expectedTableViewCout = 0;
+    const int currentTableViewCount = layoutManager->tableViewCount();
     if (expectedTableViewCout != currentTableViewCount)
     {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"

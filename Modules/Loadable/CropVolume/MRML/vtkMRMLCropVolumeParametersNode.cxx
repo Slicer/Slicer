@@ -64,7 +64,7 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode() = default;
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
   // Read all MRML node attributes from two arrays of names and values
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -95,7 +95,7 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -195,7 +195,7 @@ vtkMRMLTransformNode* vtkMRMLCropVolumeParametersNode::GetROIAlignmentTransformN
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::DeleteROIAlignmentTransformNode()
 {
-  vtkMRMLTransformNode* transformNode = this->GetROIAlignmentTransformNode();
+  vtkMRMLTransformNode* const transformNode = this->GetROIAlignmentTransformNode();
   if (transformNode)
   {
     this->SetROIAlignmentTransformNodeID(nullptr);

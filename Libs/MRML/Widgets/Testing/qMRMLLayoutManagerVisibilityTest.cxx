@@ -48,7 +48,7 @@
 // --------------------------------------------------------------------------
 bool checkNodeVisibility(int line, vtkMRMLAbstractViewNode* viewNode, bool expectedNodeVisibility)
 {
-  bool nodeVisibility = (viewNode->GetVisibility() != 0);
+  const bool nodeVisibility = (viewNode->GetVisibility() != 0);
   if (nodeVisibility != expectedNodeVisibility)
   {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
@@ -63,7 +63,7 @@ bool checkNodeVisibility(int line, vtkMRMLAbstractViewNode* viewNode, bool expec
 // --------------------------------------------------------------------------
 bool checkNodeMappedInLayout(int line, vtkMRMLAbstractViewNode* viewNode, bool expectedNodeMappedInLayout)
 {
-  bool nodeMappedInLayout = (viewNode->IsMappedInLayout() != 0);
+  const bool nodeMappedInLayout = (viewNode->IsMappedInLayout() != 0);
   if (nodeMappedInLayout != expectedNodeMappedInLayout)
   {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
@@ -78,7 +78,7 @@ bool checkNodeMappedInLayout(int line, vtkMRMLAbstractViewNode* viewNode, bool e
 // --------------------------------------------------------------------------
 bool checkNodeVisibleInLayout(int line, vtkMRMLAbstractViewNode* viewNode, bool expectedNodeVisibleInLayout)
 {
-  bool nodeVisibleInLayout = (viewNode->IsViewVisibleInLayout() != 0);
+  const bool nodeVisibleInLayout = (viewNode->IsViewVisibleInLayout() != 0);
   if (nodeVisibleInLayout != expectedNodeVisibleInLayout)
   {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
@@ -96,9 +96,9 @@ bool checkViews(int line, qMRMLLayoutManager* layoutManager, QHash<vtkMRMLAbstra
   for (vtkMRMLAbstractViewNode* const viewNode : viewNodesToExpectedVisibility.keys())
   {
 
-    bool expectedNodeVisibility = viewNodesToExpectedVisibility[viewNode].at(0);
-    bool expectedNodeMappedInLayout = viewNodesToExpectedVisibility[viewNode].at(1);
-    bool expectedNodeVisibleInLayout = viewNodesToExpectedVisibility[viewNode].at(2);
+    const bool expectedNodeVisibility = viewNodesToExpectedVisibility[viewNode].at(0);
+    const bool expectedNodeMappedInLayout = viewNodesToExpectedVisibility[viewNode].at(1);
+    const bool expectedNodeVisibleInLayout = viewNodesToExpectedVisibility[viewNode].at(2);
 
     if (!viewNode)
     {
@@ -122,7 +122,7 @@ bool checkViews(int line, qMRMLLayoutManager* layoutManager, QHash<vtkMRMLAbstra
       return false;
     }
 
-    QWidget* viewWidget = layoutManager->viewWidget(viewNode);
+    QWidget* const viewWidget = layoutManager->viewWidget(viewNode);
     if (!viewWidget)
     {
       std::cerr << "Line " << line << " - Failed to retrieve view widget"
@@ -130,8 +130,8 @@ bool checkViews(int line, qMRMLLayoutManager* layoutManager, QHash<vtkMRMLAbstra
       return false;
     }
 
-    bool widgetVisibility = viewWidget->isVisible();
-    bool expectedWidgetVisibility = expectedNodeVisibleInLayout;
+    const bool widgetVisibility = viewWidget->isVisible();
+    const bool expectedWidgetVisibility = expectedNodeVisibleInLayout;
     if (widgetVisibility != expectedWidgetVisibility)
     {
       std::cerr << "Line " << line << " - Problem with widget visibility"
@@ -169,9 +169,9 @@ bool runTests(vtkMRMLScene* scene, vtkMRMLLayoutNode* layoutNode, qMRMLLayoutMan
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   qApp->processEvents();
 
-  vtkMRMLAbstractViewNode* redNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeRed"));
+  vtkMRMLAbstractViewNode* const redNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeRed"));
   vtkMRMLAbstractViewNode* yellowNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeYellow"));
-  vtkMRMLAbstractViewNode* greenNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeGreen"));
+  vtkMRMLAbstractViewNode* const greenNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeGreen"));
   vtkMRMLAbstractViewNode* threeDNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLViewNode1"));
 
   // All view widgets are expected to be visible
@@ -225,7 +225,7 @@ bool runTests(vtkMRMLScene* scene, vtkMRMLLayoutNode* layoutNode, qMRMLLayoutMan
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView);
   qApp->processEvents();
 
-  vtkMRMLAbstractViewNode* plotNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLPlotViewNodePlotView1"));
+  vtkMRMLAbstractViewNode* const plotNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLPlotViewNodePlotView1"));
 
   // Only yellow widgets is expected to be hidden
   {
@@ -244,7 +244,7 @@ bool runTests(vtkMRMLScene* scene, vtkMRMLLayoutNode* layoutNode, qMRMLLayoutMan
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
   qApp->processEvents();
 
-  vtkMRMLAbstractViewNode* tableNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLTableViewNodeTableView1"));
+  vtkMRMLAbstractViewNode* const tableNode = vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLTableViewNodeTableView1"));
 
   // Only yellow widgets is expected to be hidden
   {
@@ -317,7 +317,7 @@ bool runTests(vtkMRMLScene* scene, vtkMRMLLayoutNode* layoutNode, qMRMLLayoutMan
     scene->Commit();
 
     // Serialized scene has yellow node with visibility set to 0
-    std::string xmlScene = scene->GetSceneXMLString();
+    const std::string xmlScene = scene->GetSceneXMLString();
 
     // Clear current scene
     scene->Clear(/*removeSingletons = */ 0);
@@ -364,7 +364,7 @@ int qMRMLLayoutManagerVisibilityTest(int argc, char* argv[])
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
 
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLLayoutNode> layoutNode;
+  const vtkNew<vtkMRMLLayoutNode> layoutNode;
 
   scene->AddNode(layoutNode.GetPointer());
   applicationLogic->SetMRMLScene(scene.GetPointer());

@@ -103,7 +103,7 @@ double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName) cons
   if (confidence > 0 && confidence < 0.56)
   {
     // Not a composite file extension, inspect the content
-    QString upperCaseFileName = fileName.toUpper();
+    const QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("JSON"))
     {
       QFile file(fileName);
@@ -112,7 +112,7 @@ double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName) cons
         QTextStream in(&file);
         // Markups json files contain a schema URL like .../Schema/markups-schema-v1.0.3.json
         // around position 150, read a bit further to account for slight variations in the header.
-        QString line = in.read(300);
+        const QString line = in.read(300);
         confidence = (line.contains("/markups-schema-v1.") ? 0.6 : 0.4);
       }
     }
@@ -127,7 +127,7 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
 
   // get the properties
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  const QString fileName = properties["fileName"].toString();
 
   QString name;
   if (properties.contains("name"))
@@ -142,7 +142,7 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
 
   // pass to logic to do the loading
   this->userMessages()->ClearMessages();
-  char* nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
+  char* const nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
   if (nodeIDs)
   {
     // returned a comma separated list of ids of the nodes that were loaded

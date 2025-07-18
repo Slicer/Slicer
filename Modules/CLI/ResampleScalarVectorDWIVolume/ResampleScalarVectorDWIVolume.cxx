@@ -218,14 +218,14 @@ typename itk::Transform<double, 3, 3>::Pointer SetUpTransform(parameters& list,
     {
       try
       {
-        typename RotationType::Pointer rotation = RotationType::New();
+        const typename RotationType::Pointer rotation = RotationType::New();
         rotation->SetMatrix(transformMatrix);
         rotation->SetTranslation(vec);
         transform = rotation;
       }
       catch (itk::ExceptionObject& exp)
       {
-        std::string exception = exp.GetDescription();
+        const std::string exception = exp.GetDescription();
         if (exception.find("Attempting to set a non-orthogonal rotation matrix") != std::string::npos)
         {
           list.transformType = "a";
@@ -239,7 +239,7 @@ typename itk::Transform<double, 3, 3>::Pointer SetUpTransform(parameters& list,
     }
     if (!list.transformType.compare("a")) // Affine transform
     {
-      typename AffineTransformType::Pointer affine = AffineTransformType::New();
+      const typename AffineTransformType::Pointer affine = AffineTransformType::New();
       affine->SetMatrix(transformMatrix);
       affine->SetTranslation(vec);
       transform = affine;
@@ -253,7 +253,7 @@ typename itk::Transform<double, 3, 3>::Pointer SetUpTransform(parameters& list,
 //  before the transform is used, otherwise the application crashes.
 void InitializeThinPlateSplineTransform(itk::Transform<double, 3, 3>::Pointer transform)
 {
-  std::string transformClassName = transform->GetNameOfClass();
+  const std::string transformClassName = transform->GetNameOfClass();
   if (transformClassName == "ThinPlateSplineKernelTransform")
   {
     typedef itk::ThinPlateSplineKernelTransform<double, 3> ThinPlateSplineTransformType;
@@ -263,7 +263,7 @@ void InitializeThinPlateSplineTransform(itk::Transform<double, 3, 3>::Pointer tr
   else if (transformClassName == "CompositeTransform")
   {
     typedef itk::CompositeTransform<double, 3> CompositeTransformType;
-    CompositeTransformType* compositeTransform = static_cast<CompositeTransformType*>(transform.GetPointer());
+    CompositeTransformType* const compositeTransform = static_cast<CompositeTransformType*>(transform.GetPointer());
     for (unsigned int i = 0; i < compositeTransform->GetNumberOfTransforms(); ++i)
     {
       InitializeThinPlateSplineTransform(compositeTransform->GetNthTransform(i));
@@ -281,7 +281,7 @@ typename itk::Transform<double, 3, 3>::Pointer SetTransformAndOrder(parameters& 
   typedef itk::AffineTransform<double, 3> AffineTransformType;
   if (list.transformationFile.compare("")) // Get transformation matrix from command line if no file given
   {
-    std::string transformClassName = transform->GetNameOfClass();
+    const std::string transformClassName = transform->GetNameOfClass();
     list.transformMatrix.resize(0);
     list.rotationPoint.resize(0);
     typename itk::MatrixOffsetTransformBase<double, 3, 3>::Pointer matrixOffsetTransform;
@@ -433,9 +433,9 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
     return;
   }
   typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
-  VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
+  const VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
   typedef itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
-  ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
+  const ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType defaultPixel;
   defaultPixel.Fill(0.0);
   resampleFieldFilter->SetDefaultPixelValue(defaultPixel);
@@ -484,12 +484,12 @@ itk::Transform<double, 3, 3>::Pointer SetAllTransform(parameters& list,
   // typename ImageType::SpacingType spacingOutput ;
   // typename ImageType::SizeType sizeOutput ;
   // typename ImageType::DirectionType directionOutput ;
-  typename ImageType::Pointer dummyOutputImage = ImageType::New();
+  const typename ImageType::Pointer dummyOutputImage = ImageType::New();
   dummyOutputImage->SetDirection(resampler->GetOutputDirection());
   dummyOutputImage->SetSpacing(resampler->GetOutputSpacing());
   dummyOutputImage->SetOrigin(resampler->GetOutputOrigin());
   dummyOutputImage->SetRegions(resampler->GetSize());
-  itk::Point<double> outputImageCenter = ImageCenter<ImageType>(dummyOutputImage);
+  const itk::Point<double> outputImageCenter = ImageCenter<ImageType>(dummyOutputImage);
   // If more than one transform or if hfield, add all transforms and compute the deformation field
   if ((list.transformationFile.compare("")              //
        && transformFile->GetTransformList()->size() > 1 //
@@ -500,7 +500,7 @@ itk::Transform<double, 3, 3>::Pointer SetAllTransform(parameters& list,
   {
     // Create warp transform
     typedef itk::WarpTransform3D<double> WarpTransformType;
-    typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
+    const typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
     typename DeformationImageType::Pointer field;
     if (list.deffield.compare(""))
     {
@@ -524,7 +524,7 @@ itk::Transform<double, 3, 3>::Pointer SetAllTransform(parameters& list,
     while (list.transformationFile.compare("") && transformFile->GetTransformList()->size())
     {
       typedef itk::TransformDeformationFieldFilter<double, double, 3> itkTransformDeformationFieldFilterType;
-      typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New();
+      const typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<ImageType>(list, image, transformFile, outputImageCenter);
       // check if there is a bspline transform and a bulk transform with it
       if (!list.notbulk && transform->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3" && //
@@ -615,7 +615,7 @@ itk::Transform<double, 3, 3>::Pointer SetAllTransform(parameters& list,
       composedMatrix = tempMatrix;
     } while (transformFile->GetTransformList()->size());
 
-    typename AffineTransformType::Pointer affine = AffineTransformType::New();
+    const typename AffineTransformType::Pointer affine = AffineTransformType::New();
     // copy 4x4 matrix into a 3x3 matrix and a vector ;
     for (int i = 0; i < 3; i++)
     {
@@ -690,7 +690,7 @@ int SeparateImages(const typename itk::VectorImage<PixelType, 3>::Pointer& image
   std::vector<IteratorImageType> out;
   for (unsigned int i = 0; i < imagePile->GetVectorLength(); i++)
   {
-    typename ImageType::Pointer imageTemp = ImageType::New();
+    const typename ImageType::Pointer imageTemp = ImageType::New();
     imageTemp->SetRegions(size);
     imageTemp->SetOrigin(origin);
     imageTemp->SetDirection(direction);
@@ -863,8 +863,8 @@ Transform3DPointer InverseTransform(const Transform3DPointer& transform)
     }
     if (transformClassName.find("AffineTransform") != std::string::npos) // Rotation around a selected point
     {
-      AffineTransformType::Pointer affine = static_cast<AffineTransformType*>(transform.GetPointer());
-      AffineTransformType::Pointer affinetemp = AffineTransformType::New();
+      const AffineTransformType::Pointer affine = static_cast<AffineTransformType*>(transform.GetPointer());
+      const AffineTransformType::Pointer affinetemp = AffineTransformType::New();
       affine->GetInverse(affinetemp);
       inverseTransform = affinetemp;
     }
@@ -883,8 +883,8 @@ Transform3DPointer InverseTransform(const Transform3DPointer& transform)
           transformClassName == "ScaleTransform" ||             //
           transformClassName == "ScaleLogarithmicTransform")    // if rotation transform
       {
-        RotationType::Pointer rigid = static_cast<RotationType*>(transform.GetPointer());
-        RotationType::Pointer rigidtemp = RotationType::New();
+        const RotationType::Pointer rigid = static_cast<RotationType*>(transform.GetPointer());
+        const RotationType::Pointer rigidtemp = RotationType::New();
         rigid->GetInverse(rigidtemp);
         inverseTransform = rigidtemp;
       }
@@ -909,15 +909,15 @@ itk::Matrix<double, 3, 3> ReadMeasurementFrame(itk::MetaDataDictionary& dico, co
   typedef std::vector<std::vector<double>> DoubleVectorType;
   typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
-  itk::MetaDataDictionary::ConstIterator end = dico.End();
+  const itk::MetaDataDictionary::ConstIterator end = dico.End();
   // We look for the measurement frame in the metadatadictionary
   while (itr != end)
   {
-    itk::MetaDataObjectBase::Pointer entry = itr->second;
-    MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
+    const itk::MetaDataObjectBase::Pointer entry = itr->second;
+    const MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
     if (entryvalue)
     {
-      int pos = itr->first.find("NRRD_measurement frame");
+      const int pos = itr->first.find("NRRD_measurement frame");
       if (pos != -1)
       {
         DoubleVectorType tagvalue = entryvalue->GetMetaDataObjectValue();
@@ -949,22 +949,22 @@ int TransformGradients(itk::MetaDataDictionary& dico, const Transform3DPointer& 
 {
   typedef itk::MetaDataObject<std::string> MetaDataStringType;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
-  itk::MetaDataDictionary::ConstIterator end = dico.End();
+  const itk::MetaDataDictionary::ConstIterator end = dico.End();
   bool dtmri = false;
   while (itr != end)
   {
-    itk::MetaDataObjectBase::Pointer entry = itr->second;
-    MetaDataStringType::Pointer entryvalue = dynamic_cast<MetaDataStringType*>(entry.GetPointer());
+    const itk::MetaDataObjectBase::Pointer entry = itr->second;
+    const MetaDataStringType::Pointer entryvalue = dynamic_cast<MetaDataStringType*>(entry.GetPointer());
     if (entryvalue)
     {
       // get the gradient directions
-      int pos = itr->first.find("DWMRI_gradient");
+      const int pos = itr->first.find("DWMRI_gradient");
       if (pos != -1)
       {
         dtmri = true;
         if (inverseTransform)
         {
-          std::string tagvalue = entryvalue->GetMetaDataObjectValue();
+          const std::string tagvalue = entryvalue->GetMetaDataObjectValue();
           itk::Vector<double, 3> vec;
           itk::Vector<double, 3> transformedVector;
           std::istringstream iss(tagvalue);
@@ -1068,12 +1068,12 @@ typename itk::InterpolateImageFunction<ImageType, double>::Pointer SetInterpolat
   typename InterpolatorType::Pointer interpol;
   if (!list.interpolationType.compare("linear"))
   {
-    typename LinearInterpolateType::Pointer linearinterpolator = LinearInterpolateType::New();
+    const typename LinearInterpolateType::Pointer linearinterpolator = LinearInterpolateType::New();
     interpol = linearinterpolator;
   }
   else if (!list.interpolationType.compare("nn"))
   {
-    typename NearestNeighborInterpolateType::Pointer interpolator = NearestNeighborInterpolateType::New();
+    const typename NearestNeighborInterpolateType::Pointer interpolator = NearestNeighborInterpolateType::New();
     interpol = interpolator;
   }
   else if (!list.interpolationType.compare("ws"))
@@ -1111,7 +1111,7 @@ typename itk::InterpolateImageFunction<ImageType, double>::Pointer SetInterpolat
   }
   else if (!list.interpolationType.compare("bs"))
   {
-    typename BSplineInterpolateFunction::Pointer bSplineInterpolator = BSplineInterpolateFunction::New();
+    const typename BSplineInterpolateFunction::Pointer bSplineInterpolator = BSplineInterpolateFunction::New();
     bSplineInterpolator->SetSplineOrder(list.splineOrder);
     interpol = bSplineInterpolator;
   }
@@ -1126,7 +1126,7 @@ int Rotate(parameters& list)
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleType;
   typedef itk::Transform<double, 3, 3> TransformType;
   typedef itk::VectorImage<PixelType, 3> VectorImageType;
-  typename ImageType::Pointer image;
+  const typename ImageType::Pointer image;
   std::vector<typename ImageType::Pointer> vectorOfImage;
   itk::MetaDataDictionary dico;
   try
@@ -1187,7 +1187,7 @@ int Rotate(parameters& list)
   AddImage<PixelType>(outputImage, vectorOutputImage);
   vectorOutputImage.clear();
   // If necessary, transform gradient vectors with the loaded transformations
-  int dwmriProblem = CheckDWMRI(dico, transform);
+  const int dwmriProblem = CheckDWMRI(dico, transform);
   if (list.space) // && list.transformationFile.compare( "" ))
   {
     RASLPS<VectorImageType>(outputImage);
@@ -1197,7 +1197,7 @@ int Rotate(parameters& list)
   typedef itk::ImageFileWriter<VectorImageType> WriterType;
   try
   {
-    typename WriterType::Pointer writer = WriterType::New();
+    const typename WriterType::Pointer writer = WriterType::New();
     writer->SetInput(outputImage);
     writer->SetFileName(list.outputVolume.c_str());
     writer->Update();

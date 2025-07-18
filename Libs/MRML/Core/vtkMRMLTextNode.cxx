@@ -42,7 +42,7 @@ void vtkMRMLTextNode::SetText(const std::string& text, int encoding /*-1*/)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Text to " << text);
 
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   if (encoding >= 0)
   {
     this->SetEncoding(encoding);
@@ -63,12 +63,12 @@ void vtkMRMLTextNode::SetText(const std::string& text, int encoding /*-1*/)
 void vtkMRMLTextNode::SetEncoding(int encoding)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting encoding to " << encoding);
-  int clampedEncoding = std::max(VTK_ENCODING_NONE, std::min(encoding, VTK_ENCODING_UNKNOWN));
+  const int clampedEncoding = std::max(VTK_ENCODING_NONE, std::min(encoding, VTK_ENCODING_UNKNOWN));
   if (this->Encoding == clampedEncoding)
   {
     return;
   }
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   this->Encoding = clampedEncoding;
   // this indicates that the text (that is stored in a separate file) is modified
   // and therefore the object will be marked as changed for file saving
@@ -108,7 +108,7 @@ std::string vtkMRMLTextNode::GetEncodingAsString()
 //----------------------------------------------------------------------------
 void vtkMRMLTextNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStdStringMacro(text, Text);
@@ -132,7 +132,7 @@ void vtkMRMLTextNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTextNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyStringMacro(Text);
@@ -165,7 +165,7 @@ std::string vtkMRMLTextNode::GetDefaultStorageNodeClassName(const char* vtkNotUs
 
   if (this->ForceCreateStorageNode == CreateStorageNodeAuto)
   {
-    int length = this->Text.length();
+    const int length = this->Text.length();
     if (length < MAX_STRING_LENGTH_FOR_SAVE_WITHOUT_STORAGE_NODE)
     {
       return "";
@@ -185,7 +185,7 @@ vtkMRMLStorageNode* vtkMRMLTextNode::CreateDefaultStorageNode()
 
   if (!this->ForceCreateStorageNode)
   {
-    int length = this->Text.length();
+    const int length = this->Text.length();
     if (length < MAX_STRING_LENGTH_FOR_SAVE_WITHOUT_STORAGE_NODE)
     {
       return nullptr;

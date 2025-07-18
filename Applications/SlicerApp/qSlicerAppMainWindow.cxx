@@ -178,9 +178,9 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   // Icons in the menu
   //----------------------------------------------------------------------------
   // Customize QAction icons with standard pixmaps
-  QIcon networkIcon = mainWindow->style()->standardIcon(QStyle::SP_DriveNetIcon);
-  QIcon informationIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-  QIcon questionIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+  const QIcon networkIcon = mainWindow->style()->standardIcon(QStyle::SP_DriveNetIcon);
+  const QIcon informationIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+  const QIcon questionIcon = mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
 
   helpAboutSlicerAppAction->setIcon(informationIcon);
   helpReportBugOrFeatureRequestAction->setIcon(questionIcon);
@@ -220,7 +220,7 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 
   // scan the modules for their actions
   QList<QAction*> moduleActions;
-  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* const moduleManager = qSlicerApplication::application()->moduleManager();
   for (const QString& moduleName : moduleManager->modulesNames())
   {
     qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));

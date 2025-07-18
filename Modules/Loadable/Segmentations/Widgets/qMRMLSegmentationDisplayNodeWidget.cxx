@@ -149,7 +149,7 @@ void qMRMLSegmentationDisplayNodeWidget::setSegmentationDisplayNode(vtkMRMLSegme
 
   qvtkReconnect(d->SegmentationDisplayNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node);
+  vtkMRMLSegmentationDisplayNode* const displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node);
   d->SegmentationDisplayNode = displayNode;
 
   this->updateWidgetFromMRML();
@@ -242,7 +242,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
     qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation " << segmentationNode->GetName();
     return;
   }
-  QString newTitle = tr("Selected segment: %1").arg(selectedSegment->GetName());
+  const QString newTitle = tr("Selected segment: %1").arg(selectedSegment->GetName());
   d->groupBox_SelectedSegment->setTitle(newTitle);
 }
 
@@ -256,7 +256,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   {
     return;
   }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
+  vtkMRMLSegmentationNode* const segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
     return;
@@ -304,12 +304,12 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   this->populate2DRepresentationsCombobox();
 
   // Set displayed representation selections
-  std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
+  const std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
   {
     d->comboBox_DisplayedRepresentation3D->setCurrentIndex(d->comboBox_DisplayedRepresentation3D->findText(displayRepresentation3D.c_str()));
   }
-  std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
+  const std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
   {
     d->comboBox_DisplayedRepresentation2D->setCurrentIndex(d->comboBox_DisplayedRepresentation2D->findText(displayRepresentation2D.c_str()));
@@ -359,7 +359,7 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   d->comboBox_DisplayedRepresentation3D->blockSignals(false);
 
   // Set selection from display node
-  std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
+  const std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
   {
     d->comboBox_DisplayedRepresentation3D->setCurrentIndex(d->comboBox_DisplayedRepresentation3D->findText(displayRepresentation3D.c_str()));
@@ -398,7 +398,7 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
   d->comboBox_DisplayedRepresentation2D->blockSignals(false);
 
   // Set selection from display node
-  std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
+  const std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
   {
     d->comboBox_DisplayedRepresentation2D->setCurrentIndex(d->comboBox_DisplayedRepresentation2D->findText(displayRepresentation2D.c_str()));
@@ -533,7 +533,7 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation3DChanged(int index)
   }
 
   // Get representation name from index
-  QString representationName = d->comboBox_DisplayedRepresentation3D->itemText(index);
+  const QString representationName = d->comboBox_DisplayedRepresentation3D->itemText(index);
 
   d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName3D(representationName.toUtf8().constData());
 }
@@ -549,7 +549,7 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation2DChanged(int index)
   }
 
   // Get representation name from index
-  QString representationName = d->comboBox_DisplayedRepresentation2D->itemText(index);
+  const QString representationName = d->comboBox_DisplayedRepresentation2D->itemText(index);
 
   d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName2D(representationName.toUtf8().constData());
 }

@@ -59,7 +59,7 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLColorPickerWidget* widget = reinterpret_cast<qMRMLColorPickerWidget*>(data);
+  qMRMLColorPickerWidget* const widget = reinterpret_cast<qMRMLColorPickerWidget*>(data);
 
   Q_UNUSED(widget);
 }
@@ -69,21 +69,21 @@ void checkFinalWidgetState(void* data)
 int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
+  const QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
+  ctkQtTestingUtility* const testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
   qMRMLColorPickerWidget* widget = new qMRMLColorPickerWidget();
   widget->setObjectName("ColorPickerWidget1");
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   widget->setMRMLScene(scene.GetPointer());
   vtkNew<vtkMRMLColorLogic> colorLogic;

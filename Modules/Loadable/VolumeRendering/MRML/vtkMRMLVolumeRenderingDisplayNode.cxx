@@ -119,7 +119,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -294,21 +294,21 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject* caller, uns
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLVolumePropertyNode* volumePropertyNode = this->GetVolumePropertyNode();
+  vtkMRMLVolumePropertyNode* const volumePropertyNode = this->GetVolumePropertyNode();
   if (volumePropertyNode != nullptr &&                                         //
       volumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
-  vtkMRMLShaderPropertyNode* shaderPropertyNode = this->GetShaderPropertyNode();
+  vtkMRMLShaderPropertyNode* const shaderPropertyNode = this->GetShaderPropertyNode();
   if (shaderPropertyNode != nullptr &&                                         //
       shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
-  vtkMRMLMarkupsROINode* markupRoiNode = this->GetMarkupsROINode();
+  vtkMRMLMarkupsROINode* const markupRoiNode = this->GetMarkupsROINode();
   if (markupRoiNode != nullptr &&                                     //
       markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
@@ -376,13 +376,13 @@ bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLClipNode*
 
   for (int i = 0; i < clipNode->GetNumberOfClippingNodes(); ++i)
   {
-    vtkMRMLClipNode* nestedClipNode = vtkMRMLClipNode::SafeDownCast(clipNode->GetNthClippingNode(i));
+    vtkMRMLClipNode* const nestedClipNode = vtkMRMLClipNode::SafeDownCast(clipNode->GetNthClippingNode(i));
     if (nestedClipNode && !vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(nestedClipNode, userMessages))
     {
       fastClippingAvailable = false;
     }
 
-    vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(clipNode->GetNthClippingNode(i));
+    vtkMRMLMarkupsROINode* const markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(clipNode->GetNthClippingNode(i));
     if (markupsROINode && clipNode->GetNthClippingNodeState(i) == vtkMRMLClipNode::ClipPositiveSpace)
     {
       if (userMessages)

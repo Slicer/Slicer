@@ -193,7 +193,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModelPrivate::removeFiltersByIncludeFla
   while (foundIndices.size() > 0)
   {
     // Remove the largest index first
-    int lastIndex = foundIndices.takeLast();
+    const int lastIndex = foundIndices.takeLast();
     filterList.removeAt(lastIndex);
   }
 }
@@ -227,7 +227,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::~qMRMLSortFilterSubjectHierarchyProxy
 //-----------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene() const
 {
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -238,7 +238,7 @@ vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene() const
 //-----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyNode() const
 {
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -267,7 +267,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(QString a
     return;
   }
 
-  qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include);
+  const qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include);
   d->ItemAttributeFilters << newFilter;
   this->invalidateFilter();
 }
@@ -276,7 +276,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(QString a
 void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
-  int foundIndex = d->findItemAttributeFilter(attributeName, attributeValue, include);
+  const int foundIndex = d->findItemAttributeFilter(attributeName, attributeValue, include);
   if (foundIndex < 0)
   {
     qWarning() << Q_FUNC_INFO << ": Failed to remove item attribute filter by exact match";
@@ -301,7 +301,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QStrin
   while (foundIndices.size() > 0)
   {
     // Remove the largest index first
-    int lastIndex = foundIndices.takeLast();
+    const int lastIndex = foundIndices.takeLast();
     d->ItemAttributeFilters.removeAt(lastIndex);
   }
   this->invalidateFilter();
@@ -319,7 +319,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(QString a
     return;
   }
 
-  qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include, className);
+  const qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include, className);
   d->NodeAttributeFilters << newFilter;
   this->invalidateFilter();
 }
@@ -328,7 +328,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(QString a
 void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
-  int foundIndex = d->findNodeAttributeFilter(attributeName, attributeValue, include, className);
+  const int foundIndex = d->findNodeAttributeFilter(attributeName, attributeValue, include, className);
   if (foundIndex < 0)
   {
     qWarning() << Q_FUNC_INFO << ": Failed to remove node attribute filter by exact match";
@@ -353,7 +353,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QStrin
   while (foundIndices.size() > 0)
   {
     // Remove the largest index first
-    int lastIndex = foundIndices.takeLast();
+    const int lastIndex = foundIndices.takeLast();
     d->NodeAttributeFilters.removeAt(lastIndex);
   }
   this->invalidateFilter();
@@ -608,21 +608,21 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setShowEmptyHierarchyItems(bool 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchySceneIndex() const
 {
-  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->subjectHierarchySceneIndex());
 }
 
 //-----------------------------------------------------------------------------
 vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyItemFromIndex(const QModelIndex& index) const
 {
-  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return sceneModel->subjectHierarchyItemFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column) const
 {
-  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->indexFromSubjectHierarchyItem(itemID, column));
 }
 
@@ -656,7 +656,7 @@ int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootI
 //-----------------------------------------------------------------------------
 QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -667,7 +667,7 @@ QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QMode
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-  QStandardItem* parentItem = this->sourceItem(sourceParent);
+  QStandardItem* const parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
   {
     return false;
@@ -687,8 +687,8 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
   {
     return false;
   }
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
-  vtkIdType itemID = model->subjectHierarchyItemFromItem(item);
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  const vtkIdType itemID = model->subjectHierarchyItemFromItem(item);
   return (this->filterAcceptsItem(itemID) != Reject);
 }
 
@@ -712,7 +712,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
     // Always accept scene
     return Accept;
   }
-  qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  qMRMLSubjectHierarchyModel* const model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
 
   // Declare condition flag that is set to true if an item check fails.
   // Needed because if an item would be filtered out based on the criteria but any of its children are shown,
@@ -812,7 +812,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
         // If attribute value is not specified in the filter then reject node
         return Reject;
       }
-      const char* attributeValue = dataNode->GetAttribute(nodeAttrIt->c_str());
+      const char* const attributeValue = dataNode->GetAttribute(nodeAttrIt->c_str());
       if (!filterIt->AttributeValue.toString().compare(attributeValue))
       {
         // If attribute value is specified and matches the attribute value in the data node then reject node
@@ -846,7 +846,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
         anyIncludedAttributeFound = true;
         break;
       }
-      const char* attributeValue = dataNode->GetAttribute(nodeAttrIt->c_str());
+      const char* const attributeValue = dataNode->GetAttribute(nodeAttrIt->c_str());
       if (!filterIt->AttributeValue.toString().compare(attributeValue))
       {
         // If attribute value is specified and matches the attribute value in the data node then accept
@@ -886,7 +886,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
   bool itemLevelAccepted = false;
   if (!d->LevelFilter.isEmpty())
   {
-    QString itemLevel(shNode->GetItemLevel(itemID).c_str());
+    const QString itemLevel(shNode->GetItemLevel(itemID).c_str());
     for (const QString& levelFilter : d->LevelFilter)
     {
       if (itemLevel == levelFilter)
@@ -914,7 +914,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
   }
 
   // Do not show items in virtual branches if their parent is not accepted for any reason
-  vtkIdType parentItemID = shNode->GetItemParent(itemID);
+  const vtkIdType parentItemID = shNode->GetItemParent(itemID);
   if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
   {
     if (this->filterAcceptsItem(parentItemID, false) == Reject)
@@ -942,7 +942,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
       // If attribute value is not specified in the filter then reject item
       return Reject;
     }
-    std::string attributeValue = shNode->GetItemAttribute(itemID, filterIt->AttributeName.toUtf8().constData());
+    const std::string attributeValue = shNode->GetItemAttribute(itemID, filterIt->AttributeName.toUtf8().constData());
     if (!filterIt->AttributeValue.toString().compare(attributeValue.c_str()))
     {
       // If attribute value is specified and matches the attribute value in the item then reject item
@@ -970,7 +970,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
       anyIncludedAttributeFound = true;
       break;
     }
-    std::string attributeValue = shNode->GetItemAttribute(itemID, filterIt->AttributeName.toUtf8().constData());
+    const std::string attributeValue = shNode->GetItemAttribute(itemID, filterIt->AttributeName.toUtf8().constData());
     if (!filterIt->AttributeValue.toString().compare(attributeValue.c_str()))
     {
       // If attribute value is specified and matches the attribute value in the item then accept
@@ -994,7 +994,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
   // Filter by item name
   if (!d->NameFilter.isEmpty())
   {
-    QString itemName(shNode->GetItemName(itemID).c_str());
+    const QString itemName(shNode->GetItemName(itemID).c_str());
     if (!itemName.contains(d->NameFilter, Qt::CaseInsensitive))
     {
       if (canAcceptIfAnyChildIsAccepted)
@@ -1055,16 +1055,16 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex& index) const
 {
-  vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
+  const vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
   if (!itemID)
   {
     // Extra item (e.g. None)
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
 
-  bool isSelectable = (this->filterAcceptsItem(itemID) == Accept);
-  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
-  QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(itemID, index.column());
+  const bool isSelectable = (this->filterAcceptsItem(itemID) == Accept);
+  qMRMLSubjectHierarchyModel* const sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
+  QStandardItem* const item = sceneModel->itemFromSubjectHierarchyItem(itemID, index.column());
   if (!item)
   {
     return Qt::ItemFlags();

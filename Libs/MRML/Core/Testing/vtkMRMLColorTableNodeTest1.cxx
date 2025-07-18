@@ -28,7 +28,7 @@ using namespace vtkMRMLCoreTestingUtilities;
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 {
-  vtkNew<vtkMRMLColorTableNode> node1;
+  const vtkNew<vtkMRMLColorTableNode> node1;
   {
     vtkNew<vtkMRMLScene> scene;
     scene->AddNode(node1.GetPointer());
@@ -44,10 +44,10 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  const char* tempDir = argv[1];
-  const char* testDataDir = argv[2];
+  const char* const tempDir = argv[1];
+  const char* const testDataDir = argv[2];
 
-  std::string sceneFileName = std::string(tempDir) + "/vtkMRMLColorTableNodeTest1.mrml";
+  const std::string sceneFileName = std::string(tempDir) + "/vtkMRMLColorTableNodeTest1.mrml";
 
   for (int fileFormat = 0; fileFormat < 2; fileFormat++)
   {
@@ -108,7 +108,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
         CHECK_NOT_NULL(scene->AddNode(colorNode.GetPointer()));
 
         // add storage node to the scene
-        vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
+        const vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
 
         scene->AddNode(colorStorageNode);
 
@@ -156,7 +156,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
         }
 
         // Check colors
-        double tolerance = 1.0 / 255.0; // color is saved as uint8_t, so 1/255 is the precision
+        const double tolerance = 1.0 / 255.0; // color is saved as uint8_t, so 1/255 is the precision
         double color[4];
         colorNode->GetColor(0, color);
         CHECK_DOUBLE_TOLERANCE(color[0], 0.0, tolerance);
@@ -181,13 +181,13 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 
   // Read color table from file and test content
   {
-    std::string colorTestFileName = std::string(testDataDir) + "/ColorTest.csv";
-    std::string colorTestWithTerminologyFileName = std::string(testDataDir) + "/ColorTestWithTerminology.csv";
-    std::string colorTestMissingAlphaFileName = std::string(testDataDir) + "/ColorTestMissingAlpha.csv";
-    std::string colorTestMissingColorFileName = std::string(testDataDir) + "/ColorTestMissingColor.csv";
-    std::string colorTestMissingLabelValueFileName = std::string(testDataDir) + "/ColorTestMissingLabelValue.csv";
-    std::string colorTestMissingNameFileName = std::string(testDataDir) + "/ColorTestMissingName.csv";
-    std::string colorTestInvalidColorFileName = std::string(testDataDir) + "/ColorTestInvalidColor.csv";
+    const std::string colorTestFileName = std::string(testDataDir) + "/ColorTest.csv";
+    const std::string colorTestWithTerminologyFileName = std::string(testDataDir) + "/ColorTestWithTerminology.csv";
+    const std::string colorTestMissingAlphaFileName = std::string(testDataDir) + "/ColorTestMissingAlpha.csv";
+    const std::string colorTestMissingColorFileName = std::string(testDataDir) + "/ColorTestMissingColor.csv";
+    const std::string colorTestMissingLabelValueFileName = std::string(testDataDir) + "/ColorTestMissingLabelValue.csv";
+    const std::string colorTestMissingNameFileName = std::string(testDataDir) + "/ColorTestMissingName.csv";
+    const std::string colorTestInvalidColorFileName = std::string(testDataDir) + "/ColorTestInvalidColor.csv";
 
     {
       // Read minimal color table file -> success
@@ -233,7 +233,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
       CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
       CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
       CHECK_INT(colorNode->GetNumberOfColors(), 11);
-      std::string name = colorNode->GetColorName(5);
+      const std::string name = colorNode->GetColorName(5);
       CHECK_STD_STRING(name, "");
     }
 
@@ -251,7 +251,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 
     {
       // Read color table file with invalid color value -> error
-      vtkNew<vtkMRMLColorTableNode> colorNode;
+      const vtkNew<vtkMRMLColorTableNode> colorNode;
       vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
       colorStorageNode->SetFileName(colorTestInvalidColorFileName.c_str());
       TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

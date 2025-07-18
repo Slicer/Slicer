@@ -55,8 +55,8 @@ void qSlicerSceneViewsModuleDialogPrivate::setupUi(QDialog* dialog)
 
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(dialog->layout());
 
-  QWidget* buttonBox = dialog->findChild<QWidget*>("buttonBox");
-  int index = gridLayout->indexOf(buttonBox);
+  QWidget* const buttonBox = dialog->findChild<QWidget*>("buttonBox");
+  const int index = gridLayout->indexOf(buttonBox);
   int newRowIndex = -1;
   int column = -1;
   int rowSpan = -1;
@@ -109,7 +109,7 @@ qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent /*=
   this->setWindowTitle(tr("3D Slicer SceneView"));
 
   // default name
-  QString name("SceneView");
+  const QString name("SceneView");
   this->setNameEdit(name);
 
   Q_D(qSlicerSceneViewsModuleDialog);
@@ -152,24 +152,24 @@ void qSlicerSceneViewsModuleDialog::loadSceneViewInfo(int index)
   this->setData(QVariant(index));
 
   // get the name..
-  std::string name = this->m_Logic->GetNthSceneViewName(index);
+  const std::string name = this->m_Logic->GetNthSceneViewName(index);
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  std::string description = this->m_Logic->GetNthSceneViewDescription(index);
+  const std::string description = this->m_Logic->GetNthSceneViewDescription(index);
 
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
 
   // get the screenshot type..
-  int screenshotType = this->m_Logic->GetNthSceneViewScreenshotType(index);
+  const int screenshotType = this->m_Logic->GetNthSceneViewScreenshotType(index);
 
   // ..and set it in the GUI
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
-  vtkImageData* imageData = this->m_Logic->GetNthSceneViewScreenshot(index);
+  vtkImageData* const imageData = this->m_Logic->GetNthSceneViewScreenshot(index);
   this->setImageData(imageData);
 
   d->UpdateExistingNodesCheckBox->setVisible(true);
@@ -214,15 +214,15 @@ void qSlicerSceneViewsModuleDialog::accept()
   Q_D(qSlicerSceneViewsModuleDialog);
 
   // name
-  QString name = this->nameEdit();
+  const QString name = this->nameEdit();
   QByteArray nameBytes = name.toUtf8();
 
   // description
-  QString description = this->description();
+  const QString description = this->description();
   QByteArray descriptionBytes = description.toUtf8();
 
   // we need to know of which type the screenshot is
-  int screenshotType = static_cast<int>(this->widgetType());
+  const int screenshotType = static_cast<int>(this->widgetType());
 
   int index = -1;
   if (!this->data().toString().isEmpty())

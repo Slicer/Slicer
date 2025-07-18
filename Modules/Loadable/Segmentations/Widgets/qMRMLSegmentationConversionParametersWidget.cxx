@@ -240,13 +240,13 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
     return;
   }
 
-  int rowCount = d->PossiblePaths->GetNumberOfPaths();
+  const int rowCount = d->PossiblePaths->GetNumberOfPaths();
   d->PathsTable->setRowCount(rowCount);
   for (int row = 0; row < d->PossiblePaths->GetNumberOfPaths(); ++row)
   {
     // Path cost
     vtkSegmentationConversionPath* path = d->PossiblePaths->GetPath(row);
-    QString costString = QString::number(path->GetCost());
+    const QString costString = QString::number(path->GetCost());
     QTableWidgetItem* costItem = new QTableWidgetItem(costString);
     costItem->setFlags(costItem->flags() & ~Qt::ItemIsEditable);
     costItem->setData(Qt::UserRole, QVariant(row));
@@ -292,7 +292,7 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
     return;
   }
 
-  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  vtkSegmentationConversionPath* const selectedPath = this->selectedPath();
   if (!selectedPath)
   {
     d->ParametersTable->setRowCount(1);
@@ -326,20 +326,20 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
     return;
   }
 
-  int numberOfParameters = parameters->GetNumberOfParameters();
+  const int numberOfParameters = parameters->GetNumberOfParameters();
   d->ParametersTable->setRowCount(numberOfParameters);
   for (int row = 0; row < numberOfParameters; ++row)
   {
     // Parameter name
-    QString parameterName = QString::fromStdString(parameters->GetName(row));
-    QString parameterDescription = QString::fromStdString(parameters->GetDescription(row));
+    const QString parameterName = QString::fromStdString(parameters->GetName(row));
+    const QString parameterDescription = QString::fromStdString(parameters->GetDescription(row));
     QTableWidgetItem* nameItem = new QTableWidgetItem(parameterName);
     nameItem->setToolTip(parameterDescription);
     nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
     d->ParametersTable->setItem(row, d->parametersColumnIndex(tr("Name")), nameItem);
 
     // Parameter value
-    QString parameterValue = QString::fromStdString(parameters->GetValue(row));
+    const QString parameterValue = QString::fromStdString(parameters->GetValue(row));
 
     // Special case: reference image geometry
     if (!parameterName.compare(vtkSegmentationConverter::GetReferenceImageGeometryParameterName().c_str()))
@@ -349,10 +349,10 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
       geometryLayout->setContentsMargins(2, 2, 2, 0);
       geometryLayout->setSpacing(4);
 
-      QLabel* textValueLabel = new QLabel(parameterValue, geometryWidget);
+      QLabel* const textValueLabel = new QLabel(parameterValue, geometryWidget);
       geometryLayout->addWidget(textValueLabel);
 
-      QPushButton* specifyGeometryButton = new QPushButton(tr("Specify geometry"), geometryWidget);
+      QPushButton* const specifyGeometryButton = new QPushButton(tr("Specify geometry"), geometryWidget);
       // setGeometryFromVolumeButton->setFixedWidth(160);
       QObject::connect(specifyGeometryButton, SIGNAL(clicked()), this, SLOT(onSpecifyGeometryButtonClicked()));
       geometryLayout->addWidget(specifyGeometryButton);
@@ -391,14 +391,14 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
   // Force finish editing now by unsetting current item.
   d->ParametersTable->setCurrentItem(nullptr);
 
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
   // Perform conversion using selected path and chosen conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  vtkSegmentationConversionPath* const selectedPath = this->selectedPath();
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(selectedPath, this->conversionParameters()))
   {
-    QString message = tr("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
+    const QString message = tr("Failed to convert %1 to %2!").arg(d->SegmentationNode->GetName()).arg(d->TargetRepresentationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
   }
   QApplication::restoreOverrideCursor();
@@ -418,8 +418,8 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
   }
 
   // Get name item (safe to assume that changed item is the value, as it is the only editable one)
-  int row = changedItem->row();
-  QTableWidgetItem* nameItem = d->ParametersTable->item(row, d->parametersColumnIndex(tr("Name")));
+  const int row = changedItem->row();
+  QTableWidgetItem* const nameItem = d->ParametersTable->item(row, d->parametersColumnIndex(tr("Name")));
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   segmentation->SetConversionParameter(nameItem->text().toUtf8().constData(), changedItem->text().toUtf8().constData());
@@ -461,8 +461,8 @@ vtkSegmentationConversionPath* qMRMLSegmentationConversionParametersWidget::sele
     return nullptr;
   }
 
-  QTableWidgetItem* firstItem = (*selectedItems.begin());
-  int selectedRow = firstItem->data(Qt::UserRole).toInt();
+  QTableWidgetItem* const firstItem = (*selectedItems.begin());
+  const int selectedRow = firstItem->data(Qt::UserRole).toInt();
   if (selectedRow < 0 || selectedRow >= d->PossiblePaths->GetNumberOfPaths())
   {
     return nullptr;
@@ -481,7 +481,7 @@ vtkSegmentationConversionParameters* qMRMLSegmentationConversionParametersWidget
     return d->ConversionParameters;
   }
 
-  vtkSegmentationConversionPath* selectedPath = this->selectedPath();
+  vtkSegmentationConversionPath* const selectedPath = this->selectedPath();
   if (!selectedPath)
   {
     return d->ConversionParameters;

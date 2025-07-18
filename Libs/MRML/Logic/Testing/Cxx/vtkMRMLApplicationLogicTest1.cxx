@@ -49,7 +49,7 @@ int vtkMRMLApplicationLogicTest1(int argc, char* argv[])
               << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
   }
-  const char* tempDir = argv[1];
+  const char* const tempDir = argv[1];
 
   CHECK_EXIT_SUCCESS(SliceLogicsTest());
   CHECK_EXIT_SUCCESS(SliceOrientationPresetInitializationTest());
@@ -66,14 +66,14 @@ int SliceLogicsTest()
 
   // By default, a null collection is expected
   {
-    vtkMTimeType mtime = appLogic->GetMTime();
+    const vtkMTimeType mtime = appLogic->GetMTime();
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() == mtime, true);
   }
 
   // Set a null string
   {
-    vtkMTimeType mtime = appLogic->GetMTime();
+    const vtkMTimeType mtime = appLogic->GetMTime();
     appLogic->SetSliceLogics(nullptr);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, false);
@@ -81,7 +81,7 @@ int SliceLogicsTest()
 
   // Set a non-empty collection should work
   {
-    vtkMTimeType mtime = appLogic->GetMTime();
+    const vtkMTimeType mtime = appLogic->GetMTime();
     vtkNew<vtkCollection> logics;
     logics->AddItem(vtkSmartPointer<vtkObject>::New());
     appLogic->SetSliceLogics(logics);
@@ -92,7 +92,7 @@ int SliceLogicsTest()
 
   // Set a null collection.
   {
-    vtkMTimeType mtime = appLogic->GetMTime();
+    const vtkMTimeType mtime = appLogic->GetMTime();
     appLogic->SetSliceLogics(nullptr);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
@@ -106,8 +106,8 @@ int SliceLogicsTest()
 
   // Set an empty collection.
   {
-    vtkMTimeType mtime = appLogic->GetMTime();
-    vtkNew<vtkCollection> logics;
+    const vtkMTimeType mtime = appLogic->GetMTime();
+    const vtkNew<vtkCollection> logics;
     appLogic->SetSliceLogics(logics);
     CHECK_NOT_NULL(appLogic->GetSliceLogics());
     CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 0);
@@ -127,7 +127,7 @@ int SliceOrientationPresetInitializationTest()
 
   {
     vtkNew<vtkMRMLScene> scene;
-    vtkMRMLSliceNode* defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    vtkMRMLSliceNode* const defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_NULL(defaultSliceNode);
   }
 
@@ -135,7 +135,7 @@ int SliceOrientationPresetInitializationTest()
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLApplicationLogic> appLogic;
     appLogic->SetMRMLScene(scene);
-    vtkMRMLSliceNode* defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    vtkMRMLSliceNode* const defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_INT(defaultSliceNode->GetNumberOfSliceOrientationPresets(), 3);
   }
 
@@ -150,7 +150,7 @@ int TemporaryPathTest()
   MRMLAppLogic->SetTemporaryPath(nullptr); // Test nullptr
   if (strlen(MRMLAppLogic->GetTemporaryPath()) != 0)
   {
-    std::string temporaryEmptyString;
+    const std::string temporaryEmptyString;
     std::cerr << "Line " << __LINE__ << " - Problem with SetTemporaryPath using NULL" << "\n"
               << "\ttemporaryPath:" << MRMLAppLogic->GetTemporaryPath() << "\n"
               << "\texpected:" << temporaryEmptyString << std::endl;
@@ -167,7 +167,7 @@ int TemporaryPathTest()
 
   for (TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
   {
-    std::string temporaryPath(data.at(rowIdx));
+    const std::string temporaryPath(data.at(rowIdx));
     MRMLAppLogic->SetTemporaryPath(temporaryPath.c_str());
     if (MRMLAppLogic->GetTemporaryPath() != temporaryPath)
     {
@@ -227,11 +227,11 @@ int CreateUniqueFileNameTest(std::string tempDir)
 int AddModuleLogicTest()
 {
   vtkNew<vtkMRMLApplicationLogic> appLogic;
-  std::string module_name = "TestModule";
+  const std::string module_name = "TestModule";
 
   // Registration of a module logic should work
   {
-    vtkNew<vtkMRMLAbstractLogic> moduleLogic;
+    const vtkNew<vtkMRMLAbstractLogic> moduleLogic;
     appLogic->SetModuleLogic(module_name.c_str(), moduleLogic);
 
     CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()), moduleLogic);
@@ -245,14 +245,14 @@ int AddModuleLogicTest()
 
   // Updating module logic with a new object can be useful for dynamic reloading of modules.
   {
-    vtkNew<vtkMRMLAbstractLogic> moduleLogic;
+    const vtkNew<vtkMRMLAbstractLogic> moduleLogic;
     appLogic->SetModuleLogic(module_name.c_str(), moduleLogic);
     CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()), moduleLogic);
   }
 
   // Trying to get a logic that has not been registered should return nullptr
   {
-    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name + "a").c_str());
+    const vtkMRMLAbstractLogic* const retval = appLogic->GetModuleLogic((module_name + "a").c_str());
 
     // return value should be nullptr
     CHECK_NULL(retval);
@@ -262,7 +262,7 @@ int AddModuleLogicTest()
   {
     // Triggers an error
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic(nullptr);
+    const vtkMRMLAbstractLogic* const retval = appLogic->GetModuleLogic(nullptr);
     TESTING_OUTPUT_ASSERT_ERRORS(1);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
 
@@ -280,7 +280,7 @@ int AddModuleLogicTest()
     // Successfully removes module logic association
     appLogic->SetModuleLogic(module_name.c_str(), nullptr);
 
-    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name).c_str());
+    const vtkMRMLAbstractLogic* const retval = appLogic->GetModuleLogic((module_name).c_str());
     CHECK_NULL(retval);
   }
 

@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
   }
 
   // get the directory of the scene file
-  std::string rootDir = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
+  const std::string rootDir = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
 
   vtkNew<vtkMRMLScene> modelScene;
 
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
     }
 
     // make sure we have a new model hierarchy node
-    vtkMRMLNode* mnode = modelScene->GetNthNodeByClass(1, "vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* const mnode = modelScene->GetNthNodeByClass(1, "vtkMRMLModelHierarchyNode");
     if (mnode != nullptr)
     {
       topColorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mnode);
@@ -515,13 +515,13 @@ int main(int argc, char* argv[])
     else
     {
       // use the full range of the scalar type
-      double dImageScalarMax = image->GetScalarTypeMax();
+      const double dImageScalarMax = image->GetScalarTypeMax();
       if (debug)
       {
         std::cout << "Image scalar max as double = " << dImageScalarMax << endl;
       }
       extentMax = (int)(floor(dImageScalarMax - 1.0));
-      int biggestBin = 1000000; // VTK_INT_MAX - 1;
+      const int biggestBin = 1000000; // VTK_INT_MAX - 1;
       if (extentMax < 0 || extentMax > biggestBin)
       {
         std::cout << "\nWARNING: due to lack of color label information and an image with a scalar maximum of " << dImageScalarMax << ", using  " << biggestBin
@@ -552,8 +552,8 @@ int main(int argc, char* argv[])
       watchImageAccumulate.QuietOn();
     }
     hist->Update();
-    double* max = hist->GetMax();
-    double* min = hist->GetMin();
+    double* const max = hist->GetMax();
+    double* const min = hist->GetMin();
     if (min[0] == 0)
     {
       if (debug)
@@ -631,7 +631,7 @@ int main(int argc, char* argv[])
     }
 
     cubes = vtkSmartPointer<vtkDiscreteFlyingEdges3D>::New();
-    std::string comment1 = "Discrete Marching Cubes";
+    const std::string comment1 = "Discrete Marching Cubes";
     vtkPluginFilterWatcher watchDMCubes(cubes, comment1.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
     if (debug)
     {
@@ -674,7 +674,7 @@ int main(int argc, char* argv[])
     }
     if (JointSmoothing)
     {
-      float passBand = 0.001;
+      const float passBand = 0.001;
       if (smoother)
       {
         smoother->SetInputData(nullptr);
@@ -685,7 +685,7 @@ int main(int argc, char* argv[])
       stream << "Joint Smooth All Models (";
       stream << numModelsToGenerate;
       stream << " to process)";
-      std::string comment2 = stream.str();
+      const std::string comment2 = stream.str();
       vtkPluginFilterWatcher watchSmoother(smoother, comment2.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -814,7 +814,7 @@ int main(int argc, char* argv[])
   }
   transformIJKtoLPS = vtkSmartPointer<vtkTransform>::New();
 
-  vtkNew<vtkMatrix4x4> ijkToRasMatrix;
+  const vtkNew<vtkMatrix4x4> ijkToRasMatrix;
   vtkMatrix4x4::Invert(reader->GetRasToIjkMatrix(), ijkToRasMatrix);
   transformIJKtoLPS->Scale(-1.0, -1.0, 1.0); // RAS to LPS
   transformIJKtoLPS->Concatenate(ijkToRasMatrix);
@@ -842,7 +842,7 @@ int main(int argc, char* argv[])
   for (::size_t l = 0; l < loopLabels.size(); l++)
   {
     // get the label out of the vector
-    int i = loopLabels[l];
+    const int i = loopLabels[l];
 
     if (makeMultiple)
     {
@@ -868,10 +868,10 @@ int main(int argc, char* argv[])
       // TODO: get the label name from the color look up table
       std::stringstream stream;
       stream << i;
-      std::string stringI = stream.str();
+      const std::string stringI = stream.str();
       if (colorNode != nullptr)
       {
-        std::string colorName = std::string(colorNode->GetColorNameAsFileName(i));
+        const std::string colorName = std::string(colorNode->GetColorNameAsFileName(i));
         if (colorName.c_str() != nullptr)
         {
           if (!SkipUnNamed || //
@@ -957,7 +957,7 @@ int main(int argc, char* argv[])
         imageThreshold = nullptr;
       }
       imageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
-      std::string comment3 = "Threshold " + labelName;
+      const std::string comment3 = "Threshold " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(imageThreshold, comment3.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1007,7 +1007,7 @@ int main(int argc, char* argv[])
         threshold = nullptr;
       }
       threshold = vtkSmartPointer<vtkThreshold>::New();
-      std::string comment4 = "Threshold " + labelName;
+      const std::string comment4 = "Threshold " + labelName;
       vtkPluginFilterWatcher watchThreshold(threshold, comment4.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1049,7 +1049,7 @@ int main(int argc, char* argv[])
         mcubes = nullptr;
       }
       mcubes = vtkSmartPointer<vtkFlyingEdges3D>::New();
-      std::string comment5 = "Marching Cubes " + labelName;
+      const std::string comment5 = "Marching Cubes " + labelName;
       vtkPluginFilterWatcher watchThreshold(mcubes, comment5.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1112,7 +1112,7 @@ int main(int argc, char* argv[])
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
         // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
         writer->SetFileVersion(42);
-        std::string commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
+        const std::string commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
         vtkPluginFilterWatcher watchWriter(writer, commentSaveCubes.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(cubes->GetOutputPort());
@@ -1155,7 +1155,7 @@ int main(int argc, char* argv[])
         decimator = nullptr;
       }
       decimator = vtkSmartPointer<vtkDecimatePro>::New();
-      std::string comment6 = "Decimate " + labelName;
+      const std::string comment6 = "Decimate " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(decimator, comment6.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1201,7 +1201,7 @@ int main(int argc, char* argv[])
       if (SaveIntermediateModels)
       {
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        std::string commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
+        const std::string commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
         vtkPluginFilterWatcher watchWriter(writer, commentSaveDecimation.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(decimator->GetOutputPort());
@@ -1247,7 +1247,7 @@ int main(int argc, char* argv[])
           reverser = nullptr;
         }
         reverser = vtkSmartPointer<vtkReverseSense>::New();
-        std::string comment7 = "Reverse " + labelName;
+        const std::string comment7 = "Reverse " + labelName;
         vtkPluginFilterWatcher watchReverser(reverser, comment7.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         if (debug)
@@ -1270,7 +1270,7 @@ int main(int argc, char* argv[])
             smootherSinc = nullptr;
           }
           smootherSinc = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
-          std::string comment8 = "Smooth " + labelName;
+          const std::string comment8 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherSinc, comment8.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (debug)
@@ -1313,7 +1313,7 @@ int main(int argc, char* argv[])
             smootherPoly = nullptr;
           }
           smootherPoly = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-          std::string comment9 = "Smooth " + labelName;
+          const std::string comment9 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherPoly, comment9.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (debug)
@@ -1352,7 +1352,7 @@ int main(int argc, char* argv[])
         if (SaveIntermediateModels)
         {
           writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-          std::string commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
+          const std::string commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
           vtkPluginFilterWatcher watchWriter(writer, commentSaveSmoothed.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
           currentFilterOffset += 1.0;
           if (strcmp(FilterType.c_str(), "Sinc") == 0)
@@ -1395,7 +1395,7 @@ int main(int argc, char* argv[])
         transformer = nullptr;
       }
       transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      std::string comment1 = "Transform " + labelName;
+      const std::string comment1 = "Transform " + labelName;
       vtkPluginFilterWatcher watchTransformer(transformer, comment1.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1438,7 +1438,7 @@ int main(int argc, char* argv[])
         normals = nullptr;
       }
       normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-      std::string comment2 = "Normals " + labelName;
+      const std::string comment2 = "Normals " + labelName;
       vtkPluginFilterWatcher watchNormals(normals, comment2.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1466,7 +1466,7 @@ int main(int argc, char* argv[])
         stripper = nullptr;
       }
       stripper = vtkSmartPointer<vtkStripper>::New();
-      std::string comment3 = "Strip " + labelName;
+      const std::string comment3 = "Strip " + labelName;
       vtkPluginFilterWatcher watchStripper(stripper, comment3.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)
@@ -1490,7 +1490,7 @@ int main(int argc, char* argv[])
 
       // but for now we're just going to write it out
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-      std::string comment4 = "Write " + labelName;
+      const std::string comment4 = "Write " + labelName;
       vtkPluginFilterWatcher watchWriter(writer, comment4.c_str(), CLPProcessInformation, 1.0 / numFilterSteps, currentFilterOffset / numFilterSteps);
       currentFilterOffset += 1.0;
       if (debug)

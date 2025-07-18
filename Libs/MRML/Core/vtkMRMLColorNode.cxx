@@ -52,7 +52,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -102,10 +102,10 @@ vtkScalarsToColors* vtkMRMLColorNode::GetScalarsToColors()
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLColorNode* node = vtkMRMLColorNode::SafeDownCast(anode);
+  vtkMRMLColorNode* const node = vtkMRMLColorNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -120,7 +120,7 @@ void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
   if (deepCopy)
   {
     // Deep copy
-    int size = node->Properties.size();
+    const int size = node->Properties.size();
     this->Properties.resize(size);
     for (int index = 0; index < size; index++)
     {
@@ -147,7 +147,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Color properties:\n";
     for (unsigned int i = 0; i < this->Properties.size(); i++)
     {
-      PropertyType& prop = this->Properties[i];
+      const PropertyType& prop = this->Properties[i];
       if (!prop.Defined)
       {
         continue;
@@ -268,7 +268,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 bool vtkMRMLColorNode::SetNameFromColor(int index)
 {
   double rgba[4] = { -1., -1., -1., -1. };
-  bool res = this->GetColor(index, rgba);
+  const bool res = this->GetColor(index, rgba);
   std::stringstream ss;
   ss.precision(3);
   ss.setf(std::ios::fixed, std::ios::floatfield);
@@ -624,7 +624,7 @@ bool vtkMRMLColorNode::SetTerminology(int ind,
     regionModifier->SetValueSchemeMeaning(regionModifierCodeValue.c_str(), regionModifierCodingScheme.c_str(), regionModifierCodeMeaning.c_str());
   }
 
-  std::string terminologyString = vtkMRMLColorNode::GetTerminologyAsString("", category, type, typeModifier, "", region, regionModifier);
+  const std::string terminologyString = vtkMRMLColorNode::GetTerminologyAsString("", category, type, typeModifier, "", region, regionModifier);
   return this->SetTerminologyFromString(ind, terminologyString);
 }
 
@@ -637,7 +637,7 @@ int vtkMRMLColorNode::GetColorIndexByName(const char* name)
     return -1;
   }
 
-  std::string strName = name;
+  const std::string strName = name;
   for (int i = 0; i < this->GetNumberOfColors(); ++i)
   {
     if (strName == this->GetColorName(i))
@@ -669,12 +669,12 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char* sub
 std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char* subst)
 {
   std::string fileName(this->GetColorName(colorIndex));
-  std::string validCharacters = //
+  const std::string validCharacters = //
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabscdefghijklmnopqrstuvwxyz"
     "0123456789"
     "-_.()$!~#'%^{}";
   std::string::size_type pos = 0;
-  size_t substLength = strlen(subst);
+  const size_t substLength = strlen(subst);
   while ((pos = fileName.find_first_not_of(validCharacters, pos)) != std::string::npos)
   {
     fileName.replace(pos, 1, subst, substLength);
@@ -712,7 +712,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char* name)
 int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char* name, const char* subst)
 {
   std::string nameString = std::string(name);
-  std::string substString = std::string(subst);
+  const std::string substString = std::string(subst);
   // does the input name have the subst character in it?
   if (strstr(name, substString.c_str()) != nullptr)
   {

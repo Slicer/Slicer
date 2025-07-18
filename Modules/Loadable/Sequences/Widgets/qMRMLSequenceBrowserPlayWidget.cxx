@@ -128,31 +128,31 @@ void qMRMLSequenceBrowserPlayWidget::updateWidgetFromMRML()
                       << d->pushButton_VcrPrevious;
   bool vcrControlsEnabled = false;
 
-  int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
+  const int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   if (numberOfDataNodes > 0 && !d->SequenceBrowserNode->GetRecordingActive())
   {
     vcrControlsEnabled = true;
 
-    bool pushButton_VcrPlayPauseBlockSignals = d->pushButton_VcrPlayPause->blockSignals(true);
+    const bool pushButton_VcrPlayPauseBlockSignals = d->pushButton_VcrPlayPause->blockSignals(true);
     d->pushButton_VcrPlayPause->setChecked(d->SequenceBrowserNode->GetPlaybackActive());
     d->pushButton_VcrPlayPause->blockSignals(pushButton_VcrPlayPauseBlockSignals);
 
-    bool pushButton_VcrLoopBlockSignals = d->pushButton_VcrLoop->blockSignals(true);
+    const bool pushButton_VcrLoopBlockSignals = d->pushButton_VcrLoop->blockSignals(true);
     d->pushButton_VcrLoop->setChecked(d->SequenceBrowserNode->GetPlaybackLooped());
     d->pushButton_VcrLoop->blockSignals(pushButton_VcrLoopBlockSignals);
   }
 
-  bool signalsBlocked = d->doubleSpinBox_VcrPlaybackRate->blockSignals(true);
+  const bool signalsBlocked = d->doubleSpinBox_VcrPlaybackRate->blockSignals(true);
   d->doubleSpinBox_VcrPlaybackRate->setValue(d->SequenceBrowserNode->GetPlaybackRateFps());
   d->doubleSpinBox_VcrPlaybackRate->blockSignals(signalsBlocked);
 
-  bool pushButton_VcrRecordingBlockSignals = d->pushButton_VcrRecord->blockSignals(true);
+  const bool pushButton_VcrRecordingBlockSignals = d->pushButton_VcrRecord->blockSignals(true);
   d->pushButton_VcrRecord->setChecked(d->SequenceBrowserNode->GetRecordingActive());
   d->pushButton_VcrRecord->blockSignals(pushButton_VcrRecordingBlockSignals);
 
-  bool recordingAllowed = d->SequenceBrowserNode->IsAnySequenceNodeRecording();
-  bool playbackActive = d->SequenceBrowserNode->GetPlaybackActive();
-  bool recordingActive = d->SequenceBrowserNode->GetRecordingActive();
+  const bool recordingAllowed = d->SequenceBrowserNode->IsAnySequenceNodeRecording();
+  const bool playbackActive = d->SequenceBrowserNode->GetPlaybackActive();
+  const bool recordingActive = d->SequenceBrowserNode->GetRecordingActive();
 
   d->pushButton_VcrRecord->setVisible(recordingAllowed && d->RecordingControlsVisible);
   d->pushButton_VcrRecord->setEnabled(!playbackActive);

@@ -132,7 +132,7 @@ int vtkDiffusionTensorMathematics::FillInputPortInformation(int port, vtkInforma
 
 int vtkDiffusionTensorMathematics::RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
-  int res = this->Superclass::RequestData(request, inputVector, outputVector);
+  const int res = this->Superclass::RequestData(request, inputVector, outputVector);
   for (int i = 0; i < this->GetNumberOfOutputPorts(); ++i)
   {
     vtkInformation* info = outputVector->GetInformationObject(i);
@@ -148,7 +148,7 @@ static void GetContinuousIncrements(vtkImageData* img, int extent[6], vtkIdType&
   int e0, e1, e2, e3;
 
   incX = 0;
-  const int* selfExtent = img->GetExtent();
+  const int* const selfExtent = img->GetExtent();
 
   e0 = extent[0];
   if (e0 < selfExtent[0])
@@ -197,7 +197,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics*
   unsigned long count = 0;
   unsigned long target;
   // math operation
-  int op = self->GetOperation();
+  const int op = self->GetOperation();
   // tensor variables
   vtkDataArray* inTensors;
   double tensor[3][3];
@@ -208,7 +208,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics*
   tStart = clock();
 #endif
   // scaling
-  double scaleFactor = self->GetScaleFactor();
+  const double scaleFactor = self->GetScaleFactor();
 
   // find the input region to loop over
   pd = in1Data->GetPointData();
@@ -360,7 +360,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   unsigned long count = 0;
   unsigned long target;
   // math operation
-  int op = self->GetOperation();
+  const int op = self->GetOperation();
   // tensor variables
   vtkDataArray* inTensors;
   double tensor[3][3];
@@ -387,7 +387,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   int extractEigenvalues;
   double cl;
   // scaling
-  double scaleFactor = self->GetScaleFactor();
+  const double scaleFactor = self->GetScaleFactor();
 
   // map 0..1 values into the range a char takes on
   // but use scaleFactor so user can bump up the brightness
@@ -750,7 +750,7 @@ void vtkDiffusionTensorMathematics::ComputeTensorIncrements(vtkImageData* imageD
     return;
   }
   vtkIdType inc = imageData->GetPointData()->GetTensors()->GetNumberOfComponents();
-  const int* extent = imageData->GetExtent();
+  const int* const extent = imageData->GetExtent();
 
   for (idx = 0; idx < 3; ++idx)
   {
@@ -1051,7 +1051,7 @@ double vtkDiffusionTensorMathematics::Mode(double w[3])
 {
 
   // see PhD thesis, Gordon Kindlmann
-  double mean = (w[0] + w[1] + w[2]) / 3;
+  const double mean = (w[0] + w[1] + w[2]) / 3;
   double norm = ((w[0] - mean) * (w[0] - mean) + //
                  (w[1] - mean) * (w[1] - mean) + //
                  (w[2] - mean) * (w[2] - mean))
@@ -1072,9 +1072,9 @@ void vtkDiffusionTensorMathematics::ColorByMode(double w[3], double& R, double& 
 {
   // see PhD thesis, Gordon Kindlmann
   // Compute FA for amount of gray
-  double fa = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
+  const double fa = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
   // Compute mode
-  double mode = vtkDiffusionTensorMathematics::Mode(w);
+  const double mode = vtkDiffusionTensorMathematics::Mode(w);
   // Calculate RGB value for this mode and FA
   vtkDiffusionTensorMathematics::ModeToRGB(mode, fa, R, G, B);
 }

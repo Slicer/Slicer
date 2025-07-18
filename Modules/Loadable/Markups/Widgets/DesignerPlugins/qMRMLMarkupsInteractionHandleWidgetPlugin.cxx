@@ -31,7 +31,7 @@ qMRMLMarkupsInteractionHandleWidgetPlugin::qMRMLMarkupsInteractionHandleWidgetPl
 //-----------------------------------------------------------------------------
 QWidget* qMRMLMarkupsInteractionHandleWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsInteractionHandleWidget* _widget = new qMRMLMarkupsInteractionHandleWidget(_parent);
+  qMRMLMarkupsInteractionHandleWidget* const _widget = new qMRMLMarkupsInteractionHandleWidget(_parent);
   return _widget;
 }
 

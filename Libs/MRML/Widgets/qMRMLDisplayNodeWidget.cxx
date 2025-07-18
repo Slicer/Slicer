@@ -346,7 +346,7 @@ void qMRMLDisplayNodeWidget::updateNodeFromProperty()
   {
     return;
   }
-  int wasModifying = d->MRMLDisplayNode->StartModify();
+  const int wasModifying = d->MRMLDisplayNode->StartModify();
   // Representation
   d->MRMLDisplayNode->SetRepresentation(d->Property->GetRepresentation());
   d->MRMLDisplayNode->SetPointSize(d->Property->GetPointSize());

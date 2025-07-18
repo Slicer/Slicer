@@ -178,7 +178,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int* xPts, int*
   // Build a list of edges for each pixel in y direction.
   // The max possible number of edges is then the
   // height of the image, so allocate this many edge pointers.
-  Edge** edges = new Edge*[ny];
+  Edge** const edges = new Edge*[ny];
 
   for (i = 0; i < ny; i++)
   {
@@ -316,7 +316,7 @@ template <class T>
 static void DrawLinesFast(int nx, int ny, int nPts, int* xPts, int* yPts, T value, T* outPtr)
 {
   int i, x, y, x1, y1, x2, y2, xx1, xx2, yy1, yy2;
-  int n = nPts;
+  const int n = nPts;
   int dx, dy, dy2, dx2, r, dydx2, xInc;
   (void)ny; // unused ??
 
@@ -445,8 +445,8 @@ static void DrawLines(int nx, int ny, int z, int radius, int nPts, int* xPts, in
   int min0, max0, min1, max1, min2, max2;
   outData->GetExtent(min0, max0, min1, max1, min2, max2);
   T* outPtr;
-  int n = nPts;
-  int rad = radius;
+  const int n = nPts;
+  const int rad = radius;
   // int d = 2*rad+1;
   int dx, dy, dy2, dx2, r, dydx2;
   int xx, yy, xInc;
@@ -631,8 +631,8 @@ static void DrawPoints(int nx, int ny, int z, int radius, int nPts, int* xPts, i
   T* outPtr;
   int min0, max0, min1, max1, min2, max2;
   outData->GetExtent(min0, max0, min1, max1, min2, max2);
-  int n = nPts;
-  int r = radius;
+  const int n = nPts;
+  const int r = radius;
   // int d = 2*r+1;
   (void)nx;
   (void)ny; // unused ??
@@ -662,7 +662,7 @@ template <class T>
 static void vtkImageFillROIExecute(vtkImageFillROI* self, vtkImageData* outData, T* outPtr)
 {
   T value = (T)(self->GetValue());
-  int r = self->GetRadius();
+  const int r = self->GetRadius();
   int i, j, x, y, z, nPts, nx, ny, outExt[6];
   int *xPts, *yPts;
   double* pt;
@@ -765,7 +765,7 @@ int vtkImageFillROI::RequestData(vtkInformation* vtkNotUsed(request), vtkInforma
     return 0;
   }
 
-  void* ptr = nullptr;
+  void* const ptr = nullptr;
   int x1, inExt[6];
 
   // ensure 1 component data

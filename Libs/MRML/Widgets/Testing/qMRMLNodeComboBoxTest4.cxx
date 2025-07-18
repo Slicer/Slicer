@@ -46,7 +46,7 @@ int qMRMLNodeComboBoxTest4(int argc, char* argv[])
   nodeSelector.setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode" << "vtkMRMLLabelMapVolumeNode");
   nodeSelector.setBaseName("SomeBaseName");
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   nodeSelector.setMRMLScene(scene.GetPointer());
 
   vtkMRMLNode* node = nodeSelector.addNode();

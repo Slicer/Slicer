@@ -60,7 +60,7 @@ void vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent)
   of << " referenceNodeID=\"" << (this->ReferenceNodeID ? this->GetReferenceNodeID() : "None") << "\"";
   of << " locked=\"" << this->Locked << "\"";
 
-  int textLength = this->TextList->GetNumberOfValues();
+  const int textLength = this->TextList->GetNumberOfValues();
   of << " textList=\"";
 
   if (textLength)
@@ -93,7 +93,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 {
   // cout << "vtkMRMLAnnotationNode::ReadXMLAttributes start"<< endl;
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   this->ResetAnnotations();
 
   // vtkMRMLDisplayableNode::ReadXMLAttributes(atts);
@@ -101,8 +101,8 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 
   while (*atts != nullptr)
   {
-    const char* attName = *(atts++);
-    std::string attValue(*(atts++));
+    const char* const attName = *(atts++);
+    const std::string attValue(*(atts++));
 
     if (!strcmp(attName, "textList") && attValue.size())
     {
@@ -157,7 +157,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLAnnotationNode* node = vtkMRMLAnnotationNode::SafeDownCast(anode);
@@ -362,7 +362,7 @@ vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att)
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationNode::GetAnnotationAttribute(vtkIdType id, int att)
 {
-  vtkBitArray* attArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(att));
+  vtkBitArray* const attArray = dynamic_cast<vtkBitArray*>(this->GetAnnotationAttributes(att));
   if (attArray)
   {
     return attArray->GetValue(id);
@@ -396,7 +396,7 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
     vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist");
     return 0;
   }
-  int n = dataArray->GetSize();
+  const int n = dataArray->GetSize();
   if (idEntry < 0 || idEntry >= n)
   {
     vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range");
@@ -483,7 +483,7 @@ int vtkMRMLAnnotationNode::AddText(const char* newText, int selectedFlag, int vi
     vtkErrorMacro("Annotation: For " << this->GetName() << " text is not defined");
     return -1;
   }
-  int n = this->GetNumberOfTexts();
+  const int n = this->GetNumberOfTexts();
   this->SetText(n, newText, selectedFlag, visibleFlag);
 
   return n;
@@ -507,7 +507,7 @@ int vtkMRMLAnnotationNode::DeleteText(int id)
     return -1;
   }
 
-  int n = this->GetNumberOfTexts();
+  const int n = this->GetNumberOfTexts();
   if (id < 0 || id >= n)
   {
     return -1;
@@ -584,7 +584,7 @@ vtkMRMLStorageNode* vtkMRMLAnnotationNode::CreateDefaultStorageNode()
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationTextDisplayNode* vtkMRMLAnnotationNode::GetAnnotationTextDisplayNode()
 {
-  int nnodes = this->GetNumberOfDisplayNodes();
+  const int nnodes = this->GetNumberOfDisplayNodes();
   vtkMRMLAnnotationTextDisplayNode* node = nullptr;
   for (int n = 0; n < nnodes; n++)
   {

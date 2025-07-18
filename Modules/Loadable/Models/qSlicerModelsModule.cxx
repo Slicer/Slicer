@@ -131,7 +131,7 @@ void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
   // Configure models logic
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* const modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
   {
     // Register IOs
@@ -148,7 +148,7 @@ void qSlicerModelsModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerModelsModule::createWidgetRepresentation()
 {
-  qSlicerModelsModuleWidget* widget = new qSlicerModelsModuleWidget;
+  qSlicerModelsModuleWidget* const widget = new qSlicerModelsModuleWidget;
   return widget;
 }
 

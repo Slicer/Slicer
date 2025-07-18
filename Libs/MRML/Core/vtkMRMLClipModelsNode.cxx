@@ -27,7 +27,7 @@ vtkMRMLClipModelsNode::~vtkMRMLClipModelsNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
@@ -40,7 +40,7 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyIntMacro(RedSliceClipState);

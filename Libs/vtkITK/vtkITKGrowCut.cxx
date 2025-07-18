@@ -117,26 +117,26 @@ void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkIm
   }
 
   // Wrap intensity VTK image into an ITK image.
-  typename itk::VTKImageToImageFilter<IntensityImageType>::Pointer intensityVTKToITKFilter = itk::VTKImageToImageFilter<IntensityImageType>::New();
+  const typename itk::VTKImageToImageFilter<IntensityImageType>::Pointer intensityVTKToITKFilter = itk::VTKImageToImageFilter<IntensityImageType>::New();
   intensityVTKToITKFilter->SetInput(intensityVolume);
   intensityVTKToITKFilter->Update();
-  IntensityImageType* intensityImage = intensityVTKToITKFilter->GetOutput();
+  IntensityImageType* const intensityImage = intensityVTKToITKFilter->GetOutput();
   fgcFilter->SetInput(intensityImage);
 
   // Wrap seed label VTK image into an ITK image.
-  typename itk::VTKImageToImageFilter<SeedLabelImageType>::Pointer seedLabelVTKToITKFilter = itk::VTKImageToImageFilter<SeedLabelImageType>::New();
+  const typename itk::VTKImageToImageFilter<SeedLabelImageType>::Pointer seedLabelVTKToITKFilter = itk::VTKImageToImageFilter<SeedLabelImageType>::New();
   seedLabelVTKToITKFilter->SetInput(seedLabelVolume);
   seedLabelVTKToITKFilter->Update();
-  SeedLabelImageType* seedImage = seedLabelVTKToITKFilter->GetOutput();
+  SeedLabelImageType* const seedImage = seedLabelVTKToITKFilter->GetOutput();
   fgcFilter->SetSeedImage(seedImage);
 
   if (maskLabelVolume)
   {
     // Wrap mask label VTK image into an ITK image.
-    typename itk::VTKImageToImageFilter<MaskImageType>::Pointer maskVTKToITKFilter = itk::VTKImageToImageFilter<MaskImageType>::New();
+    const typename itk::VTKImageToImageFilter<MaskImageType>::Pointer maskVTKToITKFilter = itk::VTKImageToImageFilter<MaskImageType>::New();
     maskVTKToITKFilter->SetInput(maskLabelVolume);
     maskVTKToITKFilter->Update();
-    MaskImageType* maskImage = maskVTKToITKFilter->GetOutput();
+    MaskImageType* const maskImage = maskVTKToITKFilter->GetOutput();
     fgcFilter->SetMaskImage(maskImage);
   }
 
@@ -144,7 +144,7 @@ void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkIm
   fgcFilter->Update();
 
   // Wrap output ITK image into an VTK image. Data type is the same as the seed label.
-  typename itk::ImageToVTKImageFilter<SeedLabelImageType>::Pointer resultImageToVTKFilter = itk::ImageToVTKImageFilter<SeedLabelImageType>::New();
+  const typename itk::ImageToVTKImageFilter<SeedLabelImageType>::Pointer resultImageToVTKFilter = itk::ImageToVTKImageFilter<SeedLabelImageType>::New();
   resultImageToVTKFilter->SetInput(fgcFilter->GetOutput());
   resultImageToVTKFilter->Update();
   resultLabelVolume->ShallowCopy(resultImageToVTKFilter->GetOutput());
@@ -189,9 +189,9 @@ void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeD
   vtkImageData* intensityVolume = vtkImageData::SafeDownCast(this->GetInput(0));
   vtkImageData* seedLabelVolume = vtkImageData::SafeDownCast(this->GetInput(1));
   vtkImageData* maskLabelVolume = vtkImageData::SafeDownCast(this->GetInput(2));
-  vtkImageData* resultLabelVolume = vtkImageData::SafeDownCast(resultLabelVolumeDataObject);
+  vtkImageData* const resultLabelVolume = vtkImageData::SafeDownCast(resultLabelVolumeDataObject);
 
-  vtkDataArray* intensityScalars = intensityVolume ? intensityVolume->GetPointData()->GetScalars() : nullptr;
+  vtkDataArray* const intensityScalars = intensityVolume ? intensityVolume->GetPointData()->GetScalars() : nullptr;
   if (!intensityScalars)
   {
     vtkErrorMacro("Invalid intensity image data");
@@ -207,7 +207,7 @@ void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeD
     return;
   }
 
-  vtkDataArray* seedScalars = seedLabelVolume ? seedLabelVolume->GetPointData()->GetScalars() : nullptr;
+  vtkDataArray* const seedScalars = seedLabelVolume ? seedLabelVolume->GetPointData()->GetScalars() : nullptr;
   if (!intensityVolume)
   {
     vtkErrorMacro("Invalid seed image data");
@@ -217,7 +217,7 @@ void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeD
   vtkInternal::FastGrowCutWorker worker;
   if (maskLabelVolume)
   {
-    vtkDataArray* maskScalars = maskLabelVolume ? maskLabelVolume->GetPointData()->GetScalars() : nullptr;
+    vtkDataArray* const maskScalars = maskLabelVolume ? maskLabelVolume->GetPointData()->GetScalars() : nullptr;
     if (!maskScalars)
     {
       vtkErrorMacro("Invalid mask image data");

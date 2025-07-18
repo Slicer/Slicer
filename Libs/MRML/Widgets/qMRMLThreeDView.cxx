@@ -98,7 +98,7 @@ void qMRMLThreeDViewPrivate::init()
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkInteractorStyle3D> interactorStyle;
+  const vtkNew<vtkInteractorStyle3D> interactorStyle;
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   // Set default background color
@@ -260,7 +260,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
 
   vtkRenderWindowInteractor* renderWindowInteractor = this->interactor();
 
-  vtkSmartPointer<vtkCallbackCommand> clickCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+  const vtkSmartPointer<vtkCallbackCommand> clickCallback = vtkSmartPointer<vtkCallbackCommand>::New();
   clickCallback->SetClientData(this);
   clickCallback->SetCallback(ClickCallbackFunction);
 
@@ -306,7 +306,7 @@ vtkMRMLCameraNode* qMRMLThreeDView::cameraNode()
     return nullptr;
   }
 
-  vtkMRMLCameraNode* cam = cameraDM->GetCameraNode();
+  vtkMRMLCameraNode* const cam = cameraDM->GetCameraNode();
   return cam;
 }
 
@@ -420,7 +420,7 @@ void qMRMLThreeDView::resetFocalPoint()
     savedBoxVisible = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
 
-    int wasModifying = d->MRMLViewNode->StartModify();
+    const int wasModifying = d->MRMLViewNode->StartModify();
     // Hide Box and AxisLabel so they don't get taken into account when computing
     // the view boundaries
     d->MRMLViewNode->SetBoxVisible(0);
@@ -443,7 +443,7 @@ void qMRMLThreeDView::resetFocalPoint()
   if (d->MRMLViewNode)
   {
     // Restore visibility state
-    int wasModifying = d->MRMLViewNode->StartModify();
+    const int wasModifying = d->MRMLViewNode->StartModify();
     d->MRMLViewNode->SetBoxVisible(savedBoxVisible);
     d->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
     d->MRMLViewNode->EndModify(wasModifying);
@@ -472,7 +472,7 @@ void qMRMLThreeDView::getDisplayableManagers(vtkCollection* displayableManagers)
   {
     return;
   }
-  int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
+  const int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
   for (int n = 0; n < num; n++)
   {
     displayableManagers->AddItem(d->DisplayableManagerGroup->GetNthDisplayableManager(n));
@@ -586,9 +586,9 @@ double qMRMLThreeDView::ambientShadowsSizeScale() const
 {
   Q_D(const qMRMLThreeDView);
   // Compute sizeScale from bias by inverting computation implemented in setAmbientShadowsSizeScale.
-  double bias = d->ShadowsRenderPass->GetBias();
-  double sceneSize = bias / 0.001;
-  double sizeScale = log(sceneSize / 100.0);
+  const double bias = d->ShadowsRenderPass->GetBias();
+  const double sceneSize = bias / 0.001;
+  const double sizeScale = log(sceneSize / 100.0);
   return sizeScale;
 }
 
@@ -597,7 +597,7 @@ void qMRMLThreeDView::setAmbientShadowsSizeScale(double sizeScale)
 {
   Q_D(const qMRMLThreeDView);
   // SizeScale = 0.0 corresponds to 100mm scene size
-  double sceneSize = 100.0 * pow(10, sizeScale);
+  const double sceneSize = 100.0 * pow(10, sizeScale);
   // Bias and radius are from example in https://blog.kitware.com/ssao/
   // These values have been tested on different kind of meshes and volumes and found to work well.
   d->ShadowsRenderPass->SetBias(0.001 * sceneSize); // how much distance difference will be made visible

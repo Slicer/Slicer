@@ -179,7 +179,7 @@ void qMRMLTextWidget::updateWidgetFromMRML()
   Q_D(qMRMLTextWidget);
 
   bool updateText = true;
-  bool editing = d->isEditing();
+  const bool editing = d->isEditing();
   if (this->ReadOnly)
   {
     updateText = true;
@@ -217,7 +217,7 @@ void qMRMLTextWidget::updateWidgetFromMRML()
   d->CancelButton->setEnabled(editing);
   d->SaveButton->setEnabled(editing);
 
-  bool wasBlocking = d->TextEdit->blockSignals(true);
+  const bool wasBlocking = d->TextEdit->blockSignals(true);
   if (!d->CurrentTextNode)
   {
     d->TextEdit->setReadOnly(true);
@@ -247,7 +247,7 @@ void qMRMLTextWidget::updateWidgetFromMRML()
   if (d->TextNodeContentsModified)
   {
     d->SaveButton->setToolTip("The original text has been modified since editing was started");
-    QIcon warningIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    const QIcon warningIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
     d->SaveButton->setIcon(warningIcon);
     d->SaveButton->setIconSize(QSize(12, 12));
   }
@@ -268,7 +268,7 @@ void qMRMLTextWidget::updateMRMLFromWidget()
   {
     return;
   }
-  std::string text = d->TextEdit->toPlainText().toStdString();
+  const std::string text = d->TextEdit->toPlainText().toStdString();
   d->CurrentTextNode->SetText(text.c_str(), VTK_ENCODING_UTF_8);
   this->updateMRMLFromWidgetFinished();
 }

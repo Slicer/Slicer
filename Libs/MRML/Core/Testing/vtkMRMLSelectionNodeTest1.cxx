@@ -46,18 +46,18 @@ int vtkMRMLSelectionNodeTest1(int, char*[])
   std::string className;
   std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << node1->PlaceNodeClassNameInList(className) << std::endl;
   className = std::string("vtkMRMLMarkupsLineNode");
-  int index = node1->PlaceNodeClassNameInList(className);
+  const int index = node1->PlaceNodeClassNameInList(className);
   std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << index << std::endl;
   if (index != -1)
   {
-    std::string classNamestring = node1->GetPlaceNodeClassNameByIndex(index);
+    const std::string classNamestring = node1->GetPlaceNodeClassNameByIndex(index);
     if (classNamestring.compare(className) != 0)
     {
       std::cerr << "Error! Set className '" << className.c_str() << "' to list at index " << index << ", but got back '" << classNamestring.c_str() << "'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
     }
-    std::string resource = node1->GetPlaceNodeResourceByIndex(index);
+    const std::string resource = node1->GetPlaceNodeResourceByIndex(index);
     if (resource.compare(":/Icons/MarkupsLine.png") != 0)
     {
       std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
@@ -66,7 +66,7 @@ int vtkMRMLSelectionNodeTest1(int, char*[])
     }
     std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
   }
-  std::string resource = node1->GetPlaceNodeResourceByClassName(className);
+  const std::string resource = node1->GetPlaceNodeResourceByClassName(className);
   if (resource.compare(":/Icons/MarkupsLine.png") != 0)
   {
     std::cerr << "ERROR! Got resource for className " << className << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
@@ -85,8 +85,8 @@ int TestUnit(vtkMRMLSelectionNode* node1)
   vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
   node1->AddObserver(vtkMRMLSelectionNode::UnitModifiedEvent, callback.GetPointer());
 
-  const char* quantity = "mass";
-  const char* unit = "vtkMRMLUnitNodeKilogram";
+  const char* const quantity = "mass";
+  const char* const unit = "vtkMRMLUnitNodeKilogram";
   node1->SetUnitNodeID(quantity, unit);
   CHECK_STRING(node1->GetUnitNodeID(quantity), unit);
 

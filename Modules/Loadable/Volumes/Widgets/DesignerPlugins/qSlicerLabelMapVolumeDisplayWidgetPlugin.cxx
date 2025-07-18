@@ -27,7 +27,7 @@ qSlicerLabelMapVolumeDisplayWidgetPlugin::qSlicerLabelMapVolumeDisplayWidgetPlug
 //------------------------------------------------------------------------------
 QWidget* qSlicerLabelMapVolumeDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerLabelMapVolumeDisplayWidget* _widget = new qSlicerLabelMapVolumeDisplayWidget(_parent);
+  qSlicerLabelMapVolumeDisplayWidget* const _widget = new qSlicerLabelMapVolumeDisplayWidget(_parent);
   return _widget;
 }
 

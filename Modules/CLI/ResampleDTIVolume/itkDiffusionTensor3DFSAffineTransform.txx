@@ -26,7 +26,7 @@ typename DiffusionTensor3DFSAffineTransform<TData>::MatrixTransformType Diffusio
 
   vnl_matrix_fixed<double, 3, 3> M(3, 3);
   M = matrix.GetVnlMatrix();
-  vnl_real_eigensystem eig(M.as_matrix());
+  const vnl_real_eigensystem eig(M.as_matrix());
   vnl_matrix_fixed<std::complex<double>, 3, 3> D(3, 3);
   vnl_matrix_fixed<std::complex<double>, 3, 3> vnl_sqrMatrix(3, 3);
   D.fill(NumericTraits<TData>::ZeroValue());
@@ -53,8 +53,8 @@ void DiffusionTensor3DFSAffineTransform<TData>::PreCompute()
   InternalMatrixTransformType m_RotationMatrix;
 
   m_RotationMatrix = ComputeRotationMatrixFromTransformationMatrix();
-  InternalMatrixTransformType MeasurementFrameTranspose = this->m_MeasurementFrame.GetTranspose();
-  InternalMatrixTransformType RotationMatrixTranspose = m_RotationMatrix.GetTranspose();
+  const InternalMatrixTransformType MeasurementFrameTranspose = this->m_MeasurementFrame.GetTranspose();
+  const InternalMatrixTransformType RotationMatrixTranspose = m_RotationMatrix.GetTranspose();
   // Instead of computing the inverse transform (which go from the input image to the output image)
   // and compute the rotation matrix from the inverse, we compute the rotation matrix from the original
   // transform and takes its inverse (=transpose since it is a rotation). Both rotation matrices are equals,
@@ -70,7 +70,7 @@ template <class TData>
 typename DiffusionTensor3DFSAffineTransform<TData>::MatrixTransformType DiffusionTensor3DFSAffineTransform<TData>::ComputeRotationMatrixFromTransformationMatrix()
 {
   MatrixTransformType m_RotationMatrix;
-  InternalMatrixTransformType TransformMatrixTranspose = this->m_TransformMatrix.GetTranspose();
+  const InternalMatrixTransformType TransformMatrixTranspose = this->m_TransformMatrix.GetTranspose();
   MatrixTransformType matrix;
 
   try

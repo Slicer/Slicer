@@ -52,8 +52,8 @@ int qMRMLSequenceEditWidgetTest1(int argc, char* argv[])
   for (int i = 0; i < 80; i++)
   {
     vtkNew<vtkMRMLTransformNode> transformNode;
-    double indexValue = i * 12.345;
-    QString name = QString("Transform %1").arg(indexValue);
+    const double indexValue = i * 12.345;
+    const QString name = QString("Transform %1").arg(indexValue);
     transformNode->SetName(name.toStdString().c_str());
     sequenceNodeNumeric->SetDataNodeAtValue(transformNode, QString::number(indexValue).toStdString());
     sequenceNodeText->SetDataNodeAtValue(transformNode, name.toStdString());
@@ -66,8 +66,8 @@ int qMRMLSequenceEditWidgetTest1(int argc, char* argv[])
   for (int i = 0; i < 10; i++)
   {
     vtkNew<vtkMRMLModelNode> modelNode;
-    double indexValue = i * 1.5;
-    QString name = QString("Model %1").arg(i);
+    const double indexValue = i * 1.5;
+    const QString name = QString("Model %1").arg(i);
     modelNode->SetName(name.toStdString().c_str());
     sequenceNodeModels->SetDataNodeAtValue(modelNode, QString::number(indexValue).toStdString());
   }
@@ -81,16 +81,16 @@ int qMRMLSequenceEditWidgetTest1(int argc, char* argv[])
   for (int i = 0; i < 20; i++)
   {
     vtkNew<vtkMRMLTransformNode> transformNode;
-    double indexValue = i * 12.345;
-    QString name = QString("TestT %1").arg(indexValue);
+    const double indexValue = i * 12.345;
+    const QString name = QString("TestT %1").arg(indexValue);
     transformNode->SetName(name.toStdString().c_str());
     scene->AddNode(transformNode);
   }
   for (int i = 0; i < 30; i++)
   {
     vtkNew<vtkMRMLModelNode> modelNode;
-    double indexValue = i * 1.23;
-    QString name = QString("TestM %1").arg(indexValue);
+    const double indexValue = i * 1.23;
+    const QString name = QString("TestM %1").arg(indexValue);
     modelNode->SetName(name.toStdString().c_str());
     scene->AddNode(modelNode.GetPointer());
   }

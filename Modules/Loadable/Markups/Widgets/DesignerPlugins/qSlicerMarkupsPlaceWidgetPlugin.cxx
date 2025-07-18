@@ -30,7 +30,7 @@ qSlicerMarkupsPlaceWidgetPlugin::qSlicerMarkupsPlaceWidgetPlugin(QObject* _paren
 //------------------------------------------------------------------------------
 QWidget* qSlicerMarkupsPlaceWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerMarkupsPlaceWidget* _widget = new qSlicerMarkupsPlaceWidget(_parent);
+  qSlicerMarkupsPlaceWidget* const _widget = new qSlicerMarkupsPlaceWidget(_parent);
   return _widget;
 }
 

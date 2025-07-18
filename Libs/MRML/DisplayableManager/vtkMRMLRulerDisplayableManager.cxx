@@ -202,7 +202,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupMarkerRenderer()
   }
 
   // In 3D viewers we need to follow the renderer and update the orientation marker accordingly
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
   if (threeDViewNode)
   {
     this->AddRendererUpdateObserver(renderer);
@@ -248,7 +248,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     return;
   }
 
-  int type = viewNode->GetRulerType();
+  const int type = viewNode->GetRulerType();
   if (type == vtkMRMLAbstractViewNode::RulerTypeNone)
   {
     // ruler not visible, no updates are needed
@@ -261,7 +261,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
   double scalingFactorPixelPerMm = 0;
 
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
+  vtkMRMLViewNode* const threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
   if (sliceNode)
   {
     viewWidthPixel = sliceNode->GetDimensions()[0];
@@ -286,7 +286,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
       double maxX = 1;
       double maxY = 1;
       this->MarkerRenderer->NormalizedDisplayToDisplay(maxX, maxY);
-      int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+      const int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
 
       viewWidthPixel = rendererSizeInPixels[0];
       viewHeightPixel = rendererSizeInPixels[1];
@@ -303,10 +303,10 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     return;
   }
 
-  double rulerPreferredLengthPixel = double(viewWidthPixel) / 4.0;
+  const double rulerPreferredLengthPixel = double(viewWidthPixel) / 4.0;
 
   // Find the value in rulerAllowedLengthsMm that is closest to rulerPreferredLength
-  double rulerPreferredLength = rulerPreferredLengthPixel / scalingFactorPixelPerMm;
+  const double rulerPreferredLength = rulerPreferredLengthPixel / scalingFactorPixelPerMm;
   std::vector<RulerScalePreset>::iterator bestMatchScalePreset = this->External->RulerScalePresets.begin();
   for (std::vector<RulerScalePreset>::iterator it = bestMatchScalePreset + 1; it != this->External->RulerScalePresets.end(); ++it)
   {
@@ -322,7 +322,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     }
   }
 
-  double actualRulerLengthPixel = double(bestMatchScalePreset->Length) * scalingFactorPixelPerMm;
+  const double actualRulerLengthPixel = double(bestMatchScalePreset->Length) * scalingFactorPixelPerMm;
   if (actualRulerLengthPixel < RULER_MINIMUM_LENGTH * viewWidthPixel || actualRulerLengthPixel > RULER_MAXIMUM_LENGTH * viewWidthPixel || viewWidthPixel == 0)
   {
     // ruler is too small or too big to display or view type is invalid
@@ -330,12 +330,12 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     return;
   }
 
-  int rulerLineMarginPixel = int(RULER_LINE_MARGIN * viewHeightPixel);
-  int rulerTickBaseLengthPixel = int(RULER_TICK_BASE_LENGTH * viewHeightPixel);
-  int rulerTextMarginPixel = int(RULER_TEXT_MARGIN * viewHeightPixel);
+  const int rulerLineMarginPixel = int(RULER_LINE_MARGIN * viewHeightPixel);
+  const int rulerTickBaseLengthPixel = int(RULER_TICK_BASE_LENGTH * viewHeightPixel);
+  const int rulerTextMarginPixel = int(RULER_TEXT_MARGIN * viewHeightPixel);
 
   // Ruler line
-  double pointOrigin[3] = { double(viewWidthPixel) / 2.0, static_cast<double>(rulerLineMarginPixel), 0.0 };
+  const double pointOrigin[3] = { double(viewWidthPixel) / 2.0, static_cast<double>(rulerLineMarginPixel), 0.0 };
   this->RulerLineActor->SetPoint2(pointOrigin[0] - double(bestMatchScalePreset->Length) * scalingFactorPixelPerMm / 2.0, rulerLineMarginPixel);
   this->RulerLineActor->SetPoint1(pointOrigin[0] + double(bestMatchScalePreset->Length) * scalingFactorPixelPerMm / 2.0, rulerLineMarginPixel);
   this->RulerLineActor->SetNumberOfLabels(bestMatchScalePreset->NumberOfMajorDivisions + 1);
@@ -368,7 +368,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     default: break;
   }
 
-  int color = viewNode->GetRulerColor();
+  const int color = viewNode->GetRulerColor();
   switch (color)
   {
     case vtkMRMLAbstractViewNode::RulerColorWhite:

@@ -89,15 +89,15 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
   {
     return nullptr;
   }
-  QTreeWidgetItem* eventItem = item->parent();
-  unsigned long event = eventItem->text(NameColumn).toInt();
+  QTreeWidgetItem* const eventItem = item->parent();
+  const unsigned long event = eventItem->text(NameColumn).toInt();
 
-  QTreeWidgetItem* subjectItem = eventItem->parent();
-  vtkObject* subject = static_cast<vtkObject*>(reinterpret_cast<void*>(subjectItem->data(0, Qt::UserRole).toLongLong()));
+  QTreeWidgetItem* const subjectItem = eventItem->parent();
+  vtkObject* const subject = static_cast<vtkObject*>(reinterpret_cast<void*>(subjectItem->data(0, Qt::UserRole).toLongLong()));
 
-  vtkObject* observer = static_cast<vtkObject*>(reinterpret_cast<void*>(item->data(0, Qt::UserRole).toLongLong()));
+  vtkObject* const observer = static_cast<vtkObject*>(reinterpret_cast<void*>(item->data(0, Qt::UserRole).toLongLong()));
 
-  vtkEventBroker::ObservationVector observations = vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, nullptr, 1);
+  const vtkEventBroker::ObservationVector observations = vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, nullptr, 1);
   Q_ASSERT(observations.size());
   return observations.size() ? (*observations.begin()) : 0;
 }
@@ -112,13 +112,13 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subje
 
   for (int i = 0; i < this->ConnectionsTreeWidget->topLevelItemCount(); ++i)
   {
-    QTreeWidgetItem* topLevelItem = this->ConnectionsTreeWidget->topLevelItem(i);
+    QTreeWidgetItem* const topLevelItem = this->ConnectionsTreeWidget->topLevelItem(i);
     if (static_cast<vtkObject*>(reinterpret_cast<void*>(topLevelItem->data(0, Qt::UserRole).toLongLong())) == subject)
     {
       return topLevelItem;
     }
   }
-  QTreeWidgetItem* subjectItem = new QTreeWidgetItem;
+  QTreeWidgetItem* const subjectItem = new QTreeWidgetItem;
   this->setObjectToItem(subjectItem, subject);
   this->ConnectionsTreeWidget->addTopLevelItem(subjectItem);
   return subjectItem;
@@ -132,11 +132,11 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromEvent(QTreeWidgetItem* s
     return nullptr;
   }
 
-  QString eventString = QString::number(event);
+  const QString eventString = QString::number(event);
 
   for (int i = 0; i < subjectItem->childCount(); ++i)
   {
-    QTreeWidgetItem* eventItem = subjectItem->child(i);
+    QTreeWidgetItem* const eventItem = subjectItem->child(i);
     if (eventItem->text(NameColumn) == eventString)
     {
       return eventItem;
@@ -158,13 +158,13 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
     return nullptr;
   }
 
-  QTreeWidgetItem* subjectItem = this->itemFromSubject(observation->GetSubject());
-  QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
+  QTreeWidgetItem* const subjectItem = this->itemFromSubject(observation->GetSubject());
+  QTreeWidgetItem* const eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
 
   for (int i = 0; i < eventItem->childCount(); ++i)
   {
-    QTreeWidgetItem* observationItem = eventItem->child(i);
-    unsigned long long userData = observationItem->data(NameColumn, Qt::UserRole).toLongLong();
+    QTreeWidgetItem* const observationItem = eventItem->child(i);
+    const unsigned long long userData = observationItem->data(NameColumn, Qt::UserRole).toLongLong();
     if ((observation->GetScript() && userData == 0 && observationItem->toolTip(NameColumn) == observation->GetScript()) || //
         (observation->GetObserver() && userData != 0 && static_cast<vtkObject*>(reinterpret_cast<void*>(userData)) == observation->GetObserver()))
     {
@@ -224,7 +224,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   // Observation
   QTreeWidgetItem* observationItem = new QTreeWidgetItem;
 
-  vtkObject* observer = observation->GetObserver();
+  vtkObject* const observer = observation->GetObserver();
   this->setObjectToItem(observationItem, observer);
 
   if (observation->GetScript())
@@ -235,7 +235,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   }
   else if (!observation->GetObserver())
   {
-    ctkVTKConnectionPrivate* connection = reinterpret_cast<ctkVTKConnectionPrivate*>(observation->GetCallbackCommand()->GetClientData());
+    ctkVTKConnectionPrivate* const connection = reinterpret_cast<ctkVTKConnectionPrivate*>(observation->GetCallbackCommand()->GetClientData());
     observationItem->setText(NameColumn, connection->QtObject->metaObject()->className());
     observationItem->setToolTip(NameColumn, "0x" + QString::number(reinterpret_cast<intptr_t>(connection->QtObject), 16));
   }
@@ -250,7 +250,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   observationItem->setText(CommentColumn, observation->GetComment());
 
   // Event
-  QTreeWidgetItem* subjectItem = this->itemFromSubject(observation->GetSubject());
+  QTreeWidgetItem* const subjectItem = this->itemFromSubject(observation->GetSubject());
   QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
   eventItem->addChild(observationItem);
 }
@@ -296,12 +296,12 @@ void qMRMLEventBrokerWidget::refresh()
   {
     return;
   }
-  bool isSortingEnabled = d->ConnectionsTreeWidget->isSortingEnabled();
+  const bool isSortingEnabled = d->ConnectionsTreeWidget->isSortingEnabled();
   d->ConnectionsTreeWidget->setSortingEnabled(false);
 
   for (int i = 0; i < eventBroker->GetNumberOfObservations(); ++i)
   {
-    vtkObservation* observation = eventBroker->GetNthObservation(i);
+    vtkObservation* const observation = eventBroker->GetNthObservation(i);
     d->addObservation(observation);
   }
   d->ConnectionsTreeWidget->setSortingEnabled(isSortingEnabled);
@@ -326,7 +326,7 @@ void qMRMLEventBrokerWidget::onItemChanged(QTreeWidgetItem* item, int column)
       newTotalTime.remove(newTotalTime.size() - 1, 1);
     }
     bool ok = false;
-    double newTotal = newTotalTime.toDouble(&ok);
+    const double newTotal = newTotalTime.toDouble(&ok);
     if (ok)
     {
       if (column == TotalTimeColumn)
@@ -372,7 +372,7 @@ void qMRMLEventBrokerWidget::expandElapsedTimeItems()
     vtkObservation* observation = eventBroker->GetNthObservation(i);
     if (observation->GetTotalElapsedTime() > 0.0)
     {
-      QTreeWidgetItem* observationItem = d->itemFromObservation(observation);
+      QTreeWidgetItem* const observationItem = d->itemFromObservation(observation);
       d->showItem(observationItem);
     }
   }

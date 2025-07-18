@@ -97,7 +97,7 @@ void vtkImageMathematicsAddonInitOutput(vtkImageData* inData, T* inPtr, vtkImage
   T *inPtrZ, *inPtrY;
 
   // This method needs to copy scalars from input to output for the update-extent.
-  vtkDataArray* inArray = inData->GetPointData()->GetScalars();
+  vtkDataArray* const inArray = inData->GetPointData()->GetScalars();
   typeSize = vtkDataArray::GetDataTypeSize(inArray->GetDataType());
   outPtrZ = outPtr;
   inPtrZ = inPtr;
@@ -144,11 +144,11 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
   int rowLength;
   unsigned long count = 0;
   unsigned long target;
-  int op = self->GetOperation();
+  const int op = self->GetOperation();
 
   double normalizeScalarRange[2] = { 0.0, 1.0 };
   self->GetRange(normalizeScalarRange);
-  double normalizeMagnitude = normalizeScalarRange[1] - normalizeScalarRange[0];
+  const double normalizeMagnitude = normalizeScalarRange[1] - normalizeScalarRange[0];
 
   // find the region to loop over
   rowLength = (outExt[1] - outExt[0] + 1) * inData->GetNumberOfScalarComponents();
@@ -191,7 +191,7 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
       {
         // The formula interpolates between the input value (*inPtr) and the lower bound of the scalar range
         // (normalizeScalarRange[0]), weighted by the normalized value.
-        float normalizedValue = static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
+        const float normalizedValue = static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
         *outPtr = normalizedValue * (*inPtr) + (1.0 - normalizedValue) * normalizeScalarRange[0];
         outPtr++;
         inPtr++;

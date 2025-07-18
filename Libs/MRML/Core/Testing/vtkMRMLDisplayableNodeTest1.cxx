@@ -37,7 +37,7 @@ public:
   const std::vector<vtkMRMLDisplayNode*> GetInternalDisplayNodes()
   {
     std::vector<vtkMRMLDisplayNode*> InternalDisplayNodes;
-    int ndnodes = this->GetNumberOfDisplayNodes();
+    const int ndnodes = this->GetNumberOfDisplayNodes();
     for (int i = 0; i < ndnodes; i++)
     {
       InternalDisplayNodes.push_back(this->GetNthDisplayNode(i));
@@ -83,7 +83,7 @@ int TestImportIntoSceneWithNodeIdConflict();
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLDisplayableNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLDisplayableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1);
 
   CHECK_EXIT_SUCCESS(TestAddDisplayNodeID());
@@ -119,13 +119,13 @@ int TestAddDisplayNodeID()
 
   vtkSmartPointer<vtkCollection> referencedNodes;
   referencedNodes.TakeReference(scene->GetReferencedNodes(displayableNode));
-  int referencedNodesCount = referencedNodes->GetNumberOfItems();
+  const int referencedNodesCount = referencedNodes->GetNumberOfItems();
 
   /// Add display node ID
   displayableNode->AddAndObserveDisplayNodeID(displayNode1->GetID());
 
   referencedNodes.TakeReference(scene->GetReferencedNodes(displayableNode));
-  int newReferencedNodesCount = referencedNodes->GetNumberOfItems();
+  const int newReferencedNodesCount = referencedNodes->GetNumberOfItems();
 
   CHECK_NOT_NULL(displayableNode->GetNthDisplayNodeID(0));
   CHECK_STRING(displayableNode->GetNthDisplayNodeID(0), displayNode1->GetID());
@@ -215,7 +215,7 @@ int TestAddDisplayNodeIDWithNoScene()
   CHECK_NOT_NULL(internalNodes[1]);
 
   // Test the scanning of GetDisplayNode
-  vtkMRMLDisplayNode* nthDisplayNode = displayableNode->GetNthDisplayNode(1);
+  vtkMRMLDisplayNode* const nthDisplayNode = displayableNode->GetNthDisplayNode(1);
 
   CHECK_INT(displayableNode->GetInternalDisplayNodes().size(), 2);
   CHECK_POINTER(nthDisplayNode, displayNode3);
@@ -295,7 +295,7 @@ int TestAddDelayedDisplayNode()
   CHECK_STRING(displayableNode->GetNthDisplayNodeID(0), "vtkMRMLDisplayNodeTestHelper1");
 
   // Search for the node in the scene.
-  vtkMRMLNode* displayNode = displayableNode->GetNthDisplayNode(0);
+  vtkMRMLNode* const displayNode = displayableNode->GetNthDisplayNode(0);
 
   CHECK_NOT_NULL(displayableNode->GetNthDisplayNodeID(0));
   CHECK_STRING(displayableNode->GetNthDisplayNodeID(0), displayNode1->GetID());
@@ -404,7 +404,7 @@ int TestRemoveDisplayableNode()
   scene->RemoveNode(displayableNode);
   // Removing the scene from the displayable node clear the cached display
   // nodes.
-  vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(0);
+  vtkMRMLDisplayNode* const displayNode = displayableNode->GetNthDisplayNode(0);
   std::vector<vtkMRMLDisplayNode*> displayNodes = displayableNode->GetInternalDisplayNodes();
 
   CHECK_INT(displayableNode->GetNumberOfDisplayNodes(), 3);
@@ -473,7 +473,7 @@ int TestDisplayModifiedEvent()
   CHECK_INT(spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent), 1);
   spy->ResetNumberOfEvents();
 
-  vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode3;
+  const vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode3;
   displayableNode->SetAndObserveDisplayNodeID("vtkMRMLDisplayNodeTestHelper3");
 
   CHECK_INT(spy->GetTotalNumberOfEvents(), 1);
@@ -482,7 +482,7 @@ int TestDisplayModifiedEvent()
 
   scene->AddNode(displayNode3);
   // update the reference of the node
-  vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+  vtkMRMLDisplayNode* const displayNode = displayableNode->GetDisplayNode();
 
   CHECK_INT(spy->GetTotalNumberOfEvents(), 2);
   CHECK_INT(spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent), 1);
@@ -585,7 +585,7 @@ int TestImportIntoSceneWithNodeIdConflict()
   // Write scene1 to string
   scene1->SetSaveToXMLString(1);
   scene1->Commit();
-  std::string xmlScene1 = scene1->GetSceneXMLString();
+  const std::string xmlScene1 = scene1->GetSceneXMLString();
   std::cout << "Scene1:\n\n" << xmlScene1 << std::endl;
 
   // Create scene2

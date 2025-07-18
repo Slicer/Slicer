@@ -109,13 +109,13 @@ QStringList qSlicerTextsModule::contributors() const
 //-----------------------------------------------------------------------------
 void qSlicerTextsModule::setup()
 {
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
 
-  qSlicerTextsReader* textFileReader = new qSlicerTextsReader(this);
+  qSlicerTextsReader* const textFileReader = new qSlicerTextsReader(this);
   app->coreIOManager()->registerIO(textFileReader);
   app->coreIOManager()->registerIO(new qSlicerNodeWriter("TextFileImporter", textFileReader->fileType(), QStringList() << "vtkMRMLTextNode", false, this));
 

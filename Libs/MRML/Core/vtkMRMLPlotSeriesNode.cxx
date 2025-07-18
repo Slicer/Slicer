@@ -105,7 +105,7 @@ void vtkMRMLPlotSeriesNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotSeriesNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -128,7 +128,7 @@ void vtkMRMLPlotSeriesNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLPlotSeriesNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
@@ -176,8 +176,8 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
     return;
   }
 
-  vtkMRMLTableNode* tnode = this->GetTableNode();
-  vtkMRMLTableNode* callerTable = vtkMRMLTableNode::SafeDownCast(caller);
+  vtkMRMLTableNode* const tnode = this->GetTableNode();
+  vtkMRMLTableNode* const callerTable = vtkMRMLTableNode::SafeDownCast(caller);
   if (callerTable != nullptr && tnode != nullptr && tnode == callerTable && //
       event == vtkCommand::ModifiedEvent)
   {
@@ -354,7 +354,7 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   }
   std::vector<vtkMRMLNode*> seriesNodes;
   this->GetScene()->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
-  int numberOfColors = colorTableNode->GetNumberOfColors();
+  const int numberOfColors = colorTableNode->GetNumberOfColors();
   if (numberOfColors < 1)
   {
     vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node " << (colorTableNodeID ? colorTableNodeID : "(none)") << " is empty");
@@ -377,7 +377,7 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
       {
         continue;
       }
-      double* foundColor = seriesNode->GetColor();
+      double* const foundColor = seriesNode->GetColor();
       if (fabs(foundColor[0] - color[0]) < 0.1    //
           && fabs(foundColor[1] - color[1]) < 0.1 //
           && fabs(foundColor[2] - color[2]) < 0.1)

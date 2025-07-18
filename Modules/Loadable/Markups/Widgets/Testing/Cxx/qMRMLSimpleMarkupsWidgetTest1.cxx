@@ -38,7 +38,7 @@ int qMRMLSimpleMarkupsWidgetTest1(int argc, char* argv[])
 
   qSlicerSimpleMarkupsWidget markupsWidget;
   markupsWidget.show();
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   markupsWidget.setMRMLScene(scene.GetPointer());
 

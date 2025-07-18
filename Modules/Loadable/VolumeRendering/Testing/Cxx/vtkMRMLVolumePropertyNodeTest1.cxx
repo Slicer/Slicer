@@ -43,9 +43,9 @@ int vtkMRMLVolumePropertyNodeTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  const char* sceneFilePath = argv[1];
+  const char* const sceneFilePath = argv[1];
 
-  vtkNew<vtkMRMLVolumePropertyNode> node1;
+  const vtkNew<vtkMRMLVolumePropertyNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -72,7 +72,7 @@ namespace
 int readOldScene(const char* mrmlScenePath)
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLVolumePropertyNode> propertyNode;
+  const vtkNew<vtkMRMLVolumePropertyNode> propertyNode;
   scene->RegisterNodeClass(propertyNode.GetPointer());
   scene->SetURL(mrmlScenePath);
   scene->Connect();
@@ -98,8 +98,8 @@ int readOldScene(const char* mrmlScenePath)
   {
     double actualValue[4];
     double expectedValue[4];
-    int actual = actualScalarOpacity->GetNodeValue(i, actualValue);
-    int expected = expectedScalarOpacity->GetNodeValue(i, expectedValue);
+    const int actual = actualScalarOpacity->GetNodeValue(i, actualValue);
+    const int expected = expectedScalarOpacity->GetNodeValue(i, expectedValue);
     CHECK_DOUBLE_TOLERANCE(actualValue[0], expectedValue[0], std::numeric_limits<double>::epsilon())
     CHECK_DOUBLE_TOLERANCE(actualValue[1], expectedValue[1], std::numeric_limits<double>::epsilon())
     CHECK_DOUBLE_TOLERANCE(actualValue[2], expectedValue[2], std::numeric_limits<double>::epsilon())
@@ -111,10 +111,10 @@ int readOldScene(const char* mrmlScenePath)
 //---------------------------------------------------------------------------
 int piecewiseFunctionFromString()
 {
-  std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
-                " 0 154.266067504883 0.699999988079071 228 1");
-  double expectedData[10] = { 0, 0, 4.94065645841247e-324, 0, 69.5504608154297, 0, 154.266067504883, 0.699999988079071, 228, 1 };
-  vtkSmartPointer<vtkPiecewiseFunction> function = vtkSmartPointer<vtkPiecewiseFunction>::New();
+  const std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
+                      " 0 154.266067504883 0.699999988079071 228 1");
+  const double expectedData[10] = { 0, 0, 4.94065645841247e-324, 0, 69.5504608154297, 0, 154.266067504883, 0.699999988079071, 228, 1 };
+  const vtkSmartPointer<vtkPiecewiseFunction> function = vtkSmartPointer<vtkPiecewiseFunction>::New();
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
   CHECK_INT(function->GetSize(), 5);
 

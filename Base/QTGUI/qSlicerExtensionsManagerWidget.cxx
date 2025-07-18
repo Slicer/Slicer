@@ -59,7 +59,7 @@ namespace
 QString jsQuote(QString text)
 {
   // NOTE: This assumes that 'text' does not contain '\r' or other control characters
-  static QRegExp reSpecialCharacters("([\'\"\\\\])");
+  static const QRegExp reSpecialCharacters("([\'\"\\\\])");
   text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
   return QString("\'%1\'").arg(text);
 }
@@ -216,7 +216,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->ExtensionsManageBrowser->webView()->load(QUrl(/*no tr*/ "about:"));
 #endif
 
-  qSlicerExtensionsActionsWidget* actionsWidget = new qSlicerExtensionsActionsWidget;
+  qSlicerExtensionsActionsWidget* const actionsWidget = new qSlicerExtensionsActionsWidget;
 
   // Back and forward buttons
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
@@ -249,7 +249,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)), q, SLOT(onCurrentTabChanged(int)));
   QObject::connect(this->ToolsWidget->CheckForUpdatesAction, SIGNAL(triggered(bool)), q, SLOT(onCheckForUpdatesTriggered()));
   QObject::connect(this->ToolsWidget->EditBookmarksAction, SIGNAL(triggered(bool)), q, SLOT(onEditBookmarksTriggered()));
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   QObject::connect(this->ToolsWidget->OpenExtensionsCatalogWebsiteAction, SIGNAL(triggered(bool)), app, SLOT(openExtensionsCatalogWebsite()));
   QObject::connect(this->ToolsWidget->CheckForUpdatesButton, SIGNAL(clicked()), q, SLOT(onCheckForUpdatesTriggered()));
   QObject::connect(this->ToolsWidget->InstallUpdatesButton, SIGNAL(clicked()), q, SLOT(onInstallUpdatesTriggered()));
@@ -269,7 +269,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 bool qSlicerExtensionsManagerWidgetPrivate::setBatchProcessing(bool newMode)
 {
   Q_Q(qSlicerExtensionsManagerWidget);
-  bool wasBatchProcessing = this->IsBatchProcessing;
+  const bool wasBatchProcessing = this->IsBatchProcessing;
   this->IsBatchProcessing = newMode;
   if (wasBatchProcessing != this->IsBatchProcessing)
   {
@@ -356,9 +356,9 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
 void qSlicerExtensionsManagerWidget::updateAutoUpdateWidgetsFromModel()
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  QSignalBlocker blocker1(d->ToolsWidget->AutoUpdateInstallAction);
-  QSignalBlocker blocker2(d->ToolsWidget->AutoUpdateCheckAction);
-  QSignalBlocker blocker3(d->ToolsWidget->AutoInstallDependenciesAction);
+  const QSignalBlocker blocker1(d->ToolsWidget->AutoUpdateInstallAction);
+  const QSignalBlocker blocker2(d->ToolsWidget->AutoUpdateCheckAction);
+  const QSignalBlocker blocker3(d->ToolsWidget->AutoInstallDependenciesAction);
   d->ToolsWidget->AutoUpdateCheckAction->setChecked(this->extensionsManagerModel()->autoUpdateCheck());
   d->ToolsWidget->AutoUpdateInstallAction->setChecked(this->extensionsManagerModel()->autoUpdateInstall());
   d->ToolsWidget->AutoInstallDependenciesAction->setChecked(this->extensionsManagerModel()->autoInstallDependencies());
@@ -385,8 +385,8 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 {
   Q_D(qSlicerExtensionsManagerWidget);
 
-  int manageExtensionsTabIndex = d->tabWidget->indexOf(d->ManageExtensionsTab);
-  int managedExtensionsCount = this->extensionsManagerModel()->managedExtensionsCount();
+  const int manageExtensionsTabIndex = d->tabWidget->indexOf(d->ManageExtensionsTab);
+  const int managedExtensionsCount = this->extensionsManagerModel()->managedExtensionsCount();
 
   // Get the list of extensions that have update available but not updated yet
   QStringList extensionsToUpdate = this->extensionsManagerModel()->availableUpdateExtensions();
@@ -395,7 +395,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
   {
     extensionsToUpdate.removeAll(extensionName);
   }
-  int extensionUpdates = extensionsToUpdate.size();
+  const int extensionUpdates = extensionsToUpdate.size();
   if (extensionUpdates > 0)
   {
     d->ToolsWidget->InstallUpdatesButton->setText(tr("Update all (%1)").arg(extensionUpdates));
@@ -410,7 +410,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
   }
 
   int foundNonInstalledBookmarkedExtension = 0;
-  QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
+  const QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
   for (const QString& extensionName : bookmarkedExtensions)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
@@ -457,7 +457,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 void qSlicerExtensionsManagerWidget::onCheckForUpdatesTriggered()
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  bool wasBatchProcessing = d->setBatchProcessing(true);
+  const bool wasBatchProcessing = d->setBatchProcessing(true);
   this->extensionsManagerModel()->updateExtensionsMetadataFromServer(true, true);
   this->extensionsManagerModel()->checkForExtensionsUpdates();
   d->setBatchProcessing(wasBatchProcessing);
@@ -468,8 +468,8 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
 {
   Q_D(qSlicerExtensionsManagerWidget);
   bool ok = false;
-  QStringList oldList = this->extensionsManagerModel()->bookmarkedExtensions();
-  QString newStr = QInputDialog::getMultiLineText(this, tr("Bookmarked extensions"), tr("List of bookmarked extensions:"), oldList.join("\n"), &ok);
+  const QStringList oldList = this->extensionsManagerModel()->bookmarkedExtensions();
+  const QString newStr = QInputDialog::getMultiLineText(this, tr("Bookmarked extensions"), tr("List of bookmarked extensions:"), oldList.join("\n"), &ok);
   if (!ok)
   {
     // Cancel clicked
@@ -507,7 +507,7 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
       history->goToItem(history->items().first());
     }
     bool isCatalogPage = false;
-    int serverAPI = this->extensionsManagerModel()->serverAPI();
+    const int serverAPI = this->extensionsManagerModel()->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
     {
       isCatalogPage = d->LastInstallWidgetUrl.path().contains("/catalog");
@@ -566,7 +566,7 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
   Q_D(qSlicerExtensionsManagerWidget);
   // refresh tools widget state (it should be only enabled if browsing the appstore)
   bool isCatalogPage = false;
-  int serverAPI = this->extensionsManagerModel()->serverAPI();
+  const int serverAPI = this->extensionsManagerModel()->serverAPI();
   QString lastSearchTextLoaded;
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
   {
@@ -618,7 +618,7 @@ void qSlicerExtensionsManagerWidget::processSearchTextChange()
   {
     if (searchText != d->LastInstallWidgetSearchText)
     {
-      int serverAPI = this->extensionsManagerModel()->serverAPI();
+      const int serverAPI = this->extensionsManagerModel()->serverAPI();
       if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
       {
         d->ExtensionsServerWidget->webView()->page()->runJavaScript("app.search(" + jsQuote(searchText) + ");");
@@ -651,8 +651,8 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
 {
   Q_D(qSlicerExtensionsManagerWidget);
   // Save last update check time
-  bool wasBatchProcessing = d->setBatchProcessing(true);
-  QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
+  const bool wasBatchProcessing = d->setBatchProcessing(true);
+  const QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
   for (const QString& extensionName : extensionNames)
   {
     this->extensionsManagerModel()->scheduleExtensionForUpdate(extensionName);
@@ -664,9 +664,9 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
 void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  bool wasBatchProcessing = d->setBatchProcessing(true);
+  const bool wasBatchProcessing = d->setBatchProcessing(true);
   // Save last update check time
-  QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
+  const QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
   for (const QString& extensionName : extensionNames)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
@@ -675,7 +675,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
       continue;
     }
     const qSlicerExtensionsManagerModel::ExtensionMetadataType& metadata = this->extensionsManagerModel()->extensionMetadata(extensionName);
-    QString extensionId = metadata.value("extension_id").toString();
+    const QString extensionId = metadata.value("extension_id").toString();
     if (extensionId.isEmpty())
     {
       // not available on the server
@@ -684,7 +684,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
     // Do not install dependencies, because installing in incorrect order could result in showing
     // installation confirmation popups. The user may also intentionally not want to install
     // some dependencies.
-    bool installDependencies = false;
+    const bool installDependencies = false;
     this->extensionsManagerModel()->downloadAndInstallExtensionByName(extensionName, installDependencies);
   }
   d->setBatchProcessing(wasBatchProcessing);
@@ -701,7 +701,7 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
     return;
   }
 
-  bool wasBatchProcessing = d->setBatchProcessing(true);
+  const bool wasBatchProcessing = d->setBatchProcessing(true);
   qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
   for (const QString& archiveName : archiveNames)
   {
@@ -729,7 +729,7 @@ bool qSlicerExtensionsManagerWidget::confirmClose()
                         + tr("Click OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
   confirmDialog.setIcon(QMessageBox::Question);
   confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
-  bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);
+  const bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);
   return closeConfirmed;
 }
 

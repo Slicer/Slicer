@@ -22,7 +22,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>::SeparateComponentsOf
   this->SetNumberOfRequiredOutputs(6);
   for (unsigned int i = 1; i < numOfIdexedOutputs; i++) // we skip output0 because it is created by default
   {
-    OutputImagePointerType output = static_cast<OutputImageType*>(this->MakeOutput(i).GetPointer());
+    const OutputImagePointerType output = static_cast<OutputImageType*>(this->MakeOutput(i).GetPointer());
     this->ProcessObject::SetNthOutput(i, output.GetPointer());
   }
 }
@@ -35,7 +35,7 @@ void SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>::DynamicThreaded
   std::vector<OutputIteratorType> out;
   for (int i = 0; i < 6; i++)
   {
-    OutputImagePointerType outputImagePtr = this->GetOutput(i);
+    const OutputImagePointerType outputImagePtr = this->GetOutput(i);
     OutputIteratorType outtemp(outputImagePtr, outputRegionForThread);
     outtemp.GoToBegin();
     out.push_back(outtemp);
@@ -63,7 +63,7 @@ void SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>::GenerateOutputI
   // get pointers to the input and output
   for (int i = 0; i < 6; i++)
   {
-    OutputImagePointerType outputPtr = this->GetOutput(i);
+    const OutputImagePointerType outputPtr = this->GetOutput(i);
     if (!outputPtr)
     {
       return;
@@ -91,7 +91,7 @@ void SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>::GenerateInputRe
     return;
   }
   // get pointers to the input and output
-  InputImagePointerType inputPtr = const_cast<InputImageType*>(this->GetInput());
+  const InputImagePointerType inputPtr = const_cast<InputImageType*>(this->GetInput());
 
   // Request the entire input image
   typename InputImageType::RegionType inputRegion;

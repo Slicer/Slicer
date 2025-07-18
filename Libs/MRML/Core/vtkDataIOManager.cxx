@@ -174,7 +174,7 @@ void vtkDataIOManager::AllTransfersClearedFromCache()
   }
 
   vtkDataTransfer* dt;
-  int n = this->DataTransferCollection->GetNumberOfItems();
+  const int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
@@ -229,7 +229,7 @@ void vtkDataIOManager::RemoveDataTransfer(int transferID)
     this->DataTransferCollection = vtkCollection::New();
   }
 
-  int n = this->DataTransferCollection->GetNumberOfItems();
+  const int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
@@ -258,7 +258,7 @@ vtkDataTransfer* vtkDataIOManager::GetDataTransfer(int transferID)
     this->DataTransferCollection = vtkCollection::New();
   }
 
-  int n = this->DataTransferCollection->GetNumberOfItems();
+  const int n = this->DataTransferCollection->GetNumberOfItems();
   for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject(i));
@@ -330,7 +330,7 @@ void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
   }
   // vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
-  const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
+  const char* const source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char* dest;
 
   if (source == nullptr)
@@ -374,7 +374,7 @@ void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
     //--- a large scene that consists of multiple datasets.
     //--- ***The risk with this implementation  is that they may
     //--- forget to adjust the cache size, but aren't notified again...
-    float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
+    const float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
     if ((cm->GetCurrentCacheSize() * 1000000.0) >= bufsize)
     {
       //--- No space left in cache. Don't trigger logic to download;
@@ -449,8 +449,8 @@ void vtkDataIOManager::QueueWrite(vtkMRMLNode* node)
   }
   // vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueWrite: got the uri handler from the storage node");
-  const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
-  const char* dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
+  const char* const source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
+  const char* const dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
 
   if (source == nullptr)
   {
@@ -491,7 +491,7 @@ int vtkDataIOManager::GetUniqueTransferID()
   {
 
     // loop thru the existing data transfers
-    int n = this->DataTransferCollection->GetNumberOfItems();
+    const int n = this->DataTransferCollection->GetNumberOfItems();
     vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);
     for (int i = 0; i < n; i++)
     {

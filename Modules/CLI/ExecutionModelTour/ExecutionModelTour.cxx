@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   scene->SetURL(transform1Filename.c_str());
   scene->Import();
 
-  vtkMRMLNode* node = scene->GetNodeByID(transform1ID);
+  vtkMRMLNode* const node = scene->GetNodeByID(transform1ID);
   if (node)
   {
     vtkMRMLNode* outNode = scene->GetNodeByID(transform2ID);

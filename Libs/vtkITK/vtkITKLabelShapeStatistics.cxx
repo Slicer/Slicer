@@ -89,7 +89,7 @@ vtkITKLabelShapeStatistics::ShapeStatistic vtkITKLabelShapeStatistics::GetShapeS
 {
   for (int i = 0; i < ShapeStatistic_Last; ++i)
   {
-    ShapeStatistic statistic = static_cast<ShapeStatistic>(i);
+    const ShapeStatistic statistic = static_cast<ShapeStatistic>(i);
     if (statisticName == vtkITKLabelShapeStatistics::GetShapeStatisticAsString(statistic))
     {
       return statistic;
@@ -114,7 +114,7 @@ void vtkITKLabelShapeStatistics::ComputeShapeStatisticOff(std::string statisticN
 //----------------------------------------------------------------------------
 void vtkITKLabelShapeStatistics::SetComputeShapeStatistic(std::string statisticName, bool state)
 {
-  std::vector<std::string>::iterator statIt = std::find(this->ComputedStatistics.begin(), this->ComputedStatistics.end(), statisticName);
+  const std::vector<std::string>::iterator statIt = std::find(this->ComputedStatistics.begin(), this->ComputedStatistics.end(), statisticName);
   if (!state)
   {
     if (statIt != this->ComputedStatistics.end())
@@ -134,7 +134,7 @@ void vtkITKLabelShapeStatistics::SetComputeShapeStatistic(std::string statisticN
 //----------------------------------------------------------------------------
 bool vtkITKLabelShapeStatistics::GetComputeShapeStatistic(std::string statisticName)
 {
-  std::vector<std::string>::iterator statIt = std::find(this->ComputedStatistics.begin(), this->ComputedStatistics.end(), statisticName);
+  const std::vector<std::string>::iterator statIt = std::find(this->ComputedStatistics.begin(), this->ComputedStatistics.end(), statisticName);
   if (statIt != this->ComputedStatistics.end())
   {
     return true;
@@ -146,7 +146,7 @@ bool vtkITKLabelShapeStatistics::GetComputeShapeStatistic(std::string statisticN
 // Note: local function not method - conforms to signature in itkCommand.h
 void vtkITKLabelShapeStatisticsHandleProgressEvent(itk::Object* caller, const itk::EventObject& vtkNotUsed(eventObject), void* clientdata)
 {
-  itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
+  itk::ProcessObject* const itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
   vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if (itkFilter && vtkFilter)
   {
@@ -166,7 +166,7 @@ T* GetArray(vtkTable* table, std::string name, int numberOfComponents, std::vect
     array->SetNumberOfComponents(numberOfComponents);
     array->SetNumberOfTuples(table->GetNumberOfRows());
     table->AddColumn(array);
-    int componentIndex = 0;
+    const int componentIndex = 0;
     if (componentNames)
     {
       if (numberOfComponents != static_cast<int>(componentNames->size()))
@@ -175,7 +175,7 @@ T* GetArray(vtkTable* table, std::string name, int numberOfComponents, std::vect
       }
       else
       {
-        for (std::string componentName : *componentNames)
+        for (const std::string componentName : *componentNames)
         {
           array->SetComponentName(componentIndex, componentName.c_str());
         }
@@ -200,7 +200,7 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   // Wrap VTK image into an ITK image
   using ImageType = itk::Image<T, 3>;
   using VTKToITKFilterType = itk::VTKImageToImageFilter<ImageType>;
-  typename VTKToITKFilterType::Pointer vtkToITKFilter = VTKToITKFilterType::New();
+  const typename VTKToITKFilterType::Pointer vtkToITKFilter = VTKToITKFilterType::New();
   vtkToITKFilter->SetInput(input);
   vtkToITKFilter->Update();
   ImageType* inImage = vtkToITKFilter->GetOutput();
@@ -220,7 +220,7 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   }
 
   // Set up the progress callback
-  itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
+  const itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
   progressCommand->SetClientData(static_cast<void*>(self));
   progressCommand->SetCallback(vtkITKLabelShapeStatisticsHandleProgressEvent);
 
@@ -228,12 +228,12 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   using LabelMapType = itk::LabelMap<ShapeLabelObjectType>;
   using LableShapeFilterType = itk::LabelImageToShapeLabelMapFilter<ImageType, LabelMapType>;
 
-  bool computeFeretDiameter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::FeretDiameter));
-  bool computePerimeter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Perimeter)) || //
-                          self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Roundness));
-  bool computeOrientedBoundingBox = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::OrientedBoundingBox));
+  const bool computeFeretDiameter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::FeretDiameter));
+  const bool computePerimeter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Perimeter)) || //
+                                self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Roundness));
+  const bool computeOrientedBoundingBox = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::OrientedBoundingBox));
 
-  typename LableShapeFilterType::Pointer labelFilter = LableShapeFilterType::New();
+  const typename LableShapeFilterType::Pointer labelFilter = LableShapeFilterType::New();
   labelFilter->AddObserver(itk::ProgressEvent(), progressCommand);
   labelFilter->SetInput(inImage);
   labelFilter->SetComputeFeretDiameter(computeFeretDiameter);
@@ -241,7 +241,7 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   labelFilter->SetComputeOrientedBoundingBox(computeOrientedBoundingBox);
   labelFilter->Update();
 
-  typename LabelMapType::Pointer labelmapObject = labelFilter->GetOutput();
+  const typename LabelMapType::Pointer labelmapObject = labelFilter->GetOutput();
   const std::vector<typename ShapeLabelObjectType::LabelType> labelValues = labelmapObject->GetLabels();
 
   // Number of rows in the table is equal to the number of label values
@@ -251,9 +251,9 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   for (unsigned int i = 0; i < labelValues.size(); ++i)
   {
     rowIndex++;
-    int labelValue = labelValues[i];
+    const int labelValue = labelValues[i];
 
-    typename ShapeLabelObjectType::ShapeLabelObject::Pointer shapeObject = labelmapObject->GetLabelObject(labelValue);
+    const typename ShapeLabelObjectType::ShapeLabelObject::Pointer shapeObject = labelmapObject->GetLabelObject(labelValue);
     if (!shapeObject)
     {
       continue;
@@ -262,77 +262,77 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
     vtkLongArray* array = GetArray<vtkLongArray>(output, "LabelValue", 1);
     array->InsertTuple1(rowIndex, labelValue);
 
-    for (std::string statisticName : self->GetComputedStatistics())
+    for (const std::string statisticName : self->GetComputedStatistics())
     {
       if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Centroid))
       {
         typename ShapeLabelObjectType::CentroidType centroidObject = shapeObject->GetCentroid();
-        vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 3);
+        vtkDoubleArray* const array = GetArray<vtkDoubleArray>(output, statisticName, 3);
         array->InsertTuple3(rowIndex, centroidObject[0], centroidObject[1], centroidObject[2]);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Roundness))
       {
-        double roundness = shapeObject->GetRoundness();
+        const double roundness = shapeObject->GetRoundness();
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, roundness);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Flatness))
       {
-        double flatness = shapeObject->GetFlatness();
+        const double flatness = shapeObject->GetFlatness();
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, flatness);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Elongation))
       {
-        double elongation = shapeObject->GetElongation();
+        const double elongation = shapeObject->GetElongation();
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, elongation);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::FeretDiameter))
       {
-        double feretDiameter = shapeObject->GetFeretDiameter();
+        const double feretDiameter = shapeObject->GetFeretDiameter();
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, feretDiameter);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Perimeter))
       {
-        double perimeter = shapeObject->GetPerimeter();
+        const double perimeter = shapeObject->GetPerimeter();
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, perimeter);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::OrientedBoundingBox))
       {
         typename ShapeLabelObjectType::OrientedBoundingBoxPointType boundingBoxOrigin = shapeObject->GetOrientedBoundingBoxOrigin();
-        vtkDoubleArray* obbOriginArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxOrigin", 3);
+        vtkDoubleArray* const obbOriginArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxOrigin", 3);
         obbOriginArray->InsertTuple3(rowIndex, boundingBoxOrigin[0], boundingBoxOrigin[1], boundingBoxOrigin[2]);
 
         typename ShapeLabelObjectType::OrientedBoundingBoxSizeType boundingBoxSize = shapeObject->GetOrientedBoundingBoxSize();
         std::vector<std::string> componentNames = { "x", "y", "z" };
-        vtkDoubleArray* obbSizeArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxSize", 3, &componentNames);
+        vtkDoubleArray* const obbSizeArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxSize", 3, &componentNames);
         obbSizeArray->InsertTuple3(rowIndex, boundingBoxSize[0], boundingBoxSize[1], boundingBoxSize[2]);
 
         typename ShapeLabelObjectType::OrientedBoundingBoxDirectionType boundingBoxDirections = shapeObject->GetOrientedBoundingBoxDirection();
-        vtkDoubleArray* obbDirectionXArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionX", 3);
+        vtkDoubleArray* const obbDirectionXArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionX", 3);
         obbDirectionXArray->InsertTuple3(rowIndex, boundingBoxDirections(0, 0), boundingBoxDirections(0, 1), boundingBoxDirections(0, 2));
-        vtkDoubleArray* obbDirectionYArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionY", 3);
+        vtkDoubleArray* const obbDirectionYArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionY", 3);
         obbDirectionYArray->InsertTuple3(rowIndex, boundingBoxDirections(1, 0), boundingBoxDirections(1, 1), boundingBoxDirections(1, 2));
-        vtkDoubleArray* obbDirectionZArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionZ", 3);
+        vtkDoubleArray* const obbDirectionZArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionZ", 3);
         obbDirectionZArray->InsertTuple3(rowIndex, boundingBoxDirections(2, 0), boundingBoxDirections(2, 1), boundingBoxDirections(2, 2));
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::PrincipalMoments))
       {
         typename ShapeLabelObjectType::VectorType principalMoments = shapeObject->GetPrincipalMoments();
-        vtkDoubleArray* principalMomentsArray = GetArray<vtkDoubleArray>(output, statisticName, 3);
+        vtkDoubleArray* const principalMomentsArray = GetArray<vtkDoubleArray>(output, statisticName, 3);
         principalMomentsArray->InsertTuple3(rowIndex, principalMoments[0], principalMoments[1], principalMoments[2]);
       }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::PrincipalAxes))
       {
         typename ShapeLabelObjectType::MatrixType principalAxes = shapeObject->GetPrincipalAxes();
-        vtkDoubleArray* principalAxisXArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisX", 3);
+        vtkDoubleArray* const principalAxisXArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisX", 3);
         principalAxisXArray->InsertTuple3(rowIndex, principalAxes(0, 0), principalAxes(0, 1), principalAxes(0, 2));
-        vtkDoubleArray* principalAxisYArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisY", 3);
+        vtkDoubleArray* const principalAxisYArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisY", 3);
         principalAxisYArray->InsertTuple3(rowIndex, principalAxes(1, 0), principalAxes(1, 1), principalAxes(1, 2));
-        vtkDoubleArray* principalAxisZArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisZ", 3);
+        vtkDoubleArray* const principalAxisZArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisZ", 3);
         principalAxisZArray->InsertTuple3(rowIndex, principalAxes(2, 0), principalAxes(2, 1), principalAxes(2, 2));
       }
     }
@@ -346,7 +346,7 @@ int vtkITKLabelShapeStatistics::RequestData(vtkInformation* vtkNotUsed(request),
 {
   // get the data object
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
-  vtkTable* output = vtkTable::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkTable* const output = vtkTable::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
   vtkImageData* input = vtkImageData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -362,7 +362,7 @@ int vtkITKLabelShapeStatistics::RequestData(vtkInformation* vtkNotUsed(request),
     vtkErrorMacro(<< "PointData is NULL");
     return 0;
   }
-  vtkDataArray* inScalars = pd->GetScalars();
+  vtkDataArray* const inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for island math");
@@ -378,7 +378,7 @@ int vtkITKLabelShapeStatistics::RequestData(vtkInformation* vtkNotUsed(request),
 
 #define CALL vtkITKLabelShapeStatisticsExecute(this, input, output, this->Directions, static_cast<VTK_TT*>(inPtr));
 
-    void* inPtr = input->GetScalarPointer();
+    void* const inPtr = input->GetScalarPointer();
     switch (inScalars->GetDataType())
     {
       vtkTemplateMacroCase(VTK_LONG, long, CALL);

@@ -93,7 +93,7 @@ void qMRMLScalarInvariantComboBoxPrivate::setScalarInvariantToComboBox(int scala
   // GetLastScalarInvariant().
   Q_ASSERT(scalarInvariant >= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant());
   Q_ASSERT(scalarInvariant <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant());
-  int index = this->ComboBox->findData(QVariant(scalarInvariant));
+  const int index = this->ComboBox->findData(QVariant(scalarInvariant));
   Q_ASSERT(index >= 0);
   this->ComboBox->setCurrentIndex(index);
 }
@@ -147,7 +147,7 @@ void qMRMLScalarInvariantComboBox::updateWidgetFromMRML()
 void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 {
   Q_D(qMRMLScalarInvariantComboBox);
-  int scalarInvariant = d->ComboBox->itemData(index).toInt();
+  const int scalarInvariant = d->ComboBox->itemData(index).toInt();
   this->setScalarInvariant(scalarInvariant);
   emit scalarInvariantChanged(scalarInvariant);
 }
@@ -156,7 +156,7 @@ void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 int qMRMLScalarInvariantComboBox::scalarInvariant() const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
-  QVariant scalarInvariant = d->ComboBox->itemData(d->ComboBox->currentIndex());
+  const QVariant scalarInvariant = d->ComboBox->itemData(d->ComboBox->currentIndex());
   return scalarInvariant.isValid() ? scalarInvariant.toInt() : -1;
 }
 

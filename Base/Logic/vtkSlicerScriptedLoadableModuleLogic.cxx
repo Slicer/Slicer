@@ -190,8 +190,8 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   // std::cout << "SetPythonSource - className:" << className << std::endl;
 
   // Get a reference to the main module and global dictionary
-  PyObject* main_module = PyImport_AddModule("__main__");
-  PyObject* global_dict = PyModule_GetDict(main_module);
+  PyObject* const main_module = PyImport_AddModule("__main__");
+  PyObject* const global_dict = PyModule_GetDict(main_module);
 
   // Load class definition if needed
   PyObject* classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
@@ -206,7 +206,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
                 << "sys.modules['__main__'] = module;"
                 << "spec.loader.exec_module(module)";
 
-    PyObject* pyRes = PyRun_String(pyRunStream.str().c_str(), Py_file_input, global_dict, global_dict);
+    PyObject* const pyRes = PyRun_String(pyRunStream.str().c_str(), Py_file_input, global_dict, global_dict);
     if (!pyRes)
     {
       vtkErrorMacro(<< "setPythonSource - Failed to execute file" << filePath << "!");
@@ -223,11 +223,11 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
 
   // std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
-  PyObject* arguments = PyTuple_New(1);
+  PyObject* const arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
-  PyObject* self = PyObject_CallObject(classToInstantiate, arguments);
+  PyObject* const self = PyObject_CallObject(classToInstantiate, arguments);
   Py_DECREF(arguments);
   if (!self)
   {

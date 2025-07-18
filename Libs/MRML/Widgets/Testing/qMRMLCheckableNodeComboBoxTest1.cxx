@@ -45,9 +45,9 @@ int qMRMLCheckableNodeComboBoxTest1(int argc, char* argv[])
   qMRMLCheckableNodeComboBox nodeSelector;
 
   // Check default state
-  bool addEnabled = nodeSelector.addEnabled();
-  bool removeEnabled = nodeSelector.removeEnabled();
-  bool editEnabled = nodeSelector.editEnabled();
+  const bool addEnabled = nodeSelector.addEnabled();
+  const bool removeEnabled = nodeSelector.removeEnabled();
+  const bool editEnabled = nodeSelector.editEnabled();
   // Add button should be enabled
   if (addEnabled || removeEnabled || editEnabled)
   {

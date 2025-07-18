@@ -131,14 +131,14 @@ bool qSlicerSubjectHierarchyAbstractPlugin::canEditProperties(vtkIdType itemID)
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
   }
-  vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
+  vtkMRMLNode* const node = shNode->GetItemDataNode(itemID);
   if (!node)
   {
     // default implementation can only edit associated nodes
     return false;
   }
   double confidence = 0.0;
-  QString moduleForEditProperties = qSlicerApplication::application()->nodeModule(node, &confidence);
+  const QString moduleForEditProperties = qSlicerApplication::application()->nodeModule(node, &confidence);
   return !moduleForEditProperties.isEmpty() && confidence > 0.0;
 }
 
@@ -216,7 +216,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
   }
 
   // Create subject hierarchy item with added node
-  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, this->m_Name.toUtf8());
+  const vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, this->m_Name.toUtf8());
   if (!addedItemID)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();
@@ -387,8 +387,8 @@ void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableN
   }
 
   // Set color
-  double* oldColorArray = displayNode->GetColor();
-  QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
+  double* const oldColorArray = displayNode->GetColor();
+  const QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
   if (oldColor != color)
   {
     if (useSelectedColor)
@@ -424,7 +424,7 @@ QColor qSlicerSubjectHierarchyAbstractPlugin::colorAndTerminologyFromDisplayable
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QColor(0, 0, 0, 0);
   }
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  vtkMRMLScene* const scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
@@ -503,7 +503,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType it
 qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModule(QString moduleName)
 {
   // Find module with name
-  qSlicerAbstractCoreModule* module = qSlicerApplication::application()->moduleManager()->module(moduleName);
+  qSlicerAbstractCoreModule* const module = qSlicerApplication::application()->moduleManager()->module(moduleName);
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (!moduleWithAction)
   {
@@ -558,7 +558,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
   if (viewNode)
   {
     // Show in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     if (!displayNode->GetVisibility())
     {
       displayNode->SetVisibility(true);
@@ -582,7 +582,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
   else
   {
     // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
+    const MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(true);
     if (displayNode->GetOpacity() <= 0.0)

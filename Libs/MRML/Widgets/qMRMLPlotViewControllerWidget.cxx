@@ -126,7 +126,7 @@ vtkMRMLPlotChartNode* qMRMLPlotViewControllerWidgetPrivate::GetPlotChartNodeFrom
   }
 
   // Get the current PlotChart node
-  vtkMRMLPlotChartNode* PlotChartNodeFromViewNode = vtkMRMLPlotChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->mrmlPlotViewNode()->GetPlotChartNodeID()));
+  vtkMRMLPlotChartNode* const PlotChartNodeFromViewNode = vtkMRMLPlotChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->mrmlPlotViewNode()->GetPlotChartNodeID()));
 
   return PlotChartNodeFromViewNode;
 }
@@ -171,7 +171,7 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodesSelected()
   {
     vtkMRMLPlotSeriesNode* dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
 
-    bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
+    const bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
 
     // is the node in the Plot?
     bool found = false;
@@ -327,7 +327,7 @@ void qMRMLPlotViewControllerWidget::onExportButton()
     name = mrmlPlotChartNode->GetName();
   }
 
-  QString fileName = QFileDialog::getSaveFileName(this, tr("Save as SVG"), name, tr("Scalable Vector Graphics (*.svg)"));
+  const QString fileName = QFileDialog::getSaveFileName(this, tr("Save as SVG"), name, tr("Scalable Vector Graphics (*.svg)"));
   if (!fileName.isEmpty())
   {
     d->PlotView->saveAsSVG(fileName);
@@ -365,11 +365,11 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   if (!mrmlPlotChartNode)
   {
     // Set the widgets to default states
-    bool wasBlocked = d->plotTypeComboBox->blockSignals(true);
+    const bool wasBlocked = d->plotTypeComboBox->blockSignals(true);
     d->plotTypeComboBox->setCurrentIndex(-1);
     d->plotTypeComboBox->blockSignals(wasBlocked);
 
-    bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
+    const bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
     for (int idx = 0; idx < d->plotSeriesComboBox->nodeCount(); idx++)
     {
       d->plotSeriesComboBox->setCheckState(d->plotSeriesComboBox->nodeFromIndex(idx), Qt::Unchecked);
@@ -379,7 +379,7 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
   }
 
   // Plot series selector
-  bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
+  const bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
   for (int idx = 0; idx < d->plotSeriesComboBox->nodeCount(); idx++)
   {
     vtkMRMLNode* plotSeriesNode = d->plotSeriesComboBox->nodeFromIndex(idx);
@@ -428,8 +428,8 @@ void qMRMLPlotViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means
   // that the current node was not in the combo box list menu before.
-  bool plotChartBlockSignals = d->plotChartComboBox->blockSignals(true);
-  bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
+  const bool plotChartBlockSignals = d->plotChartComboBox->blockSignals(true);
+  const bool plotBlockSignals = d->plotSeriesComboBox->blockSignals(true);
 
   this->Superclass::setMRMLScene(newScene);
 

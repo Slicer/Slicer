@@ -317,7 +317,7 @@ void vtkMRMLCameraDisplayableManager::SetCameraToRenderer()
   {
     return;
   }
-  vtkCamera* camera = this->Internal->CameraNode ? this->Internal->CameraNode->GetCamera() : nullptr;
+  vtkCamera* const camera = this->Internal->CameraNode ? this->Internal->CameraNode->GetCamera() : nullptr;
   this->GetRenderer()->SetActiveCamera(camera);
   if (camera)
   {

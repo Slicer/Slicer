@@ -83,7 +83,7 @@ double vtkMRMLMarkupsLineNode::GetLineLengthWorld()
   double p2[3] = { 0.0, 0.0, 0.0 };
   this->GetNthControlPointPositionWorld(0, p1);
   this->GetNthControlPointPositionWorld(1, p2);
-  double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+  const double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
   return length;
 }
 
@@ -107,8 +107,8 @@ void vtkMRMLMarkupsLineNode::UpdateInteractionHandleToWorldMatrix()
   double vectorPoint0ToPoint1_World[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkMath::Subtract(point1_World, point0_World, vectorPoint0ToPoint1_World);
 
-  double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(vectorPoint0ToPoint1_World, handleX_World));
-  double epsilon = 1e-5;
+  const double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(vectorPoint0ToPoint1_World, handleX_World));
+  const double epsilon = 1e-5;
   if (angle < epsilon)
   {
     return;
@@ -209,7 +209,7 @@ void vtkMRMLMarkupsLineNode::SetLineEndPosition(double position[3])
   {
     // First control point has not been added yet.
     // Add it now, with undefined position.
-    ControlPoint* controlPoint = new ControlPoint;
+    ControlPoint* const controlPoint = new ControlPoint;
     this->AddControlPoint(controlPoint);
   }
   if (this->GetNumberOfControlPoints() < 2)
@@ -242,7 +242,7 @@ void vtkMRMLMarkupsLineNode::SetLineEndPositionWorld(double position[3])
   {
     // First control point has not been added yet.
     // Add it now, with undefined position.
-    ControlPoint* controlPoint = new ControlPoint;
+    ControlPoint* const controlPoint = new ControlPoint;
     this->AddControlPoint(controlPoint);
   }
   if (this->GetNumberOfControlPoints() < 2)

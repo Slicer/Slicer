@@ -53,7 +53,7 @@ bool unregisteredEventReceived = false;
 //------------------------------------------------------------------------------
 int vtkSlicerMarkupsLogicTest4(int, char*[])
 {
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
 
   // Application logic - Creates vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
@@ -122,8 +122,8 @@ int vtkSlicerMarkupsLogicTest4(int, char*[])
 
   vtkNew<vtkMRMLMarkupsFiducialNode> markupsFiducialNode;
   vtkNew<vtkMRMLMarkupsAngleNode> markupsAngleNode;
-  vtkNew<vtkSlicerPointsWidget> markupsPointsWidget;
-  vtkNew<vtkSlicerAngleWidget> markupsAngleWidget;
+  const vtkNew<vtkSlicerPointsWidget> markupsPointsWidget;
+  const vtkNew<vtkSlicerAngleWidget> markupsAngleWidget;
 
   // Register non-registered valid nodes and retrieve the values
   registeredEventReceived = false;
@@ -177,10 +177,10 @@ int vtkSlicerMarkupsLogicTest4(int, char*[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // Get registered markups with an invalid name
-  vtkMRMLMarkupsNode* node = logic4->GetNodeByMarkupsType("invalid name");
+  vtkMRMLMarkupsNode* const node = logic4->GetNodeByMarkupsType("invalid name");
   CHECK_NULL(node);
 
-  vtkSlicerMarkupsWidget* widget = logic4->GetWidgetByMarkupsType("invalid name");
+  vtkSlicerMarkupsWidget* const widget = logic4->GetWidgetByMarkupsType("invalid name");
   CHECK_NULL(widget);
 
   return EXIT_SUCCESS;

@@ -97,7 +97,7 @@ void qSlicerModulesListViewPrivate::init()
 void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
 {
   Q_Q(qSlicerModulesListView);
-  QString moduleName = item->data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
+  const QString moduleName = item->data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
   item->setCheckable(true);
   // The module is ignored, therefore it hasn't been loaded
   if (this->FactoryManager != nullptr && this->FactoryManager->ignoredModuleNames().contains(moduleName))
@@ -131,7 +131,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
   {
     item->setData(QVariant(), Qt::CheckStateRole);
   }
-  qSlicerAbstractCoreModule* coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : nullptr);
+  qSlicerAbstractCoreModule* const coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : nullptr);
   if (coreModule)
   {
     item->setText(coreModule->title());
@@ -157,12 +157,12 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     helpTextDoc.setHtml(coreModule->helpText());
     QTextDocument acknowledgementTextDoc;
     acknowledgementTextDoc.setHtml(coreModule->acknowledgementText());
-    QString contributors = coreModule->contributors().join(",");
+    const QString contributors = coreModule->contributors().join(",");
     // Search text includes module name and title. Including module title is important to allow
     // easier finding modules when using non-English GUI.
-    QString searchText = QString("%1 %2").arg(coreModule->title()).arg(moduleName);
+    const QString searchText = QString("%1 %2").arg(coreModule->title()).arg(moduleName);
     item->setData(searchText, qSlicerModuleFactoryFilterModel::SearchRole);
-    QString fullTextSearchText =
+    const QString fullTextSearchText =
       QString("%1 %2 %3 %4 %5").arg(coreModule->title()).arg(moduleName).arg(helpTextDoc.toPlainText()).arg(acknowledgementTextDoc.toPlainText()).arg(contributors);
     item->setData(fullTextSearchText, qSlicerModuleFactoryFilterModel::FullTextSearchRole);
   }
@@ -174,7 +174,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     item->setData(moduleName, qSlicerModuleFactoryFilterModel::FullTextSearchRole);
   }
 
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
+  qSlicerAbstractModule* const module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (module)
   {
     item->setData(module->isBuiltIn(), qSlicerModuleFactoryFilterModel::IsBuiltInRole);
@@ -182,7 +182,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     item->setData(module->isHidden(), qSlicerModuleFactoryFilterModel::IsHiddenRole);
 
     // See QTBUG-20248
-    bool block = this->ModulesListModel->blockSignals(true);
+    const bool block = this->ModulesListModel->blockSignals(true);
     item->setIcon(module->icon());
     this->ModulesListModel->blockSignals(block);
   }
@@ -207,7 +207,7 @@ int qSlicerModulesListViewPrivate::sortedInsertionIndex(const QString& moduleNam
   int index = 0;
   for (; index < this->ModulesListModel->rowCount(); ++index)
   {
-    QStandardItem* item = this->ModulesListModel->item(index);
+    QStandardItem* const item = this->ModulesListModel->item(index);
     Q_ASSERT(item);
     if (QString::compare(moduleName, item->text(), Qt::CaseInsensitive) < 0)
     {
@@ -220,12 +220,12 @@ int qSlicerModulesListViewPrivate::sortedInsertionIndex(const QString& moduleNam
 // --------------------------------------------------------------------------
 QStandardItem* qSlicerModulesListViewPrivate::moduleItem(const QString& moduleName) const
 {
-  QModelIndex start = this->ModulesListModel->index(0, 0);
-  QModelIndexList moduleIndexes = this->ModulesListModel->match(start,
-                                                                qSlicerModuleFactoryFilterModel::ModuleNameRole,
-                                                                moduleName,
-                                                                /* hits= */ 1,
-                                                                Qt::MatchExactly);
+  const QModelIndex start = this->ModulesListModel->index(0, 0);
+  const QModelIndexList moduleIndexes = this->ModulesListModel->match(start,
+                                                                      qSlicerModuleFactoryFilterModel::ModuleNameRole,
+                                                                      moduleName,
+                                                                      /* hits= */ 1,
+                                                                      Qt::MatchExactly);
   if (moduleIndexes.count() == 0)
   {
     return nullptr;
@@ -355,8 +355,8 @@ QStringList qSlicerModulesListView::modules() const
 QStringList qSlicerModulesListView::checkedModules() const
 {
   Q_D(const qSlicerModulesListView);
-  QModelIndex start = d->ModulesListModel->index(0, 0);
-  QModelIndexList checkedModuleList = d->ModulesListModel->match(start, Qt::CheckStateRole, Qt::Checked, -1);
+  const QModelIndex start = d->ModulesListModel->index(0, 0);
+  const QModelIndexList checkedModuleList = d->ModulesListModel->match(start, Qt::CheckStateRole, Qt::Checked, -1);
   return d->indexListToModules(checkedModuleList);
 }
 
@@ -364,8 +364,8 @@ QStringList qSlicerModulesListView::checkedModules() const
 QStringList qSlicerModulesListView::uncheckedModules() const
 {
   Q_D(const qSlicerModulesListView);
-  QModelIndex start = d->ModulesListModel->index(0, 0);
-  QModelIndexList checkedModuleList = d->ModulesListModel->match(start, Qt::CheckStateRole, Qt::Unchecked, -1);
+  const QModelIndex start = d->ModulesListModel->index(0, 0);
+  const QModelIndexList checkedModuleList = d->ModulesListModel->match(start, Qt::CheckStateRole, Qt::Unchecked, -1);
   return d->indexListToModules(checkedModuleList);
 }
 
@@ -388,7 +388,7 @@ void qSlicerModulesListView::hideSelectedModules()
 {
   Q_D(qSlicerModulesListView);
   QStringList newShowModules = d->FilterModel->showModules();
-  QStringList modulesToHide = d->indexListToModules(this->selectionModel()->selectedIndexes());
+  const QStringList modulesToHide = d->indexListToModules(this->selectionModel()->selectedIndexes());
   for (const QString& moduleToHide : modulesToHide)
   {
     newShowModules.removeAll(moduleToHide);
@@ -413,10 +413,10 @@ void qSlicerModulesListView::moveSelectedModules(int offset)
 {
   Q_D(qSlicerModulesListView);
   QStringList newShowModules = d->FilterModel->showModules();
-  QStringList modulesToMove = d->indexListToModules(this->selectionModel()->selectedIndexes());
+  const QStringList modulesToMove = d->indexListToModules(this->selectionModel()->selectedIndexes());
   for (const QString& moduleToMove : modulesToMove)
   {
-    int moduleIndex = newShowModules.indexOf(moduleToMove);
+    const int moduleIndex = newShowModules.indexOf(moduleToMove);
     if (moduleIndex != -1)
     {
       newShowModules.move(moduleIndex, qBound(0, moduleIndex + offset, newShowModules.count() - 1));
@@ -452,7 +452,7 @@ void qSlicerModulesListView::addModule(const QString& moduleName)
   QStandardItem* item = new QStandardItem();
   item->setData(moduleName, qSlicerModuleFactoryFilterModel::ModuleNameRole);
   d->updateItem(item);
-  int index = d->sortedInsertionIndex(moduleName);
+  const int index = d->sortedInsertionIndex(moduleName);
   d->ModulesListModel->insertRow(index, item);
 }
 
@@ -475,7 +475,7 @@ void qSlicerModulesListView::updateModules(const QStringList& moduleNames)
 void qSlicerModulesListView::updateModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
-  QStandardItem* item = d->moduleItem(moduleName);
+  QStandardItem* const item = d->moduleItem(moduleName);
   if (item == nullptr)
   {
     this->addModule(moduleName);
@@ -494,8 +494,8 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
   {
     return;
   }
-  QString moduleName = item->data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
-  qSlicerAbstractCoreModule* module = d->FactoryManager->moduleInstance(moduleName);
+  const QString moduleName = item->data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
+  qSlicerAbstractCoreModule* const module = d->FactoryManager->moduleInstance(moduleName);
   if (item->checkState() == Qt::Checked)
   {
     d->FactoryManager->removeModuleToIgnore(moduleName);

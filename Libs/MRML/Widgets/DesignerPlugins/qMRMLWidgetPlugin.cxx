@@ -31,7 +31,7 @@ qMRMLWidgetPlugin::qMRMLWidgetPlugin(QObject* _parent)
 // --------------------------------------------------------------------------
 QWidget* qMRMLWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLWidget* _widget = new qMRMLWidget(_parent);
+  qMRMLWidget* const _widget = new qMRMLWidget(_parent);
   return _widget;
 }
 

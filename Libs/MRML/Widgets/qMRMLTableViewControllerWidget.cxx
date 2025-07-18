@@ -165,7 +165,7 @@ void qMRMLTableViewControllerWidgetPrivate::onLockTableButtonClicked()
   }
 
   // toggle the lock
-  int locked = this->TableNode->GetLocked();
+  const int locked = this->TableNode->GetLocked();
   this->TableNode->SetLocked(!locked);
 }
 
@@ -350,8 +350,8 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
   // TableNode selector
   d->tableComboBox->setCurrentNodeID(tableNode ? tableNode->GetID() : nullptr);
 
-  bool validNode = tableNode != nullptr;
-  bool editableNode = tableNode != nullptr && !tableNode->GetLocked();
+  const bool validNode = tableNode != nullptr;
+  const bool editableNode = tableNode != nullptr && !tableNode->GetLocked();
 
   d->LockTableButton->setEnabled(validNode);
   d->CopyButton->setEnabled(validNode);
@@ -376,14 +376,14 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
 
   if (tableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
   {
-    bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
+    const bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
     d->LockFirstRowButton->setChecked(tableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
   }
 
   if (tableNode->GetUseFirstColumnAsRowHeader() != d->LockFirstColumnButton->isChecked())
   {
-    bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
+    const bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
     d->LockFirstColumnButton->setChecked(tableNode->GetUseFirstColumnAsRowHeader());
     d->LockFirstColumnButton->blockSignals(wasBlocked);
   }
@@ -404,7 +404,7 @@ void qMRMLTableViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means
   // that the current node was not in the combo box list menu before
-  bool tableBlockSignals = d->tableComboBox->blockSignals(true);
+  const bool tableBlockSignals = d->tableComboBox->blockSignals(true);
   // bool arrayBlockSignals = d->arrayComboBox->blockSignals(true);
 
   this->Superclass::setMRMLScene(newScene);

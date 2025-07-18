@@ -104,7 +104,7 @@ void qSlicerVolumeRenderingPropertiesWidget::setMRMLVolumeRenderingDisplayNode(v
 void qSlicerVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerVolumeRenderingPropertiesWidget);
-  vtkMRMLVolumeNode* newVolumeNode = d->VolumeRenderingDisplayNode ? d->VolumeRenderingDisplayNode->GetVolumeNode() : nullptr;
+  vtkMRMLVolumeNode* const newVolumeNode = d->VolumeRenderingDisplayNode ? d->VolumeRenderingDisplayNode->GetVolumeNode() : nullptr;
   qvtkReconnect(d->VolumeNode, newVolumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRMLVolumeNode()));
   d->VolumeNode = newVolumeNode;
   this->updateWidgetFromMRMLVolumeNode();

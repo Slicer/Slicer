@@ -36,10 +36,10 @@ int qSlicerModulePanelTest2(int argc, char* argv[])
 {
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
-  qSlicerApplication app(argc, argv);
+  const qSlicerApplication app(argc, argv);
 
   // Register core module factories for testing purpose
-  qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();
+  qSlicerCoreModuleFactory* const coreModuleFactory = new qSlicerCoreModuleFactory();
   app.moduleManager()->factoryManager()->registerFactory(coreModuleFactory);
   app.moduleManager()->factoryManager()->registerModules();
   app.moduleManager()->factoryManager()->instantiateModules();
@@ -65,7 +65,7 @@ int qSlicerModulePanelTest2(int argc, char* argv[])
 
   // helpAndAcknowledgmentVisible property
   {
-    QWidget* helpCollapsibleButton = modulePanel->findChild<QWidget*>("HelpCollapsibleButton");
+    QWidget* const helpCollapsibleButton = modulePanel->findChild<QWidget*>("HelpCollapsibleButton");
     if (!helpCollapsibleButton)
     {
       std::cerr << "Line " << __LINE__ << " - Couldn't find 'HelpCollapsibleButton' widget !\n" << std::endl;

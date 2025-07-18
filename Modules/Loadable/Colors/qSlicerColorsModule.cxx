@@ -98,7 +98,7 @@ void qSlicerColorsModule::setup()
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLColorLegendDisplayableManager");
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLColorLegendDisplayableManager");
 
-  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerApplication* const app = qSlicerApplication::application();
   if (!app)
   {
     return;
@@ -111,11 +111,11 @@ void qSlicerColorsModule::setup()
   app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"), QStringList() << "vtkMRMLColorNode", true, this));
 
-  QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(app->userSettings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList());
+  const QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(app->userSettings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList());
 #ifdef Q_OS_WIN32
   QString joinedPaths = paths.join(";");
 #else
-  QString joinedPaths = paths.join(":");
+  QString const joinedPaths = paths.join(":");
 #endif
   // Warning: If the logic has already created the color nodes (AddDefaultColorNodes),
   // setting the user color file paths doesn't trigger any action to add new nodes.
@@ -127,7 +127,7 @@ void qSlicerColorsModule::setup()
   ctkColorDialog::addDefaultTab(d->ColorDialogPickerWidget.data(), "Labels", SIGNAL(colorSelected(QColor)), SIGNAL(colorNameSelected(QString)));
 
   // Register Subject Hierarchy core plugins
-  qSlicerSubjectHierarchyColorLegendPlugin* colorLegendPlugin = new qSlicerSubjectHierarchyColorLegendPlugin();
+  qSlicerSubjectHierarchyColorLegendPlugin* const colorLegendPlugin = new qSlicerSubjectHierarchyColorLegendPlugin();
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(colorLegendPlugin);
 }
 

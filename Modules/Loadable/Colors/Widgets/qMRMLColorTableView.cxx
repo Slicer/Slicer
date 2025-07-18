@@ -61,7 +61,7 @@ void qMRMLColorTableViewPrivate::init()
 {
   Q_Q(qMRMLColorTableView);
 
-  qMRMLColorModel* colorModel = new qMRMLColorModel(q);
+  qMRMLColorModel* const colorModel = new qMRMLColorModel(q);
   qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setFilterKeyColumn(colorModel->labelColumn());
   sortFilterModel->setSourceModel(colorModel);
@@ -128,7 +128,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode() const
 {
-  qMRMLColorModel* mrmlModel = this->colorModel();
+  qMRMLColorModel* const mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
   return mrmlModel->mrmlColorNode();
 }
@@ -148,7 +148,7 @@ bool qMRMLColorTableView::showOnlyNamedColors() const
 //------------------------------------------------------------------------------
 int qMRMLColorTableView::rowFromColorName(const QString& colorName) const
 {
-  int index = this->colorModel()->colorFromName(colorName);
+  const int index = this->colorModel()->colorFromName(colorName);
   return this->rowFromColorIndex(index);
 }
 
@@ -160,6 +160,6 @@ int qMRMLColorTableView::rowFromColorIndex(int colorIndex) const
   {
     return -1;
   }
-  QModelIndex sortedIndex = this->sortFilterProxyModel()->mapFromSource(indexes[0]);
+  const QModelIndex sortedIndex = this->sortFilterProxyModel()->mapFromSource(indexes[0]);
   return sortedIndex.row();
 }

@@ -114,18 +114,18 @@ void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageDat
 {
   // Rasterize a poly data onto the input image into the slice view
   // - Points are specified in current XY space
-  vtkSmartPointer<vtkOrientedImageData> polyMaskImage = vtkSmartPointer<vtkOrientedImageData>::New();
+  const vtkSmartPointer<vtkOrientedImageData> polyMaskImage = vtkSmartPointer<vtkOrientedImageData>::New();
   qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(polyData, polyMaskImage, sliceWidget);
 
   if (segmentationNode && segmentationNode->GetParentTransformNode())
   {
     if (segmentationNode->GetParentTransformNode()->IsTransformToWorldLinear())
     {
-      vtkNew<vtkMatrix4x4> worldToSegmentation;
+      const vtkNew<vtkMatrix4x4> worldToSegmentation;
       segmentationNode->GetParentTransformNode()->GetMatrixTransformFromWorld(worldToSegmentation);
-      vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+      const vtkNew<vtkMatrix4x4> imageToWorldMatrix;
       polyMaskImage->GetImageToWorldMatrix(imageToWorldMatrix);
-      vtkNew<vtkMatrix4x4> imageToSegmentation;
+      const vtkNew<vtkMatrix4x4> imageToSegmentation;
       vtkMatrix4x4::Multiply4x4(worldToSegmentation, imageToWorldMatrix, imageToSegmentation);
       polyMaskImage->SetImageToWorldMatrix(imageToSegmentation);
     }
@@ -149,11 +149,11 @@ void qSlicerSegmentEditorAbstractLabelEffect::appendImage(vtkOrientedImageData* 
   }
 
   // Make sure appended image has the same lattice as the input image
-  vtkSmartPointer<vtkOrientedImageData> resampledAppendedImage = vtkSmartPointer<vtkOrientedImageData>::New();
+  const vtkSmartPointer<vtkOrientedImageData> resampledAppendedImage = vtkSmartPointer<vtkOrientedImageData>::New();
   vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(appendedImage, inputImage, resampledAppendedImage);
 
   // Add image created from poly data to input image
-  vtkSmartPointer<vtkImageMathematics> imageMath = vtkSmartPointer<vtkImageMathematics>::New();
+  const vtkSmartPointer<vtkImageMathematics> imageMath = vtkSmartPointer<vtkImageMathematics>::New();
   imageMath->SetInput1Data(inputImage);
   imageMath->SetInput2Data(resampledAppendedImage);
   imageMath->SetOperationToMax();
@@ -185,17 +185,17 @@ void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPol
   // - TODO: need to account for the boundary pixels
   //
   // Note: uses the slicer2-based vtkImageFillROI filter
-  vtkSmartPointer<vtkMatrix4x4> maskIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  const vtkSmartPointer<vtkMatrix4x4> maskIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   maskIjkToRasMatrix->DeepCopy(sliceNode->GetXYToRAS());
 
   polyData->GetPoints()->Modified();
   double bounds[6] = { 0, 0, 0, 0, 0, 0 };
   polyData->GetBounds(bounds);
 
-  double xlo = bounds[0] - 1.0;
-  double xhi = bounds[1];
-  double ylo = bounds[2] - 1.0;
-  double yhi = bounds[3];
+  const double xlo = bounds[0] - 1.0;
+  const double xhi = bounds[1];
+  const double ylo = bounds[2] - 1.0;
+  const double yhi = bounds[3];
 
   double originXYZ[3] = { xlo, ylo, 0.0 };
   double originRAS[3] = { 0.0, 0.0, 0.0 };
@@ -214,23 +214,23 @@ void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPol
   //   side for the width in order to end up with a single extra
   //   pixel in the rasterized image map.  Probably has to
   //   do with how boundary conditions are handled in the filler
-  int w = (int)(xhi - xlo) + 32;
-  int h = (int)(yhi - ylo) + 32;
+  const int w = (int)(xhi - xlo) + 32;
+  const int h = (int)(yhi - ylo) + 32;
 
-  vtkSmartPointer<vtkOrientedImageData> imageData = vtkSmartPointer<vtkOrientedImageData>::New();
+  const vtkSmartPointer<vtkOrientedImageData> imageData = vtkSmartPointer<vtkOrientedImageData>::New();
   imageData->SetDimensions(w, h, 1);
   imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   // Move the points so the lower left corner of the bounding box is at 1, 1 (to avoid clipping)
-  vtkSmartPointer<vtkTransform> translate = vtkSmartPointer<vtkTransform>::New();
+  const vtkSmartPointer<vtkTransform> translate = vtkSmartPointer<vtkTransform>::New();
   translate->Translate(-xlo, -ylo, 0.0);
 
-  vtkSmartPointer<vtkPoints> drawPoints = vtkSmartPointer<vtkPoints>::New();
+  const vtkSmartPointer<vtkPoints> drawPoints = vtkSmartPointer<vtkPoints>::New();
   drawPoints->Reset();
   translate->TransformPoints(polyData->GetPoints(), drawPoints);
   drawPoints->Modified();
 
-  vtkSmartPointer<vtkImageFillROI> fill = vtkSmartPointer<vtkImageFillROI>::New();
+  const vtkSmartPointer<vtkImageFillROI> fill = vtkSmartPointer<vtkImageFillROI>::New();
   fill->SetInputData(imageData);
   fill->SetValue(1);
   fill->SetPoints(drawPoints);
@@ -255,7 +255,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::imageToWorldMatrix(vtkMRMLVolumeNo
   {
     if (transformNode->IsTransformToWorldLinear())
     {
-      vtkSmartPointer<vtkMatrix4x4> volumeRasToWorldRas = vtkSmartPointer<vtkMatrix4x4>::New();
+      const vtkSmartPointer<vtkMatrix4x4> volumeRasToWorldRas = vtkSmartPointer<vtkMatrix4x4>::New();
       transformNode->GetMatrixTransformToWorld(volumeRasToWorldRas);
       vtkMatrix4x4::Multiply4x4(volumeRasToWorldRas, ijkToRas, ijkToRas);
     }
@@ -281,7 +281,7 @@ void qSlicerSegmentEditorAbstractLabelEffect::imageToWorldMatrix(vtkOrientedImag
   {
     if (transformNode->IsTransformToWorldLinear())
     {
-      vtkSmartPointer<vtkMatrix4x4> segmentationRasToWorldRas = vtkSmartPointer<vtkMatrix4x4>::New();
+      const vtkSmartPointer<vtkMatrix4x4> segmentationRasToWorldRas = vtkSmartPointer<vtkMatrix4x4>::New();
       transformNode->GetMatrixTransformToWorld(segmentationRasToWorldRas);
       vtkMatrix4x4::Multiply4x4(segmentationRasToWorldRas, ijkToRas, ijkToRas);
     }

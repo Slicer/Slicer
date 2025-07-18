@@ -81,7 +81,7 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -178,7 +178,7 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::Reset(vtkMRMLNode* defaultNode)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::Reset(defaultNode);
   this->RemoveAllMaximizedViewNodes();
 }
@@ -194,7 +194,7 @@ void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
     return;
   }
   this->ViewArrangement = arrNew;
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
   this->Modified();
   this->EndModify(wasModifying);
@@ -239,7 +239,7 @@ bool vtkMRMLLayoutNode::SetLayoutDescription(int layout, const char* layoutDescr
   {
     this->Layouts[layout] = layoutDescriptionStr;
   }
-  int wasModifying = this->StartModify();
+  const int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
   this->Modified();
   this->EndModify(wasModifying);
@@ -260,14 +260,14 @@ std::vector<int> vtkMRMLLayoutNode::GetLayoutIndices()
 //----------------------------------------------------------------------------
 bool vtkMRMLLayoutNode::IsLayoutDescription(int layout)
 {
-  std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
+  const std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
   return it != this->Layouts.end();
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLLayoutNode::GetLayoutDescription(int layout)
 {
-  std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
+  const std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
   if (it == this->Layouts.end())
   {
     vtkWarningMacro("Can't find layout:" << layout);
@@ -283,8 +283,8 @@ void vtkMRMLLayoutNode::UpdateCurrentLayoutDescription()
   {
     return;
   }
-  int viewArrangement = this->ViewArrangement;
-  std::string description = this->GetLayoutDescription(viewArrangement);
+  const int viewArrangement = this->ViewArrangement;
+  const std::string description = this->GetLayoutDescription(viewArrangement);
   if (this->GetCurrentLayoutDescription() && //
       description == this->GetCurrentLayoutDescription())
   {
@@ -343,10 +343,10 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
 // Does NOT copy: ID, FilePrefix, LabelText, ID
 void vtkMRMLLayoutNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLLayoutNode* node = (vtkMRMLLayoutNode*)anode;
+  vtkMRMLLayoutNode* const node = (vtkMRMLLayoutNode*)anode;
   // Try to copy the registered layout descriptions. However, if the node
   // currently has layout descriptions (more than the default None description)
   // then we don't want to copy them (it would overwrite the descriptions)
@@ -444,7 +444,7 @@ void vtkMRMLLayoutNode::RemoveMaximizedViewNode(vtkMRMLAbstractViewNode* maximiz
 {
   for (int nodeReferenceIndex = 0; nodeReferenceIndex < this->GetNumberOfMaximizedViewNodes(); ++nodeReferenceIndex)
   {
-    vtkMRMLAbstractViewNode* viewNode = this->GetMaximizedViewNode(nodeReferenceIndex);
+    vtkMRMLAbstractViewNode* const viewNode = this->GetMaximizedViewNode(nodeReferenceIndex);
     if (viewNode == maximizedViewNode)
     {
       this->RemoveNthNodeReferenceID("MaximizedView", nodeReferenceIndex);

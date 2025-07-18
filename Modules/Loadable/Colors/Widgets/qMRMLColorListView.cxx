@@ -106,7 +106,7 @@ void qMRMLColorListView::setMRMLColorNode(vtkMRMLColorNode* node)
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode() const
 {
-  qMRMLColorModel* mrmlModel = this->colorModel();
+  qMRMLColorModel* const mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
   return mrmlModel->mrmlColorNode();
 }
@@ -128,12 +128,12 @@ void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModel
 {
   if (current.isValid())
   {
-    QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(current);
-    int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
+    const QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(current);
+    const int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
     emit this->colorSelected(colorEntry);
-    QColor color = this->colorModel()->qcolorFromColor(colorEntry);
+    const QColor color = this->colorModel()->qcolorFromColor(colorEntry);
     emit this->colorSelected(color);
-    QString name = this->colorModel()->nameFromColor(colorEntry);
+    const QString name = this->colorModel()->nameFromColor(colorEntry);
     emit this->colorSelected(name);
   }
   this->QListView::currentChanged(current, previous);

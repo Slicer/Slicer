@@ -177,24 +177,24 @@ bool qMRMLSegmentationGeometryDialog::exec()
   // Initialize dialog
   d->GeometryWidget->setSegmentationNode(d->SegmentationNode);
 
-  qSlicerApplication* app = qSlicerApplication::application();
-  QWidget* mainWindow = app ? app->mainWindow() : nullptr;
+  qSlicerApplication* const app = qSlicerApplication::application();
+  QWidget* const mainWindow = app ? app->mainWindow() : nullptr;
   if (mainWindow)
   {
     // setParent resets window flags, so save them and then restore
-    Qt::WindowFlags windowFlags = d->windowFlags();
+    const Qt::WindowFlags windowFlags = d->windowFlags();
     d->setParent(mainWindow);
     d->setWindowFlags(windowFlags);
   }
 
   // Show dialog
-  bool result = false;
+  const bool result = false;
   if (d->exec() != QDialog::Accepted)
   {
     return result;
   }
 
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  const MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
   // Apply geometry after clean exit
   if (d->GeometryWidget->editEnabled())

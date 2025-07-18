@@ -73,8 +73,8 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   vtkNew<vtkIntArray> events;
   vtkNew<vtkFloatArray> priorities;
 
-  float normalPriority = 0.0;
-  float lowPriority = -0.5;
+  const float normalPriority = 0.0;
+  const float lowPriority = -0.5;
   // float highPriority = 0.5;
 
   // Events that use the default priority.  Don't care the order they
@@ -117,7 +117,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 
     // If sliceNode we insert in our map the current status of the node
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-    SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
+    const SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
     if (sliceNode && it == this->SliceNodeInteractionStatus.end())
     {
       this->SliceNodeInteractionStatus.insert(std::pair<std::string, SliceNodeInfos>(sliceNode->GetID(), SliceNodeInfos(sliceNode->GetInteracting())));
@@ -137,10 +137,10 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     vtkEventBroker::GetInstance()->RemoveObservations(node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
 
     // Update the map
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    vtkMRMLSliceNode* const sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (sliceNode)
     {
-      SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
+      const SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
       if (it != this->SliceNodeInteractionStatus.end())
       {
         this->SliceNodeInteractionStatus.erase(it);
@@ -157,7 +157,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   if (sliceNode && sliceNode->GetID() //
       && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing())
   {
-    SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
+    const SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
     // if this is not the node that we are interacting with, short circuit
 
     if (!sliceNode->GetInteracting() || !sliceNode->GetInteractionFlags())
@@ -302,8 +302,8 @@ bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode* sliceNode1, 
     vtkErrorMacro("vtkMRMLSliceLinkLogic::IsOrientationMatching failed: invalid input");
     return false;
   }
-  vtkMatrix4x4* sliceToRAS1 = sliceNode1->GetSliceToRAS();
-  vtkMatrix4x4* sliceToRAS2 = sliceNode2->GetSliceToRAS();
+  vtkMatrix4x4* const sliceToRAS1 = sliceNode1->GetSliceToRAS();
+  vtkMatrix4x4* const sliceToRAS2 = sliceNode2->GetSliceToRAS();
   for (int axisIndex = 0; axisIndex < 3; axisIndex++)
   {
     double axisVector1[3] = { sliceToRAS1->Element[0][axisIndex], sliceToRAS1->Element[1][axisIndex], sliceToRAS1->Element[2][axisIndex] };
@@ -336,7 +336,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
   {
     this->BroadcastingEventsOn();
 
-    int requiredViewGroup = sliceNode->GetViewGroup();
+    const int requiredViewGroup = sliceNode->GetViewGroup();
     vtkMRMLSliceNode* sNode;
     vtkCollectionSimpleIterator it;
     vtkSmartPointer<vtkCollection> nodes;
@@ -370,7 +370,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
         if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier() & vtkMRMLSliceNode::XYZOriginFlag)
         {
           // Need to copy the SliceOrigin.
-          double* xyzOrigin = sliceNode->GetXYZOrigin();
+          double* const xyzOrigin = sliceNode->GetXYZOrigin();
           sNode->SetXYZOrigin(xyzOrigin[0], xyzOrigin[1], xyzOrigin[2]);
         }
 
@@ -460,8 +460,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
       // Broadcasting the visibility of slice in 3D
       if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier() & vtkMRMLSliceNode::SliceVisibleFlag)
       {
-        std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
-        std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
+        const std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
+        const std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
         if (layoutName.find("Compare") == 0)
         {
           // Compare view, only broadcast to compare views
@@ -485,8 +485,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
       // Broadcasting the visibility of slice edge in 3D
       if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier() & vtkMRMLSliceNode::SliceEdgeVisibility3DFlag)
       {
-        std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
-        std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
+        const std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
+        const std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
         if (layoutName.find("Compare") == 0)
         {
           // Compare view, only broadcast to compare views
@@ -636,7 +636,7 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceN
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::BroadcastLastRotation(vtkMRMLSliceNode* sliceNode, vtkMRMLSliceNode* sNode)
 {
-  SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
+  const SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
   if (it == this->SliceNodeInteractionStatus.end())
   {
     return;
@@ -645,7 +645,7 @@ void vtkMRMLSliceLinkLogic::BroadcastLastRotation(vtkMRMLSliceNode* sliceNode, v
   // Calculate the rotation applied to the sliceNode
   double cross[3], dot, rotation;
   vtkNew<vtkTransform> transform;
-  vtkMatrix4x4* sNodeToRAS = sNode->GetSliceToRAS();
+  vtkMatrix4x4* const sNodeToRAS = sNode->GetSliceToRAS();
   double sliceNormal[3] = { sliceNode->GetSliceToRAS()->GetElement(0, 2), //
                             sliceNode->GetSliceToRAS()->GetElement(1, 2), //
                             sliceNode->GetSliceToRAS()->GetElement(2, 2) };
@@ -669,7 +669,7 @@ void vtkMRMLSliceLinkLogic::BroadcastLastRotation(vtkMRMLSliceNode* sliceNode, v
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode* sliceNode)
 {
-  SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
+  const SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
 
   if (it != SliceNodeInteractionStatus.end())
   {

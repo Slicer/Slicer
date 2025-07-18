@@ -10,7 +10,7 @@ qMRMLThreeDViewInformationWidgetPlugin::qMRMLThreeDViewInformationWidgetPlugin(Q
 // --------------------------------------------------------------------------
 QWidget* qMRMLThreeDViewInformationWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLThreeDViewInformationWidget* _widget = new qMRMLThreeDViewInformationWidget(_parent);
+  qMRMLThreeDViewInformationWidget* const _widget = new qMRMLThreeDViewInformationWidget(_parent);
   return _widget;
 }
 

@@ -143,7 +143,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
   {
     return;
   }
-  vtkAlgorithm* oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
+  vtkAlgorithm* const oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
 
   if (oldInputImageDataAlgorithm != nullptr)
   {
@@ -152,7 +152,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
 
   this->Superclass::SetInputImageDataConnection(imageDataConnection);
 
-  vtkAlgorithm* inputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
+  vtkAlgorithm* const inputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
   if (inputImageDataAlgorithm != nullptr)
   {
     vtkObserveMRMLObjectMacro(inputImageDataAlgorithm);
@@ -269,7 +269,7 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -363,7 +363,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  MRMLNodeModifyBlocker blocker(this);
+  const MRMLNodeModifyBlocker blocker(this);
 
   // CopyContent updates the color table, so we need to set the display range first
   vtkMRMLScalarVolumeDisplayNode* node = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(anode);
@@ -407,7 +407,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
+  vtkMRMLColorNode* const cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode && event == vtkCommand::ModifiedEvent)
   {
     this->UpdateLookupTable(cnode);
@@ -421,7 +421,7 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsign
   if (caller == this && event == vtkCommand::ModifiedEvent && //
       !this->IsInCalculateAutoLevels)
   {
-    int wasModifying = this->GetDisableModifiedEvent();
+    const int wasModifying = this->GetDisableModifiedEvent();
     this->SetDisableModifiedEvent(1);
     this->CalculateAutoLevels();
     // TODO: Reset the pending event counter.
@@ -483,8 +483,8 @@ void vtkMRMLScalarVolumeDisplayNode::SetWindowLevel(double window, double level)
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetWindowLevelMinMax(double min, double max)
 {
-  double window = max - min;
-  double level = 0.5 * (min + max);
+  const double window = max - min;
+  const double level = 0.5 * (min + max);
   this->SetWindowLevel(window, level);
 }
 
@@ -634,7 +634,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetWindowLevelPresets(const std::vector<Win
     bool presetsAreEqual = true;
     for (int presetIndex = 0; presetIndex < this->WindowLevelPresets.size(); presetIndex++)
     {
-      WindowLevelPreset& preset = this->WindowLevelPresets[presetIndex];
+      const WindowLevelPreset& preset = this->WindowLevelPresets[presetIndex];
       const WindowLevelPreset& srcPreset = srcWindowLevelPresets[presetIndex];
       if (fabs(preset.Window - srcPreset.Window) > WINDOW_LEVEL_PRESET_TOLERANCE || //
           fabs(preset.Level - srcPreset.Level) > WINDOW_LEVEL_PRESET_TOLERANCE)
@@ -696,7 +696,7 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char* 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPreset(double window, double level)
 {
-  vtkMRMLScalarVolumeDisplayNode::WindowLevelPreset preset(window, level);
+  const vtkMRMLScalarVolumeDisplayNode::WindowLevelPreset preset(window, level);
   this->WindowLevelPresets.push_back(preset);
   this->Modified();
 }
@@ -848,10 +848,10 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   this->IsInCalculateAutoLevels = true;
   this->HistogramStatistics->SetInputData(imageDataScalar);
   this->HistogramStatistics->Update();
-  double* intensityRange = this->HistogramStatistics->GetAutoRange();
+  double* const intensityRange = this->HistogramStatistics->GetAutoRange();
   vtkDebugMacro("CalculateScalarAutoLevels:" << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
 
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
   if (this->GetAutoWindowLevel())
   {
     this->SetWindowLevelMinMax(intensityRange[0], intensityRange[1]);

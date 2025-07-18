@@ -66,7 +66,7 @@ void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  const int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -77,7 +77,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-  const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
+  const char* const transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
   os << indent << "TransformNodeID: " << (transformNodeID ? transformNodeID : "(none)") << "\n";
 }
@@ -100,7 +100,7 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char* transformNodeID)
 {
   // Prevent circular reference in transform tree
-  vtkMRMLTransformNode* newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(this->GetScene() != nullptr ? this->GetScene()->GetNodeByID(transformNodeID) : nullptr);
+  vtkMRMLTransformNode* const newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(this->GetScene() != nullptr ? this->GetScene()->GetNodeByID(transformNodeID) : nullptr);
   if (newParentTransformNode)
   {
     vtkMRMLTransformNode* thisTransform = vtkMRMLTransformNode::SafeDownCast(this);
@@ -131,7 +131,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
   {
     return;
   }
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  vtkMRMLTransformNode* const tnode = this->GetParentTransformNode();
   if (tnode == caller)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, nullptr);
@@ -169,13 +169,13 @@ bool vtkMRMLTransformableNode::HardenTransform()
   }
   if (transformNode->IsTransformToWorldLinear())
   {
-    vtkNew<vtkMatrix4x4> hardeningMatrix;
+    const vtkNew<vtkMatrix4x4> hardeningMatrix;
     transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
     this->ApplyTransformMatrix(hardeningMatrix.GetPointer());
   }
   else
   {
-    vtkNew<vtkGeneralTransform> hardeningTransform;
+    const vtkNew<vtkGeneralTransform> hardeningTransform;
     transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
     this->ApplyTransform(hardeningTransform.GetPointer());
   }

@@ -252,7 +252,7 @@ void vtkSystemInformation::RunRenderingCheck()
 
   // now test OpenGL capabilities.
 
-  vtkSmartPointer<vtkRenderWindow> window = vtkSystemInformation::NewOffscreenRenderWindow();
+  const vtkSmartPointer<vtkRenderWindow> window = vtkSystemInformation::NewOffscreenRenderWindow();
   if (!window)
   {
     this->RenderingCapabilitiesDetails = "Failed to create render window.";
@@ -264,7 +264,7 @@ void vtkSystemInformation::RunRenderingCheck()
     return;
   }
   this->RenderingCapabilities |= OPENGL;
-  const char* opengl_capabilities = window->ReportCapabilities();
+  const char* const opengl_capabilities = window->ReportCapabilities();
   this->RenderingCapabilitiesDetails = (opengl_capabilities ? opengl_capabilities : "");
 }
 

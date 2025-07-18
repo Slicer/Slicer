@@ -73,9 +73,9 @@ bool vtkMRMLVolumePropertyJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode* r
 //----------------------------------------------------------------------------
 int vtkMRMLVolumePropertyJsonStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
+  vtkMRMLVolumePropertyNode* const vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  const char* filePath = this->GetFileName();
+  const char* const filePath = this->GetFileName();
   if (!filePath)
   {
     vtkErrorToMessageCollectionMacro(
@@ -83,17 +83,17 @@ int vtkMRMLVolumePropertyJsonStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  int result = 1;
+  const int result = 1;
 
   vtkNew<vtkMRMLJsonReader> jsonReader;
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
+  const vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
   if (!jsonElement)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::ReadDataInternal", jsonReader->GetUserMessages()->GetAllMessagesAsString());
     return 0;
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
+  const vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
   if (!volumeProperties)
   {
     vtkErrorToMessageCollectionMacro(
@@ -108,7 +108,7 @@ int vtkMRMLVolumePropertyJsonStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> volumePropertyElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumeProperties->GetArrayItem(0));
+  const vtkSmartPointer<vtkMRMLJsonElement> volumePropertyElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumeProperties->GetArrayItem(0));
   if (!this->ReadVolumePropertyNode(vpNode, volumePropertyElement))
   {
     vtkErrorToMessageCollectionMacro(
@@ -138,7 +138,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadVolumePropertyNode(vtkMRMLVolumeP
 
   vtkVolumeProperty* volumeProperty = volumePropertyNode->GetVolumeProperty();
 
-  vtkSmartPointer<vtkDoubleArray> isoSurfaceValues = vtkSmartPointer<vtkDoubleArray>::Take(volumePropertyElement->GetDoubleArrayProperty("isoSurfaceValues"));
+  const vtkSmartPointer<vtkDoubleArray> isoSurfaceValues = vtkSmartPointer<vtkDoubleArray>::Take(volumePropertyElement->GetDoubleArrayProperty("isoSurfaceValues"));
   if (isoSurfaceValues)
   {
     volumeProperty->GetIsoSurfaceValues()->SetNumberOfContours(isoSurfaceValues->GetNumberOfValues());
@@ -170,10 +170,10 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadVolumePropertyNode(vtkMRMLVolumeP
   volumePropertyElement->GetDoubleProperty("scatteringAnisotropy", scatteringAnisotropy);
   volumeProperty->SetScatteringAnisotropy(scatteringAnisotropy);
 
-  vtkSmartPointer<vtkMRMLJsonElement> componentsElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumePropertyElement->GetArrayProperty("components"));
+  const vtkSmartPointer<vtkMRMLJsonElement> componentsElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumePropertyElement->GetArrayProperty("components"));
   if (componentsElement)
   {
-    int numberOfComponents = componentsElement->GetArraySize();
+    const int numberOfComponents = componentsElement->GetArraySize();
     volumePropertyNode->SetNumberOfIndependentComponents(numberOfComponents);
     if (numberOfComponents > VTK_MAX_VRCOMP)
     {
@@ -187,7 +187,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadVolumePropertyNode(vtkMRMLVolumeP
 
     for (int i = 0; i < numberOfComponents && i < VTK_MAX_VRCOMP; ++i)
     {
-      vtkSmartPointer<vtkMRMLJsonElement> componentElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentsElement->GetArrayItem(i));
+      const vtkSmartPointer<vtkMRMLJsonElement> componentElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentsElement->GetArrayItem(i));
       if (!componentElement)
       {
         vtkErrorToMessageCollectionMacro(
@@ -208,7 +208,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadVolumePropertyNode(vtkMRMLVolumeP
         volumeProperty->SetShade(i, shade);
       }
 
-      vtkSmartPointer<vtkMRMLJsonElement> lightingElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("lighting"));
+      const vtkSmartPointer<vtkMRMLJsonElement> lightingElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("lighting"));
       if (lightingElement)
       {
         double ambient = 0.1;
@@ -238,25 +238,26 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadVolumePropertyNode(vtkMRMLVolumeP
 
       if (componentElement->HasMember("rgbTransferFunction"))
       {
-        vtkSmartPointer<vtkMRMLJsonElement> rgbTransferFunctionElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("rgbTransferFunction"));
+        const vtkSmartPointer<vtkMRMLJsonElement> rgbTransferFunctionElement =
+          vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("rgbTransferFunction"));
         if (rgbTransferFunctionElement)
         {
           success &= this->ReadTransferFunction(volumeProperty->GetRGBTransferFunction(i), rgbTransferFunctionElement);
         }
       }
 
-      vtkSmartPointer<vtkMRMLJsonElement> scalarOpacityElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("scalarOpacity"));
+      const vtkSmartPointer<vtkMRMLJsonElement> scalarOpacityElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("scalarOpacity"));
       if (scalarOpacityElement)
       {
-        vtkNew<vtkPiecewiseFunction> scalarOpacity;
+        const vtkNew<vtkPiecewiseFunction> scalarOpacity;
         success &= this->ReadTransferFunction(scalarOpacity, scalarOpacityElement);
         volumeProperty->SetScalarOpacity(i, scalarOpacity);
       }
 
-      vtkSmartPointer<vtkMRMLJsonElement> gradientOpacityElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("gradientOpacity"));
+      const vtkSmartPointer<vtkMRMLJsonElement> gradientOpacityElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(componentElement->GetObjectProperty("gradientOpacity"));
       if (gradientOpacityElement)
       {
-        vtkNew<vtkPiecewiseFunction> gradientOpacity;
+        const vtkNew<vtkPiecewiseFunction> gradientOpacity;
         success &= this->ReadTransferFunction(gradientOpacity, gradientOpacityElement);
         volumeProperty->SetGradientOpacity(i, gradientOpacity);
       }
@@ -298,10 +299,10 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction(vtkObject* trans
     colorTransferFunction->RemoveAllPoints();
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> pointsElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(transferFunctionElement->GetArrayProperty("points"));
+  const vtkSmartPointer<vtkMRMLJsonElement> pointsElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(transferFunctionElement->GetArrayProperty("points"));
   for (int i = 0; i < pointsElement->GetArraySize(); ++i)
   {
-    vtkSmartPointer<vtkMRMLJsonElement> pointElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(pointsElement->GetArrayItem(i));
+    const vtkSmartPointer<vtkMRMLJsonElement> pointElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(pointsElement->GetArrayItem(i));
     if (!pointElement)
     {
       vtkErrorToMessageCollectionMacro(
@@ -319,7 +320,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction(vtkObject* trans
     {
       double y = 0.0;
       pointElement->GetDoubleProperty("y", y);
-      double values[4] = { x, y, midpoint, sharpness };
+      const double values[4] = { x, y, midpoint, sharpness };
       piecewiseFunction->AddPoint(x, y, midpoint, sharpness);
     }
     else if (colorTransferFunction)
@@ -374,7 +375,7 @@ int vtkMRMLVolumePropertyJsonStorageNode::WriteDataInternal(vtkMRMLNode* refNode
     return 0;
   }
 
-  std::string fullName = this->GetFullNameFromFileName();
+  const std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorToMessageCollectionMacro(
@@ -513,7 +514,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::WriteContourValues(vtkMRMLJsonWriter*
       this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::WriteContourValues", "Writing iso-surface values failed: contour values is null.") return false;
   }
 
-  double* values = contourValues->GetValues();
+  double* const values = contourValues->GetValues();
   vtkNew<vtkDoubleArray> contourValuesArray;
   contourValuesArray->SetNumberOfValues(contourValues->GetNumberOfContours());
   for (int i = 0; i < contourValues->GetNumberOfContours(); ++i)
@@ -623,7 +624,7 @@ int vtkMRMLVolumePropertyJsonStorageNode::GetNumberOfVolumePropertiesInFile(cons
   }
 
   vtkNew<vtkMRMLJsonReader> jsonReader;
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
+  const vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
   if (!jsonElement)
   {
     vtkErrorToMessageCollectionMacro(
@@ -631,7 +632,7 @@ int vtkMRMLVolumePropertyJsonStorageNode::GetNumberOfVolumePropertiesInFile(cons
     return 0;
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
+  const vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
   if (!volumeProperties)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -663,10 +664,10 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     newNodeName = this->GetScene()->GetUniqueNameByString(this->GetFileNameWithoutExtension(filePath).c_str());
   }
 
-  int result = 1;
+  const int result = 1;
 
   vtkNew<vtkMRMLJsonReader> jsonReader;
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
+  const vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
   if (!jsonElement)
   {
     vtkErrorToMessageCollectionMacro(
@@ -674,7 +675,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     return 0;
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
+  const vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
   if (!volumeProperties)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -683,7 +684,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     return 0;
   }
 
-  vtkSmartPointer<vtkMRMLJsonElement> volumePropertyElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumeProperties->GetArrayItem(vpIndex));
+  const vtkSmartPointer<vtkMRMLJsonElement> volumePropertyElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumeProperties->GetArrayItem(vpIndex));
   if (!volumePropertyElement)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -691,7 +692,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
                                      "Reading volume property node file failed: unable to read volume property node.");
     return 0;
   }
-  vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLVolumePropertyNode", newNodeName));
+  vtkMRMLVolumePropertyNode* const volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLVolumePropertyNode", newNodeName));
   if (!volumePropertyNode)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),

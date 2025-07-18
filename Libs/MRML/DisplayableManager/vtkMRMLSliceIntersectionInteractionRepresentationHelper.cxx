@@ -118,10 +118,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetIntersectionWit
                                                                                                      double* intersectionPoint)
 {
   // Get line equation -> y = slope * x + intercept
-  double xA = pointA[0];
-  double yA = pointA[1];
-  double xB = pointB[0];
-  double yB = pointB[1];
+  const double xA = pointA[0];
+  const double yA = pointA[1];
+  const double xB = pointB[0];
+  const double yB = pointB[1];
   double dx, dy, slope, intercept;
   dx = xB - xA;
   dy = yB - yA;
@@ -129,13 +129,13 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetIntersectionWit
   intercept = yA - slope * xA;
 
   // Get line bounding box
-  double lineBounds[4] = { std::min(xA, xB), std::max(xA, xB), std::min(yA, yB), std::max(yA, yB) };
+  const double lineBounds[4] = { std::min(xA, xB), std::max(xA, xB), std::min(yA, yB), std::max(yA, yB) };
 
   // Slice view bounds
-  double xMin = sliceViewBounds[0];
-  double xMax = sliceViewBounds[1];
-  double yMin = sliceViewBounds[2];
-  double yMax = sliceViewBounds[3];
+  const double xMin = sliceViewBounds[0];
+  const double xMax = sliceViewBounds[1];
+  const double yMin = sliceViewBounds[2];
+  const double yMax = sliceViewBounds[3];
 
   // Get intersection point using line equation
   double x0, y0;
@@ -286,7 +286,7 @@ int vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetLineTipsFromInte
   double slicePlaneOrigin[3] = { 0., 0., 0. };
 
   // Define slice size dimensions
-  int* intersectingSliceSizeDimensions = intersectingSliceNode->GetDimensions();
+  int* const intersectingSliceSizeDimensions = intersectingSliceNode->GetDimensions();
   double intersectingPlaneOrigin[4] = { 0, 0, 0, 1 };
   double intersectingPlaneX[4] = { double(intersectingSliceSizeDimensions[0]), 0., 0., 1. };
   double intersectingPlaneY[4] = { 0., double(intersectingSliceSizeDimensions[1]), 0., 1. };
@@ -295,7 +295,7 @@ int vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetLineTipsFromInte
   intersectingXYToXY->MultiplyPoint(intersectingPlaneY, intersectingPlaneY);
 
   // Compute intersection
-  int intersectionFound = this->IntersectWithFinitePlane(
+  const int intersectionFound = this->IntersectWithFinitePlane(
     slicePlaneNormal, slicePlaneOrigin, intersectingPlaneOrigin, intersectingPlaneX, intersectingPlaneY, intersectionOuterLineTip1, intersectionOuterLineTip2);
 
   return intersectionFound;
@@ -314,7 +314,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::ComputeHandleToWor
   this->RotationMatrixFromVectors(handleOrientationDefault, handleOrientation, handleToWorldTransformMatrix);
 
   // Add translation to matrix
-  double handleTranslation[2] = { handlePosition[0] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[0], handlePosition[1] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[1] };
+  const double handleTranslation[2] = { handlePosition[0] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[0], handlePosition[1] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[1] };
   handleToWorldTransformMatrix->SetElement(0, 3, handleTranslation[0]); // Translation X
   handleToWorldTransformMatrix->SetElement(1, 3, handleTranslation[1]); // Translation Y
 }
@@ -333,8 +333,8 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::RotationMatrixFrom
   // Cross and dot products
   double v[3];
   vtkMath::Cross(vector1_3D, vector2_3D, v);
-  double c = vtkMath::Dot(vector1_3D, vector2_3D);
-  double s = vtkMath::Norm(v);
+  const double c = vtkMath::Dot(vector1_3D, vector2_3D);
+  const double s = vtkMath::Norm(v);
 
   // Compute rotation matrix
   if (s == 0.0) // If vectors are aligned (i.e., cross product = 0)
@@ -381,7 +381,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::RotationMatrixFrom
     kmat->SetElement(2, 2, 0.0);
     vtkNew<vtkMatrix3x3> kmat2;
     vtkMatrix3x3::Multiply3x3(kmat, kmat, kmat2);
-    vtkNew<vtkMatrix3x3> kmat2x;
+    const vtkNew<vtkMatrix3x3> kmat2x;
     rotationMatrix->SetElement(0, 0, identityMatrix->GetElement(0, 0) + kmat->GetElement(0, 0) + kmat2->GetElement(0, 0) * ((1 - c) / (pow(s, 2.0))));
     rotationMatrix->SetElement(0, 1, identityMatrix->GetElement(0, 1) + kmat->GetElement(0, 1) + kmat2->GetElement(0, 1) * ((1 - c) / (pow(s, 2.0))));
     rotationMatrix->SetElement(0, 2, identityMatrix->GetElement(0, 2) + kmat->GetElement(0, 2) + kmat2->GetElement(0, 2) * ((1 - c) / (pow(s, 2.0))));

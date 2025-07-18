@@ -53,8 +53,8 @@ namespace
 //------------------------------------------------------------------------------
 bool testLayoutManagerViewWidgetForTable(int line, qMRMLLayoutManager* layoutManager, int viewId)
 {
-  qMRMLTableWidget* widget = layoutManager->tableWidget(viewId);
-  vtkMRMLTableViewNode* node = widget ? widget->mrmlTableViewNode() : nullptr;
+  qMRMLTableWidget* const widget = layoutManager->tableWidget(viewId);
+  vtkMRMLTableViewNode* const node = widget ? widget->mrmlTableViewNode() : nullptr;
   if (!widget || !node)
   {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::tableWidget()" << std::endl;
@@ -70,8 +70,8 @@ bool testLayoutManagerViewWidgetForTable(int line, qMRMLLayoutManager* layoutMan
 //------------------------------------------------------------------------------
 bool testLayoutManagerViewWidgetForSlice(int line, qMRMLLayoutManager* layoutManager, const char* viewName)
 {
-  qMRMLSliceWidget* widget = layoutManager->sliceWidget(viewName);
-  vtkMRMLSliceNode* node = widget ? widget->mrmlSliceNode() : nullptr;
+  qMRMLSliceWidget* const widget = layoutManager->sliceWidget(viewName);
+  vtkMRMLSliceNode* const node = widget ? widget->mrmlSliceNode() : nullptr;
   if (!widget || !node)
   {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::sliceWidget()" << std::endl;
@@ -87,8 +87,8 @@ bool testLayoutManagerViewWidgetForSlice(int line, qMRMLLayoutManager* layoutMan
 //------------------------------------------------------------------------------
 bool testLayoutManagerViewWidgetForThreeD(int line, qMRMLLayoutManager* layoutManager, int viewId)
 {
-  qMRMLThreeDWidget* widget = layoutManager->threeDWidget(viewId);
-  vtkMRMLViewNode* node = widget ? widget->mrmlViewNode() : nullptr;
+  qMRMLThreeDWidget* const widget = layoutManager->threeDWidget(viewId);
+  vtkMRMLViewNode* const node = widget ? widget->mrmlViewNode() : nullptr;
   if (!widget || !node)
   {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::threeDWidget()" << std::endl;
@@ -116,7 +116,7 @@ int qMRMLLayoutManagerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
   {
-    vtkNew<vtkMRMLScene> scene;
+    const vtkNew<vtkMRMLScene> scene;
     applicationLogic->SetMRMLScene(scene.GetPointer());
     layoutManager->setMRMLScene(scene.GetPointer());
     if (layoutManager->mrmlScene() != scene.GetPointer())
@@ -133,7 +133,7 @@ int qMRMLLayoutManagerTest1(int argc, char* argv[])
     }
   }
 
-  vtkNew<vtkMRMLScene> scene;
+  const vtkNew<vtkMRMLScene> scene;
   applicationLogic->SetMRMLScene(scene.GetPointer());
   layoutManager->setMRMLScene(scene.GetPointer());
 

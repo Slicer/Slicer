@@ -8,7 +8,7 @@ qMRMLLayoutWidgetPlugin::qMRMLLayoutWidgetPlugin(QObject* _parent)
 
 QWidget* qMRMLLayoutWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLLayoutWidget* _widget = new qMRMLLayoutWidget(_parent);
+  qMRMLLayoutWidget* const _widget = new qMRMLLayoutWidget(_parent);
   return _widget;
 }
 

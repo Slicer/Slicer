@@ -34,8 +34,8 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  unsigned int numberOfLayers = 2;
-  unsigned int boundingBoxPadding = std::max((unsigned int)(std::ceil(4.0 * gaussianSigma)), numberOfLayers);
+  const unsigned int numberOfLayers = 2;
+  const unsigned int boundingBoxPadding = std::max((unsigned int)(std::ceil(4.0 * gaussianSigma)), numberOfLayers);
 
   // Image Types
   const unsigned short ImageDimension = 3;
@@ -57,20 +57,20 @@ int main(int argc, char* argv[])
   typedef itk::ImageFileWriter<UCharImageType> WriterType;
 
   // Instances
-  ReaderType::Pointer reader = ReaderType::New();
-  InputThresholdType::Pointer inputThresholder = InputThresholdType::New();
-  MinMaxType::Pointer minMaxCalculator = MinMaxType::New();
-  LabelStatisticsType::Pointer labelStatisticsFilter = LabelStatisticsType::New();
-  ExtracterType::Pointer extracter = ExtracterType::New();
-  AntiAliasType::Pointer antiAliasFilter = AntiAliasType::New();
-  GaussianType::Pointer gaussianFilter = GaussianType::New();
-  OutputThresholdType::Pointer outputThresholder = OutputThresholdType::New();
-  PasteType::Pointer paster = PasteType::New();
-  WriterType::Pointer writer = WriterType::New();
+  const ReaderType::Pointer reader = ReaderType::New();
+  const InputThresholdType::Pointer inputThresholder = InputThresholdType::New();
+  const MinMaxType::Pointer minMaxCalculator = MinMaxType::New();
+  const LabelStatisticsType::Pointer labelStatisticsFilter = LabelStatisticsType::New();
+  const ExtracterType::Pointer extracter = ExtracterType::New();
+  const AntiAliasType::Pointer antiAliasFilter = AntiAliasType::New();
+  const GaussianType::Pointer gaussianFilter = GaussianType::New();
+  const OutputThresholdType::Pointer outputThresholder = OutputThresholdType::New();
+  const PasteType::Pointer paster = PasteType::New();
+  const WriterType::Pointer writer = WriterType::New();
 
   // Watchers
-  itk::PluginFilterWatcher AntiAliasWatcher(antiAliasFilter, "Anti Alias Image Filter", CLPProcessInformation, 2.0 / 3.0, 0.0);
-  itk::PluginFilterWatcher GaussianWatcher(gaussianFilter, "Gaussian Image Filter", CLPProcessInformation, 1.0 / 3.0, 2.0 / 3.0);
+  const itk::PluginFilterWatcher AntiAliasWatcher(antiAliasFilter, "Anti Alias Image Filter", CLPProcessInformation, 2.0 / 3.0, 0.0);
+  const itk::PluginFilterWatcher GaussianWatcher(gaussianFilter, "Gaussian Image Filter", CLPProcessInformation, 1.0 / 3.0, 2.0 / 3.0);
 
   try
   {

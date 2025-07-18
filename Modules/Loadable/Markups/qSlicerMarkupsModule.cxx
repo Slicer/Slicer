@@ -162,7 +162,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
   //// We need to restore the main window state again, now, that the Markups toolbar is available.
   QSettings settings;
   settings.beginGroup("MainWindow");
-  bool restore = settings.value("RestoreGeometry", false).toBool();
+  const bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore)
   {
     mainWindow->restoreState(settings.value("windowState").toByteArray());
@@ -233,7 +233,7 @@ void qSlicerMarkupsModule::setup()
   Q_D(qSlicerMarkupsModule);
   this->Superclass::setup();
 
-  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
+  vtkSlicerMarkupsLogic* const logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
   if (!logic)
   {
     qCritical() << Q_FUNC_INFO << ": cannot get Markups logic.";
@@ -314,7 +314,7 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     qCritical() << Q_FUNC_INFO << " failed: markupsDisplayNode is invalid";
     return;
   }
-  QSettings settings;
+  const QSettings settings;
 
   if (settings.contains("Markups/SnapMode"))
   {
@@ -377,8 +377,8 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   }
   if (settings.contains("Markups/SliceProjectionColor"))
   {
-    QVariant variant = settings.value("Markups/SliceProjectionColor");
-    QColor qcolor = variant.value<QColor>();
+    const QVariant variant = settings.value("Markups/SliceProjectionColor");
+    const QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetSliceProjectionColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
   }
   if (settings.contains("Markups/SliceProjectionOpacity"))
@@ -432,20 +432,20 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
 
   if (settings.contains("Markups/SelectedColor"))
   {
-    QVariant variant = settings.value("Markups/SelectedColor");
-    QColor qcolor = variant.value<QColor>();
+    const QVariant variant = settings.value("Markups/SelectedColor");
+    const QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetSelectedColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
   }
   if (settings.contains("Markups/UnselectedColor"))
   {
-    QVariant variant = settings.value("Markups/UnselectedColor");
-    QColor qcolor = variant.value<QColor>();
+    const QVariant variant = settings.value("Markups/UnselectedColor");
+    const QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
   }
   if (settings.contains("Markups/ActiveColor"))
   {
-    QVariant variant = settings.value("Markups/ActiveColor");
-    QColor qcolor = variant.value<QColor>();
+    const QVariant variant = settings.value("Markups/ActiveColor");
+    const QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetActiveColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
   }
   if (settings.contains("Markups/Opacity"))
@@ -550,7 +550,7 @@ void qSlicerMarkupsModule::setAutoShowToolBar(bool autoShow)
 bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
   Q_UNUSED(markupsNode);
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* const app = qSlicerCoreApplication::application();
   if (!app                     //
       || !app->moduleManager() //
       || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module(/*no tr*/ "Markups")))

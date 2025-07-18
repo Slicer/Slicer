@@ -93,7 +93,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
       && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     int controlPointIndex = 0;
-    int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
+    const int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
     if (numberOfDefinedControlPoints > 0)
     {
       // there is at least one placed point
@@ -120,7 +120,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
   {
-    ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
+    ControlPointsPipeline3D* const controlPoints = this->GetControlPointsPipeline(controlPointType);
     if (controlPointType == Project || controlPointType == ProjectBack)
     {
       // no projection display in 3D
@@ -141,14 +141,14 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
-  double diameter =
+  const double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
 
-  bool allControlPointsSelected = this->GetAllControlPointsSelected();
+  const bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
   {
@@ -230,7 +230,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
         // one lookup table can not be shared by multiple mappers if any of those mappers needs to map using its scalar
         // values range. It is therefore necessary to make a copy of the colorNode vtkLookupTable in order not to impact
         // that lookup table original range.
-        vtkSmartPointer<vtkLookupTable> dNodeLUT =
+        const vtkSmartPointer<vtkLookupTable> dNodeLUT =
           vtkSmartPointer<vtkLookupTable>::Take(this->MarkupsDisplayNode->GetColorNode() ? this->MarkupsDisplayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
         this->LineMapper->SetLookupTable(dNodeLUT);
       }
@@ -285,7 +285,7 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
-    double diameter =
+    const double diameter =
       (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
                                                                                                       : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
     this->TubeFilter->SetRadius(diameter * 0.5);
@@ -429,7 +429,7 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(vtkMRMLInteractionEven
   double dist2 = -1.0;
   if (interactionEventData->IsWorldPositionValid())
   {
-    const double* worldPosition = interactionEventData->GetWorldPosition();
+    const double* const worldPosition = interactionEventData->GetWorldPosition();
     this->CurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
   }
 

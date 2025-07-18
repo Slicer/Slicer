@@ -111,7 +111,7 @@ void qSlicerUnitsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerUnitsLogic* logic = vtkSlicerUnitsLogic::SafeDownCast(this->logic());
+  vtkSlicerUnitsLogic* const logic = vtkSlicerUnitsLogic::SafeDownCast(this->logic());
   if (logic && qSlicerApplication::application())
   {
     qSlicerUnitsSettingsPanel* panel = new qSlicerUnitsSettingsPanel;

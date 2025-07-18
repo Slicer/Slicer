@@ -150,7 +150,7 @@ void qSlicerSegmentationsModule::setMRMLScene(vtkMRMLScene* scene)
 
   // Subject hierarchy is instantiated before Segmentations, so need to connect to existing the quasi-singleton subject hierarchy node
   vtkCollection* shNodeCollection = scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode");
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(shNodeCollection->GetItemAsObject(0));
+  vtkMRMLSubjectHierarchyNode* const subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(shNodeCollection->GetItemAsObject(0));
   shNodeCollection->Delete();
   this->onNodeAdded(scene, subjectHierarchyNode);
 }
@@ -160,7 +160,7 @@ void qSlicerSegmentationsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerSegmentationsModuleLogic* segmentationsLogic = vtkSlicerSegmentationsModuleLogic::SafeDownCast(this->logic());
+  vtkSlicerSegmentationsModuleLogic* const segmentationsLogic = vtkSlicerSegmentationsModuleLogic::SafeDownCast(this->logic());
 
   // Register subject hierarchy plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchySegmentationsPlugin());
@@ -180,8 +180,8 @@ void qSlicerSegmentationsModule::setup()
   }
 
   // Use the displayable manager class to make sure the the containing library is loaded
-  vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager3D> dm3d = vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager3D>::New();
-  vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager2D> dm2d = vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager2D>::New();
+  const vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager3D> dm3d = vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager3D>::New();
+  const vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager2D> dm2d = vtkSmartPointer<vtkMRMLSegmentationsDisplayableManager2D>::New();
   // Register displayable managers
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLSegmentationsDisplayableManager3D");
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLSegmentationsDisplayableManager2D");
@@ -206,7 +206,7 @@ void qSlicerSegmentationsModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerSegmentationsModule::createWidgetRepresentation()
 {
-  qSlicerSegmentationsModuleWidget* moduleWidget = new qSlicerSegmentationsModuleWidget();
+  qSlicerSegmentationsModuleWidget* const moduleWidget = new qSlicerSegmentationsModuleWidget();
   return moduleWidget;
 }
 
@@ -219,14 +219,14 @@ vtkMRMLAbstractLogic* qSlicerSegmentationsModule::createLogic()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* nodeObject)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  vtkMRMLScene* const scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
   {
     return;
   }
 
   // Get segmentations subject hierarchy plugin
-  qSlicerSubjectHierarchySegmentationsPlugin* segmentationsPlugin =
+  qSlicerSubjectHierarchySegmentationsPlugin* const segmentationsPlugin =
     qobject_cast<qSlicerSubjectHierarchySegmentationsPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segmentations"));
   if (!segmentationsPlugin)
   {
@@ -235,7 +235,7 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
   }
 
   // Connect segment added and removed events to plugin to update subject hierarchy accordingly
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(nodeObject);
+  vtkMRMLSegmentationNode* const segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(nodeObject);
   if (segmentationNode)
   {
     qvtkConnect(segmentationNode, vtkSegmentation::SegmentAdded, segmentationsPlugin, SLOT(onSegmentAdded(vtkObject*, void*)));
@@ -246,7 +246,7 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
   }
 
   // Connect subject hierarchy modified event to handle renaming segments from subject hierarchy
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
+  vtkMRMLSubjectHierarchyNode* const subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
   if (subjectHierarchyNode)
   {
     qvtkConnect(subjectHierarchyNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, segmentationsPlugin, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));

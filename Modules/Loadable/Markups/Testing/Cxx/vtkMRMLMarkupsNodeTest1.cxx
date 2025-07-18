@@ -43,7 +43,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
 
   node1->SetControlPointLabelFormat(std::string("%N-%d"));
   node1->SetName("testingname");
-  std::string formatTest = node1->ReplaceListNameInControlPointLabelFormat();
+  const std::string formatTest = node1->ReplaceListNameInControlPointLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
 
   vtkNew<vtkMRMLStaticMeasurement> measurement1;
@@ -138,7 +138,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
     std::cout << n << ": id = " << node1->GetNthControlPointID(n).c_str() << std::endl;
   }
   // reset one
-  std::string oldID = node1->GetNthControlPointID(0);
+  const std::string oldID = node1->GetNthControlPointID(0);
   CHECK_BOOL(node1->ResetNthControlPointID(0), true);
   std::cout << "After resetting 0th markup id from " << oldID.c_str() << ", new one is " << node1->GetNthControlPointID(0).c_str() << std::endl;
 
@@ -194,7 +194,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   testOrientation[1] = 0.0;
   testOrientation[2] = 1.0;
   testOrientation[3] = 0.0;
-  double* orientationPointer = testOrientation;
+  double* const orientationPointer = testOrientation;
   node1->SetNthControlPointOrientation(0, orientationPointer);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
@@ -234,7 +234,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   p0[1] = 1.33;
   p0[2] = -9.0;
   node1->SetNthControlPointPosition(2, p0[0], p0[1], p0[2]);
-  vtkVector3d p1 = node1->GetNthControlPointPositionVector(2);
+  const vtkVector3d p1 = node1->GetNthControlPointPositionVector(2);
   if (p1.GetX() != p0[0] || //
       p1.GetY() != p0[1] || //
       p1.GetZ() != p0[2])
@@ -262,8 +262,8 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
     std::cout << "Get markup point array: " << p3[0] << "," << p3[1] << "," << p3[2] << std::endl;
   }
 
-  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
-  double offset[3] = { -10.0, 5.5, 0.22 };
+  const vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
+  const double offset[3] = { -10.0, 5.5, 0.22 };
   mat->SetElement(0, 3, offset[0]);
   mat->SetElement(1, 3, offset[1]);
   mat->SetElement(2, 3, offset[2]);
@@ -280,7 +280,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   std::cout << "Offset = " << offset[0] << "," << offset[1] << "," << offset[2] << std::endl;
   std::cout << "Expected Output = " << expectedPos[0] << "," << expectedPos[1] << "," << expectedPos[2] << std::endl;
   std::cout << "Output Point = " << outputPoint[0] << "," << outputPoint[1] << "," << outputPoint[2] << std::endl;
-  double diff = sqrt(vtkMath::Distance2BetweenPoints(expectedPos, outputPoint));
+  const double diff = sqrt(vtkMath::Distance2BetweenPoints(expectedPos, outputPoint));
   if (diff > 0.1)
   {
     std::cerr << "Difference between expected and output too large: " << diff << std::endl;
@@ -292,8 +292,8 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   }
 
   // test WriteCLI
-  vtkIndent indent;
-  int numMarkups = node1->GetNumberOfControlPoints();
+  const vtkIndent indent;
+  const int numMarkups = node1->GetNumberOfControlPoints();
   for (int m = 0; m < numMarkups; m++)
   {
     // make sure all are selected so all will be passed
@@ -302,7 +302,7 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   std::cout << "\nTesting WriteCLI call on markups node with " << numMarkups << " markups." << std::endl;
   node1->PrintSelf(std::cout, indent);
   std::vector<std::string> commandLine1;
-  std::string prefix = "point";
+  const std::string prefix = "point";
   node1->WriteCLI(commandLine1, prefix, vtkMRMLStorageNode::CoordinateSystemRAS);
   std::cout << "Wrote RAS points to CLI as:" << std::endl;
   for (unsigned int i = 0; i < commandLine1.size(); ++i)

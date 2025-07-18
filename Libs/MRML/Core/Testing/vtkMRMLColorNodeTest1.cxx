@@ -61,7 +61,7 @@ int TestGetColorNameAsFileName(const char* colorName, const char* expectedColorF
 //---------------------------------------------------------------------------
 int vtkMRMLColorNodeTest1(int, char*[])
 {
-  vtkNew<vtkMRMLColorNodeTestHelper1> node1;
+  const vtkNew<vtkMRMLColorNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName());
@@ -102,7 +102,7 @@ int TestGetColorNameAsFileName(const char* colorName, const char* expectedColorF
   vtkNew<vtkMRMLColorNodeTestHelper1> colorNode;
   colorNode->SetNamesFromColors();
   colorNode->SetColorName(0, colorName);
-  std::string fileName = colorNode->GetColorNameAsFileName(0, substr);
+  const std::string fileName = colorNode->GetColorNameAsFileName(0, substr);
   if (fileName != std::string(expectedColorFileName))
   {
     std::cerr << "Input: " << colorName << "\nOutput: " << fileName.c_str() << "\n Expected: " << expectedColorFileName << std::endl;

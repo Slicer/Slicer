@@ -44,11 +44,11 @@ int DoIt(int argc, char* argv[], T)
   typedef itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleType;
   typedef itk::ConstrainedValueMultiplicationImageFilter<InputImageType, OutputImageType, OutputImageType> FilterType;
 
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1", CLPProcessInformation);
+  const typename ReaderType::Pointer reader1 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1", CLPProcessInformation);
 
-  typename ReaderType::Pointer reader2 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader2(reader2, "Read Volume 2", CLPProcessInformation);
+  const typename ReaderType::Pointer reader2 = ReaderType::New();
+  const itk::PluginFilterWatcher watchReader2(reader2, "Read Volume 2", CLPProcessInformation);
   reader1->SetFileName(inputVolume1.c_str());
   reader2->SetFileName(inputVolume2.c_str());
   reader2->ReleaseDataFlagOn();
@@ -56,27 +56,27 @@ int DoIt(int argc, char* argv[], T)
   reader1->Update();
   reader2->Update();
 
-  typename Interpolator::Pointer interp = Interpolator::New();
+  const typename Interpolator::Pointer interp = Interpolator::New();
   interp->SetInputImage(reader2->GetOutput());
   interp->SetSplineOrder(order);
 
-  typename ResampleType::Pointer resample = ResampleType::New();
+  const typename ResampleType::Pointer resample = ResampleType::New();
   resample->SetInput(reader2->GetOutput());
   resample->SetOutputParametersFromImage(reader1->GetOutput());
   resample->SetInterpolator(interp);
   resample->SetDefaultPixelValue(0);
   resample->ReleaseDataFlagOn();
 
-  itk::PluginFilterWatcher watchResample(resample, "Resampling", CLPProcessInformation);
+  const itk::PluginFilterWatcher watchResample(resample, "Resampling", CLPProcessInformation);
 
-  typename FilterType::Pointer filter = FilterType::New();
+  const typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(reader1->GetOutput());
   filter->SetInput2(resample->GetOutput());
 
-  itk::PluginFilterWatcher watchFilter(filter, "Multiplying", CLPProcessInformation);
+  const itk::PluginFilterWatcher watchFilter(filter, "Multiplying", CLPProcessInformation);
 
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  const typename WriterType::Pointer writer = WriterType::New();
+  const itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
   writer->SetFileName(outputVolume.c_str());
   writer->SetInput(filter->GetOutput());
   writer->Update();

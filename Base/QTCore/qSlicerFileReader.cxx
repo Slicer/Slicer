@@ -53,7 +53,7 @@ QStringList qSlicerFileReader::extensions() const
 //----------------------------------------------------------------------------
 bool qSlicerFileReader::canLoadFile(const QString& fileName) const
 {
-  QStringList res = this->supportedNameFilters(fileName);
+  const QStringList res = this->supportedNameFilters(fileName);
   return res.count() > 0;
 }
 
@@ -65,11 +65,11 @@ double qSlicerFileReader::canLoadFileConfidence(const QString& fileName) const
     return 0.0;
   }
   int longestExtensionMatch = 0;
-  QStringList res = this->supportedNameFilters(fileName, &longestExtensionMatch);
+  const QStringList res = this->supportedNameFilters(fileName, &longestExtensionMatch);
   // If longer extension is matched then the confidence that this is a good reader is
   // slightly higher. For example, for "somefile.seg.nrrd", a reader that is specifically
   // for ".seg.nrrd" files get slightly higher confidence than readers that of generic ".nrrd" files.
-  double confidence = 0.5 + 0.01 * longestExtensionMatch;
+  const double confidence = 0.5 + 0.01 * longestExtensionMatch;
   return confidence;
 }
 
@@ -81,7 +81,7 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
     (*longestExtensionMatchPtr) = 0;
   }
   QStringList matchingNameFilters;
-  QFileInfo file(fileName);
+  const QFileInfo file(fileName);
   if (!file.isFile() ||            //
       !file.isReadable() ||        //
       file.suffix().contains('~')) // temporary file
@@ -92,12 +92,12 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
   {
     for (QString extension : ctk::nameFilterToExtensions(nameFilter))
     {
-      QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
+      const QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());
       if (regExp.exactMatch(file.absoluteFilePath()))
       {
         extension.remove('*'); // wildcard does not count, that's not a specific match
-        int matchedExtensionLength = extension.size();
+        const int matchedExtensionLength = extension.size();
         if (longestExtensionMatchPtr && (*longestExtensionMatchPtr) < matchedExtensionLength)
         {
           (*longestExtensionMatchPtr) = matchedExtensionLength;

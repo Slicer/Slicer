@@ -138,7 +138,7 @@ bool qSlicerTerminologySelectorDialog::exec()
   d->NavigatorWidget->setTerminologyInfo(d->TerminologyInfo);
 
   // Show dialog
-  bool result = false;
+  const bool result = false;
   if (d->exec() != QDialog::Accepted)
   {
     return result;
@@ -154,7 +154,7 @@ bool qSlicerTerminologySelectorDialog::getTerminology(qSlicerTerminologyNavigato
 {
   // Open terminology dialog and store result
   qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
-  bool result = dialog.exec();
+  const bool result = dialog.exec();
   dialog.terminologyInfo(terminologyInfo);
   return result;
 }

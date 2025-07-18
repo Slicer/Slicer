@@ -44,10 +44,10 @@ int qSlicerDTISliceDisplayWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode = vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
+  const vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode = vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
   scene->AddNode(propertiesNode);
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode = vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
+  const vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode = vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
   displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propertiesNode->GetID());
   scene->AddNode(displayNode);
 

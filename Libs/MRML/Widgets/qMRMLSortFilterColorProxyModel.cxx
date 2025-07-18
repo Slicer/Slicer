@@ -65,7 +65,7 @@ qMRMLSortFilterColorProxyModel::~qMRMLSortFilterColorProxyModel() = default;
 //-----------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLSortFilterColorProxyModel::mrmlColorNode() const
 {
-  qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
+  qMRMLColorModel* const model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -95,7 +95,7 @@ void qMRMLSortFilterColorProxyModel::setShowEmptyColors(bool show)
 //-----------------------------------------------------------------------------
 QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
-  qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
+  qMRMLColorModel* const model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
   if (!model)
   {
     return nullptr;
@@ -105,7 +105,7 @@ QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sou
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-  QStandardItem* parentItem = this->sourceItem(sourceParent);
+  QStandardItem* const parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
   {
     return false;
@@ -126,8 +126,8 @@ bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QMode
     return false;
   }
 
-  qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
-  int colorIndex = model->colorFromItem(item);
+  qMRMLColorModel* const model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
+  const int colorIndex = model->colorFromItem(item);
   return this->filterAcceptsItem(colorIndex);
 }
 

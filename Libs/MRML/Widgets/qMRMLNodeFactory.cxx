@@ -107,7 +107,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   // in the scene (and add it if it is not present).
   if (!node->GetScene() || !node->GetScene()->IsNodePresent(node))
   {
-    vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
+    vtkMRMLNode* const nodeAdded = d->MRMLScene->AddNode(node);
     Q_ASSERT(nodeAdded == node || //
              node->GetSingletonTag() != nullptr);
     node = nodeAdded;
@@ -121,7 +121,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className, const QHash<QString, QString>& attributes)
 {
   Q_ASSERT(scene);
-  QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());
+  const QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());
   factory->setMRMLScene(scene);
   // Loop over attribute map and update the factory
   for (const QString& key : attributes.keys())

@@ -64,7 +64,7 @@ void qMRMLSceneViewMenuPrivate::resetMenu()
   noSceneViewAction->setDisabled(true);
 
   // Loop over sceneView nodes and associated menu entry
-  int sceneViewCount = this->SceneViewsLogic->GetNumberOfSceneViews();
+  const int sceneViewCount = this->SceneViewsLogic->GetNumberOfSceneViews();
   for (int n = 0; n < sceneViewCount; n++)
   {
     this->addMenuItem(n);
@@ -81,7 +81,7 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject*
     return;
   }
 
-  vtkMRMLSequenceBrowserNode* sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(mrmlNode);
+  vtkMRMLSequenceBrowserNode* const sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(mrmlNode);
   if (!sequenceBrowserNode)
   {
     return;
@@ -107,14 +107,14 @@ void qMRMLSceneViewMenuPrivate::addMenuItem(int index)
     q->clear();
   }
 
-  std::string sceneViewName = this->SceneViewsLogic->GetNthSceneViewName(index);
+  const std::string sceneViewName = this->SceneViewsLogic->GetNthSceneViewName(index);
   QMenu* sceneViewMenu = q->addMenu(QString::fromUtf8(sceneViewName.c_str()));
   sceneViewMenu->setObjectName("sceneViewMenu");
 
-  QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore", &this->RestoreActionMapper, SLOT(map()));
+  QAction* const restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore", &this->RestoreActionMapper, SLOT(map()));
   this->RestoreActionMapper.setMapping(restoreAction, index);
 
-  QAction* deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete", &this->DeleteActionMapper, SLOT(map()));
+  QAction* const deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete", &this->DeleteActionMapper, SLOT(map()));
   this->DeleteActionMapper.setMapping(deleteAction, index);
 }
 
@@ -126,7 +126,7 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObjec
     return;
   }
 
-  vtkMRMLSequenceBrowserNode* sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(mrmlNode);
+  vtkMRMLSequenceBrowserNode* const sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(mrmlNode);
   if (!sequenceBrowserNode)
   {
     return;
@@ -152,7 +152,7 @@ void qMRMLSceneViewMenuPrivate::removeMenuItem(int index)
     return;
   }
 
-  QAction* action = q->actions().at(index);
+  QAction* const action = q->actions().at(index);
   q->removeAction(action);
 
   if (q->actions().isEmpty())
@@ -166,7 +166,7 @@ void qMRMLSceneViewMenuPrivate::removeMenuItem(int index)
 bool qMRMLSceneViewMenuPrivate::hasNoSceneViewItem() const
 {
   Q_Q(const qMRMLSceneViewMenu);
-  QList<QAction*> actions = q->actions();
+  const QList<QAction*> actions = q->actions();
   Q_ASSERT(actions.count() > 0); // At least one item is expected
   return (actions.at(0)->text().compare(this->NoSceneViewText) == 0);
 }

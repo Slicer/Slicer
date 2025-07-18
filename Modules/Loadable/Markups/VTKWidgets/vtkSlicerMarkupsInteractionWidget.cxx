@@ -72,28 +72,28 @@ void vtkSlicerMarkupsInteractionWidget::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsInteractionWidget::GetActiveComponentType()
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentType();
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::SetActiveComponentType(int type)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentType(type);
 }
 
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsInteractionWidget::GetActiveComponentIndex()
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentIndex();
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::SetActiveComponentIndex(int index)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  const vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentIndex(index);
 }
 
@@ -117,12 +117,12 @@ void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(this->GetMarkupsNode());
+  const MRMLNodeModifyBlocker blocker(this->GetMarkupsNode());
 
   vtkNew<vtkGeneralTransform> transformToWorld;
   vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetMarkupsNode()->GetParentTransformNode(), nullptr, transformToWorld);
 
-  vtkAbstractTransform* transformFromWorld = transformToWorld->GetInverse();
+  vtkAbstractTransform* const transformFromWorld = transformToWorld->GetInverse();
 
   vtkNew<vtkGeneralTransform> transformToApply;
   transformToApply->PostMultiply();
@@ -136,7 +136,7 @@ void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation>::New();
+  const vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation>::New();
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -169,7 +169,7 @@ vtkMRMLMarkupsNode* vtkSlicerMarkupsInteractionWidget::GetMarkupsNode()
 //-----------------------------------------------------------------------------
 bool vtkSlicerMarkupsInteractionWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  const unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   bool processedEvent = false;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -208,8 +208,8 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetJumpCursor(vtkMRMLInteracti
     return false;
   }
 
-  int componentIndex = markupsDisplayNode->GetActiveComponentIndex();
-  int componentType = markupsDisplayNode->GetActiveComponentType();
+  const int componentIndex = markupsDisplayNode->GetActiveComponentIndex();
+  const int componentType = markupsDisplayNode->GetActiveComponentType();
 
   markupsNode->GetScene()->SaveStateForUndo();
 
@@ -302,7 +302,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   vtkNew<vtkTransform> worldToObjectTransform;
   worldToObjectTransform->SetMatrix(worldToObjectMatrix);
 
-  int index = displayNode->GetActiveComponentIndex();
+  const int index = displayNode->GetActiveComponentIndex();
   if (index <= vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge)
   {
     // We are interacting with one of the edges.
@@ -431,8 +431,8 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   }
 
   // If we have crossed over the origin, we need to flip the selected handle across the Right and/or Anterior axis.
-  bool flipLRHandle = bounds_Plane[1] < bounds_Plane[0];
-  bool flipPAHandle = bounds_Plane[3] < bounds_Plane[2];
+  const bool flipLRHandle = bounds_Plane[1] < bounds_Plane[0];
+  const bool flipPAHandle = bounds_Plane[3] < bounds_Plane[2];
   if (flipLRHandle || flipPAHandle)
   {
     this->FlipPlaneHandles(flipLRHandle, flipPAHandle);
@@ -440,14 +440,14 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
 
   if (bounds_Plane[1] < bounds_Plane[0])
   {
-    double tempBounds_Plane0 = bounds_Plane[0];
+    const double tempBounds_Plane0 = bounds_Plane[0];
     bounds_Plane[0] = bounds_Plane[1];
     bounds_Plane[1] = tempBounds_Plane0;
   }
 
   if (bounds_Plane[3] < bounds_Plane[2])
   {
-    double tempBounds_Plane2 = bounds_Plane[2];
+    const double tempBounds_Plane2 = bounds_Plane[2];
     bounds_Plane[2] = bounds_Plane[3];
     bounds_Plane[3] = tempBounds_Plane2;
   }
@@ -460,7 +460,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
 void vtkSlicerMarkupsInteractionWidget::FlipPlaneHandles(bool flipLRHandle, bool flipPAHandle)
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
-  vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsPlaneNode* const markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || !displayNode)
   {
     return;
@@ -514,7 +514,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(roiNode);
+  const MRMLNodeModifyBlocker blocker(roiNode);
 
   double lastEventPos_World[3] = { 0.0, 0.0, 0.0 };
   double eventPos_World[3] = { 0.0, 0.0, 0.0 };
@@ -560,7 +560,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     vtkNew<vtkTransform> worldToObjectTransform;
     worldToObjectTransform->SetMatrix(worldToObjectMatrix);
 
-    int index = displayNode->GetActiveComponentIndex();
+    const int index = displayNode->GetActiveComponentIndex();
     if (index < 6 && !rep->GetSliceNode())
     {
       this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
@@ -698,9 +698,9 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     roiNode->SetCenterWorld(newOrigin_World);
     roiNode->SetSize(newSize);
 
-    bool flipLRHandle = bounds_ROI[1] < bounds_ROI[0];
-    bool flipPAHandle = bounds_ROI[3] < bounds_ROI[2];
-    bool flipISHandle = bounds_ROI[5] < bounds_ROI[4];
+    const bool flipLRHandle = bounds_ROI[1] < bounds_ROI[0];
+    const bool flipPAHandle = bounds_ROI[3] < bounds_ROI[2];
+    const bool flipISHandle = bounds_ROI[5] < bounds_ROI[4];
     if (flipLRHandle || flipPAHandle || flipISHandle)
     {
       this->FlipROIHandles(flipLRHandle, flipPAHandle, flipISHandle);
@@ -712,7 +712,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
 void vtkSlicerMarkupsInteractionWidget::FlipROIHandles(bool flipLRHandle, bool flipPAHandle, bool flipISHandle)
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
-  vtkMRMLMarkupsROINode* markupsNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsROINode* const markupsNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || !displayNode)
   {
     return;

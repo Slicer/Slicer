@@ -69,7 +69,7 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
     vtkMRMLNode* Node{ nullptr };
   };
 
-  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* const appLogic = this->GetMRMLApplicationLogic();
   if (appLogic == nullptr)
   {
     vtkErrorMacro("Resample: MRML application logic is not available");
@@ -91,7 +91,7 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
     return false;
   }
 
-  vtkMRMLNodeCleanup nodeCleanup(cliLogic->GetMRMLScene(), cmdNode);
+  const vtkMRMLNodeCleanup nodeCleanup(cliLogic->GetMRMLScene(), cmdNode);
 
   if (inputVolume == nullptr)
   {
@@ -134,7 +134,7 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
 
   cliLogic->ApplyAndWait(cmdNode, /* updateDisplay= */ false);
 
-  bool success = cmdNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed;
+  const bool success = cmdNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed;
 
   if (!success)
   {

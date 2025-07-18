@@ -112,9 +112,9 @@ int qMRMLSceneDisplayableModelTest1(int argc, char* argv[])
 
     vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLModelNode");
     vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLScalarVolumeNode");
-    vtkMRMLNode* hnode1 = sceneFactory.generateNode("vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* const hnode1 = sceneFactory.generateNode("vtkMRMLModelHierarchyNode");
     vtkMRMLDisplayableHierarchyNode* h1 = vtkMRMLDisplayableHierarchyNode::SafeDownCast(hnode1);
-    vtkMRMLNode* hnode2 = sceneFactory.generateNode("vtkMRMLDisplayableHierarchyNode");
+    vtkMRMLNode* const hnode2 = sceneFactory.generateNode("vtkMRMLDisplayableHierarchyNode");
     vtkMRMLDisplayableHierarchyNode* h2 = vtkMRMLDisplayableHierarchyNode::SafeDownCast(hnode2);
     if (node1 && node1->GetID() && h1)
     {

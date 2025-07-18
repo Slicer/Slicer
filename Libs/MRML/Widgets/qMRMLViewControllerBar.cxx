@@ -182,9 +182,9 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
   // gradient.setColorAt(0.5, barColor.darker(145));
   // gradient.setColorAt(1., barColor.darker(165));
   // Dialog effect
-  int hue = barColor.hue();
-  int sat = barColor.saturation();
-  double valueCoef = static_cast<double>(barColor.value()) / 240.;
+  const int hue = barColor.hue();
+  const int sat = barColor.saturation();
+  const double valueCoef = static_cast<double>(barColor.value()) / 240.;
   gradient.setColorAt(0.0, QColor::fromHsv(hue, sat, qMin(255., 358. * valueCoef)));
   gradient.setColorAt(0.15, QColor::fromHsv(hue, sat, qMin(255., 224 * valueCoef)));
   gradient.setColorAt(0.24, QColor::fromHsv(hue, sat, qMin(255., 213 * valueCoef)));

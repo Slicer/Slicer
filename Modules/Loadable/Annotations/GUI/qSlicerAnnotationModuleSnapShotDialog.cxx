@@ -75,7 +75,7 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  std::string description = this->m_Logic->GetSnapShotDescription(nodeId);
+  const std::string description = this->m_Logic->GetSnapShotDescription(nodeId);
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
 
@@ -93,10 +93,10 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   }
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
-  double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(nodeId);
+  const double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(nodeId);
   this->setScaleFactor(scaleFactor);
 
-  vtkImageData* imageData = this->m_Logic->GetSnapShotScreenshot(nodeId);
+  vtkImageData* const imageData = this->m_Logic->GetSnapShotScreenshot(nodeId);
   this->setImageData(imageData);
 }
 
@@ -124,15 +124,15 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
 void qSlicerAnnotationModuleSnapShotDialog::accept()
 {
   // name
-  QString name = this->nameEdit();
+  const QString name = this->nameEdit();
   QByteArray nameBytes = name.toUtf8();
 
   // description
-  QString description = this->description();
+  const QString description = this->description();
   QByteArray descriptionBytes = description.toUtf8();
 
   // we need to know of which type the screenshot is
-  int screenshotType = static_cast<int>(this->widgetType());
+  const int screenshotType = static_cast<int>(this->widgetType());
 
   if (this->data().toString().isEmpty())
   {

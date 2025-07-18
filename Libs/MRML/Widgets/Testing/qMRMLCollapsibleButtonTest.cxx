@@ -48,9 +48,9 @@ private slots:
 // ----------------------------------------------------------------------------
 void qMRMLCollapsibleButtonTester::testSetMRMLScene()
 {
-  QScopedPointer<qMRMLCollapsibleButton> collapsibleButton(new qMRMLCollapsibleButton);
-  QSignalSpy registeredSignalSpy(collapsibleButton.data(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)));
-  vtkNew<vtkMRMLScene> scene;
+  const QScopedPointer<qMRMLCollapsibleButton> collapsibleButton(new qMRMLCollapsibleButton);
+  const QSignalSpy registeredSignalSpy(collapsibleButton.data(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)));
+  const vtkNew<vtkMRMLScene> scene;
 
   // Trigger the mrmlsceneChanged signal
   collapsibleButton->setMRMLScene(scene.GetPointer());

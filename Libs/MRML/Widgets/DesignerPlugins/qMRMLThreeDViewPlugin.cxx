@@ -12,7 +12,7 @@ qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject* _parent)
 //-----------------------------------------------------------------------------
 QWidget* qMRMLThreeDViewPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLThreeDView* _widget = new qMRMLThreeDView(_parent);
+  qMRMLThreeDView* const _widget = new qMRMLThreeDView(_parent);
   return _widget;
 }
 

@@ -70,7 +70,7 @@ void vtkMRMLMeasurementArea::Compute()
     vtkPolyData* surfaceAreaMesh = this->GetMeshValue();
     if (!surfaceAreaMesh)
     {
-      vtkNew<vtkPolyData> newMesh;
+      const vtkNew<vtkPolyData> newMesh;
       this->SetMeshValue(newMesh);
       surfaceAreaMesh = this->GetMeshValue();
     }

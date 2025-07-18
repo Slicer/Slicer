@@ -27,7 +27,7 @@ qSlicerDiffusionTensorVolumeDisplayWidgetPlugin::qSlicerDiffusionTensorVolumeDis
 //------------------------------------------------------------------------------
 QWidget* qSlicerDiffusionTensorVolumeDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerDiffusionTensorVolumeDisplayWidget* _widget = new qSlicerDiffusionTensorVolumeDisplayWidget(_parent);
+  qSlicerDiffusionTensorVolumeDisplayWidget* const _widget = new qSlicerDiffusionTensorVolumeDisplayWidget(_parent);
   return _widget;
 }
 

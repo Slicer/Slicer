@@ -8,7 +8,7 @@ qMRMLLinearTransformSliderPlugin::qMRMLLinearTransformSliderPlugin(QObject* _par
 
 QWidget* qMRMLLinearTransformSliderPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLLinearTransformSlider* _widget = new qMRMLLinearTransformSlider(_parent);
+  qMRMLLinearTransformSlider* const _widget = new qMRMLLinearTransformSlider(_parent);
   return _widget;
 }
 
