@@ -238,7 +238,7 @@ void qMRMLVolumePropertyNodeWidget::updateIndependentComponents()
   MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
   bool indepdendentComponents = d->IndependentRadioButton->isChecked();
   volumeProperty->SetIndependentComponents(indepdendentComponents);
-  if (d->IndependentRadioButton->isChecked())
+  if (d->RGBColorsRadioButton->isChecked())
   {
     d->ComponentSpinBox->setValue(0);
   }
