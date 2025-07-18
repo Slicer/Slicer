@@ -909,8 +909,12 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
     }
 
-    for (const QString& extensionName : QStringList() //
-                                          << "MarkupsToModel")
+    QStringList extensionNames;
+
+    extensionNames = QStringList() //
+                     << "MarkupsToModel";
+
+    for (const QString& extensionName : extensionNames)
     {
       QVERIFY(this->uninstallHelper(&model, extensionName));
       QVERIFY(!model.isExtensionInstalled(extensionName));
@@ -922,21 +926,29 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
 
-    for (const QString& extensionName : QStringList() //
-                                          << "ImageMaker"
-                                          << "CurveMaker")
+    QStringList extensionNames;
+
+    extensionNames = QStringList() //
+                     << "ImageMaker"
+                     << "CurveMaker";
+
+    for (const QString& extensionName : extensionNames)
     {
       QVERIFY(model.isExtensionInstalled(extensionName));
     }
 
-    for (const QString& extensionName : QStringList() //
-                                          << "MarkupsToModel")
+    extensionNames = QStringList() //
+                     << "MarkupsToModel";
+
+    for (const QString& extensionName : extensionNames)
     {
       QVERIFY(!model.isExtensionInstalled(extensionName));
     }
 
-    for (const QString& extensionName : QStringList() //
-                                          << "MarkupsToModel")
+    extensionNames = QStringList() //
+                     << "MarkupsToModel";
+
+    for (const QString& extensionName : extensionNames)
     {
       this->installHelper(&model, operatingSystem, this->expectedExtensionNames().indexOf(extensionName), this->Tmp.absolutePath());
     }
@@ -1222,9 +1234,13 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     model.setExtensionEnabled("ImageMaker", false);
     QCOMPARE(spyExtensionEnabledChanged.count(), 1);
 
+    const QStringList extensionNames{
+      "MarkupsToModel",
+      "CurveMaker",
+    };
+
     QCOMPARE(model.isExtensionEnabled("ImageMaker"), false);
-    for (const QString& extensionName : QStringList() << "MarkupsToModel"
-                                                      << "CurveMaker")
+    for (const QString& extensionName : extensionNames)
     {
       QCOMPARE(model.isExtensionEnabled(extensionName), true);
     }
@@ -1232,8 +1248,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     model.updateModel();
 
     QCOMPARE(model.isExtensionEnabled("ImageMaker"), false);
-    for (const QString& extensionName : QStringList() << "MarkupsToModel"
-                                                      << "CurveMaker")
+    for (const QString& extensionName : extensionNames)
     {
       QCOMPARE(model.isExtensionEnabled(extensionName), true);
     }
