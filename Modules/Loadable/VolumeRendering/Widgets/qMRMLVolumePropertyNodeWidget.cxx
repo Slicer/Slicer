@@ -123,6 +123,12 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
 
   bool independentComponents = newVolumeProperty ? newVolumeProperty->GetIndependentComponents() : false;
+  int currentComponent = 0;
+  if (independentComponents)
+  {
+    currentComponent = d->ComponentSpinBox->value();
+  }
+  d->VolumePropertyWidget->setCurrentComponent(currentComponent);
 
   bool wasBlocking = d->ComponentsButtonGroup->blockSignals(true);
   d->RGBColorsRadioButton->setChecked(!independentComponents);
@@ -238,8 +244,4 @@ void qMRMLVolumePropertyNodeWidget::updateIndependentComponents()
   MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
   bool indepdendentComponents = d->IndependentRadioButton->isChecked();
   volumeProperty->SetIndependentComponents(indepdendentComponents);
-  if (d->RGBColorsRadioButton->isChecked())
-  {
-    d->ComponentSpinBox->setValue(0);
-  }
 }
