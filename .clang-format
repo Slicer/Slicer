@@ -37,6 +37,14 @@ ForEachMacros:
   - Q_FOREACH
   - Q_FOREVER
 
+QualifierAlignment: Custom
+QualifierOrder:
+  - friend
+  - static
+  - inline
+  - constexpr
+  - const
+  - type
 SortIncludes: false
 
 ---
