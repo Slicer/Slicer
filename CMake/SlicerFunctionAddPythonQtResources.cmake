@@ -53,7 +53,7 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
     add_custom_command(
       OUTPUT ${out_path}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${out_dir}
-      COMMAND ${PYTHON_EXECUTABLE}
+      COMMAND ${Python3_EXECUTABLE}
         ${Slicer_QRCC_SCRIPT}
         --rcc ${QT_RCC_EXECUTABLE}
         -o ${out_path}

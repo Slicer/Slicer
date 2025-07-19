@@ -1,7 +1,7 @@
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
   # Determine name of Python interpreter
   #
-  # NOTE: Do NOT use ${PYTHON_EXECUTABLE}; when using our own Python, it is set
+  # NOTE: Do NOT use ${Python3_EXECUTABLE}; when using our own Python, it is set
   #       to a ctkAppLauncher wrapper, and we don't want that!
   if(Slicer_USE_SYSTEM_python)
     set(PYTHON python)
