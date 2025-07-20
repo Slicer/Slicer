@@ -152,9 +152,12 @@ public:
   /// chosen application language and should not be displayed to end users.
   virtual const char* GetMarkupType() { return "Markup"; };
 
+  /// Set markup short name.
+  void SetDefaultNodeNamePrefix(std::string prefix);
+
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
-  virtual const char* GetDefaultNodeNamePrefix();
+  virtual const char* GetDefaultNodeNamePrefix() override;
 
   /// Get markup type GUI display name
   /// This may be displayed to the user and therefore it is translated to the application language.
