@@ -432,6 +432,7 @@ bool vtkMRMLVolumePropertyJsonStorageNode::WriteVolumePropertyNode(vtkMRMLJsonWr
   writer->WriteVectorProperty("effectiveRange", volumePropertyNode->GetEffectiveRange(), 2);
   this->WriteVolumeProperty(writer, volumePropertyNode->GetVolumeProperty(), volumePropertyNode->GetNumberOfIndependentComponents());
   writer->WriteObjectEnd();
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -537,7 +538,8 @@ bool vtkMRMLVolumePropertyJsonStorageNode::WriteTransferFunction(vtkMRMLJsonWrit
   if (!name || std::string(name).empty())
   {
     vtkErrorToMessageCollectionMacro(
-      this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::WriteTransferFunction", "Writing transfer function failed: name is null or empty.") return false;
+      this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::WriteTransferFunction", "Writing transfer function failed: name is null or empty.");
+    return false;
   }
 
   vtkPiecewiseFunction* piecewiseFunction = vtkPiecewiseFunction::SafeDownCast(transferFunction);
@@ -546,7 +548,8 @@ bool vtkMRMLVolumePropertyJsonStorageNode::WriteTransferFunction(vtkMRMLJsonWrit
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumePropertyJsonStorageNode::WriteTransferFunction",
-                                     "Writing transfer function failed: transfer function is neither a piecewise function nor a color transfer function.") return false;
+                                     "Writing transfer function failed: transfer function is neither a piecewise function nor a color transfer function.");
+    return false;
   }
 
   writer->WriteObjectPropertyStart(name);
@@ -650,7 +653,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
   {
     vtkErrorToMessageCollectionMacro(
       this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePropertyNodeFromFile", "Reading volume property node file failed: invalid filename.");
-    return 0;
+    return nullptr;
   }
 
   std::string newNodeName;
@@ -663,15 +666,13 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     newNodeName = this->GetScene()->GetUniqueNameByString(this->GetFileNameWithoutExtension(filePath).c_str());
   }
 
-  int result = 1;
-
   vtkNew<vtkMRMLJsonReader> jsonReader;
   vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
   if (!jsonElement)
   {
     vtkErrorToMessageCollectionMacro(
       this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePropertyNodeFromFile", jsonReader->GetUserMessages()->GetAllMessagesAsString());
-    return 0;
+    return nullptr;
   }
 
   vtkSmartPointer<vtkMRMLJsonElement> volumeProperties = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetArrayProperty("volumeProperties"));
@@ -680,7 +681,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePropertyNodeFromFile",
                                      "Reading volume property node file failed: 'volumeProperties' array not found.");
-    return 0;
+    return nullptr;
   }
 
   vtkSmartPointer<vtkMRMLJsonElement> volumePropertyElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(volumeProperties->GetArrayItem(vpIndex));
@@ -689,7 +690,7 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePro
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumePropertyJsonStorageNode::AddNewVolumePropertyNodeFromFile",
                                      "Reading volume property node file failed: unable to read volume property node.");
-    return 0;
+    return nullptr;
   }
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLVolumePropertyNode", newNodeName));
   if (!volumePropertyNode)
