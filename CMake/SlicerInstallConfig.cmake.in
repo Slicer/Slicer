@@ -129,6 +129,6 @@ set(Teem_DIR "${Slicer_HOME}/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@.
 set(VTK_DIR "${Slicer_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
 set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")
 get_filename_component(PYTHON_LIB_FILE "${PYTHON_LIBRARY}" NAME)
-set(PYTHON_LIBRARIES "${Slicer_HOME}/lib/Python/lib/${PYTHON_LIB_FILE}")
+set(Python3_LIBRARIES "${Slicer_HOME}/lib/Python/lib/${PYTHON_LIB_FILE}")
 get_filename_component(PYTHON_INCLUDE_DIR "${PYTHON_INCLUDE_PATH}" NAME)
 set(PYTHON_INCLUDE_PATH "${Slicer_HOME}/lib/Python/include/${PYTHON_INCLUDE_DIR}")
