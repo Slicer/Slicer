@@ -12,7 +12,7 @@ xcode-select --install
 
 - A CMake version that meets at least the minimum required CMake version [here](https://github.com/Slicer/Slicer/blob/main/CMakeLists.txt#L1). **Slicer build scripts are not yet compatible with CMake 4.x**
 - Qt 5: **tested and recommended**.
-  - For building Slicer: download and execute [qt-unified-mac-x64-online.dmg](https://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg), install Qt 5.15.2, make sure to select the `qtwebengine` component.
+  - For building Slicer: download and execute [qt-online-installer-mac-x64-online.dmg](https://download.qt.io/official_releases/online_installers/qt-online-installer-mac-x64-online.dmg), install Qt 5.15.2, make sure to select the `qtwebengine` component.
   - For packaging and redistributing Slicer: build Qt using [qt-easy-build](https://github.com/jcfr/qt-easy-build#readme)
 - Setting `CMAKE_OSX_DEPLOYMENT_TARGET` CMake variable specifies the minimum macOS version a generated installer may target. So it should be equal to or less than the version of SDK you are building on. Note that the SDK version is set using `CMAKE_OSX_SYSROOT` CMake variable automatically initialized during CMake configuration.
 
