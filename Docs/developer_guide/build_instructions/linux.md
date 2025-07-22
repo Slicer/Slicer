@@ -146,8 +146,8 @@ This process requires an account in [qt.io](https://qt.io)
 Download the Qt Linux online installer and make it executable:
 
 ```console
- curl -LO http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
- chmod +x qt-unified-linux-x64-online.run
+ curl -LO https://download.qt.io/official_releases/online_installers/qt-online-installer-linux-x64-online.run
+ chmod +x qt-online-installer-linux-x64-online.run
 ```
 You can run the installer and follow the instructions in the GUI. Keep in mind that the components needed by 3D Slicer are: `qt.qt5.5152.gcc_64`, `qt.qt5.5152.qtwebengine` and `qt.qt5.5152.qtwebengine.gcc_64`.
 
@@ -156,7 +156,7 @@ Alternatively, you can request the installation of the components with the follo
 ```console
 export QT_ACCOUNT_LOGIN=<set your qt.io account email here>
 export QT_ACCOUNT_PASSWORD=<set your password here>
-./qt-unified-linux-x64-online.run \
+./qt-online-installer-linux-x64-online.run \
   install \
     qt.qt5.5152.gcc_64 \
     qt.qt5.5152.qtwebengine \
