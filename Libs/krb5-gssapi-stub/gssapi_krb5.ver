@@ -1,0 +1,6 @@
+gssapi_krb5_2_MIT {
+    global:
+        GSS_C_NT_HOSTBASED_SERVICE;
+    local:
+        *;
+};

@@ -756,6 +756,36 @@ if(NOT DEFINED Slicer_USE_SYSTEM_QT)
 endif()
 
 #-----------------------------------------------------------------------------
+# Option for krb5-gssapi-stub
+#
+# This controls whether a stub library named `libgssapi_krb5.so.2` is built
+# to satisfy GSSAPI symbol requirements in Qt5Network (see below).
+#
+# By default, the option is automatically set to ON only on Linux when
+# Slicer is **not using a system Qt**.
+#
+# You may override the default by configuring with:
+#   -DSlicer_BUILD_KRB5_GSSAPI_STUB:BOOL=ON or OFF
+#-----------------------------------------------------------------------------
+if(DEFINED Slicer_BUILD_KRB5_GSSAPI_STUB)
+  if(Slicer_USE_SYSTEM_QT AND Slicer_BUILD_KRB5_GSSAPI_STUB)
+    message(WARNING "Unsetting Slicer_BUILD_KRB5_GSSAPI_STUB because Slicer_USE_SYSTEM_QT is 'ON'")
+    unset(Slicer_BUILD_KRB5_GSSAPI_STUB CACHE)
+  endif()
+endif()
+
+if(NOT DEFINED Slicer_BUILD_KRB5_GSSAPI_STUB)
+  if(UNIX AND NOT APPLE AND NOT Slicer_USE_SYSTEM_QT)
+    set(Slicer_BUILD_KRB5_GSSAPI_STUB ON)
+  else()
+    set(Slicer_BUILD_KRB5_GSSAPI_STUB OFF)
+  endif()
+endif()
+mark_as_superbuild(Slicer_BUILD_KRB5_GSSAPI_STUB:BOOL)
+
+message(STATUS "Setting Slicer_BUILD_KRB5_GSSAPI_STUB to '${Slicer_BUILD_KRB5_GSSAPI_STUB}'")
+
+#-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 # NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
@@ -1057,6 +1087,25 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
+
+#-----------------------------------------------------------------------------
+# krb5-gssapi-stub
+#-----------------------------------------------------------------------------
+# Build a minimal stub library that exports the GSSAPI symbol
+# `GSS_C_NT_HOSTBASED_SERVICE` expected by Qt5Network when it is built
+# with GSSAPI support enabled.
+#
+# This avoids shipping or linking against system Kerberos libraries that may
+# introduce OpenSSL version mismatches or be missing entirely.
+#
+# This situation commonly occurs when using a non-system Qt installation,
+# such as one installed via the Qt online installer.
+#
+# Since Slicer does not use GSSAPI/Kerberos authentication, this stub safely
+# prevents runtime errors from unresolved symbols.
+if(Slicer_BUILD_KRB5_GSSAPI_STUB)
+  add_subdirectory(Libs/krb5-gssapi-stub)
+endif()
 
 #-----------------------------------------------------------------------------
 # Subdirectories
