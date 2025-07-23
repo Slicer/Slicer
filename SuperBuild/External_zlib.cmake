@@ -70,7 +70,7 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
   if(WIN32)
     set(ZLIB_LIBRARY ${zlib_DIR}/lib/zlib.lib)
   else()
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libz.a)
+    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
