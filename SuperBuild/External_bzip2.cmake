@@ -28,13 +28,13 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/bzip2.git"
+    "${EP_GIT_PROTOCOL}://gitlab.com/bzip2/bzip2.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "391dddabd24aee4a06e10ab6636f26dd93c21308"
+    "66c46b8c9436613fd81bc5d03f63a61933a4dcc3"
     QUIET
     )
 
@@ -50,10 +50,20 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
+      # Compiler settings.
       #-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      # Options
       -DCMAKE_DEBUG_POSTFIX:STRING=
+      -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DENABLE_LIB_ONLY:BOOL=ON
+      -DENABLE_SHARED_LIB:BOOL=OFF
+      -DENABLE_STATIC_LIB:BOOL=ON
+      -DENABLE_TESTS:BOOL=OFF
+      -DENABLE_DOCS:BOOL=OFF
+      # Install directories
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -63,9 +73,9 @@ if((NOT DEFINED BZIP2_INCLUDE_DIR
 
   set(BZIP2_INCLUDE_DIR ${EP_SOURCE_DIR})
   if(WIN32)
-    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/libbz2.lib)
+    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/bz2_static.lib)
   else()
-    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/libbz2.a)
+    set(BZIP2_LIBRARIES ${EP_INSTALL_DIR}/lib/libbz2_static.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
