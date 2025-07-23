@@ -1,4 +1,4 @@
-from slicer import qMRMLSubjectHierarchyTreeView, qMRMLSubjectHierarchyComboBox
+from slicer import qMRMLSubjectHierarchyComboBox, qMRMLSubjectHierarchyTreeView
 from slicer.parameterNodeWrapper import (
     isNodeOrUnionOfNodes,
     getNodeTypes,

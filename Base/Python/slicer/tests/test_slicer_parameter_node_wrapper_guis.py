@@ -9,8 +9,8 @@ import qt
 import slicer
 
 from slicer import (
-    qMRMLSubjectHierarchyTreeView,
     qMRMLSubjectHierarchyComboBox,
+    qMRMLSubjectHierarchyTreeView,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
 )

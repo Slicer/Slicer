@@ -109,9 +109,10 @@ public:
   Q_INVOKABLE void clearSelection();
   Q_INVOKABLE vtkIdType currentItem() const;
   Q_INVOKABLE vtkIdType rootItem() const;
-
-  /// Convenience method to set current item by associated data node.
+  /// Convenience method to get the MRML data node corresponding to the selected item.
   Q_INVOKABLE virtual vtkMRMLNode* currentNode() const;
+
+  /// Convenience method to set the current item given a MRML data node.
   Q_INVOKABLE virtual void setCurrentNode(vtkMRMLNode*);
 
   void setShowRootItem(bool show);
