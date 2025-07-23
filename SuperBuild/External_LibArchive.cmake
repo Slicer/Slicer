@@ -33,7 +33,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v3.8.1"
+    "30a9657b6c12f675fd5057cea017b2c9bd924dda" # slicer-v3.8.1-2025-06-01-9525f90ca
     QUIET
     )
 
@@ -90,6 +90,8 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      # Install directories
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     DEPENDS
