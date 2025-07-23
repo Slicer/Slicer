@@ -56,6 +56,7 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
       -DZLIB_COMPAT:BOOL=ON
       -DZLIB_ENABLE_TESTS:BOOL=OFF
       # Install directories
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
