@@ -95,6 +95,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+
 public:
   typedef ctkComboBox Superclass;
   qMRMLSubjectHierarchyComboBox(QWidget* parent = nullptr);
@@ -107,6 +109,11 @@ public:
   Q_INVOKABLE void clearSelection();
   Q_INVOKABLE vtkIdType currentItem() const;
   Q_INVOKABLE vtkIdType rootItem() const;
+  /// Convenience method to get the MRML data node corresponding to the selected item.
+  Q_INVOKABLE virtual vtkMRMLNode* currentNode() const;
+
+  /// Convenience method to set the current item given a MRML data node.
+  Q_INVOKABLE virtual void setCurrentNode(vtkMRMLNode*);
 
   void setShowRootItem(bool show);
   bool showRootItem() const;
@@ -168,6 +175,8 @@ public:
   Q_INVOKABLE void setLevelFilter(QStringList& levelFilter);
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
   Q_INVOKABLE void setNodeTypes(const QStringList& types);
+  QStringList nodeTypes() const;
+
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
   /// accepted by the data node type filter. Show all data nodes if empty
   Q_INVOKABLE void setHideChildNodeTypes(const QStringList& types);
