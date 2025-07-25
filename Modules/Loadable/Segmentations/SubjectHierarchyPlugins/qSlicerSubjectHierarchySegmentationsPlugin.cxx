@@ -53,6 +53,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchySegmentationsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentationsPlugin);
 
 protected:
@@ -1503,3 +1504,5 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentsOrderModified(vtkObje
 
   d->SegmentOrderUpdateFromSegmentationNodeInProgress = wasSegmentOrderUpdateFromSegmentationNodeInProgress;
 }
+
+#include "qSlicerSubjectHierarchySegmentationsPlugin.moc"

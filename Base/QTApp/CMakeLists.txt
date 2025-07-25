@@ -21,6 +21,7 @@ set(KIT_SRCS
   qSlicerAboutDialog.cxx
   qSlicerAboutDialog.h
   qSlicerApplicationHelper.cxx
+  qSlicerApplicationHelper.txx #// Must be explicitly added because AUTO_MOC does not recognize .txx files
   qSlicerApplicationHelper.h
   qSlicerErrorReportDialog.cxx
   qSlicerErrorReportDialog.h

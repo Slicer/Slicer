@@ -51,6 +51,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyFolderPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyFolderPlugin);
 
 protected:
@@ -733,3 +734,5 @@ void qSlicerSubjectHierarchyFolderPlugin::emptyFolderCreatedFromTreeView(qMRMLSu
     d->TreeViewsToShowEmptyFolderAction.push_back(treeView);
   }
 }
+
+#include "qSlicerSubjectHierarchyFolderPlugin.moc"
