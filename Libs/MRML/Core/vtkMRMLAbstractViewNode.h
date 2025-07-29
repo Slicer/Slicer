@@ -23,6 +23,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // MRML includes
 #include "vtkMRMLNode.h"
@@ -298,6 +299,18 @@ public:
   vtkSetMacro(ScreenScaleFactor, double);
   //@}
 
+  //@{
+  /// \brief Get/Set the displayable manager group associated with the view.
+  vtkGetObjectMacro(DisplayableManagerGroup, vtkObject);
+  vtkSetObjectMacro(DisplayableManagerGroup, vtkObject);
+  //@}
+
+  //@{
+  /// \brief Get/Set the render window associated with the view.
+  vtkGetObjectMacro(RenderWindow, vtkObject);
+  vtkSetObjectMacro(RenderWindow, vtkObject);
+  //@}
+
 protected:
   vtkMRMLAbstractViewNode();
   ~vtkMRMLAbstractViewNode() override;
@@ -362,6 +375,9 @@ protected:
 
   static const char* ParentLayoutNodeReferenceRole;
   static const char* InteractionNodeReferenceRole;
+
+  vtkWeakPointer<vtkObject> DisplayableManagerGroup = nullptr;
+  vtkWeakPointer<vtkObject> RenderWindow = nullptr;
 };
 
 //------------------------------------------------------------------------------
