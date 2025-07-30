@@ -229,7 +229,8 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Millimeter", "length", "", "mm", 4, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Micrometer", "length", "", u8"\u00b5m", 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli"), 0.);
+    "Micrometer", "length", "",
+    static_cast<const char*>(u8"\u00b5m"), 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
     "Nanometer", "length", "", "nm", 4, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli"), 0.);
 
@@ -240,7 +241,8 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Square Millimeter", "area", "", "mm2", 4, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli", 2), 0.);
   this->AddUnitNodeToScene(scene,
-    "Square Micrometer", "area", "", u8"\u00b5m2", 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 2), 0.);
+    "Square Micrometer", "area", "",
+    static_cast<const char*>(u8"\u00b5m2"), 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 2), 0.);
   this->AddUnitNodeToScene(scene,
     "Square Nanometer", "area", "", "nm2", 4, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli", 2), 0.);
 
@@ -251,7 +253,8 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Cubic Millimeter", "volume", "", "mm3", 5, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli", 3), 0.);
   this->AddUnitNodeToScene(scene,
-    "Cubic Micrometer", "volume", "", u8"\u00b5m3", 5, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 3), 0.);
+    "Cubic Micrometer", "volume", "",
+    static_cast<const char*>(u8"\u00b5m3"), 5, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 3), 0.);
   this->AddUnitNodeToScene(scene,
     "Cubic Nanometer", "volume", "", "nm3", 5, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli", 3), 0.);
 
@@ -271,7 +274,8 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Millisecond", "time", "", "ms", 3, -10000., 10000., Self::GetDisplayCoefficient("milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Microsecond", "time", "", u8"\u00b5s", 3, -10000., 10000., Self::GetDisplayCoefficient("micro"), 0.);
+    "Microsecond", "time", "",
+    static_cast<const char*>(u8"\u00b5s"), 3, -10000., 10000., Self::GetDisplayCoefficient("micro"), 0.);
 
   this->AddUnitNodeToScene(scene,
     "Hertz", "frequency", "", "Hz", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
