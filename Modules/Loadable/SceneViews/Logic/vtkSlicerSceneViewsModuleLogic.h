@@ -89,8 +89,8 @@ public:
   /// Update the contents of a sceneView to match the current state of the scene.
   /// If new nodes are specified, they will be added to the scene view.
   void UpdateNthSceneView(int sceneViewIndex, bool updateExistingNodes = true, bool saveDisplayNodes = true, bool saveViewNodes = true);
-  void UpdateNthSceneView(vtkCollection* savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
-  void UpdateNthSceneView(std::vector<vtkMRMLNode*> savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
+  void UpdateNthSceneView(int sceneViewIndex, vtkCollection* savedNodes, bool updateExistingNodes = true);
+  void UpdateNthSceneView(int sceneViewIndex, std::vector<vtkMRMLNode*> savedNodes, bool updateExistingNodes = true);
   //@}
 
   /// Convert the index of the scene view to the corresponding value index of the sequence browser that holds the snapshot.
@@ -190,6 +190,18 @@ public:
   bool IsSceneViewNode(vtkMRMLNode* node);
   //@}
 
+  /// Add all display-related nodes to the vector.
+  void GetDisplayNodes(std::vector<vtkMRMLNode*>& displayNodes);
+
+  /// Add all view-related nodes to the vector.
+  void GetViewNodes(std::vector<vtkMRMLNode*>& viewNodes);
+
+  void GetDisplayNodeClasses(std::vector<std::string>& displayNodeTypes);
+  std::vector<std::string> GetDisplayNodeClasses();
+
+  void GetViewNodeClasses(std::vector<std::string>& viewNodeTypes);
+  std::vector<std::string> GetViewNodeClasses();
+
 protected:
   vtkSlicerSceneViewsModuleLogic();
 
@@ -228,12 +240,6 @@ protected:
 
   /// Convert the specified vtkMRMLSceneViewNode to use sequences.
   vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneView, vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
-
-  /// Add all display-related nodes to the vector.
-  void GetDisplayNodes(std::vector<vtkMRMLNode*>& displayNodes);
-
-  /// Add all view-related nodes to the vector.
-  void GetViewNodes(std::vector<vtkMRMLNode*>& viewNodes);
 
   /// Returns the sequence node for a given proxy node. Will create a new vtkMRMLSequenceNode if none exists.
   vtkMRMLSequenceNode* GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser, vtkMRMLNode* proxyNode);

@@ -266,11 +266,7 @@ void qSlicerSceneViewsModuleWidget::editSceneView(int index)
 {
   Q_D(qSlicerSceneViewsModuleWidget);
   d->sceneViewDialog()->loadSceneViewInfo(index);
-  QPushButton* saveAsButton = d->sceneViewDialog()->findChild<QPushButton*>("saveAsButton");
-  if (saveAsButton)
-  {
-    saveAsButton->hide();
-  }
+  d->sceneViewDialog()->setSaveAsButtonVisibility(false);
   d->sceneViewDialog()->exec();
   this->updateFromMRMLScene();
 }
@@ -392,11 +388,7 @@ void qSlicerSceneViewsModuleWidget::showSceneViewDialog()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
   // show the dialog
-  QPushButton* saveAsButton = d->sceneViewDialog()->findChild<QPushButton*>("saveAsButton");
-  if (saveAsButton)
-  {
-    saveAsButton->setVisible(false);
-  }
+  d->sceneViewDialog()->setSaveAsButtonVisibility(false);
   d->sceneViewDialog()->reset();
   d->sceneViewDialog()->exec();
 }
