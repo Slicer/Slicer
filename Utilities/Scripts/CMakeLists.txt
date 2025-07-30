@@ -13,20 +13,28 @@ if(UNIX AND NOT APPLE)
     )
 
   if(Slicer_BUILD_KRB5_GSSAPI_STUB)
-    # Install a wrapper for `git` that ensures system `git` is called with
-    # a clean environment, working around symbol resolution errors when the
-    # GSSAPI stub is enabled.
-    # See https://github.com/Slicer/Slicer/issues/8612
-    configure_file(
-      git.sh.in
-      ${Slicer_BINARY_DIR}/bin/git
-      COPYONLY
-      USE_SOURCE_PERMISSIONS
+    # Install wrappers for system executables to ensure they are called
+    # with a clean environment. This avoids symbol resolution errors (e.g.,
+    # in `libssh`) caused by the GSSAPI stub.
+    #
+    # See: https://github.com/Slicer/Slicer/issues/8612
+    foreach(tool_name IN ITEMS
+        git
       )
-    install(PROGRAMS ${Slicer_BINARY_DIR}/bin/git
-      DESTINATION ${Slicer_INSTALL_BIN_DIR}
-      COMPONENT Runtime
-      )
+      set(TOOL_NAME_CONFIG ${tool_name})
+      configure_file(
+        system-executable-wrapper.sh.in
+        ${Slicer_BINARY_DIR}/bin/${tool_name}
+        @ONLY
+        USE_SOURCE_PERMISSIONS
+        )
+      unset(TOOL_NAME_CONFIG)
+
+      install(PROGRAMS ${Slicer_BINARY_DIR}/bin/${tool_name}
+        DESTINATION ${Slicer_INSTALL_BIN_DIR}
+        COMPONENT Runtime
+        )
+    endforeach()
   endif()
 endif()
 
