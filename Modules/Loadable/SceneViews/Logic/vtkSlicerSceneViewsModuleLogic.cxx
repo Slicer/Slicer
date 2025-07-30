@@ -273,41 +273,37 @@ void vtkSlicerSceneViewsModuleLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::GetDisplayNodes(std::vector<vtkMRMLNode*>& nodes)
 {
-  std::vector<vtkMRMLNode*> displayNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLDisplayNode", displayNodes);
-  nodes.insert(nodes.end(), displayNodes.begin(), displayNodes.end());
+  std::vector<std::string> displayNodeClasses;
+  this->GetDisplayNodeClasses(displayNodeClasses);
+  if (displayNodeClasses.empty())
+  {
+    return;
+  }
 
-  std::vector<vtkMRMLNode*> volumePropertyNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLVolumePropertyNode", volumePropertyNodes);
-  nodes.insert(nodes.end(), volumePropertyNodes.begin(), volumePropertyNodes.end());
-
-  std::vector<vtkMRMLNode*> clipNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLClipNode", clipNodes);
-  nodes.insert(nodes.end(), clipNodes.begin(), clipNodes.end());
-
-  std::vector<vtkMRMLNode*> crosshairNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode", crosshairNodes);
-  nodes.insert(nodes.end(), crosshairNodes.begin(), crosshairNodes.end());
+  for (const std::string& displayNodeClass : displayNodeClasses)
+  {
+    std::vector<vtkMRMLNode*> classNodes;
+    this->GetMRMLScene()->GetNodesByClass(displayNodeClass.c_str(), classNodes);
+    nodes.insert(nodes.end(), classNodes.begin(), classNodes.end());
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::GetViewNodes(std::vector<vtkMRMLNode*>& nodes)
 {
-  std::vector<vtkMRMLNode*> viewNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLAbstractViewNode", viewNodes);
-  nodes.insert(nodes.end(), viewNodes.begin(), viewNodes.end());
+  std::vector<std::string> viewNodeClasses;
+  this->GetViewNodeClasses(viewNodeClasses);
+  if (viewNodeClasses.empty())
+  {
+    return;
+  }
 
-  std::vector<vtkMRMLNode*> cameraNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cameraNodes);
-  nodes.insert(nodes.end(), cameraNodes.begin(), cameraNodes.end());
-
-  std::vector<vtkMRMLNode*> sliceCompositeNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode", sliceCompositeNodes);
-  nodes.insert(nodes.end(), sliceCompositeNodes.begin(), sliceCompositeNodes.end());
-
-  std::vector<vtkMRMLNode*> layoutNodes;
-  this->GetMRMLScene()->GetNodesByClass("vtkMRMLLayoutNode", layoutNodes);
-  nodes.insert(nodes.end(), layoutNodes.begin(), layoutNodes.end());
+  for (const std::string& viewNodeClass : viewNodeClasses)
+  {
+    std::vector<vtkMRMLNode*> classNodes;
+    this->GetMRMLScene()->GetNodesByClass(viewNodeClass.c_str(), classNodes);
+    nodes.insert(nodes.end(), classNodes.begin(), classNodes.end());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -487,11 +483,11 @@ void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(int sceneViewIndex, bool
   {
     this->GetViewNodes(savedNodes);
   }
-  this->UpdateNthSceneView(savedNodes, sceneViewIndex, updateExistingNodes);
+  this->UpdateNthSceneView(sceneViewIndex, savedNodes, updateExistingNodes);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(vtkCollection* savedNodes, int sceneViewIndex, bool updateExistingNodes /*=true*/)
+void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(int sceneViewIndex, vtkCollection* savedNodes, bool updateExistingNodes /*=true*/)
 {
   if (!this->GetMRMLScene())
   {
@@ -515,11 +511,11 @@ void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(vtkCollection* savedNode
       savedNodesVector.push_back(node);
     }
   }
-  this->UpdateNthSceneView(savedNodesVector, sceneViewIndex, updateExistingNodes);
+  this->UpdateNthSceneView(sceneViewIndex, savedNodesVector, updateExistingNodes);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(std::vector<vtkMRMLNode*> savedNodes, int sceneViewIndex, bool updateExistingNodes /*=true*/)
+void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(int sceneViewIndex, std::vector<vtkMRMLNode*> savedNodes, bool updateExistingNodes /*=true*/)
 {
   if (!this->GetMRMLScene())
   {
@@ -1291,4 +1287,39 @@ bool vtkSlicerSceneViewsModuleLogic::IsSceneViewNode(vtkMRMLNode* node)
 
   const char* attributeValue = node->GetAttribute(vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName());
   return attributeValue && strcmp(attributeValue, vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue()) == 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::GetDisplayNodeClasses(std::vector<std::string>& displayNodeTypes)
+{
+  displayNodeTypes.push_back("vtkMRMLDisplayNode");
+  displayNodeTypes.push_back("vtkMRMLVolumePropertyNode");
+  displayNodeTypes.push_back("vtkMRMLClipNode");
+  displayNodeTypes.push_back("vtkMRMLCrosshairNode");
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerSceneViewsModuleLogic::GetDisplayNodeClasses()
+{
+  std::vector<std::string> nodeTypes;
+  this->GetDisplayNodeClasses(nodeTypes);
+  return nodeTypes;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::GetViewNodeClasses(std::vector<std::string>& viewNodeTypes)
+{
+  viewNodeTypes.push_back("vtkMRMLAbstractViewNode");
+  viewNodeTypes.push_back("vtkMRMLCameraNode");
+  viewNodeTypes.push_back("vtkMRMLLayoutNode");
+  viewNodeTypes.push_back("vtkMRMLSliceNode");
+  viewNodeTypes.push_back("vtkMRMLSliceLogic");
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerSceneViewsModuleLogic::GetViewNodeClasses()
+{
+  std::vector<std::string> nodeTypes;
+  this->GetViewNodeClasses(nodeTypes);
+  return nodeTypes;
 }

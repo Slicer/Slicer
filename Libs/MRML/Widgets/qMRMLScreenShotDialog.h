@@ -42,6 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScreenShotDialog : public QDialog
   Q_PROPERTY(QString nameEdit READ nameEdit WRITE setNameEdit)
   Q_PROPERTY(double scaleFactor READ scaleFactor WRITE setScaleFactor)
   Q_PROPERTY(bool showScaleFactorSpinBox READ showScaleFactorSpinBox WRITE setShowScaleFactorSpinBox)
+  Q_PROPERTY(bool saveAsButtonVisibility READ saveAsButtonVisibility WRITE setSaveAsButtonVisibility)
 public:
   typedef QDialog Superclass;
 
@@ -80,6 +81,9 @@ public:
 
   void setShowScaleFactorSpinBox(const bool& state);
   bool showScaleFactorSpinBox() const;
+
+  void setSaveAsButtonVisibility(const bool& visible);
+  bool saveAsButtonVisibility() const;
 
   /// set/return the image data of the screenshot
   void setImageData(vtkImageData* screenshot);

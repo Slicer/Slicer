@@ -266,6 +266,20 @@ bool qMRMLScreenShotDialog::showScaleFactorSpinBox() const
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLScreenShotDialog::setSaveAsButtonVisibility(const bool& visible)
+{
+  Q_D(qMRMLScreenShotDialog);
+  d->saveAsButton->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLScreenShotDialog::saveAsButtonVisibility() const
+{
+  Q_D(const qMRMLScreenShotDialog);
+  return d->saveAsButton->isVisible();
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLScreenShotDialog::resetDialog()
 {
   Q_D(qMRMLScreenShotDialog);

@@ -26,6 +26,12 @@ public:
 
   void accept() override;
 
+public slots:
+  void onUpdateExistingNodesClicked();
+  void onCaptureDisplayNodesClicked();
+  void onCaptureViewNodesClicked();
+  void onNodeSelectionChanged();
+
 private:
   Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleDialog);
 
