@@ -100,8 +100,8 @@ int qMRMLUtf8Test1(int argc, char* argv[])
   QString actualDisplayNodeName = QString::fromUtf8(volumeDisplayNode->GetName());
   // expectedDisplayNodeName contains a number of unicode characters that are not found in Latin1 character set
   // (the word is "a'rvi'ztu"ro" tu:ko:rfu'ro'ge'p" - https://en.wikipedia.org/wiki/Mojibake#Examples)
-  QString expectedDisplayNodeName =
-    QString::fromUtf8(u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070");
+  QString expectedDisplayNodeName = QString::fromUtf8(
+    static_cast<const char*>(u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070"));
   CHECK_BOOL(actualDisplayNodeName == expectedDisplayNodeName, true);
 
   // Check that volume can be saved into filename with special character and that file can be loaded
