@@ -1,3 +1,35 @@
+if(UNIX AND NOT APPLE)
+  # Install generic script to restore the original system environment when
+  # launching system tools (e.g., `git`) from within a Slicer launcher context.
+  configure_file(
+    exec-outside-slicer-env.sh
+    ${Slicer_BINARY_DIR}/bin/exec-outside-slicer-env.sh
+    COPYONLY
+    USE_SOURCE_PERMISSIONS
+    )
+  install(PROGRAMS ${Slicer_BINARY_DIR}/bin/exec-outside-slicer-env.sh
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    COMPONENT Runtime
+    )
+
+  if(Slicer_BUILD_KRB5_GSSAPI_STUB)
+    # Install a wrapper for `git` that ensures system `git` is called with
+    # a clean environment, working around symbol resolution errors when the
+    # GSSAPI stub is enabled.
+    # See https://github.com/Slicer/Slicer/issues/8612
+    configure_file(
+      git.sh.in
+      ${Slicer_BINARY_DIR}/bin/git
+      COPYONLY
+      USE_SOURCE_PERMISSIONS
+      )
+    install(PROGRAMS ${Slicer_BINARY_DIR}/bin/git
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
+      COMPONENT Runtime
+      )
+  endif()
+endif()
+
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
   # Determine name of Python interpreter
   #
