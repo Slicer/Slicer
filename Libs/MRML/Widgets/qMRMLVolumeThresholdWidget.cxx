@@ -29,6 +29,7 @@ class qMRMLVolumeThresholdWidgetPrivate
   : public qMRMLVolumeWidgetPrivate
   , public Ui_qMRMLVolumeThresholdWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLVolumeThresholdWidget);
 
 protected:
@@ -330,3 +331,5 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
   }
   d->VolumeThresholdRangeWidget->blockSignals(wasBlocking);
 }
+
+#include "qMRMLVolumeThresholdWidget.moc"

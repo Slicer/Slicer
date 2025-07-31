@@ -156,4 +156,4 @@ void qMRMLCheckableNodeComboBoxTester::testRename_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLCheckableNodeComboBoxTest)
-#include "moc_qMRMLCheckableNodeComboBoxTest.cxx"
+#include "qMRMLCheckableNodeComboBoxTest.moc"
