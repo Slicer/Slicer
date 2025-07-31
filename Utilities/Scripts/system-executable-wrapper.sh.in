@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # -----------------------------------------------------------------------------
-# @TOOL_NAME_CONFIG@ wrapper to work around symbol resolution errors when running
-# system executables from within a Slicer environment built with
+# Wrapper for system executables (e.g., git) to work around symbol resolution
+# issues when invoked from a Slicer environment built with
 # `Slicer_BUILD_KRB5_GSSAPI_STUB=ON`.
 #
 # Rationale:
@@ -20,6 +20,10 @@
 # using the `exec-outside-slicer-env.sh` helper, which restores the original
 # environment (e.g., resets LD_LIBRARY_PATH) before executing the binary.
 #
+# Usage:
+#   This script should be installed and renamed to the name of the system tool
+#   it is wrapping (e.g., `git`). It should not be invoked directly.
+#
 # See also:
 #   - GSSAPI stub: https://github.com/Slicer/Slicer/tree/main/Libs/krb5-gssapi-stub#readme
 #   - Slicer issue: https://github.com/Slicer/Slicer/issues/8612
@@ -27,5 +31,5 @@
 # -----------------------------------------------------------------------------
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-binary_name="@TOOL_NAME_CONFIG@"
+binary_name=$(basename "$0")
 exec "$script_dir/exec-outside-slicer-env.sh" "$binary_name" "$@"

@@ -21,14 +21,12 @@ if(UNIX AND NOT APPLE)
     foreach(tool_name IN ITEMS
         git
       )
-      set(TOOL_NAME_CONFIG ${tool_name})
       configure_file(
         system-executable-wrapper.sh.in
         ${Slicer_BINARY_DIR}/bin/${tool_name}
-        @ONLY
+        COPYONLY
         USE_SOURCE_PERMISSIONS
         )
-      unset(TOOL_NAME_CONFIG)
 
       install(PROGRAMS ${Slicer_BINARY_DIR}/bin/${tool_name}
         DESTINATION ${Slicer_INSTALL_BIN_DIR}
