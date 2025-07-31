@@ -120,10 +120,6 @@ private:
   /// displayable nodes in the subject hierarchy branch under the item that
   /// has the display node associated.
   bool ApplyDisplayPropertiesOnBranch{ false };
-
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLFolderDisplayNode", "Folder Display"); };
 };
 
 #endif

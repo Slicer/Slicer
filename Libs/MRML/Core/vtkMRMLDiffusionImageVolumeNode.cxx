@@ -28,6 +28,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionImageVolumeNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionImageVolumeNode::vtkMRMLDiffusionImageVolumeNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionImageVolumeNode", "Diffusion Image Volume");
+
   this->BaselineNodeID = nullptr;
   this->MaskNodeID = nullptr;
   this->DiffusionWeightedNodeID = nullptr;

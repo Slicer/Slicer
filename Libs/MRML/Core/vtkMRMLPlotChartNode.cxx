@@ -47,6 +47,8 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotChartNode);
 //----------------------------------------------------------------------------
 vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLPlotChartNode", "Plot Chart");
+
   this->HideFromEditors = 0;
 
   this->SetFontType("Arial");

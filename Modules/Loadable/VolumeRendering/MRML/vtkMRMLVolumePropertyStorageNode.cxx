@@ -31,6 +31,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyStorageNode::vtkMRMLVolumePropertyStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "Volume Property Storage");
+
   this->DefaultWriteFileExtension = "vp";
 }
 

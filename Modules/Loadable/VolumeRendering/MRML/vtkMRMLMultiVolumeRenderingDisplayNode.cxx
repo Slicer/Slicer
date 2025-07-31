@@ -32,7 +32,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode() = default;
+vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMultiVolumeRenderingDisplayNode", "Multi Volume Rendering");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeRenderingDisplayNode::~vtkMRMLMultiVolumeRenderingDisplayNode() = default;

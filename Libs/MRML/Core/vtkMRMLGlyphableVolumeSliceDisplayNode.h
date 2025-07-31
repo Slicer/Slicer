@@ -134,10 +134,6 @@ public:
     colorModeUseCellScalars = 3
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLGlyphableVolumeSliceDisplayNode", "Glyphable Volume Slice Display Node"); };
-
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for ALL nodes
   //--------------------------------------------------------------------------

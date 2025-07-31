@@ -69,9 +69,6 @@ public:
   /// Compression parameter corresponding to minimum compression (fast)
   std::string GetCompressionParameterFastest() { return "gzip_fastest"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLNRRDStorageNode", "NRRD Storage"); };
   /// Compression parameter corresponding to normal compression
   std::string GetCompressionParameterNormal() { return "gzip_normal"; };
   /// Compression parameter corresponding to maximum compression (slow)

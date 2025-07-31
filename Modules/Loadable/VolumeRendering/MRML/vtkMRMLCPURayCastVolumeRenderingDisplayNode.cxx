@@ -31,7 +31,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLCPURayCastVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLCPURayCastVolumeRenderingDisplayNode::vtkMRMLCPURayCastVolumeRenderingDisplayNode() = default;
+vtkMRMLCPURayCastVolumeRenderingDisplayNode::vtkMRMLCPURayCastVolumeRenderingDisplayNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLCPURayCastVolumeRenderingDisplayNode", "CPU Ray-Cast Volume Rendering");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode::~vtkMRMLCPURayCastVolumeRenderingDisplayNode() = default;

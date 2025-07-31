@@ -27,6 +27,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsROIDisplayNode::vtkMRMLMarkupsROIDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsROIDisplayNode", "Markups ROI Display");
+
   this->FillOpacity = 0.2;
   this->HandlesInteractive = true;
   this->TranslationHandleVisibility = true;

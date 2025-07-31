@@ -41,6 +41,8 @@ static const char* SliceDistanceEncodedProjectionColorNodeReferenceRole = "dista
 //-----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLModelDisplayNode", "Model Display");
+
   this->PassThrough = vtkPassThrough::New();
   this->PassThrough->AllowNullInputOn();
   this->AssignAttribute = vtkAssignAttribute::New();

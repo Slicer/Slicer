@@ -44,6 +44,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSliceNode);
 // Constructor
 vtkMRMLSliceNode::vtkMRMLSliceNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSliceNode", "Slice");
+
   // set by user
   this->SliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
   this->SliceToRAS->Identity();

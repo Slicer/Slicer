@@ -46,10 +46,6 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "TableSQLightStorage"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "Table SQ Light Storage"); };
-
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 

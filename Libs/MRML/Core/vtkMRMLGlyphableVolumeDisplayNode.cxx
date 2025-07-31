@@ -34,6 +34,8 @@ vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeDisplayNode::vtkMRMLGlyphableVolumeDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLGlyphableVolumeDisplayNode", "Glyphable Volume Display");
+
   // Strings
 
   this->GlyphColorNodeID = nullptr;

@@ -36,6 +36,8 @@ vtkMRMLNodeNewMacro(vtkMRMLShaderPropertyNode);
 //----------------------------------------------------------------------------
 vtkMRMLShaderPropertyNode::vtkMRMLShaderPropertyNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLShaderPropertyNode", "Shader Property");
+
   this->ObservedEvents = vtkIntArray::New();
   this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
 

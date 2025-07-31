@@ -33,6 +33,8 @@ vtkMRMLNodeNewMacro(vtkMRMLLabelMapVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode::vtkMRMLLabelMapVolumeDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLLabelMapVolumeDisplayNode", "Label Map Volume Display");
+
   this->MapToColors = vtkImageMapToColors::New();
   this->MapToColors->SetOutputFormatToRGBA();
 

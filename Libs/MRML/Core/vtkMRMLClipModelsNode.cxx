@@ -27,6 +27,8 @@ vtkMRMLClipModelsNode::~vtkMRMLClipModelsNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLClipModelsNode", "Clip Models");
+
   MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);

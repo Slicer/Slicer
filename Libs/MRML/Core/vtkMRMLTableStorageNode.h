@@ -112,9 +112,6 @@ protected:
     std::string NullValueString;
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTableStorageNode", "Table Storage"); };
   using ColumnInfo = struct StructColumnInfo;
 
   /// Determines information about the columns in the table, including column name,

@@ -98,10 +98,6 @@ public:
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SequenceBrowser"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSequenceBrowserNode", "Sequence Browser"); };
-
   /// Set the sequence data node.
   /// Returns the new proxy node postfix.
   std::string SetAndObserveMasterSequenceNodeID(const char* sequenceNodeID);

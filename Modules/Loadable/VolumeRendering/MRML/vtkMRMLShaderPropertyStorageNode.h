@@ -45,10 +45,6 @@ public:
   /// Get node XML tag name (like Storage, Transform)
   const char* GetNodeTagName() override { return "ShaderPropertyStorage"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "Shader Property Storage"); };
-
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 

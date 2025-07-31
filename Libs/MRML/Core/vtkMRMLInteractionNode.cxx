@@ -13,6 +13,8 @@ vtkMRMLNodeNewMacro(vtkMRMLInteractionNode);
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLInteractionNode", "Interaction");
+
   this->HideFromEditors = 1;
 
   this->SetSingletonTag("Singleton");

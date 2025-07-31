@@ -34,6 +34,7 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode);
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceDisplayNode()
   : vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionTensorVolumeSliceDisplayNode", "Diffusion Tensor Volume Slice Display Node");
 
   // Enumerated
   this->DiffusionTensorDisplayPropertiesNode = nullptr;

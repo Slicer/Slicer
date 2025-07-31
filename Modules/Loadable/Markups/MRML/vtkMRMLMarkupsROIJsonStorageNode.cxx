@@ -33,7 +33,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIJsonStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode() {}
+vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsROIJsonStorageNode", "Markups ROI JSON Storage");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsROIJsonStorageNode::~vtkMRMLMarkupsROIJsonStorageNode() = default;

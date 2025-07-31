@@ -50,10 +50,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Text"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTextNode", "Text"); };
-
   /// Set text node contents and encoding.
   /// If the encoding is not specified, then it will not be changed from the current value.
   /// \sa SetEncoding()

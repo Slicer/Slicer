@@ -40,10 +40,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "DiffusionTensorVolume"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDiffusionTensorVolumeNode", "Diffusion Tensor Volume"); };
-
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLDiffusionTensorVolumeNode);

@@ -99,10 +99,6 @@ public:
   /// Get node XML tag name (like Volume, Model).
   const char* GetNodeTagName() override { return "PlotSeries"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLPlotSeriesNode", "Plot Series"); };
-
   ///
   /// Set and observe Table node ID.
   /// \sa TableNodeID, GetTableNodeID(), SetInputData()

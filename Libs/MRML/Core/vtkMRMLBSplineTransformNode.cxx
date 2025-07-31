@@ -25,6 +25,8 @@ vtkMRMLNodeNewMacro(vtkMRMLBSplineTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLBSplineTransformNode", "B-Spline Transform");
+
   // Set up the node with a dummy bspline grid (that contains a small set of
   // null-vectors) to make sure the node is valid and can be saved
   double gridSize[3] = { 4, 4, 4 };

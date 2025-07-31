@@ -26,6 +26,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSliceDisplayNode);
 //-----------------------------------------------------------------------------
 vtkMRMLSliceDisplayNode::vtkMRMLSliceDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSliceDisplayNode", "Slice Display");
+
   // Set active component defaults for mouse (identified by empty string)
   this->ActiveComponents[GetDefaultContextName()] = ComponentInfo();
 }

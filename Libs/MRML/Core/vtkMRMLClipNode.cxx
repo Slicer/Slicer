@@ -49,6 +49,8 @@ vtkMRMLNodeNewMacro(vtkMRMLClipNode);
 //----------------------------------------------------------------------------
 vtkMRMLClipNode::vtkMRMLClipNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLClipNode", "Clip");
+
   this->HideFromEditors = true;
   this->ClippingMethod = vtkMRMLClipNode::Straight;
 

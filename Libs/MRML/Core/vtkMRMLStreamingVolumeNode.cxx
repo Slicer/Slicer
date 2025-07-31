@@ -46,6 +46,8 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
   , Frame(nullptr)
   , FrameModifiedCallbackCommand(vtkSmartPointer<vtkCallbackCommand>::New())
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLStreamingVolumeNode", "Streaming Volume");
+
   this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->FrameModifiedCallbackCommand->SetCallback(vtkMRMLStreamingVolumeNode::FrameModifiedCallback);
 }

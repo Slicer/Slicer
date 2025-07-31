@@ -39,7 +39,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLTextStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLTextStorageNode::vtkMRMLTextStorageNode() = default;
+vtkMRMLTextStorageNode::vtkMRMLTextStorageNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTextStorageNode", "Text Storage");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLTextStorageNode::~vtkMRMLTextStorageNode() = default;

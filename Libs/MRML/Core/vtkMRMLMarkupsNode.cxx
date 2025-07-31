@@ -527,16 +527,6 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
 }
 
-//----------------------------------------------------------------------------
-std::string vtkMRMLMarkupsNode::GetTypeDisplayName()
-{
-  if (this->TypeDisplayName.empty())
-  {
-    this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsNode", "Markup");
-  }
-  return this->TypeDisplayName;
-}
-
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* vtkMRMLMarkupsNode::GetMarkupsDisplayNode()
 {

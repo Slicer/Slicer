@@ -35,7 +35,10 @@ static const char NODE_BASE_NAME_SEPARATOR[] = "-";
 vtkMRMLNodeNewMacro(vtkMRMLSequenceStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLSequenceStorageNode::vtkMRMLSequenceStorageNode() = default;
+vtkMRMLSequenceStorageNode::vtkMRMLSequenceStorageNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSequenceStorageNode", "Sequence Storage");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLSequenceStorageNode::~vtkMRMLSequenceStorageNode() = default;

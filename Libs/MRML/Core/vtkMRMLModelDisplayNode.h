@@ -233,10 +233,6 @@ protected:
   double BackfaceColorHSVOffset[3];
 
   bool ClippingCapSurface{ false };
-
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLModelDisplayNode", "Model Display"); };
   double ClippingCapOpacity{ 1.0 };
   bool ClippingOutline{ false };
   double ClippingCapColorHSVOffset[3];

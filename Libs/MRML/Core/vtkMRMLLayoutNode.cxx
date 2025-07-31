@@ -16,6 +16,8 @@ vtkMRMLNodeNewMacro(vtkMRMLLayoutNode);
 //----------------------------------------------------------------------------
 vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLLayoutNode", "Layout");
+
   this->GUIPanelVisibility = 1;
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;

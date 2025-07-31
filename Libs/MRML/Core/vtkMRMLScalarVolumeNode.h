@@ -92,9 +92,6 @@ protected:
 
   vtkCodedEntry* VoxelValueQuantity{ nullptr };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLScalarVolumeNode", "Volume"); };
   vtkCodedEntry* VoxelValueUnits{ nullptr };
 };
 

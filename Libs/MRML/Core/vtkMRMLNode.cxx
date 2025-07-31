@@ -116,6 +116,10 @@ void vtkMRMLNode::Copy(vtkMRMLNode* node)
   {
     vtkMRMLCopyStringMacro(Name);
   }
+  if (!node->TypeDisplayName.empty())
+  {
+    vtkMRMLCopyStdStringMacro(TypeDisplayName);
+  }
   if (!node->DefaultNodeNamePrefix.empty())
   {
     vtkMRMLCopyStdStringMacro(DefaultNodeNamePrefix);
@@ -957,7 +961,7 @@ void vtkMRMLNode::GetAttributeNames(vtkStringArray* attributeNames)
 //----------------------------------------------------------------------------
 std::string vtkMRMLNode::GetDefaultNodeNamePrefix()
 {
-  if (vtkMRMLNode::GetDefaultNodeNamePrefix().empty())
+  if (this->DefaultNodeNamePrefix.empty())
   {
     return this->GetNodeTagName();
   }
@@ -968,6 +972,22 @@ std::string vtkMRMLNode::GetDefaultNodeNamePrefix()
 void vtkMRMLNode::SetDefaultNodeNamePrefix(const std::string& prefix)
 {
   this->DefaultNodeNamePrefix = prefix;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetTypeDisplayName()
+{
+  if (this->TypeDisplayName.empty())
+  {
+    return this->GetNodeTagName();
+  }
+  return this->TypeDisplayName;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetTypeDisplayName(const std::string& name)
+{
+  this->TypeDisplayName = name;
 }
 
 //----------------------------------------------------------------------------

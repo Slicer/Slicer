@@ -45,6 +45,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionTensorVolumeDisplayNode", "Diffusion Tensor Volume Display");
+
   this->ScalarInvariant = vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation;
   this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   this->DTIMathematicsAlpha = vtkDiffusionTensorMathematics::New();

@@ -1033,9 +1033,6 @@ protected:
 
   std::string PropertiesLabelText;
 
-  /// Store markup type GUI display name. Translated to the application language.
-  std::string TypeDisplayName;
-
   /// Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 

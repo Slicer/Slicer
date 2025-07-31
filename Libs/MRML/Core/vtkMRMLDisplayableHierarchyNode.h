@@ -118,10 +118,6 @@ public:
     DisplayModifiedEvent = 17000
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDisplayableHierarchyNode", "Displayable Hierarchy"); };
-
 protected:
   vtkMRMLDisplayableHierarchyNode();
   ~vtkMRMLDisplayableHierarchyNode() override;

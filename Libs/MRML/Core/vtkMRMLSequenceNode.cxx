@@ -60,6 +60,8 @@ vtkCxxSetVariableInDataAndStorageNodeMacro(NumericIndexValueTolerance, double);
 //----------------------------------------------------------------------------
 vtkMRMLSequenceNode::vtkMRMLSequenceNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSequenceNode", "Sequence");
+
   this->SetIndexName("time");
   this->SetIndexUnit("s");
   this->HideFromEditorsOff();

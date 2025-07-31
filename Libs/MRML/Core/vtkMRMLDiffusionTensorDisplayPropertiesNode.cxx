@@ -31,6 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayPropertiesNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionTensorDisplayPropertiesNode", "Diffusion Tensor Display Properties");
 
   // Default display is FA (often used) and line glyphs (quickest to render)
   this->ScalarInvariant = this->FractionalAnisotropy;

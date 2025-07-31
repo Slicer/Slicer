@@ -51,6 +51,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTransformNode", "Transform");
+
   this->TransformToParent = nullptr;
   this->TransformFromParent = nullptr;
   this->ReadAsTransformToParent = 0;

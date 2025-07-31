@@ -28,6 +28,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionTensorVolumeNode", "Diffusion Tensor Volume");
+
   this->Order = 2; // Second order Tensor
 }
 

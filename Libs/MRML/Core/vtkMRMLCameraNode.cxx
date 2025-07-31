@@ -40,6 +40,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCameraNode);
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLCameraNode", "Camera");
+
   this->HideFromEditors = 0;
 
   vtkNew<vtkCamera> camera;

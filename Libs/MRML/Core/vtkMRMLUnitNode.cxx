@@ -35,6 +35,8 @@ vtkMRMLNodeNewMacro(vtkMRMLUnitNode);
 //----------------------------------------------------------------------------
 vtkMRMLUnitNode::vtkMRMLUnitNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLUnitNode", "Unit");
+
   this->HideFromEditors = 1;
 
   this->Prefix = nullptr;

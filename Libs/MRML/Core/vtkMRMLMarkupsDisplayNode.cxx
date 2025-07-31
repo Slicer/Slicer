@@ -45,6 +45,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsDisplayNode", "Markups Display");
+
   // Markups display node settings
   this->Visibility = 1;
   this->Visibility2D = 1;

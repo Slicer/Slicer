@@ -60,6 +60,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSegmentationDisplayNode", "Segmentation Display");
+
   this->SetBackfaceCulling(0); // segment models are not necessarily closed surfaces (e.g., ribbon models)
   this->Visibility2D = 1;      // show slice intersections by default
 

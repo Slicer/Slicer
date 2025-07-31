@@ -33,6 +33,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeDisplayNode::vtkMRMLDiffusionWeightedVolumeDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionWeightedVolumeDisplayNode", "Diffusion Weighted Volume Display");
+
   this->DiffusionComponent = 0;
   this->ExtractComponent = vtkImageExtractComponents::New();
   this->Threshold->SetInputConnection(this->ExtractComponent->GetOutputPort());

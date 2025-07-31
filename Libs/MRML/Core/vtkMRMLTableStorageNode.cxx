@@ -77,6 +77,8 @@ const char* COMPONENT_SEPERATOR = "_";
 //----------------------------------------------------------------------------
 vtkMRMLTableStorageNode::vtkMRMLTableStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTableStorageNode", "Table Storage");
+
   this->DefaultWriteFileExtension = "tsv";
   this->AutoFindSchema = true;
   this->ReadLongNameAsTitle = false;

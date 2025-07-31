@@ -44,10 +44,6 @@ public:
   /// Get node XML tag name (like Storage, Transform)
   const char* GetNodeTagName() override { return "TransformStorage"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTransformStorageNode", "Transform Storage"); };
-
   ///
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode* node) override;

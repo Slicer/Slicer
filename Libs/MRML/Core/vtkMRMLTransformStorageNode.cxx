@@ -38,6 +38,8 @@ bool vtkMRMLTransformStorageNode::RegisterInverseTransformTypesCompleted = false
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTransformStorageNode", "Transform Storage");
+
   this->PreferITKv3CompatibleTransforms = 0;
   this->DefaultWriteFileExtension = "h5";
 

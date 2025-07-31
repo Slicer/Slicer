@@ -44,6 +44,8 @@ vtkMRMLNodeNewMacro(vtkMRMLColorTableStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLColorTableStorageNode", "Color Table Storage");
+
   // When a color table file contains very large numbers then most likely
   // it is not a valid file (probably it is some other text file and not
   // a color table). The highest acceptable color ID is specified in MaximumColorID.

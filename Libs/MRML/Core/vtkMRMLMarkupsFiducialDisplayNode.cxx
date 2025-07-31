@@ -31,6 +31,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialDisplayNode::vtkMRMLMarkupsFiducialDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsFiducialDisplayNode", "Markups Fiducial Display");
+
   // Markups display node settings
   this->PropertiesLabelVisibility = false;
   this->PointLabelsVisibility = true;

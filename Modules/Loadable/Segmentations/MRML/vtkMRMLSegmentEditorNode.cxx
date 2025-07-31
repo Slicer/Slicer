@@ -47,6 +47,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentEditorNode);
 //----------------------------------------------------------------------------
 vtkMRMLSegmentEditorNode::vtkMRMLSegmentEditorNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSegmentEditorNode", "Segment Editor");
+
   this->SetHideFromEditors(true);
   this->SourceVolumeIntensityMaskRange[0] = 0.0;
   this->SourceVolumeIntensityMaskRange[1] = 0.0;

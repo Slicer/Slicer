@@ -32,6 +32,8 @@ Version:   $Revision: 1.0 $
 //----------------------------------------------------------------------------
 vtkMRMLColorNode::vtkMRMLColorNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLColorNode", "Color");
+
   this->Type = -1;
   this->HideFromEditors = 1;
 }

@@ -52,10 +52,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "DiffusionImageVolume"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDiffusionImageVolumeNode", "Diffusion Image Volume"); };
-
   /// Description:
   /// String ID of the storage MRML node
   void SetBaselineNodeID(const char* id);

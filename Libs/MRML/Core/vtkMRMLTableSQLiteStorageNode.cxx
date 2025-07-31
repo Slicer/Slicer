@@ -47,6 +47,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTableSQLiteStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLTableSQLiteStorageNode::vtkMRMLTableSQLiteStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLite Table Storage");
+
   this->TableName = nullptr;
   this->Password = nullptr;
   this->DefaultWriteFileExtension = "sqlite3";
