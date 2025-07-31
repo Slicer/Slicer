@@ -33,6 +33,10 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "SceneViewStorage"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSceneViewStorageNode", "Scene View Storage"); };
+
   /// Initialize all the supported read file types
   void InitializeSupportedReadFileTypes() override;
 

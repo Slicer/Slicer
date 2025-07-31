@@ -80,6 +80,10 @@ public:
     Layer_Last // must be last
   };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSliceCompositeNode", "Slice Composite"); };
+
   int GetNumberOfAdditionalLayers();
 
   /// @{

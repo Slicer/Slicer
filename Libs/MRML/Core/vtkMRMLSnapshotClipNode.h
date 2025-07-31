@@ -51,6 +51,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SnapshotClip"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSnapshotClipNode", "Snapshot Clip"); };
+
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene

@@ -35,6 +35,10 @@ public:
   // Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "HierarchyStorage"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLHierarchyStorageNode", "Hierarchy Storage"); };
+
   /// Return true if reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 

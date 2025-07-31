@@ -44,6 +44,10 @@ public:
   // Get node XML tag name (like Volume, Markups)
   const char* GetNodeTagName() override { return "MarkupsPlaneDisplay"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsPlaneDisplayNode", "Markups Plane Display"); };
+
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsPlaneDisplayNode);

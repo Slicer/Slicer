@@ -91,6 +91,10 @@ protected:
   /// Main parameters for visualization
   vtkShaderProperty* ShaderProperty{ nullptr };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLShaderPropertyNode", "Shader Property"); };
+
 private:
   vtkMRMLShaderPropertyNode(const vtkMRMLShaderPropertyNode&) = delete;
   void operator=(const vtkMRMLShaderPropertyNode&) = delete;

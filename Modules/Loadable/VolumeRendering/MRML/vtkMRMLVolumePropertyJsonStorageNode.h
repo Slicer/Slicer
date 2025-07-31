@@ -51,6 +51,10 @@ public:
   /// Get node XML tag name (like Storage, Transform)
   const char* GetNodeTagName() override { return "VolumePropertyJsonStorage"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLVolumePropertyJsonStorageNode", "Volume Property Json Storage"); };
+
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 

@@ -74,6 +74,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Table"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTableNode", "Table"); };
+
   ///
   /// Method to propagate events generated in mrml
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;

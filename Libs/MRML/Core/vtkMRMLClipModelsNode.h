@@ -49,6 +49,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "ClipModels"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLClipModelsNode", "Clip Models"); };
+
 protected:
   vtkMRMLClipModelsNode();
   ~vtkMRMLClipModelsNode() override;

@@ -46,6 +46,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "GridTransform"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLGridTransformNode", "Grid Transform"); };
+
 protected:
   vtkMRMLGridTransformNode();
   ~vtkMRMLGridTransformNode() override;

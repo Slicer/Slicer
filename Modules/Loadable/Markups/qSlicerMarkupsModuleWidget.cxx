@@ -753,8 +753,8 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
       // NOTE: We assign object name so we can test the dynamic creation of buttons in the tests.
       markupCreatePushButton->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("PushButton"));
       markupCreatePushButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
-      markupCreatePushButton->setToolTip(qSlicerMarkupsModuleWidget::tr("Create %1").arg(markupsNode->GetTypeDisplayName()));
-      markupCreatePushButton->setText(QString(markupsNode->GetTypeDisplayName()));
+      markupCreatePushButton->setToolTip(qSlicerMarkupsModuleWidget::tr("Create %1").arg(QString::fromStdString(markupsNode->GetTypeDisplayName())));
+      markupCreatePushButton->setText(QString::fromStdString(markupsNode->GetTypeDisplayName()));
       layout->addWidget(markupCreatePushButton, i / this->createMarkupsButtonsColumns, i % this->createMarkupsButtonsColumns);
 
       QObject::connect(markupCreatePushButton, SIGNAL(clicked()), mapper, SLOT(map()));

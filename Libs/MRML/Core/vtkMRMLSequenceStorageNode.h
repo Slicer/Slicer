@@ -38,6 +38,10 @@ public:
   /// Get node XML tag name (like Storage, Sequence)
   const char* GetNodeTagName() override { return "SequenceStorage"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSequenceStorageNode", "Sequence Storage"); };
+
   /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 

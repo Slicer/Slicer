@@ -60,6 +60,10 @@ public:
   /// Get node XML tag name (like Volume, Model).
   const char* GetNodeTagName() override { return "PlotChart"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLPlotChartNode", "Plot Chart"); };
+
   ///
   /// Method to propagate events generated in mrml.
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;

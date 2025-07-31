@@ -132,6 +132,10 @@ public:
     SlicerLayoutUserView = 100
   };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLLayoutNode", "Layout"); };
+
   /// Adds a layout description with integer identifier
   /// "layout". Returns false without making any modifications if the
   /// integer identifier "layout" has already been added.

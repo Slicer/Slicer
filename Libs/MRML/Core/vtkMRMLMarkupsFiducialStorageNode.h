@@ -44,6 +44,10 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "MarkupsFiducialStorage"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial Storage"); };
+
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
 
