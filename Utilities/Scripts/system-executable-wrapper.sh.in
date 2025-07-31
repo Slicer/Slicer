@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# -----------------------------------------------------------------------------
+# Wrapper for system executables (e.g., git) to work around symbol resolution
+# issues when invoked from a Slicer environment built with
+# `Slicer_BUILD_KRB5_GSSAPI_STUB=ON`.
+#
+# Rationale:
+#
+# When a system executable such as `git` is invoked from the Slicer
+# environment—either directly or via Python packages like GitPython—the
+# presence of a stubbed `libgssapi_krb5.so.2` (used to satisfy `libssh`
+# runtime linking without pulling in full Kerberos dependencies) can break
+# symbol resolution in `libssh.so`, leading to errors such as:
+#
+#   symbol lookup error: /lib/x86_64-linux-gnu/libssh.so.4:
+#   undefined symbol: GSS_C_NT_USER_NAME, version gssapi_krb5_2_MIT
+#
+# This wrapper bypasses the Slicer environment and invokes the system tool
+# using the `exec-outside-slicer-env.sh` helper, which restores the original
+# environment (e.g., resets LD_LIBRARY_PATH) before executing the binary.
+#
+# Usage:
+#   This script should be installed and renamed to the name of the system tool
+#   it is wrapping (e.g., `git`). It should not be invoked directly.
+#
+# See also:
+#   - GSSAPI stub: https://github.com/Slicer/Slicer/tree/main/Libs/krb5-gssapi-stub#readme
+#   - Slicer issue: https://github.com/Slicer/Slicer/issues/8612
+#   - Related PR  : https://github.com/Slicer/Slicer/pull/8598
+# -----------------------------------------------------------------------------
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+binary_name=$(basename "$0")
+exec "$script_dir/exec-outside-slicer-env.sh" "$binary_name" "$@"
