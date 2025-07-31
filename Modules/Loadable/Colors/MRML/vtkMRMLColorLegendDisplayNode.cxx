@@ -41,6 +41,8 @@ vtkMRMLNodeNewMacro(vtkMRMLColorLegendDisplayNode);
 //-----------------------------------------------------------------------------
 vtkMRMLColorLegendDisplayNode::vtkMRMLColorLegendDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLColorLegendDisplayNode", "Color Legend Display");
+
   this->LabelFormat = this->GetDefaultNumericLabelFormat();
 
   vtkNew<vtkTextProperty> titleTextProperty;

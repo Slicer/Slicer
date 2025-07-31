@@ -57,6 +57,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Volume Archetype Storage");
+
   this->CenterImage = 0;
   this->SingleFile = 0;
   this->UseOrientationFromFile = 1;

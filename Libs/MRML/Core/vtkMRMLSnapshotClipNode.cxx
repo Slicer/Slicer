@@ -30,6 +30,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSnapshotClipNode);
 //----------------------------------------------------------------------------
 vtkMRMLSnapshotClipNode::vtkMRMLSnapshotClipNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSnapshotClipNode", "Snapshot Clip");
+
   this->HideFromEditors = 1;
 
   this->SceneSnapshotNodes = vtkCollection::New();

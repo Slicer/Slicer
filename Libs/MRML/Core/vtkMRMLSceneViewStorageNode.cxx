@@ -43,6 +43,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSceneViewStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewStorageNode::vtkMRMLSceneViewStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSceneViewStorageNode", "Scene View Storage");
+
   this->DefaultWriteFileExtension = "png";
 }
 

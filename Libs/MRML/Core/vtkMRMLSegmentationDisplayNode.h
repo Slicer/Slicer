@@ -352,10 +352,6 @@ protected:
   /// if exists. If does not exist, then source representation is displayed.
   char* PreferredDisplayRepresentationName2D{ nullptr };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSegmentationDisplayNode", "Segmentation Display"); };
-
   /// Name of representation that is displayed as poly data in the 3D view.
   /// If does not exist, then source representation is displayed if poly data,
   /// otherwise the first poly data representation if any.

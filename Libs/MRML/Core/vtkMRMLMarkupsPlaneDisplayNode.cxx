@@ -27,6 +27,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsPlaneDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsPlaneDisplayNode::vtkMRMLMarkupsPlaneDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsPlaneDisplayNode", "Markups Plane Display");
+
   this->HandlesInteractive = true;
   this->TranslationHandleVisibility = false;
   this->RotationHandleVisibility = false;

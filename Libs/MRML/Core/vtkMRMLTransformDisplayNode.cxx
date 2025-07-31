@@ -52,6 +52,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformDisplayNode);
 vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   : vtkMRMLDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTransformDisplayNode", "Transform Display Node");
+
   // Don't show transform nodes by default
   // to allow the users to adjust visualization parameters first
   this->Visibility = 0;

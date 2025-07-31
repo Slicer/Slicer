@@ -80,7 +80,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   if (baseName.isEmpty() && //
       !node->GetName())     // Keep default node name if the base name is empty
   {
-    baseName = node->GetDefaultNodeNamePrefix();
+    baseName = QString::fromStdString(node->GetDefaultNodeNamePrefix());
   }
   if (!baseName.isEmpty())
   {

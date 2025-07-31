@@ -71,10 +71,6 @@ public:
   /// Need this for tcl wrapping to call ReferenceStringMacro methods
   void SetModelNodeIDReference(const char* ref) { this->SetModelNodeID(ref); };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLModelHierarchyNode", "Model Hierarchy"); };
-
   ///
   /// Get associated model MRML node
   vtkMRMLModelNode* GetModelNode();

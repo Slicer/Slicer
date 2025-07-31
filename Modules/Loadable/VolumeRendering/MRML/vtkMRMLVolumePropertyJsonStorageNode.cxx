@@ -52,6 +52,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyJsonStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyJsonStorageNode::vtkMRMLVolumePropertyJsonStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVolumePropertyJsonStorageNode", "Volume Property Json Storage");
+
   this->DefaultWriteFileExtension = "vp.json";
 }
 

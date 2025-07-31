@@ -45,6 +45,8 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLPlotViewNode::vtkMRMLPlotViewNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLPlotViewNode", "Plot View");
+
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent);

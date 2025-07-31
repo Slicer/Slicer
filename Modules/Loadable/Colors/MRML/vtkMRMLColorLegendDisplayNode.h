@@ -181,9 +181,6 @@ protected:
 private:
   OrientationType Orientation{ vtkMRMLColorLegendDisplayNode::Vertical }; // Vertical or Horizontal
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLColorLegendDisplayNode", "Color Legend Display"); };
   double Position[2]{ 0.95, 0.5 }; // color legend position within view
   double Size[2]{ 0.15, 0.5 };     // color legend width within view
   std::string TitleText;           // color legend title

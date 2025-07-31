@@ -39,10 +39,6 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "LinearTransformSequenceStorage"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear Transform Sequence Storage"); };
-
   /// Return true if the node can be read in.
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 

@@ -11,6 +11,7 @@ vtkMRMLNodeNewMacro(vtkMRMLPETProceduralColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLPETProceduralColorNode::vtkMRMLPETProceduralColorNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLPETProceduralColorNode", "PET Procedural Color");
 
   // all this is done in the superclass...
   // this->Name = nullptr;

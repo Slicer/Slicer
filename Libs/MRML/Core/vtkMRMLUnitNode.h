@@ -58,10 +58,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Unit"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLUnitNode", "Unit"); };
-
   /// Reimplemented to prevent reset if unit node is a singleton.
   void Reset(vtkMRMLNode* defaultNode) override;
 

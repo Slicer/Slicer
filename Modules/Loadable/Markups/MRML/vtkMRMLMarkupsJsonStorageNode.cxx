@@ -56,6 +56,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsJsonStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsJsonStorageNode::vtkMRMLMarkupsJsonStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON Storage");
+
   this->DefaultWriteFileExtension = "mrk.json";
 }
 

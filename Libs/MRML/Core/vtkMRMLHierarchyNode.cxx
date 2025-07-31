@@ -55,6 +55,8 @@ vtkMRMLNodeNewMacro(vtkMRMLHierarchyNode);
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLHierarchyNode", "Hierarchy");
+
   this->HideFromEditors = 0;
 
   this->ParentNodeIDReference = nullptr;

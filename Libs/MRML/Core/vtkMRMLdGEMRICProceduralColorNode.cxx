@@ -25,6 +25,7 @@ vtkMRMLNodeNewMacro(vtkMRMLdGEMRICProceduralColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLdGEMRICProceduralColorNode::vtkMRMLdGEMRICProceduralColorNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLdGEMRICProceduralColorNode", "d GEMRIC Procedural Color");
 
   // all this is done in the superclass...
   // this->Name = nullptr;

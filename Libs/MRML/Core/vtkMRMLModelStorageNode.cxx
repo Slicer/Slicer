@@ -95,6 +95,8 @@ vtkMRMLNodeNewMacro(vtkMRMLModelStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLModelStorageNode", "Model Storage");
+
   this->DefaultWriteFileExtension = "vtk";
   this->CoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
 }

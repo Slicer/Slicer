@@ -56,6 +56,8 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotSeriesNode);
 //----------------------------------------------------------------------------
 vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLPlotSeriesNode", "Plot Series");
+
   this->HideFromEditors = 0;
   this->Color[0] = 0.0;
   this->Color[1] = 0.0;

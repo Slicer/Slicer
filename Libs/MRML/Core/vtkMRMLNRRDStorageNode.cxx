@@ -41,6 +41,8 @@ vtkMRMLNodeNewMacro(vtkMRMLNRRDStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLNRRDStorageNode", "NRRD Storage");
+
   this->CenterImage = 0;
   this->DefaultWriteFileExtension = "nhdr";
 

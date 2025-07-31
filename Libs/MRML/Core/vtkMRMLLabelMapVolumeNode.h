@@ -43,13 +43,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override { return "LabelMapVolume"; }
-
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLLabelMapVolumeNode", "Label Map Volume"); };
-
-  ///
+  const char* GetNodeTagName() override { return "LabelMapVolume"; } ///
   /// Make a 'None' volume node with blank image data
   static void CreateNoneNode(vtkMRMLScene* scene);
 

@@ -39,6 +39,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSceneViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSceneViewNode", "Scene View");
+
   this->HideFromEditors = 0;
 
   this->SnapshotScene = nullptr;

@@ -25,6 +25,8 @@ vtkMRMLNodeNewMacro(vtkMRMLHierarchyStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyStorageNode::vtkMRMLHierarchyStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLHierarchyStorageNode", "Hierarchy Storage");
+
   this->DefaultWriteFileExtension = "txt";
 }
 

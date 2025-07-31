@@ -108,10 +108,6 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override { return "Curve"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsCurveNode", "Markups Curve"); };
-
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
 

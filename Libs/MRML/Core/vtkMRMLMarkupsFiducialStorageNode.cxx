@@ -244,6 +244,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialStorageNode::vtkMRMLMarkupsFiducialStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial Storage");
+
   this->DefaultWriteFileExtension = "fcsv";
   this->FieldDelimiterCharacters = ",";
 }

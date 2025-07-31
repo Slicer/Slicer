@@ -92,6 +92,8 @@ vtkMRMLNode* vtkMRMLCommandLineModuleNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Command Line Module");
+
   this->Internal = new vtkInternal();
   this->HideFromEditors = true;
   this->Internal->Status = vtkMRMLCommandLineModuleNode::Idle;

@@ -63,6 +63,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTableNode);
 //----------------------------------------------------------------------------
 vtkMRMLTableNode::vtkMRMLTableNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTableNode", "Table");
+
   this->Table = nullptr;
   this->Schema = nullptr;
   this->Locked = false;

@@ -29,6 +29,8 @@ vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeSliceDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLGlyphableVolumeSliceDisplayNode", "Glyphable Volume Slice Display Node");
+
   this->ColorMode = this->colorModeScalar;
 
   this->SliceImagePort = nullptr;

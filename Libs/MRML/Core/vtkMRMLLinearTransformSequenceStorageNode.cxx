@@ -44,7 +44,10 @@ static const char NODE_BASE_NAME_SEPARATOR[] = "-";
 vtkMRMLNodeNewMacro(vtkMRMLLinearTransformSequenceStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLLinearTransformSequenceStorageNode::vtkMRMLLinearTransformSequenceStorageNode() = default;
+vtkMRMLLinearTransformSequenceStorageNode::vtkMRMLLinearTransformSequenceStorageNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear Transform Sequence Storage");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformSequenceStorageNode::~vtkMRMLLinearTransformSequenceStorageNode() = default;

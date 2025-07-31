@@ -34,7 +34,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsPlaneJsonStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsPlaneJsonStorageNode::vtkMRMLMarkupsPlaneJsonStorageNode() {}
+vtkMRMLMarkupsPlaneJsonStorageNode::vtkMRMLMarkupsPlaneJsonStorageNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsPlaneJsonStorageNode", "Markups Plane JSON Storage");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsPlaneJsonStorageNode::~vtkMRMLMarkupsPlaneJsonStorageNode() = default;

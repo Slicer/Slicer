@@ -37,6 +37,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCropVolumeParametersNode);
 //----------------------------------------------------------------------------
 vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLCropVolumeParametersNode", "Crop Volume Parameters");
+
   this->HideFromEditors = 1;
 
   vtkNew<vtkIntArray> inputVolumeEvents;

@@ -104,10 +104,6 @@ public:
   /// Set scalar invariant to trace (sum of eigenvalues).
   void SetScalarInvariantToTrace() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace); };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDiffusionTensorVolumeDisplayNode", "Diffusion Tensor Volume Display"); };
-
   // Description:
   /// Set scalar invariant to relative anisotropy
   void SetScalarInvariantToRelativeAnisotropy() { this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy); };

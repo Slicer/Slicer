@@ -28,6 +28,8 @@ vtkMRMLNodeNewMacro(vtkMRMLModelHierarchyNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelHierarchyNode::vtkMRMLModelHierarchyNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLModelHierarchyNode", "Model Hierarchy");
+
   this->ModelDisplayNode = nullptr;
   this->HideFromEditors = 0;
 }

@@ -55,10 +55,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Transform"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTransformNode", "Transform"); };
-
   ///
   /// Finds the storage node and read the data
   void UpdateScene(vtkMRMLScene* scene) override { Superclass::UpdateScene(scene); };

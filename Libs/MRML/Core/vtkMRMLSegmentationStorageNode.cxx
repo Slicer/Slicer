@@ -103,6 +103,8 @@ vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation Storage");
+
   Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(CropToMinimumExtent);

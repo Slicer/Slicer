@@ -51,9 +51,6 @@ public:
   /// Toggles visibility of intersections of other slices in the slice viewer
   bool GetIntersectingSlicesVisibility() { return this->GetVisibility2D(); };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSliceDisplayNode", "Slice Display"); };
   void SetIntersectingSlicesVisibility(bool visible) { this->SetVisibility2D(visible); };
   vtkBooleanMacro(IntersectingSlicesVisibility, bool);
   //@}

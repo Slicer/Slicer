@@ -33,6 +33,8 @@ vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeNode::WriteXML(ostream& of, int nIndent)
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVectorVolumeNode", "Vector Volume");
+
   Superclass::WriteXML(of, nIndent);
 }
 

@@ -47,6 +47,8 @@ vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLScalarVolumeDisplayNode", "Volume Display");
+
   // Strings
   this->Interpolate = 1;
   this->AutoWindowLevel = 1;

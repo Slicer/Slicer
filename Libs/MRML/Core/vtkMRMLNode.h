@@ -383,18 +383,28 @@ public:
   /// \note Subclasses should implement this method.
   virtual const char* GetNodeTagName() = 0;
 
-  /// Get node type display name (like "Closed Curve", "Markup", etc).
+  /// Get node type display name (like "Closed Curve", "Markup", etc) that may be displayed to the user.
   ///
-  /// \note Subclasses should override this method to provide a more appropriate and translatable name.
-  virtual std::string GetTypeDisplayName() { return this->GetNodeTagName(); }
+  /// \note If TypeDisplayName has not been set then GetTypeDisplayName will return the node tag name.
+  virtual std::string GetTypeDisplayName();
+
+  /// Set node type display name (that may be displayed to the user)
+  ///
+  /// The value is included in copy operations (so it can be used in default nodes),
+  /// but not saved into the scene (as the name should follow the current application language
+  /// and not the language that was used when the scene was saved).
+  virtual void SetTypeDisplayName(const std::string& name);
 
   /// Get default node name prefix used when generating unique node names.
   ///
   /// \note If DefaultNodeNamePrefix has not been set then GetDefaultNodeNamePrefix will return the node tag name.
   virtual std::string GetDefaultNodeNamePrefix();
 
-
   /// Set default node name prefix used when generating unique node names.
+  ///
+  /// The value is included in copy operations (so it can be used in default nodes),
+  /// but not saved into the scene (as the prefix should follow the current application language
+  /// and not the language that was used when the scene was saved).
   virtual void SetDefaultNodeNamePrefix(const std::string& prefix);
 
   /// \brief Set a name value pair attribute.
@@ -1123,12 +1133,14 @@ protected:
   char* ID{ nullptr };
   char* Name{ nullptr };
   char* Description{ nullptr };
-  std::string DefaultNodeNamePrefix;
   int HideFromEditors{ 0 };
   int Selectable{ 1 };
   int Selected{ 0 };
   int AddToScene{ 1 };
   bool UndoEnabled{ false };
+
+  std::string TypeDisplayName;
+  std::string DefaultNodeNamePrefix;
 
   int SaveWithScene{ true };
 

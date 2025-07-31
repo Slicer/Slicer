@@ -40,6 +40,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeHeaderlessStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVolumeHeaderlessStorageNode", "Volume Headerless Storage");
+
   this->FileScanOrder = nullptr;
   this->FileScalarType = VTK_SHORT;
   this->FileNumberOfScalarComponents = 0;

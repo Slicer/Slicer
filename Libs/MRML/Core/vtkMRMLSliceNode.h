@@ -67,10 +67,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Slice"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSliceNode", "Slice"); };
-
   ///
   /// Mapping from RAS space onto the slice plane
   /// This matrix is allowed to be modified from outside, for example

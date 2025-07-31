@@ -49,10 +49,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "MultiVolumeRendering"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMultiVolumeRenderingDisplayNode", "Multi Volume Rendering"); };
-
 protected:
   vtkMRMLMultiVolumeRenderingDisplayNode();
   ~vtkMRMLMultiVolumeRenderingDisplayNode() override;

@@ -28,7 +28,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsTestLineNode);
 
 //--------------------------------------------------------------------------------
-vtkMRMLMarkupsTestLineNode::vtkMRMLMarkupsTestLineNode() {}
+vtkMRMLMarkupsTestLineNode::vtkMRMLMarkupsTestLineNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsTestLineNode", "Test Line");
+}
 
 //--------------------------------------------------------------------------------
 vtkMRMLMarkupsTestLineNode::~vtkMRMLMarkupsTestLineNode() = default;

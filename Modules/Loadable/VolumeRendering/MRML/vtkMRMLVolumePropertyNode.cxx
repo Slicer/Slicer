@@ -26,6 +26,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
   : EffectiveRange{ 0.0, -1.0 }
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVolumePropertyNode", "Volume Property");
+
   this->ObservedEvents = vtkSmartPointer<vtkIntArray>::New();
   this->ObservedEvents->InsertNextValue(vtkCommand::StartEvent);
   this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);

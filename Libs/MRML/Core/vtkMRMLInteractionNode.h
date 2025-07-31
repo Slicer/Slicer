@@ -54,13 +54,7 @@ public:
     Select = 4,
     AdjustWindowLevel,
     User = 1000
-  };
-
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLInteractionNode", "Interaction"); };
-
-  /// events
+  }; /// events
   enum
   {
     InteractionModeChangedEvent = 19001,

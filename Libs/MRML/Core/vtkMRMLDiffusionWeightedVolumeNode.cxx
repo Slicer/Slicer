@@ -33,6 +33,8 @@ vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
   : DiffusionGradients(vtkDoubleArray::New())
   , BValues(vtkDoubleArray::New())
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDiffusionWeightedVolumeNode", "Diffusion Weighted Volume");
+
   this->DiffusionGradients->SetNumberOfComponents(3);
   this->SetNumberOfGradientsInternal(7); // 6 gradients + 1 baseline
 

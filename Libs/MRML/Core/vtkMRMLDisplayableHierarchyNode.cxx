@@ -32,6 +32,8 @@ vtkMRMLNodeNewMacro(vtkMRMLDisplayableHierarchyNode);
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLDisplayableHierarchyNode", "Displayable Hierarchy");
+
   this->DisplayNodeID = nullptr;
   this->DisplayNode = nullptr;
   this->HideFromEditors = 1;

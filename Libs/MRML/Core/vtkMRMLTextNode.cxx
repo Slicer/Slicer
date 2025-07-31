@@ -31,6 +31,8 @@ vtkMRMLNodeNewMacro(vtkMRMLTextNode);
 //-----------------------------------------------------------------------------
 vtkMRMLTextNode::vtkMRMLTextNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTextNode", "Text");
+
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLTextNode::TextModifiedEvent);
 }
 

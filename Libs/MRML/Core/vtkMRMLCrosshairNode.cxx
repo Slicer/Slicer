@@ -28,6 +28,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCrosshairNode);
 //----------------------------------------------------------------------------
 vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLCrosshairNode", "Crosshair");
+
   this->HideFromEditors = 1;
   this->SetSingletonTag("default");
 }

@@ -34,7 +34,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLLabelMapVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode() = default;
+vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLLabelMapVolumeNode", "Label Map Volume");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode::~vtkMRMLLabelMapVolumeNode() = default;

@@ -33,6 +33,8 @@ vtkMRMLNodeNewMacro(vtkMRMLColorTableNode);
 //----------------------------------------------------------------------------
 vtkMRMLColorTableNode::vtkMRMLColorTableNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLColorTableNode", "Color Table");
+
   this->SetName("");
   this->SetDescription("Color Table");
   this->LookupTable = nullptr;

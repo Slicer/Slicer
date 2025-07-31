@@ -54,10 +54,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "CropVolumeParameters"; }
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLCropVolumeParametersNode", "Crop Volume Parameters"); };
-
   /// Set volume node to be cropped
   void SetInputVolumeNodeID(const char* nodeID);
   /// Get volume node to be cropped

@@ -68,10 +68,6 @@ public:
     visModeBoth = 2
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLGlyphableVolumeDisplayNode", "Glyphable Volume Display"); };
-
   vtkGetMacro(VisualizationMode, int);
   vtkSetMacro(VisualizationMode, int);
 

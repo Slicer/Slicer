@@ -42,6 +42,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSliceCompositeNode);
 //----------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSliceCompositeNode", "Slice Composite");
+
   this->HideFromEditors = 1;
 
   this->AddNodeReferenceRole(BackgroundVolumeNodeReferenceRole, BackgroundVolumeNodeReferenceMRMLAttributeName);

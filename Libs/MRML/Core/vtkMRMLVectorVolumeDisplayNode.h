@@ -66,9 +66,6 @@ public:
     scalarModeMagnitude = 0
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLVectorVolumeDisplayNode", "Vector Volume Display"); };
   vtkGetMacro(ScalarMode, int);
   vtkSetMacro(ScalarMode, int);
 

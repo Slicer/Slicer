@@ -104,10 +104,6 @@ public:
     ROIModifiedEvent = 21002
   };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLROIListNode", "ROI List"); };
-
   ///
   /// Get/Set for list visibility
   void SetVisibility(int visible);

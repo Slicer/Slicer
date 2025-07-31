@@ -46,6 +46,8 @@ vtkMRMLNodeNewMacro(vtkMRMLShaderPropertyStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLShaderPropertyStorageNode::vtkMRMLShaderPropertyStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "Shader Property Storage");
+
   this->DefaultWriteFileExtension = "sp";
 }
 

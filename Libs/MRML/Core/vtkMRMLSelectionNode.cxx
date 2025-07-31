@@ -40,6 +40,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSelectionNode", "Selection");
+
   this->HideFromEditors = 1;
 
   this->SetSingletonTag("Singleton");

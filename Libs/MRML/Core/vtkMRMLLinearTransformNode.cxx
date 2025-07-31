@@ -29,6 +29,8 @@ vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLLinearTransformNode", "Linear Transform");
+
   vtkNew<vtkMatrix4x4> matrix;
   this->SetMatrixTransformToParent(matrix.GetPointer());
 

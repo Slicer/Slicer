@@ -59,10 +59,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Camera"; };
 
-  /// Get node type to be displayed to the user.
-  /// It is translated to the application language.
-  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLCameraNode", "Camera"); };
-
   ///
   /// Deprecated. Use SetLayoutName instead.
   /// Set the camera active tag, i.e. the tag for which object (view) this

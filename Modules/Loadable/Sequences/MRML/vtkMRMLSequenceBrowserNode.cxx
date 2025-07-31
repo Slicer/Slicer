@@ -137,6 +137,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSequenceBrowserNode);
 vtkMRMLSequenceBrowserNode::vtkMRMLSequenceBrowserNode()
   : IndexDisplayFormat("%.2f")
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLSequenceBrowserNode", "Sequence Browser");
+
   this->SetHideFromEditors(false);
   this->RecordingTimeOffsetSec = vtkTimerLog::GetUniversalTime();
   this->LastSaveProxyNodesStateTimeSec = vtkTimerLog::GetUniversalTime();

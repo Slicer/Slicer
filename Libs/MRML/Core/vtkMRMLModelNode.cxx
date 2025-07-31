@@ -50,6 +50,8 @@ vtkMRMLNodeNewMacro(vtkMRMLModelNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::vtkMRMLModelNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLModelNode", "Model");
+
   this->MeshConnection = nullptr;
   this->DataEventForwarder = nullptr;
 

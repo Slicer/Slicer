@@ -34,6 +34,8 @@ vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueUnits, vtkCodedEntry);
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLScalarVolumeNode", "Volume");
+
   this->DefaultSequenceStorageNodeClassName = "vtkMRMLVolumeSequenceStorageNode";
 }
 

@@ -32,6 +32,8 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorStorageNode::vtkMRMLProceduralColorStorageNode()
 {
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "Procedural Color Storage");
+
   this->DefaultWriteFileExtension = "txt";
 }
 
