@@ -75,6 +75,10 @@ public:
       "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return false;
   };
+
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLScalarVolumeDisplayNode", "Volume Display"); };
   /// \deprecated
   virtual void SetWindowLevelLocked(bool)
   {

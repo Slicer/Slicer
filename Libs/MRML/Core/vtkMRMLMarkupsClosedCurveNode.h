@@ -53,6 +53,10 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override { return "ClosedCurve"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsClosedCurveNode", "Markups Closed Curve"); };
+
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsClosedCurveNode);

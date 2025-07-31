@@ -95,6 +95,10 @@ public:
     ColorOrientationMinEigenvector = 25
   };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDiffusionTensorDisplayPropertiesNode", "Diffusion Tensor Display Properties"); };
+
   static bool ScalarInvariantHasKnownScalarRange(int ScalarInvariant);
   static void ScalarInvariantKnownScalarRange(int ScalarInvariant, double range[2]);
 

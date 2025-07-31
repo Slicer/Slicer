@@ -38,6 +38,10 @@
 # define VTK_PROPEXCLUDE
 #endif
 
+// This can be used for writing code that is backward-compatible with older Slicer versions
+// where vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix() returned const char* (instead of std::string).
+#define DEFAULT_NODE_NAME_PREFIX_IS_STD_STRING 1
+
 class vtkMatrix3x3;
 class vtkMRMLUnitNode;
 
@@ -154,11 +158,11 @@ public:
 
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
-  virtual const char* GetDefaultNodeNamePrefix();
+  virtual std::string GetDefaultNodeNamePrefix();
 
   /// Get markup type GUI display name
   /// This may be displayed to the user and therefore it is translated to the application language.
-  virtual const char* GetTypeDisplayName() override;
+  std::string GetTypeDisplayName() override;
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;

@@ -75,6 +75,10 @@ public:
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "Segmentation"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSegmentationNode", "Segmentation"); };
+
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method returns the bounds of the object with any transforms that may
   /// be applied to it.

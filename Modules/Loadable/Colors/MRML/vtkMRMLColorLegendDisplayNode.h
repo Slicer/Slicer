@@ -180,9 +180,13 @@ protected:
 
 private:
   OrientationType Orientation{ vtkMRMLColorLegendDisplayNode::Vertical }; // Vertical or Horizontal
-  double Position[2]{ 0.95, 0.5 };                                        // color legend position within view
-  double Size[2]{ 0.15, 0.5 };                                            // color legend width within view
-  std::string TitleText;                                                  // color legend title
+
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLColorLegendDisplayNode", "Color Legend Display"); };
+  double Position[2]{ 0.95, 0.5 }; // color legend position within view
+  double Size[2]{ 0.15, 0.5 };     // color legend width within view
+  std::string TitleText;           // color legend title
   vtkTextProperty* TitleTextProperty{ nullptr };
   vtkTextProperty* LabelTextProperty{ nullptr };
   // 7 so that the number appears aligned to the right even if it is large (>1000)

@@ -200,6 +200,10 @@ protected:
   /// when the property is set into the volume.
   bool IgnoreVolumePropertyChanges{ false };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLVolumePropertyNode", "Volume Property"); };
+
   /// Main parameters for visualization
   vtkVolumeProperty* VolumeProperty{ nullptr };
 

@@ -58,6 +58,10 @@ public:
   /// \deprecated Use SetActiveVolumeID instead
   void SetReferenceActiveVolumeID(const char* id) { this->SetActiveVolumeID(id); };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSelectionNode", "Selection"); };
+
   /// the ID of a MRMLVolumeNode (typically foreground)
   const char* GetSecondaryVolumeID();
   void SetSecondaryVolumeID(const char* id);

@@ -216,6 +216,10 @@ protected:
   /// Selected segment ID
   char* SelectedSegmentID{ nullptr };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSegmentEditorNode", "Segment Editor"); };
+
   /// Active effect name
   char* ActiveEffectName{ nullptr };
 

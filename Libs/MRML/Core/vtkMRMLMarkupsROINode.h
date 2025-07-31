@@ -77,6 +77,10 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override { return "ROI"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsROINode", "Markups ROI"); };
+
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsROINode);

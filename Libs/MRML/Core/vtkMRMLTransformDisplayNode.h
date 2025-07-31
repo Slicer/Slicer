@@ -202,6 +202,10 @@ public:
     TransformUpdateEditorBoundsEvent = 2750
   };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLTransformDisplayNode", "Transform Display Node"); };
+
   /// Set the default color table
   /// Create and a procedural color node with default colors and use it for visualization.
   void SetDefaultColors();

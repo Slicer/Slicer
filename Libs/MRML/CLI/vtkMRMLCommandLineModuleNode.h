@@ -45,6 +45,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "CommandLineModule"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  virtual std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Command Line Module"); };
+
   /// List of events that can be fired on or by the node.
   enum CLINodeEvent
   {

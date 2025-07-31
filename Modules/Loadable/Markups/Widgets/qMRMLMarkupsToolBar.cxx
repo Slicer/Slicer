@@ -478,7 +478,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
         QPushButton* markupCreateButton = new QPushButton();
         QSignalMapper* mapper = new QSignalMapper(markupCreateButton);
         std::string markupType = markupsNode->GetMarkupType() ? markupsNode->GetMarkupType() : "";
-        std::string markupDisplayName = markupsNode->GetTypeDisplayName() ? markupsNode->GetTypeDisplayName() : "";
+        std::string markupDisplayName = markupsNode->GetTypeDisplayName();
         markupCreateButton->setObjectName(QString::fromStdString(/*no tr*/ "Create" + markupType + "PushButton"));
         markupCreateButton->setToolTip(tr("Create new %1").arg(QString::fromStdString(markupDisplayName)));
         markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));

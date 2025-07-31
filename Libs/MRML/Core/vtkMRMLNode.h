@@ -20,6 +20,7 @@
 #include "vtkObserverManager.h"
 #include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
+#include "vtkMRMLI18N.h"
 
 class vtkMRMLScene;
 class vtkStringArray;
@@ -381,7 +382,7 @@ public:
   /// Get node type display name (like "Closed Curve", "Markup", etc).
   ///
   /// \note Subclasses should override this method to provide a more appropriate and translatable name.
-  virtual const char* GetTypeDisplayName() { return this->GetNodeTagName(); }
+  virtual std::string GetTypeDisplayName() { return this->GetNodeTagName(); }
 
   /// \brief Set a name value pair attribute.
   ///

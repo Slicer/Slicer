@@ -179,6 +179,10 @@ protected:
 protected:
   bool CropToMinimumExtent{ false };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation Storage"); };
+
 protected:
   vtkMRMLSegmentationStorageNode();
   ~vtkMRMLSegmentationStorageNode() override;

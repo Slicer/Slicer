@@ -43,6 +43,10 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   const char* GetNodeTagName() override { return "MarkupsPlaneJsonStorage"; };
+
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsPlaneJsonStorageNode", "Markups Plane Json Storage"); };
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:

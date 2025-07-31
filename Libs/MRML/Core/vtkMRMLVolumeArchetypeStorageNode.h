@@ -60,6 +60,10 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "VolumeArchetypeStorage"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Volume Archetype Storage"); };
+
   ///
   /// Center image on read
   vtkGetMacro(CenterImage, int);

@@ -43,6 +43,10 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   const char* GetNodeTagName() override { return "MarkupsROIJsonStorage"; };
+
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  virtual std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLMarkupsROIJsonStorageNode", "Markups ROI Json Storage"); };
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:

@@ -57,6 +57,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "DiffusionWeightedVolumeDisplay"; }
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLDiffusionWeightedVolumeDisplayNode", "Diffusion Weighted Volume Display"); };
+
   ///
   /// Get the pipeline input
   vtkAlgorithmOutput* GetInputImageDataConnection() override;

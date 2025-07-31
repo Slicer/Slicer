@@ -270,7 +270,7 @@ void NodeTypeWidgetSet::changeCurrentOptionsWidget(qSlicerFileWriterOptionsWidge
 //-----------------------------------------------------------------------------
 QString NodeTypeWidgetSet::getTypeDisplayName() const
 {
-  return this->prototypeNode->GetTypeDisplayName();
+  return QString::fromStdString(this->prototypeNode->GetTypeDisplayName());
 }
 
 //-----------------------------------------------------------------------------

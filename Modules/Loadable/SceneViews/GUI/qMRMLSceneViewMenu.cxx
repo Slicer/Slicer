@@ -32,6 +32,8 @@
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLSequenceBrowserNode.h>
 
+#include "qMRMLSceneViewMenu.h"
+
 //--------------------------------------------------------------------------
 // qMRMLSceneViewMenuPrivate methods
 

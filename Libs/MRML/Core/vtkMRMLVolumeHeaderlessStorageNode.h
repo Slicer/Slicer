@@ -69,6 +69,10 @@ public:
   vtkGetMacro(FileScalarType, int);
 
   void SetFileScalarTypeToUnsignedChar() { this->SetFileScalarType(VTK_UNSIGNED_CHAR); };
+
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLVolumeHeaderlessStorageNode", "Volume Headerless Storage"); };
   void SetFileScalarTypeToChar() { this->SetFileScalarType(VTK_CHAR); };
   void SetFileScalarTypeToShort() { this->SetFileScalarType(VTK_SHORT); };
   void SetFileScalarTypeToUnsignedShort() { this->SetFileScalarType(VTK_UNSIGNED_SHORT); };

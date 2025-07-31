@@ -66,6 +66,10 @@ public:
   /// Get node XML tag name (like Volume, Model).
   const char* GetNodeTagName() override { return "PlotView"; };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLPlotViewNode", "Plot View"); };
+
   ///
   /// Set and Update the PlotChart node id displayed in this PlotView.
   virtual void SetPlotChartNodeID(const char* PlotChartNodeID);

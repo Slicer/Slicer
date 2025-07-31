@@ -181,6 +181,10 @@ public:
     CoolTint3 = 38
   };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLColorTableNode", "Color Table"); };
+
   ///
   /// Return the lowest and highest integers, for use in looping
   int GetFirstType() override { return this->FullRainbow; };

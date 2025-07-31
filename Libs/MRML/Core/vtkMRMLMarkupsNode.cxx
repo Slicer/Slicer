@@ -525,23 +525,24 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
+std::string vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
 {
   if (this->DefaultNodeNamePrefix.empty())
   {
-    this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsNode", "M");
+    //: This is the default node name prefix for markups nodes.
+    return vtkMRMLTr("vtkMRMLMarkupsNode", "M");
   }
-  return this->DefaultNodeNamePrefix.c_str();
+  return this->DefaultNodeNamePrefix;
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLMarkupsNode::GetTypeDisplayName()
+std::string vtkMRMLMarkupsNode::GetTypeDisplayName()
 {
   if (this->TypeDisplayName.empty())
   {
     this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsNode", "Markup");
   }
-  return this->TypeDisplayName.c_str();
+  return this->TypeDisplayName;
 }
 
 //---------------------------------------------------------------------------
@@ -2008,12 +2009,7 @@ std::string vtkMRMLMarkupsNode::ReplaceListNameInControlPointLabelFormat()
   {
     // replace the special character with the list name, or an empty string if
     // no list name is set
-    std::string name;
-    if (this->GetDefaultNodeNamePrefix() != nullptr)
-    {
-      name = std::string(this->GetDefaultNodeNamePrefix());
-    }
-    newFormatString.replace(replacePos, 2, name);
+    newFormatString.replace(replacePos, 2, this->GetDefaultNodeNamePrefix());
   }
 
   return newFormatString;

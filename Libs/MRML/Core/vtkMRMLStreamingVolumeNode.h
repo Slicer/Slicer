@@ -78,6 +78,10 @@ public:
   /// Returns a pointer to the current frame
   vtkStreamingVolumeFrame* GetFrame() { return this->Frame.GetPointer(); };
 
+  /// Get node type to be displayed to the user.
+  /// It is translated to the application language.
+  std::string GetTypeDisplayName() override { return vtkMRMLTr("vtkMRMLStreamingVolumeNode", "Streaming Volume"); };
+
   /// Encodes the current vtkImageData as a compressed frame using the specified codec
   /// Returns true if the image is successfully encoded
   virtual bool EncodeImageData(bool forceKeyFrame = false);
