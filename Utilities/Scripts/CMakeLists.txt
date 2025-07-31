@@ -11,6 +11,35 @@ if(UNIX AND NOT APPLE)
     DESTINATION ${Slicer_INSTALL_BIN_DIR}
     COMPONENT Runtime
     )
+  if(BUILD_TESTING)
+    get_filename_component(cmake_directory ${CMAKE_COMMAND} DIRECTORY)
+    set(test_env "PATH=${cmake_directory}:$ENV{PATH}")
+
+    # Precondition: Ensure APPLAUNCHER_* variables are set using the launcher
+    set(test_name "sh-exec-outside-slicer-env-precondition-test")
+    add_test(
+      NAME ${test_name}
+      COMMAND ${Slicer_LAUNCH_COMMAND}
+        cmake -E environment
+      )
+    set_tests_properties(${test_name} PROPERTIES
+      ENVIRONMENT "${test_env}"
+      FAIL_REGULAR_EXPRESSION "Skipping environment restoration"
+      PASS_REGULAR_EXPRESSION "APPLAUNCHER_"
+      )
+
+    # Check that exec-outside-slicer-env unsets APPLAUNCHER_* variables
+    set(test_name "sh-exec-outside-slicer-env-test")
+    add_test(
+      NAME ${test_name}
+      COMMAND ${Slicer_LAUNCH_COMMAND}
+        ${Slicer_BINARY_DIR}/bin/exec-outside-slicer-env.sh cmake -E environment
+      )
+    set_tests_properties(${test_name} PROPERTIES
+      ENVIRONMENT "${test_env}"
+      FAIL_REGULAR_EXPRESSION "APPLAUNCHER_;Skipping environment restoration"
+      )
+  endif()
 
   if(Slicer_BUILD_KRB5_GSSAPI_STUB)
     # Install wrappers for system executables to ensure they are called
@@ -33,6 +62,39 @@ if(UNIX AND NOT APPLE)
         COMPONENT Runtime
         )
     endforeach()
+
+    if(BUILD_TESTING)
+      get_filename_component(git_directory ${GIT_EXECUTABLE} DIRECTORY)
+      set(test_env
+        "PATH=${git_directory}:$ENV{PATH}"
+        "SLICER_DEBUG_KRB5_GSSAPI_STUB=1"
+        )
+
+      # Precondition: Verify krb5-gssapi-stub is injected in Git without wrapper
+      set(test_name "sh-git-executable-wrapper-ls-remote-precondition-test")
+      add_test(
+        NAME ${test_name}
+        COMMAND ${Slicer_LAUNCH_COMMAND}
+          ${GIT_EXECUTABLE} ls-remote -t https://github.com/Slicer/Slicer
+        )
+      set_tests_properties(${test_name} PROPERTIES
+        ENVIRONMENT "${test_env}"
+        PASS_REGULAR_EXPRESSION "krb5-gssapi-stub;undefined symbol"
+        )
+
+      # Verify wrapper restores environment and invokes system Git correctly
+      set(test_name "sh-git-executable-wrapper-le-remote-test")
+      add_test(
+        NAME ${test_name}
+        COMMAND ${Slicer_LAUNCH_COMMAND}
+          ${Slicer_BINARY_DIR}/bin/git ls-remote -t https://github.com/Slicer/Slicer
+        )
+      set_tests_properties(${test_name} PROPERTIES
+        ENVIRONMENT "${test_env}"
+        FAIL_REGULAR_EXPRESSION "krb5-gssapi-stub;Skipping environment restoration"
+        PASS_REGULAR_EXPRESSION "refs/tags"
+        )
+    endif()
   endif()
 endif()
 
