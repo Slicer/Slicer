@@ -1312,8 +1312,7 @@ void vtkSlicerSceneViewsModuleLogic::GetViewNodeClasses(std::vector<std::string>
   viewNodeTypes.push_back("vtkMRMLAbstractViewNode");
   viewNodeTypes.push_back("vtkMRMLCameraNode");
   viewNodeTypes.push_back("vtkMRMLLayoutNode");
-  viewNodeTypes.push_back("vtkMRMLSliceNode");
-  viewNodeTypes.push_back("vtkMRMLSliceLogic");
+  viewNodeTypes.push_back("vtkMRMLSliceCompositeNode");
 }
 
 //---------------------------------------------------------------------------
