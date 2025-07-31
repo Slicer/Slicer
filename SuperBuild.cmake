@@ -320,7 +320,7 @@ endif()
 
 Slicer_Remote_Add(CompareVolumes
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
-  GIT_TAG cb755dda78f726cf9262aa4e1f75122c72a0df2f
+  GIT_TAG 527912c223c6360c49c4d705a03f71968fcffd30
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
