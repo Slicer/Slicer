@@ -554,7 +554,22 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         # if applicable, find all loadables from the file lists
         loadEnabled = False
+        seriesUIDTag = "0020,000E"
+        # Create a list of lists, split by referenced SeriesInstanceUID
         if referencedFileLists:
+            # Create a dictionary
+            from collections import defaultdict
+            grouped_by_series = defaultdict(list)
+            # Get a single list
+            all_files = [f for sublist in referencedFileLists for f in sublist]
+            # For each file, get the SeriesInstanceUID
+            for f in all_files:
+                # Get the SeriesInstanceUID of the instance
+                seriesUID =  slicer.dicomDatabase.fileValue(f, seriesUIDTag)
+                # Add to appropriate list
+                grouped_by_series[seriesUID].append(f)
+            # Convert to a list of lists
+            referencedFileLists = list(grouped_by_series.values())
             (self.referencedLoadables, loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
 
         automaticallyLoadReferences = int(slicer.util.settingsValue("DICOM/automaticallyLoadReferences", qt.QMessageBox.InvalidRole))
