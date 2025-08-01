@@ -2756,8 +2756,11 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
 {
   // Remove characters from node name that cannot be used in file names
   // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
+  // Note: in vtksys::RegularExpression, the dash ('-') character cannot be escaped by \\,
+  // but it has to be placed in the beginning or end of the regExp (to avoid mistaken it for
+  // a range operation).
   std::string safeName;
-  vtksys::RegularExpression regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]");
+  vtksys::RegularExpression regExp("[-A-Za-z0-9\\ \\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]");
   for (size_t i = 0; i < originalName.size(); ++i)
   {
     std::string currentCharStr;
