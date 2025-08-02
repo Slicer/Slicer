@@ -104,6 +104,7 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
 
   // test a conflict with one of the default actions
   QAction* action2 = new QAction("Create new type of action that conflicts with create new node", &nodeSelector);
+  action2->setData("CREATE/vtkMRMLScalarVolumeNode");
   nodeSelector.addMenuAction(action2);
 
   actionsPlusOne = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -225,18 +226,22 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   }
 
   // add a custom actions
-  const QStringList actionPrefixes = {
-    "Create new ",
-    "Delete current ",
-    "Edit current ",
-    "Rename current ",
+  const QStringList actionPrefixesData = {
+    "Create new |CREATE",
+    "Delete current |DELETE",
+    "Edit current |EDIT",
+    "Rename current |RENAME",
   };
-  for (const QString& actionPrefix : actionPrefixes)
+  for (const QString& actionPrefixData : actionPrefixesData)
   {
+    QStringList parts = actionPrefixData.split("|");
+    QString actionPrefix = parts[0];
+    QString actionData = parts[1];
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
     QString actionName = QString("%1node using custom action").arg(actionPrefix);
     QAction* action = new QAction(actionName, &nodeSelector);
+    action->setData(actionData);
     nodeSelector.addMenuAction(action);
 
     expected = startingActions + 1;
@@ -341,6 +346,7 @@ int qMRMLNodeComboBoxTest8(int argc, char* argv[])
   qMRMLSceneModel* sceneModel2 = nodeSelector2.sceneModel();
 
   QAction* action = new QAction("Rename current node using custom action", &nodeSelector2);
+  action->setData("RENAME");
 
   startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
   nodeSelector2.addMenuAction(action);
