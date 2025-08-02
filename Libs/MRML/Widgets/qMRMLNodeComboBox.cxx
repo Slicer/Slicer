@@ -369,7 +369,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 // --------------------------------------------------------------------------
 bool qMRMLNodeComboBoxPrivate::hasPostItem(const QString& name) const
 {
-  for (const QString& item : this->MRMLSceneModel->postItems(this->MRMLSceneModel->mrmlSceneItem()))
+  for (const QString& item : this->MRMLSceneModel->postItemsData(this->MRMLSceneModel->mrmlSceneItem()))
   {
     if (item.startsWith(name))
     {
