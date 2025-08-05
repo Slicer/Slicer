@@ -552,6 +552,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     {
       // clear out the list
       markupsNode->RemoveAllControlPoints();
+      markupsNode->ClearValueForAllMeasurements();
     }
 
     std::string line;
