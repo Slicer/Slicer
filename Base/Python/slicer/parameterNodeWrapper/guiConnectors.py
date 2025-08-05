@@ -483,7 +483,12 @@ class QLineEditToStrConnector(GuiConnector):
         return self._widget.text
 
     def write(self, value: str) -> None:
-        self._widget.text = value
+        # Writing the text of a QLineEdit moves the cursor to the end.
+        # We tolerate that if the value is actually changing, but sometimes
+        # the value is written as a result of an update originating from
+        # the field, and then it is wrong.
+        if value != self._widget.text:
+            self._widget.text = value
 
 @parameterNodeGuiConnector
 class QLabelToStrConnector(GuiConnector):
