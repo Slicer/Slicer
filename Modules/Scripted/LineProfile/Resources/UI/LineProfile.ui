@@ -61,6 +61,9 @@
         <property name="selectNodeUponCreation">
          <bool>true</bool>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">inputVolume</string>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -102,6 +105,12 @@
         <property name="renameEnabled">
          <bool>true</bool>
         </property>
+        <property name="noneDisplay">
+         <string>Create new table</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputTable</string>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
@@ -128,6 +137,9 @@
         <property name="value">
          <double>100.000000000000000</double>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">lineResolution</string>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">
@@ -147,6 +159,9 @@
           <green>255</green>
           <blue>0</blue>
          </color>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">inputLine</string>
         </property>
        </widget>
       </item>
@@ -194,6 +209,9 @@
         <property name="renameEnabled">
          <bool>true</bool>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputPlotSeries</string>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -211,6 +229,9 @@
         <property name="checked">
          <bool>false</bool>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">plotProportionalDistance</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -222,7 +243,7 @@
       <string>Peak Detection</string>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="title" stdset="0">
       <string>Peak Detection</string>
@@ -263,6 +284,9 @@
         <property name="renameEnabled">
          <bool>true</bool>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputPeaksTable</string>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -285,6 +309,9 @@
         </property>
         <property name="quantity">
          <string notr="true">length</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">peakMinimumWidth</string>
         </property>
        </widget>
       </item>
@@ -315,6 +342,9 @@
         <property name="value">
          <double>50.000000000000000</double>
         </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">heightPercentageForWidthMeasurement</string>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
@@ -331,6 +361,9 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">peakIsMaximum</string>
         </property>
        </widget>
       </item>
@@ -370,32 +403,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCheckablePushButton</class>
-   <extends>ctkPushButton</extends>
-   <header>ctkCheckablePushButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkPushButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkPushButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -421,6 +428,32 @@
    <class>qSlicerSimpleMarkupsWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerSimpleMarkupsWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>ctkPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
