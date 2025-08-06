@@ -61,13 +61,13 @@ class LineProfileParameterNode:
     peakIsMaximum - If true, the peaks are considered as maximum values, otherwise as minimum values.
     """
 
-    inputVolume: vtkMRMLScalarVolumeNode
-    inputLine: vtkMRMLMarkupsLineNode | vtkMRMLMarkupsCurveNode
-    outputTable: vtkMRMLTableNode
+    inputVolume: vtkMRMLScalarVolumeNode | None
+    inputLine: vtkMRMLMarkupsLineNode | vtkMRMLMarkupsCurveNode | None
+    outputTable: vtkMRMLTableNode | None
     lineResolution: Annotated[int, WithinRange(2, 1000)] = 100
-    outputPlotSeries: vtkMRMLPlotSeriesNode
+    outputPlotSeries: vtkMRMLPlotSeriesNode | None
     plotProportionalDistance: bool = False
-    outputPeaksTable: vtkMRMLTableNode
+    outputPeaksTable: vtkMRMLTableNode | None
     peakMinimumWidth: Annotated[float, WithinRange(0.0, 1e10)] = 1.0
     heightPercentageForWidthMeasurement: Annotated[float, WithinRange(0.0, 99.9)] = 50.0
     peakIsMaximum: bool = True
