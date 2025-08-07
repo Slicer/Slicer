@@ -42,6 +42,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
         self.previewPipelines = {}
         self.histogramPipeline = None
+        self._sliceCompositeObservers = []
 
         # Histogram stencil setup
         self.stencil = vtk.vtkPolyDataToImageStencil()
@@ -101,6 +102,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         # Update intensity range
         self.sourceVolumeNodeChanged()
 
+        # Set up observers for background/foreground volume changes in visible slice widgets
+        self.addSliceCompositeObservers()
+
         # Start preview pulse
         self.timer.start(200)
 
@@ -108,9 +112,46 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         # Stop preview pulse
         self.timer.stop()
 
+        # Remove observers
+        self.removeSliceCompositeObservers()
+
         # Clear preview pipeline
         self.clearPreviewDisplayPipelines()
         self.clearHistogramDisplay()
+
+    def addSliceCompositeObservers(self):
+        # Remove any existing observers first
+        self.removeSliceCompositeObservers()
+        layoutManager = slicer.app.layoutManager()
+        if not layoutManager:
+            return
+        for sliceViewName in layoutManager.sliceViewNames():
+            sliceWidget = layoutManager.sliceWidget(sliceViewName)
+            if not sliceWidget.isVisible():
+                continue
+            compositeNode = sliceWidget.sliceLogic().GetSliceCompositeNode()
+            tag = compositeNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onSliceCompositeNodeModified)
+            self._sliceCompositeObservers.append((compositeNode, tag))
+
+    def removeSliceCompositeObservers(self):
+        for compositeNode, tag in self._sliceCompositeObservers:
+            if compositeNode:
+                compositeNode.RemoveObserver(tag)
+        self._sliceCompositeObservers = []
+
+    def onSliceCompositeNodeModified(self, caller, event):
+        # Only update if the slice widget is visible
+        layoutManager = slicer.app.layoutManager()
+        if not layoutManager:
+            return
+        for sliceViewName in layoutManager.sliceViewNames():
+            sliceWidget = layoutManager.sliceWidget(sliceViewName)
+            if not sliceWidget.isVisible():
+                continue
+            compositeNode = sliceWidget.sliceLogic().GetSliceCompositeNode()
+            if compositeNode == caller:
+                self.updatePreviewDisplayPipelines()
+                break
 
     def setupOptionsFrame(self):
         self.thresholdSliderLabel = qt.QLabel(_("Threshold Range:"))
@@ -375,6 +416,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
                 self.scriptedEffect.setParameter("MaximumThreshold", hi)
 
     def layoutChanged(self):
+        self.addSliceCompositeObservers()
         self.updatePreviewDisplayPipelines()
 
     def setMRMLDefaults(self):
@@ -618,7 +660,11 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         for sliceViewName in sliceViewNames:
 
             sliceWidget = layoutManager.sliceWidget(sliceViewName)
-            if not self.scriptedEffect.segmentationDisplayableInView(sliceWidget.mrmlSliceNode()):
+            # Check if either background or foreground volume is set in the slice view
+            background_id = sliceWidget.sliceLogic().GetSliceCompositeNode().GetBackgroundVolumeID()
+            foreground_id = sliceWidget.sliceLogic().GetSliceCompositeNode().GetForegroundVolumeID()
+            volume_in_slice_view = bool(background_id or foreground_id)
+            if not sliceWidget.isVisible() or not volume_in_slice_view or not self.scriptedEffect.segmentationDisplayableInView(sliceWidget.mrmlSliceNode()):
                 # No need to add pipeline in this widget
                 continue
 
@@ -650,7 +696,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
                 self.previewedSegmentationDisplayNode.GetID(), self.previewedSegmentID)
 
         # Removed unused pipelines
-        for sliceWidget, pipeline in self.previewPipelines.items():
+        previewPipelines = list(self.previewPipelines.items())
+        for sliceWidget, pipeline in previewPipelines:
             if sliceWidget in sliceWidgetPipelinesToKeep:
                 continue
             self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
@@ -807,8 +854,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         foregroundVolumeNode = foregroundLogic.GetVolumeNode()
         if sourceVolumeNode == foregroundVolumeNode:
             return foregroundLogic
-
-        logging.warning("Source volume is not set as either the foreground or background")
 
         foregroundOpacity = 0.0
         if foregroundVolumeNode:
