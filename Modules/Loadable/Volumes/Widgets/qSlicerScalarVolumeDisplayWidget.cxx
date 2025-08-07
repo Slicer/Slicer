@@ -240,8 +240,18 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   vtkPointData* pointData = imageData ? imageData->GetPointData() : nullptr;
   vtkDataArray* voxelValues = pointData ? pointData->GetScalars() : nullptr;
 
-  // If there are no voxel values then we completely hide the histogram section
-  d->HistogramGroupBox->setVisible(voxelValues != nullptr);
+  // Guard against calling setVisible() too early.
+  //
+  // ctkCollapsibleGroupBox ignores child visibility changes until it has
+  // been created (WA_WState_Created is true). Calling setVisible() before
+  // this point can cause its internal visibility bookkeeping to become
+  // inconsistent, leaving children in the wrong state.
+  //
+  // See ctkCollapsibleGroupBoxPrivate::setChildVisibility() for details.
+  if (d->HistogramGroupBox->testAttribute(Qt::WA_WState_Created))
+  {
+    d->HistogramGroupBox->setVisible(voxelValues != nullptr);
+  }
 
   d->Histogram->setDataArray(voxelValues);
   // Calling histogram build() with an empty volume causes heap corruption
