@@ -169,9 +169,6 @@
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
-        <property name="frameStyle">
-         <set>QFrame::StyledPanel|QFrame::Sunken</set>
-        </property>
        </widget>
       </item>
       <item>
