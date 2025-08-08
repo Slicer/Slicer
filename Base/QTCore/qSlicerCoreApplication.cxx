@@ -46,7 +46,6 @@
 // For:
 //  - Slicer_BIN_DIR
 //  - Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
-//  - Slicer_BUILD_CLI_SUPPORT
 //  - Slicer_BUILD_DICOM_SUPPORT
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_I18N_SUPPORT
@@ -109,9 +108,7 @@
 #include <vtkCacheManager.h>
 #include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include <vtkMRMLCommandLineModuleNode.h>
-#endif
+#include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLI18N.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTranslator.h>
@@ -1408,12 +1405,10 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   {
     newMRMLScene->SetRootDirectory(this->defaultScenePath().toUtf8());
 
-#ifdef Slicer_BUILD_CLI_SUPPORT
     // Register the node type for the command line modules
     // TODO: should probably done in the command line logic
     vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
     newMRMLScene->RegisterNodeClass(clmNode.GetPointer());
-#endif
 
     // First scene needs a crosshair to be added manually
     vtkNew<vtkMRMLCrosshairNode> crosshair;

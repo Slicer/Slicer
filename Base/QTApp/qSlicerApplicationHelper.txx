@@ -38,10 +38,8 @@
 #endif
 #include <ctkUtils.h>
 
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include "qSlicerCLIExecutableModuleFactory.h"
-# include "qSlicerCLILoadableModuleFactory.h"
-#endif
+#include "qSlicerCLIExecutableModuleFactory.h"
+#include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCommandOptions.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"

@@ -77,7 +77,10 @@
 #cmakedefine Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT
 #cmakedefine Slicer_BUILD_WEBENGINE_SUPPORT
 
-#cmakedefine Slicer_BUILD_CLI_SUPPORT
+// CLI support is always enabled and cannot be disabled.
+// This variable is retained only for backward compatibility with dependent projects (e.g., Slicer extensions).
+// For more details, see: https://github.com/Slicer/Slicer/issues/8477
+#define Slicer_BUILD_CLI_SUPPORT
 #cmakedefine Slicer_BUILD_CLI
 #define Slicer_CLIMODULES_SUBDIR "@Slicer_CLIMODULES_SUBDIR@"
 #define Slicer_CLIMODULES_BIN_DIR "@Slicer_CLIMODULES_BIN_DIR@"

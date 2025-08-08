@@ -59,7 +59,7 @@
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
-#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
+#ifdef Slicer_USE_QtTesting
 # include "qSlicerCLIModuleWidgetEventPlayer.h"
 #endif
 #include "qSlicerCommandOptions.h"
@@ -1374,7 +1374,7 @@ void qSlicerMainWindow::setupMenuActions()
   d->WindowToolBarsMenu->removeAction(d->ViewExtensionsManagerAction);
 #endif
 
-#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
+#ifdef Slicer_USE_QtTesting
   if (app->commandOptions()->enableQtTesting() || //
       app->userSettings()->value("QtTesting/Enabled").toBool())
   {

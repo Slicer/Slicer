@@ -303,13 +303,9 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyLabelMapSeeding()
 {
-#ifdef Slicer_BUILD_CLI_SUPPORT
   // TODO: Select inputs too
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("TractographyLabelMapSeeding");
   Q_UNUSED(moduleWidget);
-#else
-  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
-#endif
 }
 
 //---------------------------------------------------------------------------

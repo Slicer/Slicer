@@ -29,12 +29,8 @@ set(qtmodules
   ViewControllers
   Volumes
   VolumeRendering # Volume Rendering depends of Volumes
+  CropVolume # CropVolume depends of Volumes
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND qtmodules
-    CropVolume
-    )
-endif()
 
 include(SlicerCheckModuleEnabled)
 

@@ -97,6 +97,7 @@ set(Slicer_DEPENDENCIES
   CTK
   LibArchive
   RapidJSON
+  SlicerExecutionModel
   )
 
 set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
@@ -104,10 +105,6 @@ set(DCMTK_WITH_OPENSSL ${Slicer_USE_DCMTK_WITH_OPENSSL})
 
 if(Slicer_USE_SimpleITK)
   list(APPEND Slicer_DEPENDENCIES SimpleITK)
-endif()
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES SlicerExecutionModel)
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
@@ -307,7 +304,7 @@ Slicer_Remote_Add(BRAINSTools
   GIT_TAG "36ae5529907a2c41225265a7158595e8d19e2cbf" # slicer-20250702-postv5.8.0 (v5.8.0 + 1 patch)
   LICENSE_FILES "https://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
-  OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
+  OPTION_DEPENDS "Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
   VARS ${BRAINSTools_slicer_options} ${BRAINSTools_hidden_options}
   )

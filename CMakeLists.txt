@@ -308,7 +308,18 @@ CMAKE_DEPENDENT_OPTION(
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)
 mark_as_superbuild(Slicer_BUILD_QTSCRIPTEDMODULES)
 
-option(Slicer_BUILD_CLI_SUPPORT "Build Slicer with CLI support" ON)
+# CLI support is always enabled and cannot be disabled.
+# This variable is retained only for backward compatibility with dependent projects (e.g., Slicer extensions).
+# For more details, see: https://github.com/Slicer/Slicer/issues/8477
+# Warn if a project attempts to disable CLI support.
+if(DEFINED Slicer_BUILD_CLI_SUPPORT AND NOT Slicer_BUILD_CLI_SUPPORT)
+  message(WARNING
+    "Setting Slicer_BUILD_CLI_SUPPORT to OFF is not supported. "
+    "CLI support is always enabled. See: "
+    "https://github.com/Slicer/Slicer/issues/8477"
+  )
+endif()
+set(Slicer_BUILD_CLI_SUPPORT ON CACHE BOOL "Build Slicer with CLI support" FORCE)
 mark_as_superbuild(Slicer_BUILD_CLI_SUPPORT)
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_CLI "Build Slicer CLI Plugins" ON
@@ -914,10 +925,8 @@ if(BUILD_TESTING)
   add_subdirectory(CMake/Testing)
   add_subdirectory(Extensions/CMake/Testing)
 
-  if(Slicer_BUILD_CLI_SUPPORT)
-    set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
-    set(SEM_DATA_MANAGEMENT_TARGET ${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
-  endif()
+  set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
+  set(SEM_DATA_MANAGEMENT_TARGET ${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
 endif()
 
 #-----------------------------------------------------------------------------

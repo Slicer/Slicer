@@ -8,12 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
   ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
+  ${MRMLCLI_INCLUDE_DIRS}
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND ${KIT}_INCLUDE_DIRECTORIES
-    ${MRMLCLI_INCLUDE_DIRS}
-  )
-endif()
 
 set(${KIT}_SRCS
   qMRMLSubjectHierarchyModel.cxx
@@ -99,12 +95,8 @@ set(${KIT}_TARGET_LIBRARIES
   qSlicerTerminologiesModuleWidgets
   MRMLCore
   vtkSlicerVolumesModuleLogic
+  MRMLCLI
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND ${KIT}_TARGET_LIBRARIES
-    MRMLCLI
-  )
-endif()
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleWidgets(

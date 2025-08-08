@@ -7,9 +7,7 @@ project(SlicerBaseLogic)
 #
 # ModuleDescriptionParser
 #
-if(Slicer_BUILD_CLI_SUPPORT)
-  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
-endif()
+find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
 
 #
 # VTK
@@ -26,10 +24,8 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKCommon
   ITKIOTransformBase
   ITKTransform
+  ${ModuleDescriptionParser_ITK_COMPONENTS}
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND ${PROJECT_NAME}_ITK_COMPONENTS ${ModuleDescriptionParser_ITK_COMPONENTS})
-endif()
 find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
   foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
@@ -65,14 +61,9 @@ set(include_dirs
   ${vtkTeem_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
+  ${MRMLCLI_INCLUDE_DIRS}
+  ${ModuleDescriptionParser_INCLUDE_DIRS}
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND include_dirs
-    ${MRMLCLI_INCLUDE_DIRS}
-    ${ModuleDescriptionParser_INCLUDE_DIRS}
-    )
-endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND include_dirs
@@ -126,13 +117,8 @@ set(SlicerBaseLogic_SRCS
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
   vtkImageFillROI.cxx
+  vtkSlicerCLIModuleLogic.cxx
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND SlicerBaseLogic_SRCS
-    vtkSlicerCLIModuleLogic.cxx
-    )
-endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND SlicerBaseLogic_SRCS
@@ -158,13 +144,8 @@ set(libs
 # Archive support used by extensions and by slicer data bundle
 list(APPEND libs
   ${LibArchive_LIBRARY}
+  MRMLCLI
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND libs
-    MRMLCLI
-    )
-endif()
 
 if(Slicer_USE_PYTHONQT)
   set(VTK_COMMON_PYTHON_LIBRARY

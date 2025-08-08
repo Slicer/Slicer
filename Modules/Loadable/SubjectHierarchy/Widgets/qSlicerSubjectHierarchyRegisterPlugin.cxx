@@ -34,9 +34,7 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLBSplineTransformNode.h>
 
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include <vtkMRMLCommandLineModuleNode.h>
-#endif
+#include <vtkMRMLCommandLineModuleNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -222,7 +220,6 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentItemTo()
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 {
-#ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
@@ -291,16 +288,11 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 
   // Reset saved 'from' item
   this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-
-#else
-  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
-#endif
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 {
-#ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
@@ -369,10 +361,6 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 
   // Reset saved 'from' item
   this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-
-#else
-  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
-#endif
 }
 
 //---------------------------------------------------------------------------
