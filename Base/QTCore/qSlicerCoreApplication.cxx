@@ -246,9 +246,17 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::init()
+void qSlicerCoreApplicationPrivate::initializeEnvironmentFromLauncher()
 {
   Q_Q(qSlicerCoreApplication);
+
+  if (this->EnvironmentInitializedFromLauncher)
+  {
+    qWarning() << "initializeEnvironmentFromLauncher() called more than once."
+               << "This may indicate unexpected constructor logic.";
+    return;
+  }
+  this->EnvironmentInitializedFromLauncher = true;
 
   // Minimize the number of call to 'systemEnvironment()' by keeping
   // a reference to 'Environment'. Indeed, re-creating QProcessEnvironment is a non-trivial
@@ -285,15 +293,15 @@ void qSlicerCoreApplicationPrivate::init()
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
   QCoreApplication::setOrganizationName(Slicer_ORGANIZATION_NAME);
 
+  // The INI format is required here because launcher-derived settings are
+  // provided via an INI file. Setting it early ensures any subsequent
+  // QSettings reads during environment initialization use the correct
+  // backend.
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
-  if (q->arguments().isEmpty())
-  {
-    qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
-  }
-
-  this->parseArguments();
-
+  // Discover Slicer home before argument parsing so that environment
+  // variables depending on this path are available to Python and other
+  // early subsystems.
   this->SlicerHome = this->discoverSlicerHomeDirectory();
 
   // Save the environment if no launcher is used (this is for example the case
@@ -373,6 +381,22 @@ void qSlicerCoreApplicationPrivate::init()
       }
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::init()
+{
+  Q_Q(qSlicerCoreApplication);
+
+  if (q->arguments().isEmpty())
+  {
+    qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
+  }
+
+  // Arguments are parsed only after the environment is fully initialized.
+  // This guarantees that any options affecting later initialization
+  // operate with a complete environment.
+  this->parseArguments();
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
@@ -951,6 +975,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int& _argc, char** _argv)
   , d_ptr(new qSlicerCoreApplicationPrivate(*this, new qSlicerCoreCommandOptions, new qSlicerCoreIOManager))
 {
   Q_D(qSlicerCoreApplication);
+  d->initializeEnvironmentFromLauncher();
   d->init();
 }
 
@@ -959,7 +984,9 @@ qSlicerCoreApplication::qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pi
   : Superclass(argc, argv)
   , d_ptr(pimpl)
 {
-  // Note: You are responsible to call init() in the constructor of derived class.
+  // Note: You are responsible for calling both initializeEnvironmentFromLauncher()
+  // and init() in the constructor of the derived class. This ensures launcher-
+  // derived environment variables exist before Python initialization.
 }
 
 //-----------------------------------------------------------------------------
