@@ -85,11 +85,8 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     endif()
   endforeach()
 
-  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
-  if(Slicer_BUILD_CLI_SUPPORT)
-    if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+") # Matches library and executable
-      set(path "@fixup_path@/@Slicer_CLIMODULES_LIB_DIR@")
-    endif()
+  if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+") # Matches library and executable
+    set(path "@fixup_path@/@Slicer_CLIMODULES_LIB_DIR@")
   endif()
 
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
@@ -157,8 +154,6 @@ function(fixup_bundle_with_plugins app)
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/platforms/*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/printsupport/*${suffix}"
     )
-
-  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 
@@ -239,11 +234,9 @@ function(fixup_bundle_with_plugins app)
       _fixup_paths_append(libs_path ${dir})
     endforeach()
   endif()
-  if(Slicer_BUILD_CLI_SUPPORT)
-    foreach(dir "@SlicerExecutionModel_LIBRARY_DIRS@")
-      _fixup_paths_append(libs_path ${dir})
-    endforeach()
-  endif()
+  foreach(dir "@SlicerExecutionModel_LIBRARY_DIRS@")
+    _fixup_paths_append(libs_path ${dir})
+  endforeach()
   set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     _fixup_paths_append(libs_path "@LibArchive_DIR@/lib")
@@ -266,9 +259,7 @@ function(fixup_bundle_with_plugins app)
   if(Slicer_BUILD_QTLOADABLEMODULES)
     _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
-  if(Slicer_BUILD_CLI_SUPPORT)
-    _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_CLIMODULES_LIB_DIR@")
-  endif()
+  _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_CLIMODULES_LIB_DIR@")
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/designer")
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/iconengines")
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/styles")

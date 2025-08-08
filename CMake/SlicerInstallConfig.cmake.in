@@ -13,7 +13,10 @@ set(Slicer_REQUIRED_CXX_FLAGS "@Slicer_REQUIRED_CXX_FLAGS@")
 set(Slicer_REQUIRED_LINK_FLAGS "@Slicer_REQUIRED_LINK_FLAGS@")
 
 # Whether Slicer was built with modules and CLI support.
-set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
+# CLI support is always enabled and cannot be disabled.
+# This variable is retained only for backward compatibility with dependent projects (e.g., Slicer extensions).
+# For more details, see: https://github.com/Slicer/Slicer/issues/8477
+set(Slicer_BUILD_CLI_SUPPORT ON)
 set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
 set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
 set(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT "@Slicer_BUILD_APPLICATIONUPDATE_SUPPORT@")

@@ -19,9 +19,6 @@
 #include "vtkSlicerGeneralizedReformatLogic.h"
 #include "vtkMRMLScalarVectorDWIVolumeResampler.h"
 
-// Slice includes
-#include <vtkSlicerConfigure.h> // For Slicer_BUILD_CLI_SUPPORT
-
 // MRML includes
 #include <vtkMRMLMarkupsCurveNode.h>
 #include <vtkMRMLScene.h>
@@ -58,9 +55,7 @@ vtkStandardNewMacro(vtkSlicerGeneralizedReformatLogic);
 //----------------------------------------------------------------------------
 vtkSlicerGeneralizedReformatLogic::vtkSlicerGeneralizedReformatLogic()
 {
-#ifdef Slicer_BUILD_CLI_SUPPORT
   this->RegisterVolumeResampler("ResampleScalarVectorDWIVolume", vtkNew<vtkMRMLScalarVectorDWIVolumeResampler>().GetPointer());
-#endif
 }
 
 //----------------------------------------------------------------------------

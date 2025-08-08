@@ -47,13 +47,8 @@ set(KIT_UI_SRCS
 set(KIT_target_libraries
   # ${QT_LIBRARIES} # Not needed: All dependencies are transitively satisfied by other targets
   qSlicerModulesCore
+  qSlicerBaseQTCLI
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND KIT_target_libraries
-    qSlicerBaseQTCLI
-    )
-endif()
 
 # Resources
 set(KIT_resources

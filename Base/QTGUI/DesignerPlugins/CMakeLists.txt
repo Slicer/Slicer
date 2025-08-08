@@ -40,12 +40,8 @@ set(${KIT}_MOC_SRCS
 
 set(${KIT}_TARGET_LIBRARIES
   qSlicerBaseQTGUI
+  qSlicerBaseQTCLI
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND ${KIT}_TARGET_LIBRARIES
-    qSlicerBaseQTCLI
-    )
-endif()
 
 ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}

@@ -507,18 +507,16 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     CurvedPlanarReformation.py
     )
 
-  if(Slicer_BUILD_CLI_SUPPORT)
-    slicer_add_python_unittest(SCRIPT CLIEventTest.py SLICER_ARGS --no-main-window)
-    slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
-    slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
+  slicer_add_python_unittest(SCRIPT CLIEventTest.py SLICER_ARGS --no-main-window)
+  slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
+  slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
 
-    if(Slicer_BUILD_BRAINSTOOLS)
-      slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139.py)
+  if(Slicer_BUILD_BRAINSTOOLS)
+    slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139.py)
 
-      list(APPEND KIT_PYTHON_SCRIPTS
-        BRAINSFitRigidRegistrationCrashIssue4139.py
-        )
-    endif()
+    list(APPEND KIT_PYTHON_SCRIPTS
+      BRAINSFitRigidRegistrationCrashIssue4139.py
+      )
   endif()
 
   set(KIT_PYTHON_RESOURCES

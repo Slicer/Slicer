@@ -35,10 +35,8 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include "qSlicerCLIExecutableModuleFactory.h"
-# include "qSlicerCLILoadableModuleFactory.h"
-#endif
+#include "qSlicerCLIExecutableModuleFactory.h"
+#include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerLoadableModuleFactory.h"
@@ -173,7 +171,6 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   }
 #endif
 
-#ifdef Slicer_BUILD_CLI_SUPPORT
   if (!options->disableCLIModules())
   {
     QString tempDirectory = qSlicerCoreApplication::application()->temporaryPath();
@@ -203,12 +200,12 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
       // in the install location, and exec/libs are *automatically* installed
       // in intDir.
       moduleFactoryManager->addSearchPath(cliPath + app->intDir());
-# ifdef Q_OS_MAC
+#ifdef Q_OS_MAC
       moduleFactoryManager->addSearchPath(app->slicerHome() + "/" + Slicer_CLIMODULES_SUBDIR);
-# endif
+#endif
     }
   }
-#endif
+
   moduleFactoryManager->addSearchPaths(app->toSlicerHomeAbsolutePaths(app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList()));
 
   QStringList modulesToAlwaysIgnore = app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList();

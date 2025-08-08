@@ -138,7 +138,7 @@ set(Slicer_EP_COMPONENT_VARS_CONFIG
   "set(Slicer_VTK_COMPONENTS \"${Slicer_VTK_COMPONENTS}\")")
 
 # List all required external project
-set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK CTKAppLauncherLib ITK CURL Teem VTK RapidJSON)
+set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK CTKAppLauncherLib ITK CURL Teem VTK RapidJSON SlicerExecutionModel)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG CURL CTKAppLauncherLib RapidJSON)
 if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG CTKAppLauncher)
@@ -147,9 +147,6 @@ endif()
 if(Slicer_USE_QtTesting)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG QtTesting)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG QtTesting)
-endif()
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG SlicerExecutionModel)
 endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG qRestAPI)
@@ -178,11 +175,9 @@ set(Slicer_USE_SYSTEM_${varname} \"${Slicer_USE_SYSTEM_${varname}}\")"
     )
 endforeach()
 
-if(Slicer_BUILD_CLI_SUPPORT)
-  set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX})
-  set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES})
-  set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
-endif()
+set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX})
+set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES})
+set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 
 # Export Targets file.
 set(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")

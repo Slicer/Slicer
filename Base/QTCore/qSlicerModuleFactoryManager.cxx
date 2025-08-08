@@ -327,9 +327,7 @@ QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
 #ifdef Slicer_USE_PYTHONQT
   subPaths << Slicer_QTSCRIPTEDMODULES_LIB_DIR;
 #endif
-#ifdef Slicer_BUILD_CLI_SUPPORT
   subPaths << Slicer_CLIMODULES_BIN_DIR;
-#endif
   subPaths << Slicer_QTLOADABLEMODULES_LIB_DIR;
 
   for (const QString& subPath : subPaths)

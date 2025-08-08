@@ -469,7 +469,6 @@ void qSlicerCoreCommandOptions::addArguments()
                     QVariant::Bool,
                     /*no tr*/ "Disable the loading of builtin Modules.");
 
-#ifdef Slicer_BUILD_CLI_SUPPORT
   this->addArgument("disable-cli-modules",
                     "",
                     QVariant::Bool,
@@ -479,7 +478,6 @@ void qSlicerCoreCommandOptions::addArguments()
                     "",
                     QVariant::Bool,
                     /*no tr*/ "Disable the loading of builtin Command Line Modules.");
-#endif
 
   this->addArgument("disable-loadable-modules",
                     "",

@@ -55,8 +55,7 @@ endif()
 # -------------------------------------------------------------------------
 # Install SlicerExecutionModel
 # -------------------------------------------------------------------------
-if(Slicer_BUILD_CLI_SUPPORT
-  AND NOT "${SlicerExecutionModel_DIR}" STREQUAL "" AND EXISTS "${SlicerExecutionModel_DIR}/CMakeCache.txt")
+if(NOT "${SlicerExecutionModel_DIR}" STREQUAL "" AND EXISTS "${SlicerExecutionModel_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SlicerExecutionModel_DIR};SlicerExecutionModel;RuntimeLibraries;/")
 endif()
 
