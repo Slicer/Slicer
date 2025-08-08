@@ -66,6 +66,15 @@ public:
   qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object, qSlicerCoreCommandOptions* coreCommandOptions, qSlicerCoreIOManager* coreIOManager);
   virtual ~qSlicerCoreApplicationPrivate();
 
+  // Initialize process environment as early as possible.
+  //
+  // Reads launcher settings (.ini) and discovers Slicer home to populate
+  // environment variables needed by early subsystems (notably Python).
+  // Must run before parseArguments() and any Python initialization to
+  // avoid incomplete interpreter state (e.g., import failures on macOS
+  // installers).
+  virtual void initializeEnvironmentFromLauncher();
+
   virtual void init();
 
   /// Terminates the calling process "immediately".
@@ -185,6 +194,8 @@ public:
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   QSharedPointer<qSlicerApplicationUpdateManager> ApplicationUpdateManager;
 #endif
+
+  bool EnvironmentInitializedFromLauncher{ false };
 
   QProcessEnvironment Environment;
 

@@ -508,6 +508,7 @@ qSlicerApplication::qSlicerApplication(int& _argc, char** _argv)
   : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
 {
   Q_D(qSlicerApplication);
+  d->initializeEnvironmentFromLauncher();
   d->init();
   // Note: Since QWidget/QDialog requires a QApplication to be successfully instantiated,
   //       qSlicerIOManager is not added to the constructor initialization list.
