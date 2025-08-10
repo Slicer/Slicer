@@ -1469,10 +1469,12 @@ QString qSlicerCoreApplication::slicerSharePath() const
 bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName) const
 {
   QString slicerRevision = this->revision();
+  std::string extensionBaseDir;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   slicerRevision = this->extensionsManagerModel()->slicerRevision();
+  extensionBaseDir = Slicer_EXTENSIONS_DIRBASENAME;
 #endif
-  return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(), this->slicerHome().toStdString(), slicerRevision.toStdString());
+  return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(), this->slicerHome().toStdString(), slicerRevision.toStdString(), extensionBaseDir);
 }
 
 //-----------------------------------------------------------------------------
