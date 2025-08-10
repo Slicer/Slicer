@@ -29,6 +29,7 @@
 // Slicer includes
 #include "qSlicerUtils.h"
 #include "qSlicerAbstractCoreModule.h"
+#include "vtkSlicerConfigure.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
@@ -203,13 +204,29 @@ QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& applicationHomeDir)
 {
-  return vtkSlicerApplicationLogic::IsPluginInstalled(filePath.toStdString(), applicationHomeDir.toStdString());
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  std::string organizationDomain = Slicer_ORGANIZATION_DOMAIN;
+  std::string organizationName = Slicer_ORGANIZATION_NAME;
+  std::string extensionsDirBase = Slicer_EXTENSIONS_DIRBASENAME;
+#else
+  std::string organizationDomain;
+  std::string organizationName;
+  std::string extensionsDirBase;
+#endif
+
+  return vtkSlicerApplicationLogic::IsPluginInstalled(filePath.toStdString(), applicationHomeDir.toStdString(), organizationDomain, organizationName, extensionsDirBase);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir, const QString& applicationRevision)
 {
-  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString(), applicationRevision.toStdString());
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  std::string extensionsDirBase = Slicer_EXTENSIONS_DIRBASENAME;
+#else
+  std::string extensionsDirBase;
+#endif
+
+  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString(), applicationRevision.toStdString(), extensionsDirBase);
 }
 
 //-----------------------------------------------------------------------------
