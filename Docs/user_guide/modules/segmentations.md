@@ -9,7 +9,7 @@ The Segmentations module manages segmentations. Each segmentation can contain mu
 - Create surface meshes from images for 3D printing
 - Editing of 3D closed surfaces
 
-Motivation, features, and details of the infrastructure are explained in paper *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](http://perk.cs.queensu.ca/sites/perkd7.cs.queensu.ca/files/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)) and in presentation slides ([pdf](https://www.slicer.org/wiki/File:20160526_Segmentations.pdf), [pptx](https://www.slicer.org/wiki/File:20160526_Segmentations.pptx)).
+Motivation, features, and details of the infrastructure are explained in paper *Cs. Pinter, A. Lasso, G. Fichtinger, "Polymorph segmentation representation for medical image computing", Computer Methods and Programs in Biomedicine, Volume 171, p19-26, 2019* ([pdf](https://github.com/EBATINCA/EbatincaDoc/blob/477aae710a5f741b21edaca4838cf48fd4ea0220/Papers/Pinter2019_Manuscript.pdf), [DOI](https://doi.org/10.1016/j.cmpb.2019.02.011)) and in the related [PhD dissertation](https://qspace.library.queensu.ca/handle/1974/26422).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
 
