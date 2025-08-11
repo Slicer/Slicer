@@ -188,7 +188,6 @@ set(MRMLCore_SRCS
   vtkMRMLLinearTransformNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.h
-  vtkMRMLLogic.cxx
   vtkMRMLMarkupsAngleNode.cxx
   vtkMRMLMarkupsAngleNode.h
   vtkMRMLMarkupsClosedCurveNode.cxx
