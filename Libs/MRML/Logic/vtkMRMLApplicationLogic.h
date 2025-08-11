@@ -295,6 +295,21 @@ public:
   /// Font file path is set to the one specified in FontFileName property in this object.
   void UseCustomFontFile(vtkTextProperty* textProperty);
 
+  /// @{
+  /// Applications must set this variable to a meaningful value. By default it is empty, this state
+  /// represents the current working directory. This is used by modules to access files.
+  void SetHomeDirectory(const std::string& path);
+  const std::string& GetHomeDirectory() const;
+  /// @}
+
+  /// @{
+  /// Applications must set this variable to a meaningful value.
+  /// This path is relative, modules will generally resolve it from GetHomeDirectory().
+  /// For example, the slicer application will set this to "share/slicer-X-Y".
+  void SetShareDirectory(const std::string& path);
+  const std::string& GetShareDirectory() const;
+  /// @}
+
 protected:
   vtkMRMLApplicationLogic();
   ~vtkMRMLApplicationLogic() override;

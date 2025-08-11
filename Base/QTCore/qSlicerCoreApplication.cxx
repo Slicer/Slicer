@@ -394,6 +394,8 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  this->AppLogic->SetHomeDirectory(this->SlicerHome.toUtf8().toStdString());
+  this->AppLogic->SetShareDirectory(Slicer_SHARE_DIR);
 
   // Create callback function that allows invoking VTK object modified requests from any thread.
   // This is used for example in MRMLIDImageIO to indicate that image update is completed.
@@ -1462,7 +1464,8 @@ void qSlicerCoreApplication::setDefaultScenePath(const QString& path)
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::slicerSharePath() const
 {
-  return Slicer_SHARE_DIR;
+  Q_D(const qSlicerCoreApplication);
+  return QString::fromUtf8(d->AppLogic->GetShareDirectory().c_str());
 }
 
 //-----------------------------------------------------------------------------

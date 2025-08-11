@@ -22,7 +22,7 @@
 
 // MRML includes
 #include <vtkMRMLAbstractViewNode.h>
-#include <vtkMRMLLogic.h>
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLSliceNode.h>
@@ -253,7 +253,7 @@ std::string vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetOrientat
 {
   std::vector<std::string> filesVector;
   filesVector.emplace_back(""); // The first two components do not add a slash.
-  filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
+  filesVector.push_back(this->External->GetMRMLApplicationLogic()->GetShareDirectory());
   filesVector.emplace_back(ORIENTATION_MARKERS_DIR);
   filesVector.emplace_back(modelFileName);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
