@@ -503,14 +503,25 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   set(CPACK_NSIS_FINISH_TITLE_3LINES True)
 
   # -------------------------------------------------------------------------
+  # Graphics Preference
+  # -------------------------------------------------------------------------
+  # Windows Settings -> System -> Display -> Graphics
+  # This area has options for setting custom graphics settings for an individual app with the following options:
+  # GpuPreference=0 -> "Let Windows Decide (default)"
+  # GpuPreference=1 -> "Power Saving" - uses integrated graphics
+  # GpuPreference=2 -> "High Performance" - uses discrete graphics
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+"WriteRegStr SHCTX \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\" \\\"GpuPreference=2;\\\"
+")
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+"DeleteRegValue SHCTX \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\"
+")
+
+  # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
   set(FILE_EXTENSIONS .mrml .xcat .mrb)
-
   if(FILE_EXTENSIONS)
-
-    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS)
-    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS)
     foreach(ext ${FILE_EXTENSIONS})
       string(LENGTH "${ext}" len)
       math(EXPR len_m1 "${len} - 1")
