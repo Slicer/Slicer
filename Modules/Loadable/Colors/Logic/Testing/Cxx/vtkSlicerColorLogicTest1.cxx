@@ -22,6 +22,7 @@
 #include "vtkSlicerColorLogic.h"
 
 // MRML includes
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
@@ -54,6 +55,9 @@ int TestDefaults()
 {
   vtkNew<vtkMRMLScene> scene;
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
+
+  vtkNew<vtkMRMLApplicationLogic> appLogic;
+  colorLogic->SetMRMLApplicationLogic(appLogic);
 
   vtkNew<vtkTimerLog> overallTimer;
   overallTimer->StartTimer();

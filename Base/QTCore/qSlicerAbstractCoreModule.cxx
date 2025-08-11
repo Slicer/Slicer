@@ -301,9 +301,9 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
     vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
     if (moduleLogic)
     {
-      moduleLogic->SetMRMLApplicationLogic(d->AppLogic);
       moduleLogic->SetModuleShareDirectory(vtkSlicerApplicationLogic::GetModuleShareDirectory(this->name().toStdString(), this->path().toStdString()));
     }
+    d->Logic->SetMRMLApplicationLogic(d->AppLogic);
     d->Logic->SetMRMLScene(this->mrmlScene());
   }
   return d->Logic;
