@@ -24,7 +24,6 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
-#include "vtkMRMLLogic.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLinkLogic.h"
@@ -97,6 +96,8 @@ public:
   std::string TemporaryPath;
   std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic>> ModuleLogicMap;
   std::map<int, std::string> FontFileNames;
+  std::string HomeDirectory;
+  std::string ShareDirectory;
 };
 
 //----------------------------------------------------------------------------
@@ -1206,12 +1207,36 @@ void vtkMRMLApplicationLogic::UseCustomFontFile(vtkTextProperty* textProperty)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetHomeDirectory(const std::string& path)
+{
+  this->Internal->HomeDirectory = path;
+}
+
+//----------------------------------------------------------------------------
+const std::string& vtkMRMLApplicationLogic::GetHomeDirectory() const
+{
+  return this->Internal->HomeDirectory;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetShareDirectory(const std::string& path)
+{
+  this->Internal->ShareDirectory = path;
+}
+
+//----------------------------------------------------------------------------
+const std::string& vtkMRMLApplicationLogic::GetShareDirectory() const
+{
+  return this->Internal->ShareDirectory;
+}
+
+//----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::GetFontFilePath(const std::string& fontFileName)
 {
   std::vector<std::string> filesVector;
   // Add an empty component because JoinPath does not add a slash for the first two components.
   filesVector.emplace_back("");
-  filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
+  filesVector.emplace_back(this->GetShareDirectory());
   filesVector.emplace_back(FONTS_DIR);
   filesVector.emplace_back(fontFileName);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
@@ -1224,7 +1249,7 @@ std::string vtkMRMLApplicationLogic::GetFontsDirectory()
   std::vector<std::string> filesVector;
   // Add an empty component because JoinPath does not add a slash for the first two components.
   filesVector.emplace_back("");
-  filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
+  filesVector.emplace_back(this->GetShareDirectory());
   filesVector.emplace_back(FONTS_DIR);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
   return fullPath;
