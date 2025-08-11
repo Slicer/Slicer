@@ -107,6 +107,7 @@ void qSlicerColorsModule::setup()
   if (this->appLogic() != nullptr)
   {
     this->appLogic()->SetColorLogic(colorLogic);
+    colorLogic->SetMRMLApplicationLogic(this->appLogic());
   }
   app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"), QStringList() << "vtkMRMLColorNode", true, this));
