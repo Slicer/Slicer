@@ -228,6 +228,51 @@ class QCheckablePushButtonToBoolConnector(GuiConnector):
 
 
 @parameterNodeGuiConnector
+class ctkCheckablePushButtonToBoolConnector(GuiConnector):
+    @staticmethod
+    def canRepresent(widget, datatype) -> bool:
+        return unannotatedType(datatype) == bool and type(widget) == ctk.ctkCheckablePushButton
+
+    @staticmethod
+    def create(widget, datatype):
+        if ctkCheckablePushButtonToBoolConnector.canRepresent(widget, datatype):
+            # no annotations are handled
+            return ctkCheckablePushButtonToBoolConnector(widget)
+        return None
+
+    def __init__(self, widget: ctk.ctkCheckablePushButton):
+        super().__init__()
+        self._widget: ctk.ctkCheckablePushButton = widget
+        if not self._widget.checkBoxControlsButtonToggleState:
+            # standard Qt-like checkable button - if the checkbox is checked then button becomes a toggle button
+            if not self._widget.checkable:
+                logging.warn(f"Making push button checkable for conversion to bool: button {self._widget}, parent {self._widget.parent}")
+                self._widget.checkable = True
+
+    def _connect(self):
+        self._widget.toggled.connect(self.changed)
+
+    def _disconnect(self):
+        self._widget.toggled.disconnect(self.changed)
+
+    def widget(self) -> ctk.ctkCheckablePushButton:
+        return self._widget
+
+    def read(self) -> bool:
+        return self._widget.checked
+
+    def write(self, value: bool) -> None:
+        if self._widget.checkBoxControlsButtonToggleState:
+            if value:
+                self._widget.checkable = True
+                self._widget.checked = True
+            else:
+                self._widget.checkable = False
+        else:
+            self._widget.checked = value
+
+
+@parameterNodeGuiConnector
 class QSliderOrSpinBoxToIntConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
@@ -292,28 +337,34 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
 
 
 @parameterNodeGuiConnector
-class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
+class QDoubleSpinBoxCtkSliderWidgetToFloatIntConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
-        return unannotatedType(datatype) == float and type(widget) in (
+        return (unannotatedType(datatype) in (float, int)) and (type(widget) in (
             qt.QDoubleSpinBox, ctk.ctkSliderWidget, slicer.qMRMLSliderWidget,
             ctk.ctkDoubleSlider, ctk.ctkDoubleSpinBox, slicer.qMRMLSpinBox,
-        )
+        ))
 
     @staticmethod
     def create(widget, datatype):
-        if QDoubleSpinBoxCtkSliderWidgetToFloatConnector.canRepresent(widget, datatype):
-            annotations = splitAnnotations(datatype)[1]
-            return QDoubleSpinBoxCtkSliderWidgetToFloatConnector(widget, annotations)
+        if QDoubleSpinBoxCtkSliderWidgetToFloatIntConnector.canRepresent(widget, datatype):
+            return QDoubleSpinBoxCtkSliderWidgetToFloatIntConnector(widget, datatype)
         return None
 
-    def __init__(self, widget, annotations):
+    def __init__(self, widget, datatype):
         super().__init__()
         self._widget = widget
 
-        decimals = findFirstAnnotation(annotations, Decimals)
-        if decimals is not None and not isinstance(widget, ctk.ctkDoubleSlider):
-            self._widget.decimals = decimals.value
+        actualtype, annotations = splitAnnotations(datatype)
+        self._isInteger = (actualtype == int)
+
+        if not isinstance(widget, ctk.ctkDoubleSlider):
+            if self._isInteger:
+                self._widget.decimals = 0
+            else:
+                decimals = findFirstAnnotation(annotations, Decimals)
+                if decimals is not None:
+                    self._widget.decimals = decimals.value
 
         singleStep = findFirstAnnotation(annotations, SingleStep)
         if singleStep is not None:
@@ -350,11 +401,17 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
     def widget(self):
         return self._widget
 
-    def read(self) -> float:
-        return self._widget.value
+    def read(self) -> float | int:
+        if self._isInteger:
+            return int(self._widget.value)
+        else:
+            return self._widget.value
 
-    def write(self, value: float) -> None:
-        self._widget.value = value
+    def write(self, value: float | int) -> None:
+        if self._isInteger:
+            self._widget.value = int(value)
+        else:
+            self._widget.value = value
 
 
 @parameterNodeGuiConnector

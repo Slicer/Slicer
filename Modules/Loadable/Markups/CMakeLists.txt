@@ -93,6 +93,11 @@ slicerMacroBuildLoadableModule(
   )
 
 #-----------------------------------------------------------------------------
+if(Slicer_USE_PYTHONQT)
+  add_subdirectory(${MODULE_NAME}Lib)
+endif()
+
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

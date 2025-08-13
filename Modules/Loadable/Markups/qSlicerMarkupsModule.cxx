@@ -31,6 +31,9 @@
 #include <qSlicerIOManager.h>
 #include <qSlicerNodeWriter.h>
 #include "qSlicerModuleManager.h"
+#ifdef Slicer_USE_PYTHONQT
+# include <qSlicerPythonManager.h>
+#endif
 
 #include "vtkMRMLScene.h"
 
@@ -255,6 +258,18 @@ void qSlicerMarkupsModule::setup()
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyMarkupsPlugin());
+
+  qSlicerApplication* app = qSlicerApplication::application();
+  if (app)
+  {
+    // Explicitly import associated python library to trigger registration of plugins
+#ifdef Slicer_USE_PYTHONQT
+    if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+      app->pythonManager()->executeString(QString("import MarkupsLib"));
+    }
+#endif
+  }
 }
 
 //-----------------------------------------------------------------------------
