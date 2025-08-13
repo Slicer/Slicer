@@ -510,11 +510,12 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   # GpuPreference=0 -> "Let Windows Decide (default)"
   # GpuPreference=1 -> "Power Saving" - uses integrated graphics
   # GpuPreference=2 -> "High Performance" - uses discrete graphics
+  # Note: This is a user setting that has to be applied at the HKCU (HKEY_CURRENT_USER) level and cannot be set at the HKLM (HKEY_LOCAL_MACHINE) level
   set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-"WriteRegStr SHCTX \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\" \\\"GpuPreference=2;\\\"
+"WriteRegStr HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\" \\\"GpuPreference=2;\\\"
 ")
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-"DeleteRegValue SHCTX \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\"
+"DeleteRegValue HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\"
 ")
 
   # -------------------------------------------------------------------------
