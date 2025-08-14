@@ -342,6 +342,18 @@ void qMRMLSliceView::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
     return;
   }
 
+  if (d->MRMLSliceNode)
+  {
+    d->MRMLSliceNode->SetDisplayableManagerGroup(nullptr);
+    d->MRMLSliceNode->SetRenderWindow(nullptr);
+  }
+
+  if (newSliceNode)
+  {
+    newSliceNode->SetDisplayableManagerGroup(d->DisplayableManagerGroup);
+    newSliceNode->SetRenderWindow(d->RenderWindow);
+  }
+
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
 
   d->MRMLSliceNode = newSliceNode;
