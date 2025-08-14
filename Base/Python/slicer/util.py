@@ -3988,87 +3988,10 @@ def _executePythonModule(module, args):
     logProcessOutput(proc)
 
 
-def pip_install(requirements):
-    """Install python packages.
+import slicer.packaging
 
-    Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
-    user confirmation may be implemented, therefore it is recommended to use this method call instead of calling
-    pip install directly.
-
-    :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
-      It can be either a single string or a list of command-line arguments. In general, passing all arguments as a single string is
-      the simplest. The only case when using a list may be easier is when there are arguments that may contain spaces, because
-      each list item is automatically quoted (it is not necessary to put quotes around each string argument that may contain spaces).
-
-    Example: calling from Slicer GUI
-
-    .. code-block:: python
-
-      pip_install("pandas scipy scikit-learn")
-
-    Example: calling from PythonSlicer console
-
-    .. code-block:: python
-
-      from slicer.util import pip_install
-      pip_install("pandas>2")
-
-    Example: upgrading to latest version of a package
-
-    .. code-block:: python
-
-      pip_install("--upgrade pandas")
-
-    """
-
-    if type(requirements) == str:
-        # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
-        import shlex
-
-        args = "install", *(shlex.split(requirements))
-    elif type(requirements) == list:
-        args = "install", *requirements
-    else:
-        raise ValueError("pip_install requirement input must be string or list")
-
-    _executePythonModule("pip", args)
-
-
-def pip_uninstall(requirements):
-    """Uninstall python packages.
-
-    Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
-    user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
-    pip uninstall.
-
-    :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
-      It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
-      if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
-
-    Example: calling from Slicer GUI
-
-    .. code-block:: python
-
-      pip_uninstall("tensorflow keras scikit-learn ipywidgets")
-
-    Example: calling from PythonSlicer console
-
-    .. code-block:: python
-
-      from slicer.util import pip_uninstall
-      pip_uninstall("tensorflow")
-
-    """
-    if type(requirements) == str:
-        # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
-        import shlex
-
-        args = "uninstall", *(shlex.split(requirements)), "--yes"
-    elif type(requirements) == list:
-        args = "uninstall", *requirements, "--yes"
-    else:
-        raise ValueError("pip_uninstall requirement input must be string or list")
-    _executePythonModule("pip", args)
+pip_install = slicer.packaging.pip_install
+pip_uninstall = slicer.packaging.pip_uninstall
 
 
 def longPath(path):
