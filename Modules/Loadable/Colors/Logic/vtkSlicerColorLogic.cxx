@@ -92,31 +92,24 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
   if (!app)
   {
     vtkErrorMacro("GetMRMLApplicationLogic() must not be null");
-    return;
+    return {};
+  }
+
+  const std::string& shareDir = app->GetShareDirectory();
+  if (shareDir.empty())
+  {
+    vtkWarningMacro("ShareDirectory of vtkSlicerApplication is not defined.\n"
+                    "Default color files won't be loaded!");
+    return {};
   }
 
   const std::string& homeDir = app->GetHomeDirectory();
-  if(homeDir.empty())
-  {
-    vtkWarningMacro("HomeDirectory of vtkSlicerApplication is not defined.\n" \
-        "Default color files won't be loaded!");
-    return {};
-  }
-
-  const std::string& ShareDir = app->GetShareDirectory();
-  if (ShareDir.empty())
-  {
-    vtkWarningMacro("ShareDirectory of vtkSlicerApplication is not defined.\n" \
-        "Default color files won't be loaded!");
-    return {};
-  }
-
 
   // build up the vector
   std::vector<std::string> filesVector;
   filesVector.emplace_back(""); // for relative path
   filesVector.push_back(homeDir);
-  filesVector.push_back(ShareDir + "/ColorFiles");
+  filesVector.push_back(shareDir + "/ColorFiles");
   std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in
