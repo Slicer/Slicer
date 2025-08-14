@@ -2560,10 +2560,21 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer /*=false*/
         thresholdedLabelmap->CopyDirections(currentLabelmap);
 
         int effectiveExtent[6] = { 0 };
-        vtkOrientedImageDataResample::CalculateEffectiveExtent(thresholdedLabelmap, effectiveExtent);
+        if (!vtkOrientedImageDataResample::CalculateEffectiveExtent(thresholdedLabelmap, effectiveExtent))
+        {
+          vtkErrorMacro("CollapseBinaryLabelmaps: Failed to calculate effective extent for thresholded labelmap.");
+          continue;
+        }
 
         vtkNew<vtkOrientedImageData> referenceImage;
         referenceImage->ShallowCopy(thresholdedLabelmap);
+
+        // Validate extent before setting it
+        if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
+        {
+          vtkErrorMacro("CollapseBinaryLabelmaps: Invalid effective extent calculated.");
+          continue;
+        }
         referenceImage->SetExtent(effectiveExtent);
 
         vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(thresholdedLabelmap, referenceImage, thresholdedLabelmap);
