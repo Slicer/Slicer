@@ -1,21 +1,29 @@
 """The wrapper module is responsible for creating parameterNodeWrappers"""
 
 import logging
+import os
+import sys
 import typing
 import weakref
 import types
 
-import qt
+_standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
+
+if not _standalone_python:
+    import qt
 
 import slicer
 import vtk
 
 from .default import Default, extractDefault
-from .guiConnectors import GuiConnector, createGuiConnector, _getPackNameToWidgetMap
+if not _standalone_python:
+    from .guiConnectors import GuiConnector, createGuiConnector, _getPackNameToWidgetMap
 from .parameterInfo import ParameterInfo
 from .parameterPack import _checkMember as checkPackMember
 from .serializers import Serializer, createSerializer
 from .util import splitAnnotations, splitPossiblyDottedName, unannotatedType
+
+del _standalone_python
 
 __all__ = [
     "parameterNodeWrapper",
