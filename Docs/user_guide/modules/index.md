@@ -59,6 +59,7 @@ brainsroiauto.md
 ```{toctree}
 :maxdepth: 1
 markups.md
+lineprofile.md
 petstandarduptakevaluecomputation.md
 segmentstatistics.md
 ```
