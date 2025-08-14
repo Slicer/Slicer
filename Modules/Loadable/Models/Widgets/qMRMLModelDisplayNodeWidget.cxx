@@ -55,6 +55,7 @@ class qMRMLModelDisplayNodeWidgetPrivate
   : public QWidget
   , public Ui_qMRMLModelDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLModelDisplayNodeWidget);
 
 protected:
@@ -891,3 +892,5 @@ void qMRMLModelDisplayNodeWidget::setClippingConfigurationButtonVisible(bool sho
   Q_D(qMRMLModelDisplayNodeWidget);
   d->ConfigureClippingPushButton->setVisible(show);
 }
+
+#include "qMRMLModelDisplayNodeWidget.moc"

@@ -144,6 +144,7 @@ protected:
 //-----------------------------------------------------------------------------
 class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   typedef QStyledItemDelegate Superclass;
   qSlicerFileNameItemDelegate(QObject* parent = nullptr);

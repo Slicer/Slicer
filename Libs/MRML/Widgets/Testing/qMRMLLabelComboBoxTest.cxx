@@ -164,4 +164,4 @@ void qMRMLLabelComboBoxTester::testSetColorNameVisible()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLLabelComboBoxTest)
-#include "moc_qMRMLLabelComboBoxTest.cxx"
+#include "qMRMLLabelComboBoxTest.moc"

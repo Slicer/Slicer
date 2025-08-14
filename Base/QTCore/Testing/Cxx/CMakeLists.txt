@@ -112,9 +112,9 @@ if(BUILD_TESTING)
   endif()
 
   set(KIT_TEST_TARGET_LIBRARIES ${KIT})
-    QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
-    QT5_ADD_RESOURCES(Tests ${resources_dir}/${KIT}Testing.qrc)
-    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
+  list(APPEND Tests ${KIT_TEST_GENERATE_MOC_SRCS})
+  list(APPEND Tests ${resources_dir}/${KIT}Testing.qrc)
+  list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
 
   if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_TEST_TARGET_LIBRARIES
