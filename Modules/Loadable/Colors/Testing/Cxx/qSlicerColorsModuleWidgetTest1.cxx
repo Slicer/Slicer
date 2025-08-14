@@ -55,6 +55,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char* argv[])
   colorsModule.setMRMLScene(scene);
 
   vtkNew<vtkSlicerApplicationLogic> appLogic;
+  appLogic->SetShareDirectory(Slicer_SHARE_DIR);
   colorsModule.initialize(appLogic);
 
   qSlicerColorsModuleWidget* colorsWidget = dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
