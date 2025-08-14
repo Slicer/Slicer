@@ -21,6 +21,11 @@ if(Slicer_USE_NUMPY)
     Endoscopy
     )
 endif()
+if(Slicer_USE_SCIPY)
+  list(APPEND modules
+    LineProfile
+    )
+endif()
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND modules
     DICOM

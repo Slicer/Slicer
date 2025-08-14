@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LineProfile</class>
+ <widget class="qMRMLWidget" name="LineProfile">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>442</width>
+    <height>409</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>LineProfile</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="ctkCollapsibleButton" name="parametersCollapsibleButton">
+     <property name="text">
+      <string>Parameters</string>
+     </property>
+     <property name="title" stdset="0">
+      <string>Parameters</string>
+     </property>
+     <layout class="QFormLayout" name="parametersFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="inputVolumeLabel">
+        <property name="text">
+         <string>Input Volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="inputVolumeSelector">
+        <property name="toolTip">
+         <string>Pick the input to the algorithm which will be sampled along the line.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>false</bool>
+        </property>
+        <property name="noneEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="editEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="selectNodeUponCreation">
+         <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">inputVolume</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="inputLineLabel">
+        <property name="text">
+         <string>Input Line:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lineResolutionLabel">
+        <property name="text">
+         <string>Line Resolution:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkSliderWidget" name="lineResolutionSliderWidget">
+        <property name="toolTip">
+         <string>Number of points to sample along the line.</string>
+        </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>2.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">lineResolution</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qSlicerSimpleMarkupsWidget" name="inputLineWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Pick line or curve to take image samples along.</string>
+        </property>
+        <property name="defaultNodeColor">
+         <color>
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">inputLine</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="plottingCollapsibleButton">
+     <property name="text">
+      <string>Advanced</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="title" stdset="0">
+      <string>Plotting</string>
+     </property>
+     <layout class="QFormLayout" name="plottingLayout">
+      <item row="2" column="0">
+       <widget class="QLabel" name="outputPlotSeriesLabel">
+        <property name="text">
+         <string>Output Plot Series:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputPlotSeriesSelector">
+        <property name="toolTip">
+         <string>Pick the output plot series to the algorithm.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLPlotSeriesNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>false</bool>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="noneDisplay">
+         <string>Create new plot</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputPlotSeries</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="plotProportionalDistanceLabel">
+        <property name="text">
+         <string>Plot Proportional Distance (%):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="plotProportionalDistanceCheckBox">
+        <property name="toolTip">
+         <string>If checked, then distance along the line in plot is not absolute, but the percent distance from the start of the line.</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">plotProportionalDistance</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="plotProportionalDistanceLabel_3">
+        <property name="text">
+         <string>Show plot:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="plotShowCheckBox">
+        <property name="toolTip">
+         <string>If checked, then the intensity profile plot is automatically shown when the intensity profile is updated.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">plotShow</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="outputTableLabel">
+        <property name="text">
+         <string>Output Intensities Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputTableSelector">
+        <property name="toolTip">
+         <string>Pick the table that will store the intensity and distance values.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLTableNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>false</bool>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="noneDisplay">
+         <string>Create new table</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputTable</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="peaksCollapsibleButton">
+     <property name="text">
+      <string>Peak Detection</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="title" stdset="0">
+      <string>Peak Detection</string>
+     </property>
+     <layout class="QFormLayout" name="peaksFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="outputPeaksTableLabel">
+        <property name="text">
+         <string>Peaks Output Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputPeaksTableSelector">
+        <property name="toolTip">
+         <string>Pick the output table that will store information about each detected peak.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLTableNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>false</bool>
+        </property>
+        <property name="baseName">
+         <string>Peaks</string>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputPeaksTable</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="peakMinimumWidthLabel">
+        <property name="text">
+         <string>Minimum Peak Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLSpinBox" name="peakMinimumWidthSpinBox">
+        <property name="toolTip">
+         <string>Minimum width of the peak. Use higher values to reject small peaks detected due to image noise.</string>
+        </property>
+        <property name="maximum">
+         <double>10000000000.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="quantity">
+         <string notr="true">length</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">peakMinimumWidth</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="heightPercentageForWidthMeasurementLabel">
+        <property name="text">
+         <string>Height for Width Measurement:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLSpinBox" name="heightPercentageForWidthMeasurementSpinBox">
+        <property name="toolTip">
+         <string>Height at which the peak width is measured. 50% computes full width at half maximum. Larger value means that the height is measured near the top of the peak.</string>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>99.900000000000006</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>50.000000000000000</double>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">heightPercentageForWidthMeasurement</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="peakIsMaximumLabel">
+        <property name="text">
+         <string>Peak is Maximum:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="peakIsMaximumCheckBox">
+        <property name="toolTip">
+         <string>If checked then peaks are local maximum values. If unchecked then peaks are local minimum values.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">peakIsMaximum</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCheckablePushButton" name="applyButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Compute intensity profile</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="checkBoxControlsButtonToggleState">
+      <bool>true</bool>
+     </property>
+     <property name="SlicerParameterName" stdset="0">
+      <string>autoUpdate</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSpinBox</class>
+   <extends>ctkDoubleSpinBox</extends>
+   <header>qMRMLSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerSimpleMarkupsWidget</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerSimpleMarkupsWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>ctkPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>LineProfile</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>inputVolumeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>283</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LineProfile</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>inputLineWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>283</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LineProfile</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>outputTableSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>283</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LineProfile</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>outputPlotSeriesSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LineProfile</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>outputPeaksTableSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>456</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
