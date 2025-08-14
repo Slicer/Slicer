@@ -37,17 +37,17 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(Slicer_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
   unset(PYTHON_LIBRARY CACHE)
-  unset(PYTHON_EXECUTABLE CACHE)
-  find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
-  find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
-  set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIRS})
-  set(PYTHON_LIBRARY ${PYTHON_LIBRARIES})
-  set(PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
+  unset(Python3_EXECUTABLE CACHE)
+  find_package(Python3 COMPONENTS Development ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
+  find_package(Python3 COMPONENTS Interpreter ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
+  set(PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS})
+  set(PYTHON_LIBRARY ${Python3_LIBRARIES})
+  set(Python3_EXECUTABLE ${Python3_EXECUTABLE})
 endif()
 
 if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
-   OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT Slicer_USE_SYSTEM_${proj})
+   OR NOT DEFINED Python3_EXECUTABLE) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-${Slicer_REQUIRED_PYTHON_VERSION}")
 
@@ -193,13 +193,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}${Slicer_REQUIRED_PYTHON_ABIFLAGS})
     set(PYTHON_LIBRARY ${python_DIR}/lib/libpython${Slicer_REQUIRED_PYTHON_VERSION_DOT}${Slicer_REQUIRED_PYTHON_ABIFLAGS}.${python_IMPORT_SUFFIX})
-    set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer)
+    set(Python3_EXECUTABLE ${python_DIR}/bin/PythonSlicer)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python)
   elseif(WIN32)
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include)
-    set(PYTHON_LIBRARY ${python_DIR}/libs/python${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}${Slicer_REQUIRED_PYTHON_VERSION_MINOR}.lib)
-    set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer.exe)
+    set(PYTHON_LIBRARY ${python_DIR}/libs/python${Slicer_REQUIRED_Python3_VERSION_MAJOR}${Slicer_REQUIRED_Python3_VERSION_MINOR}.lib)
+    set(Python3_EXECUTABLE ${python_DIR}/bin/PythonSlicer.exe)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
     message(FATAL_ERROR "Unknown system !")
@@ -424,14 +424,14 @@ else()
   # to the virtual environment.
   set(python_cmd "import sys;print(';'.join(sys.path))")
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "${python_cmd}"
+    COMMAND ${Python3_EXECUTABLE} -c "${python_cmd}"
     RESULT_VARIABLE rv
     OUTPUT_VARIABLE ov
     ERROR_VARIABLE ev
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   if(rv)
-    message(FATAL_ERROR "Failed to execute '${python_cmd}' using PYTHON_EXECUTABLE [${PYTHON_EXECUTABLE}]. ${ev}")
+    message(FATAL_ERROR "Failed to execute '${python_cmd}' using Python3_EXECUTABLE [${Python3_EXECUTABLE}]. ${ev}")
   endif()
 
   #-----------------------------------------------------------------------------
@@ -466,13 +466,13 @@ mark_as_superbuild(
 
 mark_as_superbuild(
   VARS
-    PYTHON_EXECUTABLE:FILEPATH
+    Python3_EXECUTABLE:FILEPATH
     PYTHON_INCLUDE_DIR:PATH
     PYTHON_LIBRARY:FILEPATH
   LABELS "FIND_PACKAGE"
   )
 
-ExternalProject_Message(${proj} "PYTHON_EXECUTABLE:${PYTHON_EXECUTABLE}")
+ExternalProject_Message(${proj} "Python3_EXECUTABLE:${Python3_EXECUTABLE}")
 ExternalProject_Message(${proj} "PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
 ExternalProject_Message(${proj} "PYTHON_LIBRARY:${PYTHON_LIBRARY}")
 
@@ -488,7 +488,7 @@ set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
 set(Python3_LIBRARY ${PYTHON_LIBRARY})
 set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
 set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
-set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+set(Python3_EXECUTABLE ${Python3_EXECUTABLE})
 
 mark_as_superbuild(
   VARS
@@ -540,7 +540,7 @@ print('Removing %s [done]' % dir)
   file(WRITE ${_file} ${_content})
 
   ExternalProject_Add_Step(${proj} install_tree_cleanup
-    COMMAND ${PYTHON_EXECUTABLE} ${_file}
+    COMMAND ${Python3_EXECUTABLE} ${_file}
     COMMENT "Performing install tree cleanup for '${proj}'"
     DEPENDEES install
     )
