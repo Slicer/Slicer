@@ -51,6 +51,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-${Slicer_REQUIRED_PYTHON_VERSION}")
 
+  # Python version update notes:
+  # - When updating to Python >= 3.13, remove explicit setting of ENABLE_NIS to OFF below.
   set(_download_3.12.10_url "https://www.python.org/ftp/python/3.12.10/Python-3.12.10.tgz")
   set(_download_3.12.10_md5 "35c03f014408e26e2b06d576c19cac54")
 
@@ -120,6 +122,15 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(_install_command)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DCMAKE_BUILD_TYPE:STRING=Release
+      )
+  endif()
+
+  if(UNIX)
+    # Disable "nis" module deprecated since version 3.11 and removed in version 3.13.
+    # Explicitly disabling the module in Python 3.12 allows to simplify the distribution of Slicer
+    # by removing the dependencies "tirpc" and "nsl" libraries.
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DENABLE_NIS:BOOL=OFF
       )
   endif()
 
