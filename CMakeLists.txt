@@ -179,8 +179,11 @@ mark_as_superbuild(Slicer_PLATFORM_CHECK:BOOL)
 #-----------------------------------------------------------------------------
 # Determine endian type
 #-----------------------------------------------------------------------------
-include(TestBigEndian)
-test_big_endian(CMAKE_WORDS_BIGENDIAN)
+if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+  set(CMAKE_WORDS_BIGENDIAN TRUE)
+else()
+  set(CMAKE_WORDS_BIGENDIAN FALSE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Prerequisites
