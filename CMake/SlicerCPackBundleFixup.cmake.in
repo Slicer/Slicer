@@ -190,8 +190,8 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     list(APPEND candidates_pattern
-      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_hashlib.so"
-      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_ssl.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_hashlib*.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_ssl*.so"
       )
   endif()
 
