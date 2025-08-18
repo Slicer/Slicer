@@ -257,30 +257,6 @@ cmake -DSlicer_USE_SYSTEM_OpenSSL=ON ../Slicer
 ```
 :::
 
-:::{warning}
-Resolving symbol lookup error with libtirpc and GSS/Kerberos on Ubuntu 25.04 when using the Qt online installer
-
-When launching Slicer built with Qt installed via the online installer, you may encounter the following error:
-```
-symbol lookup error: /lib/x86_64-linux-gnu/libtirpc.so.3: undefined symbol: GSS_C_NT_USER_NAME version gssapi_krb5_2_MIT
-```
-Root cause:
-This error is caused by a conflict between the system's `libtirpc.so.3` and Slicer's bundled GSS/Kerberos libraries, resulting in a symbol version mismatch.
-
-Solution:
-
-1. Remove Slicer's bundled GSS library
-   This will force Slicer to use the system-provided GSS library:
-   ```console
-   rm /path/to/Slicer-build/bin/libgssapi_krb5.so*
-   ```
-2. Reconfigure and rebuild the inner build of Slicer
-   Configure CMake to disable building the bundled GSS/Kerberos stub:
-   ```console
-   cmake -DSlicer_BUILD_KRB5_GSSAPI_STUB:BOOL=OFF
-   ```
-:::
-
 :::{admonition} Tip -- Interfaces to change 3D Slicer configuration variables
 
 Instead of `cmake`, one can use `ccmake`, which provides a text-based interface, or `cmake-gui`, which provides a graphical user interface. These applications will also provide a list of variables that can be changed.
