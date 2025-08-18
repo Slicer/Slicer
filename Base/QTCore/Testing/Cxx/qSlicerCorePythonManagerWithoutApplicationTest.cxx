@@ -66,4 +66,4 @@ void qSlicerCorePythonManagerWithoutApplicationTester::toPythonStringLiteral()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerCorePythonManagerWithoutApplicationTest)
-#include "moc_qSlicerCorePythonManagerWithoutApplicationTest.cxx"
+#include "qSlicerCorePythonManagerWithoutApplicationTest.moc"

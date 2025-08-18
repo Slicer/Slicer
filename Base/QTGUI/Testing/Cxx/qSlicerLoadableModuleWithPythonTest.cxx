@@ -143,4 +143,4 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerLoadableModuleWithPythonTest)
-#include "moc_qSlicerLoadableModuleWithPythonTest.cxx"
+#include "qSlicerLoadableModuleWithPythonTest.moc"

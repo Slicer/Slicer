@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 class qMRMLSegmentationGeometryDialogPrivate : public QDialog
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSegmentationGeometryDialog);
 
 protected:
@@ -207,3 +208,5 @@ bool qMRMLSegmentationGeometryDialog::exec()
   }
   return true;
 }
+
+#include "qMRMLSegmentationGeometryDialog.moc"
