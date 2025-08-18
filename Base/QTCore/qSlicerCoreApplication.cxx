@@ -22,9 +22,6 @@
 #include <clocale>
 #include <stdexcept>
 
-// Python include header
-#include <Python.h>
-
 // Qt includes
 #include <QDebug>
 #include <QDir>
