@@ -177,15 +177,6 @@ include(SlicerBlockPlatformCheck)
 mark_as_superbuild(Slicer_PLATFORM_CHECK:BOOL)
 
 #-----------------------------------------------------------------------------
-# Determine endian type
-#-----------------------------------------------------------------------------
-if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
-  set(CMAKE_WORDS_BIGENDIAN TRUE)
-else()
-  set(CMAKE_WORDS_BIGENDIAN FALSE)
-endif()
-
-#-----------------------------------------------------------------------------
 # Prerequisites
 #-----------------------------------------------------------------------------
 find_package(Git)
