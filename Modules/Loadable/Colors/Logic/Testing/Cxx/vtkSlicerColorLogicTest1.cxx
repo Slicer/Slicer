@@ -26,6 +26,8 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkSlicerConfigure.h" // For Slicer_SHARE_DIR
+
 // VTK includes
 #include <vtkTimerLog.h>
 
@@ -57,6 +59,7 @@ int TestDefaults()
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
 
   vtkNew<vtkMRMLApplicationLogic> appLogic;
+  appLogic->SetShareDirectory(Slicer_SHARE_DIR);
   colorLogic->SetMRMLApplicationLogic(appLogic);
 
   vtkNew<vtkTimerLog> overallTimer;

@@ -10,9 +10,6 @@
 // Colors
 #include "vtkSlicerColorLogic.h"
 
-// Slicer
-#include "vtkSlicerConfigure.h" // for Slicer_SHARE_DIR
-
 // MRML
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
@@ -21,6 +18,9 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
+
+// Slicer includes
+#include "vtkSlicerApplicationLogic.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -88,27 +88,28 @@ const char* vtkSlicerColorLogic::GetDefaultChartColorNodeID()
 std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
 {
   // get the slicer home dir
-  std::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == nullptr)
+  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+  if (!appLogic)
   {
-    if (vtksys::SystemTools::GetEnv("PWD") != nullptr)
-    {
-      slicerHome = std::string(vtksys::SystemTools::GetEnv("PWD"));
-    }
-    else
-    {
-      slicerHome = std::string("");
-    }
+    vtkErrorMacro("FindDefaultColorFiles failed: Unable to get application logic");
+    return {};
   }
-  else
+
+  const std::string& shareDir = appLogic->GetShareDirectory();
+  if (shareDir.empty())
   {
-    slicerHome = std::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    vtkWarningMacro("FindDefaultColorFiles failed: ShareDirectory is not set. "
+                    "Default color files will not be loaded.");
+    return {};
   }
+
+  const std::string& homeDir = appLogic->GetHomeDirectory();
+
   // build up the vector
   std::vector<std::string> filesVector;
   filesVector.emplace_back(""); // for relative path
-  filesVector.push_back(slicerHome);
-  filesVector.push_back(std::string(Slicer_SHARE_DIR) + "/ColorFiles");
+  filesVector.push_back(homeDir);
+  filesVector.push_back(shareDir + "/ColorFiles");
   std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in
