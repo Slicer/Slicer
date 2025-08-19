@@ -209,6 +209,15 @@ Many companies prefer not to disclose what software components they use in their
 
 _Listed in alphabetical order._
 
+## Governance
+
+This section outlines the governance model for the Slicer project, including how decisions are made and who is responsible for maintaining the health of the project.
+
+```{include} ../../GOVERNANCE.md
+:start-after: <!-- governance-start -->
+:end-before: <!-- governance-end -->
+```
+
 ## Contact us
 
 It is recommended to post any questions, bug reports, or enhancement requests to the [Slicer forum](https://discourse.slicer.org).
