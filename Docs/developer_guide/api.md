@@ -18,10 +18,13 @@ Python-style documentation is available for the following packages:
 ```{toctree}
 :maxdepth: 2
 
-mrml
 slicer
+```
+
+```{toctree}
+:maxdepth: 1
+
 vtkTeem
-vtkAddon
 vtkITK
 ```
 

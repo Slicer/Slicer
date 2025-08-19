@@ -16,13 +16,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import importlib
 import lxml.etree as ET
 import os
 import re
 import sys
 from datetime import date
 
-sys.path.insert(0, os.path.abspath("../Base/Python"))
+try:
+    import slicer.kits
+except ImportError:
+    sys.path.insert(0, os.path.abspath("../Base/Python"))
 
 
 # -- General configuration ------------------------------------------------
@@ -50,10 +54,13 @@ suppress_warnings = [
 ]
 
 autodoc_mock_imports = [
-    "ctk",
-    "qt",
-    "vtk",
 ]
+for module in ["ctk", "qt", "vtk"]:
+    try:
+        importlib.import_module(module)
+    except ImportError:
+        print("[conf] Failed to import %s. Appending to autodoc_mock_imports" % module)
+        autodoc_mock_imports.append(module)
 
 myst_enable_extensions = [
     "attrs_inline",  # Enable parsing of inline attributes (see https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#inline-attributes)
