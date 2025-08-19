@@ -379,11 +379,15 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
                 # keep their relative distance the same (or boost to 1e-6 if very small)
                 # but make sure the points are on the opposite side of the
                 # plane (to ensure probe filter considers the line crossing the image plane)
+                    lineStartPoint_IJK = list(lineStartPoint_IJK)
+                    lineEndPoint_IJK = list(lineEndPoint_IJK)
                     pointDistance = max(abs(lineStartPoint_IJK[axisIndex]-lineEndPoint_IJK[axisIndex]), 1e-6)
                     lineStartPoint_IJK[axisIndex] = -0.5 * pointDistance
                     lineEndPoint_IJK[axisIndex] = 0.5 * pointDistance
                     sampledCurvePoints_IJK.SetPoint(startPointIndex, lineStartPoint_IJK)
                     sampledCurvePoints_IJK.SetPoint(endPointIndex, lineEndPoint_IJK)
+                    lineStartPoint_IJK = tuple(lineStartPoint_IJK)
+                    lineEndPoint_IJK = tuple(lineEndPoint_IJK)
 
         # Set up probe filter
         probeFilter=vtk.vtkProbeFilter()
