@@ -57,3 +57,15 @@ BDFL.
 [slicer-forum]: https://discourse.slicer.org
 
 <!-- governance-end -->
+
+<!--
+  Note: The "Code of Conduct" section below is intentionally excluded from the
+  governance-[start|end] include markers, since the Code of Conduct is already
+  included explicitly in docs/user_guide/about.md.
+-->
+
+## Code of Conduct
+
+Participation in the Slicer community is governed by the principles outlined in our
+[Code of Conduct](CODE_OF_CONDUCT.md). All community members, contributors, and leaders are expected
+to uphold these standards to foster a welcoming, respectful, and inclusive environment.

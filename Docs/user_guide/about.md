@@ -211,11 +211,29 @@ _Listed in alphabetical order._
 
 ## Governance
 
-This section outlines the governance model for the Slicer project, including how decisions are made and who is responsible for maintaining the health of the project.
+This section introduces the guiding principles and decision-making framework of the
+Slicer project, including the Code of Conduct and governance model that describe how
+decisions are made and who is responsible for maintaining the health of the project.
+
+### Code of Conduct
+
+The Slicer community is committed to fostering a welcoming, respectful, and
+inclusive environment. Details are outlined in the Code of Conduct below.
 
 <!--
-  Notes: Includes GOVERNANCE.md content, excluding its top-level header
+  Notes: Includes CODE_OF_CONDUCT.md content, excluding its top-level header
   and intro.
+-->
+
+```{include} ../../CODE_OF_CONDUCT.md
+:start-after: <!-- code-of-conduct-start -->
+:end-before: <!-- code-of-conduct-end -->
+:heading-offset: 2
+```
+
+<!--
+  Notes: Includes GOVERNANCE.md content, excluding the top-level header, intro,
+  and the Code of Conduct section (already included above).
 -->
 
 ```{include} ../../GOVERNANCE.md
