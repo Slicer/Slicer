@@ -105,7 +105,7 @@ Getting your contributions integrated is relatively straightforward, here
 is the checklist:
 
 * All tests pass
-* Consensus is reached. This usually means that at least one reviewers approved
+* Consensus is reached. This usually means that at least one reviewer approved
   the changes and at least one business day passed
   without anyone objecting.
 * To accommodate developers explicitly asking for more time to test the
