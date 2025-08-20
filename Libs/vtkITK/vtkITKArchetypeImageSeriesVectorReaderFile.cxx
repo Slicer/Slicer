@@ -9,6 +9,7 @@
 
 // VTKITK includes
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
+#include "vtkITKImageWriter.h"
 
 // VTK includes
 #include <vtkAOSDataArrayTemplate.h>
@@ -112,6 +113,12 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
       default: vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType); this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+    }
+
+    if (this->GetVoxelVectorType() == vtkITKImageWriter::VoxelVectorTypeSpatial //
+        || this->GetVoxelVectorType() == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
+    {
+      vtkITKImageWriter::ConvertSpatialVectorVoxelsBetweenRasLps(data);
     }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);

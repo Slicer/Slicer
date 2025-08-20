@@ -754,6 +754,14 @@ void vtkSlicerSceneViewsModuleLogic::SetNthSceneViewScreenshot(int index, vtkIma
   if (screenshot)
   {
     screenshotDataNode->SetAndObserveImageData(screenshot);
+    if (screenshot->GetNumberOfScalarComponents() == 3)
+    {
+      screenshotDataNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeColorRGB);
+    }
+    else if (screenshot->GetNumberOfScalarComponents() == 4)
+    {
+      screenshotDataNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA);
+    }
   }
   else
   {
@@ -761,6 +769,7 @@ void vtkSlicerSceneViewsModuleLogic::SetNthSceneViewScreenshot(int index, vtkIma
     tempScreenshot->SetDimensions(1, 1, 1);
     tempScreenshot->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
     screenshotDataNode->SetAndObserveImageData(tempScreenshot);
+    screenshotDataNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeColorRGB);
   }
 }
 

@@ -38,6 +38,14 @@ class vtkMatrix4x4;
 /// stored in files. The series are represented by one filename. This
 /// filename, the archetype, is any one of the files in the series.
 ///
+/// Concrete subclasses:
+/// - vtkITKArchetypeDiffusionTensorImageReaderFile for diffusion imaging
+/// - vtkITKArchetypeImageSeriesScalarReader for scalar images
+/// - vtkITKArchetypeImageSeriesVectorReaderFile for reading vector image from a single file
+/// - vtkITKArchetypeImageSeriesVectorReaderSeries for reading vector image from multiple files
+///
+/// vtkITKImageSequenceReader can be used instead for reading time sequence of images.
+///
 /// \note
 /// This work is part of the National Alliance for Medical Image Computing
 /// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
@@ -247,7 +255,7 @@ public:
   vtkMatrix4x4* GetRasToIjkMatrix();
 
   ///
-  /// Returns the Measurement frame matrix
+  /// Returns the Measurement frame matrix.
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
   /// Defines how to interpret voxel components
@@ -735,6 +743,14 @@ public:
                              int idxSliceLocation,
                              int idxImageOrientationPatient,
                              int n);
+
+  static bool ReadMeasurementFrameMatrixFromMetaDataDictionary(const itk::MetaDataDictionary& dictionary, vtkMatrix4x4* measurementFrameMatrix);
+
+  /// Returns true if the pixel component type is a list type (i.e., not spatial).
+  /// Returns false if the pixel component type is unknown or a different type.
+  /// This can be used to get a hint that the image voxels store non-spatial vectors.
+  /// Currently, it can only get information from NRRD files (for all other formats it will return false).
+  static bool IsListPixelComponentTypeInMetaDataDictionary(const itk::MetaDataDictionary& dictionary);
 
 protected:
   vtkITKArchetypeImageSeriesReader();

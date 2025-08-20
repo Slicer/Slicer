@@ -37,6 +37,8 @@ vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
   this->CenterOfTransformation[0] = 0.0;
   this->CenterOfTransformation[1] = 0.0;
   this->CenterOfTransformation[2] = 0.0;
+
+  this->DefaultSequenceStorageNodeClassName = "vtkMRMLLinearTransformSequenceStorageNode";
 }
 
 //----------------------------------------------------------------------------

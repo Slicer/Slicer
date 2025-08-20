@@ -468,7 +468,7 @@ void vtkTeemNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
   }
   else
   {
-    this->AxisLabels->erase(axis);
+    this->AxisUnits->erase(axis);
   }
 }
 

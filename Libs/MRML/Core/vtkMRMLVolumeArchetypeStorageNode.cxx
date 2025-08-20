@@ -170,6 +170,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeMRMLToVTKITK(int mr
     case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageWriter::VoxelVectorTypeSpatial;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageWriter::VoxelVectorTypeColorRGB;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageWriter::VoxelVectorTypeColorRGBA;
+    case vtkMRMLVolumeNode::VoxelVectorTypeSpatialCovariant: return vtkITKImageWriter::VoxelVectorTypeSpatialCovariant;
     default: return vtkITKImageWriter::VoxelVectorTypeUndefined;
   }
 }
@@ -183,6 +184,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vt
     case vtkITKImageWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
     case vtkITKImageWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
     case vtkITKImageWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
+    case vtkITKImageWriter::VoxelVectorTypeSpatialCovariant: return vtkMRMLVolumeNode::VoxelVectorTypeSpatialCovariant;
     default: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
   }
 }
@@ -509,12 +511,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   int voxelVectorType = this->ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType());
   volNode->SetVoxelVectorType(voxelVectorType);
 
-  // If voxel values store spatial vectors then we need to convert from LPS to RAS
-  if (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial && outputImage->GetNumberOfScalarComponents() == 3)
-  {
-    this->ConvertSpatialVectorVoxelsBetweenRasLps(outputImage);
-  }
-
   // Log volume size to the application log. It helps to identify potential out-of-memory issues.
   vtkDebugMacro(<< "Loaded volume from file: " << fullName << ". Dimensions: " << outputImage->GetDimensions()[0] << "x" << outputImage->GetDimensions()[1] << "x"
                 << outputImage->GetDimensions()[2] << ". Number of components: " << outputImage->GetNumberOfScalarComponents()
@@ -573,7 +569,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  if (volNode->GetVoxelVectorType() == vtkMRMLVolumeNode::VoxelVectorTypeSpatial)
+  int voxelVectorType = volNode->GetVoxelVectorType();
+  if (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial || voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatialCovariant)
   {
     if (volNode->GetImageData()->GetNumberOfScalarComponents() != 3)
     {
@@ -691,15 +688,6 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     // Pass on voxel type to the writer
     int voxelVectorType = volNode->GetVoxelVectorType();
     writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
-    // If voxel values store spatial vectors then we need to convert from LPS to RAS
-    bool writeVoxelValuesAsLps = (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
-                                  && volNode->GetImageData()                                   //
-                                  && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
-    if (writeVoxelValuesAsLps)
-    {
-      // temporarily switch image voxel values from RAS to LPS
-      this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
-    }
     try
     {
       writer->Write();
@@ -707,11 +695,6 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     catch (...)
     {
       result = 0;
-    }
-    if (writeVoxelValuesAsLps)
-    {
-      // revert temporary LPS values back to RAS
-      this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
     }
   }
 
@@ -903,16 +886,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   // Pass on voxel type to the writer
   int voxelVectorType = volNode->GetVoxelVectorType();
   writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
-  // If voxel values store spatial vectors then we need to convert from LPS to RAS
-  bool writeVoxelValuesAsLps = (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
-                                && volNode->GetImageData()                                   //
-                                && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
   bool success = true;
-  if (writeVoxelValuesAsLps)
-  {
-    // temporarily switch image voxel values from RAS to LPS
-    this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
-  }
   try
   {
     writer->Write();
@@ -921,12 +895,6 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   {
     success = false;
   }
-  if (writeVoxelValuesAsLps)
-  {
-    // revert temporary LPS values back to RAS
-    this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
-  }
-
   if (!success)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
@@ -1101,44 +1069,5 @@ void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLV
   if (volNode && reader)
   {
     volNode->SetMetaDataDictionary(reader->GetMetaDataDictionary());
-  }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* imageData)
-{
-  vtkIdType numberOfTuples = imageData->GetPointData()->GetScalars()->GetNumberOfTuples();
-  if (imageData->GetScalarType() == VTK_DOUBLE)
-  {
-    double* displacementVectors = reinterpret_cast<double*>(imageData->GetScalarPointer());
-    for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
-    {
-      *displacementVectors = -(*displacementVectors);
-      displacementVectors++;
-      *displacementVectors = -(*displacementVectors);
-      displacementVectors++;
-      displacementVectors++;
-    }
-    imageData->GetPointData()->GetScalars()->Modified();
-  }
-  else if (imageData->GetScalarType() == VTK_FLOAT)
-  {
-    float* displacementVectors = reinterpret_cast<float*>(imageData->GetScalarPointer());
-    for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
-    {
-      *displacementVectors = -(*displacementVectors);
-      displacementVectors++;
-      *displacementVectors = -(*displacementVectors);
-      displacementVectors++;
-      displacementVectors++;
-    }
-    imageData->GetPointData()->GetScalars()->Modified();
-  }
-  else
-  {
-    vtkWarningToMessageCollectionMacro(
-      this->GetUserMessages(),
-      "vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps",
-      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Displacements are expected to be stored as double or float. Vector values will not be converted from LPS to RAS."));
   }
 }

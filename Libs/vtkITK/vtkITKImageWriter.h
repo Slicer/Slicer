@@ -25,6 +25,16 @@
 
 class vtkStringArray;
 
+/// \brief Writes image files using ITK.
+///
+/// It can be used for writing 3D image data with voxels containing scalars, RGB, RGBA, spatial vectors
+/// (displacement, speed, etc.), or generic list components.
+///
+/// vtkITKImageSequenceWriter can be used instead for writing time sequence data
+/// (e.g., time sequence of displacement fields, RGB volumes, etc.).
+///
+/// \sa vtkITKImageSequenceWriter vtkITKArchetypeImageSeriesReader
+
 class VTK_ITK_EXPORT vtkITKImageWriter : public vtkImageAlgorithm
 {
 public:
@@ -35,10 +45,11 @@ public:
   enum
   {
     VoxelVectorTypeUndefined,
-    VoxelVectorTypeSpatial,
+    VoxelVectorTypeSpatial, // 3D contravariant spatial vector (displacement field, motion, etc.)
     VoxelVectorTypeColorRGB,
     VoxelVectorTypeColorRGBA,
-    VoxelVectorType_Last // must be last
+    VoxelVectorTypeSpatialCovariant, // 3D covariant spatial vector (gradient, etc.)
+    VoxelVectorType_Last             // must be last
   };
 
   ///
@@ -73,6 +84,12 @@ public:
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
   vtkGetMacro(VoxelVectorType, int);
+
+  /// Convert voxel vector type between RAS and LPS measurement frame
+  static void ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* imageData);
+
+  /// Adds measurement frame matrix to the metadata.
+  static void WriteMeasurementFrameMatrixToMetaDataDictionary(itk::MetaDataDictionary& dictionary, vtkMatrix4x4* measurementFrameMatrix);
 
 protected:
   vtkITKImageWriter();

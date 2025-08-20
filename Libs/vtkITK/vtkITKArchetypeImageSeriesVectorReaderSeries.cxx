@@ -9,6 +9,7 @@
 
 // VTKITK includes
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
+#include "vtkITKImageWriter.h"
 
 // VTK includes
 #include <vtkAOSDataArrayTemplate.h>
@@ -154,6 +155,12 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
     {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
+    }
+
+    if (this->GetVoxelVectorType() == vtkITKImageWriter::VoxelVectorTypeSpatial //
+        || this->GetVoxelVectorType() == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
+    {
+      vtkITKImageWriter::ConvertSpatialVectorVoxelsBetweenRasLps(data);
     }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);

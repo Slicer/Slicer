@@ -114,8 +114,10 @@ int vtkSceneViewImportSceneTest(int argc, char* argv[])
   // Save the scene
   std::string fileName = std::string(tempDir) + "/vtkSceneViewNodeImportSceneTest.mrb";
   CHECK_BOOL(scene->WriteToMRB(fileName.c_str()), true);
+  CHECK_INT(sceneViewLogic->GetNumberOfSceneViews(), 1);
 
   scene->Clear(1);
+  CHECK_INT(sceneViewLogic->GetNumberOfSceneViews(), 0);
   CHECK_BOOL(scene->ReadFromMRB(fileName.c_str()), true);
   std::cout << fileName << std::endl;
 

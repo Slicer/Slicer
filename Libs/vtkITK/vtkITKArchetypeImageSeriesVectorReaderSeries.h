@@ -18,6 +18,8 @@ class Object;
 class ProgressEvent;
 }; // namespace itk
 
+/// \brief Read vector image (up to 5D) from multiple files
+
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkITKArchetypeImageSeriesReader
 {
 public:
