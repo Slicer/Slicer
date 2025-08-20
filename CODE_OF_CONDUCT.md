@@ -1,6 +1,15 @@
 
 # Contributor Covenant Code of Conduct
 
+<!--
+  Note: The sections below use "##" headings intentionally.
+  This ensures correct nesting when included in other documents (e.g., about.md)
+  with a specified heading-offset.
+  Do not modify heading levels unless all dependent includes are updated accordingly.
+-->
+
+<!-- code-of-conduct-start -->
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
@@ -91,3 +100,5 @@ see https://github.com/Slicer/Slicer/commits/main/CODE_OF_CONDUCT.md.
 [Mozilla CoC]: https://github.com/mozilla/diversity
 [FAQ]: https://www.contributor-covenant.org/faq
 [translations]: https://www.contributor-covenant.org/translations
+
+<!-- code-of-conduct-end -->
