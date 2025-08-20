@@ -23,7 +23,7 @@ import sys
 from datetime import date
 
 sys.path.insert(0, os.path.abspath("../Base/Python"))
-
+sys.path.insert(0, os.path.abspath("./_ext"))
 
 # -- General configuration ------------------------------------------------
 
@@ -41,6 +41,7 @@ extensions = [
     "notfound.extension",  # Show a better 404 page when an invalid address is entered
     "sphinx_rtd_theme",
     "sphinx-jsonschema",
+    "github_alerts",
 ]
 
 suppress_warnings = [
