@@ -213,9 +213,15 @@ _Listed in alphabetical order._
 
 This section outlines the governance model for the Slicer project, including how decisions are made and who is responsible for maintaining the health of the project.
 
+<!--
+  Notes: Includes GOVERNANCE.md content, excluding its top-level header
+  and intro.
+-->
+
 ```{include} ../../GOVERNANCE.md
 :start-after: <!-- governance-start -->
 :end-before: <!-- governance-end -->
+:heading-offset: 1
 ```
 
 ## Contact us
