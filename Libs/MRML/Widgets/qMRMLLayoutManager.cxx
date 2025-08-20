@@ -39,6 +39,9 @@
 #include <qMRMLThreeDView.h>
 #include <qMRMLThreeDWidget.h>
 
+// MRMLDisplayableManager includes
+#include <vtkMRMLDisplayableManagerGroup.h>
+
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorLogic.h>
@@ -106,6 +109,9 @@ QWidget* qMRMLLayoutThreeDViewFactory::createViewFromNode(vtkMRMLAbstractViewNod
   threeDWidget->setMRMLViewNode(vtkMRMLViewNode::SafeDownCast(viewNode));
 
   this->viewLogics()->AddItem(threeDWidget->viewLogic());
+
+  // Associate logic with its matching displayable manager group
+  threeDWidget->viewLogic()->SetDisplayableManagerGroup(threeDWidget->threeDView()->displayableManagerGroup());
 
   return threeDWidget;
 }
@@ -259,6 +265,9 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   // initialize new views when switching to a new view layout that has more slice views.
   sliceWidget->setSliceLogics(this->sliceLogics());
   this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
+
+  // Associate logic with its matching displayable manager group
+  sliceWidget->sliceLogic()->SetDisplayableManagerGroup(sliceWidget->sliceView()->displayableManagerGroup());
 
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   sliceWidget->setObjectName(QString("qMRMLSliceWidget%1").arg(viewNode->GetLayoutName()));

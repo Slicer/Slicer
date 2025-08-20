@@ -30,6 +30,7 @@
 class QDropEvent;
 class qMRMLThreeDViewPrivate;
 class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLCameraNode;
 class vtkMRMLScene;
 class vtkMRMLThreeDViewInteractorStyle;
@@ -153,6 +154,10 @@ public slots:
   void setAmbientShadowsVolumeOpacityThreshold(double);
   void setAmbientShadowsIntensityScale(double);
   void setAmbientShadowsIntensityShift(double);
+
+protected:
+  friend class qMRMLLayoutThreeDViewFactory;
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup() const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDView);

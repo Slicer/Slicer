@@ -810,8 +810,9 @@ Custom actions can be assigned to markups, which can be triggered by any interac
 # 3. Double-click on the markup -> this triggers toggleLabelVisibilty.
 # 4. Hover the mouse over a markup then pressing `q` and `w` keys -> this triggers shrinkControlPoints and growControlPoints.
 
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-markupsDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName('vtkMRMLMarkupsDisplayableManager')
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+markupsDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLMarkupsDisplayableManager")
 
 def shrinkControlPoints(caller, eventId):
   markupsDisplayNode = caller

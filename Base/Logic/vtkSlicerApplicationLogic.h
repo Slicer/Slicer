@@ -31,6 +31,8 @@
 #include <mutex>
 #include <thread>
 
+class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLAbstractViewNode;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
 class vtkMRMLRemoteIOLogic;
@@ -210,6 +212,25 @@ public:
   /// Callback function to request invoking a modified event on the main thread.
   /// This function may be called from any thread.
   static void RequestModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
+  /// Get view displayable manager given its class name.
+  ///
+  /// This provides a Qt-independent way to access displayable managers, by
+  /// looking up the vtkMRMLDisplayableManagerGroup associated with a
+  /// vtkMRMLViewNode (3D) or vtkMRMLSliceNode (2D).
+  ///
+  /// \param viewNode MRML view node (slice or 3D) whose displayable manager group will be queried.
+  /// \param className Class name of the displayable manager (e.g., "vtkMRMLCameraDisplayableManager").
+  ///
+  /// \return The displayable manager instance if found, otherwise nullptr.
+  ///  The returned pointer is owned by the displayable manager group and must
+  ///  not be deleted by the caller.
+  ///
+  /// This API is primarily intended for accessing low-level VTK actors or
+  /// widgets without going through Qt view classes, and is especially
+  /// useful in headless contexts or alternative frontends (e.g., trame).
+  ///
+  vtkMRMLAbstractDisplayableManager* GetViewDisplayableManagerByClassName(vtkMRMLAbstractViewNode* viewNode, const char* className) const;
 
 protected:
   vtkSlicerApplicationLogic();

@@ -31,6 +31,7 @@ class QDropEvent;
 class qMRMLSliceViewPrivate;
 class vtkCollection;
 class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceViewInteractorStyle;
@@ -117,6 +118,10 @@ public slots:
 
   /// Set the current \a viewNode to observe
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
+
+protected:
+  friend class qMRMLLayoutSliceViewFactory;
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup() const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceView);
