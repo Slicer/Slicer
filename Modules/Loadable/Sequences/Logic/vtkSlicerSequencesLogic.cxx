@@ -26,6 +26,7 @@
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
+#include "vtkMRMLTransformSequenceStorageNode.h"
 
 // MRML includes
 #include "vtkCacheManager.h"
@@ -147,11 +148,16 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
   vtkNew<vtkMRMLSequenceStorageNode> sequenceStorageNode;
   vtkNew<vtkMRMLVolumeSequenceStorageNode> volumeSequenceStorageNode;
+  vtkNew<vtkMRMLTransformSequenceStorageNode> transformSequenceStorageNode;
 
   vtkMRMLStorageNode* storageNode = nullptr;
   if (sequenceStorageNode->SupportedFileType(filename))
   {
     storageNode = sequenceStorageNode;
+  }
+  else if (transformSequenceStorageNode->SupportedFileType(filename))
+  {
+    storageNode = transformSequenceStorageNode;
   }
   else if (volumeSequenceStorageNode->SupportedFileType(filename))
   {

@@ -1329,6 +1329,7 @@ const char* vtkMRMLVolumeNode::GetVoxelVectorTypeAsString(int id)
     case VoxelVectorTypeSpatial: return "spatial";
     case VoxelVectorTypeColorRGB: return "colorRGB";
     case VoxelVectorTypeColorRGBA: return "colorRGBA";
+    case VoxelVectorTypeSpatialCovariant: return "spatialCovariant";
     default:
       // invalid id
       return "";

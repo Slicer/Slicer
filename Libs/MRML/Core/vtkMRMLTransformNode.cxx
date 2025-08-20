@@ -62,7 +62,7 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
-  this->DefaultSequenceStorageNodeClassName = "vtkMRMLLinearTransformSequenceStorageNode";
+  this->DefaultSequenceStorageNodeClassName = "vtkMRMLTransformSequenceStorageNode";
 }
 
 //----------------------------------------------------------------------------

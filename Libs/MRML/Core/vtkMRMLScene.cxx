@@ -93,6 +93,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
+#include "vtkMRMLTransformSequenceStorageNode.h"
 #include "vtkTagTable.h"
 #include "vtkURIHandler.h"
 
@@ -259,6 +260,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLViewNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformSequenceStorageNode>::New());
 
 #ifdef MRML_USE_vtkTeem
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode>::New());

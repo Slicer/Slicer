@@ -15,6 +15,8 @@
 #include "itkImageFileReader.h"
 #include <vtkVersion.h>
 
+/// \brief Read vector image (up to 5D) from a single file
+
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKArchetypeImageSeriesReader
 {
 public:

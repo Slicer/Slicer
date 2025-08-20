@@ -39,9 +39,15 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// ITK includes
+#include <itkConfigure.h>
+#include <itkFactoryRegistration.h>
+
 //-----------------------------------------------------------------------------
 int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* sequenceNode, vtkMRMLStorageNode* storageNode, std::string fileName)
 {
+  itk::itkFactoryRegistration();
+
   std::stringstream fullFilePathSS;
   fullFilePathSS << tempDir << "/" << fileName << "." << storageNode->GetDefaultWriteFileExtension();
   std::string fullFilePath = fullFilePathSS.str();

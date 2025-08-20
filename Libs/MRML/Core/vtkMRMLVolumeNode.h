@@ -46,10 +46,11 @@ public:
   enum
   {
     VoxelVectorTypeUndefined,
-    VoxelVectorTypeSpatial,
+    VoxelVectorTypeSpatial, // 3D contravariant spatial vector (displacement field, motion, etc.)
     VoxelVectorTypeColorRGB,
     VoxelVectorTypeColorRGBA,
-    VoxelVectorType_Last // must be last
+    VoxelVectorTypeSpatialCovariant, // 3D covariant spatial vector (gradient, etc.)
+    VoxelVectorType_Last             // must be last
   };
 
   vtkMRMLNode* CreateNodeInstance() override = 0;

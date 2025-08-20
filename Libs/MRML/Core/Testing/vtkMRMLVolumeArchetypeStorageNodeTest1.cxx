@@ -76,6 +76,10 @@ int TestVoxelVectorType(const std::string& tempDir,
     vectorVolumeNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeSpatial);
     storageNode->SetFileName(tempFilename(tempDir, "vector_spatial", fileExtension, true).c_str());
     CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), canWriteSpatialVector);
+
+    vectorVolumeNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeSpatialCovariant);
+    storageNode->SetFileName(tempFilename(tempDir, "vector_spatial_covariant", fileExtension, true).c_str());
+    CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), canWriteSpatialVector);
   }
 
   if (canWriteColorRGB)
@@ -110,6 +114,10 @@ int TestVoxelVectorType(const std::string& tempDir,
     storageNode->SetFileName(tempFilename(tempDir, "vector_spatial", fileExtension).c_str());
     CHECK_BOOL(storageNode->ReadData(vectorVolumeNode), true);
     CHECK_INT(vectorVolumeNode->GetVoxelVectorType(), vtkMRMLVolumeNode::VoxelVectorTypeSpatial);
+
+    storageNode->SetFileName(tempFilename(tempDir, "vector_spatial_covariant", fileExtension).c_str());
+    CHECK_BOOL(storageNode->ReadData(vectorVolumeNode), true);
+    CHECK_INT(vectorVolumeNode->GetVoxelVectorType(), vtkMRMLVolumeNode::VoxelVectorTypeSpatialCovariant);
   }
 
   if (canWriteColorRGB)
