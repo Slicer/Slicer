@@ -1,5 +1,4 @@
-Contributing to Slicer
-======================
+# Contributing to Slicer
 
 There are many ways to contribute to Slicer, with varying levels of effort.  Do try to
 look through the [documentation](https://slicer.readthedocs.io/en/latest/index.html) first if something is unclear, and let us know how we can
@@ -12,8 +11,7 @@ do better.
 We encourage a range of Pull Requests, from patches that include passing tests and
 documentation, all the way down to half-baked ideas that launch discussions.
 
-The PR Process, Circle CI, and Related Gotchas
-----------------------------------------------
+## Submitting a Pull Request
 
 ### How to submit a PR ?
 
@@ -120,15 +118,14 @@ is the checklist:
 
 ### Automatic testing of pull requests
 
-Every pull request is tested automatically using CircleCI each time you push a
-commit to it. The Github UI will restrict users from merging pull requests until
-the CI build has returned with a successful result indicating that all tests have
-passed.
+Every pull request (PR) is automatically tested using GitHub Actions each time a
+commit is pushed. The GitHub interface prevents merging until all required CI workflows
+have completed successfully, ensuring that changes meet the project’s testing and
+quality standards.
 
-The testing infrastructure is described in details in the
-[3D Slicer Improves Testing for Pull Requests Using Docker and CircleCI](https://blog.kitware.com/3d-slicer-improves-testing-for-pull-requests-using-docker-and-circleci/)
-blog post.
-
+The testing infrastructure was migrated from CircleCI to GitHub Actions, but the
+principles described in the blog post [3D Slicer Improves Testing for Pull Requests Using Docker and CircleCI](https://blog.kitware.com/3d-slicer-improves-testing-for-pull-requests-using-docker-and-circleci/)
+remain relevant for understanding the overall approach and concepts.
 
 ### Nightly tests
 
