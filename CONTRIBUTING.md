@@ -105,9 +105,9 @@ Getting your contributions integrated is relatively straightforward, here
 is the checklist:
 
 * All tests pass
-* Consensus is reached. This usually means that at least two reviewers approved
-  the changes (or added a `LGTM` comment) and at least one business day passed
-  without anyone objecting. `LGTM` is an acronym for _Looks Good to Me_.
+* Consensus is reached. This usually means that at least one reviewers approved
+  the changes and at least one business day passed
+  without anyone objecting.
 * To accommodate developers explicitly asking for more time to test the
   proposed changes, integration time can be delayed by few more days.
 
