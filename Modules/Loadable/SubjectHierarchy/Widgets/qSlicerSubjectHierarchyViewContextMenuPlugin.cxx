@@ -41,6 +41,7 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
 #include <qMRMLThreeDViewControllerWidget.h>
 
 // Slicer includes
@@ -279,6 +280,10 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
 void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+
+  // Always reset cached camera widget at start to avoid stale pointers
+  d->CameraWidget = nullptr;
+
   // make sure we don't use metadata from some previous view context menu calls
   d->ViewContextMenuEventData.clear();
 
@@ -394,32 +399,33 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   }
 
   d->ToggleTiltLockAction->setVisible(!isSliceViewNode);
-  if (!qSlicerApplication::application() //
-      || !qSlicerApplication::application()->layoutManager())
+
+  if (!appLogic)
   {
-    qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
+    qWarning() << Q_FUNC_INFO << " failed: cannot get application logic";
     return;
   }
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
 
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
-  vtkMRMLCameraWidget* cameraWidget = nullptr;
-  if (threeDWidget)
+  if (vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(d->ViewNode); threeDViewNode != nullptr)
   {
     vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
-      vtkMRMLCameraDisplayableManager::SafeDownCast(threeDWidget->threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+      vtkMRMLCameraDisplayableManager::SafeDownCast(appLogic->GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLCameraDisplayableManager"));
     if (!cameraDisplayableManager)
     {
       qWarning() << Q_FUNC_INFO << " failed: cannot get cameraDisplayableManager";
       return;
     }
-    else
+
+    vtkMRMLCameraWidget* cameraWidget = cameraDisplayableManager->GetCameraWidget();
+    if (!cameraWidget)
     {
-      cameraWidget = cameraDisplayableManager->GetCameraWidget();
-      d->ToggleTiltLockAction->setChecked(cameraWidget->GetTiltLocked());
-      // Cache camera widget pointer to have it available for the menu action execution.
-      d->CameraWidget = cameraWidget;
+      qWarning() << Q_FUNC_INFO << " failed: cameraDisplayableManager->GetCameraWidget() returned nullptr";
+      return;
     }
+
+    d->ToggleTiltLockAction->setChecked(cameraWidget->GetTiltLocked());
+    // Cache camera widget pointer to have it available for the menu action execution.
+    d->CameraWidget = cameraWidget;
   }
 }
 

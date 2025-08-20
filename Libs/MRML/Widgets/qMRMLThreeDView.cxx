@@ -655,3 +655,10 @@ void qMRMLThreeDView::setAmbientShadowsIntensityShift(double intensityShift)
   Q_D(const qMRMLThreeDView);
   d->ShadowsRenderPass->SetIntensityShift(intensityShift);
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLDisplayableManagerGroup* qMRMLThreeDView::displayableManagerGroup() const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->DisplayableManagerGroup;
+}

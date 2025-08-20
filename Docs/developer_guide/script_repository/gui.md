@@ -525,8 +525,9 @@ If 2D display position (in pixels) of a model's surface point is known then this
 displayPosition = [10, 12]
 
 # Get model displayable manager
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+modelDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLModelDisplayableManager")
 
 # Use model displayable manager's point picker
 if modelDisplayableManager.Pick(displayPosition[0], displayPosition[1]) and modelDisplayableManager.GetPickedNodeID():
@@ -868,10 +869,12 @@ crosshair.SetCrosshairBehavior(crosshair.CenteredJumpSlice)
 For microscopy or micro-CT images you may want to switch unit to micrometer instead of the default mm. To do that, 1. change the unit in Application settings / Units and 2. update ruler display settings using the script below (it can be copied to your Application startup script):
 
 ```python
-lm = slicer.app.layoutManager()
-for sliceViewName in lm.sliceViewNames():
-  sliceView = lm.sliceWidget(sliceViewName).sliceView()
-  displayableManager = sliceView.displayableManagerByClassName("vtkMRMLRulerDisplayableManager")
+appLogic = slicer.app.applicationLogic()
+layoutManagerLogic = slicer.app.layoutManager().layoutLogic()
+for viewNode in layoutManagerLogic.GetViewNodes():
+  if type(viewNode) is not slicer.vtkMRMLSliceNode:
+    continue
+  displayableManager = appLogic.GetViewDisplayableManagerByClassName(viewNode, "vtkMRMLRulerDisplayableManager")
   displayableManager.RemoveAllRulerScalePresets()
   displayableManager.AddRulerScalePreset(   0.001, 5, 2, "nm", 1000.0)
   displayableManager.AddRulerScalePreset(   0.010, 5, 2, "nm", 1000.0)
@@ -1023,8 +1026,9 @@ Displayable managers are responsible for creating VTK filters, mappers, and acto
 Accessing displayable managers is useful for troubleshooting or for testing new features that are not exposed via MRML classes yet, as they provide usually allow low-level access to VTK actors.
 
 ```python
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+modelDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLModelDisplayableManager")
 if modelDisplayableManager is None:
   logging.error("Failed to find the model displayable manager")
 ```
@@ -1036,8 +1040,9 @@ This example shows how to access and modify VTK actor properties to experiment w
 ```python
 modelNode = slicer.util.getNode("MyModel")
 
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+modelDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLModelDisplayableManager")
 actor=modelDisplayableManager.GetActorByID(modelNode.GetDisplayNode().GetID())
 property=actor.GetProperty()
 property.SetInterpolationToPBR()
@@ -1111,8 +1116,9 @@ for (shortcutKey, callback) in shortcuts:
 #### Make the 3D view rotate using right-click-and-drag
 
 ```python
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-cameraDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLCameraDisplayableManager")
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+cameraDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLCameraDisplayableManager")
 cameraWidget = cameraDisplayableManager.GetCameraWidget()
 
 # Remove old mapping from right-click-and-drag
@@ -1129,8 +1135,10 @@ cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.v
 ```python
 # Red slice view
 sliceViewLabel = "Red"
-sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
-displayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLCrosshairDisplayableManager")
+sliceViewNode = slicer.mrmlScene.GetNodeByID(f"vtkMRMLSliceNode{sliceViewLabel}")
+appLogic = slicer.app.applicationLogic()
+displayableManager = appLogic.GetViewDisplayableManagerByClassName(sliceViewNode, "vtkMRMLCrosshairDisplayableManager")
+
 widget = displayableManager.GetSliceIntersectionWidget()
 
 # Set crosshair position by left-click
@@ -1146,8 +1154,9 @@ widget.SetEventTranslationClickAndDrag(widget.WidgetStateIdle, vtk.vtkCommand.Le
 
 ```python
 # 3D view
-threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-cameraDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLCameraDisplayableManager")
+threeDViewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+appLogic = slicer.app.applicationLogic()
+cameraDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(threeDViewNode, "vtkMRMLCameraDisplayableManager")
 widget = cameraDisplayableManager.GetCameraWidget()
 
 # Set crosshair position by left-click
@@ -1164,8 +1173,9 @@ Makes Ctrl + Right-click-and-drag gesture adjust window/level in red slice view.
 
 ```python
 sliceViewLabel = "Red"
-sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
-displayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLScalarBarDisplayableManager")
+sliceViewNode = slicer.mrmlScene.GetNodeByID(f"vtkMRMLSliceNode{sliceViewLabel}")
+appLogic = slicer.app.applicationLogic()
+displayableManager = appLogic.GetViewDisplayableManagerByClassName(sliceViewNode, "vtkMRMLScalarBarDisplayableManager")
 w = displayableManager.GetWindowLevelWidget()
 w.SetEventTranslationClickAndDrag(w.WidgetStateIdle,
   vtk.vtkCommand.RightButtonPressEvent, vtk.vtkEvent.ControlModifier,

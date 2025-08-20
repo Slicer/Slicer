@@ -70,8 +70,10 @@ Access to the scalar bar VTK actor may can be useful for debugging and for exper
 ```python
 displayableNode = getNode('Model')
 colorLegendDisplayNode = slicer.modules.colors.logic().GetColorLegendDisplayNode(displayableNode)
-sliceView = slicer.app.layoutManager().sliceWidget('Red').sliceView()
-displayableManager = sliceView.displayableManagerByClassName("vtkMRMLColorLegendDisplayableManager")
+sliceViewLabel = "Red"
+sliceViewNode = slicer.mrmlScene.GetNodeByID(f"vtkMRMLSliceNode{sliceViewLabel}")
+appLogic = slicer.app.applicationLogic()
+displayableManager = appLogic.GetViewDisplayableManagerByClassName(sliceViewNode, "vtkMRMLColorLegendDisplayableManager")
 colorLegendActor = displayableManager.GetColorLegendActor(colorLegendDisplayNode)
 
 # Experimental adjustment of a parameter that is not exposed via the colorLegendDisplayNode

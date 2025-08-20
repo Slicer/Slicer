@@ -324,3 +324,14 @@ const char* vtkMRMLViewLogic::GetName() const
 {
   return this->Name.c_str();
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewLogic::SetDisplayableManagerGroup(vtkObject* obj)
+{
+  if (obj && !obj->IsA("vtkMRMLDisplayableManagerGroup"))
+  {
+    vtkErrorMacro("SetDisplayableManagerGroup: expected vtkMRMLDisplayableManagerGroup");
+    return;
+  }
+  this->DisplayableManagerGroup = obj;
+}

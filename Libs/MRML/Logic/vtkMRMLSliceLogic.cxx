@@ -2853,3 +2853,14 @@ vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetFirstVolumeNode()
   }
   return nullptr;
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::SetDisplayableManagerGroup(vtkObject* obj)
+{
+  if (obj && !obj->IsA("vtkMRMLDisplayableManagerGroup"))
+  {
+    vtkErrorMacro("SetDisplayableManagerGroup: expected vtkMRMLDisplayableManagerGroup");
+    return;
+  }
+  this->DisplayableManagerGroup = obj;
+}
