@@ -27,10 +27,12 @@ repository, here are the steps:
 This corresponds to the `Fork & Pull Model` described in the [GitHub collaborative development](https://docs.github.com/pull-requests/collaborating-with-pull-requests/getting-started/about-collaborative-development-models)
 documentation.
 
-When submitting a PR, the developers following the project will be notified. That
-said, to engage specific developers, you can add `Cc: @<username>` comment to notify
-them of your awesome contributions.
-Based on the comments posted by the reviewers, you may have to revisit your patches.
+> [!TIP]
+>
+> When submitting a PR, the developers following the project will be notified. That
+> said, to engage specific developers, you can add `Cc: @<username>` comment to notify
+> them of your awesome contributions.
+> Based on the comments posted by the reviewers, you may have to revisit your patches.
 
 
 ### How to efficiently contribute ?
@@ -111,10 +113,11 @@ is the checklist:
 * To accommodate developers explicitly asking for more time to test the
   proposed changes, integration time can be delayed by few more days.
 
-* If you do NOT have push access, a Slicer core developer will integrate your PR. If
-  you would like to speed up the integration, do not hesitate to send a note on
-  the [Slicer forum][slicer-forum].
-
+> [!TIP]
+>
+> If you do NOT have push access, a Slicer core developer will integrate your PR. If
+> you would like to speed up the integration, do not hesitate to send a note on
+> the [Slicer forum][slicer-forum].
 
 ### Automatic testing of pull requests
 
