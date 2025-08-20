@@ -61,7 +61,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders listed
-[here](https://github.com/Slicer/Slicer/blob/master/CONTRIBUTING.md#benevolent-dictators-for-life)
+[here](https://github.com/Slicer/Slicer/blob/master/GOVERNANCE.md#benevolent-dictators-for-life)
 via private message on the [Slicer forum](https://discourse.slicer.org).
 All complaints will be reviewed and investigated promptly and fairly.
 
