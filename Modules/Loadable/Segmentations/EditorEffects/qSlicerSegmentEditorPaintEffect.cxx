@@ -93,6 +93,7 @@
 #include "qMRMLThreeDWidget.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerApplication.h"
+#include "vtkSlicerApplicationLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLayerLogic.h"
 #include "vtkOrientedImageDataResample.h"
@@ -883,9 +884,16 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
     return selectedSegmentID;
   }
 
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+  {
+    return selectedSegmentID;
+  }
+
   // Get slice displayable manager
+  vtkMRMLAbstractViewNode* viewNode = sliceWidget->mrmlSliceNode();
   vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D =
-    vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D"));
+    vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(appLogic->GetViewDisplayableManagerByClassName(viewNode, "vtkMRMLSegmentationsDisplayableManager2D"));
   if (!segmentationDisplayableManager2D)
   {
     return selectedSegmentID;

@@ -2841,19 +2841,24 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller, unsigned long ei
     return;
   }
 
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+  {
+    return;
+  }
+
   // Call processing function of active effect. Handle both interactor and view node events
   vtkRenderWindowInteractor* callerInteractor = vtkRenderWindowInteractor::SafeDownCast(caller);
   vtkMRMLAbstractViewNode* callerViewNode = vtkMRMLAbstractViewNode::SafeDownCast(caller);
-  if (callerInteractor)
+  if (callerInteractor != nullptr)
   {
-
     // Do not process events while a touch gesture is in progress (e.g., do not paint in the view
     // while doing multi-touch pinch/rotate).
     qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
     if (sliceWidget)
     {
       vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager =
-        vtkMRMLCrosshairDisplayableManager::SafeDownCast(sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+        vtkMRMLCrosshairDisplayableManager::SafeDownCast(appLogic->GetViewDisplayableManagerByClassName(sliceWidget->mrmlSliceNode(), "vtkMRMLCrosshairDisplayableManager"));
       if (crosshairDisplayableManager)
       {
         int widgetState = crosshairDisplayableManager->GetSliceIntersectionWidget()->GetWidgetState();
@@ -2863,11 +2868,12 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller, unsigned long ei
         }
       }
     }
+
     qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
     if (threeDWidget)
     {
       vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
-        vtkMRMLCameraDisplayableManager::SafeDownCast(threeDWidget->threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+        vtkMRMLCameraDisplayableManager::SafeDownCast(appLogic->GetViewDisplayableManagerByClassName(threeDWidget->mrmlViewNode(), "vtkMRMLCameraDisplayableManager"));
       if (cameraDisplayableManager)
       {
         int widgetState = cameraDisplayableManager->GetCameraWidget()->GetWidgetState();
@@ -2886,7 +2892,7 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller, unsigned long ei
       callbackCommand->SetAbortFlag(1);
     }
   }
-  else if (callerViewNode)
+  else if (callerViewNode != nullptr)
   {
     activeEffect->processViewNodeEvents(callerViewNode, eid, viewWidget);
   }

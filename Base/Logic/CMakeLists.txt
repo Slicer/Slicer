@@ -58,6 +58,7 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
+  ${MRMLDisplayableManager_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
@@ -138,6 +139,7 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   MRMLLogic
+  MRMLDisplayableManager
   ${VTK_LIBRARIES}
   )
 

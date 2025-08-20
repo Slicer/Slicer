@@ -16,12 +16,19 @@
 #include "vtkSlicerConfigure.h"
 #include "vtkSlicerTask.h"
 
+// MRMLDisplayableManager includes
+#include <vtkMRMLDisplayableManagerGroup.h>
+
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkDataIOManagerLogic.h>
 #include <vtkMRMLRemoteIOLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceLogic.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewLogic.h>
+#include <vtkMRMLViewNode.h>
 
 // VTKAddon includes
 #include <vtkPersonInformation.h>
@@ -980,4 +987,31 @@ void vtkSlicerApplicationLogic::RequestModifiedCallback(vtkObject* vtkNotUsed(ca
   vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(clientData);
   vtkObject* modifiedObject = static_cast<vtkObject*>(callData);
   appLogic->RequestModified(modifiedObject);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLAbstractDisplayableManager* vtkSlicerApplicationLogic::GetViewDisplayableManagerByClassName(vtkMRMLAbstractViewNode* viewNode, const char* className) const
+{
+  if (!viewNode || !className)
+  {
+    return nullptr;
+  }
+
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup = nullptr;
+
+  if (vtkMRMLViewLogic* viewLogic = this->GetViewLogic(vtkMRMLViewNode::SafeDownCast(viewNode)); viewLogic != nullptr)
+  {
+    displayableManagerGroup = vtkMRMLDisplayableManagerGroup::SafeDownCast(viewLogic->GetDisplayableManagerGroup());
+  }
+  else if (vtkMRMLSliceLogic* slicelogic = this->GetSliceLogic(vtkMRMLSliceNode::SafeDownCast(viewNode)); slicelogic != nullptr)
+  {
+    displayableManagerGroup = vtkMRMLDisplayableManagerGroup::SafeDownCast(slicelogic->GetDisplayableManagerGroup());
+  }
+
+  if (displayableManagerGroup != nullptr)
+  {
+    return displayableManagerGroup->GetDisplayableManagerByClassName(className);
+  }
+
+  return nullptr;
 }

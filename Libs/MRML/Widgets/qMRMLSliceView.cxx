@@ -505,3 +505,10 @@ void qMRMLSliceView::dropEvent(QDropEvent* event)
   }
   shNode->ShowItemsInView(shItemIdList, this->mrmlSliceNode());
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLDisplayableManagerGroup* qMRMLSliceView::displayableManagerGroup() const
+{
+  Q_D(const qMRMLSliceView);
+  return d->DisplayableManagerGroup;
+}
