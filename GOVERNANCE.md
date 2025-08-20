@@ -3,14 +3,15 @@
 This document outlines the governance model for the Slicer project, including how decisions are made and who is responsible for maintaining the health of the project.
 
 <!--
-  The sections below start with ### headers to ensure proper nesting
-  when this content is included under a ## heading (e.g., in about.md).
-  Do not change header levels unless updating all dependent includes.
+  Note: The sections below use "##" headings intentionally.
+  This ensures correct nesting when included in other documents (e.g., about.md)
+  with a specified heading-offset.
+  Do not modify heading levels unless all dependent includes are updated accordingly.
 -->
 
 <!-- governance-start -->
 
-### Decision-making process
+## Decision-making process
 
 1. Given the topic of interest, initiate discussion on the [Slicer forum][slicer-forum].
 
@@ -34,7 +35,7 @@ This document outlines the governance model for the Slicer project, including ho
 *The initial version of these guidelines was established during the [winter
  project week 2017](https://www.na-mic.org/Wiki/index.php/2017_Winter_Project_Week/UpdatingCommunityForums).*
 
-### Benevolent dictators for life
+## Benevolent dictators for life
 
 The [benevolent dictators](https://slicer.readthedocs.io/en/latest/user_guide/about.html#benevolent-dictators-for-life) can
 integrate changes to keep the platform healthy and help interpret
