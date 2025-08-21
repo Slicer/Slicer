@@ -3,6 +3,7 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
   SegmentationsModuleTest1.py
   SegmentationsModuleTest2.py
   SegmentationWidgetsTest1.py
+  SegmentEditorLogicTest.py
   )
 
 set(EXTENSION_TEST_PYTHON_RESOURCES

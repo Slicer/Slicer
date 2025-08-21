@@ -128,7 +128,7 @@ public:
 
   /// Get an effect object by name
   /// \return The effect instance if exists, nullptr otherwise
-  Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByName(QString name);
+  Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* effectByName(const QString& name);
 
   /// Get list of all registered effect names that can be displayed in the widget.
   Q_INVOKABLE QStringList availableEffectNames();
@@ -311,10 +311,10 @@ public slots:
   }
 
   /// Set selected segment by its ID
-  void setCurrentSegmentID(const QString segmentID);
+  void setCurrentSegmentID(const QString& segmentID);
 
   /// Set active effect by name
-  void setActiveEffectByName(QString effectName);
+  void setActiveEffectByName(const QString& effectName);
 
   /// Save current segmentation before performing an edit operation
   /// to allow reverting to the current state by using undo
@@ -542,6 +542,9 @@ protected slots:
   /// Show segmentation geometry dialog to specify labelmap geometry
   void showSegmentationGeometryDialog();
 
+  static void pauseRender();
+  static void resumeRender();
+
 protected:
   /// Callback function invoked when interaction happens
   static void processEvents(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
@@ -555,7 +558,7 @@ protected:
   bool setSourceRepresentationToBinaryLabelmap();
 
   /// Switches to Segmentations module and returns the module widget
-  qSlicerAbstractModuleWidget* switchToSegmentationsModule();
+  static qSlicerAbstractModuleWidget* switchToSegmentationsModule();
 
 protected:
   QScopedPointer<qMRMLSegmentEditorWidgetPrivate> d_ptr;
