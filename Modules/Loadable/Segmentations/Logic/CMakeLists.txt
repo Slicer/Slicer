@@ -18,6 +18,8 @@ set(${KIT}_SRCS
   vtkImageGrowCutSegment.cxx
   vtkImageGrowCutSegment.h
   FibHeap.cxx
+  vtkSegmentEditorLogic.cxx
+  vtkSegmentEditorLogic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
