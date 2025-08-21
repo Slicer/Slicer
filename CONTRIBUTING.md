@@ -88,18 +88,18 @@ Keep in mind that the significant time is invested in reviewing commits and
 *pull requests*, so following these guidelines will greatly help the people
 doing reviews.
 
-These guidelines are largely inspired by Chris Beam's
-[How to Write a Commit Message](https://chris.beams.io/posts/git-commit/)
-post.
-
 Examples:
-  - Bad: `BUG: Check pointer validity before dereferencing` -> implementation detail, self-explanatory (by looking at the code)
-  - Good: `BUG: Fix crash in Module X when clicking Apply button`
-  - Bad: `ENH: More work in qSlicerXModuleWidget` -> more work is too vague, qSlicerXModuleWidget is too low level
-  - Good: `ENH: Add float image outputs in module X`
-  - Bad: `COMP: Typo in cmake variable` -> implementation detail, self-explanatory
-  - Good: `COMP: Fix compilation error with Numpy on Visual Studio`
 
+- ❌ `BUG: Check pointer validity before dereferencing` -> implementation detail, self-explanatory (by looking at the code)
+- ✅ `BUG: Fix crash in Module X when clicking Apply button`
+- ❌ `ENH: More work in qSlicerXModuleWidget` -> more work is too vague, qSlicerXModuleWidget is too low level
+- ✅ `ENH: Add float image outputs in module X`
+- ❌ `COMP: Typo in cmake variable` -> implementation detail, self-explanatory
+- ✅ `COMP: Fix compilation error with Numpy on Visual Studio`
+
+_These guidelines are largely inspired by Chris Beam's
+[How to Write a Commit Message](https://chris.beams.io/posts/git-commit/)
+post._
 
 ### How to integrate a PR ?
 
@@ -134,8 +134,11 @@ remain relevant for understanding the overall approach and concepts.
 
 After changes are integrated, every evening at 10pm EST (3am UTC), Slicer build bots (aka factories)
 will build, test and package the Slicer application and all its extensions on Linux, macOS
-and Windows. Results are published daily on CDash ([Stable](https://slicer.cdash.org/index.php?project=SlicerStable) & [Preview](https://slicer.cdash.org/index.php?project=SlicerPreview))
-and developers that introduced changes resulting in build or test failures are notified by
+and Windows. Results are published daily on CDash:
+- [Stable](https://slicer.cdash.org/index.php?project=SlicerStable)
+- [Preview](https://slicer.cdash.org/index.php?project=SlicerPreview))
+
+Developers that introduced changes resulting in build or test failures are notified by
 email.
 
 
