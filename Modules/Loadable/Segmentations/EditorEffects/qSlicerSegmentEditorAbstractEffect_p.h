@@ -111,6 +111,8 @@ public:
   /// Changing it does not change the reference geometry of the segment, it is just a copy,
   /// for convenience.
   vtkWeakPointer<vtkOrientedImageData> ReferenceGeometryImage;
+
+  vtkWeakPointer<vtkSegmentEditorLogic> Logic;
 };
 
 #endif
