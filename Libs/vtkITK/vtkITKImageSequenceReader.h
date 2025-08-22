@@ -33,11 +33,6 @@ public:
   vtkTypeMacro(vtkITKImageSequenceReader, vtkMedicalImageReader2);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Specify file name for the image file.
-  vtkSetStringMacro(FileName);
-  /// Get file name for the image file.
-  vtkGetStringMacro(FileName);
-
   /// Set current frame index that is extracted from the sequence image to the output port.
   vtkSetMacro(CurrentFrameIndex, unsigned int);
   /// Get current frame index that is extracted from the sequence image to the output port.
@@ -84,9 +79,6 @@ protected:
   void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 
 protected:
-  /// File name for the image to read.
-  char* FileName{ nullptr };
-
   /// Current frame index that is extracted from the sequence image to the output port.
   unsigned int CurrentFrameIndex{ 0 };
 

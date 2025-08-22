@@ -179,7 +179,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self,
       itkImageWriter->SetImageIO(imageIOType);
     }
   }
-  OutImageType::Pointer joinedImage = joinImageFilter->GetOutput();
+  typename OutImageType::Pointer joinedImage = joinImageFilter->GetOutput();
   itkImageWriter->SetInput(joinedImage);
 
   // Fill in axis kinds metadata
