@@ -58,7 +58,6 @@ void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "FileName: " << (this->FileName ? this->FileName : "(none)") << "\n";
   os << indent << "Header key/value pairs:\n";
   for (std::map<std::string, std::string>::iterator it = HeaderKeyValueMap.begin(); it != HeaderKeyValueMap.end(); ++it)
   {
@@ -145,7 +144,7 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, std::vector<vtkS
   using ImageType = itk::Image<PixelType, ImageDimension>;
 
   using ReaderType = itk::ImageFileReader<ImageType>;
-  ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
 
   using ImageIOType = itk::NrrdImageIO;
   ImageIOType::Pointer imageIO = ImageIOType::New();
@@ -154,7 +153,7 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, std::vector<vtkS
 
   reader->SetFileName(self->GetFileName());
   reader->Update();
-  ImageType::ConstPointer image = reader->GetOutput();
+  typename ImageType::ConstPointer image = reader->GetOutput();
 
   // Get IJK to LPS matrix
   vtkNew<vtkMatrix4x4> ijkToLpsMatrix;
@@ -184,34 +183,34 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, std::vector<vtkS
   // Extract requested frame from image
   using FrameImageType = itk::Image<PixelType, ImageDimension - 1>;
   using ExtractImageFilterType = itk::ExtractImageFilter<ImageType, FrameImageType>;
-  ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+  typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
 
   extractImageFilter->SetInput(image);
 
-  ImageType::RegionType fullRegion = image->GetLargestPossibleRegion();
-  ImageType::SizeType extractionSize = fullRegion.GetSize();
+  typename ImageType::RegionType fullRegion = image->GetLargestPossibleRegion();
+  typename ImageType::SizeType extractionSize = fullRegion.GetSize();
   self->SetNumberOfFrames(extractionSize[listDimIdx]);
 
   extractionSize[listDimIdx] = 0; // Collapse sequence dimension when extracting frame
 
-  ImageType::RegionType extractionRegion;
-  ImageType::IndexType extractionIndex = extractionRegion.GetIndex();
+  typename ImageType::RegionType extractionRegion;
+  typename ImageType::IndexType extractionIndex = extractionRegion.GetIndex();
   extractionRegion.SetSize(extractionSize);
   extractImageFilter->SetDirectionCollapseToSubmatrix();
 
   using VTKExporterFilterType = itk::ImageToVTKImageFilter<FrameImageType>;
-  VTKExporterFilterType::Pointer vtkExportFilter = VTKExporterFilterType::New();
+  typename VTKExporterFilterType::Pointer vtkExportFilter = VTKExporterFilterType::New();
 
   images.clear();
-  for (int frameIndex = 0; frameIndex < self->GetNumberOfFrames(); frameIndex++)
+  for (unsigned int frameIndex = 0; frameIndex < self->GetNumberOfFrames(); frameIndex++)
   {
     extractionIndex[listDimIdx] = frameIndex;
     extractionRegion.SetIndex(extractionIndex);
     extractImageFilter->SetExtractionRegion(extractionRegion);
     extractImageFilter->Update();
 
-    FrameImageType::Pointer frameImage = extractImageFilter->GetOutput();
-    FrameImageType::RegionType frameRegion = frameImage->GetLargestPossibleRegion();
+    typename FrameImageType::Pointer frameImage = extractImageFilter->GetOutput();
+    typename FrameImageType::RegionType frameRegion = frameImage->GetLargestPossibleRegion();
 
     // Convert extracted frame to VTK image
     vtkExportFilter->SetInput(frameImage);
