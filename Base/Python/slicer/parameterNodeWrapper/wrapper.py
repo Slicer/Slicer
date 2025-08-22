@@ -250,7 +250,7 @@ def _connectGui(self, gui):
             if widget.property(SlicerParameterNamePropertyName):
                 paramNameToWidget[widget.property(SlicerParameterNamePropertyName)] = widget
 
-    _connectParametersToGui(self, paramNameToWidget)
+    return _connectParametersToGui(self, paramNameToWidget)
 
 
 def _disconnectGui(self, guiTag):

@@ -38,18 +38,21 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
             alpha: bool
             bravo: Annotated[bool, Default(True)]
 
+        mappingWidget = qt.QWidget()
+        mappingWidget.setLayout(qt.QVBoxLayout())
         widgetAlpha = widgettype()
+        widgetAlpha.setProperty(SlicerParameterNamePropertyName, "alpha")
         widgetAlpha.deleteLater()
         widgetBravo = widgettype()
+        widgetBravo.setProperty(SlicerParameterNamePropertyName, "bravo")
         widgetBravo.deleteLater()
+        mappingWidget.layout().addWidget(widgetAlpha)
+        mappingWidget.layout().addWidget(widgetBravo)
+        mappingWidget.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
         # Phase 0 - connect parameterNode to GUI
-        mapping = {
-            "alpha": widgetAlpha,
-            "bravo": widgetBravo,
-        }
-        tag = param.connectParametersToGui(mapping)
+        tag = param.connectGui(mappingWidget)
         self.assertFalse(param.alpha)
         self.assertFalse(widgetAlpha.checked)
         self.assertTrue(param.bravo)
@@ -84,7 +87,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # Phase 4 - reconnect to GUI after changing parameterNode
         param.alpha = True
         widgetAlpha.checked = False
-        tag = param.connectParametersToGui(mapping)
+        tag = param.connectGui(mappingWidget)
         self.assertTrue(param.alpha)
         self.assertTrue(widgetAlpha.checked)
         self.assertTrue(param.bravo)
