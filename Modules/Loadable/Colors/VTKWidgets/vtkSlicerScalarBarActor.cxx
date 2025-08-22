@@ -278,7 +278,11 @@ void vtkSlicerScalarBarActor::LayoutTicks()
       targetHeight = this->P->TickBox.Size[0];
     }
 
-    vtkTextActor::SetMultipleConstrainedFontSize(this->P->Viewport, targetWidth, targetHeight, this->P->TextActors.PointerArray(), this->NumberOfLabels, labelSize);
+    int fontSize = vtkTextActor::SetMultipleConstrainedFontSize(this->P->Viewport, targetWidth, targetHeight, this->P->TextActors.PointerArray(), this->NumberOfLabels, labelSize);
+
+    // Match the font size of the title actor
+    this->TitleTextProperty->SetFontSize(fontSize);
+    this->TitleActor->GetTextProperty()->ShallowCopy(this->TitleTextProperty);
 
     // Now adjust scalar bar size by the half-size of the first and last ticks
     this->P->ScalarBarBox.Posn[this->P->TL[1]] += labelSize[this->P->TL[1]] / 2.;
