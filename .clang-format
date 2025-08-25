@@ -15,6 +15,7 @@ AlwaysBreakTemplateDeclarations: true
 BreakBeforeBinaryOperators: NonAssignment
 ConstructorInitializerIndentWidth: 2
 IndentPPDirectives: AfterHash
+InsertBraces: true
 PackConstructorInitializers: Never
 PPIndentWidth: 1
 
