@@ -91,23 +91,8 @@ void qMRMLWidget::preInitializeApplication()
 
   QString openGLProfileStr = qgetenv(MRML_APPLICATION_OPENGL_PROFILE_ENV);
   openGLProfileStr = openGLProfileStr.toLower();
-  if (openGLProfileStr.isEmpty() || openGLProfileStr == "default")
+  if (!openGLProfileStr.isEmpty() && openGLProfileStr != "default")
   {
-    // Use default profile
-#ifdef _WIN32
-    // Enable OpenGL compatibility profile on Windows.
-    // It fixes display update issues and should not have any
-    // side effect.
-    // Compatibility profile is only requested for Windows, as it is
-    // not fully supported on Mac, and there is no known issue
-    // on Linux that would require requesting compatibility profile.
-    // More details: https://gitlab.kitware.com/vtk/vtk/issues/17572
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-#endif
-  }
-  else
-  {
-    // Force a specific profile
     if (openGLProfileStr == "no")
     {
       format.setProfile(QSurfaceFormat::NoProfile);
@@ -119,6 +104,12 @@ void qMRMLWidget::preInitializeApplication()
     else if (openGLProfileStr == "compatibility")
     {
       format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    }
+    else
+    {
+      qCritical("Invalid OpenGL profile option '%s' set in %s. Valid options are: 'default', 'no', 'core', 'compatibility'.",
+                qPrintable(openGLProfileStr),
+                MRML_APPLICATION_OPENGL_PROFILE_ENV);
     }
   }
 
