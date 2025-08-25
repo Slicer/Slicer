@@ -63,11 +63,17 @@ public:
   void SetShapeString(const char* str)
   {
     if (strcmp(str, "Polygon") == 0)
+    {
       this->SetShapeToPolygon();
+    }
     else if (strcmp(str, "Lines") == 0)
+    {
       this->SetShapeToLines();
+    }
     else
+    {
       this->SetShapeToPoints();
+    }
   }
 
   vtkSetMacro(Radius, int);

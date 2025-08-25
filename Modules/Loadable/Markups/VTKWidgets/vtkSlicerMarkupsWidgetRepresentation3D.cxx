@@ -291,15 +291,21 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       {
         case Active:
           if (!isPointActive)
+          {
             continue;
+          }
           break;
         case Unselected:
           if (isPointActive || markupsNode->GetNthControlPointSelected(pointIndex))
+          {
             continue;
+          }
           break;
         case Selected:
           if (isPointActive || !markupsNode->GetNthControlPointSelected(pointIndex))
+          {
             continue;
+          }
           break;
       }
 

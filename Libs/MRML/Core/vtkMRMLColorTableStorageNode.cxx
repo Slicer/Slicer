@@ -320,11 +320,17 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   auto GetIndexInEntryForIdType = [](std::string idType)
   {
     if (idType == "CodingScheme")
+    {
       return 0;
+    }
     else if (idType == "CodeValue")
+    {
       return 1;
+    }
     else if (idType == "CodeMeaning")
+    {
       return 2;
+    }
     vtkGenericWarningMacro("vtkMRMLColorTableStorageNode::ReadCsvFile::GetIndexInEntryForIdType: Invalid coded entry ID type" << idType);
     return 0;
   };

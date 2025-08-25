@@ -26,13 +26,21 @@
 bool validFile(const char* fileName)
 {
   if (!strcmp(fileName, "."))
+  {
     return true;
+  }
   if (!strcmp(fileName, ".."))
+  {
     return true;
+  }
   if (!strcmp(fileName, "vol.mrml"))
+  {
     return true;
+  }
   if (!strcmp(fileName, "vol_and_cube.mrml"))
+  {
     return true;
+  }
   return false;
 }
 
@@ -94,7 +102,9 @@ int vtkArchiveTest1(int argc, char* argv[])
   {
     std::cout << "Extracted file: " << cwd.GetFile(i) << std::endl;
     if (validFile(cwd.GetFile(i)))
+    {
       validFiles++;
+    }
   }
 
   if (validFiles != 4)
@@ -159,7 +169,9 @@ int vtkArchiveTest1(int argc, char* argv[])
   {
     std::cerr << "Extracted file: " << cwd.GetFile(i) << std::endl;
     if (validFile(cwd.GetFile(i)))
+    {
       validFiles++;
+    }
   }
 
   if (validFiles != 4)

@@ -195,9 +195,13 @@ public:
   const char* GetEventModeAsString()
   {
     if (this->EventMode == vtkEventBroker::Synchronous)
+    {
       return ("Synchronous");
+    }
     if (this->EventMode == vtkEventBroker::Asynchronous)
+    {
       return ("Asynchronous");
+    }
     return "Undefined";
   }
 

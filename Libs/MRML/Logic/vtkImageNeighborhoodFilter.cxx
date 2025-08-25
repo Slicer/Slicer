@@ -88,9 +88,15 @@ void vtkImageNeighborhoodFilter::SetNeighborTo4()
   // set 4 neighbors in center slice
   int z = 0;
   for (int y = -1; y <= 1; y++)
+  {
     for (int x = -1; x <= 1; x++)
+    {
       if (x * y == 0)
+      {
         this->Mask[(1 + z) * 9 + (1 + y) * 3 + (1 + x)] = 1;
+      }
+    }
+  }
 
   // unset center (current) pixel
   this->Mask[1 * 9 + 1 * 3 + 1] = 0;

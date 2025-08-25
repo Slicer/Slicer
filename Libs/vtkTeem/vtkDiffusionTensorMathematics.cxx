@@ -551,16 +551,24 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
             //              vtkGenericWarningMacro( "Warning: Eigenvalues are not properly sorted" );
             //            }
             if ((w[0] < 0) || (w[1] < 0) || (w[2] < 0))
+            {
               vtkGenericWarningMacro("Warning: Negative Eigenvalues after positivity fix");
+            }
           }
           else
           {
             if (w[0] < 0)
+            {
               w[0] = 0;
+            }
             if (w[1] < 0)
+            {
               w[1] = 0;
+            }
             if (w[2] < 0)
+            {
               w[2] = 0;
+            }
           }
 
           // pixel operation
@@ -866,13 +874,21 @@ int vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
   double wtmp[3];
   // Check for cardinality of negative eigenvalues
   if (w[0] < 0 && w[1] < 0 && w[2] < 0)
+  {
     cardinality = 3;
+  }
   else if (w[1] < 0 && w[2] < 0)
+  {
     cardinality = 2;
+  }
   else if (w[2] < 0)
+  {
     cardinality = 1;
+  }
   else
+  {
     cardinality = 0;
+  }
 
   switch (cardinality)
   {
@@ -884,7 +900,9 @@ int vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
     case 2:
       w[0] = w[0] + 0.5 * (w[1] + w[2]);
       if (w[0] < 0)
+      {
         w[0] = 0;
+      }
       w[1] = 0;
       break;
     case 1:
@@ -900,7 +918,9 @@ int vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
       {
         w[0] = w[0] + 0.5 * (w[1] + w[2]);
         if (w[0] < 0)
+        {
           w[0] = 0;
+        }
         w[1] = 0;
       }
       else
@@ -1229,9 +1249,13 @@ int vtkDiffusionTensorMathematics::TeemEigenSolver(double** m, double* w, double
   t[6] = m[2][2];
 
   if (v == nullptr)
+  {
     res = tenEigensolve_d(eval, nullptr, t);
+  }
   else
+  {
     res = tenEigensolve_d(eval, evec, t);
+  }
 
   unsigned int eval_indices[3] = { 0, 1, 2 };
 

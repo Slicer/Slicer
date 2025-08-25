@@ -45,8 +45,12 @@ void qMRMLNodeComboBoxDelegate::setSeparator(QAbstractItemModel* model, const QM
 {
   model->setData(index, QString::fromLatin1("separator"), Qt::AccessibleDescriptionRole);
   if (QStandardItemModel* m = qobject_cast<QStandardItemModel*>(model))
+  {
     if (QStandardItem* item = m->itemFromIndex(index))
+    {
       item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+    }
+  }
 }
 
 // --------------------------------------------------------------------------

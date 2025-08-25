@@ -717,7 +717,9 @@ public:
 
     std::vector<float> aVector(3);
     for (unsigned int i = 0; i < 3; i++)
+    {
       aVector[i] = a[i];
+    }
     this->ImagePositionPatient.push_back(aVector);
     return (this->ImagePositionPatient.size() - 1);
   }

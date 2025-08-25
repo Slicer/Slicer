@@ -514,13 +514,21 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
     double newViewport[4] = { 1.0 - viewPortSizeInPixels / double(rendererSizeInPixels[0]), 0.0, 1.0, viewPortSizeInPixels / double(rendererSizeInPixels[1]) };
     // Clip viewport to valid range
     if (newViewport[0] < 0.0)
+    {
       newViewport[0] = 0.0;
+    }
     if (newViewport[1] < 0.0)
+    {
       newViewport[1] = 0.0;
+    }
     if (newViewport[2] > 1.0)
+    {
       newViewport[1] = 1.0;
+    }
     if (newViewport[3] > 1.0)
+    {
       newViewport[3] = 1.0;
+    }
 
     // Update the viewport
     if (newViewport[0] != viewport[0]    //

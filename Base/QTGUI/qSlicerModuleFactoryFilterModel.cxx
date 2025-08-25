@@ -360,7 +360,9 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   Q_D(qSlicerModuleFactoryFilterModel);
   // check if the action is supported
   if (!data || !(action == Qt::CopyAction))
+  {
     return false;
+  }
   // check if the format is supported
   QString format = QLatin1String("application/x-qstandarditemmodeldatalist");
   if (!data->hasFormat(format))
