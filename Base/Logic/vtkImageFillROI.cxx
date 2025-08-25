@@ -669,7 +669,9 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self, vtkImageData* outData,
 
   vtkPoints* points = self->GetPoints();
   if (points == nullptr)
+  {
     return;
+  }
 
   outData->GetExtent(outExt);
   nx = outExt[1] - outExt[0] + 1;
@@ -679,7 +681,9 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self, vtkImageData* outData,
   // Convert to int
   nPts = points->GetNumberOfPoints();
   if (nPts == 0)
+  {
     return;
+  }
   xPts = new int[nPts];
   yPts = new int[nPts];
   for (i = 0, j = 0; i < nPts; i++)

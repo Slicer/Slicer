@@ -305,7 +305,9 @@ void vtkMRMLAnnotationControlPointsNode::CreateAnnotationPointDisplayNode()
 {
   vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (node)
+  {
     return;
+  }
   if (!this->GetScene())
   {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::CreateAnnotationControlPointDisplayNode Annotation: No scene defined");
@@ -460,9 +462,13 @@ const char* vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(in
     return vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(val);
   }
   if (val == CP_SELECTED)
+  {
     return "ctrlPtsSelected";
+  }
   if (val == CP_VISIBLE)
+  {
     return "ctrlPtsVisible";
+  }
   return "(unknown)";
 };
 

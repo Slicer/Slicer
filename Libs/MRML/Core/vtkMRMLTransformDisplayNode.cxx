@@ -372,7 +372,9 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned 
     this->Modified();
   }
   else
+  {
     this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  }
 }
 
 //----------------------------------------------------------------------------

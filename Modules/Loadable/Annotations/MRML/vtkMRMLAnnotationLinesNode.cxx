@@ -243,7 +243,9 @@ void vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode()
 {
   vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (node)
+  {
     return;
+  }
   if (!this->GetScene())
   {
     vtkErrorMacro("vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode AnnotationLine: No scene defined");
@@ -411,9 +413,13 @@ const char* vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
     return vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(val);
   }
   if (val == LINE_SELECTED)
+  {
     return "lineSelected";
+  }
   if (val == LINE_VISIBLE)
+  {
     return "lineVisible";
+  }
   return "(unknown)";
 };
 

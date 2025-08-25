@@ -89,8 +89,12 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   // IJKToRASDirections
   double dirs[3][3];
   for (int i = 0; i < 3; i++)
+  {
     for (int j = 0; j < 3; j++)
+    {
       dirs[i][j] = 0.0;
+    }
+  }
   dirs[0][0] = 1;
   dirs[1][1] = 1;
   dirs[2][2] = 1;

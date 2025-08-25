@@ -44,7 +44,9 @@ vtkImageRectangularSource::~vtkImageRectangularSource()
   if (this->Corners)
   {
     for (int i = 0; i < 4; i++)
+    {
       delete[] this->Corners[i];
+    }
     delete[] this->Corners;
     this->Corners = nullptr;
   }
@@ -125,7 +127,9 @@ void vtkImageRectangularSource::SetCorners(int x1, int y1, int x2, int y2, int x
   assert(!this->Corners);
   this->Corners = new int*[4];
   for (int i = 0; i < 4; i++)
+  {
     this->Corners[i] = new int[2];
+  }
   this->Corners[0][0] = x1;
   this->Corners[0][1] = y1;
 
@@ -162,7 +166,9 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource* self, vtkImageD
   {
     Min[i] = center[i] - size[i] / 2;
     if (Min[i] <= ext[2 * i])
+    {
       Min[i] = ext[2 * i];
+    }
     Max[i] = center[i] + size[i] / 2 + 1;
   }
   data->GetContinuousIncrements(ext, inc0, inc1, inc2);
@@ -174,27 +180,41 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource* self, vtkImageD
   for (idx2 = ext[4]; idx2 <= ext[5]; ++idx2)
   {
     if (idx2 == Min[2])
+    {
       InFlag[2] = 1;
+    }
     else if (idx2 == Max[2])
+    {
       InFlag[2] = 0;
+    }
     InFlag[1] = 0;
     for (idx1 = ext[2]; !self->AbortExecute && idx1 <= ext[3]; ++idx1)
     {
       if (!(count % target))
+      {
         self->UpdateProgress(count / (50.0 * target));
+      }
       count++;
       if (idx1 == Min[1])
+      {
         InFlag[1] = InFlag[2];
+      }
       else if (idx1 == Max[1])
+      {
         InFlag[1] = 0;
+      }
       InFlag[0] = 0;
       for (idx0 = ext[0]; idx0 <= ext[1]; ++idx0)
       {
         // handle divide by zero
         if (idx0 == Min[0])
+        {
           InFlag[0] = InFlag[1];
+        }
         else if (idx0 == Max[0])
+        {
           InFlag[0] = 0;
+        }
         if (InFlag[0])
         {
           if (InsideGraySlopeFlag && size[0])
@@ -203,10 +223,14 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource* self, vtkImageD
             *ptr = T((1.0 - grad) * double(inVal)) + T(grad * double(outVal));
           }
           else
+          {
             *ptr = inVal;
+          }
         }
         else
+        {
           *ptr = outVal;
+        }
         ++ptr;
         // inc0 is 0
       }
@@ -275,7 +299,9 @@ int DefineX(int* c1, int* c2, int y)
 {
   assert(c1[1] != c2[1]);
   if ((Min(c1[1], c2[1]) > y) || (Max(c1[1], c2[1]) < y))
+  {
     return -1;
+  }
 
   double lenY = c2[1] - c1[1];
   int lenX = c2[0] - c1[0];
@@ -295,24 +321,36 @@ template <class T>
 void DefineLine(int MinInX, int MaxInX, int LineLength, T inVal, T outVal, int InsideGraySlopeFlag, T* Result)
 {
   if (MinInX >= LineLength || MaxInX < 0 || MinInX > MaxInX)
+  {
     MinInX = LineLength;
+  }
   for (int x = 0; x < MinInX; x++)
+  {
     *Result++ = outVal;
+  }
   // We already went through entire image
   if (MinInX == LineLength)
+  {
     return;
+  }
 
   if (MinInX < 0)
+  {
     MinInX = 0;
+  }
   if (MaxInX >= LineLength)
+  {
     MaxInX = LineLength - 1;
+  }
 
   int inLength = MaxInX - MinInX + 1;
   double inCenter = double(MinInX) + double(inLength) / 2.0;
 
   // Otherwise everything is just black
   if (inLength < 2)
+  {
     InsideGraySlopeFlag = 0;
+  }
 
   for (int x = MinInX; x <= MaxInX; x++)
   {
@@ -321,11 +359,15 @@ void DefineLine(int MinInX, int MaxInX, int LineLength, T inVal, T outVal, int I
       *Result++ = CalculateGraySlope(inLength, inCenter, x, inVal, outVal);
     }
     else
+    {
       *Result++ = inVal;
+    }
   }
 
   for (int x = MaxInX + 1; x < LineLength; x++)
+  {
     *Result++ = outVal;
+  }
 }
 
 void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, int& MaxX)
@@ -350,10 +392,14 @@ void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, 
       return;
     }
     else
+    {
       x1 = -1;
+    }
   }
   else
+  {
     x1 = DefineX(c1, c2, y);
+  }
 
   if (c2[1] == c3[1])
   {
@@ -364,10 +410,14 @@ void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, 
       return;
     }
     else
+    {
       x2 = -1;
+    }
   }
   else
+  {
     x2 = DefineX(c2, c3, y);
+  }
 
   if (c1[1] == c3[1])
   {
@@ -378,10 +428,14 @@ void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, 
       return;
     }
     else
+    {
       x3 = -1;
+    }
   }
   else
+  {
     x3 = DefineX(c1, c3, y);
+  }
   // One of them has to be -1
   int xBlub;
 
@@ -389,24 +443,34 @@ void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, 
 
   // Special Case when all three lines have input
   if ((MinX == MaxX) && (xBlub > -1))
+  {
     MinX = xBlub;
+  }
 }
 
 void DefineXMinMaxInTriangle(int* c1, int* c2, int* c3, int y, int& MinX, int& MaxX)
 {
   DefineXMinMaxInTriangleNormal(c1, c2, c3, y, MinX, MaxX);
   if (MinX != MaxX)
+  {
     return;
+  }
 
   // When we are at a corners make sure that the piece is connected
   int MinX1, MaxX1;
   DefineXMinMaxInTriangleNormal(c1, c2, c3, y + 1, MinX1, MaxX1);
   if (MaxX1 < 0)
+  {
     DefineXMinMaxInTriangleNormal(c1, c2, c3, y - 1, MinX1, MaxX1);
+  }
   if (MaxX1 < 0)
+  {
     return;
+  }
   if (!(MaxX1 - MinX1))
+  {
     return;
+  }
 
   if (MinX < MinX1)
   {
@@ -415,7 +479,9 @@ void DefineXMinMaxInTriangle(int* c1, int* c2, int* c3, int y, int& MinX, int& M
   }
 
   if (MaxX > MaxX1)
+  {
     MinX = MaxX1 - 1;
+  }
   return;
 }
 
@@ -426,7 +492,9 @@ void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal
   int MaxInY = Max(Corners[0][1], Corners[1][1], Corners[2][1], Corners[3][1]);
 
   if (MinInY >= RowLength || MaxInY < 0 || MinInY > MaxInY)
+  {
     MinInY = RowLength;
+  }
   // Outside
   for (int y = 0; y < MinInY; y++)
   {
@@ -434,12 +502,18 @@ void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal
     Result += RowLength + IncResultY;
   }
   if (MinInY == RowLength)
+  {
     return;
+  }
 
   if (MinInY < 0)
+  {
     MinInY = 0;
+  }
   if (MaxInY >= RowLength)
+  {
     MaxInY = RowLength - 1;
+  }
 
   int inMinX1, inMinX2, inMaxX1, inMaxX2;
 
@@ -450,9 +524,13 @@ void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal
     DefineXMinMaxInTriangle(Corners[0], Corners[1], Corners[3], y, inMinX1, inMaxX1);
     DefineXMinMaxInTriangle(Corners[1], Corners[2], Corners[3], y, inMinX2, inMaxX2);
     if (inMaxX1 < 0)
+    {
       DefineLine(inMinX2, inMaxX2, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
+    }
     else if (inMaxX2 < 0)
+    {
       DefineLine(inMinX1, inMaxX1, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
+    }
     else
     {
 
@@ -461,14 +539,18 @@ void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal
         DefineLine(inMinX1, inMinX2 - 1, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
         int inMaxX3 = inMaxX1 - inMaxX2 - 1;
         if (inMaxX3 > -1)
+        {
           DefineLine(0, inMaxX3, LineLength, inVal, outVal, InsideGraySlopeFlag, Result + (inMaxX2 + 1));
+        }
       }
       else if ((inMinX2 <= inMinX1) && (inMaxX1 <= inMaxX2))
       {
         DefineLine(inMinX2, inMinX1 - 1, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
         int inMaxX3 = inMaxX2 - inMaxX1 - 1;
         if (inMaxX3 > -1)
+        {
           DefineLine(0, inMaxX3, LineLength, inVal, outVal, InsideGraySlopeFlag, Result + (inMaxX1 + 1));
+        }
       }
       else
       {

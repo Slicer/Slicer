@@ -833,7 +833,9 @@ void qMRMLTreeView::saveTreeExpandState()
   if (this->isExpanded(sceneIndex))
   {
     if (sceneNode && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(sceneNode))
+    {
       d->ExpandedNodes->AddItem(sceneNode);
+    }
   }
   unsigned int numChildrenRows = this->sortFilterProxyModel()->rowCount(sceneIndex);
   for (unsigned int row = 0; row < numChildrenRows; ++row)

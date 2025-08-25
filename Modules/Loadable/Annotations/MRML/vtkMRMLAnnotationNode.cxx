@@ -111,7 +111,9 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
       while (endPos != std::string::npos)
       {
         if (endPos == startPos)
+        {
           this->AddText(nullptr, 1, 1);
+        }
         else
         {
           this->AddText(attValue.substr(startPos, endPos - startPos).c_str(), 1, 1);
@@ -557,9 +559,13 @@ int vtkMRMLAnnotationNode::GetNumberOfTexts()
 const char* vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(int val)
 {
   if (val == TEXT_SELECTED)
+  {
     return "textSelected";
+  }
   if (val == TEXT_VISIBLE)
+  {
     return "textVisible";
+  }
   return "(unknown)";
 };
 
@@ -602,7 +608,9 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
 {
   vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (node)
+  {
     return;
+  }
   if (!this->GetScene())
   {
     vtkErrorMacro("vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode Annotation: No scene defined");

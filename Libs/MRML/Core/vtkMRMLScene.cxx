@@ -1190,7 +1190,9 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     *os << vindent << "<" << node->GetNodeTagName() << "\n ";
 
     if (indent <= 0)
+    {
       indent = 1;
+    }
 
     vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
     nodeWritingMessages->SetObservedObject(node);
