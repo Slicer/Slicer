@@ -249,7 +249,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
         """Called when the logic class is instantiated. Can be used for initializing member variables."""
         ScriptedLoadableModuleLogic.__init__(self)
 
-        self.lineObservation = None # pair of line object and observation ID
+        self.lineObservation = None # tuple of line object and list of observation IDs
         self._parameterNode = None
 
     def getParameterNode(self):
@@ -269,10 +269,13 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
 
     def update(self):
         """Update the output table, peaks table, and plot based on the current parameter node settings."""
-
         parameterNode = self.getParameterNode()
 
         self._setAutoUpdateFromLineNode(parameterNode.inputLine if parameterNode.autoUpdate else None)
+
+        if parameterNode.inputLine.GetNumberOfDefinedControlPoints() < 2:
+            self._resetOutput()
+            return
 
         self._updateOutputTable()
 
@@ -288,10 +291,14 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
             if inputLineNode == self.lineObservation[0]:
                 # If the input line node is the same as the observed one, do not change the observation
                 return
-            self.lineObservation[0].RemoveObserver(self.lineObservation[1])
+            # Remove all existing observers
+            for observationID in self.lineObservation[1]:
+                self.lineObservation[0].RemoveObserver(observationID)
             self.lineObservation = None
         if inputLineNode is not None:
-            self.lineObservation = [inputLineNode, inputLineNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self._onLineModified)]
+            pointModifiedObserver = inputLineNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self._onLineModified)
+            pointUndefinedObserver = inputLineNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointRemovedEvent, self._onLineModified)
+            self.lineObservation = [inputLineNode, [pointModifiedObserver, pointUndefinedObserver]]
 
     def _onLineModified(self, caller=None, event=None):
         self.update()
@@ -311,6 +318,14 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
         tableNode.GetTable().AddColumn(newArray)
         return newArray
 
+    def _resetOutput(self):
+        """Reset output by clearing table and plot series."""
+        parameterNode = self.getParameterNode()
+        parameterNode.outputTable.GetTable().SetNumberOfRows(0)
+        # Clear the plot series data as well
+        if parameterNode.outputPlotSeries:
+            parameterNode.outputPlotSeries.SetAndObserveTableNodeID("")
+
     def _updateOutputTable(self):
         """Update the output table by sampling the input volume at the points of the input line or curve."""
         parameterNode = self.getParameterNode()
@@ -322,7 +337,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
         if inputCurve is None or inputVolume is None or outputTable is None:
             return
         if inputCurve.GetNumberOfDefinedControlPoints() < 2:
-            outputTable.GetTable().SetNumberOfRows(0)
+            self._resetOutput()
             return
 
         curvePoints_RAS = inputCurve.GetCurvePointsWorld()
