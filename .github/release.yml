@@ -2,7 +2,7 @@ changelog:
   exclude:
     authors:
       # Excludes automated dependency updates for GitHub workflows, as these are not Slicer dependencies and are not relevant for the changelog.
-      - dependabot
+      - dependabot[bot]
 
       # Manages Slicer.crt certificate updates (see update-slicer-certificate-bundle.yml).
       # PRs from slicerbot are intentionally *not* excluded, as they update the Slicer.crt certificate, and documenting these changes is useful.
@@ -10,4 +10,4 @@ changelog:
 
       # Excludes automated pre-commit updates (see pre-commit-autoupdate.yml) used for linting.
       # These updates involve only formatting changes, which would add unnecessary noise to the changelog.
-      - slicer-app
+      - slicer-app[bot]
