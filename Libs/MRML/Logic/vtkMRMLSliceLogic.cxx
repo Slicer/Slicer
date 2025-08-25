@@ -664,8 +664,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 
     // set the plane corner point for use in a model
     double inPoint[4] = { 0, 0, 0, 1 };
-    double outPoint[4];
-    double* outPoint3 = outPoint;
 
     // set the z position to be the active slice (from the lightbox)
     inPoint[2] = this->SliceNode->GetActiveSlice();
@@ -673,18 +671,49 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(this->SliceModelNode->GetPolyDataConnection()->GetProducer());
 
     int wasModified = this->SliceModelNode->StartModify();
+    double outPoint[4] = { 0.0, 0.0, 0.0, 0.0 };
+    double defaultOrigin[3] = { 1.0, -1.0, 0.0 };
+    double defaultPoint1[3] = { -1.0, -1.0, 0.0 };
+    double defaultPoint2[3] = { 1.0, 1.0, 0.0 };
 
+    // Compute transformed points
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetOrigin(outPoint3);
+    double origin[3] = { outPoint[0], outPoint[1], outPoint[2] };
 
     inPoint[0] = dims[0];
+    inPoint[1] = 0.0;
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetPoint1(outPoint3);
+    double point1[3] = { outPoint[0], outPoint[1], outPoint[2] };
 
-    inPoint[0] = 0;
+    inPoint[0] = 0.0;
     inPoint[1] = dims[1];
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetPoint2(outPoint3);
+    double point2[3] = { outPoint[0], outPoint[1], outPoint[2] };
+
+    // Validate points to avoid degeneracy
+    if (vtkMath::Distance2BetweenPoints(origin, point1) < 1e-6 || vtkMath::Distance2BetweenPoints(origin, point2) < 1e-6 || vtkMath::Distance2BetweenPoints(point1, point2) < 1e-6)
+    {
+      vtkMath::Add(origin, defaultOrigin, origin);
+      vtkMath::Add(point1, defaultPoint1, point1);
+      vtkMath::Add(point2, defaultPoint2, point2);
+    }
+
+    // Ensure points form an orthogonal basis
+    double vector1[3], vector2[3];
+    vtkMath::Subtract(point1, origin, vector1);
+    vtkMath::Subtract(point2, origin, vector2);
+
+    if (fabs(vtkMath::Dot(vector1, vector2)) > 1e-6)
+    {
+      vtkMath::Add(origin, defaultOrigin, origin);
+      vtkMath::Add(point1, defaultPoint1, point1);
+      vtkMath::Add(point2, defaultPoint2, point2);
+    }
+
+    // Set plane points
+    plane->SetOrigin(origin);
+    plane->SetPoint1(point1);
+    plane->SetPoint2(point2);
 
     this->SliceModelNode->EndModify(wasModified);
 
