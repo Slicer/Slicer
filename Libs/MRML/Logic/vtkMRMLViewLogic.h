@@ -23,6 +23,10 @@
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 
+// VTK includes
+#include <vtkObject.h>
+#include <vtkWeakPointer.h>
+
 // STD includes
 #include <vector>
 #include <deque>
@@ -97,6 +101,12 @@ public:
   /// The name of the Logic is the same of the widget one to which it is associated
   static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene, const char* layoutName);
 
+  /// @{
+  /// \brief Get/Set the displayable manager group associated with the logic.
+  vtkGetObjectMacro(DisplayableManagerGroup, vtkObject);
+  void SetDisplayableManagerGroup(vtkObject* obj);
+  /// @}
+
 protected:
   vtkMRMLViewLogic();
   ~vtkMRMLViewLogic() override;
@@ -117,6 +127,22 @@ protected:
   vtkMRMLViewNode* ViewNode;
   vtkMRMLCameraNode* CameraNode;
   bool UpdatingMRMLNodes;
+
+  // Weak reference to the view's displayable manager group.
+  //
+  // Stored as vtkObject to keep MRMLLogic independent of
+  // MRMLDisplayableManager headers. The expected dynamic type is
+  // vtkMRMLDisplayableManagerGroup.
+  //
+  // Set by the layout factories when the view widget is created, and used by
+  // vtkSlicerApplicationLogic::GetViewDisplayableManagerByClassName() to
+  // resolve managers without Qt. This works because vtkSlicerApplicationLogic
+  // lives in SlicerBaseLogic, which can depend on MRMLDisplayableManager.
+  //
+  // Ownership: the group is owned by the view/widget; this logic holds only a
+  // weak pointer. May be nullptr (e.g., headless or before view creation).
+  // Type is validated in SetDisplayableManagerGroup().
+  vtkWeakPointer<vtkObject> DisplayableManagerGroup;
 
 private:
   vtkMRMLViewLogic(const vtkMRMLViewLogic&) = delete;

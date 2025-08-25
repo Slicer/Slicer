@@ -513,8 +513,9 @@ sliceViewLabel = "Red"  # any slice view where segmentation node is visible work
 
 def printSegmentNames(unused1=None, unused2=None):
 
-  sliceViewWidget = slicer.app.layoutManager().sliceWidget(sliceViewLabel)
-  segmentationsDisplayableManager = sliceViewWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
+  sliceViewNode = slicer.mrmlScene.GetNodeByID(f"vtkMRMLSliceNode{sliceViewLabel}")
+  appLogic = slicer.app.applicationLogic()
+  segmentationsDisplayableManager = appLogic.GetViewDisplayableManagerByClassName(sliceViewNode, "vtkMRMLSegmentationsDisplayableManager2D")
   ras = [0,0,0]
   pointListNode.GetNthControlPointPositionWorld(0, ras)
   segmentIds = vtk.vtkStringArray()
