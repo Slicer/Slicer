@@ -92,6 +92,8 @@ add_library(${lib_name} ${srcs})
 
 set(libs MRMLCore)
 target_link_libraries(${lib_name} ${libs})
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
 
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
@@ -155,6 +157,8 @@ set_target_properties(MRMLIDIOPlugin PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_ITKFACTORIES_DIR}"
   )
 target_link_libraries(MRMLIDIOPlugin ${lib_name})
+target_precompile_headers(MRMLIDIOPlugin REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(MRMLIDIOPlugin REUSE_FROM PrecompileVtkHeaders)
 
 # Folder
 if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
