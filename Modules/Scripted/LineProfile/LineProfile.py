@@ -273,7 +273,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
 
         self._setAutoUpdateFromLineNode(parameterNode.inputLine if parameterNode.autoUpdate else None)
 
-        if parameterNode.inputLine.GetNumberOfDefinedControlPoints() < 2:
+        if parameterNode.inputLine.GetNumberOfControlPoints() < 2:
             self._resetOutput()
             return
 
@@ -336,7 +336,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
 
         if inputCurve is None or inputVolume is None or outputTable is None:
             return
-        if inputCurve.GetNumberOfDefinedControlPoints() < 2:
+        if inputCurve.GetNumberOfControlPoints() < 2:
             self._resetOutput()
             return
 
