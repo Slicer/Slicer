@@ -681,6 +681,12 @@ oversamplingFactor = 2.0
 isotropicSpacing = True
 
 # Update geometry of internal binary labelmap representation in segmentation node
+segmentationGeometryLogic = slicer.vtkSlicerSegmentationGeometryLogic()
+segmentationGeometryLogic.SetInputSegmentationNode(segmentationNode)
+segmentationGeometryLogic.SetSourceGeometryNode(volumeNode)
+segmentationGeometryLogic.SetOversamplingFactor(oversamplingFactor)
+segmentationGeometryLogic.SetIsotropicSpacing(isotropicSpacing)
+segmentationGeometryLogic.CalculateOutputGeometry()
 segmentationGeometryLogic.SetReferenceImageGeometryInSegmentationNode()
 segmentationGeometryLogic.ResampleLabelmapsInSegmentationNode()
 ```
