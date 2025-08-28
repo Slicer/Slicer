@@ -519,6 +519,36 @@
     <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
    </property>
   </action>
+  <action name="PreviousModulesAction">
+   <property name="icon">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerUndo.png</normaloff>:/Icons/Small/SlicerUndo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Previous</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous modules</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
+  </action>
+  <action name="NextModulesAction">
+   <property name="icon">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerRedo.png</normaloff>:/Icons/Small/SlicerRedo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="toolTip">
+    <string>Next modules</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Right</string>
+   </property>
+  </action>
   <action name="EditApplicationSettingsAction">
    <property name="icon">
     <iconset>
