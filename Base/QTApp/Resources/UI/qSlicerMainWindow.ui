@@ -519,7 +519,7 @@
     <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
    </property>
   </action>
-  <action name="FindModulesAction">
+  <action name="ModuleFindAction">
    <property name="icon">
     <!-- TODO: @ruffsl mimic const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
@@ -535,7 +535,7 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="PreviousModulesAction">
+  <action name="ModulePreviousAction">
    <property name="icon">
     <!-- TODO: @ruffsl mimic QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
@@ -551,7 +551,7 @@
     <string>Alt+Left</string>
    </property>
   </action>
-  <action name="NextModulesAction">
+  <action name="ModuleNextAction">
    <property name="icon">
     <!-- TODO: @ruffsl mimic QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">

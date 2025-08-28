@@ -1030,11 +1030,29 @@ void qSlicerMainWindow::on_EditRedoAction_triggered()
   qSlicerApplication::application()->mrmlScene()->Redo();
 }
 
+// //---------------------------------------------------------------------------
+// void qSlicerMainWindow::on_ModuleFindAction_triggered()
+// {
+//   this->setHomeModuleCurrent();
+// }
+
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_ModuleHomeAction_triggered()
 {
   this->setHomeModuleCurrent();
 }
+
+// //---------------------------------------------------------------------------
+// void qSlicerMainWindow::on_ModuleNextAction_triggered()
+// {
+//   this->setHomeModuleCurrent();
+// }
+
+// //---------------------------------------------------------------------------
+// void qSlicerMainWindow::on_ModulePreviousAction_triggered()
+// {
+//   this->setHomeModuleCurrent();
+// }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::setLayout(int layout)
