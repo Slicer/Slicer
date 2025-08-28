@@ -190,13 +190,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
 
   // Install event filter to handle mouse back/forward buttons globally
-  mainWindow->installEventFilter(q);
-  // // Also install on all child widgets to ensure coverage (e.g., tables, trees)
-  const QList<QWidget*> allWidgets = mainWindow->findChildren<QWidget*>();
-  for (QWidget* widget : allWidgets)
-  {
-    widget->installEventFilter(q);
-  }
+  qApp->installEventFilter(q);
 }
 
 //---------------------------------------------------------------------------
