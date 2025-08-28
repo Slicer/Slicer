@@ -519,6 +519,21 @@
     <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
    </property>
   </action>
+  <action name="FindModulesAction">
+   <property name="icon">
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
+   </property>
+   <property name="text">
+    <string>Module Finder</string>
+   </property>
+   <property name="toolTip">
+    <string>Find module</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
   <action name="PreviousModulesAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
