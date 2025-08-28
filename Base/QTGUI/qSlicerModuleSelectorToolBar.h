@@ -89,6 +89,7 @@ protected slots:
   void actionSelected(QAction* action);
 
 protected:
+  bool eventFilter(QObject* obj, QEvent* event) override;
   QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
 
 private:
