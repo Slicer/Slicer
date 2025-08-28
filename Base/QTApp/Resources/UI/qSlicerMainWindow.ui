@@ -521,6 +521,7 @@
   </action>
   <action name="FindModulesAction">
    <property name="icon">
+    <!-- TODO: @ruffsl mimic const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
    </property>
@@ -536,6 +537,7 @@
   </action>
   <action name="PreviousModulesAction">
    <property name="icon">
+    <!-- TODO: @ruffsl mimic QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerUndo.png</normaloff>:/Icons/Small/SlicerUndo.png</iconset>
    </property>
@@ -551,6 +553,7 @@
   </action>
   <action name="NextModulesAction">
    <property name="icon">
+    <!-- TODO: @ruffsl mimic QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight); -->
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerRedo.png</normaloff>:/Icons/Small/SlicerRedo.png</iconset>
    </property>
