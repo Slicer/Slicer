@@ -519,6 +519,39 @@
     <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
    </property>
   </action>
+  <action name="ModuleFindAction">
+   <property name="text">
+    <string>Module Finder</string>
+   </property>
+   <property name="toolTip">
+    <string>Find module by name</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="ModulePreviousAction">
+   <property name="text">
+    <string>Previous module</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to previously used module</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
+  </action>
+  <action name="ModuleNextAction">
+   <property name="text">
+    <string>Next module</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to next used module</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Right</string>
+   </property>
+  </action>
   <action name="EditApplicationSettingsAction">
    <property name="icon">
     <iconset>
