@@ -189,8 +189,8 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
   this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
 
-  // Install event filter to handle mouse back/forward buttons
-  q->installEventFilter(q);
+  // Install event filter to handle mouse back/forward buttons globally
+  mainWindow->installEventFilter(q);
 }
 
 //---------------------------------------------------------------------------
