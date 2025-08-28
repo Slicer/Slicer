@@ -31,7 +31,6 @@
 class qSlicerScriptedLoadableModuleTester : public QObject
 {
   Q_OBJECT
-
 private:
   QString preparePythonSource(const QString& scriptName);
 
@@ -130,6 +129,7 @@ namespace
 // ----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleSetup : public qSlicerScriptedLoadableModule
 {
+  Q_OBJECT
 public:
   void callSetup() { this->setup(); }
 };
@@ -163,4 +163,4 @@ void qSlicerScriptedLoadableModuleTester::testSetup_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerScriptedLoadableModuleTest)
-#include "moc_qSlicerScriptedLoadableModuleTest.cxx"
+#include "qSlicerScriptedLoadableModuleTest.moc"
