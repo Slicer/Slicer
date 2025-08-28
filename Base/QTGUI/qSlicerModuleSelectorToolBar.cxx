@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCompleter>
 #include <QDebug>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
@@ -454,6 +455,20 @@ bool qSlicerModuleSelectorToolBar::eventFilter(QObject* obj, QEvent* event)
       return true;
     }
     else if (mouseEvent->button() == Qt::ForwardButton)
+    {
+      this->selectNextModule();
+      return true;
+    }
+  }
+  else if (event->type() == QEvent::KeyRelease)
+  {
+    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Left)
+    {
+      this->selectPreviousModule();
+      return true;
+    }
+    else if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Right)
     {
       this->selectNextModule();
       return true;
