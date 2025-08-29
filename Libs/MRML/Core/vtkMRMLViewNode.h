@@ -334,14 +334,12 @@ public:
   /// to object size of about 100 (in scene physical units).
   vtkGetMacro(AmbientShadowsSizeScale, double);
   vtkSetMacro(AmbientShadowsSizeScale, double);
-  vtkBooleanMacro(AmbientShadowsSizeScale, double);
   //@}
 
   //@{
   /// Volume rendering opacity above this value will cast shadows.
   vtkGetMacro(AmbientShadowsVolumeOpacityThreshold, double);
   vtkSetMacro(AmbientShadowsVolumeOpacityThreshold, double);
-  vtkBooleanMacro(AmbientShadowsVolumeOpacityThreshold, double);
   //@}
 
   //@{
