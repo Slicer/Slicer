@@ -43,8 +43,10 @@ class vtkMRMLScene;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLSegmentationNode;
+class vtkMRMLSliceNode;
 class vtkMRMLTransformNode;
 class vtkSegment;
+class vtkSegmentEditorLogic;
 class vtkRenderer;
 class vtkRenderWindow;
 class vtkRenderWindowInteractor;
@@ -466,7 +468,11 @@ public:
 
   Q_INVOKABLE bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode);
 
+  void setSegmentEditorLogic(vtkSegmentEditorLogic* segmentEditorLogic);
+
 protected:
+  static vtkMRMLSliceNode* sliceNode(qMRMLSliceWidget* viewWidget);
+
   QString m_Name;
   bool m_Active{ false };
   QString m_Title;
