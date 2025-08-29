@@ -141,10 +141,10 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::AddSliceNode(vtkMRML
     // We associate the node with the widget if an instantiation is called.
     // We add the sliceNode without instantiating the widget first.
     this->AddObservations(sliceNode);
-    this->SliceEdgeWidgetRepresentations[sliceNodeID] = nullptr;
+    widgetRepIt = this->SliceEdgeWidgetRepresentations.insert({ sliceNodeID, nullptr }).first;
   }
 
-  this->UpdateSliceEdgeWidgetRepresentation(sliceNode, nullptr);
+  this->UpdateSliceEdgeWidgetRepresentation(sliceNode, widgetRepIt->second);
 }
 
 //---------------------------------------------------------------------------
