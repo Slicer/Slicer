@@ -89,7 +89,10 @@ public slots:
   virtual void on_EditUndoAction_triggered();
   virtual void on_EditRedoAction_triggered();
 
+  // virtual void on_ModuleFindAction_triggered();
   virtual void on_ModuleHomeAction_triggered();
+  // virtual void on_ModuleNextAction_triggered();
+  // virtual void on_ModulePreviousAction_triggered();
 
   virtual void onLayoutActionTriggered(QAction* action);
   virtual void onLayoutCompareActionTriggered(QAction* action);

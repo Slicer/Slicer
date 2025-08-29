@@ -519,6 +519,54 @@
     <string>Open settings to the Modules panel where Favorite Modules can be defined.</string>
    </property>
   </action>
+  <action name="ModuleFindAction">
+   <property name="icon">
+    <!-- TODO: @ruffsl mimic const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")); -->
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
+   </property>
+   <property name="text">
+    <string>Module Finder</string>
+   </property>
+   <property name="toolTip">
+    <string>Find module</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="ModulePreviousAction">
+   <property name="icon">
+    <!-- TODO: @ruffsl mimic QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft); -->
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerUndo.png</normaloff>:/Icons/Small/SlicerUndo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Previous</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous modules</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
+  </action>
+  <action name="ModuleNextAction">
+   <property name="icon">
+    <!-- TODO: @ruffsl mimic QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight); -->
+    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerRedo.png</normaloff>:/Icons/Small/SlicerRedo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="toolTip">
+    <string>Next modules</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Right</string>
+   </property>
+  </action>
   <action name="EditApplicationSettingsAction">
    <property name="icon">
     <iconset>

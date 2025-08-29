@@ -21,10 +21,12 @@
 // Qt includes
 #include <QCompleter>
 #include <QDebug>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QStyleOptionButton>
 #include <QToolButton>
@@ -187,6 +189,9 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), this->NextButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
   this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
+
+  // Install event filter to handle mouse back/forward buttons globally
+  qApp->installEventFilter(q);
 }
 
 //---------------------------------------------------------------------------
@@ -436,4 +441,38 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
     // triggering the action will eventually call actionSelected()
     previousAction->trigger();
   }
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModuleSelectorToolBar::eventFilter(QObject* obj, QEvent* event)
+{
+  if (event->type() == QEvent::MouseButtonRelease)
+  {
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+    if (mouseEvent->button() == Qt::BackButton)
+    {
+      this->selectPreviousModule();
+      return true;
+    }
+    else if (mouseEvent->button() == Qt::ForwardButton)
+    {
+      this->selectNextModule();
+      return true;
+    }
+  }
+  else if (event->type() == QEvent::KeyRelease)
+  {
+    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Left)
+    {
+      this->selectPreviousModule();
+      return true;
+    }
+    else if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Right)
+    {
+      this->selectNextModule();
+      return true;
+    }
+  }
+  return QToolBar::eventFilter(obj, event);
 }
