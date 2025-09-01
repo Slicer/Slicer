@@ -673,7 +673,9 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
   }
 
   QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
-  this->selectionModel()->select(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+  // Call selectionModel()->setCurrentIndex rather than selectionModel()->select because select method does not set the current index.
+  // It is only required if this method is called programmatically because mousePressEvent set the current index before selecting the item.
+  this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 //------------------------------------------------------------------------------
@@ -739,7 +741,9 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
   {
     if (!previouslySelectedItems.contains(itemIndex))
     {
-      this->selectionModel()->select(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+      // Call selectionModel()->setCurrentIndex rather than selectionModel()->select because select method does not set the current index.
+      // It is only required if this method is called programmatically because mousePressEvent set the current index before selecting the item.
+      this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
   }
 }
