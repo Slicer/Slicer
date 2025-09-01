@@ -453,6 +453,17 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(std::vector<vtkMRMLNode*> s
   sequenceBrowser->GetSynchronizedSequenceNodes(savedSequenceNodes, true);
   for (vtkMRMLSequenceNode* sequenceNode : savedSequenceNodes)
   {
+    vtkMRMLStorageNode* storageNode = sequenceNode->GetStorageNode();
+    if (storageNode)
+    {
+      // There is a storage node, but it may no longer be suitable (for example, an image sequence may not contain images with different sizes,
+      // so it can no longer be written as a single NRRD file).
+      if (!storageNode->CanWriteFromReferenceNode(sequenceNode))
+      {
+        // This storage node is no longer usable. Remove it (it will be replaced with a suitable one).
+        this->GetMRMLScene()->RemoveNode(storageNode);
+      }
+    }
     sequenceNode->AddDefaultStorageNode();
   }
 
