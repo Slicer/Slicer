@@ -806,21 +806,21 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.alpha, pathlib.Path())
         self.assertEqual(pathlib.Path(directoryButtonAlpha.directory), pathlib.Path())
         self.assertEqual(param.bravo, pathlib.Path("some/path"))
-        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("some/path"))
+        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("some/path").resolve())
 
         # Phase 1 - write to GUI
         directoryButtonAlpha.directory = "pathy/path"
-        self.assertEqual(param.alpha, pathlib.Path("pathy/path"))
-        self.assertEqual(pathlib.Path(directoryButtonAlpha.directory), pathlib.Path("pathy/path"))
+        self.assertEqual(param.alpha, pathlib.Path("pathy/path").resolve())
+        self.assertEqual(pathlib.Path(directoryButtonAlpha.directory), pathlib.Path("pathy/path").resolve())
         self.assertEqual(param.bravo, pathlib.Path("some/path"))
-        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("some/path"))
+        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("some/path").resolve())
 
         # Phase 2 - write to parameterNode
         param.bravo = pathlib.Path("magnificent/path/bravo")
-        self.assertEqual(param.alpha, pathlib.Path("pathy/path"))
-        self.assertEqual(pathlib.Path(directoryButtonAlpha.directory), pathlib.Path("pathy/path"))
+        self.assertEqual(param.alpha, pathlib.Path("pathy/path").resolve())
+        self.assertEqual(pathlib.Path(directoryButtonAlpha.directory), pathlib.Path("pathy/path").resolve())
         self.assertEqual(param.bravo, pathlib.Path("magnificent/path/bravo"))
-        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("magnificent/path/bravo"))
+        self.assertEqual(pathlib.Path(directoryButtonBravo.directory), pathlib.Path("magnificent/path/bravo").resolve())
 
     def impl_qMRMLToNodeConnector(self, widgettype, clearFunc):
         """
