@@ -206,6 +206,12 @@ public:
 
   void ConvertAnnotationHierarchyToSubjectHierarchy(vtkMRMLScene* scene);
 
+  /// Remove remaining annotation nodes from the scene to ensure the scene is not cluttered by unused legacy nodes.
+  /// Currently, it only removes annotation display nodes, which are found to remain in some old scenes after conversion
+  /// (due to orphan, unreferenced nodes). In the future, the method may be extended to remove annotation hierarchy nodes
+  /// or even annotation nodes that cannot be converted to markups.
+  void RemoveUnusedAnnotationNodes(vtkStringArray* removedNodeIds = nullptr);
+
   /// Iterate over the control points in the list and reset the control point labels using
   /// the current ControlPointLabelFormat setting. Try to keep current numbering.
   /// Will work if there's a %d, %g or %f in the format string, but precision

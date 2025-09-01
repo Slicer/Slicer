@@ -19,6 +19,7 @@
 #include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsLineNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkSlicerMarkupsLogic.h"
 #include "vtkSlicerSceneViewsModuleLogic.h"
@@ -37,22 +38,36 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
 {
   // Test reading in a Slicer4 MRML scene with legacy annotation nodes (created using Slicer-4.1.1):
   //
-  // --- All Annotations
-  //  |--- Fiducials List
-  //  | |--- F
-  //  | |--- F_1
-  //  | |--- F_2
-  //  |--- Ruler list
-  //  | |--- M
-  //  | |--- M_1
-  //  |--- ROI list
-  //  | |--- R
-  //  | |--- R_1
-  //  | |--- R_2
-  //  |--- List
-  //    |--- F_4
-  //    |--- F_3
   //
+  // All Annotations (vtkMRMLAnnotationHierarchyNode1) -> vtkMRMLAnnotationDisplayNode1
+  // |
+  // |- Fiducials List (vtkMRMLAnnotationHierarchyNode2) -> vtkMRMLAnnotationDisplayNode2
+  // |  |- F (vtkMRMLAnnotationFiducialNode1) = vtkMRMLAnnotationHierarchyNode3
+  //       -> vtkMRMLAnnotationControlPointsStorageNode1, vtkMRMLAnnotationPointDisplayNode1, vtkMRMLAnnotationTextDisplayNode1
+  // |  |- F_1 (vtkMRMLAnnotationFiducialNode2) = vtkMRMLAnnotationHierarchyNode4
+  //       -> vtkMRMLAnnotationControlPointsStorageNode2, vtkMRMLAnnotationPointDisplayNode2, vtkMRMLAnnotationTextDisplayNode2
+  // |  |- F_2 (vtkMRMLAnnotationFiducialNode3) = vtkMRMLAnnotationHierarchyNode5
+  //       -> vtkMRMLAnnotationControlPointsStorageNode3, vtkMRMLAnnotationPointDisplayNode3, vtkMRMLAnnotationTextDisplayNode3
+  // |
+  // |- Ruler List (vtkMRMLAnnotationHierarchyNode7) -> vtkMRMLAnnotationDisplayNode3
+  // |  |- M (vtkMRMLAnnotationRulerNode1) = vtkMRMLAnnotationHierarchyNode8
+  //       -> vtkMRMLAnnotationRulerStorageNode1, vtkMRMLAnnotationLineDisplayNode1, vtkMRMLAnnotationPointDisplayNode5, vtkMRMLAnnotationTextDisplayNode5
+  // |  |- M_1 (vtkMRMLAnnotationRulerNode2) = vtkMRMLAnnotationHierarchyNode9
+  //       -> vtkMRMLAnnotationRulerStorageNode2, vtkMRMLAnnotationLineDisplayNode2, vtkMRMLAnnotationPointDisplayNode6, vtkMRMLAnnotationTextDisplayNode6
+  // |
+  // |- ROI List (vtkMRMLAnnotationHierarchyNode10) -> vtkMRMLAnnotationDisplayNode4
+  // |  |- R (vtkMRMLAnnotationROINode1) = vtkMRMLAnnotationHierarchyNode11
+  //       -> vtkMRMLAnnotationLinesStorageNode1, vtkMRMLAnnotationLineDisplayNode3, vtkMRMLAnnotationPointDisplayNode7, vtkMRMLAnnotationTextDisplayNode7
+  // |  |- R_1 (vtkMRMLAnnotationROINode2) = vtkMRMLAnnotationHierarchyNode1
+  //       -> vtkMRMLAnnotationLinesStorageNode2, vtkMRMLAnnotationLineDisplayNode4, vtkMRMLAnnotationPointDisplayNode8, vtkMRMLAnnotationTextDisplayNode8
+  // |  |- R_2 (vtkMRMLAnnotationROINode3) = vtkMRMLAnnotationHierarchyNode13
+  //       -> vtkMRMLAnnotationLinesStorageNode3, vtkMRMLAnnotationLineDisplayNode5, vtkMRMLAnnotationPointDisplayNode9, vtkMRMLAnnotationTextDisplayNode9
+  // |
+  // |- List (vtkMRMLAnnotationHierarchyNode15)
+  //    |- F_3 (vtkMRMLAnnotationFiducialNode4) = vtkMRMLAnnotationHierarchyNode6
+  //       -> vtkMRMLAnnotationControlPointsStorageNode4, vtkMRMLAnnotationPointDisplayNode4, vtkMRMLAnnotationTextDisplayNode4
+  //    |- F_4 (vtkMRMLAnnotationFiducialNode5) = vtkMRMLAnnotationHierarchyNode14
+  //       -> vtkMRMLAnnotationControlPointsStorageNode5, vtkMRMLAnnotationPointDisplayNode10, vtkMRMLAnnotationTextDisplayNode10
 
   // get the file name
   std::string fileName;
@@ -149,7 +164,8 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   CHECK_NOT_NULL(markupsFiducialDisplayNode1);
 
   double* color = markupsFiducialDisplayNode1->GetColor();
-  double expectedColor[3] = { 0.862745, 0.960784, 0.0784314 };
+  double expectedColor[3] = { 0.862745, 0.960784, 0.0784314 }; // from the storage node "F.acsv"
+
   double diff = vtkMath::Distance2BetweenPoints(color, expectedColor);
   if (diff > 0.01)
   {
@@ -167,6 +183,9 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
               << " but got " << selectedColor[0] << "," << selectedColor[1] << "," << selectedColor[2] << ", diff = " << diff << std::endl;
     return EXIT_FAILURE;
   }
+
+  vtkMRMLMarkupsLineNode* markupsLineNode = vtkMRMLMarkupsLineNode::SafeDownCast(scene->GetFirstNodeByName("M"));
+  CHECK_BOOL(markupsLineNode->GetDisplayNode()->GetVisibility(), true);
 
   //
   // check storage nodes
