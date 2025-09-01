@@ -52,7 +52,13 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+
+  // Using default priority for this event. The priority must be lower than the value
+  // used in vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal to ensure that
+  // vtkSlicerMarkupsLogic::OnMRMLSceneEndImport() runs before vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndImport()
+  // to convert old annotation nodes before converting old scene view nodes.
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+
   events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
@@ -113,7 +119,12 @@ void vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodesToSequenceBrowserNodes
   }
 
   vtkMRMLSequenceBrowserNode* sequenceBrowser = this->AddNewSceneViewSequenceBrowserNode();
-  MRMLNodeModifyBlocker blocker(sequenceBrowser);
+
+  // We need to suppress (not just delay) sequence browser modified event to prevent restoring a scene view,
+  // this is why we do not use start/end modify.
+  bool wasDisableModified = sequenceBrowser->GetDisableModifiedEvent();
+  sequenceBrowser->DisableModifiedEventOn();
+
   for (vtkMRMLNode* node : nodes)
   {
     vtkMRMLSceneViewNode* sceneView = vtkMRMLSceneViewNode::SafeDownCast(node);
@@ -121,9 +132,10 @@ void vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodesToSequenceBrowserNodes
     {
       continue;
     }
-
     this->ConvertSceneViewNodeToSequenceBrowserNode(sceneView, sequenceBrowser);
   }
+
+  sequenceBrowser->SetDisableModifiedEvent(wasDisableModified);
 }
 
 //-----------------------------------------------------------------------------
