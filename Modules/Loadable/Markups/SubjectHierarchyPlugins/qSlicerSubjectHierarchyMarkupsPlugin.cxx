@@ -475,6 +475,21 @@ QIcon qSlicerSubjectHierarchyMarkupsPlugin::visibilityIcon(int visible)
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyMarkupsPlugin::tooltip(vtkIdType itemID) const
+{
+  // Get basic tooltip from abstract plugin
+  QString tooltipString = Superclass::tooltip(itemID);
+
+  // Append the file path if available
+  QString filePath = this->tooltipWithStoragePath(itemID);
+  if (!filePath.isEmpty())
+  {
+    tooltipString.append(QString("\n  %1").arg(filePath));
+  }
+  return tooltipString;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyMarkupsPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
 {
   this->setColorAndTerminologyToDisplayableNode(itemID, color, terminologyMetaData, true, false);

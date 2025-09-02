@@ -72,6 +72,9 @@ public:
   /// Get visibility icon for a visibility state
   QIcon visibilityIcon(int visible) override;
 
+  /// Generate tooltip for a owned subject hierarchy item
+  QString tooltip(vtkIdType itemID) const override;
+
   /// Set display visibility of a owned subject hierarchy item
   void setDisplayVisibility(vtkIdType itemID, int visible) override;
 
