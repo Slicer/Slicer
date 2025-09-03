@@ -46,6 +46,7 @@
 // Conversion graph
 
 // Convenience macro for defining a converter rule class with a single line
+// clang-format off
 #define RULE(from, to, weight)                                                                                                                    \
   class vtkRep##from##ToRep##to##Rule : public vtkSegmentationConverterRule                                                                       \
   {                                                                                                                                               \
@@ -85,6 +86,7 @@
     }                                                                                                                                             \
   };                                                                                                                                              \
   vtkSegmentationConverterRuleNewMacro(vtkRep##from##ToRep##to##Rule);
+// clang-format on
 
 /*
 Test conversion graph:
