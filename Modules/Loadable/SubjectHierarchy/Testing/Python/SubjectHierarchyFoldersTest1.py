@@ -93,8 +93,8 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
         # Check number of model hierarchy nodes to make sure all of them were converted
         self.assertEqual(0, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode"))
-        # Check number of folder display nodes, which is zero until branch display related functions are used
-        self.assertEqual(0, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLFolderDisplayNode"))
+        # Annotation hierarchy display nodes of folders are converted to folder display nodes
+        self.assertEqual(79, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLFolderDisplayNode"))
 
         # Check number of folder items
         numberOfFolderItems = 0
@@ -139,7 +139,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
         logging.info("Time of hiding whole brain: " + str(self.stopTiming() / 1000) + " s")
 
         # Check if a folder display node was indeed created when changing display property on the folder
-        self.assertEqual(1, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLFolderDisplayNode"))
+        self.assertEqual(79, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLFolderDisplayNode"))
         brainFolderDisplayNode = self.shNode.GetItemDataNode(brainFolderItem)
         self.assertIsNotNone(brainFolderDisplayNode)
 
@@ -197,18 +197,22 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
         for index in range(midbrainModelItems.GetNumberOfIds()):
             currentMidbrainModelItem = midbrainModelItems.GetId(index)
             currentMidbrainModelNode = self.shNode.GetItemDataNode(currentMidbrainModelItem)
-            if currentMidbrainModelNode:  # The child item can be a folder as well, in which case there is no model node
-                displayNode = currentMidbrainModelNode.GetDisplayNode()
-                actor = self.modelDisplayableManager.GetActorByID(displayNode.GetID())
-                currentColor = actor.GetProperty().GetColor()
-                if (
-                    currentColor[0] == self.overrideColor[0] / 255
-                    and currentColor[1] == self.overrideColor[1] / 255
-                    and currentColor[2] == self.overrideColor[2] / 255
-                ):
-                    if currentMidbrainModelNode is self.testModelNode:
-                        testModelNodeOverridden = True
-                    numberOfOverriddenMidbrainModels += 1
+            if not currentMidbrainModelNode:
+                continue
+            if not currentMidbrainModelNode.IsA("vtkMRMLModelNode"):
+                # folder display node
+                continue
+            displayNode = currentMidbrainModelNode.GetDisplayNode()
+            actor = self.modelDisplayableManager.GetActorByID(displayNode.GetID())
+            currentColor = actor.GetProperty().GetColor()
+            if (
+                currentColor[0] == self.overrideColor[0] / 255
+                and currentColor[1] == self.overrideColor[1] / 255
+                and currentColor[2] == self.overrideColor[2] / 255
+            ):
+                if currentMidbrainModelNode is self.testModelNode:
+                    testModelNodeOverridden = True
+                numberOfOverriddenMidbrainModels += 1
         self.assertEqual(6, numberOfOverriddenMidbrainModels)
         self.assertTrue(testModelNodeOverridden)
 

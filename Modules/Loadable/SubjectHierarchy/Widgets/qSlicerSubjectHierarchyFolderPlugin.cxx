@@ -637,39 +637,13 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::displayNodeForItem(vtkI
 vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
-  if (!itemID)
-  {
-    qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return nullptr;
-  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
+  vtkMRMLDisplayNode* displayNode = vtkMRMLFolderDisplayNode::AddDisplayNodeForItem(shNode, itemID);
+  if (!displayNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    qCritical() << Q_FUNC_INFO << ": Failed to create folder display node";
     return nullptr;
   }
-
-  vtkMRMLDisplayNode* existingDisplayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkMRMLNode* existingDataNode = shNode->GetItemDataNode(itemID);
-  if (existingDisplayNode)
-  {
-    return existingDisplayNode;
-  }
-  if (existingDataNode)
-  {
-    qCritical() << Q_FUNC_INFO << ": Item " << itemID << " is already associated to a data node, but it is not a display node";
-    return nullptr;
-  }
-
-  vtkNew<vtkMRMLFolderDisplayNode> displayNode;
-  displayNode->SetName(shNode->GetItemName(itemID).c_str());
-  displayNode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH
-  displayNode->SetAttribute(d->AddedByFolderPluginAttributeName.toUtf8().constData(), "1");
-  shNode->GetScene()->AddNode(displayNode);
-
-  shNode->SetItemDataNode(itemID, displayNode);
-
-  shNode->ItemModified(itemID);
   return displayNode;
 }
 

@@ -14,6 +14,7 @@
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include "vtkMRMLMessageCollection.h"
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
@@ -102,6 +103,26 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
       continue;
     }
 
+    vtkMRMLModelDisplayNode* mhDisplayNode = mhNode->GetModelDisplayNode();
+    if (mhDisplayNode && folderItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+      // Convert model hierarchy folder display node to subject hierarchy folder display node
+      vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::AddDisplayNodeForItem(shNode, folderItemID);
+      if (folderDisplayNode)
+      {
+        folderDisplayNode->SetName(mhNode->GetName()); // this name will appear for the user, so use the hierarchy node name
+        folderDisplayNode->SetColor(mhDisplayNode->GetColor());
+        folderDisplayNode->SetSelectedColor(mhDisplayNode->GetSelectedColor());
+        folderDisplayNode->SetOpacity(mhDisplayNode->GetOpacity());
+        folderDisplayNode->SetFolderDisplayOverrideAllowed(mhDisplayNode->GetSelected());
+        scene->RemoveNode(mhDisplayNode);
+      }
+      else
+      {
+        vtkErrorMacro("OnMRMLSceneEndImport: Failed to create folder display node");
+      }
+    }
+
     // Remember subject hierarchy item for current model hierarchy node
     // (even if has no actual folder, as this map will be used to remove the hierarchy nodes)
     mhNodeIdToShItemIdMap[mhNode->GetID()] = folderItemID;
@@ -121,6 +142,10 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
         vtkMRMLNode* associatedNode = (*it)->GetAssociatedNode();
         if (associatedNode)
         {
+          if (associatedNode->IsA("vtkMRMLDisplayNode"))
+          {
+            continue;
+          }
           vtkIdType associatedItemID = shNode->GetItemByDataNode(associatedNode);
           if (associatedItemID)
           {

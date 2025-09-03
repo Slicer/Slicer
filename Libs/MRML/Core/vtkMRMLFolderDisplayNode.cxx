@@ -345,3 +345,44 @@ double vtkMRMLFolderDisplayNode::GetHierarchyOpacity(vtkMRMLDisplayableNode* nod
 
   return opacityProduct;
 }
+
+//-----------------------------------------------------------------------------
+vtkMRMLFolderDisplayNode* vtkMRMLFolderDisplayNode::AddDisplayNodeForItem(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID)
+{
+  if (!itemID)
+  {
+    vtkGenericWarningMacro("vtkMRMLFolderDisplayNode::AddDisplayNodeForItem: Invalid input item");
+    return nullptr;
+  }
+  if (!shNode)
+  {
+    vtkGenericWarningMacro("vtkMRMLFolderDisplayNode::AddDisplayNodeForItem: Failed to access subject hierarchy node");
+    return nullptr;
+  }
+
+  vtkMRMLFolderDisplayNode* existingDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLNode* existingDataNode = shNode->GetItemDataNode(itemID);
+  if (existingDisplayNode)
+  {
+    return existingDisplayNode;
+  }
+  if (existingDataNode)
+  {
+    vtkGenericWarningMacro("vtkMRMLFolderDisplayNode::AddDisplayNodeForItem: " //
+                           << "Item " << itemID << " is already associated to a data node, but it is not a folder display node");
+    return nullptr;
+  }
+
+  vtkNew<vtkMRMLFolderDisplayNode> displayNode;
+  displayNode->SetName(shNode->GetItemName(itemID).c_str());
+  displayNode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH
+  std::string addedByFolderPluginAttributeName =
+    vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + std::string(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder());
+  displayNode->SetAttribute(addedByFolderPluginAttributeName.c_str(), "1");
+  shNode->GetScene()->AddNode(displayNode);
+
+  shNode->SetItemDataNode(itemID, displayNode);
+
+  shNode->ItemModified(itemID);
+  return displayNode;
+}
