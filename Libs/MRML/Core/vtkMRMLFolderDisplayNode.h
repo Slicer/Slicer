@@ -26,6 +26,7 @@
 #include "vtkMRMLDisplayNode.h"
 
 class vtkMRMLDisplayableNode;
+class vtkMRMLSubjectHierarchyNode;
 
 /// \brief MRML node to represent a display property for child nodes of a
 ///        subject hierarchy folder.
@@ -108,6 +109,8 @@ public:
   /// Opacity is influenced by the hierarchy regardless the fact whether there is override
   // or not. Opacity defined by hierarchy is the product of the ancestors' opacities.
   static double GetHierarchyOpacity(vtkMRMLDisplayableNode* node);
+
+  static vtkMRMLFolderDisplayNode* AddDisplayNodeForItem(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID);
 
 protected:
   vtkMRMLFolderDisplayNode();
