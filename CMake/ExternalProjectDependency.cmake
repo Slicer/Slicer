@@ -529,6 +529,15 @@ function(_sb_get_external_project_arguments proj varname)
     # See https://cmake.org/cmake/help/latest/policy/CMP0135.html
     list(APPEND _ep_arguments DOWNLOAD_EXTRACT_TIMESTAMP 1)
   endif()
+  if(CMAKE_VERSION VERSION_EQUAL "3.28" OR CMAKE_VERSION VERSION_GREATER "3.28")
+    # Address "gmake[N]: *** read jobs pipe: Bad file descriptor." issue associated with
+    # build command.
+    # For more details:
+    # - https://gitlab.kitware.com/cmake/cmake/-/issues/26398
+    # - https://gitlab.kitware.com/cmake/cmake/-/merge_requests/8667
+    # - https://gitlab.kitware.com/cmake/cmake/-/merge_requests/10014
+    list(APPEND _ep_arguments BUILD_JOB_SERVER_AWARE ON)
+  endif()
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
 
