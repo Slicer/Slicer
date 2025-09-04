@@ -850,6 +850,9 @@ public:
   /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
   static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension = "");
 
+  /// Returns name of the subfolder where hidden nodes (scene view nodes, etc.) are saved.
+  static std::string GetPrivateFolderName();
+
 protected:
   typedef std::map<std::string, std::set<std::string>> NodeReferencesType;
 

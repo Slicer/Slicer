@@ -4160,6 +4160,9 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
     return "";
   }
 
+  // Find the main scene .mrml file in the archive
+  // (it is the first .mrml file that is not in the Private subfolder)
+
   vtksys::Glob glob;
   glob.RecurseOn();
   glob.RecurseThroughSymlinksOff();
@@ -4173,18 +4176,31 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
     }
     return "";
   }
+
+  std::string mainSceneFile;
   std::vector<std::string> files = glob.GetFiles();
-  if (files.size() <= 0)
+  std::string privateSubfolder = "/" + vtkMRMLScene::GetPrivateFolderName() + "/";
+  for (const auto& file : files)
+  {
+    if (file.find(privateSubfolder) != std::string::npos)
+    {
+      // skip mrml files in the Private subfolder, those are not the main scene file
+      continue;
+    }
+    // found a mrml file
+    mainSceneFile = file;
+    break;
+  }
+  if (mainSceneFile.empty())
   {
     vtkGenericWarningMacro("could not find mrml file in archive");
     if (userMessages)
     {
       userMessages->AddMessage(vtkCommand::ErrorEvent, "Could not find mrml file in archive.");
     }
-    return "";
   }
 
-  return (files[0]);
+  return mainSceneFile;
 }
 
 //----------------------------------------------------------------------------
@@ -4291,7 +4307,7 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
 
   // the new private directory
   vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
-  pathComponents.emplace_back("Private");
+  pathComponents.emplace_back(vtkMRMLScene::GetPrivateFolderName());
   std::string privateDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("using private dir of " << privateDir);
 
@@ -4658,4 +4674,10 @@ bool vtkMRMLScene::ParseVersion(const char* versionString, std::string& applicat
   patch = atoi(patchStr.c_str());
   revision = atoi(revisionStr.c_str());
   return true;
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkMRMLScene::GetPrivateFolderName()
+{
+  return "Private";
 }
