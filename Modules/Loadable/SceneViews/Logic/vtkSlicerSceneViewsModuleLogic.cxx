@@ -986,23 +986,26 @@ bool vtkSlicerSceneViewsModuleLogic::RemoveSceneView(int sceneIndex)
     return false;
   }
 
-  std::vector<MRMLNodeModifyBlocker> blockers;
-  blockers.emplace_back(sequenceBrowser);
-
-  std::string value = sequenceNode->GetNthIndexValue(sequenceBrowserIndex);
+  // Create the blocker here to make it unblocked only after all the sequence nodes are updated.
+  MRMLNodeModifyBlocker sequenceBrowserLocker(sequenceBrowser);
 
   std::vector<vtkMRMLSequenceNode*> sequenceNodes;
   sequenceBrowser->GetSynchronizedSequenceNodes(sequenceNodes, true);
 
-  for (vtkMRMLSequenceNode* sequenceNode : sequenceNodes)
   {
-    blockers.emplace_back(sequenceNode);
-  }
-  for (vtkMRMLSequenceNode* sequenceNode : sequenceNodes)
-  {
-    if (sequenceNode->GetDataNodeAtValue(value))
+    std::vector<MRMLNodeModifyBlocker> blockers;
+    for (vtkMRMLSequenceNode* sequenceNode : sequenceNodes)
     {
-      sequenceNode->RemoveDataNodeAtValue(value);
+      blockers.emplace_back(sequenceNode);
+    }
+
+    std::string value = sequenceNode->GetNthIndexValue(sequenceBrowserIndex);
+    for (vtkMRMLSequenceNode* sequenceNode : sequenceNodes)
+    {
+      if (sequenceNode->GetDataNodeAtValue(value))
+      {
+        sequenceNode->RemoveDataNodeAtValue(value);
+      }
     }
   }
 
