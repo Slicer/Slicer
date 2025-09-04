@@ -325,6 +325,21 @@ void vtkITKImageWriter::Write()
       voxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
     }
   }
+  if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeUndefined)
+  {
+    // Try to guess voxel type
+    if (inputDataType == VTK_UNSIGNED_CHAR || inputDataType == VTK_CHAR)
+    {
+      if (inputNumberOfScalarComponents == 3)
+      {
+        voxelVectorType = vtkITKImageWriter::VoxelVectorTypeColorRGB;
+      }
+      else if (inputNumberOfScalarComponents == 4)
+      {
+        voxelVectorType = vtkITKImageWriter::VoxelVectorTypeColorRGBA;
+      }
+    }
+  }
   vtkSmartPointer<vtkMatrix4x4> measurementFrameMatrix = this->MeasurementFrameMatrix;
   if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatial || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
   {
@@ -395,7 +410,7 @@ void vtkITKImageWriter::Write()
   } // scalar
   else if (inputNumberOfScalarComponents == 3)
   {
-    if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB)
+    if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB)
     {
       // RGB color image
       switch (inputDataType)
@@ -418,6 +433,12 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
+        case VTK_CHAR:
+        {
+          typedef itk::RGBPixel<char> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
         case VTK_UNSIGNED_CHAR:
         {
           typedef itk::RGBPixel<unsigned char> PixelType;
@@ -427,7 +448,7 @@ void vtkITKImageWriter::Write()
         default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
       }
     }
-    else if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
+    else if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
     {
       // Covariant spatial vector (gradient image, etc.)
       switch (inputDataType)
@@ -447,6 +468,12 @@ void vtkITKImageWriter::Write()
         case VTK_UNSIGNED_SHORT:
         {
           typedef itk::CovariantVector<unsigned short, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
+        }
+        break;
+        case VTK_CHAR:
+        {
+          typedef itk::CovariantVector<char, 3> PixelType;
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
         }
         break;
@@ -482,6 +509,12 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
         }
         break;
+        case VTK_CHAR:
+        {
+          typedef itk::Vector<char, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
+        }
+        break;
         case VTK_UNSIGNED_CHAR:
         {
           typedef itk::Vector<unsigned char, 3> PixelType;
@@ -494,7 +527,7 @@ void vtkITKImageWriter::Write()
   } // vector
   else if (inputNumberOfScalarComponents == 4)
   {
-    if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA)
+    if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA)
     {
       // RGBA image
       switch (inputDataType)
@@ -514,6 +547,12 @@ void vtkITKImageWriter::Write()
         case VTK_UNSIGNED_SHORT:
         {
           typedef itk::RGBAPixel<unsigned short> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+        case VTK_CHAR:
+        {
+          typedef itk::RGBAPixel<char> PixelType;
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
@@ -546,6 +585,12 @@ void vtkITKImageWriter::Write()
         case VTK_UNSIGNED_SHORT:
         {
           typedef itk::Vector<unsigned short, 4> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+        case VTK_CHAR:
+        {
+          typedef itk::Vector<char, 4> PixelType;
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
