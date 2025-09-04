@@ -209,6 +209,7 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
     {
       proxyNode = snapshotNode->CreateNodeInstance();
       this->GetMRMLScene()->AddNode(proxyNode);
+      proxyNode->Delete();
       proxyNode->Copy(snapshotNode);
     }
 
