@@ -345,7 +345,6 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, u
     return;
   }
 
-  bool isUpdating = this->GetMRMLScene()->IsBatchProcessing();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
   {
     // There is no need to request a render (which can be expensive if the
@@ -365,12 +364,14 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, u
       case vtkCommand::ModifiedEvent:
       case vtkMRMLModelNode::MeshModifiedEvent:
       case vtkMRMLTransformableNode::TransformModifiedEvent:
-      case vtkMRMLClipNode::ClipNodeModifiedEvent: requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(displayableNode); break;
+      case vtkMRMLClipNode::ClipNodeModifiedEvent: //
+        requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(displayableNode);
+        break;
       default:
         // We don't expect any other types of events.
         break;
     }
-    if (!isUpdating && requestRender)
+    if (requestRender)
     {
       this->RequestRender();
     }
