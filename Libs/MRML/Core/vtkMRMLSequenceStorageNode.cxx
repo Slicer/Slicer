@@ -100,10 +100,19 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   int success = false;
-  if (extension == std::string(".mrb"))
+  if (extension == std::string(".mrb") || extension == std::string(".mrml"))
   {
     vtkMRMLScene* sequenceScene = sequenceNode->GetSequenceScene();
-    success = sequenceScene->ReadFromMRB(fullName.c_str(), this->GetUserMessages());
+    if (extension == std::string(".mrb"))
+    {
+      success = sequenceScene->ReadFromMRB(fullName.c_str(), this->GetUserMessages());
+    }
+    else
+    {
+      sequenceScene->SetURL(fullName.c_str());
+      success = sequenceScene->Connect(this->GetUserMessages());
+    }
+
     if (success)
     {
       // Read sequence index information from node embedded in the internal scene
@@ -125,6 +134,35 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   return success ? 1 : 0;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
+{
+  vtkMRMLSequenceNode* seqNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
+  if (seqNode == nullptr)
+  {
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only sequence nodes can be written in this format."));
+    return false;
+  }
+
+  std::string fullName = this->GetFullNameFromFileName();
+  if (fullName.empty())
+  {
+    return true;
+  }
+
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  if (extension == std::string(".mrml"))
+  {
+    if (this->IsMRBStorageRequired(seqNode))
+    {
+      this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent, //
+                                          std::string("Sequence cannot be saved with this file extension, as it contains storable nodes."));
+      return false;
+    }
+  }
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -154,7 +192,7 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   bool success = false;
-  if (extension == ".mrb")
+  if (extension == ".mrb" || extension == ".mrml")
   {
     this->ForceUniqueDataNodeFileNames(sequenceNode); // Prevents storable nodes' files from being overwritten due to the same node name
     vtkMRMLScene* sequenceScene = sequenceNode->GetSequenceScene();
@@ -167,7 +205,14 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
     sequenceScene->AddNode(embeddedSequenceNode.GetPointer());
 
-    success = sequenceScene->WriteToMRB(fullName.c_str(), nullptr, this->GetUserMessages());
+    if (extension == ".mrb")
+    {
+      success = sequenceScene->WriteToMRB(fullName.c_str(), nullptr, this->GetUserMessages());
+    }
+    else
+    {
+      success = sequenceScene->Commit(fullName.c_str(), this->GetUserMessages());
+    }
 
     // It is important to remove the embeddedSequenceNode from the scene, because if
     // an embeddedSequenceNode already exists in the sequenceScene then calling AddNode()
@@ -190,6 +235,10 @@ void vtkMRMLSequenceStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");
   //: File format name
   this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence") + " (.seq.mrml)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence") + " (.mrml)");
 }
 
 //----------------------------------------------------------------------------
@@ -199,12 +248,46 @@ void vtkMRMLSequenceStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");
   //: File format name
   this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence") + " (.seq.mrml)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence") + " (.mrml)");
 }
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLSequenceStorageNode::GetDefaultWriteFileExtension()
 {
-  return "seq.mrb";
+  vtkMRMLNode* storableNode = this->GetStorableNode();
+  if (storableNode && this->IsMRBStorageRequired(storableNode))
+  {
+    return "seq.mrb";
+  }
+  else
+  {
+    return "seq.mrml";
+  }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSequenceStorageNode::IsMRBStorageRequired(vtkMRMLNode* refNode)
+{
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
+  if (!sequenceNode)
+  {
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Data node must be a sequence node."));
+    return false;
+  }
+  for (int index = 0; index < sequenceNode->GetNumberOfDataNodes(); ++index)
+  {
+    vtkMRMLStorableNode* dataNode = vtkMRMLStorableNode::SafeDownCast(sequenceNode->GetNthDataNode(index));
+    if (dataNode)
+    {
+      // This is a storable node, it may require saving additional files, use MRB
+      return true;
+    }
+  }
+  // No storable nodes found in the sequence, we can save the sequence as a simple .mrml file
+  return false;
 }
 
 //----------------------------------------------------------------------------

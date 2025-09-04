@@ -44,6 +44,9 @@ public:
   /// Return true if the reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
+  /// Return true if the node can be written by using the writer.
+  bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
+
   // fileName: fCal_Test_Validation_3NWires_fCal2.0-ProbeToTracker-Seq.seq.mha
   // itemName: ProbeToTracker
   // return: fCal_Test_Validation_3NWires_fCal2.0
@@ -53,6 +56,9 @@ public:
   // itemName: Image
   // return: fCal_Test_Validation_3NWires_fCal2.0-Image-Seq
   static std::string GetSequenceNodeName(const std::string& baseName, const std::string& itemName);
+
+  /// Returns true if the sequence requires MRB file for storage (because additional data files need to be saved)
+  bool IsMRBStorageRequired(vtkMRMLNode* refNode);
 
 protected:
   vtkMRMLSequenceStorageNode();
