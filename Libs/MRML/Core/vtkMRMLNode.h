@@ -1202,16 +1202,16 @@ private:
 class VTK_MRML_EXPORT MRMLNodeModifyBlocker
 {
 public:
-  vtkWeakPointer<vtkMRMLNode> Node;
-  int WasModifying;
-  MRMLNodeModifyBlocker(vtkMRMLNode* node)
+  explicit MRMLNodeModifyBlocker(vtkMRMLNode* node)
   {
     this->Node = node;
+    this->WasModifying = 0;
     if (this->Node)
     {
       this->WasModifying = this->Node->StartModify();
     }
   };
+
   ~MRMLNodeModifyBlocker()
   {
     if (this->Node)
@@ -1219,6 +1219,40 @@ public:
       this->Node->EndModify(this->WasModifying);
     }
   }
+
+  // Non-copyable
+  MRMLNodeModifyBlocker(const MRMLNodeModifyBlocker&) = delete;
+  MRMLNodeModifyBlocker& operator=(const MRMLNodeModifyBlocker&) = delete;
+
+  // Move constructor
+  MRMLNodeModifyBlocker(MRMLNodeModifyBlocker&& other) noexcept
+  {
+    this->Node = other.Node;
+    this->WasModifying = other.WasModifying;
+    other.Node = nullptr;
+    other.WasModifying = 0;
+  }
+
+  // Move assignment
+  MRMLNodeModifyBlocker& operator=(MRMLNodeModifyBlocker&& other) noexcept
+  {
+    if (this != &other)
+    {
+      if (this->Node)
+      {
+        this->Node->EndModify(this->WasModifying);
+      }
+      this->Node = other.Node;
+      this->WasModifying = other.WasModifying;
+      other.Node = nullptr;
+      other.WasModifying = 0;
+    }
+    return *this;
+  }
+
+protected:
+  vtkWeakPointer<vtkMRMLNode> Node;
+  int WasModifying;
 };
 
 #endif
