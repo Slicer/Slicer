@@ -132,6 +132,17 @@ bool TestSharedLabelmapCollapse()
   int extent4[6] = { 3, 5, 3, 5, 3, 5 };
   int imageCount4 = CreateCubeLabelmap(cubeImage4, extent4);
 
+  vtkNew<vtkOrientedImageData> emptyImage1; // 1 pixel, empty label
+  int emptyExtent1[6] = { 0, 0, 0, 0, 0, 0 };
+  emptyImage1->SetExtent(emptyExtent1);
+  emptyImage1->AllocateScalars(VTK_CHAR, 1);
+  emptyImage1->GetPointData()->GetScalars()->Fill(0.0);
+
+  vtkNew<vtkOrientedImageData> emptyImage2; // 0 pixels
+  int emptyExtent2[6] = { 0, -1, 0, -1, 0, -1 };
+  emptyImage2->SetExtent(emptyExtent2);
+  emptyImage2->AllocateScalars(VTK_CHAR, 1);
+
   vtkNew<vtkSegment> segment1;
   segment1->SetName("cube1");
   segment1->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), cubeImage1);
@@ -148,52 +159,56 @@ bool TestSharedLabelmapCollapse()
   segment4->SetName("cube4");
   segment4->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), cubeImage4);
 
-  std::vector<vtkSegment*> segments = {
-    segment1,
-    segment2,
-    segment3,
-    segment4,
+  vtkNew<vtkSegment> segment5;
+  segment5->SetName("empty1");
+  segment5->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), emptyImage1);
+
+  vtkNew<vtkSegment> segment6;
+  segment6->SetName("empty2");
+  segment6->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), emptyImage2);
+
+  std::vector<std::pair<vtkSegment*, int>> segments = {
+    { segment1, imageCount1 }, { segment2, imageCount2 }, { segment5, 0 }, { segment3, imageCount3 }, { segment4, imageCount4 }, { segment6, 0 },
   };
 
   vtkNew<vtkSegmentation> segmentation;
   segmentation->SetSourceRepresentationName(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
-  segmentation->AddSegment(segment1);
-  segmentation->AddSegment(segment2);
-  segmentation->AddSegment(segment3);
-  segmentation->AddSegment(segment4);
-
-  int numberOfLayers = 0;
-
-  numberOfLayers = segmentation->GetNumberOfLayers();
-  if (numberOfLayers != 4)
+  for (auto segment : segments)
   {
-    std::cerr << "Invalid number of layers " << numberOfLayers << " should be 4" << std::endl;
-    return false;
+    segmentation->AddSegment(segment.first);
+  }
+
+  {
+    int expectedNumberOfLayers = segments.size();
+    int numberOfLayers = 0;
+    numberOfLayers = segmentation->GetNumberOfLayers();
+    if (numberOfLayers != expectedNumberOfLayers)
+    {
+      std::cerr << "Invalid number of layers " << numberOfLayers << " should be " << expectedNumberOfLayers << std::endl;
+      return false;
+    }
   }
 
   /////////////////////////////////////
   segmentation->CollapseBinaryLabelmaps(false); // Merge to multiple layers
 
-  numberOfLayers = segmentation->GetNumberOfLayers();
-  if (numberOfLayers != 3)
   {
-    std::cerr << "Safe merge failed: Invalid number of layers " << numberOfLayers << " should be 3" << std::endl;
-    return false;
+    int expectedNumberOfLayers = 3;
+    int numberOfLayers = segmentation->GetNumberOfLayers();
+    if (numberOfLayers != expectedNumberOfLayers)
+    {
+      std::cerr << "Safe merge failed: Invalid number of layers " << numberOfLayers << " should be " << expectedNumberOfLayers << std::endl;
+      return false;
+    }
   }
 
   vtkNew<vtkImageAccumulate> imageAccumulate;
   double frequency = 0.0;
 
-  std::vector<int> expectedResults = {
-    imageCount1,
-    imageCount2,
-    imageCount3,
-    imageCount4,
-  };
   for (size_t i = 0; i < segments.size(); ++i)
   {
-    vtkSegment* segment = segments[i];
-    int expectedFrequency = expectedResults[i];
+    vtkSegment* segment = segments[i].first;
+    int expectedFrequency = segments[i].second;
 
     vtkOrientedImageData* segmentLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
     double labelValue = segment->GetLabelValue();
@@ -210,23 +225,22 @@ bool TestSharedLabelmapCollapse()
   /////////////////////////////////////
   segmentation->CollapseBinaryLabelmaps(true); // Overwrite merge
 
-  numberOfLayers = segmentation->GetNumberOfLayers();
-  if (numberOfLayers != 1)
   {
-    std::cerr << "Overwrite merge failed: Invalid number of layers " << numberOfLayers << " should be 1" << std::endl;
-    return false;
+    int expectedNumberOfLayers = 1;
+    int numberOfLayers = segmentation->GetNumberOfLayers();
+    if (numberOfLayers != expectedNumberOfLayers)
+    {
+      std::cerr << "Overwrite merge failed: Invalid number of layers " << numberOfLayers << " should be " << expectedNumberOfLayers << std::endl;
+      return false;
+    }
   }
 
-  expectedResults = {
-    0,
-    imageCount2 - imageCount3,
-    imageCount3,
-    imageCount4,
-  };
+  segments[0] = { segment1, 0 };                         // overlapping segment overwrites full segment
+  segments[1] = { segment2, imageCount2 - imageCount3 }; // overlapping segment removes some voxels
   for (size_t i = 0; i < segments.size(); ++i)
   {
-    vtkSegment* segment = segments[i];
-    int expectedFrequency = expectedResults[i];
+    vtkSegment* segment = segments[i].first;
+    int expectedFrequency = segments[i].second;
 
     vtkOrientedImageData* segmentLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
     double labelValue = segment->GetLabelValue();
@@ -243,11 +257,14 @@ bool TestSharedLabelmapCollapse()
   /////////////////////////////////////
   segmentation->SeparateSegmentLabelmap(segmentation->GetSegmentIdBySegment(segment1));
 
-  numberOfLayers = segmentation->GetNumberOfLayers();
-  if (numberOfLayers != 2)
   {
-    std::cerr << "Separate segment labelmap failed: Invalid number of layers " << numberOfLayers << " should be 2" << std::endl;
-    return false;
+    int expectedNumberOfLayers = 2;
+    int numberOfLayers = segmentation->GetNumberOfLayers();
+    if (numberOfLayers != expectedNumberOfLayers)
+    {
+      std::cerr << "Separate segment labelmap failed: Invalid number of layers " << numberOfLayers << " should be " << expectedNumberOfLayers << std::endl;
+      return false;
+    }
   }
 
   return true;
@@ -434,7 +451,6 @@ int vtkSegmentationTest2(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     return EXIT_FAILURE;
   }
 
-  std::cout << "Segmentation test 2 passed." << std::endl;
   return EXIT_SUCCESS;
 }
 
@@ -469,6 +485,7 @@ int CreateCubeLabelmap(vtkOrientedImageData* imageData, int extent[6])
   vtkNew<vtkOrientedImageData> identityImageData;
   imageData->SetExtent(extent);
   imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  imageData->GetPointData()->GetScalars()->Fill(0.0);
 
   unsigned char* imagePtr = (unsigned char*)imageData->GetScalarPointer();
   int size = (extent[1] - extent[0] + 1) * (extent[3] - extent[2] + 1) * (extent[5] - extent[4] + 1);

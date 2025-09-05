@@ -2559,7 +2559,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer /*=false*/
         thresholdedLabelmap->ShallowCopy(imageThreshold->GetOutput());
         thresholdedLabelmap->CopyDirections(currentLabelmap);
 
-        int effectiveExtent[6] = { 0 };
+        int effectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
         vtkOrientedImageDataResample::CalculateEffectiveExtent(thresholdedLabelmap, effectiveExtent);
 
         vtkNew<vtkOrientedImageData> referenceImage;
@@ -2596,7 +2596,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer /*=false*/
 
           if (currentLabelmap)
           {
-            int extent[6] = { 0 };
+            int extent[6] = { 0, -1, 0, -1, 0, -1 };
             currentLabelmap->GetExtent(extent);
             // If the current labelmap is empty, we don't need to merge the image.
             if (extent[0] <= extent[1] || extent[2] <= extent[3] || extent[4] <= extent[5])
