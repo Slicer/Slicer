@@ -773,12 +773,6 @@ void qMRMLSubjectHierarchyTreeView::setCurrentNode(vtkMRMLNode* node)
   }
 
   vtkIdType itemID = d->SubjectHierarchyNode->GetItemByDataNode(node);
-  if (!itemID)
-  {
-    qCritical() << Q_FUNC_INFO << ": Unable to find subject hierarchy item by data node " << node->GetName();
-    return;
-  }
-
   this->setCurrentItem(itemID);
 }
 
