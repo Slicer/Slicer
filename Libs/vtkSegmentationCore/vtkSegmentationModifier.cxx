@@ -461,7 +461,7 @@ void vtkSegmentationModifier::ShrinkSegmentToEffectiveExtent(vtkOrientedImageDat
   else
   {
     bool isPaddingRequired = false;
-    int segmentExtent[6] = { 0 };
+    int segmentExtent[6] = { 0, -1, 0, -1, 0, -1 };
     segmentLabelmap->GetExtent(segmentExtent);
     for (int i = 0; i < 3; ++i)
     {

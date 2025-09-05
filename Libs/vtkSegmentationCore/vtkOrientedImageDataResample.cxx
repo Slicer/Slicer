@@ -696,10 +696,26 @@ bool vtkOrientedImageDataResample::CalculateEffectiveExtent(vtkOrientedImageData
   // Return with failure if effective input extent is empty
   if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
   {
+    vtkOrientedImageDataResample::InvalidateExtent(effectiveExtent);
     return false;
   }
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkOrientedImageDataResample::InvalidateExtent(int extent[6])
+{
+  if (!extent)
+  {
+    return;
+  }
+
+  for (int i = 0; i < 3; ++i)
+  {
+    extent[2 * i] = 0;
+    extent[2 * i + 1] = -1;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1614,13 +1630,13 @@ void vtkOrientedImageDataResample::GetLabelValuesInMask(std::vector<int>& labelV
 {
   labelValues.clear();
 
-  int binaryExtent[6] = { 0 };
+  int binaryExtent[6] = { 0, -1, 0, -1, 0, -1 };
   binaryLabelmap->GetExtent(binaryExtent);
 
-  int maskExtent[6] = { 0 };
+  int maskExtent[6] = { 0, -1, 0, -1, 0, -1 };
   mask->GetExtent(maskExtent);
 
-  int effectiveExtent[6] = { 0 };
+  int effectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
   for (int i = 0; i < 3; ++i)
   {
     effectiveExtent[2 * i] = std::max(binaryExtent[2 * i], maskExtent[2 * i]);
@@ -1761,14 +1777,14 @@ bool vtkOrientedImageDataResample::IsLabelInMask(vtkOrientedImageData* binaryLab
   vtkNew<vtkTransform> binaryToMaskTransform;
   vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(binaryLabelmap, mask, binaryToMaskTransform);
 
-  int binaryExtent[6] = { 0 };
+  int binaryExtent[6] = { 0, -1, 0, -1, 0, -1 };
   binaryLabelmap->GetExtent(binaryExtent);
   vtkOrientedImageDataResample::TransformExtent(binaryExtent, binaryToMaskTransform, binaryExtent);
 
-  int maskExtent[6] = { 0 };
+  int maskExtent[6] = { 0, -1, 0, -1, 0, -1 };
   mask->GetExtent(maskExtent);
 
-  int effectiveExtent[6] = { 0 };
+  int effectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
   for (int i = 0; i < 3; ++i)
   {
     effectiveExtent[2 * i] = std::max(binaryExtent[2 * i], maskExtent[2 * i]);

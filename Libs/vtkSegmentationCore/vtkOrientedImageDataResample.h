@@ -132,6 +132,9 @@ public:
   /// Calculate effective extent of an image: the IJK extent where non-zero voxels are located
   static bool CalculateEffectiveExtent(vtkOrientedImageData* image, int effectiveExtent[6], double threshold = 0.0);
 
+  /// Set extent to [0,-1,0,-1,0,-1]
+  static void InvalidateExtent(int extent[6]);
+
   /// Determine if geometries of two oriented image data objects match.
   /// Origin, spacing and direction are considered, extent is not.
   static bool DoGeometriesMatch(vtkOrientedImageData* image1, vtkOrientedImageData* image2);
