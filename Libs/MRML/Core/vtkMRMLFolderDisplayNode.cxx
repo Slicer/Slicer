@@ -133,16 +133,19 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
     }
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
     vtkMRMLDisplayableNode* displayableReparentedNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(reparentedItemID));
-    // Trigger display update for reparented displayable node if it is in a folder that applies
-    // display properties on its branch (only display nodes that allow overriding)
-    for (int i = 0; i < displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
+    if (displayableReparentedNode)
     {
-      vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
-      if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
+      // Trigger display update for reparented displayable node if it is in a folder that applies
+      // display properties on its branch (only display nodes that allow overriding)
+      for (int i = 0; i < displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
       {
-        currentDisplayNode->Modified();
-      }
-    } // For all display nodes
+        vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
+        if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
+        {
+          currentDisplayNode->Modified();
+        }
+      } // For all display nodes
+    }
   } // SubjectHierarchyItemReparentedEvent
 }
 
