@@ -42,7 +42,13 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinx-jsonschema",
     "github_alerts",
+    "sphinx_reredirects",  # Handle page redirects
 ]
+
+# Redirect renamed/moved pages for keeping external links working
+redirects = {
+    "user_guide/extensions_manager.html": "extensions.html#extensions-manager",
+}
 
 suppress_warnings = [
     # Since we split the "script_repository.md" into smaller documents combined using

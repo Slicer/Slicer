@@ -328,7 +328,7 @@ So that the following code can run within `MySlicerModule.py`:
 from MySlicerModuleLib import utils, cool_maths
 ```
 
-By default, only the Slicer module (`MySlicerModule.py`) will be included in the package distributed via the [Extensions Manager](../user_guide/extensions_manager) (see [a related issue on GitHub](https://github.com/Slicer/ExtensionsIndex/issues/1749)).
+By default, only the Slicer module (`MySlicerModule.py`) will be included in the package distributed via the [Extensions Manager](../user_guide/extensions.md#extensions-manager) (see [a related issue on GitHub](https://github.com/Slicer/ExtensionsIndex/issues/1749)).
 To make sure all the necessary files are included in the package, the `CMakeLists.txt` file associated with the Slicer module needs to be modified.
 Initially, the second section of `CMakeLists.txt` will look like this:
 

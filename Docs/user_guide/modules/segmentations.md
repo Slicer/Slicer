@@ -24,7 +24,7 @@ Segmentation can be edited using [Segment Editor](segmenteditor.md) module.
 3D volumes in NRRD (.nrrd or .nhdr) and Nifti (.nii or .nii.gz) file formats can be directly loaded as segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - In `Description` column choose `Segmentation`
-- Optional: if a color table (specifying name and color for each label value) is available then load that first into the application and then select it as `Color node` in the `Options` section. Specification of the color table file format is available [here](../../developer_guide/modules/colors.md#color-table-file-format-txt-ctbl).
+- Optional: if a color table (specifying name and color for each label value) is available then load that first into the application and then select it as `Color node` in the `Options` section. Specification of the color table file format is available [here](../../developer_guide/modules/colors.md#color-table-text-file-format-txt-ctbl).
 - Click `OK`
 
 :::{tip}

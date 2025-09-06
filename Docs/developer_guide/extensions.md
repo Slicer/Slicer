@@ -1,12 +1,12 @@
 # Extensions
 
-Developers can create extensions to provide additional features to users. See an overview of extensions in the [Extensions manager page](../user_guide/extensions_manager).
+Developers can create extensions to provide additional features to users. See an overview of extensions in the [Extensions manager page](../user_guide/extensions.md#extensions-manager).
 
 ## Create an extension
 
 If you have developed a script or module that you would like to share with others then it is recommended to submit it to the Slicer Extensions Index. Indexed extensions get listed in the Extensions Manager in Slicer and user can install them by a few mouse clicks.
 
-- Scan through the [user](../user_guide/extensions_manager.md) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
+- Scan through the [user](../user_guide/extensions.md#extensions-manager) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
 - Inform a community about your plans on the [Slicer forum](https://discourse.slicer.org) to get information about potential parallel efforts (other developers may already work on a similar idea and you could join or build on each other's work), past efforts (related tools might have been available in earlier Slicer versions or in other software that you may reuse), and get early feedback from prospective users. You may also seek advice on the name of your extension and how to organize features into modules. All these can save you a lot of time in the long term.
 - If you have not done already, use the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) module in Slicer to create an extension that will contain your module(s).
 - If developing [C++ loadable or CLI modules](module_overview.md) (not needed if developing in Python):

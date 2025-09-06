@@ -223,7 +223,7 @@ All data in the scene can be saved at once using `File` menu -> `Save data`, or 
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_extensions_manager.png)
 
-For details about downloading extensions, see [Extensions Manager documentation](extensions_manager.md).
+For details about downloading extensions, see [Extensions Manager documentation](extensions.md#extensions-manager).
 Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
 
 Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://training.slicer.org/#developer-tutorials).
@@ -258,7 +258,7 @@ Terms used in various fields of medical and biomedical image computing and clini
 - **Color legend** (or color bar, scalar bar): a widget overlaid on slice or 3D views that displays a color legend, indicating meaning of colors.
 - **Coordinate system** (or coordinate frame, reference frame, space): Specified by position of origin, axis directions, and distance unit. All coordinate systems in 3D Slicer are right-handed.
 - **Extension** (or Slicer extension): A collection of modules that is not bundled with the core application but can be downloaded and installed using the Extensions manager.
-- [**Extensions manager**](extensions_manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](https://extensions.slicer.org) directly from the application.
+- [**Extensions manager**](extensions.md#extensions-manager): A software component of Slicer that allows browsing, installing, uninstalling extensions in the [Extensions catalog (also known as the Slicer app store)](https://extensions.slicer.org) directly from the application.
 - [**Extensions index**](https://github.com/Slicer/ExtensionsIndex): A repository that contains description of each extension that the Extension catalog is built from.
 - **Extent**: Range of integer coordinates along 3 axes. Defined in VTK by 6 values, for IJK axes: `I_min`, `I_max`, `J_min`, `J_max`, `K_min`, `K_max`. Both minimum and maximum values are inclusive, therefore size of an array is `(I_max - I_min + 1)` x `(J_max - J_min + 1)` x `(K_max - K_min + 1)`.
 - **Fiducial**: Represents a point in 3D space. The term originates from image-guided surgery, where "fiducial markers" are used to mark point positions.
