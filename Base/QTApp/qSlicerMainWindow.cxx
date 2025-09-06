@@ -346,10 +346,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   setThemeIcon(this->EditApplicationSettingsAction, "preferences-system");
   setThemeIcon(this->ModuleHomeAction, "go-home");
 
-  this->ModuleFindAction->setIcon(QIcon::fromTheme("edit-find", QIcon(":/Icons/Search.png")));
-  this->ModulePreviousAction->setIcon(mainWindow->style()->standardIcon(QStyle::SP_ArrowLeft));
-  this->ModuleNextAction->setIcon(mainWindow->style()->standardIcon(QStyle::SP_ArrowRight));
-
   //----------------------------------------------------------------------------
   // Error log widget
   //----------------------------------------------------------------------------
