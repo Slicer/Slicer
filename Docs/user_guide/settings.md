@@ -32,7 +32,7 @@ Directory where modules can store their temporary outputs if needed.
 
 List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded.
 
-Module folders of extensions are included in this list. To remove modules of an extension, it is recommended to use the [Extensions Manager](extensions_manager.md) instead of just removing its module paths.
+Module folders of extensions are included in this list. To remove modules of an extension, it is recommended to use the [Extensions Manager](extensions.md#extensions-manager) instead of just removing its module paths.
 
 It is also possible to start Slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
 

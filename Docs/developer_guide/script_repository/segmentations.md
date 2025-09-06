@@ -108,7 +108,7 @@ Slicer can import a labelmap volume into segmentation, visualize/edit the segmen
 
 #### Create color table node
 
-A color table node can be loaded from a [color table file](/developer_guide/modules/colors.md#color-table-file-format-txt-ctbl) or created from scratch like this:
+A color table node can be loaded from a [color table file](/developer_guide/modules/colors.md#color-table-text-file-format-txt-ctbl) or created from scratch like this:
 
 ```python
 segment_names_to_labels = [("ribs", 10), ("right lung", 12), ("left lung", 6)]

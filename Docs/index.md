@@ -16,7 +16,6 @@ user_guide/image_segmentation
 user_guide/registration
 user_guide/modules/index
 user_guide/extensions
-user_guide/extensions_manager
 user_guide/settings
 
 developer_guide/index
