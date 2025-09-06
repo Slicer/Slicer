@@ -223,9 +223,9 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     ")
 
   if(CMAKE_VERSION GREATER_EQUAL "3.28")
-    set(maybe_JOB_SERVER_AWARE "JOB_SERVER_AWARE 1")
+    set(maybe_BUILD_JOB_SERVER_AWARE "BUILD_JOB_SERVER_AWARE 1")
   else()
-    set(maybe_JOB_SERVER_AWARE "")
+    set(maybe_BUILD_JOB_SERVER_AWARE "")
   endif()
 
   # Add extension external project
@@ -237,7 +237,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${CMAKE_COMMAND} -DCTEST_BUILD_CONFIGURATION=$<CONFIG> -P ${build_extension_wrapper_script}
     INSTALL_COMMAND ""
-    ${maybe_JOB_SERVER_AWARE}
+    ${maybe_BUILD_JOB_SERVER_AWARE}
     ${EP_ARG_EXTENSION_DEPENDS}
     )
   # This custom external project step forces the build and later
