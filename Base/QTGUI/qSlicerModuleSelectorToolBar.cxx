@@ -108,15 +108,16 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->NormalModuleFinderFlags = this->ModuleFinder->windowFlags();
 #endif
 
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+
   // Module finder
   this->ModuleFinderButton = new QToolButton(q);
   const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
-  QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"));
+  QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"), mainWindow);
   ViewFindModuleAction->setObjectName("ViewFindModuleAction");
   ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
   ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
   QObject::connect(ViewFindModuleAction, SIGNAL(triggered()), q, SLOT(showModuleFinder()));
-  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
   for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("ViewMenu"))
@@ -163,32 +164,42 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Previous button
   this->PreviousHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Previous History"), q);
   this->PreviousButton = new QToolButton(q);
-  this->PreviousButton->setIcon(previousIcon);
-  this->PreviousButton->setText(qSlicerModuleSelectorToolBar::tr("Previous"));
-  this->PreviousButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Previous modules"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
   // selectPreviousModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
-  QObject::connect(this->PreviousButton, SIGNAL(clicked(bool)), q, SLOT(selectPreviousModule()));
   q->addWidget(this->PreviousButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), this->PreviousButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
-  this->PreviousButton->setEnabled(this->PreviousHistoryMenu->actions().size() > 0);
-  this->PreviousButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Left));
+  bool canGoBack = this->PreviousHistoryMenu->actions().size() > 0;
+  this->PreviousButton->setEnabled(canGoBack);
+  QAction* previousModuleAction = new QAction(previousIcon, qSlicerModuleSelectorToolBar::tr("Previous module"), mainWindow);
+  previousModuleAction->setEnabled(canGoBack);
+  previousModuleAction->setText(qSlicerModuleSelectorToolBar::tr("Previous"));
+  previousModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Switch to previously used module"));
+  previousModuleAction->setObjectName("PreviousModuleAction");
+  previousModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier + Qt::Key_Left), QKeySequence::Back });
+  previousModuleAction->setShortcutContext(Qt::ApplicationShortcut);
+  this->PreviousButton->setDefaultAction(previousModuleAction);
+  QObject::connect(previousModuleAction, &QAction::triggered, q, &qSlicerModuleSelectorToolBar::selectPreviousModule);
 
   // Next button
   this->NextHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Next History"), q);
   this->NextButton = new QToolButton(q);
-  this->NextButton->setIcon(nextIcon);
-  this->NextButton->setText(qSlicerModuleSelectorToolBar::tr("Next"));
-  this->NextButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Next modules"));
   this->NextButton->setMenu(this->NextHistoryMenu);
   // selectNextModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
-  QObject::connect(this->NextButton, SIGNAL(clicked(bool)), q, SLOT(selectNextModule()));
   q->addWidget(this->NextButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), this->NextButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
-  this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
-  this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
+  bool canGoNext = this->NextHistoryMenu->actions().size() > 0;
+  this->NextButton->setEnabled(canGoNext);
+  QAction* nextModuleAction = new QAction(nextIcon, qSlicerModuleSelectorToolBar::tr("Next module"), mainWindow);
+  nextModuleAction->setEnabled(canGoNext);
+  nextModuleAction->setText(qSlicerModuleSelectorToolBar::tr("Next"));
+  nextModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Switch to next used module"));
+  nextModuleAction->setObjectName("NextModuleIcon");
+  nextModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier + Qt::Key_Right), QKeySequence::Forward });
+  nextModuleAction->setShortcutContext(Qt::ApplicationShortcut);
+  this->NextButton->setDefaultAction(nextModuleAction);
+  QObject::connect(nextModuleAction, &QAction::triggered, q, &qSlicerModuleSelectorToolBar::selectNextModule);
 
   // Install event filter to handle mouse back/forward buttons globally
   qApp->installEventFilter(q);
@@ -347,8 +358,12 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
   d->NextHistoryMenu->clear();
   d->NextHistoryMenu->addActions(nextActions);
 
-  d->PreviousButton->setEnabled(d->PreviousHistoryMenu->actions().size());
-  d->NextButton->setEnabled(d->NextHistoryMenu->actions().size());
+  bool canGoBack = d->PreviousHistoryMenu->actions().size() > 0;
+  d->PreviousButton->setEnabled(canGoBack);
+  d->PreviousButton->defaultAction()->setEnabled(canGoBack);
+  bool canGoNext = d->NextHistoryMenu->actions().size() > 0;
+  d->NextButton->setEnabled(canGoNext);
+  d->NextButton->defaultAction()->setEnabled(canGoNext);
 
   if (action)
   {
@@ -455,20 +470,6 @@ bool qSlicerModuleSelectorToolBar::eventFilter(QObject* obj, QEvent* event)
       return true;
     }
     else if (mouseEvent->button() == Qt::ForwardButton)
-    {
-      this->selectNextModule();
-      return true;
-    }
-  }
-  else if (event->type() == QEvent::KeyRelease)
-  {
-    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-    if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Left)
-    {
-      this->selectPreviousModule();
-      return true;
-    }
-    else if (keyEvent->modifiers() == Qt::AltModifier && keyEvent->key() == Qt::Key_Right)
     {
       this->selectNextModule();
       return true;
