@@ -1,16 +1,5 @@
-set(LayerDM_PYTHON_SCRIPTS
-  __init__.py
-  vtkMRMLLayerDMScriptedPipeline.py
-)
-
-set(LayerDM_PYTHON_RESOURCES
-)
-
-ctkMacroCompilePythonScript(
-  TARGET_NAME LayerDMLib
-  SCRIPTS "${LayerDM_PYTHON_SCRIPTS}"
-  RESOURCES "${LayerDM_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}/LayerDMLib
-  INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}/LayerDMLib
-  NO_INSTALL_SUBDIR
-)
+if(DEFINED SKBUILD_PROJECT_NAME)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/wheel.cmake)
+else()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/extension.cmake)
+endif()

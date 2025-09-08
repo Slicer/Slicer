@@ -1,3 +1,4 @@
+# Note: this file is never included when building the slicer-core based version
 
 #-----------------------------------------------------------------------------
 set(MODULE_NAME LayerDM)

@@ -11,8 +11,10 @@
 
 // STL includes
 #include <array>
+#include <cstdint>
 #include <map>
 #include <set>
+#include <vector>
 
 class vtkMRMLLayerDMPipelineI;
 class vtkRenderWindow;
