@@ -250,7 +250,8 @@ struct BlendPipeline
       {
         this->AddSubCasts[stageIndex]->SetInputConnection(foregroundPorts[stageIndex]);
         this->AddSubExtractAlphas[stageIndex]->SetInputConnection(foregroundPorts[stageIndex]);
-        this->AddSubMath->SetInputConnection(stageIndex, this->FractionMaths[stageIndex]->GetOutputPort());
+        // Offset foreground connections by +1 to preserve background input at port 0
+        this->AddSubMath->SetInputConnection(stageIndex + 1, this->FractionMaths[stageIndex]->GetOutputPort());
       }
 
       // If clip to background is disabled, blending occurs over the entire extent
