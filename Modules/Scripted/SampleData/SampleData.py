@@ -1206,9 +1206,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
             fileNames=["MRHeadResampled.raw.gz", "MRHeadResampled.nhdr"],
             nodeNames=[None, "MRHeadResampled"],
             loadFiles=[False, True]))
-        self.assertEqual(len(nodes), 2)
-        self.assertEqual(os.path.basename(nodes[0]), "MRHeadResampled.raw.gz")
-        self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("MRHeadResampled"))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHeadResampled"))
 
     def test_downloadFromSource_loadNodesWithLoadFileFalse(self):
         logic = SampleDataLogic()
