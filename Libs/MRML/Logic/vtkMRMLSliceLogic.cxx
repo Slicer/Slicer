@@ -1278,7 +1278,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
                                  this->SliceCompositeNode->GetClipToBackgroundVolume(),
                                  // Layers
                                  layerUVWPorts,
-                                 layerOpacities,
+                                 layerUVWOpacities,
                                  // Label
                                  this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
                                  this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel));
