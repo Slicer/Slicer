@@ -182,25 +182,54 @@ public:
   /// Create and observe default display node(s)
   void CreateDefaultDisplayNodes() override;
 
-  //@{
+  ///@{
   /**
    * Get measurement data, such as length, angle, diameter, cross-section area.
    * Add/remove/clear measurements.
    */
   int GetNumberOfMeasurements();
   int GetNumberOfEnabledMeasurements();
+  int GetNumberOfEnabledAndDefinedMeasurements();
   vtkMRMLMeasurement* GetNthMeasurement(int id);
   vtkMRMLMeasurement* GetMeasurement(const char* name);
   void AddMeasurement(vtkMRMLMeasurement* measurement);
+  std::string GetMeasurementNameFromIndex(int id);
+  int GetMeasurementIndexFromName(const char* name);
+  void RemoveMeasurement(const char* name);
   void RemoveNthMeasurement(int id);
+  void EnableAllMeasurements();
+  void EnableMeasurement(const char* name);
+  void DisableAllMeasurements();
+  void DisableMeasurement(const char* name);
   void ClearValueForAllMeasurements();
-  //@}
+  ///@}
+
+  ///@{
+  /**
+   * Utility method to override the list DefaultMeasurements which in default is empty.
+   * DefaultMeasurements values have to be the measurement names.
+   * The list will used by the MarkupsMeasurementPanel to set which measurements will
+   * be enabled when a markup is added.
+   *
+   * Python pseudocode
+   * curve = slicer.vtkMRMLMarkupsClosedCurveNode()
+   * defaultMeasurements = vtk.vtkStringArray()
+   * defaultMeasurements.SetNumberOfTuples(2)
+   * defaultMeasurements.SetValue(0, "length")
+   * defaultMeasurements.SetValue(1, "curvature max")
+   * curve.SetDefaultMeasurements(defaultMeasurements)
+   * slicer.mrmlScene.AddDefaultNode(curve)
+   *
+   */
+  void SetDefaultMeasurements(vtkStringArray* defaultMeasurements);
+  vtkStringArray* GetDefaultMeasurements();
+  ///@}
 
   /// Update all measurements.
   /// It should not be necessary for users to call this method.
   void UpdateAllMeasurements();
 
-  //@{
+  ///@{
   /**
    * Set measurement data, such as length, angle, diameter, cross-section area.
    *
@@ -222,7 +251,7 @@ public:
                          vtkCodedEntry* unitsCode = nullptr,
                          vtkCodedEntry* methodCode = nullptr);
   void RemoveAllMeasurements();
-  //@}
+  ///@}
 
   /// Invoke events when control points change, passing the control point index if applicable.
   ///
@@ -234,7 +263,8 @@ public:
   enum
   {
     LockModifiedEvent = 19000,               ///< Markups node lock status is changed. Modified event is invoked, too.
-    LabelFormatModifiedEvent,                ///< Markups node label format changed. Modified event is invoked, too.
+    LabelFormatModifiedEvent,                ///< Markups node label format changed.
+    MeasurementsCollectionModifiedEvent,     ///< Markups measurements collection changed.
     PointAddedEvent,                         ///< New control point(s) added. Modified event is NOT invoked.
     PointRemovedEvent,                       ///< Control point(s) deleted. Modified event is NOT invoked.
     PointPositionDefinedEvent,               ///< Point was not defined (undefined, preview position status,
@@ -367,6 +397,9 @@ public:
 
   /// Swap two control points (position data and all other properties).
   void SwapControlPoints(int m1, int m2);
+
+  /// Reverse control points order
+  virtual void ReverseControlPoints();
 
   ///@{
   /// Get/Set control point auto-created status. Set to true if point was generated automatically
@@ -1030,6 +1063,9 @@ protected:
 
   /// List of measurements stored for the markup
   vtkCollection* Measurements;
+
+  /// List of default measurements for the MarkupsMeasurement panel
+  vtkSmartPointer<vtkStringArray> DefaultMeasurements;
 
   std::string PropertiesLabelText;
 
