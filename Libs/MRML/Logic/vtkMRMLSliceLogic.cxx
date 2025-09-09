@@ -222,6 +222,8 @@ struct BlendPipeline
 
     if (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha)
     {
+      // Alpha: keep input order and each layer’s own opacity.
+      // vtkImageBlend stacks later inputs on top; slider -> opacity mapping is unchanged.
       for (int index = 0; index < static_cast<int>(imagePorts.size()); ++index)
       {
         layers.emplace_back(imagePorts[index], opacities[index]);
@@ -229,9 +231,14 @@ struct BlendPipeline
     }
     else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
     {
-      for (int index = static_cast<int>(imagePorts.size()) - 1; index >= 0; --index)
+      // ReverseAlpha: reverse stacking order, keep opacities as given.
+      // For 2 layers {BG, FG} with opacities {1.0, w}, this yields BG(w) over FG(1.0)
+      // because vtkImageBlend places later inputs on top.
+      const int numberOfLayers = static_cast<int>(imagePorts.size());
+      for (int index = 0; index < numberOfLayers; ++index)
       {
-        layers.emplace_back(imagePorts[index], opacities[index]);
+        int layerIndex = numberOfLayers - 1 - index;
+        layers.emplace_back(imagePorts[layerIndex], opacities[index]);
       }
     }
     else
