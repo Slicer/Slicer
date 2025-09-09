@@ -700,10 +700,16 @@ class SampleDataLogic:
         resultNodes = []
         resultFilePaths = []
 
+        # If some node names are defined and some are left empty then we assume that it is intentional
+        # (e.g., you only want to load the image.nhdr file and not the image.raw file).
+        # In this case default node names are not generated.
+        generateDefaultNodeNames = all(n is None for n in source.nodeNames)
+
         for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(
             source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileTypes, strict=False):
 
             if nodeName is None or fileName is None:
+                # Determine file basename and extension from URL or path
                 import urllib
                 import uuid
                 if fileName is not None:
@@ -711,11 +717,15 @@ class SampleDataLogic:
                 else:
                     p = urllib.parse.urlparse(uri)
                     basename, ext = os.path.splitext(os.path.basename(p.path))
-                if nodeName is None:
+
+                # Generate default node name (we only need this if we want to load the file into the scene and no node name is provided)
+                if (nodeName is None) and (loadFile is not False) and generateDefaultNodeNames:
                     nodeName = basename
+
+                # Generate default file name (we always need this, even for just downloading)
                 if fileName is None:
                     # Generate a unique filename to avoid overwriting existing file with the same name
-                    fileName = f"{nodeName}-{uuid.uuid4().hex}{ext}"
+                    fileName = f"{nodeName if nodeName else basename}-{uuid.uuid4().hex}{ext}"
 
             current_source = SampleDataSource(
                 uris=uri,
