@@ -1,5 +1,5 @@
 import slicer
-from LayerDMManagerLib import vtkMRMLLayerDMScriptedPipeline
+from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
     vtkMRMLLayerDMPipelineManager,
