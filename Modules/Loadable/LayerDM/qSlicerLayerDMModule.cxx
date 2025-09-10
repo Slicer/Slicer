@@ -35,33 +35,33 @@ qSlicerLayerDMModule::~qSlicerLayerDMModule() {}
 //-----------------------------------------------------------------------------
 QString qSlicerLayerDMModule::helpText() const
 {
-  return "This is a loadable module that can be bundled in an extension";
+  return "A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerLayerDMModule::acknowledgementText() const
 {
-  return "This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN";
+  return "This module was initially developed by Kitware SAS.";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerLayerDMModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe (AnyWare Corp.)");
+  moduleContributors << QString("Thibault Pelletier (Kitware SAS)");
   return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerLayerDMModule::icon() const
 {
-  return QIcon(":/Icons/LayerDM.png");
+  return QIcon();
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerLayerDMModule::categories() const
 {
-  return QStringList() << "Examples";
+  return QStringList() << "Developer Tools";
 }
 
 //-----------------------------------------------------------------------------
