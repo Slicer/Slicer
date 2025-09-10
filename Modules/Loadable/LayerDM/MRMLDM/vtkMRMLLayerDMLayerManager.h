@@ -20,16 +20,16 @@ class vtkRenderer;
 class vtkCamera;
 
 /// \brief Responsible for adding and removing renderer layers to a vtkRenderWindow depending on the
-/// display pipeline preferred layer value.
+/// display pipeline preferred render order value.
 ///
-/// Display pipeline layer values are arbitrary unsigned int. This class will create and set the actual
+/// Display pipeline order values are arbitrary unsigned int. This class will create and set the actual
 /// Renderer layers so that their ordering is consistent with expected VTK behavior.
 ///
 /// Renderer 0 is left unchanged by the class and is expected to already exist in the render window.
 ///
 /// When pipelines are added / removed, renderers are created or deleted, and renderer layers are optimized
-/// depending on the pipelines' preferred layer number.
-/// Layer number is read-only during update and is expected to be static per pipeline.
+/// depending on the pipelines' preferred render order number.
+/// Order number is read-only during update and is expected to be static per pipeline.
 class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMLayerManager : public vtkObject
 {
 public:
