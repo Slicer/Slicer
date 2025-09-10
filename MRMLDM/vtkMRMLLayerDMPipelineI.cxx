@@ -94,7 +94,7 @@ bool vtkMRMLLayerDMPipelineI::UpdateObserver(vtkObject* prevObj, vtkObject* obj,
   return this->m_obs->UpdateObserver(prevObj, obj, events);
 }
 
-unsigned int vtkMRMLLayerDMPipelineI::GetRenderLayer() const
+unsigned int vtkMRMLLayerDMPipelineI::GetRenderOrder() const
 {
   return 0;
 }

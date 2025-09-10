@@ -63,11 +63,13 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         return 0
 
-    def GetRenderLayer(self) -> int:
+    def GetRenderOrder(self) -> int:
         """
-        Arbitrary render layer number where the pipeline wants to be displayed.
-        Return 0 to be at the default renderer (main 3D Slicer renderer)
-        Return larger values to be rendered in overlay.
+        Arbitrary render order number where the pipeline wants to be displayed.
+        Return 0 to be at the default order (main 3D Slicer pipelines)
+        Return larger values to be rendered on top of pipelines with lower render orders.
+
+        See also: vtkMRMLLayerDMLayerManager
         :return: default = 0
         """
         return 0

@@ -23,7 +23,7 @@ public:
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   vtkCamera* GetCamera() const override;
   int GetMouseCursor() const override;
-  unsigned int GetRenderLayer() const override;
+  unsigned int GetRenderOrder() const override;
   int GetWidgetState() const override;
   void LoseFocus(vtkMRMLInteractionEventData* eventData) override;
   void OnDefaultCameraModified(vtkCamera* camera) override;

@@ -52,11 +52,14 @@ public:
   /// This value is only used if the pipeline actually processes an event and is ignore otherwise.
   virtual int GetMouseCursor() const;
 
-  /// Arbitrary render layer number where the pipeline wants to be displayed.
-  /// Return 0 to be at the default renderer (main 3D Slicer renderer)
-  /// Return larger values to be rendered in overlay.
+  /// Arbitrary render order number where the pipeline wants to be displayed.
+  /// Return 0 to be at the default order (main 3D Slicer pipelines)
+  /// Return larger values to be rendered on top of pipelines with lower render orders.
+  /// Order number is read-only during update and is expected to be static per pipeline.
+  ///
+  /// \sa vtkMRMLLayerDMLayerManager
   /// \return default = 0
-  virtual unsigned int GetRenderLayer() const;
+  virtual unsigned int GetRenderOrder() const;
 
   /// Current widget state of the pipeline.
   /// \return default = WidgetStateIdle

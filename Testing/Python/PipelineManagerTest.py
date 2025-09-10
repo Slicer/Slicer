@@ -104,11 +104,11 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         assert self.pipelineManager.GetNodePipeline(node) == mock
         return mock
 
-    def test_dispatches_process_interaction_to_higher_layer_pipeline_first(self):
-        m1 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
-        m2 = self.triggerMockPipelineCreation(MockPipeline(layer=10))
-        m3 = self.triggerMockPipelineCreation(MockPipeline(layer=100))
-        m4 = self.triggerMockPipelineCreation(MockPipeline(layer=0))
+    def test_dispatches_process_interaction_to_higher_order_pipeline_first(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
+        m2 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=10))
+        m3 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=100))
+        m4 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=0))
         m1.mockCanProcess.return_value = (True, 1)
         m2.mockCanProcess.return_value = (True, 1000)
         m3.mockCanProcess.return_value = (True, 2000)
@@ -133,9 +133,9 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m1.mockProcess.assert_not_called()
 
     def test_dispatches_process_to_max_state_first(self):
-        # Create two pipelines with same layer and disable pipeline 2 for first interaction
-        m1 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
-        m2 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
+        # Create two pipelines with same order and disable pipeline 2 for first interaction
+        m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
+        m2 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
         m1.mockCanProcess.return_value = (True, 0)
         m2.mockCanProcess.return_value = (False, 0)
         m1.mockProcess.return_value = True
@@ -161,7 +161,7 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         assert m2.mockCanProcess.call_count == 2
 
     def test_on_lose_focus_forwards_information_of_last_with_focus(self):
-        m1 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
+        m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
         m1.mockCanProcess.return_value = (True, 0)
         m1.mockProcess.return_value = True
 
@@ -176,8 +176,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m1.mockLoseFocus.assert_called_once_with(loseFocusData)
 
     def test_if_last_with_focus_cannot_process_loses_focus(self):
-        m1 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
-        m2 = self.triggerMockPipelineCreation(MockPipeline(layer=10))
+        m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
+        m2 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=10))
         m1.mockCanProcess.return_value = (True, 0)
         m2.mockCanProcess.return_value = (False, 0)
 
@@ -201,8 +201,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m2.mockProcess.assert_called_once()
 
     def test_if_last_with_focus_did_not_process_loses_focus(self):
-        m1 = self.triggerMockPipelineCreation(MockPipeline(layer=1))
-        m2 = self.triggerMockPipelineCreation(MockPipeline(layer=10))
+        m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
+        m2 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=10))
         m1.mockCanProcess.return_value = (True, 0)
         m2.mockCanProcess.return_value = (False, 0)
 

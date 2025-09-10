@@ -71,7 +71,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
       int widgetState = std::max(this->MinWidgetState(), pipeline->GetWidgetState());
       minDistance = std::min(minDistance, pipelineDistance);
       maxState = std::max(widgetState, maxState);
-      priority[pipeline] = std::make_tuple(widgetState, pipeline->GetRenderLayer(), -pipelineDistance);
+      priority[pipeline] = std::make_tuple(widgetState, pipeline->GetRenderOrder(), -pipelineDistance);
     }
   }
   // Sort can process by layer order and inverted square distance (larger layer number first and closest to interaction)
