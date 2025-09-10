@@ -210,11 +210,11 @@ int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
   return Superclass::GetMouseCursor();
 }
 
-unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderLayer() const
+unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
 {
   if (!Py_IsInitialized())
   {
-    return Superclass::GetRenderLayer();
+    return Superclass::GetRenderOrder();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -222,7 +222,7 @@ unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderLayer() const
   {
     return PyLong_AsLong(result);
   }
-  return Superclass::GetRenderLayer();
+  return Superclass::GetRenderOrder();
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const

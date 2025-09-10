@@ -32,7 +32,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
         assert self.distance < 0
 
-    def test_with_same_state_and_layer_processes_min_dist_first(self):
+    def test_with_same_state_and_order_processes_min_dist_first(self):
         pipelines = []
         for i in range(5):
             pipeline = MockPipeline(canProcess=True, didProcess=True, processDistance=i)
@@ -43,10 +43,10 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         assert self.logic.ProcessInteractionEvent(self.event)
         pipelines[0].mockProcess.assert_called_once_with(self.event)
 
-    def test_with_same_state_processes_max_layer_first(self):
+    def test_with_same_state_processes_max_order_first(self):
         pipelines = []
         for i in range(5):
-            pipeline = MockPipeline(canProcess=True, didProcess=True, layer=i)
+            pipeline = MockPipeline(canProcess=True, didProcess=True, renderOrder=i)
             pipelines.append(pipeline)
             self.logic.AddPipeline(pipeline)
 
@@ -95,7 +95,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
         assert self.logic.ProcessInteractionEvent(self.event)
 
-        p2 = MockPipeline(canProcess=True, didProcess=True, layer=10)
+        p2 = MockPipeline(canProcess=True, didProcess=True, renderOrder=10)
         self.logic.AddPipeline(p2)
 
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)

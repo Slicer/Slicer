@@ -1,18 +1,18 @@
 import slicer
-from LayerDMManagerLib import vtkMRMLLayerDMScriptedPipeline
+from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 from slicer import vtkMRMLLayerDMLayerManager
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkRenderWindow, vtkRenderer, vtkCamera
 
 
 class Pipeline(vtkMRMLLayerDMScriptedPipeline):
-    def __init__(self, renderLayer: int = 0, camera: vtkCamera = None):
+    def __init__(self, renderOrder: int = 0, camera: vtkCamera = None):
         super().__init__()
-        self._renderLayer = renderLayer
+        self._renderOrder = renderOrder
         self._camera = camera
 
-    def GetRenderLayer(self) -> int:
-        return self._renderLayer
+    def GetRenderOrder(self) -> int:
+        return self._renderOrder
 
     def GetCamera(self) -> vtkCamera | None:
         return self._camera
@@ -40,7 +40,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
     def test_at_init_has_one_distinct_default_layer(self):
         assert self.layerManager.GetNumberOfDistinctLayers() == 1
 
-    def test_adding_pipeline_on_the_default_layer_doesnt_create_layers(self):
+    def test_adding_pipeline_with_default_order_doesnt_create_layers(self):
         pipelines = [Pipeline() for _ in range(5)]
 
         for pipeline in pipelines:
@@ -48,9 +48,9 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
 
         self.assertAreExpectedLayers([pipelines], expRenderLayers=[0])
 
-    def test_adding_pipelines_to_non_default_are_grouped_by_value(self):
-        layerValues = [1, 1000, 2000]
-        pipelineLists = [[Pipeline(layer) for _ in range(3)] for layer in layerValues]
+    def test_adding_pipelines_to_non_default_order_are_grouped_by_value(self):
+        orderValues = [1, 1000, 2000]
+        pipelineLists = [[Pipeline(order) for _ in range(3)] for order in orderValues]
 
         for pipelines in pipelineLists:
             for pipeline in pipelines:
@@ -59,8 +59,8 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
         self.assertAreExpectedLayers(pipelineLists, expRenderLayers=[1, 2, 3])
 
     def test_removed_pipeline_layers_are_collapsed(self):
-        layerValues = [1, 1000, 2000]
-        pipelineLists = [[Pipeline(layer) for _ in range(3)] for layer in layerValues]
+        orderValues = [1, 1000, 2000]
+        pipelineLists = [[Pipeline(order) for _ in range(3)] for order in orderValues]
 
         for pipelines in pipelineLists:
             for pipeline in pipelines:

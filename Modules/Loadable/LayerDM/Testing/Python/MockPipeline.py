@@ -2,7 +2,7 @@ import sys
 from typing import Any
 from unittest.mock import MagicMock
 
-from LayerDMManagerLib import vtkMRMLLayerDMScriptedPipeline
+from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 from slicer import (
     vtkMRMLAbstractViewNode,
     vtkMRMLInteractionEventData,
@@ -21,7 +21,7 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
 
     def __init__(
         self,
-        layer=0,
+        renderOrder=0,
         widgetState=0,
         canProcess=False,
         processDistance=sys.float_info.max,
@@ -32,7 +32,7 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.mockCanProcess = MagicMock(return_value=(canProcess, processDistance))
         self.mockGetCamera = MagicMock(return_value=None)
         self.mockGetMouse = MagicMock(return_value=mouseCursor)
-        self.mockGetRenderLayer = MagicMock(return_value=layer)
+        self.mockGetRenderOrder = MagicMock(return_value=renderOrder)
         self.mockGetWidgetState = MagicMock(return_value=widgetState)
         self.mockLoseFocus = MagicMock()
         self.mockOnDefaultCameraModified = MagicMock()
@@ -55,8 +55,8 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def GetMouseCursor(self) -> int:
         return self.mockGetMouse()
 
-    def GetRenderLayer(self) -> int:
-        return self.mockGetRenderLayer()
+    def GetRenderOrder(self) -> int:
+        return self.mockGetRenderOrder()
 
     def GetWidgetState(self) -> int:
         return self.mockGetWidgetState()
