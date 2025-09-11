@@ -257,6 +257,10 @@ std::string vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetOrientat
   filesVector.emplace_back(ORIENTATION_MARKERS_DIR);
   filesVector.emplace_back(modelFileName);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
+  if (!vtksys::SystemTools::FileExists(fullPath, true))
+  {
+    vtkErrorWithObjectMacro(this->External, "GetOrientationMarkerModelPath: file does not exist: " << fullPath);
+  }
   return fullPath;
 }
 
