@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QProcessEnvironment>
 #include <QTimer>
 
 // Slicer includes
@@ -55,6 +56,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char* argv[])
   colorsModule.setMRMLScene(scene);
 
   vtkNew<vtkSlicerApplicationLogic> appLogic;
+  appLogic->SetHomeDirectory(QProcessEnvironment::systemEnvironment().value("SLICER_HOME").toStdString());
   appLogic->SetShareDirectory(Slicer_SHARE_DIR);
   colorsModule.initialize(appLogic);
 
