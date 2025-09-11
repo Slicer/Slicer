@@ -95,15 +95,22 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
     return {};
   }
 
-  const std::string& shareDir = appLogic->GetShareDirectory();
-  if (shareDir.empty())
+  const std::string& homeDir = appLogic->GetHomeDirectory();
+  if (homeDir.empty())
   {
-    vtkWarningMacro("FindDefaultColorFiles failed: ShareDirectory is not set. "
-                    "Default color files will not be loaded.");
+    vtkErrorMacro("FindDefaultColorFiles failed: HomeDirectory is not set. "
+                  "Default color files will not be loaded.");
     return {};
   }
 
-  const std::string& homeDir = appLogic->GetHomeDirectory();
+  const std::string& shareDir = appLogic->GetShareDirectory();
+  if (shareDir.empty())
+  {
+    vtkErrorMacro("FindDefaultColorFiles failed: ShareDirectory is not set. "
+                  "Default color files will not be loaded.");
+    return {};
+  }
+
 
   // build up the vector
   std::vector<std::string> filesVector;
