@@ -29,6 +29,7 @@
 #include "vtkSlicerConfigure.h" // For Slicer_SHARE_DIR
 
 // VTK includes
+#include <vtksys/SystemTools.hxx>
 #include <vtkTimerLog.h>
 
 // STD includes
@@ -59,6 +60,7 @@ int TestDefaults()
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
 
   vtkNew<vtkMRMLApplicationLogic> appLogic;
+  appLogic->SetHomeDirectory(std::string(vtksys::SystemTools::GetEnv("SLICER_HOME")));
   appLogic->SetShareDirectory(Slicer_SHARE_DIR);
   colorLogic->SetMRMLApplicationLogic(appLogic);
 
