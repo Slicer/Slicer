@@ -23,10 +23,12 @@
 
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkSlicerConfigure.h" // For Slicer_SHARE_DIR
+
+// vtkAddon includes
+#include <vtkAddonTestingMacros.h>
 
 // VTK includes
 #include <vtksys/SystemTools.hxx>
@@ -34,10 +36,7 @@
 
 // STD includes
 
-#include "vtkMRMLCoreTestingMacros.h"
-
 using namespace vtkAddonTestingUtilities;
-using namespace vtkMRMLCoreTestingUtilities;
 
 //----------------------------------------------------------------------------
 namespace
