@@ -93,6 +93,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVectorVolumeNodeTest1.cxx
   vtkMRMLViewNodeTest1.cxx
   vtkMRMLVolumeArchetypeStorageNodeTest1.cxx
+  vtkMRMLVolumeSequenceStorageNodeTest1.cxx
   vtkMRMLVolumeDisplayNodeTest1.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
   vtkMRMLVolumeNodeEventsTest.cxx
@@ -206,6 +207,17 @@ simple_test( vtkMRMLVectorVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVectorVolumeNodeTest1 )
 simple_test( vtkMRMLViewNodeTest1 )
 simple_test( vtkMRMLVolumeArchetypeStorageNodeTest1  ${TEMP})
+simple_test( vtkMRMLVolumeSequenceStorageNodeTest1
+  ${TEMP}
+  DATA{${INPUT}/Volumes-DomainList.seq.nrrd}
+  DATA{${INPUT}/Volumes-ColorDomainList.seq.nrrd}
+  DATA{${INPUT}/Volumes-ListDomain-NonStandard.seq.nrrd}
+  DATA{${INPUT}/Volumes-VectorDomain-NonStandard.seq.nrrd}
+  DATA{${INPUT}/Volumes-CharVectorDomain-NonStandard.seq.nrrd}
+  DATA{${INPUT}/Volumes-DomainListColor-NonStandard.seq.nrrd}
+  DATA{${INPUT}/Transforms-VectorDomainList.seq.nrrd}
+  DATA{${INPUT}/Volumes-ListDomainListColor-Unsupported.seq.nrrd}
+)
 simple_test( vtkMRMLVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVolumeHeaderlessStorageNodeTest1 )
 simple_test( vtkMRMLVolumeNodeEventsTest )
