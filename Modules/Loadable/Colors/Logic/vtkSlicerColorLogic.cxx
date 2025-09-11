@@ -11,6 +11,7 @@
 #include "vtkSlicerColorLogic.h"
 
 // MRML
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
@@ -18,9 +19,6 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
-
-// Slicer includes
-#include "vtkSlicerApplicationLogic.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -111,10 +109,9 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
     return {};
   }
 
-
   // build up the vector
   std::vector<std::string> filesVector;
-  filesVector.emplace_back(""); // for relative path
+  filesVector.emplace_back(""); // The first two components do not add a slash.
   filesVector.push_back(homeDir);
   filesVector.push_back(shareDir + "/ColorFiles");
   std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);

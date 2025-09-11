@@ -40,10 +40,6 @@
 // VTK includes
 #include "qMRMLWidget.h"
 
-// STD includes
-
-#include "vtkMRMLCoreTestingMacros.h"
-
 int qSlicerColorsModuleWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
