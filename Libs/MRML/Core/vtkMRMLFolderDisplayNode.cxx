@@ -198,7 +198,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(folderItemId, childItemIDs, true);
 
-  bool batchProcessing = (childItemIDs.size() > 10);
+  bool batchProcessing = (childItemIDs.size() > 50);
   if (batchProcessing)
   {
     this->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
