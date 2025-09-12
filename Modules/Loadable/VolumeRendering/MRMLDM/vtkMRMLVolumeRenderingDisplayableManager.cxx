@@ -58,12 +58,15 @@
 #include <vtkImplicitFunctionCollection.h>
 #include <vtkImplicitFunctionToImageStencil.h>
 #include <vtkImplicitInvertableBoolean.h>
+#include <vtkInformation.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
 #include <vtkMultiVolume.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkOpenGLActor.h>
 #include <vtkOpenGLGPUVolumeRayCastMapper.h>
+#include <vtkOpenGLRenderPass.h>
 #include <vtkPlane.h>
 #include <vtkPlaneCollection.h>
 #include <vtkPlanes.h>
@@ -71,6 +74,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkSSAOPass.h>
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkVolume.h>
 #include <vtkVolumePicker.h>
@@ -113,6 +117,11 @@ public:
     Pipeline()
     {
       this->VolumeActor = vtkSmartPointer<vtkVolume>::New();
+      this->VolumeActor->SetPropertyKeys(this->VolumeActorInformation);
+      this->VolumeInformationCallback->SetClientData(this);
+      this->VolumeInformationCallback->SetCallback(&Pipeline::OnVolumeActorInformationModified);
+      this->VolumeActorInformation->AddObserver(vtkCommand::ModifiedEvent, this->VolumeInformationCallback);
+
       this->IJKToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
 
       // Only RGBA volumes can be rendered using direct color mapping.
@@ -141,6 +150,43 @@ public:
     }
     virtual ~Pipeline() = default;
 
+    static void OnVolumeActorInformationModified(vtkObject* sender, unsigned long eid, void* clientData, void* callData)
+    {
+      Pipeline* pipeline = reinterpret_cast<Pipeline*>(clientData);
+      if (!pipeline || !pipeline->DoRemoveSSAORenderPass || eid != vtkCommand::ModifiedEvent)
+      {
+        return;
+      }
+
+      // SSAO pass adds in a vtkOpenGLRenderPass::RenderPasses() flag to the volume actor information in pre render pass.
+      // Removing this pass from the information will disable the SSAO pass for the volume while keeping SSAO for other
+      // objects in the renderer.
+      if (pipeline->VolumeActorInformation->Has(vtkOpenGLRenderPass::RenderPasses()))
+      {
+        // Iterate on the OpenGL render passes to remove the SSAO pass if attached
+        int numRenderPasses = pipeline->VolumeActorInformation->Length(vtkOpenGLRenderPass::RenderPasses());
+        for (int i = 0; i < numRenderPasses; ++i)
+        {
+          if (vtkSSAOPass::SafeDownCast(pipeline->VolumeActorInformation->Get(vtkOpenGLRenderPass::RenderPasses(), i)))
+          {
+            pipeline->VolumeActorInformation->Remove(vtkOpenGLRenderPass::RenderPasses(), i);
+          }
+        }
+
+        // Cleanup OpenGL render passes if empty after removal of the SSAO pass to avoid crashes in the GPU mapper
+        if (pipeline->VolumeActorInformation->Length(vtkOpenGLRenderPass::RenderPasses()) == 0)
+        {
+          pipeline->VolumeActorInformation->Remove(vtkOpenGLRenderPass::RenderPasses());
+        }
+      }
+
+      // Avoid writing in depth buffer when in MIP / MinIP with SSAO (override added by SSAO pass)
+      if (pipeline->VolumeActorInformation->Has(vtkOpenGLActor::GLDepthMaskOverride()))
+      {
+        pipeline->VolumeActorInformation->Remove(vtkOpenGLActor::GLDepthMaskOverride());
+      }
+    }
+
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;
@@ -155,6 +201,14 @@ public:
     vtkSmartPointer<vtkImageStencil> StencilFilter;
     vtkSmartPointer<vtkImageGaussianSmooth> Gaussian;
     vtkSmartPointer<vtkImageMathematicsAddon> ImageMathematics;
+
+    /// Whether to disable the SSAO render pass for this volume actor.
+    /// As of VTK 9.5.1, SSAO requires per-fragment normals, which MIP and MinIP
+    /// blend modes do not generate.
+    /// See https://www.kitware.com/screen-space-ambient-occlusion-for-volumes/
+    bool DoRemoveSSAORenderPass{ false };
+    vtkNew<vtkInformation> VolumeActorInformation;
+    vtkNew<vtkCallbackCommand> VolumeInformationCallback;
   };
 
   //-------------------------------------------------------------------------
@@ -223,7 +277,7 @@ public:
   void RemoveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
   PipelineListType::iterator RemovePipelineIt(PipelineListType::iterator pipelineIt);
   void UpdateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
-  void UpdateDisplayNodePipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
+  void UpdateDisplayNodePipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode, Pipeline* pipeline);
 
   double GetFramerate();
   vtkIdType GetMaxMemoryInBytes(vtkMRMLVolumeRenderingDisplayNode* displayNode);
@@ -847,7 +901,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNode(vt
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLVolumeRenderingDisplayNode* displayNode, Pipeline* pipeline)
 {
   if (!displayNode || !pipeline)
   {
@@ -1172,10 +1226,19 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   // Set ray casting technique
   switch (viewNode->GetRaycastTechnique())
   {
-    case vtkMRMLViewNode::MaximumIntensityProjection: mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND); break;
-    case vtkMRMLViewNode::MinimumIntensityProjection: mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND); break;
+    case vtkMRMLViewNode::MaximumIntensityProjection:
+      mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
+      pipeline->DoRemoveSSAORenderPass = true;
+      break;
+    case vtkMRMLViewNode::MinimumIntensityProjection:
+      mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
+      pipeline->DoRemoveSSAORenderPass = true;
+      break;
     case vtkMRMLViewNode::Composite:
-    default: mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND); break;
+    default:
+      mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
+      pipeline->DoRemoveSSAORenderPass = false;
+      break;
   }
 
   // Update ROI clipping planes
