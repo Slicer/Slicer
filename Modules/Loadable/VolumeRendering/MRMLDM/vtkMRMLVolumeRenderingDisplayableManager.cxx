@@ -40,12 +40,10 @@
 #include "vtkEventBroker.h"
 
 // VTK includes
-#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include "vtkAddonMathUtilities.h"
 #include <vtkCallbackCommand.h>
 #include <vtkClipVolume.h>
-#include <vtkNew.h>
-#include <vtkObjectFactory.h>
+#include <vtkDoubleArray.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 #include <vtkGPUVolumeRayCastMapper.h>
 #include <vtkImageAppendComponents.h>
@@ -53,15 +51,18 @@
 #include <vtkImageData.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkImageLuminance.h>
+#include <vtkImageMathematicsAddon.h>
 #include <vtkImageStencil.h>
 #include <vtkImageStencilData.h>
-#include <vtkImageMathematicsAddon.h>
 #include <vtkImplicitBoolean.h>
 #include <vtkImplicitFunctionCollection.h>
 #include <vtkImplicitFunctionToImageStencil.h>
 #include <vtkImplicitInvertableBoolean.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
+#include <vtkMultiVolume.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkOpenGLGPUVolumeRayCastMapper.h>
 #include <vtkPlane.h>
 #include <vtkPlaneCollection.h>
@@ -70,11 +71,10 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#include <vtkMultiVolume.h>
+#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkVolume.h>
-#include <vtkVolumeProperty.h>
-#include <vtkDoubleArray.h>
 #include <vtkVolumePicker.h>
+#include <vtkVolumeProperty.h>
 
 #include <vtkImageData.h>         //TODO: Used for workaround. Remove when fixed
 #include <vtkTrivialProducer.h>   //TODO: Used for workaround. Remove when fixed
