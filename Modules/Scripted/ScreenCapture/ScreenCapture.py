@@ -1134,7 +1134,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             writer.Write()
 
     def createImageWriter(self, filename):
-        name, extension = os.path.splitext(filename)
+        _name, extension = os.path.splitext(filename)
         if extension.lower() == ".png":
             return vtk.vtkPNGWriter()
         elif extension.lower() == ".jpg" or extension.lower() == ".jpeg":
@@ -1143,7 +1143,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             raise ValueError(_("Unsupported image format based on file name {filename}").format(filename=filename))
 
     def createImageReader(self, filename):
-        name, extension = os.path.splitext(filename)
+        _name, extension = os.path.splitext(filename)
         if extension.lower() == ".png":
             return vtk.vtkPNGReader()
         elif extension.lower() == ".jpg" or extension.lower() == ".jpeg":

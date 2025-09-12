@@ -96,7 +96,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
         # self.delayDisplay("Starting test_3D_interactionDefaults")
         logic = SlicerTransformInteractionTest1Logic()
-        tNode, tdNode = logic.addTransform()
+        _tNode, tdNode = logic.addTransform()
         self.assertFalse(tdNode.GetEditorVisibility())
         self.assertFalse(tdNode.GetEditorSliceIntersectionVisibility())
 
@@ -423,7 +423,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         markupNode.AddControlPoint([-1500.0, -200.0, -100.0])
 
         logic = SlicerTransformInteractionTest1Logic()
-        parentNode, parendDisplayNode = logic.addTransform()
+        parentNode, _parendDisplayNode = logic.addTransform()
 
         leafNode, tdNode = logic.addTransform()
         slicer.app.layoutManager().layout = slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView

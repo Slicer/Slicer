@@ -65,7 +65,7 @@ def createCoordinateSystemsModel(curve, axisLength=5):
 
 
 def addCoordinateSystemUpdater(updateInfo):
-    model, curve, coordinateSystemAppender, curvePointToWorldTransform, transform, transformer = updateInfo
+    _model, curve, _coordinateSystemAppender, _curvePointToWorldTransform, _transform, _transformer = updateInfo
     observation = curve.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent,
                                     lambda caller, eventData, updateInfo=updateInfo: updateCoordinateSystemsModel(updateInfo))
     return [curve, observation]

@@ -81,7 +81,7 @@ def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_execut
     args = list(common_args)
     args.remove("--disable-settings")
     args.extend(["--keep-temporary-settings"])
-    (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, args)
+    (returnCode, _stdout, stderr) = runSlicerAndExit(slicer_executable, args)
     expectedMessage = "Argument '--keep-temporary-settings' requires '--settings-disabled' to be specified."
     if expectedMessage not in stderr:
         print(f"=> return code{returnCode}\n")

@@ -352,7 +352,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # then adjust confidence values based on warnings
         #
         for loadable in loadables:
-            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.spacingEpsilon)
+            loadable.files, _distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.spacingEpsilon)
 
         loadablesBetterThanAllFiles = []
         if allFilesLoadable.warning != "":
@@ -909,7 +909,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             This can be used to confirm that an acquisition transform has correctly
             mapped the slice corners to match the dicom acquisition.
             """
-            columns, rows, slices = volumeNode.GetImageData().GetDimensions()
+            _columns, _rows, slices = volumeNode.GetImageData().GetDimensions()
             worldCorners = numpy.zeros(shape=[slices, 2, 2, 3])
             for slice in range(slices):
                 for row in range(2):

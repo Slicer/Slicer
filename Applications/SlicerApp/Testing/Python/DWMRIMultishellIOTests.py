@@ -151,7 +151,7 @@ def test_nrrd_dwi_roundtrip(test_nrrd_path):
     storagenode1.SetFileName(tmp_nrrd1)
     storagenode1.WriteData(dw_node1)
 
-    parsed_nrrd2, dw_node2 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd1)
+    _parsed_nrrd2, dw_node2 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd1)
 
     # re-save NRRD again
     storagenode2 = slicer.vtkMRMLNRRDStorageNode()
@@ -161,7 +161,7 @@ def test_nrrd_dwi_roundtrip(test_nrrd_path):
     storagenode2.WriteData(dw_node2)
 
     # test twice-saved file against original NRRD
-    parsed_nrrd3, dw_node3 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd2)
+    _parsed_nrrd3, _dw_node3 = test_nrrd_dwi_load(test_nrrd_path, tmp_nrrd2)
 
 
 def run_tests(data_dir, tmp_dir):
