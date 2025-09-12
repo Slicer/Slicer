@@ -271,7 +271,19 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView::~qMRMLThreeDView() = default;
+qMRMLThreeDView::~qMRMLThreeDView()
+{
+  Q_D(qMRMLThreeDView);
+
+  if (this->renderer())
+  {
+    this->renderer()->SetPass(nullptr);
+    if (d->ShadowsRenderPass)
+    {
+      d->ShadowsRenderPass->ReleaseGraphicsResources(this->renderer()->GetRenderWindow());
+    }
+  }
+}
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::setInteractor(vtkRenderWindowInteractor* interactor)
