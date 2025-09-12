@@ -446,7 +446,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         of what to load
         """
 
-        (self.loadablesByPlugin, loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
+        (self.loadablesByPlugin, _loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
         DICOMLib.selectHighestConfidenceLoadables(self.loadablesByPlugin)
         self.loadableTable.setLoadables(self.loadablesByPlugin)
         self.updateButtonStates()

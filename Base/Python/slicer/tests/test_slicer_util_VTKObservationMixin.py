@@ -117,7 +117,7 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         priority = 42.0
 
         foo.addObserver(obj, event, callback, group=group, priority=priority)
-        group_, tag_, priority_ = foo.getObserver(obj, event, callback)
+        group_, _tag, priority_ = foo.getObserver(obj, event, callback)
 
         self.assertEqual(group, group_)
         self.assertEqual(priority, priority_)

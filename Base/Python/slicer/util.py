@@ -2895,7 +2895,7 @@ class VTKObservationMixin:
             for obj, events in self.__observations.items():
                 for e, methods in events.items():
                     if method in methods:
-                        g, t, p = methods.pop(method)
+                        _g, t, _p = methods.pop(method)
                         obj.RemoveObserver(t)
 
     def addObserver(self, obj, event, method, group="none", priority=0.0):
@@ -2917,7 +2917,7 @@ class VTKObservationMixin:
         try:
             events = self.__observations[obj]
             methods = events[event]
-            group, tag, priority = methods.pop(method)
+            _group, tag, _priority = methods.pop(method)
             obj.RemoveObserver(tag)
         except KeyError:
             warn("does not have observer")
@@ -3580,7 +3580,7 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
     if not os.path.exists(archiveFilePath):
         logging.error("Specified file %s does not exist" % (archiveFilePath))
         return False
-    fileName, fileExtension = os.path.splitext(archiveFilePath)
+    _fileName, fileExtension = os.path.splitext(archiveFilePath)
     if fileExtension.lower() != ".zip":
         # TODO: Support other archive types
         logging.error("Only zip archives are supported now, got " + fileExtension)

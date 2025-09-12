@@ -518,7 +518,7 @@ class SlicerHTTPServer(HTTPServer):
     def onServerSocketNotify(self, fileno):
         self.logMessage("got request on %d" % fileno)
         try:
-            (connectionSocket, clientAddress) = self.socket.accept()
+            (connectionSocket, _clientAddress) = self.socket.accept()
             fileno = connectionSocket.fileno()
             self.requestCommunicators[fileno] = self.SlicerRequestCommunicator(connectionSocket, self.requestHandlers, self.docroot, self.logMessage, self.enableCORS)
             self.logMessage("Connected on %s fileno %d" % (connectionSocket, connectionSocket.fileno()))

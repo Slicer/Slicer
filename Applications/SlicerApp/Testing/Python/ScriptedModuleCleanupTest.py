@@ -73,7 +73,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
             args.append("--testing")
         else:
             args.append("--exit-after-startup")
-        (returnCode, stdout, stderr) = run(slicer_executable, args)
+        (returnCode, _stdout, _stderr) = run(slicer_executable, args)
 
         assert os.path.isfile(test_output_file)
 

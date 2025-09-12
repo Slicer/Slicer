@@ -53,7 +53,7 @@ def compileResources(in_path, out_file, args):
 
     # Run rcc
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr)
-    data, err = proc.communicate()
+    data, _err = proc.communicate()
 
     # Check that rcc ran successfully
     if proc.returncode != 0:

@@ -130,7 +130,7 @@ with open("{0}", 'w') as output:
   output.write(json.dumps(modules, indent=4))
 """.format(output_file))
 
-    (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, ["--python-script", python_script.name])
+    (returnCode, _stdout, _stderr) = runSlicerAndExit(slicer_executable, ["--python-script", python_script.name])
     assert returnCode == EXIT_SUCCESS
     print("=> ok\n")
 
@@ -138,7 +138,7 @@ with open("{0}", 'w') as output:
 
 
 def slicerRevision():
-    (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
+    (returnCode, stdout, _stderr) = runSlicerAndExit(slicer_executable, [
         "--no-main-window", "--ignore-slicerrc", "--disable-modules",
         "--python-code", "print(slicer.app.repositoryRevision)",
     ])

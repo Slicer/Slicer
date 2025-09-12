@@ -303,7 +303,7 @@ def SEMToMediaWikiProg():
     )
     parser.epilog = program_description
     #    print program_description
-    (options, args) = parser.parse_args()
+    (options, _args) = parser.parse_args()
 
     #    It may be desirable in the future to automatically push information to the
     #    WIKI page without having to copy and paste.

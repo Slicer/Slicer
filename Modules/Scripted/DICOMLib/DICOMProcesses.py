@@ -230,7 +230,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
 
     def killStoreSCPProcessesPosix(self, uniqueListener):
         p = subprocess.Popen(["ps", "-A"], stdout=subprocess.PIPE)
-        out, err = p.communicate()
+        out, _err = p.communicate()
         for line in out.splitlines():
             line = line.decode()
             if self.STORESCP_PROCESS_FILE_NAME in line:

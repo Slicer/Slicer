@@ -59,7 +59,7 @@ class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
         mrHead.GetDisplayNode().ApplyThresholdOn()
         mrHead.GetDisplayNode().SetAutoWindowLevel(False)
         mrHead.GetDisplayNode().SetWindowLevelMinMax(10, 120)
-        min, max = mrHead.GetImageData().GetScalarRange()
+        _min, max = mrHead.GetImageData().GetScalarRange()
         mrHead.GetDisplayNode().SetThreshold(0, max)
         window_preset = 99
         level_preset = 49
@@ -69,7 +69,7 @@ class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
         mrHead2 = sampleDataLogic.downloadMRHead()
         mrHead2.GetDisplayNode().SetAndObserveColorNodeID("vtkMRMLColorTableNodeRed")
         mrHead2.GetDisplayNode().ApplyThresholdOn()
-        min, max = mrHead2.GetImageData().GetScalarRange()
+        _min, max = mrHead2.GetImageData().GetScalarRange()
         mrHead2.GetDisplayNode().SetThreshold(79, max)
         mrHead2.GetDisplayNode().ApplyThresholdOn()
         mrHead2.GetDisplayNode().SetAutoWindowLevel(False)
