@@ -51,6 +51,8 @@ vtkITKImageSequenceReader::~vtkITKImageSequenceReader()
     this->RasToIjkMatrix->Delete();
     this->RasToIjkMatrix = nullptr;
   }
+  delete[] this->FileName;
+  this->FileName = nullptr;
 }
 
 //----------------------------------------------------------------------------

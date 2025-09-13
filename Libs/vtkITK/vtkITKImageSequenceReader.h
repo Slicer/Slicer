@@ -19,19 +19,27 @@
 #ifndef __vtkITKImageSequenceReader_h
 #define __vtkITKImageSequenceReader_h
 
-#include "vtkMedicalImageReader2.h"
+#include "vtkImageAlgorithm.h"
 
 #include "vtkMatrix4x4.h"
 
 #include "vtkITK.h"
 #include "vtkITKImageWriter.h"
 
-class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkMedicalImageReader2
+class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkImageAlgorithm
 {
 public:
   static vtkITKImageSequenceReader* New();
-  vtkTypeMacro(vtkITKImageSequenceReader, vtkMedicalImageReader2);
+  vtkTypeMacro(vtkITKImageSequenceReader, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  ///@{
+  /**
+   * Specify file name for the image file.
+   */
+  vtkSetFilePathMacro(FileName);
+  vtkGetFilePathMacro(FileName);
+  ///@}
 
   /// Set current frame index that is extracted from the sequence image to the output port.
   vtkSetMacro(CurrentFrameIndex, unsigned int);
@@ -79,6 +87,8 @@ protected:
   void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 
 protected:
+  char* FileName{ nullptr };
+
   /// Current frame index that is extracted from the sequence image to the output port.
   unsigned int CurrentFrameIndex{ 0 };
 
