@@ -764,6 +764,9 @@ void vtkSegmentEditorLogic::SetSegmentEditorNode(vtkMRMLSegmentEditorNode* newSe
       });
 
     this->SegmentEditorNodeObs = newSegmentEditorNode->AddObserver(vtkCommand::ModifiedEvent, updateCommand);
+
+    // Update the segment editor's segmentation node observers
+    this->ReconnectSegmentationNodeObserver();
   }
 }
 
@@ -2212,6 +2215,9 @@ void vtkSegmentEditorLogic::ReconnectSegmentationNodeObserver()
 
     auto obs = newSegmentationNode->AddObserver(vtkCommand::ModifiedEvent, updateCommand);
     this->SegmentationObs = std::make_tuple(obs, newSegmentationNode);
+
+    // Synchronize the segmentation history for the new segmentation node
+    this->SynchronizeSegmentationHistorySegmentation();
   }
 }
 
