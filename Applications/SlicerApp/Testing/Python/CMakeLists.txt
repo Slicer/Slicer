@@ -434,6 +434,14 @@ add_test(
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
+# Check that sys.path modifications performed at module import are preserved after Slicer startup
+add_test(
+  NAME py_startup_preserve_sys_path
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerStartupPreserveSysPathTest.py
+    ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
 # Check that stand-alone Python interpreter, without PythonQt support, can `import slicer` safely (#945)
 add_test(
   NAME py_standalonepython_import_slicer
