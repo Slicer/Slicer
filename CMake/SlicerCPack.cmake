@@ -471,8 +471,8 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 
   get_property(${app_name}_CPACK_NSIS_MUI_ICON GLOBAL PROPERTY ${app_name}_WIN_ICON_FILE)
   slicer_cpack_set("CPACK_NSIS_MUI_ICON")
-  slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
-  slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${APPLICATION_NAME}.exe")
+  slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${EXECUTABLE_NAME}.exe")
+  slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${EXECUTABLE_NAME}.exe")
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20")
     set(CPACK_NSIS_BRANDING_TEXT " ")
   elseif()
@@ -512,10 +512,10 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   # GpuPreference=2 -> "High Performance" - uses discrete graphics
   # Note: This is a user setting that has to be applied at the HKCU (HKEY_CURRENT_USER) level and cannot be set at the HKLM (HKEY_LOCAL_MACHINE) level
   set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-"WriteRegStr HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\" \\\"GpuPreference=2;\\\"
+"WriteRegStr HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${EXECUTABLE_NAME}App-real.exe\\\" \\\"GpuPreference=2;\\\"
 ")
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-"DeleteRegValue HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${APPLICATION_NAME}App-real.exe\\\"
+"DeleteRegValue HKCU \\\"SOFTWARE\\\\Microsoft\\\\DirectX\\\\UserGpuPreferences\\\" \\\"$INSTDIR\\\\bin\\\\${EXECUTABLE_NAME}App-real.exe\\\"
 ")
 
   # -------------------------------------------------------------------------
