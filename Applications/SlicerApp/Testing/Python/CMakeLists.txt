@@ -434,6 +434,14 @@ add_test(
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
+# Check that modules can configure environment on load
+add_test(
+  NAME py_module_configuration_startup
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerStartupModuleTest.py
+    ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
 # Check that stand-alone Python interpreter, without PythonQt support, can `import slicer` safely (#945)
 add_test(
   NAME py_standalonepython_import_slicer
