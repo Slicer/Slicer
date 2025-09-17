@@ -64,6 +64,7 @@ function(SlicerReadApplicationProperties)
 
   set(properties
     APPLICATION_NAME
+    APPLICATION_DISPLAY_NAME
 
     VERSION_MAJOR
     VERSION_MINOR

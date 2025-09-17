@@ -2,6 +2,9 @@
 set(APPLICATION_NAME
   Slicer
   )
+set(APPLICATION_DISPLAY_NAME
+  "3D Slicer"
+  )
 
 set(VERSION_MAJOR
   ${Slicer_VERSION_MAJOR}

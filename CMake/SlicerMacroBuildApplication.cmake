@@ -28,6 +28,7 @@ macro(slicerMacroBuildAppLibrary)
     EXPORT_DIRECTIVE
     FOLDER
     APPLICATION_NAME
+    APPLICATION_DISPLAY_NAME
     DESCRIPTION_SUMMARY
     DESCRIPTION_FILE
     )
@@ -276,6 +277,7 @@ macro(slicerMacroBuildApplication)
     NAME
     FOLDER
     APPLICATION_NAME
+    APPLICATION_DISPLAY_NAME
 
     DEFAULT_SETTINGS_FILE
     SPLASHSCREEN_ENABLED
@@ -357,6 +359,7 @@ macro(slicerMacroBuildApplication)
   endif()
 
   _set_app_property("APPLICATION_NAME")
+  _set_app_property("APPLICATION_DISPLAY_NAME")
 
   macro(_set_path_var varname)
     if(NOT IS_ABSOLUTE ${SLICERAPP_${varname}})

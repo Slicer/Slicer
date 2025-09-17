@@ -487,6 +487,7 @@ endif()
 # associated with the SlicerApp application.
 
 foreach(name IN ITEMS
+  APPLICATION_DISPLAY_NAME
   DESCRIPTION_SUMMARY
   DESCRIPTION_FILE
   LAUNCHER_SPLASHSCREEN_FILE
