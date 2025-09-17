@@ -145,6 +145,11 @@ vtkMRMLScene* vtkMRMLLayerDMPipelineI::GetScene() const
 
 void vtkMRMLLayerDMPipelineI::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) {}
 
+void vtkMRMLLayerDMPipelineI::RemoveObserver(vtkObject* prevObj) const
+{
+  this->m_obs->RemoveObserver(prevObj);
+}
+
 void vtkMRMLLayerDMPipelineI::RequestRender() const
 {
   if (this->m_pipelineManager)

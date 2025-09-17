@@ -27,11 +27,26 @@ public:
   static vtkObjectEventObserver* New();
   vtkTypeMacro(vtkObjectEventObserver, vtkObject);
 
+  /// @{
+  /// Remove previous monitored events from \param prevObj and observe events from the \param obj
+  /// If both obj are the same, does nothing.
+  /// On event triggerred, calls the update set by \sa SetUpdateCallback.
+  ///
+  /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent);
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events);
+  /// @}
+
+  /// Remove observers attached to the input object.
+  /// Use \sa UpdateObserver to update the observed events for a new object (RemoveObserver is then called automatically).
+  void RemoveObserver(vtkObject* obj);
+
+  /// @{
+  /// Set the callback triggerred when one of the observed objects and event is invoked.
   void SetUpdateCallback(const std::function<void(vtkObject* node)>& callback);
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback);
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback);
+  /// @}
 
 protected:
   vtkObjectEventObserver();
@@ -39,7 +54,6 @@ protected:
 
 private:
   void AddObserver(vtkObject* obj, unsigned long event);
-  void RemoveObserver(vtkObject* obj);
 
   vtkSmartPointer<vtkCallbackCommand> m_updateCommand{};
   std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> m_obsMap{};
