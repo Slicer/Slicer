@@ -386,7 +386,7 @@ slicer_cpack_set("CPACK_PACKAGE_VERSION")
 
 set(CPACK_SYSTEM_NAME "${Slicer_OS}-${Slicer_ARCHITECTURE}")
 
-set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${${app_name}_CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME} ${CPACK_PACKAGE_VERSION}")
 slicer_cpack_set("CPACK_PACKAGE_INSTALL_DIRECTORY")
 
 #
@@ -463,11 +463,10 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   # Slicer does *NOT* require setting the windows path
   set(CPACK_NSIS_MODIFY_PATH OFF)
 
-  set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
   set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
   # Set application name used to create Start Menu shortcuts
-  set(PACKAGE_APPLICATION_NAME "${APPLICATION_NAME} ${CPACK_PACKAGE_VERSION}")
-  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${PACKAGE_APPLICATION_NAME}")
+  set(CPACK_NSIS_DISPLAY_NAME "${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME} ${CPACK_PACKAGE_VERSION}")
+  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${CPACK_NSIS_DISPLAY_NAME}")
 
   get_property(${app_name}_CPACK_NSIS_MUI_ICON GLOBAL PROPERTY ${app_name}_WIN_ICON_FILE)
   slicer_cpack_set("CPACK_NSIS_MUI_ICON")
@@ -497,9 +496,9 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
     slicer_verbose_set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${_nsis_installer_file}")
   endif()
 
-  set(CPACK_NSIS_WELCOME_TITLE "Welcome to the ${PACKAGE_APPLICATION_NAME} Setup Wizard")
+  set(CPACK_NSIS_WELCOME_TITLE "Welcome to the ${CPACK_NSIS_DISPLAY_NAME} Setup Wizard")
   set(CPACK_NSIS_WELCOME_TITLE_3LINES True)
-  set(CPACK_NSIS_FINISH_TITLE "Completed the ${PACKAGE_APPLICATION_NAME} Setup Wizard")
+  set(CPACK_NSIS_FINISH_TITLE "Completed the ${CPACK_NSIS_DISPLAY_NAME} Setup Wizard")
   set(CPACK_NSIS_FINISH_TITLE_3LINES True)
 
   # -------------------------------------------------------------------------

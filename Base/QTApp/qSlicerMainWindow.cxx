@@ -1290,7 +1290,7 @@ void qSlicerMainWindow::disclaimer()
   }
 
   // Replace "%1" in the text by the name and version of the application
-  message = message.arg(app->applicationName() + " " + app->applicationVersion());
+  message = message.arg(app->mainApplicationDisplayName() + " " + app->applicationVersion());
 
   ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
   disclaimerMessage->setAttribute(Qt::WA_DeleteOnClose, true);

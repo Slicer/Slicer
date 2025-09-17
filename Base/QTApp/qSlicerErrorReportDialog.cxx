@@ -53,7 +53,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
 
   QString instructionsText = d->InstructionsLabel->text();
   QString appNameVersionPlatform = QString("%1 %2 %3")
-                                     .arg(qSlicerApplication::application()->applicationName())
+                                     .arg(qSlicerApplication::application()->mainApplicationDisplayName())
                                      .arg(qSlicerApplication::application()->applicationVersion())
                                      .arg(qSlicerApplication::application()->platform());
   instructionsText.replace(QString("[appname-version-platform]"), QUrl::toPercentEncoding(appNameVersionPlatform));

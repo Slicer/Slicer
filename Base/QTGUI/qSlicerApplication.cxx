@@ -561,7 +561,7 @@ bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
   catch (std::bad_alloc& exception)
   {
     QString errorMessage;
-    errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
+    errorMessage = tr("%1 has caught an application error, ").arg(this->mainApplicationDisplayName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("The application has run out of memory. ");
     if (!QSysInfo::kernelType().compare(/*no tr*/ "winnt"))
@@ -597,7 +597,7 @@ bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
   catch (std::exception& exception)
   {
     QString errorMessage;
-    errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
+    errorMessage = tr("%1 has caught an application error, ").arg(this->mainApplicationDisplayName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
     errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
@@ -1111,7 +1111,7 @@ void qSlicerApplication::logApplicationInformation() const
          << "Slicer version ";
   if (this->isCustomMainApplication())
   {
-    titles << (QString(Slicer_MAIN_PROJECT_APPLICATION_NAME) + " version ");
+    titles << (QString(Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME) + " version ");
   }
   titles << "Operating system "
          << "Memory "

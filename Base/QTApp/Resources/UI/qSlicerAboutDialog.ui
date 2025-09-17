@@ -16,9 +16,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle">
-   <string>About 3D Slicer</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,0">
    <property name="margin">
     <number>0</number>

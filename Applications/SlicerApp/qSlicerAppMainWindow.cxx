@@ -134,7 +134,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 
   QAction* helpAboutSlicerAppAction = new QAction(mainWindow);
   helpAboutSlicerAppAction->setObjectName("HelpAboutSlicerAppAction");
-  helpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About 3D Slicer"));
+  helpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About %1").arg(qSlicerApplication::application()->mainApplicationDisplayName()));
   helpAboutSlicerAppAction->setToolTip(qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
 
   //----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   //----------------------------------------------------------------------------
   // Configure
   //----------------------------------------------------------------------------
-  mainWindow->setWindowTitle("3D Slicer");
+  mainWindow->setWindowTitle(qSlicerApplication::application()->mainApplicationDisplayName());
   mainWindow->setWindowIcon(QIcon(":/Icons/Medium/DesktopIcon.png"));
 
   QLabel* logoLabel = new QLabel();
