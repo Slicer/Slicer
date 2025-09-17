@@ -246,7 +246,7 @@ vtkITKArchetypeImageSeriesReader* vtkMRMLVolumeArchetypeStorageNode::Instantiate
 
   vtkDebugMacro("ReadData: readerSeries number of file names = " << numberOfFileNames);
 
-  if (reader->GetNumberOfComponents() < 3)
+  if (reader->GetNumberOfComponents() < 2)
   {
     return nullptr;
   }
