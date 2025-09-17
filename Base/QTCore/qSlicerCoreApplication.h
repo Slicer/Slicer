@@ -103,6 +103,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString os READ os CONSTANT)
   Q_PROPERTY(bool isCustomMainApplication READ isCustomMainApplication CONSTANT)
   Q_PROPERTY(QString mainApplicationName READ mainApplicationName CONSTANT)
+  Q_PROPERTY(QString mainApplicationDisplayName READ mainApplicationDisplayName CONSTANT)
   Q_PROPERTY(QString mainApplicationRepositoryUrl READ mainApplicationRepositoryUrl CONSTANT)
   Q_PROPERTY(QString mainApplicationRepositoryRevision READ mainApplicationRepositoryRevision CONSTANT)
   Q_PROPERTY(QString mainApplicationRevision READ mainApplicationRevision CONSTANT)
@@ -416,7 +417,15 @@ public:
   bool isCustomMainApplication() const;
 
   /// \brief Return the name of the main application.
+  /// This property represents the internal, programmatic name of the application.
+  /// It is primarily used for identifying the application in system contexts.
   QString mainApplicationName() const;
+
+  /// \brief Return the display name of the main application.
+  /// This property represents the user-visible name of the application.
+  /// It is intended for display in user interfaces, such as window titles,
+  /// taskbar entries, or application menus.
+  QString mainApplicationDisplayName() const;
 
   /// Return the main application's source repository URL associated with this build.
   /// Useful for custom applications.

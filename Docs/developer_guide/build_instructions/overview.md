@@ -22,7 +22,8 @@ If a developer builds the Slicer application then it is expected that the develo
 
 Customized editions of Slicer can be generated without changing Slicer source code, just by modifying CMake variables:
 
-- `SlicerApp_APPLICATION_NAME`: Custom application name to be used, instead of default "Slicer". The name is used in installation package name, window title bar, etc.
+- `SlicerApp_APPLICATION_NAME`: Custom application name to be used, instead of default "Slicer". The name is the internal, programmatic name of the application.
+- `SlicerApp_APPLICATION_DISPLAY_NAME`: Custom application name to be used in display situations. The name is used in user facing text such as window title bar, installation directory name, desktop shortcut names etc.
 - `Slicer_DISCLAIMER_AT_STARTUP`: String that is displayed to the user after first startup of Slicer after installation (disclaimer, welcome message, etc).
 - `Slicer_DEFAULT_HOME_MODULE`: Module name that is activated automatically on application start.
 - `Slicer_DEFAULT_FAVORITE_MODULES`: Modules that will be added to the toolbar by default for easy access. List contains module names, separated by space character.

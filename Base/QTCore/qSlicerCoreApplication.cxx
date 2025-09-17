@@ -52,6 +52,7 @@
 //  - Slicer_CLIMODULES_BIN_DIR
 //  - Slicer_EXTENSIONS_DIRBASENAME
 //  - Slicer_MAIN_PROJECT_APPLICATION_NAME
+//  - Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME
 //  - Slicer_ORGANIZATION_DOMAIN
 //  - Slicer_ORGANIZATION_NAME
 //  - Slicer_QM_DIR
@@ -1794,6 +1795,12 @@ bool qSlicerCoreApplication::isCustomMainApplication() const
 QString qSlicerCoreApplication::mainApplicationName() const
 {
   return QString(Slicer_MAIN_PROJECT_APPLICATION_NAME);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::mainApplicationDisplayName() const
+{
+  return QString(Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME);
 }
 
 //-----------------------------------------------------------------------------

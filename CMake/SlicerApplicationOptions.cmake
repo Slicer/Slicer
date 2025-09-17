@@ -40,6 +40,10 @@ foreach(property IN LISTS application_properties)
   set(Slicer_MAIN_PROJECT_${property} "${${Slicer_MAIN_PROJECT}_${property}}")
 endforeach()
 
+if(NOT DEFINED Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME OR Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME STREQUAL "")
+  set(Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
+endif()
+
 #-----------------------------------------------------------------------------
 # Terminal support
 #-----------------------------------------------------------------------------
