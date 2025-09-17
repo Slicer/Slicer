@@ -218,8 +218,10 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
   else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
-    if (!(reader->GetPointDataType() == vtkDataSetAttributes::VECTORS //
-          || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
+    if (!(reader->GetPointDataType() == vtkDataSetAttributes::VECTORS     //
+          || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS  //
+          || (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS //
+              && reader->GetNumberOfComponents() > 1)))
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;

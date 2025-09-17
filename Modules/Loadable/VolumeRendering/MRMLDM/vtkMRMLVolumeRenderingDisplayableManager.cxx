@@ -1105,10 +1105,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   vtkOpenGLGPUVolumeRayCastMapper* openGLMapper = vtkOpenGLGPUVolumeRayCastMapper::SafeDownCast(mapper);
   if (openGLMapper)
   {
-    int* dims = volumeNode->GetImageData()->GetDimensions();
-    unsigned short partitions[3] = { static_cast<unsigned short>(dims[0] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
-                                     static_cast<unsigned short>(dims[1] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
-                                     static_cast<unsigned short>(dims[2] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1) };
+    int dimensions[3] = { 0, 0, 0 };
+    if (imageData)
+    {
+      imageData->GetDimensions(dimensions);
+    }
+    unsigned short partitions[3] = { static_cast<unsigned short>(dimensions[0] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+                                     static_cast<unsigned short>(dimensions[1] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+                                     static_cast<unsigned short>(dimensions[2] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1) };
     openGLMapper->SetPartitions(partitions[0], partitions[1], partitions[2]);
   }
 
