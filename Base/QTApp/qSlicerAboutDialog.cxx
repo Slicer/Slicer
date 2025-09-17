@@ -48,8 +48,9 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   qSlicerApplication* slicer = qSlicerApplication::application();
+  this->setWindowTitle(tr("About %1").arg(slicer->application()->mainApplicationDisplayName()));
   d->CreditsTextBrowser->setFontPointSize(25);
-  d->CreditsTextBrowser->append(slicer->applicationName());
+  d->CreditsTextBrowser->append(slicer->mainApplicationDisplayName());
   d->CreditsTextBrowser->setFontPointSize(11);
   d->CreditsTextBrowser->append("");
   if (!slicer->isCustomMainApplication())
