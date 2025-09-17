@@ -142,18 +142,26 @@ public:
   /// Remove previous monitored events from \param prevObj and observe events from the \param obj
   /// If both obj are the same, does nothing.
   /// On event triggerred, calls \sa OnUpdate
+  ///
+  /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
   /// @}
+
+  /// Remove all observed events for the input object.
+  /// For updating the observer, use \sa UpdateObserver instead.
+  ///
+  /// \warning prevObj is not mutated by this call.
+  void RemoveObserver(vtkObject* prevObj) const;
+
+  /// Request rendering and camera clipping reset.
+  /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
+  void RequestRender() const;
 
   /// Resets the pipeline display.
   /// Delegates actual work to \sa UpdatePipeline.
   /// Called the first time after pipeline initialization.
   void ResetDisplay();
-
-  /// Request rendering and camera clipping reset.
-  /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
-  void RequestRender() const;
 
   /// Set the new renderer.
   /// Triggers \sa OnRendererAdded and \sa OnRendererRemoved if renderer has changed.
