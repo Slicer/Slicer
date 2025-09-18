@@ -10,9 +10,10 @@
 #include <vtkWeakPointer.h>
 
 // STL includes
+#include <array>
+#include <cstdint>
 #include <map>
 #include <set>
-#include <array>
 
 class vtkMRMLLayerDMPipelineI;
 class vtkRenderWindow;
