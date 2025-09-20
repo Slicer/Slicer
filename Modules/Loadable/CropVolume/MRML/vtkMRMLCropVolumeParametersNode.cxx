@@ -57,6 +57,8 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->IsotropicResampling = false;
   this->SpacingScalingConst = 1.;
   this->FillValue = 0.;
+
+  this->FitROIMode = vtkMRMLCropVolumeParametersNode::FitROIAlignToVolume;
 }
 
 //----------------------------------------------------------------------------
@@ -76,6 +78,7 @@ void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(isotropicResampling, IsotropicResampling);
   vtkMRMLReadXMLFloatMacro(spaceScalingConst, SpacingScalingConst);
   vtkMRMLReadXMLFloatMacro(fillValue, FillValue);
+  vtkMRMLReadXMLEnumMacro(fitROIMode, FitROIMode);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -91,6 +94,7 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(isotropicResampling, IsotropicResampling);
   vtkMRMLWriteXMLFloatMacro(spaceScalingConst, SpacingScalingConst);
   vtkMRMLWriteXMLFloatMacro(fillValue, FillValue);
+  vtkMRMLWriteXMLEnumMacro(fitROIMode, FitROIMode);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -106,6 +110,7 @@ void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepC
   vtkMRMLCopyBooleanMacro(IsotropicResampling);
   vtkMRMLCopyFloatMacro(SpacingScalingConst);
   vtkMRMLCopyFloatMacro(FillValue);
+  vtkMRMLCopyEnumMacro(FitROIMode);
   vtkMRMLCopyEndMacro();
 }
 
@@ -119,6 +124,7 @@ void vtkMRMLCropVolumeParametersNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(IsotropicResampling);
   vtkMRMLPrintFloatMacro(SpacingScalingConst);
   vtkMRMLPrintFloatMacro(FillValue);
+  vtkMRMLPrintEnumMacro(FitROIMode);
   vtkMRMLPrintEndMacro();
 }
 
@@ -206,4 +212,36 @@ void vtkMRMLCropVolumeParametersNode::DeleteROIAlignmentTransformNode()
       this->GetScene()->RemoveNode(transformNode);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLCropVolumeParametersNode::GetFitROIModeAsString(int mode)
+{
+  switch (mode)
+  {
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToVolume: return "AlignToVolume";
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToWorld: return "AlignToWorld";
+    case vtkMRMLCropVolumeParametersNode::FitROIKeepOrientation: return "KeepOrientation";
+    default: vtkGenericWarningMacro("Unknown fit ROI mode: " << mode); return "";
+  }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLCropVolumeParametersNode::GetFitROIModeFromString(const char* name)
+{
+  if (name == nullptr)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int mode = 0; mode < FitROI_Last; mode++)
+  {
+    if (strcmp(name, GetFitROIModeAsString(mode)) == 0)
+    {
+      // found a matching name
+      return mode;
+    }
+  }
+  // unknown name
+  return -1;
 }

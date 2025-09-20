@@ -32,6 +32,7 @@
 #include <vtkMRMLMarkupsROINode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
+#include <vtkMRMLTransformDisplayNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -114,6 +115,16 @@ public:
     else
     {
       vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::vtkInternal::SetROIRadius failed: invalid ROI");
+    }
+  }
+
+  static void GetMatrixTransformFromObjectToWorld(vtkMRMLDisplayableNode* roi, vtkMatrix4x4* objectToNode)
+  {
+    vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(roi->GetParentTransformNode(), nullptr, objectToNode);
+    vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(roi);
+    if (markupsROI)
+    {
+      vtkMatrix4x4::Multiply4x4(objectToNode, markupsROI->GetObjectToNodeMatrix(), objectToNode);
     }
   }
 
@@ -619,6 +630,33 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi,
 }
 
 //-----------------------------------------------------------------------------
+bool vtkSlicerCropVolumeLogic::FitROI(vtkMRMLCropVolumeParametersNode* parametersNode)
+{
+  if (!parametersNode)
+  {
+    return false;
+  }
+
+  switch (parametersNode->GetFitROIMode())
+  {
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToVolume: //
+      vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(parametersNode);
+      break;
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToWorld: //
+      vtkSlicerCropVolumeLogic::SnapROIToWorld(parametersNode);
+      break;
+    case vtkMRMLCropVolumeParametersNode::FitROIKeepOrientation: //
+      // No need to reorient
+      break;
+    default: //
+      vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::FitROI: invalid fit mode " << parametersNode->GetFitROIMode());
+      return false;
+  }
+
+  return vtkSlicerCropVolumeLogic::FitROIToInputVolume(parametersNode);
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSlicerCropVolumeLogic::FitROIToInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode)
 {
   if (!parametersNode)
@@ -809,6 +847,53 @@ void vtkSlicerCropVolumeLogic::SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNod
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerCropVolumeLogic::SnapROIToWorld(vtkMRMLCropVolumeParametersNode* parametersNode)
+{
+  if (!parametersNode || !parametersNode->GetInputVolumeNode() || !parametersNode->GetROINode())
+  {
+    // no misalignment (not enough nodes to be misaligned)
+    return;
+  }
+
+  // Is it already aligned?
+  if (IsROIAlignedWithWorld(parametersNode))
+  {
+    // already aligned, nothing to do
+    return;
+  }
+
+  vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(parametersNode->GetROINode());
+  if (!markupsROI)
+  {
+    // this only works for markups ROI, not for legacy annotation ROI node
+    return;
+  }
+
+  double originalBounds_World[6] = { 0, -1, 0, -1, 0, -1 };
+  markupsROI->GetRASBounds(originalBounds_World);
+
+  // Adjust the orientation of the ROI to be aligned with world coordinate axes even if under a transform
+
+  vtkNew<vtkMatrix4x4> worldToObjectLocalTransformMatrix;
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, markupsROI->GetParentTransformNode(), worldToObjectLocalTransformMatrix);
+  double scale[3] = { 1.0 };
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(worldToObjectLocalTransformMatrix, scale);
+
+  MRMLNodeModifyBlocker blocker(markupsROI);
+  markupsROI->GetObjectToNodeMatrix()->DeepCopy(worldToObjectLocalTransformMatrix);
+  markupsROI->UpdateControlPointsFromROI();
+  markupsROI->Modified();
+
+  // Update ROI to match original region
+  markupsROI->SetCenterWorld((originalBounds_World[0] + originalBounds_World[1]) / 2.0,
+                             (originalBounds_World[2] + originalBounds_World[3]) / 2.0,
+                             (originalBounds_World[4] + originalBounds_World[5]) / 2.0);
+  markupsROI->SetSizeWorld(originalBounds_World[1] - originalBounds_World[0], //
+                           originalBounds_World[3] - originalBounds_World[2], //
+                           originalBounds_World[5] - originalBounds_World[4]);
+}
+
+//----------------------------------------------------------------------------
 bool vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode)
 {
   if (!parametersNode || !parametersNode->GetInputVolumeNode() || !parametersNode->GetROINode())
@@ -853,4 +938,157 @@ bool vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(vtkMRMLCropVolumePara
     }
   }
   return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerCropVolumeLogic::IsROIAlignedWithWorld(vtkMRMLCropVolumeParametersNode* parametersNode)
+{
+  if (!parametersNode || !parametersNode->GetROINode())
+  {
+    // no misalignment (not enough nodes to be misaligned)
+    return true;
+  }
+
+  vtkMRMLMarkupsROINode* markupsROI = vtkMRMLMarkupsROINode::SafeDownCast(parametersNode->GetROINode());
+  if (!markupsROI)
+  {
+    // this only works for markups ROI, not for legacy annotation ROI node
+    return false;
+  }
+
+  vtkMatrix4x4* objectToWorldMatrix = markupsROI->GetObjectToWorldMatrix();
+  vtkNew<vtkMatrix3x3> objectToWorldOrientationMatrix;
+  vtkAddonMathUtilities::GetOrientationMatrix(objectToWorldMatrix, objectToWorldOrientationMatrix);
+  double scale[3] = { 1.0, 1.0, 1.0 };
+  vtkAddonMathUtilities::NormalizeColumns(objectToWorldOrientationMatrix, scale);
+
+  vtkNew<vtkMatrix3x3> identityMatrix;
+  return vtkAddonMathUtilities::MatrixAreEqual(objectToWorldOrientationMatrix, identityMatrix, 0.001);
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerCropVolumeLogic::ReorientVolumeStart(vtkMRMLCropVolumeParametersNode* parametersNode)
+{
+  if (!parametersNode)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::ReorientVolumeStart failed: invalid parametersNode");
+    return false;
+  }
+  vtkMRMLVolumeNode* inputVolume = parametersNode->GetInputVolumeNode();
+  if (!inputVolume)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::ReorientVolumeStart failed: invalid input volume");
+    return false;
+  }
+
+  vtkMRMLTransformNode* transformNode = this->GetReorientTransformNode(parametersNode);
+
+  // Create new reorientation transform if needed
+  if (!transformNode)
+  {
+    std::stringstream transformNameSS;
+    transformNameSS << "Reorient_" << inputVolume->GetName();
+    transformNode = vtkMRMLTransformNode::SafeDownCast(inputVolume->GetScene()->AddNewNodeByClass("vtkMRMLTransformNode", transformNameSS.str()));
+    transformNode->SetAttribute("CropVolume.Reorient", "1");
+
+    double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+    inputVolume->GetBounds(bounds);
+    transformNode->SetCenterOfTransformation((bounds[1] + bounds[0]) / 2.0, (bounds[3] + bounds[2]) / 2.0, (bounds[5] + bounds[4]) / 2.0);
+
+    transformNode->CreateDefaultDisplayNodes();
+
+    // Insert transform in the transform tree above the volume
+    vtkMRMLTransformNode* transformNodeParent = inputVolume->GetParentTransformNode();
+    inputVolume->SetAndObserveTransformNodeID(transformNode->GetID());
+    if (transformNodeParent)
+    {
+      transformNode->SetAndObserveTransformNodeID(transformNodeParent->GetID());
+    }
+  }
+
+  // Show rotation handles
+  transformNode->CreateDefaultDisplayNodes();
+  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+  if (!displayNode)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::ReorientVolumeStart failed: failed to get transform display node");
+    return false;
+  }
+  displayNode->SetEditorTranslationEnabled(false);
+  displayNode->SetEditorScalingEnabled(false);
+  displayNode->SetEditorVisibility(true);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerCropVolumeLogic::ReorientVolumeEnd(vtkMRMLCropVolumeParametersNode* parametersNode, bool apply)
+{
+  if (!parametersNode)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::ReorientVolumeEnd failed: invalid parametersNode");
+    return false;
+  }
+  vtkMRMLVolumeNode* inputVolume = parametersNode->GetInputVolumeNode();
+  if (!inputVolume)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::ReorientVolumeEnd failed: invalid input volume");
+    return false;
+  }
+
+  vtkMRMLTransformNode* transformNode = this->GetReorientTransformNode(parametersNode);
+  if (!transformNode)
+  {
+    // This is not a transform that we created for reorienting the volume, do not use it
+    return false;
+  }
+
+  // Harden the transform
+  vtkMRMLTransformNode* transformNodeParent = transformNode->GetParentTransformNode();
+
+  // Set the parent of the reorientation transform to nullptr so that only the reorientation transform is
+  // hardened on the volume.
+  transformNode->SetAndObserveTransformNodeID(nullptr);
+  if (apply)
+  {
+    inputVolume->HardenTransform();
+  }
+  // Set the original parent transform to the volume (if any)
+  if (transformNodeParent)
+  {
+    inputVolume->SetAndObserveTransformNodeID(transformNodeParent->GetID());
+  }
+
+  // Remove temporary nodes
+  vtkMRMLDisplayNode* displayNode = transformNode->GetDisplayNode();
+  if (displayNode)
+  {
+    displayNode->GetScene()->RemoveNode(displayNode);
+  }
+  transformNode->GetScene()->RemoveNode(transformNode);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLTransformNode* vtkSlicerCropVolumeLogic::GetReorientTransformNode(vtkMRMLCropVolumeParametersNode* parametersNode)
+{
+  if (!parametersNode)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::GetReorientTransformNode failed: invalid parametersNode");
+    return nullptr;
+  }
+  vtkMRMLVolumeNode* inputVolume = parametersNode->GetInputVolumeNode();
+  if (!inputVolume)
+  {
+    vtkErrorMacro("vtkSlicerCropVolumeLogic::GetReorientTransformNode failed: invalid input volume");
+    return nullptr;
+  }
+  vtkMRMLTransformNode* transformNode = inputVolume->GetParentTransformNode();
+  if (!transformNode || !transformNode->GetAttribute("CropVolume.Reorient"))
+  {
+    // This is not a transform that we created for reorienting the volume, do not use it
+    return nullptr;
+  }
+  return transformNode;
 }
