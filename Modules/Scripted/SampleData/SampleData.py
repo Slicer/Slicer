@@ -245,6 +245,20 @@ class SampleDataSource:
 # SampleData widget
 #
 
+class TextEditFinishEventFilter(qt.QObject):
+
+    def __init__(self, *args, **kwargs):
+        qt.QObject.__init__(self, *args, **kwargs)
+        self.textEditFinishedCallback = None
+
+    def eventFilter(self, object, event):
+        if self.textEditFinishedCallback is None:
+            return
+        if (event.type() == qt.QEvent.KeyPress and event.key() in (qt.Qt.Key_Return, qt.Qt.Key_Enter)
+                and (event.modifiers() & qt.Qt.ControlModifier)):
+            self.textEditFinishedCallback()
+            return True  # stop further handling
+        return False
 
 class SampleDataWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -272,12 +286,20 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         customFrame = ctk.ctkCollapsibleGroupBox()
         self.categoryLayout.addWidget(customFrame)
         customFrame.title = _("Load data from URL")
-        customFrameLayout = qt.QHBoxLayout()
+        customFrameLayout = qt.QVBoxLayout()
         customFrame.setLayout(customFrameLayout)
-        self.customSampleLabel = qt.QLabel(_("URL:"))
+        self.customSampleLabel = qt.QLabel(_("Download URLs:"))
         customFrameLayout.addWidget(self.customSampleLabel)
-        self.customSampleName = qt.QLineEdit()
-        customFrameLayout.addWidget(self.customSampleName)
+        self.customSampleUrlEdit = qt.QTextEdit()
+        self.customSampleUrlEdit.toolTip = _("Enter one or more URLs (one per line) to download and load the corresponding data sets. "
+                                            "Press Ctrl+Enter or click 'Load' button to start loading.")
+
+        # Install event filter to catch Ctrl+Enter keypress to start loading
+        self.customSampleUrlEditFinishedEventFilter = TextEditFinishEventFilter()
+        self.customSampleUrlEditFinishedEventFilter.textEditFinishedCallback = self.onCustomDataDownload
+        self.customSampleUrlEdit.installEventFilter(self.customSampleUrlEditFinishedEventFilter)
+
+        customFrameLayout.addWidget(self.customSampleUrlEdit)
         self.customDownloadButton = qt.QPushButton(_("Load"))
         self.customDownloadButton.toolTip = _("Download the dataset from the given URL and import it into the scene")
         self.customDownloadButton.default = True
@@ -286,7 +308,6 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         self.showCustomDataFolderButton.toolTip = _("Show folder where custom data sets are downloaded ({path}).").format(path=slicer.app.cachePath)
         customFrameLayout.addWidget(self.showCustomDataFolderButton)
         customFrame.collapsed = True
-        self.customSampleName.connect("returnPressed()", self.onCustomDataDownload)
         self.customDownloadButton.connect("clicked()", self.onCustomDataDownload)
         self.showCustomDataFolderButton.connect("clicked()", self.onShowCustomDataFolder)
 
@@ -301,7 +322,39 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         SampleDataWidget.setCategoriesFromSampleDataSources(self.categoryLayout, {}, self.logic)
 
     def onCustomDataDownload(self):
-        self.logic.downloadFromURL(self.customSampleName.text)
+        uris = self.customSampleUrlEdit.toPlainText().strip()
+        if not uris:
+            return
+        uriList = [u.strip() for u in uris.splitlines() if u.strip()]
+        totalCount = 0
+        errorCount = 0
+        for uri in uriList:
+            self.logMessage(f"Downloading data from {uri} ...", logging.INFO)
+            if not uri:
+                continue
+            try:
+                totalCount += 1
+                # Get filename from URL
+                import urllib
+                parsedUrl = urllib.parse.urlparse(uri)
+                basename, ext = os.path.splitext(os.path.basename(parsedUrl.path))
+                filename = basename + ext
+                # Download
+                result = self.logic.downloadFromURL(uris=uri, fileNames=filename, forceDownload=True)
+                if not result:
+                    errorCount += 1
+            except Exception as e:
+                errorCount += 1
+                self.logMessage(f"Data download from {uri} failed: {str(e)}", logging.ERROR)
+                import traceback
+                traceback.print_exc()
+
+        if totalCount > 1:
+            self.logMessage("", logging.INFO)
+            if errorCount == 0:
+                self.logMessage(_("All {totalCount} data sets were loaded successfully.").format(totalCount=totalCount), logging.INFO)
+            else:
+                self.logMessage(_("Failed to load {errorCount} out of {totalCount} data sets.").format(errorCount=errorCount, totalCount=totalCount), logging.ERROR)
 
     def onShowCustomDataFolder(self):
         qt.QDesktopServices.openUrl(qt.QUrl("file:///" + slicer.app.cachePath, qt.QUrl.TolerantMode))
@@ -536,6 +589,22 @@ class SampleDataLogic:
 
         return sampleDataSource in slicer.modules.sampleDataSources.get(category, [])
 
+    @staticmethod
+    def registerUrlRewriteRule(name, rewriteFunction):
+        """Adds a URL rewrite rule for custom data sets in SampleData.
+        :param name: Name of the rewrite rule.
+        :param rewriteFunction: Function that implements the rewrite logic.
+        """
+        if not callable(rewriteFunction):
+            raise TypeError(f"Expected 'rewriteFunction' to be callable, got {type(rewriteFunction)}")
+
+        try:
+            slicer.modules.sampleDataUrlRewriteRules
+        except AttributeError:
+            slicer.modules.sampleDataUrlRewriteRules = {}
+
+        slicer.modules.sampleDataUrlRewriteRules[name] = rewriteFunction
+
     def __init__(self, logMessage=None):
         if logMessage:
             self.logMessage = logMessage
@@ -545,6 +614,7 @@ class SampleDataLogic:
         self.registerDevelopmentSampleDataSources()
         if slicer.app.testingEnabled():
             self.registerTestingDataSources()
+        self.registerBuiltInUrlRewriteRules()
         self.downloadPercent = 0
 
     def registerBuiltInSampleDataSources(self):
@@ -653,9 +723,55 @@ class SampleDataLogic:
         """Register sample data sources used by SampleData self-test to test module functionalities."""
         self.registerCustomSampleDataSource(**SampleDataTest.CustomDownloaderDataSource)
 
-    def downloadFileIntoCache(self, uri, name, checksum=None):
-        """Given a uri and and a filename, download the data into
-        a file of the given name in the scene's cache
+    def registerBuiltInUrlRewriteRules(self):
+        """Register built-in URL rewrite rules."""
+
+        def githubFileWebpageUrlRewriteRule(url):
+            """Rewrite GitHub file webpage URL to download URL.
+            Example:
+              https://github.com/SlicerMorph/terms-and-colors/blob/main/JaimiGrayTetrapodSkulls.csv
+            is automatically converted to
+              https://raw.githubusercontent.com/SlicerMorph/terms-and-colors/refs/heads/main/JaimiGrayTetrapodSkulls.csv
+            """
+            import urllib.parse as urlparse
+            parsedUrl = urlparse.urlparse(url)
+            if parsedUrl.scheme != "https" or parsedUrl.netloc != "github.com":
+                return url
+            pathParts = parsedUrl.path.split("/")
+            if len(pathParts) <= 4:
+                return url
+            organization = pathParts[1]
+            repository = pathParts[2]
+            rootFolder = pathParts[3]
+            filePath = "/".join(pathParts[4:])
+            if rootFolder != "blob":
+                return url
+            parsedUrl = parsedUrl._replace(netloc="raw.githubusercontent.com")
+            parsedUrl = parsedUrl._replace(path="/".join([organization, repository, "refs", "heads"]) + "/" + filePath)
+            return parsedUrl.geturl()
+
+        def dropboxDownloadUrlRewriteRule(url):
+            """Rewrite Dropbox shared link to direct download link.
+            Example:
+              https://www.dropbox.com/s/abcd1234efgh5678/myfile.nrrd
+            is automatically converted to
+              https://dl.dropbox.com/s/abcd1234efgh5678/myfile.nrrd
+            """
+            import urllib.parse as urlparse
+            parsedUrl = urlparse.urlparse(url)
+            if parsedUrl.scheme != "https" or parsedUrl.netloc != "www.dropbox.com":
+                return url
+            parsedUrl = parsedUrl._replace(netloc="dl.dropbox.com")
+            return parsedUrl.geturl()
+
+        self.registerUrlRewriteRule("GitHubFileWebpage", githubFileWebpageUrlRewriteRule)
+        self.registerUrlRewriteRule("DropboxDownloadLink", dropboxDownloadUrlRewriteRule)
+
+    def downloadFileIntoCache(self, uri, name, checksum=None, forceDownload=False):
+        """Given a uri and a filename, download the data into
+        a file of the given name in the scene's cache.
+        If checksum is provided then it is used to decide if the file has to be downloaded again.
+        If checksum is not provided then the file is not downloaded again unless forceDownload is True.
         """
         destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
 
@@ -666,7 +782,7 @@ class SampleDataLogic:
                 self.logMessage(_("Failed to create cache folder {path}").format(path=destFolderPath), logging.ERROR)
             if not os.access(destFolderPath, os.W_OK):
                 self.logMessage(_("Cache folder {path} is not writable").format(path=destFolderPath), logging.ERROR)
-        return self.downloadFile(uri, destFolderPath, name, checksum)
+        return self.downloadFile(uri, destFolderPath, name, checksum, forceDownload=forceDownload)
 
     def downloadSourceIntoCache(self, source):
         """Download all files for the given source and return a
@@ -677,7 +793,7 @@ class SampleDataLogic:
             filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
         return filePaths
 
-    def downloadFromSource(self, source, maximumAttemptsCount=3):
+    def downloadFromSource(self, source, maximumAttemptsCount=3, forceDownload=False):
         """Given an instance of SampleDataSource, downloads the associated data and
         load them into Slicer if it applies.
 
@@ -692,6 +808,8 @@ class SampleDataLogic:
 
         If no ``nodeNames`` and no ``fileTypes`` are specified or if ``loadFiles`` are all False,
         returns the list of all downloaded filepaths.
+
+        If ``forceDownload`` is True then existing files are downloaded again (if no hash is provided).
         """
 
         # Input may contain urls without associated node names, which correspond to additional data files
@@ -740,12 +858,11 @@ class SampleDataLogic:
 
                 # Download
                 try:
-                    filePath = self.downloadFileIntoCache(uri, fileName, checksum)
+                    filePath = self.downloadFileIntoCache(uri, fileName, checksum, forceDownload=forceDownload)
                 except ValueError:
                     self.logMessage(_("Download failed (attempt {current} of {total})...").format(
                         current=attemptsCount + 1, total=maximumAttemptsCount), logging.ERROR)
                     continue
-                resultFilePaths.append(filePath)
 
                 # Special behavior (how `loadFileType` is used and what is returned in `resultNodes` ) is implemented
                 # for scene and zip file loading, for preserving backward compatible behavior.
@@ -791,6 +908,7 @@ class SampleDataLogic:
                         break
                 else:
                     # no need to load node
+                    resultFilePaths.append(filePath)
                     break
 
                 # Failed. Clean up downloaded file (it might have been a partial download)
@@ -827,7 +945,7 @@ class SampleDataLogic:
         return None
 
     def downloadFromURL(self, uris=None, fileNames=None, nodeNames=None, checksums=None, loadFiles=None,
-                        customDownloader=None, loadFileTypes=None, loadFileProperties={}):
+                        customDownloader=None, loadFileTypes=None, loadFileProperties={}, forceDownload=False):
         """Download and optionally load data into the application.
 
         :param uris: Download URL(s).
@@ -857,11 +975,14 @@ class SampleDataLogic:
         The ``loadFileProperties`` are common for all files. If different properties
         need to be associated with files of different types, downloadFromURL must
         be called for each.
+
+        If ``forceDownload`` is True then existing files are downloaded again (if no hash is provided).
         """
-        return self.downloadFromSource(SampleDataSource(
+        source = SampleDataSource(
             uris=uris, fileNames=fileNames, nodeNames=nodeNames, loadFiles=loadFiles,
             loadFileTypes=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums,
-        ))
+            customDownloader=customDownloader)
+        return self.downloadFromSource(source, forceDownload=forceDownload)
 
     def downloadSample(self, sampleName):
         """For a given sample name this will search the available sources
@@ -941,17 +1062,35 @@ class SampleDataLogic:
                             sizeCompleted=humanSizeSoFar, percentCompleted=percent, sizeTotal=humanSizeTotal) + "</i>")
             self.downloadPercent = percent
 
-    def downloadFile(self, uri, destFolderPath, name, checksum=None):
+    @staticmethod
+    def rewriteUrl(url):
+        """Apply all registered URL rewrite rules to the given URL."""
+
+        try:
+            slicer.modules.sampleDataUrlRewriteRules
+        except AttributeError:
+            # No rules are registered
+            return url
+
+        for rule in slicer.modules.sampleDataUrlRewriteRules.values():
+            url = rule(url)
+        return url
+
+    def downloadFile(self, uri, destFolderPath, name, checksum=None, forceDownload=False):
         """
-        :param uri: Download URL.
+        :param uri: Download URL. It is rewritten using registered URL rewrite rules before download.
         :param destFolderPath: Folder to download the file into.
         :param name: File name that will be downloaded.
         :param checksum: Checksum formatted as ``<algo>:<digest>`` to verify the downloaded file. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
+        :param forceDownload: If True then the file is always downloaded even if it already exists in the destination folder.
         """
+
+        uri = self.rewriteUrl(uri)
+
         self.downloadPercent = 0
         filePath = destFolderPath + "/" + name
         (algo, digest) = extractAlgoAndDigest(checksum)
-        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+        if forceDownload or not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
             import urllib.request, urllib.parse, urllib.error
 
             self.logMessage(_("Requesting download {name} from {uri} ...").format(name=name, uri=uri))
