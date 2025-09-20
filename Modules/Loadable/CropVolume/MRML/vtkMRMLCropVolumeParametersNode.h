@@ -35,6 +35,14 @@ public:
     InterpolationBSpline = 4
   };
 
+  enum
+  {
+    FitROIAlignToVolume = 0,   ///< Before resizing the ROI, ROI orientation is adjusted to align with the axes of the input volume
+    FitROIAlignToWorld = 1,    ///< Before resizing the ROI, ROI orientation is adjusted to align with the world coordinate system axes
+    FitROIKeepOrientation = 2, ///< The ROI orientation is not modified during fitting
+    FitROI_Last                ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last = FitROI_Last)
+  };
+
   static vtkMRMLCropVolumeParametersNode* New();
   vtkTypeMacro(vtkMRMLCropVolumeParametersNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -97,6 +105,16 @@ public:
   vtkSetMacro(FillValue, double);
   vtkGetMacro(FillValue, double);
 
+  /// Set method for fitting the ROI to the input volume.
+  /// Before resizing the ROI, orientation of the ROI is adjusted according to chosen option:
+  /// - FitROIAlignToVolume to align with the axes of the input volume (default)
+  /// - FitROIAlignToWorld to align with world coordinate system axes
+  /// - FitROIKeepOrientation to keep the current orientation
+  vtkSetMacro(FitROIMode, int);
+  vtkGetMacro(FitROIMode, int);
+  static const char* GetFitROIModeAsString(int slabReconstructionType);
+  static int GetFitROIModeFromString(const char* name);
+
 protected:
   vtkMRMLCropVolumeParametersNode();
   ~vtkMRMLCropVolumeParametersNode() override;
@@ -109,6 +127,7 @@ protected:
   bool IsotropicResampling;
   double SpacingScalingConst;
   double FillValue;
+  int FitROIMode;
 };
 
 #endif

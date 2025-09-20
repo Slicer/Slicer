@@ -1,6 +1,11 @@
 // Qt includes
+#include <QActionGroup>
 #include <QDebug>
+#include <QMenu>
 #include <QMessageBox>
+
+// CTK includes
+#include <ctkSignalMapper.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -53,6 +58,10 @@ public:
   vtkWeakPointer<vtkMRMLCropVolumeParametersNode> ParametersNode;
   vtkWeakPointer<vtkMRMLVolumeNode> InputVolumeNode;
   vtkWeakPointer<vtkMRMLTransformableNode> InputROINode;
+
+  ctkSignalMapper* FitROIModeMapper{ nullptr };
+
+  QMenu* FitROIModeMenu{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -219,9 +228,35 @@ void qSlicerCropVolumeModuleWidget::setup()
 
   this->Superclass::setup();
 
+  // Set up menu for selecting ROI fit mode
+
+  QActionGroup* fitROIModeActions = new QActionGroup(this);
+  fitROIModeActions->setExclusive(true);
+  fitROIModeActions->addAction(d->ROIFitAlignToVolumeAction);
+  fitROIModeActions->addAction(d->ROIFitAlignToWorldAction);
+  fitROIModeActions->addAction(d->ROIFitKeepOrientationAction);
+
+  d->FitROIModeMapper = new ctkSignalMapper(this);
+  d->FitROIModeMapper->setMapping(d->ROIFitAlignToVolumeAction, vtkMRMLCropVolumeParametersNode::FitROIAlignToVolume);
+  d->FitROIModeMapper->setMapping(d->ROIFitAlignToWorldAction, vtkMRMLCropVolumeParametersNode::FitROIAlignToWorld);
+  d->FitROIModeMapper->setMapping(d->ROIFitKeepOrientationAction, vtkMRMLCropVolumeParametersNode::FitROIKeepOrientation);
+  QObject::connect(fitROIModeActions, SIGNAL(triggered(QAction*)), d->FitROIModeMapper, SLOT(map(QAction*)));
+  QObject::connect(d->FitROIModeMapper, SIGNAL(mapped(int)), this, SLOT(setFitROIMode(int)));
+
+  d->FitROIModeMenu = new QMenu(tr("ROI fit mode"), d->ROIFitPushButton);
+  d->FitROIModeMenu->setObjectName("ROIFitModeMenu");
+  d->ROIFitPushButton->setMenu(d->FitROIModeMenu);
+  d->FitROIModeMenu->addActions(fitROIModeActions->actions());
+
+  // Set up connections
+
   connect(d->ParametersNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setParametersNode(vtkMRMLNode*)));
 
   connect(d->InputVolumeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setInputVolume(vtkMRMLNode*)));
+
+  connect(d->ReorientInputVolumeInitializeButton, SIGNAL(clicked()), this, SLOT(onReorientInputVolumeInitialize()));
+  connect(d->ReorientInputVolumeApplyButton, SIGNAL(clicked()), this, SLOT(onReorientInputVolumeApply()));
+  connect(d->ReorientInputVolumeCancelButton, SIGNAL(clicked()), this, SLOT(onReorientInputVolumeCancel()));
 
   connect(d->InputROIComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setInputROI(vtkMRMLNode*)));
   connect(d->InputROIComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), this, SLOT(initializeInputROI(vtkMRMLNode*)));
@@ -498,8 +533,7 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged(bool visible)
 void qSlicerCropVolumeModuleWidget::onROIFit()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
-  d->logic()->SnapROIToVoxelGrid(d->ParametersNode);
-  d->logic()->FitROIToInputVolume(d->ParametersNode);
+  d->logic()->FitROI(d->ParametersNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -615,6 +649,8 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
     d->InputROIComboBox->setCurrentNode(nullptr);
     d->OutputVolumeComboBox->setCurrentNode(nullptr);
 
+    d->ReorientInputVolumeGroupBox->setEnabled(false);
+
     d->InterpolationEnabledCheckBox->setChecked(true);
     d->VisibilityButton->setChecked(true);
 
@@ -626,10 +662,25 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
     this->updateVolumeInfo();
 
     d->CropButton->setEnabled(false);
+    d->ROIFitPushButton->setEnabled(false);
     return;
   }
 
   d->CropButton->setEnabled(inputCheckErrorMessage.isEmpty());
+  d->ROIFitPushButton->setEnabled(d->ParametersNode->GetInputVolumeNode() != nullptr);
+
+  d->ReorientInputVolumeGroupBox->setEnabled(d->ParametersNode->GetInputVolumeNode() != nullptr);
+  bool reorientInProgress = d->logic()->GetReorientTransformNode(d->ParametersNode);
+  d->ReorientInputVolumeInitializeButton->setEnabled(!reorientInProgress);
+  d->ReorientInputVolumeApplyButton->setEnabled(reorientInProgress);
+  d->ReorientInputVolumeCancelButton->setEnabled(reorientInProgress);
+
+  switch (d->ParametersNode->GetFitROIMode())
+  {
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToVolume: d->ROIFitAlignToVolumeAction->setChecked(true); break;
+    case vtkMRMLCropVolumeParametersNode::FitROIAlignToWorld: d->ROIFitAlignToWorldAction->setChecked(true); break;
+    case vtkMRMLCropVolumeParametersNode::FitROIKeepOrientation: d->ROIFitKeepOrientationAction->setChecked(true); break;
+  }
 
   d->InputVolumeComboBox->setCurrentNode(d->ParametersNode->GetInputVolumeNode());
   d->InputROIComboBox->setCurrentNode(d->ParametersNode->GetROINode());
@@ -735,4 +786,39 @@ void qSlicerCropVolumeModuleWidget::onVolumeInformationSectionClicked(bool isOpe
   {
     this->updateVolumeInfo();
   }
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::setFitROIMode(int fitROIMode)
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  if (!d->ParametersNode)
+  {
+    return;
+  }
+  d->ParametersNode->SetFitROIMode(fitROIMode);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::onReorientInputVolumeInitialize()
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  d->logic()->ReorientVolumeStart(d->ParametersNode);
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::onReorientInputVolumeApply()
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  d->logic()->ReorientVolumeEnd(d->ParametersNode, true);
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::onReorientInputVolumeCancel()
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  d->logic()->ReorientVolumeEnd(d->ParametersNode, false);
+  this->updateWidgetFromMRML();
 }

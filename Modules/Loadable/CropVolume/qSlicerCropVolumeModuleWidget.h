@@ -35,12 +35,16 @@ protected slots:
   void setInputVolume(vtkMRMLNode*);
   void setOutputVolume(vtkMRMLNode* node);
   void setInputROI(vtkMRMLNode*);
+  void setFitROIMode(int);
   void initializeInputROI(vtkMRMLNode*);
   /// when ROIs get added to the node selector, if the selector doesn't
   /// have a current node, select it
   void onInputROIAdded(vtkMRMLNode* node);
 
   void onROIVisibilityChanged(bool);
+  void onReorientInputVolumeInitialize();
+  void onReorientInputVolumeApply();
+  void onReorientInputVolumeCancel();
   void onROIFit();
   void onInterpolationModeChanged();
   void onApply();

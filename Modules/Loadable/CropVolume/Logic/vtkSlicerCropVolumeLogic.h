@@ -22,10 +22,13 @@
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
-class vtkMRMLVolumeNode;
 class vtkMRMLDisplayableNode;
-// vtk includes
+class vtkMRMLTransformNode;
+class vtkMRMLVolumeNode;
+
+// VTK includes
 class vtkMatrix4x4;
+
 // CropVolumes includes
 #include "vtkSlicerCropVolumeModuleLogicExport.h"
 class vtkMRMLCropVolumeParametersNode;
@@ -92,15 +95,24 @@ public:
                                                 int outputExtent[6],
                                                 double outputSpacing[3]);
 
+  /// Sets ROI to fit to input volume. Orientation of the ROI set based on FitROIMode setting.
+  static bool FitROI(vtkMRMLCropVolumeParametersNode* parametersNode);
+
   /// Sets ROI to fit to input volume.
   /// If ROI is under a non-linear transform then the ROI transform will be reset to RAS.
   static bool FitROIToInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode);
 
   static void SnapROIToVoxelGrid(vtkMRMLCropVolumeParametersNode* parametersNode);
+  static void SnapROIToWorld(vtkMRMLCropVolumeParametersNode* parametersNode);
 
   static bool IsROIAlignedWithInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode);
+  static bool IsROIAlignedWithWorld(vtkMRMLCropVolumeParametersNode* parametersNode);
 
   void RegisterNodes() override;
+
+  bool ReorientVolumeStart(vtkMRMLCropVolumeParametersNode* parametersNode);
+  bool ReorientVolumeEnd(vtkMRMLCropVolumeParametersNode* parametersNode, bool apply);
+  vtkMRMLTransformNode* GetReorientTransformNode(vtkMRMLCropVolumeParametersNode* parametersNode);
 
 protected:
   vtkSlicerCropVolumeLogic();

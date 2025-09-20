@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>583</width>
-    <height>792</height>
+    <width>317</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -160,14 +160,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="InputROILabel">
         <property name="text">
          <string>Input ROI:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="qMRMLNodeComboBox" name="InputROIComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -197,7 +197,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="spacing">
          <number>6</number>
@@ -227,10 +227,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="ROIFitPushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
+         <widget class="ctkMenuButton" name="ROIFitPushButton">
           <property name="text">
            <string>Fit to Volume</string>
           </property>
@@ -242,14 +239,14 @@
         </item>
        </layout>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="OutputVolumeLabel">
         <property name="text">
          <string>Output volume:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="qMRMLNodeComboBox" name="OutputVolumeComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -278,6 +275,42 @@
         <property name="noneDisplay">
          <string>Create new volume</string>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkCollapsibleGroupBox" name="ReorientInputVolumeGroupBox">
+        <property name="title">
+         <string>Reorient volume</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <property name="collapsedHeight">
+         <number>3</number>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <widget class="QPushButton" name="ReorientInputVolumeCancelButton">
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="ReorientInputVolumeApplyButton">
+           <property name="text">
+            <string>Apply</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QPushButton" name="ReorientInputVolumeInitializeButton">
+           <property name="text">
+            <string>Initialize</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -319,6 +352,35 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="FillValueLabel">
+        <property name="text">
+         <string>Fill value:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkDoubleSpinBox" name="FillValueSpinBox">
+        <property name="toolTip">
+         <string>Voxel values outside the input volume will be filled with this value</string>
+        </property>
+        <property name="decimalsOption">
+         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
+        </property>
+        <property name="minimum">
+         <double>-65536.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>65535.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="setMode">
+         <enum>ctkDoubleSpinBox::SetAlways</enum>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="IsotropicOutputVoxelLabel_2">
         <property name="text">
@@ -388,13 +450,6 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="InterpolatorLabel">
-        <property name="text">
-         <string>Interpolator:</string>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="1">
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="1">
@@ -438,35 +493,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="FillValueLabel">
-        <property name="text">
-         <string>Fill value:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="ctkDoubleSpinBox" name="FillValueSpinBox">
-        <property name="toolTip">
-         <string>Voxel values outside the input volume will be filled with this value</string>
-        </property>
-        <property name="decimalsOption">
-         <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
-        </property>
-        <property name="minimum">
-         <double>-65536.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>65535.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>10.000000000000000</double>
-        </property>
-        <property name="setMode">
-         <enum>ctkDoubleSpinBox::SetAlways</enum>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -722,6 +748,39 @@
     </spacer>
    </item>
   </layout>
+  <action name="ROIFitAlignToVolumeAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Align to volume axes + Resize</string>
+   </property>
+   <property name="toolTip">
+    <string>Set axes of the ROI box to match the volume axes</string>
+   </property>
+  </action>
+  <action name="ROIFitAlignToWorldAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Align to world axes + Resize</string>
+   </property>
+   <property name="toolTip">
+    <string>Set axes of the ROI box to match the world coordinate system axes</string>
+   </property>
+  </action>
+  <action name="ROIFitKeepOrientationAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Resize only</string>
+   </property>
+   <property name="toolTip">
+    <string>Do not change ROI box orientation</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -753,6 +812,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
    <header>ctkCoordinatesWidget.h</header>
@@ -766,6 +831,11 @@
    <class>ctkFittedTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>ctkFittedTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -962,22 +1032,6 @@
     <hint type="destinationlabel">
      <x>154</x>
      <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>InputROIComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ROIFitPushButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>279</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>278</x>
-     <y>160</y>
     </hint>
    </hints>
   </connection>

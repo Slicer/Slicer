@@ -22,7 +22,9 @@ Most frequently used for these scenarios:
 
 * **Registration of two objects that occupy smaller portions of the image**. In this scenario, cropping will allow you to focus the processing at the region of interest, and simplify registration initialization.
 
-* **Definition of new axis directions** for your image: [Interpolated cropping options](#interpolated-cropping-options) allows the output volume to have different axis directions that the original volume. The output volume's axis directions will be aligned with the ROI widget's axes. ROI widget axes can be rotated using the [Transforms](transforms.md) module.
+* **Fix orientation of the volume**: If the orientation of the input volume is not correct (i.e., does not correspond to the anatomical axes) then the "Reorient volume" section can be used for adjusting the orientation by clicking on `Initialize`, use the rotation handles in views to fix the orientation, then click `Apply`. After that it is recommended to change the ROI fitting mode (dropdown menu of `Fit to Volume` button) to `Align to world axes + Resize` so that the cropped volume's axes are aligned to anatomical directions.
+
+* **Definition of new axis directions** for your image: [Interpolated cropping options](#interpolated-cropping-options) allows the output volume to have different axis directions than the original volume. The output volume's axis directions will be aligned with the ROI widget's axes. ROI widget axes can be rotated using the [Transforms](transforms.md) module.
 
 * **Cropping of oblique sub-volumes**: This can be done by placing either or both of input volume and ROI under transform(s). These transforms will be taken into account while preparing the output.
 
@@ -36,11 +38,17 @@ Most frequently used for these scenarios:
 
 - **Input volume:** The scalar volume to crop.
 
+  - **Reorient volume:** Useful for correcting orientation of the volume before cropping. Click on `Initialize` to show rotation handles, adjust the orientation, then click `Apply` to permanently change the volume orientation and hide the rotation handles.
+
 - **Input ROI:** The region of interest driving the cropping process. ROIs have a box-like shape in which the interior of the box is the region to preserve and the exterior is the region to exclude. This combobox widget will allow the user to select an already existing ROI or create a new one (in addition, this widget will provide additional options such as rename or edit an existing ROI).
 
   - **Display ROI:** Turn on/off the display of the ROI representation. If this is on, a representation of the ROI will be visible in the Slice views (2D) or in the 3D view. The resulting ROI can be manipulated interactively in any of the Slice views (2D) or the 3D view.
 
-  - **Fit to Volume:** This will resize the ROI to fit the extent of the Input volume specified.
+  - **Fit to Volume:** This will resize the ROI to fit the extent of the Input volume specified. The button has a dropdown menu to tune its behavior, with the following options:
+
+    - **Align to volume axes + Resize:** rotate the ROI axes to align the ROI box orientation (and thus the cropped volume axes) to match the input volume axes directions. This is useful if the goal is to minimize changes compared to the input volume.
+    - **Align to world axes + Resize:** rotate the ROI axes to align the ROI box orientation (and thus the cropped volume axes) to the world coordinate system. This is useful to make the cropped volume axes to be anatomically aligned.
+    - **Resize only:** only resize the ROI and keep its current orientation. This is useful if the ROI orientation is already set to the desired value and only the size of the ROI needs to be adjusted to fully enclose the input volume.
 
 - **Output volume:** The output volume that represents the result of the cropping operation. This widget allows for the selection of an already existing volume (e.g., the input volume itself) or the creation of a new output volume node to store the results. By default, if no node is selected, output volume is created automatically.
 
