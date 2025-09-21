@@ -124,7 +124,6 @@ By default 3D Slicer uses window/level setting that is specified in the DICOM fi
 
 Window/level can be manually adjusted anytime by clicking on "Adjust window/level" button on the toolbar then left-click-and-drag in any of the slice viewers. Optimal window/level can be computed for a chosen area by lef-click-and-dragging while holding down <kbd>Ctrl</kbd> key.
 
-
 [![](https://img.youtube.com/vi/u1B0F1KcVsk/0.jpg)](https://youtu.be/u1B0F1KcVsk "Demo video of how to adjust image window/level")
 
 Additional window/level options, presets, intensity histogram, automatic adjustments are available in Display section of [Volumes](modules/volumes.md) module.  Presets are also available in the context menu of the Slice views.  You can reset to the automatically calculated window/level settings using the context menu or by using `Ctrl` + `left-double-click` on the Slice view.
