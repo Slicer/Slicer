@@ -21,6 +21,7 @@
 
 // Volume Rendering includes
 #include "vtkMRMLVolumeRenderingDisplayableManager.h"
+#include "vtkMRMLVolumeRenderingWindowLevelWidget.h"
 
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
@@ -305,6 +306,9 @@ public:
 public:
   vtkMRMLVolumeRenderingDisplayableManager* External;
 
+  /// Volume rendering window level widget
+  vtkSmartPointer<vtkMRMLVolumeRenderingWindowLevelWidget> VolumeRenderingWindowLevelWidget;
+
   /// Flag indicating whether adding volume node is in progress
   bool AddingVolumeNode;
 
@@ -383,12 +387,23 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 
   this->VolumePicker = vtkSmartPointer<vtkVolumePicker>::New();
   this->VolumePicker->SetTolerance(0.005);
+
+  // Initialize volume rendering window level widget
+  this->VolumeRenderingWindowLevelWidget = vtkSmartPointer<vtkMRMLVolumeRenderingWindowLevelWidget>::New();
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::~vtkInternal()
 {
   this->ClearDisplayableNodes();
+
+  // Clean up the volume rendering window level widget
+  if (this->VolumeRenderingWindowLevelWidget)
+  {
+    this->VolumeRenderingWindowLevelWidget->SetMRMLApplicationLogic(nullptr);
+    this->VolumeRenderingWindowLevelWidget->SetRenderer(nullptr);
+    this->VolumeRenderingWindowLevelWidget = nullptr;
+  }
 
   if (this->DisplayObservedEvents)
   {
@@ -1690,6 +1705,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::Create()
 {
   Superclass::Create();
   this->ObserveGraphicalResourcesCreatedEvent();
+
+  // Set up volume rendering window level widget
+  this->Internal->VolumeRenderingWindowLevelWidget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
+  this->Internal->VolumeRenderingWindowLevelWidget->SetRenderer(this->GetRenderer());
+  this->Internal->VolumeRenderingWindowLevelWidget->SetMRMLViewNode(this->GetMRMLViewNode());
+  this->Internal->VolumeRenderingWindowLevelWidget->SetVolumeRenderingDisplayableManager(this);
+
   this->SetUpdateFromMRMLRequested(true);
 }
 
@@ -1936,6 +1958,26 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
+{
+  if (this->Internal->VolumeRenderingWindowLevelWidget)
+  {
+    return this->Internal->VolumeRenderingWindowLevelWidget->CanProcessInteractionEvent(eventData, distance2);
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  if (this->Internal->VolumeRenderingWindowLevelWidget)
+  {
+    return this->Internal->VolumeRenderingWindowLevelWidget->ProcessInteractionEvent(eventData);
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
 {
   this->SetUpdateFromMRMLRequested(false);
@@ -2032,6 +2074,12 @@ vtkVolume* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeActor(vtkMRMLVolum
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLVolumeRenderingWindowLevelWidget* vtkMRMLVolumeRenderingDisplayableManager::GetVolumeRenderingWindowLevelWidget()
+{
+  return this->Internal->VolumeRenderingWindowLevelWidget;
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
 {
   this->Internal->PickedNodeID = "";
@@ -2049,6 +2097,31 @@ int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
     // Find the volume this image data belongs to
     this->Internal->FindPickedDisplayNodeFromVolumeActor(volume);
   }
+
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeRenderingDisplayableManager::Pick(int x, int y)
+{
+  this->Internal->PickedNodeID = "";
+
+  vtkRenderer* ren = this->GetRenderer();
+  if (!ren)
+  {
+    vtkErrorMacro("Pick: Unable to get renderer");
+    return 0;
+  }
+
+  if (!this->Internal->VolumePicker->Pick(x, y, 0, ren))
+  {
+    // No volume is found here
+    return 0;
+  }
+
+  // Find the volume this image data belongs to
+  vtkVolume* volume = vtkVolume::SafeDownCast(this->Internal->VolumePicker->GetProp3D());
+  this->Internal->FindPickedDisplayNodeFromVolumeActor(volume);
 
   return 1;
 }

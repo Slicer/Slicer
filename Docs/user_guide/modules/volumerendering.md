@@ -16,10 +16,15 @@ This is accomplished by specifying color and opacity for each voxel, based on it
   - Option A: drag-and-drop the volume in the subject hierarchy tree into a 3D view
   - Option B: right-click on the eye icon, and choose "Show in 3D views as volume rendering"
 
-To adjust volume rendering settings
-- Right-click on the eye icon and choose "Volume rendering options" to switch to edit visualization options in Volume rendering module
-- Choose a different preset in Display section,
-- Adjust "Offset" slider to change what image intensity range is visible
+To adjust volume rendering settings:
+- Option A: Switch to "Adjust window/level" mouse mode using the toolbar. Click on a displayed volume and click-and-drag to adjust the rendering settings.
+  - Moving the mouse vertically: shifts the opacity and color transfer functions, which changes what range of voxel values are visible in the image (similar to intensity "level" adjustment).
+  - Moving the mouse horizontally: shrinks or stretches the transfer functions (similar to intensity "window" adjustment).
+  - Holding down <kbd>Ctrl</kbd> key while starting the click-and drag and then moving the mouse vertically: adjusts the opacity of the volume.
+- Option B:
+  - Go to `Volume rendering` module and select the volume to be adjusted. This can be achieved by right-click on the eye icon in the `Data` module and choose "Volume rendering settings".
+  - Choose a different preset in Display section.
+  - Adjust "Offset" slider to change what image intensity range is visible.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_volumerendering_basic.png)
 

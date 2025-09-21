@@ -31,6 +31,7 @@ class vtkSlicerVolumeRenderingLogic;
 class vtkMRMLVolumeNode;
 class vtkVolumeMapper;
 class vtkVolume;
+class vtkMRMLVolumeRenderingWindowLevelWidget;
 
 #define VTKIS_VOLUME_PROPS 100
 
@@ -57,9 +58,16 @@ public:
   vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeNode* volumeNode);
   vtkVolume* GetVolumeActor(vtkMRMLVolumeNode* volumeNode);
 
+  /// Get the volume rendering window level widget
+  vtkMRMLVolumeRenderingWindowLevelWidget* GetVolumeRenderingWindowLevelWidget();
+
   /// Find display node managed by the displayable manager at a specified world RAS position.
   /// \return Non-zero in case a node is found at the position, 0 otherwise
   int Pick3D(double ras[3]) override;
+
+  /// Pick volume at display coordinates (x, y)
+  /// \return Non-zero in case a node is found at the position, 0 otherwise
+  int Pick(int x, int y);
 
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char* GetPickedNodeID() override;
@@ -89,6 +97,12 @@ protected:
   int ActiveInteractionModes() override;
 
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+
+  /// Check if interaction event can be processed
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
+
+  /// Process interaction event
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
 protected:
   vtkSlicerVolumeRenderingLogic* VolumeRenderingLogic{ nullptr };

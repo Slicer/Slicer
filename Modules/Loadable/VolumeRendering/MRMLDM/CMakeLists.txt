@@ -13,6 +13,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRMLVolumeRenderingDisplayableManager.cxx
+  vtkMRMLVolumeRenderingWindowLevelWidget.cxx
   )
 
 SlicerConfigureDisplayableManagerObjectFactory(
