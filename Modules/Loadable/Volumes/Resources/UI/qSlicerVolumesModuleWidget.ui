@@ -90,6 +90,7 @@
           <string>Volumes</string>
           <string>Folder</string>
           <string>Visibility</string>
+          <string>VolumeRendering</string>
          </stringlist>
         </property>
        </widget>
