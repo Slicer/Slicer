@@ -70,6 +70,8 @@ protected slots:
   void toggleVolumeRenderingForCurrentItem(bool);
   /// Switch to Volume Rendering module and select current volume item
   void showVolumeRenderingOptionsForCurrentItem();
+  /// Toggle synchronization with slice views for current volume item
+  void synchronizeWithSliceViewsForCurrentItem(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumeRenderingPluginPrivate> d_ptr;

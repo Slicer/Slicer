@@ -74,6 +74,7 @@ public:
 
   QAction* ToggleVolumeRenderingAction;
   QAction* VolumeRenderingOptionsAction;
+  QAction* SynchronizeWithSliceViewsAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -84,6 +85,7 @@ qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::qSlicerSubjectHierarchyVolu
   : q_ptr(&object)
   , ToggleVolumeRenderingAction(nullptr)
   , VolumeRenderingOptionsAction(nullptr)
+  , SynchronizeWithSliceViewsAction(nullptr)
 {
 }
 
@@ -97,9 +99,16 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
   this->ToggleVolumeRenderingAction->setCheckable(true);
   this->ToggleVolumeRenderingAction->setChecked(false);
 
-  this->VolumeRenderingOptionsAction = new QAction(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Volume rendering options..."), q);
+  this->VolumeRenderingOptionsAction = new QAction(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Volume rendering settings..."), q);
   this->VolumeRenderingOptionsAction->setToolTip(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering module to manage display options"));
   QObject::connect(this->VolumeRenderingOptionsAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingOptionsForCurrentItem()));
+
+  this->SynchronizeWithSliceViewsAction = new QAction(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Volume rendering settings follow slice views"), q);
+  this->SynchronizeWithSliceViewsAction->setToolTip(
+    qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Make volume rendering use the same window/level and color map settings as slice views"));
+  QObject::connect(this->SynchronizeWithSliceViewsAction, SIGNAL(toggled(bool)), q, SLOT(synchronizeWithSliceViewsForCurrentItem(bool)));
+  this->SynchronizeWithSliceViewsAction->setCheckable(true);
+  this->SynchronizeWithSliceViewsAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -135,7 +144,7 @@ QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextM
   Q_D(const qSlicerSubjectHierarchyVolumeRenderingPlugin);
 
   QList<QAction*> actions;
-  actions << d->ToggleVolumeRenderingAction << d->VolumeRenderingOptionsAction;
+  actions << d->ToggleVolumeRenderingAction << d->SynchronizeWithSliceViewsAction << d->VolumeRenderingOptionsAction;
   return actions;
 }
 
@@ -179,6 +188,11 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::showVisibilityContextMenuActi
     d->ToggleVolumeRenderingAction->setChecked(displayNode ? displayNode->GetVisibility() : false);
     d->ToggleVolumeRenderingAction->blockSignals(false);
     d->ToggleVolumeRenderingAction->setVisible(true);
+
+    d->SynchronizeWithSliceViewsAction->blockSignals(true);
+    d->SynchronizeWithSliceViewsAction->setChecked(displayNode ? displayNode->GetFollowVolumeDisplayNode() : false);
+    d->SynchronizeWithSliceViewsAction->blockSignals(false);
+    d->SynchronizeWithSliceViewsAction->setVisible(true);
 
     d->VolumeRenderingOptionsAction->setVisible(true);
   }
@@ -414,5 +428,54 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
       return false;
     }
     return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
+  }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumeRenderingPlugin::synchronizeWithSliceViewsForCurrentItem(bool follow)
+{
+  Q_D(qSlicerSubjectHierarchyVolumeRenderingPlugin);
+
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+  }
+
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+  }
+
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  if (!volumeNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to find scalar volume node associated to subject hierarchy item " << currentItemID;
+    return;
+  }
+
+  if (!d->VolumeRenderingLogic)
+  {
+    qWarning() << Q_FUNC_INFO << ": volume rendering logic is not set, cannot set synchronization";
+    return;
+  }
+
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = d->VolumeRenderingLogic->GetFirstVolumeRenderingDisplayNode(volumeNode);
+  if (!displayNode)
+  {
+    // Create volume rendering display node if it doesn't exist
+    displayNode = d->VolumeRenderingLogic->CreateDefaultVolumeRenderingNodes(volumeNode);
+  }
+
+  if (displayNode)
+  {
+    displayNode->SetFollowVolumeDisplayNode(follow ? 1 : 0);
+  }
+  else
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to create or access volume rendering display node for scalar volume node " << volumeNode->GetName();
   }
 }
