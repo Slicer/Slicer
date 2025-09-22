@@ -128,9 +128,7 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(d->MRMLDisplayNode);
   vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
 
-  bool widgetsEnabled = clipNode != nullptr;
   bool surfaceWidgetsVisible = modelDisplayNode != nullptr || segmentationDisplayNode != nullptr;
-  bool clipping = d->MRMLDisplayNode ? d->MRMLDisplayNode->GetClipping() : false;
   bool capping = false;
   double capOpacity = 0.0;
   bool outline = false;

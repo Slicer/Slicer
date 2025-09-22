@@ -222,7 +222,6 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
   int sceneViewScreenshotType = sceneViewNode->GetScreenShotType();
   vtkImageData* sceneViewScreenshot = sceneViewNode->GetScreenShot();
 
-  vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
   for (vtkMRMLNode* proxyNode : proxyNodes)
   {
     vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = this->GetOrAddSceneViewSequenceNode(sequenceBrowser, proxyNode);

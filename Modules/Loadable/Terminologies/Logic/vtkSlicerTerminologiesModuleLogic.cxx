@@ -2750,7 +2750,6 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
   }
 
   // Find terminology entries in each preferred terminology
-  int preferredTerminologyNameIndex = 0;
   for (int preferredTerminologyNameIndex = 0; preferredTerminologyNameIndex < preferredTerminologyNames.size(); ++preferredTerminologyNameIndex)
   {
     std::string terminologyName = preferredTerminologyNames[preferredTerminologyNameIndex];

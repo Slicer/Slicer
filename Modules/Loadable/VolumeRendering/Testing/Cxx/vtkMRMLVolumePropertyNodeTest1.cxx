@@ -99,7 +99,9 @@ int readOldScene(const char* mrmlScenePath)
     double actualValue[4];
     double expectedValue[4];
     int actual = actualScalarOpacity->GetNodeValue(i, actualValue);
+    CHECK_INT(actual, 1);
     int expected = expectedScalarOpacity->GetNodeValue(i, expectedValue);
+    CHECK_INT(expected, 1);
     CHECK_DOUBLE_TOLERANCE(actualValue[0], expectedValue[0], std::numeric_limits<double>::epsilon())
     CHECK_DOUBLE_TOLERANCE(actualValue[1], expectedValue[1], std::numeric_limits<double>::epsilon())
     CHECK_DOUBLE_TOLERANCE(actualValue[2], expectedValue[2], std::numeric_limits<double>::epsilon())
