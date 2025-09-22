@@ -10,7 +10,7 @@ The prerequisites listed below are required to be able to configure/build/packag
 xcode-select --install
 ```
 
-- A CMake version that meets at least the minimum required CMake version [here](https://github.com/Slicer/Slicer/blob/main/CMakeLists.txt#L1). **Slicer build scripts are not yet compatible with CMake 4.x**
+- A CMake version that meets at least the minimum required CMake version [here](https://github.com/Slicer/Slicer/blob/main/CMakeLists.txt#L1).
 - Qt 5: **tested and recommended**.
   - For building Slicer: download and execute [qt-online-installer-mac-x64-online.dmg](https://download.qt.io/official_releases/online_installers/qt-online-installer-mac-x64-online.dmg), install Qt 5.15.2, make sure to select the `qtwebengine` component.
   - For packaging and redistributing Slicer: build Qt using [qt-easy-build](https://github.com/jcfr/qt-easy-build#readme)
