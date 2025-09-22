@@ -5,8 +5,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef itkSeparateComponentsOfADiffusionTensorImage_txx
-#define itkSeparateComponentsOfADiffusionTensorImage_txx
+#ifndef itkSeparateComponentsOfADiffusionTensorImage_hxx
+#define itkSeparateComponentsOfADiffusionTensorImage_hxx
 
 #include "itkSeparateComponentsOfADiffusionTensorImage.h"
 

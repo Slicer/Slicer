@@ -62,7 +62,7 @@ public:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DAffineTransform.txx"
+# include "itkDiffusionTensor3DAffineTransform.hxx"
 #endif
 
 #endif

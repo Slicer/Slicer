@@ -101,7 +101,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DMatrix3x3Transform.txx"
+# include "itkDiffusionTensor3DMatrix3x3Transform.hxx"
 #endif
 
 #endif

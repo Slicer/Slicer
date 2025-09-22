@@ -56,7 +56,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.txx"
+# include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.hxx"
 #endif
 
 #endif

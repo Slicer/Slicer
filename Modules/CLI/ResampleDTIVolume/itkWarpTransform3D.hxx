@@ -1,6 +1,6 @@
 
-#ifndef itkWarpTransform3D_txx
-#define itkWarpTransform3D_txx
+#ifndef itkWarpTransform3D_hxx
+#define itkWarpTransform3D_hxx
 
 #include "itkWarpTransform3D.h"
 

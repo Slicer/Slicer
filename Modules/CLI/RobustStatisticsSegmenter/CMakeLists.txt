@@ -36,9 +36,9 @@ SEMMacroBuildCLI(
     labelMapPreprocessor.h
     SFLS.h
     SFLSSegmentor3D.h
-    SFLSSegmentor3D.txx
+    SFLSSegmentor3D.hxx
     SFLSRobustStatSegmentor3DLabelMap_single.h
-    SFLSRobustStatSegmentor3DLabelMap_single.txx
+    SFLSRobustStatSegmentor3DLabelMap_single.hxx
   INCLUDE_DIRECTORIES
     ${vtkTeem_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}

@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef itkDiffusionTensor3DRead_txx
-#define itkDiffusionTensor3DRead_txx
+#ifndef itkDiffusionTensor3DRead_hxx
+#define itkDiffusionTensor3DRead_hxx
 
 #include "itkDiffusionTensor3DRead.h"
 

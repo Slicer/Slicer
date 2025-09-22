@@ -64,6 +64,11 @@ Object& Node::Foo()
 
 Useful information about some coding style decisions: <https://google.github.io/styleguide/cppguide.html>
 
+Source file name rules:
+  - C++ source files files shall have a `.cxx` extension.
+  - C++ Headers with declarations shall have a `.h` extension, and header definition files shall have a `.hxx` extension.
+    The `.hxx` files shall only be included from the corresponding `.h` files or `.cxx` files.
+
 #### CMake
 
 - Macros/functions should be lower case and words separated with underscores

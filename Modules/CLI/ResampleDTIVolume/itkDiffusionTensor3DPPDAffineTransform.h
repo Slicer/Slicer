@@ -70,7 +70,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DPPDAffineTransform.txx"
+# include "itkDiffusionTensor3DPPDAffineTransform.hxx"
 #endif
 
 #endif

@@ -11,8 +11,8 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#ifndef itkDiffusionTensor3DBSplineInterpolateImageFunction_txx
-#define itkDiffusionTensor3DBSplineInterpolateImageFunction_txx
+#ifndef itkDiffusionTensor3DBSplineInterpolateImageFunction_hxx
+#define itkDiffusionTensor3DBSplineInterpolateImageFunction_hxx
 
 #include "itkDiffusionTensor3DBSplineInterpolateImageFunction.h"
 

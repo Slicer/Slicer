@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkDifferenceDiffusionTensor3DImageFilter.txx,v $
+  Module:    $RCSfile: itkDifferenceDiffusionTensor3DImageFilter.hxx,v $
   Language:  C++
 
   Copyright (c) Insight Software Consortium. All rights reserved.
@@ -12,8 +12,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef itkDifferenceDiffusionTensor3DImageFilter_txx
-#define itkDifferenceDiffusionTensor3DImageFilter_txx
+#ifndef itkDifferenceDiffusionTensor3DImageFilter_hxx
+#define itkDifferenceDiffusionTensor3DImageFilter_hxx
 
 #include "itkDifferenceDiffusionTensor3DImageFilter.h"
 

@@ -150,6 +150,6 @@ protected:
 
 } // namespace vtkMRMLCoreTestingUtilities
 
-#include "vtkMRMLCoreTestingUtilities.txx"
+#include "vtkMRMLCoreTestingUtilities.hxx"
 
 #endif

@@ -141,7 +141,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDifferenceDiffusionTensor3DImageFilter.txx"
+# include "itkDifferenceDiffusionTensor3DImageFilter.hxx"
 #endif
 
 #endif

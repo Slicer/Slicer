@@ -74,7 +74,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DInterpolateImageFunctionReimplementation.txx"
+# include "itkDiffusionTensor3DInterpolateImageFunctionReimplementation.hxx"
 #endif
 
 #endif
