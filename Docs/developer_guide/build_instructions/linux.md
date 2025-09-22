@@ -47,7 +47,7 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
 
 :::{note}
 The CMake version currently included in Debian 12 Bookworm (Stable) is not compatible with the current development version of Slicer.
-For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file. On Debian 12 Bookworm (Stable), you will need to upgrade CMake manually by downloading CMake version >= 3.25.3 and < 4 from the [CMake website](https://cmake.org/download/) and following the CMake installation instructions. **Slicer build scripts are not yet compatible with CMake 4.x**
+For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file. On Debian 12 Bookworm (Stable), you will need to upgrade CMake manually by downloading CMake version >= 3.25.3 from the [CMake website](https://cmake.org/download/) and following the CMake installation instructions.
 
 :::
 
@@ -89,8 +89,8 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev
 ```
 
-Install CMake manually by downloading CMake >=3.25.3 and < 4 from the [CMake website](https://cmake.org/download/)
-and by following the CMake installation instructions. **Slicer build scripts are not yet compatible with CMake 4.x**
+Install CMake manually by downloading CMake >=3.25.3 from the [CMake website](https://cmake.org/download/)
+and by following the CMake installation instructions.
 
 :::{note}
 The CMake version currently included in Ubuntu 23.04 is CMake 3.25.1 (see [here](https://packages.ubuntu.com/lunar/cmake))
