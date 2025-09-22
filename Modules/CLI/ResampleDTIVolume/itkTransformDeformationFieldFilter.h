@@ -76,7 +76,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkTransformDeformationFieldFilter.txx"
+# include "itkTransformDeformationFieldFilter.hxx"
 #endif
 
 #endif

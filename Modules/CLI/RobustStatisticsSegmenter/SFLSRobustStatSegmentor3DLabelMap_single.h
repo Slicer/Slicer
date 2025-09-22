@@ -127,6 +127,6 @@ protected:
   double kernelEvaluationUsingPDF(const std::vector<double>& newFeature);
 };
 
-#include "SFLSRobustStatSegmentor3DLabelMap_single.txx"
+#include "SFLSRobustStatSegmentor3DLabelMap_single.hxx"
 
 #endif

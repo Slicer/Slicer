@@ -49,7 +49,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DLinearInterpolateFunction.txx"
+# include "itkDiffusionTensor3DLinearInterpolateFunction.hxx"
 #endif
 
 #endif

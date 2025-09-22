@@ -148,6 +148,6 @@ protected:
   std::vector<CSFLSLayer> m_zeroLayerHistory;
 };
 
-#include "SFLSSegmentor3D.txx"
+#include "SFLSSegmentor3D.hxx"
 
 #endif

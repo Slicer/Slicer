@@ -28,6 +28,7 @@ repos:
     rev: "v21.1.1"
     hooks:
       - id: clang-format
+        # For support of legacy code.  The Slicer core no longer has files with .txx extensions.
         # Explicitly include ".txx" files, which are not recognized as source files
         # by the "identify" package used by pre-commit. To work around this,
         # we manually specify file matching via the "files" regex and set "types_or"
@@ -35,7 +36,7 @@ repos:
         #
         # Reference: https://github.com/pre-commit/identify/blob/main/identify/extensions.py
         types_or: [file, text]
-        files: \.(cpp|cxx|h|hpp|txx)$
+        files: \.(cpp|cxx|h|hpp|hxx|txx)$
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.20.0

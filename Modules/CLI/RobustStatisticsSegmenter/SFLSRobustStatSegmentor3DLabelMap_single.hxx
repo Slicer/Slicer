@@ -1,5 +1,5 @@
-#ifndef SFLSRobustStatSegmentor3DLabelMap_single_txx_
-#define SFLSRobustStatSegmentor3DLabelMap_single_txx_
+#ifndef SFLSRobustStatSegmentor3DLabelMap_single_hxx_
+#define SFLSRobustStatSegmentor3DLabelMap_single_hxx_
 
 #include "SFLSRobustStatSegmentor3DLabelMap_single.h"
 

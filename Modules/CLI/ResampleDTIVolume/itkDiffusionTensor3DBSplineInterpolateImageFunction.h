@@ -57,7 +57,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DBSplineInterpolateImageFunction.txx"
+# include "itkDiffusionTensor3DBSplineInterpolateImageFunction.hxx"
 #endif
 
 #endif

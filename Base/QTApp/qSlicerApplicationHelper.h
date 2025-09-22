@@ -74,6 +74,6 @@ private:
   Q_DISABLE_COPY(qSlicerApplicationHelper);
 };
 
-#include "qSlicerApplicationHelper.txx"
+#include "qSlicerApplicationHelper.hxx"
 
 #endif

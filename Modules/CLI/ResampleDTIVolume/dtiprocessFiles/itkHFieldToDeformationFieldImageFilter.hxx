@@ -3,7 +3,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkHFieldToDeformationFieldImageFilter.txx,v $
+  Module:    $RCSfile: itkHFieldToDeformationFieldImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2010/03/09 18:01:02 $
   Version:   $Revision: 1.2 $
@@ -17,8 +17,8 @@
 
 =========================================================================*/
 
-#ifndef itkHFieldToDeformationFieldImageFilter_txx
-#define itkHFieldToDeformationFieldImageFilter_txx
+#ifndef itkHFieldToDeformationFieldImageFilter_hxx
+#define itkHFieldToDeformationFieldImageFilter_hxx
 
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkImageRegionIterator.h>

@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLCoreTestingUtilities_txx
-#define __vtkMRMLCoreTestingUtilities_txx
+#ifndef __vtkMRMLCoreTestingUtilities_hxx
+#define __vtkMRMLCoreTestingUtilities_hxx
 
 // MRML includes
 #include "vtkMRMLCoreTestingUtilities.h"

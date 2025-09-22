@@ -48,7 +48,7 @@ public:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkMatrixExtended.txx"
+# include "itkMatrixExtended.hxx"
 #endif
 
 #endif

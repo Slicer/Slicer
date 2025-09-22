@@ -35,3 +35,9 @@ Docs/_moduledescriptions
 # CLI module translation files
 Docs/_extraCLI/*_tr.h
 Modules/CLI/*/*_tr.h
+
+# Do not commit files that end with .txx extension
+# change the filename to .hxx to be recognized as
+# C++ files in many ide's and analysis tools.
+# (i.e. AUTOMOC for building Qt6)
+*.txx

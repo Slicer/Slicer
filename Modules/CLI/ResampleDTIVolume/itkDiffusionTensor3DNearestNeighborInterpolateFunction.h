@@ -53,7 +53,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DNearestNeighborInterpolateFunction.txx"
+# include "itkDiffusionTensor3DNearestNeighborInterpolateFunction.hxx"
 #endif
 
 #endif

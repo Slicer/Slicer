@@ -80,7 +80,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DRead.txx"
+# include "itkDiffusionTensor3DRead.hxx"
 #endif
 
 #endif

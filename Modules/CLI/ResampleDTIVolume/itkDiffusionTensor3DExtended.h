@@ -53,7 +53,7 @@ public:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DExtended.txx"
+# include "itkDiffusionTensor3DExtended.hxx"
 #endif
 
 #endif

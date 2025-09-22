@@ -96,7 +96,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DWrite.txx"
+# include "itkDiffusionTensor3DWrite.hxx"
 #endif
 
 #endif

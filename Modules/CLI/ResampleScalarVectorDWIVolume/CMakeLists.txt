@@ -40,14 +40,14 @@ SEMMacroBuildCLI(
     ${ResampleDTIVolume_SOURCE_DIR}
   ADDITIONAL_SRCS
     ${ResampleDTIVolume_SOURCE_DIR}/itkWarpTransform3D.h
-    ${ResampleDTIVolume_SOURCE_DIR}/itkWarpTransform3D.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/itkWarpTransform3D.hxx
     ${ResampleDTIVolume_SOURCE_DIR}/itkTransformDeformationFieldFilter.h
-    ${ResampleDTIVolume_SOURCE_DIR}/itkTransformDeformationFieldFilter.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/itkTransformDeformationFieldFilter.hxx
     ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/deformationfieldio.h
     ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/deformationfieldio.cxx
     ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/dtitypes.h
     ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
-    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.hxx
   )
 
 #-----------------------------------------------------------------------------

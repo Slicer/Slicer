@@ -65,7 +65,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkDiffusionTensor3DTransform.txx"
+# include "itkDiffusionTensor3DTransform.hxx"
 #endif
 
 #endif

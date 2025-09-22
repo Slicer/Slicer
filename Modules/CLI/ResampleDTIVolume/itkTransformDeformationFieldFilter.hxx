@@ -1,5 +1,5 @@
-#ifndef itkTransformDeformationFieldFilter_txx
-#define itkTransformDeformationFieldFilter_txx
+#ifndef itkTransformDeformationFieldFilter_hxx
+#define itkTransformDeformationFieldFilter_hxx
 
 #include "itkTransformDeformationFieldFilter.h"
 

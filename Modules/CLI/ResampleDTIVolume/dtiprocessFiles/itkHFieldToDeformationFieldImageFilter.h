@@ -81,7 +81,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-# include "itkHFieldToDeformationFieldImageFilter.txx"
+# include "itkHFieldToDeformationFieldImageFilter.hxx"
 #endif
 
 #endif
