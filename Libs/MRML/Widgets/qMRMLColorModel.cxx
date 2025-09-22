@@ -348,7 +348,6 @@ void qMRMLColorModel::updateNode()
 
   // Note: Adding a signal blocker or temporarily disconnecting signals could improve update performance
   // (similarly to how it is done in qMRMLTableModel::updateModelFromMRML()).
-  int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
   {
     for (int j = 0; j < this->columnCount(); ++j)

@@ -273,7 +273,6 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   // Create color table
   this->ColorTableView = new qMRMLSimpleColorTableView(q);
   qMRMLSortFilterColorProxyModel* sortFilterModel = this->ColorTableView->sortFilterProxyModel();
-  qMRMLColorModel* colorModel = this->ColorTableView->colorModel();
   // sortFilterModel->setFilterKeyColumn(colorModel->labelColumn());
   // sortFilterModel->setFilterRegExp("^(?!.*none).*$"); // Do not show entries with empty terminology
   sortFilterModel->setShowEmptyColors(false);

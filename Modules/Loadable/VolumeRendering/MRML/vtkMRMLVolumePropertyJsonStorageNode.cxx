@@ -85,8 +85,6 @@ int vtkMRMLVolumePropertyJsonStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  int result = 1;
-
   vtkNew<vtkMRMLJsonReader> jsonReader;
   vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromFile(filePath));
   if (!jsonElement)
@@ -321,7 +319,6 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction(vtkObject* trans
     {
       double y = 0.0;
       pointElement->GetDoubleProperty("y", y);
-      double values[4] = { x, y, midpoint, sharpness };
       piecewiseFunction->AddPoint(x, y, midpoint, sharpness);
     }
     else if (colorTransferFunction)
@@ -516,7 +513,6 @@ bool vtkMRMLVolumePropertyJsonStorageNode::WriteContourValues(vtkMRMLJsonWriter*
       this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::WriteContourValues", "Writing iso-surface values failed: contour values is null.") return false;
   }
 
-  double* values = contourValues->GetValues();
   vtkNew<vtkDoubleArray> contourValuesArray;
   contourValuesArray->SetNumberOfValues(contourValues->GetNumberOfContours());
   for (int i = 0; i < contourValues->GetNumberOfContours(); ++i)

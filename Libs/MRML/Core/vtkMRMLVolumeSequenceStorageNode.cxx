@@ -321,7 +321,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkNew<vtkMatrix4x4> firstVolumeRasToIjk;
   int frameVolumeDimensions[3] = { 0 };
   int frameVolumeScalarType = VTK_VOID;
-  int frameVolumeNumberOfComponents = 0;
   int frameVolumeVoxelVectorType = vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
   int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   if (numberOfFrameVolumes > 0)
@@ -337,7 +336,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     {
       frameVolume->GetImageData()->GetDimensions(frameVolumeDimensions);
       frameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
-      frameVolumeNumberOfComponents = frameVolume->GetImageData()->GetNumberOfScalarComponents();
       frameVolumeVoxelVectorType = frameVolume->GetVoxelVectorType();
     }
   }
