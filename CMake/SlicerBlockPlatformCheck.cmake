@@ -38,6 +38,7 @@ if(Slicer_PLATFORM_CHECK)
     # and https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history
     # 1920-1929 = VS 16.0 (v142 toolset)
     # 1930-1949 = VS 17.0 (v143 toolset, see https://devblogs.microsoft.com/cppblog/msvc-toolset-minor-version-number-14-40-in-vs-2022-v17-10/)
+    # 1950-1959 = VS 18.0 (v145 toolset)
     if(NOT MSVC_VERSION VERSION_GREATER_EQUAL 1920)
       message(FATAL_ERROR "Microsoft Visual C/C++ toolset 142 or newer is required !")
     endif()
