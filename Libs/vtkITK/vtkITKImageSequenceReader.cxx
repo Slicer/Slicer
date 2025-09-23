@@ -503,6 +503,29 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
                 return;
             }
             break;
+          case itk::CommonEnums::IOPixel::SCALAR:
+          case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
+          case itk::CommonEnums::IOPixel::UNKNOWNPIXELTYPE:
+          case itk::CommonEnums::IOPixel::OFFSET:
+          case itk::CommonEnums::IOPixel::POINT:
+          case itk::CommonEnums::IOPixel::SYMMETRICSECONDRANKTENSOR:
+          case itk::CommonEnums::IOPixel::DIFFUSIONTENSOR3D:
+          case itk::CommonEnums::IOPixel::COMPLEX:
+          case itk::CommonEnums::IOPixel::FIXEDARRAY:
+          case itk::CommonEnums::IOPixel::ARRAY:
+          case itk::CommonEnums::IOPixel::MATRIX:
+          case itk::CommonEnums::IOPixel::VARIABLELENGTHVECTOR:
+          case itk::CommonEnums::IOPixel::VARIABLESIZEMATRIX:
+          {
+            vtkErrorMacro("Unexpected pixel type: " << imageIO->GetPixelType());
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
+          }
+          break;
+          default:
+            vtkErrorMacro("Unexpected pixel type code requested: " << imageIO->GetPixelType());
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
         }
         break;
       case 4:
@@ -725,6 +748,24 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
                 return;
             }
             break;
+          case itk::CommonEnums::IOPixel::UNKNOWNPIXELTYPE:
+          case itk::CommonEnums::IOPixel::OFFSET:
+          case itk::CommonEnums::IOPixel::POINT:
+          case itk::CommonEnums::IOPixel::SYMMETRICSECONDRANKTENSOR:
+          case itk::CommonEnums::IOPixel::DIFFUSIONTENSOR3D:
+          case itk::CommonEnums::IOPixel::COMPLEX:
+          case itk::CommonEnums::IOPixel::FIXEDARRAY:
+          case itk::CommonEnums::IOPixel::ARRAY:
+          case itk::CommonEnums::IOPixel::MATRIX:
+          case itk::CommonEnums::IOPixel::VARIABLELENGTHVECTOR:
+          case itk::CommonEnums::IOPixel::VARIABLESIZEMATRIX:
+            vtkErrorMacro("Unexpected pixel type: " << imageIO->GetPixelType());
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
+          default:
+            vtkErrorMacro("Unexpected pixel type code requested: " << imageIO->GetPixelType());
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
         }
         break;
     } // Load image from file the sequence frames either in the last dimension or as components, depending on the pixel type
