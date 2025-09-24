@@ -66,6 +66,7 @@
 #ifdef Slicer_USE_PYTHONQT
 // PythonQt includes
 # include <PythonQt.h>
+# include <PythonQtConversion.h>
 #endif
 
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
@@ -1217,6 +1218,25 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 #else
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
+    // Snapshot current sys.path BEFORE applying the config
+    // Rationale: _PyInterpreterState_SetConfig will replace sys.path from config.
+    // We want an exact restore of the sys.path augmented during Slicer module discovery.
+    PythonQtObjectPtr sys;
+    sys.setNewRef(PyImport_ImportModule("sys"));
+    PythonQtObjectPtr sysPath;
+    if (sys)
+    {
+      sysPath.setNewRef(PyObject_GetAttrString(sys, "path"));
+    }
+    if (!sys || !sysPath)
+    {
+      PyErr_Print();
+      qSlicerCoreApplication::terminate(EXIT_FAILURE);
+    }
+    bool ok = false;
+    QStringList savedSysPath = PythonQtConv::PyObjToStringList(sysPath, true, ok);
+    Q_UNUSED(ok);
+
     // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
     QString pythonScript = options->pythonScript();
     QString extraPythonScript = options->extraPythonScript();
@@ -1263,12 +1283,17 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       Py_ExitStatusException(status);
     }
 
+    // Apply the updated config back to the running interpreter (This call *replaces*
+    // sys.path from the config's module_search_paths)
     if (_PyInterpreterState_SetConfig(&config) < 0)
     {
       PyConfig_Clear(&config);
       PyErr_Print();
       qSlicerCoreApplication::terminate(EXIT_FAILURE);
     }
+
+    // Restore sys.path exactly as it was before calling "_PyInterpreterState_SetConfig"
+    PythonQt::self()->overwriteSysPath(savedSysPath);
 
     PyConfig_Clear(&config);
 
