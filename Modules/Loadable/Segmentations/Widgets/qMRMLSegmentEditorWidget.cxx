@@ -1227,8 +1227,8 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
   }
 
   // Forward application logic to segment editor logic
-  d->Logic->SetApplicationLogic(qSlicerApplication::application()->applicationLogic());
-  d->Logic->SetScene(newScene);
+  d->Logic->SetMRMLApplicationLogic(qSlicerApplication::application()->applicationLogic());
+  d->Logic->SetMRMLScene(newScene);
 
   // Make connections that depend on the Slicer application
 

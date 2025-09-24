@@ -3,7 +3,7 @@ import numpy as np
 import slicer
 import vtk
 
-from slicer import vtkSegmentEditorLogic, vtkSlicerSegmentationsModuleLogic
+from slicer import vtkSlicerSegmentEditorLogic, vtkSlicerSegmentationsModuleLogic
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 
 
@@ -12,9 +12,9 @@ class SegmentationLogicTest(ScriptedLoadableModuleTest):
         # Configure the segmentation logic
         slicer.mrmlScene.Clear(0)
 
-        self.logic = vtkSegmentEditorLogic()
-        self.logic.SetScene(slicer.mrmlScene)
-        self.logic.SetApplicationLogic(slicer.app.applicationLogic())
+        self.logic = vtkSlicerSegmentEditorLogic()
+        self.logic.SetMRMLScene(slicer.mrmlScene)
+        self.logic.SetMRMLApplicationLogic(slicer.app.applicationLogic())
 
         # Initialize with a tiny patient and basic segment editor node
         self.segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentEditorNode")
@@ -128,7 +128,7 @@ class SegmentationLogicTest(ScriptedLoadableModuleTest):
             self.logic.GetSegmentationNode(),
             segmentId,
             labelMap,
-            vtkSegmentEditorLogic.ModificationModeAdd,
+            vtkSlicerSegmentEditorLogic.ModificationModeAdd,
             labelMap.GetExtent(),
             True,
             False,
