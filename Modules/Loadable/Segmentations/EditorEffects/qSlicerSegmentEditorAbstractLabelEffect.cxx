@@ -53,7 +53,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLSliceNode.h"
-#include "vtkSegmentEditorLogic.h"
+#include "vtkSlicerSegmentEditorLogic.h"
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorAbstractLabelEffectPrivate methods
@@ -113,29 +113,29 @@ void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageDat
                                                              qMRMLSliceWidget* sliceWidget,
                                                              vtkMRMLSegmentationNode* segmentationNode /*=nullptr*/)
 {
-  vtkSegmentEditorLogic::AppendPolyMask(input, polyData, qSlicerSegmentEditorAbstractEffect::sliceNode(sliceWidget), segmentationNode);
+  vtkSlicerSegmentEditorLogic::AppendPolyMask(input, polyData, qSlicerSegmentEditorAbstractEffect::sliceNode(sliceWidget), segmentationNode);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::appendImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* appendedImage)
 {
-  vtkSegmentEditorLogic::AppendImage(inputImage, appendedImage);
+  vtkSlicerSegmentEditorLogic::AppendImage(inputImage, appendedImage);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(vtkPolyData* polyData, vtkOrientedImageData* outputMask, qMRMLSliceWidget* sliceWidget)
 {
-  vtkSegmentEditorLogic::CreateMaskImageFromPolyData(polyData, outputMask, qSlicerSegmentEditorAbstractEffect::sliceNode(sliceWidget));
+  vtkSlicerSegmentEditorLogic::CreateMaskImageFromPolyData(polyData, outputMask, qSlicerSegmentEditorAbstractEffect::sliceNode(sliceWidget));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::imageToWorldMatrix(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToRas)
 {
-  vtkSegmentEditorLogic::ImageToWorldMatrix(node, ijkToRas);
+  vtkSlicerSegmentEditorLogic::ImageToWorldMatrix(node, ijkToRas);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::imageToWorldMatrix(vtkOrientedImageData* image, vtkMRMLSegmentationNode* node, vtkMatrix4x4* ijkToRas)
 {
-  vtkSegmentEditorLogic::ImageToWorldMatrix(image, node, ijkToRas);
+  vtkSlicerSegmentEditorLogic::ImageToWorldMatrix(image, node, ijkToRas);
 }

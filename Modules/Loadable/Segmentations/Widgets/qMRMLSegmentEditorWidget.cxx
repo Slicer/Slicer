@@ -29,7 +29,7 @@
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
 #include "qMRMLSegmentationGeometryDialog.h"
-#include "vtkSegmentEditorLogic.h"
+#include "vtkSlicerSegmentEditorLogic.h"
 
 // vtkSegmentationCore Includes
 #include "vtkSegmentation.h"
@@ -235,7 +235,7 @@ public:
 
   QString DefaultTerminologyEntrySettingsKey;
 
-  vtkSmartPointer<vtkSegmentEditorLogic> Logic;
+  vtkSmartPointer<vtkSlicerSegmentEditorLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -253,7 +253,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   , MaskModeComboBoxFixedItemsCount(0)
   , EffectButtonStyle(Qt::ToolButtonIconOnly)
   , RotateWarningInNodeSelectorLayout(true)
-  , Logic(vtkSmartPointer<vtkSegmentEditorLogic>::New())
+  , Logic(vtkSmartPointer<vtkSlicerSegmentEditorLogic>::New())
 {
   // Define default effect order
   this->EffectNameOrder
@@ -354,9 +354,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QObject::connect(this->UndoButton, SIGNAL(clicked()), q, SLOT(undo()));
   QObject::connect(this->RedoButton, SIGNAL(clicked()), q, SLOT(redo()));
 
-  q->qvtkConnect(this->Logic, vtkSegmentEditorLogic::SegmentationHistoryChangedEvent, q, SLOT(onSegmentationHistoryChanged()));
-  q->qvtkConnect(this->Logic, vtkSegmentEditorLogic::PauseRenderEvent, q, SLOT(pauseRender()));
-  q->qvtkConnect(this->Logic, vtkSegmentEditorLogic::ResumeRenderEvent, q, SLOT(resumeRender()));
+  q->qvtkConnect(this->Logic, vtkSlicerSegmentEditorLogic::SegmentationHistoryChangedEvent, q, SLOT(onSegmentationHistoryChanged()));
+  q->qvtkConnect(this->Logic, vtkSlicerSegmentEditorLogic::PauseRenderEvent, q, SLOT(pauseRender()));
+  q->qvtkConnect(this->Logic, vtkSlicerSegmentEditorLogic::ResumeRenderEvent, q, SLOT(resumeRender()));
 
   // Widget properties
   this->SegmentsTableView->setSelectionMode(QAbstractItemView::SingleSelection);

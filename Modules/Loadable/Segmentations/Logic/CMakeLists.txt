@@ -13,13 +13,13 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   vtkSlicer${MODULE_NAME}ModuleLogic.cxx
   vtkSlicer${MODULE_NAME}ModuleLogic.h
+  vtkSlicerSegmentEditorLogic.cxx
+  vtkSlicerSegmentEditorLogic.h
   vtkSlicerSegmentationGeometryLogic.cxx
   vtkSlicerSegmentationGeometryLogic.h
   vtkImageGrowCutSegment.cxx
   vtkImageGrowCutSegment.h
   FibHeap.cxx
-  vtkSegmentEditorLogic.cxx
-  vtkSegmentEditorLogic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -112,7 +112,7 @@ public:
   /// for convenience.
   vtkWeakPointer<vtkOrientedImageData> ReferenceGeometryImage;
 
-  vtkWeakPointer<vtkSegmentEditorLogic> Logic;
+  vtkWeakPointer<vtkSlicerSegmentEditorLogic> Logic;
 };
 
 #endif
