@@ -228,7 +228,7 @@ bool vtkSlicerSegmentEditorLogic::ContainsClosedSurfaceRepresentation() const
 //-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::CreateAndSetBlankSourceVolumeFromSegmentationGeometry() const
 {
-  if (!this->IsSegmentationNodeValid() || !this->MRMLScene)
+  if (!this->IsSegmentationNodeValid() || !this->GetMRMLScene())
   {
     return;
   }
@@ -249,7 +249,7 @@ void vtkSlicerSegmentEditorLogic::CreateAndSetBlankSourceVolumeFromSegmentationG
     // Create volume node from blank image
     vtkMRMLSegmentationNode* segmentationNode = this->GetSegmentationNode();
     std::string sourceVolumeNodeName = (segmentationNode->GetName() ? segmentationNode->GetName() : "Volume") + std::string(" source volume");
-    vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->MRMLScene->AddNewNodeByClass("vtkMRMLScalarVolumeNode", sourceVolumeNodeName));
+    vtkMRMLScalarVolumeNode* sourceVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLScalarVolumeNode", sourceVolumeNodeName));
     sourceVolumeNode->SetAndObserveTransformNodeID(segmentationNode->GetTransformNodeID());
     vtkSlicerSegmentationsModuleLogic::CopyOrientedImageDataToVolumeNode(blankImage.GetPointer(), sourceVolumeNode);
 
@@ -705,12 +705,6 @@ void vtkSlicerSegmentEditorLogic::SelectFirstSegment(bool visibleOnly) const
   }
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerSegmentEditorLogic::SetApplicationLogic(vtkMRMLApplicationLogic* applicationLogic)
-{
-  this->ApplicationLogic = applicationLogic;
-}
-
 void vtkSlicerSegmentEditorLogic::SetDefaultTerminologyEntry(const std::string& entry)
 {
   this->DefaultTerminologyEntry = entry;
@@ -727,12 +721,6 @@ void vtkSlicerSegmentEditorLogic::SetMaximumNumberOfUndoStates(int maxNumberOfSt
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSegmentEditorLogic::SetScene(vtkMRMLScene* newScene)
-{
-  this->MRMLScene = newScene;
-}
-
-//-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::SetCurrentSegmentID(const std::string& segmentID) const
 {
   if (this->SegmentEditorNode)
@@ -744,30 +732,13 @@ void vtkSlicerSegmentEditorLogic::SetCurrentSegmentID(const std::string& segment
 //-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::SetSegmentEditorNode(vtkMRMLSegmentEditorNode* newSegmentEditorNode)
 {
-  if (this->SegmentEditorNode)
+  if (this->SegmentEditorNode == newSegmentEditorNode)
   {
-    this->SegmentEditorNode->RemoveObserver(this->SegmentEditorNodeObs);
+    return;
   }
 
-  this->SegmentEditorNode = newSegmentEditorNode;
-
-  if (newSegmentEditorNode)
-  {
-    // Observe segment editor node changes to synchronize attached segmentation to the segmentation history
-    vtkNew<vtkCallbackCommand> updateCommand;
-    updateCommand->SetClientData(this);
-    updateCommand->SetCallback(
-      [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
-      {
-        auto client = static_cast<vtkSlicerSegmentEditorLogic*>(clientData);
-        client->ReconnectSegmentationNodeObserver();
-      });
-
-    this->SegmentEditorNodeObs = newSegmentEditorNode->AddObserver(vtkCommand::ModifiedEvent, updateCommand);
-
-    // Update the segment editor's segmentation node observers
-    this->ReconnectSegmentationNodeObserver();
-  }
+  vtkSetAndObserveMRMLNodeMacro(this->SegmentEditorNode, newSegmentEditorNode);
+  this->ProcessMRMLNodesEvents(this->SegmentEditorNode, vtkCommand::ModifiedEvent, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -788,17 +759,19 @@ void vtkSlicerSegmentEditorLogic::SetSegmentationNode(vtkMRMLNode* node) const
 //------------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::SetSegmentationNodeID(const std::string& nodeID) const
 {
-  if (!this->MRMLScene)
+  if (!this->GetMRMLScene())
   {
     vtkErrorMacro("" << __func__ << ": MRML scene is not set");
     return;
   }
-  this->SetSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(this->MRMLScene->GetNodeByID(nodeID.c_str())));
+  this->SetSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID.c_str())));
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::SetSegmentationHistory(const vtkSmartPointer<vtkSegmentationHistory>& segmentationHistory)
 {
+  // Segmentation history doesn't inherit from MRML nodes and cannot use the vtkSetAndObserveMRMLNodeMacro
+  // Method connects the segmentation history manually and forwards update to ProcessMRMLNodesEvents.
   if (segmentationHistory == this->SegmentationHistory)
   {
     return;
@@ -821,14 +794,11 @@ void vtkSlicerSegmentEditorLogic::SetSegmentationHistory(const vtkSmartPointer<v
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
       auto client = static_cast<vtkSlicerSegmentEditorLogic*>(clientData);
-      client->InvokeEvent(SegmentationHistoryChangedEvent, callData);
+      client->ProcessMRMLNodesEvents(caller, eid, callData);
     });
 
   this->SegmentationHistory->AddObserver(vtkCommand::ModifiedEvent, updateCommand);
-  InvokeEvent(SegmentationHistoryChangedEvent);
-
-  // Synchronize segmentation history with current segmentation
-  this->SynchronizeSegmentationHistorySegmentation();
+  this->ProcessMRMLNodesEvents(this->SegmentationHistory, vtkCommand::ModifiedEvent, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -856,12 +826,12 @@ void vtkSlicerSegmentEditorLogic::SetSourceVolumeNode(vtkMRMLNode* node) const
 //------------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::SetSourceVolumeNodeID(const std::string& nodeID) const
 {
-  if (!this->MRMLScene)
+  if (!this->GetMRMLScene())
   {
     vtkErrorMacro("" << __func__ << ": MRML scene is not set");
     return;
   }
-  this->SetSourceVolumeNode(this->MRMLScene->GetNodeByID(nodeID.c_str()));
+  this->SetSourceVolumeNode(this->GetMRMLScene()->GetNodeByID(nodeID.c_str()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1224,7 +1194,8 @@ bool vtkSlicerSegmentEditorLogic::UpdateReferenceGeometryImage() const
 
 //-----------------------------------------------------------------------------
 vtkSlicerSegmentEditorLogic::vtkSlicerSegmentEditorLogic()
-  : SegmentationHistory(nullptr)
+  : SegmentEditorNode(nullptr)
+  , SegmentationHistory(nullptr)
   , AlignedSourceVolume(vtkSmartPointer<vtkOrientedImageData>::New())
   , ModifierLabelmap(vtkSmartPointer<vtkOrientedImageData>::New())
   , SelectedSegmentLabelmap(vtkSmartPointer<vtkOrientedImageData>::New())
@@ -1233,17 +1204,18 @@ vtkSlicerSegmentEditorLogic::vtkSlicerSegmentEditorLogic()
   , AlignedSourceVolumeUpdateSourceVolumeNode(nullptr)
   , AlignedSourceVolumeUpdateSourceVolumeNodeTransform(nullptr)
   , AlignedSourceVolumeUpdateSegmentationNodeTransform(nullptr)
-  , MRMLScene(nullptr)
-  , SegmentEditorNodeObs(0)
   , SegmentHistoryObs(0)
-  , SegmentationObs{ 0, nullptr }
-  , ApplicationLogic(nullptr)
+  , SegmentationNodeObs(nullptr)
 {
   SetSegmentationHistory(vtkSmartPointer<vtkSegmentationHistory>::New());
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerSegmentEditorLogic::~vtkSlicerSegmentEditorLogic() = default;
+vtkSlicerSegmentEditorLogic::~vtkSlicerSegmentEditorLogic()
+{
+  SetSegmentEditorNode(nullptr);
+  UpdateSegmentationNodeObserver(nullptr);
+}
 
 //---------------------------------------------------------------------------
 bool IsSegmentIDValid(const std::string& segmentID)
@@ -1475,7 +1447,7 @@ vtkSegment* vtkSlicerSegmentEditorLogic::GetSelectedSegment() const
 //----------------------------------------------------------------------------
 double vtkSlicerSegmentEditorLogic::GetSliceSpacing(vtkMRMLSliceNode* sliceNode) const
 {
-  vtkMRMLSliceLogic* sliceLogic = this->ApplicationLogic ? this->ApplicationLogic->GetSliceLogic(sliceNode) : nullptr;
+  vtkMRMLSliceLogic* sliceLogic = this->GetMRMLApplicationLogic() ? this->GetMRMLApplicationLogic()->GetSliceLogic(sliceNode) : nullptr;
   return vtkSlicerSegmentEditorLogic::GetSliceSpacing(sliceNode, sliceLogic);
 }
 
@@ -2002,7 +1974,29 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
 //---------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::PauseRender()
 {
-  InvokeEvent(PauseRenderEvent);
+  this->InvokeEvent(PauseRenderEvent);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSegmentEditorLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
+{
+  if (vtkMRMLSegmentEditorNode::SafeDownCast(caller))
+  {
+    this->UpdateSegmentationNodeObserver(this->GetSegmentationNode());
+  }
+
+  if (vtkMRMLSegmentationNode::SafeDownCast(caller))
+  {
+    if (this->SegmentationHistory)
+    {
+      this->SegmentationHistory->SetSegmentation(GetSegmentation());
+    }
+  }
+
+  if (vtkSegmentationHistory::SafeDownCast(caller))
+  {
+    this->InvokeEvent(SegmentationHistoryChangedEvent);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2031,7 +2025,7 @@ std::array<int, 2> vtkSlicerSegmentEditorLogic::RasToXy(double ras[3], vtkMRMLSl
 //---------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::ResumeRender()
 {
-  InvokeEvent(ResumeRenderEvent);
+  this->InvokeEvent(ResumeRenderEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -2189,47 +2183,13 @@ std::array<int, 3> vtkSlicerSegmentEditorLogic::XyToIjk(int xy[2], vtkMRMLSliceN
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSegmentEditorLogic::ReconnectSegmentationNodeObserver()
+void vtkSlicerSegmentEditorLogic::UpdateSegmentationNodeObserver(vtkMRMLSegmentationNode* segmentationNode)
 {
-  vtkMRMLSegmentationNode* prevSegmentationNode = std::get<1>(this->SegmentationObs);
-  vtkMRMLSegmentationNode* newSegmentationNode = this->GetSegmentationNode();
-  if (prevSegmentationNode == newSegmentationNode)
+  if (this->SegmentationNodeObs == segmentationNode)
   {
     return;
   }
 
-  // Remove previous observer
-  if (prevSegmentationNode)
-  {
-    prevSegmentationNode->RemoveObserver(std::get<0>(this->SegmentationObs));
-  }
-
-  // Attach new observer
-  if (newSegmentationNode)
-  {
-    // Always synchronize segmentation node's segmentation to the segmentation history
-    vtkNew<vtkCallbackCommand> updateCommand;
-    updateCommand->SetClientData(this);
-    updateCommand->SetCallback(
-      [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
-      {
-        auto client = static_cast<vtkSlicerSegmentEditorLogic*>(clientData);
-        client->SynchronizeSegmentationHistorySegmentation();
-      });
-
-    auto obs = newSegmentationNode->AddObserver(vtkCommand::ModifiedEvent, updateCommand);
-    this->SegmentationObs = std::make_tuple(obs, newSegmentationNode);
-
-    // Synchronize the segmentation history for the new segmentation node
-    this->SynchronizeSegmentationHistorySegmentation();
-  }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSegmentEditorLogic::SynchronizeSegmentationHistorySegmentation() const
-{
-  if (this->SegmentationHistory)
-  {
-    this->SegmentationHistory->SetSegmentation(GetSegmentation());
-  }
+  vtkSetAndObserveMRMLNodeMacro(this->SegmentationNodeObs, segmentationNode);
+  this->ProcessMRMLNodesEvents(this->SegmentationNodeObs, vtkCommand::ModifiedEvent, nullptr);
 }
