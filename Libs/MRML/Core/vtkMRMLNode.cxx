@@ -539,47 +539,11 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
             }
           }
         }
-        // Current value string is the node ID for the current node reference.
-        // Only proceed if this ID is not already referenced
-        else if (!this->HasNodeReferenceID(role.c_str(), value.c_str()))
+        else
         {
-          // Split ID by "Node" to get base class name
-          // e.g. "vtkMRMLModelNode123" -> "vtkMRMLModel"
-          std::string valueStr(value);
-          size_t nodePos = valueStr.find("Node");
-          std::string baseClass = valueStr.substr(0, nodePos);
-
-          // Check if any existing reference IDs have same base class
-          // This prevents duplicate references to nodes of the same type
-          int matchingIndex = -1;
-          if (this->NodeReferences.find(role) != this->NodeReferences.end())
-          {
-            // Iterate through existing references looking for matching base class
-            for (NodeReferenceListType::iterator it = this->NodeReferences[role].begin(); it != this->NodeReferences[role].end(); ++it)
-            {
-              std::string existingId((*it)->GetReferencedNodeID());
-              size_t existingNodePos = existingId.find("Node");
-              std::string existingBaseClass = existingId.substr(0, existingNodePos);
-              if (baseClass == existingBaseClass)
-              {
-                // Found matching base class, store its index
-                matchingIndex = std::distance(this->NodeReferences[role].begin(), it);
-                break;
-              }
-            }
-          }
-
-          // If no matching base class found, add as new reference
-          // Otherwise update the existing reference with matching base class
-          if (matchingIndex == -1)
-          {
-            this->AddNodeReferenceID(role.c_str(), value.c_str());
-            references.insert(role);
-          }
-          else
-          {
-            this->SetNthNodeReferenceID(role.c_str(), matchingIndex, value.c_str());
-          }
+          // Current value string is the node ID for the current node reference.
+          this->AddNodeReferenceID(role.c_str(), value.c_str());
+          references.insert(role);
         }
       }
     }

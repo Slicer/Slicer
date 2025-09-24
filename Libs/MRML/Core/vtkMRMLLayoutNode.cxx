@@ -85,8 +85,6 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
 
-  this->RemoveAllMaximizedViewNodes();
-
   Superclass::ReadXMLAttributes(atts);
 
   const char* attName;

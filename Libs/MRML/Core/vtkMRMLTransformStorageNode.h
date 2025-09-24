@@ -77,7 +77,7 @@ public:
   /// The most reliable way to determine this is to check which transform
   /// allows modification (the original stored transform).
   static bool IsTransformFromParentStored(vtkMRMLTransformNode* transformNode);
-  
+
   /// Serialize this node's data into a JSON-formatted string representation.
   /// \param refNode The node whose data will be serialized
   /// \return A string containing the node data in JSON format
