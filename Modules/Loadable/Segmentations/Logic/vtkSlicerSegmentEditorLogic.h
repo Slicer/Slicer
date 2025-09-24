@@ -20,8 +20,8 @@ Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
 
 ==============================================================================*/
 
-#ifndef __vtkSegmentEditorLogic_h
-#define __vtkSegmentEditorLogic_h
+#ifndef __vtkSlicerSegmentEditorLogic_h
+#define __vtkSlicerSegmentEditorLogic_h
 
 // Module export include
 #include "vtkSlicerSegmentationsModuleLogicExport.h"
@@ -60,11 +60,11 @@ class vtkPolyData;
 /// \brief Helper segment editor logic for qMRMLSegmentEditorWidget and its associated effects
 ///
 /// Provides common logic to access and modify the segmentation.
-class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSegmentEditorLogic : public vtkObject
+class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentEditorLogic : public vtkObject
 {
 public:
-  static vtkSegmentEditorLogic* New();
-  vtkTypeMacro(vtkSegmentEditorLogic, vtkObject);
+  static vtkSlicerSegmentEditorLogic* New();
+  vtkTypeMacro(vtkSlicerSegmentEditorLogic, vtkObject);
 
   enum ModificationMode
   {
@@ -388,8 +388,8 @@ public:
   static std::array<int, 3> XyToIjk(int xy[2], vtkMRMLSliceNode* sliceNode, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
 
 protected:
-  vtkSegmentEditorLogic();
-  ~vtkSegmentEditorLogic() override;
+  vtkSlicerSegmentEditorLogic();
+  ~vtkSlicerSegmentEditorLogic() override;
 
 private:
   void ReconnectSegmentationNodeObserver();
