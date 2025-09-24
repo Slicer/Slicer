@@ -72,6 +72,7 @@ class DICOMProcess:
             raise UserWarning("Could not find a valid path to DICOM helper applications")
 
     def __init__(self):
+        super().__init__()
         self.process = None
         self.connections = {}
         self.exeDir = self.getDCMTKToolsPath()
