@@ -60,6 +60,8 @@ const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED = -1;
 const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME = -2;
 const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME = -3;
 const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
+constexpr double SLICE_PLANE_DEGENERACY_EPSILON = 1e-6;
+constexpr double SLICE_PLANE_DEGENERACY_SQUARED_EPSILON = SLICE_PLANE_DEGENERACY_EPSILON * SLICE_PLANE_DEGENERACY_EPSILON;
 
 //----------------------------------------------------------------------------
 struct SliceLayerInfo
@@ -671,9 +673,7 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     dims[1] = std::max(1, dims[1]);
 
     // set the plane corner point for use in a model
-    double inPoint[4] = { 0, 0, 0, 1 };
-    double outPoint[4];
-    double* outPoint3 = outPoint;
+    double inPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
 
     // set the z position to be the active slice (from the lightbox)
     inPoint[2] = this->SliceNode->GetActiveSlice();
@@ -682,17 +682,50 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 
     int wasModified = this->SliceModelNode->StartModify();
 
+    double outPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
+    double defaultOrigin[3] = { 1.0, -1.0, 0.0 };
+    double defaultPoint1[3] = { -1.0, -1.0, 0.0 };
+    double defaultPoint2[3] = { 1.0, 1.0, 0.0 };
+
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetOrigin(outPoint3);
+    double origin[3] = { outPoint[0] / outPoint[3], outPoint[1] / outPoint[3], outPoint[2] / outPoint[3] };
 
     inPoint[0] = dims[0];
+    inPoint[1] = 0.0;
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetPoint1(outPoint3);
+    double point1[3] = { outPoint[0] / outPoint[3], outPoint[1] / outPoint[3], outPoint[2] / outPoint[3] };
 
-    inPoint[0] = 0;
+    inPoint[0] = 0.0;
     inPoint[1] = dims[1];
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    plane->SetPoint2(outPoint3);
+    double point2[3] = { outPoint[0] / outPoint[3], outPoint[1] / outPoint[3], outPoint[2] / outPoint[3] };
+
+    // Validate points to avoid degeneracy
+    if (vtkMath::Distance2BetweenPoints(origin, point1) < SLICE_PLANE_DEGENERACY_EPSILON || //
+        vtkMath::Distance2BetweenPoints(origin, point2) < SLICE_PLANE_DEGENERACY_EPSILON || //
+        vtkMath::Distance2BetweenPoints(point1, point2) < SLICE_PLANE_DEGENERACY_EPSILON)
+    {
+      vtkMath::Add(origin, defaultOrigin, origin);
+      vtkMath::Add(point1, defaultPoint1, point1);
+      vtkMath::Add(point2, defaultPoint2, point2);
+    }
+
+    // Ensure points form an orthogonal basis
+    double vector1[3] = { 0.0 };
+    double vector2[3] = { 0.0 };
+    vtkMath::Subtract(point1, origin, vector1);
+    vtkMath::Subtract(point2, origin, vector2);
+    if (fabs(vtkMath::Dot(vector1, vector2)) > SLICE_PLANE_DEGENERACY_EPSILON)
+    {
+      vtkMath::Add(origin, defaultOrigin, origin);
+      vtkMath::Add(point1, defaultPoint1, point1);
+      vtkMath::Add(point2, defaultPoint2, point2);
+    }
+
+    // Set plane points
+    plane->SetOrigin(origin);
+    plane->SetPoint1(point1);
+    plane->SetPoint2(point2);
 
     this->SliceModelNode->EndModify(wasModified);
 
