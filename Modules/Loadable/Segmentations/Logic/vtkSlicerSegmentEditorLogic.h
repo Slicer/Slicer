@@ -199,6 +199,9 @@ public:
   double GetSliceSpacing(vtkMRMLSliceNode* sliceNode) const;
   static double GetSliceSpacing(vtkMRMLSliceNode* sliceNode, vtkMRMLSliceLogic* sliceLogic);
 
+  /// Returns warning verbosity.
+  bool GetVerbose() const;
+
   /// Return matrix for volume node that takes into account the IJKToRAS
   /// and any linear transforms that have been applied
   static void ImageToWorldMatrix(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToRas);
@@ -317,6 +320,11 @@ public:
   /// \sa TrivialSetSourceRepresentationToBinaryLabelmap
   bool SetSourceRepresentationToBinaryLabelMap() const;
 
+  /// Sets the warning verbosity.
+  /// If verbose = False instance methods don't emit vtkWarnings.
+  /// Default: Verbose = False.
+  void SetVerbose(bool isVerbose);
+
   /// Create/remove closed surface model for the segmentation that is automatically updated when editing
   void ToggleSegmentationSurfaceRepresentation(bool isSurfaceRepresentationOn) const;
 
@@ -415,6 +423,9 @@ private:
 
   unsigned long SegmentHistoryObs;
   vtkMRMLSegmentationNode* SegmentationNodeObs;
+
+  // Warning verbosity level. Default = no warnings.
+  bool IsVerbose;
 };
 
 #endif
