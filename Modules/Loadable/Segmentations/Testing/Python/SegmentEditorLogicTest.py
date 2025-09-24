@@ -15,6 +15,7 @@ class SegmentationLogicTest(ScriptedLoadableModuleTest):
         self.logic = vtkSlicerSegmentEditorLogic()
         self.logic.SetMRMLScene(slicer.mrmlScene)
         self.logic.SetMRMLApplicationLogic(slicer.app.applicationLogic())
+        self.logic.SetVerbose(True)
 
         # Initialize with a tiny patient and basic segment editor node
         self.segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentEditorNode")

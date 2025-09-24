@@ -65,6 +65,15 @@ Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
 #include <vtkTransform.h>
 #include <vtkWeakPointer.h>
 
+#define WarningMacro(x)                             \
+  do                                                \
+  {                                                 \
+    if (this->IsVerbose)                            \
+    {                                               \
+      vtkWarningMacro("" << __func__ << ": " << x); \
+    }                                               \
+  } while (false)
+
 //----------------------------------------------------------------------------
 /// \brief Helper class to emit pause / resume events on construction and destruction
 class RenderBlocker
@@ -99,7 +108,7 @@ std::string vtkSlicerSegmentEditorLogic::AddEmptySegment(const std::string& segm
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return {};
   }
 
@@ -111,7 +120,7 @@ std::string vtkSlicerSegmentEditorLogic::AddEmptySegment(const std::string& segm
 
   if (!this->SaveStateForUndo())
   {
-    vtkWarningMacro("" << __func__ << ": Failed to properly save changes for Undo.");
+    WarningMacro("Failed to properly save changes for Undo.");
   }
 
   // Create empty segment in current segmentation
@@ -281,7 +290,7 @@ void vtkSlicerSegmentEditorLogic::ExportSegmentationToColorTableNode() const
   vtkMRMLColorTableNode* newColorTable = vtkSlicerSegmentationsModuleLogic::AddColorTableNodeForSegmentation(segmentationNode);
   if (newColorTable == nullptr)
   {
-    vtkErrorMacro("" << __func__ << ": Failed to create color table node for segmentation " << segmentationNode->GetName());
+    WarningMacro("Failed to create color table node for segmentation " << segmentationNode->GetName());
     return;
   }
 
@@ -289,8 +298,7 @@ void vtkSlicerSegmentEditorLogic::ExportSegmentationToColorTableNode() const
   std::vector<std::string> segmentIDs;
   if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIDs, newColorTable))
   {
-    vtkErrorMacro("" << __func__ << ": Failed to export color and terminology information from segmentation " << segmentationNode->GetName() << " to color table "
-                     << newColorTable->GetName());
+    WarningMacro("Failed to export color and terminology information from segmentation " << segmentationNode->GetName() << " to color table " << newColorTable->GetName());
   }
 }
 
@@ -356,7 +364,7 @@ std::string vtkSlicerSegmentEditorLogic::GetReferenceImageGeometryString() const
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return "";
   }
 
@@ -364,7 +372,7 @@ std::string vtkSlicerSegmentEditorLogic::GetReferenceImageGeometryString() const
   vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : nullptr;
   if (!segmentationNode || !segmentation)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segmentation");
+    WarningMacro("Invalid segmentation");
     return "";
   }
 
@@ -609,7 +617,7 @@ std::string vtkSlicerSegmentEditorLogic::RemoveSelectedSegment() const
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return {};
   }
 
@@ -622,7 +630,7 @@ std::string vtkSlicerSegmentEditorLogic::RemoveSelectedSegment() const
 
   if (!this->SaveStateForUndo())
   {
-    vtkWarningMacro("" << __func__ << ": Failed to properly save state for Undo.");
+    WarningMacro("Failed to properly save state for Undo.");
   }
 
   // Switch to a new valid segment now (to avoid transient state when no segments are selected
@@ -651,7 +659,7 @@ bool vtkSlicerSegmentEditorLogic::ResetModifierLabelmapToDefault() const
   std::string referenceImageGeometry = this->GetReferenceImageGeometryString();
   if (referenceImageGeometry.empty())
   {
-    vtkErrorMacro("" << __func__ << ": Cannot determine default modifierLabelmap geometry");
+    WarningMacro("Cannot determine default modifierLabelmap geometry");
     return false;
   }
 
@@ -748,7 +756,7 @@ void vtkSlicerSegmentEditorLogic::SetSegmentationNode(vtkMRMLNode* node) const
   {
     if (node)
     {
-      vtkErrorMacro("" << __func__ << ": need to set segment editor node first");
+      WarningMacro("need to set segment editor node first");
     }
     return;
   }
@@ -761,7 +769,7 @@ void vtkSlicerSegmentEditorLogic::SetSegmentationNodeID(const std::string& nodeI
 {
   if (!this->GetMRMLScene())
   {
-    vtkErrorMacro("" << __func__ << ": MRML scene is not set");
+    WarningMacro("MRML scene is not set");
     return;
   }
   this->SetSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID.c_str())));
@@ -808,7 +816,7 @@ void vtkSlicerSegmentEditorLogic::SetSourceVolumeNode(vtkMRMLNode* node) const
   {
     if (node)
     {
-      vtkErrorMacro("" << __func__ << ": need to set segment editor and segmentation nodes first");
+      WarningMacro("need to set segment editor and segmentation nodes first");
     }
     return;
   }
@@ -828,7 +836,7 @@ void vtkSlicerSegmentEditorLogic::SetSourceVolumeNodeID(const std::string& nodeI
 {
   if (!this->GetMRMLScene())
   {
-    vtkErrorMacro("" << __func__ << ": MRML scene is not set");
+    WarningMacro("MRML scene is not set");
     return;
   }
   this->SetSourceVolumeNode(this->GetMRMLScene()->GetNodeByID(nodeID.c_str()));
@@ -861,8 +869,7 @@ bool vtkSlicerSegmentEditorLogic::SetSourceRepresentationToBinaryLabelMap() cons
   }
 
   // Show binary labelmap in 2D
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(GetSegmentationNode()->GetDisplayNode());
-  if (displayNode)
+  if (vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(GetSegmentationNode()->GetDisplayNode()))
   {
     displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
   }
@@ -871,11 +878,17 @@ bool vtkSlicerSegmentEditorLogic::SetSourceRepresentationToBinaryLabelMap() cons
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerSegmentEditorLogic::SetVerbose(bool isVerbose)
+{
+  this->IsVerbose = isVerbose;
+}
+
+//-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::ToggleSegmentationSurfaceRepresentation(bool isSurfaceRepresentationOn) const
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return;
   }
 
@@ -975,7 +988,7 @@ void vtkSlicerSegmentEditorLogic::UpdateVolume(void* volumeToUpdate, bool& succe
   }
   else
   {
-    vtkErrorMacro("" << __func__ << ": Failed to update volume");
+    WarningMacro("Failed to update volume");
     success = false;
   }
 }
@@ -985,7 +998,7 @@ bool vtkSlicerSegmentEditorLogic::UpdateSelectedSegmentLabelmap() const
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return false;
   }
 
@@ -998,21 +1011,21 @@ bool vtkSlicerSegmentEditorLogic::UpdateSelectedSegmentLabelmap() const
   const char* selectedSegmentID = this->SegmentEditorNode->GetSelectedSegmentID();
   if (!selectedSegmentID)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment selection");
+    WarningMacro("Invalid segment selection");
     return false;
   }
 
   vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(selectedSegmentID);
   if (selectedSegment == nullptr)
   {
-    vtkWarningMacro(" failed: Segment " << selectedSegmentID << " not found in segmentation");
+    WarningMacro("Failed: Segment " << selectedSegmentID << " not found in segmentation");
     return false;
   }
   vtkOrientedImageData* segmentLabelmap =
     vtkOrientedImageData::SafeDownCast(selectedSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
   if (!segmentLabelmap)
   {
-    vtkErrorMacro("" << __func__ << ": Failed to get binary labelmap representation in segmentation " << segmentationNode->GetName());
+    WarningMacro("Failed to get binary labelmap representation in segmentation " << segmentationNode->GetName());
     return false;
   }
   int* extent = segmentLabelmap->GetExtent();
@@ -1048,7 +1061,7 @@ bool vtkSlicerSegmentEditorLogic::UpdateAlignedSourceVolume()
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return false;
   }
 
@@ -1142,26 +1155,26 @@ bool vtkSlicerSegmentEditorLogic::UpdateMaskLabelmap() const
 {
   if (!this->SegmentEditorNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return false;
   }
   vtkMRMLSegmentationNode* segmentationNode = this->SegmentEditorNode->GetSegmentationNode();
   if (!segmentationNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segmentation node");
+    WarningMacro("Invalid segmentation node");
     return false;
   }
 
   std::string referenceGeometryStr = this->GetReferenceImageGeometryString();
   if (referenceGeometryStr.empty())
   {
-    vtkErrorMacro("" << __func__ << ": Cannot determine mask labelmap geometry");
+    WarningMacro("Cannot determine mask labelmap geometry");
     return false;
   }
   vtkNew<vtkOrientedImageData> referenceGeometry;
   if (!vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryStr, referenceGeometry, false))
   {
-    vtkErrorMacro("" << __func__ << ": Cannot determine mask labelmap geometry");
+    WarningMacro("Cannot determine mask labelmap geometry");
     return false;
   }
 
@@ -1175,7 +1188,7 @@ bool vtkSlicerSegmentEditorLogic::UpdateMaskLabelmap() const
                                           this->SegmentEditorNode->GetSelectedSegmentID() ? this->SegmentEditorNode->GetSelectedSegmentID() : "",
                                           this->SegmentEditorNode->GetMaskSegmentID() ? this->SegmentEditorNode->GetMaskSegmentID() : ""))
   {
-    vtkErrorMacro("" << __func__ << ": Mask generation failed");
+    WarningMacro("Mask generation failed");
     return false;
   }
   return true;
@@ -1206,6 +1219,7 @@ vtkSlicerSegmentEditorLogic::vtkSlicerSegmentEditorLogic()
   , AlignedSourceVolumeUpdateSegmentationNodeTransform(nullptr)
   , SegmentHistoryObs(0)
   , SegmentationNodeObs(nullptr)
+  , IsVerbose(false)
 {
   SetSegmentationHistory(vtkSmartPointer<vtkSegmentationHistory>::New());
 }
@@ -1475,6 +1489,12 @@ double vtkSlicerSegmentEditorLogic::GetSliceSpacing(vtkMRMLSliceNode* sliceNode,
 }
 
 //-----------------------------------------------------------------------------
+bool vtkSlicerSegmentEditorLogic::GetVerbose() const
+{
+  return this->IsVerbose;
+}
+
+//-----------------------------------------------------------------------------
 void vtkSlicerSegmentEditorLogic::ImageToWorldMatrix(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToRas)
 {
   if (!node || !ijkToRas)
@@ -1583,13 +1603,13 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
   vtkMRMLSegmentEditorNode* parameterSetNode = this->GetSegmentEditorNode();
   if (!parameterSetNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment editor parameter set node");
+    WarningMacro("Invalid segment editor parameter set node");
     return;
   }
 
   if (!segmentationNode)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segmentation");
+    WarningMacro("Invalid segmentation");
     return;
   }
 
@@ -1600,7 +1620,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
   }
   if (!segment)
   {
-    vtkErrorMacro("" << __func__ << ": Invalid segment");
+    WarningMacro("Invalid segment");
     return;
   }
 
@@ -1609,7 +1629,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     // If per-segment flag is off, then it is not an error (the effect itself has written it back to segmentation)
     if (isPerSegment)
     {
-      vtkErrorMacro("" << __func__ << ": Cannot apply edit operation because modifier labelmap cannot be accessed");
+      WarningMacro("Cannot apply edit operation because modifier labelmap cannot be accessed");
     }
     return;
   }
@@ -1635,7 +1655,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     {
       if (!this->UpdateMaskLabelmap())
       {
-        vtkErrorMacro("" << __func__ << ": Failed to update mask labelmap");
+        WarningMacro("Failed to update mask labelmap");
         return;
       }
       vtkOrientedImageDataResample::ModifyImage(maskImage, this->GetMaskLabelmap(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
@@ -1646,21 +1666,21 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     {
       if (!this->UpdateAlignedSourceVolume())
       {
-        vtkErrorMacro("" << __func__ << ": Unable to update volume image");
+        WarningMacro("Unable to update volume image");
         return;
       }
 
       vtkOrientedImageData* sourceVolumeOrientedImageData = this->GetAlignedSourceVolume();
       if (!sourceVolumeOrientedImageData)
       {
-        vtkErrorMacro("" << __func__ << ": Source volume image is empty");
+        WarningMacro("Source volume image is empty");
         return;
       }
 
       // Make sure the modifier labelmap has the same geometry as the source volume
       if (!vtkOrientedImageDataResample::DoGeometriesMatch(modifierLabelmap, sourceVolumeOrientedImageData))
       {
-        vtkErrorMacro("" << __func__ << ": Modifier labelmap should have the same geometry as the source volume");
+        WarningMacro("Modifier labelmap should have the same geometry as the source volume");
         return;
       }
 
@@ -1809,12 +1829,12 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
           invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, nullptr, false, segmentIDsToOverwrite))
     {
-      vtkErrorMacro("" << __func__ << ": Failed to remove modifier labelmap from selected segment");
+      WarningMacro("Failed to remove modifier labelmap from selected segment");
     }
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
           modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
     {
-      vtkErrorMacro("" << __func__ << ": Failed to add modifier labelmap to selected segment");
+      WarningMacro("Failed to add modifier labelmap to selected segment");
     }
   }
   else if (modificationMode == vtkSlicerSegmentEditorLogic::ModificationModeAdd)
@@ -1822,7 +1842,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
           modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
     {
-      vtkErrorMacro("" << __func__ << ": Failed to add modifier labelmap to selected segment");
+      WarningMacro("Failed to add modifier labelmap to selected segment");
     }
   }
   else if (modificationMode == vtkSlicerSegmentEditorLogic::ModificationModeRemove || modificationMode == vtkSlicerSegmentEditorLogic::ModificationModeRemoveAll)
@@ -1842,7 +1862,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
                                                                        minimumOfAllSegments,
                                                                        segmentIDsToOverwrite))
     {
-      vtkErrorMacro("" << __func__ << ": Failed to remove modifier labelmap from selected segment");
+      WarningMacro("Failed to remove modifier labelmap from selected segment");
     }
   }
 
@@ -1929,7 +1949,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
       if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
             invertedModifierLabelmap2, segmentationNode, eraseSegmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent, true, segmentIDsToOverwrite))
       {
-        vtkErrorMacro("" << __func__ << ": Failed to set modifier labelmap to segment " + eraseSegmentID);
+        WarningMacro("Failed to set modifier labelmap to segment " + eraseSegmentID);
       }
     }
   }
@@ -1948,7 +1968,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
                                                                        false,
                                                                        segmentIDsToOverwrite))
     {
-      vtkErrorMacro("" << __func__ << ": Failed to add back modifier labelmap to segment " + std::string(this->GetSegmentEditorNode()->GetMaskSegmentID()));
+      WarningMacro("Failed to add back modifier labelmap to segment " + std::string(this->GetSegmentEditorNode()->GetMaskSegmentID()));
     }
   }
 
@@ -1965,7 +1985,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
       }
       else
       {
-        vtkErrorMacro("" << __func__ << ": Subject hierarchy items not found for segmentation or source volume");
+        WarningMacro("Subject hierarchy items not found for segmentation or source volume");
       }
     }
   }
