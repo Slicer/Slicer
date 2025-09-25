@@ -20,13 +20,14 @@ Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
 
 ==============================================================================*/
 
-#ifndef __vtkSegmentEditorLogic_h
-#define __vtkSegmentEditorLogic_h
+#ifndef __vtkSlicerSegmentEditorLogic_h
+#define __vtkSlicerSegmentEditorLogic_h
 
 // Module export include
 #include "vtkSlicerSegmentationsModuleLogicExport.h"
 
 // MRML includes
+#include "vtkMRMLAbstractLogic.h"
 class vtkMRMLAbstractViewNode;
 class vtkMRMLApplicationLogic;
 class vtkMRMLNode;
@@ -47,9 +48,7 @@ class vtkSegmentationHistory;
 
 // VTK includes
 #include <vtkCommand.h>
-#include <vtkObject.h>
 #include <vtkSmartPointer.h>
-#include <vtkWeakPointer.h>
 class vtkMatrix4x4;
 class vtkPolyData;
 
@@ -60,11 +59,11 @@ class vtkPolyData;
 /// \brief Helper segment editor logic for qMRMLSegmentEditorWidget and its associated effects
 ///
 /// Provides common logic to access and modify the segmentation.
-class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSegmentEditorLogic : public vtkObject
+class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentEditorLogic : public vtkMRMLAbstractLogic
 {
 public:
-  static vtkSegmentEditorLogic* New();
-  vtkTypeMacro(vtkSegmentEditorLogic, vtkObject);
+  static vtkSlicerSegmentEditorLogic* New();
+  vtkTypeMacro(vtkSlicerSegmentEditorLogic, vtkMRMLAbstractLogic);
 
   enum ModificationMode
   {
@@ -200,6 +199,9 @@ public:
   double GetSliceSpacing(vtkMRMLSliceNode* sliceNode) const;
   static double GetSliceSpacing(vtkMRMLSliceNode* sliceNode, vtkMRMLSliceLogic* sliceLogic);
 
+  /// Returns warning verbosity.
+  bool GetVerbose() const;
+
   /// Return matrix for volume node that takes into account the IJKToRAS
   /// and any linear transforms that have been applied
   static void ImageToWorldMatrix(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToRas);
@@ -280,17 +282,11 @@ public:
   /// Negative offset will move up the segmentation list
   void SelectSegmentAtOffset(int offset, bool visibleOnly) const;
 
-  /// Set the current MRML application logic
-  void SetApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
-
   /// Set the default terminology to use when adding new segments
   void SetDefaultTerminologyEntry(const std::string& entry);
 
   /// Set maximum number of saved undo/redo states.
   void SetMaximumNumberOfUndoStates(int) const;
-
-  /// Set the MRML \a scene associated with the widget
-  void SetScene(vtkMRMLScene* newScene);
 
   /// Set selected segment by its ID
   void SetCurrentSegmentID(const std::string& segmentID) const;
@@ -323,6 +319,11 @@ public:
   /// \sa CanTriviallyConvertSourceRepresentationToBinaryLabelMap
   /// \sa TrivialSetSourceRepresentationToBinaryLabelmap
   bool SetSourceRepresentationToBinaryLabelMap() const;
+
+  /// Sets the warning verbosity.
+  /// If verbose = False instance methods don't emit vtkWarnings.
+  /// Default: Verbose = False.
+  void SetVerbose(bool isVerbose);
 
   /// Create/remove closed surface model for the segmentation that is automatically updated when editing
   void ToggleSegmentationSurfaceRepresentation(bool isSurfaceRepresentationOn) const;
@@ -388,15 +389,17 @@ public:
   static std::array<int, 3> XyToIjk(int xy[2], vtkMRMLSliceNode* sliceNode, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
 
 protected:
-  vtkSegmentEditorLogic();
-  ~vtkSegmentEditorLogic() override;
+  /// Update segment editor node, segmentation node and segment history observers
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+
+  vtkSlicerSegmentEditorLogic();
+  ~vtkSlicerSegmentEditorLogic() override;
 
 private:
-  void ReconnectSegmentationNodeObserver();
-  void SynchronizeSegmentationHistorySegmentation() const;
+  void UpdateSegmentationNodeObserver(vtkMRMLSegmentationNode* segmentationNode);
 
   /// Segment editor parameter set node containing all selections and working images
-  vtkWeakPointer<vtkMRMLSegmentEditorNode> SegmentEditorNode;
+  vtkMRMLSegmentEditorNode* SegmentEditorNode;
   vtkSmartPointer<vtkSegmentationHistory> SegmentationHistory;
 
   /// These volumes are owned by this widget and a pointer is given to each effect
@@ -418,12 +421,11 @@ private:
 
   std::string DefaultTerminologyEntry;
 
-  vtkMRMLScene* MRMLScene;
-
-  unsigned long SegmentEditorNodeObs;
   unsigned long SegmentHistoryObs;
-  std::tuple<unsigned long, vtkWeakPointer<vtkMRMLSegmentationNode>> SegmentationObs;
-  vtkMRMLApplicationLogic* ApplicationLogic;
+  vtkMRMLSegmentationNode* SegmentationNodeObs;
+
+  // Warning verbosity level. Default = no warnings.
+  bool IsVerbose;
 };
 
 #endif
