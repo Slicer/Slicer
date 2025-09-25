@@ -267,6 +267,8 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   QFileDialog::AcceptMode acceptMode = (d->Action == qSlicerFileDialog::Read) ? QFileDialog::AcceptOpen : QFileDialog::AcceptSave;
   fileDialog->setAcceptMode(acceptMode);
 
+  const bool usingNativeDialog = !fileDialog->testOption(QFileDialog::DontUseNativeDialog);
+
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   qSlicerIOOptions* options = this->options(properties);
@@ -275,7 +277,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   // options is not necessary a qSlicerIOOptionsWidget (for the case of
   // readers/modules with no UI. If there is a UI then add it inside the file
   // dialog.
-  if (optionsWidget)
+  if (optionsWidget && !usingNativeDialog)
   {
     // fileDialog will reparent optionsWidget and take care of deleting
     // optionsWidget for us.
@@ -334,7 +336,11 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   // If options is not a qSlicerIOOptionsWidget, we are responsible for
   // deleting options. If it is, then fileDialog would have reparent
   // the options and take care of its destruction
-  if (!optionsWidget)
+  //
+  // However, when a *native* dialog is used, custom widgets are not embedded,
+  // so even qSlicerIOOptionsWidget instances won't be reparented. In that case
+  // we must still delete.
+  if (options && (!optionsWidget || usingNativeDialog))
   {
     delete options;
     options = nullptr;
