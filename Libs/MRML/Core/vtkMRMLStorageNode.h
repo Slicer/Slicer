@@ -402,6 +402,22 @@ public:
   /// to be called explicitly.
   void FixFileName();
 
+  ///
+  /// Generate temporary file path for writing by creating a unique temporary subdirectory.
+  /// This method creates a unique temporary subdirectory at the same location as the target file,
+  /// using the current time and process id to avoid conflicts.
+  /// \param fullFileName Input target full file path
+  /// \param tempDir Returns the temporary directory path that was created
+  /// \param tempFileName Returns the temporary full file path
+  /// \return true on success, false on failure
+  bool GenerateTempFilePathForWrite(const std::string& fullFileName, std::string& tempDir, std::string& tempFullFileName);
+
+  ///
+  /// Move all files in the source directory to their final destinations with file-based locking.
+  /// This method attempts to acquire a file lock for each file, moves the source files to the final destinations,
+  /// and cleans up the source directory. It ensures that concurrent writes do not corrupt the files.
+  bool MoveFilesWithLocking(const std::string& sourceDir, const std::string& targetDir);
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;
