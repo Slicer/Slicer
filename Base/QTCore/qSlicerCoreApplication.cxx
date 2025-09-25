@@ -1198,6 +1198,32 @@ CTK_GET_CPP(qSlicerCoreApplication, bool, isURIArgumentHandlingEnabled, URIArgum
 CTK_SET_CPP(qSlicerCoreApplication, bool, setURIArgumentHandlingEnabled, URIArgumentHandlingEnabled);
 
 //-----------------------------------------------------------------------------
+namespace
+{
+
+// Mirrors CPython's PyWideStringList_Clear only available internally:
+// Items in PyWideStringList are allocated with the "raw" allocator;
+// free them with PyMem_RawFree (mirrors CPython).
+void ClearWideStringList(PyWideStringList* list)
+{
+  if (!list || !list->items)
+  {
+    list->length = 0;
+    list->items = nullptr;
+    return;
+  }
+  for (Py_ssize_t i = 0; i < list->length; ++i)
+  {
+    PyMem_RawFree(list->items[i]);
+  }
+  PyMem_RawFree(list->items);
+  list->length = 0;
+  list->items = nullptr;
+}
+
+} // namespace
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handleCommandLineArguments()
 {
   Q_D(qSlicerCoreApplication);
@@ -1218,9 +1244,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 #else
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
-    // Snapshot current sys.path BEFORE applying the config
-    // Rationale: _PyInterpreterState_SetConfig will replace sys.path from config.
-    // We want an exact restore of the sys.path augmented during Slicer module discovery.
+    // Snapshot current sys.path BEFORE applying the config.
+    // Rationale: _PyInterpreterState_SetConfig replaces sys.path from the config.
+    // We capture the runtime-augmented sys.path so we can install it into the config.
     PythonQtObjectPtr sys;
     sys.setNewRef(PyImport_ImportModule("sys"));
     PythonQtObjectPtr sysPath;
@@ -1275,6 +1301,23 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       qSlicerCoreApplication::terminate(EXIT_FAILURE);
     }
 
+    // Preserve runtime-augmented sys.path in the config itself.
+    // Set module_search_paths_set=1 BEFORE PyConfig_SetArgv so argv changes
+    // won't trigger a path recompute that drops Slicer inserts.
+    ClearWideStringList(&config.module_search_paths);
+    config.module_search_paths_set = 1;
+
+    for (const QString& path : savedSysPath)
+    {
+      const std::wstring w = path.toStdWString();
+      PyStatus status = PyWideStringList_Append(&config.module_search_paths, w.c_str());
+      if (PyStatus_Exception(status))
+      {
+        PyConfig_Clear(&config);
+        Py_ExitStatusException(status);
+      }
+    }
+
     // Apply updated command-line arguments to the interpreter.
     PyStatus status = PyConfig_SetArgv(&config, pythonArgc, pythonArgv);
     if (PyStatus_Exception(status))
@@ -1291,9 +1334,6 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       PyErr_Print();
       qSlicerCoreApplication::terminate(EXIT_FAILURE);
     }
-
-    // Restore sys.path exactly as it was before calling "_PyInterpreterState_SetConfig"
-    PythonQt::self()->overwriteSysPath(savedSysPath);
 
     PyConfig_Clear(&config);
 
