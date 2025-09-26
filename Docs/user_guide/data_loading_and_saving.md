@@ -73,6 +73,20 @@ documentation, and the [Coordinate system convention in Slicer](../user_guide/co
 
 :::
 
+:::{note}
+
+### Be careful with uncommon encoding options
+
+Research data formats like NRRD and NIfTI, and even widely used clinical formats like DICOM,
+support many encoding options that are technically valid but are so rarely seen that support
+libraries and other code in Slicer may not interpret them correctly.
+
+If you are performing data interchange between Slicer and other software, prefer widely used
+conventions (such as LPS or RAS for coordinate systems) and double-check data integrity if you
+deviate from them.
+
+:::
+
 ### Images
 
 Readers may support 2D, 3D, and 4D images of various types, such as scalar, vector, DWI or DTI, containing images, dose maps, displacement fields, etc.
