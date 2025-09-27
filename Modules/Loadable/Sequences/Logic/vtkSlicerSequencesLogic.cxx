@@ -145,21 +145,50 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
   {
     return nullptr;
   }
+
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
   vtkNew<vtkMRMLSequenceStorageNode> sequenceStorageNode;
   vtkNew<vtkMRMLVolumeSequenceStorageNode> volumeSequenceStorageNode;
   vtkNew<vtkMRMLTransformSequenceStorageNode> transformSequenceStorageNode;
 
+  // check for local or remote files
+  int useURI = 0; // false;
+  if (this->GetMRMLScene()->GetCacheManager() != nullptr)
+  {
+    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    vtkDebugMacro("AddSequence: file name is remote: " << filename);
+  }
+  std::string localFile = filename;
+  if (useURI)
+  {
+    sequenceStorageNode->SetURI(filename);
+    volumeSequenceStorageNode->SetURI(filename);
+    transformSequenceStorageNode->SetURI(filename);
+    // reset filename to the local file name
+    const char* localFilePtr = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    if (localFilePtr)
+    {
+      localFile = localFilePtr;
+    }
+  }
+  else
+  {
+    sequenceStorageNode->SetFileName(filename);
+    volumeSequenceStorageNode->SetFileName(filename);
+    transformSequenceStorageNode->SetFileName(filename);
+  }
+
+  // May need to look into the file content to decide if the file is a transform sequence or an image sequence
   vtkMRMLStorageNode* storageNode = nullptr;
-  if (sequenceStorageNode->SupportedFileType(filename))
+  if (sequenceStorageNode->SupportedFileType(localFile.c_str()))
   {
     storageNode = sequenceStorageNode;
   }
-  else if (transformSequenceStorageNode->SupportedFileType(filename))
+  else if (transformSequenceStorageNode->SupportedFileType(localFile.c_str()))
   {
     storageNode = transformSequenceStorageNode;
   }
-  else if (volumeSequenceStorageNode->SupportedFileType(filename))
+  else if (volumeSequenceStorageNode->SupportedFileType(localFile.c_str()))
   {
     storageNode = volumeSequenceStorageNode;
   }
@@ -169,66 +198,36 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
     return nullptr;
   }
 
-  // check for local or remote files
-  int useURI = 0; // false;
-  if (this->GetMRMLScene()->GetCacheManager() != nullptr)
-  {
-    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
-    vtkDebugMacro("AddSequence: file name is remote: " << filename);
-  }
-  const char* localFile = 0;
-  if (useURI)
-  {
-    storageNode->SetURI(filename);
-    // reset filename to the local file name
-    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
-  }
-  else
-  {
-    storageNode->SetFileName(filename);
-    localFile = filename;
-  }
-  const std::string fname(localFile ? localFile : "");
   // the sequence name is based on the file name (vtksys call should work even if
   // file is not on disk yet)
-  std::string name = vtksys::SystemTools::GetFilenameName(fname);
-  vtkDebugMacro("AddSequence: got Sequence name = " << name.c_str());
+  vtkDebugMacro("AddSequence: got Sequence name = " << localFile.c_str());
 
-  // check to see which node can read this type of file
-  if (storageNode->SupportedFileType(name.c_str()))
+  std::string baseName = storageNode->GetFileNameWithoutExtension(localFile.c_str());
+  std::string uname(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
+  sequenceNode->SetName(uname.c_str());
+
+  this->GetMRMLScene()->SaveStateForUndo();
+
+  this->GetMRMLScene()->AddNode(storageNode);
+
+  // Set the scene so that SetAndObserveStorageNodeID can find the node in the scene.
+  sequenceNode->SetScene(this->GetMRMLScene());
+  sequenceNode->SetAndObserveStorageNodeID(storageNode->GetID());
+
+  this->GetMRMLScene()->AddNode(sequenceNode);
+
+  // now set up the reading
+  vtkDebugMacro("AddSequence: calling read on the storage node");
+  int success = storageNode->ReadData(sequenceNode);
+  if (!success)
   {
-    std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
-    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
-    sequenceNode->SetName(uname.c_str());
-
-    this->GetMRMLScene()->SaveStateForUndo();
-
-    this->GetMRMLScene()->AddNode(storageNode);
-
-    // Set the scene so that SetAndObserveStorageNodeID can find the node in the scene.
-    sequenceNode->SetScene(this->GetMRMLScene());
-    sequenceNode->SetAndObserveStorageNodeID(storageNode->GetID());
-
-    this->GetMRMLScene()->AddNode(sequenceNode);
-
-    // now set up the reading
-    vtkDebugMacro("AddSequence: calling read on the storage node");
-    int success = storageNode->ReadData(sequenceNode);
-    if (!success)
+    vtkErrorMacro("AddSequence: error reading " << filename);
+    if (userMessages)
     {
-      vtkErrorMacro("AddSequence: error reading " << filename);
-      if (userMessages)
-      {
-        userMessages->AddMessages(storageNode->GetUserMessages());
-      }
-      this->GetMRMLScene()->RemoveNode(sequenceNode);
-      this->GetMRMLScene()->RemoveNode(storageNode);
-      return nullptr;
+      userMessages->AddMessages(storageNode->GetUserMessages());
     }
-  }
-  else
-  {
-    vtkErrorMacro("Couldn't read file: " << filename);
+    this->GetMRMLScene()->RemoveNode(sequenceNode);
+    this->GetMRMLScene()->RemoveNode(storageNode);
     return nullptr;
   }
 

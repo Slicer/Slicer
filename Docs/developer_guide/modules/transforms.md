@@ -17,6 +17,70 @@
   - Avoid inverse non-linear transforms: make sure that non-linear transforms are only set as FromParent
 - Transforms module in Slicer shows linear transform matrix values "to parent" (modeling convention) in RAS coordinate system. Therefore to retrieve the same values from an ITK transforms as shown in Slicer GUI, one has switch between RAS/LPS and modeling/resampling. See example [here](../script_repository.md#convert-between-itk-and-slicer-linear-transforms).
 
+## Displacement field files
+
+Slicer can store displacement field transforms (or "grid transforms" in VTK naming convention) in 3D NRRD or NIFTI format; or sequence of transforms in NRRD format. Image file header fields are used to distinguish the displacement field transforms form regular images and specify how to correctly interpret these images as transforms.
+
+Requirements for NRRD files to be correctly recognized and loaded as displacement field transform:
+- `kinds` field is set to:
+  - `vector domain domain domain` for single 3D displacement field transform
+  - `vector domain domain domain list` for displacement field sequence
+- `measurement frame` is recommended to be set to identity to unambiguously specify that vector stores spatial coordinates in the same coordinate system as the image axes are specified in.
+- custom `intent_code` field is set to `1006`. This convention originates from the NIFTI file format and it makes it easy to detect images as displacement fields when using ITK file reader.
+- custom `displacement field type` is set to:
+  - `resampling` for ITK convention, useful for transforming images, in the Slicer transform tree specifies the transform "from parent"
+  - `modeling` (useful for transforming points, markups, models; in the Slicer transform tree specifies the transform "to parent")
+
+Requirements for NIFTI files to be correctly recognized and loaded as displacement field transform:
+- `intent_code` field is set to 1006 (`NIFTI_INTENT_DISPVECT`)
+- displacement vector values are stored in RAS coordinate system
+
+### Example 3D displacement field file header
+
+```txt
+NRRD0005
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: double
+dimension: 4
+space: left-posterior-superior
+sizes: 3 256 256 130
+space directions: none (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
+kinds: vector domain domain domain
+endian: little
+encoding: raw
+space origin: (86.644897460937486,-133.92860412597656,116.78569793701172)
+measurement frame: (1,0,0) (0,1,0) (0,0,1)
+displacement field type:=resampling
+intent_code:=1006
+```
+
+### Example 3D+t displacement field sequence file header
+
+```txt
+NRRD0005
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: double
+dimension: 5
+space: left-posterior-superior
+sizes: 3 88 160 72 14
+space directions: none (0,1.5,0) (0.13855585501996717,0,-1.4935870497027235) (-1.4935870497027182,0,-0.13855585501997181) none
+kinds: vector domain domain domain list
+labels: "" "" "" "" "time"
+units: "" "" "" "" "ms"
+endian: little
+encoding: gzip
+space origin: (43.348771859606991,-103.34095001221,82.564098750818999)
+measurement frame: (1,0,0) (0,1,0) (0,0,1)
+axis 3 index type:=numeric
+axis 3 index values:=18.551218032837 55.653656005859 92.756088256836 129.8585357666 166.96096801758 204.06340026855 241.16584777832 278.26824951172 315.37069702148 352.47314453125 389.57556152344 426.6780090332 463.78045654297 500.88287353516
+displacement field type:=modeling
+intent_code:=1006
+```
+
+`axis 3 index type` and `axis 3 index values` fields refer to the 4th range axis (list).
+
 ## Events
 
 When a transform node is observed by a transformable node, [vtkMRMLTransformableNode::TransformModifiedEvent](slicerapidocs:classvtkMRMLTransformableNode.html#a2614fa4d0c7c096d4782ceae75af0c82a4993bf6e23a6dfc138cb2efc1b9ce43b) is fired on the transformable node at observation time. Anytime a transform is modified, vtkCommand::ModifiedEvent is fired on the transform node and [vtkMRMLTransformableNode::TransformModifiedEvent](slicerapidocs:classvtkMRMLTransformableNode.html#a2614fa4d0c7c096d4782ceae75af0c82a4993bf6e23a6dfc138cb2efc1b9ce43b) is fired on the transformable node.

@@ -27,6 +27,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
+#include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 
 // vtkAddon includes
@@ -36,6 +37,10 @@
 // vtkITK includes
 #include "vtkITKImageSequenceReader.h"
 #include "vtkITKImageSequenceWriter.h"
+
+// ITK includes
+#include "itkMetaDataObject.h"
+#include "itkNrrdImageIO.h"
 
 // VTK includes
 #include <vtkErrorCode.h>
@@ -100,6 +105,7 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // Read custom attributes
   std::vector<std::string> indexValues;
+  bool useTransformFromParent = true; // Default: use TransformFromParent (backward compatibility)
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
   for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
@@ -115,6 +121,24 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       {
         // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
         indexValues.push_back(vtkMRMLNode::URLDecodeString(indexValue.c_str()));
+      }
+    }
+    else if (*kit == "displacement field type")
+    {
+      // Read displacement field type metadata to determine transform direction
+      std::string displacementFieldType = reader->GetHeaderValue(kit->c_str());
+      if (displacementFieldType == "resampling")
+      {
+        useTransformFromParent = true;
+      }
+      else if (displacementFieldType == "modeling")
+      {
+        useTransformFromParent = false;
+      }
+      else
+      {
+        vtkWarningMacro(<< "vtkMRMLTransformSequenceStorageNode::ReadDataInternal : Unrecognized displacement field type '" << displacementFieldType
+                        << "', use default 'resampling' instead.");
       }
     }
   }
@@ -149,8 +173,15 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     gridTransform->SetDisplacementGridData(frameImage);
     gridTransform->SetGridDirectionMatrix(directionMatrix4x4);
 
-    // Set the transform in the transform node
-    frameTransform->SetAndObserveTransformFromParent(gridTransform.GetPointer());
+    // Set the transform in the transform node based on the displacement field type
+    if (useTransformFromParent)
+    {
+      frameTransform->SetAndObserveTransformFromParent(gridTransform.GetPointer());
+    }
+    else
+    {
+      frameTransform->SetAndObserveTransformToParent(gridTransform.GetPointer());
+    }
 
     std::ostringstream indexStr;
     if (static_cast<int>(indexValues.size()) > frameIndex)
@@ -180,9 +211,11 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 }
 
 //----------------------------------------------------------------------------
-vtkOrientedGridTransform* vtkMRMLTransformSequenceStorageNode::GetReferenceGridTransform(vtkMRMLSequenceNode* seqNode)
+vtkOrientedGridTransform* vtkMRMLTransformSequenceStorageNode::GetReferenceGridTransform(vtkMRMLSequenceNode* seqNode, bool& isTransformFromParent)
 {
   vtkSmartPointer<vtkOrientedGridTransform> firstGridTransform;
+  bool firstTransformDirectionFromParent = true; // will be set based on first transform
+  bool firstTransformDirectionSet = false;
 
   // Check all frames
   int numberOfFrames = seqNode->GetNumberOfDataNodes();
@@ -195,12 +228,41 @@ vtkOrientedGridTransform* vtkMRMLTransformSequenceStorageNode::GetReferenceGridT
       return nullptr;
     }
 
-    // Convert transform to grid transform
-    vtkOrientedGridTransform* frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
-      frameTransform->GetTransformFromParentAs("vtkOrientedGridTransform",
+    // Check transform direction consistency
+    bool currentTransformFromParent = vtkMRMLTransformStorageNode::IsTransformFromParentStored(frameTransform);
+    if (!firstTransformDirectionSet)
+    {
+      firstTransformDirectionFromParent = currentTransformFromParent;
+      firstTransformDirectionSet = true;
+    }
+    else if (currentTransformFromParent != firstTransformDirectionFromParent)
+    {
+      vtkDebugMacro("GetReferenceGridTransform: Inconsistent transform directions in sequence" //
+                    << " (frame " << frameIndex << ": "                                        //
+                    << (currentTransformFromParent ? "FromParent" : "ToParent")                //
+                    << ", expected: " << (firstTransformDirectionFromParent ? "FromParent" : "ToParent") << ")");
+      return nullptr;
+    }
+
+    // Convert transform to grid transform using the consistent direction
+    vtkOrientedGridTransform* frameGridTransform = nullptr;
+
+    if (firstTransformDirectionFromParent)
+    {
+      frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
+        frameTransform->GetTransformFromParentAs("vtkOrientedGridTransform",
+                                                 false, // don't report conversion error
+                                                 true   // we would like to modify the transform
+                                                 ));
+    }
+    else // TransformToParent
+    {
+      frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
+        frameTransform->GetTransformToParentAs("vtkOrientedGridTransform",
                                                false, // don't report conversion error
                                                true   // we would like to modify the transform
                                                ));
+    }
     if (frameGridTransform == nullptr)
     {
       // If the transform is linear, it does not prevent the sequence from saving, but will require
@@ -298,6 +360,9 @@ vtkOrientedGridTransform* vtkMRMLTransformSequenceStorageNode::GetReferenceGridT
 
   } // for all frames
 
+  // Set the output parameter
+  isTransformFromParent = firstTransformDirectionFromParent;
+
   return firstGridTransform;
 }
 
@@ -311,7 +376,8 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode*
     return false;
   }
 
-  if (!this->GetReferenceGridTransform(seqNode))
+  bool isTransformFromParent = true;
+  if (!this->GetReferenceGridTransform(seqNode, isTransformFromParent))
   {
     this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent, std::string("Sequence cannot be saved with this storage node, it does not contain grid transforms."));
     return false;
@@ -343,8 +409,9 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   writer->SetFileName(fullName.c_str());
   writer->SetUseCompression(this->GetUseCompression());
 
-  // Convert transform to grid transform
-  vtkOrientedGridTransform* gridTransform = this->GetReferenceGridTransform(seqNode);
+  // Convert transform to grid transform and get transform direction
+  bool useTransformFromParent = true;
+  vtkOrientedGridTransform* gridTransform = this->GetReferenceGridTransform(seqNode, useTransformFromParent);
   if (!gridTransform)
   {
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only grid transforms can be written in this format."));
@@ -385,6 +452,12 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   writer->SetVoxelVectorType(vtkITKImageWriter::VoxelVectorTypeSpatial);
   writer->SetIntentCode("1006"); // Set intent code indicating this is a transform (comes from Nifti heritage as a de facto standard)
 
+  // Set displacement field type metadata
+  // "resampling" = TransformFromParent (ITK/ANTs style, used for resampling operations)
+  // "modeling" = TransformToParent (used for modeling/forward transforms)
+  std::string displacementFieldType = useTransformFromParent ? "resampling" : "modeling";
+  writer->SetAttribute("displacement field type", displacementFieldType);
+
   // Set sequence axis label and unit
   const unsigned int sequenceAxisIndex = 3; // The fourth NRRD axis regardless the components, because the component axis does not count as real axis
   writer->SetAxisLabel(sequenceAxisIndex, seqNode->GetIndexName().c_str());
@@ -424,9 +497,19 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       return 0;
     }
 
-    // Convert transform to grid transform
-    vtkOrientedGridTransform* frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
-      frameTransform->GetTransformFromParentAs("vtkOrientedGridTransform", false, true));
+    // Convert transform to grid transform using the consistent direction
+    vtkOrientedGridTransform* frameGridTransform = nullptr;
+
+    if (useTransformFromParent) // TransformFromParent
+    {
+      frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
+        frameTransform->GetTransformFromParentAs("vtkOrientedGridTransform", false, true));
+    }
+    else // TransformToParent
+    {
+      frameGridTransform = vtkOrientedGridTransform::SafeDownCast( //
+        frameTransform->GetTransformToParentAs("vtkOrientedGridTransform", false, true));
+    }
     if (frameGridTransform == nullptr)
     {
       if (frameIndex == 0)
@@ -510,25 +593,33 @@ int vtkMRMLTransformSequenceStorageNode::SupportedFileType(const char* fileName)
     return 0; // The file extension is not supported so surely not acceptable
   }
 
-  std::ifstream file(fileName, std::ios::in);
-  if (!file.is_open())
+  // It is a NRRD file.
+  // Use lower than default confidence value unless it turns out that this file contains a displacement field.
+  // Parse the entire header instead of just peeking into the first couple of hundred bytes, because
+  // index values can be many hundreds of characters long (and the intent code field is after the index values),
+  // so it would be hard to determine a fixed length that surely contains the intent code.
+  using ImageIOType = itk::NrrdImageIO;
+  ImageIOType::Pointer nrrdIO = ImageIOType::New();
+  nrrdIO->SetFileName(fileName);
+  try
   {
-    // Unable to open the file, probably fileName did not contain full path, only the file name.
-    // See SupportedFileType call in vtkSlicerSequencesLogic::AddSequence method after creating the
-    // storage node. That call is superfluous and it is ambiguous that one time the full path
-    // is passed, then only the file name.
-    return 1;
+    nrrdIO->ReadImageInformation();
+    const itk::MetaDataDictionary& metadata = nrrdIO->GetMetaDataDictionary();
+    std::string niftiIntentCode; // NIFTI intent code is also stored in NRRD files
+    if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
+    {
+      // Verify that it contains a displacement vector image
+      // by checking that the "intent code" metadata field equals 1006 (originates from NIFTI file format).
+      if (niftiIntentCode == "1006")
+      {
+        return 1; // File is supported
+      }
+    }
   }
-
-  // Read the first 800 characters of the file
-  std::string content(800, '\0');
-  file.read(&content[0], 800);
-  content.resize(file.gcount()); // Resize to actual number of characters read
-
-  // Look for "intent_code:=1006"
-  if (content.find("intent_code:=1006") != std::string::npos)
+  catch (...)
   {
-    return 1; // File is supported
+    // Something went wrong, we do not need to know the details, it is enough to know that
+    // this does not look like a valid NRRD file.
   }
 
   return 0; // File is not supported

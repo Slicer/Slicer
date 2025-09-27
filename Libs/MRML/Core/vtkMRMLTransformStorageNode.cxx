@@ -19,6 +19,7 @@ Version:   $Revision: 1.2 $
 #include "vtkOrientedGridTransform.h"
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
 #include <vtkNew.h>
@@ -28,6 +29,8 @@ Version:   $Revision: 1.2 $
 #include <vtkVersion.h>
 #include "vtksys/SystemTools.hxx"
 
+#include "vtkITKArchetypeImageSeriesReader.h"
+#include "vtkITKImageWriter.h"
 #include "vtkITKTransformConverter.h"
 
 //----------------------------------------------------------------------------
@@ -287,6 +290,45 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode* refNode)
     }
   }
 
+  // Check for displacement field type metadata to determine how to store the transform
+  std::string displacementFieldType;
+  bool useTransformFromParent = true; // Default assumption for backward compatibility
+  if (itk::ExposeMetaData<std::string>(metadata, "displacement field type", displacementFieldType))
+  {
+    if (displacementFieldType == "modeling")
+    {
+      // "modeling" = ToParent transform
+      useTransformFromParent = false;
+    }
+    else if (displacementFieldType == "resampling")
+    {
+      // "resampling" = FromParent transform
+      useTransformFromParent = true;
+    }
+    else
+    {
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                         "vtkMRMLTransformStorageNode::ReadFromImageFile",
+                                         "Unrecognized displacement field type '" << displacementFieldType << "', use default 'resampling' instead.");
+    }
+  }
+
+  vtkNew<vtkMatrix4x4> measurementFrameMatrix;
+  if (vtkITKArchetypeImageSeriesReader::ReadMeasurementFrameMatrixFromMetaDataDictionary(metadata, measurementFrameMatrix))
+  {
+    vtkNew<vtkMatrix4x4> identity;
+    if (!vtkAddonMathUtilities::MatrixAreEqual(measurementFrameMatrix, identity))
+    {
+      // Measurement frame is not LPS. We could transform the displacement vectors, but since it is a very rare case,
+      // support for it is not implemented.
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLTransformStorageNode::ReadFromImageFile",                //
+                                       "Error while reading image file as grid transform '" << fullName //
+                                                                                            << "': non-idendentity measurement frame matrix is not supported");
+      return 0;
+    }
+  }
+
   vtkNew<vtkOrientedGridTransform> gridTransform_Ras;
   vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage<double>(this, gridTransform_Ras.GetPointer(), gridImage_Lps);
 
@@ -300,7 +342,16 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode* refNode)
     tn->SetReadAsTransformToParent(0);
   }
 
-  SetAndObserveTransformFromParentAutoInvert(tn, gridTransform_Ras.GetPointer());
+  // Set the transform according to the displacement field type metadata or auto-detect
+  if (useTransformFromParent)
+  {
+    SetAndObserveTransformFromParentAutoInvert(tn, gridTransform_Ras.GetPointer());
+  }
+  else
+  {
+    // For ToParent (modeling) transforms, store directly as ToParent
+    tn->SetAndObserveTransformToParent(gridTransform_Ras.GetPointer());
+  }
   return 1;
 }
 
@@ -578,6 +629,50 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLTransformStorageNode::IsTransformFromParentStored(vtkMRMLTransformNode* transformNode)
+{
+  if (!transformNode)
+  {
+    return true; // Default assumption
+  }
+
+  // The most reliable way to determine if the transform is stored as FromParent or ToParent
+  // is to check which one allows modification (the original stored transform)
+  // and which one returns an inverse (the computed transform).
+
+  // Try to get transforms as modifiable - only the stored transform will be modifiable
+  vtkAbstractTransform* modifiableFromParent = transformNode->GetTransformFromParentAs("vtkAbstractTransform", false, true /*modifiableOnly*/);
+  vtkAbstractTransform* modifiableToParent = transformNode->GetTransformToParentAs("vtkAbstractTransform", false, true /*modifiableOnly*/);
+
+  if (modifiableFromParent && !modifiableToParent)
+  {
+    // FromParent is modifiable, ToParent is not -> stored as FromParent
+    return true;
+  }
+  else if (modifiableToParent && !modifiableFromParent)
+  {
+    // ToParent is modifiable, FromParent is not -> stored as ToParent
+    return false;
+  }
+
+  // If both or neither are modifiable, fall back to checking if both exist
+  vtkAbstractTransform* transformFromParent = transformNode->GetTransformFromParent();
+  vtkAbstractTransform* transformToParent = transformNode->GetTransformToParent();
+
+  if (transformFromParent && !transformToParent)
+  {
+    return true; // Only FromParent exists
+  }
+  else if (transformToParent && !transformFromParent)
+  {
+    return false; // Only ToParent exists
+  }
+
+  // Default assumption: FromParent (backward compatibility)
+  return true;
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
 {
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
@@ -587,8 +682,19 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
     return 0;
   }
 
-  vtkOrientedGridTransform* gridTransform_Ras = vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
-  if (gridTransform_Ras == nullptr)
+  bool isTransformFromParent = this->IsTransformFromParentStored(transformNode);
+
+  vtkOrientedGridTransform* gridTransform_Ras = nullptr;
+  if (isTransformFromParent)
+  {
+    gridTransform_Ras = vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
+  }
+  else
+  {
+    gridTransform_Ras = vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformToParentAs("vtkOrientedGridTransform"));
+  }
+
+  if (!gridTransform_Ras)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLTransformStorageNode::WriteToImageFile",
@@ -596,30 +702,48 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
     return 0;
   }
 
-  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  gridTransform_Ras->Update();
-  if (gridTransform_Ras->GetInverseFlag())
+  itk::ImageFileWriter<GridImageDoubleType>::Pointer writer = itk::ImageFileWriter<GridImageDoubleType>::New();
+
+  std::string fullName = this->GetFullNameFromFileName();
+  writer->SetFileName(fullName);
+
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  bool isNRRD = (extension == ".nrrd");
+  if (!isTransformFromParent && !isNRRD)
   {
+    // We can only save inverse grid transforms into NRRD file format (cannot store the information that it is a modeling transform).
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLTransformStorageNode::WriteToImageFile",
-                                     "Cannot write inverse grid transform "
-                                       << (transformNode->GetID() ? transformNode->GetID() : "(unknown)") << " to file."
-                                       << " Either save the transform in a transform file (.h5) or invert the transform before saving it into an image file.");
+                                     "Cannot write modeling type (transform to parent) grid transform" //
+                                       << (transformNode->GetID() ? transformNode->GetID() : "(unknown)") << " to " << extension << " file."
+                                       << " Either save the transform in a NRRD image file, transform file (.h5)"
+                                       << " or invert the transform before saving it into an image file.");
     return 0;
   }
 
   GridImageDoubleType::Pointer gridImage_Lps;
   vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(this, gridImage_Lps, gridTransform_Ras);
 
-  itk::ImageFileWriter<GridImageDoubleType>::Pointer writer = itk::ImageFileWriter<GridImageDoubleType>::New();
-  writer->SetInput(gridImage_Lps);
-  std::string fullName = this->GetFullNameFromFileName();
-  writer->SetFileName(fullName);
-
   // If this image is saved as a NIFTI then setting intent code to 1006 (NIFTI_INTENT_DISPVECT)
   // will save the image as a displacement vector image.
   itk::MetaDataDictionary& dictionary = gridImage_Lps->GetMetaDataDictionary();
   itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", "1006");
+
+  // Measurement frame is LPS, which is identity matrix in LPS coordinate system
+  vtkNew<vtkMatrix4x4> measurementFrameMatrix;
+  vtkITKImageWriter::WriteMeasurementFrameMatrixToMetaDataDictionary(dictionary, measurementFrameMatrix);
+
+  if (isNRRD)
+  {
+    // NRRD format can store either FromParent or ToParent transforms, so we add metadata to indicate which one is stored
+    // (otherwise it is not possible to determine this when reading the file).
+    // "resampling" = TransformFromParent (ITK/ANTs style, used for resampling operations)
+    // "modeling" = TransformToParent (used for modeling/forward transforms)
+    std::string displacementFieldType = isTransformFromParent ? "resampling" : "modeling";
+    itk::EncapsulateMetaData<std::string>(dictionary, "displacement field type", displacementFieldType);
+  }
+
+  writer->SetInput(gridImage_Lps);
 
   try
   {

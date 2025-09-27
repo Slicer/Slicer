@@ -122,8 +122,7 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
 
         bool looksLikeSequence = false;
 
-        // Supported 4D NRRD files contain "dimension: 4" line.
-        // 2D+t and 3D+color+t files are not yet supported.
+        // Supported 4D/5D NRRD files contain "dimension: 4" or "dimension: 5" line.
         QRegularExpression dimensionRe("dimension:([^\\n]+)");
         QRegularExpressionMatch dimensionMatch = dimensionRe.match(line);
         if (dimensionMatch.hasMatch())
@@ -146,6 +145,11 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
                 looksLikeSequence = true;
               }
             }
+          }
+          else if (ok && dimension == 5)
+          {
+            // Transform sequence
+            looksLikeSequence = true;
           }
         }
         // If it looks like sequence then we need to set a confidence value that is larger than 0.55.
