@@ -93,8 +93,11 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Get an oriented grid transform that is used as a common reference geometry.
-  /// Returns nullptr if not all transforms are grid transforms or identity.
-  vtkOrientedGridTransform* GetReferenceGridTransform(vtkMRMLSequenceNode* seqNode);
+  /// Returns nullptr if not all transforms are grid transforms or identity, or if transforms
+  /// have different directions (mix of TransformFromParent and TransformToParent).
+  /// isTransformFromParent will be set to true if all transforms use TransformFromParent,
+  /// false if all use TransformToParent.
+  vtkOrientedGridTransform* GetReferenceGridTransform(vtkMRMLSequenceNode* seqNode, bool& isTransformFromParent);
 };
 
 #endif

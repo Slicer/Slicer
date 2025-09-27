@@ -22,7 +22,15 @@ class vtkMRMLTransformNode;
 
 /// \brief MRML node for transform storage on disk.
 ///
-/// Storage nodes has methods to read/write transforms to/from disk.
+///  It can store any transforms as ITK transform file and it can store
+///  displacement field (grid) transforms as image file.
+///
+///  If displacement field transform is stored as image file then NRRD file format
+///  can handle transforms stored as both TransformFromParent and TransformToParent.
+///  It uses a metadata field "displacement field type" to indicate the transform direction
+///  ("resampling" or "modeling"). Other image file formats can only store resampling (from parent)
+///  transform.
+///
 class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 {
 public:
@@ -63,6 +71,12 @@ public:
   vtkGetMacro(PreferITKv3CompatibleTransforms, int);
   vtkSetMacro(PreferITKv3CompatibleTransforms, int);
   vtkBooleanMacro(PreferITKv3CompatibleTransforms, int);
+
+  /// Determine whether the transform is stored as FromParent or ToParent.
+  /// Returns true if stored as FromParent, false if stored as ToParent.
+  /// The most reliable way to determine this is to check which transform
+  /// allows modification (the original stored transform).
+  static bool IsTransformFromParentStored(vtkMRMLTransformNode* transformNode);
 
 protected:
   vtkMRMLTransformStorageNode();

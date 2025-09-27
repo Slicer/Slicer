@@ -33,6 +33,7 @@
 // ITK includes
 #include "itkMetaDataObject.h"
 #include "itkNiftiImageIO.h"
+#include "itkNrrdImageIO.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -118,34 +119,49 @@ double qSlicerTransformsReader::canLoadFileConfidence(const QString& fileName) c
   double confidence = Superclass::canLoadFileConfidence(fileName);
   if (confidence > 0)
   {
-    // Set higher confidence for NIFTI files containing displacement field
+    // Set higher confidence for NIFTI or NRRD files containing displacement field.
+    // In canLoadFileConfidence we often just peek into the text header, but since NIFTI
+    // does not use a text header, we must parse.
     QString upperCaseFileName = fileName.toUpper();
+    itk::ImageIOBase::Pointer imageIO;
     if (upperCaseFileName.endsWith(".NII") || upperCaseFileName.endsWith(".NII.GZ"))
+    {
+      using ImageIOType = itk::NiftiImageIO;
+      imageIO = ImageIOType::New();
+    }
+    else if (upperCaseFileName.endsWith(".NRRD") || upperCaseFileName.endsWith(".NHDR"))
+    {
+      using ImageIOType = itk::NrrdImageIO;
+      imageIO = ImageIOType::New();
+    }
+    if (imageIO)
     {
       // Use lower than default confidence value unless it turns out that this file contains a displacement field.
       confidence = 0.4;
-      using ImageIOType = itk::NiftiImageIO;
-      ImageIOType::Pointer niftiIO = ImageIOType::New();
-      niftiIO->SetFileName(fileName.toStdString());
+      imageIO->SetFileName(fileName.toStdString());
       try
       {
-        niftiIO->ReadImageInformation();
-        const itk::MetaDataDictionary& metadata = niftiIO->GetMetaDataDictionary();
-        std::string niftiIntentCode;
-        if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
+        imageIO->ReadImageInformation();
+        const itk::MetaDataDictionary& metadata = imageIO->GetMetaDataDictionary();
+        if (imageIO->GetNumberOfDimensions() == 3 && imageIO->GetNumberOfComponents() > 1) // vector voxels in 3D array
         {
-          // This is a NIFTI file. Verify that it contains a displacement vector image
-          // by checking that the "intent code" metadata field equals 1006 (NIFTI_INTENT_DISPVECT).
-          if (niftiIntentCode == "1006")
+          // NIFTI "intent_code" field is used in both NIFTI and NRRD files
+          std::string niftiIntentCode;
+          if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
           {
-            confidence = 0.6;
+            // This is a NIFTI file. Verify that it contains a displacement vector image
+            // by checking that the "intent code" metadata field equals 1006 (NIFTI_INTENT_DISPVECT).
+            if (niftiIntentCode == "1006")
+            {
+              confidence = 0.6;
+            }
           }
         }
       }
       catch (...)
       {
         // Something went wrong, we do not need to know the details, it is enough to know that
-        // this does not look like a transform file.
+        // this does not look like a valid NIFTI file.
       }
     }
   }
