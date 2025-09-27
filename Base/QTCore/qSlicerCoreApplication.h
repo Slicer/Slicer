@@ -686,6 +686,7 @@ protected slots:
   void processAppLogicModified();
   void processAppLogicReadData();
   void processAppLogicWriteData();
+  void processAppLogicBackgroundData();
 
   /// Editing of a MRML node has been requested.
   /// Implemented in qSlicerApplication.
