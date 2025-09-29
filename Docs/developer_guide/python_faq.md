@@ -25,7 +25,9 @@ modules, are not available.
 :::
 
 :::{tip}
-To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+To use additional packages, you can use the {func}`slicer.packaging.Requirements` context manager.
+You may also directly install packages with more control using the {func}`slicer.util.pip_install()`
+function. See [Managing Python Packages](/developer_guide/python_packages.md) for details.
 :::
 
 ## What is the Python Console?
@@ -51,6 +53,7 @@ For example, this applies to the [Segment Editor effects](/user_guide/modules/se
 
 :::{tip}
 To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+See [](/developer_guide/python_packages.md) for details.
 :::
 
 :::{versionchanged} 5.2.0
@@ -317,9 +320,9 @@ For example, the files associated with a Slicer module could look like this:
     .
     ├── CMakeLists.txt
     ├── MySlicerModuleLib
-    │   ├── __init__.py
-    │   ├── cool_maths.py
-    │   └── utils.py
+    │   ├── __init__.py
+    │   ├── cool_maths.py
+    │   └── utils.py
     └── MySlicerModule.py
 
 So that the following code can run within `MySlicerModule.py`:
@@ -348,20 +351,35 @@ In our example:
 
 ## Can I use any Python package in a Slicer module
 
-You can install any Python package within Slicer's built-in Python environment.
+You can install any Python package within Slicer's built-in Python environment, but there are some
+limitations as installing packages can impact other extensions or the main application.
 
-The convenience function {func}`slicer.util.pip_install` can be used to install packages into your Slicer module. To understand its usage, examine the [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) example within the Script Repository.
+:::{tip}
+See [](/developer_guide/python_packages.md) for more details.
+:::
 
 :::{warning}
-Since installing packages can have side effects on other extensions or the main application, here are some best practices to adhere to:
+Since installing packages can have side effects on other extensions or the main application, here
+are some best practices to adhere to:
 
 **DO:**
-* ✅ Always include a confirmation dialog that clearly communicates the installation process, mirroring the approach in the linked example.
+
 * ✅ Document the dependencies your module relies upon.
-* ✅ Consider specifying version requirements using `>=X.Y` to avoid incompatible versions.
-* ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important for dependencies including compiled code, as installing a wheel eliminates the need for users to install a compiler.
+* ✅ Consider specifying version requirements using `~=X.Y` to avoid incompatible versions.
+* ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important
+  for dependencies including compiled code, as installing a wheel eliminates the need for users to
+  install a compiler.
 
 **DON'T:**
-* ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor. This can significantly slow down application startup, and it may even prevent the module from loading.
-* ❌ Do not pin to a specific version of the package, as this may generate conflicts with other package versions, leading to unexpected environment modifications. Pinning dependencies should be considered only in the context of custom applications where the deployment environment is tightly controlled.
-:::
+
+* ❌ Do not install packages in use by core Slicer functionality or by other extensions.
+* ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the
+  module class constructor. This can significantly slow down application startup, and it may even
+  prevent the module from loading.
+* ❌ Do not pin to a specific version of the package with `==`, as this will generate conflicts with
+  other package versions. Pinning dependencies should be considered only in the context of custom
+  applications where the deployment environment is tightly controlled. When in doubt, prefer the
+  `~=` [Compatible Release][compatible-release] specifier.
+  :::
+
+[compatible-release]: https://packaging.python.org/en/latest/specifications/version-specifiers/#compatible-release
