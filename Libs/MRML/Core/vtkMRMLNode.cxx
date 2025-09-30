@@ -483,6 +483,9 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
     // Only process this role if it has not been encountered already
     if (references.find(role) == references.end())
     {
+      // Clear all existing references for this role before adding new ones
+      this->RemoveNodeReferenceIDs(role.c_str());
+
       std::string ids = attribute.substr(sep + 1, end - sep - 1);
       std::stringstream ss(ids);
       while (!ss.eof())
