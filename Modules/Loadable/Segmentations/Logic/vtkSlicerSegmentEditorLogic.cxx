@@ -2303,7 +2303,7 @@ void vtkSlicerSegmentEditorLogic::XyToIjk(double xy[2],
                                           vtkOrientedImageData* image,
                                           vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
-  double xyz[3] = { xy[0], xy[0], 0.0 };
+  double xyz[3] = { xy[0], xy[1], 0.0 };
   vtkSlicerSegmentEditorLogic::XyzToIjk(xyz, outputIjk, sliceNode, image, parentTransformNode);
 }
 
