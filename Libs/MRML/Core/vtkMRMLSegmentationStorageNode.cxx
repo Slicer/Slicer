@@ -749,6 +749,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       padder->SetOutputWholeExtent(imageExtentInFile);
       padder->Update();
       currentBinaryLabelmap->ShallowCopy(padder->GetOutput());
+      currentBinaryLabelmap->SetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
 
       double scalarRange[2] = { 0 };
       currentBinaryLabelmap->GetScalarRange(scalarRange);
@@ -777,7 +778,6 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
         }
         vtkSmartPointer<vtkSegment> currentSegment = vtkSmartPointer<vtkSegment>::New();
         currentSegment->SetLabelValue(labelValue);
-        currentBinaryLabelmap->SetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
         currentSegment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), currentBinaryLabelmap);
         segments.push_back(currentSegment);
       }
