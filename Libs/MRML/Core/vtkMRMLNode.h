@@ -903,6 +903,7 @@ public:
   /// \sa GetNthNodeReferenceProperties GetNodeReferenceProperties
   void SetNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName, const std::string& value);
   void SetNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName, const std::string& value);
+  void SetNthNodeReferenceProperties(const std::string& referenceRole, int n, const std::map<std::string, std::string>& properties);
   //@}
 
   //@{
