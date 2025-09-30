@@ -474,6 +474,10 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
   /// parse references in the form "role1:id1 id2;role2:id3;"
   std::string attribute(attValue);
 
+  // Parse the new references from the attribute string into a temporary structure
+  // roles -> list of (referenced_node_id, property_names -> property_values)
+  std::map<std::string, std::vector<std::pair<std::string, std::map<std::string, std::string>>>> newReferences;
+
   std::size_t start = 0;
   std::size_t end = attribute.find_first_of(';', start);
   std::size_t sep = attribute.find_first_of(':', start);
@@ -485,6 +489,10 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
     {
       std::string ids = attribute.substr(sep + 1, end - sep - 1);
       std::stringstream ss(ids);
+      // Stores referenced node IDs and properties for the current role in a
+      // list of (referenced_node_id, property_names -> property_values)
+      std::vector<std::pair<std::string, std::map<std::string, std::string>>>& roleReferences = newReferences[role];
+
       while (!ss.eof())
       {
         std::string value;
@@ -506,40 +514,148 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
         {
           // Current value string is the properties for the previous node reference.
           std::string referenceProperties = value.substr(referencePropertyStart + 1, referencePropertyEnd - referencePropertyStart - 1);
-          if (referenceProperties.empty())
+          if (!referenceProperties.empty() && !roleReferences.empty())
           {
-            // No properties
-            continue;
-          }
+            // Apply properties to the last added reference in this role
+            std::map<std::string, std::string>& properties = roleReferences.back().second;
 
-          // Separate the properties by comma
-          std::stringstream ssProperties(referenceProperties);
-          std::string property;
-          while (std::getline(ssProperties, property, ','))
-          {
-            std::size_t propertySeparator = property.find_first_of('=');
-            if (propertySeparator != std::string::npos)
+            // Separate the properties by comma
+            std::stringstream ssProperties(referenceProperties);
+            std::string property;
+            while (std::getline(ssProperties, property, ','))
             {
-              std::string propertyKey = property.substr(0, propertySeparator);
-              propertyKey = this->NodeReferencePropertyDecodeString(propertyKey);
-              std::string propertyValue = property.substr(propertySeparator + 1);
-              propertyValue = this->NodeReferencePropertyDecodeString(propertyValue);
-              int index = this->GetNumberOfNodeReferences(role.c_str()) - 1;
-              this->SetNthNodeReferenceProperty(role.c_str(), index, propertyKey.c_str(), propertyValue.c_str());
+              std::size_t propertySeparator = property.find_first_of('=');
+              if (propertySeparator != std::string::npos)
+              {
+                std::string propertyKey = property.substr(0, propertySeparator);
+                propertyKey = this->NodeReferencePropertyDecodeString(propertyKey);
+                std::string propertyValue = property.substr(propertySeparator + 1);
+                propertyValue = this->NodeReferencePropertyDecodeString(propertyValue);
+                properties[propertyKey] = propertyValue;
+              }
             }
           }
         }
         else
         {
           // Current value string is the node ID for the current node reference.
-          this->AddNodeReferenceID(role.c_str(), value.c_str());
-          references.insert(role);
+          roleReferences.push_back(std::make_pair(value, std::map<std::string, std::string>()));
         }
       }
+      references.insert(role);
     }
     start = (end == std::string::npos) ? std::string::npos : end + 1;
     end = attribute.find_first_of(';', start);
     sep = attribute.find_first_of(':', start);
+  }
+
+  // Now update the actual node references to match the new references
+  // Use a surgical approach: only modify references that need to be changed
+  for (const auto& newRoleEntry : newReferences)
+  {
+    const std::string& role = newRoleEntry.first;
+    const std::vector<std::pair<std::string, std::map<std::string, std::string>>>& newRoleReferences = newRoleEntry.second;
+
+    // Get current references for this role
+    std::vector<const char*> currentNodeIDs;
+    this->GetNodeReferenceIDs(role.c_str(), currentNodeIDs);
+
+    // Build list of new node IDs for comparison
+    std::vector<std::string> newNodeIDs;
+    for (const auto& refPair : newRoleReferences)
+    {
+      newNodeIDs.push_back(refPair.first);
+    }
+
+    // Remove references to node IDs that are no longer needed first
+    // This reduces the number of existing items that might need updates
+    bool nodeReferencesRemoved = false;
+    for (int currentIndex = static_cast<int>(currentNodeIDs.size()) - 1; currentIndex >= 0; currentIndex--)
+    {
+      const char* currentNodeID = currentNodeIDs[currentIndex];
+      if (currentNodeID)
+      {
+        // Check if this node ID is still needed in the new reference list
+        bool nodeIdStillNeeded = false;
+        for (const std::string& newNodeID : newNodeIDs)
+        {
+          if (std::string(currentNodeID) == newNodeID)
+          {
+            nodeIdStillNeeded = true;
+            break;
+          }
+        }
+
+        // If this node ID is no longer needed, remove the reference
+        if (!nodeIdStillNeeded)
+        {
+          this->RemoveNthNodeReferenceID(role.c_str(), currentIndex);
+          nodeReferencesRemoved = true;
+        }
+      }
+    }
+
+    if (nodeReferencesRemoved)
+    {
+      // We have removed some references, so we need to refresh the current node ID list
+      currentNodeIDs.clear();
+      this->GetNodeReferenceIDs(role.c_str(), currentNodeIDs);
+    }
+
+    // Process each position in the new reference list
+    for (int newIndex = 0; newIndex < static_cast<int>(newNodeIDs.size()); newIndex++)
+    {
+      const std::string& newNodeID = newNodeIDs[newIndex];
+      const std::map<std::string, std::string>& newProperties = newRoleReferences[newIndex].second;
+
+      // Check if we need to update the reference at this position
+      bool needsUpdate = false;
+      if (newIndex >= static_cast<int>(currentNodeIDs.size()))
+      {
+        // Need to add a new reference
+        needsUpdate = true;
+      }
+      else if (!currentNodeIDs[newIndex] || std::string(currentNodeIDs[newIndex]) != newNodeID)
+      {
+        // Need to change existing reference ID
+        needsUpdate = true;
+      }
+      else
+      {
+        // Same node ID, but check if properties need updating
+        const vtkMRMLNode::ReferencePropertiesType* currentProperties = this->GetNthNodeReferenceProperties(role.c_str(), newIndex);
+        if (currentProperties->size() != newProperties.size())
+        {
+          needsUpdate = true;
+        }
+        else
+        {
+          // Check if any property values differ
+          for (const auto& newProp : newProperties)
+          {
+            auto currentPropIt = currentProperties->find(newProp.first);
+            if (currentPropIt == currentProperties->end() || currentPropIt->second != newProp.second)
+            {
+              needsUpdate = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (needsUpdate)
+      {
+        // Update the reference at this position
+        this->SetNthNodeReferenceID(role.c_str(), newIndex, newNodeID.c_str());
+
+        // Clear existing properties and set new ones
+        this->ClearNthNodeReferenceProperties(role, newIndex);
+        for (const auto& prop : newProperties)
+        {
+          this->SetNthNodeReferenceProperty(role, newIndex, prop.first, prop.second);
+        }
+      }
+    }
   }
 }
 
@@ -2189,6 +2305,33 @@ void vtkMRMLNode::SetNthNodeReferenceProperty(const std::string& referenceRole, 
 
   if (references[n]->SetProperty(propertyName, value))
   {
+    this->Modified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetNthNodeReferenceProperties(const std::string& referenceRole, int n, const std::map<std::string, std::string>& properties)
+{
+  if (referenceRole.empty())
+  {
+    return;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n < 0 || static_cast<size_t>(n) >= references.size())
+  {
+    return;
+  }
+
+  // Get current properties to compare
+  const vtkMRMLNode::ReferencePropertiesType* currentProperties = references[n]->GetProperties();
+
+  // Check if properties actually need to be changed
+  if (*currentProperties != properties)
+  {
+    // Directly replace the Properties map in the node reference
+    references[n]->SetProperties(properties);
+    references[n]->Modified();
     this->Modified();
   }
 }
