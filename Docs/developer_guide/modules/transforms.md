@@ -21,21 +21,53 @@
 
 Slicer can store displacement field transforms (or "grid transforms" in VTK naming convention) in 3D NRRD or NIFTI format; or sequence of transforms in NRRD format. Image file header fields are used to distinguish the displacement field transforms form regular images and specify how to correctly interpret these images as transforms.
 
-Requirements for NRRD files to be correctly recognized and loaded as displacement field transform:
-- `kinds` field is set to:
-  - `vector domain domain domain` for single 3D displacement field transform
-  - `vector domain domain domain list` for displacement field sequence
-- `measurement frame` is recommended to be set to identity to unambiguously specify that vector stores spatial coordinates in the same coordinate system as the image axes are specified in.
-- custom `intent_code` field is set to `1006`. This convention originates from the NIFTI file format and it makes it easy to detect images as displacement fields when using ITK file reader.
-- custom `displacement field type` is set to:
-  - `resampling` for ITK convention, useful for transforming images, in the Slicer transform tree specifies the transform "from parent"
-  - `modeling` (useful for transforming points, markups, models; in the Slicer transform tree specifies the transform "to parent")
+### NRRD
 
-Requirements for NIFTI files to be correctly recognized and loaded as displacement field transform:
-- `intent_code` field is set to 1006 (`NIFTI_INTENT_DISPVECT`)
-- displacement vector values are stored in RAS coordinate system
+**Required `kinds`:**
 
-### Example 3D displacement field file header
+* `vector domain domain domain` for a single 3D displacement field
+* `vector domain domain domain list` for a **sequence** of displacement fields
+
+**Required custom `intent_code`:**
+
+* `intent_code := 1006`
+  Mirrors the NIfTI convention `NIFTI_INTENT_DISPVECT`, allowing ITK readers to detect displacement fields reliably.
+
+**Recommended `measurement frame`:**
+
+* `measurement frame: (1,0,0) (0,1,0) (0,0,1)`
+  Use identity to state unambiguously that vector components are spatial and expressed in world space.
+
+**Optional usage hint (`displacement field type`):**
+
+* `displacement field type := resampling | modeling`
+
+  * `resampling` (default): Interpret as a **resampling** transform (ITK convention, fixed to moving). In Slicer's transform tree this corresponds to **"from parent"**.
+  * `modeling`: Interpret as a **modeling** transform (useful for points/markups/models, moving to fixed). In Slicer's transform tree this corresponds to **"to parent"**.
+
+**Per-item attributes for sequences (custom fields):**
+Use these only when `kinds` includes a `list` axis.
+
+* `axis <A> index type := numeric | text`
+  Declares the type of the list-axis index values (affects parsing/sorting).
+* `axis <A> index values := <v0> <v1> ... <vN-1>`
+  Provides one index value per sequence item (values may be non-uniform or non-numeric).
+  Provides the explicit index value for each sequence item, separated by spaces. Values can be arbitrary strings, stored using URL encoding.
+* `axis <A> item <I> <AttrName> := <AttrValue>`
+  Stores an arbitrary per-item attribute (becomes a node attribute on the corresponding MRML data node).
+
+Where:
+
+* `<A>` = the **list axis index** (the axis whose `kinds` entry is `list`)
+* `<I>` = **0-based** item index along the list axis
+* Quote values that contain spaces per NRRD rules
+* The count of `index values` **must equal** the size of the list axis
+
+:::{note}
+In 3D + time sequences the vector axis is typically 0, followed by three spatial `domain` axes, and the `list` axis last. Do not assume a fixed number—always use the axis where `kinds` is `list` for `<A>`.
+:::
+
+#### Example 3D displacement field file header
 
 ```txt
 NRRD0005
@@ -55,7 +87,7 @@ displacement field type:=resampling
 intent_code:=1006
 ```
 
-### Example 3D+t displacement field sequence file header
+#### Example 3D+t displacement field sequence file header
 
 ```txt
 NRRD0005
@@ -79,7 +111,13 @@ displacement field type:=modeling
 intent_code:=1006
 ```
 
-`axis 3 index type` and `axis 3 index values` fields refer to the 4th range axis (list).
+The `3` in `axis 3 index type` and `axis 3 index values` fields refer to the 4th range axis (list).
+
+### NIfTI
+
+* `intent_code` **must** be `1006` (`NIFTI_INTENT_DISPVECT`)
+* Displacement vector components are stored in the **RAS** coordinate system
+
 
 ## Events
 

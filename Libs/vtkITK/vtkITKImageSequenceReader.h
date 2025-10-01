@@ -64,6 +64,23 @@ public:
   /// Get unit for specified axis
   const char* GetAxisUnit(unsigned int axis);
 
+  /// Parse axis item attribute string (format: "axis M item NNNN attributename")
+  /// Returns true if the string matches the expected format, false otherwise
+  /// On success, fills axisIndex, frameIndex, and attributeName with parsed values
+  static bool ParseSequenceItemMetadataKey(const std::string& key, unsigned int& axisIndex, unsigned int& frameIndex, std::string& attributeName);
+
+  // Format axis and frame index values and attribute name into metadata key.
+  // For example: "axis 3 item 0025 SomeAttributeName"
+  static std::string FormatSequenceItemMetadataKey(unsigned int axisIndex, unsigned int frameIndex, const std::string& attributeName);
+
+  /// Parse and store sequence item metadata (format: "axis M item NNNN attributename")
+  /// Returns true if the string matches the expected format and stores the attribute value
+  /// Updates attributeNames and frameAttributeValues vectors with the parsed data
+  static bool ParseAndStoreSequenceItemMetadata(const std::string& key,
+                                                const char* attributeValue,
+                                                std::vector<std::string>& attributeNames,
+                                                std::vector<std::vector<std::string>>& frameAttributeValues);
+
   vtkGetMacro(SequenceAxisLabel, std::string);
   vtkGetMacro(SequenceAxisUnit, std::string);
 

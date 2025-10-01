@@ -13,37 +13,72 @@ The image is always stored in 3 spatial dimensions. Even if an image consists of
 #### Standard fields
 
 - `dimension`: `4`
-- `sizes`: number of time points, followed by image size (I, J, K)
-- `space directions`: `none`, followed by I, J, K axis directions in physical space
-- `kinds`: `list domain domain domain`
-- `labels`: name of the sequence index (e.g., `"time"`), followed by ` "" "" ""`
+- `sizes`: image size (I, J, K) followed by the number of time points
+- `space directions`: I, J, K axis directions in physical space followed by `none`
+- `kinds`: `domain domain domain list`
+- `labels`: ` "" "" ""` followed by name of the sequence index (e.g., `"time"`)
 - other standard fields (`type`, `space`, `endian`, `encoding`, `space origin`, etc.) can have any value
 
 #### Custom fields
 
-- `axis 0 index type`: `numeric` or `text` (used for example for sorting).
-- `axis 0 index values`: index value for each sequence item (cannot use spacing value in the standard NRRD fields, because the values may not be equally spaced and the index values are not always numeric).
-- `DataNodeClassName`: class name of the proxy node that needs to be created when the sequence is read. Default (and most common) is `vtkMRMLScalarVolumeNode`.
-  For labelmap volumes: `vtkMRMLLabelMapVolumeNode`.
+The sequence-specific metadata is stored in NRRD key–value pairs that follow this pattern:
 
-### Example
+* `axis <A> index type:=<IndexType>`
+* `axis <A> index values:=<v0> <v1> ... <vN-1>`
+* `axis <A> item <I> <AttrName>:=<AttrValue>`
+* `DataNodeClassName:=<MRMLNodeClass>`
+
+Where:
+
+* `<A>` is the **list axis index**. In Slicer-generated `.seq.nrrd` files the list axis is **3**, because sizes are ordered as `I, J, K, list`.
+* `<IndexType>` is either `numeric` or `text` and determines how index values are interpreted (e.g., numeric vs. lexicographic sorting).
+* `<v0> ... <vN-1>` are the **per-item index values** along the list axis (must have as many values as there are list items). These are stored here rather than using standard NRRD spacing because sequence indices may be **non-uniform** or **non-numeric**.
+* `<I>` is the **0-based item index** along the list axis.
+* `<AttrName>` / `<AttrValue>` store **per-item node attributes** for the data nodes in the sequence.
+* `<MRMLNodeClass>` is the MRML class name of the proxy node to instantiate when reading the sequence (e.g., `vtkMRMLScalarVolumeNode`; for labelmaps use `vtkMRMLLabelMapVolumeNode`).
+
+#### Field definitions
+
+* `axis <A> index type:=numeric|text`
+  Declares the index value type for the list axis (affects sorting and parsing).
+
+* `axis <A> index values:=<v0> <v1> ... <vN-1>`
+  Provides the explicit index value for each sequence item, separated by spaces. Values can be arbitrary strings, stored using URL encoding.
+
+* `axis <A> item <I> <AttrName>:=<AttrValue>`
+  Stores arbitrary per-item attributes from the sequence's proxy nodes (e.g., acquisition time, frame UID).
+
+* `DataNodeClassName:=<MRMLNodeClass>`
+  Specifies the MRML node class to create for items in this sequence. Common values include:
+
+  * `vtkMRMLScalarVolumeNode` (default)
+  * `vtkMRMLLabelMapVolumeNode` (labelmaps)
+
+:::{note}
+* Slicer writes the list axis as **axis 3** and sets `kinds: domain domain domain list`.
+* The count of `index values` **must match** the size of the list axis (`sizes[3]` in Slicer files).
+* Use `numeric` when index values are intended to be ordered by numeric value (e.g., frame number, time in seconds). Use `text` for non-numeric or mixed tokens (e.g., `"pre" "post" "followup1"`).
+:::
+
+#### Example
 
 ```text
-NRRD0005
+NRRD0004
 # Complete NRRD file format specification at:
 # http://teem.sourceforge.net/nrrd/format.html
-type: int
+type: short
 dimension: 4
-space: right-anterior-superior
-sizes: 26 102 102 61
-space directions: none (1.9531249999999991,0,0) (0,1.9531249999999991,0) (0,0,1.9531249999999991)
-kinds: list domain domain domain
-labels: "frame" "" "" ""
+space: left-posterior-superior
+sizes: 128 104 72 10
+space directions: (1.1499999999999999,0,0) (0,1.1499999999999999,0) (0,0,2) none
+kinds: domain domain domain list
+labels: "" "" "" "frame"
 endian: little
 encoding: gzip
-space origin: (-137.16099548339844,-36.806499481201172,-309.71899414062506)
-measurement frame: (1,0,0) (0,1,0) (0,0,1)
+space origin: (-62.20000000000001,-68,1692.0989989999998)
 DataNodeClassName:=vtkMRMLScalarVolumeNode
-axis 0 index type:=numeric
-axis 0 index values:=0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+axis 3 index type:=numeric
+axis 3 index values:=0 1 2 3 4 5 6 7 8 9
+# Example per-item attribute (item 5)
+axis 3 item 5 AcquisitionTime:=2024-06-21T10:32:45.120Z
 ```

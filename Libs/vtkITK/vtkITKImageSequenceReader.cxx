@@ -36,6 +36,10 @@
 #include "itkNrrdImageIO.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
+// STD includes
+#include <sstream>
+#include <iomanip> // for std::setw and std::setfill
+
 #define KEY_PREFIX "NRRD_"
 
 vtkStandardNewMacro(vtkITKImageSequenceReader);
@@ -133,6 +137,109 @@ const char* vtkITKImageSequenceReader::GetAxisUnit(unsigned int axis)
     return nullptr;
   }
   return this->AxisUnits[axis].c_str();
+}
+
+//----------------------------------------------------------------------------
+std::string vtkITKImageSequenceReader::FormatSequenceItemMetadataKey(unsigned int axisIndex, unsigned int frameIndex, const std::string& attributeName)
+{
+  // Metadata key format: "axis 3 item 0025 attributename"
+  // Leading zeros are used in the item index because ITK sorts custom attributes alphabetically.
+  std::stringstream ssAttributeKey;
+  ssAttributeKey << "axis " << axisIndex << " item " << std::setw(4) << std::setfill('0') << frameIndex << " " << attributeName;
+  return ssAttributeKey.str();
+}
+
+//----------------------------------------------------------------------------
+bool vtkITKImageSequenceReader::ParseSequenceItemMetadataKey(const std::string& key, //
+                                                             unsigned int& axisIndex,
+                                                             unsigned int& frameIndex,
+                                                             std::string& attributeName)
+{
+  // Check if this is a frame attribute (format: "axis M item NNNN attributename")
+  const std::string axisItemPattern = "axis ";
+  if (key.compare(0, axisItemPattern.size(), axisItemPattern) != 0)
+  {
+    return false;
+  }
+
+  size_t itemPos = key.find(" item ");
+  if (itemPos == std::string::npos)
+  {
+    return false;
+  }
+
+  // Parse axis index
+  std::string axisIndexStr = key.substr(axisItemPattern.size(), itemPos - axisItemPattern.size());
+  std::istringstream axisIss(axisIndexStr);
+  if (!(axisIss >> axisIndex))
+  {
+    return false;
+  }
+
+  // Parse frame index and attribute name
+  size_t frameStartPos = itemPos + 6; // Length of " item "
+  size_t spacePos = key.find(' ', frameStartPos);
+  if (spacePos == std::string::npos)
+  {
+    return false;
+  }
+
+  std::string frameIndexStr = key.substr(frameStartPos, spacePos - frameStartPos);
+  attributeName = key.substr(spacePos + 1);
+
+  // Convert frame index string to integer
+  std::istringstream frameIss(frameIndexStr);
+  if (!(frameIss >> frameIndex))
+  {
+    return false;
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkITKImageSequenceReader::ParseAndStoreSequenceItemMetadata(const std::string& key,
+                                                                  const char* attributeValue,
+                                                                  std::vector<std::string>& attributeNames,
+                                                                  std::vector<std::vector<std::string>>& frameAttributeValues)
+{
+  if (!attributeValue)
+  {
+    return false;
+  }
+
+  unsigned int axisIndex, frameIndex;
+  std::string attributeName;
+
+  if (!ParseSequenceItemMetadataKey(key, axisIndex, frameIndex, attributeName))
+  {
+    return false;
+  }
+
+  // Find or add attribute name
+  size_t attributeNameIndex = 0;
+  for (attributeNameIndex = 0; attributeNameIndex < attributeNames.size(); ++attributeNameIndex)
+  {
+    if (attributeNames[attributeNameIndex] == attributeName)
+    {
+      break;
+    }
+  }
+  if (attributeNameIndex == attributeNames.size())
+  {
+    // New attribute name
+    attributeNames.push_back(attributeName);
+    frameAttributeValues.resize(attributeNames.size());
+  }
+
+  // Ensure the frame attribute values vector is large enough
+  if (frameAttributeValues[attributeNameIndex].size() <= frameIndex)
+  {
+    frameAttributeValues[attributeNameIndex].resize(frameIndex + 1);
+  }
+  frameAttributeValues[attributeNameIndex][frameIndex] = attributeValue;
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
