@@ -21,8 +21,9 @@ The image is always stored in 3 spatial dimensions. Even if an image consists of
 
 #### Custom fields
 
-- `axis 0 index type`: `numeric` or `text` (used for example for sorting).
-- `axis 0 index values`: index value for each sequence item (cannot use spacing value in the standard NRRD fields, because the values may not be equally spaced and the index values are not always numeric).
+- `axis 3 index type`: `numeric` or `text` (used for example for sorting).
+- `axis 3 index values`: index value for each sequence item (cannot use spacing value in the standard NRRD fields, because the values may not be equally spaced and the index values are not always numeric).
+- `axis 3 item 5 SomeAttributeName`: these fields store node attributes of the sequence nodes (the first number refers to the sequence axis, the second number is the item index along that axis)
 - `DataNodeClassName`: class name of the proxy node that needs to be created when the sequence is read. Default (and most common) is `vtkMRMLScalarVolumeNode`.
   For labelmap volumes: `vtkMRMLLabelMapVolumeNode`.
 

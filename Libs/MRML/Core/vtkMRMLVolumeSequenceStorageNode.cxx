@@ -105,14 +105,30 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
   std::string dataNodeClassName;
+  unsigned int sequenceAxisIndex = 3;
+
+  // Store per frame attributes (read from metadata field such as: "axis M item NNNN attributename")
+  // Since most attributes are common across all frames and typically there are only a few of them,
+  // we store them in vectors instead of maps.
+  std::vector<std::string> attributeNames;
+  std::vector<std::vector<std::string>> frameAttributeValues; // for each frame, list of attribute values
+
   for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
   {
     if (*kit == "axis 0 index type" || *kit == "axis 3 index type")
     {
+      if (*kit == "axis 0 index type")
+      {
+        sequenceAxisIndex = 0;
+      }
       volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
     }
     else if (*kit == "axis 0 index values" || *kit == "axis 3 index values")
     {
+      if (*kit == "axis 0 index values")
+      {
+        sequenceAxisIndex = 0;
+      }
       std::string indexValue;
       for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str())); indexValueList >> indexValue;)
       {
@@ -126,7 +142,14 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
     else
     {
-      volSequenceNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
+      // Store for later use if it is a per-frame attribute (will be saved later into the sequence items);
+      // otherwise save as attribute in the sequence node.
+      const char* attributeValue = reader->GetHeaderValue(kit->c_str());
+      if (!vtkITKImageSequenceReader::ParseAndStoreSequenceItemMetadata(*kit, attributeValue, attributeNames, frameAttributeValues))
+      {
+        // Not a sequence item metadata, treat as regular sequence attribute
+        volSequenceNode->SetAttribute(kit->c_str(), attributeValue);
+      }
     }
   }
 
@@ -187,6 +210,17 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
 
     frameVolume->SetVoxelVectorType(vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType()));
+
+    // Apply pre-parsed node attributes for this frame
+    for (size_t attributeIndex = 0; attributeIndex < attributeNames.size(); ++attributeIndex)
+    {
+      if (static_cast<size_t>(frameIndex) < frameAttributeValues[attributeIndex].size() //
+          && !frameAttributeValues[attributeIndex][frameIndex].empty())
+      {
+        frameVolume->SetAttribute(attributeNames[attributeIndex].c_str(), //
+                                  frameAttributeValues[attributeIndex][frameIndex].c_str());
+      }
+    }
 
     std::ostringstream indexStr;
     if (static_cast<int>(indexValues.size()) > frameIndex)
@@ -322,7 +356,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   int frameVolumeDimensions[3] = { 0 };
   int frameVolumeScalarType = VTK_VOID;
   int frameVolumeVoxelVectorType = vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
-  int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
+  unsigned int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   if (numberOfFrameVolumes > 0)
   {
     vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(0));
@@ -386,7 +420,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   if (numberOfFrameVolumes > 0)
   {
     std::stringstream ssIndexValues;
-    for (int frameIndex = 0; frameIndex < numberOfFrameVolumes; frameIndex++)
+    for (unsigned int frameIndex = 0; frameIndex < numberOfFrameVolumes; frameIndex++)
     {
       if (frameIndex > 0)
       {
@@ -398,6 +432,32 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     std::stringstream ssAttributeName;
     ssAttributeName << "axis " << sequenceAxisIndex << " index values";
     writer->SetAttribute(ssAttributeName.str(), ssIndexValues.str());
+  }
+
+  // Store node attributes for each frame (format: "axis 3 item 0025 attributename")
+  for (unsigned int frameIndex = 0; frameIndex < numberOfFrameVolumes; frameIndex++)
+  {
+    vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
+    if (!frameVolume)
+    {
+      continue;
+    }
+    std::vector<std::string> frameAttributeNames = frameVolume->GetAttributeNames();
+    for (const std::string& attributeName : frameAttributeNames)
+    {
+      if (attributeName == "Sequences.BaseName")
+      {
+        // This is an attribute of the sequence proxy node, which is used internally by Sequences module.
+        // There is no need to save it into the sequence file.
+        continue;
+      }
+      const char* attributeValue = frameVolume->GetAttribute(attributeName.c_str());
+      if (!attributeValue)
+      {
+        continue;
+      }
+      writer->SetAttribute(vtkITKImageSequenceReader::FormatSequenceItemMetadataKey(sequenceAxisIndex, frameIndex, attributeName), attributeValue);
+    }
   }
 
   // Setup writer
