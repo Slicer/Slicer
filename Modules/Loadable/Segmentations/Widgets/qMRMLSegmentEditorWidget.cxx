@@ -3093,3 +3093,9 @@ void qMRMLSegmentEditorWidget::resumeRender()
 {
   qSlicerApplication::application()->resumeRender();
 }
+
+void qMRMLSegmentEditorWidget::applySegmentEffectCursor(qSlicerSegmentEditorAbstractEffect* effect)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->setEffectCursor(effect);
+}

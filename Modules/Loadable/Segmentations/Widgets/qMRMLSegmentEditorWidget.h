@@ -276,6 +276,9 @@ public:
   /// Returns true if automatic jump to current segment is enabled.
   bool jumpToSelectedSegmentEnabled() const;
 
+  /// Update the current cursor to incorporate the icon of a segment editor effect tool
+  Q_INVOKABLE void applySegmentEffectCursor(qSlicerSegmentEditorAbstractEffect* effect);
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   void setMRMLScene(vtkMRMLScene* newScene) override;
