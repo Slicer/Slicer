@@ -103,18 +103,29 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
+  const unsigned int sequenceAxisIndex = 3; // In grid transform sequence file, sequence axis is always the fourth NRRD axis
+  std::string axisIndexTypeKey = "axis " + std::to_string(sequenceAxisIndex) + " index type";
+  std::string axisIndexValuesKey = "axis " + std::to_string(sequenceAxisIndex) + " index values";
+
   // Read custom attributes
   std::vector<std::string> indexValues;
   bool useTransformFromParent = true; // Default: use TransformFromParent (backward compatibility)
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
+
+  // Store per frame attributes (read from metadata field such as: "axis M item NNNN attributename")
+  // Since most attributes are common across all frames and typically there are only a few of them,
+  // we store them in vectors instead of maps.
+  std::vector<std::string> attributeNames;
+  std::vector<std::vector<std::string>> frameAttributeValues; // for each frame, list of attribute values
+
   for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
   {
-    if (*kit == "axis 3 index type")
+    if (*kit == axisIndexTypeKey)
     {
       seqNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
     }
-    else if (*kit == "axis 3 index values")
+    else if (*kit == axisIndexValuesKey)
     {
       std::string indexValue;
       for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str())); indexValueList >> indexValue;)
@@ -140,6 +151,12 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
         vtkWarningMacro(<< "vtkMRMLTransformSequenceStorageNode::ReadDataInternal : Unrecognized displacement field type '" << displacementFieldType
                         << "', use default 'resampling' instead.");
       }
+    }
+    else
+    {
+      // Store for later use if it is a per-frame attribute (will be saved later into the sequence items)
+      const char* attributeValue = reader->GetHeaderValue(kit->c_str());
+      vtkITKImageSequenceReader::ParseAndStoreSequenceItemMetadata(*kit, attributeValue, attributeNames, frameAttributeValues);
     }
   }
 
@@ -181,6 +198,17 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     else
     {
       frameTransform->SetAndObserveTransformToParent(gridTransform.GetPointer());
+    }
+
+    // Apply pre-parsed node attributes for this frame
+    for (size_t attributeIndex = 0; attributeIndex < attributeNames.size(); ++attributeIndex)
+    {
+      if (static_cast<size_t>(frameIndex) < frameAttributeValues[attributeIndex].size() //
+          && !frameAttributeValues[attributeIndex][frameIndex].empty())
+      {
+        frameTransform->SetAttribute(attributeNames[attributeIndex].c_str(), //
+                                     frameAttributeValues[attributeIndex][frameIndex].c_str());
+      }
     }
 
     std::ostringstream indexStr;
@@ -469,11 +497,11 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     ssAttributeName << "axis " << sequenceAxisIndex << " index type";
     writer->SetAttribute(ssAttributeName.str(), seqNode->GetIndexTypeAsString());
   }
-  int numberOfFrames = seqNode->GetNumberOfDataNodes();
+  unsigned int numberOfFrames = seqNode->GetNumberOfDataNodes();
   if (numberOfFrames > 0)
   {
     std::stringstream ssIndexValues;
-    for (int frameIndex = 0; frameIndex < numberOfFrames; frameIndex++)
+    for (unsigned int frameIndex = 0; frameIndex < numberOfFrames; frameIndex++)
     {
       if (frameIndex > 0)
       {
@@ -487,8 +515,34 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     writer->SetAttribute(ssAttributeName.str(), ssIndexValues.str());
   }
 
+  // Store node attributes for each frame
+  for (unsigned int frameIndex = 0; frameIndex < numberOfFrames; frameIndex++)
+  {
+    vtkMRMLTransformNode* frameTransform = vtkMRMLTransformNode::SafeDownCast(seqNode->GetNthDataNode(frameIndex));
+    if (!frameTransform)
+    {
+      continue;
+    }
+    std::vector<std::string> frameAttributeNames = frameTransform->GetAttributeNames();
+    for (const std::string& attributeName : frameAttributeNames)
+    {
+      if (attributeName == "Sequences.BaseName")
+      {
+        // This is an attribute of the sequence proxy node, which is used internally by Sequences module.
+        // There is no need to save it into the sequence file.
+        continue;
+      }
+      const char* attributeValue = frameTransform->GetAttribute(attributeName.c_str());
+      if (!attributeValue)
+      {
+        continue;
+      }
+      writer->SetAttribute(vtkITKImageSequenceReader::FormatSequenceItemMetadataKey(sequenceAxisIndex, frameIndex, attributeName), attributeValue);
+    }
+  }
+
   // Process each frame
-  for (int frameIndex = 0; frameIndex < numberOfFrames; frameIndex++)
+  for (unsigned int frameIndex = 0; frameIndex < numberOfFrames; frameIndex++)
   {
     vtkMRMLTransformNode* frameTransform = vtkMRMLTransformNode::SafeDownCast(seqNode->GetNthDataNode(frameIndex));
     if (frameTransform == nullptr)
