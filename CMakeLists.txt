@@ -717,7 +717,6 @@ set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}"
 include(SlicerBlockFindQtAndCheckVersion)
   mark_as_superbuild(VARS Qt5_DIR LABELS "FIND_PACKAGE")
 
-set(Slicer_HAVE_QT5 1)
     set(Slicer_HAVE_WEBKIT_SUPPORT 0)
 
 #
