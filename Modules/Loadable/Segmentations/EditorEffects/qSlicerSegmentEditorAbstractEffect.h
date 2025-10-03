@@ -169,7 +169,7 @@ public:
   virtual void setupOptionsFrame() {};
 
   /// Create a cursor customized for the given effect, potentially for each view
-  virtual QCursor createCursor(qMRMLWidget* viewWidget);
+  Q_INVOKABLE virtual QCursor createCursor(qMRMLWidget* viewWidget);
 
   /// Callback function invoked when interaction happens
   /// \param callerInteractor Interactor object that was observed to catch the event
