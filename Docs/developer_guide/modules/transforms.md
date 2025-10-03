@@ -21,19 +21,20 @@
 
 Slicer can store displacement field transforms (or "grid transforms" in VTK naming convention) in 3D NRRD or NIFTI format; or sequence of transforms in NRRD format. Image file header fields are used to distinguish the displacement field transforms form regular images and specify how to correctly interpret these images as transforms.
 
-Requirements for NRRD files to be correctly recognized and loaded as displacement field transform:
-- `kinds` field is set to:
-  - `vector domain domain domain` for single 3D displacement field transform
+Metadata in NRRD files to:
+- `kinds` field must be set to:
+  - `vector domain domain domain` for single 3D displacement field transform, or
   - `vector domain domain domain list` for displacement field sequence
-- `measurement frame` is recommended to be set to identity to unambiguously specify that vector stores spatial coordinates in the same coordinate system as the image axes are specified in.
-- custom `intent_code` field is set to `1006`. This convention originates from the NIFTI file format and it makes it easy to detect images as displacement fields when using ITK file reader.
-- custom `displacement field type` is set to:
-  - `resampling` for ITK convention, useful for transforming images, in the Slicer transform tree specifies the transform "from parent"
-  - `modeling` (useful for transforming points, markups, models; in the Slicer transform tree specifies the transform "to parent")
+- custom `intent_code` field must be set to `1006`. This convention originates from the NIFTI file format and it makes it easy to detect images as displacement fields when using ITK file reader.
+- `measurement frame` is recommended to be explicitly set to identity (`(1,0,0) (0,1,0) (0,0,1)`) to unambiguously specify that vectors store spatial coordinates that they are specified in the world space.
+- custom `displacement field type` can be set to specify how the displacement field should be used:
+  - `resampling` (default): use it as a resampling transform. This is how ITK uses transforms, because it is useful for transforming images. In the Slicer transform tree it is called the transform "from parent" (for a position in the parent coordinate system the transform directly specifies the corresponding position in the transformed object's coordinate system)
+  - `modeling`: use it as modeling transform. It is useful for transforming points, markups, models. In the Slicer transform tree specifies the transform "to parent".
+- custom `axis 3 item 5 SomeAttributeName` (the first number refers to the sequence axis, the second number is the item index along that axis) may be used for storing custom attributes for each sequence item (in the MRML scene these are stored as node attributes of the data nodes in the sequence)
 
-Requirements for NIFTI files to be correctly recognized and loaded as displacement field transform:
-- `intent_code` field is set to 1006 (`NIFTI_INTENT_DISPVECT`)
-- displacement vector values are stored in RAS coordinate system
+Metadata in NIFTI files:
+- `intent_code` must be set to 1006 (`NIFTI_INTENT_DISPVECT`)
+- displacement vector coordinate values are stored in RAS coordinate system
 
 ### Example 3D displacement field file header
 
