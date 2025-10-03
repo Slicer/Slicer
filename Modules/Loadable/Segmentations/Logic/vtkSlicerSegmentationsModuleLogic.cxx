@@ -842,6 +842,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
       modelNode->SetAndObserveTransformNodeID(nullptr);
     }
 
+    // Set terminology of segment as attribute of model node
+    if (!segment->GetTerminology().empty())
+    {
+      vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(modelNode, segment->GetTerminology());
+    }
+
     return true;
   }
 
