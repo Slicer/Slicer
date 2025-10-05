@@ -167,7 +167,7 @@ try:
                         self.backgroundWp, self.labelWp, self.thetaWp,
                         self.labelNextWp, self.thetaNextWp,
                         self.candidatesWp, self.candidatesNextWp,
-                        self.volumeMax, self.changedFlagWp, self.wpShape
+                        self.volumeMax, self.changedFlagWp, self.wpShape,
                     ],
                     device=self.device,
                 )
@@ -315,7 +315,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
             slicer.util.pip_install("warp-lang[extras]")
             if slicer.util.confirmOkCancelDisplay(
                 _("GPU backend installation is complete. Restart Slicer to use this feature."),
-                _("Restart required")
+                _("Restart required"),
             ):
                 slicer.util.restart()
 
