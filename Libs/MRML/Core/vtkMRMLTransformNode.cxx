@@ -216,7 +216,7 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     // Copy the concatenated transforms
     vtkCollectionSimpleIterator it;
     vtkAbstractTransform* concatenatedTransform = nullptr;
-    dstGeneral->PreMultiply();
+    dstGeneral->PostMultiply();
     for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it)));)
     {
       vtkAbstractTransform* concatenatedTransformCopy = concatenatedTransform->MakeTransform();
