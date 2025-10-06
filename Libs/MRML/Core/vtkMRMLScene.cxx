@@ -4160,9 +4160,7 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
     return "";
   }
 
-  // Find the main scene .mrml file in the archive
-  // (it is the first .mrml file that is not in the Private subfolder)
-
+  // Find all the scene .mrml files in the archive
   vtksys::Glob glob;
   glob.RecurseOn();
   glob.RecurseThroughSymlinksOff();
@@ -4177,20 +4175,22 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
     return "";
   }
 
+  // Find the .mrml file that is closest to the root of the archive
+  // (there may be scene files in subdirectories for storing sequences, but those are not the main scene file)
   std::string mainSceneFile;
   std::vector<std::string> files = glob.GetFiles();
-  std::string privateSubfolder = "/" + vtkMRMLScene::GetPrivateFolderName() + "/";
+  size_t foundSceneFileNumberOfComponents{ 0 };
   for (const auto& file : files)
   {
-    if (file.find(privateSubfolder) != std::string::npos)
+    std::vector<std::string> components;
+    vtksys::SystemTools::SplitPath(file, components, false /*no need to expand home dir*/);
+    if (mainSceneFile.empty() || components.size() < foundSceneFileNumberOfComponents)
     {
-      // skip mrml files in the Private subfolder, those are not the main scene file
-      continue;
+      mainSceneFile = file;
+      foundSceneFileNumberOfComponents = components.size();
     }
-    // found a mrml file
-    mainSceneFile = file;
-    break;
   }
+
   if (mainSceneFile.empty())
   {
     vtkGenericWarningMacro("could not find mrml file in archive");
