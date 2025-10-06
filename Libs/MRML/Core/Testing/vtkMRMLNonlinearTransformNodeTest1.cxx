@@ -33,8 +33,8 @@
 int TestBSplineTransform(const char* filename);
 int TestGridTransform(const char* filename);
 int TestThinPlateSplineTransform(const char* filename);
-int TestCompositeTransformHardenSplit(const char* filename);
-int TestBSplineLinearCompositeTransformSplit(const char* filename);
+int TestCompositeTransformHardenCopySplit(const char* filename);
+int TestBSplineLinearCompositeTransformCopySplit(const char* filename);
 int TestRelativeTransforms(const char* filename);
 int TestGetTransform();
 
@@ -51,8 +51,8 @@ int vtkMRMLNonlinearTransformNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestBSplineTransform(filename));
   CHECK_EXIT_SUCCESS(TestGridTransform(filename));
   CHECK_EXIT_SUCCESS(TestThinPlateSplineTransform(filename));
-  CHECK_EXIT_SUCCESS(TestCompositeTransformHardenSplit(filename));
-  CHECK_EXIT_SUCCESS(TestBSplineLinearCompositeTransformSplit(filename));
+  CHECK_EXIT_SUCCESS(TestCompositeTransformHardenCopySplit(filename));
+  CHECK_EXIT_SUCCESS(TestBSplineLinearCompositeTransformCopySplit(filename));
   CHECK_EXIT_SUCCESS(TestRelativeTransforms(filename));
   CHECK_EXIT_SUCCESS(TestGetTransform());
 
@@ -185,7 +185,7 @@ int TestThinPlateSplineTransform(const char* filename)
 }
 
 //---------------------------------------------------------------------------
-int TestCompositeTransformHardenSplit(const char* filename)
+int TestCompositeTransformHardenCopySplit(const char* filename)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -248,6 +248,21 @@ int TestCompositeTransformHardenSplit(const char* filename)
                                            transformedPoints.GetPointer(),
                                            transformedPointsBackToTest.GetPointer()));
 
+  // Test if transform to world is the same after deep-copying (cloning) the node
+  vtkMRMLTransformNode* clonedTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode", "ClonedTransformNode"));
+  clonedTransformNode->CopyContent(bsplineTransformNode, true);
+  vtkNew<vtkGeneralTransform> transformToWorldAfterCopying;
+  clonedTransformNode->GetTransformToWorld(transformToWorldAfterCopying);
+  std::cout << "Transform to world after copying: " << std::endl;
+  std::cout << infoPrinter->GetTransformInfo(transformToWorldAfterCopying) << std::endl;
+  vtkNew<vtkGeneralTransform> transformFromWorldAfterCopying;
+  clonedTransformNode->GetTransformFromWorld(transformFromWorldAfterCopying);
+  CHECK_EXIT_SUCCESS(testTransformAccuracy(transformFromWorldAfterCopying, //
+                                           transformToWorldAfterCopying,
+                                           testPoints,
+                                           transformedPoints,
+                                           transformedPointsBackToTest));
+
   // Split transform
   CHECK_BOOL(bsplineTransformNode->Split(), true);
 
@@ -270,7 +285,7 @@ int TestCompositeTransformHardenSplit(const char* filename)
 }
 
 //---------------------------------------------------------------------------
-int TestBSplineLinearCompositeTransformSplit(const char* filename)
+int TestBSplineLinearCompositeTransformCopySplit(const char* filename)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -300,6 +315,19 @@ int TestBSplineLinearCompositeTransformSplit(const char* filename)
   compositeBsplineTransformNode->GetTransformFromWorld(transformFromWorldBeforeSplit.GetPointer());
   CHECK_EXIT_SUCCESS(testTransformConsistency(
     transformFromWorldBeforeSplit.GetPointer(), transformToWorldBeforeSplit.GetPointer(), testPoints, transformedPoints.GetPointer(), transformedPointsBackToTest.GetPointer()));
+
+  // Test if transform to world is the same after deep-copying (cloning) the node
+  vtkMRMLTransformNode* clonedTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode", "ClonedTransformNode"));
+  clonedTransformNode->CopyContent(compositeBsplineTransformNode, true);
+  vtkNew<vtkGeneralTransform> transformToWorldAfterCopying;
+  clonedTransformNode->GetTransformToWorld(transformToWorldAfterCopying);
+  vtkNew<vtkGeneralTransform> transformFromWorldAfterCopying;
+  clonedTransformNode->GetTransformFromWorld(transformFromWorldAfterCopying);
+  CHECK_EXIT_SUCCESS(testTransformAccuracy(transformFromWorldAfterCopying, //
+                                           transformToWorldAfterCopying,
+                                           testPoints,
+                                           transformedPoints,
+                                           transformedPointsBackToTest));
 
   // Split transform
   CHECK_BOOL(compositeBsplineTransformNode->Split(), true);
