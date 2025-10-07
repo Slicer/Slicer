@@ -133,9 +133,11 @@ set_source_files_properties(
 if(MRMLDisplayableManager_USE_PYTHON)
   list(APPEND KIT_SRCS
     vtkMRMLScriptedDisplayableManager.cxx
+    vtkMRMLScriptedLightBoxRendererManagerProxy.cxx
     )
   set_source_files_properties(
     vtkMRMLScriptedDisplayableManager.cxx
+    vtkMRMLScriptedLightBoxRendererManagerProxy.cxx
     WRAP_EXCLUDE
     )
 endif()
