@@ -104,14 +104,9 @@ void vtkMRMLCrosshairNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCrosshairNode::SetCrosshairRAS(double ras[3], int id)
+void vtkMRMLCrosshairNode::SetCrosshairRAS(double ras[3], int vtkNotUsed(id))
 {
   bool modified = false;
-
-  if (this->LightBoxPane != id)
-  {
-    modified = true;
-  }
 
   if (this->CrosshairRAS[0] != ras[0]    //
       || this->CrosshairRAS[1] != ras[1] //
@@ -123,7 +118,6 @@ void vtkMRMLCrosshairNode::SetCrosshairRAS(double ras[3], int id)
   this->CrosshairRAS[0] = ras[0];
   this->CrosshairRAS[1] = ras[1];
   this->CrosshairRAS[2] = ras[2];
-  this->LightBoxPane = id;
 
   if (modified)
   {

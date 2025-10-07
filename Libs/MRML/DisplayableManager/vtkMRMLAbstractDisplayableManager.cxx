@@ -21,7 +21,6 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
-#include <vtkMRMLLightBoxRendererManagerProxy.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -118,7 +117,6 @@ public:
   vtkInteractorObserver* InteractorStyle;
   vtkSmartPointer<vtkCallbackCommand> InteractorStyleCallBackCommand;
   std::vector<std::pair<int, float>> InteractorStyleObservableEvents;
-  vtkWeakPointer<vtkMRMLLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
 //----------------------------------------------------------------------------
@@ -132,7 +130,6 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(vtkMRMLAbstractDispl
   this->WidgetsObserverManager = vtkObserverManager::New();
   this->UpdateFromMRMLRequested = false;
   this->Renderer = nullptr;
-  this->LightBoxRendererManagerProxy = nullptr;
   this->MRMLDisplayableNode = nullptr;
   this->MRMLDisplayableNodeObservableEvents = vtkSmartPointer<vtkIntArray>::New();
   this->DisplayableManagerGroup = nullptr;
@@ -176,7 +173,6 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::~vtkInternal()
   this->SetAndObserveInteractor(nullptr);
   this->SetAndObserveInteractorStyle(nullptr);
   this->SetAndObserveMRMLInteractionNode(nullptr);
-  this->LightBoxRendererManagerProxy = nullptr;
   this->WidgetsObserverManager->Delete();
 }
 
@@ -835,28 +831,9 @@ void vtkMRMLAbstractDisplayableManager::OnInteractorEvent(int vtkNotUsed(eventid
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy* mgr)
+vtkRenderer* vtkMRMLAbstractDisplayableManager::GetRenderer(int vtkNotUsed(idx))
 {
-  this->Internal->LightBoxRendererManagerProxy = mgr;
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLLightBoxRendererManagerProxy* vtkMRMLAbstractDisplayableManager::GetLightBoxRendererManagerProxy()
-{
-  return this->Internal->LightBoxRendererManagerProxy;
-}
-
-//---------------------------------------------------------------------------
-vtkRenderer* vtkMRMLAbstractDisplayableManager::GetRenderer(int idx)
-{
-  if (this->Internal->LightBoxRendererManagerProxy)
-  {
-    return this->Internal->LightBoxRendererManagerProxy->GetRenderer(idx);
-  }
-  else
-  {
-    return this->GetRenderer();
-  }
+  return this->GetRenderer();
 }
 
 //---------------------------------------------------------------------------

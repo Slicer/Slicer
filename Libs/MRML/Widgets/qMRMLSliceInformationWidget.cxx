@@ -64,10 +64,6 @@ void qMRMLSliceInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setViewGroup(int)));
 
-  // Connect LightBox layout
-  this->connect(this->LightboxLayoutRowsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setLightboxLayoutRows(int)));
-  this->connect(this->LightboxLayoutColumnsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setLightboxLayoutColumns(int)));
-
   // Connect SliceSpacingMode
   this->SliceSpacingModeGroup = new QButtonGroup(widget);
   this->SliceSpacingModeGroup->addButton(this->AutomaticSliceSpacingRadioButton, vtkMRMLSliceNode::AutomaticSliceSpacingMode);
@@ -120,10 +116,6 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->FieldOfViewWidget->setCoordinates(coordinatesInDouble);
 
   this->ViewGroupSpinBox->setValue(this->MRMLSliceNode->GetViewGroup());
-
-  // Update lightbox rows/columns entries
-  this->LightboxLayoutRowsSpinBox->setValue(this->MRMLSliceNode->GetLayoutGridRows());
-  this->LightboxLayoutColumnsSpinBox->setValue(this->MRMLSliceNode->GetLayoutGridColumns());
 
   // Update spacing mode
   if (this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
@@ -246,27 +238,15 @@ void qMRMLSliceInformationWidget::setWidgetVisible(bool visible)
 //---------------------------------------------------------------------------
 void qMRMLSliceInformationWidget::setLightboxLayoutRows(int rowCount)
 {
-  Q_D(qMRMLSliceInformationWidget);
-
-  if (!d->MRMLSliceNode)
-  {
-    return;
-  }
-
-  d->MRMLSliceNode->SetLayoutGridRows(rowCount);
+  Q_UNUSED(rowCount);
+  qWarning() << "qMRMLSliceInformationWidget::setLightboxLayoutRows is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceInformationWidget::setLightboxLayoutColumns(int columnCount)
 {
-  Q_D(qMRMLSliceInformationWidget);
-
-  if (!d->MRMLSliceNode)
-  {
-    return;
-  }
-
-  d->MRMLSliceNode->SetLayoutGridColumns(columnCount);
+  Q_UNUSED(columnCount);
+  qWarning() << "qMRMLSliceInformationWidget::setLightboxLayoutColumns is deprecated";
 }
 
 //---------------------------------------------------------------------------
