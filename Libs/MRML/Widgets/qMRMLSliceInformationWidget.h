@@ -74,10 +74,12 @@ public slots:
   /// Set view group
   void setViewGroup(int viewGroup);
 
-  /// Set lightbox layout row count
+  /// \deprecated
+  /// Setting lightbox layout row count is ignored since LightBox removal.
   void setLightboxLayoutRows(int rowCount);
 
-  /// Set lightbox layout column count
+  /// \deprecated
+  /// Setting lightbox layout column count is ignored since LightBox removal.
   void setLightboxLayoutColumns(int columnCount);
 
   /// Specify whether the slice spacing is automatically determined or prescribed

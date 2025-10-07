@@ -531,23 +531,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="LightBoxToolButton">
-          <property name="toolTip">
-           <string>Lightbox view.</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
-          </property>
-          <property name="popupMode">
-           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QToolButton" name="ShowReformatWidgetToolButton">
           <property name="toolTip">
            <string>Show reformat widget in 3D view</string>
@@ -904,78 +887,6 @@
    </property>
    <property name="text">
     <string>FOV matches Volumes, Spacing matches 2D View</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x1_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x1 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x2_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x2 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x3_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x3 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x4_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x4 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x6_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x6 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox1x8_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x8 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox2x2_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>2x2 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox3x3_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>3x3 view</string>
-   </property>
-  </action>
-  <action name="actionLightbox6x6_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>6x6 view</string>
    </property>
   </action>
   <action name="actionAdjustDisplayForeground_volume">
@@ -1436,22 +1347,6 @@
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MoreButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>LightBoxToolButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>7</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>140</x>
-     <y>14</y>
     </hint>
    </hints>
   </connection>

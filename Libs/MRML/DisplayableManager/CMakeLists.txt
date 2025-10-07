@@ -120,9 +120,6 @@ set(KIT_SRCS
   vtkMRMLSliceIntersectionInteractionRepresentationHelper.cxx
   vtkMRMLRubberBandWidgetRepresentation.cxx
   vtkMRMLWindowLevelWidget.cxx
-
-  # Proxy classes
-  vtkMRMLLightBoxRendererManagerProxy.cxx
   )
 
 set_source_files_properties(

@@ -24,7 +24,6 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLInteractionNode.h>
-#include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
