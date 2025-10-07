@@ -31,7 +31,6 @@
 // CTK includes
 #include <ctkAxesWidget.h>
 #include <ctkPopupWidget.h>
-#include <vtkLightBoxRendererManager.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
@@ -42,7 +41,6 @@
 #include <vtkMRMLAbstractDisplayableManager.h>
 #include <vtkMRMLCrosshairDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLScalarBarDisplayableManager.h>
 #include <vtkMRMLSliceViewInteractorStyle.h>
@@ -66,63 +64,6 @@
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
-// qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy class
-
-//--------------------------------------------------------------------------
-// vtkInternalLightBoxRendereManagerProxy methods
-// vtkStandardNewMacro(qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy );
-
-//---------------------------------------------------------------------------
-// Using the vtkStandardNewMacro results in a compiler error about
-// vtkInstantiatorqMRMLSliceWidgetPrivate has not been declared. This
-// seems to be due to how the macro uses the type passed into the
-// vtkStandardNewMacro as both a type and a classname string. Below,
-// we do the equivalent to the vtkStandardNewMacro but use the full
-// path to the type where needed and the scoped name elsewhere.
-qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy* qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::New()
-{
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkInternalLightBoxRendererManagerProxy");
-  if (ret)
-  {
-    return static_cast<qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy*>(ret);
-  }
-
-  qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy* result = new qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy;
-#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-  result->InitializeObjectBase();
-#endif
-  return result;
-}
-
-//---------------------------------------------------------------------------
-qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::vtkInternalLightBoxRendererManagerProxy()
-{
-  this->LightBoxRendererManager = nullptr;
-}
-
-//---------------------------------------------------------------------------
-qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::~vtkInternalLightBoxRendererManagerProxy()
-{
-  this->LightBoxRendererManager = nullptr;
-}
-
-//---------------------------------------------------------------------------
-vtkRenderer* qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::GetRenderer(int id)
-{
-  if (this->LightBoxRendererManager)
-  {
-    return this->LightBoxRendererManager->GetRenderer(id);
-  }
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBoxRendererManager(vtkLightBoxRendererManager* mgr)
-{
-  this->LightBoxRendererManager = mgr;
-}
-
-//--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
 
 //---------------------------------------------------------------------------
@@ -134,7 +75,6 @@ qMRMLSliceViewPrivate::qMRMLSliceViewPrivate(qMRMLSliceView& object)
   this->MRMLScene = nullptr;
   this->MRMLSliceNode = nullptr;
   this->InactiveBoxColor = QColor(95, 95, 113);
-  this->LightBoxRendererManagerProxy = vtkInternalLightBoxRendererManagerProxy::New();
 }
 
 //---------------------------------------------------------------------------
@@ -148,10 +88,6 @@ qMRMLSliceViewPrivate::~qMRMLSliceViewPrivate()
   {
     this->InteractorObserver->Delete();
   }
-  if (this->LightBoxRendererManagerProxy)
-  {
-    this->LightBoxRendererManagerProxy->Delete();
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -161,16 +97,12 @@ void qMRMLSliceViewPrivate::init()
 
   this->ctkVTKSliceViewPrivate::init();
 
-  // Highlight first RenderWindowItem
-  q->setHighlightedBoxColor(this->InactiveBoxColor);
-
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
   vtkNew<vtkInteractorStyleUser> interactorStyle;
 
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
-  this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(q->lightBoxRendererManager());
   this->initDisplayableManagers();
 
   // Force an initial render to ensure that the render window creates an OpenGL
@@ -209,9 +141,6 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   this->InteractorObserver->SetDisplayableManagers(this->DisplayableManagerGroup);
   // Observe displayable manager group to catch RequestRender events
   q->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent, q, SLOT(scheduleRender()));
-
-  // pass the lightbox manager proxy onto the display managers
-  this->DisplayableManagerGroup->SetLightBoxRendererManagerProxy(this->LightBoxRendererManagerProxy);
 }
 
 //---------------------------------------------------------------------------
@@ -243,20 +172,6 @@ void qMRMLSliceViewPrivate::onSceneEndProcessing()
 {
   Q_Q(qMRMLSliceView);
   q->setRenderEnabled(true);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceViewPrivate::updateWidgetFromMRML()
-{
-  Q_Q(qMRMLSliceView);
-  if (!this->MRMLSliceNode)
-  {
-    return;
-  }
-  q->lightBoxRendererManager()->SetRenderWindowLayout(this->MRMLSliceNode->GetLayoutGridRows(), this->MRMLSliceNode->GetLayoutGridColumns());
-  bool displayLightboxBorders = this->MRMLSliceNode->GetLayoutGridRows() != 1 || //
-                                this->MRMLSliceNode->GetLayoutGridColumns() != 1;
-  q->lightBoxRendererManager()->SetHighlighted(0, 0, displayLightboxBorders);
 }
 
 // --------------------------------------------------------------------------
@@ -342,10 +257,7 @@ void qMRMLSliceView::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
     return;
   }
 
-  d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
-
   d->MRMLSliceNode = newSliceNode;
-  d->updateWidgetFromMRML();
 
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
 

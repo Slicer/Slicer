@@ -32,7 +32,6 @@ class vtkMRMLSelectionNode;
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLNode;
 class vtkMRMLScene;
-class vtkMRMLLightBoxRendererManagerProxy;
 
 class vtkRenderer;
 class vtkRenderWindowInteractor;
@@ -55,25 +54,10 @@ public:
   /// \sa CreateIfPossible() Create()
   bool IsCreated();
 
-  /// Set the LightBoxRendererManager proxy. This proxy provides a
-  /// method GetRenderer(int) that returns the renderer for the Nth
-  /// lightbox pane. The DisplayableManagers use this method to map
-  /// coordinates to the proper lightbox pane, e.g. in placing
-  /// crosshairs or markups in the proper renderer.
-  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*);
-
-  /// Get the LightBoxRendererManagerProxy if one has been provided
-  /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*)
-  virtual vtkMRMLLightBoxRendererManagerProxy* GetLightBoxRendererManagerProxy();
-
   /// Get the default renderer for this displayable manager.
   vtkRenderer* GetRenderer();
 
-  /// Get the renderer for the Nth lightbox pane. This method uses the
-  /// LightBoxRendererManagerProxy if one has been configured for the
-  /// DisplayableManager. If no LightBoxRendererManagerProxy has been
-  /// set, this method returns the default renderer by deferring to
-  /// GetRenderer(),
+  /// \deprecated LightBox was removed and GetRenderer() should be used.
   vtkRenderer* GetRenderer(int idx);
 
   /// Convenient method to get the WindowInteractor associated with the Renderer

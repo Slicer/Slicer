@@ -116,12 +116,18 @@ public:
   vtkSetVector3Macro(CrosshairRAS, double);
   vtkGetVector3Macro(CrosshairRAS, double);
 
-  /// Set the crosshair position and cache which pane of lightbox that
-  /// position was in
+  /// Set the crosshair position.
+  /// The \id parameter is ignored since LightBox removal.
   void SetCrosshairRAS(double ras[3], int id);
 
-  /// Get the pane of the lightbox that was last cached
-  vtkGetMacro(LightBoxPane, int);
+  /// \deprecated
+  /// Get the pane of the lightbox that was last cached.
+  /// Always return 0
+  int GetLightBoxPane() const
+  {
+    vtkWarningMacro("vtkMRMLCrosshairNode::GetLightBoxPane is deprecated, LightBox feature has been removed.");
+    return 0;
+  }
 
   ///
   /// Name of the layout
@@ -183,7 +189,6 @@ protected:
   float CrosshairColor[3]{ 1.0f, 0.8f, 0.1f }; // Light yellow
 
   double CrosshairRAS[3]{ 0.0, 0.0, 0.0 };
-  int LightBoxPane{ 0 };
 
   /// Last known cursor position in RAS coordinate system.
   /// If CursorPositionValid is false then this position is not up-to-date anymore.

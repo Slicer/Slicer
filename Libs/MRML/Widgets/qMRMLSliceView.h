@@ -84,19 +84,19 @@ public:
 
   /// Convert device coordinates to XYZ coordinates. The x and y
   /// components of the return value are the positions within a
-  /// LightBox pane and the z component of the return value (rounded
-  /// to the nearest integer) is the pane in the LightBox
+  /// slice view pane and the z component of the return value is always 0.0. It
+  /// used to be the pane (rounded to the nearest integer) in the LightBox
   Q_INVOKABLE QList<double> convertDeviceToXYZ(const QList<int>& xy) const;
 
   /// Convert RAS to XYZ coordinates. Parameter ras and return value
-  /// are of length 3. Z component of the return value is the pane in
-  /// the LightBox.
+  /// are of length 3. Z component of the return value is always 0.0. It used to be
+  /// the pane in the LightBox.
   Q_INVOKABLE QList<double> convertRASToXYZ(const QList<double>& ras) const;
 
   /// Convert XYZ to RAS coordinates. parameters xyz and return value
-  /// are of length 3. Z component of parameter xyz is the LightBox
-  /// pane and the X and Y components of parameter xyz is the position
-  /// in the LightBox pane.
+  /// are of length 3. X and Y components of parameter xyz is the position
+  /// in the slice view pane. Z component of the return value is always 0.0. It used to be
+  /// the pane in the LightBox.
   Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double>& xyz) const;
 
   /// Set cursor in the view area
