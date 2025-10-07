@@ -391,7 +391,7 @@ def childWidgetVariables(widget):
     ui = type("", (), {})()  # empty object
     childWidgets = findChildren(widget)
     for childWidget in childWidgets:
-        if hasattr(childWidget, "name"):
+        if hasattr(childWidget, "name") and childWidget.name:
             setattr(ui, childWidget.name, childWidget)
     return ui
 
