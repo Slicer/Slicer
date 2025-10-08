@@ -152,9 +152,6 @@ public:
   /// Select first segment in table view
   void selectFirstSegment() const;
 
-  /// Set cursor for effect. If effect is nullptr then the cursor is reset to default.
-  void setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect);
-
   bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode) const;
 
   QToolButton* toolButton(qSlicerSegmentEditorAbstractEffect* effect);
@@ -454,73 +451,6 @@ void qMRMLSegmentEditorWidgetPrivate::selectFirstSegment() const
     QStringList firstSegmentID;
     firstSegmentID << QString(segmentIDs[0].c_str());
     this->SegmentsTableView->setSelectedSegmentIDs(firstSegmentID);
-  }
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect)
-{
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  if (!layoutManager)
-  {
-    // application is closing
-    return;
-  }
-
-  // We update the default cursor as well so that if the user hovers the mouse over
-  // a markup, the cursor shape is then restored to the effect cursor.
-
-  for (const QString& sliceViewName : layoutManager->sliceViewNames())
-  {
-    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
-    QString viewNodeID = QString::fromStdString(sliceWidget->mrmlSliceNode()->GetID());
-    if (!this->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
-    {
-      // segmentation is not displayable in this view anymore
-      if (!this->CustomCursorInViewNodeIDs.contains(viewNodeID))
-      {
-        // we did not use this view previously either, so don't change the cursor there
-        continue;
-      }
-    }
-    if (effect && effect->showEffectCursorInSliceView())
-    {
-      sliceWidget->sliceView()->setViewCursor(effect->createCursor(sliceWidget));
-      sliceWidget->sliceView()->setDefaultViewCursor(effect->createCursor(sliceWidget));
-      this->CustomCursorInViewNodeIDs.insert(viewNodeID);
-    }
-    else
-    {
-      sliceWidget->sliceView()->setViewCursor(QCursor());
-      sliceWidget->sliceView()->setDefaultViewCursor(QCursor());
-      this->CustomCursorInViewNodeIDs.remove(viewNodeID);
-    }
-  }
-  for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
-  {
-    qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
-    QString viewNodeID = QString::fromStdString(threeDWidget->mrmlViewNode()->GetID());
-    if (!this->segmentationDisplayableInView(threeDWidget->mrmlViewNode()))
-    {
-      // segmentation is not displayable in this view anymore
-      if (!this->CustomCursorInViewNodeIDs.contains(viewNodeID))
-      {
-        // we did not use this view previously either, so don't change the cursor there
-        continue;
-      }
-    }
-    if (effect && effect->showEffectCursorInThreeDView())
-    {
-      threeDWidget->threeDView()->setViewCursor(effect->createCursor(threeDWidget));
-      threeDWidget->threeDView()->setDefaultViewCursor(effect->createCursor(threeDWidget));
-      this->CustomCursorInViewNodeIDs.insert(viewNodeID);
-    }
-    else
-    {
-      threeDWidget->threeDView()->setViewCursor(QCursor());
-      threeDWidget->threeDView()->setDefaultViewCursor(QCursor());
-      this->CustomCursorInViewNodeIDs.remove(viewNodeID);
-    }
   }
 }
 
@@ -1197,7 +1127,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
   if (!d->InteractionNode //
       || d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
   {
-    d->setEffectCursor(activeEffect);
+    this->setEffectCursor(activeEffect);
   }
 
   // Set active effect
@@ -3092,4 +3022,73 @@ void qMRMLSegmentEditorWidget::pauseRender()
 void qMRMLSegmentEditorWidget::resumeRender()
 {
   qSlicerApplication::application()->resumeRender();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect)
+{
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+  {
+    // application is closing
+    return;
+  }
+
+  Q_D(qMRMLSegmentEditorWidget);
+
+  // We update the default cursor as well so that if the user hovers the mouse over
+  // a markup, the cursor shape is then restored to the effect cursor.
+
+  for (const QString& sliceViewName : layoutManager->sliceViewNames())
+  {
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    QString viewNodeID = QString::fromStdString(sliceWidget->mrmlSliceNode()->GetID());
+    if (!d->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
+    {
+      // segmentation is not displayable in this view anymore
+      if (!d->CustomCursorInViewNodeIDs.contains(viewNodeID))
+      {
+        // we did not use this view previously either, so don't change the cursor there
+        continue;
+      }
+    }
+    if (effect && effect->showEffectCursorInSliceView())
+    {
+      sliceWidget->sliceView()->setViewCursor(effect->createCursor(sliceWidget));
+      sliceWidget->sliceView()->setDefaultViewCursor(effect->createCursor(sliceWidget));
+      d->CustomCursorInViewNodeIDs.insert(viewNodeID);
+    }
+    else
+    {
+      sliceWidget->sliceView()->setViewCursor(QCursor());
+      sliceWidget->sliceView()->setDefaultViewCursor(QCursor());
+      d->CustomCursorInViewNodeIDs.remove(viewNodeID);
+    }
+  }
+  for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
+  {
+    qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
+    QString viewNodeID = QString::fromStdString(threeDWidget->mrmlViewNode()->GetID());
+    if (!d->segmentationDisplayableInView(threeDWidget->mrmlViewNode()))
+    {
+      // segmentation is not displayable in this view anymore
+      if (!d->CustomCursorInViewNodeIDs.contains(viewNodeID))
+      {
+        // we did not use this view previously either, so don't change the cursor there
+        continue;
+      }
+    }
+    if (effect && effect->showEffectCursorInThreeDView())
+    {
+      threeDWidget->threeDView()->setViewCursor(effect->createCursor(threeDWidget));
+      threeDWidget->threeDView()->setDefaultViewCursor(effect->createCursor(threeDWidget));
+      d->CustomCursorInViewNodeIDs.insert(viewNodeID);
+    }
+    else
+    {
+      threeDWidget->threeDView()->setViewCursor(QCursor());
+      threeDWidget->threeDView()->setDefaultViewCursor(QCursor());
+      d->CustomCursorInViewNodeIDs.remove(viewNodeID);
+    }
+  }
 }
