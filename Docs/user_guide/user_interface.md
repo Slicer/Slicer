@@ -185,7 +185,6 @@ View Controllers module provides an alternate way of displaying these controller
 - **Reset field of view** (small square) centers the slice on the current background volume
 - **Show in 3D** "eye" button in the top row can show the current slice in 3D views. Drop-down menu of the button contains advanced options to customize how this slice is rendered: "...match volume" means that the properties are taken from the full volume, while "...match 2D" means that the properties are copied from the current slice view (for example, copies zoom and pan position). Typically these differences are subtle and the settings can be left at default.
 - **Slice orientation** displays allows you to choose the orientation for this slice view.
-- **Lightbox** to select a mosiac (a.k.a. contact sheet) view.  Not all operations work in this mode and it may be removed in the future.
 - **Reformat** allows interactive manipulation of the slice orientation.
 - **Slice offset slider** allows slicing through the volume. Step size is set to the background volume's spacing by default but can be modified by clicking on "Spacing and field of view" button. The label next to the offset value (e.g., `S`, `L`, `A`, `IL`, `IRP`) reflects the slice normal direction. If the offset slider moved to the right then the slice moves in this normal direction. If the slice normal direction is not aligned with an axis then the label contains a combination of directions, with the order of axes reflecting the dominance of the axis. For example, if the plane normal points to anterior and slightly left then the label is `AL`, while if the plane normal mostly left and slightly anterior then the label is `LA`.
 - **Blending mode** specifies how foreground and background layers are mixed.
@@ -201,6 +200,11 @@ View Controllers module provides an alternate way of displaying these controller
 - **Foreground volume opacity** slider allows fading between foreground and background volumes.
 - **Interpolation** allows displaying voxel values without interpolation. Recommended to keep interpolation enabled, and only disable it for testing and troubleshooting.
 - **Node selectors** are used to choose which background, foreground, and labelmap volumes and segmentations to display in this slice view. Note: multiple segmentations can be displayed in a slice view, but slice view controls only allow adjusting visibility of the currently selected segmentation node.
+
+:::{version-removed} 5.10
+- **Lightbox** feature to select a mosaic (a.k.a. contact sheet) view was removed. Instead the _Lightbox image columns_ option provided by the
+[Screen Capture](modules/screencapture.md) module may be used.
+:::
 
 ## Mouse & Keyboard Shortcuts
 
