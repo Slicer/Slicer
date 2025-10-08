@@ -30,6 +30,7 @@
 #include "qMRMLWidget.h"
 
 // Qt includes
+#include <QDebug>
 #include <QVariant>
 
 // CTK includes
@@ -390,10 +391,14 @@ public slots:
   /// Uninstall previously installed keyboard shortcuts.
   void uninstallKeyboardShortcuts();
 
-  /// Convenience method to turn off lightbox view in all slice viewers.
-  /// Segment editor is not compatible with lightbox view layouts.
-  /// Returns true if there were lightbox views.
-  bool turnOffLightboxes();
+  /// \deprecated
+  /// Disabling lightbox is a no-op since LightBox removal. Calling this
+  /// function always return false.
+  bool turnOffLightboxes()
+  {
+    qWarning() << "qMRMLSegmentEditorWidget::turnOffLightboxes is deprecated and it not needed.";
+    return false;
+  }
 
   /// Unselect labelmap layer in all slice views in the active layout
   void hideLabelLayer();
