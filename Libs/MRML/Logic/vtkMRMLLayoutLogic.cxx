@@ -1326,10 +1326,6 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
       "     <property name=\"viewlabel\" action=\"default\">" << i << "</property>"
       "     <property name=\"viewcolor\" action=\"default\">#E17012</property>"
-      "     <property name=\"lightboxrows\" action=\"default\">1</property>"
-      "     <property name=\"lightboxcolumns\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
-      "     <property name=\"lightboxrows\" action=\"relayout\">1</property>"
-      "     <property name=\"lightboxcolumns\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
       "    </view>"
       "   </item>";
     // clang-format on
@@ -1385,10 +1381,6 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
         "       <property name=\"orientation\" action=\"default\">Axial</property>"
         "       <property name=\"viewlabel\" action=\"default\">" << k << "</property>"
         "       <property name=\"viewcolor\" action=\"default\">#E17012</property>"
-        "       <property name=\"lightboxrows\" action=\"default\">1</property>"
-        "       <property name=\"lightboxcolumns\" action=\"default\">1</property>"
-        "       <property name=\"lightboxrows\" action=\"relayout\">1</property>"
-        "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
         "      </view>"
         "     </item>";
       // clang-format on
@@ -1655,35 +1647,6 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
     double color[3];
     vtkMRMLColors::toRGBColor(value.c_str(), color);
     viewNode->SetLayoutColor(color);
-  }
-  // Lightbox
-  if (name == std::string("lightboxrows"))
-  {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
-    if (!sliceNode)
-    {
-      vtkWarningMacro("Invalid lightboxrows property.");
-      return;
-    }
-    std::stringstream ss;
-    int n;
-    ss << value;
-    ss >> n;
-    sliceNode->SetLayoutGridRows(n);
-  }
-  if (name == std::string("lightboxcolumns"))
-  {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
-    if (!sliceNode)
-    {
-      vtkWarningMacro("Invalid lightboxcolumns property.");
-      return;
-    }
-    std::stringstream ss;
-    int n;
-    ss << value;
-    ss >> n;
-    sliceNode->SetLayoutGridColumns(n);
   }
 }
 
