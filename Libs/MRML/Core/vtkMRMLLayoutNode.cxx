@@ -25,8 +25,6 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->CollapseSliceControllers = 0;
   this->NumberOfCompareViewRows = 1;
   this->NumberOfCompareViewColumns = 1;
-  this->NumberOfCompareViewLightboxRows = 6;
-  this->NumberOfCompareViewLightboxColumns = 6;
   this->MainPanelSize = 400;
   this->SecondaryPanelSize = 400;
   this->SelectedModule = nullptr;
@@ -69,8 +67,6 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << " collapseSliceControllers=\"" << this->CollapseSliceControllers << "\"" << std::endl;
   of << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
   of << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
-  of << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
-  of << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
   of << " mainPanelSize=\"" << this->MainPanelSize << "\"";
   of << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
   if (this->SelectedModule != nullptr)
@@ -139,18 +135,6 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewColumns;
-    }
-    else if (!strcmp(attName, "numberOfLightboxRows"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->NumberOfCompareViewLightboxRows;
-    }
-    else if (!strcmp(attName, "numberOfLightboxColumns"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->NumberOfCompareViewLightboxColumns;
     }
     else if (!strcmp(attName, "mainPanelSize"))
     {
@@ -366,8 +350,6 @@ void vtkMRMLLayoutNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
   vtkMRMLCopyIntMacro(CollapseSliceControllers);
   vtkMRMLCopyIntMacro(NumberOfCompareViewRows);
   vtkMRMLCopyIntMacro(NumberOfCompareViewColumns);
-  vtkMRMLCopyIntMacro(NumberOfCompareViewLightboxRows);
-  vtkMRMLCopyIntMacro(NumberOfCompareViewLightboxColumns);
   vtkMRMLCopyIntMacro(MainPanelSize);
   vtkMRMLCopyIntMacro(SecondaryPanelSize);
   vtkMRMLCopyStringMacro(SelectedModule);
@@ -399,8 +381,6 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "CollapseSliceControllers: " << this->CollapseSliceControllers << "\n";
   os << indent << "NumberOfCompareViewRows: " << this->NumberOfCompareViewRows << "\n";
   os << indent << "NumberOfCompareViewColumns: " << this->NumberOfCompareViewColumns << "\n";
-  os << indent << "NumberOfCompareViewLightboxRows: " << this->NumberOfCompareViewLightboxRows << "\n";
-  os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
   os << indent << "Main panel size: " << this->MainPanelSize << "\n";
   os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
   if (this->SelectedModule)
