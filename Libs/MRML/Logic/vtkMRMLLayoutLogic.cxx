@@ -1348,60 +1348,6 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView, compareView.str().c_str());
   }
 
-  // Vertical compare viewers
-  std::stringstream compareWidescreenView;
-  compareWidescreenView <<
-    // clang-format off
-    "<layout type=\"horizontal\" split=\"true\" >"
-    " <item>"
-    "  <layout type=\"vertical\">"
-    "   <item>"
-    "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\"/>"
-    "   </item>"
-    "   <item>"
-    "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
-    "     <property name=\"orientation\" action=\"default\">Axial</property>"
-    "     <property name=\"viewlabel\" action=\"default\">R</property>"
-    "     <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
-    "    </view>"
-    "   </item>"
-    "  </layout>"
-    " </item>"
-    " <item>"
-    "  <layout type=\"horizontal\">";
-  // clang-format on
-
-  for (int i = 1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
-  {
-    compareWidescreenView <<
-      // clang-format off
-      "   <item>"
-      "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i<< "\">"
-      "     <property name=\"orientation\" action=\"default\">Axial</property>"
-      "     <property name=\"viewlabel\" action=\"default\">" << i << "</property>"
-      "     <property name=\"viewcolor\" action=\"default\">#E17012</property>"
-      "     <property name=\"lightboxrows\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxRows() << "</property>"
-      "     <property name=\"lightboxcolumns\" action=\"default\">1</property>"
-      "     <property name=\"lightboxrows\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxRows() << "</property>"
-      "     <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
-      "    </view>"
-      "   </item>";
-    // clang-format on
-  }
-  compareWidescreenView << //
-    "  </layout>"
-    " </item>"
-    "</layout>";
-
-  if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView))
-  {
-    this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView, compareWidescreenView.str().c_str());
-  }
-  else
-  {
-    this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView, compareWidescreenView.str().c_str());
-  }
-
   // Grid compare viewers
   std::stringstream compareViewGrid;
   compareViewGrid <<

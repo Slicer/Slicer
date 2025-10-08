@@ -105,7 +105,7 @@ public:
     SlicerLayoutNone = 14,
     SlicerLayoutDual3DView = 15,
     SlicerLayoutConventionalWidescreenView = 16,
-    SlicerLayoutCompareWidescreenView = 17,
+    SlicerLayoutCompareWidescreenView = 17, // Ignored since LightBox removal.
     SlicerLayoutTriple3DEndoscopyView = 19, // Up to here, all layouts are Slicer 3 compatible
     SlicerLayoutThreeOverThreeView = 21,
     SlicerLayoutFourOverFourView = 22,
