@@ -59,11 +59,49 @@ public:
   vtkGetMacro(NumberOfCompareViewColumns, int);
   vtkSetClampMacro(NumberOfCompareViewColumns, int, 1, 50);
 
-  /// CompareView lightbox configuration Get/Set methods
-  vtkGetMacro(NumberOfCompareViewLightboxRows, int);
-  vtkSetClampMacro(NumberOfCompareViewLightboxRows, int, 1, 50);
-  vtkGetMacro(NumberOfCompareViewLightboxColumns, int);
-  vtkSetClampMacro(NumberOfCompareViewLightboxColumns, int, 1, 50);
+  /// @{
+  /// \deprecated
+  /// Following removal of the LightBox feature, compareView lightbox configuration
+  /// through Get/Set methods is not supported.
+  int GetNumberOfCompareViewLightboxRows()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  void SetNumberOfCompareViewLightboxRows(int vtkNotUsed(value)) //
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+  }
+  int GetNumberOfCompareViewLightboxRowsMinValue()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxRowsMaxValue()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxColumns()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  void SetNumberOfCompareViewLightboxColumns(int vtkNotUsed(value)) //
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+  }
+  int GetNumberOfCompareViewLightboxColumnsMinValue()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxColumnsMaxValue()
+  {
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  /// @}
 
   /// Set/Get the size of the main and secondary panels (size of Frame1
   /// in each panel)
@@ -187,8 +225,6 @@ protected:
   int ViewArrangement;
   int NumberOfCompareViewRows;
   int NumberOfCompareViewColumns;
-  int NumberOfCompareViewLightboxRows;
-  int NumberOfCompareViewLightboxColumns;
 
   char* SelectedModule;
 
