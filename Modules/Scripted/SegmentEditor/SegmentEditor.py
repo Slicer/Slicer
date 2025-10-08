@@ -113,9 +113,6 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def enter(self):
         """Runs whenever the module is reopened"""
-        if self.editor.turnOffLightboxes():
-            slicer.util.warningDisplay(_("Segment Editor is not compatible with slice viewers in light box mode."
-                                         "Views are being reset."), windowTitle=_("Segment Editor"))
 
         # Allow switching between effects and selected segment using keyboard shortcuts
         self.editor.installKeyboardShortcuts()
