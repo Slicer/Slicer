@@ -271,19 +271,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   this->ViewLayoutCompareAction->setMenu(compareMenu);
   QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareActionTriggered(QAction*)));
 
-  // ... and for widescreen version of compare view as well
-  compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
-  compareMenu->setObjectName("CompareMenuWideScreen");
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_2_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_3_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_4_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_5_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_6_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_7_viewersAction);
-  compareMenu->addAction(this->ViewLayoutCompareWidescreen_8_viewersAction);
-  this->ViewLayoutCompareWidescreenAction->setMenu(compareMenu);
-  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
-
   // ... and for the grid version of the compare views
   compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuGrid");
@@ -1323,7 +1310,6 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutTabbed3DAction->setData(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
   d->ViewLayoutTabbedSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
   d->ViewLayoutCompareAction->setData(vtkMRMLLayoutNode::SlicerLayoutCompareView);
-  d->ViewLayoutCompareWidescreenAction->setData(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView);
   d->ViewLayoutCompareGridAction->setData(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
   d->ViewLayoutThreeOverThreeAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView);
   d->ViewLayoutThreeOverThreePlotAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView);
@@ -1343,14 +1329,6 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutCompare_6_viewersAction->setData(6);
   d->ViewLayoutCompare_7_viewersAction->setData(7);
   d->ViewLayoutCompare_8_viewersAction->setData(8);
-
-  d->ViewLayoutCompareWidescreen_2_viewersAction->setData(2);
-  d->ViewLayoutCompareWidescreen_3_viewersAction->setData(3);
-  d->ViewLayoutCompareWidescreen_4_viewersAction->setData(4);
-  d->ViewLayoutCompareWidescreen_5_viewersAction->setData(5);
-  d->ViewLayoutCompareWidescreen_6_viewersAction->setData(6);
-  d->ViewLayoutCompareWidescreen_7_viewersAction->setData(7);
-  d->ViewLayoutCompareWidescreen_8_viewersAction->setData(8);
 
   d->ViewLayoutCompareGrid_2x2_viewersAction->setData(2);
   d->ViewLayoutCompareGrid_3x3_viewersAction->setData(3);
@@ -1598,19 +1576,6 @@ void qSlicerMainWindow::onLayoutCompareActionTriggered(QAction* action)
   this->setLayout(d->ViewLayoutCompareAction->data().toInt());
   this->removeAllMaximizedViewNodes();
   this->setLayoutNumberOfCompareViewRows(action->data().toInt());
-}
-
-//---------------------------------------------------------------------------
-void qSlicerMainWindow::onLayoutCompareWidescreenActionTriggered(QAction* action)
-{
-  Q_D(qSlicerMainWindow);
-
-  // std::cerr << "onLayoutCompareWidescreenActionTriggered: " << action->text().toStdString() << std::endl;
-
-  // we need to communicate both the layout change and the number of viewers.
-  this->setLayout(d->ViewLayoutCompareWidescreenAction->data().toInt());
-  this->removeAllMaximizedViewNodes();
-  this->setLayoutNumberOfCompareViewColumns(action->data().toInt());
 }
 
 //---------------------------------------------------------------------------
