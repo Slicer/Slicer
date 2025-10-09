@@ -659,8 +659,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     }
     actorProperty->SetDiffuse(genericDisplayNode->GetDiffuse());
     actorProperty->SetSpecularPower(genericDisplayNode->GetPower());
-    actorProperty->SetMetallic(displayNode->GetMetallic());
-    actorProperty->SetRoughness(displayNode->GetRoughness());
+    actorProperty->SetMetallic(genericDisplayNode->GetMetallic());
+    actorProperty->SetRoughness(genericDisplayNode->GetRoughness());
     actorProperty->SetEdgeVisibility(genericDisplayNode->GetEdgeVisibility());
     actorProperty->SetEdgeColor(genericDisplayNode->GetEdgeColor());
 

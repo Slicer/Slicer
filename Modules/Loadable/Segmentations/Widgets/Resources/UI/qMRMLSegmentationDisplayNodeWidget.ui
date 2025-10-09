@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>333</width>
-    <height>193</height>
+    <width>448</width>
+    <height>190</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,30 +79,10 @@
       <property name="spacing">
        <number>4</number>
       </property>
-      <item row="0" column="1">
-       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox"/>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_Views">
         <property name="text">
          <string>Views:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="spinBox_SliceIntersectionThickness">
-        <property name="suffix">
-         <string> px</string>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_Representation2D">
-        <property name="text">
-         <string>Representation in 2D views:</string>
         </property>
        </widget>
       </item>
@@ -113,20 +93,10 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_Representation3D">
-        <property name="toolTip">
-         <string>Representation that is shown as a model in 3D and as slice intersections in 2D if exists</string>
-        </property>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_Representation2D">
         <property name="text">
-         <string>Representation in 3D views:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBox_DisplayedRepresentation2D">
-        <property name="toolTip">
-         <string>Representation that is shown in the 2D slice views</string>
+         <string>Representation in 2D views:</string>
         </property>
        </widget>
       </item>
@@ -137,7 +107,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBox_SelectedSegment">
         <property name="title">
          <string>Selected segment</string>
@@ -302,6 +272,79 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Representation3D">
+        <property name="toolTip">
+         <string>Representation that is shown as a model in 3D and as slice intersections in 2D if exists</string>
+        </property>
+        <property name="text">
+         <string>Representation in 3D views:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBox_DisplayedRepresentation2D">
+        <property name="toolTip">
+         <string>Representation that is shown in the 2D slice views</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spinBox_SliceIntersectionThickness">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_Advanced3D">
+        <property name="title">
+         <string>3D Display</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="ctkVTKSurfaceMaterialPropertyWidget" name="MaterialPropertyWidget">
+           <property name="colorVisible">
+            <bool>false</bool>
+           </property>
+           <property name="opacityVisible">
+            <bool>false</bool>
+           </property>
+           <property name="backfaceCullingVisible">
+            <bool>false</bool>
+           </property>
+           <property name="interpolationModeVisible">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -505,7 +548,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="4">
+   <item row="5" column="0" colspan="4">
     <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
      <property name="title">
       <string>Clipping</string>
@@ -561,6 +604,27 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkVTKSurfaceMaterialPropertyWidget</class>
+   <extends>ctkMaterialPropertyWidget</extends>
+   <header>ctkVTKSurfaceMaterialPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMaterialPropertyWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMaterialPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLCheckableNodeComboBox.h</header>
@@ -591,17 +655,6 @@
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
