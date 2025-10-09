@@ -13,7 +13,7 @@
   id="vtkMRMLSliceNodeGreen"  name="Green"  hideFromEditors="false"  selectable="true"  selected="false"  attributes="MappedInLayout:1"  fieldOfView="466.45 517.316 1"  dimensions="862 956 1"  activeSlice="0"  layoutGridRows="1"  layoutGridColumns="1"  sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1"  layoutName="Green"  layoutLabel=""  layoutColor="0.54902 0.54902 0.54902"  orientation="Coronal"  orientationReference="Coronal"  jumpMode="1"  sliceVisibility="false"  widgetVisibility="false"  useLabelOutline="false"  sliceSpacingMode="0"  prescribedSliceSpacing="1 1 1" ></Slice>
  <Layout
   id="vtkMRMLLayoutNodevtkMRMLLayoutNode"  name="Layout"  hideFromEditors="true"  selectable="true"  selected="false"  currentViewArrangement="2"  guiPanelVisibility="1"  bottomPanelVisibility ="1"  guiPanelLR="0"  collapseSliceControllers="0"
-  numberOfCompareViewRows="1"  numberOfCompareViewColumns="1"  numberOfLightboxRows="6"  numberOfLightboxColumns="6"  mainPanelSize="400"  secondaryPanelSize="400" ></Layout>
+  numberOfCompareViewRows="1"  numberOfCompareViewColumns="1"  mainPanelSize="400"  secondaryPanelSize="400" ></Layout>
  <SliceComposite
   id="vtkMRMLSliceCompositeNodeRed"  name="SliceComposite"  hideFromEditors="true"  selectable="true"  selected="false"  backgroundVolumeID=""  foregroundVolumeID=""  labelVolumeID=""  compositing="0"  foregroundOpacity="0"  labelOpacity="1"  linkedControl="0"  foregroundGrid="0"  backgroundGrid="0"  labelGrid="1"  fiducialVisibility="1"  fiducialLabelVisibility="1"  sliceIntersectionVisibility="0"  layoutName="Red"  annotationSpace="IJKAndRAS"  annotationMode="All"  doPropagateVolumeSelection="1" ></SliceComposite>
  <SliceComposite
@@ -173,7 +173,7 @@
     id="vtkMRMLSliceNodeGreen"    name="Green"    hideFromEditors="false"    selectable="true"    selected="false"    attributes="MappedInLayout:1"    fieldOfView="466.45 517.316 1"    dimensions="862 956 1"    activeSlice="0"    layoutGridRows="1"    layoutGridColumns="1"    sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1"    layoutName="Green"    layoutLabel=""    layoutColor="0.54902 0.54902 0.54902"    orientation="Coronal"    orientationReference="Coronal"    jumpMode="1"    sliceVisibility="false"    widgetVisibility="false"    useLabelOutline="false"    sliceSpacingMode="0"    prescribedSliceSpacing="1 1 1"  ></Slice>
   <Layout
     id="vtkMRMLLayoutNodevtkMRMLLayoutNode"    hideFromEditors="true"    selectable="true"    selected="false"    currentViewArrangement="2"    guiPanelVisibility="1"    bottomPanelVisibility ="1"    guiPanelLR="0"    collapseSliceControllers="0"
-    numberOfCompareViewRows="1"    numberOfCompareViewColumns="1"    numberOfLightboxRows="6"    numberOfLightboxColumns="6"    mainPanelSize="400"    secondaryPanelSize="400"  ></Layout>
+    numberOfCompareViewRows="1"    numberOfCompareViewColumns="1"    mainPanelSize="400"    secondaryPanelSize="400"  ></Layout>
   <SliceComposite
     id="vtkMRMLSliceCompositeNodeRed"    name="SliceComposite"    hideFromEditors="true"    selectable="true"    selected="false"    backgroundVolumeID=""    foregroundVolumeID=""    labelVolumeID=""    compositing="0"    foregroundOpacity="0"    labelOpacity="1"    linkedControl="0"    foregroundGrid="0"    backgroundGrid="0"    labelGrid="1"    fiducialVisibility="1"    fiducialLabelVisibility="1"    sliceIntersectionVisibility="0"    layoutName="Red"    annotationSpace="IJKAndRAS"    annotationMode="All"    doPropagateVolumeSelection="1"  ></SliceComposite>
   <SliceComposite
