@@ -36,6 +36,9 @@
 
 // VTK includes
 #include <vtkWeakPointer.h>
+#include <vtkProperty.h>
+#include <vtkSmartPointer.h>
+#include <vtkCommand.h>
 
 // Qt includes
 #include <QDebug>
@@ -58,6 +61,12 @@ public:
 
   /// Selected segment ID
   QString SelectedSegmentID;
+
+  /// VTK property for material properties
+  vtkSmartPointer<vtkProperty> Property;
+
+  /// Flag to prevent recursive updates
+  bool IsUpdatingWidgetFromMRML;
 };
 
 //-----------------------------------------------------------------------------
@@ -65,6 +74,8 @@ qMRMLSegmentationDisplayNodeWidgetPrivate::qMRMLSegmentationDisplayNodeWidgetPri
   : q_ptr(&object)
 {
   this->SegmentationDisplayNode = nullptr;
+  this->Property = vtkSmartPointer<vtkProperty>::New();
+  this->IsUpdatingWidgetFromMRML = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +83,10 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
 {
   Q_Q(qMRMLSegmentationDisplayNodeWidget);
   this->setupUi(q);
+
+  // Setup material property widget
+  this->MaterialPropertyWidget->setProperty(this->Property);
+  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent, q, SLOT(onMaterialPropertiesChanged()));
 
   // Make connections
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
@@ -293,9 +308,17 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   {
     return;
   }
+
+  if (d->IsUpdatingWidgetFromMRML)
+  {
+    return;
+  }
+  d->IsUpdatingWidgetFromMRML = true;
+
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
+    d->IsUpdatingWidgetFromMRML = false;
     return;
   }
 
@@ -361,8 +384,19 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   d->SlicerWidget_ClipNodeDisplayProperties->setMRMLDisplayNode(d->SegmentationDisplayNode);
   d->SlicerWidget_ClipNodeProperties->setMRMLClipNode(d->SegmentationDisplayNode->GetClipNode());
 
+  // Update material properties
+  d->Property->SetInterpolation(d->SegmentationDisplayNode->GetInterpolation());
+  d->Property->SetAmbient(d->SegmentationDisplayNode->GetAmbient());
+  d->Property->SetDiffuse(d->SegmentationDisplayNode->GetDiffuse());
+  d->Property->SetSpecular(d->SegmentationDisplayNode->GetSpecular());
+  d->Property->SetSpecularPower(d->SegmentationDisplayNode->GetPower());
+  d->Property->SetMetallic(d->SegmentationDisplayNode->GetMetallic());
+  d->Property->SetRoughness(d->SegmentationDisplayNode->GetRoughness());
+
   // Update selected segment visibility and opacity section
   this->updateSelectedSegmentSection();
+
+  d->IsUpdatingWidgetFromMRML = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -739,4 +773,31 @@ void qMRMLSegmentationDisplayNodeWidget::onClipNodeChanged(vtkMRMLNode* node)
 
   vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(node);
   d->SegmentationDisplayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationDisplayNodeWidget::onMaterialPropertiesChanged()
+{
+  Q_D(qMRMLSegmentationDisplayNodeWidget);
+
+  if (d->IsUpdatingWidgetFromMRML)
+  {
+    return;
+  }
+
+  if (!d->SegmentationDisplayNode.GetPointer())
+  {
+    return;
+  }
+
+  MRMLNodeModifyBlocker blocker(d->SegmentationDisplayNode);
+
+  // Update material properties in the segmentation node from the GUI
+  d->SegmentationDisplayNode->SetInterpolation(d->Property->GetInterpolation());
+  d->SegmentationDisplayNode->SetAmbient(d->Property->GetAmbient());
+  d->SegmentationDisplayNode->SetDiffuse(d->Property->GetDiffuse());
+  d->SegmentationDisplayNode->SetSpecular(d->Property->GetSpecular());
+  d->SegmentationDisplayNode->SetPower(d->Property->GetSpecularPower());
+  d->SegmentationDisplayNode->SetMetallic(d->Property->GetMetallic());
+  d->SegmentationDisplayNode->SetRoughness(d->Property->GetRoughness());
 }
