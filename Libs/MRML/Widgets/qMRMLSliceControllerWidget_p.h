@@ -82,7 +82,6 @@ public:
 
   void setupLinkedOptionsMenu();
   void setupReformatOptionsMenu();
-  void setupLightboxMenu();
   void setupCompositingMenu();
   void setupSliceSpacingMenu();
   void setupSliceModelMenu();
@@ -154,8 +153,6 @@ public slots:
   /// Called after the SliceLogic is modified
   void onSliceLogicModifiedEvent();
 
-  void applyCustomLightbox();
-
   void updateSliceOffsetSliderVisibility();
 
 protected:
@@ -180,7 +177,6 @@ public:
   double LastForegroundOpacity;
   double LastBackgroundOpacity;
 
-  QMenu* LightboxMenu;
   QMenu* CompositingMenu;
   QMenu* SliceSpacingMenu;
   QMenu* SliceModelMenu;
@@ -192,8 +188,6 @@ public:
 
   ctkDoubleSpinBox* SliceSpacingSpinBox;
   ctkDoubleSpinBox* SliceFOVSpinBox;
-  QSpinBox* LightBoxRowsSpinBox;
-  QSpinBox* LightBoxColumnsSpinBox;
   ctkDoubleSpinBox* SlabReconstructionThicknessSpinBox;
 
   ctkDoubleSpinBox* SliceModelFOVXSpinBox;

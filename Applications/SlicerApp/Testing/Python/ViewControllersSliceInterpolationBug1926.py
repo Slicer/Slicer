@@ -110,7 +110,6 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
         # Change to a CompareView
         ln = slicer.util.getNode(pattern="vtkMRMLLayoutNode*")
         ln.SetNumberOfCompareViewRows(2)
-        ln.SetNumberOfCompareViewLightboxColumns(4)
         ln.SetViewArrangement(12)
         self.delayDisplay("Compare View")
 

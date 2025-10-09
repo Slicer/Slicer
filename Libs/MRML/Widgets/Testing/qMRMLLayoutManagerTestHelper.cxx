@@ -16,6 +16,7 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager, vtkMRMLLa
   if (expectedViewArrangement == 5                                                  // SlicerLayoutOneUpSliceView
       || expectedViewArrangement == 11                                              // SlicerLayoutLightboxView
       || expectedViewArrangement == 13                                              // SlicerLayoutSideBySideLightboxView
+      || expectedViewArrangement == 17                                              // SlicerLayoutCompareWidescreenView
       || expectedViewArrangement == 18                                              // SlicerLayoutSingleLightboxView
       || expectedViewArrangement == 20                                              // SlicerLayout3DPlusLightboxView
       || expectedViewArrangement == 24                                              // SlicerLayoutConventionalQuantitativeView

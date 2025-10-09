@@ -85,7 +85,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->FitToWindowToolButton = nullptr;
   this->SliceOffsetSlider = nullptr;
 
-  this->LightboxMenu = nullptr;
   this->CompositingMenu = nullptr;
   this->SliceSpacingMenu = nullptr;
   this->SliceModelMenu = nullptr;
@@ -97,8 +96,6 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
 
   this->SliceSpacingSpinBox = nullptr;
   this->SliceFOVSpinBox = nullptr;
-  this->LightBoxRowsSpinBox = nullptr;
-  this->LightBoxColumnsSpinBox = nullptr;
 
   this->SliceModelFOVXSpinBox = nullptr;
   this->SliceModelFOVYSpinBox = nullptr;
@@ -196,20 +193,9 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // QObject::connect(this->actionSliceModelModeCustom, SIGNAL(triggered()),
   //                  q, SLOT(setSliceModelModeCustom()));
 
-  QObject::connect(this->actionLightbox1x1_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x1()));
-  QObject::connect(this->actionLightbox1x2_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x2()));
-  QObject::connect(this->actionLightbox1x3_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x3()));
-  QObject::connect(this->actionLightbox1x4_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x4()));
-  QObject::connect(this->actionLightbox1x6_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x6()));
-  QObject::connect(this->actionLightbox1x8_view, SIGNAL(triggered()), q, SLOT(setLightboxTo1x8()));
-  QObject::connect(this->actionLightbox2x2_view, SIGNAL(triggered()), q, SLOT(setLightboxTo2x2()));
-  QObject::connect(this->actionLightbox3x3_view, SIGNAL(triggered()), q, SLOT(setLightboxTo3x3()));
-  QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()), q, SLOT(setLightboxTo6x6()));
-
   QObject::connect(this->actionEnable_slab_reconstruction_widget, SIGNAL(toggled(bool)), q, SLOT(showSlabReconstructionWidget(bool)));
   QObject::connect(this->actionSlabReconstructionInteractive, SIGNAL(toggled(bool)), q, SLOT(toggleSlabReconstructionInteractive(bool)));
 
-  this->setupLightboxMenu();
   this->setupCompositingMenu();
   this->setupSliceSpacingMenu();
   this->setupSliceModelMenu();
@@ -278,7 +264,6 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   // Connect actions to buttons
   this->SliceVisibilityButton->setDefaultAction(this->actionShow_in_3D);
-  this->LightBoxToolButton->setMenu(this->LightboxMenu);
   this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
 
   this->EnableSlabReconstructionButton->setMenu(this->SlabReconstructionMenu);
@@ -439,54 +424,6 @@ void qMRMLSliceControllerWidgetPrivate::setupReformatOptionsMenu()
   this->ShowReformatWidgetToolButton->setMenu(reformatMenu);
 }
 
-// --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
-{
-  // Lightbox View
-  this->LightboxMenu = new QMenu(tr("Lightbox view"), this->LightBoxToolButton);
-  this->LightboxMenu->setObjectName("LightboxMenu");
-  this->LightboxMenu->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
-  this->LightboxMenu->addAction(this->actionLightbox1x1_view);
-  this->LightboxMenu->addAction(this->actionLightbox1x2_view);
-  this->LightboxMenu->addAction(this->actionLightbox1x3_view);
-  this->LightboxMenu->addAction(this->actionLightbox1x4_view);
-  this->LightboxMenu->addAction(this->actionLightbox1x6_view);
-  this->LightboxMenu->addAction(this->actionLightbox1x8_view);
-  this->LightboxMenu->addAction(this->actionLightbox2x2_view);
-  this->LightboxMenu->addAction(this->actionLightbox3x3_view);
-  this->LightboxMenu->addAction(this->actionLightbox6x6_view);
-  QMenu* customLightboxMenu = new QMenu(tr("Custom"), this->LightboxMenu);
-  customLightboxMenu->setObjectName("customLightboxMenu");
-  QWidget* customLightbox = new QWidget(this->LightboxMenu);
-  QHBoxLayout* customLightboxLayout = new QHBoxLayout(customLightbox);
-  this->LightBoxRowsSpinBox = new QSpinBox(customLightbox);
-  this->LightBoxRowsSpinBox->setRange(1, 100);
-  this->LightBoxRowsSpinBox->setValue(1);
-  this->LightBoxColumnsSpinBox = new QSpinBox(customLightbox);
-  this->LightBoxColumnsSpinBox->setRange(1, 100);
-  this->LightBoxColumnsSpinBox->setValue(1);
-  QPushButton* applyCustomLightboxButton = new QPushButton(tr("Apply"), customLightbox);
-  QObject::connect(applyCustomLightboxButton, SIGNAL(clicked()), this, SLOT(applyCustomLightbox()));
-  customLightboxLayout->addWidget(this->LightBoxRowsSpinBox);
-  customLightboxLayout->addWidget(this->LightBoxColumnsSpinBox);
-  customLightboxLayout->addWidget(applyCustomLightboxButton);
-  customLightbox->setLayout(customLightboxLayout);
-  QWidgetAction* customLightboxAction = new QWidgetAction(customLightbox);
-  customLightboxAction->setDefaultWidget(customLightbox);
-  customLightboxMenu->addAction(customLightboxAction);
-  this->LightboxMenu->addMenu(customLightboxMenu);
-  QActionGroup* lightboxActionGroup = new QActionGroup(this->LightboxMenu);
-  lightboxActionGroup->addAction(this->actionLightbox1x1_view);
-  lightboxActionGroup->addAction(this->actionLightbox1x2_view);
-  lightboxActionGroup->addAction(this->actionLightbox1x3_view);
-  lightboxActionGroup->addAction(this->actionLightbox1x4_view);
-  lightboxActionGroup->addAction(this->actionLightbox1x6_view);
-  lightboxActionGroup->addAction(this->actionLightbox1x8_view);
-  lightboxActionGroup->addAction(this->actionLightbox2x2_view);
-  lightboxActionGroup->addAction(this->actionLightbox3x3_view);
-  lightboxActionGroup->addAction(this->actionLightbox6x6_view);
-  lightboxActionGroup->addAction(customLightboxAction);
-}
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupCompositingMenu()
 {
@@ -854,18 +791,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   wasBlocked = this->SliceFOVSpinBox->blockSignals(true);
   this->SliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
   this->SliceFOVSpinBox->blockSignals(wasBlocked);
-  // Lightbox
-  int rows = sliceNode->GetLayoutGridRows();
-  int columns = sliceNode->GetLayoutGridColumns();
-  this->actionLightbox1x1_view->setChecked(rows == 1 && columns == 1);
-  this->actionLightbox1x2_view->setChecked(rows == 1 && columns == 2);
-  this->actionLightbox1x3_view->setChecked(rows == 1 && columns == 3);
-  this->actionLightbox1x4_view->setChecked(rows == 1 && columns == 4);
-  this->actionLightbox1x6_view->setChecked(rows == 1 && columns == 6);
-  this->actionLightbox1x8_view->setChecked(rows == 1 && columns == 8);
-  this->actionLightbox2x2_view->setChecked(rows == 2 && columns == 2);
-  this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
-  this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
 
   this->actionSliceModelModeVolumes->setChecked(sliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatchVolumes);
   this->actionSliceModelMode2D->setChecked(sliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView);
@@ -1362,13 +1287,6 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   //     volumeNode->Modified();
   //     }
   //   }
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::applyCustomLightbox()
-{
-  Q_Q(qMRMLSliceControllerWidget);
-  q->setLightbox(this->LightBoxRowsSpinBox->value(), this->LightBoxColumnsSpinBox->value());
 }
 
 //---------------------------------------------------------------------------
@@ -2565,107 +2483,63 @@ void qMRMLSliceControllerWidget::setSliceModelMode(int mode)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
 {
-  Q_D(qMRMLSliceControllerWidget);
-  // TBD: issue #1690: disable fiducials in light box mode
-  int AA_EnableTesting = 1001; // XXX Copied from qSlicerCoreApplication
-  bool isTestingEnabled = QCoreApplication::testAttribute(static_cast<Qt::ApplicationAttribute>(AA_EnableTesting));
-  if (rows * columns != 1 && !isTestingEnabled)
-  {
-    ctkMessageBox disableFidsMsgBox;
-    disableFidsMsgBox.setWindowTitle("Disable fiducials?");
-    QString labelText = QString("Fiducials are disabled in light box mode. Press Continue to enter light box mode without fiducials.");
-    disableFidsMsgBox.setText(labelText);
-    QPushButton* continueButton = disableFidsMsgBox.addButton(tr("Continue"), QMessageBox::AcceptRole);
-    disableFidsMsgBox.addButton(QMessageBox::Cancel);
-    disableFidsMsgBox.setIcon(QMessageBox::Question);
-    disableFidsMsgBox.setDontShowAgainVisible(true);
-    disableFidsMsgBox.setDontShowAgainSettingsKey("SliceController/AlwaysEnterLightBoxWithDisabledFiducials");
-    disableFidsMsgBox.exec();
-    if (disableFidsMsgBox.clickedButton() != continueButton)
-    {
-      d->actionLightbox1x1_view->setChecked(true);
-      return;
-    }
-  }
-
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
-  if (!nodes.GetPointer())
-  {
-    return;
-  }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
-  {
-    // only coronal layouts can be lightboxes ?
-    if (node == this->mrmlSliceNode() ||              //
-        (this->isLinked() && this->isCompareView() && //
-         QString(node->GetLayoutName()).startsWith("Compare")))
-    {
-      node->SetLayoutGrid(rows, columns);
-      vtkMRMLSliceLogic* sliceLogic = d->sliceNodeLogic(node);
-      if (sliceLogic)
-      {
-        // As the size (dimension+fov) of the slicenode depends on the
-        // viewport size and the layout, we need to recompute the size
-        sliceLogic->ResizeSliceNode(d->ViewSize.width(), d->ViewSize.height());
-      }
-    }
-  }
+  Q_UNUSED(rows);
+  Q_UNUSED(columns);
+  qWarning() << "qMRMLSliceControllerWidget::setLightbox is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x1()
 {
-  this->setLightbox(1, 1);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x1 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x2()
 {
-  this->setLightbox(1, 2);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x2 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x3()
 {
-  this->setLightbox(1, 3);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x3 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x4()
 {
-  this->setLightbox(1, 4);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x4 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x6()
 {
-  this->setLightbox(1, 6);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x6 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo1x8()
 {
-  this->setLightbox(1, 8);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo1x8 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo2x2()
 {
-  this->setLightbox(2, 2);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo2x2 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo3x3()
 {
-  this->setLightbox(3, 3);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo3x3 is deprecated";
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightboxTo6x6()
 {
-  this->setLightbox(6, 6);
+  qWarning() << "qMRMLSliceControllerWidget::setLightboxTo6x6 is deprecated";
 }
 
 //---------------------------------------------------------------------------
