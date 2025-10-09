@@ -24,6 +24,19 @@ import shutil
 import subprocess
 import sys
 
+def detect_tr_function_name(source_code_bytes):
+    """
+    Detect if the file uses tr() or translate() as translation function with _() alias.
+    Returns 'tr' if tr is found, 'translate' if translate is found, otherwise 'tr'.
+    """
+    source_code = source_code_bytes.decode(errors="ignore")
+    # Look for function import of tr
+    if re.search(r'(^|\n)\s*from\s+.+\s+import\s+tr(\s)as _', source_code):
+        return "tr"
+    # Look for function import of translate
+    if re.search(r'(^|\n)\s*from\s+.+\s+import\s+translate(\s)as _', source_code):
+        return "translate"
+    return "tr"
 
 def get_python_context(source_file):
     if os.path.isfile(source_file):
@@ -40,7 +53,7 @@ def get_python_context(source_file):
         return os.path.basename(source_file)
 
 
-def patch_python_source(source_code, context_name, tr_function_name="translate"):
+def patch_python_source(source_code, context_name, tr_function_name_before, tr_function_name="translate"):
     """
     Search in the source code any occurrence of the translation function call pattern and replace
     it with the transformed translation function call.
@@ -63,7 +76,10 @@ def patch_python_source(source_code, context_name, tr_function_name="translate")
 
     # \1 refers to any character that comes before the _(...), except _
     # \2 refers to the translation function parameter, like Y in _(Y)
-    transformed_function_text = r"\1" + tr_function_name + '("' + context_name + '", ' + r"\2" + ")"
+    if tr_function_name_before == "tr":
+        transformed_function_text = r"\1" + tr_function_name + '("' + context_name + '", ' + r"\2" + ")"
+    else:  # translate: do not add context
+        transformed_function_text = r"\1" + tr_function_name + '(' + r"\2" + ")"
 
     source_code = source_code.decode()
 
@@ -105,7 +121,8 @@ def patch_python_files(source_files, root_dir):
                 original_source_code = file_object.read()
 
         context_name = get_python_context(source_file)
-        patched_source_code = patch_python_source(original_source_code, context_name)
+        tr_function_name = detect_tr_function_name(original_source_code)
+        patched_source_code = patch_python_source(original_source_code, context_name, tr_function_name_before=tr_function_name)
         if patched_source_code == original_source_code:
             # The file has not needed patching, remove backup copy if existed
             if os.path.isfile(original_source_file):
