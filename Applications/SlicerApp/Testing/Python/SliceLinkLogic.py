@@ -150,7 +150,6 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         # Change to a CompareView
         ln = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLLayoutNode")
         ln.SetNumberOfCompareViewRows(3)
-        ln.SetNumberOfCompareViewLightboxColumns(4)
         ln.SetViewArrangement(12)
         self.delayDisplay("Compare View")
         print("")
@@ -203,25 +202,6 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
 
         diff = abs(compareNode3.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
         print("Field of view of comparison (y) between compare viewers #1 and #3: " + str(diff))
-        self.assertLess(diff, eps)
-        print("")
-
-        # Changed the number of lightboxes
-        ln.SetNumberOfCompareViewLightboxColumns(6)
-        logic.StartSliceNodeInteraction(8)  # ResetFieldOfViewFlag
-        logic.FitSliceToBackground()
-        compareNode.UpdateMatrices()
-        logic.EndSliceNodeInteraction()
-
-        # Note: we validate on fov[1] when resetting the field of view (fov[0] can
-        # differ by a few units)
-        self.delayDisplay("Changed the number of lightboxes")
-        diff = abs(compareNode2.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
-        print("Field of view of comparison (y) between compare viewers #1 and #2: " + str(diff))
-        self.assertLess(diff, eps)
-
-        diff = abs(compareNode3.GetFieldOfView()[1] - compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
-        print("Field of view of comparison between compare viewers #1 and #3: " + str(diff))
         self.assertLess(diff, eps)
         print("")
 

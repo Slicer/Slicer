@@ -270,6 +270,7 @@ set( ScenesToTest
   vol_and_cube.mrml|DATA{${INPUT}/fixed.nrrd,cube.vtk}
   vol.mrml|DATA{${INPUT}/fixed.nrrd}
   volScene.mrml|DATA{${INPUT}/fixed.nrrd,moving.nrrd}
+  backward_compat_light_box_scene.mrml
   )
 
 foreach(SceneToTest ${ScenesToTest})
