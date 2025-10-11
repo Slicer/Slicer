@@ -244,6 +244,90 @@ Scanners may create image volumes with varying image slice spacing. Slicer can r
 
 Note that if Slicer displays a warning about non-uniform slice spacing then it may be due to missing or corrupted DICOM files. There is no reliable mechanism to distinguish between slices that are missing because they had not been acquired (for example, to reduce patient dose) or they were acquired but later they were lost.
 
+## Slicer Integration in hospital/PACS context
+
+This section provides practical recommendations for working with hospital IT/PACS teams to integrate Slicer (or Slicer-based applications) into clinical or research workflows.
+
+### Core assumptions & constraints
+
+It is not possible to *scan the network* to discover PACS. DICOM Application Entities (AEs) don't self-advertise; endpoints must be explicitly provisioned (host/IP, port, AE Title) and allowed through firewalls. Leveraging its DICOM networking capabilities, Slicer is itself a DICOM AE.
+
+There are two fundamental flows to work with DICOM:
+
+1. **Push:** An AE (e.g., scanner, PACS/router) pushes (`C-STORE`) to Slicer's AE.
+2. **Pull:** Slicer queries (`C-FIND`) and retrieves (`C-MOVE` or `C-GET`) from a PACS/VNA/router.
+   (Slicer may also use **DICOMweb**: `QIDO-RS`/`WADO-RS`/`STOW-RS`.)
+
+In hospitals with many modalities/AEs, **prefer central integration** via the enterprise **PACS/VNA** (or a router/broker) rather than connecting Slicer to each modality individually.
+
+### Supported technical patterns
+
+#### Push to Slicer (`C-STORE` → Slicer)
+
+**Architecture:** A modality, PACS, or routing node pushes specific studies/series to Slicer's AE.
+
+* **Pros:** Simple user experience; deterministic; works well for scheduled research/processing pipelines.
+* **Cons:** Requires routing rules; local copies on the Slicer host can become a shadow archive unless retention is governed; ensure consistent Patient ID/Accession handling.
+* **Recommendations**
+  * Register Slicer AE with PACS: **AE Title / Host / Port** (commonly 104 or 11112).
+  * Create **routing rules** (e.g., by Accession Number, Modality, Study Description, Research flag).
+  * Use **TLS** (DICOM over TLS) if mandated by policy; exchange certs with PACS.
+  * Set storage quota & PHI retention policy on the Slicer host.
+
+**Best for:** Controlled workflows (e.g., "all cardiac MR from clinic X to Slicer-Lab").
+
+#### Pull from PACS/VNA (Query/Retrieve)
+
+**Architecture:** Slicer performs `C-FIND` queries and `C-MOVE/C-GET` retrievals against PACS/VNA or a DICOM router.
+
+* **Pros:** On-demand; one integration point covers many modalities.
+* **Cons:** Users need patient/study identifiers; retrieved studies also create local copies—enforce retention/purge to avoid a shadow archive; `C-MOVE` must target a valid destination AE.
+* **Recommendations**
+  * Provision PACS endpoint in Slicer (AE/host/port).
+  * **C-MOVE destination:** either
+    * **Slicer's own AE** (built-in **C-STORE SCP**), or
+    * a **local receiving AE** on the same host/subnet (e.g., **Orthanc**, **dcmtk `storescp`**) that writes to a folder or local store. Slicer then **imports** from that local store—either by performing **DIMSE Query/Retrieve** against the local AE, or by **importing from a designated "hot folder"** that the receiver writes to. If your local store exposes **DICOMweb**, you may also fetch via `QIDO-RS/WADO-RS`
+  * Enforce role-appropriate **access control** and **auditing**.
+  * **TLS** per security policy.
+
+**Best for:** Interactive case selection; ad-hoc research pulls; multi-modality environments; many upstream AEs via one PACS.
+
+#### DICOMweb (`QIDO-RS` / `WADO-RS` / `STOW-RS`)
+
+**Architecture:** Slicer uses `QIDO-RS` to search, `WADO-RS` to fetch, and optionally `STOW-RS` to push.
+
+* **Pros:** Modern HTTP(S); easier firewalling/reverse proxy; integrates with enterprise identity when used with a reverse proxy/broker; **well-suited to hybrid setups**—for example, **Slicer running on-prem** accessing a **cloud-hosted archive/service** through an HTTPS API gateway. The inverse also works (cloud-hosted Slicer reaching an on-prem PACS/VNA via a reverse proxy). In both cases you typically standardize on port **443**, use normal TLS termination, and leverage identity brokering without bespoke VPNs.
+* **Cons:** Requires DICOMweb enablement on PACS/VNA and a compatible Slicer service for DICOMweb workflows. Core Slicer does not natively handle OIDC flows; use a proxy/broker.
+
+**Recommendations**
+  * PACS/VNA DICOMweb base URLs; **mutual TLS** and/or **OIDC** tokens per site policy.
+  * Confirm **multipart** support and accepted **transfer syntaxes**; document any required auth headers or proxy paths.
+  * **Reachability:** The DICOMweb reverse proxy does not need to be internet-wide. Prefer **private connectivity** (VPN/PrivateLink) with a private DNS name and firewall rules allowing only hospital subnets. If a public URL is used, restrict by **IP allowlists**, require **mTLS** and/or **OIDC** at the proxy, and protect with a **WAF/rate-limiting** policy.
+
+**Definition**
+> A **reverse proxy** is an HTTPS front end (e.g., NGINX, Apache, Kong) placed **in front of** the PACS/VNA. It terminates TLS and can perform **OIDC/OAuth2** authentication with the hospital identity provider (IdP). The reverse proxy forwards authorized **DICOMweb** requests to the internal service. This setup allows **Slicer (on-prem or in cloud)** to connect over HTTPS to a single URL, while the **PACS/VNA** remains isolated on its private network or VPC (reachable via private connectivity or a tightly restricted public endpoint).
+
+**Best for:** Web-native environments, **on-prem Slicer ↔ cloud archive** integrations via API gateways, or sites standardizing on DICOMweb.
+
+#### Broker/Router middle tier (Orthanc, dcm4chee-arc, commercial routers)
+
+**Architecture:** A broker sits between PACS/VNA and Slicer to handle routing, study filtering, de-identification, caching, throttling, and DIMSE↔DICOMweb translation.
+
+* **Pros:** Decouples Slicer from PACS; central place for **filters, de-identification, study whitelists**, and **access auditing**.
+* **Cons:** Additional system to deploy/patch/monitor.
+
+**Best for:** Research programs, multi-site feeds, de-identification pipelines, or batch processing.
+
+### Security, privacy, and governance
+
+* **Intended use:** Slicer/Slicer-based apps are typically **not cleared as diagnostic devices**; document intended use in SOPs.
+* **PHI handling:** For research, perform **de-identification upstream** (preferably at the router) so only compliant data reaches Slicer.
+* **Transport security:** Use **DICOM over TLS** (mutual certificates) and/or **HTTPS** for DICOMweb; plan certificate ownership and rotation.
+* **Identity & access:** Prefer centralized auth (AD/LDAP/SSO via broker or DICOMweb). Apply least-privilege access to query/pull.
+* **Audit:** Enable and retain **ATNA-style** logs (who accessed what/when). See **DICOM PS3.15 – A.5 Audit Trail Message Format Profile** ([link](https://dicom.nema.org/medical/dicom/current/output/html/part15.html#sect_A.5)) and **IHE ITI TF Vol. 1, Ch. 9 – ATNA** ([link](https://profiles.ihe.net/ITI/TF/Volume1/ch-9.html)). Forward audit records to the organization's **SIEM (Security Information and Event Management)** for centralized monitoring and retention.
+* **Storage & retention:** Define local **quota** and **auto-purge** policy (e.g., delete after N days) to avoid shadow archives; encrypt disks.
+
+
 ## Information for developers
 
 See examples and other developer information in [Developer guide](../../developer_guide/modules/dicom) and [Script repository](../../developer_guide/script_repository.md#dicom).
