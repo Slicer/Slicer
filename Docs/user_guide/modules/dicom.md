@@ -352,6 +352,7 @@ Authors:
 - Alireza Mehrtash (BWH)
 - Csaba Pinter (PerkLab, Queen's)
 - Andras Lasso (PerkLab, Queen's)
+- Jean-Christophe Fillion-Robin (Kitware)
 
 ## Acknowledgements
 
@@ -365,3 +366,4 @@ This work is part of the [National Alliance for Medical Image Computing](https:/
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_dicom_offis.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_kitware.png)
