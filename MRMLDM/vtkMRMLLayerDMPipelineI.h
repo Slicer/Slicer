@@ -16,7 +16,7 @@ class vtkMRMLLayerDMPipelineI;
 class vtkMRMLLayerDMPipelineManager;
 class vtkMRMLNode;
 class vtkMRMLScene;
-class vtkObjectEventObserver;
+class vtkMRMLLayerDMObjectEventObserver;
 class vtkRenderer;
 
 /// \brief Interface for the layered displayable manager pipelines.
@@ -180,7 +180,7 @@ private:
   vtkWeakPointer<vtkMRMLNode> m_displayNode;
   vtkWeakPointer<vtkRenderer> m_renderer;
   bool m_isResetDisplayBlocked;
-  vtkSmartPointer<vtkObjectEventObserver> m_obs;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
   vtkWeakPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
   vtkWeakPointer<vtkMRMLScene> m_scene;
 };
