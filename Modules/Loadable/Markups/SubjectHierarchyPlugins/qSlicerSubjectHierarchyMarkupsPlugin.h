@@ -94,6 +94,10 @@ public:
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
   QList<QAction*> viewContextMenuActions() const override;
 
+  /// Get item context menu item actions to add to tree view.
+  /// These item context menu actions can be shown in the implementations of \sa showContextMenuActionsForItem
+  QList<QAction*> itemContextMenuActions() const override;
+
   /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
   /// \param itemID Subject Hierarchy item to show the context menu items for
   /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
@@ -139,6 +143,8 @@ protected slots:
   void toggleCurrentItemHandleTypeVisibility();
   /// toggle the visibility of the interaction handle type for the active node in view
   void toggleHandleTypeVisibility();
+  /// Called when clicking on flip plane normal action
+  void flipPlaneNormal();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;
