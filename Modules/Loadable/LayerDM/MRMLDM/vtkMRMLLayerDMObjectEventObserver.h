@@ -21,11 +21,11 @@ class vtkCallbackCommand;
 /// Can observe multiple objects and multiple events per object.
 ///
 /// Depending on the callback used, event id and call data can either be forwarded or ignored.
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkObjectEventObserver : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMObjectEventObserver : public vtkObject
 {
 public:
-  static vtkObjectEventObserver* New();
-  vtkTypeMacro(vtkObjectEventObserver, vtkObject);
+  static vtkMRMLLayerDMObjectEventObserver* New();
+  vtkTypeMacro(vtkMRMLLayerDMObjectEventObserver, vtkObject);
 
   /// @{
   /// Remove previous monitored events from \param prevObj and observe events from the \param obj
@@ -49,8 +49,8 @@ public:
   /// @}
 
 protected:
-  vtkObjectEventObserver();
-  ~vtkObjectEventObserver() override;
+  vtkMRMLLayerDMObjectEventObserver();
+  ~vtkMRMLLayerDMObjectEventObserver() override;
 
 private:
   void AddObserver(vtkObject* obj, unsigned long event);

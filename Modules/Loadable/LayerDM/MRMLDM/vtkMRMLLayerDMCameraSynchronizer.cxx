@@ -1,7 +1,7 @@
 #include "vtkMRMLLayerDMCameraSynchronizer.h"
 
 // Layer DM includes
-#include "vtkObjectEventObserver.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // Slicer includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -28,7 +28,7 @@ public:
 
 protected:
   vtkSmartPointer<vtkCamera> m_camera;
-  vtkNew<vtkObjectEventObserver> m_eventObserver;
+  vtkNew<vtkMRMLLayerDMObjectEventObserver> m_eventObserver;
 };
 
 class DefaultCameraSynchronizeStrategy : public CameraSynchronizeStrategy

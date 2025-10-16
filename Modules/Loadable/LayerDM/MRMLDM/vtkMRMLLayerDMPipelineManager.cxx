@@ -6,7 +6,7 @@
 #include "vtkMRMLLayerDMLayerManager.h"
 #include "vtkMRMLLayerDMPipelineFactory.h"
 #include "vtkMRMLLayerDMPipelineI.h"
-#include "vtkObjectEventObserver.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // Slicer includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -178,7 +178,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
   , m_layerManager(vtkSmartPointer<vtkMRMLLayerDMLayerManager>::New())
   , m_cameraSync(vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer>::New())
   , m_interactionLogic(vtkSmartPointer<vtkMRMLLayerDMInteractionLogic>::New())
-  , m_eventObs(vtkSmartPointer<vtkObjectEventObserver>::New())
+  , m_eventObs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , m_defaultCamera(vtkSmartPointer<vtkCamera>::New())
   , m_viewNode{ nullptr }
   , m_scene{ nullptr }
