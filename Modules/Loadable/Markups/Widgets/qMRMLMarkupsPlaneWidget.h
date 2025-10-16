@@ -74,6 +74,7 @@ protected slots:
   void onPlaneBoundsSpinBoxChanged();
   void onNormalVisibilityCheckBoxChanged();
   void onNormalOpacitySliderChanged();
+  void onFlipPlaneNormalButtonClicked();
 
 protected:
   void setup();

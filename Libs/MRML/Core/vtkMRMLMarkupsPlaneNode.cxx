@@ -1544,11 +1544,11 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneSize()
     return;
   }
 
-  vtkNew<vtkMatrix4x4> objectToBaseMatrix;
-  this->GetBaseToWorldMatrix(objectToBaseMatrix);
+  vtkNew<vtkMatrix4x4> baseToWorldMatrix;
+  this->GetBaseToWorldMatrix(baseToWorldMatrix);
 
   vtkNew<vtkTransform> worldToBaseTransform;
-  worldToBaseTransform->SetMatrix(objectToBaseMatrix);
+  worldToBaseTransform->SetMatrix(baseToWorldMatrix);
   worldToBaseTransform->Inverse();
 
   double xMax_Base = 0.0;
@@ -1858,4 +1858,27 @@ vtkImplicitFunction* vtkMRMLMarkupsPlaneNode::GetImplicitFunctionWorld()
 {
   this->UpdateImplicitFunction();
   return this->ImplicitPlaneWorld;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::FlipNormal()
+{
+  double xAxis_Node[3] = { 1.0, 0.0, 0.0 };
+  double yAxis_Node[3] = { 0.0, 1.0, 0.0 };
+  double zAxis_Node[3] = { 0.0, 0.0, 1.0 };
+  this->GetAxes(xAxis_Node, yAxis_Node, zAxis_Node);
+  double center_Node[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenter(center_Node);
+
+  // 180deg rotation around the y axis
+  vtkNew<vtkTransform> oldToNewNormalTransform;
+  oldToNewNormalTransform->Translate(center_Node);
+  oldToNewNormalTransform->RotateWXYZ(180, yAxis_Node);
+  vtkMath::MultiplyScalar(center_Node, -1.0);
+  oldToNewNormalTransform->Translate(center_Node);
+  this->ApplyTransform(oldToNewNormalTransform);
+
+  this->UpdateControlPointsFromPlane();
+  this->UpdateImplicitFunction();
+  this->Modified();
 }

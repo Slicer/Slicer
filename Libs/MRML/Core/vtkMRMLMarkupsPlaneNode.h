@@ -164,6 +164,9 @@ public:
   void SetNormalWorld(double x, double y, double z);
   //@}
 
+  /// Flip the normal vector direction by 180deg rotation around Y axis at the plane center.
+  void FlipNormal();
+
   //@{
   /// Get/Set the origin of the plane in object or world coordinate system.
   void GetOrigin(double origin[3]);

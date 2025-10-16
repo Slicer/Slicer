@@ -48,6 +48,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
 #include <vtkMRMLMarkupsPlaneDisplayNode.h>
+#include <vtkMRMLMarkupsPlaneNode.h>
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
@@ -118,6 +119,8 @@ public:
   QAction* ToggleTranslateHandleVisible{ nullptr };
   QAction* ToggleRotateHandleVisible{ nullptr };
   QAction* ToggleScaleHandleVisible{ nullptr };
+
+  QAction* FlipPlaneNormalAction{ nullptr };
 
   QList<vtkWeakPointer<vtkMRMLMarkupsNode>> NodesToDelete;
 
@@ -250,6 +253,12 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 
   this->CurrentItemHandleVisibilityAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction options"));
   this->CurrentItemHandleVisibilityAction->setMenu(this->CurrentItemHandleVisibilityMenu);
+
+  // Plane-specific actions
+  this->FlipPlaneNormalAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Flip normal"), q);
+  this->FlipPlaneNormalAction->setObjectName("FlipPlaneNormalAction");
+  q->setActionPosition(this->FlipPlaneNormalAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode);
+  QObject::connect(this->FlipPlaneNormalAction, SIGNAL(triggered()), q, SLOT(flipPlaneNormal()));
 }
 
 //-----------------------------------------------------------------------------
@@ -493,8 +502,19 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions() c
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction
-          << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction << d->ToggleHandleInteractive << d->HandleVisibilityAction;
+  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction            //
+          << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction //
+          << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction             //
+          << d->ToggleHandleInteractive << d->HandleVisibilityAction << d->FlipPlaneNormalAction;
+  return actions;
+}
+
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::itemContextMenuActions() const
+{
+  Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
+  QList<QAction*> actions;
+  actions << d->FlipPlaneNormalAction;
   return actions;
 }
 
@@ -607,6 +627,10 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     d->ToggleScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
     d->ToggleScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
   }
+
+  // Show flip normal action only for plane nodes
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(associatedNode);
+  d->FlipPlaneNormalAction->setVisible(planeNode != nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -658,11 +682,33 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForIt
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyMarkupsPlugin::showContextMenuActionsForItem(vtkIdType)
+void qSlicerSubjectHierarchyMarkupsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
   // make sure we don't use metadata from some previous view context menu calls
   d->ViewContextMenuEventData.clear();
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+  }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+  }
+
+  // Markup
+  vtkMRMLMarkupsNode* associatedNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (!associatedNode)
+  {
+    return;
+  }
+
+  // Show flip normal action only for plane nodes
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(associatedNode);
+  d->FlipPlaneNormalAction->setVisible(planeNode != nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -1067,6 +1113,42 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleHandleTypeVisibility()
 
   int componentType = sender->property(INTERACTION_HANDLE_TYPE_PROPERTY).toInt();
   displayNode->SetHandleVisibility(componentType, !displayNode->GetHandleVisibility(componentType));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::flipPlaneNormal()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  vtkMRMLMarkupsNode* markupsNode = d->markupsNodeFromViewContextMenuEventData();
+  if (!markupsNode)
+  {
+    // Item is selected from the item context menu (not the view context menu)
+    vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+    if (shNode)
+    {
+      vtkIdType selectedItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+      if (selectedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+        markupsNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(selectedItemID));
+      }
+    }
+  }
+
+  if (!markupsNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node";
+    return;
+  }
+
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
+  if (!planeNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Node is not a plane node";
+    return;
+  }
+
+  planeNode->FlipNormal();
 }
 
 //-----------------------------------------------------------------------------
