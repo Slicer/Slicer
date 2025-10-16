@@ -121,11 +121,13 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
   }
 
   vtkNew<vtkMRMLInteractionEventData> ed;
-  ed->SetType(inputEventData->GetType());
+  int eventType = inputEventData->GetType();
+  ed->SetType(eventType);
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
+  bool eventHasPosition = (eventType != vtkCommand::ConfigureEvent);
   double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
-  if (this->QuickPick(displayPositionInt[0], displayPositionInt[1], worldPosition))
+  if (eventHasPosition && this->QuickPick(displayPositionInt[0], displayPositionInt[1], worldPosition))
   {
     // set "inaccurate" world position
     ed->SetWorldPosition(worldPosition, false);
