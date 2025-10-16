@@ -1,10 +1,10 @@
-#include "vtkObjectEventObserver.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(vtkObjectEventObserver);
+vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserver);
 
 template <class... Ts>
 struct Overloaded : Ts...
@@ -15,14 +15,14 @@ struct Overloaded : Ts...
 template <class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
 
-vtkObjectEventObserver::vtkObjectEventObserver()
+vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
   : m_updateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
 {
   this->m_updateCommand->SetClientData(this);
   this->m_updateCommand->SetCallback(
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
-      auto client = static_cast<vtkObjectEventObserver*>(clientData);
+      auto client = static_cast<vtkMRMLLayerDMObjectEventObserver*>(clientData);
       try
       {
         // Dispatch to callback depending on current std variant content
@@ -38,7 +38,7 @@ vtkObjectEventObserver::vtkObjectEventObserver()
     });
 }
 
-vtkObjectEventObserver::~vtkObjectEventObserver()
+vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
 {
   for (const auto& obs : m_obsMap)
   {
@@ -52,12 +52,12 @@ vtkObjectEventObserver::~vtkObjectEventObserver()
   }
 }
 
-bool vtkObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event)
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event)
 {
   return this->UpdateObserver(prevObj, obj, std::vector<unsigned long>{ event });
 }
 
-bool vtkObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
 {
   if (prevObj == obj)
   {
@@ -72,22 +72,22 @@ bool vtkObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, 
   return true;
 }
 
-void vtkObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
 {
   this->m_callback = callback;
 }
 
-void vtkObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
 {
   this->m_callback = callback;
 }
 
-void vtkObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback)
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback)
 {
   this->m_callback = callback;
 }
 
-void vtkObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
+void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
 {
   if (!node)
   {
@@ -107,7 +107,7 @@ void vtkObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
   this->m_obsMap[node].insert(node->AddObserver(event, this->m_updateCommand));
 }
 
-void vtkObjectEventObserver::RemoveObserver(vtkObject* node)
+void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
 {
   if (!node || this->m_obsMap.find(node) == std::end(this->m_obsMap))
   {

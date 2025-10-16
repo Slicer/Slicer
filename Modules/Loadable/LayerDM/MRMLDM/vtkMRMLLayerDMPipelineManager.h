@@ -23,11 +23,11 @@ class vtkMRMLLayerDMPipelineFactory;
 class vtkMRMLLayerDMPipelineI;
 class vtkMRMLNode;
 class vtkMRMLScene;
-class vtkObjectEventObserver;
+class vtkMRMLLayerDMObjectEventObserver;
 class vtkRenderWindow;
 class vtkRenderer;
 
-/// @brief Class responsible for handling adding / updating / removing pipelines depending on nodes added / removed /
+/// \brief Class responsible for handling adding / updating / removing pipelines depending on nodes added / removed /
 /// updated in the 3D Slicer Scene.
 ///
 /// The display manager handles connections to the scene's events.
@@ -131,7 +131,7 @@ private:
   vtkSmartPointer<vtkMRMLLayerDMLayerManager> m_layerManager;
   vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer> m_cameraSync;
   vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> m_interactionLogic;
-  vtkSmartPointer<vtkObjectEventObserver> m_eventObs;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_eventObs;
   vtkSmartPointer<vtkCamera> m_defaultCamera;
 
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;

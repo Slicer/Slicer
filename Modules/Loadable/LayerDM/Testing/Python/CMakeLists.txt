@@ -6,6 +6,7 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
   LayerManagerTest.py
   PipelineFactoryTest.py
   PipelineManagerTest.py
+  ObjectEventObserverScriptedTest.py
 )
 
 set(EXTENSION_TEST_PYTHON_RESOURCES

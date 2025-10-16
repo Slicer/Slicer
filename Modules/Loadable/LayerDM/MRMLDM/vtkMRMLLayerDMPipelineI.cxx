@@ -4,7 +4,7 @@
 #include "vtkMRMLAbstractWidget.h"
 #include "vtkMRMLLayerDMPipelineManager.h"
 #include "vtkMRMLScene.h"
-#include "vtkObjectEventObserver.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -168,7 +168,7 @@ vtkMRMLLayerDMPipelineI::vtkMRMLLayerDMPipelineI()
   , m_displayNode{ nullptr }
   , m_renderer{ nullptr }
   , m_isResetDisplayBlocked{ false }
-  , m_obs(vtkSmartPointer<vtkObjectEventObserver>::New())
+  , m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , m_pipelineManager(nullptr)
 {
   this->m_obs->SetUpdateCallback([this](vtkObject* obj, unsigned long eventId, void* callData) { this->OnUpdate(obj, eventId, callData); });
