@@ -261,6 +261,16 @@
           </item>
          </layout>
         </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="flipPlaneNormalButton">
+          <property name="text">
+           <string>Flip normal</string>
+          </property>
+          <property name="toolTip">
+           <string>Reverse direction of the plane normal</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
