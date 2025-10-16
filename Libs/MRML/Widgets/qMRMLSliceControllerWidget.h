@@ -282,7 +282,9 @@ public slots:
   void setSlabReconstructionType(int type);
   void setSlabReconstructionThickness(double thickness);
 
-  // Lightbox
+  /// @{
+  /// \deprecated
+  /// Lightbox
   void setLightbox(int rows, int columns);
   void setLightboxTo1x1();
   void setLightboxTo1x2();
@@ -293,6 +295,8 @@ public slots:
   void setLightboxTo2x2();
   void setLightboxTo3x3();
   void setLightboxTo6x6();
+  /// @}
+
   // interpolation
   void setForegroundInterpolation(bool nearestNeighbor);
   void setBackgroundInterpolation(bool nearestNeighbor);

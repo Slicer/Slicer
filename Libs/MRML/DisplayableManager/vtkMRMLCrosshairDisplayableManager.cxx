@@ -27,7 +27,6 @@
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLInteractionNode.h>
-#include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceIntersectionWidget.h>
 #include <vtkMRMLSliceLogic.h>
@@ -97,7 +96,6 @@ public:
   int PickState;
   int ActionState;
   vtkSmartPointer<vtkActor2D> Actor;
-  vtkWeakPointer<vtkRenderer> LightBoxRenderer;
 
   vtkWeakPointer<vtkMRMLCrosshairNode> CrosshairNode;
   int CrosshairMode;
@@ -117,7 +115,6 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::vtkInternal(vtkMRMLCrosshairDis
   this->External = external;
   this->CrosshairNode = nullptr;
   this->Actor = nullptr;
-  this->LightBoxRenderer = nullptr;
   this->CrosshairMode = -1;
   this->CrosshairThickness = -1;
   this->CrosshairPosition[0] = 0.0;
@@ -133,7 +130,6 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::vtkInternal(vtkMRMLCrosshairDis
 vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
 {
   this->SetCrosshairNode(nullptr);
-  this->LightBoxRenderer = nullptr;
 
   if (this->SliceIntersectionWidget)
   {
@@ -285,9 +281,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
   // Remove the old actor is any
   if (this->Actor.GetPointer())
   {
-    if (this->LightBoxRenderer)
+    if (this->External->GetRenderer() && this->External->GetRenderer()->HasViewProp(this->Actor))
     {
-      this->LightBoxRenderer->RemoveActor(this->Actor);
+      this->External->GetRenderer()->RemoveActor(this->Actor);
     }
     this->Actor = nullptr;
   }
@@ -327,9 +323,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
   mapper->SetInputData(polyData.GetPointer());
   actor->SetMapper(mapper.GetPointer());
 
-  if (this->LightBoxRenderer)
+  if (this->External->GetRenderer() && !this->External->GetRenderer()->HasViewProp(actor))
   {
-    this->LightBoxRenderer->AddActor(actor.GetPointer());
+    this->External->GetRenderer()->AddActor(actor.GetPointer());
   }
 
   // Cache the actor
@@ -476,36 +472,6 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* vtkNotU
     this->ConvertRASToXYZ(ras, xyz);
 
     this->Internal->Actor->SetPosition(xyz[0], xyz[1]);
-
-    // put the actor in the right lightbox
-    if (this->GetLightBoxRendererManagerProxy())
-    {
-      int id = (int)(floor(xyz[2] + 0.5)); // round to find the lightbox
-      vtkRenderer* renderer = this->GetLightBoxRendererManagerProxy()->GetRenderer(id);
-      if (renderer == nullptr)
-      {
-        // crosshair must not be displayed in this view
-        this->Internal->Actor->SetVisibility(false);
-      }
-      else
-      {
-        // crosshair must be displayed in this view
-        if (this->Internal->LightBoxRenderer == renderer)
-        {
-          this->Internal->Actor->SetVisibility(true);
-        }
-        else
-        {
-          if (this->Internal->LightBoxRenderer)
-          {
-            this->Internal->LightBoxRenderer->RemoveActor(this->Internal->Actor);
-          }
-          this->Internal->Actor->SetVisibility(true);
-          renderer->AddActor(this->Internal->Actor);
-          this->Internal->LightBoxRenderer = renderer;
-        }
-      }
-    }
 
     double* lastRas = this->Internal->CrosshairPosition;
     lastRas[0] = ras[0];

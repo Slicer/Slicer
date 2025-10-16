@@ -59,11 +59,49 @@ public:
   vtkGetMacro(NumberOfCompareViewColumns, int);
   vtkSetClampMacro(NumberOfCompareViewColumns, int, 1, 50);
 
-  /// CompareView lightbox configuration Get/Set methods
-  vtkGetMacro(NumberOfCompareViewLightboxRows, int);
-  vtkSetClampMacro(NumberOfCompareViewLightboxRows, int, 1, 50);
-  vtkGetMacro(NumberOfCompareViewLightboxColumns, int);
-  vtkSetClampMacro(NumberOfCompareViewLightboxColumns, int, 1, 50);
+  /// @{
+  /// \deprecated
+  /// Following removal of the LightBox feature, compareView lightbox configuration
+  /// through Get/Set methods is not supported.
+  int GetNumberOfCompareViewLightboxRows()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxRows method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  void SetNumberOfCompareViewLightboxRows(int vtkNotUsed(value)) //
+  {
+    vtkWarningMacro("SetNumberOfCompareViewLightboxRows method is deprecated. LightBox support has been removed.");
+  }
+  int GetNumberOfCompareViewLightboxRowsMinValue()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxRowsMinValue method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxRowsMaxValue()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxRowsMaxValue method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxColumns()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxColumns method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  void SetNumberOfCompareViewLightboxColumns(int vtkNotUsed(value))
+  {
+    vtkWarningMacro("SetNumberOfCompareViewLightboxColumns method is deprecated. LightBox support has been removed.");
+  }
+  int GetNumberOfCompareViewLightboxColumnsMinValue()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxColumnsMinValue method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  int GetNumberOfCompareViewLightboxColumnsMaxValue()
+  {
+    vtkWarningMacro("GetNumberOfCompareViewLightboxColumnsMaxValue method is deprecated. LightBox support has been removed.");
+    return 1;
+  }
+  /// @}
 
   /// Set/Get the size of the main and secondary panels (size of Frame1
   /// in each panel)
@@ -105,7 +143,6 @@ public:
     SlicerLayoutNone = 14,
     SlicerLayoutDual3DView = 15,
     SlicerLayoutConventionalWidescreenView = 16,
-    SlicerLayoutCompareWidescreenView = 17,
     SlicerLayoutTriple3DEndoscopyView = 19, // Up to here, all layouts are Slicer 3 compatible
     SlicerLayoutThreeOverThreeView = 21,
     SlicerLayoutFourOverFourView = 22,
@@ -188,8 +225,6 @@ protected:
   int ViewArrangement;
   int NumberOfCompareViewRows;
   int NumberOfCompareViewColumns;
-  int NumberOfCompareViewLightboxRows;
-  int NumberOfCompareViewLightboxColumns;
 
   char* SelectedModule;
 

@@ -166,7 +166,7 @@ public:
     ActionBlend = 8,  /* fg to bg, labelmap to bg */
     ActionBrowseSlice = 64,
     ActionShowSlice = 128,
-    ActionAdjustLightbox = 256,
+    ActionAdjustLightbox = 256, /* not used */
     ActionSelectVolume = 512,
     ActionSetCursorPosition = 1024,    /* adjust cursor position in crosshair node as mouse is moved */
     ActionSetCrosshairPosition = 2048, /* adjust cursor position in crosshair node as mouse is moved */

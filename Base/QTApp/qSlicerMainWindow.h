@@ -93,7 +93,6 @@ public slots:
 
   virtual void onLayoutActionTriggered(QAction* action);
   virtual void onLayoutCompareActionTriggered(QAction* action);
-  virtual void onLayoutCompareWidescreenActionTriggered(QAction* action);
   virtual void onLayoutCompareGridActionTriggered(QAction* action);
 
   /// Set the view layout.

@@ -181,7 +181,6 @@
    <addaction name="ViewLayoutTabbed3DAction"/>
    <addaction name="ViewLayoutTabbedSliceAction"/>
    <addaction name="ViewLayoutCompareAction"/>
-   <addaction name="ViewLayoutCompareWidescreenAction"/>
    <addaction name="ViewLayoutCompareGridAction"/>
    <addaction name="ViewLayoutThreeOverThreeAction"/>
    <addaction name="ViewLayoutThreeOverThreePlotAction"/>
@@ -263,7 +262,6 @@
      <addaction name="ViewLayoutTabbed3DAction"/>
      <addaction name="ViewLayoutTabbedSliceAction"/>
      <addaction name="ViewLayoutCompareAction"/>
-     <addaction name="ViewLayoutCompareWidescreenAction"/>
      <addaction name="ViewLayoutCompareGridAction"/>
      <addaction name="ViewLayoutThreeOverThreeAction"/>
      <addaction name="ViewLayoutThreeOverThreePlotAction"/>
@@ -749,21 +747,6 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="ViewLayoutCompareWidescreenAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>Compare Widescreen</string>
-   </property>
-   <property name="toolTip">
-    <string>Compare Widescreen</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="ViewLayoutTwoOverTwoAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
@@ -891,69 +874,6 @@
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>8 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_2_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>2 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_3_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>3 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_4_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>4 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_5_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>5 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_6_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>6 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_7_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
-   </property>
-   <property name="text">
-    <string>7 viewers</string>
-   </property>
-  </action>
-  <action name="ViewLayoutCompareWidescreen_8_viewersAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
     <string>8 viewers</string>

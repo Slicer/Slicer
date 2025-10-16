@@ -4,7 +4,7 @@
  <Interaction
   id="vtkMRMLInteractionNodeSingleton"  name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentInteractionMode="ViewTransform"  lastInteractionMode="ViewTransform" ></Interaction>
  <Layout
-  id="vtkMRMLLayoutNode1"  name="vtkMRMLLayoutNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentViewArrangement="3"  guiPanelVisibility="1"  bottomPanelVisibility ="0"  guiPanelLR="0"  numberOfCompareViewRows="2"  numberOfCompareViewColumns="0"  numberOfLightboxRows="1"  numberOfLightboxColumns="6"  mainPanelSize="700"  secondaryPanelSize="461"  selectedModule="SlicerWelcome" ></Layout>
+  id="vtkMRMLLayoutNode1"  name="vtkMRMLLayoutNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentViewArrangement="3"  guiPanelVisibility="1"  bottomPanelVisibility ="0"  guiPanelLR="0"  numberOfCompareViewRows="2"  numberOfCompareViewColumns="0"  mainPanelSize="700"  secondaryPanelSize="461"  selectedModule="SlicerWelcome" ></Layout>
  <View
   id="vtkMRMLViewNode1"  name="View"  hideFromEditors="false"  selectable="true"  selected="false"  active="true"  fieldOfView="200"  letterSize="0.05"  boxVisible="true"  fiducialsVisible="true"  fiducialLabelsVisible="true"  axisLabelsVisible="true"  backgroundColor="0.70196 0.70196 0.90588"  animationMode="Off"  viewAxisMode="LookFrom"  spinDegrees="2"  spinMs="5"  spinDirection="YawLeft"  rotateDegrees="5"  rockLength="200"  rockCount="0"  stereoType="NoStereo"  renderMode="Perspective" ></View>
  <Camera
@@ -47,7 +47,7 @@
   <Interaction
     id="vtkMRMLInteractionNode1"    name="vtkMRMLInteractionNode1"    hideFromEditors="true"    selectable="true"    selected="false"    currentInteractionMode="ViewTransform"    lastInteractionMode="ViewTransform"  ></Interaction>
   <Layout
-    id="vtkMRMLLayoutNode1"    hideFromEditors="true"    selectable="true"    selected="false"    currentViewArrangement="12"    guiPanelVisibility="1"    bottomPanelVisibility ="1"    guiPanelLR="0"    numberOfCompareViewRows="2"    numberOfCompareViewColumns="0"    numberOfLightboxRows="1"    numberOfLightboxColumns="6"    mainPanelSize="700"    secondaryPanelSize="461"    selectedModule="SlicerWelcome"  ></Layout>
+    id="vtkMRMLLayoutNode1"    hideFromEditors="true"    selectable="true"    selected="false"    currentViewArrangement="12"    guiPanelVisibility="1"    bottomPanelVisibility ="1"    guiPanelLR="0"    numberOfCompareViewRows="2"    numberOfCompareViewColumns="0"    mainPanelSize="700"    secondaryPanelSize="461"    selectedModule="SlicerWelcome"  ></Layout>
   <View
     id="vtkMRMLViewNode1"    name="View"    hideFromEditors="false"    selectable="true"    selected="false"    active="true"    fieldOfView="200"    letterSize="0.05"    boxVisible="true"    fiducialsVisible="true"    fiducialLabelsVisible="true"    axisLabelsVisible="true"    backgroundColor="0.70196 0.70196 0.90588"    animationMode="Off"    viewAxisMode="LookFrom"    spinDegrees="2"    spinMs="5"    spinDirection="YawLeft"    rotateDegrees="5"    rockLength="200"    rockCount="0"    stereoType="NoStereo"    renderMode="Perspective"  ></View>
   <Camera

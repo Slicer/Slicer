@@ -83,22 +83,11 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderWin
     return;
   }
 
-  double windowWidth = interactor->GetRenderWindow()->GetSize()[0];
-  double windowHeight = interactor->GetRenderWindow()->GetSize()[1];
-
-  int numberOfColumns = sliceNode->GetLayoutGridColumns();
-  int numberOfRows = sliceNode->GetLayoutGridRows();
-
-  float tempX = x / windowWidth;
-  float tempY = (windowHeight - 1 - y) / windowHeight;
-
-  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
-
   vtkRenderer* pokedRenderer = interactor->FindPokedRenderer(x, y);
 
   xyz[0] = x - (pokedRenderer ? pokedRenderer->GetOrigin()[0] : 0.);
   xyz[1] = y - (pokedRenderer ? pokedRenderer->GetOrigin()[1] : 0.);
-  xyz[2] = z;
+  xyz[2] = 0.0;
 }
 
 //---------------------------------------------------------------------------
@@ -109,20 +98,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderer*
     return;
   }
 
-  double windowWidth = renderer->GetRenderWindow()->GetSize()[0];
-  double windowHeight = renderer->GetRenderWindow()->GetSize()[1];
-
-  int numberOfColumns = sliceNode->GetLayoutGridColumns();
-  int numberOfRows = sliceNode->GetLayoutGridRows();
-
-  float tempX = x / windowWidth;
-  float tempY = (windowHeight - 1 - y) / windowHeight;
-
-  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
-
   xyz[0] = x - renderer->GetOrigin()[0];
   xyz[1] = y - renderer->GetOrigin()[1];
-  xyz[2] = z;
+  xyz[2] = 0.0;
 }
 
 //---------------------------------------------------------------------------

@@ -2470,51 +2470,6 @@ void qMRMLSegmentEditorWidget::hideLabelLayer()
 }
 
 //---------------------------------------------------------------------------
-bool qMRMLSegmentEditorWidget::turnOffLightboxes()
-{
-  Q_D(qMRMLSegmentEditorWidget);
-  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  if (!layoutManager)
-  {
-    // application is closing
-    return false;
-  }
-  vtkCollection* sliceLogics = layoutManager->mrmlSliceLogics();
-  if (!sliceLogics)
-  {
-    return false;
-  }
-
-  bool lightboxFound = false;
-  vtkObject* object = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
-  {
-    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
-    if (!sliceLogic)
-    {
-      continue;
-    }
-    vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
-    if (!sliceNode)
-    {
-      continue;
-    }
-    if (!d->segmentationDisplayableInView(sliceNode))
-    {
-      continue;
-    }
-    if (sliceNode->GetLayoutGridRows() != 1 || sliceNode->GetLayoutGridColumns() != 1)
-    {
-      lightboxFound = true;
-      sliceNode->SetLayoutGrid(1, 1);
-    }
-  }
-
-  return lightboxFound;
-}
-
-//---------------------------------------------------------------------------
 Qt::ToolButtonStyle qMRMLSegmentEditorWidget::effectButtonStyle() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
