@@ -48,6 +48,10 @@ public:
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback);
   /// @}
 
+  /// Set update callback blocked.
+  /// @return previous blocked state.
+  bool SetBlocked(bool isBlocked);
+
 protected:
   vtkMRMLLayerDMObjectEventObserver();
   ~vtkMRMLLayerDMObjectEventObserver() override;
@@ -62,4 +66,5 @@ private:
                std::function<void(vtkObject* node, unsigned long eventId)>,
                std::function<void(vtkObject* node, unsigned long eventId, void* callData)>>
     m_callback;
+  bool m_isBlocked;
 };
