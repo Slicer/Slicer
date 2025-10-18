@@ -64,3 +64,16 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
         assert args[0] == slicer.mrmlScene
         assert args[1] == vtkMRMLScene.NodeAddedEvent
         assert self.observer.CastCallData(args[2], VTK_OBJECT) == modelNode
+
+    def test_update_can_be_blocked(self):
+        modelNode = vtkMRMLModelNode()
+        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
+        wasBlocked = self.observer.SetBlocked(True)
+        assert not wasBlocked
+
+        modelNode.Modified()
+        self.mock.assert_not_called()
+
+        self.observer.SetBlocked(wasBlocked)
+        modelNode.Modified()
+        self.mock.assert_called_once_with(modelNode, vtkCommand.ModifiedEvent, None)
