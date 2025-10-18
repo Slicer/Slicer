@@ -17,12 +17,18 @@ Overloaded(Ts...) -> Overloaded<Ts...>;
 
 vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
   : m_updateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
+  , m_isBlocked(false)
 {
   this->m_updateCommand->SetClientData(this);
   this->m_updateCommand->SetCallback(
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
       auto client = static_cast<vtkMRMLLayerDMObjectEventObserver*>(clientData);
+      if (client->m_isBlocked)
+      {
+        return;
+      }
+
       try
       {
         // Dispatch to callback depending on current std variant content
@@ -75,6 +81,13 @@ bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkOb
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
 {
   this->m_callback = callback;
+}
+
+bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
+{
+  bool wasBlocked = this->m_isBlocked;
+  this->m_isBlocked = isBlocked;
+  return wasBlocked;
 }
 
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
