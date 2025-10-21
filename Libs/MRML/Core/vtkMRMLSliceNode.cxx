@@ -1680,133 +1680,27 @@ vtkMatrix4x4* vtkMRMLSliceNode::GetUVWToRAS()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
 {
-  // Much of this code looks more like application logic than data
-  // code. Should the adjustments to Dimensions and FieldOfView be
-  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
-  // level?
-  if ((rows != this->LayoutGridRows) //
-      || (columns != this->LayoutGridColumns))
-  {
-    // Calculate the scaling and "scaling magnitudes"
-    double scaling[3];
-    scaling[0] = this->LayoutGridColumns / (double)columns;
-    scaling[1] = this->LayoutGridRows / (double)rows;
-    scaling[2] = 1.0; // ???
-
-    double scaleMagnitude[3];
-    scaleMagnitude[0] = (scaling[0] < 1.0 ? 1.0 / scaling[0] : scaling[0]);
-    scaleMagnitude[1] = (scaling[1] < 1.0 ? 1.0 / scaling[1] : scaling[1]);
-    scaleMagnitude[2] = 1.0;
-
-    // A change in the LightBox layout changes the dimensions of the
-    // slice and the FieldOfView in Z
-    this->Dimensions[0] = int(this->Dimensions[0] * scaling[0]);
-    this->Dimensions[1] = int(this->Dimensions[1] * scaling[1]);
-    this->Dimensions[2] = rows * columns;
-
-    // adjust the field of view in x and y to maintain aspect ratio
-    if (scaleMagnitude[0] < scaleMagnitude[1])
-    {
-      // keep x fov the same, adjust y
-      this->FieldOfView[1] *= (scaling[1] / scaling[0]);
-    }
-    else
-    {
-      // keep y fov the same, adjust x
-      this->FieldOfView[0] *= (scaling[0] / scaling[1]);
-    }
-
-    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
-    this->FieldOfView[2] *= (rows * columns / (double)(this->LayoutGridRows * this->LayoutGridColumns));
-
-    // cache the layout
-    this->LayoutGridRows = rows;
-    this->LayoutGridColumns = columns;
-
-    // if the active slice is not on the lightbox, then reset active
-    // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
-    {
-      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
-    }
-
-    this->UpdateMatrices();
-  }
+  vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed. "
+                     << "1x1 grid will be used. Input value: " << rows << "x" << columns);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
 {
-  // Much of this code looks more like application logic than data
-  // code. Should the adjustments to Dimensions and FieldOfView be
-  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
-  // level?
-  if (rows != this->LayoutGridRows)
+  if (rows != 1)
   {
-    // Calculate the scaling
-    double scaling;
-    scaling = this->LayoutGridRows / (double)rows;
-
-    // A change in the LightBox layout changes the dimensions of the
-    // slice and the FieldOfView in Z
-    this->Dimensions[1] = int(this->Dimensions[1] * scaling);
-    this->Dimensions[2] = rows * this->LayoutGridColumns;
-
-    // adjust the field of view in x to maintain aspect ratio
-    this->FieldOfView[0] /= scaling;
-
-    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
-    this->FieldOfView[2] *= (rows / (double)this->LayoutGridRows);
-
-    // cache the layout
-    this->LayoutGridRows = rows;
-
-    // if the active slice is not on the lightbox, then reset active
-    // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
-    {
-      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
-    }
-
-    this->UpdateMatrices();
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed. "
+                       << "Value will be forced to 1. Input value: " << rows);
   }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 {
-  // Much of this code looks more like application logic than data
-  // code. Should the adjustments to Dimensions and FieldOfView be
-  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
-  // level?
-  if (cols != this->LayoutGridColumns)
+  if (cols != 1)
   {
-    // Calculate the scaling
-    double scaling;
-    scaling = this->LayoutGridColumns / (double)cols;
-
-    // A change in the LightBox layout changes the dimensions of the
-    // slice and the FieldOfView in Z
-    this->Dimensions[0] = int(this->Dimensions[0] * (this->LayoutGridColumns / (double)cols));
-    this->Dimensions[2] = this->LayoutGridRows * cols;
-
-    // adjust the field of view in y to maintain aspect ratio
-    this->FieldOfView[1] /= scaling;
-
-    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
-    this->FieldOfView[2] *= (cols / (double)this->LayoutGridColumns);
-
-    // cache the layout
-    this->LayoutGridColumns = cols;
-
-    // if the active slice is not on the lightbox, then reset active
-    // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
-    {
-      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
-    }
-
-    this->UpdateMatrices();
+    vtkWarningMacro("" << __func__ << ": Function is deprecated. LightBox support has been removed. "
+                       << "Value will be forced to 1. Input value: " << cols);
   }
 }
 
