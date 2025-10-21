@@ -705,6 +705,7 @@ macro(slicerMacroBuildApplication)
           SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
           SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
           SPLASHSCREEN_HIDE_DELAY_MS 3000
+          SPLASHSCREEN_IGNORE_OUTPUT
           )
         set(_launcher_application_default_arguments "${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
       else()
