@@ -303,11 +303,19 @@ public:
   /// @}
 
   /// @{
-  /// Applications must set this variable to a meaningful value.
-  /// This path is relative, modules will generally resolve it from GetHomeDirectory().
-  /// For example, the slicer application will set this to "share/slicer-X-Y".
+  /// Applications must set this variable to a meaningful value (typically to something like "share/slicer-X-Y").
+  /// This path is relative to HomeDirectory. Absolute path of a file in the share directory can be constructed
+  /// using GetShareFilePath() convenience method.
+  /// \sa GetHomeDirectory, GetShareFilePath
   void SetShareDirectory(const std::string& path);
   const std::string& GetShareDirectory() const;
+  /// @}
+
+  /// @{
+  /// Get full path to a file (or a relative path) in the Share folder.
+  /// The path is constructed as HomeDirectory/ShareDirectory/subfolderName/shareFileName
+  std::string GetShareFilePath(const std::string& fileName) const;
+  std::string GetShareFilePath(const std::string& subfolderName, const std::string& fileName) const;
   /// @}
 
 protected:

@@ -248,10 +248,10 @@ public:
 
   /// Get slicer share directory
   ///
-  /// This returns the partial path where slicer resources are located, which
-  /// is normally of the form <code>"share/Slicer-<i>version</i>"</code>.
+  /// This returns the relative path from the slicer home directory where shared resources are located.
+  /// The path is usually <code>"share/Slicer-<i>version</i>"</code>.
   ///
-  /// \sa slicerSharePath, slicerHome()
+  /// \sa slicerHome()
   QString slicerSharePath() const;
 
   /// Returns True if module identified by \a moduleFileName is a descendant of slicer home.
