@@ -20,6 +20,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkXMLDataParser.h>
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <algorithm>
@@ -246,11 +247,33 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   //---------------------------------------------------------------------------
   callback->ResetNumberOfEvents();
 
+  // Set expected number of warnings during scene load
+  int expectedWarningCount = 0;
+  if (vtksys::SystemTools::StringEndsWith(argv[1], "backward_compat_light_box_scene.mrml"))
+  {
+    // Warnings reported after calling "scene->Connect()"
+    //   SetLayoutGridRows: Function is deprecated. LightBox support has been removed. Value will be forced to 1. Input value: 6
+    //   SetLayoutGridColumns: Function is deprecated. LightBox support has been removed. Value will be forced to 1. Input value: 6
+    expectedWarningCount = 2;
+  }
+
+  if (expectedWarningCount > 0)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  }
+
   // Load the scene
   scene->SetURL(argv[1]);
   scene->Connect();
 
   CHECK_EXIT_SUCCESS(callback->CheckStatus());
+
+  // Check number of expected warnings
+  if (expectedWarningCount > 0)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS_MINIMUM(expectedWarningCount);
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+  }
 
   std::vector<std::string> unexpectedAddedNodeNames = vector_diff(expectedNodeAddedClassNames, callback->NodeAddedClassNames);
   if (!unexpectedAddedNodeNames.empty())
