@@ -701,11 +701,13 @@ macro(slicerMacroBuildApplication)
       include(SlicerBlockCTKAppLauncherSettings)
 
       if(SLICERAPP_SPLASHSCREEN_ENABLED)
+        # Application launcher splashscreen is shown until the application is started (and writes something to its output)
+        # or SPLASHSCREEN_HIDE_DELAY_MS time is elapsed - whichever comes first.
+        # 3 minutes (180000ms) should be sufficient to get the application started on all platforms.
         set(_launcher_splashscreen_args
           SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
           SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
-          SPLASHSCREEN_HIDE_DELAY_MS 3000
-          SPLASHSCREEN_IGNORE_OUTPUT
+          SPLASHSCREEN_HIDE_DELAY_MS 180000
           )
         set(_launcher_application_default_arguments "${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
       else()

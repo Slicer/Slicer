@@ -188,6 +188,11 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
     splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
     splashScreen->show();
+    // Write a new-line character on the process output to hide the application launcher's splashscreen
+    // (SPLASHSCREEN_IGNORE_OUTPUT option is disabled by default).
+    std::cout << std::endl;
+    // Ensure that the output is not delayed by buffering.
+    std::cout.flush();
   }
 
   DraggableWidgetEventFilter draggable;
