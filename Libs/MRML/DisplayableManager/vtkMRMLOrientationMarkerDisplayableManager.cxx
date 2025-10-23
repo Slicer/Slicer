@@ -251,17 +251,7 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetCubeActor
 //----------------------------------------------------------------------------
 std::string vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetOrientationMarkerModelPath(const char* modelFileName)
 {
-  std::vector<std::string> filesVector;
-  filesVector.emplace_back(""); // The first two components do not add a slash.
-  filesVector.push_back(this->External->GetMRMLApplicationLogic()->GetShareDirectory());
-  filesVector.emplace_back(ORIENTATION_MARKERS_DIR);
-  filesVector.emplace_back(modelFileName);
-  std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
-  if (!vtksys::SystemTools::FileExists(fullPath, true))
-  {
-    vtkErrorWithObjectMacro(this->External, "GetOrientationMarkerModelPath: file does not exist: " << fullPath);
-  }
-  return fullPath;
+  return this->External->GetMRMLApplicationLogic()->GetShareFilePath(ORIENTATION_MARKERS_DIR, modelFileName);
 }
 
 //---------------------------------------------------------------------------

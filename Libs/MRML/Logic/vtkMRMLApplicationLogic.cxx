@@ -1233,24 +1233,45 @@ const std::string& vtkMRMLApplicationLogic::GetShareDirectory() const
 //----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::GetFontFilePath(const std::string& fontFileName)
 {
-  std::vector<std::string> filesVector;
-  // Add an empty component because JoinPath does not add a slash for the first two components.
-  filesVector.emplace_back("");
-  filesVector.emplace_back(this->GetShareDirectory());
-  filesVector.emplace_back(FONTS_DIR);
-  filesVector.emplace_back(fontFileName);
-  std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
-  return fullPath;
+  return this->GetShareFilePath(FONTS_DIR, fontFileName);
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::GetFontsDirectory()
 {
+  return this->GetShareFilePath(FONTS_DIR);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::GetShareFilePath(const std::string& fileName) const
+{
+  return this->GetShareFilePath("", fileName);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::GetShareFilePath(const std::string& subfolderName, const std::string& fileName) const
+{
+  if (this->GetHomeDirectory().empty())
+  {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetShareFilePath: Home directory is not set. Returned path may be invalid.");
+  }
+  if (this->GetShareDirectory().empty())
+  {
+    vtkWarningMacro("vtkMRMLApplicationLogic::GetShareFilePath: Share directory is not set. Returned path may be invalid.");
+  }
   std::vector<std::string> filesVector;
   // Add an empty component because JoinPath does not add a slash for the first two components.
   filesVector.emplace_back("");
+  filesVector.emplace_back(this->GetHomeDirectory());
   filesVector.emplace_back(this->GetShareDirectory());
-  filesVector.emplace_back(FONTS_DIR);
+  if (!subfolderName.empty())
+  {
+    filesVector.emplace_back(subfolderName);
+  }
+  if (!fileName.empty())
+  {
+    filesVector.emplace_back(fileName);
+  }
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
   return fullPath;
 }
