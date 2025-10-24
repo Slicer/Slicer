@@ -19,12 +19,12 @@ vtkStandardNewMacro(vtkMRMLLayerDMScriptedPipelineBridge);
 
 void vtkMRMLLayerDMScriptedPipelineBridge::UpdatePipeline()
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
-  this->CallPythonMethod({}, __func__);
+  this->CallPythonMethod({}, __func__, true);
 }
 
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CastCallData(PyObject* object, int vtkType)
@@ -44,23 +44,24 @@ vtkMRMLLayerDMScriptedPipelineBridge::~vtkMRMLLayerDMScriptedPipelineBridge()
 
 bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return false;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__))
+  if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, false))
   {
     int canProcess;
     if (PyTuple_Check(result) && PyArg_ParseTuple(result, "pd", &canProcess, &distance2))
     {
+      Py_DECREF(result);
       return canProcess;
     }
 
+    Py_DECREF(result);
     // Unpack error or unexpected return type
     PyErr_SetString(PyExc_TypeError, "Expected a tuple[bool, float] return type");
-    PyErr_Print();
   }
 
   return false;
@@ -68,166 +69,172 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
 
 vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCamera() const
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return Superclass::GetCamera();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  auto result = this->CallPythonMethod({}, __func__);
-  if (result && (result != Py_None))
+  auto result = this->CallPythonMethod({}, __func__, false);
+  if (result)
   {
-    return vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+    if (result != Py_None)
+    {
+      return vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+    }
+    Py_DECREF(result);
   }
   return Superclass::GetCamera();
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return Superclass::GetMouseCursor();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (auto result = this->CallPythonMethod({}, __func__))
+  if (auto result = this->CallPythonMethod({}, __func__, false))
   {
-    return PyLong_AsLong(result);
+    return CastToIntAndDecrement(result);
   }
   return Superclass::GetMouseCursor();
 }
 
 unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return Superclass::GetRenderOrder();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (auto result = this->CallPythonMethod({}, __func__))
+  if (auto result = this->CallPythonMethod({}, __func__, false))
   {
-    return PyLong_AsLong(result);
+    return CastToIntAndDecrement(result);
   }
   return Superclass::GetRenderOrder();
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return Superclass::GetWidgetState();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (auto result = this->CallPythonMethod({}, __func__))
+  if (auto result = this->CallPythonMethod({}, __func__, false))
   {
-    return PyLong_AsLong(result);
+    return CastToIntAndDecrement(result);
   }
   return Superclass::GetWidgetState();
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::LoseFocus(vtkMRMLInteractionEventData* eventData)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* camera)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(camera), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(camera), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererRemoved(vtkRenderer* renderer)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
 bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return false;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__))
+  if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, false))
   {
-    return result == Py_True;
+    bool wasProcessed = result == Py_True;
+    Py_DECREF(result);
+    return wasProcessed;
   }
   return false;
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetDisplayNode(vtkMRMLNode* displayNode)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(displayNode), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(displayNode), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(viewNode), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(viewNode), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetScene(vtkMRMLScene* scene)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(scene), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(scene), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(pipelineManager), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(pipelineManager), __func__, true);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPythonObject(PyObject* object)
@@ -237,16 +244,41 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetPythonObject(PyObject* object)
 
 void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)
 {
-  if (!Py_IsInitialized())
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
     return;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(obj, eventId, callData), __func__);
+  this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(obj, eventId, callData), __func__, true);
 }
 
-PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName) const
+PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
-  return vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName);
+  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName);
+
+  if (!result)
+  {
+    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+    vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
+    return nullptr;
+  }
+  else if (decrementResult)
+  {
+    Py_DECREF(result);
+    return nullptr;
+  }
+
+  return result;
+}
+
+int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result) const
+{
+  if (!result)
+  {
+    return {};
+  }
+  auto value = PyLong_AsLong(result);
+  Py_DECREF(result);
+  return value;
 }

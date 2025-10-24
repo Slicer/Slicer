@@ -77,3 +77,15 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
         self.observer.SetBlocked(wasBlocked)
         modelNode.Modified()
         self.mock.assert_called_once_with(modelNode, vtkCommand.ModifiedEvent, None)
+
+    def test_update_exceptions_are_propagated_to_python(self):
+        modelNode = vtkMRMLModelNode()
+        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
+
+        _errorMsg = "Something happened in Python"
+        self.mock.side_effect = RuntimeError(_errorMsg)
+
+        with self.assertRaises(RuntimeError) as context:
+            modelNode.Modified()
+
+        assert _errorMsg in str(context.exception)

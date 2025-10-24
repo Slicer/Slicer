@@ -1,4 +1,5 @@
 #include "vtkMRMLLayerDMPythonUtil.h"
+
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro(vtkMRMLLayerDMPythonUtil);
@@ -62,7 +63,7 @@ vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(vtkObject* obj, unsigned lon
 PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
-  if (!Py_IsInitialized())
+  if (!IsValidPythonContext())
   {
     return nullptr;
   }
@@ -126,16 +127,24 @@ PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
 
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName)
 {
-  if (!Py_IsInitialized() || !object)
+  if (!IsValidPythonContext() || !object)
   {
     return nullptr;
   }
 
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = PyObject_GetAttrString(object, fName.c_str());
-  if (!method || !PyCallable_Check(method))
+  if (!method)
   {
-    const std::string errorString = "Method is not callable : " + fName;
-    PyErr_SetString(PyExc_ValueError, errorString.c_str());
+    // Don't modify Python's error reporting
+    return nullptr;
+  }
+
+  if (!PyCallable_Check(method))
+  {
+    // PyCallable_Check doesn't raise any errors. Raise called attribute isn't callable.
+    const auto errorString = std::string("vtkMRMLLayerDMPythonUtil::") + __func__ + ": Attribute is not callable : '" + fName + "' of object : " + GetObjectStr(object);
+    PyErr_SetString(PyExc_TypeError, errorString.c_str());
     return nullptr;
   }
 
@@ -144,24 +153,26 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
 
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtkSmartPyObject& pyArgs)
 {
-  if (!Py_IsInitialized() || !object || !PyCallable_Check(object))
+  if (!IsValidPythonContext() || !object)
   {
     return nullptr;
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  PyObject* result = PyObject_CallObject(object, pyArgs);
-  if (!result)
+  if (!PyCallable_Check(object))
   {
-    PyErr_Print();
+    // PyCallable_Check doesn't raise any errors. Raise called attribute isn't callable.
+    const auto errorString = std::string("vtkMRMLLayerDMPythonUtil::") + __func__ + ": Object is not callable : " + GetObjectStr(object);
+    PyErr_SetString(PyExc_TypeError, errorString.c_str());
     return nullptr;
   }
-  return result;
+
+  return PyObject_CallObject(object, pyArgs);
 }
 
 void vtkMRMLLayerDMPythonUtil::SetPythonObject(PyObject** destObject, PyObject* object)
 {
-  if (!Py_IsInitialized())
+  if (!IsValidPythonContext())
   {
     return;
   }
@@ -187,4 +198,100 @@ void vtkMRMLLayerDMPythonUtil::DeletePythonObject(PyObject** destObject)
   vtkPythonScopeGilEnsurer gilEnsurer;
   Py_XDECREF(*destObject);
   *destObject = nullptr;
+}
+
+std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
+{
+  if (!Py_IsInitialized())
+  {
+    return {};
+  }
+
+  if (!object)
+  {
+    return "None";
+  }
+
+  // Save current errors to avoid changing the current python error stack if any
+  PyObject *type, *value, *traceback;
+  PyErr_Fetch(&type, &value, &traceback);
+
+  std::string objectString{ "INVALID_OBJECT_STR" };
+  if (auto strObj = PyObject_Str(object))
+  {
+    objectString = PyUnicode_AsUTF8(strObj);
+    Py_DECREF(strObj);
+  }
+
+  // Restore the python error stack
+  PyErr_Restore(type, value, traceback);
+  return objectString;
+}
+
+bool vtkMRMLLayerDMPythonUtil::IsValidPythonContext()
+{
+  if (!Py_IsInitialized())
+  {
+    return false;
+  }
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  return !PyErr_Occurred();
+}
+
+std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
+{
+  // Don't use IsValidPythonContext here as it checks if no error has occurred
+  if (!Py_IsInitialized())
+  {
+    return {};
+  }
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  if (!PyErr_Occurred())
+  {
+    // No error has occurred
+    return {};
+  }
+
+  // Get error string from the traceback module
+  PyObject *type, *value, *traceback;
+  PyErr_Fetch(&type, &value, &traceback);
+  PyErr_NormalizeException(&type, &value, &traceback);
+
+  PyObject* tracebackModule = PyImport_ImportModule("traceback");
+  PyObject* formatExceptionFunc = PyObject_GetAttrString(tracebackModule, "format_exception");
+  PyObject* args = PyTuple_Pack(3, type, value, traceback);
+  PyObject* formattedList = PyObject_CallObject(formatExceptionFunc, args);
+  PyObject* emptyString = PyUnicode_FromString("");
+  PyObject* formatted = PyUnicode_Join(emptyString, formattedList);
+  std::string exceptionTraceback = PyUnicode_AsUTF8(formatted);
+
+  // Cleanup
+  PyErr_Restore(type, value, traceback);
+  Py_XDECREF(formatted);
+  Py_XDECREF(emptyString);
+  Py_XDECREF(formattedList);
+  Py_XDECREF(args);
+  Py_XDECREF(formatExceptionFunc);
+  Py_XDECREF(tracebackModule);
+  return exceptionTraceback;
+}
+
+void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, const std::string& errorMsg)
+{
+  // If the traceback is not empty, print the traceback using vtkErrorMacro
+  const auto traceback = FormatExceptionTraceback();
+  if (traceback.empty())
+  {
+    return;
+  }
+
+  std::string errorString{ errorMsg };
+  if (!errorString.empty())
+  {
+    errorString += "\n";
+  }
+  errorString += traceback;
+  vtkErrorWithObjectMacro(object, "" << traceback.c_str());
 }
