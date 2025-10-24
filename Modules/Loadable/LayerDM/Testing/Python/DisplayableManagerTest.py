@@ -137,3 +137,11 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
 
         self.pipeline.ResetDisplay()
         self.pipeline.mockUpdatePipeline.assert_called_once()
+
+    def test_pipeline_exceptions_are_propagated_to_python(self):
+        _error_msg = "Something went wrong in Python"
+        self.pipeline.mockUpdatePipeline.side_effect = RuntimeError(_error_msg)
+
+        with self.assertRaises(RuntimeError) as context:
+            slicer.mrmlScene.AddNode(self.node)
+        assert _error_msg in str(context.exception)
