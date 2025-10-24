@@ -11,13 +11,21 @@ vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScri
   this->SetUpdateCallback(
     [this](vtkObject* node, unsigned long eventId, void* callData) -> void
     {
-      if (!Py_IsInitialized())
+      if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
       {
         return;
       }
 
       vtkPythonScopeGilEnsurer gilEnsurer;
-      vtkMRMLLayerDMPythonUtil::CallPythonObject(this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData));
+      if (auto result = vtkMRMLLayerDMPythonUtil::CallPythonObject(this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData)))
+      {
+        Py_DECREF(result);
+      }
+      else
+      {
+        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+        vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
+      }
     });
 }
 
