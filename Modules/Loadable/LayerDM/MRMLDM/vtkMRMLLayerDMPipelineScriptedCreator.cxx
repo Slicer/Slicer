@@ -20,7 +20,7 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
   this->SetCallback(
     [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) -> vtkSmartPointer<vtkMRMLLayerDMPipelineI>
     {
-      if (!Py_IsInitialized())
+      if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
       {
         return nullptr;
       }
@@ -30,6 +30,8 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
         this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(viewNode), vtkMRMLLayerDMPythonUtil::ToPyObject(node) }));
       if (!result)
       {
+        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+        vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
         return nullptr;
       }
       return vtkMRMLLayerDMPipelineI::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkMRMLLayerDMPipelineI"));
