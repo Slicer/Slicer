@@ -45,7 +45,9 @@ protected:
   void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) override;
 
 private:
-  PyObject* CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName) const;
+  PyObject* CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const;
+  int CastToIntAndDecrement(PyObject* result) const;
+
 
   PyObject* m_object;
 };
