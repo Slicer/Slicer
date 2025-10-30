@@ -144,11 +144,9 @@ class LineProfileWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def exit(self) -> None:
         """Called each time the user opens a different module."""
-        # Do not react to parameter node changes (GUI will be updated when the user enters into the module)
-        if self._parameterNode:
-            self._parameterNode.disconnectGui(self._parameterNodeGuiTag)
-            self._parameterNodeGuiTag = None
-            self.removeObserver(self._parameterNode, vtk.vtkCommand.ModifiedEvent, self.parameterNodeModified)
+        # Do not react to parameter node changes (GUI will be updated when the user enters into the module).
+        # The module logic will keep a reference to the parameter node, so when we enter again, we will reconnect to it.
+        self.setParameterNode(None)
 
     def onSceneStartClose(self, caller, event) -> None:
         """Called just before the scene is closed."""
@@ -213,6 +211,8 @@ class LineProfileWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.outputTableSelector.setCurrentNode(outputTableNode)
         if self.ui.plotShowCheckBox.checked and not self.ui.outputPlotSeriesSelector.currentNode():
             outputPlotSeriesNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode")
+            outputPlotSeriesNode.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleNone)
+            outputPlotSeriesNode.SetColor(0, 0.6, 1.0)
             self.ui.outputPlotSeriesSelector.setCurrentNode(outputPlotSeriesNode)
 
     def onApplyButton(self) -> None:
@@ -507,6 +507,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
         name = parameterNode.inputVolume.GetName()
         if name:
             outputPlotSeries.SetName(_("{name} intensity").format(name=name))
+            outputTable.SetName(_("{name} intensity table").format(name=name))
         outputPlotSeries.SetAndObserveTableNodeID(outputTable.GetID())
         if parameterNode.plotProportionalDistance:
             outputPlotSeries.SetXColumnName(PROPORTIONAL_DISTANCE_ARRAY_NAME)
@@ -514,8 +515,6 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
             outputPlotSeries.SetXColumnName(DISTANCE_ARRAY_NAME)
         outputPlotSeries.SetYColumnName(INTENSITY_ARRAY_NAME)
         outputPlotSeries.SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatter)
-        outputPlotSeries.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleNone)
-        outputPlotSeries.SetColor(0, 0.6, 1.0)
 
     def showPlot(self):
         """Show the plot in the view layout."""
