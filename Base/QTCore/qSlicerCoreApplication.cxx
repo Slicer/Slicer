@@ -2022,12 +2022,26 @@ void qSlicerCoreApplication::restart()
   bool launcherAvailable = QFile::exists(coreApp->launcherExecutableFilePath());
   QStringList arguments = coreApp->arguments();
   arguments.removeFirst(); // Remove program name
+
+  bool disableTerminalOutputs = false;
 #if defined(Q_OS_WIN32) && !defined(Slicer_BUILD_WIN32_CONSOLE)
 #else
-  arguments.prepend("--disable-terminal-outputs");
+  disableTerminalOutputs = true;
 #endif
+
+  if (disableTerminalOutputs)
+  {
+    arguments.prepend("--disable-terminal-outputs");
+  }
   if (launcherAvailable)
   {
+    if (disableTerminalOutputs)
+    {
+      // Disabling terminal outputs disables the launcher splash-screen hiding mechanism,
+      // because it relies on writing to the process output. To prevent the launcher splash-screen
+      // from being displayed for too long, we disable it.
+      arguments.prepend("--launcher-no-splash");
+    }
     QProcess::startDetached(coreApp->launcherExecutableFilePath(), arguments);
   }
   else
