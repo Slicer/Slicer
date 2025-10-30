@@ -140,86 +140,6 @@
       <string>Plotting</string>
      </property>
      <layout class="QFormLayout" name="plottingLayout">
-      <item row="2" column="0">
-       <widget class="QLabel" name="outputPlotSeriesLabel">
-        <property name="text">
-         <string>Output Plot Series:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="outputPlotSeriesSelector">
-        <property name="toolTip">
-         <string>Pick the output plot series to the algorithm.</string>
-        </property>
-        <property name="nodeTypes">
-         <stringlist notr="true">
-          <string>vtkMRMLPlotSeriesNode</string>
-         </stringlist>
-        </property>
-        <property name="showHidden">
-         <bool>false</bool>
-        </property>
-        <property name="noneEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="removeEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="renameEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="noneDisplay">
-         <string>Create new plot</string>
-        </property>
-        <property name="SlicerParameterName" stdset="0">
-         <string notr="true">outputPlotSeries</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="plotProportionalDistanceLabel">
-        <property name="text">
-         <string>Plot Proportional Distance (%):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="plotProportionalDistanceCheckBox">
-        <property name="toolTip">
-         <string>If checked, then distance along the line in plot is not absolute, but the percent distance from the start of the line.</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <property name="SlicerParameterName" stdset="0">
-         <string notr="true">plotProportionalDistance</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="plotProportionalDistanceLabel_3">
-        <property name="text">
-         <string>Show plot:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="plotShowCheckBox">
-        <property name="toolTip">
-         <string>If checked, then the intensity profile plot is automatically shown when the intensity profile is updated.</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-        <property name="SlicerParameterName" stdset="0">
-         <string notr="true">plotShow</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="outputTableLabel">
         <property name="text">
@@ -257,6 +177,86 @@
         </property>
         <property name="SlicerParameterName" stdset="0">
          <string notr="true">outputTable</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="outputPlotSeriesLabel">
+        <property name="text">
+         <string>Output Intensities Plot Series:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputPlotSeriesSelector">
+        <property name="toolTip">
+         <string>Pick the output plot series to the algorithm.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLPlotSeriesNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>false</bool>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="noneDisplay">
+         <string>Create new plot</string>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">outputPlotSeries</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="plotProportionalDistanceLabel">
+        <property name="text">
+         <string>Plot Proportional Distance (%):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="plotProportionalDistanceCheckBox">
+        <property name="toolTip">
+         <string>If checked, then distance along the line in plot is not absolute, but the percent distance from the start of the line.</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">plotProportionalDistance</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="plotProportionalDistanceLabel_3">
+        <property name="text">
+         <string>Show plot:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="plotShowCheckBox">
+        <property name="toolTip">
+         <string>If checked, then the intensity profile plot is automatically shown when the intensity profile is updated.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="SlicerParameterName" stdset="0">
+         <string notr="true">plotShow</string>
         </property>
        </widget>
       </item>
@@ -432,6 +432,32 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>ctkPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -457,32 +483,6 @@
    <class>qSlicerSimpleMarkupsWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerSimpleMarkupsWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCheckablePushButton</class>
-   <extends>ctkPushButton</extends>
-   <header>ctkCheckablePushButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkPushButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkPushButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
