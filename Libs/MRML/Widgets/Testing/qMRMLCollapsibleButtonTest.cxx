@@ -62,4 +62,4 @@ void qMRMLCollapsibleButtonTester::testSetMRMLScene()
 }
 
 CTK_TEST_MAIN(qMRMLCollapsibleButtonTest)
-#include "moc_qMRMLCollapsibleButtonTest.cxx"
+#include "qMRMLCollapsibleButtonTest.moc"

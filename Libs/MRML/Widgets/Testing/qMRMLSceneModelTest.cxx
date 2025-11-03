@@ -192,4 +192,4 @@ void qMRMLSceneModelTester::testSetColumnsWithScene_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLSceneModelTest)
-#include "moc_qMRMLSceneModelTest.cxx"
+#include "qMRMLSceneModelTest.moc"
