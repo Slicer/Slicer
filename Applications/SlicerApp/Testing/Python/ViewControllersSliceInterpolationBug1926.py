@@ -21,9 +21,14 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
-        parent.helpText = """
-    Test case for the interaction between the ViewControllers module, linking, slice interpolation, and the selection of background, foreground, and label images. When entering the ViewControllers module, extra View Controllers are created and configured.  If linking is on, then foreground, background, and label selection can be propagated to the other views incorrectly. If the node selectors are bocked from emitting signals, then the viewers maintain their proper volumes. However the slice interpolation widget is then not managed properly.
-    """
+        parent.helpText = (
+            "Test case for the interaction between the ViewControllers module, linking, slice interpolation, and "
+            "the selection of background, foreground, and label images. When entering the ViewControllers module, "
+            "extra View Controllers are created and configured. If linking is on, then foreground, background, and "
+            "label selection can be propagated to the other views incorrectly. If the node selectors are bocked from "
+            "emitting signals, then the viewers maintain their proper volumes. However the slice interpolation widget "
+            "is then not managed properly."
+        )
         parent.acknowledgementText = """
     This file was originally developed by Jim Miller, GE.  and was partially funded by NIH grant U54EB005149.
 """  # replace with organization, grant and thanks.

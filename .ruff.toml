@@ -1,5 +1,5 @@
 target-version = "py312"
-line-length = 550
+line-length = 320
 
 extend-exclude = [
   "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py",
