@@ -227,4 +227,4 @@ void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration7()
 
 //------------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLMarkupsOptionsWidgetsFactoryTest)
-#include "moc_qMRMLMarkupsOptionsWidgetsFactoryTest.cxx"
+#include "qMRMLMarkupsOptionsWidgetsFactoryTest.moc"

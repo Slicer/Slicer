@@ -119,4 +119,4 @@ void qSlicerSslTester::testHttpsConnection_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerSslTest)
-#include "moc_qSlicerSslTest.cxx"
+#include "qSlicerSslTest.moc"

@@ -44,4 +44,4 @@ void qSlicerPythonManagerWithoutApplicationTester::testInitialize()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerPythonManagerWithoutApplicationTest)
-#include "moc_qSlicerPythonManagerWithoutApplicationTest.cxx"
+#include "qSlicerPythonManagerWithoutApplicationTest.moc"
