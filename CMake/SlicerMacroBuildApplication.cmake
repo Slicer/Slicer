@@ -144,13 +144,11 @@ macro(slicerMacroBuildAppLibrary)
   # --------------------------------------------------------------------------
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
-    QT5_WRAP_UI(SLICERAPPLIB_UI_CXX ${SLICERAPPLIB_UI_SRCS})
     if(DEFINED SLICERAPPLIB_RESOURCES)
       QT5_ADD_RESOURCES(SLICERAPPLIB_QRC_SRCS ${SLICERAPPLIB_RESOURCES})
     endif()
 
   set_source_files_properties(
-    ${SLICERAPPLIB_UI_CXX}
     ${SLICERAPPLIB_MOC_OUTPUT}
     ${SLICERAPPLIB_QRC_SRCS}
     WRAP_EXCLUDE
@@ -166,7 +164,6 @@ macro(slicerMacroBuildAppLibrary)
   )
 
   source_group("Generated" FILES
-    ${SLICERAPPLIB_UI_CXX}
     ${SLICERAPPLIB_MOC_OUTPUT}
     ${SLICERAPPLIB_QRC_SRCS}
     ${dynamicHeaders}
@@ -202,10 +199,26 @@ macro(slicerMacroBuildAppLibrary)
   add_library(${lib_name}
     ${SLICERAPPLIB_SRCS}
     ${SLICERAPPLIB_MOC_OUTPUT}
-    ${SLICERAPPLIB_UI_CXX}
     ${SLICERAPPLIB_QRC_SRCS}
     ${QM_OUTPUT_FILES}
     )
+
+  # Configure CMake Qt automatic code generation
+  set(uic_search_paths)
+  foreach(ui_src IN LISTS SLICERAPPLIB_UI_SRCS)
+    if(NOT IS_ABSOLUTE ${ui_src})
+      set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
+    endif()
+    get_filename_component(ui_path ${ui_src} PATH)
+    list(APPEND uic_search_paths ${ui_path})
+  endforeach()
+  list(REMOVE_DUPLICATES uic_search_paths)
+
+  set_target_properties(${lib_name} PROPERTIES
+    AUTOUIC ON
+    AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
+    )
+
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
   # Apply user-defined properties to the library target.
