@@ -390,7 +390,6 @@ endif()
     list(APPEND _moc_options -DMRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   endif()
   QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
-  QT5_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
   QT5_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
 
 source_group("Resources" FILES
@@ -400,7 +399,6 @@ source_group("Resources" FILES
 
 source_group("Generated" FILES
   ${MRMLWidgets_MOC_CXX}
-  ${MRMLWidgets_UI_CXX}
   ${MRMLWidgets_QRC_CXX}
   )
 
@@ -462,9 +460,15 @@ set(targets_to_export ${lib_name})
 add_library(${lib_name}
   ${MRMLWidgets_SRCS}
   ${MRMLWidgets_MOC_CXX}
-  ${MRMLWidgets_UI_CXX}
   ${MRMLWidgets_QRC_CXX}
   ${QM_OUTPUT_FILES}
+  )
+
+# Configure CMake Qt automatic code generation
+set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI/")
+set_target_properties(${lib_name} PROPERTIES
+  AUTOUIC ON
+  AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )
 
 set(MRMLWidgets_LIBRARIES
@@ -550,5 +554,19 @@ endif()
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
+  #
+  # By default CMake writes them to:
+  #   <AUTOGEN_BUILD_DIR>/include
+  #
+  # where AUTOGEN_BUILD_DIR defaults to:
+  #   <target-binary-dir>/<target-name>_autogen
+  #
+  # References:
+  # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
+  # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
+  ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

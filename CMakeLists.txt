@@ -854,6 +854,11 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
+# CMake Qt automatic code generation
+#-----------------------------------------------------------------------------
+set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
+
+#-----------------------------------------------------------------------------
 # Folders
 #-----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ${Slicer_USE_FOLDERS})

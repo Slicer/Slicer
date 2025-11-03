@@ -92,7 +92,22 @@ macro(slicerMacroBuildLoadableModule)
     set(${lib_name}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
   endif()
 
-  set(${lib_name}_INCLUDE_DIRS ${${lib_name}_SOURCE_DIR} ${${lib_name}_BINARY_DIR} CACHE INTERNAL "" FORCE)
+  set(${lib_name}_INCLUDE_DIRS
+    ${${lib_name}_SOURCE_DIR}
+    ${${lib_name}_BINARY_DIR}
+    # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
+    #
+    # By default CMake writes them to:
+    #   <AUTOGEN_BUILD_DIR>/include
+    #
+    # where AUTOGEN_BUILD_DIR defaults to:
+    #   <target-binary-dir>/<target-name>_autogen
+    #
+    # References:
+    # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
+    # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
+    ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include
+    CACHE INTERNAL "" FORCE)
 
   include_directories(
     ${${lib_name}_INCLUDE_DIRS}
@@ -125,7 +140,6 @@ macro(slicerMacroBuildLoadableModule)
   # Sources
   #-----------------------------------------------------------------------------
   set(LOADABLEMODULE_MOC_OUTPUT)
-  set(LOADABLEMODULE_UI_CXX)
   set(LOADABLEMODULE_QRC_SRCS)
   if(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
     message("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
@@ -133,7 +147,6 @@ macro(slicerMacroBuildLoadableModule)
 
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(LOADABLEMODULE_MOC_OUTPUT ${LOADABLEMODULE_MOC_SRCS} ${_moc_options})
-    QT5_WRAP_UI(LOADABLEMODULE_UI_CXX ${LOADABLEMODULE_UI_SRCS})
     if(DEFINED LOADABLEMODULE_RESOURCES)
       QT5_ADD_RESOURCES(LOADABLEMODULE_QRC_SRCS ${LOADABLEMODULE_RESOURCES})
     endif()
@@ -141,7 +154,6 @@ macro(slicerMacroBuildLoadableModule)
 
   set_source_files_properties(
     ${LOADABLEMODULE_SRCS} # For now, let's prevent the module widget from being wrapped
-    ${LOADABLEMODULE_UI_CXX}
     ${LOADABLEMODULE_MOC_OUTPUT}
     ${LOADABLEMODULE_QRC_SRCS}
     WRAP_EXCLUDE
@@ -157,7 +169,6 @@ macro(slicerMacroBuildLoadableModule)
     )
 
   source_group("Generated" FILES
-    ${LOADABLEMODULE_UI_CXX}
     ${LOADABLEMODULE_MOC_OUTPUT}
     ${LOADABLEMODULE_QRC_SRCS}
     ${dynamicHeaders}
@@ -191,9 +202,24 @@ macro(slicerMacroBuildLoadableModule)
   add_library(${lib_name}
     ${LOADABLEMODULE_SRCS}
     ${LOADABLEMODULE_MOC_OUTPUT}
-    ${LOADABLEMODULE_UI_CXX}
     ${LOADABLEMODULE_QRC_SRCS}
     ${QM_OUTPUT_FILES}
+    )
+
+  # Configure CMake Qt automatic code generation
+  set(uic_search_paths)
+  foreach(ui_src IN LISTS LOADABLEMODULE_UI_SRCS)
+    if(NOT IS_ABSOLUTE ${ui_src})
+      set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
+    endif()
+    get_filename_component(ui_path ${ui_src} PATH)
+    list(APPEND uic_search_paths ${ui_path})
+  endforeach()
+  list(REMOVE_DUPLICATES uic_search_paths)
+
+  set_target_properties(${lib_name} PROPERTIES
+    AUTOUIC ON
+    AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )
 
   # Set loadable modules output path
