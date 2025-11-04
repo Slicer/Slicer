@@ -131,7 +131,7 @@ macro(slicerMacroBuildLoadableModule)
     message("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
   endif()
 
-    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
+    set(_moc_options OPTIONS -DSlicer_QT_MAJOR_VERSION=${Slicer_QT_MAJOR_VERSION})
     QT5_WRAP_CPP(LOADABLEMODULE_MOC_OUTPUT ${LOADABLEMODULE_MOC_SRCS} ${_moc_options})
     QT5_WRAP_UI(LOADABLEMODULE_UI_CXX ${LOADABLEMODULE_UI_SRCS})
     if(DEFINED LOADABLEMODULE_RESOURCES)

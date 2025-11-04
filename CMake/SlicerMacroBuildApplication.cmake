@@ -142,7 +142,7 @@ macro(slicerMacroBuildAppLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   # --------------------------------------------------------------------------
-    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
+    set(_moc_options OPTIONS -DSlicer_QT_MAJOR_VERSION=${Slicer_QT_MAJOR_VERSION})
     QT5_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
     QT5_WRAP_UI(SLICERAPPLIB_UI_CXX ${SLICERAPPLIB_UI_SRCS})
     if(DEFINED SLICERAPPLIB_RESOURCES)
