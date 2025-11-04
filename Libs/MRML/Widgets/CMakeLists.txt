@@ -390,7 +390,6 @@ endif()
     list(APPEND _moc_options -DMRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   endif()
   QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
-  QT5_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
 
 source_group("Resources" FILES
   ${MRMLWidgets_UI_SRCS}
@@ -399,7 +398,6 @@ source_group("Resources" FILES
 
 source_group("Generated" FILES
   ${MRMLWidgets_MOC_CXX}
-  ${MRMLWidgets_QRC_CXX}
   )
 
 # --------------------------------------------------------------------------
@@ -460,13 +458,14 @@ set(targets_to_export ${lib_name})
 add_library(${lib_name}
   ${MRMLWidgets_SRCS}
   ${MRMLWidgets_MOC_CXX}
-  ${MRMLWidgets_QRC_CXX}
+  ${MRMLWidgets_QRC_SRCS}
   ${QM_OUTPUT_FILES}
   )
 
 # Configure CMake Qt automatic code generation
 set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI/")
 set_target_properties(${lib_name} PROPERTIES
+  AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )

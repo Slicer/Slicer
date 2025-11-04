@@ -81,12 +81,20 @@ if(BUILD_TESTING)
     if(KIT_TEST_GENERATE_MOC_SRCS)
       QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
     endif()
-    QT5_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+
+  list(APPEND Tests
+    Resources/${KIT}Testing.qrc
+    )
 
   ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
+
+  # Configure CMake Qt automatic code generation
+  set_target_properties(${KIT}CxxTests PROPERTIES
+    AUTORCC ON
+    )
 
   #
   # Add Tests
