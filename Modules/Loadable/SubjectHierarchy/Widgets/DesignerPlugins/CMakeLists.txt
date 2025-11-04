@@ -14,12 +14,6 @@ set(${KIT}_SRCS
   qMRMLSubjectHierarchyComboBoxPlugin.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicerSubjectHierarchyModuleWidgetsPlugin.h
-  qMRMLSubjectHierarchyTreeViewPlugin.h
-  qMRMLSubjectHierarchyComboBoxPlugin.h
-  )
-
 set(${KIT}_TARGET_LIBRARIES
   qSlicerSubjectHierarchyModuleWidgets
   )
@@ -30,6 +24,5 @@ ctkMacroBuildQtDesignerPlugin(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
   FOLDER "Module-${MODULE_NAME}"
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

@@ -14,11 +14,6 @@ set(${KIT}_SRCS
   qSlicerStylePlugin.h
   )
 
-# Headers that should run through moc
-set(${KIT}_MOC_SRCS
-  qSlicerStylePlugin.h
-  )
-
 set(${KIT}_TARGET_LIBRARIES
   qSlicerBaseQTGUI
   )
@@ -28,6 +23,5 @@ ctkMacroBuildQtStylesPlugin(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
   FOLDER "Core-Base"
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )
