@@ -124,18 +124,9 @@ macro(SlicerMacroBuildModuleQtLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   #-----------------------------------------------------------------------------
-  set(MODULEQTLIBRARY_MOC_OUTPUT)
   if(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
     message("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
   endif()
-
-    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
-    QT5_WRAP_CPP(MODULEQTLIBRARY_MOC_OUTPUT ${MODULEQTLIBRARY_MOC_SRCS} ${_moc_options})
-
-  set_source_files_properties(
-    ${MODULEQTLIBRARY_MOC_OUTPUT}
-    WRAP_EXCLUDE
-    )
 
   # --------------------------------------------------------------------------
   # Source groups
@@ -147,7 +138,6 @@ macro(SlicerMacroBuildModuleQtLibrary)
     )
 
   source_group("Generated" FILES
-    ${MODULEQTLIBRARY_MOC_OUTPUT}
     ${dynamicHeaders}
     )
 
@@ -156,9 +146,12 @@ macro(SlicerMacroBuildModuleQtLibrary)
   #-----------------------------------------------------------------------------
   add_library(${lib_name}
     ${MODULEQTLIBRARY_SRCS}
-    ${MODULEQTLIBRARY_MOC_OUTPUT}
     ${MODULEQTLIBRARY_RESOURCES}
     ${Slicer_LOGOS_RESOURCE}
+    )
+
+  target_compile_definitions(${lib_name} PRIVATE
+    $<$<BOOL:${Qt5_VERSION_MAJOR}>:Slicer_HAVE_QT5>
     )
 
   # Configure CMake Qt automatic code generation
@@ -173,6 +166,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"

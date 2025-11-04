@@ -67,21 +67,6 @@ if(BUILD_TESTING)
     EXTRA_INCLUDE ${EXTRA_INCLUDE}
     )
 
-  set(KIT_TEST_GENERATE_MOC_SRCS
-    )
-  if(Slicer_USE_PYTHONQT)
-    list(APPEND KIT_TEST_GENERATE_MOC_SRCS
-      qSlicerLoadableModuleWithPythonTest.cxx
-      qSlicerPythonManagerWithoutApplicationTest.cxx
-      qSlicerScriptedLoadableModuleTest.cxx
-      qSlicerScriptedLoadableModuleWidgetTest.cxx
-      )
-  endif()
-
-    if(KIT_TEST_GENERATE_MOC_SRCS)
-      QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
-    endif()
-
   list(APPEND Tests
     Resources/${KIT}Testing.qrc
     )
@@ -93,6 +78,7 @@ if(BUILD_TESTING)
 
   # Configure CMake Qt automatic code generation
   set_target_properties(${KIT}CxxTests PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     )
 

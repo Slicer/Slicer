@@ -25,7 +25,12 @@
 #cmakedefine HAVE_STDINT_H
 #endif
 
+#ifndef MRML_WIDGETS_HAVE_QT5
 #cmakedefine MRML_WIDGETS_HAVE_QT5
+#endif
+
+#ifndef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
 #cmakedefine MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
+#endif
 
 #endif

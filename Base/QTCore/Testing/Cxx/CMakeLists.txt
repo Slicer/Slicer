@@ -88,31 +88,7 @@ if(BUILD_TESTING)
     EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
     )
 
-  set(KIT_TEST_GENERATE_MOC_SRCS
-    qSlicerSslTest.cxx
-    )
-
-  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-    list(APPEND KIT_TEST_GENERATE_MOC_SRCS
-      qSlicerExtensionsManagerModelTest.cxx
-      qSlicerPersistentCookieJarTest.cxx
-      )
-  endif()
-
-  if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
-  list(APPEND KIT_TEST_GENERATE_MOC_SRCS
-    qSlicerApplicationUpdateManagerTest.cxx
-    )
-  endif()
-
-  if(Slicer_USE_PYTHONQT)
-    list(APPEND KIT_TEST_GENERATE_MOC_SRCS
-      qSlicerCorePythonManagerWithoutApplicationTest.cxx
-      )
-  endif()
-
   set(KIT_TEST_TARGET_LIBRARIES ${KIT})
-    QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
     list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
 
   list(APPEND Tests
@@ -132,6 +108,7 @@ if(BUILD_TESTING)
 
   # Configure CMake Qt automatic code generation
   set_target_properties(${KIT}CxxTests PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     )
 
