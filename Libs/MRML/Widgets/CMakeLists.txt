@@ -385,19 +385,9 @@ if(Slicer_USE_QtTesting)
     )
 endif()
 
-  set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
-  if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
-    list(APPEND _moc_options -DMRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
-  endif()
-  QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
-
 source_group("Resources" FILES
   ${MRMLWidgets_UI_SRCS}
   ${MRMLWidgets_QRC_SRCS}
-  )
-
-source_group("Generated" FILES
-  ${MRMLWidgets_MOC_CXX}
   )
 
 # --------------------------------------------------------------------------
@@ -457,14 +447,19 @@ set(targets_to_export ${lib_name})
 
 add_library(${lib_name}
   ${MRMLWidgets_SRCS}
-  ${MRMLWidgets_MOC_CXX}
   ${MRMLWidgets_QRC_SRCS}
   ${QM_OUTPUT_FILES}
+  )
+
+target_compile_definitions(${lib_name} PRIVATE
+  $<$<BOOL:${MRML_WIDGETS_HAVE_QT5}>:MRML_WIDGETS_HAVE_QT5>
+  $<$<BOOL:${MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT}>:MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT>
   )
 
 # Configure CMake Qt automatic code generation
 set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI/")
 set_target_properties(${lib_name} PROPERTIES
+  AUTOMOC ON
   AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"

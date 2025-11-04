@@ -13,11 +13,6 @@ set(KIT_TEST_SRCS
   )
 
 #-----------------------------------------------------------------------------
-set(KIT_TEST_GENERATE_MOC_SRCS
-  qSlicer${MODULE_NAME}ModuleWidgetTest.cxx
-  )
-  QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
-
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
@@ -26,6 +21,11 @@ slicerMacroConfigureModuleCxxTestDriver(
   SOURCES ${KIT_TEST_SRCS}
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
+  )
+
+# Configure CMake Qt automatic code generation
+set_target_properties(${KIT}CxxTests PROPERTIES
+  AUTOMOC ON
   )
 
 #-----------------------------------------------------------------------------

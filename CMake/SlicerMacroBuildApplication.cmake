@@ -139,17 +139,6 @@ macro(slicerMacroBuildAppLibrary)
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  #-----------------------------------------------------------------------------
-  # Sources
-  # --------------------------------------------------------------------------
-    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
-    QT5_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
-
-  set_source_files_properties(
-    ${SLICERAPPLIB_MOC_OUTPUT}
-    WRAP_EXCLUDE
-    )
-
   # --------------------------------------------------------------------------
   # Source groups
   # --------------------------------------------------------------------------
@@ -160,7 +149,6 @@ macro(slicerMacroBuildAppLibrary)
   )
 
   source_group("Generated" FILES
-    ${SLICERAPPLIB_MOC_OUTPUT}
     ${dynamicHeaders}
   )
 
@@ -193,9 +181,12 @@ macro(slicerMacroBuildAppLibrary)
   # --------------------------------------------------------------------------
   add_library(${lib_name}
     ${SLICERAPPLIB_SRCS}
-    ${SLICERAPPLIB_MOC_OUTPUT}
     ${SLICERAPPLIB_RESOURCES}
     ${QM_OUTPUT_FILES}
+    )
+
+  target_compile_definitions(${lib_name} PRIVATE
+    $<$<BOOL:${Qt5_VERSION_MAJOR}>:Slicer_HAVE_QT5>
     )
 
   # Configure CMake Qt automatic code generation
@@ -210,6 +201,7 @@ macro(slicerMacroBuildAppLibrary)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
