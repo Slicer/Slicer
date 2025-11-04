@@ -19,12 +19,6 @@ set(${KIT}_SRCS
   qSlicerCLIProgressBarPlugin.h
   )
 
-# Headers that should run through moc
-set(${KIT}_MOC_SRCS
-  qSlicerQTCLIPlugins.h
-  qSlicerCLIProgressBarPlugin.h
-  )
-
 set(${KIT}_TARGET_LIBRARIES
   qSlicerBaseQTCLI
   )
@@ -34,6 +28,5 @@ ctkMacroBuildQtDesignerPlugin(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
   FOLDER "Core-Base"
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

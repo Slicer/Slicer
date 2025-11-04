@@ -25,18 +25,6 @@ set(${KIT}_SRCS
   qMRMLSegmentationFileExportWidgetPlugin.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicerSegmentationsModuleWidgetsPlugin.h
-  qMRMLSegmentsTableViewPlugin.h
-  qMRMLSegmentationRepresentationsListViewPlugin.h
-  qMRMLSegmentationConversionParametersWidgetPlugin.h
-  qMRMLSegmentSelectorWidgetPlugin.h
-  qMRMLSegmentEditorWidgetPlugin.h
-  qMRMLSegmentationDisplayNodeWidgetPlugin.h
-  qMRMLSegmentationFileExportWidgetPlugin.h
-  qMRMLSegmentationShow3DButtonPlugin.h
-  )
-
 set(${KIT}_TARGET_LIBRARIES
   qSlicerSegmentationsModuleWidgets
   )
@@ -47,6 +35,5 @@ ctkMacroBuildQtDesignerPlugin(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
   FOLDER "Module-${MODULE_NAME}"
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

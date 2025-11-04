@@ -23,16 +23,6 @@ set(${KIT}_SRCS
   qSlicerVolumeDisplayWidgetPlugin.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
-  qSlicerDiffusionTensorVolumeDisplayWidgetPlugin.h
-  qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin.h
-  qSlicerDTISliceDisplayWidgetPlugin.h
-  qSlicerLabelMapVolumeDisplayWidgetPlugin.h
-  qSlicerScalarVolumeDisplayWidgetPlugin.h
-  qSlicerVolumeDisplayWidgetPlugin.h
-  )
-
 set(${KIT}_TARGET_LIBRARIES
   qSlicer${MODULE_NAME}ModuleWidgets
   )
@@ -43,6 +33,5 @@ ctkMacroBuildQtDesignerPlugin(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
   FOLDER "Module-${MODULE_NAME}"
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )
