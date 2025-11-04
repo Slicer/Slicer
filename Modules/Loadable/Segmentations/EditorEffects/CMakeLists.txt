@@ -43,25 +43,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-set(${KIT}_MOC_SRCS
-  qSlicerSegmentEditorEffectFactory.h
-  qSlicerSegmentEditorAbstractEffect.h
-  qSlicerSegmentEditorAbstractEffect_p.h
-  qSlicerSegmentEditorAbstractLabelEffect.h
-  qSlicerSegmentEditorAbstractLabelEffect_p.h
-  qSlicerSegmentEditorPaintEffect.h
-  qSlicerSegmentEditorPaintEffect_p.h
-  qSlicerSegmentEditorEraseEffect.h
-  qSlicerSegmentEditorScissorsEffect.h
-  )
-if(Slicer_USE_PYTHONQT)
-  list(APPEND ${KIT}_MOC_SRCS
-    qSlicerSegmentEditorScriptedEffect.h
-    qSlicerSegmentEditorScriptedLabelEffect.h
-    qSlicerSegmentEditorScriptedPaintEffect.h
-    )
-endif()
-
 set(${KIT}_UI_SRCS
   )
 
@@ -87,7 +68,6 @@ SlicerMacroBuildModuleQtLibrary(
   FOLDER "Module-${MODULE_NAME}"
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

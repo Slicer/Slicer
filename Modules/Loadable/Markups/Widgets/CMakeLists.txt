@@ -37,22 +37,6 @@ set(${KIT}_SRCS
   qSlicerSimpleMarkupsWidget.h
   )
 
-set(${KIT}_MOC_SRCS
-  qMRML${MODULE_NAME}DisplayNodeWidget.h
-  qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
-  qMRML${MODULE_NAME}InteractionHandleWidget.h
-  qMRML${MODULE_NAME}ToolBar.h
-  qMRML${MODULE_NAME}ToolBar_p.h
-  qMRML${MODULE_NAME}PlaneWidget.h
-  qMRML${MODULE_NAME}ROIWidget.h
-  qMRML${MODULE_NAME}AbstractOptionsWidget.h
-  qMRML${MODULE_NAME}AngleMeasurementsWidget.h
-  qMRML${MODULE_NAME}CurveSettingsWidget.h
-  qMRML${MODULE_NAME}OptionsWidgetsFactory.h
-  qSlicer${MODULE_NAME}PlaceWidget.h
-  qSlicerSimpleMarkupsWidget.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRML${MODULE_NAME}DisplayNodeWidget.ui
   Resources/UI/qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.ui
@@ -79,7 +63,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

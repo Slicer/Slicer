@@ -177,104 +177,6 @@ set_source_files_properties(
   WRAP_EXCLUDE
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  qSlicerAbstractModule.h
-  qSlicerAbstractModulePanel.h
-  qSlicerAbstractModuleWidget.h
-  qSlicerActionsDialog.h
-  qSlicerApplication.h
-  qSlicerCommandOptions.h
-  qSlicerDarkStyle.h
-  qSlicerDataDialog.h
-  qSlicerDataDialog_p.h
-  qSlicerDirectoryListView.h
-  qSlicerExportNodeDialog.h
-  qSlicerExportNodeDialog_p.h
-  qSlicerFileDialog.h
-  qSlicerFileWriterOptionsWidget.h
-  qSlicerIOManager.h
-  qSlicerIOOptionsWidget.h
-  qSlicerLayoutManager.h
-  qSlicerLightStyle.h
-  qSlicerLoadableModule.h
-
-  qSlicerModelsDialog.h
-  qSlicerModelsDialog_p.h
-
-  qSlicerModuleFactoryFilterModel.h
-  qSlicerModuleFinderDialog.h
-  qSlicerModulesListView.h
-  qSlicerModulesMenu.h
-  qSlicerModulePanel.h
-  qSlicerModuleSelectorToolBar.h
-  qSlicerMouseModeToolBar.h
-  qSlicerMouseModeToolBar_p.h
-  qSlicerNodeWriter.h
-  qSlicerNodeWriterOptionsWidget.h
-  qSlicerNodeWriterOptionsWidget_p.h
-  qSlicerSaveDataDialog.h
-  qSlicerSaveDataDialog_p.h
-  qSlicerSettingsCachePanel.h
-  qSlicerSettingsGeneralPanel.h
-  qSlicerSettingsModulesPanel.h
-  qSlicerSettingsStylesPanel.h
-  qSlicerSettingsViewsPanel.h
-  qSlicerSettingsDeveloperPanel.h
-  qSlicerSettingsUserInformationPanel.h
-  qSlicerStyle.h
-  qSlicerViewersToolBar.h
-  qSlicerViewersToolBar_p.h
-  qSlicerWidget.h
-
-  qSlicerSingletonViewFactory.h
-  )
-
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerExtensionsLocalWidget.h
-    qSlicerExtensionsManagerDialog.h
-    qSlicerExtensionsManagerWidget.h
-    qSlicerSettingsExtensionsPanel.h
-    )
-  if(Slicer_BUILD_WEBENGINE_SUPPORT)
-    list(APPEND KIT_MOC_SRCS
-      qSlicerExtensionsServerWidget.h
-      qSlicerExtensionsServerWidget_p.h
-      )
-  endif()
-endif()
-
-if(Slicer_BUILD_I18N_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerSettingsInternationalizationPanel.h
-    )
-endif()
-
-if(Slicer_BUILD_WEBENGINE_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerWebDownloadWidget.h
-    qSlicerWebPythonProxy.h
-    qSlicerWebWidget.h
-    qSlicerWebWidget_p.h
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerScriptedLoadableModule.h
-    qSlicerScriptedLoadableModuleWidget.h
-    qSlicerScriptedFileDialog.h
-    )
-endif()
-
-# PythonQt decorator
-if(Slicer_USE_PYTHONQT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerSettingsPythonPanel.h
-    )
-endif()
-
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
@@ -348,11 +250,6 @@ if(Slicer_USE_PYTHONQT)
     qSlicerPythonManager.h
     )
 
-  # Headers that should run through moc
-  list(APPEND KIT_MOC_SRCS
-    qSlicerPythonManager.h
-    )
-
 endif()
 
 SlicerMacroBuildBaseQtLibrary(
@@ -360,7 +257,6 @@ SlicerMacroBuildBaseQtLibrary(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
@@ -377,7 +273,6 @@ ctkMacroBuildQtIconEnginesPlugin(
   EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT"
   FOLDER "Core-Base"
   SRCS qSlicerIconEnginePlugin.cxx qSlicerIconEnginePlugin.h
-  MOC_SRCS qSlicerIconEnginePlugin.h
   TARGET_LIBRARIES ${QT_LIBRARIES} ${CTK_LIBRARIES}
   )
 

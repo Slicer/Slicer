@@ -61,15 +61,6 @@ set(KIT_SRCS
   qSlicerCLIProgressBar.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  qSlicerCLIModule.h
-  qSlicerCLIModuleWidget.h
-  qSlicerCLIModuleWidget_p.h
-  qSlicerCLIModuleUIHelper.h
-  qSlicerCLIProgressBar.h
-  )
-
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerCLIModuleWidget.ui
@@ -94,9 +85,6 @@ if(Slicer_USE_QtTesting)
     qSlicerCLIModuleWidgetEventPlayer.cxx
     qSlicerCLIModuleWidgetEventPlayer.h
     )
-  list(APPEND KIT_MOC_SRCS
-    qSlicerCLIModuleWidgetEventPlayer.h
-    )
 endif()
 
 SlicerMacroBuildBaseQtLibrary(
@@ -104,7 +92,6 @@ SlicerMacroBuildBaseQtLibrary(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

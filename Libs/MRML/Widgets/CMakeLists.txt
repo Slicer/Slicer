@@ -233,103 +233,6 @@ if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
     )
 endif()
 
-# Headers that should run through moc
-set(MRMLWidgets_MOC_SRCS
-  qMRMLAbstractViewWidget.h
-  qMRMLCheckableNodeComboBox.h
-  qMRMLClipNodeWidget.h
-  qMRMLClipNodeDisplayWidget.h
-  qMRMLCollapsibleButton.h
-  qMRMLColorModel.h
-  qMRMLColorTableComboBox.h
-  qMRMLCoordinatesWidget.h
-  qMRMLDisplayNodeViewComboBox.h
-  qMRMLDisplayNodeWidget.h
-  qMRMLEventBrokerConnection.h
-  qMRMLEventBrokerWidget.h
-  qMRMLEventLogger.h
-  qMRMLEventLoggerWidget.h
-  qMRMLItemDelegate.h
-  qMRMLLabelComboBox.h
-  qMRMLLayoutManager.h
-  qMRMLLayoutManager_p.h
-  qMRMLLayoutViewFactory.h
-  qMRMLLayoutWidget.h
-  qMRMLLinearTransformSlider.h
-  qMRMLListWidget.h
-  qMRMLMatrixWidget.h
-  qMRMLModelInfoWidget.h
-  qMRMLNavigationView.h
-  qMRMLNodeAttributeTableView.h
-  qMRMLNodeAttributeTableWidget.h
-  qMRMLNodeComboBox.h
-  qMRMLNodeComboBoxDelegate.h
-  qMRMLNodeComboBoxMenuDelegate.h
-  qMRMLNodeFactory.h
-  qMRMLPlotWidget.h
-  qMRMLPlotViewControllerWidget.h
-  qMRMLPlotViewControllerWidget_p.h
-  qMRMLPlotView_p.h
-  qMRMLPlotView.h
-  qMRMLRangeWidget.h
-  qMRMLROIWidget.h
-  qMRMLScalarInvariantComboBox.h
-  qMRMLScalarsDisplayWidget.h
-  qMRMLSceneCategoryModel.h
-  qMRMLSceneColorTableModel.h
-  qMRMLSceneFactoryWidget.h
-  qMRMLSceneModel.h
-  qMRMLSceneTransformModel.h
-  qMRMLSceneHierarchyModel.h
-  qMRMLSceneDisplayableModel.h
-  qMRMLScreenShotDialog.h
-  qMRMLSegmentSelectorWidget.h
-  qMRMLSliceControllerWidget.h
-  qMRMLSliceControllerWidget_p.h
-  qMRMLSliceInformationWidget.h
-  qMRMLSliceInformationWidget_p.h
-  qMRMLSliceVerticalControllerWidget.h
-  qMRMLSliceView.h
-  qMRMLSliceView_p.h
-  qMRMLSliceWidget.h
-  qMRMLSliceWidget_p.h
-  qMRMLSliderWidget.h
-  qMRMLSortFilterColorProxyModel.h
-  qMRMLSortFilterHierarchyProxyModel.h
-  qMRMLSortFilterProxyModel.h
-  qMRMLSpinBox.h
-  qMRMLTableModel.h
-  qMRMLTableView.h
-  qMRMLTableView_p.h
-  qMRMLTableViewControllerWidget.h
-  qMRMLTableViewControllerWidget_p.h
-  qMRMLTableWidget.h
-  qMRMLThreeDView.h
-  qMRMLThreeDView_p.h
-  qMRMLThreeDViewControllerWidget.h
-  qMRMLThreeDViewInformationWidget.h
-  qMRMLThreeDViewInformationWidget_p.h
-  qMRMLThreeDWidget.h
-  qMRMLTransformSliders.h
-  qMRMLTreeView.h
-  qMRMLUtils.h
-  qMRMLViewControllerBar.h
-  qMRMLViewControllerBar_p.h
-  qMRMLVolumeInfoWidget.h
-  qMRMLVolumeThresholdWidget.h
-  qMRMLVolumeWidget.h
-  qMRMLVolumeWidget_p.h
-  qMRMLWidget.h
-  qMRMLWindowLevelWidget.h
-  )
-
-if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
-  list(APPEND MRMLWidgets_MOC_SRCS
-    qMRMLExpandingWebView.h
-    qMRMLExpandingWebView_p.h
-    )
-endif()
-
 # UI files
 set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLClipNodeWidget.ui
@@ -373,14 +276,6 @@ if(Slicer_USE_QtTesting)
     qMRMLTreeViewEventPlayer.cpp
     qMRMLTreeViewEventPlayer.h
     qMRMLTreeViewEventTranslator.cpp
-    qMRMLTreeViewEventTranslator.h
-    )
-
-  list(APPEND MRMLWidgets_MOC_SRCS
-    qMRMLCheckableNodeComboBoxEventPlayer.h
-    qMRMLNodeComboBoxEventPlayer.h
-    qMRMLNodeComboBoxEventTranslator.h
-    qMRMLTreeViewEventPlayer.h
     qMRMLTreeViewEventTranslator.h
     )
 endif()

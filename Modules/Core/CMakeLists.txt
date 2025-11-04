@@ -27,14 +27,6 @@ set(KIT_SRCS
   EventBroker/qSlicerEventBrokerModuleWidget.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  qSlicerCoreModule.h
-
-  EventBroker/qSlicerEventBrokerModule.h
-  EventBroker/qSlicerEventBrokerModuleWidget.h
-  )
-
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerEventBrokerModuleWidget.ui
@@ -55,7 +47,6 @@ SlicerMacroBuildBaseQtLibrary(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

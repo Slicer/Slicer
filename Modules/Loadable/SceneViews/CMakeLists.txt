@@ -38,15 +38,6 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   )
 
-set(MODULE_MOC_SRCS
-  GUI/qMRMLCaptureToolBar.h
-  GUI/qMRMLSceneViewMenu.h
-  GUI/qMRMLSceneViewMenu_p.h
-  qSlicer${MODULE_NAME}Module.h
-  GUI/qSlicer${MODULE_NAME}ModuleWidget.h
-  GUI/qSlicer${MODULE_NAME}ModuleDialog.h
-  )
-
 set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
   )
@@ -68,7 +59,6 @@ slicerMacroBuildLoadableModule(
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}
-  MOC_SRCS ${MODULE_MOC_SRCS}
   UI_SRCS ${MODULE_UI_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   RESOURCES ${MODULE_RESOURCES}

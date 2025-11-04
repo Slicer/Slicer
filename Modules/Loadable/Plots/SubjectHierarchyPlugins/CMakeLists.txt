@@ -18,10 +18,6 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchy${MODULE_NAME}Plugin.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicerSubjectHierarchy${MODULE_NAME}Plugin.h
-  )
-
 set(${KIT}_UI_SRCS
   )
 
@@ -47,7 +43,6 @@ SlicerMacroBuildModuleQtLibrary(
   FOLDER "Module-${MODULE_NAME}"
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

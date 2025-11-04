@@ -12,10 +12,6 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}FooBarWidget.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicer${MODULE_NAME}FooBarWidget.h
-  )
-
 set(${KIT}_UI_SRCS
   ../Resources/UI/qSlicer${MODULE_NAME}FooBarWidget.ui
   )
@@ -34,7 +30,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

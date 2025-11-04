@@ -39,21 +39,6 @@ set(${KIT}_SRCS
   qMRMLSortFilterSegmentsProxyModel.h
   )
 
-set(${KIT}_MOC_SRCS
-  qMRMLSegmentsTableView.h
-  qMRMLSegmentsModel.h
-  qMRMLSegmentationConversionParametersWidget.h
-  qMRMLSegmentationDisplayNodeWidget.h
-  qMRMLSegmentationFileExportWidget.h
-  qMRMLSegmentationGeometryWidget.h
-  qMRMLSegmentationGeometryDialog.h
-  qMRMLSegmentationRepresentationsListView.h
-  qMRMLSegmentationShow3DButton.h
-  qMRMLSegmentEditorWidget.h
-  qMRMLSortFilterSegmentsProxyModel.h
-  qMRMLDoubleSpinBoxDelegate.h
-)
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLSegmentationRepresentationsListView.ui
   Resources/UI/qMRMLSegmentationConversionParametersWidget.ui
@@ -81,7 +66,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

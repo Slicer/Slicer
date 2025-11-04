@@ -28,14 +28,6 @@ set(KIT_SRCS
   qSlicerMainWindow.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  qSlicerAboutDialog.h
-  qSlicerApplicationHelper.h
-  qSlicerErrorReportDialog.h
-  qSlicerMainWindow.h
-  )
-
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerAboutDialog.ui
@@ -59,7 +51,6 @@ SlicerMacroBuildBaseQtLibrary(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
