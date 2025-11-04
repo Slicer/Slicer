@@ -144,13 +144,9 @@ macro(slicerMacroBuildAppLibrary)
   # --------------------------------------------------------------------------
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(SLICERAPPLIB_MOC_OUTPUT ${SLICERAPPLIB_MOC_SRCS} ${_moc_options})
-    if(DEFINED SLICERAPPLIB_RESOURCES)
-      QT5_ADD_RESOURCES(SLICERAPPLIB_QRC_SRCS ${SLICERAPPLIB_RESOURCES})
-    endif()
 
   set_source_files_properties(
     ${SLICERAPPLIB_MOC_OUTPUT}
-    ${SLICERAPPLIB_QRC_SRCS}
     WRAP_EXCLUDE
     )
 
@@ -165,7 +161,6 @@ macro(slicerMacroBuildAppLibrary)
 
   source_group("Generated" FILES
     ${SLICERAPPLIB_MOC_OUTPUT}
-    ${SLICERAPPLIB_QRC_SRCS}
     ${dynamicHeaders}
   )
 
@@ -199,7 +194,7 @@ macro(slicerMacroBuildAppLibrary)
   add_library(${lib_name}
     ${SLICERAPPLIB_SRCS}
     ${SLICERAPPLIB_MOC_OUTPUT}
-    ${SLICERAPPLIB_QRC_SRCS}
+    ${SLICERAPPLIB_RESOURCES}
     ${QM_OUTPUT_FILES}
     )
 
@@ -215,6 +210,7 @@ macro(slicerMacroBuildAppLibrary)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )

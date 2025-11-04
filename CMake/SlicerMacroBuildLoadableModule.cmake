@@ -140,22 +140,16 @@ macro(slicerMacroBuildLoadableModule)
   # Sources
   #-----------------------------------------------------------------------------
   set(LOADABLEMODULE_MOC_OUTPUT)
-  set(LOADABLEMODULE_QRC_SRCS)
   if(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
     message("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
   endif()
 
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(LOADABLEMODULE_MOC_OUTPUT ${LOADABLEMODULE_MOC_SRCS} ${_moc_options})
-    if(DEFINED LOADABLEMODULE_RESOURCES)
-      QT5_ADD_RESOURCES(LOADABLEMODULE_QRC_SRCS ${LOADABLEMODULE_RESOURCES})
-    endif()
-    QT5_ADD_RESOURCES(LOADABLEMODULE_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
 
   set_source_files_properties(
     ${LOADABLEMODULE_SRCS} # For now, let's prevent the module widget from being wrapped
     ${LOADABLEMODULE_MOC_OUTPUT}
-    ${LOADABLEMODULE_QRC_SRCS}
     WRAP_EXCLUDE
     )
 
@@ -170,7 +164,6 @@ macro(slicerMacroBuildLoadableModule)
 
   source_group("Generated" FILES
     ${LOADABLEMODULE_MOC_OUTPUT}
-    ${LOADABLEMODULE_QRC_SRCS}
     ${dynamicHeaders}
     )
 
@@ -202,7 +195,8 @@ macro(slicerMacroBuildLoadableModule)
   add_library(${lib_name}
     ${LOADABLEMODULE_SRCS}
     ${LOADABLEMODULE_MOC_OUTPUT}
-    ${LOADABLEMODULE_QRC_SRCS}
+    ${LOADABLEMODULE_RESOURCES}
+    ${Slicer_LOGOS_RESOURCE}
     ${QM_OUTPUT_FILES}
     )
 
@@ -218,6 +212,7 @@ macro(slicerMacroBuildLoadableModule)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )

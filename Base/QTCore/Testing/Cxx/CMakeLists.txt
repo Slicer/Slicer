@@ -113,8 +113,11 @@ if(BUILD_TESTING)
 
   set(KIT_TEST_TARGET_LIBRARIES ${KIT})
     QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
-    QT5_ADD_RESOURCES(Tests ${resources_dir}/${KIT}Testing.qrc)
     list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
+
+  list(APPEND Tests
+    ${resources_dir}/${KIT}Testing.qrc
+    )
 
   if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_TEST_TARGET_LIBRARIES
@@ -126,6 +129,11 @@ if(BUILD_TESTING)
   target_link_libraries(${KIT}CxxTests ${KIT_TEST_TARGET_LIBRARIES})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
+
+  # Configure CMake Qt automatic code generation
+  set_target_properties(${KIT}CxxTests PROPERTIES
+    AUTORCC ON
+    )
 
   #
   # Add Tests

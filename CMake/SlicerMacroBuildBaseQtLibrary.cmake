@@ -152,15 +152,9 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # --------------------------------------------------------------------------
     set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS} ${_moc_options})
-    if(DEFINED SLICERQTBASELIB_RESOURCES)
-      QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
-    endif()
-
-    QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
 
   set_source_files_properties(
     ${SLICERQTBASELIB_MOC_OUTPUT}
-    ${SLICERQTBASELIB_QRC_SRCS}
     WRAP_EXCLUDE
     )
 
@@ -175,7 +169,6 @@ macro(SlicerMacroBuildBaseQtLibrary)
 
   source_group("Generated" FILES
     ${SLICERQTBASELIB_MOC_OUTPUT}
-    ${SLICERQTBASELIB_QRC_SRCS}
     ${dynamicHeaders}
   )
 
@@ -209,7 +202,8 @@ macro(SlicerMacroBuildBaseQtLibrary)
   add_library(${lib_name}
     ${SLICERQTBASELIB_SRCS}
     ${SLICERQTBASELIB_MOC_OUTPUT}
-    ${SLICERQTBASELIB_QRC_SRCS}
+    ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc
+    ${SLICERQTBASELIB_RESOURCES}
     ${QM_OUTPUT_FILES}
     )
 
@@ -225,6 +219,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )
