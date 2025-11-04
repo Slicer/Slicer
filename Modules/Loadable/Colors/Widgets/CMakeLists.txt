@@ -28,17 +28,6 @@ set(${KIT}_SRCS
   qSlicerTerminologyEditorDialog.h
   )
 
-set(${KIT}_MOC_SRCS
-  qMRMLColorLegendDisplayNodeWidget.h
-  qMRMLColorListView.h
-  qMRMLColorPickerWidget.h
-  qMRMLColorTableView.h
-  qSlicerColorTableTerminologyDelegate.h
-  qSlicerTerminologyEditorWidget.h
-  qSlicerTerminologyEditorButton.h
-  qSlicerTerminologyEditorDialog.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLColorLegendDisplayNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
@@ -62,7 +51,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

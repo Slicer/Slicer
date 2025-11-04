@@ -18,13 +18,6 @@ set(${KIT}_SRCS
   qMRMLPlotChartPropertiesWidget.cxx
   )
 
-set(${KIT}_MOC_SRCS
-  qMRMLPlotSeriesPropertiesWidget.h
-  qMRMLPlotChartPropertiesWidget.h
-  qMRMLPlotChartPropertiesWidget_p.h
- qMRMLPlotSeriesPropertiesWidget_p.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLPlotSeriesPropertiesWidget.ui
   Resources/UI/qMRMLPlotChartPropertiesWidget.ui
@@ -43,7 +36,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

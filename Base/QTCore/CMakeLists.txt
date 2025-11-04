@@ -139,42 +139,6 @@ set_source_files_properties(
   WRAP_EXCLUDE
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  qSlicerAbstractCoreModule.h
-  qSlicerAbstractModuleFactoryManager.h
-  qSlicerCoreCommandOptions.h
-  qSlicerCoreApplication.h
-  qSlicerCoreIOManager.h
-  qSlicerFileReader.h
-  qSlicerFileWriter.h
-  qSlicerIO.h
-  qSlicerModuleFactoryManager.h
-  qSlicerModuleManager.h
-  qSlicerRelativePathMapper.h
-  qSlicerSceneBundleReader.h
-  )
-
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerExtensionDownloadTask.h
-    qSlicerExtensionsManagerModel.h
-    )
-endif()
-
-if(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerApplicationUpdateManager.h
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerScriptedFileReader.h
-    qSlicerScriptedFileWriter.h
-    )
-endif()
-
 # Additional Target libraries
 set(KIT_target_libraries
   ${QT_LIBRARIES}
@@ -253,11 +217,6 @@ if(Slicer_USE_PYTHONQT)
     qSlicerCorePythonManager.h
     )
 
-  # Headers that should run through moc
-  list(APPEND KIT_MOC_SRCS
-    qSlicerCorePythonManager.h
-    )
-
 endif()
 
 SlicerMacroBuildBaseQtLibrary(
@@ -265,7 +224,6 @@ SlicerMacroBuildBaseQtLibrary(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   WRAP_PYTHONQT

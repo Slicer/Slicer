@@ -24,10 +24,6 @@ set(APPLIB_SRCS
   qSlicerAppMainWindow_p.h
   )
 
-set(APPLIB_MOC_SRCS
-  qSlicerAppMainWindow.h
-  )
-
 set(APPLIB_UI_SRCS
   )
 
@@ -44,7 +40,6 @@ slicerMacroBuildAppLibrary(
   EXPORT_DIRECTIVE "Q_SLICER_APP_EXPORT"
   FOLDER ${${PROJECT_NAME}_FOLDER}
   SRCS ${APPLIB_SRCS}
-  MOC_SRCS ${APPLIB_MOC_SRCS}
   UI_SRCS ${APPLIB_UI_SRCS}
   RESOURCES ${APPLIB_RESOURCES}
   )

@@ -16,11 +16,6 @@ set(${KIT}_SRCS
   qMRMLUnitWidget.h
   )
 
-set(${KIT}_MOC_SRCS
-  qMRMLSettingsUnitWidget.h
-  qMRMLUnitWidget.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLSettingsUnitWidget.ui
   Resources/UI/qMRMLUnitWidget.ui
@@ -39,7 +34,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

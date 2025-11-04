@@ -22,15 +22,6 @@ set(${KIT}_SRCS
   qSlicerDTISliceDisplayWidget.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicerDiffusionTensorVolumeDisplayWidget.h
-  qSlicerDiffusionWeightedVolumeDisplayWidget.h
-  qSlicerLabelMapVolumeDisplayWidget.h
-  qSlicerScalarVolumeDisplayWidget.h
-  qSlicerVolumeDisplayWidget.h
-  qSlicerDTISliceDisplayWidget.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qSlicerDiffusionTensorVolumeDisplayWidget.ui
   Resources/UI/qSlicerDiffusionWeightedVolumeDisplayWidget.ui
@@ -53,7 +44,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

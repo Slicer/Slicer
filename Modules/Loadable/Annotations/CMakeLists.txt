@@ -31,11 +31,6 @@ set(MODULE_SRCS
   qSlicerAnnotationsModule.h
   )
 
-set(MODULE_MOC_SRCS
-  qSlicerAnnotationsModule.h
-  GUI/qSlicerAnnotationModuleSnapShotDialog.h
-  )
-
 set(MODULE_UI_SRCS
   )
 
@@ -56,7 +51,6 @@ slicerMacroBuildLoadableModule(
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}
-  MOC_SRCS ${MODULE_MOC_SRCS}
   UI_SRCS ${MODULE_UI_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   RESOURCES ${MODULE_RESOURCES}

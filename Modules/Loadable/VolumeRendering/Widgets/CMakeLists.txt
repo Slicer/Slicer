@@ -29,18 +29,6 @@ set(${KIT}_SRCS
   qSlicerGPUMemoryComboBox.h
   )
 
-set(${KIT}_MOC_SRCS
-  qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.h
-  qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.h
-  qSlicerMulti${MODULE_NAME}PropertiesWidget.h
-  qSlicerPresetComboBox.h
-  qSlicerPresetComboBox_p.h
-  qSlicer${MODULE_NAME}PropertiesWidget.h
-  qSlicer${MODULE_NAME}PresetComboBox.h
-  qMRMLVolumePropertyNodeWidget.h
-  qSlicerGPUMemoryComboBox.h
-  )
-
 set(${KIT}_UI_SRCS
   ../Resources/UI/qMRMLVolumePropertyNodeWidget.ui
   ../Resources/UI/qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.ui
@@ -63,7 +51,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

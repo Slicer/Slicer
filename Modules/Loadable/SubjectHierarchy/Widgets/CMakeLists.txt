@@ -55,31 +55,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-set(${KIT}_MOC_SRCS
-  qSlicerSubjectHierarchyPluginLogic.h
-  qSlicerSubjectHierarchyAbstractPlugin.h
-  qSlicerSubjectHierarchyPluginHandler.h
-  qSlicerSubjectHierarchyDefaultPlugin.h
-  qSlicerSubjectHierarchyCloneNodePlugin.h
-  qSlicerSubjectHierarchyParseLocalDataPlugin.h
-  qSlicerSubjectHierarchyRegisterPlugin.h
-  qSlicerSubjectHierarchyFolderPlugin.h
-  qSlicerSubjectHierarchyOpacityPlugin.h
-  qSlicerSubjectHierarchyViewContextMenuPlugin.h
-  qSlicerSubjectHierarchyVisibilityPlugin.h
-  qMRMLSubjectHierarchyTreeView.h
-  qMRMLSubjectHierarchyComboBox.h
-  qMRMLSubjectHierarchyModel.h
-  qMRMLSortFilterSubjectHierarchyProxyModel.h
-  qSlicerSubjectHierarchyExportPlugin.h
-  qSlicerSubjectHierarchyExpandToDepthPlugin.h
-  )
-if(Slicer_USE_PYTHONQT)
-  list(APPEND ${KIT}_MOC_SRCS
-    qSlicerSubjectHierarchyScriptedPlugin.h
-    )
-endif()
-
 set(${KIT}_UI_SRCS
   )
 
@@ -104,7 +79,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}

@@ -28,10 +28,6 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   )
 
-set(MODULE_MOC_SRCS
-  qSlicer${MODULE_NAME}Module.h
-  )
-
 set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
@@ -46,7 +42,6 @@ slicerMacroBuildLoadableModule(
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}
-  MOC_SRCS ${MODULE_MOC_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   # Important: remove NO_INSTALL option below when this template is used for implementing a new module.
   # Installation is disabled here because this template is used for testing custom markups in Slicer core

@@ -33,14 +33,6 @@ set(MODULE_SRCS
   qSlicerSceneWriter.h
   )
 
-set(MODULE_MOC_SRCS
-  qSlicer${MODULE_NAME}Module.h
-  qSlicer${MODULE_NAME}ModuleWidget.h
-  qSlicerSceneReader.h
-  qSlicerSceneIOOptionsWidget.h
-  qSlicerSceneWriter.h
-  )
-
 set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
   Resources/UI/qSlicerSceneIOOptionsWidget.ui
@@ -63,7 +55,6 @@ slicerMacroBuildLoadableModule(
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}
-  MOC_SRCS ${MODULE_MOC_SRCS}
   UI_SRCS ${MODULE_UI_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   RESOURCES ${MODULE_RESOURCES}

@@ -15,10 +15,6 @@ set(${KIT}_SRCS
   qMRMLMarkupsTestLineWidget.cxx
   )
 
-set(${KIT}_MOC_SRCS
-  qMRMLMarkupsTestLineWidget.h
-  )
-
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLMarkupsTestLineWidget.ui
   )
@@ -38,7 +34,6 @@ SlicerMacroBuildModuleWidgets(
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
   INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
   SRCS ${${KIT}_SRCS}
-  MOC_SRCS ${${KIT}_MOC_SRCS}
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}
