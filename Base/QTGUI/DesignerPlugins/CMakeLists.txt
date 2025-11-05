@@ -39,3 +39,6 @@ ctkMacroBuildQtDesignerPlugin(
   SRCS ${${KIT}_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )
+
+target_precompile_headers(${PROJECT_NAME} REUSE_FROM PrecompileQtCoreHeaders)
+target_precompile_headers(${PROJECT_NAME} REUSE_FROM PrecompileQtWidgetsHeaders)

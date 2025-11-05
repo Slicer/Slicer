@@ -365,6 +365,9 @@ if(MRML_USE_vtkTeem)
 endif()
 target_link_libraries(${lib_name} ${libs})
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
@@ -414,6 +417,8 @@ if(VTK_WRAP_PYTHON)
     KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
+  target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileItkHeaders)
+  target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileVtkHeaders)
   # Export target
   export(TARGETS ${lib_name}Python APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
   # Folder

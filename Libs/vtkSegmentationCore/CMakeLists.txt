@@ -113,6 +113,8 @@ include_directories( ${vtkSegmentationCore_INCLUDE_DIRS} )
 add_library(${PROJECT_NAME} ${vtkSegmentationCore_SRCS})
 target_link_libraries( ${PROJECT_NAME} ${vtkSegmentationCore_LIBS} )
 
+target_precompile_headers(${PROJECT_NAME} REUSE_FROM PrecompileVtkHeaders)
+
 if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND NOT WIN32)
   set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")
 endif()
@@ -178,6 +180,7 @@ if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    target_precompile_headers(${PROJECT_NAME}Python REUSE_FROM PrecompileVtkHeaders)
     if(TARGET ${PROJECT_NAME}Hierarchy)
       set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()

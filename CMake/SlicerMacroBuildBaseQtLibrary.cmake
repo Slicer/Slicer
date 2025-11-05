@@ -55,6 +55,7 @@
 macro(SlicerMacroBuildBaseQtLibrary)
   set(options
     WRAP_PYTHONQT
+    USE_PRECOMPILED_HEADERS
     )
   set(oneValueArgs
     NAME
@@ -225,6 +226,11 @@ macro(SlicerMacroBuildBaseQtLibrary)
 
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
+  if (SLICERQTBASELIB_USE_PRECOMPILED_HEADERS)
+    target_precompile_headers(${lib_name} REUSE_FROM PrecompileQtCoreHeaders)
+    target_precompile_headers(${lib_name} REUSE_FROM PrecompileQtWidgetsHeaders)
+  endif()
+
   # Apply user-defined properties to the library target.
   if(Slicer_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
@@ -271,6 +277,10 @@ macro(SlicerMacroBuildBaseQtLibrary)
       INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
       )
     set_target_properties(${lib_name}PythonQt PROPERTIES FOLDER "Core-Base")
+    if (SLICERQTBASELIB_USE_PRECOMPILED_HEADERS)
+      target_precompile_headers(${lib_name}PythonQt REUSE_FROM PrecompileQtCoreHeaders)
+      target_precompile_headers(${lib_name}PythonQt REUSE_FROM PrecompileQtWidgetsHeaders)
+    endif()
   endif()
 
   # --------------------------------------------------------------------------
