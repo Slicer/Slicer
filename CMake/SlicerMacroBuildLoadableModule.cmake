@@ -92,13 +92,20 @@ macro(slicerMacroBuildLoadableModule)
     set(${lib_name}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
   endif()
 
+  get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
   set(${lib_name}_INCLUDE_DIRS
     ${${lib_name}_SOURCE_DIR}
     ${${lib_name}_BINARY_DIR}
     # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
     #
     # By default CMake writes them to:
-    #   <AUTOGEN_BUILD_DIR>/include
+    #
+    #   - Single-config generators (Ninja/Makefiles):
+    #       <AUTOGEN_BUILD_DIR>/include
+    #
+    #   - Multi-config generators (VS, Xcode, Ninja Multi-Config):
+    #       <AUTOGEN_BUILD_DIR>/include_<CONFIG>
     #
     # where AUTOGEN_BUILD_DIR defaults to:
     #   <target-binary-dir>/<target-name>_autogen
@@ -106,7 +113,7 @@ macro(slicerMacroBuildLoadableModule)
     # References:
     # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
     # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
-    ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include$<$<BOOL:${_isMultiConfig}>:_$<CONFIG>>
     CACHE INTERNAL "" FORCE)
 
   include_directories(

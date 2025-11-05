@@ -69,6 +69,8 @@ macro(SlicerMacroBuildModuleQtLibrary)
   # --------------------------------------------------------------------------
   # Set <MODULEQTLIBRARY_NAME>_INCLUDE_DIRS
   # --------------------------------------------------------------------------
+  get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
   set(_include_dirs
     ${${MODULEQTLIBRARY_NAME}_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -76,7 +78,12 @@ macro(SlicerMacroBuildModuleQtLibrary)
     # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
     #
     # By default CMake writes them to:
-    #   <AUTOGEN_BUILD_DIR>/include
+    #
+    #   - Single-config generators (Ninja/Makefiles):
+    #       <AUTOGEN_BUILD_DIR>/include
+    #
+    #   - Multi-config generators (VS, Xcode, Ninja Multi-Config):
+    #       <AUTOGEN_BUILD_DIR>/include_<CONFIG>
     #
     # where AUTOGEN_BUILD_DIR defaults to:
     #   <target-binary-dir>/<target-name>_autogen
@@ -84,7 +91,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
     # References:
     # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
     # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
-    ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/${lib_name}_autogen/include$<$<BOOL:${_isMultiConfig}>:_$<CONFIG>>
     )
   # Since module developer may have already set the variable to some
   # specific values in the module CMakeLists.txt, we make sure to
