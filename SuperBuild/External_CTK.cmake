@@ -58,10 +58,17 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       )
   endif()
 
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DQt6_DIR:FILEPATH=${Qt6_DIR}
+      -DCTK_QT_VERSION:STRING=6
+      )
+  else()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DQt5_DIR:FILEPATH=${Qt5_DIR}
       -DCTK_QT_VERSION:STRING=5
       )
+  endif()
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY

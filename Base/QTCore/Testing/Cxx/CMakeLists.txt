@@ -89,7 +89,7 @@ if(BUILD_TESTING)
     )
 
   set(KIT_TEST_TARGET_LIBRARIES ${KIT})
-    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
+    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt${CTK_QT_VERSION}::Test)
 
   list(APPEND Tests
     ${resources_dir}/${KIT}Testing.qrc

@@ -1,5 +1,5 @@
 # Get root directory
-get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+get_property(_filepath TARGET "Qt${CTK_QT_VERSION}::Core" PROPERTY LOCATION_RELEASE)
 get_filename_component(_dir ${_filepath} PATH)
 if(APPLE)
   # "_dir" of the form "<qt_root_dir>/lib/QtCore.framework"

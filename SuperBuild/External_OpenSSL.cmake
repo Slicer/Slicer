@@ -43,11 +43,19 @@ endif()
 if(NOT DEFINED OPENSSL_LIBRARIES
    AND NOT (${_has_openssl_libraries}) AND NOT Slicer_USE_SYSTEM_${proj})
 
+  if(TARGET Qt5::Core)
+    set(_qt_version ${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH})
+  elseif(TARGET Qt6::Core)
+    set(_qt_version ${Qt6_VERSION_MAJOR}.${Qt6_VERSION_MINOR}.${Qt6_VERSION_PATCH})
+  else()
+    message(FATAL_ERROR "Failed to locate target Qt5::Core or Qt6::Core")
+  endif()
+
   #------------------------------------------------------------------------------
   if(UNIX)
     # Starting with Qt 5.12.4, official Qt binaries are build against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
-    if("${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}" VERSION_GREATER_EQUAL "5.12.4")
+    if("${_qt_version}" VERSION_GREATER_EQUAL "5.12.4")
       set(_default_version "1.1.1w")
     else()
       set(_default_version "1.0.2n")
@@ -196,7 +204,7 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
 
     # Starting with Qt 5.12.4, official Qt binaries are build against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
-    if("${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}" VERSION_GREATER_EQUAL "5.12.4")
+    if("${_qt_version}" VERSION_GREATER_EQUAL "5.12.4")
       set(_default_version "1.1.1g")
     else()
       set(_default_version "1.0.1h")
