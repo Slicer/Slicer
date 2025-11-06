@@ -1,6 +1,11 @@
 
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+  set(Slicer_QT_VERSION_MAJOR "${Qt6_VERSION_MAJOR}")
+  set(Slicer_QT_VERSION_MINOR "${Qt6_VERSION_MINOR}")
+else()
   set(Slicer_QT_VERSION_MAJOR "${Qt5_VERSION_MAJOR}")
   set(Slicer_QT_VERSION_MINOR "${Qt5_VERSION_MINOR}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Sanity checks

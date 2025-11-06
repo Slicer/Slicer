@@ -24,16 +24,32 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     QUIET
     )
 
-  ExternalProject_SetIfNotDefined(
-    Slicer_${proj}_GIT_TAG
-    "a2c2f83401eddc72f30a1a6dd6769eb17a46fd41"
-    QUIET
-    )
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    ExternalProject_SetIfNotDefined(
+      Slicer_${proj}_GIT_TAG
+      "9635b987dedfc3cb7c397baaf67bb00d640f5be6" # add-qt6-support
+      QUIET
+      )
+  else()
+    ExternalProject_SetIfNotDefined(
+      Slicer_${proj}_GIT_TAG
+      "a2c2f83401eddc72f30a1a6dd6769eb17a46fd41"
+      QUIET
+      )
+  endif()
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
-      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-        -DQt5_DIR:FILEPATH=${Qt5_DIR}
-      )
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DCTKAppLauncher_QT_VERSION:STRING=6
+      -DQt6_DIR:FILEPATH=${Qt6_DIR}
+    )
+  else()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DCTKAppLauncher_QT_VERSION:STRING=5
+      -DQt5_DIR:FILEPATH=${Qt5_DIR}
+    )
+  endif()
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)

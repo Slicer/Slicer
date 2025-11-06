@@ -199,6 +199,9 @@ if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
     # Windows and macOS
     set(_required_qt_version "5.15")
   endif()
+  if(DEFINED Qt6_DIR)
+    set(_required_qt_version "6.9")
+  endif()
   set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
 endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
@@ -672,16 +675,29 @@ endif()
       )
   endif()
 
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    list(APPEND Slicer_REQUIRED_QT_MODULES
+      Core5Compat
+      StateMachine
+      )
+  endif()
+
   # Add the Qt5X11Extras component for Linux systems
   # This component is needed for building VTK
-  if(UNIX AND NOT APPLE)
+  if(UNIX AND NOT APPLE AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "6")
     list(APPEND Slicer_REQUIRED_QT_MODULES X11Extras)
   endif()
 
-  find_package(Qt5 COMPONENTS Core QUIET)
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    find_package(Qt6 COMPONENTS Core QUIET)
+    set(_webengine_qt_component "WebEngineCore")
+  else()
+    find_package(Qt5 COMPONENTS Core QUIET)
+    set(_webengine_qt_component "WebEngine")
+  endif()
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES
-      WebEngine
+      ${_webengine_qt_component}
       WebEngineWidgets
       WebChannel
       )
@@ -704,7 +720,11 @@ list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
     if(lib MATCHES "^(LinguistTools)$")
       continue()
     endif()
-    list(APPEND QT_LIBRARIES Qt5::${lib})
+    if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+      list(APPEND QT_LIBRARIES Qt6::${lib})
+    else()
+      list(APPEND QT_LIBRARIES Qt5::${lib})
+    endif()
   endforeach()
 
 if(DEFINED Slicer_ADDITIONAL_REQUIRED_QT_MODULES)
@@ -723,9 +743,14 @@ set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}"
 # Qt
 #-----------------------------------------------------------------------------
 include(SlicerBlockFindQtAndCheckVersion)
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+  mark_as_superbuild(VARS Qt6_DIR LABELS "FIND_PACKAGE")
+  set(Slicer_HAVE_QT6 1)
+else()
   mark_as_superbuild(VARS Qt5_DIR LABELS "FIND_PACKAGE")
+  set(Slicer_HAVE_QT5 1)
+endif()
 
-set(Slicer_HAVE_QT5 1)
     set(Slicer_HAVE_WEBKIT_SUPPORT 0)
 
 #
@@ -737,6 +762,11 @@ set(Slicer_HAVE_QT5 1)
 # See https://issues.slicer.org/view.php?id=3574
 #
 if(NOT DEFINED Slicer_USE_SYSTEM_QT)
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+    set(_qt_dir_varname "Qt6_DIR")
+  else()
+    set(_qt_dir_varname "Qt5_DIR")
+  endif()
   foreach(_path IN ITEMS
       "/usr/lib/"
       "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/"
@@ -754,10 +784,11 @@ if(NOT DEFINED Slicer_USE_SYSTEM_QT)
       "/opt/lib"
       "/opt/local/lib"
       )
-    if("${Qt5_DIR}" MATCHES "^${_path}")
+    set(_qt_dir "${${_qt_dir_varname}}")
+    if("${_qt_dir}" MATCHES "^${_path}")
       set(Slicer_USE_SYSTEM_QT ON)
       message(STATUS "")
-      message(STATUS "Initializing Slicer_USE_SYSTEM_QT to ON (Qt5_DIR [${Qt5_DIR}] associated with a system location: ${_path})")
+      message(STATUS "Initializing Slicer_USE_SYSTEM_QT to ON (${_qt_dir_varname} [${_qt_dir}] associated with a system location: ${_path})")
       message(STATUS "")
       break()
     endif()
