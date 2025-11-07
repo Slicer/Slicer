@@ -124,10 +124,12 @@ public:
   {
     itkExceptionMacro("Only storage methods are implemented for InverseBSplineTransform");
   }
+#if !defined(ITK_LEGACY_REMOVE)
   void ComputeInverseJacobianWithRespectToPosition(const typename Superclass::InputPointType&, typename Superclass::JacobianType&) const override
   {
     itkExceptionMacro("Only storage methods are implemented for InverseBSplineTransform");
   }
+#endif
   void ComputeInverseJacobianWithRespectToPosition(const typename Superclass::InputPointType&, typename Superclass::InverseJacobianPositionType&) const override
   {
     itkExceptionMacro("Only storage methods are implemented for InverseBSplineTransform");
@@ -179,10 +181,12 @@ public:
   {
     itkExceptionMacro("Only storage methods are implemented for InverseDisplacementFieldTransform");
   }
+#if !defined(ITK_LEGACY_REMOVE)
   void ComputeInverseJacobianWithRespectToPosition(const typename Superclass::InputPointType&, typename Superclass::JacobianType&) const override
   {
     itkExceptionMacro("Only storage methods are implemented for InverseDisplacementFieldTransform");
   }
+#endif
   void ComputeInverseJacobianWithRespectToPosition(const typename Superclass::InputPointType&, typename Superclass::InverseJacobianPositionType&) const override
   {
     itkExceptionMacro("Only storage methods are implemented for InverseDisplacementFieldTransform");

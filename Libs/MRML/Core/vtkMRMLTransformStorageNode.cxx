@@ -169,7 +169,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* 
   }
 
   // For now, grab the first two transforms from the file.
-  TransformListType* transforms = reader->GetTransformList();
+  const TransformListType* transforms = reader->GetTransformList();
   if (transforms->size() == 0)
   {
     vtkErrorToMessageCollectionMacro(
@@ -182,7 +182,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* 
                                        "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
                                        "More than two transform in the file: '" << fullName << "'. Using only the first two transforms.");
   }
-  TransformListType::iterator it = transforms->begin();
+  TransformListType::const_iterator it = transforms->begin();
   TransformType::Pointer transform = (*it);
   if (!transform)
   {
@@ -385,7 +385,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     return nullptr;
   }
 
-  TransformListType* transforms = reader->GetTransformList();
+  const TransformListType* transforms = reader->GetTransformList();
   if (transforms == nullptr || transforms->empty())
   {
     vtkErrorToMessageCollectionWithObjectMacro(
