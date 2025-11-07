@@ -50,7 +50,7 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   # once ITKv4 is not supported, then we can simply replace SimpleFastMutexLock with std::mutex
   # the use the DeprecatedLib allows building without many preprocessor conditionals
   # for ITKv5/ITKv4 differences.
-  ITKDeprecated
+  # ITKDeprecated
   )
 find_package(ITK 5.0 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
