@@ -1120,6 +1120,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(vtkMRMLSe
     }
   }
 
+  if (!colorTableNode->GetLookupTable())
+  {
+    vtkNew<vtkLookupTable> lookupTable;
+    colorTableNode->SetAndObserveLookupTable(lookupTable);
+  }
+
   colorTableNode->SetNumberOfColors(numberOfColors);
   colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
