@@ -653,9 +653,15 @@ endif()
     Network OpenGL
     PrintSupport
     UiTools #no dll
-    Xml XmlPatterns
+    Xml
     Svg Sql
     )
+
+  if(Slicer_USE_QtTesting)
+    list(APPEND Slicer_REQUIRED_QT_MODULES
+      XmlPatterns
+      )
+  endif()
 
   if(Slicer_BUILD_MULTIMEDIA_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES
