@@ -858,6 +858,15 @@ set(CMAKE_MODULE_PATH
 #-----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
 
+# Ensure response files are used earlier to avoid "name too long" errors
+# with Automatic MOC and UIC for large projects like qSlicerBaseQTCore,
+# which can generate very long command lines, by limiting AUTOGEN command
+# line length. Use 16000 as a conservative value (notably on Windows,
+# where practical limits are below 32k).
+if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.29.0")
+  set(CMAKE_AUTOGEN_COMMAND_LINE_LENGTH_MAX "16000")
+endif()
+
 #-----------------------------------------------------------------------------
 # Folders
 #-----------------------------------------------------------------------------
