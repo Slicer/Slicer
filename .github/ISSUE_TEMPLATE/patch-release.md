@@ -9,7 +9,7 @@ assignees: ''
 
 <!-- Before submitting this issue, replace X.Y.Z and YYYY-MM-DD with the corresponding values in both the title and content -->
 
-_Based on the state of the relevant sub-tasks, consider updating the issue description changing `:question:` (:question:)  into either `:hourglass:` (:hourglass:) or `:heavy_check_mark:` (:heavy_check_mark:)._
+_Based on the state of the relevant sub-tasks, consider updating the issue description changing `:question:` (:question:)  into either `:hourglass_flowing_sand:` (:hourglass_flowing_sand:) or `:heavy_check_mark:` (:heavy_check_mark:)._
 
 --------------------------------------
 
@@ -44,7 +44,12 @@ _These steps will take place in the week following **Installers Release** steps_
   * macOS: :question:
   * Windows: :question:
 * [ ] In the `X.Y.Z` release folder, update each `Slicer_<os>_<arch>_<revision>` items changing the `pre_release` metadata from `true` to `false`.
+  * Linux: :question:
+  * macOS: :question:
+  * Windows: :question:
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionstats-module) `ExtensionStats` module.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-external-websites) external websites.
-* [ ] Finalize Slicer Announcement.
+* [ ] [Generate release notes](https://github.com/Slicer/Slicer/wiki/Generating-Release-Notes) and prepare Discourse content.
+* [ ] Finalize Slicer Announcement and release notes in HackMD (or equivalent shared document).
+* [ ] Publish Slicer Announcement & release notes on Discourse.
 * [ ] Unpin this issue.

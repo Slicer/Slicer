@@ -9,7 +9,7 @@ assignees: ''
 
 <!-- Before submitting this issue, replace X.Y and YYYY-MM-DD with the corresponding values in both the title and content -->
 
-_Based on the state of the relevant sub-tasks, consider updating the issue description changing `:question:` (:question:)  into either `:hourglass:` (:hourglass:) or `:heavy_check_mark:` (:heavy_check_mark:)._
+_Based on the state of the relevant sub-tasks, consider updating the issue description changing `:question:` (:question:)  into either `:hourglass_flowing_sand:` (:hourglass_flowing_sand:) or `:heavy_check_mark:` (:heavy_check_mark:)._
 
 --------------------------------------
 
@@ -27,7 +27,7 @@ Checklist **Installers Release**:
 * [ ] [Create](https://github.com/Slicer/Slicer/wiki/Release-Process#create-maintenance-branch) maintenance branch called `X.Y` based on the first tag of the `X.Y` series.
 * [ ] Update readthedocs.
   * [Activate](https://readthedocs.org/projects/slicer/versions/) the build of the `X.Y` maintenance branch in readthedocs.
-  * Add a [Redirect](https://readthedocs.org/dashboard/slicer/redirects/) of type _Exact Redirects_ from `/en/vX.Y$rest` to `/en/X.Y`.
+  * Add a [Redirect](https://readthedocs.org/dashboard/slicer/redirects/) of type _Exact Redirects_ from `/en/vX.Y*` to `/en/X.Y:splat`.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-release-scripts) release scripts.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionsindex) ExtensionsIndex by creating the `X.Y` branch.
 * [ ] Update CDash: Add `Extensions-X.Y-Nightly` group to https://slicer.cdash.org/index.php?project=SlicerStable.
@@ -53,9 +53,13 @@ _These steps will take place in the week following **Installers Release** steps_
   * macOS: :question:
   * Windows: :question:
 * [ ] In the `X.Y.0` release folder, update each `Slicer_<os>_<arch>_<revision>` items changing the `pre_release` metadata from `true` to `false`.
+  * Linux: :question:
+  * macOS: :question:
+  * Windows: :question:
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-external-websites) external websites.
 * [ ] [Update](https://github.com/Slicer/Slicer/wiki/Release-Process#update-extensionstats-module) `ExtensionStats` module.
-* [ ] Finalize Slicer Announcement.
-* [ ] Publish Slicer Announcement & update discourse (draft [here](https://drive.google.com/drive/u/0/folders/1ZN1iFUHrGvqWHtoH_qlNUsZWbxXwsAs-)).
+* [ ] [Generate release notes](https://github.com/Slicer/Slicer/wiki/Generating-Release-Notes) and prepare Discourse content.
+* [ ] Finalize Slicer Announcement and release notes in HackMD (or equivalent shared document).
+* [ ] Publish Slicer Announcement & release notes on Discourse.
 * [ ] Re-target unresolved GitHub issues.
 * [ ] Unpin this issue.
