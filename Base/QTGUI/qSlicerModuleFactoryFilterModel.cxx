@@ -21,6 +21,7 @@
 // Qt includes
 #include <QBrush>
 #include <QDebug>
+#include <QIODevice>
 #include <QMimeData>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>

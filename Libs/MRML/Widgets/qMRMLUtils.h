@@ -22,6 +22,7 @@
 #define __qMRMLUtils_h
 
 /// Qt includes
+#include <QObject>
 #include <QString>
 #include <QVector>
 #include <QIcon>

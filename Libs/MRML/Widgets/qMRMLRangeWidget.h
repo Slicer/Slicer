@@ -26,12 +26,14 @@
 #include <ctkRangeSlider.h>
 #include <ctkRangeWidget.h>
 
+// MRML includes
+#include "vtkMRMLScene.h"
+
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLRangeSliderPrivate;
 class qMRMLSpinBox;
-class vtkMRMLScene;
 
 /// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
 /// It adds QSpinBoxes (in a menu) for controlling the range of the values
