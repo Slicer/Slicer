@@ -87,6 +87,11 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.dicomVisualBrowser.seriesRetrieved.connect(self.onSeriesRetrieved)
         self.dicomVisualBrowser.connect("sendRequested(QStringList)", self.onSend)
 
+        if self.settings.value("DICOM/LastImportDirectory") is not None:
+            lastImportDirectory = self.settings.value("DICOM/LastImportDirectory")
+            if os.path.exists(lastImportDirectory):
+                self.changeDialogDirectory(lastImportDirectory)
+
     def onSeriesRetrieved(self, seriesInstanceUIDs):
         seriesList = [str(seriesInstanceUID) for seriesInstanceUID in seriesInstanceUIDs]
         if seriesList is None or not seriesList:
@@ -279,6 +284,15 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         signals during the same operation, so we collapse them
         into a single check for compatible extensions.
         """
+        if self.useExpertimentalVisualDICOMBrowser:
+            browserUsed = self.dicomVisualBrowser
+        else:
+            browserUsed = self.dicomBrowser
+
+        newDirectory = browserUsed.importDialog().directory().path()
+        self.settings.setValue("DICOM/LastImportDirectory", newDirectory)
+        self.changeDialogDirectory(newDirectory)
+
         if not hasattr(slicer.app, "extensionsManagerModel"):
             # Slicer may not be built with extensions manager support
             return
@@ -664,6 +678,9 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if not self.browserPersistent:
             self.close()
 
+    def changeDialogDirectory(self, directory):
+        self.dicomVisualBrowser.importDialog().setDirectory(directory)
+        self.dicomBrowser.importDialog().setDirectory(directory)
 
 class DICOMReferencesDialog(qt.QMessageBox):
     WINDOW_TITLE = _("Referenced datasets found")
