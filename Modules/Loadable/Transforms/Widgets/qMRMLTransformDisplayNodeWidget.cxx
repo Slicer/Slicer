@@ -24,6 +24,10 @@
 #include "qMRMLTransformDisplayNodeWidget.h"
 #include "ui_qMRMLTransformDisplayNodeWidget.h"
 
+// Qt includes
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
+
 // MRML includes
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -186,8 +190,9 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GridShowNonWarped, SIGNAL(toggled(bool)), q, SLOT(setGridShowNonWarped(bool)));
 
   // Contour Parameters
-  QRegExp rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
-  this->ContourLevelsMm->setValidator(new QRegExpValidator(rx, q));
+  QRegularExpression rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
+  this->ContourLevelsMm->setValidator(new QRegularExpressionValidator(rx, q));
+
   QObject::connect(this->ContourLevelsMm, SIGNAL(textChanged(QString)), q, SLOT(setContourLevelsMm(QString)));
   QObject::connect(this->ContourResolutionMm, SIGNAL(valueChanged(double)), q, SLOT(setContourResolutionMm(double)));
   QObject::connect(this->ContourOpacityPercent, SIGNAL(valueChanged(double)), q, SLOT(setContourOpacityPercent(double)));

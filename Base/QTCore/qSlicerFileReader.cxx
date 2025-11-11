@@ -20,6 +20,9 @@
 
 /// Qt includes
 #include <QFileInfo>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+# include <QRegularExpression>
+#endif
 
 // CTK includes
 #include <ctkUtils.h>
@@ -92,9 +95,17 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
   {
     for (QString extension : ctk::nameFilterToExtensions(nameFilter))
     {
+      // QRegularExpression::wildcardToRegularExpression could be used from Qt 5.12, but its behavior
+      // slightly changes across Qt5 versions, so stick to QRegExp for Qt5 to keep things simple.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      QRegularExpression regExp = QRegularExpression::fromWildcard(extension, Qt::CaseInsensitive);
+      Q_ASSERT(regExp.isValid());
+      if (regExp.match(file.fileName()).hasMatch())
+#else
       QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());
       if (regExp.exactMatch(file.absoluteFilePath()))
+#endif
       {
         extension.remove('*'); // wildcard does not count, that's not a specific match
         int matchedExtensionLength = extension.size();

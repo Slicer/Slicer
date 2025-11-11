@@ -23,6 +23,10 @@
 #include <QDialog>
 #include <QKeyEvent>
 #include <QStringListModel>
+#include <QRegularExpression>
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+# include <QRegExp>
+#endif
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
@@ -188,8 +192,14 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
 void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
 {
   Q_D(qMRMLColorPickerWidget);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+  QRegularExpression regExp(colorText, QRegularExpression::CaseInsensitiveOption);
+  d->MRMLColorListView->sortFilterProxyModel()->setFilterRegularExpression(regExp);
+#else
   QRegExp regExp(colorText, Qt::CaseInsensitive, QRegExp::RegExp);
   d->MRMLColorListView->sortFilterProxyModel()->setFilterRegExp(regExp);
+#endif
 
   QModelIndex newCurrentIndex;
 

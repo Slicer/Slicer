@@ -26,6 +26,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QRegularExpression>
 #include <QTimer>
 #include <QTimerEvent>
 #include <QToolButton>
@@ -59,7 +60,7 @@ namespace
 QString jsQuote(QString text)
 {
   // NOTE: This assumes that 'text' does not contain '\r' or other control characters
-  static QRegExp reSpecialCharacters("([\'\"\\\\])");
+  static QRegularExpression reSpecialCharacters("([\'\"\\\\])");
   text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
   return QString("\'%1\'").arg(text);
 }
@@ -476,11 +477,7 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
     return;
   }
   // Split along whitespaces and common separator characters
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QStringList newList = newStr.split(QRegExp("\\s+|,|;"), Qt::SkipEmptyParts);
-#else
-  QStringList newList = newStr.split(QRegExp("\\s+|,|;"), QString::SkipEmptyParts);
-#endif
+  QStringList newList = newStr.split(QRegularExpression("\\s+|,|;"), Qt::SkipEmptyParts);
   newList.removeDuplicates();
 
   // Update bookmarks
