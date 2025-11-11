@@ -181,7 +181,6 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
 {
   static const unsigned int D = VTKDimension;
   typedef itk::MatrixOffsetTransformBase<T, D, D> LinearTransformType;
-  typedef itk::ScaleTransform<T, D> ScaleTransformType;
   typedef itk::TranslationTransform<T, D> TranslateTransformType;
 
   vtkSmartPointer<vtkMatrix4x4> transformVtk_LPS = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -192,7 +191,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
 
   // Linear transform of doubles or floats, dimension 3
 
-  // ITKIO transform libraries are build as shared and dynamic_cast
+  // ITKIO transform libraries are built as shared and dynamic_cast
   // can NOT be used with templated classes that are
   // instantiated in a translation unit different than the one where they are
   // defined. It will work only if the classes are explicitly instantiated
@@ -248,18 +247,8 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
     convertedToVtkMatrix = true;
   }
 
-  // Scale transform of doubles or floats, dimension 3
-  if (itkTransformClassName == "ScaleTransform")
-  {
-    typename ScaleTransformType::Pointer dst = static_cast<ScaleTransformType*>(transformItk_LPS.GetPointer());
-    convertedToVtkMatrix = true;
-    for (unsigned int i = 0; i < D; i++)
-    {
-      transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
-    }
-  }
-
   // Translate transform of doubles or floats, dimension 3
+  // Separated out as it does not inherit from MatrixOffsetTransformBase
   if (itkTransformClassName == "TranslationTransform")
   {
     typename TranslateTransformType::Pointer dtt = static_cast<TranslateTransformType*>(transformItk_LPS.GetPointer());
@@ -534,11 +523,11 @@ bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Generic(vtkObject* loggerOb
 
   bool inverse = false;
   // inverse class is derived from forward class, so it has to be checked first
-  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineDeformableTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineDeformableTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
   {
     inverse = true;
   }
-  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineDeformableTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineDeformableTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
   {
     inverse = false;
   }
@@ -606,11 +595,11 @@ bool vtkITKTransformConverter::SetVTKBSplineFromITKv4Generic(vtkObject* loggerOb
 {
   bool inverse = false;
   // inverse class is derived from forward class, so it has to be checked first
-  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
   {
     inverse = true;
   }
-  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
   {
     inverse = false;
   }
@@ -937,19 +926,6 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* log
   typedef itk::DisplacementFieldTransform<T, 3> DisplacementFieldTransformType;
   typedef itk::InverseDisplacementFieldTransform<T, 3> InverseDisplacementFieldTransformType;
 
-  if (!transformItk_LPS)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK oriented grid transform from ITK: the input transform is nullptr");
-    return false;
-  }
-  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
-  {
-    vtkErrorWithObjectMacro(loggerObject,
-                            "Unsupported number of dimensions in oriented grid transform file (expected = " << VTKDimension
-                                                                                                            << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
-    return false;
-  }
-
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
   bool inverse = false;
@@ -1056,7 +1032,6 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
 
   double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionConstIterator<GridImageType> inputIt(gridImage_Lps, gridImage_Lps->GetRequestedRegion());
-  inputIt.GoToBegin();
   while (!inputIt.IsAtEnd())
   {
     typename GridImageType::PixelType displacementVectorLps = inputIt.Get();
@@ -1192,26 +1167,6 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
 {
   typedef itk::ThinPlateSplineKernelTransform<T, 3> ThinPlateSplineTransformType;
   typedef itk::InverseThinPlateSplineKernelTransform<T, 3> InverseThinPlateSplineTransformType;
-
-  if (transformVtk_RAS == nullptr)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the output vtkThinPlateSplineTransform is invalid");
-    return false;
-  }
-
-  if (!transformItk_LPS)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the input transform is nullptr");
-    return false;
-  }
-
-  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
-  {
-    vtkErrorWithObjectMacro(
-      loggerObject,
-      "Unsupported number of dimensions in thin-plate spline transform file (expected = " << VTKDimension << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
-    return false;
-  }
 
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
@@ -1369,6 +1324,35 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
                                                                           double center_LocalRAS[3] /*=nullptr*/)
 {
   bool conversionSuccess = false;
+
+  // Perform these sanity checks early
+  if (!transformItk)
+  {
+    vtkErrorWithObjectMacro(loggerObject, "CreateVTKTransformFromITK failed: nullptr provided");
+    return nullptr;
+  }
+  const unsigned itkDim = transformItk->GetOutputSpaceDimension();
+  if (itkDim != transformItk->GetInputSpaceDimension())
+  {
+    vtkErrorWithObjectMacro(loggerObject,
+                            "We do not support transforms with different number of input and output dimensions, " << "input dimension = " << transformItk->GetInputSpaceDimension()
+                                                                                                                  << ", output dimension = " << itkDim << ")");
+    return nullptr;
+  }
+  if (itkDim < 2 || itkDim > 3) // do we need to support 4D transforms?
+  {
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported transform dimension: " << itkDim);
+    return nullptr;
+  }
+
+  std::string itkTransformClassName = transformItk->GetNameOfClass();
+
+  // Composite Transform
+  if (itkTransformClassName == "CompositeTransform")
+  {
+    // Composition is handled by the caller (vtkMRMLTransformStorageNode)
+    return nullptr;
+  }
 
   // Linear
   vtkNew<vtkMatrix4x4> transformMatrixVtk;
