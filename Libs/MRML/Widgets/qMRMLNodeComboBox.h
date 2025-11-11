@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QComboBox>
+#include <QStringList>
 
 // qMRML includes
 #include "qMRMLSortFilterProxyModel.h"

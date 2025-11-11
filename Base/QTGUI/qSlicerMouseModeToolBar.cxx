@@ -19,9 +19,10 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QActionGroup>
 #include <QDebug>
-#include <QToolButton>
 #include <QMainWindow>
+#include <QToolButton>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>

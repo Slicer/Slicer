@@ -56,6 +56,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QActionGroup>
 #include <QDebug>
 #include <QSettings>
 #include <QStandardItem>
