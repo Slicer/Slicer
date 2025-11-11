@@ -22,7 +22,11 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDesktopWidget>
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  #include <QDesktopWidget>
+#else
+  #include <QScreen>
+#endif
 #include <QDir>
 #include <QTimer>
 #ifdef Slicer_USE_PYTHONQT
@@ -180,7 +184,11 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest(int argc, char* argv[])
   // If the element is in a form layout, QFormLayout::layoutFieldGrowthPolicy
   // might need to be set to AllNonFixedFieldsGrow.
   // All those changes can be set from Qt Designer.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  const int desktopWidth = QApplication::primaryScreen()->size().width();
+#else
   const int desktopWidth = QApplication::desktop()->width();
+#endif
 
   // Compute actual allowed widget size. Absolute pixel value works for most
   // legacy systems and provides backward compatibility.

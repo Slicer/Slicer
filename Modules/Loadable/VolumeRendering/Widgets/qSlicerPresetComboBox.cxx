@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QListView>
 #include <QScreen>
 #include <QScrollBar>
