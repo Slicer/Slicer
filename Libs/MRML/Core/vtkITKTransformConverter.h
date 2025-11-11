@@ -97,6 +97,8 @@ public:
 
 protected:
   template <typename T>
+  static typename itk::AffineTransform<T, 3>::Pointer ConvertITKLinearTransformFrom2Dto3D(typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
+  template <typename T>
   static bool SetVTKLinearTransformFromITK(vtkObject* loggerObject,
                                            vtkMatrix4x4* transformVtk_RAS,
                                            typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS,
@@ -174,6 +176,58 @@ void vtkITKTransformConverter::RegisterInverseTransformTypes()
 
 //----------------------------------------------------------------------------
 template <typename T>
+typename itk::AffineTransform<T, 3>::Pointer vtkITKTransformConverter::ConvertITKLinearTransformFrom2Dto3D(typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS)
+{
+  constexpr unsigned Dimension = VTKDimension;
+  using Affine3D = itk::AffineTransform<T, 3>;
+  using LinearTransformType = itk::MatrixOffsetTransformBase<T, 2, 2>;
+
+  typename LinearTransformType::ConstPointer t2d = dynamic_cast<const LinearTransformType*>(transformItk_LPS.GetPointer());
+  assert(t2d != nullptr);
+
+  // convert into 3D affine which Slicer can handle
+  typename Affine3D::MatrixType m;
+  m.SetIdentity();
+  typename Affine3D::TranslationType t;
+  t.Fill(0);
+  typename Affine3D::InputPointType c;
+  c.Fill(0);
+  for (unsigned int i = 0; i < 2; i++)
+  {
+    for (unsigned int j = 0; j < 2; j++)
+    {
+      m[i][j] = t2d->GetMatrix()(i, j);
+    }
+    t[i] = t2d->GetTranslation()[i];
+    c[i] = t2d->GetCenter()[i];
+  }
+
+  // compute scale for Z direction
+  itk::Vector<T, Dimension> directionCosine{};
+  directionCosine[0] = m[0][0];
+  directionCosine[1] = m[0][1];
+  auto scaleX = directionCosine.GetNorm();
+  directionCosine[0] = m[1][0];
+  directionCosine[1] = m[1][1];
+  auto scaleY = directionCosine.GetNorm();
+  double scaleZ = std::sqrt(scaleX * scaleY); // geometric mean
+  m(2, 2) = scaleZ;
+  auto det = vnl_determinant(m.GetVnlMatrix());
+  if (det < 0)
+  {
+    m(2, 2) = -scaleZ; // make right-handed coordinate system
+  }
+  assert(vnl_determinant(m.GetVnlMatrix()) >= 0);
+
+  typename Affine3D::Pointer aTr = Affine3D::New();
+  aTr->SetCenter(c);
+  aTr->SetMatrix(m);
+  aTr->SetTranslation(t);
+  return aTr;
+}
+
+//----------------------------------------------------------------------------
+template <typename T>
 bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerObject*/,
                                                             vtkMatrix4x4* transformVtk_RAS,
                                                             typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS,
@@ -181,18 +235,18 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
 {
   static const unsigned int D = VTKDimension;
   typedef itk::MatrixOffsetTransformBase<T, D, D> LinearTransformType;
-  typedef itk::ScaleTransform<T, D> ScaleTransformType;
   typedef itk::TranslationTransform<T, D> TranslateTransformType;
 
   vtkSmartPointer<vtkMatrix4x4> transformVtk_LPS = vtkSmartPointer<vtkMatrix4x4>::New();
+  const unsigned itkDim = transformItk_LPS->GetOutputSpaceDimension();
 
   bool convertedToVtkMatrix = false;
 
   std::string itkTransformClassName = transformItk_LPS->GetNameOfClass();
 
-  // Linear transform of doubles or floats, dimension 3
+  // Linear transform of doubles or floats, dimension 2 or 3
 
-  // ITKIO transform libraries are build as shared and dynamic_cast
+  // ITKIO transform libraries are built as shared and dynamic_cast
   // can NOT be used with templated classes that are
   // instantiated in a translation unit different than the one where they are
   // defined. It will work only if the classes are explicitly instantiated
@@ -221,7 +275,16 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
       itkTransformClassName == "ScaleTransform" ||                          //
       itkTransformClassName == "ScaleLogarithmicTransform")
   {
-    typename LinearTransformType::Pointer dlt = static_cast<LinearTransformType*>(transformItk_LPS.GetPointer());
+    typename LinearTransformType::Pointer dlt;
+    if (itkDim == 2)
+    {
+      dlt = ConvertITKLinearTransformFrom2Dto3D<T>(transformItk_LPS);
+    }
+    else
+    {
+      dlt = static_cast<LinearTransformType*>(transformItk_LPS.GetPointer());
+    }
+
     convertedToVtkMatrix = true;
     for (unsigned int i = 0; i < D; i++)
     {
@@ -241,33 +304,60 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
     }
   }
 
-  // Identity transform of doubles or floats, dimension 3
+  // Identity transform of doubles or floats, any dimension
   if (itkTransformClassName == "IdentityTransform")
   {
     // nothing to do, matrix is already the identity
     convertedToVtkMatrix = true;
   }
 
-  // Scale transform of doubles or floats, dimension 3
+  // Scale transform of doubles or floats, dimension 2 or 3
   if (itkTransformClassName == "ScaleTransform")
   {
-    typename ScaleTransformType::Pointer dst = static_cast<ScaleTransformType*>(transformItk_LPS.GetPointer());
-    convertedToVtkMatrix = true;
-    for (unsigned int i = 0; i < D; i++)
+    if (itkDim == 2)
     {
-      transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
+      using Scale2DTransformType = itk::ScaleTransform<T, 2>;
+      typename Scale2DTransformType::Pointer dst = static_cast<Scale2DTransformType*>(transformItk_LPS.GetPointer());
+      for (unsigned int i = 0; i < 2; i++)
+      {
+        transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
+      }
+      double scaleZ = std::sqrt(dst->GetScale()[0] * dst->GetScale()[1]); // geometric mean
+      transformVtk_LPS->SetElement(2, 2, scaleZ);
     }
+    else
+    {
+      typename ScaleTransformType::Pointer dst = static_cast<ScaleTransformType*>(transformItk_LPS.GetPointer());
+      for (unsigned int i = 0; i < D; i++)
+      {
+        transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
+      }
+    }
+    convertedToVtkMatrix = true;
   }
 
-  // Translate transform of doubles or floats, dimension 3
+  // Translate transform of doubles or floats, dimension 2 or 3
   if (itkTransformClassName == "TranslationTransform")
   {
-    typename TranslateTransformType::Pointer dtt = static_cast<TranslateTransformType*>(transformItk_LPS.GetPointer());
-    convertedToVtkMatrix = true;
-    for (unsigned int i = 0; i < D; i++)
+    if (itkDim == 2)
     {
-      transformVtk_LPS->SetElement(i, D, dtt->GetOffset()[i]);
+      using Translate2DTransformType = itk::TranslationTransform<T, 2>;
+      typename Translate2DTransformType::Pointer dtt = static_cast<Translate2DTransformType*>(transformItk_LPS.GetPointer());
+      for (unsigned int i = 0; i < 2; i++)
+      {
+        transformVtk_LPS->SetElement(i, D, dtt->GetOffset()[i]);
+      }
+      // third element remains zero
     }
+    else
+    {
+      typename TranslateTransformType::Pointer dtt = static_cast<TranslateTransformType*>(transformItk_LPS.GetPointer());
+      for (unsigned int i = 0; i < D; i++)
+      {
+        transformVtk_LPS->SetElement(i, D, dtt->GetOffset()[i]);
+      }
+    }
+    convertedToVtkMatrix = true;
   }
 
   // Convert from LPS (ITK) to RAS (Slicer)
@@ -1369,6 +1459,18 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
                                                                           double center_LocalRAS[3] /*=nullptr*/)
 {
   bool conversionSuccess = false;
+
+  // Perform this dimension check early
+  const unsigned itkDim = transformItk->GetOutputSpaceDimension();
+  assert(itkDim == transformItk->GetInputSpaceDimension()); // do we support these asymmetric transforms?
+  if (itkDim != VTKDimension)
+  {
+    if (itkDim < 2 || itkDim > 3) // do we need to support 4D transforms?
+    {
+      vtkErrorWithObjectMacro(loggerObject, "Unsupported transform dimension: " << itkDim);
+      return nullptr;
+    }
+  }
 
   // Linear
   vtkNew<vtkMatrix4x4> transformMatrixVtk;
