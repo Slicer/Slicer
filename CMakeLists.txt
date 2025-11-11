@@ -207,6 +207,17 @@ endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 
 #-----------------------------------------------------------------------------
+# QtTesting compatibility check
+#-----------------------------------------------------------------------------
+if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+  if(Slicer_USE_QtTesting)
+    message(WARNING "QtTesting is not yet compatible with Qt 6. Forcing Slicer_USE_QtTesting to OFF. "
+                    "Please review the state of https://github.com/Slicer/Slicer/issues/8839")
+  endif()
+  set(Slicer_USE_QtTesting OFF CACHE BOOL "Integrate QtTesting framework into Slicer." FORCE)
+endif()
+
+#-----------------------------------------------------------------------------
 # Python requirements
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_PYTHON_VERSION)
