@@ -26,6 +26,11 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+#else
+# include <QRegExp>
+#endif
 #include <QTimer>
 #include <QTimerEvent>
 #include <QToolButton>
@@ -59,8 +64,13 @@ namespace
 QString jsQuote(QString text)
 {
   // NOTE: This assumes that 'text' does not contain '\r' or other control characters
+# if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  static QRegularExpression reSpecialCharacters("([\'\"\\\\])");
+  text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
+# else
   static QRegExp reSpecialCharacters("([\'\"\\\\])");
   text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
+# endif
   return QString("\'%1\'").arg(text);
 }
 #endif
@@ -476,10 +486,18 @@ void qSlicerExtensionsManagerWidget::onEditBookmarksTriggered()
     return;
   }
   // Split along whitespaces and common separator characters
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+# if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList newList = newStr.split(QRegularExpression("\\s+|,|;"), Qt::SkipEmptyParts);
+# else
   QStringList newList = newStr.split(QRegExp("\\s+|,|;"), Qt::SkipEmptyParts);
+# endif
 #else
+# if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList newList = newStr.split(QRegularExpression("\\s+|,|;"), QString::SkipEmptyParts);
+# else
   QStringList newList = newStr.split(QRegExp("\\s+|,|;"), QString::SkipEmptyParts);
+# endif
 #endif
   newList.removeDuplicates();
 

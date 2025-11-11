@@ -29,6 +29,11 @@
 #include <QObject>
 #include <QString>
 #include <QVariantMap>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+#else
+# include <QRegExp>
+#endif
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -105,7 +110,11 @@ public:
   /// extension. Example of supported extensions:
   /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
   /// An empty extension or "*" means any filename (or directory) is valid
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  Q_INVOKABLE static QRegularExpression fileNameRegularExpression(const QString& extension = QString());
+#else
   Q_INVOKABLE static QRegExp fileNameRegExp(const QString& extension = QString());
+#endif
 
   /// Remove characters that are likely to cause problems in a filename
   Q_INVOKABLE static QString forceFileNameValidCharacters(const QString& filename);

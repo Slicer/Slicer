@@ -24,6 +24,15 @@
 #include "qMRMLTransformDisplayNodeWidget.h"
 #include "ui_qMRMLTransformDisplayNodeWidget.h"
 
+// Qt includes
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+# include <QRegularExpressionValidator>
+#else
+# include <QRegExp>
+# include <QRegExpValidator>
+#endif
+
 // MRML includes
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -186,8 +195,13 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GridShowNonWarped, SIGNAL(toggled(bool)), q, SLOT(setGridShowNonWarped(bool)));
 
   // Contour Parameters
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
+  this->ContourLevelsMm->setValidator(new QRegularExpressionValidator(rx, q));
+#else
   QRegExp rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
   this->ContourLevelsMm->setValidator(new QRegExpValidator(rx, q));
+#endif
   QObject::connect(this->ContourLevelsMm, SIGNAL(textChanged(QString)), q, SLOT(setContourLevelsMm(QString)));
   QObject::connect(this->ContourResolutionMm, SIGNAL(valueChanged(double)), q, SLOT(setContourResolutionMm(double)));
   QObject::connect(this->ContourOpacityPercent, SIGNAL(valueChanged(double)), q, SLOT(setContourOpacityPercent(double)));

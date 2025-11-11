@@ -26,8 +26,13 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QRegExp>
-#include <QRegExpValidator>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+# include <QRegularExpressionValidator>
+#else
+# include <QRegExp>
+# include <QRegExpValidator>
+#endif
 #include <QSettings>
 
 /// CTK includes

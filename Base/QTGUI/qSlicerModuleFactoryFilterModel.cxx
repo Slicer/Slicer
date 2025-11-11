@@ -22,6 +22,9 @@
 #include <QBrush>
 #include <QDebug>
 #include <QMimeData>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+# include <QRegularExpression>
+#endif
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -248,7 +251,11 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
   }
   else
   {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    this->setFilterRegularExpression(QRegularExpression(QString("\\b(") + d->ShowModules.join("|") + QString(")\\b")));
+#else
     this->setFilterRegExp(QString("\\b(") + d->ShowModules.join("|") + QString(")\\b"));
+#endif
   }
   this->sort(0);
   emit showModulesChanged(d->ShowModules);

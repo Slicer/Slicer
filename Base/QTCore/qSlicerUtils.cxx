@@ -22,7 +22,11 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
-#include <QRegExp>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+#else
+# include <QRegExp>
+#endif
 #include <QStringList>
 #include <QUrl>
 
@@ -88,16 +92,26 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
 bool qSlicerUtils::isCLILoadableModule(const QString& filePath)
 {
   // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
+  return regex.match(QFileInfo(filePath).fileName()).hasMatch();
+#else
   QRegExp regex("(lib.+Lib\\.(so|dylib))|((?!lib).+Lib\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
+#endif
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerUtils::isLoadableModule(const QString& filePath)
 {
   // See https://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
+  return regex.match(QFileInfo(filePath).fileName()).hasMatch();
+#else
   QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -326,6 +340,28 @@ bool qSlicerUtils::setPermissionsRecursively(const QString& path, QFile::Permiss
 QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& version)
 {
   QString updatedText = text;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+  QRegularExpression rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
+  QRegularExpressionMatchIterator iter = rx.globalMatch(updatedText);
+  int offset = 0;
+  while (iter.hasNext())
+  {
+    QRegularExpressionMatch match = iter.next();
+    int pos = match.capturedStart() + offset;
+    QString capturedText = match.captured(0);
+    // Given an URL matching the regular expression reported above, this second
+    // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
+    // with "Documentation/<version>/"
+    QString updatedURL = capturedText;
+    QRegularExpression docRegex("Documentation\\/[a-zA-Z0-9\\.]+");
+    updatedURL.replace(docRegex, "Documentation/" + version);
+    if (updatedURL != capturedText)
+    {
+      updatedText.replace(pos, capturedText.length(), updatedURL);
+      offset += updatedURL.length() - capturedText.length();
+    }
+  }
+#else
   QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
   int pos = 0;
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
@@ -337,12 +373,23 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
   }
+#endif
 
   return updatedText;
 }
 
 bool replaceFirst(QString& text, const QString& pattern, const QString& replacement)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression rx(pattern);
+  QRegularExpressionMatch match = rx.match(text);
+  if (!match.hasMatch())
+  {
+    return false;
+  }
+  text = text.replace(match.capturedStart(), match.capturedLength(), replacement);
+  return true;
+#else
   QRegExp rx = QRegExp(pattern);
   if (!text.contains(rx))
   {
@@ -350,12 +397,33 @@ bool replaceFirst(QString& text, const QString& pattern, const QString& replacem
   }
   text = text.replace(rx.pos(0), rx.cap(0).size(), replacement);
   return true;
+#endif
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const QString& hostname, const QString& version)
 {
   QString updatedText = text;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
+  QRegularExpressionMatchIterator iter = rx.globalMatch(updatedText);
+  int offset = 0;
+  while (iter.hasNext())
+  {
+    QRegularExpressionMatch match = iter.next();
+    int pos = match.capturedStart() + offset;
+    QString foundURL = match.captured(0);
+    QString originalURL = foundURL;
+    if (foundURL.contains(hostname)                                                              //
+        && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
+            || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/"))                  // replace /v5.0/
+    )
+    {
+      updatedText.replace(pos, originalURL.length(), foundURL);
+      offset += foundURL.length() - originalURL.length();
+    }
+  }
+#else
   QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
   int pos = 0;
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
@@ -373,6 +441,7 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
     }
     pos += foundURL.length();
   }
+#endif
 
   return updatedText;
 }
