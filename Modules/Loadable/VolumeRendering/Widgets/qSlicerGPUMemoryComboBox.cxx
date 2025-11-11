@@ -29,6 +29,8 @@
 // Qt includes
 #include <QDebug>
 #include <QLineEdit>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 
 //-----------------------------------------------------------------------------
 class qSlicerGPUMemoryComboBoxPrivate
@@ -47,7 +49,7 @@ public:
   double memoryFromString(const QString& memory) const;
   QString memoryToString(double memory) const;
 
-  QRegExp MemoryRegExp;
+  QRegularExpression MemoryRegExp;
   QString DefaultText;
 };
 
@@ -59,7 +61,7 @@ qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(qSlicerGPUMemor
   : q_ptr(&object)
   , DefaultText("0 MB (Default)")
 {
-  this->MemoryRegExp = QRegExp("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB|\\%)$");
+  this->MemoryRegExp = QRegularExpression("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB|\\%)$");
 }
 
 //-----------------------------------------------------------------------------
@@ -71,7 +73,7 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   Q_Q(qSlicerGPUMemoryComboBox);
 
   q->setEditable(true);
-  q->lineEdit()->setValidator(new QRegExpValidator(this->MemoryRegExp, q));
+  q->lineEdit()->setValidator(new QRegularExpressionValidator(this->MemoryRegExp, q));
   q->addItem(DefaultText);
   // q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
   // q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
@@ -107,15 +109,15 @@ double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory) 
     return 0.0;
   }
 
-  int pos = this->MemoryRegExp.indexIn(memory);
-  if (pos < 0)
+  QRegularExpressionMatch match = this->MemoryRegExp.match(memory);
+  if (!match.hasMatch())
   {
     return 0.0;
   }
 
-  QString memoryValue = this->MemoryRegExp.cap(1);
+  QString memoryValue = match.captured(1);
   double value = memoryValue.toDouble();
-  QString memoryUnit = this->MemoryRegExp.cap(2);
+  QString memoryUnit = match.captured(2);
 
   if (memoryUnit == "%")
   {

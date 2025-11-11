@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QIODevice>
 #include <QMimeData>
+#include <QRegularExpression>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -249,7 +250,7 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
   }
   else
   {
-    this->setFilterRegExp(QString("\\b(") + d->ShowModules.join("|") + QString(")\\b"));
+    this->setFilterRegularExpression(QRegularExpression(QString("\\b(") + d->ShowModules.join("|") + QString(")\\b")));
   }
   this->sort(0);
   emit showModulesChanged(d->ShowModules);

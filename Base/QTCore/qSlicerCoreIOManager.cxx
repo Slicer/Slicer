@@ -23,6 +23,9 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+# include <QRegExp>
+#endif
 #include <QSettings>
 
 // CTK includes
@@ -175,9 +178,18 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::
         {
           extensionWithStar.prepend("*");
         }
+
+        // QRegularExpression::wildcardToRegularExpression could be used from Qt 5.12, but its behavior
+        // slightly changes across Qt5 versions, so stick to QRegExp for Qt5 to keep things simple.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QRegularExpression regExp = QRegularExpression::fromWildcard(extensionWithStar, Qt::CaseInsensitive);
+        Q_ASSERT(regExp.isValid());
+        if (regExp.match(file.fileName()).hasMatch())
+#else
         QRegExp regExp(extensionWithStar, Qt::CaseInsensitive, QRegExp::Wildcard);
         Q_ASSERT(regExp.isValid());
         if (regExp.exactMatch(file.absoluteFilePath()))
+#endif
         {
           matchingNameFilters << nameFilter;
         }
@@ -457,15 +469,15 @@ QStringList qSlicerCoreIOManager::allReadableFileExtensions() const
 }
 
 //-----------------------------------------------------------------------------
-QRegExp qSlicerCoreIOManager::fileNameRegExp(const QString& extension /*= QString()*/)
+QRegularExpression qSlicerCoreIOManager::fileNameRegularExpression(const QString& extension /*= QString()*/)
 {
-  QRegExp regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}");
+  QString pattern = "[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}";
 
   if (!extension.isEmpty())
   {
-    regExp.setPattern(regExp.pattern() + extension);
+    pattern += extension;
   }
-  return regExp;
+  return QRegularExpression(pattern);
 }
 
 //-----------------------------------------------------------------------------
@@ -473,11 +485,11 @@ QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filena
 {
   // Remove characters that are likely to cause problems in filename
   QString sanitizedFilename;
-  QRegExp regExp = fileNameRegExp();
+  QRegularExpression regExp = fileNameRegularExpression();
 
   for (int i = 0; i < filename.size(); ++i)
   {
-    if (regExp.exactMatch(QString(filename[i])))
+    if (regExp.match(QString(filename[i])).hasMatch())
     {
       sanitizedFilename += filename[i];
     }
