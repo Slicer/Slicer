@@ -26,7 +26,7 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "a2c2f83401eddc72f30a1a6dd6769eb17a46fd41"
+    "9635b987dedfc3cb7c397baaf67bb00d640f5be6" # add-qt6-support
     QUIET
     )
 
