@@ -31,11 +31,13 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// Qt includes
+#include <QStringList>
+
 class vtkMRMLNode;
 class qMRMLSegmentSelectorWidgetPrivate;
 class QTableWidgetItem;
 class QItemSelection;
-class QStringList;
 
 /// \brief Qt widget for selecting a single segment from a segmentation.
 ///   If multiple segments are needed, then use \sa qMRMLSegmentsTableView instead in SimpleListMode

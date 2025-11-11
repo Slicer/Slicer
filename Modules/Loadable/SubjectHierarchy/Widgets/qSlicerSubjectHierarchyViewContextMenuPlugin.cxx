@@ -27,6 +27,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QActionGroup>
 #include <QClipboard>
 #include <QDebug>
 #include <QVariant>
