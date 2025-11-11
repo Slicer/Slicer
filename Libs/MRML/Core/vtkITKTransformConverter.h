@@ -311,32 +311,8 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
     convertedToVtkMatrix = true;
   }
 
-  // Scale transform of doubles or floats, dimension 2 or 3
-  if (itkTransformClassName == "ScaleTransform")
-  {
-    if (itkDim == 2)
-    {
-      using Scale2DTransformType = itk::ScaleTransform<T, 2>;
-      typename Scale2DTransformType::Pointer dst = static_cast<Scale2DTransformType*>(transformItk_LPS.GetPointer());
-      for (unsigned int i = 0; i < 2; i++)
-      {
-        transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
-      }
-      double scaleZ = std::sqrt(dst->GetScale()[0] * dst->GetScale()[1]); // geometric mean
-      transformVtk_LPS->SetElement(2, 2, scaleZ);
-    }
-    else
-    {
-      typename ScaleTransformType::Pointer dst = static_cast<ScaleTransformType*>(transformItk_LPS.GetPointer());
-      for (unsigned int i = 0; i < D; i++)
-      {
-        transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
-      }
-    }
-    convertedToVtkMatrix = true;
-  }
-
   // Translate transform of doubles or floats, dimension 2 or 3
+  // Separated out as it does not inherit from MatrixOffsetTransformBase
   if (itkTransformClassName == "TranslationTransform")
   {
     if (itkDim == 2)
