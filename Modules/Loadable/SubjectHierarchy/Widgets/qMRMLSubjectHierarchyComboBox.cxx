@@ -25,7 +25,6 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QMouseEvent>
 #include <QLabel>
 #include <QScreen>
