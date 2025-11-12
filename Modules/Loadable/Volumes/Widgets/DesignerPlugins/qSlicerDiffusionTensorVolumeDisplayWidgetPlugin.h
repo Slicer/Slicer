@@ -18,6 +18,7 @@
 #ifndef __qSlicerDiffusionTensorVolumeDisplayWidgetPlugin_h
 #define __qSlicerDiffusionTensorVolumeDisplayWidgetPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumesModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
