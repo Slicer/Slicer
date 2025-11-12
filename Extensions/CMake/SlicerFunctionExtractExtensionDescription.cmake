@@ -113,6 +113,7 @@ endfunction()
 #  <var-prefix>_EXT_BUILD_DEPENDENCIES - list of Slicer extensions required at build-time
 #  <var-prefix>_EXT_CATEGORY - category
 #  <var-prefix>_EXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
+#  <var-prefix>_EXT_TIER - extension tier (default is 1)
 #
 
 function(slicerFunctionExtractExtensionDescriptionFromJson)
@@ -149,11 +150,13 @@ function(slicerFunctionExtractExtensionDescriptionFromJson)
     "BUILD_SUBDIRECTORY"
     "BUILD_DEPENDENCIES"
     "ENABLED"
+    "TIER"
     )
   set(SCM_TYPE_DEFAULT "git")
   set(BUILD_SUBDIRECTORY_DEFAULT ".")
   set(BUILD_DEPENDENCIES_DEFAULT "")
   set(ENABLED_DEFAULT "1")
+  set(TIER_DEFAULT "1")
 
   foreach(name IN LISTS Slicer_EXT_REQUIRED_METADATA_NAMES Slicer_EXT_OPTIONAL_METADATA_NAMES)
     set(upper_case_token ${name})
@@ -331,6 +334,7 @@ function(slicer_extract_extension_description_from_json_test)
     BUILD_DEPENDENCIES
     BUILD_SUBDIRECTORY
     ENABLED
+    TIER
     )
 
   set(expected_CATEGORY "Exporter")
@@ -356,6 +360,7 @@ function(slicer_extract_extension_description_from_json_test)
   set(expected_BUILD_SUBDIRECTORY ".")
   set(expected_BUILD_DEPENDENCIES "")
   set(expected_ENABLED "1")
+  set(expected_TIER "1")
 
   foreach(name IN LISTS required optional)
     if(NOT foo_EXT_${name} STREQUAL "${expected_${name}}")
@@ -380,7 +385,8 @@ function(slicer_extract_extension_description_from_json_test)
     \"build_dependencies\": [\"Foo\", \"Bar\"],
     \"scm_revision\": \"${expected_SCM_REVISION}\",
     \"scm_url\": \"${expected_SCM_URL}\",
-    \"enabled\": false
+    \"enabled\": false,
+    \"tier\": 5,
 }
 ")
 
@@ -392,6 +398,7 @@ function(slicer_extract_extension_description_from_json_test)
   set(expected_BUILD_SUBDIRECTORY "inner-build")
   set(expected_BUILD_DEPENDENCIES Foo Bar)
   set(expected_ENABLED "0")
+  set(expected_TIER "5")
 
   foreach(name IN LISTS required optional)
     if(NOT bar_EXT_${name} STREQUAL "${expected_${name}}")
