@@ -44,6 +44,10 @@ macro(slicerMacroBuildLoadableModule)
     ${ARGN}
     )
 
+  # Setting this policy to NEW avoids error when running AUTOMOC with generated files
+  # from Slicer extension specifying a minimum required version older than 3.10.
+  cmake_policy(SET CMP0071 NEW)
+
   if(LOADABLEMODULE_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "Unknown keywords given to slicerMacroBuildLoadableModule(): \"${LOADABLEMODULE_UNPARSED_ARGUMENTS}\"")
   endif()
