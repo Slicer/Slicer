@@ -132,7 +132,9 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
     menuOption.palette.setBrush(QPalette::All, QPalette::Window, qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
   }
   menuOption.text = index.model()->data(index, Qt::DisplayRole).toString().replace(QLatin1Char('&'), QLatin1String("&&"));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   menuOption.tabWidth = 0;
+#endif
   menuOption.maxIconWidth = option.decorationSize.width() + 4;
   menuOption.menuRect = option.rect;
   menuOption.rect = option.rect;
