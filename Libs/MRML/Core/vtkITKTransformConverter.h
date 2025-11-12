@@ -1003,19 +1003,6 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* log
   typedef itk::DisplacementFieldTransform<T, 3> DisplacementFieldTransformType;
   typedef itk::InverseDisplacementFieldTransform<T, 3> InverseDisplacementFieldTransformType;
 
-  if (!transformItk_LPS)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK oriented grid transform from ITK: the input transform is nullptr");
-    return false;
-  }
-  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
-  {
-    vtkErrorWithObjectMacro(loggerObject,
-                            "Unsupported number of dimensions in oriented grid transform file (expected = " << VTKDimension
-                                                                                                            << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
-    return false;
-  }
-
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
   bool inverse = false;
@@ -1259,26 +1246,6 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
   typedef itk::ThinPlateSplineKernelTransform<T, 3> ThinPlateSplineTransformType;
   typedef itk::InverseThinPlateSplineKernelTransform<T, 3> InverseThinPlateSplineTransformType;
 
-  if (transformVtk_RAS == nullptr)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the output vtkThinPlateSplineTransform is invalid");
-    return false;
-  }
-
-  if (!transformItk_LPS)
-  {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the input transform is nullptr");
-    return false;
-  }
-
-  if (transformItk_LPS->GetOutputSpaceDimension() != VTKDimension)
-  {
-    vtkErrorWithObjectMacro(
-      loggerObject,
-      "Unsupported number of dimensions in thin-plate spline transform file (expected = " << VTKDimension << ", actual = " << transformItk_LPS->GetOutputSpaceDimension() << ")");
-    return false;
-  }
-
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
   bool inverse = false;
@@ -1436,16 +1403,33 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
 {
   bool conversionSuccess = false;
 
-  // Perform this dimension check early
-  const unsigned itkDim = transformItk->GetOutputSpaceDimension();
-  assert(itkDim == transformItk->GetInputSpaceDimension()); // do we support these asymmetric transforms?
-  if (itkDim != VTKDimension)
+  // Perform these sanity checks early
+  if (!transformItk)
   {
-    if (itkDim < 2 || itkDim > 3) // do we need to support 4D transforms?
-    {
-      vtkErrorWithObjectMacro(loggerObject, "Unsupported transform dimension: " << itkDim);
-      return nullptr;
-    }
+    vtkErrorWithObjectMacro(loggerObject, "CreateVTKTransformFromITK failed: nullptr provided");
+    return nullptr;
+  }
+  const unsigned itkDim = transformItk->GetOutputSpaceDimension();
+  if (itkDim != transformItk->GetInputSpaceDimension())
+  {
+    vtkErrorWithObjectMacro(loggerObject,
+                            "We do not support transforms with different number of input and output dimensions, " << "input dimension = " << transformItk->GetInputSpaceDimension()
+                                                                                                                  << ", output dimension = " << itkDim << ")");
+    return nullptr;
+  }
+  if (itkDim < 2 || itkDim > 3) // do we need to support 4D transforms?
+  {
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported transform dimension: " << itkDim);
+    return nullptr;
+  }
+
+  std::string itkTransformClassName = transformItk->GetNameOfClass();
+
+  // Composite Transform
+  if (itkTransformClassName == "CompositeTransform")
+  {
+    // Composition is handled by the caller (vtkMRMLTransformStorageNode)
+    return nullptr;
   }
 
   // Linear
