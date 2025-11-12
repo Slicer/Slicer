@@ -18,6 +18,7 @@
 #ifndef __qSlicerLabelMapVolumeDisplayWidgetPlugin_h
 #define __qSlicerLabelMapVolumeDisplayWidgetPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumesModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerLabelMapVolumeDisplayWidgetPlugin

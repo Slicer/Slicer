@@ -21,6 +21,7 @@
 #ifndef __qMRMLSegmentSelectorWidgetPlugin_h
 #define __qMRMLSegmentSelectorWidgetPlugin_h
 
+#include <QObject>
 #include "qSlicerSegmentationsModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentSelectorWidgetPlugin
