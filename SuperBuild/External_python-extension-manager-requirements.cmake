@@ -46,7 +46,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   smmap==5.0.2 --hash=sha256:b30115f0def7d7531d22a0fb6502488d879e75b260a9db4d0819cfb25403af5e
   # [/smmap]
   # [GitPython]
-  GitPython==3.1.44 --hash=sha256:9e0e10cda9bed1ee64bc9a6de50e7e38a9c9943241cd7f585f6df3ed28011110
+  GitPython==3.1.45 --hash=sha256:8908cb2e02fb3b93b7eb0f2827125cb699869470432cc885f019b8fd0fccff77
   # [/GitPython]
   # [six]
   six==1.17.0 --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274

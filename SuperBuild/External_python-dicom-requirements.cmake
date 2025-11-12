@@ -41,39 +41,39 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pydicom]
-  pydicom==2.4.4 --hash=sha256:f9f8e19b78525be57aa6384484298833e4d06ac1d6226c79459131ddb0bd7c42
+  pydicom==3.0.1 --hash=sha256:db32f78b2641bd7972096b8289111ddab01fb221610de8d7afa835eb938adb41
   # [/pydicom]
   # [six]
   six==1.17.0 --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274
   # [/six]
   # [pillow]
   # Hashes correspond to the following packages:
-  #  - pillow-11.2.1-cp312-cp312-macosx_10_13_x86_64.whl
-  #  - pillow-11.2.1-cp312-cp312-macosx_11_0_arm64.whl
-  #  - pillow-11.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - pillow-11.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - pillow-11.2.1-cp312-cp312-manylinux_2_28_aarch64.whl
-  #  - pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl
-  #  - pillow-11.2.1-cp312-cp312-musllinux_1_2_aarch64.whl
-  #  - pillow-11.2.1-cp312-cp312-musllinux_1_2_x86_64.whl
-  #  - pillow-11.2.1-cp312-cp312-win_amd64.whl
-  #  - pillow-11.2.1-cp312-cp312-win_arm64.whl
-  pillow==11.2.1 --hash=sha256:78afba22027b4accef10dbd5eed84425930ba41b3ea0a86fa8d20baaf19d807f \
-                 --hash=sha256:78092232a4ab376a35d68c4e6d5e00dfd73454bd12b230420025fbe178ee3b0b \
-                 --hash=sha256:25a5f306095c6780c52e6bbb6109624b95c5b18e40aab1c3041da3e9e0cd3e2d \
-                 --hash=sha256:0c7b29dbd4281923a2bfe562acb734cee96bbb129e96e6972d315ed9f232bef4 \
-                 --hash=sha256:3e645b020f3209a0181a418bffe7b4a93171eef6c4ef6cc20980b30bebf17b7d \
-                 --hash=sha256:b2dbea1012ccb784a65349f57bbc93730b96e85b42e9bf7b01ef40443db720b4 \
-                 --hash=sha256:da3104c57bbd72948d75f6a9389e6727d2ab6333c3617f0a89d72d4940aa0443 \
-                 --hash=sha256:598174aef4589af795f66f9caab87ba4ff860ce08cd5bb447c6fc553ffee603c \
-                 --hash=sha256:14e33b28bf17c7a38eede290f77db7c664e4eb01f7869e37fa98a5aa95978941 \
-                 --hash=sha256:21e1470ac9e5739ff880c211fc3af01e3ae505859392bf65458c224d0bf283eb
+  #  - pillow-12.0.0-cp312-cp312-macosx_10_13_x86_64.whl
+  #  - pillow-12.0.0-cp312-cp312-macosx_11_0_arm64.whl
+  #  - pillow-12.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl
+  #  - pillow-12.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+  #  - pillow-12.0.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
+  #  - pillow-12.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+  #  - pillow-12.0.0-cp312-cp312-musllinux_1_2_aarch64.whl
+  #  - pillow-12.0.0-cp312-cp312-musllinux_1_2_x86_64.whl
+  #  - pillow-12.0.0-cp312-cp312-win_amd64.whl
+  #  - pillow-12.0.0-cp312-cp312-win_arm64.whl
+  pillow==12.0.0 --hash=sha256:53561a4ddc36facb432fae7a9d8afbfaf94795414f5cdc5fc52f28c1dca90371 \
+                 --hash=sha256:71db6b4c1653045dacc1585c1b0d184004f0d7e694c7b34ac165ca70c0838082 \
+                 --hash=sha256:2fa5f0b6716fc88f11380b88b31fe591a06c6315e955c096c35715788b339e3f \
+                 --hash=sha256:82240051c6ca513c616f7f9da06e871f61bfd7805f566275841af15015b8f98d \
+                 --hash=sha256:55f818bd74fe2f11d4d7cbc65880a843c4075e0ac7226bc1a23261dbea531953 \
+                 --hash=sha256:b87843e225e74576437fd5b6a4c2205d422754f84a06942cfaf1dc32243e45a8 \
+                 --hash=sha256:c607c90ba67533e1b2355b821fef6764d1dd2cbe26b8c1005ae84f7aea25ff79 \
+                 --hash=sha256:21f241bdd5080a15bc86d3466a9f6074a9c2c2b314100dd896ac81ee6db2f1ba \
+                 --hash=sha256:9fe611163f6303d1619bbcb653540a4d60f9e55e622d60a3108be0d5b441017a \
+                 --hash=sha256:7dfb439562f234f7d57b1ac6bc8fe7f838a4bd49c79230e0f6a1da93e82f1fad
   # [/pillow]
   # [retrying]
-  retrying==1.3.4 --hash=sha256:8cc4d43cb8e1125e0ff3344e9de678fefd85db3b750b81b2240dc0183af37b35
+  retrying==1.4.2 --hash=sha256:bbc004aeb542a74f3569aeddf42a2516efefcdaff90df0eb38fbfbf19f179f59
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.60.0 --hash=sha256:fde6743036f9c9da74580dd643c66121a1650d16737184695bfbe076f3875e71
+  dicomweb-client==0.60.1 --hash=sha256:e128866a797b7acdcd4ad280a10ebced5af77a3ce1d1bde709389ad56583955d
   # [/dicomweb-client]
   ]===])
 

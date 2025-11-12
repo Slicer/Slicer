@@ -31,24 +31,26 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [numpy]
   # Hashes correspond to the following packages:
-  #  - numpy-2.0.2-cp312-cp312-macosx_10_9_x86_64.whl
-  #  - numpy-2.0.2-cp312-cp312-macosx_11_0_arm64.whl
-  #  - numpy-2.0.2-cp312-cp312-macosx_14_0_arm64.whl
-  #  - numpy-2.0.2-cp312-cp312-macosx_14_0_x86_64.whl
-  #  - numpy-2.0.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - numpy-2.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - numpy-2.0.2-cp312-cp312-musllinux_1_1_x86_64.whl
-  #  - numpy-2.0.2-cp312-cp312-musllinux_1_2_aarch64.whl
-  #  - numpy-2.0.2-cp312-cp312-win_amd64.whl
-  numpy==2.0.2 --hash=sha256:df55d490dea7934f330006d0f81e8551ba6010a5bf035a249ef61a94f21c500b \
-               --hash=sha256:8df823f570d9adf0978347d1f926b2a867d5608f434a7cff7f7908c6570dcf5e \
-               --hash=sha256:9a92ae5c14811e390f3767053ff54eaee3bf84576d99a2456391401323f4ec2c \
-               --hash=sha256:a842d573724391493a97a62ebbb8e731f8a5dcc5d285dfc99141ca15a3302d0c \
-               --hash=sha256:c05e238064fc0610c840d1cf6a13bf63d7e391717d247f1bf0318172e759e692 \
-               --hash=sha256:0123ffdaa88fa4ab64835dcbde75dcdf89c453c922f18dced6e27c90d1d0ec5a \
-               --hash=sha256:96a55f64139912d61de9137f11bf39a55ec8faec288c75a54f93dfd39f7eb40c \
-               --hash=sha256:ec9852fb39354b5a45a80bdab5ac02dd02b15f44b3804e9f00c556bf24b4bded \
-               --hash=sha256:cfd41e13fdc257aa5778496b8caa5e856dc4896d4ccf01841daee1d96465467a
+  #  - numpy-2.3.4-cp312-cp312-macosx_10_13_x86_64.whl
+  #  - numpy-2.3.4-cp312-cp312-macosx_11_0_arm64.whl
+  #  - numpy-2.3.4-cp312-cp312-macosx_14_0_arm64.whl
+  #  - numpy-2.3.4-cp312-cp312-macosx_14_0_x86_64.whl
+  #  - numpy-2.3.4-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
+  #  - numpy-2.3.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+  #  - numpy-2.3.4-cp312-cp312-musllinux_1_2_aarch64.whl
+  #  - numpy-2.3.4-cp312-cp312-musllinux_1_2_x86_64.whl
+  #  - numpy-2.3.4-cp312-cp312-win_amd64.whl
+  #  - numpy-2.3.4-cp312-cp312-win_arm64.whl
+  numpy==2.3.4 --hash=sha256:ef1b5a3e808bc40827b5fa2c8196151a4c5abe110e1726949d7abddfe5c7ae11 \
+               --hash=sha256:c2f91f496a87235c6aaf6d3f3d89b17dba64996abadccb289f48456cff931ca9 \
+               --hash=sha256:f77e5b3d3da652b474cc80a14084927a5e86a5eccf54ca8ca5cbd697bf7f2667 \
+               --hash=sha256:8ab1c5f5ee40d6e01cbe96de5863e39b215a4d24e7d007cad56c7184fdf4aeef \
+               --hash=sha256:77b84453f3adcb994ddbd0d1c5d11db2d6bda1a2b7fd5ac5bd4649d6f5dc682e \
+               --hash=sha256:4121c5beb58a7f9e6dfdee612cb24f4df5cd4db6e8261d7f4d7450a997a65d6a \
+               --hash=sha256:65611ecbb00ac9846efe04db15cbe6186f562f6bb7e5e05f077e53a599225d16 \
+               --hash=sha256:dabc42f9c6577bcc13001b8810d300fe814b4cfbe8a92c873f269484594f9786 \
+               --hash=sha256:985f1e46358f06c2a09921e8921e2c98168ed4ae12ccd6e5e87a4f1857923f32 \
+               --hash=sha256:4635239814149e06e2cb9db3dd584b2fa64316c96f10656983b8026a82e6e4db
   # [/numpy]
   ]===])
 
