@@ -93,23 +93,72 @@ void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
 
-  this->addArgument("disable-tooltips", "", QVariant::Bool, "Disable toolstips in the user interface.");
+  this->addArgument("disable-tooltips",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    "Disable toolstips in the user interface.");
 
-  this->addArgument("no-splash", "", QVariant::Bool, "Disable the startup splash screen.");
+  this->addArgument("no-splash",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    "Disable the startup splash screen.");
 
-  this->addArgument("no-main-window", "", QVariant::Bool, "Disable display of the main slicer window.  Use with --python-script for alternate interface");
+  this->addArgument("no-main-window",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    "Disable display of the main slicer window.  Use with --python-script for alternate interface");
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
-    this->addArgument("show-python-console", "", QVariant::Bool, "Show Python console at startup.");
-    this->addArgument("show-python-interactor", "", QVariant::Bool, "Show Python console at startup (deprecated, use show-python-console instead).");
+    this->addArgument("show-python-console",
+                      "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                      QMetaType::Bool,
+# else
+                      QVariant::Bool,
+# endif
+                      "Show Python console at startup.");
+    this->addArgument("show-python-interactor",
+                      "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                      QMetaType::Bool,
+# else
+                      QVariant::Bool,
+# endif
+                      "Show Python console at startup (deprecated, use show-python-console instead).");
   }
 #endif
 
 #ifdef Slicer_USE_QtTesting
-  this->addArgument("qt-testing", "", QVariant::Bool, "Enable QtTesting in the user interface");
+  this->addArgument("qt-testing",
+                    "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
+                    QVariant::Bool,
+# endif
+                    "Enable QtTesting in the user interface");
 #endif
 
-  this->addArgument("exit-after-startup", "", QVariant::Bool, "Exit after startup is complete. Useful for measuring startup time");
+  this->addArgument("exit-after-startup",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    "Exit after startup is complete. Useful for measuring startup time");
 }
