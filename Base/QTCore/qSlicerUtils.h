@@ -228,6 +228,11 @@ public:
   ///   generate their versioned links (for example, using qSlicerCoreApplication::documentationVersion()).
   static QString replaceDocumentationUrlVersion(const QString& text, const QString& hostname, const QString& version);
 
+  /// Safely convert a char pointer to QString.
+  /// It does the same as QString::fromUtf8 but it does not crash when the input is a null pointer.
+  /// If the input is a null pointer then an empty QString is returned.
+  static QString safeQStringFromUtf8Ptr(const char* cString);
+
 private:
   /// Not implemented
   qSlicerUtils() = default;

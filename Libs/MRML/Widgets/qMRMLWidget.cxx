@@ -159,3 +159,13 @@ QPixmap qMRMLWidget::pixmapFromIcon(const QIcon& icon)
   QPixmap pixmap = icon.pixmap(icon.availableSizes().first());
   return pixmap;
 }
+
+//-----------------------------------------------------------------------------
+QString qMRMLWidget::safeQStringFromUtf8Ptr(const char* cString)
+{
+  if (!cString)
+  {
+    return QString();
+  }
+  return QString::fromUtf8(cString);
+}

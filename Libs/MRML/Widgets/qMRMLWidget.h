@@ -55,6 +55,11 @@ public:
   // Useful for cases when a widget cannot take a QIcon as input only as QPixmap.
   Q_INVOKABLE static QPixmap pixmapFromIcon(const QIcon& icon);
 
+  /// Safely convert a char pointer to QString.
+  /// It does the same as QString::fromUtf8 but it does not crash when the input is a null pointer.
+  /// If the input is a null pointer then an empty QString is returned.
+  static QString safeQStringFromUtf8Ptr(const char* cString);
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);

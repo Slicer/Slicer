@@ -73,6 +73,7 @@
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerApplication.h"
+#include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
 const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
@@ -523,7 +524,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   }
 
   d->ViewContextMenuEventData = eventData;
-  d->ViewContextMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
+  d->ViewContextMenuEventData["NodeID"] = qSlicerUtils::safeQStringFromUtf8Ptr(associatedNode->GetID());
 
   int componentType = d->ViewContextMenuEventData["ComponentType"].toInt();
   bool pointActionsDisabled = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle || //

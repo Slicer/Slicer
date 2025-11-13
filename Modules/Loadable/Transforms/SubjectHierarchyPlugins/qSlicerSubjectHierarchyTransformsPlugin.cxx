@@ -58,6 +58,7 @@
 
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerUtils.h"
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
@@ -394,7 +395,7 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::showResetCenterOfTransforma
     }
 
     QAction* action = this->ResetCenterOfTransformationMenu->addAction(transformNode->GetName());
-    action->setData(QVariant(transformNode->GetID()));
+    action->setData(QVariant(qSlicerUtils::safeQStringFromUtf8Ptr(transformNode->GetID())));
     this->ResetCenterOfTransformationNodeGroup->addAction(action);
     QObject::connect(action, SIGNAL(triggered()), q, SLOT(resetCenterOfTransformationTransformedNodeBounds()));
   }
@@ -881,7 +882,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::showViewContextMenuActionsForItem(
   }
 
   d->ViewContextMenuEventData = eventData;
-  d->ViewContextMenuEventData["NodeID"] = QVariant(transformNode->GetID());
+  d->ViewContextMenuEventData["NodeID"] = qSlicerUtils::safeQStringFromUtf8Ptr(transformNode->GetID());
 
   d->InvertAction->setVisible(true);
   d->IdentityAction->setVisible(true);

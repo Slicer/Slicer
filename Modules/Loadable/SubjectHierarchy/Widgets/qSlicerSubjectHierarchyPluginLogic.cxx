@@ -48,6 +48,7 @@
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "qSlicerUtils.h"
 
 // Qt includes
 #include <QAction>
@@ -557,7 +558,7 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   eventDataMap["ComponentIndex"] = QVariant(eventData->GetComponentIndex());
   if (eventData->GetViewNode())
   {
-    eventDataMap["ViewNodeID"] = QVariant(eventData->GetViewNode()->GetID());
+    eventDataMap["ViewNodeID"] = QVariant(qSlicerUtils::safeQStringFromUtf8Ptr(eventData->GetViewNode()->GetID()));
   }
   if (eventData->IsWorldPositionValid())
   {

@@ -376,3 +376,13 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
 
   return updatedText;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerUtils::safeQStringFromUtf8Ptr(const char* cString)
+{
+  if (!cString)
+  {
+    return QString();
+  }
+  return QString::fromUtf8(cString);
+}
