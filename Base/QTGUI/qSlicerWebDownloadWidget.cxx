@@ -29,7 +29,12 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QWebEngineDownloadItem>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+# include <QWebEngineDownloadRequest>
+#else
+# include <QWebEngineDownloadItem>
+#endif
 
 // Slicer includes
 #include "qSlicerCoreApplication.h"
@@ -43,7 +48,11 @@ qSlicerWebDownloadWidget::qSlicerWebDownloadWidget(QWidget* parent)
 }
 
 // --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadRequest* download)
+#else
 void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
+#endif
 {
   // need to use a modal dialog here because 'download' will be deleted
   // if we don't return 'accept from this slot
@@ -141,9 +150,17 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
 
   // Progress
   connect(download,
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+          &QWebEngineDownloadRequest::receivedBytesChanged,
+          [download, progressBar]()
+          {
+            auto bytesTotal = download->totalBytes();
+            auto bytesReceived = download->receivedBytes();
+#else
           &QWebEngineDownloadItem::downloadProgress,
           [=](qint64 bytesReceived, qint64 bytesTotal)
           {
+#endif
             progressBar->setRange(0, bytesTotal);
             progressBar->setValue(bytesReceived);
           });
@@ -160,7 +177,11 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem* download)
 
   // Finish
   connect(download,
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+          &QWebEngineDownloadRequest::isFinishedChanged,
+#else
           &QWebEngineDownloadItem::finished,
+#endif
           [=]()
           {
             this->hide();

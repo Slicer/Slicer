@@ -23,7 +23,11 @@
 
 // Qt includes
 #include <QDialog>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+class QWebEngineDownloadRequest;
+#else
 class QWebEngineDownloadItem;
+#endif
 
 // CTK
 class ctkPathLineEdit;
@@ -40,8 +44,11 @@ public:
   explicit qSlicerWebDownloadWidget(QWidget* parent = nullptr);
 
 public slots:
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  void handleDownload(QWebEngineDownloadRequest* download);
+#else
   void handleDownload(QWebEngineDownloadItem* download);
+#endif
 };
 
 #endif
