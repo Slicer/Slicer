@@ -32,6 +32,7 @@
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerFileWriterOptionsWidget.h"
 #include "qSlicerExportNodeDialog_p.h"
+#include "qSlicerUtils.h"
 
 /// MRML includes
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
@@ -991,7 +992,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     }
 
     // Fill saving parameters with the gathered information
-    savingParameters["nodeID"] = node->GetID();
+    savingParameters["nodeID"] = qSlicerUtils::safeQStringFromUtf8Ptr(node->GetID());
     savingParameters["fileName"] = fileInfo.absoluteFilePath();
     savingParameters["fileFormat"] = nodeTypeWidgetSet->formatText();
 

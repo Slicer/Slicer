@@ -60,6 +60,7 @@
 // Slicer includes
 #include <vtkMRMLSliceLogic.h>
 #include <vtkSlicerApplicationLogic.h>
+#include <qSlicerUtils.h>
 
 // MRML includes
 #include <vtkMRMLCameraDisplayableManager.h>
@@ -735,7 +736,7 @@ void qMRMLSegmentEditorWidget::updateMaskingSection()
   if (d->ParameterSetNode->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment)
   {
     // segment item
-    maskModeIndex = d->MaskModeComboBox->findData(d->ParameterSetNode->GetMaskSegmentID());
+    maskModeIndex = d->MaskModeComboBox->findData(qSlicerUtils::safeQStringFromUtf8Ptr(d->ParameterSetNode->GetMaskSegmentID()));
   }
   else
   {

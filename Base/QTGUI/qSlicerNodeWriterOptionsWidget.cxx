@@ -21,6 +21,7 @@
 // qSlicer includes
 #include "qSlicerNodeWriterOptionsWidget.h"
 #include "qSlicerNodeWriterOptionsWidget_p.h"
+#include "qSlicerUtils.h"
 
 // MRML includes
 #include <vtkMRMLStorableNode.h>
@@ -69,7 +70,7 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode != nullptr)
   {
-    d->Properties["nodeID"] = storableNode->GetID();
+    d->Properties["nodeID"] = qSlicerUtils::safeQStringFromUtf8Ptr(storableNode->GetID());
   }
   else
   {
