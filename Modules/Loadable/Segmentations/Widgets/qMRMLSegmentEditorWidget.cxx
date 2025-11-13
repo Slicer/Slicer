@@ -1010,7 +1010,7 @@ void qMRMLSegmentEditorWidget::setActiveEffect(qSlicerSegmentEditorAbstractEffec
     return;
   }
 
-  d->ParameterSetNode->SetActiveEffectName(effect ? effect->name().toUtf8() : "");
+  d->ParameterSetNode->SetActiveEffectName(effect ? effect->name().toUtf8().constData() : "");
 }
 
 //-----------------------------------------------------------------------------

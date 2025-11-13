@@ -25,7 +25,7 @@ bool setModuleAttribute(int line, const QString& moduleName, const QString& attr
     return true;
   }
 
-  PyObject* module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toUtf8());
+  PyObject* module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toUtf8().constData());
   if (!module)
   {
     PythonQt::self()->handleError();
