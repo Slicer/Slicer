@@ -400,14 +400,22 @@ void qSlicerCoreCommandOptions::addArguments()
 {
   this->addArgument("ignore-rest",
                     "-",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Ignores the rest of the labeled arguments following this flag.",
                     QVariant(false),
                     true);
 
   this->addArgument(/*no tr*/ "help",
                     "h",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display available command line arguments.");
 
 #ifdef Slicer_USE_PYTHONQT
@@ -415,147 +423,263 @@ void qSlicerCoreCommandOptions::addArguments()
 #else
   QString testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings.";
 #endif
-  this->addArgument(/*no tr*/ "testing", "", QVariant::Bool, testingDescription, QVariant(false));
+  this->addArgument(/*no tr*/ "testing",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    testingDescription,
+                    QVariant(false));
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-python",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
                     QVariant::Bool,
+# endif
                     /*no tr*/ "Disable python support. This is equivalent to build the application with Slicer_USE_PYTHONQT=OFF.");
 
   this->addArgument("python-script",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QString,
+# else
                     QVariant::String,
+# endif
                     /*no tr*/ "Python script to execute after slicer loads.");
 
   this->addArgument("python-code",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QString,
+# else
                     QVariant::String,
+# endif
                     /*no tr*/ "Python code to execute after slicer loads.");
 
   this->addArgument("",
                     "c",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QString,
+# else
                     QVariant::String,
+# endif
                     /*no tr*/ "Python code to execute after slicer loads. By default, no modules are loaded and Slicer exits afterward.");
 
   this->addArgument("ignore-slicerrc",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
                     QVariant::Bool,
+# endif
                     /*no tr*/ "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
 
   this->addArgument("additional-module-path",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QString,
+#else
                     QVariant::String,
+#endif
                     /*no tr*/ "Additional module path to consider when searching for modules to load.");
 
   this->addArgument("additional-module-paths",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QStringList,
+#else
                     QVariant::StringList,
+#endif
                     /*no tr*/ "List of additional module path to consider when searching for modules to load.");
 
   this->addArgument("modules-to-ignore",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::QString,
+#else
                     QVariant::String,
+#endif
                     /*no tr*/ "Comma separated list of modules that should *NOT* be loaded.");
 
   this->addArgument("disable-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of any Modules.");
 
   this->addArgument("disable-builtin-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of builtin Modules.");
 
   this->addArgument("disable-cli-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of any Command Line Modules.");
 
   this->addArgument("disable-builtin-cli-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of builtin Command Line Modules.");
 
   this->addArgument("disable-loadable-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of any Loadable Modules.");
 
   this->addArgument("disable-builtin-loadable-modules",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Disable the loading of builtin Loadable Modules.");
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-scripted-loadable-modules",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
                     QVariant::Bool,
+# endif
                     /*no tr*/ "Disable the loading of any Scripted Loadable Modules.");
 
   this->addArgument("disable-builtin-scripted-loadable-modules",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
                     QVariant::Bool,
+# endif
                     /*no tr*/ "Disable the loading of builtinScripted Loadable Modules.");
 #endif
 
   this->addArgument(/*no tr*/ "version",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display version information and exits.");
 
   this->addArgument("program-path",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display application program path and exits.");
 
   this->addArgument(/*no tr*/ "home",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display home path and exits.");
 
   this->addArgument("settings-path",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display settings path and exits.");
 
   this->addArgument("temporary-path",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display temporary path and exits.");
 
   this->addArgument("application-information",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Display application information in the terminal.");
 
   this->addArgument("verbose-module-discovery",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Enable verbose output during module discovery process.");
 
   this->addArgument("disable-settings",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Start application ignoring user settings and using new temporary settings.");
 
   this->addArgument("keep-temporary-settings",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Indicate whether temporary settings should be maintained.");
 
   this->addArgument("disable-message-handlers",
                     "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
                     QVariant::Bool,
+#endif
                     /*no tr*/ "Start application disabling the 'terminal' message handlers.");
 
 #if defined(Q_OS_WIN32) && !defined(Slicer_BUILD_WIN32_CONSOLE)
 #else
   this->addArgument("disable-terminal-outputs",
                     "",
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+# else
                     QVariant::Bool,
+# endif
                     /*no tr*/ "Start application disabling stdout/stderr outputs and capturing outputs only using the error log.");
 #endif
 }
