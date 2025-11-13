@@ -31,7 +31,11 @@
 #include <QCoreApplication>
 #include <QWebEngineView>
 #include <QWebChannel>
-#include <QWebEngineDownloadItem>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+# include <QWebEngineDownloadRequest>
+#else
+# include <QWebEngineDownloadItem>
+#endif
 #include <QWebEngineScript>
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
@@ -74,6 +78,9 @@ qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile* profile, QObject* 
   , WebWidget(nullptr)
   , JavaScriptConsoleMessageLoggingEnabled(false)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  connect(this, &QWebEnginePage::certificateError, this, &qSlicerWebEnginePage::onCertificateError);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -187,7 +194,11 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
     return;
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  if (!this->WebEnginePage->scripts().find("qwebchannel_appended.js").isEmpty())
+#else
   if (!this->WebEnginePage->scripts().findScript("qwebchannel_appended.js").isNull())
+#endif
   {
     // profile is already initialized
     return;
@@ -213,7 +224,11 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
   }
 
   // setup default download handler shared across all widgets
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadRequest*)), this, SLOT(handleDownload(QWebEngineDownloadRequest*)));
+#else
   QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)), this, SLOT(handleDownload(QWebEngineDownloadItem*)));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -224,7 +239,11 @@ void qSlicerWebWidgetPrivate::setDocumentWebkitHidden(bool value)
 }
 
 // --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadRequest* download)
+#else
 void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
+#endif
 {
   Q_Q(qSlicerWebWidget);
 

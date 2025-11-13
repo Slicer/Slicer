@@ -27,7 +27,11 @@
 #include <QWebEngineCertificateError>
 #include <QWebEnginePage>
 class QWebEngineProfile;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+class QWebEngineDownloadRequest;
+#else
 class QWebEngineDownloadItem;
+#endif
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
@@ -63,11 +67,19 @@ protected:
     qWarning() << "qSlicerWebEnginePage: createWindow not implemented";
     return nullptr;
   }
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  void onCertificateError(const QWebEngineCertificateError& certificateError)
+#else
   bool certificateError(const QWebEngineCertificateError& certificateError) override
+#endif
   {
-    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]" << qPrintable(certificateError.errorDescription());
+    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]" <<
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      qPrintable(certificateError.description());
+#else
+      qPrintable(certificateError.errorDescription());
     return false;
+#endif
   }
 
   void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID) override
@@ -145,7 +157,11 @@ public:
   virtual void initializeWebChannel(QWebChannel* /* webChannel */);
 
 protected slots:
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  virtual void handleDownload(QWebEngineDownloadRequest* download);
+#else
   virtual void handleDownload(QWebEngineDownloadItem* download);
+#endif
 
 public:
   /// Convenient method to set "document.webkitHidden" property
