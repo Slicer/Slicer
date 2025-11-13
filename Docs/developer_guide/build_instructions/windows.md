@@ -14,7 +14,8 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
     - 3.25.0 to 3.25.2 (CMake issues [24180](https://gitlab.kitware.com/cmake/cmake/-/issues/24180), [24567](https://gitlab.kitware.com/cmake/cmake/-/issues/24567))
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note: CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
-- [Visual Studio](https://visualstudio.microsoft.com/downloads/): any edition can be used (including the free Community edition), when configuring the installer:
+- Visual Studio:
+  - Download [free Community edition](https://aka.ms/vs/17/release/vs_community.exe) (recommended) or a [commercial edition](https://learn.microsoft.com/en-us/visualstudio/releases/2022/release-history#evergreen-bootstrappers) of Visual Studio 2022. Visual Studio 2026 with v143 toolset and latest CMake 4.x is usable for building Slicer core and some of its extensions, but it is not an officially supported build configuration yet.
   - Enable `Desktop development with C++` and in installation details
   - Enable the `MSVC v145 - VS2026 C++ x64...` (Visual Studio 2026 v145 toolset with 64-bit support) component - in some distributions, this option is not enabled by default.
   - Enable the `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) component - in some distributions, this option is not enabled by default.
