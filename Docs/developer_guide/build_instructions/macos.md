@@ -48,7 +48,7 @@ cd Slicer
 mkdir /opt/s
 cd /opt/s
 cmake \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0 \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=14.0 \
   -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DQt5_DIR:PATH=/path/to/Qt/lib/cmake/Qt5 \
   /path/to/source/code/of/Slicer

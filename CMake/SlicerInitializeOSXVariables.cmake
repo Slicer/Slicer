@@ -40,7 +40,7 @@ if(APPLE)
     endif()
   endif()
 
-  set(required_deployment_target "13.0")
+  set(required_deployment_target "14.0")
   if("x${CMAKE_OSX_DEPLOYMENT_TARGET}x" STREQUAL "xx")
     set(CMAKE_OSX_DEPLOYMENT_TARGET ${required_deployment_target})
   endif()
