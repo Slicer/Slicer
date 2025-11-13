@@ -143,7 +143,7 @@ void qSlicerDataDialogPrivate::addFiles()
 
   for (const QString& file : files)
   {
-    this->addFile(file);
+    this->addFile(QFileInfo(file));
   }
   this->resetColumnWidths();
 }

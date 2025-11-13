@@ -238,7 +238,7 @@ void qMRMLTextWidget::updateWidgetFromMRML()
     d->TextEdit->setText(text.c_str());
     d->TextNodeContentsModified = false;
     QTextCursor cursor = d->TextEdit->textCursor();
-    position = std::min(position, d->TextEdit->toPlainText().length());
+    position = std::min(position, static_cast<int>(d->TextEdit->toPlainText().length()));
     cursor.setPosition(position);
     d->TextEdit->setTextCursor(cursor);
   }
