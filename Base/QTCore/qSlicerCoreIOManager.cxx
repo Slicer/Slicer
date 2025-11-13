@@ -114,7 +114,12 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
   }
   // Put matching readers in a list, with highest confidence readers pushed to the front
   QList<qSlicerFileReader*> matchingReaders;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  QMultiMapIterator<double, qSlicerFileReader*> i(matchingReadersSortedByConfidence);
+#else
   QMapIterator<double, qSlicerFileReader*> i(matchingReadersSortedByConfidence);
+#endif
   while (i.hasNext())
   {
     i.next();
@@ -363,7 +368,11 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(vtkObject* object) const
   }
   // Put extensions from matching writers in a list, with highest confidence writer pushed to the front
   QStringList matchingExtensions;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  QMultiMapIterator<double, qSlicerFileWriter*> i(matchingWritersSortedByConfidence);
+#else
   QMapIterator<double, qSlicerFileWriter*> i(matchingWritersSortedByConfidence);
+#endif
   while (i.hasNext())
   {
     i.next();
