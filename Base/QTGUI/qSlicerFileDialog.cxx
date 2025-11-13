@@ -301,7 +301,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     properties = ioProperties;
     if (options)
     {
-      properties.unite(options->properties());
+      properties.insert(options->properties());
     }
     properties["fileName"] = fileDialog->selectedFiles();
     if (d->Action == qSlicerFileDialog::Read)
