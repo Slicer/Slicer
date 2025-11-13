@@ -1119,7 +1119,7 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   qSlicerIOOptions* options = this->options(row);
   if (options)
   {
-    properties.unite(options->properties());
+    properties.insert(options->properties());
   }
 
   vtkNew<vtkMRMLMessageCollection> userMessages;

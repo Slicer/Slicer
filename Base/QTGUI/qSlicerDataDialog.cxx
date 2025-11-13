@@ -355,7 +355,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles() const
     if (optionsItem)
     {
       // The optionsItem contains all the file properties including "fileName"
-      properties.unite(optionsItem->properties());
+      properties.insert(optionsItem->properties());
     }
     else
     {
@@ -650,7 +650,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   QList<qSlicerIO::IOProperties> files = d->selectedFiles();
   for (int i = 0; i < files.count(); ++i)
   {
-    files[i].unite(readerProperties);
+    files[i].insert(readerProperties);
   }
   vtkNew<vtkMRMLMessageCollection> userMessages;
   success = qSlicerCoreApplication::application()->coreIOManager()->loadNodes(files, nullptr, userMessages);
