@@ -275,6 +275,11 @@ void qMRMLSubjectHierarchyModelPrivate::completePendingDragAndDropReverts(QMap<v
     if (!newParentItem)
     {
       newParentItem = q->subjectHierarchySceneItem();
+      if (!newParentItem)
+      {
+        // scene is not set yet
+        continue;
+      }
     }
     // If the item has no parent, then it means it hasn't been put into the hierarchy yet and it will do it automatically
     if (parentItem && parentItem != newParentItem)
@@ -405,10 +410,15 @@ QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem() const
   {
     return nullptr;
   }
-  int count = this->invisibleRootItem()->rowCount();
+  const QStandardItem* rootItem = this->invisibleRootItem();
+  if (!rootItem)
+  {
+    return nullptr;
+  }
+  int count = rootItem->rowCount();
   for (int row = 0; row < count; ++row)
   {
-    QStandardItem* child = this->invisibleRootItem()->child(row);
+    QStandardItem* child = rootItem->child(row);
     if (!child)
     {
       continue;
@@ -1020,7 +1030,7 @@ void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardIte
     if (parentItem && parentItem != newParentItem)
     {
       int newIndex = this->subjectHierarchyItemIndex(shItemID);
-      if (parentItem != newParentItem || newIndex != item->row())
+      if ((newParentItem != nullptr) && (parentItem != newParentItem || newIndex != item->row()))
       {
         // Reparent items
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
@@ -1614,6 +1624,11 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
       newParentItem = this->subjectHierarchySceneItem();
     }
     // Reparent orphans
+    if (!newParentItem)
+    {
+      // it can happen if the scene is not set yet
+      continue;
+    }
     newParentItem->insertRow(newIndex, orphans);
   }
   d->Orphans.clear();
@@ -2037,10 +2052,17 @@ void qMRMLSubjectHierarchyModel::setNoneDisplay(const QString& displayName)
   }
   d->NoneDisplay = displayName;
 
-  if (d->NoneEnabled)
+  if (!d->NoneEnabled)
   {
-    this->subjectHierarchySceneItem()->child(0, this->nameColumn())->setText(d->NoneDisplay);
+    return;
   }
+  const QStandardItem* sceneItem = this->subjectHierarchySceneItem();
+  if (!sceneItem)
+  {
+    // scene is not set yet
+    return;
+  }
+  sceneItem->child(0, this->nameColumn())->setText(d->NoneDisplay);
 }
 
 //--------------------------------------------------------------------------
