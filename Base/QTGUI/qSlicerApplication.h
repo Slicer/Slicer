@@ -205,8 +205,10 @@ public slots:
   /// are no longer visible. By enabling hasBorderInFullScreen, a one-pixel border
   /// is added around the window, which fixes the problem.
   /// Border has to be enabled before going to full screen mode.
-  /// This method has only effect when using Qt5 on Windows.
   /// See http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
+  /// This method has only effect on Windows.
+  /// Qt6 removed the public API to set this property, therefore this method may
+  /// need to be be retired in the future.
   void setHasBorderInFullScreen(bool);
 
   /// Calls setRenderPaused(pause) on the current layout manager.
