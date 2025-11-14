@@ -52,10 +52,12 @@ public:
 
   void ComputeJacobianWithRespectToParameters(const InputPointType& p, JacobianType& jacobian) const override;
 
+#if !defined(ITK_LEGACY_REMOVE)
   void ComputeJacobianWithRespectToPosition(const InputPointType& itkNotUsed(x), JacobianType& itkNotUsed(j)) const override
   {
     itkExceptionMacro("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
   }
+#endif
 
   void ComputeJacobianWithRespectToPosition(const InputPointType& itkNotUsed(x), JacobianPositionType& itkNotUsed(j)) const override
   {
