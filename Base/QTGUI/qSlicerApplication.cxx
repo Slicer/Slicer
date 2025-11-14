@@ -34,8 +34,13 @@
 #include <QVBoxLayout>
 
 #if defined(Q_OS_WIN32)
-# include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
-# include <Windows.h>                                 // For MEMORYSTATUSEX and GlobalMemoryStatusEx
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#  include <qpa/qplatformwindow_p.h>
+#  include <QWindow>
+# else
+#  include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
+# endif
+# include <Windows.h> // For MEMORYSTATUSEX and GlobalMemoryStatusEx
 #endif
 
 #include "vtkSlicerConfigure.h"        // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
@@ -917,7 +922,14 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel /*=QStr
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
 #if defined(Q_OS_WIN32)
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  if (auto win = mainWindow()->windowHandle()->nativeInterface<QNativeInterface::Private::QWindowsWindow>())
+  {
+    win->setHasBorderInFullScreen(true);
+  }
+# else
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
+# endif
 #else
   Q_UNUSED(hasBorder);
 #endif
