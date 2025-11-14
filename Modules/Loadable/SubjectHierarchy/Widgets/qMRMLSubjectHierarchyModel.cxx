@@ -2037,7 +2037,7 @@ void qMRMLSubjectHierarchyModel::setNoneDisplay(const QString& displayName)
   }
   d->NoneDisplay = displayName;
 
-  if (d->NoneEnabled)
+  if (d->NoneEnabled && d->MRMLScene != nullptr)
   {
     this->subjectHierarchySceneItem()->child(0, this->nameColumn())->setText(d->NoneDisplay);
   }
