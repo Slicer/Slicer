@@ -445,17 +445,9 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
 
   // Apply transform on segmentation
   bool wasEnabled = this->Segmentation->SetSourceRepresentationModifiedEnabled(false);
-  vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
-  if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
-  {
-    this->Segmentation->ApplyLinearTransform(transform);
-  }
-  else
-  {
-    this->Segmentation->ApplyNonLinearTransform(transform);
-  }
-  this->Segmentation->SetSourceRepresentationModifiedEnabled(wasEnabled);
-  this->Segmentation->InvalidateNonSourceRepresentations();
+
+  std::vector<std::string> containedRepresentationNames;
+  this->Segmentation->GetContainedRepresentationNames(containedRepresentationNames);
 
   // Make sure preferred display representations exist after transformation
   // (it is invalidated in the process unless it is the source representation)
@@ -468,19 +460,27 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
     preferredDisplayRepresentation3D = displayNode->GetPreferredDisplayRepresentationName3D();
   }
 
-  // Make sure preferred display representations exist after transformation
-  // (it was invalidated in the process unless it is the source representation)
+  vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
+  if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
+  {
+    this->Segmentation->ApplyLinearTransform(transform);
+  }
+  else
+  {
+    this->Segmentation->ApplyNonLinearTransform(transform);
+  }
+  this->Segmentation->SetSourceRepresentationModifiedEnabled(wasEnabled);
+  this->Segmentation->InvalidateNonSourceRepresentations();
+
+  // Restore original representations
+  for (const std::string& representationName : containedRepresentationNames)
+  {
+    this->Segmentation->CreateRepresentation(representationName);
+  }
+
+  // Need to set preferred representations, as conversion sets them to the last converted one
   if (displayNode)
   {
-    if (preferredDisplayRepresentation2D)
-    {
-      this->Segmentation->CreateRepresentation(preferredDisplayRepresentation2D);
-    }
-    if (preferredDisplayRepresentation3D)
-    {
-      this->Segmentation->CreateRepresentation(preferredDisplayRepresentation3D);
-    }
-    // Need to set preferred representations again, as conversion sets them to the last converted one
     displayNode->SetPreferredDisplayRepresentationName2D(preferredDisplayRepresentation2D);
     displayNode->SetPreferredDisplayRepresentationName3D(preferredDisplayRepresentation3D);
   }

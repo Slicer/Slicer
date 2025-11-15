@@ -165,6 +165,7 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
 
   // Copy properties
   this->SetSourceRepresentationName(aSegmentation->GetSourceRepresentationName());
+  this->SetUUIDSegmentIDs(aSegmentation->GetUUIDSegmentIDs());
 
   // Copy conversion parameters
   this->Converter->DeepCopy(aSegmentation->Converter);
@@ -177,6 +178,9 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
     vtkSegmentation::CopySegment(segment, aSegmentation->Segments[*segmentIdIt], nullptr, copiedDataObjects);
     this->AddSegment(segment, *segmentIdIt);
   }
+
+  // Continue segment ID autogeneration from the same index as in the source segmentation
+  this->SegmentIdAutogeneratorIndex = aSegmentation->SegmentIdAutogeneratorIndex;
 }
 
 //----------------------------------------------------------------------------

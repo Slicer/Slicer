@@ -435,26 +435,27 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         self.reset()
 
         segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
+
+        # Get segment ID list
+        visibleSegmentIds = vtk.vtkStringArray()
+        if self.getParameterNode().GetParameter("visibleSegmentsOnly") == "True":
+            segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
+        else:
+            segmentationNode.GetSegmentation().GetSegmentIDs(visibleSegmentIds)
+        if visibleSegmentIds.GetNumberOfValues() == 0:
+            logging.debug("computeStatistics will not return any results: there are no visible segments")
+
         transformedSegmentationNode = None
         try:
             if not segmentationNode.GetParentTransformNode() is None:
                 # Create a temporary segmentation and harden the transform to ensure that the statistics are calculated
                 # in world coordinates
-                transformedSegmentationNode = slicer.vtkMRMLSegmentationNode()
-                transformedSegmentationNode.Copy(segmentationNode)
-                transformedSegmentationNode.HideFromEditorsOn()
-                slicer.mrmlScene.AddNode(transformedSegmentationNode)
+                transformedSegmentationNode = slicer.mrmlScene.AddNewNodeByClass(
+                    "vtkMRMLSegmentationNode", "_tmp_" + segmentationNode.GetName() + "_transformedForSegmentStatistics")
+                transformedSegmentationNode.CopyContent(segmentationNode)
+                transformedSegmentationNode.SetAndObserveTransformNodeID(segmentationNode.GetParentTransformNode().GetID())
                 transformedSegmentationNode.HardenTransform()
                 self.getParameterNode().SetParameter("Segmentation", transformedSegmentationNode.GetID())
-
-            # Get segment ID list
-            visibleSegmentIds = vtk.vtkStringArray()
-            if self.getParameterNode().GetParameter("visibleSegmentsOnly") == "True":
-                segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
-            else:
-                segmentationNode.GetSegmentation().GetSegmentIDs(visibleSegmentIds)
-            if visibleSegmentIds.GetNumberOfValues() == 0:
-                logging.debug("computeStatistics will not return any results: there are no visible segments")
 
             # update statistics for all segment IDs
             for segmentIndex in range(visibleSegmentIds.GetNumberOfValues()):
@@ -462,7 +463,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                 self.updateStatisticsForSegment(segmentID)
         finally:
             if transformedSegmentationNode is not None:
-                # We made a copy and hardened the segmentation transform
+                # We made a copy and hardened the segmentation transform, restore the original now
                 self.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
                 slicer.mrmlScene.RemoveNode(transformedSegmentationNode)
 
