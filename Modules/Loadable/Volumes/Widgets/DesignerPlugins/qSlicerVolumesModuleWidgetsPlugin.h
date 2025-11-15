@@ -19,6 +19,7 @@
 #define __qSlicerVolumesModuleWidgetsPlugin_h
 
 // Qt includes
+#include <QObject>
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
 // Volumes includes

@@ -741,7 +741,12 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
   {
     // get the index of the current column
     QModelIndex index = this->indexAt(e->pos());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QStyleOptionViewItem opt = this->viewOptions();
+#else
+    QStyleOptionViewItem opt;
+    this->initViewItemOption(&opt);
+#endif
     opt.rect = this->visualRect(index);
     qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt, index);
     QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);

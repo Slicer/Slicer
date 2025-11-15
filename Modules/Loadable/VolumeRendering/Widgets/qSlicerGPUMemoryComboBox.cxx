@@ -29,6 +29,13 @@
 // Qt includes
 #include <QDebug>
 #include <QLineEdit>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+# include <QRegularExpressionValidator>
+#else
+# include <QRegExp>
+# include <QRegExpValidator>
+#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerGPUMemoryComboBoxPrivate
@@ -47,7 +54,11 @@ public:
   double memoryFromString(const QString& memory) const;
   QString memoryToString(double memory) const;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression MemoryRegExp;
+#else
   QRegExp MemoryRegExp;
+#endif
   QString DefaultText;
 };
 
@@ -59,7 +70,11 @@ qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(qSlicerGPUMemor
   : q_ptr(&object)
   , DefaultText("0 MB (Default)")
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  this->MemoryRegExp = QRegularExpression("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB|\\%)$");
+#else
   this->MemoryRegExp = QRegExp("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB|\\%)$");
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -71,7 +86,11 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   Q_Q(qSlicerGPUMemoryComboBox);
 
   q->setEditable(true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  q->lineEdit()->setValidator(new QRegularExpressionValidator(this->MemoryRegExp, q));
+#else
   q->lineEdit()->setValidator(new QRegExpValidator(this->MemoryRegExp, q));
+#endif
   q->addItem(DefaultText);
   // q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
   // q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
@@ -107,15 +126,26 @@ double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory) 
     return 0.0;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpressionMatch match = this->MemoryRegExp.match(memory);
+  if (!match.hasMatch())
+#else
   int pos = this->MemoryRegExp.indexIn(memory);
   if (pos < 0)
+#endif
   {
     return 0.0;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QString memoryValue = match.captured(1);
+  double value = memoryValue.toDouble();
+  QString memoryUnit = match.captured(2);
+#else
   QString memoryValue = this->MemoryRegExp.cap(1);
   double value = memoryValue.toDouble();
   QString memoryUnit = this->MemoryRegExp.cap(2);
+#endif
 
   if (memoryUnit == "%")
   {

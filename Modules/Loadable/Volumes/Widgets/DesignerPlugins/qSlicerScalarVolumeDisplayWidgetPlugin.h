@@ -18,6 +18,7 @@
 #ifndef __qSlicerScalarVolumeDisplayWidgetPlugin_h
 #define __qSlicerScalarVolumeDisplayWidgetPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumesModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerScalarVolumeDisplayWidgetPlugin

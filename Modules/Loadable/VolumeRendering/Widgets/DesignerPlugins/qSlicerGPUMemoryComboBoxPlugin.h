@@ -21,6 +21,7 @@
 #ifndef __qSlicerGPUMemoryComboBoxPlugin_h
 #define __qSlicerGPUMemoryComboBoxPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerGPUMemoryComboBoxPlugin

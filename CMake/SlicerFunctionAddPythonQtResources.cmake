@@ -38,8 +38,8 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
         )
     endif()
 
-    if(NOT DEFINED QT_RCC_EXECUTABLE AND TARGET Qt5::rcc)
-      get_target_property(QT_RCC_EXECUTABLE Qt5::rcc IMPORTED_LOCATION)
+    if(NOT DEFINED QT_RCC_EXECUTABLE AND TARGET Qt${CTK_QT_VERSION}::rcc)
+      get_target_property(QT_RCC_EXECUTABLE Qt${CTK_QT_VERSION}::rcc IMPORTED_LOCATION)
     endif()
 
     if(NOT DEFINED Slicer_QRCC_SCRIPT)

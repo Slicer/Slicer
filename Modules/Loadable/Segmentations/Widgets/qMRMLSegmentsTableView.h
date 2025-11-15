@@ -33,13 +33,15 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// Qt includes
+#include <QStringList>
+
 class qMRMLSegmentsModel;
 class qMRMLSegmentsTableViewPrivate;
 class qMRMLSortFilterSegmentsProxyModel;
 class QContextMenuEvent;
 class QItemSelection;
 class QStandardItem;
-class QStringList;
 class QTableWidgetItem;
 class QTableView;
 class vtkMRMLNode;

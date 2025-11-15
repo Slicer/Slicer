@@ -27,8 +27,9 @@
 // Qt includes
 #include <QCursor>
 #include <QIcon>
-#include <QPoint>
 #include <QList>
+#include <QObject>
+#include <QPoint>
 #include <QVector3D>
 
 // VTK includes
@@ -62,11 +63,11 @@ class QLayout;
 /// \brief Abstract class for segment editor effects
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorAbstractEffect : public QObject
 {
-public:
   Q_OBJECT
   Q_ENUMS(ConfirmationResult)
   Q_ENUMS(ModificationMode)
 
+public:
   /// This property stores the name of the effect
   /// Cannot be empty.
   /// \sa name(), \sa setName()

@@ -20,6 +20,11 @@
 
 /// Qt includes
 #include <QFileInfo>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+#else
+# include <QRegExp>
+#endif
 
 // CTK includes
 #include <ctkFlowLayout.h>
@@ -141,13 +146,22 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
       // Single file
       // If the name (or the extension) is just a number, then it must be a 2D
       // slice from a 3D volume, so uncheck Single File.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+      onlyNumberInName = QRegularExpression("[0-9\\.\\-\\_\\@\\(\\)\\~]+").match(fileBaseName).hasMatch();
+#else
       onlyNumberInName = QRegExp("[0-9\\.\\-\\_\\@\\(\\)\\~]+").exactMatch(fileBaseName);
+#endif
       fileInfo.suffix().toInt(&onlyNumberInExtension);
     }
     // Because '_' is considered as a word character (\w), \b
     // doesn't consider '_' as a word boundary.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    QRegularExpression labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
+    QRegularExpression segName("(\\b|_)([Ss]eg)(\\b|_)");
+#else
     QRegExp labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
     QRegExp segName("(\\b|_)([Ss]eg)(\\b|_)");
+#endif
     if (fileBaseName.contains(labelMapName) || //
         fileBaseName.contains(segName))
     {
