@@ -445,6 +445,14 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                 transformedSegmentationNode.HideFromEditorsOn()
                 slicer.mrmlScene.AddNode(transformedSegmentationNode)
                 transformedSegmentationNode.HardenTransform()
+
+                # Check to see if a closed surface representation exists for the original segmentation
+                import vtkSegmentationCorePython as vtkSegmentationCore
+                containsClosedSurfaceRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
+                    vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
+                if containsClosedSurfaceRepresentation:
+                    # Recreate closed surface representation after hardening the transform
+                    transformedSegmentationNode.CreateClosedSurfaceRepresentation()
                 self.getParameterNode().SetParameter("Segmentation", transformedSegmentationNode.GetID())
 
             # Get segment ID list
