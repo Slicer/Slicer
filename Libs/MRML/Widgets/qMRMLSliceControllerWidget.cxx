@@ -173,7 +173,11 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)), q, SLOT(setSliceLink(bool)));
 
   // Connect Orientation selector
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  this->connect(this->SliceOrientationSelector, &QComboBox::currentTextChanged, q, &qMRMLSliceControllerWidget::setSliceOrientation);
+#else
   this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)), q, SLOT(setSliceOrientation(QString)));
+#endif
 
   QObject::connect(this->actionShow_in_3D, SIGNAL(toggled(bool)), q, SLOT(setSliceVisible(bool)));
   QObject::connect(this->actionSliceEdgeVisibility3D, SIGNAL(triggered(bool)), q, SLOT(setSliceEdgeVisibility3D(bool)));

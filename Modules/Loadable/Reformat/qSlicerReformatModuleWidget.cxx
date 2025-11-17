@@ -328,7 +328,11 @@ void qSlicerReformatModuleWidget::setup()
   this->connect(d->InVolumeCoordinatesWidget, SIGNAL(coordinatesChanged(double*)), this, SLOT(setWorldPosition(double*)));
 
   // Connect Orientation selector
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  this->connect(d->SliceOrientationSelector, &QComboBox::currentTextChanged, this, &qSlicerReformatModuleWidget::onSliceOrientationChanged);
+#else
   this->connect(d->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT(onSliceOrientationChanged(QString)));
+#endif
 
   // Connect the recenter
   this->connect(d->CenterPushButton, SIGNAL(pressed()), this, SLOT(centerSliceNode()));

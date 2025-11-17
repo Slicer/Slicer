@@ -74,8 +74,13 @@ void qSlicerSettingsViewsPanelPrivate::init()
   this->MSAAComboBox->setCurrentIndex(this->MSAAComboBox->findText("Off"));
 
   // Actions to propagate to the application when settings are changed
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->MSAAComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::onMSAAChanged);
+  QObject::connect(this->MSAAComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentMSAAChanged);
+#else
   QObject::connect(this->MSAAComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onMSAAChanged(QString)));
   QObject::connect(this->MSAAComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentMSAAChanged(QString)));
+#endif
   q->registerProperty(
     "Views/MSAA", q, "currentMSAA", SIGNAL(currentMSAAChanged(QString)), qSlicerSettingsViewsPanel::tr("Multisampling (MSAA)"), ctkSettingsPanel::OptionRequireRestart);
 
@@ -84,21 +89,33 @@ void qSlicerSettingsViewsPanelPrivate::init()
   this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("human"), QString(/*no tr*/ "human"));
   this->SliceOrientationMarkerTypeComboBox->addItem(qSlicerSettingsViewsPanel::tr("axes"), QString(/*no tr*/ "axes"));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SliceOrientationMarkerTypeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentSliceOrientationMarkerTypeChanged);
+#else
   QObject::connect(this->SliceOrientationMarkerTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentSliceOrientationMarkerTypeChanged(QString)));
+#endif
   q->registerProperty("DefaultSliceView/OrientationMarkerType",
                       q,
                       "sliceOrientationMarkerType",
                       SIGNAL(currentSliceOrientationMarkerTypeChanged(QString)),
                       qSlicerSettingsViewsPanel::tr("Slice view orientation marker type"),
                       ctkSettingsPanel::OptionRequireRestart);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SliceOrientationMarkerSizeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentSliceOrientationMarkerSizeChanged);
+#else
   QObject::connect(this->SliceOrientationMarkerSizeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentSliceOrientationMarkerSizeChanged(QString)));
+#endif
   q->registerProperty("DefaultSliceView/OrientationMarkerSize",
                       q,
                       "sliceOrientationMarkerSize",
                       SIGNAL(currentSliceOrientationMarkerSizeChanged(QString)),
                       qSlicerSettingsViewsPanel::tr("Slice view orientation marker size"),
                       ctkSettingsPanel::OptionRequireRestart);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SliceRulerTypeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentSliceRulerTypeChanged);
+#else
   QObject::connect(this->SliceRulerTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentSliceRulerTypeChanged(QString)));
+#endif
   q->registerProperty("DefaultSliceView/RulerType",
                       q,
                       "sliceRulerType",
@@ -133,21 +150,33 @@ void qSlicerSettingsViewsPanelPrivate::init()
                       /*no tr*/ "checked",
                       SIGNAL(toggled(bool)),
                       qSlicerSettingsViewsPanel::tr("3D view axis label visibility"));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->ThreeDOrientationMarkerTypeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentThreeDOrientationMarkerTypeChanged);
+#else
   QObject::connect(this->ThreeDOrientationMarkerTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentThreeDOrientationMarkerTypeChanged(QString)));
+#endif
   q->registerProperty("Default3DView/OrientationMarkerType",
                       q,
                       "threeDOrientationMarkerType",
                       SIGNAL(currentThreeDOrientationMarkerTypeChanged(QString)),
                       qSlicerSettingsViewsPanel::tr("3D view orientation marker type"),
                       ctkSettingsPanel::OptionRequireRestart);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->ThreeDOrientationMarkerSizeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentThreeDOrientationMarkerSizeChanged);
+#else
   QObject::connect(this->ThreeDOrientationMarkerSizeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentThreeDOrientationMarkerSizeChanged(QString)));
+#endif
   q->registerProperty("Default3DView/OrientationMarkerSize",
                       q,
                       "threeDOrientationMarkerSize",
                       SIGNAL(currentThreeDOrientationMarkerSizeChanged(QString)),
                       qSlicerSettingsViewsPanel::tr("3D view orientation marker size"),
                       ctkSettingsPanel::OptionRequireRestart);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->ThreeDRulerTypeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentThreeDRulerTypeChanged);
+#else
   QObject::connect(this->ThreeDRulerTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(currentThreeDRulerTypeChanged(QString)));
+#endif
   q->registerProperty("Default3DView/RulerType",
                       q,
                       "threeDRulerType",
