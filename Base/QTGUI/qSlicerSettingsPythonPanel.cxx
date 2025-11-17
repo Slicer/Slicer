@@ -86,7 +86,11 @@ void qSlicerSettingsPythonPanelPrivate::init()
   //
 
   QObject::connect(this->ConsoleFontButton, SIGNAL(currentFontChanged(QFont)), q, SLOT(onFontChanged(QFont)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->ConsoleLogLevelComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsPythonPanel::onConsoleLogLevelChanged);
+#else
   QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onConsoleLogLevelChanged(QString)));
+#endif
 
   //
   // Register settings with their corresponding widgets
@@ -108,7 +112,11 @@ void qSlicerSettingsPythonPanelPrivate::init()
   q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont", SIGNAL(currentFontChanged(QFont)));
 
   q->registerProperty("Python/ConsoleLogLevel", q, "consoleLogLevel", SIGNAL(consoleLogLevelChanged(QString)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->ConsoleLogLevelComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsPythonPanel::consoleLogLevelChanged);
+#else
   QObject::connect(this->ConsoleLogLevelComboBox, SIGNAL(currentIndexChanged(QString)), q, SIGNAL(consoleLogLevelChanged(QString)));
+#endif
 }
 
 // --------------------------------------------------------------------------

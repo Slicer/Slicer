@@ -52,7 +52,11 @@ void qMRMLSliceInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
   // LayoutName is readonly
 
   // Connect Orientation selector
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  this->connect(this->SliceOrientationSelector, &QComboBox::currentTextChanged, q, &qMRMLSliceInformationWidget::setSliceOrientation);
+#else
   this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)), q, SLOT(setSliceOrientation(QString)));
+#endif
 
   // Connect Slice visibility toggle
   this->connect(this->SliceVisibilityToggle, SIGNAL(clicked(bool)), q, SLOT(setSliceVisible(bool)));

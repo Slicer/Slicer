@@ -81,7 +81,11 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->activeColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onActiveColorPickerButtonChanged(QColor)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->glyphTypeComboBox, &QComboBox::currentTextChanged, q, &qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged);
+#else
   QObject::connect(this->glyphTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onGlyphTypeComboBoxChanged(QString)));
+#endif
   QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)), q, SLOT(setGlyphSizeIsAbsolute(bool)));
   QObject::connect(this->glyphScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
   QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
