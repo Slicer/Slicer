@@ -229,6 +229,18 @@ void qSlicerExtensionsLocalWidgetPrivate::init()
   q->setSpacing(1);
   q->setItemDelegate(new qSlicerExtensionsItemDelegate(q, q));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(&this->InstallButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::installExtension);
+  QObject::connect(&this->AddBookmarkButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::addBookmark);
+  QObject::connect(&this->RemoveBookmarkButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::removeBookmark);
+  QObject::connect(&this->EnableButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::setExtensionEnabled);
+  QObject::connect(&this->DisableButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::setExtensionDisabled);
+  QObject::connect(&this->ScheduleUninstallButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::scheduleExtensionForUninstall);
+  QObject::connect(&this->CancelScheduledUninstallButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::cancelExtensionScheduledForUninstall);
+  QObject::connect(&this->ScheduleUpdateButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::scheduleExtensionForUpdate);
+  QObject::connect(&this->CancelScheduledUpdateButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::cancelExtensionScheduledForUpdate);
+  QObject::connect(&this->IconDownloadMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::onIconDownloadComplete);
+#else
   QObject::connect(&this->InstallButtonMapper, SIGNAL(mapped(QString)), q, SLOT(installExtension(QString)));
   QObject::connect(&this->AddBookmarkButtonMapper, SIGNAL(mapped(QString)), q, SLOT(addBookmark(QString)));
   QObject::connect(&this->RemoveBookmarkButtonMapper, SIGNAL(mapped(QString)), q, SLOT(removeBookmark(QString)));
@@ -239,6 +251,7 @@ void qSlicerExtensionsLocalWidgetPrivate::init()
   QObject::connect(&this->ScheduleUpdateButtonMapper, SIGNAL(mapped(QString)), q, SLOT(scheduleExtensionForUpdate(QString)));
   QObject::connect(&this->CancelScheduledUpdateButtonMapper, SIGNAL(mapped(QString)), q, SLOT(cancelExtensionScheduledForUpdate(QString)));
   QObject::connect(&this->IconDownloadMapper, SIGNAL(mapped(QString)), q, SLOT(onIconDownloadComplete(QString)));
+#endif
 }
 
 // --------------------------------------------------------------------------

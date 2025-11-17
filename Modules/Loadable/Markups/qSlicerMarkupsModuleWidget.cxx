@@ -759,7 +759,11 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
 
       QObject::connect(markupCreatePushButton, SIGNAL(clicked()), mapper, SLOT(map()));
       mapper->setMapping(markupCreatePushButton, markupsNode->GetClassName());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+      QObject::connect(mapper, &QSignalMapper::mappedString, q, &qSlicerMarkupsModuleWidget::onCreateMarkupByClass);
+#else
       QObject::connect(mapper, SIGNAL(mapped(const QString&)), q, SLOT(onCreateMarkupByClass(const QString&)));
+#endif
 
       // NOTE: Alternative connection using lambdas instead of QSignalMapper
       // QObject::connect(markupCreatePushButton, &QPushButton::clicked,
