@@ -75,7 +75,11 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
   this->ComponentsButtonGroup = new QButtonGroup(q);
   this->ComponentsButtonGroup->addButton(this->RGBColorsRadioButton);
   this->ComponentsButtonGroup->addButton(this->IndependentRadioButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  QObject::connect(this->ComponentsButtonGroup, &QButtonGroup::buttonToggled, q, &qMRMLVolumePropertyNodeWidget::updateIndependentComponents);
+#else
   QObject::connect(this->ComponentsButtonGroup, SIGNAL(buttonToggled(int, bool)), q, SLOT(updateIndependentComponents()));
+#endif
 }
 
 // --------------------------------------------------------------------------

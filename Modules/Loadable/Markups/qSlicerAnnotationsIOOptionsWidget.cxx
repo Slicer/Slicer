@@ -54,7 +54,11 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   this->FileTypeButtonGroup->addButton(d->RulerRadioButton);
   this->FileTypeButtonGroup->addButton(d->ROIRadioButton);
   //  this->FileTypeButtonGroup->addButton(d->ListRadioButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  this->connect(this->FileTypeButtonGroup, &QButtonGroup::buttonClicked, this, &qSlicerAnnotationsIOOptionsWidget::updateProperties);
+#else
   this->connect(this->FileTypeButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(updateProperties()));
+#endif
 
   connect(d->NameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(updateProperties()));
   /*

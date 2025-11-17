@@ -98,7 +98,11 @@ void qMRMLScreenShotDialogPrivate::setupUi(QDialog* dialog)
   this->setCheckedRadioButton(this->LastWidgetType);
 
   QObject::connect(this->saveAsButton, SIGNAL(clicked()), q, SLOT(saveAs()));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->WidgetTypeGroup, &QButtonGroup::idClicked, q, &qMRMLScreenShotDialog::setLastWidgetType);
+#else
   QObject::connect(this->WidgetTypeGroup, SIGNAL(buttonClicked(int)), q, SLOT(setLastWidgetType(int)));
+#endif
 }
 
 //-----------------------------------------------------------------------------
