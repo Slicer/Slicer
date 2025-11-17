@@ -120,7 +120,11 @@ ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent)
   : QWidget(_parent)
 {
   this->ButtonGroup = new QButtonGroup(this);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  this->connect(this->ButtonGroup, &QButtonGroup::buttonClicked, this, &ButtonGroupWidgetWrapper::valueChanged);
+#else
   this->connect(this->ButtonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(valueChanged()));
+#endif
 }
 
 //-----------------------------------------------------------------------------
