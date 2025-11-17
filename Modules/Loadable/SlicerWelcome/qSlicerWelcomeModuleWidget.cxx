@@ -282,7 +282,11 @@ void qSlicerWelcomeModuleWidget::setup()
 
   if (extensionUpdatesEnabled || applicationUpdatesEnabled)
   {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerWelcomeModuleWidget::onAutoUpdateCheckStateChanged);
+#else
     QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onAutoUpdateCheckStateChanged(int)));
+#endif
 
     QObject::connect(d->CheckForUpdatesNowButton, SIGNAL(clicked()), this, SLOT(checkForUpdates()));
 

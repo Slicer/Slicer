@@ -396,9 +396,15 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   this->setupUi(this);
 
   connect(this->FilenameLineEdit, SIGNAL(editingFinished()), this, SLOT(onFilenameEditingFinished()));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  connect(this->RecursiveChildrenCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
+  connect(this->IncludeChildrenCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
+  connect(this->IncludeChildrenCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerExportNodeDialogPrivate::onIncludeChildrenCheckBoxStateChanged);
+#else
   connect(this->RecursiveChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
   connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onNodeInclusionCheckboxStateChanged);
   connect(this->IncludeChildrenCheckBox, &QCheckBox::stateChanged, this, &qSlicerExportNodeDialogPrivate::onIncludeChildrenCheckBoxStateChanged);
+#endif
 
   // Set up DirectoryPathLineEdit widget to be a directory selector
   this->DirectoryPathLineEdit->setLabel(qSlicerExportNodeDialog::tr("Output folder:"));

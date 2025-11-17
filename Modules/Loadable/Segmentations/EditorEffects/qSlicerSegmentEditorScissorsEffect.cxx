@@ -1245,8 +1245,11 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
 #else
   QObject::connect(d->shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setShape(int)));
 #endif
-
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(d->shapeDrawCenteredCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerSegmentEditorScissorsEffect::setShapeDrawCentered);
+#else
   QObject::connect(d->shapeDrawCenteredCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setShapeDrawCentered(int)));
+#endif
 
   // Slice cut mode
 

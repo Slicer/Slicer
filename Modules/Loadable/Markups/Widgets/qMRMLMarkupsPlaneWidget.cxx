@@ -82,7 +82,11 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
   QObject::connect(this->boundsYMinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
   QObject::connect(this->boundsYMaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->normalVisibilityCheckBox, &QCheckBox::checkStateChanged, q, &qMRMLMarkupsPlaneWidget::onNormalVisibilityCheckBoxChanged);
+#else
   QObject::connect(this->normalVisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(onNormalVisibilityCheckBoxChanged()));
+#endif
   QObject::connect(this->normalOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(onNormalOpacitySliderChanged()));
 
   q->setEnabled(vtkMRMLMarkupsPlaneNode::SafeDownCast(q->MarkupsNode) != nullptr);

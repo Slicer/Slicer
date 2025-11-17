@@ -823,13 +823,32 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
   for (int row = 0; row < d->tableWidget_SynchronizedSequenceNodes->rowCount(); row++)
   {
     QCheckBox* playbackCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PLAYBACK_COLUMN));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    disconnect(playbackCheckbox, &QCheckBox::checkStateChanged, this, &qSlicerSequencesModuleWidget::synchronizedSequenceNodePlaybackStateChanged);
+#else
     disconnect(playbackCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodePlaybackStateChanged(int)));
+#endif
     QCheckBox* recordingCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_RECORDING_COLUMN));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    disconnect(recordingCheckbox, &QCheckBox::checkStateChanged, this, &qSlicerSequencesModuleWidget::synchronizedSequenceNodeRecordingStateChanged);
+#else
     disconnect(recordingCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeRecordingStateChanged(int)));
+#endif
     QCheckBox* overwriteProxyNameCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_OVERWRITE_PROXY_NAME_COLUMN));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    disconnect(overwriteProxyNameCheckbox, //
+               &QCheckBox::checkStateChanged,
+               this,
+               &qSlicerSequencesModuleWidget::synchronizedSequenceNodeOverwriteProxyNameStateChanged);
+#else
     disconnect(overwriteProxyNameCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeOverwriteProxyNameStateChanged(int)));
+#endif
     QCheckBox* saveChangesCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_SAVE_CHANGES_COLUMN));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    disconnect(saveChangesCheckbox, &QCheckBox::checkStateChanged, this, &qSlicerSequencesModuleWidget::synchronizedSequenceNodeSaveChangesStateChanged);
+#else
     disconnect(saveChangesCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeSaveChangesStateChanged(int)));
+#endif
     qMRMLNodeComboBox* proxyNodeComboBox = dynamic_cast<qMRMLNodeComboBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PROXY_COLUMN));
     disconnect(proxyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onProxyNodeChanged(vtkMRMLNode*)));
   }
@@ -905,10 +924,29 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
     bool recordingChecked = d->ActiveBrowserNode->GetRecording(syncedNode);
     recordingCheckbox->setChecked(recordingChecked);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(playbackCheckbox,
+            &QCheckBox::checkStateChanged, //
+            this,
+            &qSlicerSequencesModuleWidget::synchronizedSequenceNodePlaybackStateChanged);
+    connect(overwriteProxyNameCheckbox,
+            &QCheckBox::checkStateChanged, //
+            this,
+            &qSlicerSequencesModuleWidget::synchronizedSequenceNodeOverwriteProxyNameStateChanged);
+    connect(saveChangesCheckbox,
+            &QCheckBox::checkStateChanged, //
+            this,
+            &qSlicerSequencesModuleWidget::synchronizedSequenceNodeSaveChangesStateChanged);
+    connect(recordingCheckbox,
+            &QCheckBox::checkStateChanged, //
+            this,
+            &qSlicerSequencesModuleWidget::synchronizedSequenceNodeRecordingStateChanged);
+#else
     connect(playbackCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodePlaybackStateChanged(int)));
     connect(overwriteProxyNameCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeOverwriteProxyNameStateChanged(int)));
     connect(saveChangesCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeSaveChangesStateChanged(int)));
     connect(recordingCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodeRecordingStateChanged(int)));
+#endif
 
     d->tableWidget_SynchronizedSequenceNodes->setCellWidget(i, SYNCH_NODES_PLAYBACK_COLUMN, playbackCheckbox);
     d->tableWidget_SynchronizedSequenceNodes->setCellWidget(i, SYNCH_NODES_RECORDING_COLUMN, recordingCheckbox);
