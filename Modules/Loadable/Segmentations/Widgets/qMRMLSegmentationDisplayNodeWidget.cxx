@@ -74,13 +74,35 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
   this->setupUi(q);
 
   // Make connections
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->checkBox_Visible, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onVisibilityChanged);
+#else
   QObject::connect(this->checkBox_Visible, SIGNAL(stateChanged(int)), q, SLOT(onVisibilityChanged(int)));
+#endif
   QObject::connect(this->SliderWidget_Opacity, SIGNAL(valueChanged(double)), q, SLOT(onOpacityChanged(double)));
 
   // Segmentation visibility and opacity settings
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->checkBox_VisibilitySliceFill, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onVisibilitySliceFillChanged);
+  QObject::connect(this->checkBox_VisibilitySliceOutline, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onVisibilitySliceOutlineChanged);
+  QObject::connect(this->checkBox_Visibility3D, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onVisibility3DChanged);
+#else
   QObject::connect(this->checkBox_VisibilitySliceFill, SIGNAL(stateChanged(int)), q, SLOT(onVisibilitySliceFillChanged(int)));
   QObject::connect(this->checkBox_VisibilitySliceOutline, SIGNAL(stateChanged(int)), q, SLOT(onVisibilitySliceOutlineChanged(int)));
   QObject::connect(this->checkBox_Visibility3D, SIGNAL(stateChanged(int)), q, SLOT(onVisibility3DChanged(int)));
+#endif
 
   QObject::connect(this->SliderWidget_OpacitySliceFill, SIGNAL(valueChanged(double)), q, SLOT(onOpacitySliceFillChanged(double)));
   QObject::connect(this->SliderWidget_OpacitySliceOutline, SIGNAL(valueChanged(double)), q, SLOT(onOpacitySliceOutlineChanged(double)));
@@ -92,9 +114,24 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
   QObject::connect(this->comboBox_DisplayedRepresentation2D, SIGNAL(currentIndexChanged(int)), q, SLOT(onRepresentation2DChanged(int)));
 
   // Selected segment visibility and opacity settings
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->checkBox_VisibilitySliceFill_SelectedSegment, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceFillChanged);
+  QObject::connect(this->checkBox_VisibilitySliceOutline_SelectedSegment, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceOutlineChanged);
+  QObject::connect(this->checkBox_Visibility3D_SelectedSegment, //
+                   &QCheckBox::checkStateChanged,
+                   q,
+                   &qMRMLSegmentationDisplayNodeWidget::onSegmentVisibility3DChanged);
+#else
   QObject::connect(this->checkBox_VisibilitySliceFill_SelectedSegment, SIGNAL(stateChanged(int)), q, SLOT(onSegmentVisibilitySliceFillChanged(int)));
   QObject::connect(this->checkBox_VisibilitySliceOutline_SelectedSegment, SIGNAL(stateChanged(int)), q, SLOT(onSegmentVisibilitySliceOutlineChanged(int)));
   QObject::connect(this->checkBox_Visibility3D_SelectedSegment, SIGNAL(stateChanged(int)), q, SLOT(onSegmentVisibility3DChanged(int)));
+#endif
 
   QObject::connect(this->SliderWidget_OpacitySliceFill_SelectedSegment, SIGNAL(valueChanged(double)), q, SLOT(onSegmentOpacitySliceFillChanged(double)));
   QObject::connect(this->SliderWidget_OpacitySliceOutline_SelectedSegment, SIGNAL(valueChanged(double)), q, SLOT(onSegmentOpacitySliceOutlineChanged(double)));
