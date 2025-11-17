@@ -145,7 +145,11 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->InteractionModeMapper->setMapping(this->InteractionModeAdjustWindowLevelAction, vtkMRMLInteractionNode::AdjustWindowLevel);
   this->InteractionModeMapper->setMapping(this->InteractionModePlaceAction, vtkMRMLInteractionNode::Place);
   QObject::connect(interactionModeActions, SIGNAL(triggered(QAction*)), this->InteractionModeMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->InteractionModeMapper, &QSignalMapper::mappedInt, q, &qSlicerSubjectHierarchyViewContextMenuPlugin::setInteractionMode);
+#else
   QObject::connect(this->InteractionModeMapper, SIGNAL(mapped(int)), q, SLOT(setInteractionMode(int)));
+#endif
 
   // Other
 

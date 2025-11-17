@@ -123,7 +123,11 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   QSignalMapper* mapper = new QSignalMapper(moduleButton);
   QObject::connect(moduleButton, SIGNAL(clicked()), mapper, SLOT(map()));
   mapper->setMapping(moduleButton, moduleName);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(mapper, &QSignalMapper::mappedString, this, &qMRMLMarkupsToolBarPrivate::onSetModule);
+#else
   QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onSetModule(const QString&)));
+#endif
   q->addWidget(moduleButton);
 }
 
@@ -486,7 +490,11 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
         this->insertWidget(d->NodeSelectorAction, markupCreateButton);
         QObject::connect(markupCreateButton, SIGNAL(clicked()), mapper, SLOT(map()));
         mapper->setMapping(markupCreateButton, markupsNode->GetClassName());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+        QObject::connect(mapper, &QSignalMapper::mappedString, this, &qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass);
+#else
         QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onAddNewMarkupsNodeByClass(const QString&)));
+#endif
       }
     }
   }

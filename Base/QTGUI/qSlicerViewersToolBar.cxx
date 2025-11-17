@@ -83,7 +83,11 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairJumpSlicesMapper->setMapping(this->CrosshairJumpSlicesOffsetAction, vtkMRMLCrosshairNode::OffsetJumpSlice);
   this->CrosshairJumpSlicesMapper->setMapping(this->CrosshairJumpSlicesCenteredAction, vtkMRMLCrosshairNode::CenteredJumpSlice);
   QObject::connect(crosshairJumpSlicesActions, SIGNAL(triggered(QAction*)), this->CrosshairJumpSlicesMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->CrosshairJumpSlicesMapper, &QSignalMapper::mappedInt, this, &qSlicerViewersToolBarPrivate::setCrosshairJumpSlicesMode);
+#else
   QObject::connect(this->CrosshairJumpSlicesMapper, SIGNAL(mapped(int)), this, SLOT(setCrosshairJumpSlicesMode(int)));
+#endif
 
   // Crosshair Style
   QActionGroup* crosshairActions = new QActionGroup(q);
@@ -127,7 +131,11 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairMapper->setMapping(this->CrosshairSmallBasicAction, vtkMRMLCrosshairNode::ShowSmallBasic);
   this->CrosshairMapper->setMapping(this->CrosshairSmallBasicIntersectionAction, vtkMRMLCrosshairNode::ShowSmallIntersection);
   QObject::connect(crosshairActions, SIGNAL(triggered(QAction*)), this->CrosshairMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->CrosshairMapper, &QSignalMapper::mappedInt, this, &qSlicerViewersToolBarPrivate::setCrosshairMode);
+#else
   QObject::connect(this->CrosshairMapper, SIGNAL(mapped(int)), this, SLOT(setCrosshairMode(int)));
+#endif
 
   // Crosshair Thickness
   QActionGroup* crosshairThicknessActions = new QActionGroup(q);
@@ -156,7 +164,11 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairThicknessMapper->setMapping(this->CrosshairMediumAction, vtkMRMLCrosshairNode::Medium);
   this->CrosshairThicknessMapper->setMapping(this->CrosshairThickAction, vtkMRMLCrosshairNode::Thick);
   QObject::connect(crosshairThicknessActions, SIGNAL(triggered(QAction*)), this->CrosshairThicknessMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->CrosshairThicknessMapper, &QSignalMapper::mappedInt, this, &qSlicerViewersToolBarPrivate::setCrosshairThickness);
+#else
   QObject::connect(this->CrosshairThicknessMapper, SIGNAL(mapped(int)), this, SLOT(setCrosshairThickness(int)));
+#endif
 
   // Crosshair Menu
   this->CrosshairMenu = new QMenu(qSlicerViewersToolBar::tr("Crosshair"), q);
@@ -209,7 +221,11 @@ void qSlicerViewersToolBarPrivate::init()
   this->SliceIntersectionsMapper->setMapping(this->SliceIntersectionsSkipIntersectionAction, vtkMRMLSliceDisplayNode::SkipLineCrossings);
   this->SliceIntersectionsMapper->setMapping(this->SliceIntersectionsFullIntersectionAction, vtkMRMLSliceDisplayNode::FullLines);
   QObject::connect(sliceIntersectionsActions, SIGNAL(triggered(QAction*)), this->SliceIntersectionsMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SliceIntersectionsMapper, &QSignalMapper::mappedInt, this, &qSlicerViewersToolBarPrivate::setIntersectingSlicesIntersectionMode);
+#else
   QObject::connect(this->SliceIntersectionsMapper, SIGNAL(mapped(int)), this, SLOT(setIntersectingSlicesIntersectionMode(int)));
+#endif
 
   // Slice Intersections Thickness
   QActionGroup* sliceIntersectionsThicknessActions = new QActionGroup(q);
@@ -239,7 +255,11 @@ void qSlicerViewersToolBarPrivate::init()
   this->SliceIntersectionsThicknessMapper->setMapping(this->SliceIntersectionsMediumAction, vtkMRMLSliceDisplayNode::MediumLines);
   this->SliceIntersectionsThicknessMapper->setMapping(this->SliceIntersectionsThickAction, vtkMRMLSliceDisplayNode::ThickLines);
   QObject::connect(sliceIntersectionsThicknessActions, SIGNAL(triggered(QAction*)), this->SliceIntersectionsThicknessMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SliceIntersectionsThicknessMapper, &QSignalMapper::mappedInt, this, &qSlicerViewersToolBarPrivate::setIntersectingSlicesLineThicknessMode);
+#else
   QObject::connect(this->SliceIntersectionsThicknessMapper, SIGNAL(mapped(int)), this, SLOT(setIntersectingSlicesLineThicknessMode(int)));
+#endif
 
   // Interactive slice intersections
   this->IntersectingSlicesInteractiveAction = new QAction(q);

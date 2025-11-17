@@ -1323,7 +1323,11 @@ void qMRMLSliceControllerWidgetPrivate::setupOrientationMarkerMenu()
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeCube);
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeHuman);
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeAxes);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->OrientationMarkerTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLSliceControllerWidget::setOrientationMarkerType);
+#else
   QObject::connect(this->OrientationMarkerTypesMapper, SIGNAL(mapped(int)), q, SLOT(setOrientationMarkerType(int)));
+#endif
   QObject::connect(orientationMarkerTypesActions, SIGNAL(triggered(QAction*)), this->OrientationMarkerTypesMapper, SLOT(map(QAction*)));
   // Size
   this->OrientationMarkerSizesMapper = new ctkSignalMapper(this->PopupWidget);
@@ -1335,7 +1339,11 @@ void qMRMLSliceControllerWidgetPrivate::setupOrientationMarkerMenu()
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeSmall);
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeMedium);
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeLarge);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->OrientationMarkerSizesMapper, &QSignalMapper::mappedInt, q, &qMRMLSliceControllerWidget::setOrientationMarkerSize);
+#else
   QObject::connect(this->OrientationMarkerSizesMapper, SIGNAL(mapped(int)), q, SLOT(setOrientationMarkerSize(int)));
+#endif
   QObject::connect(orientationMarkerSizesActions, SIGNAL(triggered(QAction*)), this->OrientationMarkerSizesMapper, SLOT(map(QAction*)));
   // Menu
   QMenu* orientationMarkerMenu = new QMenu(tr("Orientation marker"), this->PopupWidget);
@@ -1365,13 +1373,21 @@ void qMRMLSliceControllerWidgetPrivate::setupRulerMenu()
   rulerTypesActions->addAction(this->actionRulerTypeNone);
   rulerTypesActions->addAction(this->actionRulerTypeThin);
   rulerTypesActions->addAction(this->actionRulerTypeThick);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->RulerTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLSliceControllerWidget::setRulerType);
+#else
   QObject::connect(this->RulerTypesMapper, SIGNAL(mapped(int)), q, SLOT(setRulerType(int)));
+#endif
   QObject::connect(rulerTypesActions, SIGNAL(triggered(QAction*)), this->RulerTypesMapper, SLOT(map(QAction*)));
   QActionGroup* rulerColorActions = new QActionGroup(this->PopupWidget);
   rulerColorActions->addAction(this->actionRulerColorWhite);
   rulerColorActions->addAction(this->actionRulerColorBlack);
   rulerColorActions->addAction(this->actionRulerColorYellow);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->RulerColorMapper, &QSignalMapper::mappedInt, q, &qMRMLSliceControllerWidget::setRulerColor);
+#else
   QObject::connect(this->RulerColorMapper, SIGNAL(mapped(int)), q, SLOT(setRulerColor(int)));
+#endif
   QObject::connect(rulerColorActions, SIGNAL(triggered(QAction*)), this->RulerColorMapper, SLOT(map(QAction*)));
   // Menu
   QMenu* rulerMenu = new QMenu(tr("Ruler"), this->PopupWidget);
@@ -1422,7 +1438,11 @@ void qMRMLSliceControllerWidgetPrivate::setupSlabReconstructionMenu()
   slabReconstructionTypesActions->addAction(this->actionSlabReconstructionMin);
   slabReconstructionTypesActions->addAction(this->actionSlabReconstructionMean);
   slabReconstructionTypesActions->addAction(this->actionSlabReconstructionSum);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->SlabReconstructionTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLSliceControllerWidget::setSlabReconstructionType);
+#else
   QObject::connect(this->SlabReconstructionTypesMapper, SIGNAL(mapped(int)), q, SLOT(setSlabReconstructionType(int)));
+#endif
   QObject::connect(slabReconstructionTypesActions, SIGNAL(triggered(QAction*)), this->SlabReconstructionTypesMapper, SLOT(map(QAction*)));
   this->SlabReconstructionTypesActions = slabReconstructionTypesActions;
 
