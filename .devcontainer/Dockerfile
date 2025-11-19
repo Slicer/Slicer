@@ -227,6 +227,10 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
   echo $(date) > /tmp/package_stamp.txt && \
   make package -j$(nproc)
 
+RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
+  cd Slicer-build && mkdir -p /packager && \
+  cp *.tar.gz /packager
+
 ################################################################################
 # MARK: dancer - multi-stage for cache dancing
 ################################################################################
@@ -243,12 +247,8 @@ RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readon
 # MARK: exporter - multi-stage for exporting caches
 ################################################################################
 FROM scratch AS exporter
-ARG OVERLAY_WS
-ARG WS_CACHE_ID
 
-RUN --mount=type=cache,from=packager,target=/packager \
-    --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readonly \
-  cp $OVERLAY_WS/Slicer-SuperBuild-Debug/Slicer-build/*.tar.gz /
+COPY --from=packager /packager /
 
 ################################################################################
 # MARK: shipper - setup production images using shared instructions
