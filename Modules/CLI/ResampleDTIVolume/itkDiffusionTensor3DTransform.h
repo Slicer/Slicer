@@ -32,7 +32,7 @@ class DiffusionTensor3DTransform : public Object
 {
 public:
   typedef TData DataType;
-  typedef double TransformType;
+  typedef itk::SpacePrecisionType TransformType;
   typedef DiffusionTensor3DTransform Self;
   typedef Point<TransformType, 3> PointType;
   typedef DiffusionTensor3D<DataType> TensorDataType;

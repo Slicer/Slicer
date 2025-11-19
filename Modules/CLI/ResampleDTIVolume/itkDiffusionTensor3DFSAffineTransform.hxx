@@ -25,7 +25,13 @@ typename DiffusionTensor3DFSAffineTransform<TData>::MatrixTransformType Diffusio
   MatrixTransformType sqrMatrix;
 
   vnl_matrix_fixed<double, 3, 3> M(3, 3);
-  M = matrix.GetVnlMatrix();
+  for (int i = 0; i < 3; i++)
+  {
+    for (int j = 0; j < 3; j++)
+    {
+      M[i][j] = matrix(i, j);
+    }
+  }
   vnl_real_eigensystem eig(M.as_matrix());
   vnl_matrix_fixed<std::complex<double>, 3, 3> D(3, 3);
   vnl_matrix_fixed<std::complex<double>, 3, 3> vnl_sqrMatrix(3, 3);
