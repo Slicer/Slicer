@@ -141,7 +141,7 @@ To package Slicer using BuildKit, use the following commands and find the tarbal
 docker buildx bake package
 ls ./result/*.tar.gz
 ```
-
+<!-- 
 If you'd instead like to run tests and inspect the test results:
 
 ```shell
@@ -155,3 +155,4 @@ Or to just build Slicer and inspect the build output:
 docker buildx bake build
 ls ./result/build/Slicer-SuperBuild
 ```
+ -->
