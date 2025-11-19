@@ -1,0 +1,7 @@
+# Ignore meta files
+.devcontainer
+.git
+
+# First-order allow exception for select directories
+!/.devcontainer/config
+!/cache
