@@ -30,6 +30,11 @@ sudo chmod -R g+rwx $OVERLAY_WS
 # to allow write access such as config dotfiles
 sudo chown -R $(id -u):$(id -g) $HOME
 
+# Setup ccache symlinks for compiler caching
+mkdir -p $HOME/.local/bin
+ln -s /usr/bin/ccache $HOME/.local/bin/c++
+ln -s /usr/bin/ccache $HOME/.local/bin/cc
+
 # Recursively update group permissions for slicer cache
 sudo chown -R :ubuntu /opt/slicer/slicer.org
 sudo chmod -R g+rwx /opt/slicer/slicer.org
