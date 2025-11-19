@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.20.0
 ARG DEV_FROM_STAGE=builder
-ARG EXPORT_FROM_STAGE=compiler
+ARG EXPORT_FROM_STAGE=dancer
+ARG EXTRACT_FROM_STAGE=compiler
 ARG OVERLAY_WS=/opt/slicer_ws
 ARG SHIP_FROM_STAGE=runner
 ARG WS_CACHE_ID=slicer
@@ -233,27 +234,32 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
   make package -j$(nproc)
 
 RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-  cd Slicer-build && mkdir -p /packager && \
-  cp *.tar.gz /packager
+  cd Slicer-build && mkdir -p /result && \
+  cp *.tar.gz /result
 
 ################################################################################
 # MARK: dancer - multi-stage for cache dancing
 ################################################################################
-FROM $EXPORT_FROM_STAGE AS dancer
+FROM $EXTRACT_FROM_STAGE AS dancer
 ARG WS_CACHE_ID
 
 RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readonly \
   echo "Exporting cache!" && \
-  mkdir -p /dancer/$OVERLAY_WS && \
-  cp -rT $OVERLAY_WS /dancer/$OVERLAY_WS && \
+  mkdir -p /result/$OVERLAY_WS && \
+  cp -rT $OVERLAY_WS /result/$OVERLAY_WS && \
   echo "Cache exported!"
+
+################################################################################
+# MARK: redirecter - dummy stage for redirect workaround
+################################################################################
+FROM $EXPORT_FROM_STAGE AS redirecter
 
 ################################################################################
 # MARK: exporter - multi-stage for exporting caches
 ################################################################################
 FROM scratch AS exporter
 
-COPY --from=packager /packager /
+COPY --from=redirecter /result /
 
 ################################################################################
 # MARK: shipper - setup production images using shared instructions
