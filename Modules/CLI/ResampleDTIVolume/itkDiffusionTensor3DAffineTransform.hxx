@@ -36,7 +36,7 @@ void DiffusionTensor3DAffineTransform<TData>::SetTransform(typename AffineTransf
 }
 
 template <class TData>
-typename AffineTransform<double, 3>::Pointer DiffusionTensor3DAffineTransform<TData>::GetAffineTransform()
+typename AffineTransform<itk::SpacePrecisionType, 3>::Pointer DiffusionTensor3DAffineTransform<TData>::GetAffineTransform()
 {
   typename AffineTransformType::Pointer affineTransform = AffineTransformType::New();
   affineTransform->SetMatrix(this->m_TransformMatrix);
