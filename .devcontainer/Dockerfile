@@ -49,6 +49,7 @@ WORKDIR $OVERLAY_WS
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
   apt-get install -y \
     gettext-base \
+    sudo \
     unzip \
     wget \
     zstd
