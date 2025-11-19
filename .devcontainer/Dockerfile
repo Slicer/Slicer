@@ -221,7 +221,7 @@ ARG WS_CACHE_ID
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,from=compiler,target=/compiler \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-  rm $OVERLAY_WS/Slicer-SuperBuild-Debug/Slicer-build/*.tar.gz || true && \
+  cd Slicer-build && rm *.tar.gz || true && \
   echo $(date) > /tmp/package_stamp.txt && \
   make package -j$(nproc)
 
