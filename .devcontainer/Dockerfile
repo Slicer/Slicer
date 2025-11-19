@@ -198,6 +198,7 @@ ARG WS_CACHE_ID
 
 # build overlay source
 ARG BUST_BUILD_CACHE
+ARG CMAKE_BUILD_TYPE=Release
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,from=seeder,target=/seeder \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
@@ -205,7 +206,7 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
   mkdir build/Slicer-SuperBuild && \
   cd build/Slicer-SuperBuild && \
   cmake \
-    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE \
     -DCMAKE_CXX_COMPILER:STRING=/usr/bin/ccache \
     -DCMAKE_C_COMPILER:STRING=/usr/bin/ccache \
     ../src/Slicer && \
