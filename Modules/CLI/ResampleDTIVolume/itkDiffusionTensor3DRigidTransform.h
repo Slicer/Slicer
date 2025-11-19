@@ -36,9 +36,9 @@ public:
   typedef SmartPointer<const Self> ConstPointer;
   typedef typename Superclass::MatrixTransformType MatrixTransformType;
   typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef Matrix<double, 4, 4> MatrixTransform4x4Type;
-  typedef Rigid3DTransform<double> Rigid3DTransformType;
-  typedef VersorRigid3DTransform<double> VersorRigid3DTransformType;
+  typedef Matrix<itk::SpacePrecisionType, 4, 4> MatrixTransform4x4Type;
+  typedef Rigid3DTransform<itk::SpacePrecisionType> Rigid3DTransformType;
+  typedef VersorRigid3DTransform<itk::SpacePrecisionType> VersorRigid3DTransformType;
   // /Set the 4x4 Matrix (the last row is ignored and considered to be 0,0,0,1
   void SetMatrix4x4(MatrixTransform4x4Type matrix);
 

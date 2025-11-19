@@ -47,8 +47,8 @@ public:
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef typename Superclass::VectorType VectorType;
-  typedef DiffusionTensor3DExtended<double>::EigenValuesArrayType EValuesType;
-  typedef DiffusionTensor3DExtended<double>::EigenVectorsMatrixType EVectorsType;
+  typedef DiffusionTensor3DExtended<itk::SpacePrecisionType>::EigenValuesArrayType EValuesType;
+  typedef DiffusionTensor3DExtended<itk::SpacePrecisionType>::EigenVectorsMatrixType EVectorsType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DPPDAffineTransform, DiffusionTensor3DAffineTransform);
