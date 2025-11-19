@@ -496,11 +496,6 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode* refNode)
 
   if (transformVtk.GetPointer() == nullptr)
   {
-    transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(::ReadFromTransformFile<float>(this, fullName, this->GetUserMessages(), center_RAS));
-  }
-
-  if (transformVtk.GetPointer() == nullptr)
-  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromTransformFile", "Failed to read transform from file: '" << fullName << "'");
     return 0;
   }
