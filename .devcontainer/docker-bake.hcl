@@ -86,6 +86,12 @@ target "exporter" {
   inherits   = ["dancer"]
   target = "exporter"
   tags = ["slicer:exporter"]
+  output = [
+    {
+      type = "local"
+      dest = "./result"
+    }
+  ]
 }
 
 ################################################################################
