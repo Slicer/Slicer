@@ -219,10 +219,10 @@ FROM $EXPORT_FROM_STAGE AS dancer
 ARG WS_CACHE_ID
 
 RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readonly \
-    echo "Exporting cache!" && \
-    mkdir -p /dancer/$OVERLAY_WS && \
-    cp -rT $OVERLAY_WS /dancer/$OVERLAY_WS && \
-    echo "Cache exported!"
+  echo "Exporting cache!" && \
+  mkdir -p /dancer/$OVERLAY_WS && \
+  cp -rT $OVERLAY_WS /dancer/$OVERLAY_WS && \
+  echo "Cache exported!"
 
 ################################################################################
 # MARK: exporter - multi-stage for exporting caches
