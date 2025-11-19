@@ -107,6 +107,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
 # install build dependencies
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
   apt-get install -y \
+    libqt5opengl5-dev \
     libqt5svg5-dev \
     libqt5x11extras5-dev \
     libqt5xmlpatterns5-dev \
