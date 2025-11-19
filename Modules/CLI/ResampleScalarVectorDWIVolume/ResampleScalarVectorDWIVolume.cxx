@@ -24,7 +24,7 @@
 #include <itkRigid3DTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
 #include <itkTransformFileReader.h>
-#include <itkVectorResampleImageFilter.h>
+#include <itkResampleImageFilter.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
 #include <itkConstantBoundaryCondition.h>
 #include <itkTransformFactory.h>
@@ -432,9 +432,9 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
   {
     return;
   }
-  typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
   VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
-  typedef itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
+  typedef itk::ResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
   ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType defaultPixel;
   defaultPixel.Fill(0.0);

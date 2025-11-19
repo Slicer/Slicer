@@ -29,7 +29,7 @@
 #include "dtiprocessFiles/deformationfieldio.h"
 #include "itkWarpTransform3D.h"
 #include "itkTransformDeformationFieldFilter.h"
-#include <itkVectorResampleImageFilter.h>
+#include <itkResampleImageFilter.h>
 #include <itkBSplineDeformableTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
 #include <itkTransformFactory.h>
@@ -653,9 +653,9 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
   {
     return;
   }
-  typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
   VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
-  typedef itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
+  typedef itk::ResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
   ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType defaultPixel;
   defaultPixel.Fill(0.0);
