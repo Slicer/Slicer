@@ -86,9 +86,10 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
 ################################################################################
 FROM runner AS tester
 
-# RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
-#   apt-get install -y \
-#     TODO
+# install test dependencies
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
+  apt-get install -y \
+    cmake
 
 ################################################################################
 # MARK: builder - setup build dependencies for compilation
