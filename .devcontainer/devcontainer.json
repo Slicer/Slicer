@@ -21,8 +21,8 @@
         // # MARK: Graphic args - for hardware acceleration displays
         // ################################################################################
         // "--device=/dev/dri", // enable Intel integrated graphics
-        "--device=nvidia.com/gpu=all", // enable NVIDIA Container Toolkit on NixOS
-        // "--runtime=nvidia", // enable NVIDIA Container Toolkit on Ubuntu
+        "--device=nvidia.com/gpu=all", // enable NVIDIA Container Toolkit
+        // "--runtime=nvidia", // enable NVIDIA Container Toolkit on older systems
         //     "--env=NVIDIA_VISIBLE_DEVICES=all", // enable GPUs with env as --gpus doesn't parse nicely
         //     "--env=NVIDIA_DRIVER_CAPABILITIES=all", // enable all capabilities, including `graphics`
         // ################################################################################
