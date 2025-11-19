@@ -89,7 +89,8 @@ FROM runner AS tester
 # install test dependencies
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
   apt-get install -y \
-    cmake
+    cmake \
+    xvfb
 
 ################################################################################
 # MARK: builder - setup build dependencies for compilation
@@ -202,6 +203,7 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
 # MARK: validator - validate workspace artifacts for development
 ################################################################################
 FROM tester AS validator
+WORKDIR $OVERLAY_WS/build/Slicer-SuperBuild
 ARG WS_CACHE_ID
 
 # test overlay build
@@ -210,9 +212,11 @@ ARG FAIL_ON_TEST_FAILURE=1
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,from=compiler,target=/compiler \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
+  cd Slicer-build && \
   echo $(date) > /tmp/ctest_stamp.txt && \
-  ctest -j$(nproc) \
-    || ([ -z "$FAIL_ON_TEST_FAILURE" ] || exit 1)
+  xvfb-run -s "-screen 0 1280x1024x24" \
+    ctest -j$(nproc) \
+      || ([ -z "$FAIL_ON_TEST_FAILURE" ] || exit 1)
 
 ################################################################################
 # MARK: packager - multi-stage for packaging artifacts
