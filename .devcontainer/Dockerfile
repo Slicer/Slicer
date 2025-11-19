@@ -168,27 +168,31 @@ RUN ln -s /var/run/docker-host.sock /var/run/docker.sock
 # MARK: compiler - compile workspace artifacts for deployment
 ################################################################################
 FROM builder AS compiler
+WORKDIR $OVERLAY_WS/build/Slicer-SuperBuild
 ARG WS_CACHE_ID
 
-# build overlay source
+# setup cmake config
 ARG BUST_BUILD_CACHE
 ARG CMAKE_BUILD_TYPE=Release
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-  ln -s /cacher/$OVERLAY_WS/src src && \
-  mkdir -p build/Slicer-SuperBuild && \
-  cd build/Slicer-SuperBuild && \
+  rm $OVERLAY_WS/src && \
+  ln -s /cacher/$OVERLAY_WS/src $OVERLAY_WS/src && \
+  mkdir -p $HOME/.local/bin && \
+  ln -s /usr/bin/ccache $HOME/.local/bin/c++ && \
+  ln -s /usr/bin/ccache $HOME/.local/bin/cc && \
+  echo $(date) > /tmp/cmake_stamp.txt && \
   cmake \
     -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE \
-    -DCMAKE_CXX_COMPILER:STRING=/usr/bin/ccache \
-    -DCMAKE_C_COMPILER:STRING=/usr/bin/ccache \
-    ../src/Slicer && \
-  echo $(date) > /tmp/compiler_stamp.txt
+    -DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++ \
+    -DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc \
+    $OVERLAY_WS/src/Slicer
 
+# compile make artifacts
 ARG FAIL_ON_BUILD_FAILURE=1
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-  echo $(date) > /tmp/compiler_stamp.txt && \
+  echo $(date) > /tmp/make_stamp.txt && \
   make -j$(nproc) \
     || ([ -z "$FAIL_ON_BUILD_FAILURE" ] || exit 1)
 
