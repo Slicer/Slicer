@@ -128,3 +128,33 @@ target "debugger" {
     SHIP_FROM_STAGE = "${BUILDER}",
   }
 }
+
+################################################################################
+// MARK: Result targets
+################################################################################
+
+target "build" {
+  inherits   = ["exporter"]
+  args = {
+    EXPORT_FROM_STAGE = "dancer",
+    EXTRACT_FROM_STAGE = "compiler",
+  }
+  tags = ["slicer:build"]
+}
+
+target "test" {
+  inherits   = ["exporter"]
+  args = {
+    EXPORT_FROM_STAGE = "dancer",
+    EXTRACT_FROM_STAGE = "validator",
+  }
+  tags = ["slicer:test"]
+}
+
+target "package" {
+  inherits   = ["exporter"]
+  args = {
+    EXPORT_FROM_STAGE = "packager",
+  }
+  tags = ["slicer:package"]
+}

@@ -41,3 +41,6 @@ Modules/CLI/*/*_tr.h
 # C++ files in many ide's and analysis tools.
 # (i.e. AUTOMOC for building Qt6)
 *.txx
+
+# Ignore buildkit result folder
+result/

@@ -130,3 +130,28 @@ Afterwards, you may want to further familiarize yourself more with the following
   - https://docs.nav2.org/development_guides/devcontainer_docs/index.html
   - https://containers.dev/
   - https://code.visualstudio.com/docs/devcontainers/containers
+
+## Buildkit Extras
+
+The same stages used for Dev Containers can also be reused to build, test, and package Slicer for one-off tasks.
+
+To package Slicer using BuildKit, use the following commands and find the tarballs in the result folder:
+
+```shell
+docker buildx bake package
+ls ./result/*.tar.gz
+```
+
+If you'd instead like to run tests and inspect the test results:
+
+```shell
+docker buildx bake test
+ls ./result/build/Slicer-SuperBuild-Debug/Slicer-build/Testing/Temporary
+```
+
+Or to just build Slicer and inspect the build output:
+
+```shell
+docker buildx bake build
+ls ./result/build/Slicer-SuperBuild
+```
