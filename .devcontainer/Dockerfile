@@ -208,9 +208,9 @@ ARG FAIL_ON_TEST_FAILURE=1
 RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,from=compiler,target=/compiler \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-  echo $(date) > /tmp/validator_stamp.txt && \
-  make test \
-  || ([ -z "$FAIL_ON_TEST_FAILURE" ] || exit 1)
+  echo $(date) > /tmp/ctest_stamp.txt && \
+  ctest -j$(nproc) \
+    || ([ -z "$FAIL_ON_TEST_FAILURE" ] || exit 1)
 
 ################################################################################
 # MARK: dancer - multi-stage for caches dancing
