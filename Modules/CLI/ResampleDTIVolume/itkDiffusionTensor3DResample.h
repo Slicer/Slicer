@@ -79,7 +79,7 @@ public:
   itkSetMacro(OutputSpacing, typename OutputImageType::SpacingType);
   itkSetMacro(OutputSize, typename OutputImageType::SizeType);
   itkSetMacro(OutputDirection, typename OutputImageType::DirectionType);
-  Matrix<double, 3, 3> GetOutputMeasurementFrame();
+  Matrix<itk::SpacePrecisionType, 3, 3> GetOutputMeasurementFrame();
 
   itkGetMacro(OutputOrigin, typename OutputImageType::PointType);
   itkGetMacro(OutputSpacing, typename OutputImageType::SpacingType);
