@@ -55,21 +55,8 @@ target "dever" {
   tags = ["slicer:dever"]
 }
 
-target "seeder" {
-  inherits   = ["dever"]
-  target = "seeder"
-  tags = ["slicer:seeder"]
-  // no-cache-filter = ["compiler"]
-  args = {
-    CLEAR_WS_CACHE = null,
-    // CLEAR_WS_CACHE = "${timestamp()}",
-    SEED_WS_CACHE = null,
-    // SEED_WS_CACHE = "${timestamp()}",
-  }
-}
-
 target "compiler" {
-  inherits   = ["seeder"]
+  inherits   = ["builder"]
   target = "compiler"
   tags = ["slicer:compiler"]
   // no-cache-filter = ["compiler"]
