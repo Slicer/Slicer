@@ -133,23 +133,23 @@ target "debugger" {
 // MARK: Result targets
 ################################################################################
 
-target "build" {
-  inherits   = ["exporter"]
-  args = {
-    EXPORT_FROM_STAGE = "dancer",
-    EXTRACT_FROM_STAGE = "compiler",
-  }
-  tags = ["slicer:build"]
-}
+# target "build" {
+#   inherits   = ["exporter"]
+#   args = {
+#     EXPORT_FROM_STAGE = "dancer",
+#     EXTRACT_FROM_STAGE = "compiler",
+#   }
+#   tags = ["slicer:build"]
+# }
 
-target "test" {
-  inherits   = ["exporter"]
-  args = {
-    EXPORT_FROM_STAGE = "dancer",
-    EXTRACT_FROM_STAGE = "validator",
-  }
-  tags = ["slicer:test"]
-}
+# target "test" {
+#   inherits   = ["exporter"]
+#   args = {
+#     EXPORT_FROM_STAGE = "dancer",
+#     EXTRACT_FROM_STAGE = "validator",
+#   }
+#   tags = ["slicer:test"]
+# }
 
 target "package" {
   inherits   = ["exporter"]
