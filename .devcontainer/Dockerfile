@@ -203,7 +203,7 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
     --mount=type=cache,from=seeder,target=/seeder \
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
   ln -s /cacher/$OVERLAY_WS/src src && \
-  mkdir build/Slicer-SuperBuild && \
+  mkdir -p build/Slicer-SuperBuild && \
   cd build/Slicer-SuperBuild && \
   cmake \
     -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE \
