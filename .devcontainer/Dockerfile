@@ -155,6 +155,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
     bash-completion \
     byobu \
     fish \
+    ssh \
     tmux \
     # Source utils
     gh \
