@@ -173,20 +173,20 @@ ARG WS_CACHE_ID
 
 ARG CLEAR_WS_CACHE
 RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-    if [ -n "$CLEAR_WS_CACHE" ]; then \
-      echo "Clearing cache!" && \
-      rm -rf $OVERLAY_WS/* && \
-      echo "Cache cleared!"; \
-    fi
+  if [ -n "$CLEAR_WS_CACHE" ]; then \
+    echo "Clearing cache!" && \
+    rm -rf $OVERLAY_WS/* && \
+    echo "Cache cleared!"; \
+  fi
 
 ARG SEED_WS_CACHE
 RUN --mount=type=bind,source=./,target=/seeder/\
     --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
-    if [ -n "$SEED_WS_CACHE" ]; then \
-      echo "Seeding cache!" && \
-      cp -rT /seeder/cache/$OVERLAY_WS $OVERLAY_WS && \
-      echo "Cache seeded!"; \
-    fi
+  if [ -n "$SEED_WS_CACHE" ]; then \
+    echo "Seeding cache!" && \
+    cp -rT /seeder/cache/$OVERLAY_WS $OVERLAY_WS && \
+    echo "Cache seeded!"; \
+  fi
 
 RUN echo $(date) > /tmp/seeder_stamp.txt
 
