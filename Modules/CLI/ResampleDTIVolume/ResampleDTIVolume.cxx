@@ -53,8 +53,8 @@ struct parameters
   int numberOfThread;
   std::string interpolationType;
   std::string transformType;
-  std::vector<double> directionMatrix;
-  std::vector<double> transformMatrix;
+  std::vector<itk::SpacePrecisionType> directionMatrix;
+  std::vector<itk::SpacePrecisionType> transformMatrix;
   std::string inputVolume;
   std::string outputVolume;
   std::vector<float> rotationPoint;
@@ -77,7 +77,8 @@ struct parameters
 };
 
 // Verify if some input parameters are null
-bool VectorIsNul(std::vector<double> vec)
+template <typename T>
+bool VectorIsNul(std::vector<T> vec)
 {
   bool zero = true;
 
@@ -184,13 +185,13 @@ void SetListFromTransform(const typename itk::MatrixOffsetTransformBase<PixelTyp
   {
     for (int j = 0; j < 3; j++)
     {
-      list.transformMatrix.push_back((double)transform->GetMatrix()[i][j]);
+      list.transformMatrix.push_back(transform->GetMatrix()[i][j]);
     }
   }
   for (int i = 0; i < 3; i++)
   {
-    list.transformMatrix.push_back((double)transform->GetTranslation()[i]);
-    list.rotationPoint.push_back((double)transform->GetCenter()[i]);
+    list.transformMatrix.push_back(transform->GetTranslation()[i]);
+    list.rotationPoint.push_back(transform->GetCenter()[i]);
   }
 }
 
@@ -220,11 +221,11 @@ itk::Point<double> ImageCenter(const typename itk::Image<itk::DiffusionTensor3D<
 }
 
 template <class PixelType>
-itk::Matrix<double, 4, 4> ComputeTransformMatrix(const parameters& list,
-                                                 const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image,
-                                                 const itk::Point<double>& outputImageCenter)
+itk::Matrix<itk::SpacePrecisionType, 4, 4> ComputeTransformMatrix(const parameters& list,
+                                                                  const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image,
+                                                                  const itk::Point<double>& outputImageCenter)
 {
-  itk::Matrix<double, 4, 4> transformMatrix4x4;
+  itk::Matrix<itk::SpacePrecisionType, 4, 4> transformMatrix4x4;
   transformMatrix4x4.SetIdentity();
   itk::Point<double> center;
   itk::Vector<double> translation;
@@ -253,11 +254,11 @@ itk::Matrix<double, 4, 4> ComputeTransformMatrix(const parameters& list,
   for (int i = 0; i < 3; i++)
   {
     center[i] = list.rotationPoint[i];
-    translation[i] = (double)list.transformMatrix[9 + i];
+    translation[i] = list.transformMatrix[9 + i];
     offset[i] = translation[i] + center[i];
     for (int j = 0; j < 3; j++)
     {
-      transformMatrix4x4[i][j] = (double)list.transformMatrix[i * 3 + j];
+      transformMatrix4x4[i][j] = list.transformMatrix[i * 3 + j];
       offset[i] -= transformMatrix4x4[i][j] * center[j];
     }
     // Compute the 4th column of the matrix
@@ -272,7 +273,7 @@ itk::Matrix<double, 4, 4> ComputeTransformMatrix(const parameters& list,
   /*  //If the transform is in RAS, transform it in LPS
     if (list.space  && !list.transformationFile.compare( "" ))
     {
-      itk::Matrix< double , 4 , 4 > ras ;
+      itk::Matrix< itk::SpacePrecisionType , 4 , 4 > ras ;
       ras.SetIdentity() ;
       ras[ 0 ][ 0 ] = -1 ;
       ras[ 1 ][ 1 ] = -1 ;
@@ -282,7 +283,7 @@ itk::Matrix<double, 4, 4> ComputeTransformMatrix(const parameters& list,
 }
 
 template <class PixelType>
-typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer FSOrPPD(const std::string& ppd, itk::Matrix<double, 4, 4>* matrix = nullptr)
+typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer FSOrPPD(const std::string& ppd, itk::Matrix<itk::SpacePrecisionType, 4, 4>* matrix = nullptr)
 {
   typedef itk::DiffusionTensor3DFSAffineTransform<PixelType> FSAffineTransformType;
   typedef itk::DiffusionTensor3DPPDAffineTransform<PixelType> PPDAffineTransformType;
@@ -315,7 +316,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetUpTransform(cons
   typedef itk::DiffusionTensor3DTransform<PixelType> TransformType;
   typedef itk::DiffusionTensor3DNonRigidTransform<PixelType> NonRigidTransformType;
   typedef typename TransformType::Pointer TransformTypePointer;
-  itk::Matrix<double, 4, 4> transformMatrix4x4;
+  itk::Matrix<itk::SpacePrecisionType, 4, 4> transformMatrix4x4;
   typedef itk::DiffusionTensor3DRigidTransform<PixelType> RigidTransformType;
   TransformTypePointer transform;
   if (list.transformType.compare("nr")) // if rigid or affine transform
@@ -365,12 +366,12 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransformAndOrde
     std::string transformClassName = transform->GetNameOfClass();
     list.transformMatrix.resize(0);
     list.rotationPoint.resize(0);
-    typename itk::MatrixOffsetTransformBase<double, 3, 3>::Pointer matrixOffsetTransform;
+    typename itk::MatrixOffsetTransformBase<itk::SpacePrecisionType, 3, 3>::Pointer matrixOffsetTransform;
     if (transformClassName.find("AffineTransform") != std::string::npos) // if affine transform
     {
       matrixOffsetTransform = static_cast<typename FSAffineTransformType::Superclass::AffineTransformType*>(transform.GetPointer());
       list.transformType.assign("a");
-      SetListFromTransform<double>(matrixOffsetTransform, list);
+      SetListFromTransform<itk::SpacePrecisionType>(matrixOffsetTransform, list);
     }
     else
     {
@@ -386,8 +387,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransformAndOrde
         list.transformType.assign("rt");
         precisionChecking = false;
         matrixOffsetTransform = static_cast<typename RigidTransformType::Rigid3DTransformType*>(transform.GetPointer());
-        ;
-        SetListFromTransform<double>(matrixOffsetTransform, list);
+        SetListFromTransform<itk::SpacePrecisionType>(matrixOffsetTransform, list);
       }
       else // if non-rigid
       {
@@ -420,7 +420,7 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransformAndOrde
 template <class PixelType>
 typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransform(parameters& list,
                                                                           const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image,
-                                                                          itk::TransformFileReader::Pointer& transformFile,
+                                                                          itk::TransformFileReaderTemplate<itk::SpacePrecisionType>::Pointer& transformFile,
                                                                           const itk::Point<double>& outputImageCenter)
 {
   typedef typename itk::DiffusionTensor3DNonRigidTransform<PixelType>::TransformType TransformType;
@@ -456,7 +456,9 @@ typename itk::DiffusionTensor3DTransform<PixelType>::Pointer SetTransform(parame
 // If the transform file contain a transform that the program does not
 // handle, the function returns -1
 template <class PixelType>
-int ReadTransform(parameters& list, const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image, itk::TransformFileReader::Pointer& transformFile)
+int ReadTransform(parameters& list,
+                  const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image,
+                  itk::TransformFileReaderTemplate<itk::SpacePrecisionType>::Pointer& transformFile)
 {
   int numberOfNonRigidTransform = 0;
 
@@ -464,7 +466,7 @@ int ReadTransform(parameters& list, const typename itk::Image<itk::DiffusionTens
   dummyOutputCenter.Fill(0);
   if (list.transformationFile.compare(""))
   {
-    transformFile = itk::TransformFileReader::New();
+    transformFile = itk::TransformFileReaderTemplate<itk::SpacePrecisionType>::New();
     transformFile->SetFileName(list.transformationFile.c_str());
     transformFile->Update();
 
@@ -489,9 +491,9 @@ int ReadTransform(parameters& list, const typename itk::Image<itk::DiffusionTens
 
 // Set Output parameters
 template <class PixelType>
-itk::Matrix<double, 3, 3> SetOutputParameters(const parameters& list,
-                                              typename itk::DiffusionTensor3DResample<PixelType, PixelType>::Pointer& resampler,
-                                              const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image)
+itk::Matrix<itk::SpacePrecisionType, 3, 3> SetOutputParameters(const parameters& list,
+                                                               typename itk::DiffusionTensor3DResample<PixelType, PixelType>::Pointer& resampler,
+                                                               const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& image)
 {
   typedef itk::Image<unsigned char, 3> ImageType;
   typedef itk::ImageFileReader<ImageType> ReaderType;
@@ -514,7 +516,7 @@ itk::Matrix<double, 3, 3> SetOutputParameters(const parameters& list,
       directionReference = readerReference->GetOutput()->GetDirection();
       originReference[0] = -originReference[0];
       originReference[1] = -originReference[1];
-      itk::Matrix<double, 3, 3> ras;
+      itk::Matrix<itk::SpacePrecisionType, 3, 3> ras;
       ras.SetIdentity();
       ras[0][0] = -1;
       ras[1][1] = -1;
@@ -599,7 +601,7 @@ itk::Matrix<double, 3, 3> SetOutputParameters(const parameters& list,
     {
       for (int j = 0; j < 3; j++)
       {
-        m_Direction[i][j] = (double)list.directionMatrix[i * 3 + j];
+        m_Direction[i][j] = list.directionMatrix[i * 3 + j];
       }
     }
   }
@@ -619,7 +621,7 @@ void RASLPS(typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>::Pointer& 
   m_Direction = image->GetDirection();
   m_Origin[0] = -m_Origin[0];
   m_Origin[1] = -m_Origin[1];
-  itk::Matrix<double, 3, 3> ras;
+  itk::Matrix<itk::SpacePrecisionType, 3, 3> ras;
   ras.SetIdentity();
   ras[0][0] = -1;
   ras[1][1] = -1;
@@ -633,14 +635,14 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
                               const itk::Point<double, 3>& origin,
                               const itk::Vector<double, 3>& spacing,
                               const itk::Size<3>& size,
-                              const itk::Matrix<double, 3, 3>& direction)
+                              const itk::Matrix<itk::SpacePrecisionType, 3, 3>& direction)
 {
   // Check if the field does not already have the same properties as the output image:
   // It would save some time if we did not have to resample the field
   itk::Point<double, 3> fieldOrigin;
   itk::Vector<double, 3> fieldSpacing;
   itk::Size<3> fieldSize;
-  itk::Matrix<double, 3, 3> fieldDirection;
+  itk::Matrix<itk::SpacePrecisionType, 3, 3> fieldDirection;
   fieldOrigin = field->GetOrigin();
   fieldSpacing = field->GetSpacing();
   fieldSize = field->GetLargestPossibleRegion().GetSize();
@@ -655,13 +657,13 @@ void ResampleDeformationField(DeformationImageType::Pointer& field,
   }
   typedef itk::LinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
   VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
-  typedef itk::ResampleImageFilter<DeformationImageType, DeformationImageType, double> ResampleImageFilter;
+  typedef itk::ResampleImageFilter<DeformationImageType, DeformationImageType, itk::SpacePrecisionType> ResampleImageFilter;
   ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType defaultPixel;
   defaultPixel.Fill(0.0);
   resampleFieldFilter->SetDefaultPixelValue(defaultPixel);
   resampleFieldFilter->SetInput(field);
-  resampleFieldFilter->SetInterpolator(linearVectorInterpolator);
+  // resampleFieldFilter->SetInterpolator(linearVectorInterpolator); // linear by default
   resampleFieldFilter->SetOutputDirection(direction);
   resampleFieldFilter->SetSize(size);
   resampleFieldFilter->SetOutputSpacing(spacing);
@@ -680,7 +682,7 @@ int Do(parameters list)
   typedef itk::DiffusionTensor3DWrite<PixelType> WriterType;
   typedef typename WriterType::Pointer WriterTypePointer;
   WriterTypePointer writer = WriterType::New();
-  itk::Matrix<double, 3, 3> measurementFrame;
+  itk::Matrix<itk::SpacePrecisionType, 3, 3> measurementFrame;
   bool hasMeasurementFrame;
   try
   {
@@ -719,7 +721,7 @@ int Do(parameters list)
   interpol = InterpolationTypeFct<PixelType>(list.interpolationType, list.windowFunction, list.splineOrder, list.numberOfThread);
 
   // Select the transformation
-  typedef itk::TransformFileReader::Pointer TransformReaderPointer;
+  typedef itk::TransformFileReaderTemplate<itk::SpacePrecisionType>::Pointer TransformReaderPointer;
   TransformReaderPointer transformFile;
   int nonRigidTransforms;
   nonRigidTransforms = ReadTransform<PixelType>(list, image, transformFile);
@@ -768,7 +770,7 @@ int Do(parameters list)
       || list.deffield.compare(""))
   {
     // Create warp transform
-    typedef itk::WarpTransform3D<double> WarpTransformType;
+    typedef itk::WarpTransform3D<itk::SpacePrecisionType> WarpTransformType;
     typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
     typename DeformationImageType::Pointer field;
     if (list.deffield.compare(""))
@@ -793,25 +795,27 @@ int Do(parameters list)
     // Compute the transformation field adding all the transforms together
     while (list.transformationFile.compare("") && transformFile->GetTransformList()->size())
     {
-      typedef itk::TransformDeformationFieldFilter<double, double, 3> itkTransformDeformationFieldFilterType;
+      typedef itk::TransformDeformationFieldFilter<itk::SpacePrecisionType, itk::SpacePrecisionType, 3> itkTransformDeformationFieldFilterType;
       typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<PixelType>(list, image, transformFile, outputImageCenter);
+      std::string transformClassName;
+      if constexpr (std::is_same_v<itk::SpacePrecisionType, float>)
+      {
+        transformClassName = "BSplineDeformableTransform_float_3_3";
+      }
+      else
+      {
+        transformClassName = "BSplineDeformableTransform_double_3_3";
+      }
       // check if there is a bspline transform and a bulk transform with it
-      if (!list.notbulk && transform->GetTransform()->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"
-          && transformFile->GetTransformList()->size()) //
-                                                        // Check
-                                                        // if
-                                                        // transform
-                                                        // file
-                                                        // contains
-                                                        // a
-                                                        // BSpline
+      if (!list.notbulk && transform->GetTransform()->GetTransformTypeAsString() == transformClassName // Check if transform file contains a BSpline
+          && transformFile->GetTransformList()->size())
       {
         // transform = SetTransform<PixelType> ( list , image , transformFile , outputImageCenter ) ;
         // order=3 for the BSpline seems to be standard among tools in Slicer and BRAINTools
         if (std::string(transform->GetTransform()->GetNameOfClass()) == "BSplineDeformableTransform")
         {
-          typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+          typedef itk::BSplineDeformableTransform<itk::SpacePrecisionType, 3, 3> BSplineDeformableTransformType;
           BSplineDeformableTransformType::Pointer BSplineTransform;
           BSplineTransform = static_cast<BSplineDeformableTransformType*>(transform->GetTransform().GetPointer());
           typename TransformType::Pointer bulkTransform;
@@ -843,10 +847,10 @@ int Do(parameters list)
   else if (list.transformationFile.compare("") && transformFile->GetTransformList()->size() > 1)
   {
     typedef itk::DiffusionTensor3DMatrix3x3Transform<PixelType> MatrixTransformType;
-    itk::Matrix<double, 4, 4> composedMatrix;
+    itk::Matrix<itk::SpacePrecisionType, 4, 4> composedMatrix;
     composedMatrix.SetIdentity();
-    itk::Matrix<double, 4, 4> tempMatrix;
-    itk::Matrix<double, 3, 3> matrix;
+    itk::Matrix<itk::SpacePrecisionType, 4, 4> tempMatrix;
+    itk::Matrix<itk::SpacePrecisionType, 3, 3> matrix;
     itk::Vector<double, 3> vector;
     composedMatrix.SetIdentity();
 
@@ -900,11 +904,11 @@ int Do(parameters list)
       resampler->SetNumberOfWorkUnits(list.numberOfThread);
     }
     resampler->SetInterpolator(interpol);
-    itk::Matrix<double, 3, 3> outputImageDirection;
+    itk::Matrix<itk::SpacePrecisionType, 3, 3> outputImageDirection;
     outputImageDirection = SetOutputParameters<PixelType>(list, resampler, image);
     if (!hasMeasurementFrame || list.noMeasurementFrame)
     {
-      itk::Matrix<double, 3, 3> transposeOutputDirection(outputImageDirection.GetTranspose());
+      itk::Matrix<itk::SpacePrecisionType, 3, 3> transposeOutputDirection(outputImageDirection.GetTranspose());
       measurementFrame = transposeOutputDirection * measurementFrame;
     }
     resampler->SetDefaultPixelValue(static_cast<PixelType>(defaultPixelValue)); // Could be set directly in the
@@ -997,8 +1001,14 @@ int main(int argc, char* argv[])
   list.numberOfThread = numberOfThread;
   list.interpolationType = interpolationType;
   list.transformType = transformType;
-  list.directionMatrix = directionMatrix;
-  list.transformMatrix = transformMatrix;
+  for (auto val : directionMatrix)
+  {
+    list.directionMatrix.push_back(val);
+  }
+  for (auto val : transformMatrix)
+  {
+    list.transformMatrix.push_back(val);
+  }
   list.inputVolume = inputVolume;
   list.outputVolume = outputVolume;
   list.rotationPoint = rotationPoint;
