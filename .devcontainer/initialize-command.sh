@@ -20,6 +20,5 @@ mkdir -p /var/tmp/home/slicer
 
 # Bake the target and export locally to static tag
 docker buildx bake --load \
-    --file .devcontainer/docker-bake.hcl \
     --set $target.tags=slicer:devcontainer \
     $target

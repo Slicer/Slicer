@@ -1,6 +1,8 @@
 # Ignore meta files
 .devcontainer
+.dockerignore
 .git
+docker-bake.hcl
 
 # First-order allow exception for select directories
 !/.devcontainer/config
