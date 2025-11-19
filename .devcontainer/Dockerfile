@@ -227,7 +227,7 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
   make package -j$(nproc)
 
 ################################################################################
-# MARK: dancer - multi-stage for caches dancing
+# MARK: dancer - multi-stage for cache dancing
 ################################################################################
 FROM $EXPORT_FROM_STAGE AS dancer
 ARG WS_CACHE_ID
