@@ -37,7 +37,7 @@ class ITK_ABI_EXPORT DiffusionTensor3DRead : public Object
 public:
   typedef TData DataType;
   typedef DiffusionTensor3DRead Self;
-  typedef Matrix<double, 3, 3> MatrixType;
+  typedef Matrix<itk::SpacePrecisionType, 3, 3> MatrixType;
   typedef DiffusionTensor3D<DataType> TensorDataType;
   typedef Image<TensorDataType, 3> DiffusionImageType;
   typedef typename DiffusionImageType::Pointer DiffusionImagePointer;

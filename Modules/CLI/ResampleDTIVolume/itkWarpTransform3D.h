@@ -35,6 +35,7 @@ public:
   typedef ConstNeighborhoodIterator<DeformationImageType> ConstNeighborhoodIteratorType;
   typedef typename ConstNeighborhoodIteratorType::RadiusType RadiusType;
   typedef typename Superclass::ParametersType ParametersType;
+  typedef typename Superclass::FixedParametersType FixedParametersType;
 
   /** New method for creation through the object factory.
    * NOTE: itkNewMacro is not used because we need to provide a
@@ -97,7 +98,7 @@ protected:
   /**This is a dummy function. This class does not allow to set the
    * transform fixed parameters through this function. Use
    * SetDeformationField() to set the transform */
-  void SetFixedParameters(const ParametersType&) override {}
+  void SetFixedParameters(const FixedParametersType&) override {}
 
   WarpTransform3D();
   void operator=(const Self&); // purposely not implemented

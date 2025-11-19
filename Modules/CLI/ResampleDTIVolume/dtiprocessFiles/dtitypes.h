@@ -37,15 +37,15 @@
 #include <vnl/vnl_vector_fixed.h>
 
 // Define necessary types for images
-typedef double RealType;
-typedef double TransformRealType;
+typedef itk::SpacePrecisionType RealType;
+typedef itk::SpacePrecisionType TransformRealType;
 typedef unsigned char LabelType;
 const unsigned int DIM = 3;
 
 typedef unsigned short ScalarPixelType;
-typedef itk::DiffusionTensor3D<double> TensorPixelType;
-typedef itk::Vector<double, 3> DeformationPixelType;
-typedef itk::CovariantVector<double, 3> GradientPixelType;
+typedef itk::DiffusionTensor3D<itk::SpacePrecisionType> TensorPixelType;
+typedef itk::Vector<itk::SpacePrecisionType, 3> DeformationPixelType;
+typedef itk::CovariantVector<itk::SpacePrecisionType, 3> GradientPixelType;
 
 typedef itk::VectorImage<ScalarPixelType, DIM> VectorImageType;
 typedef itk::Image<TensorPixelType, DIM> TensorImageType;
@@ -63,7 +63,7 @@ typedef TensorImageType::SpacingType ImageSpacingType;
 
 typedef itk::AffineTransform<TransformRealType, 3> AffineTransformType;
 
-typedef vnl_vector_fixed<double, 3> GradientType;
+typedef vnl_vector_fixed<itk::SpacePrecisionType, 3> GradientType;
 typedef itk::VectorContainer<unsigned int, GradientType> GradientListType;
 
 // enum InterpolationType {NearestNeighbor, Linear, Cubic};

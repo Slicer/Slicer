@@ -139,7 +139,7 @@ typename DiffusionTensor3DMatrix3x3Transform<TData>::VectorType DiffusionTensor3
 }
 
 template <class TData>
-typename Transform<double, 3, 3>::Pointer DiffusionTensor3DMatrix3x3Transform<TData>::GetTransform()
+typename Transform<itk::SpacePrecisionType, 3, 3>::Pointer DiffusionTensor3DMatrix3x3Transform<TData>::GetTransform()
 {
   typename itk::MatrixOffsetTransformBase<TransformType, 3, 3>::Pointer matrixTransform;
   matrixTransform = itk::MatrixOffsetTransformBase<TransformType, 3, 3>::New();

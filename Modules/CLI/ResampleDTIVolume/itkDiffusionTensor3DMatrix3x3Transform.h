@@ -80,7 +80,7 @@ public:
                                                                                                         // non-rigid
                                                                                                         // transforms
 
-  typename Transform<double, 3, 3>::Pointer GetTransform() override;
+  typename Transform<itk::SpacePrecisionType, 3, 3>::Pointer GetTransform() override;
 
 protected:
   void ComputeOffset();

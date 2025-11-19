@@ -65,7 +65,7 @@ public:
    * use this function to set the new metadatadictionary. Using these functions the other way around would not give
    * a good result.
    */
-  void SetMeasurementFrame(Matrix<double, 3, 3> measurementFrame);
+  void SetMeasurementFrame(Matrix<itk::SpacePrecisionType, 3, 3> measurementFrame);
 
   //  Space:
   //  nrrdSpaceUnknown,

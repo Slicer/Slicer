@@ -34,7 +34,7 @@ public:
   typedef typename Superclass::PointType PointType;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef Transform<double, 3, 3> TransformType;
+  typedef Transform<itk::SpacePrecisionType, 3, 3> TransformType;
   typedef itk::DiffusionTensor3DPPDAffineTransform<DataType> PPDAffineTransformType;
   typedef itk::DiffusionTensor3DFSAffineTransform<DataType> FSAffineTransformType;
   typedef itk::DiffusionTensor3DAffineTransform<DataType> AffineTransform;
