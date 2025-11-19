@@ -159,6 +159,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
     fish \
     ssh \
     tmux \
+    tree \
     # Source utils
     gh \
     pre-commit
