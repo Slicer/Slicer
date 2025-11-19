@@ -213,6 +213,18 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
     || ([ -z "$FAIL_ON_TEST_FAILURE" ] || exit 1)
 
 ################################################################################
+# MARK: packager - multi-stage for packaging artifacts
+################################################################################
+FROM compiler AS packager
+ARG WS_CACHE_ID
+
+RUN --mount=type=cache,from=cacher,target=/cacher \
+    --mount=type=cache,from=compiler,target=/compiler \
+    --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS \
+  echo $(date) > /tmp/package_stamp.txt && \
+  make package -j$(nproc)
+
+################################################################################
 # MARK: dancer - multi-stage for caches dancing
 ################################################################################
 FROM $EXPORT_FROM_STAGE AS dancer
@@ -227,9 +239,13 @@ RUN --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readon
 ################################################################################
 # MARK: exporter - multi-stage for exporting caches
 ################################################################################
-FROM $EXPORT_FROM_STAGE AS exporter
+FROM scratch AS exporter
+ARG OVERLAY_WS
+ARG WS_CACHE_ID
 
-COPY --link --from=dancer /dancer/$OVERLAY_WS $OVERLAY_WS
+RUN --mount=type=cache,from=packager,target=/packager \
+    --mount=type=cache,id=$WS_CACHE_ID,sharing=private,target=$OVERLAY_WS,readonly \
+  cp $OVERLAY_WS/Slicer-SuperBuild-Debug/Slicer-build/*.tar.gz /
 
 ################################################################################
 # MARK: shipper - setup production images using shared instructions
