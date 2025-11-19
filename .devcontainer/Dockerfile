@@ -187,6 +187,7 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
     -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE \
     -DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++ \
     -DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc \
+    -DSlicer_FORCED_WC_LAST_CHANGED_DATE=$(date +%Y-%m-%d) \
     $OVERLAY_WS/src/Slicer
 
 # compile make artifacts
