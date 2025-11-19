@@ -210,8 +210,6 @@ RUN --mount=type=cache,from=cacher,target=/cacher \
     -DCMAKE_CXX_COMPILER:STRING=/usr/bin/ccache \
     -DCMAKE_C_COMPILER:STRING=/usr/bin/ccache \
     ../src/Slicer && \
-  make -j$(nproc) \
-    || true && \
   echo $(date) > /tmp/compiler_stamp.txt
 
 ARG FAIL_ON_BUILD_FAILURE=1
