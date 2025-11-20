@@ -146,6 +146,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
     micro \
     nano \
     # Graphic utils
+    eterm \
     mesa-utils \
     # Profiling utils
     btop \
