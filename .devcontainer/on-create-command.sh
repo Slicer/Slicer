@@ -32,8 +32,8 @@ sudo chown -R $(id -u):$(id -g) $HOME
 
 # Setup ccache symlinks for compiler caching
 mkdir -p $HOME/.local/bin
-ln -s /usr/bin/ccache $HOME/.local/bin/c++
-ln -s /usr/bin/ccache $HOME/.local/bin/cc
+ln -s /usr/bin/ccache $HOME/.local/bin/c++ || true
+ln -s /usr/bin/ccache $HOME/.local/bin/cc || true
 
 # Recursively update group permissions for slicer cache
 sudo chown -R :ubuntu /opt/slicer/slicer.org
