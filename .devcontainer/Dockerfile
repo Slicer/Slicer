@@ -25,10 +25,11 @@ RUN apt-get update && \
     tzdata \
   && rm -rf /var/lib/apt/lists/*
 
-# configure ubuntu snapshot
-RUN UBUNTU_DEB_SNAPSHOT=$(date -r /var/lib/dpkg/info +%Y%m%dT%H%M%SZ) && \
-  echo "APT::Snapshot \"${UBUNTU_DEB_SNAPSHOT}\";" \
-  | tee /etc/apt/apt.conf.d/50snapshot
+# Uncomment to tradeoff slower downloads for better reproducibility
+# # configure ubuntu snapshot
+# RUN UBUNTU_DEB_SNAPSHOT=$(date -r /var/lib/dpkg/info +%Y%m%dT%H%M%SZ) && \
+#   echo "APT::Snapshot \"${UBUNTU_DEB_SNAPSHOT}\";" \
+#   | tee /etc/apt/apt.conf.d/50snapshot
 
 # update package cache
 RUN cat <<EOF > /etc/apt/apt.conf.d/docker-clean && apt-get update && echo v1
