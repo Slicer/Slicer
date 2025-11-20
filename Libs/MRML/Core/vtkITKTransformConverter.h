@@ -97,9 +97,13 @@ public:
                                                       typename itk::DisplacementFieldTransform<T, 3>::DisplacementFieldType::Pointer gridImage_Lps);
   static bool SetITKImageFromVTKOrientedGridTransform(vtkObject* loggerObject, GridImageDoubleType::Pointer& gridImage_Lps, vtkOrientedGridTransform* grid_Ras);
 
-protected:
+  // Convert a 2D ITK matrix to a 3D ITK matrix.
+  // Spacing for the third dimension is geometrical mean of the other two dimensions.
+  // Sign of the third dimension is chosen to create a right-handed coordinate system.
   template <typename T>
   static itk::Matrix<T, 3, 3> Matrix2Dto3D(itk::Matrix<T, 2, 2> m2D);
+
+protected:
   template <typename T>
   static typename itk::AffineTransform<T, 3>::Pointer ConvertITKLinearTransformFrom2Dto3D(typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
   template <typename T>
@@ -222,7 +226,6 @@ itk::Matrix<T, 3, 3> vtkITKTransformConverter::Matrix2Dto3D(itk::Matrix<T, 2, 2>
 template <typename T>
 typename itk::AffineTransform<T, 3>::Pointer vtkITKTransformConverter::ConvertITKLinearTransformFrom2Dto3D(typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS)
 {
-  constexpr unsigned Dimension = VTKDimension;
   using Affine3D = itk::AffineTransform<T, 3>;
   using LinearTransformType = itk::MatrixOffsetTransformBase<T, 2, 2>;
 
