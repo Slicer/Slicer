@@ -224,6 +224,13 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID) const
   }
   tooltipString.append(QString(")"));
 
+  // Append the storage path if available
+  QString storagePath = this->tooltipWithStoragePath(itemID);
+  if (!storagePath.isEmpty())
+  {
+    tooltipString.append(QString("\n  %1").arg(storagePath));
+  }
+
   return tooltipString;
 }
 
