@@ -608,6 +608,19 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # connect 'Import DICOM files' and 'Show DICOM Browser' button
         self.ui.showBrowserButton.connect("clicked()", self.toggleBrowserWidget)
         self.ui.importButton.connect("clicked()", self.importFolder)
+        # --- Metadata Viewer Panel ---
+        self.metadataViewer = qt.QTextEdit()
+        self.metadataViewer.setReadOnly(True)
+        self.metadataViewer.setMaximumHeight(300)
+        self.layout.addWidget(self.metadataViewer)
+
+        # --- Fix and Insert Button ---
+        self.fixInsertButton = qt.QPushButton("Fix and Insert Metadata")
+        self.layout.addWidget(self.fixInsertButton)
+
+        # --- Connect signals ---
+        self.browserWidget.dicomBrowser.connect('seriesSelectionChanged(QString)', self.onSeriesSelected)
+        self.fixInsertButton.connect('clicked()', self.onFixAndInsert)
 
         # Add import options menu to import button
 
@@ -716,6 +729,79 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
             self.checkBox = self.pluginSelector.checkBoxByPlugin[pluginClass]
             self.checkBox.connect("stateChanged(int)", self.onPluginStateChanged)
             self.checkBoxByPlugins.append(self.checkBox)
+    def onSeriesSelected(self, seriesUID):
+        try:
+            file = slicer.dicomDatabase.filesForSeries(seriesUID)[0]
+            import pydicom
+            ds = pydicom.dcmread(file, stop_before_pixels=True)
+
+            def get(attr, default="N/A"):
+                return getattr(ds, attr, default)
+
+            metadata = f"""
+    === Patient Information ===
+    Name: {get('PatientName')}
+    ID: {get('PatientID')}
+    Age: {get('PatientAge')}
+    Sex: {get('PatientSex')}
+
+    === Study Information ===
+    Study ID: {get('StudyID')}
+    Date: {get('StudyDate')}
+    Manufacturer: {get('Manufacturer')}
+    Model: {get('ManufacturerModelName')}
+    KVP: {get('KVP')}
+    Tube Current (mA): {get('XRayTubeCurrent')}
+    Institution: {get('InstitutionName')}
+    Physician: {get('ReferringPhysicianName')}
+
+    === Image Information ===
+    Width: {get('Columns')} px
+    Height: {get('Rows')} px
+    Pixel Spacing: {get('PixelSpacing')}
+    Slice Thickness: {get('SliceThickness')}
+    Slice Increment: {get('SpacingBetweenSlices')}
+    Field of View: {get('ReconstructionDiameter')}
+    Orientation: {get('ImageOrientationPatient')}
+    ----------------------------------------------------------
+    """
+            self.metadataViewer.setPlainText(metadata)
+        except Exception as e:
+            self.metadataViewer.setPlainText(f"⚠️ Could not read metadata: {e}")
+    def onFixAndInsert(self):
+        import pydicom, os
+        from pydicom.uid import generate_uid
+
+        selectedSeries = self.browserWidget.dicomBrowser.selectedSeries()
+        if not selectedSeries:
+            slicer.util.errorDisplay("No series selected.")
+            return
+
+        files = slicer.dicomDatabase.filesForSeries(selectedSeries)
+        for file in files:
+            try:
+                ds = pydicom.dcmread(file, force=True)
+
+                # Inject missing tags
+                if not hasattr(ds, "SOPInstanceUID"):
+                    ds.SOPInstanceUID = generate_uid()
+                if not hasattr(ds, "SeriesInstanceUID"):
+                    ds.SeriesInstanceUID = generate_uid()
+                if not hasattr(ds, "StudyInstanceUID"):
+                    ds.StudyInstanceUID = generate_uid()
+                if not hasattr(ds, "Modality"):
+                    ds.Modality = "CT"
+
+                # Save fixed file
+                fixedPath = file.replace(".dcm", "_fixed.dcm")
+                ds.save_as(fixedPath)
+
+                # Insert into DICOM database
+                slicer.dicomDatabase.insert(fixedPath)
+                slicer.util.showStatusMessage(f" Inserted: {os.path.basename(fixedPath)}", 3000)
+
+            except Exception as e:
+                slicer.util.errorDisplay(f"Failed to fix {file}: {e}")
 
     def onPluginStateChanged(self, state):
         settings = qt.QSettings()
