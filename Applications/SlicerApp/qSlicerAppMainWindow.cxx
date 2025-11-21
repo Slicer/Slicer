@@ -23,10 +23,13 @@
 
 // Qt includes
 #include <QDesktopServices>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPixmap>
+#include <QPushButton>
 #include <QStyle>
 #include <QUrl>
+#include <QWidget>
 
 // Slicer includes
 #include "qSlicerAboutDialog.h"
@@ -149,10 +152,33 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   mainWindow->setWindowTitle(qSlicerApplication::application()->mainApplicationDisplayName());
   mainWindow->setWindowIcon(QIcon(":/Icons/Medium/DesktopIcon.png"));
 
+  // Create custom title bar with logo, float button, and close button
+  QWidget* titleBarWidget = new QWidget();
+  QHBoxLayout* titleBarLayout = new QHBoxLayout(titleBarWidget);
+  titleBarLayout->setContentsMargins(0, 0, 0, 0);
+  titleBarLayout->setSpacing(0);
+
   QLabel* logoLabel = new QLabel();
   logoLabel->setObjectName("LogoLabel");
   logoLabel->setPixmap(qMRMLWidget::pixmapFromIcon(QIcon(":/ModulePanelLogo.png")));
-  this->PanelDockWidget->setTitleBarWidget(logoLabel);
+  titleBarLayout->addWidget(logoLabel);
+  titleBarLayout->addStretch();
+
+  QPushButton* floatButton = new QPushButton();
+  floatButton->setIcon(mainWindow->style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+  floatButton->setFlat(true);
+  floatButton->setMaximumSize(20, 20);
+  QObject::connect(floatButton, &QPushButton::clicked, [this]() { this->PanelDockWidget->setFloating(!this->PanelDockWidget->isFloating()); });
+  titleBarLayout->addWidget(floatButton);
+
+  QPushButton* closeButton = new QPushButton();
+  closeButton->setIcon(mainWindow->style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+  closeButton->setFlat(true);
+  closeButton->setMaximumSize(20, 20);
+  QObject::connect(closeButton, &QPushButton::clicked, this->PanelDockWidget, &QDockWidget::close);
+  titleBarLayout->addWidget(closeButton);
+
+  this->PanelDockWidget->setTitleBarWidget(titleBarWidget);
 
   this->HelpMenu->addAction(helpDocumentationAction);
   this->HelpMenu->addAction(helpQuickStartAction);
