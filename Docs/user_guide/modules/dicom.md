@@ -186,6 +186,82 @@ DICOM module settings:
         - Acquisition geometry regularization option supports the creation of a nonlinear transform that corrects for things like missing slices or gantry tilt in the acquisition. The regularization transformation can also be hardened to the volume. See more information [here](https://github.com/Slicer/Slicer/commit/3328b81211cb2e9ae16a0b49097744171c8c71c0)
         - Autoloading subseries by time is an option break up some 4D acquisitions into individual volume, but is optional since some volumes are also acquired in time unites and should not be split.
 
+
+## Visual DICOM Browser
+
+The Visual DICOM Browser provides a thumbnail-based interface for browsing and loading DICOM data. This interface is particularly useful when you need to quickly identify images visually.
+
+### When to use
+
+- When you need to quickly identify anatomical regions or specific acquisitions visually
+- In multi-monitor setups where you want the browser displayed on a secondary display
+
+### Features
+
+- **Thumbnail previews**: View preview images of all series in the database
+
+- **Quick visual identification**: Easily identify the correct series by viewing the images
+
+- **Tab patient mode and list mode**: Toggle between a tab-based patient view (optimized for clinical workflows) and a list mode (ideal for managing large research databases)
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_tabmode.png)
+
+*Tab patient mode: organized by patient tabs for clinical workflows*
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_listmode.png)
+
+*List mode: flat list view ideal for large research databases*
+
+- **Dynamic thumbnails size settings**: Choose between different thumbnail sizes (small, medium, large) to suit your workflow
+
+- **Side panel mode**: Display the Visual DICOM Browser in a dockable side panel, allowing you to keep the browser visible while working with data in the main views
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_sidepanel.png)
+
+*Side panel mode: keep the browser visible while working with data*
+
+- **Integrated query/retrieve**: Query and retrieve functionality is built directly into the UI, allowing the browser to display both local database content (with interactive filtering) and remote database content (with loading progress bars and status reports)
+
+- **Advanced job tracking**: The advanced section includes comprehensive job tracking with detailed logging for each query and retrieve operation
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_jobs.png)
+
+*Job tracking: monitor query and retrieve operations with detailed logs*
+
+- **Server configuration**: Configure multiple servers with their individual settings
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_serversettings.png)
+
+*Server settings: configure multiple DICOM servers*
+
+
+### How to use
+
+1. In the DICOM module, click the "Visual browser" button to toggle between the traditional text-based browser and the Visual DICOM Browser
+2. Navigate and load data:
+   - **Double-click** on a series to load all selected series into the scene
+   - **Right-click** on a series to open a context menu with additional options
+3. Adjust thumbnail size using any of these methods:
+   - **Keyboard shortcuts**: Press `Ctrl+` to increase or `Ctrl-` to decrease thumbnail size
+   - **Mouse scroll**: Hold `Ctrl` and scroll with the mouse wheel while hovering over the widget
+   - **Application Settings**: Navigate to Edit / Application Settings / DICOM / Thumbnails size to set a specific size
+4. (Optional) Click "Side panel" to dock the browser to the side of the main window, allowing you to work with your data while keeping the browser visible
+5. The docked browser can be:
+   - Moved to different dock areas (left, right, top, bottom)
+   - Undocked and floated as a separate window
+   - Maximized to fullscreen using the maximize button in the dock's title bar
+   - Returned to center view by clicking "Show in center view"
+
+### Advanced proxy server configuration
+
+Advanced configuration allows you to specify a PACS system using the C-MOVE protocol along with a proxy using the C-GET protocol. When configured this way, the C-MOVE operation will be automatically executed on the proxy server, and C-GET will automatically start to retrieve the data to Slicer once the C-MOVE retrieve is finished.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_visualbrowser_proxyserversettings.png)
+
+*Proxy server configuration: advanced setup for C-MOVE with proxy C-GET*
+
+**Note**: DICOMweb protocol is not yet supported. See the [development roadmap](https://github.com/commontk/CTK/issues/1230) for more information.
+
 ## Troubleshooting
 
 ### How do I know if the files I have are stored using DICOM format? How do I get started?
@@ -353,6 +429,7 @@ Authors:
 - Csaba Pinter (PerkLab, Queen's)
 - Andras Lasso (PerkLab, Queen's)
 - Jean-Christophe Fillion-Robin (Kitware)
+- Davide Punzo (DNA-HIVE/PI3)
 
 ## Acknowledgements
 
@@ -367,3 +444,5 @@ This work is part of the [National Alliance for Medical Image Computing](https:/
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_kitware.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_hive.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_PI3.png)

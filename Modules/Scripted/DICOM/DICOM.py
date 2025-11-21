@@ -16,6 +16,132 @@ from slicer.i18n import translate
 
 
 #
+# Custom QDockWidget that notifies when it's closed
+#
+class DICOMDockWidget(qt.QDockWidget):
+    """Custom dock widget that handles close events and has a fullscreen button"""
+
+    def __init__(self, title, parent=None, browserWidget=None):
+        qt.QDockWidget.__init__(self, title, parent)
+        self.dicomInstance = None
+        self.isDockFullScreen = False
+        self.browserWidget = browserWidget
+
+        # Create custom title bar with fullscreen button
+        self.titleDockBarWidget = qt.QWidget()
+        titleLayout = qt.QHBoxLayout(self.titleDockBarWidget)
+        titleLayout.setContentsMargins(0, 0, 1, 0)
+        titleLayout.setSpacing(1)
+
+        # Title label
+        self.titleLabel = qt.QLabel(title)
+        titleLayout.addWidget(self.titleLabel)
+        titleLayout.addStretch()
+
+        # Set icon size to match the appearance of default QDockWidget title bar buttons
+        iconSize = 13
+
+        # Fullscreen button
+        self.fullScreenButton = qt.QPushButton()
+        self.fullScreenButton.setFlat(True)
+        self.fullScreenButton.setMaximumSize(iconSize, iconSize)
+        self.fullScreenButton.setIcon(self.style().standardIcon(qt.QStyle.SP_TitleBarNormalButton))
+        self.fullScreenButton.setIconSize(qt.QSize(iconSize, iconSize))
+        self.fullScreenButton.setToolTip(_("Toggle fullscreen"))
+        self.fullScreenButton.clicked.connect(self.toggleFullScreen)
+        titleLayout.addWidget(self.fullScreenButton)
+
+        # Close button
+        closeButton = qt.QPushButton()
+        closeButton.setFlat(True)
+        closeButton.setMaximumSize(iconSize, iconSize)
+        closeButton.setIcon(self.style().standardIcon(qt.QStyle.SP_TitleBarCloseButton))
+        closeButton.setIconSize(qt.QSize(iconSize, iconSize))
+        closeButton.setToolTip(_("Close"))
+        closeButton.clicked.connect(lambda: self.close())
+        titleLayout.addWidget(closeButton)
+
+        self.setTitleBarWidget(self.titleDockBarWidget)
+
+    def toggleFullScreen(self):
+        """Toggle fullscreen mode"""
+        if not self.isDockFullScreen:
+            # Enter fullscreen - set floating and resize to current screen dimensions
+            self.setFloating(True)
+            center = self.geometry.center()
+            screenGeometry = None
+            screen = qt.QApplication.screenAt(center)
+            if screen:
+                screenGeometry = screen.geometry
+            if screenGeometry:
+                self.setGeometry(screenGeometry)
+            self.isDockFullScreen = True
+            # Open Actions and Search collapsible group boxes in visual DICOM browser
+            if self.browserWidget and hasattr(self.browserWidget, "dicomVisualBrowser"):
+                actionsGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "ActionsCollapsibleGroupBox")
+                if actionsGroupBox:
+                    actionsGroupBox.collapsed = False
+                searchGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "SearchPatientsCollapsibleGroupBox")
+                if searchGroupBox:
+                    searchGroupBox.collapsed = False
+        else:
+            # Exit fullscreen
+            self.showNormal()
+            self.setFloating(False)
+            self.isDockFullScreen = False
+            # Collapse Actions and Search collapsible group boxes in visual DICOM browser
+            if self.browserWidget and hasattr(self.browserWidget, "dicomVisualBrowser"):
+                actionsGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "ActionsCollapsibleGroupBox")
+                if actionsGroupBox:
+                    actionsGroupBox.collapsed = True
+                searchGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "SearchPatientsCollapsibleGroupBox")
+                if searchGroupBox:
+                    searchGroupBox.collapsed = True
+
+    def paintEvent(self, event):
+        qt.QDockWidget.paintEvent(self, event)
+
+        if self.isFloating():
+            painter = qt.QPainter(self)
+            pen = qt.QPen(qt.QColor(200, 200, 200))
+            pen.setWidth(1)
+            painter.setPen(pen)
+            painter.drawRect(self.rect.adjusted(0, 0, -1, -1))
+
+    def closeEvent(self, event):
+        """Override close event to notify DICOM module"""
+        if self.dicomInstance:
+            dicomInstance = self.dicomInstance
+            # Remove browser widget from dock first
+            self.setWidget(None)
+
+            # User explicitly closed the dock widget - return to layout mode
+            dicomInstance.isDockMode = False
+
+            # Restore original browser persistence setting
+            if dicomInstance.browserWidget:
+                dicomInstance.browserWidget.setBrowserPersistence(settingsValue("DICOM/BrowserPersistent", False, converter=toBool))
+
+            # Reparent browser widget back to layout view
+            if dicomInstance.viewWidget and dicomInstance.browserWidget:
+                dicomInstance.browserWidget.setParent(None)
+                dicomInstance.viewWidget.layout().addWidget(dicomInstance.browserWidget)
+                dicomInstance.browserWidget.show()
+
+            # Update the showBrowserButton state and button visibility if DICOMWidget exists
+            try:
+                ui = slicer.modules.DICOMWidget.ui
+                ui.showBrowserButton.checked = False
+                ui.showBrowserButton.text = _("Show DICOM Database")
+                ui.showVisualBrowserButton.visible = False
+                ui.dockToRightPushButton.visible = False
+                ui.dockToRightPushButton.checked = False
+            except Exception as exc:
+                logging.debug("Failed to disconnect DICOM browserWidget 'closed' signal: %s", exc)
+        qt.QDockWidget.closeEvent(self, event)
+
+
+#
 # DICOM
 #
 # This code includes the GUI for the slicer module.  It is supported
@@ -41,6 +167,8 @@ class DICOM(ScriptedLoadableModule):
         self.viewWidget = None  # Widget used in the layout manager (contains just label and browser widget)
         self.browserWidget = None  # SlicerDICOMBrowser instance (ctkDICOMBrowser with additional section for loading the selected items)
         self.browserSettingsWidget = None
+        self.dockWidget = None  # Dockable panel for the browser widget (used in dock mode)
+        self.isDockMode = False  # Track whether browser is in dock mode or layout mode
         self.currentViewArrangement = 0
         # This variable is set to true if we temporarily
         # hide the data probe (and so we need to restore its visibility).
@@ -60,6 +188,18 @@ class DICOM(ScriptedLoadableModule):
         self.viewFactory.setTagName("dicombrowser")
         if slicer.app.layoutManager() is not None:
             slicer.app.layoutManager().registerViewFactory(self.viewFactory)
+
+        mainWindow = slicer.util.mainWindow()
+        if not mainWindow:
+            return
+
+        # Create dock
+        self.dockWidget = DICOMDockWidget(_("DICOM Database"), mainWindow, self.browserWidget)
+        self.dockWidget.dicomInstance = self
+        self.dockWidget.setObjectName("DICOMBrowserDockWidget")
+        self.dockWidget.setAllowedAreas(qt.Qt.AllDockWidgetAreas)
+        mainWindow.addDockWidget(qt.Qt.RightDockWidgetArea, self.dockWidget)
+        self.dockWidget.hide()
 
     def performPostModuleDiscoveryTasks(self):
         """Since dicom plugins are discovered while the application
@@ -290,6 +430,23 @@ class DICOM(ScriptedLoadableModule):
         if self.browserWidget:
             self.viewWidget.layout().addWidget(self.browserWidget)
 
+    def configureDockablePanel(self, browserWidget):
+        if self.browserWidget != browserWidget:
+            return
+
+        if self.browserWidget is not None and hasattr(self.browserWidget, "closed"):
+            try:
+                self.browserWidget.closed.disconnect(self.onBrowserWidgetClosed)
+            except Exception as exc:
+                logging.debug("DICOMDockWidget.closeEvent: unable to update DICOMWidget UI state: %s", exc, exc_info=True)
+
+        self.dockWidget.setWidget(self.browserWidget)
+
+        mainWindow = slicer.util.mainWindow()
+        if mainWindow:
+            self.dockWidget.setFloating(False)
+            self.browserWidget.closed.connect(self.onBrowserWidgetClosed)
+
     def onLayoutChanged(self, viewArrangement):
         if viewArrangement == self.currentViewArrangement:
             return
@@ -307,9 +464,9 @@ class DICOM(ScriptedLoadableModule):
         dataProbe = mw.findChild("QWidget", "DataProbeCollapsibleWidget") if mw else None
         if self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
             # View has been changed to the DICOM browser view
-            useExpertimentalVisualDICOMBrowser = settingsValue("DICOM/UseExpertimentalVisualDICOMBrowser", False, converter=toBool)
+            useVisualDICOMBrowser = settingsValue("DICOM/UseVisualDICOMBrowser", False, converter=toBool)
             self.browserWidget.show()
-            self.browserWidget.toggleBrowsers(useExpertimentalVisualDICOMBrowser)
+            self.browserWidget.toggleBrowsers(useVisualDICOMBrowser)
             # If we are in DICOM module, hide the Data Probe to have more space for the module
             try:
                 inDicomModule = slicer.modules.dicom.widgetRepresentation().isEntered
@@ -325,8 +482,18 @@ class DICOM(ScriptedLoadableModule):
                 # DataProbe was temporarily hidden, restore its visibility now
                 dataProbe.setVisible(True)
                 self.dataProbeHasBeenTemporarilyHidden = False
+            # In dock mode, don't close the browser when layout changes
+            if self.isDockMode and self.dockWidget:
+                # Keep the dock widget visible
+                pass
 
     def onBrowserWidgetClosed(self):
+        # In dock mode, browser closing is handled by dock widget visibility
+        if self.isDockMode:
+            if self.dockWidget:
+                self.dockWidget.hide()
+            return
+
         if (
             self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
             and self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone
@@ -405,8 +572,8 @@ class _ui_DICOMSettingsPanel:
         genericGroupBoxFormLayout.addRow(_("Thumbnails size:"), thumbnailsSizeComboBox)
         parent.registerProperty(
             "DICOM/thumbnailsSize", thumbnailsSizeComboBox,
-            "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")),
-            _("DICOM settings"), ctk.ctkSettingsPanel.OptionRequireRestart)
+            "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
+        thumbnailsSizeComboBox.currentIndexChanged.connect(self.onThumbnailsSizeChanged)
 
         vBoxLayout.addWidget(genericGroupBox)
 
@@ -426,12 +593,23 @@ class _ui_DICOMSettingsPanel:
         else:
           ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Warning)
 
+    def onThumbnailsSizeChanged(self):
+        browserWidget = slicer.modules.DICOMInstance.browserWidget
+        if not browserWidget:
+            return
+        thumbnailsSize = settingsValue("DICOM/thumbnailsSize", "medium")
+        if thumbnailsSize == "large":
+            browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Large
+        elif thumbnailsSize == "medium":
+            browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Medium
+        elif thumbnailsSize == "small":
+            browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Small
+
 
 class DICOMSettingsPanel(ctk.ctkSettingsPanel):
     def __init__(self, *args, **kwargs):
         ctk.ctkSettingsPanel.__init__(self, *args, **kwargs)
         self.ui = _ui_DICOMSettingsPanel(self)
-
 
 #
 # DICOM file dialog
@@ -596,6 +774,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # Add SlicerDICOMBrowser
         self.browserWidget = DICOMLib.SlicerDICOMBrowser()
         self.browserWidget.objectName = "SlicerDICOMBrowser"
+
         slicer.modules.DICOMInstance.setBrowserWidgetInDICOMLayout(self.browserWidget)
 
         # Setup layout manager
@@ -608,6 +787,9 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # connect 'Import DICOM files' and 'Show DICOM Browser' button
         self.ui.showBrowserButton.connect("clicked()", self.toggleBrowserWidget)
         self.ui.importButton.connect("clicked()", self.importFolder)
+
+        # Connect dock to right button
+        self.ui.dockToRightPushButton.connect("clicked()", self.onDockToRight)
 
         # Add import options menu to import button
 
@@ -623,18 +805,21 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         importButtonMenu.addAction(self.copyOnImportAction)
         self.copyOnImportAction.connect("toggled(bool)", self.copyOnImportToggled)
 
-        # Add show options menu to showBrowser button
+        # Add visual browser toggle button
+        self.ui.showVisualBrowserButton.visible = self.ui.showBrowserButton.checked
+        self.ui.showVisualBrowserButton.checked = settingsValue("DICOM/UseVisualDICOMBrowser", False, converter=toBool)
+        self.ui.showVisualBrowserButton.connect("toggled(bool)", self.onShowVisualDICOMBrowser)
 
-        showBrowserButtonMenu = qt.QMenu(_("Show options"), self.ui.showBrowserButton)
-        showBrowserButtonMenu.toolTipsVisible = True
-        self.ui.showBrowserButton.setMenu(showBrowserButtonMenu)
+        # Initialize button texts based on initial state
+        if self.ui.showBrowserButton.checked:
+            self.ui.showBrowserButton.text = _("Hide DICOM database")
+        else:
+            self.ui.showBrowserButton.text = _("Show DICOM database")
 
-        self.toggleVisualBrowserAction = qt.QAction(_("Show experimental visual DICOM browser"), showBrowserButtonMenu)
-        self.toggleVisualBrowserAction.setToolTip(_("If enabled, the DICOM browser widget will be substituted with new experimental visual browser."))
-        self.toggleVisualBrowserAction.setCheckable(True)
-        self.toggleVisualBrowserAction.checked = settingsValue("DICOM/UseExpertimentalVisualDICOMBrowser", False, converter=toBool)
-        showBrowserButtonMenu.addAction(self.toggleVisualBrowserAction)
-        self.toggleVisualBrowserAction.connect("toggled(bool)", self.onShowBrowser)
+
+        # Initialize dock button
+        self.ui.dockToRightPushButton.visible = self.ui.showBrowserButton.checked
+        self.ui.dockToRightPushButton.text = _("Side panel")
 
         # Connect subjectHierarchyTree
 
@@ -685,6 +870,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
         self.ui.browserAutoHideCheckBox.checked = not settingsValue("DICOM/BrowserPersistent", False, converter=toBool)
         self.ui.browserAutoHideCheckBox.stateChanged.connect(self.onBrowserAutoHideStateChanged)
+        self.browserWidget.setBrowserPersistence(not self.ui.browserAutoHideCheckBox.checked)
 
         self.ui.repairDatabaseButton.connect("clicked()", self.browserWidget.dicomBrowser, "onRepairAction()")
         self.ui.clearDatabaseButton.connect("clicked()", self.onClearDatabase)
@@ -763,7 +949,18 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         pass
 
     def onLayoutChanged(self, viewArrangement):
-        self.ui.showBrowserButton.checked = viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+        dicomInstance = slicer.modules.DICOMInstance
+        # In dock mode, don't change button state based on layout
+        if not dicomInstance.isDockMode:
+            self.ui.showBrowserButton.checked = viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+            self.ui.showBrowserButton.text = (_("Hide DICOM database") if self.ui.showBrowserButton.checked
+                                              else _("Show DICOM database"))
+
+        # Update button visibility - keep visible if browser is shown (either in layout or dock mode)
+        browserIsShown = self.ui.showBrowserButton.checked or dicomInstance.isDockMode
+        self.ui.showVisualBrowserButton.visible = browserIsShown
+        self.ui.showVisualBrowserButton.checked = settingsValue("DICOM/UseVisualDICOMBrowser", False, converter=toBool)
+        self.ui.dockToRightPushButton.visible = browserIsShown
 
     def onCurrentItemChanged(self, id):
         plugin = slicer.qSlicerSubjectHierarchyPluginHandler.instance().getOwnerPluginForSubjectHierarchyItem(id)
@@ -784,18 +981,49 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if self.browserWidget is None:
             return
 
+        # Don't auto-close browser in dock mode
         if oldSubjectHierarchyCurrentVisibility != self.subjectHierarchyCurrentVisibility and self.subjectHierarchyCurrentVisibility:
-            self.closeBrowser()
+            dicomInstance = slicer.modules.DICOMInstance
+            if not dicomInstance.isDockMode:
+                self.closeBrowser()
 
     def toggleBrowserWidget(self):
-        if self.ui.showBrowserButton.checked:
+        # Update button visibility based on whether browser is shown
+        browserIsShown = self.ui.showBrowserButton.checked
+        self.ui.showVisualBrowserButton.visible = browserIsShown
+        self.ui.showVisualBrowserButton.checked = settingsValue("DICOM/UseVisualDICOMBrowser", False, converter=toBool)
+        self.ui.dockToRightPushButton.visible = browserIsShown
+
+        # Update button text based on state
+        if browserIsShown:
+            self.ui.showBrowserButton.text = _("Hide DICOM database")
             self.onOpenBrowserWidget()
         else:
+            self.ui.showBrowserButton.text = _("Show DICOM database")
             self.closeBrowser()
 
     def closeBrowser(self):
-        if self.browserWidget:
-            self.browserWidget.close()
+        # Check if DICOMInstance still exists (may not exist during shutdown/restart)
+        if not hasattr(slicer.modules, "DICOMInstance"):
+            # Fallback: just close the browser widget if it exists
+            if self.browserWidget:
+                self.browserWidget.close()
+            return
+
+        dicomInstance = slicer.modules.DICOMInstance
+        if dicomInstance.isDockMode:
+            # In dock mode, hide the dock widget and update button states
+            if dicomInstance.dockWidget:
+                dicomInstance.dockWidget.hide()
+            # Update button states
+            self.ui.showBrowserButton.checked = False
+            self.ui.showBrowserButton.text = _("Show DICOM Database")
+            self.ui.showVisualBrowserButton.visible = False
+            self.ui.dockToRightPushButton.visible = False
+        else:
+            # In layout mode, close the browser widget
+            if self.browserWidget:
+                self.browserWidget.close()
 
     def aboutToShowImportOptionsMenu(self):
         self.copyOnImportAction.checked = self.browserWidget.importDirectoryMode() == ctk.ctkDICOMBrowser.ImportDirectoryCopy
@@ -806,17 +1034,119 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         else:
             self.browserWidget.setImportDirectoryMode(ctk.ctkDICOMBrowser.ImportDirectoryAddLink)
 
-    def onShowBrowser(self):
-        useExpertimentalVisualDICOMBrowser = self.toggleVisualBrowserAction.checked
-        self.browserWidget.toggleBrowsers(useExpertimentalVisualDICOMBrowser)
+    def onShowVisualDICOMBrowser(self, toggled):
+        settings = qt.QSettings()
+        settings.setValue("DICOM/UseVisualDICOMBrowser", bool(toggled))
+        self.browserWidget.toggleBrowsers(toggled)
 
     def importFolder(self):
         if not DICOMFileDialog.createDefaultDatabase():
             return
         self.browserWidget.importFolder()
 
-    def onOpenBrowserWidget(self):
+    def onDockToRight(self):
+        """Toggle between dock mode and layout mode"""
+        if not slicer.modules.DICOMInstance.isDockMode:
+            # Switch to dock mode
+            self.switchToDockMode()
+        else:
+            # Switch back to layout mode
+            self.switchToLayoutMode()
+
+    def switchToDockMode(self):
+        """Switch browser to dockable panel mode"""
+        dicomInstance = slicer.modules.DICOMInstance
+        # Set dock mode flag FIRST, before changing layout, so onLayoutChanged handles it correctly
+        dicomInstance.isDockMode = True
+
+        # Remember the current layout to restore later
+        currentLayout = slicer.app.layoutManager().layoutLogic().GetLayoutNode().GetViewArrangement()
+        if currentLayout == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
+            # We're currently in DICOM browser layout, switch to previous layout
+            layoutId = dicomInstance.previousViewArrangement
+            if (
+                layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutNone
+                or layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+            ):
+                layoutId = qt.QSettings().value("MainWindow/layout", slicer.vtkMRMLLayoutNode.SlicerLayoutInitialView)
+            slicer.app.layoutManager().setLayout(layoutId)
+
+        # Remove browser from layout widget and unparent it
+        if dicomInstance.viewWidget and self.browserWidget:
+            dicomInstance.viewWidget.layout().removeWidget(self.browserWidget)
+            self.browserWidget.setParent(None)
+
+        # Create and show dockable panel
+        dicomInstance.configureDockablePanel(self.browserWidget)
+
+        # Store the original browser persistence setting and set browser to persistent in dock mode
+        if self.browserWidget:
+            self.browserWidget.setBrowserPersistence(True)
+
+        if dicomInstance.dockWidget:
+            dicomInstance.dockWidget.show()
+            dicomInstance.dockWidget.raise_()
+
+        # Collapse Actions and Search collapsible group boxes in visual DICOM browser
+        if self.browserWidget and hasattr(self.browserWidget, "dicomVisualBrowser"):
+            actionsGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "ActionsCollapsibleGroupBox")
+            if actionsGroupBox:
+                actionsGroupBox.collapsed = True
+            searchGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "SearchPatientsCollapsibleGroupBox")
+            if searchGroupBox:
+                searchGroupBox.collapsed = True
+
+        # Update button state
+        self.ui.dockToRightPushButton.checked = True
+
+    def switchToLayoutMode(self):
+        """Switch browser back to layout mode"""
+        dicomInstance = slicer.modules.DICOMInstance
+        # Remove browser widget from dock widget first
+        if dicomInstance.dockWidget:
+            dicomInstance.dockWidget.setWidget(None)
+            dicomInstance.dockWidget.hide()
+
+        # Set isDockMode to False before changing layout
+        dicomInstance.isDockMode = False
+
+        # Manually re-add browser widget to layout view (since setBrowserWidgetInDICOMLayout returns early if same widget)
+        if dicomInstance.viewWidget and self.browserWidget:
+            # Remove from current parent if any
+            if self.browserWidget.parent():
+                self.browserWidget.setParent(None)
+            # Add to layout view
+            dicomInstance.viewWidget.layout().addWidget(self.browserWidget)
+            self.browserWidget.show()
+
+        # Restore original browser persistence setting
+        if self.browserWidget:
+            self.browserWidget.setBrowserPersistence(settingsValue("DICOM/BrowserPersistent", False, converter=toBool))
+
+        # Expand Actions and Search collapsible group boxes in visual DICOM browser when returning to center view
+        if self.browserWidget and hasattr(self.browserWidget, "dicomVisualBrowser"):
+            actionsGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "ActionsCollapsibleGroupBox")
+            if actionsGroupBox:
+                actionsGroupBox.collapsed = False
+            searchGroupBox = self.browserWidget.dicomVisualBrowser.findChild(qt.QWidget, "SearchPatientsCollapsibleGroupBox")
+            if searchGroupBox:
+                searchGroupBox.collapsed = False
+
+        # Show the DICOM browser layout
         slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
+
+        # Update button state
+        self.ui.dockToRightPushButton.checked = False
+
+    def onOpenBrowserWidget(self):
+        # If in dock mode, show dock widget; otherwise use layout
+        dicomInstance = slicer.modules.DICOMInstance
+        if dicomInstance.isDockMode:
+            if dicomInstance.dockWidget:
+                dicomInstance.dockWidget.show()
+                dicomInstance.dockWidget.raise_()
+        else:
+            slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
 
     def onToggleListener(self, toggled):
         if hasattr(slicer, "dicomListener"):
@@ -925,22 +1255,27 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.ui.directoryButton.directory = databaseDirectory
         self.ui.directoryButton.blockSignals(wasBlocked)
 
-        wasBlocked = self.browserWidget.dicomVisualBrowser.blockSignals(True)
-        self.browserWidget.dicomVisualBrowser.setDatabaseDirectory(databaseDirectory)
-        self.browserWidget.dicomVisualBrowser.blockSignals(wasBlocked)
+        dicomVisualBrowser = self.browserWidget.dicomVisualBrowser
+        wasBlocked = dicomVisualBrowser.blockSignals(True)
+        dicomVisualBrowser.setDatabaseDirectory(databaseDirectory)
+        dicomVisualBrowser.blockSignals(wasBlocked)
 
     def updateDatabaseDirectoryFromVisualBrowser(self, databaseDirectory):
         wasBlocked = self.ui.directoryButton.blockSignals(True)
         self.ui.directoryButton.directory = databaseDirectory
         self.ui.directoryButton.blockSignals(wasBlocked)
 
-        wasBlocked = self.browserWidget.dicomBrowser.blockSignals(True)
-        self.browserWidget.dicomBrowser.setDatabaseDirectory(databaseDirectory)
-        self.browserWidget.dicomBrowser.blockSignals(wasBlocked)
+        dicomBrowser = self.browserWidget.dicomBrowser
+        wasBlocked = dicomBrowser.blockSignals(True)
+        dicomBrowser.setDatabaseDirectory(databaseDirectory)
+        dicomBrowser.blockSignals(wasBlocked)
 
     def onBrowserAutoHideStateChanged(self, autoHideState):
+        settings = qt.QSettings()
+        browserPersistent = autoHideState != qt.Qt.Checked
+        settings.setValue("DICOM/BrowserPersistent", bool(browserPersistent))
         if self.browserWidget:
-            self.browserWidget.setBrowserPersistence(autoHideState != qt.Qt.Checked)
+            self.browserWidget.setBrowserPersistence(browserPersistent)
 
     def onClearDatabase(self):
         patientIds = slicer.dicomDatabase.patients()

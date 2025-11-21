@@ -24,17 +24,23 @@
     <number>3</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="buttonGridLayout">
+     <property name="horizontalSpacing">
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>6</number>
+     </property>
+     <item row="0" column="0" colspan="2">
       <widget class="ctkMenuButton" name="importButton">
        <property name="toolTip">
         <string>Import files into DICOM database</string>
        </property>
        <property name="text">
-        <string>    Import DICOM files</string>
+        <string> Import DICOM files</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+        <iconset resource="../../../../../Base/QTCore/Resources/qSlicerBaseQTCore.qrc">
          <normaloff>:/Icons/Medium/SlicerImportDICOM.png</normaloff>:/Icons/Medium/SlicerImportDICOM.png</iconset>
        </property>
        <property name="iconSize">
@@ -45,21 +51,67 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="ctkMenuButton" name="showBrowserButton">
+     <item row="1" column="0" colspan="2">
+      <widget class="QPushButton" name="showBrowserButton">
        <property name="toolTip">
-        <string>Import files into DICOM database</string>
+        <string>Show DICOM database</string>
        </property>
        <property name="text">
-        <string>    Show DICOM database</string>
+        <string>Show DICOM database</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+        <iconset resource="../../../../../Base/QTCore/Resources/qSlicerBaseQTCore.qrc">
          <normaloff>:/Icons/Medium/SlicerDatabase.png</normaloff>:/Icons/Medium/SlicerDatabase.png</iconset>
        </property>
        <property name="iconSize">
         <size>
          <width>64</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="showVisualBrowserButton">
+       <property name="toolTip">
+        <string>If enabled, the DICOM browser widget will be substituted with the visual browser.</string>
+       </property>
+       <property name="text">
+        <string>Visual browser</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Base/QTCore/Resources/qSlicerBaseQTCore.qrc">
+         <normaloff>:/Icons/Medium/SlicerVisualDICOMBrowser.svg</normaloff>:/Icons/Medium/SlicerVisualDICOMBrowser.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="dockToRightPushButton">
+       <property name="toolTip">
+        <string>Show the dicom database in vertical mode allowing to use the Slicer views.</string>
+       </property>
+       <property name="text">
+        <string>Side panel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Base/QTCore/Resources/qSlicerBaseQTCore.qrc">
+         <normaloff>:/Icons/Medium/SlicerDockToRight.svg</normaloff>:/Icons/Medium/SlicerDockToRight.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
          <height>32</height>
         </size>
        </property>
@@ -81,7 +133,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>6</height>
+       <height>3</height>
       </size>
      </property>
     </spacer>
