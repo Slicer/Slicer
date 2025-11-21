@@ -97,6 +97,8 @@
         <file alias="SlicerImportDICOM.png">Icons/Medium/SlicerImportDICOM.png</file>
         <file alias="SlicerPointNumberLock.png">Icons/Medium/SlicerPointNumberLock.png</file>
         <file alias="SlicerPointNumberUnlock.png">Icons/Medium/SlicerPointNumberUnlock.png</file>
+        <file alias="SlicerVisualDICOMBrowser.svg">Icons/Medium/SlicerVisualDICOMBrowser.svg</file>
+        <file alias="SlicerDockToRight.svg">Icons/Medium/SlicerDockToRight.svg</file>
     </qresource>
     <qresource prefix="/Icons/Scalable">
         <file alias="SlicerConfigure.svg">Icons/Scalable/SlicerConfigure.svg</file>

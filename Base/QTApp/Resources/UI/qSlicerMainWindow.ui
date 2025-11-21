@@ -14,7 +14,7 @@
   <widget class="QStatusBar" name="StatusBar"/>
   <widget class="QDockWidget" name="PanelDockWidget">
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
@@ -198,7 +198,7 @@
      <x>0</x>
      <y>0</y>
      <width>835</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="FileMenu">
