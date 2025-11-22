@@ -492,12 +492,7 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode* refNode)
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
   double center_RAS[3] = { 0.0, 0.0, 0.0 };
 
-  transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(::ReadFromTransformFile<double>(this, fullName, this->GetUserMessages(), center_RAS));
-
-  if (transformVtk.GetPointer() == nullptr)
-  {
-    transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(::ReadFromTransformFile<float>(this, fullName, this->GetUserMessages(), center_RAS));
-  }
+  transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(::ReadFromTransformFile<itk::SpacePrecisionType>(this, fullName, this->GetUserMessages(), center_RAS));
 
   if (transformVtk.GetPointer() == nullptr)
   {

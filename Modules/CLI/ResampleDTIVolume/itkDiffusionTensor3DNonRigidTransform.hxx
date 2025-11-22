@@ -29,7 +29,7 @@ void DiffusionTensor3DNonRigidTransform<TData>::SetAffineTransformType(typename 
 }
 
 template <class TData>
-typename Transform<double, 3, 3>::Pointer DiffusionTensor3DNonRigidTransform<TData>::GetTransform()
+typename Transform<itk::SpacePrecisionType, 3, 3>::Pointer DiffusionTensor3DNonRigidTransform<TData>::GetTransform()
 {
   return m_Transform;
 }

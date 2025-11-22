@@ -43,7 +43,7 @@ void DiffusionTensor3DRigidTransform<TData>::SetTransform(typename Rigid3DTransf
 }
 
 template <class TData>
-itk::VersorRigid3DTransform<double>::Pointer DiffusionTensor3DRigidTransform<TData>::GetRigidTransform()
+itk::VersorRigid3DTransform<itk::SpacePrecisionType>::Pointer DiffusionTensor3DRigidTransform<TData>::GetRigidTransform()
 {
   typename VersorRigid3DTransformType::Pointer rigidTransform = VersorRigid3DTransformType::New();
   rigidTransform->SetMatrix(this->m_TransformMatrix);
@@ -75,7 +75,7 @@ void DiffusionTensor3DRigidTransform<TData>::SetMatrix4x4(MatrixTransform4x4Type
 template <class TData>
 void DiffusionTensor3DRigidTransform<TData>::SetMatrix3x3(MatrixTransformType& matrix)
 {
-  Matrix<double, 3, 3> result;
+  Matrix<itk::SpacePrecisionType, 3, 3> result;
   result = matrix * matrix.GetTranspose();
   bool ok = true;
   if (m_PrecisionChecking)
