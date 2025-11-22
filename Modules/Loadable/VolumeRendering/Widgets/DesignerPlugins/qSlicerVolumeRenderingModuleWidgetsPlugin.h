@@ -22,6 +22,7 @@
 #define __qSlicerVolumeRenderingModuleWidgetsPlugin_h
 
 // Qt includes
+#include <QObject>
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
 // VolumeRendering includes

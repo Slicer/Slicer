@@ -21,6 +21,7 @@
 #ifndef __qSlicerVolumeRenderingPresetComboBoxPlugin_h
 #define __qSlicerVolumeRenderingPresetComboBoxPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingPresetComboBoxPlugin

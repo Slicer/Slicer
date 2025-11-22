@@ -24,10 +24,12 @@
 // Markups widgets include
 #include "qSlicerMarkupsModuleExport.h"
 
+// Qt includes
+#include <QStringList>
+
 class QItemSelection;
 class QMenu;
 class QModelIndex;
-class QStringList;
 class QTableWidgetItem;
 class QShortcut;
 class qMRMLMarkupsOptionsWidget;

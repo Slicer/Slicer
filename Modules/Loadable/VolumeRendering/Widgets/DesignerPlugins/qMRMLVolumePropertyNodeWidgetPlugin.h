@@ -21,6 +21,7 @@
 #ifndef __qMRMLVolumePropertyNodeWidgetPlugin_h
 #define __qMRMLVolumePropertyNodeWidgetPlugin_h
 
+#include <QObject>
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qMRMLVolumePropertyNodeWidgetPlugin

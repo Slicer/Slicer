@@ -187,6 +187,7 @@ macro(slicerMacroBuildAppLibrary)
 
   target_compile_definitions(${lib_name} PRIVATE
     $<$<BOOL:${Qt5_VERSION_MAJOR}>:Slicer_HAVE_QT5>
+    $<$<BOOL:${Qt6_VERSION_MAJOR}>:Slicer_HAVE_QT6>
     )
 
   # Configure CMake Qt automatic code generation

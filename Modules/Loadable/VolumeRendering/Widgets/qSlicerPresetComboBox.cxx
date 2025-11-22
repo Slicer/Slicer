@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDesktopWidget>
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+# include <QDesktopWidget>
+#endif
 #include <QListView>
 #include <QScreen>
 #include <QScrollBar>

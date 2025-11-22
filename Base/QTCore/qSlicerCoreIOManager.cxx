@@ -23,6 +23,11 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+# include <QRegularExpression>
+#else
+# include <QRegExp>
+#endif
 #include <QSettings>
 
 // CTK includes
@@ -169,9 +174,15 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::
         {
           extensionWithStar.prepend("*");
         }
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+        QRegularExpression regExp(QRegularExpression::wildcardToRegularExpression(extensionWithStar), QRegularExpression::CaseInsensitiveOption);
+        Q_ASSERT(regExp.isValid());
+        if (regExp.match(file.absoluteFilePath()).hasMatch())
+#else
         QRegExp regExp(extensionWithStar, Qt::CaseInsensitive, QRegExp::Wildcard);
         Q_ASSERT(regExp.isValid());
         if (regExp.exactMatch(file.absoluteFilePath()))
+#endif
         {
           matchingNameFilters << nameFilter;
         }
@@ -447,6 +458,18 @@ QStringList qSlicerCoreIOManager::allReadableFileExtensions() const
 }
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+QRegularExpression qSlicerCoreIOManager::fileNameRegularExpression(const QString& extension /*= QString()*/)
+{
+  QString pattern = "[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}";
+
+  if (!extension.isEmpty())
+  {
+    pattern += extension;
+  }
+  return QRegularExpression(pattern);
+}
+#else
 QRegExp qSlicerCoreIOManager::fileNameRegExp(const QString& extension /*= QString()*/)
 {
   QRegExp regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}");
@@ -457,12 +480,24 @@ QRegExp qSlicerCoreIOManager::fileNameRegExp(const QString& extension /*= QStrin
   }
   return regExp;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filename)
 {
   // Remove characters that are likely to cause problems in filename
   QString sanitizedFilename;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QRegularExpression regExp = fileNameRegularExpression();
+
+  for (int i = 0; i < filename.size(); ++i)
+  {
+    if (regExp.match(QString(filename[i])).hasMatch())
+    {
+      sanitizedFilename += filename[i];
+    }
+  }
+#else
   QRegExp regExp = fileNameRegExp();
 
   for (int i = 0; i < filename.size(); ++i)
@@ -472,6 +507,7 @@ QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filena
       sanitizedFilename += filename[i];
     }
   }
+#endif
 
   // Remove leading and trailing spaces
   sanitizedFilename = sanitizedFilename.trimmed();
