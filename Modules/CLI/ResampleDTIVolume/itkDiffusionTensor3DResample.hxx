@@ -83,7 +83,7 @@ void DiffusionTensor3DResample<TInput, TOutput>::DynamicThreadedGenerateData(con
   OutputTensorDataType outputTensor;
 
   typename OutputImageType::IndexType index;
-  Point<double, 3> point;
+  Point<itk::SpacePrecisionType, 3> point;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     index = it.GetIndex();
@@ -180,9 +180,9 @@ void DiffusionTensor3DResample<TInput, TOutput>::GenerateInputRequestedRegion()
 }
 
 template <class TInput, class TOutput>
-Matrix<double, 3, 3> DiffusionTensor3DResample<TInput, TOutput>::GetOutputMeasurementFrame()
+Matrix<itk::SpacePrecisionType, 3, 3> DiffusionTensor3DResample<TInput, TOutput>::GetOutputMeasurementFrame()
 {
-  Matrix<double, 3, 3> mat;
+  Matrix<itk::SpacePrecisionType, 3, 3> mat;
   mat.SetIdentity();
   return mat;
 }
