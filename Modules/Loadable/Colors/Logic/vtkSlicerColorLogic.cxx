@@ -23,14 +23,8 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtksys/Directory.hxx>
 #include <vtksys/SystemTools.hxx>
-
-#ifdef _WIN32
-# include <windows.h>
-#else
-# include <dirent.h>
-# include <cerrno>
-#endif
 
 #include <sstream>
 #include <cstring>
@@ -151,87 +145,24 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
 {
   std::vector<std::string> filenames;
 
-  // get the list of color files in these dir
-  for (unsigned int d = 0; d < directories.size(); d++)
+  // Gather all the parameter set files: all text files from the provided directories
+  std::vector<std::string> filesToLoad = vtkMRMLApplicationLogic::FindTextFiles(directories);
+  for (const std::string& fileToLoad : filesToLoad)
   {
-    std::string dirString = directories[d];
-    vtkDebugMacro("FindColorFiles: checking for color files in dir " << d << " = " << dirString.c_str());
-
-    std::vector<std::string> filesVector;
-    filesVector.push_back(dirString);
-    filesVector.emplace_back("/");
-
-#ifdef _WIN32
-    WIN32_FIND_DATA findData;
-    HANDLE fileHandle;
-    int flag = 1;
-    std::string search("*.*");
-    dirString += "/";
-    search = dirString + search;
-
-    fileHandle = FindFirstFile(search.c_str(), &findData);
-    if (fileHandle != INVALID_HANDLE_VALUE)
+    // Check if Slicer supports this color file
+    vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+    vtkNew<vtkMRMLProceduralColorStorageNode> procColorStorageNode;
+    if (colorStorageNode->SupportedFileType(fileToLoad.c_str()) || procColorStorageNode->SupportedFileType(fileToLoad.c_str()))
     {
-      while (flag)
-      {
-        // add this file to the vector holding the base dir name so check the
-        // file type using the full path
-        filesVector.push_back(std::string(findData.cFileName));
-#else
-    DIR* dp;
-    struct dirent* dirp;
-    if ((dp = opendir(dirString.c_str())) == nullptr)
-    {
-      vtkErrorMacro("FindColorFiles: Error(" << errno << ") opening user specified color path: " << dirString.c_str()
-                                             << ", no color files will be loaded from that directory\n(check Edit -> Application Settings -> "
-                                             << "Module Settings to adjust your User defined color file paths)");
+      vtkDebugMacro("FindColorFiles: Adding " << fileToLoad);
+      this->AddColorFile(fileToLoad.c_str(), &filenames);
     }
     else
     {
-      while ((dirp = readdir(dp)) != nullptr)
-      {
-        // add this file to the vector holding the base dir name
-        filesVector.emplace_back(dirp->d_name);
-#endif
+      vtkWarningMacro("FindColorFiles: Not a supported color file: " << fileToLoad);
+    }
+  }
 
-        std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
-        int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
-        if (fileType == vtksys::SystemTools::FileTypeText)
-        {
-          // check that it's a supported file type
-          // create storage nodes so can check for supported file types
-          vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
-          vtkNew<vtkMRMLProceduralColorStorageNode> procColorStorageNode;
-          if (colorStorageNode->SupportedFileType(fileToCheck.c_str()) || //
-              procColorStorageNode->SupportedFileType(fileToCheck.c_str()))
-          {
-            vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential color files. Type = " << fileType);
-            // add it to the list
-            this->AddColorFile(fileToCheck.c_str(), &filenames);
-          }
-          else
-          {
-            vtkWarningMacro("FindColorFiles: not a supported file type:\n" << fileToCheck);
-          }
-        }
-        else
-        {
-          vtkDebugMacro("FindColorFiles: Skipping potential color file " << fileToCheck.c_str() << ", not a text file (file type = " << fileType << ")");
-        }
-        // take this file off so that can build the next file name
-        filesVector.pop_back();
-
-#ifdef _WIN32
-        flag = FindNextFile(fileHandle, &findData);
-      } // end of while flag
-      FindClose(fileHandle);
-    } // end of having a valid fileHandle
-#else
-      } // end of while loop over reading the directory entries
-      closedir(dp);
-    } // end of able to open dir
-#endif
-  } // end of looping over dirs
   return filenames;
 }
 

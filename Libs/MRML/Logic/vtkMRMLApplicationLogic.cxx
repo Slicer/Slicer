@@ -53,6 +53,7 @@
 #include <vtkTextProperty.h>
 
 // VTKSYS includes
+#include <vtksys/Directory.hxx>
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Glob.hxx>
 
@@ -656,104 +657,52 @@ std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string& fil
 }
 
 //----------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLApplicationLogic::FindTextFiles(const std::vector<std::string>& directories)
+{
+  std::vector<std::string> filenames;
+
+  for (const std::string& directoryPath : directories)
+  {
+    vtksys::Directory dir;
+    if (!dir.Load(directoryPath))
+    {
+      vtkGenericWarningMacro("vtkMRMLApplicationLogic::FindTextFiles: Cannot open directory: " << directoryPath);
+      continue;
+    }
+
+    const unsigned long nFiles = dir.GetNumberOfFiles();
+    for (unsigned long i = 0; i < nFiles; ++i)
+    {
+      const char* entry = dir.GetFile(i);
+      if (!entry)
+      {
+        // invalid entry
+        continue;
+      }
+      // Build full path (need the initial "" because the first two components do not add a slash)
+      std::string fileToCheck = vtksys::SystemTools::JoinPath({ "", directoryPath, entry });
+      if (!vtksys::SystemTools::FileExists(fileToCheck, true))
+      {
+        // Skip directories (".", "..", and subdirectories)
+        continue;
+      }
+      // Skip non-text files
+      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
+      if (fileType != vtksys::SystemTools::FileTypeText)
+      {
+        continue;
+      }
+      filenames.push_back(fileToCheck);
+    }
+  }
+  return filenames;
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene, const std::vector<std::string>& directories)
 {
-
-  // build up the vector
-  std::vector<std::string> filesVector;
-  std::vector<std::string> filesToLoad;
-  // filesVector.push_back(""); // for relative path
-
-  // Didn't port this next block of code yet.  Would need to add a
-  //   UserParameterSetsPath to the object and some window
-  //
-  //   // add the list of dirs set from the application
-  //   if (this->UserColorFilePaths != nullptr)
-  //     {
-  //     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
-  //     // parse out the list, breaking at delimiter strings
-  // #ifdef _WIN32
-  //     const char* delim = ";";
-  // #else
-  //     const char* delim = ":";
-  // #endif
-  //     char* ptr = strtok(this->UserColorFilePaths, delim);
-  //     while (ptr != nullptr)
-  //       {
-  //       std::string dir = std::string(ptr);
-  //       vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
-  //       DirectoriesToCheck.push_back(dir);
-  //       ptr = strtok(nullptr, delim);
-  //       }
-  //     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
-
-  // Get the list of parameter sets in these dir
-  for (unsigned int d = 0; d < directories.size(); d++)
-  {
-    std::string dirString = directories[d];
-    // vtkDebugMacro("\nLoadDefaultParameterSets: checking for parameter sets in dir " << d << " = " << dirString.c_str());
-
-    filesVector.clear();
-    filesVector.push_back(dirString);
-    filesVector.emplace_back("/");
-
-#ifdef _WIN32
-    WIN32_FIND_DATA findData;
-    HANDLE fileHandle;
-    int flag = 1;
-    std::string search("*.*");
-    dirString += "/";
-    search = dirString + search;
-
-    fileHandle = FindFirstFile(search.c_str(), &findData);
-    if (fileHandle != INVALID_HANDLE_VALUE)
-    {
-      while (flag)
-      {
-        // add this file to the vector holding the base dir name so check the
-        // file type using the full path
-        filesVector.push_back(std::string(findData.cFileName));
-#else
-    DIR* dp;
-    struct dirent* dirp;
-    if ((dp = opendir(dirString.c_str())) == nullptr)
-    {
-      vtkGenericWarningMacro("Error(" << errno << ") opening " << dirString.c_str());
-    }
-    else
-    {
-      while ((dirp = readdir(dp)) != nullptr)
-      {
-        // add this file to the vector holding the base dir name
-        filesVector.emplace_back(dirp->d_name);
-#endif
-
-        std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
-        int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
-        if (fileType == vtksys::SystemTools::FileTypeText)
-        {
-          // vtkDebugMacro("\nAdding " << fileToCheck.c_str() << " to list of potential parameter sets. Type = " << fileType);
-          filesToLoad.push_back(fileToCheck);
-        }
-        else
-        {
-          // vtkDebugMacro("\nSkipping potential parameter set " << fileToCheck.c_str() << ", file type = " << fileType);
-        }
-        // take this file off so that can build the next file name
-        filesVector.pop_back();
-
-#ifdef _WIN32
-        flag = FindNextFile(fileHandle, &findData);
-      } // end of while flag
-      FindClose(fileHandle);
-    } // end of having a valid fileHandle
-#else
-      } // end of while loop over reading the directory entries
-      closedir(dp);
-    } // end of able to open dir
-#endif
-
-  } // end of looping over dirs
+  // Gather all the parameter set files: all text files from the provided directories
+  std::vector<std::string> filesToLoad = vtkMRMLApplicationLogic::FindTextFiles(directories);
 
   // Save the URL and root directory of the scene so it can
   // be restored after loading presets
@@ -761,10 +710,9 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene, const
   std::string rootdir = scene->GetRootDirectory();
 
   // Finally, load each of the parameter sets
-  std::vector<std::string>::iterator fit;
-  for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
+  for (const std::string& file : filesToLoad)
   {
-    scene->SetURL(fit->c_str());
+    scene->SetURL(file.c_str());
     scene->Import();
   }
 
