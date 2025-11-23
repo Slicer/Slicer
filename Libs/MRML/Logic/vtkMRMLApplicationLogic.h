@@ -186,6 +186,10 @@ public:
   /// Returns the total number of loaded parameter sets
   static int LoadDefaultParameterSets(vtkMRMLScene* scene, const std::vector<std::string>& directories);
 
+  /// Find text files in the specified directories (directly, not recursively).
+  /// It can be used to find presets, color tables, configuration files.
+  static std::vector<std::string> FindTextFiles(const std::vector<std::string>& directories);
+
   /// Creates a unique (non-existent) file name by adding an index after base file name.
   /// knownExtension specifies the extension the index should be inserted before.
   /// It is necessary to provide extension, because there is no reliable way of correctly
