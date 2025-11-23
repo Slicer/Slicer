@@ -303,31 +303,49 @@ int qSlicerApplicationHelper::runAsAdmin(QString executable, QString parameters 
   // Run tscon system tool to create a new session, which terminates
   // the existing session (closes remote desktop connection).
   SHELLEXECUTEINFO shExecInfo;
+  ZeroMemory(&shExecInfo, sizeof(shExecInfo));
   shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
   shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
   shExecInfo.hwnd = nullptr;
   // tscon requires administrator access, therefore "runas" verb is needed.
   // UAC popup will be displayed.
-  shExecInfo.lpVerb = "runas";
-  shExecInfo.lpFile = executable.toUtf8().constData();
-  shExecInfo.lpParameters = nullptr;
-  if (!parameters.isEmpty())
-  {
-    shExecInfo.lpParameters = parameters.toUtf8().constData();
-  }
-  shExecInfo.lpDirectory = nullptr;
-  if (!workingDir.isEmpty())
-  {
-    shExecInfo.lpDirectory = workingDir.toUtf8().constData();
-  }
+  shExecInfo.lpVerb = TEXT("runas");
+
+# ifdef UNICODE
+  // ShellExecuteExW expects UTF-16
+  // Keep all converted strings alive during the entire call.
+  std::wstring exeW = executable.toStdWString();
+  std::wstring paramsW = parameters.isEmpty() ? L"" : parameters.toStdWString();
+  std::wstring workdirW = workingDir.isEmpty() ? L"" : workingDir.toStdWString();
+
+  shExecInfo.lpFile = exeW.c_str();
+  shExecInfo.lpParameters = paramsW.empty() ? nullptr : paramsW.c_str();
+  shExecInfo.lpDirectory = workdirW.empty() ? nullptr : workdirW.c_str();
+# else
+  // ShellExecuteExA expects ANSI (current ACP). Use UTF-8 and let Windows convert.
+  // Keep all converted strings alive during the entire call.
+  QByteArray exeA = executable.toUtf8();
+  QByteArray paramsA = parameters.toUtf8();
+  QByteArray workdirA = workingDir.toUtf8();
+
+  shExecInfo.lpFile = exeA.constData();
+  shExecInfo.lpParameters = parameters.isEmpty() ? nullptr : paramsA.constData();
+  shExecInfo.lpDirectory = workingDir.isEmpty() ? nullptr : workdirA.constData();
+# endif
+
   shExecInfo.nShow = SW_MAXIMIZE;
   shExecInfo.hInstApp = nullptr;
-  ShellExecuteEx(&shExecInfo);
+  if (!ShellExecuteEx(&shExecInfo))
+  {
+    return -1;
+  }
+
   WaitForSingleObject(shExecInfo.hProcess, INFINITE);
   DWORD exitCode = 0;
   GetExitCodeProcess(shExecInfo.hProcess, &exitCode);
   CloseHandle(shExecInfo.hProcess);
-  return exitCode;
+  return static_cast<int>(exitCode);
+
 #else
   Q_UNUSED(executable);
   Q_UNUSED(parameters);
