@@ -1001,12 +1001,14 @@ int main(int argc, char* argv[])
   list.numberOfThread = numberOfThread;
   list.interpolationType = interpolationType;
   list.transformType = transformType;
-  for (auto val : directionMatrix)
+  for (double val : directionMatrix)
   {
+    // directionMatrix in the list can have floats or doubles
     list.directionMatrix.push_back(val);
   }
-  for (auto val : transformMatrix)
+  for (double val : transformMatrix)
   {
+    // transformMatrix in the list can have floats or doubles
     list.transformMatrix.push_back(val);
   }
   list.inputVolume = inputVolume;
