@@ -191,7 +191,6 @@ void vtkITKTransformConverter::RegisterInverseTransformTypes()
 template <typename T>
 itk::Matrix<T, 3, 3> vtkITKTransformConverter::Matrix2Dto3D(itk::Matrix<T, 2, 2> m2D)
 {
-  constexpr unsigned Dimension = VTKDimension;
   itk::Matrix<T, 3, 3> m3D;
   m3D.SetIdentity();
   for (unsigned int i = 0; i < 2; i++)
@@ -203,14 +202,14 @@ itk::Matrix<T, 3, 3> vtkITKTransformConverter::Matrix2Dto3D(itk::Matrix<T, 2, 2>
   }
 
   // compute scale for Z direction
-  itk::Vector<T, Dimension> directionCosine{};
+  itk::Vector<T, VTKDimension> directionCosine{};
   directionCosine[0] = m3D[0][0];
   directionCosine[1] = m3D[0][1];
   auto scaleX = directionCosine.GetNorm();
   directionCosine[0] = m3D[1][0];
   directionCosine[1] = m3D[1][1];
   auto scaleY = directionCosine.GetNorm();
-  double scaleZ = std::sqrt(scaleX * scaleY); // geometric mean
+  T scaleZ = std::sqrt(scaleX * scaleY); // geometric mean
   m3D(2, 2) = scaleZ;
   auto det = vnl_determinant(m3D.GetVnlMatrix());
   if (det < 0)
