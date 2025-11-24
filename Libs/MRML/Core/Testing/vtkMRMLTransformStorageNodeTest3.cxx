@@ -59,7 +59,11 @@ vtkSmartPointer<T> readTransformUsingSlicer(std::string filePath, vtkMRMLScene* 
   readTransformNode->AddDefaultStorageNode();
   vtkMRMLTransformStorageNode* readStorageNode = vtkMRMLTransformStorageNode::SafeDownCast(readTransformNode->GetStorageNode());
   readStorageNode->SetFileName(filePath.c_str());
-  assert(readStorageNode->ReadData(readTransformNode));
+  if (!readStorageNode->ReadData(readTransformNode))
+  {
+    std::cerr << "Failed to read transform from file: " << filePath << std::endl;
+    return nullptr;
+  }
 
   return readTransformNode;
 }
@@ -119,6 +123,8 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
 {
   using Affine2DType = itk::AffineTransform<T, 2>;
 
+  std::cout << "TestAffineTransform2DConversionFromITKToVTK<" << typeid(T).name() << ">" << std::endl;
+
   // Create an example 2D affine transform
   typename Affine2DType::Pointer affine2d = Affine2DType::New();
 
@@ -177,6 +183,8 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
   // Typedefs for convenience
   using PixelVectorType = itk::Vector<T, 2>;
   using Image2DType = itk::Image<PixelVectorType, 2>;
+
+  std::cout << "TestVTKOrientedGridTransformFrom2DITKImage<" << typeid(T).name() << ">" << std::endl;
 
   // Create a small 2D displacement field
   typename Image2DType::Pointer dispImage = Image2DType::New();

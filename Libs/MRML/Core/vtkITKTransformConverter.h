@@ -98,7 +98,8 @@ public:
   static bool SetITKImageFromVTKOrientedGridTransform(vtkObject* loggerObject, GridImageDoubleType::Pointer& gridImage_Lps, vtkOrientedGridTransform* grid_Ras);
 
   // Convert a 2D ITK matrix to a 3D ITK matrix.
-  // Spacing for the third dimension is geometrical mean of the other two dimensions.
+  // Spacing for the third dimension is geometric mean of the other two dimensions.
+  // This is chosen to minimize geometric distortion.
   // Sign of the third dimension is chosen to create a right-handed coordinate system.
   template <typename T>
   static itk::Matrix<T, 3, 3> Matrix2Dto3D(itk::Matrix<T, 2, 2> m2D);
@@ -216,7 +217,13 @@ itk::Matrix<T, 3, 3> vtkITKTransformConverter::Matrix2Dto3D(itk::Matrix<T, 2, 2>
   {
     m3D(2, 2) = -scaleZ; // make right-handed coordinate system
   }
-  assert(vnl_determinant(m3D.GetVnlMatrix()) >= 0);
+#ifndef NDEBUG
+  // This should never happen, so only compute another determinant in debug builds
+  if (vnl_determinant(m3D.GetVnlMatrix()) < 0)
+  {
+    throw std::runtime_error("vtkITKTransformConverter::Matrix2Dto3D: Unable to create right-handed coordinate system from 2D matrix");
+  }
+#endif
 
   return m3D;
 }
@@ -229,7 +236,10 @@ typename itk::AffineTransform<T, 3>::Pointer vtkITKTransformConverter::ConvertIT
   using LinearTransformType = itk::MatrixOffsetTransformBase<T, 2, 2>;
 
   typename LinearTransformType::ConstPointer t2d = dynamic_cast<const LinearTransformType*>(transformItk_LPS.GetPointer());
-  assert(t2d != nullptr);
+  if (t2d == nullptr)
+  {
+    throw std::runtime_error("vtkITKTransformConverter::ConvertITKLinearTransformFrom2Dto3D: Unable to cast ITK transform to 2D linear transform");
+  }
 
   // convert into 3D affine which Slicer can handle
   typename Affine3D::MatrixType m = vtkITKTransformConverter::Matrix2Dto3D<T>(t2d->GetMatrix());
@@ -1178,7 +1188,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFrom2DITKImage(vtkObje
   double originRasZ = 0.0;
   gridImage_Ras->SetOrigin(originRasX, originRasY, originRasZ);
 
-  // Spacing (X,Y from ITK, Z = 1.0)
+  // Spacing (X,Y from ITK, Z=geometric mean)
   const auto& itkSpacing = gridImage_Lps->GetSpacing();
   gridImage_Ras->SetSpacing(itkSpacing[0], itkSpacing[1], std::sqrt(itkSpacing[0] * itkSpacing[1]));
 
