@@ -18,6 +18,7 @@
 #include <vtkNew.h>
 #include <vtkImageData.h>
 #include <vtkOrientedGridTransform.h>
+#include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 
 // ITK includes
@@ -25,13 +26,13 @@
 #include <itkVector.h>
 #include <itkImageRegionIterator.h>
 #include <itkDisplacementFieldTransform.h>
+#include <itkThinPlateSplineKernelTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkAffineTransform.h>
 #include <itksys/Directory.hxx>
 
 // MRML / project testing utilities
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkITKTransformConverter.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
@@ -80,6 +81,15 @@ int PointsCheck(typename itk::Transform<T, 2, 2>::Pointer itkTransform, vtkMRMLT
   // transform needs to be in the parent node for TransformPointFromWorld to do something
   vtkMRMLTransformNode* dummyTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode"));
   dummyTransformNode->SetAndObserveTransformNodeID(vtkTransformNode->GetID());
+
+  if constexpr (std::is_same_v<T, float>)
+  {
+    std::cerr << setprecision(8);
+  }
+  else
+  {
+    std::cerr << setprecision(16);
+  }
 
   unsigned failures = 0;
   for (const auto& pointLPS2D : testPointsLps)
@@ -149,6 +159,7 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
   translation[1] = -2.25;
   affine2d->SetTranslation(translation);
 
+  // Write it to a temporary file (to test realistic read from file scenario)
   std::string tempFilePath = tempFilename(tempDir, "Affine2D", "tfm", true);
   typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
   writer->SetFileName(tempFilePath);
@@ -175,6 +186,62 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
   constexpr double tol = 100 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
 
   return PointsCheck<T>(affine2d, readTransformNode, scene, tol);
+}
+
+template <typename T>
+int TestThinPlateSpline2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScene* scene)
+{
+  using ThinPlateSpline2DType = itk::ThinPlateSplineKernelTransform<T, 2>;
+
+  std::cout << "TestThinPlateSpline2DConversionFromITKToVTK<" << typeid(T).name() << ">" << std::endl;
+
+  // Create an example 2D thin plate spline transform
+  typename ThinPlateSpline2DType::Pointer tps2d = ThinPlateSpline2DType::New();
+
+  // Add some source and target landmarks for a non-linear transform
+  typename ThinPlateSpline2DType::PointSetType::Pointer sourcePoints = ThinPlateSpline2DType::PointSetType::New();
+  typename ThinPlateSpline2DType::PointSetType::Pointer targetPoints = ThinPlateSpline2DType::PointSetType::New();
+  constexpr unsigned int numberOfLandmarks = 12;
+  for (unsigned int n = 0; n < numberOfLandmarks; ++n)
+  {
+    unsigned i = n / 3;
+    unsigned k = n % 3;
+
+    itk::Point<T, 2> sourcePoint;
+    sourcePoint[0] = i * 12.5 - 25.5;
+    sourcePoint[1] = k * 7.5 - 20.0;
+    sourcePoints->SetPoint(n, sourcePoint);
+
+    itk::Point<T, 2> targetPoint;
+    targetPoint[0] = sourcePoint[0] + std::sin(n) * 0.2;
+    targetPoint[1] = sourcePoint[1] + std::cos(n) * 1.3;
+    targetPoints->SetPoint(n, targetPoint);
+  }
+  tps2d->SetSourceLandmarks(sourcePoints);
+  tps2d->SetTargetLandmarks(targetPoints);
+  tps2d->ComputeWMatrix();
+
+  // Write it to a temporary file (to test realistic read from file scenario)
+  std::string tempFilePath = tempFilename(tempDir, "ThinPlateSpline2D", "tfm", true);
+  typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
+  writer->SetFileName(tempFilePath);
+  writer->SetInput(tps2d);
+  TRY_EXPECT_NO_ITK_EXCEPTION(writer->Update());
+
+  // Now read back the transform from the file using Slicer machinery
+  vtkMRMLTransformNode* readTransformNode = readTransformUsingSlicer<vtkMRMLTransformNode>(tempFilePath, scene);
+
+  vtkThinPlateSplineTransform* tpsT = vtkThinPlateSplineTransform::SafeDownCast(readTransformNode->GetTransformFromParent());
+  if (!tpsT)
+  {
+    std::cerr << "Converting to vtkThinPlateSplineTransform failed." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // constexpr double tol = 100 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
+  constexpr double tol = 100 * std::numeric_limits<float>::epsilon(); // vtkThinPlateSplineTransform always uses float internally
+
+  return PointsCheck<T>(tps2d, readTransformNode, scene, tol);
 }
 
 template <typename T>
@@ -341,6 +408,9 @@ int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(TestAffineTransform2DConversionFromITKToVTK<double>(tempDir, scene));
   CHECK_EXIT_SUCCESS(TestAffineTransform2DConversionFromITKToVTK<float>(tempDir, scene));
+
+  CHECK_EXIT_SUCCESS(TestThinPlateSpline2DConversionFromITKToVTK<double>(tempDir, scene));
+  CHECK_EXIT_SUCCESS(TestThinPlateSpline2DConversionFromITKToVTK<float>(tempDir, scene));
 
   CHECK_EXIT_SUCCESS(TestVTKOrientedGridTransformFrom2DITKImage<double>(tempDir, scene));
   CHECK_EXIT_SUCCESS(TestVTKOrientedGridTransformFrom2DITKImage<float>(tempDir, scene));
