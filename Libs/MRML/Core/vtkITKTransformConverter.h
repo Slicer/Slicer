@@ -132,7 +132,7 @@ protected:
                                      bool alwaysAddBulkTransform);
   static bool SetITKv4BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
 
-  template <typename T>
+  template <typename T, unsigned VDimension>
   static bool SetVTKThinPlateSplineTransformFromITK(vtkObject* loggerObject,
                                                     vtkThinPlateSplineTransform* transformVtk_RAS,
                                                     typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
@@ -180,12 +180,18 @@ void vtkITKTransformConverter::RegisterInverseTransformTypes()
   itk::TransformFactory<InverseThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<InverseThinPlateSplineTransformDoubleType>::RegisterTransform();
 
+  itk::TransformFactory<itk::InverseThinPlateSplineKernelTransform<float, 2>>::RegisterTransform();
+  itk::TransformFactory<itk::InverseThinPlateSplineKernelTransform<double, 2>>::RegisterTransform();
+
   typedef itk::ThinPlateSplineKernelTransform<float, 3> ThinPlateSplineTransformFloatType;
   typedef itk::ThinPlateSplineKernelTransform<double, 3> ThinPlateSplineTransformDoubleType;
 
   // by default they are not registered
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
+
+  itk::TransformFactory<itk::ThinPlateSplineKernelTransform<float, 2>>::RegisterTransform();
+  itk::TransformFactory<itk::ThinPlateSplineKernelTransform<double, 2>>::RegisterTransform();
 }
 
 //----------------------------------------------------------------------------
@@ -1371,13 +1377,13 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
 }
 
 //----------------------------------------------------------------------------
-template <typename T>
+template <typename T, unsigned VDimension>
 bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* loggerObject,
                                                                      vtkThinPlateSplineTransform* transformVtk_RAS,
                                                                      typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS)
 {
-  typedef itk::ThinPlateSplineKernelTransform<T, 3> ThinPlateSplineTransformType;
-  typedef itk::InverseThinPlateSplineKernelTransform<T, 3> InverseThinPlateSplineTransformType;
+  typedef itk::ThinPlateSplineKernelTransform<T, VDimension> ThinPlateSplineTransformType;
+  typedef itk::InverseThinPlateSplineKernelTransform<T, VDimension> InverseThinPlateSplineTransformType;
 
   std::string transformItkClassName = transformItk_LPS->GetNameOfClass();
 
@@ -1417,7 +1423,14 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     double pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
-    pointVtk_Ras[2] = pointItk_Lps[2];
+    if constexpr (VDimension == 2)
+    {
+      pointVtk_Ras[2] = 0.0;
+    }
+    else
+    {
+      pointVtk_Ras[2] = pointItk_Lps[2];
+    }
     sourceLandmarksVtk_Ras->InsertNextPoint(pointVtk_Ras);
   }
 
@@ -1434,7 +1447,14 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     double pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
-    pointVtk_Ras[2] = pointItk_Lps[2];
+    if constexpr (VDimension == 2)
+    {
+      pointVtk_Ras[2] = 0.0;
+    }
+    else
+    {
+      pointVtk_Ras[2] = pointItk_Lps[2];
+    }
     targetLandmarksVtk_Ras->InsertNextPoint(pointVtk_Ras);
   }
 
@@ -1603,7 +1623,14 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
 
   // ThinPlateSpline
   vtkNew<vtkThinPlateSplineTransform> tpsTransformVtk;
-  conversionSuccess = SetVTKThinPlateSplineTransformFromITK<T>(loggerObject, tpsTransformVtk.GetPointer(), transformItk);
+  if (itkDim == 3)
+  {
+    conversionSuccess = SetVTKThinPlateSplineTransformFromITK<T, 3>(loggerObject, tpsTransformVtk.GetPointer(), transformItk);
+  }
+  else if (itkDim == 2)
+  {
+    conversionSuccess = SetVTKThinPlateSplineTransformFromITK<T, 2>(loggerObject, tpsTransformVtk.GetPointer(), transformItk);
+  }
   if (conversionSuccess)
   {
     tpsTransformVtk->Register(nullptr);
