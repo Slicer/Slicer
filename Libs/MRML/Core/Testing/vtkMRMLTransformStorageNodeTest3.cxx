@@ -69,6 +69,23 @@ vtkSmartPointer<T> readTransformUsingSlicer(std::string filePath, vtkMRMLScene* 
   return readTransformNode;
 }
 
+int writeTransformUsingSlicer(vtkAbstractTransform* transform, std::string filePath, vtkMRMLScene* scene)
+{
+  vtkMRMLTransformNode* writeTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode"));
+  writeTransformNode->ApplyTransform(transform);
+
+  writeTransformNode->AddDefaultStorageNode();
+  vtkMRMLTransformStorageNode* writeStorageNode = vtkMRMLTransformStorageNode::SafeDownCast(writeTransformNode->GetStorageNode());
+  if (!writeStorageNode)
+  {
+    std::cerr << "Error: Storage node is not created." << std::endl;
+    return EXIT_FAILURE;
+  }
+  writeStorageNode->SetFileName(filePath.c_str());
+  CHECK_INT(writeStorageNode->WriteData(writeTransformNode), 1);
+  return EXIT_SUCCESS;
+}
+
 template <typename T>
 int PointsCheck(typename itk::Transform<T, 2, 2>::Pointer itkTransform, vtkMRMLTransformNode* vtkTransformNode, vtkMRMLScene* scene, T tol)
 {
@@ -183,6 +200,14 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
     return EXIT_FAILURE;
   }
 
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "Affine3D", "tfm", true);
+  if (writeTransformUsingSlicer(affineTransform, tempFilePath, scene) != EXIT_SUCCESS)
+  {
+    std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
+    return EXIT_FAILURE;
+  }
+
   constexpr double tol = 100 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
 
   return PointsCheck<T>(affine2d, readTransformNode, scene, tol);
@@ -235,6 +260,14 @@ int TestThinPlateSpline2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
   if (!tpsT)
   {
     std::cerr << "Converting to vtkThinPlateSplineTransform failed." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "ThinPlateSpline3D", "tfm", true);
+  if (writeTransformUsingSlicer(tpsT, tempFilePath, scene) != EXIT_SUCCESS)
+  {
+    std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -301,7 +334,7 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
   // Write it to a temporary file (to test realistic read from file scenario)
   typename itk::DisplacementFieldTransform<T, 2>::Pointer dispTransform = itk::DisplacementFieldTransform<T, 2>::New();
   dispTransform->SetDisplacementField(dispImage);
-  std::string tempFilePath = tempFilename(tempDir, "DispField2D", "tfm", true);
+  std::string tempFilePath = tempFilename(tempDir, "DisplacementField2D", "tfm", true);
   typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
   writer->SetFileName(tempFilePath);
   writer->SetInput(dispTransform);
@@ -387,6 +420,14 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
       return EXIT_FAILURE;
     }
     ++it2;
+  }
+
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "DisplacementField3D", "tfm", true);
+  if (writeTransformUsingSlicer(gridTransform, tempFilePath, scene) != EXIT_SUCCESS)
+  {
+    std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
+    return EXIT_FAILURE;
   }
 
   return PointsCheck<T>(dispTransform, readTransformNode, scene, 1e-4);
