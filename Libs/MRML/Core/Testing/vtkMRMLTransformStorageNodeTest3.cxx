@@ -238,8 +238,7 @@ int TestThinPlateSpline2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
     return EXIT_FAILURE;
   }
 
-  // constexpr double tol = 100 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
-  constexpr double tol = 100 * std::numeric_limits<float>::epsilon(); // vtkThinPlateSplineTransform always uses float internally
+  constexpr double tol = 1000 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
 
   return PointsCheck<T>(tps2d, readTransformNode, scene, tol);
 }

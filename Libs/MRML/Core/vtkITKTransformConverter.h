@@ -1412,6 +1412,30 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
 
   vtkNew<vtkPoints> sourceLandmarksVtk_Ras;
   unsigned int numberOfSourceLandmarks = sourceLandmarksItk_Lps->GetNumberOfPoints();
+  vtkNew<vtkPoints> targetLandmarksVtk_Ras;
+  unsigned int numberOfTargetLandmarks = targetLandmarksItk_Lps->GetNumberOfPoints();
+  if constexpr (std::is_same_v<T, float>)
+  {
+    sourceLandmarksVtk_Ras->SetDataTypeToFloat();
+    sourceLandmarksVtk_Ras->Allocate(numberOfSourceLandmarks);
+
+    targetLandmarksVtk_Ras->SetDataTypeToFloat();
+    targetLandmarksVtk_Ras->Allocate(numberOfTargetLandmarks);
+  }
+  else if constexpr (std::is_same_v<T, double>)
+  {
+    sourceLandmarksVtk_Ras->SetDataTypeToDouble();
+    sourceLandmarksVtk_Ras->Allocate(numberOfSourceLandmarks);
+
+    targetLandmarksVtk_Ras->SetDataTypeToDouble();
+    targetLandmarksVtk_Ras->Allocate(numberOfTargetLandmarks);
+  }
+  else
+  {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot load 2D TPS transform: unsupported pixel type. Only float and double are supported.");
+    return false;
+  }
+
   for (unsigned int i = 0; i < numberOfSourceLandmarks; i++)
   {
     typename ThinPlateSplineTransformType::InputPointType pointItk_Lps;
@@ -1420,7 +1444,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     {
       continue;
     }
-    double pointVtk_Ras[3] = { 0 };
+    T pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
     if constexpr (VDimension == 2)
@@ -1434,8 +1458,6 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     sourceLandmarksVtk_Ras->InsertNextPoint(pointVtk_Ras);
   }
 
-  vtkNew<vtkPoints> targetLandmarksVtk_Ras;
-  unsigned int numberOfTargetLandmarks = targetLandmarksItk_Lps->GetNumberOfPoints();
   for (unsigned int i = 0; i < numberOfTargetLandmarks; i++)
   {
     typename ThinPlateSplineTransformType::InputPointType pointItk_Lps;
@@ -1444,7 +1466,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     {
       continue;
     }
-    double pointVtk_Ras[3] = { 0 };
+    T pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
     if constexpr (VDimension == 2)
