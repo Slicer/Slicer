@@ -370,6 +370,10 @@ set(MRMLWidgets_LIBRARIES
 
 target_link_libraries(${lib_name} ${MRMLWidgets_LIBRARIES})
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileQtCoreHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileQtWidgetsHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
@@ -396,6 +400,10 @@ if(MRMLWidgets_WRAP_PYTHON)
     INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     )
+  target_precompile_headers(${lib_name}PythonQt REUSE_FROM PrecompileQtCoreHeaders)
+  target_precompile_headers(${lib_name}PythonQt REUSE_FROM PrecompileQtWidgetsHeaders)
+  target_precompile_headers(${lib_name}PythonQt REUSE_FROM PrecompileVtkHeaders)
+
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${lib_name}PythonQt PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})

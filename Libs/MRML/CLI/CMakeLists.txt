@@ -90,6 +90,9 @@ set(libs
   )
 target_link_libraries(${lib_name} ${libs})
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
@@ -149,6 +152,9 @@ if(VTK_WRAP_PYTHON)
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileItkHeaders)
+    target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileVtkHeaders)
+
     if(TARGET ${lib_name}Hierarchy)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()

@@ -163,6 +163,9 @@ target_link_libraries(${lib_name} ${libs})
 set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
@@ -201,6 +204,8 @@ if(VTK_WRAP_PYTHON)
   # Export target
   set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python)
   set_target_properties(${lib_name}Python PROPERTIES FOLDER "Core-Base")
+  target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileItkHeaders)
+  target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileVtkHeaders)
   if(TARGET ${lib_name}Hierarchy)
     set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER "Core-Base")
   endif()

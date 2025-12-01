@@ -179,6 +179,9 @@ endif()
 
 target_link_libraries(${lib_name} ${libs})
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileItkHeaders)
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 if(${lib_name}_AUTOINIT)
   set_property(TARGET ${lib_name}
     APPEND PROPERTY COMPILE_DEFINITIONS
@@ -245,6 +248,8 @@ if(MRMLDisplayableManager_USE_PYTHON)
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileItkHeaders)
+    target_precompile_headers(${lib_name}Python REUSE_FROM PrecompileVtkHeaders)
     if(TARGET ${lib_name}Hierarchy)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()

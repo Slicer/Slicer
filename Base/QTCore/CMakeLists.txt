@@ -227,6 +227,7 @@ SlicerMacroBuildBaseQtLibrary(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   WRAP_PYTHONQT
+  USE_PRECOMPILED_HEADERS
   )
 
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
