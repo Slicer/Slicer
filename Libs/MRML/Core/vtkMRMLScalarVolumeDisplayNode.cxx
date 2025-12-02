@@ -592,32 +592,31 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColo
       if (vtkColorTransferFunction* ctf = vtkColorTransferFunction::SafeDownCast(newLookupTable))
       {
         // For continuous transfer functions, invert the positions
-        vtkNew<vtkColorTransferFunction> invertedCtf;
+        vtkColorTransferFunction* originalCtf = vtkColorTransferFunction::SafeDownCast(lookupTable);
+
+        ctf->RemoveAllPoints();
         double range[2] = { 0, 255 };
-        ctf->GetRange(range);
-        for (int i = 0; i < ctf->GetSize(); i++)
+        originalCtf->GetRange(range);
+        for (int i = 0; i < originalCtf->GetSize(); i++)
         {
           double val[6];
-          ctf->GetNodeValue(i, val);
+          originalCtf->GetNodeValue(i, val);
           // Invert the position while keeping the color
           val[0] = range[0] + (range[1] - val[0]);
-          invertedCtf->AddRGBPoint(val[0], val[1], val[2], val[3], val[4], val[5]);
+          ctf->AddRGBPoint(val[0], val[1], val[2], val[3], val[4], val[5]);
         }
-        newLookupTable = invertedCtf;
       }
       else if (vtkLookupTable* lut = vtkLookupTable::SafeDownCast(newLookupTable))
       {
         // For discrete lookup tables, invert the table entries
-        vtkNew<vtkLookupTable> invertedLut;
-        invertedLut->SetNumberOfTableValues(lut->GetNumberOfTableValues());
-        invertedLut->SetRange(0, 255);
-        for (int i = 0; i < lut->GetNumberOfTableValues(); i++)
+        vtkLookupTable* originalLut = vtkLookupTable::SafeDownCast(lookupTable);
+
+        for (int i = 0; i < originalLut->GetNumberOfTableValues(); i++)
         {
           double rgba[4];
-          lut->GetTableValue(i, rgba);
-          invertedLut->SetTableValue(lut->GetNumberOfTableValues() - 1 - i, rgba);
+          originalLut->GetTableValue(i, rgba);
+          lut->SetTableValue(originalLut->GetNumberOfTableValues() - 1 - i, rgba);
         }
-        newLookupTable = invertedLut;
       }
     }
     lookupTable = newLookupTable;
