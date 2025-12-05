@@ -19,13 +19,13 @@ repos:
         exclude: "\\.(svg|vtk|vtp)$"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.7
+    rev: v0.14.8
     hooks:
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: "v21.1.6"
+    rev: "v21.1.7"
     hooks:
       - id: clang-format
         # For support of legacy code.  The Slicer core no longer has files with .txx extensions.
