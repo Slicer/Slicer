@@ -1,5 +1,5 @@
 import slicer
-from slicer import vtkMRMLLayerDMCameraSynchronizer, vtkMRMLViewNode, vtkMRMLLayerDMPipelineManager, vtkMRMLSliceNode
+from slicer import vtkMRMLLayerDMCameraSynchronizer, vtkMRMLViewNode, vtkMRMLSliceNode
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkRenderWindow, vtkRenderer, vtkCamera
 
