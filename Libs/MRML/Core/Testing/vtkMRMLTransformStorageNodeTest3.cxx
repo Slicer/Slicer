@@ -19,6 +19,7 @@
 #include <vtkImageData.h>
 #include <vtkOrientedGridTransform.h>
 #include <vtkThinPlateSplineTransform.h>
+#include "vtkOrientedBSplineTransform.h"
 #include <vtkTransform.h>
 
 // ITK includes
@@ -27,6 +28,7 @@
 #include <itkImageRegionIterator.h>
 #include <itkDisplacementFieldTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
+#include <itkBSplineTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkAffineTransform.h>
 #include <itksys/Directory.hxx>
@@ -320,7 +322,6 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
 
   // Fill image with deterministic values: pixel(x,y) = [x + 0.1*y, 2*x - 0.5*y]
   itk::ImageRegionIteratorWithIndex<Image2DType> it(dispImage, dispImage->GetRequestedRegion());
-  it.GoToBegin();
   while (!it.IsAtEnd())
   {
     typename Image2DType::IndexType idx = it.GetIndex();
@@ -433,6 +434,102 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
   return PointsCheck<T>(dispTransform, readTransformNode, scene, 1e-4);
 }
 
+template <typename T>
+int TestVTKBSplineParametersFromITK(const char* tempDir, vtkMRMLScene* scene)
+{
+  // Typedefs for convenience
+  using TransformType = itk::BSplineTransform<T, 2, 3>;
+  using Image2DType = TransformType::ImageType;
+
+  std::cout << "TestVTKBSplineParametersFromITK<" << typeid(T).name() << ">" << std::endl;
+
+  // Create a small 2D displacement field
+  typename TransformType::ImagePointer dispImageX = TransformType::ImageType::New();
+
+  typename Image2DType::SizeType size;
+  size[0] = 16; // X
+  size[1] = 17; // Y
+  typename Image2DType::RegionType region;
+  region.SetSize(size);
+  dispImageX->SetRegions(region);
+
+  // Set origin, spacing and a non-trivial direction (to exercise conversion)
+  typename Image2DType::PointType origin;
+  origin[0] = -32.4;
+  origin[1] = -23.5;
+  dispImageX->SetOrigin(origin);
+
+  typename Image2DType::SpacingType spacing;
+  spacing[0] = 18.5;
+  spacing[1] = 7.3;
+  dispImageX->SetSpacing(spacing);
+
+  typename Image2DType::DirectionType direction;
+  direction.SetIdentity();
+  // apply a simple 2D rotation for direction to ensure conversion handles non-identity
+  const double theta = vtkMath::RadiansFromDegrees(5.0);
+  direction(0, 0) = std::cos(theta);
+  direction(0, 1) = -std::sin(theta);
+  direction(1, 0) = std::sin(theta);
+  direction(1, 1) = std::cos(theta);
+  dispImageX->SetDirection(direction);
+
+  dispImageX->Allocate();
+
+  typename Image2DType::Pointer dispImageY = Image2DType::New();
+  dispImageY->SetRegions(region);
+  dispImageY->CopyInformation(dispImageX);
+  dispImageY->Allocate();
+
+  // Fill image with deterministic values, make it similar to TestVTKOrientedGridTransformFrom2DITKImage
+  itk::ImageRegionIteratorWithIndex<Image2DType> itX(dispImageX, dispImageX->GetRequestedRegion());
+  itk::ImageRegionIteratorWithIndex<Image2DType> itY(dispImageY, dispImageY->GetRequestedRegion());
+  while (!itX.IsAtEnd())
+  {
+    typename Image2DType::IndexType idx = itX.GetIndex();
+    itX.Set(10 * (idx[0] + 0.1 * idx[1]));
+    itY.Set(10 * (2.0 * idx[0] - 0.5 * idx[1]));
+    ++itX;
+    ++itY;
+  }
+
+  auto bsplineTransform = TransformType::New();
+  typename TransformType::ImagePointer images[2];
+  images[0] = dispImageX;
+  images[1] = dispImageY;
+  bsplineTransform->SetCoefficientImages(images);
+
+  // Write it to a temporary file (to test realistic read from file scenario)
+  std::string tempFilePath = tempFilename(tempDir, "BSpline2D", "tfm", true);
+  typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
+  writer->SetFileName(tempFilePath);
+  writer->SetInput(bsplineTransform);
+  TRY_EXPECT_NO_ITK_EXCEPTION(writer->Update());
+
+  // Now read back the displacement field image from the file using Slicer machinery
+  vtkMRMLTransformNode* readTransformNode = readTransformUsingSlicer<vtkMRMLTransformNode>(tempFilePath, scene);
+
+  vtkOrientedBSplineTransform* vtkTransform = vtkOrientedBSplineTransform::SafeDownCast(readTransformNode->GetTransformFromParent());
+  if (!vtkTransform)
+  {
+    std::cerr << "Converting to vtkOrientedBSplineTransform failed." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "BSpline3D", "tfm", true);
+  // Writing needs inversion, I don't know how to force it here
+  // if (writeTransformUsingSlicer(vtkTransform, tempFilePath, scene) != EXIT_SUCCESS)
+  //{
+  //  std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
+  //  return EXIT_FAILURE;
+  //}
+
+  constexpr double tol = 1000 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
+
+  return PointsCheck<T>(bsplineTransform, readTransformNode, scene, tol);
+}
+
 int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 {
   if (argc != 2)
@@ -454,6 +551,9 @@ int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(TestVTKOrientedGridTransformFrom2DITKImage<double>(tempDir, scene));
   CHECK_EXIT_SUCCESS(TestVTKOrientedGridTransformFrom2DITKImage<float>(tempDir, scene));
+
+  CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITK<double>(tempDir, scene));
+  CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITK<float>(tempDir, scene));
 
   return EXIT_SUCCESS;
 }
