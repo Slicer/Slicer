@@ -1,11 +1,9 @@
 import slicer
-from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLLayerDisplayableManager,
-    vtkMRMLModelNode,
     vtkMRMLScene,
     vtkMRMLScriptedModuleNode,
     vtkMRMLSliceViewDisplayableManagerFactory,

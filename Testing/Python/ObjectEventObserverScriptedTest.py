@@ -6,7 +6,7 @@ from slicer import (
     vtkMRMLLayerDMObjectEventObserverScripted,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 from vtk import vtkCommand, VTK_OBJECT
 
 
