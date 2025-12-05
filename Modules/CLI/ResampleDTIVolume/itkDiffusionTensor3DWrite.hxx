@@ -63,7 +63,7 @@ void DiffusionTensor3DWrite<TData>::SetSpace(int space)
 }
 
 template <class TData>
-void DiffusionTensor3DWrite<TData>::SetMeasurementFrame(Matrix<double, 3, 3> measurementFrame)
+void DiffusionTensor3DWrite<TData>::SetMeasurementFrame(Matrix<itk::SpacePrecisionType, 3, 3> measurementFrame)
 {
   DictionaryType::ConstIterator itr = m_MetaDataDictionary.Begin();
   DictionaryType::ConstIterator end = m_MetaDataDictionary.End();
