@@ -48,6 +48,5 @@ private:
   PyObject* CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const;
   int CastToIntAndDecrement(PyObject* result) const;
 
-
   PyObject* m_object;
 };

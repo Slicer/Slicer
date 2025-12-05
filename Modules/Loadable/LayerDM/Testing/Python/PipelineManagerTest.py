@@ -2,9 +2,7 @@ from unittest.mock import MagicMock
 
 import slicer
 from slicer import (
-    vtkMRMLLayerDMPipelineCreatorI,
     vtkMRMLLayerDMPipelineFactory,
-    vtkMRMLLayerDMPipelineI,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLAbstractViewNode,
@@ -12,7 +10,6 @@ from slicer import (
     vtkMRMLMarkupsFiducialNode,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
-    vtkMRMLViewNode,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkRenderWindow, reference as ref, vtkCommand
