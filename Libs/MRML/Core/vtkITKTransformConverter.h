@@ -529,11 +529,11 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
   {
     return false;
   }
-  if (warpTransformItk->GetOutputSpaceDimension() != VTKDimension)
+  const unsigned itkDim = warpTransformItk->GetOutputSpaceDimension();
+  constexpr unsigned instDim = BSplineTransformType::SpaceDimension;
+  if (itkDim != instDim)
   {
-    vtkErrorWithObjectMacro(loggerObject,
-                            "Unsupported number of dimensions in BSpline transform file (expected = " << VTKDimension
-                                                                                                      << ", actual = " << warpTransformItk->GetOutputSpaceDimension() << ")");
+    vtkErrorWithObjectMacro(loggerObject, "Actual and instantiated dimensionality differ: actual = " << itkDim << ", instantiated = " << instDim);
     return false;
   }
   bsplineItk = static_cast<BSplineTransformType*>(warpTransformItk.GetPointer());
@@ -559,12 +559,22 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
   // * mesh direction 3x3 matrix (first row, second row, third row)
   typename BSplineTransformType::DirectionType direction = coefficientImages[0]->GetDirection();
 
+  itk::Matrix<T, 3, 3> m3d;
+  if constexpr (instDim == 2)
+  {
+    m3d = Matrix2Dto3D(direction);
+  }
+  else
+  {
+    m3d = direction;
+  }
+
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
   for (unsigned int row = 0; row < VTKDimension; row++)
   {
     for (unsigned int column = 0; column < VTKDimension; column++)
     {
-      gridDirectionMatrix_LPS->SetElement(row, column, direction[row][column]);
+      gridDirectionMatrix_LPS->SetElement(row, column, m3d[row][column]);
     }
   }
 
@@ -573,8 +583,16 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
 
   vtkNew<vtkImageData> bsplineCoefficients;
 
-  bsplineCoefficients->SetExtent(0, meshSize[0] - 1, 0, meshSize[1] - 1, 0, meshSize[2] - 1);
-  bsplineCoefficients->SetSpacing(spacing[0], spacing[1], spacing[2]);
+  if constexpr (instDim == 2)
+  {
+    bsplineCoefficients->SetExtent(0, meshSize[0] - 1, 0, meshSize[1] - 1, 0, 0);
+    bsplineCoefficients->SetSpacing(spacing[0], spacing[1], std::sqrt(spacing[0] * spacing[1]));
+  }
+  else
+  {
+    bsplineCoefficients->SetExtent(0, meshSize[0] - 1, 0, meshSize[1] - 1, 0, meshSize[2] - 1);
+    bsplineCoefficients->SetSpacing(spacing[0], spacing[1], spacing[2]);
+  }
 
   // convert the direction matrix from LPS (itk) to RAS (slicer)
   vtkNew<vtkMatrix4x4> lpsToRas;
@@ -590,7 +608,11 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
   bsplineVtk->SetGridDirectionMatrix(gridDirectionMatrix_RAS.GetPointer());
 
   // convert the origin from LPS (itk) to RAS (slicer)
-  double gridOrigin_RAS[3] = { -origin[0], -origin[1], origin[2] };
+  double gridOrigin_RAS[3] = { -origin[0], -origin[1], 0 };
+  if constexpr (instDim == 3)
+  {
+    gridOrigin_RAS[2] = origin[2];
+  }
   bsplineCoefficients->SetOrigin(gridOrigin_RAS);
 
   int bsplineCoefficientsScalarType = VTK_FLOAT;
@@ -601,8 +623,8 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
 
   bsplineCoefficients->AllocateScalars(bsplineCoefficientsScalarType, 3);
 
-  const unsigned int expectedNumberOfVectors = meshSize[0] * meshSize[1] * meshSize[2];
-  const unsigned int expectedNumberOfParameters = expectedNumberOfVectors * VTKDimension;
+  const unsigned int expectedNumberOfVectors = meshSize.CalculateProductOfElements();
+  const unsigned int expectedNumberOfParameters = expectedNumberOfVectors * instDim;
   const unsigned int actualNumberOfParameters = bsplineItk->GetNumberOfParameters();
 
   if (actualNumberOfParameters != expectedNumberOfParameters)
@@ -616,7 +638,14 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(vtkObject* 
   {
     *(vtkBSplineParams_RAS++) = -(*(itkBSplineParams_LPS));
     *(vtkBSplineParams_RAS++) = -(*(itkBSplineParams_LPS + expectedNumberOfVectors));
-    *(vtkBSplineParams_RAS++) = (*(itkBSplineParams_LPS + expectedNumberOfVectors * 2));
+    if constexpr (instDim == 3)
+    {
+      *(vtkBSplineParams_RAS++) = (*(itkBSplineParams_LPS + expectedNumberOfVectors * 2));
+    }
+    else // 2D
+    {
+      *(vtkBSplineParams_RAS++) = 0; // Z component
+    }
     itkBSplineParams_LPS++;
   }
   bsplineVtk->SetCoefficientData(bsplineCoefficients.GetPointer());
@@ -638,20 +667,46 @@ bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Generic(vtkObject* loggerOb
     return false;
   }
 
-  bool inverse = false;
-  // inverse class is derived from forward class, so it has to be checked first
-  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineDeformableTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  const unsigned int itkDim = warpTransformItk->GetOutputSpaceDimension();
+  if (itkDim < 2 || itkDim > 3)
   {
-    inverse = true;
+    vtkErrorWithObjectMacro(loggerObject, "Unsupported number of dimensions in BSpline transform file (expected = 2 or 3, actual = " << itkDim << ")");
+    return false;
   }
-  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineDeformableTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  bool inverse = false;
+  if (itkDim == 2)
   {
-    inverse = false;
+    // inverse class is derived from forward class, so it has to be checked first
+    if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineDeformableTransform<T, 2, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = true;
+    }
+    else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineDeformableTransform<T, 2, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = false;
+    }
+    else
+    {
+      vtkDebugWithObjectMacro(loggerObject, "Not an ITKv3 BSpline transform");
+      return false;
+    }
   }
   else
   {
-    vtkDebugWithObjectMacro(loggerObject, "Not an ITKv3 BSpline transform");
-    return false;
+    // inverse class is derived from forward class, so it has to be checked first
+    if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineDeformableTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = true;
+    }
+    else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineDeformableTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = false;
+    }
+    else
+    {
+      vtkDebugWithObjectMacro(loggerObject, "Not an ITKv3 BSpline transform");
+      return false;
+    }
   }
 
   // Set the bulk transform
@@ -659,29 +714,14 @@ bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Generic(vtkObject* loggerOb
   {
     std::string bulkTransformItkTransformName = bulkTransformItk->GetNameOfClass();
 
-    typedef itk::AffineTransform<T, 3> BulkTransformType;
-
     if (bulkTransformItkTransformName == "AffineTransform")
     {
-      BulkTransformType* bulkItkAffine = static_cast<BulkTransformType*>(bulkTransformItk.GetPointer());
-      vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
-      for (unsigned int i = 0; i < VTKDimension; i++)
+      vtkNew<vtkMatrix4x4> bulkMatrix_RAS;
+      if (!SetVTKLinearTransformFromITK<T>(loggerObject, bulkMatrix_RAS, bulkTransformItk))
       {
-        for (unsigned int j = 0; j < VTKDimension; j++)
-        {
-          bulkMatrix_LPS->SetElement(i, j, bulkItkAffine->GetMatrix()[i][j]);
-        }
-        bulkMatrix_LPS->SetElement(i, VTKDimension, bulkItkAffine->GetOffset()[i]);
+        vtkErrorWithObjectMacro(loggerObject, "Cannot read the bulk transform in BSplineTransform");
+        return false;
       }
-      vtkNew<vtkMatrix4x4> lpsToRas;
-      lpsToRas->SetElement(0, 0, -1);
-      lpsToRas->SetElement(1, 1, -1);
-      vtkNew<vtkMatrix4x4> rasToLps;
-      rasToLps->SetElement(0, 0, -1);
-      rasToLps->SetElement(1, 1, -1);
-      vtkNew<vtkMatrix4x4> bulkMatrix_RAS; // bulk_RAS = lpsToRas * bulk_LPS * rasToLps
-      vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer(), bulkMatrix_RAS.GetPointer());
-      vtkMatrix4x4::Multiply4x4(bulkMatrix_RAS.GetPointer(), rasToLps.GetPointer(), bulkMatrix_RAS.GetPointer());
       bsplineVtk->SetBulkTransformMatrix(bulkMatrix_RAS.GetPointer());
     }
     else if (bulkTransformItkTransformName == "IdentityTransform")
@@ -711,20 +751,43 @@ bool vtkITKTransformConverter::SetVTKBSplineFromITKv4Generic(vtkObject* loggerOb
                                                              typename itk::TransformBaseTemplate<T>::Pointer warpTransformItk)
 {
   bool inverse = false;
-  // inverse class is derived from forward class, so it has to be checked first
-  if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
+  const unsigned int itkDim = warpTransformItk->GetOutputSpaceDimension();
+
+  if (itkDim == 2)
   {
-    inverse = true;
-  }
-  else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineTransform<T, VTKDimension, VTKDimension>>(loggerObject, bsplineVtk, warpTransformItk))
-  {
-    inverse = false;
+    // inverse class is derived from forward class, so it has to be checked first
+    if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineTransform<T, 2, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = true;
+    }
+    else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineTransform<T, 2, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = false;
+    }
+    else
+    {
+      vtkDebugWithObjectMacro(loggerObject, "Not an ITKv4 BSpline transform");
+      return false;
+    }
   }
   else
   {
-    vtkDebugWithObjectMacro(loggerObject, "Not an ITKv4 BSpline transform");
-    return false;
+    // inverse class is derived from forward class, so it has to be checked first
+    if (SetVTKBSplineParametersFromITKGeneric<itk::InverseBSplineTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = true;
+    }
+    else if (SetVTKBSplineParametersFromITKGeneric<itk::BSplineTransform<T, 3, BSPLINE_TRANSFORM_ORDER>>(loggerObject, bsplineVtk, warpTransformItk))
+    {
+      inverse = false;
+    }
+    else
+    {
+      vtkDebugWithObjectMacro(loggerObject, "Not an ITKv4 BSpline transform");
+      return false;
+    }
   }
+
   if (inverse)
   {
     bsplineVtk->Inverse();
