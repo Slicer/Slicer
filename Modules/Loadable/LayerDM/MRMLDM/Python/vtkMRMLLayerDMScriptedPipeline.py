@@ -86,7 +86,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         Triggered when the pipeline had focus (processed an interaction) and loses the focus (other pipeline
         handled the new interaction or window leave event).
         default behavior: does nothing.
-        :param eventData: Optional event data which triggerred the lose focus
+        :param eventData: Optional event data which triggered the lose focus
         """
         pass
 
@@ -126,8 +126,8 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         Observer update callback.
         Triggered when any object & events observed using UpdateObserver is triggered.
 
-        :param obj: vtkObject instance which triggerred the callback
-        :param eventId: Event id which triggerred the callback
+        :param obj: vtkObject instance which triggered the callback
+        :param eventId: Event id which triggered the callback
         :param callData: Optional observer call data. Use self.CastCallData(callData, vtkType) to convert to Python
         """
         pass
