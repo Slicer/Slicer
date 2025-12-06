@@ -30,7 +30,7 @@ public:
   /// @{
   /// Remove previous monitored events from \param prevObj and observe events from the \param obj
   /// If both obj are the same, does nothing.
-  /// On event triggerred, calls the update set by \sa SetUpdateCallback.
+  /// On event triggered, calls the update set by \sa SetUpdateCallback.
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent);
@@ -42,7 +42,7 @@ public:
   void RemoveObserver(vtkObject* obj);
 
   /// @{
-  /// Set the callback triggerred when one of the observed objects and event is invoked.
+  /// Set the callback triggered when one of the observed objects and event is invoked.
   void SetUpdateCallback(const std::function<void(vtkObject* node)>& callback);
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback);
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback);
