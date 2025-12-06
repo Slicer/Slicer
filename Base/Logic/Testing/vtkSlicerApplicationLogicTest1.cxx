@@ -241,7 +241,13 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
       std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(3));
       bool isEmbeddedExpected = (isEmbeddedExpectedAsStr == "1");
 
-      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision, Slicer_EXTENSIONS_DIRBASENAME);
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+      std::string extensionsDirBase = Slicer_EXTENSIONS_DIRBASENAME;
+#else
+      std::string extensionsDirBase;
+      // empty string will be interpreted by IsEmbeddedModule to mean that Slicer was built without extension manager support
+#endif
+      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision, extensionsDirBase);
       if (isEmbeddedExpected != isEmbedded)
       {
         std::cerr << "Line " << __LINE__ << " - Problem with isEmbedded ! - Row:" << rowIdx << "\n"
