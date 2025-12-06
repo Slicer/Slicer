@@ -141,7 +141,7 @@ public:
   /// @{
   /// Remove previous monitored events from \param prevObj and observe events from the \param obj
   /// If both obj are the same, does nothing.
-  /// On event triggerred, calls \sa OnUpdate
+  /// On event triggered, calls \sa OnUpdate
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;

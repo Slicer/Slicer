@@ -17,7 +17,7 @@ class vtkMRMLAbstractViewNode;
 
 /// \brief Class responsible for synchronizing the camera of the different display layers.
 /// If a pipeline doesn't use a specific camera, its layer will be set the default camera.
-/// The default camera is synchronized to the renderer 0 byt this class and its default implementation is to
+/// The default camera is synchronized to the renderer 0 by this class and its default implementation is to
 /// copy the content of the main camera when the camera has changed.
 ///
 /// For SliceViews, the class monitors modified events to set the default camera aligned with the Slice view
