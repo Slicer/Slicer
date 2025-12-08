@@ -29,6 +29,7 @@
 #include <itkDisplacementFieldTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
 #include <itkBSplineTransform.h>
+#include <itkBSplineDeformableTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkAffineTransform.h>
 #include <itksys/Directory.hxx>
@@ -145,16 +146,10 @@ int PointsCheck(typename itk::Transform<T, 2, 2>::Pointer itkTransform, vtkMRMLT
   return EXIT_SUCCESS;
 }
 
-} // namespace
-
 template <typename T>
-int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScene* scene)
+typename itk::AffineTransform<T, 2>::Pointer CreateNonTrivialAffine(double thetaDegrees)
 {
   using Affine2DType = itk::AffineTransform<T, 2>;
-
-  std::cout << "TestAffineTransform2DConversionFromITKToVTK<" << typeid(T).name() << ">" << std::endl;
-
-  // Create an example 2D affine transform
   typename Affine2DType::Pointer affine2d = Affine2DType::New();
 
   // Center
@@ -165,7 +160,7 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
 
   // Define a non-trivial 2x2 matrix (rotation + scaling/shear)
   itk::Matrix<T, 2, 2> mat2d;
-  const double theta = vtkMath::RadiansFromDegrees(15.0);
+  const double theta = vtkMath::RadiansFromDegrees(thetaDegrees);
   mat2d[0][0] = 1.2 * std::cos(theta);
   mat2d[0][1] = -0.8 * std::sin(theta);
   mat2d[1][0] = 0.5 * std::sin(theta);
@@ -177,6 +172,19 @@ int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScen
   translation[0] = 3.5;
   translation[1] = -2.25;
   affine2d->SetTranslation(translation);
+
+  return affine2d;
+}
+
+template <typename T>
+int TestAffineTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScene* scene)
+{
+  using Affine2DType = itk::AffineTransform<T, 2>;
+
+  std::cout << "TestAffineTransform2DConversionFromITKToVTK<" << typeid(T).name() << ">" << std::endl;
+
+  // Create an example 2D affine transform
+  typename Affine2DType::Pointer affine2d = CreateNonTrivialAffine<T>(15.0);
 
   // Write it to a temporary file (to test realistic read from file scenario)
   std::string tempFilePath = tempFilename(tempDir, "Affine2D", "tfm", true);
@@ -434,14 +442,11 @@ int TestVTKOrientedGridTransformFrom2DITKImage(const char* tempDir, vtkMRMLScene
   return PointsCheck<T>(dispTransform, readTransformNode, scene, 1e-4);
 }
 
-template <typename T>
-int TestVTKBSplineParametersFromITK(const char* tempDir, vtkMRMLScene* scene)
+template <typename TransformType>
+typename TransformType::Pointer CreateNonTrivialBSpline()
 {
   // Typedefs for convenience
-  using TransformType = itk::BSplineTransform<T, 2, 3>;
   using Image2DType = typename TransformType::ImageType;
-
-  std::cout << "TestVTKBSplineParametersFromITK<" << typeid(T).name() << ">" << std::endl;
 
   // Create a small 2D displacement field
   typename TransformType::ImagePointer dispImageX = TransformType::ImageType::New();
@@ -499,6 +504,17 @@ int TestVTKBSplineParametersFromITK(const char* tempDir, vtkMRMLScene* scene)
   images[1] = dispImageY;
   bsplineTransform->SetCoefficientImages(images);
 
+  return bsplineTransform;
+}
+
+template <typename T>
+int TestVTKBSplineParametersFromITK(const char* tempDir, vtkMRMLScene* scene)
+{
+  using TransformType = itk::BSplineTransform<T, 2, 3>;
+  std::cout << "TestVTKBSplineParametersFromITK<" << typeid(T).name() << ">" << std::endl;
+
+  typename TransformType::Pointer bsplineTransform = CreateNonTrivialBSpline<TransformType>();
+
   // Write it to a temporary file (to test realistic read from file scenario)
   std::string tempFilePath = tempFilename(tempDir, "BSpline2D", "tfm", true);
   typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
@@ -530,6 +546,48 @@ int TestVTKBSplineParametersFromITK(const char* tempDir, vtkMRMLScene* scene)
   return PointsCheck<T>(bsplineTransform, readTransformNode, scene, tol);
 }
 
+template <typename T>
+int TestVTKBSplineParametersFromITKv3(const char* tempDir, vtkMRMLScene* scene)
+{
+  // Typedefs for convenience
+  using TransformType = itk::BSplineDeformableTransform<T, 2, 3>;
+  std::cout << "TestVTKBSplineParametersFromITKv3<" << typeid(T).name() << ">" << std::endl;
+
+  typename TransformType::Pointer bsplineTransform = CreateNonTrivialBSpline<TransformType>();
+  // bsplineTransform->SetBulkTransform(CreateNonTrivialAffine<T>(0.1));  // does not get written to file
+
+  // Write it to a temporary file (to test realistic read from file scenario)
+  std::string tempFilePath = tempFilename(tempDir, "BSpline2Dv3", "tfm", true);
+  typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
+  writer->SetFileName(tempFilePath);
+  writer->SetInput(bsplineTransform);
+  TRY_EXPECT_NO_ITK_EXCEPTION(writer->Update());
+
+  // Now read back the displacement field image from the file using Slicer machinery
+  vtkMRMLTransformNode* readTransformNode = readTransformUsingSlicer<vtkMRMLTransformNode>(tempFilePath, scene);
+
+  vtkOrientedBSplineTransform* vtkTransform = vtkOrientedBSplineTransform::SafeDownCast(readTransformNode->GetTransformFromParent());
+  if (!vtkTransform)
+  {
+    std::cerr << "Converting to vtkOrientedBSplineTransform failed." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "BSpline3Dv3", "tfm", true);
+  // Writing needs inversion, I don't know how to force it here
+  // if (writeTransformUsingSlicer(vtkTransform, tempFilePath, scene) != EXIT_SUCCESS)
+  //{
+  //  std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
+  //  return EXIT_FAILURE;
+  //}
+
+  constexpr double tol = 1000 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
+
+  return PointsCheck<T>(bsplineTransform, readTransformNode, scene, tol);
+}
+} // namespace
+
 int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 {
   if (argc != 2)
@@ -554,6 +612,9 @@ int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITK<double>(tempDir, scene));
   CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITK<float>(tempDir, scene));
+
+  CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITKv3<double>(tempDir, scene));
+  CHECK_EXIT_SUCCESS(TestVTKBSplineParametersFromITKv3<float>(tempDir, scene));
 
   return EXIT_SUCCESS;
 }
