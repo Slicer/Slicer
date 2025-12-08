@@ -106,3 +106,27 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
 
         self.factory.CreatePipeline(viewNode, node)
         mock.assert_called_once_with(viewNode, node, instance)
+
+    def test_creators_handle_creation_by_priority(self):
+        i1 = vtkMRMLLayerDMPipelineI()
+        i2 = vtkMRMLLayerDMPipelineI()
+
+        c1 = vtkMRMLLayerDMPipelineScriptedCreator()
+        c1.SetPythonCallback(lambda *_: i1)
+
+        c2 = vtkMRMLLayerDMPipelineScriptedCreator()
+        c2.SetPythonCallback(lambda *_: i2)
+        c2.SetPriority(42)
+
+        self.factory.AddPipelineCreator(c1)
+        self.factory.AddPipelineCreator(c2)
+
+        viewNode = vtkMRMLViewNode()
+        node = vtkMRMLCameraNode()
+
+        # Higher priority implies priority in creation
+        assert self.factory.CreatePipeline(viewNode, node) == i2
+
+        # Lower priority implies lower priority in creation
+        c2.SetPriority(-1)
+        assert self.factory.CreatePipeline(viewNode, node) == i1
