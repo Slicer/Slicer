@@ -12,7 +12,7 @@ from slicer import (
     vtkMRMLScalarVolumeNode,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
-from vtk import vtkRenderWindow, reference as ref, vtkCommand
+from vtk import vtkRenderWindow, reference as ref, vtkCommand, vtkRenderer
 from MockPipeline import MockPipeline
 
 
@@ -29,6 +29,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         self.pipelineManager.SetFactory(self.factory)
         self.pipelineManager.SetScene(slicer.mrmlScene)
         self.pipelineManager.SetRenderWindow(self.renderWindow)
+        self.defaultRenderer = vtkRenderer()
+        self.renderWindow.AddRenderer(self.defaultRenderer)
 
         modelCreator = vtkMRMLLayerDMPipelineScriptedCreator()
         modelCreator.SetPythonCallback(self.createModelPipeline)
@@ -248,3 +250,16 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
 
         self.pipelineManager.RemoveNode(modelNode)
         mock.assert_called_once()
+
+    def test_on_pipeline_added_triggers_renderer_added(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        m1.mockOnRendererAdded.assert_called_once_with(self.defaultRenderer)
+
+    def test_on_pipeline_removed_triggers_renderer_removed(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+
+        # Reset mockOnRendererRemoved (called once when setting the first renderer with value None)
+        m1.mockOnRendererRemoved.reset_mock()
+
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        m1.mockOnRendererRemoved.assert_called_once_with(self.defaultRenderer)
