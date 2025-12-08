@@ -66,6 +66,10 @@ void vtkMRMLLayerDMLayerManager::RemovePipeline(vtkMRMLLayerDMPipelineI* pipelin
     return;
   }
 
+  // Remove pipeline from its renderer
+  this->RemovePipelineRenderer(pipeline);
+
+  // Update the other pipeline layers if needed
   this->m_pipelineLayers[key].erase(pipeline);
   this->UpdateLayers();
 }
@@ -235,11 +239,16 @@ void vtkMRMLLayerDMLayerManager::RemoveAllPipelineRenderers()
   {
     for (const auto& pipeline : pipelines)
     {
-      if (pipeline)
-      {
-        pipeline->SetRenderer(nullptr);
-      }
+      this->RemovePipelineRenderer(pipeline);
     }
+  }
+}
+
+void vtkMRMLLayerDMLayerManager::RemovePipelineRenderer(vtkMRMLLayerDMPipelineI* pipeline)
+{
+  if (pipeline)
+  {
+    pipeline->SetRenderer(nullptr);
   }
 }
 
