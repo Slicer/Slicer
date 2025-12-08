@@ -65,6 +65,7 @@ private:
   int GetKeyIndex(const LayerKey& key) const;
   void RemoveAllLayers();
   void RemoveAllPipelineRenderers();
+  static void RemovePipelineRenderer(vtkMRMLLayerDMPipelineI* pipeline);
   void RemoveOutdatedLayers();
   void RemoveOutdatedPipelines();
   void RemoveRenderer(const vtkSmartPointer<vtkRenderer>& renderer);
