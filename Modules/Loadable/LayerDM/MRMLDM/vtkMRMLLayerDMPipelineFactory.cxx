@@ -4,6 +4,7 @@
 #include "vtkMRMLLayerDMPipelineCreatorI.h"
 #include "vtkMRMLLayerDMPipelineCallbackCreator.h"
 #include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -24,21 +25,26 @@ void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtk
     return;
   }
 
+  this->m_obs->UpdateObserver(nullptr, creator);
   this->m_pipelineCreators.emplace_back(creator);
+  this->SortPipelineCreators();
   this->InvokeEvent(vtkCommand::ModifiedEvent);
 }
 
 vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(
-  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack)
+  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
+  int priority)
 {
   auto creator = vtkSmartPointer<vtkMRMLLayerDMPipelineCallbackCreator>::New();
   creator->SetCallback(creatorCallBack);
+  creator->SetPriority(priority);
   this->AddPipelineCreator(creator);
   return creator;
 }
 
 void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator)
 {
+  this->m_obs->RemoveObserver(creator);
   size_t prevSize = this->m_pipelineCreators.size();
   this->m_pipelineCreators.erase(std::remove_if(this->m_pipelineCreators.begin(),
                                                 this->m_pipelineCreators.end(),
@@ -95,5 +101,22 @@ vtkMRMLLayerDMPipelineFactory::vtkMRMLLayerDMPipelineFactory()
   : m_lastView(nullptr)
   , m_lastNode(nullptr)
   , m_lastPipeline(nullptr)
+  , m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
 {
+  m_obs->SetUpdateCallback([this](vtkObject* node) { this->SortPipelineCreators(); });
+}
+
+void vtkMRMLLayerDMPipelineFactory::SortPipelineCreators()
+{
+  std::sort(std::begin(m_pipelineCreators),
+            std::end(m_pipelineCreators),
+            [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& b)
+            {
+              if (!a || !b)
+              {
+                return true;
+              }
+
+              return a->GetPriority() > b->GetPriority();
+            });
 }
