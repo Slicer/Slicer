@@ -12,6 +12,7 @@
 #include <vector>
 
 class vtkMRMLAbstractViewNode;
+class vtkMRMLLayerDMObjectEventObserver;
 class vtkMRMLLayerDMPipelineCreatorI;
 class vtkMRMLLayerDMPipelineI;
 class vtkMRMLNode;
@@ -42,8 +43,11 @@ public:
 
   /// Convenience method to add creator callback
   /// Delegates to \sa vtkMRMLLayerDMPipelineCallbackCreator and returns the creator instance.
+  ///
+  /// \param priority: Creator priority value (default=0) higher indicates priority on handling the creation call
   vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> AddPipelineCreator(
-    const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack);
+    const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
+    int priority = 0);
 
   /// \brief Remove the input creator from the list of creators.
   /// If the factory doesn't contain the creator, does nothing.
@@ -74,8 +78,13 @@ protected:
   ~vtkMRMLLayerDMPipelineFactory() override = default;
 
 private:
+  /// \brief Sort the pipeline creators by priority.
+  /// Updated when new creators are added / removed or when creators modified events are triggered.
+  void SortPipelineCreators();
+
   std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>> m_pipelineCreators;
   vtkMRMLAbstractViewNode* m_lastView;
   vtkMRMLNode* m_lastNode;
   vtkMRMLLayerDMPipelineI* m_lastPipeline;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
 };

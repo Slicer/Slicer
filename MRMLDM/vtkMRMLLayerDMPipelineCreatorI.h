@@ -22,7 +22,16 @@ public:
 
   virtual vtkSmartPointer<vtkMRMLLayerDMPipelineI> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const;
 
+  /// @{
+  /// \brief Get/Set the priority of creation of the pipeline creator.
+  /// Pipelines with higher priority will be allowed to handle creation first (allowing to supplant existing creators).
+  vtkGetMacro(Priority, int);
+  vtkSetMacro(Priority, int);
+  /// @}
 protected:
   vtkMRMLLayerDMPipelineCreatorI() = default;
   ~vtkMRMLLayerDMPipelineCreatorI() override = default;
+
+private:
+  int Priority = 0;
 };
