@@ -19,10 +19,6 @@
 
 #include "vtkMRMLLayerDisplayableManager.h"
 
-#include <vtkAutoInit.h>
-
-VTK_MODULE_INIT(vtkSlicerLayerDMModuleMRMLDisplayableManager);
-
 //-----------------------------------------------------------------------------
 qSlicerLayerDMModule::qSlicerLayerDMModule(QObject* _parent)
   : Superclass(_parent)
