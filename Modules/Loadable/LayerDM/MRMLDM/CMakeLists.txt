@@ -64,6 +64,7 @@ set(${KIT}_TARGET_LIBRARIES
 )
 
 #-----------------------------------------------------------------------------
+
 SlicerMacroBuildModuleLogic(
   NAME ${KIT}
   EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
@@ -78,5 +79,12 @@ target_include_directories(
   ${${KIT}_SOURCE_DIR}
   ${${KIT}_BINARY_DIR}
 )
+
+if(${KIT}_AUTOINIT)
+  set_property(TARGET ${KIT}
+    APPEND PROPERTY COMPILE_DEFINITIONS
+    "${KIT}_AUTOINIT=1(${KIT})"
+    )
+endif()
 
 target_compile_features(${KIT} PUBLIC cxx_std_17)
