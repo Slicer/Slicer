@@ -114,15 +114,20 @@ If you find Slicer is helpful like the community please get involved. You don't 
 
 ### Funding Sources
 
-Many of the activities around the Slicer effort are made possible through funding from public and private sources. The National Institutes of Health of the USA is a major contributor through a variety of competitive grants and contracts. Funding sources that contribute to development of Slicer core or extensions include:
+Many of the activities around the Slicer effort are made possible through funding from public and private sources. The National Institutes of Health of the USA is a major contributor through a variety of competitive grants and contracts. Funding sources that contribute to development of Slicer core or extensions include (ordered by End Date):
 
 |Grant Number|Description|Grant PIs|Start Date|End Date|Title|
 |------------|-----------|---------|----------|--------|-----|
+| NSF/DBI 2301405 | MorphoCloud and MorphoDepot | Murat Maga | 2024-03-01 | 2028-02-28 | MorphoCloud: A Cloud Powered, Open-Source Platform For Research, Teaching And Collaboration In 3d Digital Morphology And Beyond |
+| NSF/OAC 2118240 | Photogrammetry extension | Murat Maga | 2021-09-15 | 2026-08-31 | Imageomics: A New Frontier of Biological Information Powered by Knowledge-Guided Machine Learning |
+| NIH P01HD104435  | Mouse Embryo Multi-Organ Segmentations (MEMOS), ANTsPy Extension, Terminologies | Murat Maga | 2021-01-11 | 2025-12-31 | 3D Quantitative Analysis of Mouse Models of Structural Birth Defects Through Computational Anatomy |
 |[NIH 1R01HL153166-01](https://projectreporter.nih.gov/project_info_description.cfm?aid=10029738&icde=51006191)|Computer Modeling of the Tricuspid Valve in HLHS|Matthew Jolley|2021-06-30|2025-06-30|Computer Modeling of the Tricuspid Valve in Hypoplastic Left Heart Syndrome|
+| NIH R03OD032627 | Dense Correspondence Analysis Toolkit (DeCA) | Murat Maga | 2021-09-22 | 2023-09-21 | Deep Phenotyping of 3D Data for Candidate Gene Selection from Kids First Studies |
 |[CZI EOSS 4](https://chanzuckerberg.com/eoss/proposals/3d-slicer-in-my-language-internationalization-and-usability-improvements/)   |Slicer internationalization and usability|Pujol, Sonia|2021-09-01|2023-09-01   |3D Slicer in My Language: Internationalization and Usability Improvements|
 |[NIH 4P41EB015902](https://projectreporter.nih.gov/project_info_description.cfm?aid=9115586&icde=31485398&ddparam=&ddvalue=&ddsub=&cr=3&csb=default&cs=ASC)|Neuroimage Analysis Center|Ron Kikinis|2013-08-01|2023-08-31|Application of Slicer to image-guided neurosurgery and other applications through steered computatiton and image navigation databases|
 |CANARIE RS3-036|SlicerAIGT|Fichtinger, Gabor|2020-10-01|2023-03-31|Develop free open source research software for AI-powered image guided therapy on Slicer platform|
 |[NIH R01MH112748](https://reporter.nih.gov/search/-oPV-FDakki3bPslkjMUwg/project-details/10053340)|High-accuracy brain segmentation tools|Bouix, Sylvain|2017-12-01|2022-10-31|High Resolution, Comprehensive Atlases of the Human Brain Morphology|
+| NSF/DBI 1759883 | SlicerMorph extension, Markups infrastructure| Murat Maga | 2018-08-01 | 2022-07-31 | An Integrated Platform for Retrieval, Visualization and Analysis of 3D Morphology From Digital Biological Collections |
 |[NIH R44DK115332](https://www.sbir.gov/sbirsearch/detail/1683213)|Renal Biopsy            |Enquobahrie, Andinet A.|2019-08-13|2021-07-31|Advanced virtual simulator for real-time ultrasound-guided renal biopsy training|
 |ICEX 0202101723|SlicerVR Collaboration|Juan Ruiz Alzola|2021-01-16|2021-12-31|Sistema Virtual Colaborativa Aplicación Médicas|
 |[NIH R01EB025212](https://govtribe.com/award/federal-grant-award/project-grant-r01eb025212)|Software annotation     |Enquobahrie, Andinet A.|2019-07-02|2021-03-31|Software for Practical Annotation and Exchange of Virtual Anatomy|
