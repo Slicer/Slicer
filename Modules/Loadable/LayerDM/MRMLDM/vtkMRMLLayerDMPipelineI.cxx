@@ -99,7 +99,7 @@ unsigned int vtkMRMLLayerDMPipelineI::GetRenderOrder() const
   return 0;
 }
 
-vtkCamera* vtkMRMLLayerDMPipelineI::GetCamera() const
+vtkCamera* vtkMRMLLayerDMPipelineI::GetCustomCamera() const
 {
   return nullptr;
 }
