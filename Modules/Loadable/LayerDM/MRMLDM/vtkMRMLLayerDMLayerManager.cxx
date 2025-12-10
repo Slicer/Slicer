@@ -35,7 +35,7 @@ vtkMRMLLayerDMLayerManager::LayerKey vtkMRMLLayerDMLayerManager::GetPipelineLaye
   {
     return {};
   }
-  return { pipeline->GetRenderOrder(), vtkMRMLLayerDMLayerManager::GetCameraId(pipeline->GetCamera()) };
+  return { pipeline->GetRenderOrder(), vtkMRMLLayerDMLayerManager::GetCameraId(pipeline->GetCustomCamera()) };
 }
 
 int vtkMRMLLayerDMLayerManager::GetNumberOfDistinctLayers() const
@@ -201,7 +201,7 @@ vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, co
   {
     if (pipeline)
     {
-      return pipeline->GetCamera();
+      return pipeline->GetCustomCamera();
     }
   }
 

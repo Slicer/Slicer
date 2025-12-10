@@ -46,7 +46,7 @@ public:
   /// Otherwise, the pipeline will be moved in a renderer with a default camera synchronized on its view default camera.
   /// \sa vtkMRMLLayerDMCameraSynchronizer
   /// \return nullptr by default.
-  virtual vtkCamera* GetCamera() const;
+  virtual vtkCamera* GetCustomCamera() const;
 
   /// Custom mouse cursor from VTK mouse cursor enum.
   /// This value is only used if the pipeline actually processes an event and is ignore otherwise.
