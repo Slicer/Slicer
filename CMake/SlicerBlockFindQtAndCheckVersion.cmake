@@ -87,16 +87,39 @@ message(STATUS "Configuring ${_project_name} with Qt ${_major}.${_minor}.${_patc
 
 # Since neither Qt5 or Qt6 set CMake variables for plugins and binary directories,
 # we explicitly set them here.
-set(QT_PLUGINS_DIR "${Qt${_major}_DIR}/../../../plugins")
-get_filename_component(QT_PLUGINS_DIR ${QT_PLUGINS_DIR} ABSOLUTE)
+set(QMAKE_EXECUTABLE "/usr/bin/qmake" CACHE FILEPATH "Path to qmake executable")
+
+execute_process(
+    COMMAND ${QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
+    OUTPUT_VARIABLE QT_PLUGINS_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE qmake_result
+)
+if(NOT qmake_result EQUAL 0)
+    message(FATAL_ERROR "Failed to get QT_PLUGINS_DIR using qmake")
+endif()
 message(STATUS "Setting QT_PLUGINS_DIR: ${QT_PLUGINS_DIR}")
 
-set(QT_BINARY_DIR "${Qt${_major}_DIR}/../../../bin")
-get_filename_component(QT_BINARY_DIR ${QT_BINARY_DIR} ABSOLUTE)
+execute_process(
+    COMMAND ${QMAKE_EXECUTABLE} -query QT_INSTALL_BINS
+    OUTPUT_VARIABLE QT_BINARY_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE qmake_result
+)
+if(NOT qmake_result EQUAL 0)
+    message(FATAL_ERROR "Failed to get QT_BINARY_DIR using qmake")
+endif()
 message(STATUS "Setting QT_BINARY_DIR: ${QT_BINARY_DIR}")
 
-set(QT_LIBRARY_DIR "${Qt${_major}_DIR}/../../../lib")
-get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} ABSOLUTE)
+execute_process(
+    COMMAND ${QMAKE_EXECUTABLE} -query QT_INSTALL_LIBS
+    OUTPUT_VARIABLE QT_LIBRARY_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE qmake_result
+)
+if(NOT qmake_result EQUAL 0)
+    message(FATAL_ERROR "Failed to get QT_LIBRARY_DIR using qmake")
+endif()
 message(STATUS "Setting QT_LIBRARY_DIR: ${QT_LIBRARY_DIR}")
 
 # Sanity checks
