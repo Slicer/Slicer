@@ -45,7 +45,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
         return False, sys.float_info.max
 
-    def GetCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self) -> vtkCamera | None:
         """
         Custom pipeline camera.
         If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera.
