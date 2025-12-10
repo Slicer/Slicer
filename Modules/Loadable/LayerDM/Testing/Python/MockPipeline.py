@@ -30,7 +30,7 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     ):
         super().__init__()
         self.mockCanProcess = MagicMock(return_value=(canProcess, processDistance))
-        self.mockGetCamera = MagicMock(return_value=None)
+        self.mockGetCustomCamera = MagicMock(return_value=None)
         self.mockGetMouse = MagicMock(return_value=mouseCursor)
         self.mockGetRenderOrder = MagicMock(return_value=renderOrder)
         self.mockGetWidgetState = MagicMock(return_value=widgetState)
@@ -49,8 +49,8 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
         return self.mockCanProcess(eventData)
 
-    def GetCamera(self) -> vtkCamera | None:
-        return self.mockGetCamera()
+    def GetCustomCamera(self) -> vtkCamera | None:
+        return self.mockGetCustomCamera()
 
     def GetMouseCursor(self) -> int:
         return self.mockGetMouse()
