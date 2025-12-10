@@ -14,7 +14,7 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
     def GetRenderOrder(self) -> int:
         return self._renderOrder
 
-    def GetCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self) -> vtkCamera | None:
         return self._camera
 
 

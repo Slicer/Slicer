@@ -67,11 +67,11 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
   return false;
 }
 
-vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCamera() const
+vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
-    return Superclass::GetCamera();
+    return Superclass::GetCustomCamera();
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -84,7 +84,7 @@ vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCamera() const
     }
     Py_DECREF(result);
   }
-  return Superclass::GetCamera();
+  return Superclass::GetCustomCamera();
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
