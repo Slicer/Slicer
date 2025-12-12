@@ -385,10 +385,11 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget) const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode) const
+QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* aViewNode) const
 {
   Q_Q(const qMRMLLayoutManager);
-  if (!vtkMRMLAbstractViewNode::SafeDownCast(viewNode))
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(aViewNode);
+  if (!viewNode)
   {
     return nullptr;
   }
@@ -409,7 +410,16 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode) const
   {
     widget = this->plotWidget(vtkMRMLPlotViewNode::SafeDownCast(viewNode));
   }
-  return widget ? widget : q->mrmlViewFactory(QString::fromUtf8(viewNode->GetClassName()))->viewWidget(vtkMRMLAbstractViewNode::SafeDownCast(viewNode));
+  if (!widget)
+  {
+    // not found among known view types
+    qMRMLLayoutViewFactory* factory = q->mrmlViewFactory(QString::fromUtf8(viewNode->GetClassName()));
+    if (factory)
+    {
+      widget = factory->viewWidget(viewNode);
+    }
+  }
+  return widget;
 }
 
 // --------------------------------------------------------------------------
