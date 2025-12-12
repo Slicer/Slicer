@@ -16,9 +16,12 @@
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLTableNode.h>
+
+#include <thread>
 
 //----------------------------------------------------------------------------
 class DataRequest
@@ -32,7 +35,7 @@ public:
 
   virtual void Execute(vtkSlicerApplicationLogic*) {};
 
-  int GetUID() const { return m_UID; }
+  vtkMTimeType GetUID() const { return m_UID; }
 
 protected:
   vtkMTimeType m_UID;
@@ -583,13 +586,57 @@ protected:
 class WriteDataRequestFile : public DataRequest
 {
 public:
-  WriteDataRequestFile(const std::string& vtkNotUsed(node), const std::string& vtkNotUsed(filename), int uid = 0)
+  WriteDataRequestFile(const std::string& nodeID, const std::string& filename, int uid = 0)
     : DataRequest(uid)
   {
+    m_SourceNodeID = nodeID;
+    m_Filename = filename;
+  }
+
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
+  {
+    if (!appLogic)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: no application logic");
+      return;
+    }
+
+    vtkMRMLNode* nd = appLogic->GetMRMLScene()->GetNodeByID(m_SourceNodeID.c_str());
+    if (!nd)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: node " << m_SourceNodeID.c_str() << " not found in scene");
+      return;
+    }
+    vtkDebugWithObjectMacro(appLogic, "ProcessWriteNodeData: write data request node id = " << m_SourceNodeID.c_str());
+
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
+    if (!storableNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: node " << m_SourceNodeID.c_str() << " is not a storable node");
+      return;
+    }
+    vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
+    if (!storageNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: no storage node for node " << m_SourceNodeID.c_str());
+      return;
+    }
+    std::string directory = vtksys::SystemTools::GetFilenamePath(m_Filename);
+    if (!vtksys::SystemTools::FileIsDirectory(directory))
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: directory does not exist: " << directory);
+      return;
+    }
+
+    storageNode->SetFileName(m_Filename.c_str());
+    if (!storageNode->WriteData(storableNode))
+    {
+      vtkErrorWithObjectMacro(appLogic, "ProcessWriteNodeData: error writing data to file " << m_Filename.c_str());
+    }
   }
 
 protected:
-  std::string m_SourceNode;
+  std::string m_SourceNodeID;
   std::string m_Filename;
 };
 
@@ -623,6 +670,222 @@ protected:
   std::vector<std::string> m_TargetNodes;
   std::vector<std::string> m_SourceNodes;
   std::string m_Filename;
+};
+
+//----------------------------------------------------------------------------
+class DataBackgroundRequestFile : public DataRequest
+{
+public:
+  DataBackgroundRequestFile(const std::string& filename, int uid = 0)
+    : DataRequest(uid)
+  {
+    this->m_Node = nullptr;
+    this->m_Scene = nullptr;
+    this->m_Filename = filename;
+  }
+
+  ~DataBackgroundRequestFile() override
+  {
+    if (this->m_Node)
+    {
+      this->m_Node->Delete();
+      this->m_Node = nullptr;
+    }
+
+    if (this->m_Scene)
+    {
+      this->m_Scene->Delete();
+      this->m_Scene = nullptr;
+    }
+  }
+
+  vtkMRMLNode* GetNode() { return this->m_Node; }
+
+  vtkMRMLScene* GetScene() { return this->m_Scene; }
+
+  std::string GetFilename() { return this->m_Filename; }
+
+protected:
+  vtkMRMLNode* m_Node;
+  vtkMRMLScene* m_Scene;
+  std::string m_Filename;
+};
+
+//----------------------------------------------------------------------------
+class ReadDataBackgroundRequestFile : public DataBackgroundRequestFile
+{
+public:
+  ReadDataBackgroundRequestFile(const std::string& refNodeID, const std::string& refNodeClass, const std::string& filename, int displayData, int deleteFile, int uid = 0)
+    : DataBackgroundRequestFile(filename, uid)
+  {
+    this->m_RefNodeID = refNodeID;
+    this->m_RefNodeClass = refNodeClass;
+    this->m_DisplayData = displayData;
+    this->m_DeleteFile = deleteFile;
+  }
+
+  std::string GetRefNodeID() { return this->m_RefNodeID; }
+
+  std::string GetRefNodeClass() { return this->m_RefNodeClass; }
+
+  int GetDisplayData() { return this->m_DisplayData; }
+
+  int GetDeleteFile() { return this->m_DeleteFile; }
+
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
+  {
+    if (!appLogic)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: no application logic");
+      return;
+    }
+    if (this->m_RefNodeClass.empty())
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: no reference node class");
+      return;
+    }
+
+    this->m_Scene = vtkMRMLScene::New();
+    this->m_Node = this->m_Scene->CreateNodeByClass(this->m_RefNodeClass.c_str());
+    this->m_Node->SetScene(this->m_Scene);
+
+    if (!this->m_Node)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: node not found");
+      return;
+    }
+    if (!itksys::SystemTools::FileExists(this->m_Filename.c_str()))
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: file " << this->m_Filename << " does not exist");
+      return;
+    }
+
+    vtkDebugWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: write data request node id = " << this->m_RefNodeID.c_str());
+
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->m_Node);
+    if (!storableNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: node " << this->m_RefNodeID.c_str() << " is not a storable node");
+      return;
+    }
+    vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(storableNode->CreateDefaultStorageNode());
+    if (!storageNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: no storage node for node " << this->m_RefNodeID.c_str());
+      return;
+    }
+
+    try
+    {
+      vtkDebugWithObjectMacro(appLogic,
+                              "ReadDataBackgroundRequestFile: about to call read data, "
+                              "storage node's read state is "
+                                << storageNode->GetReadStateAsString());
+      // If the node was previously empty then the write state may still be
+      // "SkipNoData", which would prevent the file from loading.
+      // Change the write state back to "Idle" to make sure the file is loaded.
+      storageNode->SetWriteStateIdle();
+      if (appLogic->GetMRMLScene()->GetCacheManager()->IsRemoteReference(this->m_Filename.c_str()))
+      {
+        storageNode->SetURI(this->m_Filename.c_str());
+        vtkDebugWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: calling ReadData on the storage node " << storageNode->GetID() << ", uri = " << storageNode->GetURI());
+        storageNode->ReadData(storableNode, /*temporary*/ true);
+      }
+      else
+      {
+        storageNode->SetFileName(this->m_Filename.c_str());
+        vtkDebugWithObjectMacro(appLogic,
+                                "ReadDataBackgroundRequestFile: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
+        storageNode->ReadData(storableNode, /*temporary*/ true);
+      }
+    }
+    catch (itk::ExceptionObject& exc)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: Exception while reading " << this->m_Filename << ", " << exc);
+    }
+    catch (...)
+    {
+      vtkErrorWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: Unknown exception while reading " << this->m_Filename);
+    }
+
+    // Delete the file if requested
+    if (this->m_DeleteFile)
+    {
+      int removed;
+      // is it a shared memory location?
+      if (this->m_Filename.find("slicer:") != std::string::npos)
+      {
+        removed = 1;
+      }
+      else
+      {
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile(this->m_Filename.c_str()));
+      }
+      if (!removed)
+      {
+        vtkWarningWithObjectMacro(appLogic, "ReadDataBackgroundRequestFile: Unable to delete temporary file " << m_Filename);
+      }
+    }
+  }
+
+protected:
+  int m_DisplayData;
+  int m_DeleteFile;
+  std::string m_RefNodeID;
+  std::string m_RefNodeClass;
+};
+
+//----------------------------------------------------------------------------
+class WriteDataBackgroundRequestFile : public DataBackgroundRequestFile
+{
+public:
+  WriteDataBackgroundRequestFile(vtkMRMLNode* node, vtkMRMLScene* miniScene, const std::string& filename, int uid = 0)
+    : DataBackgroundRequestFile(filename, uid)
+  {
+    this->m_Node = node;
+    this->m_Scene = miniScene;
+  }
+
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
+  {
+    if (!appLogic)
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: no application logic");
+      return;
+    }
+    if (!this->m_Node)
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: node not found");
+      return;
+    }
+    std::string directory = vtksys::SystemTools::GetFilenamePath(this->m_Filename);
+    if (!vtksys::SystemTools::FileIsDirectory(directory))
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: directory does not exist: " << directory);
+      return;
+    }
+
+    std::string m_NodeID = this->m_Node->GetID();
+    vtkDebugWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: write data request node id = " << m_NodeID.c_str());
+
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->m_Node);
+    if (!storableNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: node " << m_NodeID.c_str() << " is not a storable node");
+      return;
+    }
+    vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(storableNode->CreateDefaultStorageNode());
+    if (!storageNode)
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: no storage node for node " << m_NodeID.c_str());
+      return;
+    }
+    storageNode->SetFileName(this->m_Filename.c_str());
+    if (!storageNode->WriteData(storableNode))
+    {
+      vtkErrorWithObjectMacro(appLogic, "WriteDataBackgroundRequestFile: error writing data to file " << this->m_Filename.c_str());
+    }
+  }
 };
 
 #endif
