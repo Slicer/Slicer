@@ -183,6 +183,21 @@ QIcon qSlicerSubjectHierarchyTablesPlugin::visibilityIcon(int visible)
   return qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->visibilityIcon(visible);
 }
 
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyTablesPlugin::tooltip(vtkIdType itemID) const
+{
+  // Get basic tooltip from abstract plugin
+  QString tooltipString = Superclass::tooltip(itemID);
+
+  // Append the file path if available
+  QString filePath = this->tooltipWithStoragePath(itemID);
+  if (!filePath.isEmpty())
+  {
+    tooltipString.append(QString("\n  %1").arg(filePath));
+  }
+  return tooltipString;
+}
+
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {

@@ -69,6 +69,9 @@ public:
   /// Get visibility icon for a visibility state
   QIcon visibilityIcon(int visible) override;
 
+  /// Generate tooltip for a owned subject hierarchy item
+  QString tooltip(vtkIdType itemID) const override;
+
   /// Set display color of an owned subject hierarchy item
   /// \param color Display color to set
   /// \param terminologyMetaData Map containing terminology meta data. Contents:
