@@ -41,14 +41,14 @@ public:
   typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef MatrixExtended<double, 4, 4> MatrixTransform4x4Type;
-  typedef AffineTransform<double, 3> AffineTransformType;
+  typedef MatrixExtended<itk::SpacePrecisionType, 4, 4> MatrixTransform4x4Type;
+  typedef AffineTransform<itk::SpacePrecisionType, 3> AffineTransformType;
   typedef typename Superclass::VectorType VectorType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DAffineTransform, DiffusionTensor3DMatrix3x3Transform);
 
-  /** Set the transformation matrix from an itk::AffineTransform< double , 3 > object
+  /** Set the transformation matrix from an itk::AffineTransform< itk::SpacePrecisionType , 3 > object
    */
   void SetTransform(typename AffineTransformType::Pointer transform);
   typename AffineTransformType::Pointer GetAffineTransform();
