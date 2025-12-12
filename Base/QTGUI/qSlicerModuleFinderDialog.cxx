@@ -156,14 +156,18 @@ void qSlicerModuleFinderDialog::setFactoryManager(qSlicerAbstractModuleFactoryMa
 //------------------------------------------------------------------------------
 void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
+  Q_UNUSED(selected);
   Q_UNUSED(deselected);
   Q_D(qSlicerModuleFinderDialog);
 
   QString moduleName;
   qSlicerAbstractCoreModule* module = nullptr;
-  if (!selected.indexes().empty())
+
+  // Get the first currently selected index from the selection model
+  QModelIndexList selectedIndexes = d->ModuleListView->selectionModel()->selectedIndexes();
+  if (!selectedIndexes.empty())
   {
-    moduleName = selected.indexes().first().data(Qt::UserRole).toString();
+    moduleName = selectedIndexes.first().data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
     qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
     qSlicerModuleManager* moduleManager = coreApp->moduleManager();
     qSlicerModuleFactoryManager* factoryManager = moduleManager->factoryManager();
@@ -378,7 +382,62 @@ void qSlicerModuleFinderDialog::onModuleTitleFilterTextChanged()
 {
   Q_D(qSlicerModuleFinderDialog);
   qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  // Store the current selection before applying the filter
+  QModelIndex currentIndex = d->ModuleListView->currentIndex();
+  QString previouslySelectedModuleName;
+  if (currentIndex.isValid())
+  {
+    previouslySelectedModuleName = currentIndex.data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
+  }
+#endif
+
   filterModel->setFilterFixedString(d->FilterTitleSearchBox->text());
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  // Qt6 no longer automatically updates the selection when a proxy model's filter changes,
+  // so we need to update the selection manually if the previously selected module is no longer shown.
+  //
+  // Note that other filter modifications (setFilterRole, setShowBuiltIn, etc.) change what data is considered
+  // and so the entire filter gets invalidated, which updates the selection model (and so if the previously selected
+  // module is no longer available then the first one that is available will be selected). However, setFilterFixedString
+  // only modifies a filter parameter, which does not invalidate the filter, therefore the selection requires manual update.
+  //
+  // In the future, it may be considered changing the implementation to react to rowsInserted, rowsRemoved, modelReset
+  // instead of relying on onSelectionChanged.
+
+  // First check if the previously selected item is still shown (if yes, then we do not need to modify the selection)
+  bool isPreviouslySelectedModuleStillShown = false;
+  if (!previouslySelectedModuleName.isEmpty())
+  {
+    // Search for the previously selected module in the filtered results
+    for (int row = 0; row < filterModel->rowCount(); ++row)
+    {
+      QModelIndex index = filterModel->index(row, 0);
+      if (index.data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString() == previouslySelectedModuleName)
+      {
+        isPreviouslySelectedModuleStillShown = true;
+        break;
+      }
+    }
+  }
+
+  // If previously selected module is no longer shown then select the first module that is shown
+  if (!isPreviouslySelectedModuleStillShown)
+  {
+    QModelIndex first = filterModel->index(0, 0);
+    if (first.isValid())
+    {
+      d->ModuleListView->selectionModel()->setCurrentIndex(first, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    }
+    else
+    {
+      d->ModuleListView->selectionModel()->clearSelection();
+    }
+  }
+#endif
+
   d->makeSelectedItemVisible();
 }
 
