@@ -289,6 +289,7 @@ void vtkMRMLLayerDMPipelineManager::UpdateFromScene()
 
   this->RemoveOutdatedPipelines();
   this->AddMissingPipelines();
+  this->RequestRender();
 }
 
 void vtkMRMLLayerDMPipelineManager::SetScene(vtkMRMLScene* scene)
