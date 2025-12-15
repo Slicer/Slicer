@@ -1,6 +1,7 @@
 import slicer
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
+    vtkMRMLLayerDMPipelineI,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLLayerDisplayableManager,
@@ -8,11 +9,9 @@ from slicer import (
     vtkMRMLScriptedModuleNode,
     vtkMRMLSliceViewDisplayableManagerFactory,
     vtkMRMLThreeDViewDisplayableManagerFactory,
-    vtkMRMLLayerDMPipelineI,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
-from vtk import vtkRenderer, vtkActor, vtkObjectFactory
-from vtkmodules.vtkCommonCore import VTK_OBJECT
+from vtk import VTK_OBJECT, vtkActor, vtkImageData, vtkObjectFactory, vtkRenderer
 
 from MockPipeline import MockPipeline
 
@@ -143,3 +142,19 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         with self.assertRaises(RuntimeError) as context:
             slicer.mrmlScene.AddNode(self.node)
         assert _error_msg in str(context.exception)
+
+    def test_can_render_to_image_data(self):
+        render_window = slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow()
+
+        # Direct return value call
+        image = vtkMRMLLayerDisplayableManager.RenderWindowBufferToImage(render_window)
+        assert isinstance(image, vtkImageData)
+        assert image.GetDimensions()[0] == render_window.GetSize()[0]
+        assert image.GetDimensions()[1] == render_window.GetSize()[1]
+
+        # Mutated call
+        image = vtkImageData()
+        vtkMRMLLayerDisplayableManager.RenderWindowBufferToImage(render_window, image)
+        assert isinstance(image, vtkImageData)
+        assert image.GetDimensions()[0] == render_window.GetSize()[0]
+        assert image.GetDimensions()[1] == render_window.GetSize()[1]

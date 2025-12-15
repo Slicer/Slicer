@@ -31,7 +31,11 @@ void vtkMRMLLayerDMPipelineI::ResetDisplay()
     return;
   }
 
+  // Make sure to avoid looping reset display during processing
+  this->BlockResetDisplay(true);
   this->UpdatePipeline();
+  this->RequestRender();
+  this->BlockResetDisplay(false);
 }
 
 void vtkMRMLLayerDMPipelineI::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
