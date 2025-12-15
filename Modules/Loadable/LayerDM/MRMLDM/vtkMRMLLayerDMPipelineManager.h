@@ -81,15 +81,16 @@ public:
   /// Reset camera clipping range and call display manager request render.
   void RequestRender();
 
-  /// Delegate to \sa vtkMRMLLayerDMLayerManager::ResetCameraClippingRange
-  void ResetCameraClippingRange();
+  /// Resets the clipping range for all cameras managed by the LayerDM and renderer 0's
+  /// camera
+  void ResetCameraClippingRange() const;
 
   /// Set the Pipeline factory to use by the pipeline manager (initialization).
   /// On factory-modified event, will trigger a \sa UpdateFromScene.
   void SetFactory(const vtkSmartPointer<vtkMRMLLayerDMPipelineFactory>& factory);
 
   /// Set the render window on which the pipeline manager is attached (initialization).
-  void SetRenderWindow(vtkRenderWindow* renderWindow) const;
+  void SetRenderWindow(vtkRenderWindow* renderWindow);
 
   /// Set the default renderer used by the display manager (initialization).
   void SetRenderer(vtkRenderer* renderer) const;
@@ -104,11 +105,20 @@ public:
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Update all pipelines managed by the pipeline manager.
-  void UpdateAllPipelines() const;
+  /// Requests render at the end of the update
+  void UpdateAllPipelines();
 
   /// Update the pipeline manager from the current MRML scene state.
   /// Will automatically remove or create pipelines depending on the scene state.
+  /// Requests render at the end of the update
   void UpdateFromScene();
+
+  /// Block the request render
+  /// Returns the previous blocked value.
+  ///
+  /// Allows to avoid requesting a render while a render is already being processed or when updating multiple pipelines at a time
+  /// (for instance updating from scene or synchronizing with the default camera)
+  bool BlockRequestRender(bool isBlocked);
 
 protected:
   vtkMRMLLayerDMPipelineManager();
@@ -116,7 +126,7 @@ protected:
 
 private:
   /// Notify pipelines that the default camera has changed.
-  void OnDefaultCameraModified() const;
+  void OnDefaultCameraModified();
 
   /// Update the input pipeline and reset its display.
   void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline) const;
@@ -136,9 +146,10 @@ private:
 
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
   vtkWeakPointer<vtkMRMLScene> m_scene;
+  vtkWeakPointer<vtkRenderWindow> m_renderWindow;
 
   std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipelineI>> m_pipelineMap;
   std::function<void()> m_requestRender;
 
-  bool m_isResettingClippingRange;
+  bool m_isRequestRenderBlocked{ false };
 };

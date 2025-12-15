@@ -11,7 +11,6 @@
 
 // STL includes
 #include <array>
-#include <cstdint>
 #include <map>
 #include <set>
 
@@ -39,14 +38,31 @@ public:
   static vtkMRMLLayerDMLayerManager* New();
   vtkTypeMacro(vtkMRMLLayerDMLayerManager, vtkObject);
 
+  /// Adds the pipeline to the layers.
+  /// May change an update of the layer ordering.
+  /// Will trigger the SetRenderer call on the pipeline when it's added to its layer.
   void AddPipeline(vtkMRMLLayerDMPipelineI* pipeline);
+
   static LayerKey GetPipelineLayerKey(vtkMRMLLayerDMPipelineI* pipeline);
+
   int GetNumberOfDistinctLayers() const;
   int GetNumberOfManagedLayers() const;
+
+  /// Returns the current number of managed renderers in the render window.
   int GetNumberOfRenderers() const;
+
+  /// Removes the pipeline from the layers.
+  /// May change the layer ordering if pipeline was the last one of its current renderer.
   void RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline);
+
+  /// Iterates over the renderers and resets their clipping range to visible bounds
   void ResetCameraClippingRange() const;
+
+  /// Changes the render window managed by the layer manager.
+  /// Will trigger a removal of all managed layers and creation of new layers if the render window is not null.
   void SetRenderWindow(vtkRenderWindow* renderWindow);
+
+  /// If the default camera has changed, update the layers with ne new camera
   void SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera);
 
 protected:
@@ -73,7 +89,7 @@ private:
   void SynchronizePipelineRenderers();
   void UpdateRenderWindowNumberOfLayers() const;
   void UpdateLayers();
-  void UpdateRenderWindowLayerOrdering() const;
+  void UpdateRendererLayerOrdering() const;
   void UpdateRendererCamera();
 
   // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>

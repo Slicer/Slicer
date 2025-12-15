@@ -38,6 +38,10 @@ public:
   /// The renderer active camera will be monitored for change when applicable (for instance 3D views).
   void SetRenderer(vtkRenderer* renderer);
 
+  /// Blocks modified invocation. Doesn't block updates on the underlying camera changes.
+  /// @return previous blocked state.
+  bool BlockModified(bool isBlocked);
+
 protected:
   vtkMRMLLayerDMCameraSynchronizer();
   ~vtkMRMLLayerDMCameraSynchronizer() override;
@@ -50,4 +54,5 @@ private:
   vtkWeakPointer<vtkRenderer> m_renderer;
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
   std::unique_ptr<CameraSynchronizeStrategy> m_syncStrategy;
+  bool m_isBlocked{ false };
 };

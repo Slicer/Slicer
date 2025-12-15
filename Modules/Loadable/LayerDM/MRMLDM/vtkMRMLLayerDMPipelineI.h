@@ -156,9 +156,11 @@ public:
 
   /// Request rendering and camera clipping reset.
   /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
+  ///
+  /// \sa ResetDisplay
   void RequestRender() const;
 
-  /// Resets the pipeline display.
+  /// Resets the pipeline display and request a new render \sa RequestRender.
   /// Delegates actual work to \sa UpdatePipeline.
   /// Called the first time after pipeline initialization.
   void ResetDisplay();

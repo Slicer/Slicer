@@ -77,7 +77,7 @@ void vtkMRMLLayerDMLayerManager::RemovePipeline(vtkMRMLLayerDMPipelineI* pipelin
 void vtkMRMLLayerDMLayerManager::ResetCameraClippingRange() const
 {
   // Reset first renderer clipping range
-  if (auto defaultRenderer = this->GetDefaultRenderer())
+  if (const auto defaultRenderer = this->GetDefaultRenderer())
   {
     defaultRenderer->ResetCameraClippingRange();
   }
@@ -107,6 +107,7 @@ void vtkMRMLLayerDMLayerManager::SetDefaultCamera(const vtkSmartPointer<vtkCamer
   {
     return;
   }
+
   this->m_defaultCamera = camera;
   this->UpdateLayers();
 }
@@ -191,8 +192,7 @@ std::uintptr_t vtkMRMLLayerDMLayerManager::GetCameraId(vtkCamera* camera)
 
 vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipelineI>>& pipelines) const
 {
-  auto cameraId = std::get<1>(key);
-  if (cameraId == 0)
+  if (const auto cameraId = std::get<1>(key); cameraId == 0)
   {
     return this->m_defaultCamera;
   }
@@ -298,7 +298,7 @@ void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::se
     {
       continue;
     }
-    renderer->ResetCameraClippingRange(bounds.data());
+    renderer->ResetCameraClippingRange(const_cast<double*>(bounds.data()));
   }
 }
 
@@ -349,19 +349,19 @@ void vtkMRMLLayerDMLayerManager::UpdateLayers()
   this->RemoveOutdatedPipelines();
   this->RemoveOutdatedLayers();
   this->AddMissingLayers();
-  this->UpdateRenderWindowLayerOrdering();
+  this->UpdateRendererLayerOrdering();
   this->UpdateRendererCamera();
   this->SynchronizePipelineRenderers();
+  this->UpdateRenderWindowNumberOfLayers();
 }
 
-void vtkMRMLLayerDMLayerManager::UpdateRenderWindowLayerOrdering() const
+void vtkMRMLLayerDMLayerManager::UpdateRendererLayerOrdering() const
 {
   // Managed layers are always ordered from layer 1 to the number of managed renderers
   for (int iRenderer = 0; iRenderer < this->GetNumberOfRenderers(); iRenderer++)
   {
     this->m_renderers[iRenderer]->SetLayer(iRenderer + 1);
   }
-  this->UpdateRenderWindowNumberOfLayers();
 }
 
 void vtkMRMLLayerDMLayerManager::UpdateRendererCamera()
