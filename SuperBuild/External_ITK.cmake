@@ -69,9 +69,8 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-    -DITK_LEGACY_REMOVE:BOOL=ON     #<-- Disable LEGACY ITKv4 features in preparation for transition to ITKv6.
+    -DITK_LEGACY_REMOVE:BOOL=OFF    #<-- Enable LEGACY ITKv4 to avoid dealing with removal of Rigid3DTransform and BSplineDeformableTransform.
     -DITK_LEGACY_SILENT:BOOL=OFF    #<-- Use of legacy code will produce compiler warnings
-    -DModule_ITKDeprecated:BOOL=OFF #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
     )
 
 
