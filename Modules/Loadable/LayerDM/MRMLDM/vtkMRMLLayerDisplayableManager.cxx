@@ -11,8 +11,13 @@
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkObjectFactory.h>
+#include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
+
+// STD includes
+#include <cstring>
 
 vtkStandardNewMacro(vtkMRMLLayerDisplayableManager);
 
@@ -67,6 +72,11 @@ bool vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(vtkMRMLDisplayableMan
 
   const vtkNew<vtkMRMLLayerDisplayableManager> dm;
   return factory->IsDisplayableManagerRegistered(dm->GetClassName());
+}
+
+vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDisplayableManager::GetNodePipeline(vtkMRMLNode* node) const
+{
+  return m_pipelineManager->GetNodePipeline(node);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndClose()
@@ -178,4 +188,43 @@ void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteracti
   {
     this->m_pipelineManager->LoseFocus(eventData);
   }
+}
+
+vtkSmartPointer<vtkImageData> vtkMRMLLayerDisplayableManager::RenderWindowBufferToImage(vtkRenderWindow* window)
+{
+  auto imageData = vtkSmartPointer<vtkImageData>::New();
+  RenderWindowBufferToImage(window, imageData);
+  return imageData;
+}
+
+void vtkMRMLLayerDisplayableManager::RenderWindowBufferToImage(vtkRenderWindow* window, const vtkSmartPointer<vtkImageData>& imageData)
+{
+  if (!window || !imageData)
+  {
+    return;
+  }
+
+  // Set image bounds to full RW bounds
+  const auto size = window->GetSize();
+  int imageBounds[4] = { 0, size[0] - 1, 0, size[1] - 1 };
+
+  // Read pixel data from the back buffer
+  const auto pixels = window->GetPixelData(imageBounds[0], imageBounds[2], imageBounds[1], imageBounds[3], 0);
+
+  if (!pixels)
+  {
+    return;
+  }
+
+  // Configure imageData extent and allocate scalars for RGB
+  imageData->SetExtent(imageBounds[0], imageBounds[1], imageBounds[2], imageBounds[3], 0, 0);
+  imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+
+  // Copy pixel buffer into vtkImageData
+  const auto dest = static_cast<unsigned char*>(imageData->GetScalarPointer());
+  const auto numPixels = static_cast<size_t>(size[0]) * size[1];
+  std::memcpy(dest, pixels, numPixels * 3 * sizeof(unsigned char));
+
+  // Free the pixel buffer allocated by VTK
+  delete[] pixels;
 }
