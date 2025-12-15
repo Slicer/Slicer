@@ -8,8 +8,11 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-class vtkMRMLLayerDMPipelineManager;
+class vtkImageData;
 class vtkMRMLDisplayableManagerFactory;
+class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipelineManager;
+class vtkRenderWindow;
 
 /// \brief Displayable manager responsible for handling multiple displayable pipelines in sub-layers.
 ///
@@ -34,6 +37,24 @@ public:
 
   /// true if the input factory is defined and displayable manager is present in the input factory
   static bool IsRegisteredInFactory(vtkMRMLDisplayableManagerFactory* factory);
+
+  /// Returns the pipeline associated with the input display node if any.
+  ///
+  /// Usage of this method should be reserved for testing and debugging.
+  /// Pipelines are completely managed by the displayable manager and any dependencies can be
+  /// injected when creating the pipeline through the pipeline creator mechanism.
+  /// Runtime access logic shouldn't be necessary outside the LayerDM layer.
+  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+
+  /// @{
+  /// Utility function to get the content of the render window image as buffer
+  /// Doesn't render / make any changes to the render window nor its renderers / cameras.
+  ///
+  /// Use instead of vtkWindowToImageFilter to take screenshots of render windows where the LayerDM
+  /// is set to avoid unwanted behavior (i.e., unwanted OnDefaultCameraModified calls).
+  static vtkSmartPointer<vtkImageData> RenderWindowBufferToImage(vtkRenderWindow* window);
+  static void RenderWindowBufferToImage(vtkRenderWindow* window, const vtkSmartPointer<vtkImageData>& imageData);
+  /// @}
 
 protected:
   vtkMRMLLayerDisplayableManager();

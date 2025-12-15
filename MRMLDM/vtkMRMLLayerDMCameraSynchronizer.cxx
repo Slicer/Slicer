@@ -16,11 +16,15 @@
 // STL includes
 #include <array>
 
+/// \brief Abstract class for the camera strategies.
+/// Implements only the reset camera clipping range logic for the layer cameras.
+/// Other methods are expected to be implemented by deriving classes.
 class CameraSynchronizeStrategy
 {
 public:
-  explicit CameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera)
+  explicit CameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, std::function<void()> invokeModifiedEvent)
     : m_camera(camera)
+    , m_invokeModifiedEvent{ std::move(invokeModifiedEvent) }
   {
   }
   virtual ~CameraSynchronizeStrategy() = default;
@@ -29,26 +33,25 @@ public:
 protected:
   vtkSmartPointer<vtkCamera> m_camera;
   vtkNew<vtkMRMLLayerDMObjectEventObserver> m_eventObserver;
+  std::function<void()> m_invokeModifiedEvent;
 };
 
+/// Default camera synchronization consists in updating the camera when the first renderer active camera is updated.
 class DefaultCameraSynchronizeStrategy : public CameraSynchronizeStrategy
 {
 public:
-  explicit DefaultCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkRenderer* renderer)
-    : CameraSynchronizeStrategy(camera)
+  explicit DefaultCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkRenderer* renderer, std::function<void()> invokeModifiedEvent)
+    : CameraSynchronizeStrategy(camera, std::move(invokeModifiedEvent))
     , m_renderer(renderer)
   {
     this->m_eventObserver->SetUpdateCallback(
       [this](vtkObject* object)
       {
-        if (object == this->m_observedCamera)
-        {
-          this->UpdateCamera();
-        }
         if (object == this->m_renderer)
         {
           this->ObserveActiveCamera();
         }
+        this->UpdateCamera();
       });
 
     this->m_eventObserver->UpdateObserver(nullptr, this->m_renderer, vtkCommand::ActiveCameraEvent);
@@ -57,11 +60,17 @@ public:
 
   void UpdateCamera() override
   {
-    if (this->m_observedCamera)
+    if (!this->m_observedCamera)
     {
-      this->m_camera->DeepCopy(this->m_observedCamera);
-      this->m_camera->Modified();
+      return;
     }
+
+    // Update camera and preserve clipping range
+    double clippingRange[2];
+    this->m_camera->GetClippingRange(clippingRange);
+    this->m_camera->DeepCopy(this->m_observedCamera);
+    this->m_camera->SetClippingRange(clippingRange);
+    this->m_invokeModifiedEvent();
   }
 
 private:
@@ -76,18 +85,26 @@ private:
 
     this->m_eventObserver->UpdateObserver(this->m_observedCamera, camera);
     this->m_observedCamera = camera;
-    this->UpdateCamera();
   }
 
   vtkWeakPointer<vtkRenderer> m_renderer;
   vtkWeakPointer<vtkCamera> m_observedCamera;
 };
 
+/// Synchronizes the default camera to the current slice node view configuration.
+/// The Slice renderer 0 camera is not configured nor modified during camera changes.
+/// All of its actors are set to render in 2D.
+///
+/// To simplify adding new pipelines, the sync adjusts the default camera to render in parallel projection in the correct
+/// orientation with respect to the current node configuration.
+///
+/// Clipping range is configured to show all actors attached to the default camera.
+/// If clipping is required, then it should be done inside the specific pipeline.
 class SliceViewCameraSynchronizeStrategy : public CameraSynchronizeStrategy
 {
 public:
-  explicit SliceViewCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkMRMLSliceNode* sliceNode)
-    : CameraSynchronizeStrategy(camera)
+  explicit SliceViewCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkMRMLSliceNode* sliceNode, std::function<void()> invokeModifiedEvent)
+    : CameraSynchronizeStrategy(camera, std::move(invokeModifiedEvent))
     , m_sliceNode{ sliceNode }
   {
     this->m_eventObserver->SetUpdateCallback(
@@ -142,6 +159,7 @@ public:
     vtkMath::Cross(vRight.data(), vUp.data(), normal.data());
     double position[3] = { viewCenterRAS[0] + normal[0] * d, viewCenterRAS[1] + normal[1] * d, viewCenterRAS[2] + normal[2] * d };
     this->m_camera->SetPosition(position);
+    this->m_invokeModifiedEvent();
   }
 
 private:
@@ -199,13 +217,29 @@ void vtkMRMLLayerDMCameraSynchronizer::UpdateStrategy()
     return;
   }
 
+  const auto invokeModifiedEvent = [this]
+  {
+    if (this->m_isBlocked)
+    {
+      return;
+    }
+    this->Modified();
+  };
+
   if (auto sliceNode = vtkMRMLSliceNode::SafeDownCast(this->m_viewNode))
   {
-    this->m_syncStrategy = std::make_unique<SliceViewCameraSynchronizeStrategy>(this->m_defaultCamera, sliceNode);
+    this->m_syncStrategy = std::make_unique<SliceViewCameraSynchronizeStrategy>(this->m_defaultCamera, sliceNode, invokeModifiedEvent);
   }
   else
   {
-    this->m_syncStrategy = std::make_unique<DefaultCameraSynchronizeStrategy>(this->m_defaultCamera, this->m_renderer);
+    this->m_syncStrategy = std::make_unique<DefaultCameraSynchronizeStrategy>(this->m_defaultCamera, this->m_renderer, invokeModifiedEvent);
   }
   this->m_syncStrategy->UpdateCamera();
+}
+
+bool vtkMRMLLayerDMCameraSynchronizer::BlockModified(bool isBlocked)
+{
+  bool wasBlocked = this->m_isBlocked;
+  m_isBlocked = isBlocked;
+  return wasBlocked;
 }

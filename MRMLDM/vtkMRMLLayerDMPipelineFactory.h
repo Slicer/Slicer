@@ -6,6 +6,7 @@
 #include <vtkCommand.h>
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // STL includes
 #include <functional>
@@ -83,8 +84,8 @@ private:
   void SortPipelineCreators();
 
   std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>> m_pipelineCreators;
-  vtkMRMLAbstractViewNode* m_lastView;
-  vtkMRMLNode* m_lastNode;
-  vtkMRMLLayerDMPipelineI* m_lastPipeline;
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> m_lastView;
+  vtkWeakPointer<vtkMRMLNode> m_lastNode;
+  vtkWeakPointer<vtkMRMLLayerDMPipelineI> m_lastPipeline;
 };
