@@ -118,6 +118,7 @@ Many of the activities around the Slicer effort are made possible through fundin
 
 |Grant Number|Description|Grant PIs|Start Date|End Date|Title|
 |------------|-----------|---------|----------|--------|-----|
+|CHOP|CHOP Frontier Program|Matthew Jolley|2024-07-01|to date|Children’s Hospital of Philadelphia Frontier Programs conduct visionary research that translates to cutting-edge care]
 |NSF/DBI 2301405|MorphoCloud and MorphoDepot|Murat Maga|2024-03-01|2028-02-28|MorphoCloud: A Cloud Powered, Open-Source Platform For Research, Teaching And Collaboration In 3d Digital Morphology And Beyond|
 |NSF/OAC 2118240|Photogrammetry extension|Murat Maga|2021-09-15|2026-08-31|Imageomics: A New Frontier of Biological Information Powered by Knowledge-Guided Machine Learning|
 |AV 993932|SlicerHeart for Single Ventricle|Matthew Jolley|2023-03-01|2026-02-28|Computational Modelling of the Atrioventricular Valve Repair Single Ventricle Patients with Atrioventricular Canal]
