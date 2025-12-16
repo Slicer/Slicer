@@ -26,12 +26,13 @@
 #include <vtkGeneralTransform.h>
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 
 namespace
 {
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
-  std::string filename = tempDir + "/vtkMRMLTransformStorageNodeTest1_" + suffix + "." + fileExtension;
+  std::string filename = tempDir + "/vtkMRMLTransformStorageNodeTest2_" + suffix + fileExtension;
   // remove file if exists
   if (remove && vtksys::SystemTools::FileExists(filename.c_str(), true))
   {
@@ -42,14 +43,19 @@ std::string tempFilename(std::string tempDir, std::string suffix, std::string fi
 } // namespace
 
 //---------------------------------------------------------------------------
-int TestGridTransformStorage(const std::string& tempDir, bool useTransformFromParent, const std::string& fileExtension)
+
+int TestGridTransformStorage(const std::string& tempDir, bool useTransformFromParent, const std::string& fileExtension, std::vector<int> dfDims = { 6, 8, 11 })
 {
+  CHECK_INT(dfDims.size(), 3);
+
   std::string transformDirection = useTransformFromParent ? "FromParent" : "ToParent";
-  std::cout << "Testing grid transform " << transformDirection << " as " << fileExtension << " file..." << std::endl;
+  std::cout << "Testing grid transform " << transformDirection << " as " << fileExtension;
+  std::cout << " file with size " << dfDims[0] << "x" << dfDims[1] << "x" << dfDims[2] << std::endl;
+  auto timePoint0 = std::chrono::high_resolution_clock::now();
 
   vtkNew<vtkMRMLScene> scene;
 
-  int dimensions[3] = { 6, 8, 11 };
+  int dimensions[3] = { dfDims[0], dfDims[1], dfDims[2] };
 
   // Create a grid transform node
   vtkNew<vtkMRMLTransformNode> transformNode;
@@ -83,6 +89,9 @@ int TestGridTransformStorage(const std::string& tempDir, bool useTransformFromPa
   // Create the oriented grid transform
   vtkNew<vtkOrientedGridTransform> gridTransform;
   gridTransform->SetDisplacementGridData(displacementGrid);
+  auto timePoint1 = std::chrono::high_resolution_clock::now();
+  auto duration0 = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint1 - timePoint0);
+  std::cout << "Transform creation took: " << duration0.count() << " milliseconds." << std::endl;
 
   // Set up the transform direction
   if (useTransformFromParent)
@@ -98,15 +107,25 @@ int TestGridTransformStorage(const std::string& tempDir, bool useTransformFromPa
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
   scene->AddNode(storageNode);
 
+  auto timePoint2 = std::chrono::high_resolution_clock::now();
+  auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint2 - timePoint1);
+  std::cout << "Setting transform to node took: " << duration1.count() << " milliseconds." << std::endl;
+
   std::string filename = tempFilename(tempDir, "gridTransform_" + transformDirection, fileExtension, true);
   storageNode->SetFileName(filename.c_str());
   CHECK_BOOL(storageNode->WriteData(transformNode), true);
+  auto timePoint3 = std::chrono::high_resolution_clock::now();
+  auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint3 - timePoint2);
+  std::cout << "Transform writing took: " << duration2.count() << " milliseconds." << std::endl;
 
   // Create a new transform node and read back the data
   vtkNew<vtkMRMLTransformNode> transformNodeRead;
   scene->AddNode(transformNodeRead);
 
   CHECK_BOOL(storageNode->ReadData(transformNodeRead), true);
+  auto timePoint4 = std::chrono::high_resolution_clock::now();
+  auto duration3 = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint4 - timePoint3);
+  std::cout << "Transform reading took: " << duration3.count() << " milliseconds." << std::endl;
 
   // Verify the transform has the correct direction
   vtkAbstractTransform* readTransformFromParent = transformNodeRead->GetTransformFromParent();
@@ -193,6 +212,11 @@ int vtkMRMLTransformStorageNodeTest2(int argc, char* argv[])
   int exitCode = TestGridTransformStorage(tempDir, false /*useTransformFromParent*/, ".nii.gz");
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   CHECK_BOOL(exitCode != EXIT_SUCCESS, true);
+
+  // Test with a large image
+  std::vector<int> largeDims = { 64, 64, 4 };
+  // std::vector<int> largeDims = { 1024, 1024, 64 }; // uncomment for a realisticly large test image
+  CHECK_EXIT_SUCCESS(TestGridTransformStorage(tempDir, true /*useTransformFromParent*/, ".h5", largeDims));
 
   std::cout << "\nTest passed." << std::endl;
   return EXIT_SUCCESS;
