@@ -62,6 +62,9 @@ public:
   ///   Each plugin should provide only one role.
   Q_INVOKABLE const QString roleForPlugin() const override;
 
+  /// Generate tooltip for a owned subject hierarchy item
+  QString tooltip(vtkIdType itemID) const override;
+
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
   QIcon icon(vtkIdType itemID) override;
