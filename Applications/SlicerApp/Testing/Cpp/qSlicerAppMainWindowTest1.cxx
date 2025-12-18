@@ -57,7 +57,9 @@ int qSlicerAppMainWindowTest1(int argc, char* argv[])
 
   if (argc < 2 || QString(argv[1]) != "-I")
   {
-    QTimer::singleShot(100, qApp, SLOT(quit()));
+    // Avoid welcome and exit confirmation popups holding up application exit
+    // by forcing application exit.
+    QTimer::singleShot(1000, []() { QCoreApplication::exit(0); });
   }
 
   return app.exec();

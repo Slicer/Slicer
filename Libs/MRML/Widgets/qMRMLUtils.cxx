@@ -19,11 +19,14 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QMimeData>
 #include <QPainter>
 #include <QStyle>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QWidget>
 
 // CTK includes
 #include "ctkVTKWidgetsUtils.h"
@@ -207,4 +210,21 @@ void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vt
     QUrlQuery query(url.query());
     idList->InsertNextId(query.queryItemValue("id").toLong());
   }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLUtils::closeAllTopLevelWidgetsLater(int delayMs)
+{
+  QTimer::singleShot(delayMs,
+                     []()
+                     {
+                       const auto widgets = QApplication::topLevelWidgets();
+                       for (QWidget* w : widgets)
+                       {
+                         if (w)
+                         {
+                           w->close();
+                         }
+                       }
+                     });
 }

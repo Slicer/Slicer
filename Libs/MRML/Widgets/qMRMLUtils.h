@@ -79,6 +79,11 @@ public:
 
   Q_INVOKABLE static void mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList);
 
+  /// Closes all top-level widgets after a delay (in milliseconds).
+  /// This is useful for exiting the application in automated tests.
+  /// Simple application close signal cannot close the application if a dialog is shown.
+  Q_INVOKABLE static void closeAllTopLevelWidgetsLater(int delayMs = 1000);
+
 private:
   Q_DISABLE_COPY(qMRMLUtils);
 };
