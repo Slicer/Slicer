@@ -125,7 +125,7 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
             checksums=downloadFileChecksum)[0]
 
     def startTiming(self):
-        self.Timer = qt.QTime()
+        self.Timer = qt.QElapsedTimer()
         self.Timer.start()
 
     def stopTiming(self):
