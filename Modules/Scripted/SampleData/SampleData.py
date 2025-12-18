@@ -386,9 +386,17 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
             iconSize = qt.QSize(int(mainWindow.iconSize.width() * 6), int(mainWindow.iconSize.height() * 4))
         else:
             # There is no main window in the automated tests
-            desktop = qt.QDesktopWidget()
-            mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
-            iconSize = qt.QSize(int(mainScreenSize.width() / 15), int(mainScreenSize.height() / 10))
+            screens = slicer.app.screens()
+            primaryScreen = screens[0] if screens else None
+            if primaryScreen:
+                mainScreenSize = primaryScreen.availableGeometry.size()
+                iconSize = qt.QSize(
+                    int(mainScreenSize.width() / 15),
+                    int(mainScreenSize.height() / 10),
+                )
+            else:
+                # Absolute fallback (should never happen, but keeps tests robust)
+                iconSize = qt.QSize(128, 128)
 
         categories = sorted(dataSources.keys())
 
