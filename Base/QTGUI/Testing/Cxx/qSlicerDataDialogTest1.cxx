@@ -28,6 +28,9 @@
 #include "qSlicerIO.h"
 #include "qSlicerIOOptionsWidget.h"
 
+// MRML includes
+#include <qMRMLUtils.h>
+
 // STD includes
 
 //-----------------------------------------------------------------------------
@@ -80,10 +83,7 @@ int qSlicerDataDialogTest1(int argc, char* argv[])
 
   if (argc < 2 || QString(argv[1]) != "-I")
   {
-    // Quit the dialog
-    QTimer::singleShot(100, &app, SLOT(quit()));
-    // Quit the app
-    QTimer::singleShot(120, &app, SLOT(quit()));
+    qMRMLUtils::closeAllTopLevelWidgetsLater();
   }
 
   return dataDialog.exec();

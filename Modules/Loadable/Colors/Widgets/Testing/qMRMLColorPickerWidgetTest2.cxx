@@ -30,6 +30,7 @@
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
+#include <qMRMLUtils.h>
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
@@ -66,8 +67,7 @@ int qMRMLColorPickerWidgetTest2(int argc, char* argv[])
 
   if (argc < 2 || QString(argv[1]) != "-I")
   {
-    // quits the getColor dialog event loop.
-    QTimer::singleShot(200, &app, SLOT(quit()));
+    qMRMLUtils::closeAllTopLevelWidgetsLater();
   }
   ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
   return EXIT_SUCCESS;
