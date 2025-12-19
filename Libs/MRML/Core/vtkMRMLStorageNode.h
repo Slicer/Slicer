@@ -66,6 +66,19 @@ public:
   /// \sa WriteDataInternal()
   virtual int WriteData(vtkMRMLNode* refNode);
 
+  /// Serialize this node's data into a JSON-formatted string representation.
+  /// NOTE: Subclasses should implement WriteDataToJSONString(), not this method.
+  /// \param refNode The node whose data will be serialized
+  /// \return A string containing the node data in JSON format
+  virtual std::string WriteDataToJSONString(vtkMRMLNode* refNode);
+
+  /// Parse a JSON-formatted string and populate this node's data from it.
+  /// NOTE: Subclasses should implement ReadDataFromJSONString(), not this method.
+  /// \param refNode The node whose data will be populated from the JSON
+  /// \param json The JSON-formatted string containing the node data
+  /// \return True on successful parse and data update, false otherwise
+  virtual bool ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json);
+
   ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -401,6 +414,22 @@ public:
   /// This method is automatically invoked during scene loading and usually does not need
   /// to be called explicitly.
   void FixFileName();
+
+  ///
+  /// Generate temporary file path for writing by creating a unique temporary subdirectory.
+  /// This method creates a unique temporary subdirectory at the same location as the target file,
+  /// using the current time and process id to avoid conflicts.
+  /// \param fullFileName Input target full file path
+  /// \param tempDir Returns the temporary directory path that was created
+  /// \param tempFileName Returns the temporary full file path
+  /// \return true on success, false on failure
+  bool GenerateTempFilePathForWrite(const std::string& fullFileName, std::string& tempDir, std::string& tempFullFileName);
+
+  ///
+  /// Move all files in the source directory to their final destinations with file-based locking.
+  /// This method attempts to acquire a file lock for each file, moves the source files to the final destinations,
+  /// and cleans up the source directory. It ensures that concurrent writes do not corrupt the files.
+  bool MoveFilesWithLocking(const std::string& sourceDir, const std::string& targetDir);
 
 protected:
   vtkMRMLStorageNode();
