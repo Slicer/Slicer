@@ -106,8 +106,8 @@ To segment a single object, create a segment and paint inside and create another
         import sitkUtils
 
         # Read input data from Slicer into SimpleITK
-        labelImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(mergedLabelmapNode.GetName()))
-        backgroundImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(sourceVolumeNode.GetName()))
+        labelImage = sitkUtils.PullVolumeFromSlicer(mergedLabelmapNode)
+        backgroundImage = sitkUtils.PullVolumeFromSlicer(sourceVolumeNode)
         # Run watershed filter
         featureImage = sitk.GradientMagnitudeRecursiveGaussian(backgroundImage, float(self.scriptedEffect.doubleParameter("ObjectScaleMm")))
         del backgroundImage
@@ -119,8 +119,8 @@ To segment a single object, create a segment and paint inside and create another
         # Pixel type of watershed output is the same as the input. Convert it to int16 now.
         if labelImage.GetPixelID() != sitk.sitkInt16:
             labelImage = sitk.Cast(labelImage, sitk.sitkInt16)
-        # Write result from SimpleITK to Slicer. This currently performs a deep copy of the bulk data.
-        sitk.WriteImage(labelImage, sitkUtils.GetSlicerITKReadWriteAddress(mergedLabelmapNode.GetName()))
+        # Write result from SimpleITK to Slicer
+        sitkUtils.PushVolumeToSlicer(labelImage, mergedLabelmapNode)
         mergedLabelmapNode.GetImageData().Modified()
         mergedLabelmapNode.Modified()
 

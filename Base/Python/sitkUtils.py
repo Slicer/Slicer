@@ -11,8 +11,6 @@ def _get_lps_to_ras_matrix():
     lpsToRas.SetElement(1, 1, -1)
     return lpsToRas
 
-__sitk__MRMLIDImageIO_Missing_Reported__ = False
-
 
 def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRMLScalarVolumeNode"):
     """Given a SimpleITK image, push it back to slicer for viewing
@@ -87,38 +85,13 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
 
 
 def IsMRMLIDImageIOAvailable():
-    """Determine if MRMLIDImageIO (fast in-memory ITK image transfer) is available.
-    If not available then report the error (only once).
+    """Deprecated: This function always returns True.
+
+    PushVolumeToSlicer and PullVolumeFromSlicer now use numpy-based conversions
+    for fast in-memory ITK image transfer, independent of MRMLIDImageIO availability
+    previously made available in a customized SimpleITK version.
     """
-    if "MRMLIDImageIO" in sitk.ImageFileReader().GetRegisteredImageIOs():
-        # MRMLIDImageIO is available
-        return True
-
-    global __sitk__MRMLIDImageIO_Missing_Reported__
-    if not __sitk__MRMLIDImageIO_Missing_Reported__:
-        import logging
-        logging.error(
-            "MRMLIDImageIO is not available, SimpleITK image transfer speed will be slower."
-            " Probably an extension replaced SimpleITK version that was bundled with Slicer."
-            f" Current SimpleITK version: {sitk.__version__}")
-        __sitk__MRMLIDImageIO_Missing_Reported__ = True
-
-    return False
-
-
-def _addDefaultStorageNode(targetNode):
-    originalStorageNode = targetNode.GetStorageNode()
-    if originalStorageNode:
-        storageNode = slicer.mrmlScene.AddNewNodeByClass(originalStorageNode.GetClassName(), "__tmp__" + originalStorageNode.GetName())
-    else:
-        storageNode = targetNode.CreateDefaultStorageNode()
-        storageNode.UnRegister(None)
-        slicer.mrmlScene.AddNode(storageNode)
-    import os, uuid
-    tempFileName = os.path.join(slicer.app.temporaryPath, str(uuid.uuid1())) + ".nrrd"
-    storageNode.SetFileName(tempFileName)
-    storageNode.UseCompressionOff()
-    return storageNode, tempFileName
+    return True
 
 
 def vtk2sitk(vtkimg, origin=None, spacing=None, direction=None):

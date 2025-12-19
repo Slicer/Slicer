@@ -111,8 +111,8 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
     indentation = 2
     lines_to_write = {}
     for package_name, (current_version, latest_version) in packages_to_update.items():
-        if package_name in ["vtk", "simpleitk"]:
-            continue  # Slicer python wraps VTK and SimpleITK instead of installing the official python package from PyPI
+        if package_name in ["vtk"]:
+            continue  # Slicer python wraps VTK instead of installing the official python package from PyPI
 
         url = f"https://pypi.org/pypi/{package_name}/json"
         url_request = requests.get(url)
