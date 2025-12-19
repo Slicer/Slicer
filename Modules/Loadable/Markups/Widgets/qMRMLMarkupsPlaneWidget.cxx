@@ -88,6 +88,7 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
   QObject::connect(this->normalVisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(onNormalVisibilityCheckBoxChanged()));
 #endif
   QObject::connect(this->normalOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(onNormalOpacitySliderChanged()));
+  QObject::connect(this->flipPlaneNormalButton, SIGNAL(clicked()), q, SLOT(onFlipPlaneNormalButtonClicked()));
 
   q->setEnabled(vtkMRMLMarkupsPlaneNode::SafeDownCast(q->MarkupsNode) != nullptr);
   q->setVisible(vtkMRMLMarkupsPlaneNode::SafeDownCast(q->MarkupsNode) != nullptr);
@@ -300,6 +301,22 @@ void qMRMLMarkupsPlaneWidget::onNormalOpacitySliderChanged()
   }
 
   displayNode->SetNormalOpacity(d->normalOpacitySlider->value());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsPlaneWidget::onFlipPlaneNormalButtonClicked()
+{
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
+  if (!planeNode)
+  {
+    return;
+  }
+  double normal[3] = { 0.0, 0.0, 0.0 };
+  planeNode->GetNormal(normal);
+  normal[0] = -normal[0];
+  normal[1] = -normal[1];
+  normal[2] = -normal[2];
+  planeNode->SetNormal(normal);
 }
 
 //-----------------------------------------------------------------------------
