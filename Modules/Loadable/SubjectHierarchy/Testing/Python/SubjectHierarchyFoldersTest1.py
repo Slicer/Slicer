@@ -265,7 +265,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
     # ------------------------------------------------------------------------------
     def startTiming(self):
-        self.timer = qt.QTime()
+        self.timer = qt.QElapsedTimer()
         self.timer.start()
 
     # ------------------------------------------------------------------------------

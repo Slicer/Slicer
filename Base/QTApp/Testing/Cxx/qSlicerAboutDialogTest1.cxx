@@ -25,6 +25,9 @@
 #include "qSlicerAboutDialog.h"
 #include "qSlicerApplication.h"
 
+// MRML includes
+#include <qMRMLUtils.h>
+
 // STD includes
 
 int qSlicerAboutDialogTest1(int argc, char* argv[])
@@ -35,7 +38,7 @@ int qSlicerAboutDialogTest1(int argc, char* argv[])
 
   if (argc < 2 || QString(argv[1]) != "-I")
   {
-    QTimer::singleShot(100, qApp, SLOT(quit()));
+    qMRMLUtils::closeAllTopLevelWidgetsLater();
   }
 
   return about.exec();

@@ -142,7 +142,7 @@ class SegmentStatisticsPluginBase:
         selectAllNoneFrame = qt.QFrame(self.optionsWidget)
         selectAllNoneFrame.setLayout(qt.QHBoxLayout())
         selectAllNoneFrame.layout().setSpacing(0)
-        selectAllNoneFrame.layout().setMargin(0)
+        selectAllNoneFrame.layout().setContentsMargins(0, 0, 0, 0)
         selectAllNoneFrame.layout().addWidget(qt.QLabel(_("Select measurements: "), self.optionsWidget))
         selectAllButton = qt.QPushButton(_("all"), self.optionsWidget)
         selectAllNoneFrame.layout().addWidget(selectAllButton)
