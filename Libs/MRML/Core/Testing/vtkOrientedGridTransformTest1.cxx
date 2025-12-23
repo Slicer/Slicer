@@ -23,6 +23,9 @@
 #include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 
+// STD includes
+#include <iostream>
+
 typedef double itkVectorComponentType;
 typedef itk::Vector<itkVectorComponentType, 3> itkVectorPixelType;
 typedef itk::Image<itkVectorPixelType, 3> itkDisplacementFieldType;

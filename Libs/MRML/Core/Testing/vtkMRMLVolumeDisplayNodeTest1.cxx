@@ -17,6 +17,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 class vtkMRMLVolumeDisplayNodeTestHelper1 : public vtkMRMLVolumeDisplayNode
 {

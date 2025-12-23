@@ -30,6 +30,9 @@
 #include <vtkImageImport.h>
 #include <vtkVersion.h>
 
+// STD includes
+#include <iostream>
+
 #undef itkExceptionMacro
 #define itkExceptionMacro(x)                                                     \
   {                                                                              \

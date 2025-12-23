@@ -24,6 +24,9 @@ Program:   3D Slicer
 
 #include <array>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided = false);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);

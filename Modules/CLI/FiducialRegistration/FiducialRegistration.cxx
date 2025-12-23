@@ -10,6 +10,7 @@
 #include <itkVersorRigid3DTransform.h>
 
 // STD includes
+#include <iostream>
 #include <numeric>
 
 namespace

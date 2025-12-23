@@ -18,6 +18,9 @@
 #include <vtkGeneralTransform.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
 {

@@ -40,6 +40,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLVolumeThresholdWidgetTest1(int argc, char* argv[])
 {

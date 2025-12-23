@@ -18,6 +18,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 class vtkMRMLCustomNode : public vtkMRMLNode
 {

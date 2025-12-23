@@ -27,6 +27,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char* argv[])
 {
   // Test reading in a Slicer4 Annotation fiducial .acsv file

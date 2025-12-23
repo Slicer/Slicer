@@ -36,6 +36,7 @@
 // VTK includes
 
 // STD includes
+#include <iostream>
 
 // namespace{
 // class qSlicerCoreApplicationTest : public qSlicerCoreApplication

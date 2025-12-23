@@ -21,6 +21,7 @@
 #include "vtkMRMLScene.h"
 
 // STD includes
+#include <iostream>
 #include <sstream>
 #include <vector>
 

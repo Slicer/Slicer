@@ -43,6 +43,9 @@
 #include <itkMetaDataObject.h>
 #include <itkVTKImageImport.h>
 
+// STD includes
+#include <iostream>
+
 #define NRRD_DIM_MAX 16
 
 class AttributeMapType : public std::map<std::string, std::string>

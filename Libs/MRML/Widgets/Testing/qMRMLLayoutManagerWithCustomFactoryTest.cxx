@@ -51,6 +51,9 @@
 #include <vtkWeakPointer.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 class qSlicerLayoutCustomSliceViewFactory : public qMRMLLayoutSliceViewFactory
 {

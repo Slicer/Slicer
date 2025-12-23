@@ -51,6 +51,7 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
+#include <iostream>
 #include <mutex>
 #include <random>
 #include <set>

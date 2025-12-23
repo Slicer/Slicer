@@ -37,6 +37,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 int qMRMLNodeComboBoxTest5(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();

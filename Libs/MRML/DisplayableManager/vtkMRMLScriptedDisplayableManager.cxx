@@ -36,6 +36,7 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
+#include <iostream>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLScriptedDisplayableManager);

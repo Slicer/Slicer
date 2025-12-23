@@ -50,6 +50,7 @@
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceLayerLogic);

@@ -37,6 +37,9 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

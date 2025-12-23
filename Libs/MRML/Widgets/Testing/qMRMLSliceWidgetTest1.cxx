@@ -44,6 +44,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 int qMRMLSliceWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();

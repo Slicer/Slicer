@@ -24,6 +24,9 @@
 // ITK includes
 #include <itkSimpleFilterWatcher.h>
 
+// STD includes
+#include <iostream>
+
 namespace itk
 {
 

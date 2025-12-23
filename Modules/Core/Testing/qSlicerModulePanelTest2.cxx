@@ -31,6 +31,7 @@
 #include <qSlicerStyle.h>
 
 // STD includes
+#include <iostream>
 
 int qSlicerModulePanelTest2(int argc, char* argv[])
 {

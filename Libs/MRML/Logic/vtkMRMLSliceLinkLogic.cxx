@@ -35,6 +35,7 @@
 
 // STD includes
 #include <cassert>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceLinkLogic);

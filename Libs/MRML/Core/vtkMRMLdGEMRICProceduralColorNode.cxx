@@ -75,7 +75,7 @@ void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
-    os << indent << "ColorTransferFunction:" << endl;
+    os << indent << "ColorTransferFunction:" << std::endl;
     this->ColorTransferFunction->PrintSelf(os, indent.GetNextIndent());
   }
 }

@@ -24,6 +24,7 @@
 #include <qSlicerCoreModuleFactory.h>
 
 // STD includes
+#include <iostream>
 
 #include "vtkMRMLCoreTestingMacros.h"
 

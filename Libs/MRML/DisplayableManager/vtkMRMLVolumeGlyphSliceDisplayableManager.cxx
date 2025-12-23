@@ -42,6 +42,7 @@
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager);

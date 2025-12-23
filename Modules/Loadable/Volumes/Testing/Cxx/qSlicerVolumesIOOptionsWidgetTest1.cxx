@@ -38,6 +38,9 @@
 // VTK includes
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int qSlicerVolumesIOOptionsWidgetTest1(int argc, char* argv[])
 {

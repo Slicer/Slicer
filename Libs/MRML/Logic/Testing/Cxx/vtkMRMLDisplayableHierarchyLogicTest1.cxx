@@ -23,6 +23,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;

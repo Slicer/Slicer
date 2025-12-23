@@ -25,6 +25,9 @@
 
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, std::string text, int encoding);
 

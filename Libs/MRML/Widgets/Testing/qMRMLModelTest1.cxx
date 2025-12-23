@@ -35,6 +35,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLModelTest1(int argc, char* argv[])
 {

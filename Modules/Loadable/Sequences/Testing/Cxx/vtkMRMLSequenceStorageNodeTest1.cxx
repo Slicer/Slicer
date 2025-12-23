@@ -43,6 +43,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* sequenceNode, vtkMRMLStorageNode* storageNode, std::string fileName)
 {

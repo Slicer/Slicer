@@ -26,6 +26,7 @@
 #include <vtkGeneralTransform.h>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 #include <chrono>
 
 namespace

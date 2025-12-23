@@ -33,6 +33,9 @@
 #include "qSlicerVolumesModule.h"
 #include "vtkSlicerVolumesLogic.h"
 
+// STD includes
+#include <iostream>
+
 // VTK includes
 #include <vtkNew.h>
 #include "qMRMLWidget.h"

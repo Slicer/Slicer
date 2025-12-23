@@ -22,6 +22,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 // SegmentationCore includes
 #include <vtkSegmentationConverter.h>
 #include <vtkSegmentationConverterFactory.h>

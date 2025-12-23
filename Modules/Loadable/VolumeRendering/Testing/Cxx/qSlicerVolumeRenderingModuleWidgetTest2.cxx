@@ -42,6 +42,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int qSlicerVolumeRenderingModuleWidgetTest2(int argc, char* argv[])
 {

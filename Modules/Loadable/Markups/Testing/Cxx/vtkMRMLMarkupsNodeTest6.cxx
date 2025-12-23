@@ -33,6 +33,7 @@
 #include <vtkTransform.h>
 
 // STL includes
+#include <iostream>
 #include <sstream>
 
 static const double TOLERANCE = 1e-4;

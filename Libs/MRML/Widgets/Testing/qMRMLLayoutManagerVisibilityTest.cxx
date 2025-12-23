@@ -45,6 +45,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 // --------------------------------------------------------------------------
 bool checkNodeVisibility(int line, vtkMRMLAbstractViewNode* viewNode, bool expectedNodeVisibility)
 {

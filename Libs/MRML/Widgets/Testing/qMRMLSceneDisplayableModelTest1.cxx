@@ -37,6 +37,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 // MRML includes
 #include <vtkMRMLDisplayableHierarchyNode.h>

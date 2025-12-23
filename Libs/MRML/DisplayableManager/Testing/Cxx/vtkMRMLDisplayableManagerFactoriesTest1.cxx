@@ -26,6 +26,7 @@
 #include <vtkTesting.h>
 
 // STD includes
+#include <iostream>
 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])

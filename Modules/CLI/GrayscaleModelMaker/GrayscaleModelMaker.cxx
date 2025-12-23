@@ -33,6 +33,9 @@ Version:   $Revision$
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
 
+// STD includes
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;

@@ -40,6 +40,7 @@
 
 // STD includes
 #include <cassert>
+#include <iostream>
 #include <sstream>
 
 // Standard layouts definitions

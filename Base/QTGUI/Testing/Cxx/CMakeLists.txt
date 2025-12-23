@@ -34,7 +34,7 @@ if(BUILD_TESTING)
     TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
     ")
 
-  set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <itkConfigure.h>\n\#include <itkFactoryRegistration.h>\n\#include \"vtkTestingOutputWindow.h")
+  set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <itkConfigure.h>\n\#include <itkFactoryRegistration.h>\n\#include <iostream>\n\#include \"vtkTestingOutputWindow.h")
 
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   set(KIT_TEST_SRCS

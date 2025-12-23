@@ -33,6 +33,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int TestLongNodeNameSaving(const char* temporaryDirectory)
 {
   vtkNew<vtkMRMLScene> scene;

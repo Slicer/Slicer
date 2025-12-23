@@ -31,6 +31,7 @@
 
 // STL includes
 #include <sstream>
+#include <iostream>
 
 // Test markups measurements
 

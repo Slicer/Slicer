@@ -23,6 +23,7 @@ Version:   $Revision: 1.14 $
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);

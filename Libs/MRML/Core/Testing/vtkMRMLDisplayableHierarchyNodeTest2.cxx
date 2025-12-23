@@ -22,6 +22,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 // test more general hierarchy uses, with different displayable node types
 int vtkMRMLDisplayableHierarchyNodeTest2(int, char*[])
 {

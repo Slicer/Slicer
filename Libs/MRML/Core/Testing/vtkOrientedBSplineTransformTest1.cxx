@@ -23,6 +23,9 @@
 #include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 
+// STD includes
+#include <iostream>
+
 typedef itk::BSplineDeformableTransform<double, 3, 3> itkBSplineType;
 
 double DisplacementScale = 0.63;

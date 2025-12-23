@@ -19,6 +19,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int vtkSlicerTransformLogicTest1(int argc, char* argv[])
 {

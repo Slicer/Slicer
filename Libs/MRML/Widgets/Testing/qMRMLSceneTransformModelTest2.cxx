@@ -36,6 +36,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 int qMRMLSceneTransformModelTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();

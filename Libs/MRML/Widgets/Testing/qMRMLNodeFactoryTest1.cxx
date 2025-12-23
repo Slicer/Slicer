@@ -37,6 +37,7 @@
 
 // STD includes
 #include <cstdlib>
+#include <iostream>
 
 int qMRMLNodeFactoryTest1(int argc, char* argv[])
 {

@@ -30,6 +30,7 @@
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
+#include <iostream>
 
 #include "vtkMRMLCoreTestingMacros.h"
 

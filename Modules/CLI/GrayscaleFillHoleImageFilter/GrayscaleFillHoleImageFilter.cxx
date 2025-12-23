@@ -22,6 +22,9 @@
 
 #include "GrayscaleFillHoleImageFilterCLP.h"
 
+// STD includes
+#include <iostream>
+
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module

@@ -14,6 +14,9 @@
 #include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLMarkupsFiducialStorageNode.h>
 
+// STD includes
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;

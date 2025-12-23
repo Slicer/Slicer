@@ -12,6 +12,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLLayoutLogicTest2(int, char*[])
 {
   vtkNew<vtkMRMLLayoutLogic> logic;

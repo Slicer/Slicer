@@ -19,6 +19,9 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLMarkupsDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsDisplayNode> node1;

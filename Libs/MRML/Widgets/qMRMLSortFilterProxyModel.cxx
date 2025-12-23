@@ -28,6 +28,9 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
+// STD includes
+#include <iostream>
+
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterProxyModelPrivate
 

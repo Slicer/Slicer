@@ -3,6 +3,9 @@
 
 // VTK includes
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 class vtkPluginWatcherStart : public vtkCommand
 {

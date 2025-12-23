@@ -259,24 +259,24 @@ void FibHeap::Print(FibHeapNode* tree, FibHeapNode* theParent)
   {
     if (temp->m_Left == FibHeapNode::NullNodeIndex)
     {
-      cout << "(m_Left is nullptr)";
+      std::cout << "(m_Left is nullptr)";
     }
     temp->Print();
     if (temp->m_Parent != theParent->m_Index)
     {
-      cout << "(m_Parent is incorrect)";
+      std::cout << "(m_Parent is incorrect)";
     }
     if (temp->m_Right == FibHeapNode::NullNodeIndex)
     {
-      cout << "(m_Right is nullptr)";
+      std::cout << "(m_Right is nullptr)";
     }
     else if (m_HeapNodes[temp->m_Right].m_Left != temp->m_Index)
     {
-      cout << "(Error in left link left) ->";
+      std::cout << "(Error in left link left) ->";
     }
     else
     {
-      cout << " <-> ";
+      std::cout << " <-> ";
     }
 
     temp = HeapNodeFromIndex(temp->m_Right);
@@ -289,17 +289,17 @@ void FibHeap::Print(FibHeapNode* tree, FibHeapNode* theParent)
     }
     */
   } while (temp != nullptr && temp != tree);
-  cout << '\n';
+  std::cout << '\n';
 
   temp = tree;
   do
   {
-    cout << "Children of ";
+    std::cout << "Children of ";
     temp->Print();
-    cout << ": ";
+    std::cout << ": ";
     if (temp->m_Child == FibHeapNode::NullNodeIndex)
     {
-      cout << "NONE\n";
+      std::cout << "NONE\n";
     }
     else
     {

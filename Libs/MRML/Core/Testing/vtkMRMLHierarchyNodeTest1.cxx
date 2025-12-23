@@ -17,6 +17,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 {

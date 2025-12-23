@@ -27,6 +27,9 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
+// STD includes
+#include <iostream>
+
 int vtkSlicerMarkupsLogicTest1(int, char*[])
 {
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();

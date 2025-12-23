@@ -33,6 +33,9 @@
 // Sequences logic includes
 #include <vtkSlicerSequencesLogic.h>
 
+// STD includes
+#include <iostream>
+
 // SceneView logic includes
 #include <vtkSlicerSceneViewsModuleLogic.h>
 

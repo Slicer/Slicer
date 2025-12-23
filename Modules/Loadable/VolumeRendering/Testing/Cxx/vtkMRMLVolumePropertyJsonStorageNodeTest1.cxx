@@ -28,6 +28,9 @@
 #include <vtkPiecewiseFunction.h>
 #include <vtkVolumeProperty.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 const double DOUBLE_TOLERANCE = 1e-6;
 

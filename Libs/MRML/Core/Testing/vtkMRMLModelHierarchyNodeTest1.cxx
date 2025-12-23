@@ -21,6 +21,9 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLModelHierarchyNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLModelHierarchyNode> node1;

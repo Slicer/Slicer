@@ -13,6 +13,7 @@
 #include <vtkMatrix4x4.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 //----------------------------------------------------------------------------

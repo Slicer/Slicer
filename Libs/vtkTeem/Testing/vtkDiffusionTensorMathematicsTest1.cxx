@@ -29,6 +29,9 @@
 #include <vtkPointData.h>
 #include <vtkVersion.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

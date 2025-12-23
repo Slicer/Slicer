@@ -27,6 +27,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLSliceLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLSliceLogic> logic;

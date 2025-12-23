@@ -38,6 +38,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLModelDisplayNodeWidgetTest2(int argc, char* argv[])
 {

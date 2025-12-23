@@ -11,6 +11,7 @@
 // //debug//
 // #include "cArrayOp.h"
 #include <fstream>
+#include <iostream>
 // //DEBUG//
 
 #include "itkImageRegionConstIteratorWithIndex.h"

@@ -29,6 +29,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);

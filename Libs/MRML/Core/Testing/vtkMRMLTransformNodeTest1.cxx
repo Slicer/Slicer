@@ -23,6 +23,9 @@
 #include <vtkTransform.h>
 #include <vtkAddonMathUtilities.h>
 
+// STD includes
+#include <iostream>
+
 vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double translateZ, double rotateX, double rotateY, double rotateZ)
 {
   vtkNew<vtkTransform> tr;

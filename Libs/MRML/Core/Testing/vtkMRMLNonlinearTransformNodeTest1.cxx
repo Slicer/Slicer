@@ -30,6 +30,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int TestBSplineTransform(const char* filename);
 int TestGridTransform(const char* filename);
 int TestThinPlateSplineTransform(const char* filename);

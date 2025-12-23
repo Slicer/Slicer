@@ -26,6 +26,9 @@
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportTest(int argc, char* argv[])
 {

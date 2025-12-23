@@ -30,6 +30,7 @@ Version:   $Revision: 1.6 $
 #include <vtkTable.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 const std::vector<std::string> TERMINOLOGY_COLUMN_NAMES = { "Category_CodingScheme",       "Category_CodeValue",       "Category_CodeMeaning",
@@ -793,7 +794,7 @@ int vtkMRMLColorTableStorageNode::WriteCtblFile(std::string fullFileName, vtkMRM
       of << rgba[0] * 255.0 << " ";
       of << rgba[1] * 255.0 << " ";
       of << rgba[2] * 255.0 << " ";
-      of << rgba[3] * 255.0 << endl;
+      of << rgba[3] * 255.0 << std::endl;
     }
   }
 

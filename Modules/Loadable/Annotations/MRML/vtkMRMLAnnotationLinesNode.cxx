@@ -1,5 +1,6 @@
 #include <sstream>
 #include <algorithm>
+#include <iostream>
 
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"

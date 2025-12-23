@@ -23,6 +23,9 @@
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
 
+// STD includes
+#include <iostream>
+
 int TestSaveAndRead(std::string filename, vtkMRMLScene* scene, vtkMatrix4x4* matrix, double centerOfTransformation[3])
 {
   std::cout << std::endl << "|||||||||||||" << std::endl << filename << std::endl << std::endl;

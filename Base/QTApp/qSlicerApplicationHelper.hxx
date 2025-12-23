@@ -44,6 +44,9 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 

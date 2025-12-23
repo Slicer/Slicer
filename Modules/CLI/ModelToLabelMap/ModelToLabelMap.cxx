@@ -33,6 +33,9 @@
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkOrientedImageData.h"
 
+// STD includes
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;

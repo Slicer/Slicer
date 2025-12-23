@@ -29,6 +29,9 @@
 
 #include <vtksys/SystemTools.hxx>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 void BuildShaderProperty(vtkMRMLShaderPropertyNode* psNode);
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkMRMLShaderPropertyNode* sp);

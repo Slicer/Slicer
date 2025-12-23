@@ -6,6 +6,9 @@
 #include <vtkMRMLLayoutNode.h>
 #include <qMRMLLayoutManager.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 

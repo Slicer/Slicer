@@ -42,6 +42,9 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 void RegisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);
 void UnregisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);

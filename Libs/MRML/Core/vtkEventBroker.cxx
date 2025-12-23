@@ -22,6 +22,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkTimerLog.h>
 
+// STD includes
+#include <iostream>
+
 vtkCxxSetObjectMacro(vtkEventBroker, TimerLog, vtkTimerLog);
 vtkCxxSetObjectMacro(vtkEventBroker, RequestModifiedCallback, vtkCallbackCommand);
 

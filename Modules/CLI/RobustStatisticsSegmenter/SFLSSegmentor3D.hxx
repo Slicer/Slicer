@@ -9,6 +9,7 @@
 #include <csignal>
 
 #include <fstream>
+#include <iostream>
 
 #include "itkImageRegionIteratorWithIndex.h"
 

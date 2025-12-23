@@ -21,6 +21,9 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCamerasModuleWidget.h"
 
+// STD includes
+#include <iostream>
+
 int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);

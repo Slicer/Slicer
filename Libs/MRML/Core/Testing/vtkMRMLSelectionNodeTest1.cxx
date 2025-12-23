@@ -14,6 +14,9 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLSelectionNode.h"
 
+// STD includes
+#include <iostream>
+
 // ---------------------------------------------------------------------------
 int TestUnit(vtkMRMLSelectionNode* node1);
 

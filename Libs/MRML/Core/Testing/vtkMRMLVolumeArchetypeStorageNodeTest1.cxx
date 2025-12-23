@@ -22,6 +22,7 @@
 #include "vtkPointData.h"
 #include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
+#include <iostream>
 
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {

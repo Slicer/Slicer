@@ -17,6 +17,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
 {

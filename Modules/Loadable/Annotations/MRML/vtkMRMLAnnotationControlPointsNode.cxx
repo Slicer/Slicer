@@ -12,6 +12,7 @@
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <sstream>
 
 #define NUMERIC_ZERO 1.0e-6

@@ -19,7 +19,7 @@ list(APPEND ITK_INCLUDE_DIRS
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
-set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include \"vtkTestingOutputWindow.h")
+set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <iostream>\n\#include \"vtkTestingOutputWindow.h")
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();\nTESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" )
 set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx

@@ -24,6 +24,9 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 // qMRMLEventLoggerPrivate methods
 

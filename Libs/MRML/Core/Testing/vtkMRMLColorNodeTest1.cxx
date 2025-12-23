@@ -19,6 +19,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 /// \brief Concrete implementation of vtkMRMLColorNode
 class vtkMRMLColorNodeTestHelper1 : public vtkMRMLColorNode
 {

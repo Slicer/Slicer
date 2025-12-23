@@ -36,6 +36,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLNodeComboBoxTest2(int argc, char* argv[])
 {

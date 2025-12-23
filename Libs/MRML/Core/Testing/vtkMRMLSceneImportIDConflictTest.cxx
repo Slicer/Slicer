@@ -28,6 +28,7 @@
 #include <vtkPolyData.h>
 
 // STD includes
+#include <iostream>
 #include <vtkNew.h>
 
 using namespace vtkMRMLCoreTestingUtilities;

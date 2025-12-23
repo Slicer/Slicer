@@ -34,6 +34,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qSlicerWidgetTest1(int argc, char* argv[])
 {

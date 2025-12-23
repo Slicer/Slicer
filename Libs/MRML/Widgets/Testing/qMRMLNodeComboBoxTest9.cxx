@@ -37,6 +37,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 // test the filtering with many cases
 int qMRMLNodeComboBoxTest9(int argc, char* argv[])
 {

@@ -13,6 +13,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 int qMRMLMatrixWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();

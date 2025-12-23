@@ -43,6 +43,9 @@
 #include <vtkURIHandler.h>
 #include <vtkXMLDataParser.h>
 
+// STD includes
+#include <iostream>
+
 namespace vtkMRMLCoreTestingUtilities
 {
 

@@ -26,6 +26,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLTableViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTableViewNode> node1;

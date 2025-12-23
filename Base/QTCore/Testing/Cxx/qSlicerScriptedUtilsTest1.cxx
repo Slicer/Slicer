@@ -6,6 +6,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 bool setModuleAttribute(int line, const QString& moduleName, const QString& attributeName, PyObject* expectedAttributeValue, bool expectedResult)
 {
