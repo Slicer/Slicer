@@ -21,6 +21,7 @@
 #include <vtkNew.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 // helper methods to check children ordering

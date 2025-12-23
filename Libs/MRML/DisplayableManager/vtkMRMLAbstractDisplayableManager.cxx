@@ -46,6 +46,7 @@
 #include <cassert>
 #include <algorithm>
 #include <functional>
+#include <iostream>
 
 #if (_MSC_VER >= 1700 && _MSC_VER < 1800)
 // Visual Studio 2012 moves bind1st to <functional>

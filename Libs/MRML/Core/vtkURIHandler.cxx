@@ -5,6 +5,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 vtkStandardNewMacro(vtkURIHandler);
 vtkCxxSetObjectMacro(vtkURIHandler, PermissionPrompter, vtkPermissionPrompter);
 //----------------------------------------------------------------------------

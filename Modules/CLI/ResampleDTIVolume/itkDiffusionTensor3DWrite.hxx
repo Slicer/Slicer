@@ -20,6 +20,9 @@
 # include <NrrdIO.h>
 #endif
 
+// STD includes
+#include <iostream>
+
 namespace itk
 {
 

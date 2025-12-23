@@ -37,6 +37,7 @@
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
 // STD includes
+#include <iostream>
 #include <sstream>
 #include <iomanip> // for std::setw and std::setfill
 

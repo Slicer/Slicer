@@ -754,7 +754,7 @@ void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Color Glyphs by Scalar Invariant: " << this->ScalarInvariant << "\n";
   os << indent << "Mask Glyphs: " << (this->MaskGlyphs ? "On\n" : "Off\n");
-  os << indent << "Resolution: " << this->Resolution << endl;
+  os << indent << "Resolution: " << this->Resolution << std::endl;
 
   // print objects
   if (this->VolumePositionMatrix)

@@ -34,6 +34,9 @@
 #include <vtkTestingOutputWindow.h>
 #include <vtkTransform.h>
 
+// STD includes
+#include <iostream>
+
 // STL includes
 #include <sstream>
 

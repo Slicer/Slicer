@@ -27,6 +27,9 @@
 #include <vtkOrientedGridTransform.h>
 #include "vtkMRMLGridTransformNode.h"
 
+// STD includes
+#include <iostream>
+
 /// Test that node attributes of volume nodes and transform nodes in sequences can be stored
 /// in volume sequence and transform sequence files.
 

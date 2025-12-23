@@ -27,6 +27,9 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkVersion.h>
 
+// STD includes
+#include <iostream>
+
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 

@@ -28,6 +28,7 @@
 
 // STD includes
 #include <vector>
+#include <iostream>
 
 const size_t NUMBER_OF_UNITS = 5;
 const char* UNITS[NUMBER_OF_UNITS][2] = { { "length", "m" }, { "length", "km" }, { "energy", "J" }, { "luminous_intensity", "cd" }, { "energy", "eV" } };

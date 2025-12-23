@@ -755,8 +755,8 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // put down a header
-  of << "# Markups fiducial file version = " << Slicer_VERSION << endl;
-  of << "# CoordinateSystem = " << vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(this->GetCoordinateSystem()) << endl;
+  of << "# Markups fiducial file version = " << Slicer_VERSION << std::endl;
+  of << "# CoordinateSystem = " << vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(this->GetCoordinateSystem()) << std::endl;
 
   // label the columns
   // id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
@@ -771,11 +771,11 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     separator = this->FieldDelimiterCharacters[0];
   }
   of << "# columns = id" << separator << "x" << separator << "y" << separator << "z" << separator << "ow" << separator << "ox" << separator << "oy" << separator << "oz"
-     << separator << "vis" << separator << "sel" << separator << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << endl;
+     << separator << "vis" << separator << "sel" << separator << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << std::endl;
   for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
   {
     of << this->GetPointAsString(markupsNode, i);
-    of << endl;
+    of << std::endl;
   }
 
   of.close();

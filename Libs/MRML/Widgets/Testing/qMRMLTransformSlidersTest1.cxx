@@ -11,6 +11,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLTransformSlidersTest1(int argc, char* argv[])
 {

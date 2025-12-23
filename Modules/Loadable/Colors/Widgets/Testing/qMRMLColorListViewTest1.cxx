@@ -34,6 +34,9 @@
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
 
+// STD includes
+#include <iostream>
+
 // VTK includes
 #include <vtkNew.h>
 

@@ -23,6 +23,7 @@
 #include <vtkPointData.h>
 #include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
+#include <iostream>
 
 namespace
 {

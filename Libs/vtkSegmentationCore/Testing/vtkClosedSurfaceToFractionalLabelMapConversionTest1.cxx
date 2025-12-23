@@ -33,6 +33,9 @@
 #include <vtkSegmentationConverter.h>
 #include <vtkSegmentationConverterFactory.h>
 
+// STD includes
+#include <iostream>
+
 void CreateSpherePolyData(vtkPolyData* polyData);
 
 //----------------------------------------------------------------------------

@@ -25,6 +25,9 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
+// STD includes
+#include <iostream>
+
 static void PrintLabels(vtkMRMLMarkupsNode* m)
 {
   if (!m)

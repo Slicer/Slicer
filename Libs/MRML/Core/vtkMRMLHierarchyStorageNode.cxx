@@ -133,7 +133,7 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // put down a header
-  of << "# hierarchy file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
+  of << "# hierarchy file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << std::endl;
 
   of.close();
 

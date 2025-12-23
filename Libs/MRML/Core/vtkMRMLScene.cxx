@@ -121,6 +121,7 @@ Version:   $Revision: 1.18 $
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 #include <numeric>
 
 // #define MRMLSCENE_VERBOSE

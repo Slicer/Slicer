@@ -16,6 +16,9 @@
 // VTK includes
 #include <vtkMath.h>
 
+// STD includes
+#include <iostream>
+
 /// Convenience macros for unit tests.
 ///
 /// The macro returns from the current method with EXIT_FAILURE if the check fails.

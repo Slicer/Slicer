@@ -32,6 +32,9 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkTestingOutputWindow.h"
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 bool testAddInvalidFile(const char* filePath);
 bool testAddFile(const char* filePath);

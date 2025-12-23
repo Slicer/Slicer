@@ -6,6 +6,9 @@
 
 #include "DiffusionTensorTestCLP.h"
 
+// STD includes
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   typedef itk::DiffusionTensor3D<float> TensorType;

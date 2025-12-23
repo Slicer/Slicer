@@ -41,6 +41,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLNodeComboBoxLazyUpdateTest1(int argc, char* argv[])
 {

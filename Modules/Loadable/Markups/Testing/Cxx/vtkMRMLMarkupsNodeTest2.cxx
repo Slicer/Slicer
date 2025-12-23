@@ -22,6 +22,9 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
+// STD includes
+#include <iostream>
+
 // test copy and swap
 int vtkMRMLMarkupsNodeTest2(int, char*[])
 {

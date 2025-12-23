@@ -31,6 +31,7 @@
 #include "vtkAddonSetGet.h"
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 using namespace vtkAddonTestingUtilities;

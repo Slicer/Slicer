@@ -21,6 +21,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 enum TestReadReferenceType

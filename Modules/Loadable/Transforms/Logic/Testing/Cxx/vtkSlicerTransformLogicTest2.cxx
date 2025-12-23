@@ -21,6 +21,9 @@
 #include <vtkNew.h>
 #include <vtkPolyDataReader.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 //-----------------------------------------------------------------------------

@@ -23,6 +23,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableHierarchyNodeTestHelper1;
 

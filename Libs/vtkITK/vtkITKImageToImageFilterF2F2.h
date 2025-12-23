@@ -26,6 +26,9 @@
 #include "vtkITKUtility.h"
 #include <vtkVersion.h>
 
+// STD includes
+#include <iostream>
+
 class VTK_ITK_EXPORT vtkITKImageToImageFilterF2F2 : public vtkITKImageToImageFilter
 {
 public:

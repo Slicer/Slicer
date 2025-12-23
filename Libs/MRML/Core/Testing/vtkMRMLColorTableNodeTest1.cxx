@@ -23,6 +23,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkLookupTable.h>
 
+// STD includes
+#include <iostream>
+
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------

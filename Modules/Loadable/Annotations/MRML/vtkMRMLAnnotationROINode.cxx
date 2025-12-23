@@ -22,6 +22,7 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 //------------------------------------------------------------------------------

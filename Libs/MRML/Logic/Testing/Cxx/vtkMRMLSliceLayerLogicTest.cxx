@@ -36,6 +36,9 @@
 #include <vtkPointData.h>
 #include <vtkTrivialProducer.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 bool testDTIPipeline();

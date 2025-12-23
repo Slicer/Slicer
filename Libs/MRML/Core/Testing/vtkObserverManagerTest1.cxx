@@ -20,6 +20,9 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 struct callBackDataStruct
 {
   std::string testString;

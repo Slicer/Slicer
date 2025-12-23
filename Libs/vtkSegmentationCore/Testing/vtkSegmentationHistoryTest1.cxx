@@ -28,6 +28,9 @@
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
 
+// STD includes
+#include <iostream>
+
 // Get CHECK_INT from vtkAddonTestingMacros.h to avoid dependency on vtkAddon
 namespace
 {

@@ -8,6 +8,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();

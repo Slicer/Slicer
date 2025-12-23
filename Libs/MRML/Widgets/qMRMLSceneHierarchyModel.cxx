@@ -33,6 +33,9 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModelPrivate::qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object)
   : Superclass(object)

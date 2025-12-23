@@ -32,6 +32,7 @@
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 
 namespace
 {

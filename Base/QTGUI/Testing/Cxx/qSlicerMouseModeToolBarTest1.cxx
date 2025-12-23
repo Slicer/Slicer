@@ -20,6 +20,7 @@
 // VTK includes
 
 // STD includes
+#include <iostream>
 
 #define CHECK_PLACE_ACTION_TEXT(expected, mouseToolBar)                                                                                                              \
   {                                                                                                                                                                  \

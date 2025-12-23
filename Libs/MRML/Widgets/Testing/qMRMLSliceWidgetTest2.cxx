@@ -48,6 +48,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
   vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;

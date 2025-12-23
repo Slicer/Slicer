@@ -29,6 +29,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLPlotChartNodeTest1(int, char*[])
 {
   // Create a PlotChart node

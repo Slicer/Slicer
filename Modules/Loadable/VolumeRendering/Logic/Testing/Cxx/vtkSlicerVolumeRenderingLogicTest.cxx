@@ -34,6 +34,9 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 int testDefaultRenderingMethod(const std::string& moduleShareDirectory);
 int testPresets(const std::string& moduleShareDirectory);

@@ -23,6 +23,7 @@
 #include "vtkMRMLScene.h"
 
 // STD includes
+#include <iostream>
 #include <vtkNew.h>
 #include <vtkPolyData.h>
 

@@ -56,6 +56,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <iostream>
 #include <string>
 
 const char vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog[] = //

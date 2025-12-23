@@ -21,6 +21,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 {

@@ -10,6 +10,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 #include "labelMapPreprocessor.h"
 
 template <typename TPixel>

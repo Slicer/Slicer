@@ -43,6 +43,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <iostream>
 #include <string>
 
 #include "vtkMRMLCoreTestingMacros.h"
@@ -456,7 +457,7 @@ bool readFileIntoString(const char* filename, std::string& output)
   std::ifstream istream(filename);
   if (!istream)
   {
-    cerr << "Could not open input file:" << filename << endl;
+    std::cerr << "Could not open input file:" << filename << std::endl;
     return false;
   }
 

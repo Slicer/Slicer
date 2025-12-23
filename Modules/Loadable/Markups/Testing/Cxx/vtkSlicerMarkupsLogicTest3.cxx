@@ -34,6 +34,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 int vtkSlicerMarkupsLogicTest3(int, char*[])
 {
   vtkNew<vtkSlicerMarkupsLogic> logic1;

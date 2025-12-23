@@ -30,6 +30,7 @@
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 #include <string>
 

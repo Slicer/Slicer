@@ -23,6 +23,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLPlotViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLPlotViewNode> node1;

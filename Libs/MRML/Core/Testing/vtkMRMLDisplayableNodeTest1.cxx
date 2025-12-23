@@ -23,6 +23,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {

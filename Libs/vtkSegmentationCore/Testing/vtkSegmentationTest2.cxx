@@ -27,6 +27,9 @@
 #include <vtkMatrix4x4.h>
 #include <vtkImageAccumulate.h>
 
+// STD includes
+#include <iostream>
+
 // SegmentationCore includes
 #include "vtkSegmentation.h"
 #include "vtkSegment.h"

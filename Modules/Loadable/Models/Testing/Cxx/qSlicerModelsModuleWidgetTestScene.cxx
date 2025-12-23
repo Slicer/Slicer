@@ -34,6 +34,9 @@
 #include "qSlicerModelsModule.h"
 #include "vtkSlicerModelsLogic.h"
 
+// STD includes
+#include <iostream>
+
 // MRML includes
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLScene.h>

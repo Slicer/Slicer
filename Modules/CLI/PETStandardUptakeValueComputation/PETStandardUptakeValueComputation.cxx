@@ -32,6 +32,9 @@
 #include <itkMetaDataDictionary.h>
 #include <itkNumericSeriesFileNames.h>
 
+// STD includes
+#include <iostream>
+
 #undef HAVE_SSTREAM // stupid DCMTK Header issue
 #include "itkDCMTKFileReader.h"
 

@@ -8,6 +8,9 @@
 #include "N4ITKBiasFieldCorrectionCLP.h"
 #include "itkPluginUtilities.h"
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 

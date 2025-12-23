@@ -30,6 +30,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int vtkSlicerApplicationLogicTest1(int, char*[])
 {

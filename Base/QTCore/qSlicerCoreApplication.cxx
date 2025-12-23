@@ -20,6 +20,7 @@
 
 // STD includes
 #include <clocale>
+#include <iostream>
 #include <stdexcept>
 
 // Qt includes

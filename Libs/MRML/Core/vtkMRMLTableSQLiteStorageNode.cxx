@@ -41,6 +41,9 @@
 
 #include <vtksys/SystemTools.hxx>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTableSQLiteStorageNode);
 
@@ -228,7 +231,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkSQLiteQuery* query = static_cast<vtkSQLiteQuery*>(database->GetQueryInstance());
 
   query->SetQuery(createTableQuery.c_str());
-  cout << "creating the table" << endl;
+  std::cout << "creating the table" << std::endl;
   if (!query->Execute())
   {
     vtkErrorMacro(<< "Error performing 'create table' query");

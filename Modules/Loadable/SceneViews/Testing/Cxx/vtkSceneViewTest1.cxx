@@ -20,6 +20,9 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 int vtkSceneViewTest1(int, char*[])
 {
   vtkNew<vtkMRMLSceneViewNode> node1;

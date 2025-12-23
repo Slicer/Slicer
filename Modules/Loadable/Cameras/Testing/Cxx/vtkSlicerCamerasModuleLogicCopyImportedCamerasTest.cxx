@@ -31,6 +31,7 @@
 
 // STD includes
 #include <cassert>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 bool TestCopyImportedCameras(bool clear, bool legacy);

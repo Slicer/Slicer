@@ -45,6 +45,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection);
 vtkMRMLScalarVolumeNode* TestScalarVolumeLoading(const char* volumeName, vtkSlicerVolumesLogic* logic);

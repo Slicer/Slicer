@@ -26,6 +26,9 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkVoxel.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 const char* VOXEL_ARRAY_NAME = "ids";

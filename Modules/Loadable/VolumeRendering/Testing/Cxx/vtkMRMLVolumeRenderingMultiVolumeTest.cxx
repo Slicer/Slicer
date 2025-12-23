@@ -51,6 +51,7 @@
 
 // STD includes
 #include <cassert>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 void SetupRenderer(vtkRenderWindow* renderWindow, vtkRenderer* renderer)

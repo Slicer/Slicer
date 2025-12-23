@@ -31,6 +31,7 @@
 
 // STL includes
 #include <sstream>
+#include <iostream>
 
 int vtkMRMLMarkupsNodeTest1(int, char*[])
 {

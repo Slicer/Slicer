@@ -35,6 +35,9 @@
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToBinaryLabelmapConversionRule.h"
 
+// STD includes
+#include <iostream>
+
 void CreateSpherePolyData(vtkPolyData* polyData);
 void CreateCubeLabelmap(vtkOrientedImageData* imageData);
 

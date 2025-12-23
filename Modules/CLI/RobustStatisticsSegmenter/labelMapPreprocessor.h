@@ -5,6 +5,7 @@
 #include "itkImageRegionIterator.h"
 
 #include <algorithm>
+#include <iostream>
 
 template <typename pixel_t>
 typename itk::Image<pixel_t, 3>::Pointer preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pixel_t desiredLabel)

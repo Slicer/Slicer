@@ -49,6 +49,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 {

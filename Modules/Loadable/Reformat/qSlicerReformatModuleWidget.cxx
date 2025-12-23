@@ -45,6 +45,9 @@
 #include <vtkNew.h>
 #include <vtkTransform.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 class qSlicerReformatModuleWidgetPrivate : public Ui_qSlicerReformatModuleWidget
 {

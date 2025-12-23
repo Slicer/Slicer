@@ -11,6 +11,7 @@
 #include "vtkSlicerBaseCLIExport.h"
 
 // STD includes
+#include <iostream>
 #include <string>
 
 /** \class vtkPluginFilterWatcher

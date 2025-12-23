@@ -37,6 +37,9 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
+// STD includes
+#include <iostream>
+
 // Common test driver includes
 #include "qMRMLWidgetCxxTests.h"
 #include "qMRMLLayoutManagerTestHelper.cxx"

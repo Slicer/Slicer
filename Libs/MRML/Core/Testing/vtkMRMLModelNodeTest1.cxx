@@ -21,6 +21,9 @@
 #include <vtkSphereSource.h>
 #include <vtkUnstructuredGrid.h>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods();
 int TestActiveScalars();

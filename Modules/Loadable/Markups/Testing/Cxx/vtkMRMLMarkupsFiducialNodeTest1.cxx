@@ -26,6 +26,9 @@
 #include <vtkNew.h>
 #include <vtkPolyData.h>
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;

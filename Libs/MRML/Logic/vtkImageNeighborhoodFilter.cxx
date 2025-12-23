@@ -14,6 +14,7 @@
 #include "vtkImageNeighborhoodFilter.h"
 
 #include "vtkObjectFactory.h"
+#include <iostream>
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkImageNeighborhoodFilter);

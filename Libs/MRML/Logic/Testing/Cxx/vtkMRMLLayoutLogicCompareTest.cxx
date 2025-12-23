@@ -13,6 +13,7 @@
 #include <vtkNew.h>
 
 // STD includes
+#include <iostream>
 
 bool TestSetSlicerLayoutCompareGridView();
 bool TestSetSlicerLayoutCompareGridViewEvents();

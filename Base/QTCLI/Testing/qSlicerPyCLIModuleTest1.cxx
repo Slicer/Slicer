@@ -40,6 +40,7 @@
 #include <vtkSlicerCLIModuleLogic.h>
 
 // STD includes
+#include <iostream>
 
 namespace
 {

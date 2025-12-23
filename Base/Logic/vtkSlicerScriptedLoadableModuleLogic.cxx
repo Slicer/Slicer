@@ -32,6 +32,7 @@
 
 // STD includes
 #include <cstdlib>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerScriptedLoadableModuleLogic);

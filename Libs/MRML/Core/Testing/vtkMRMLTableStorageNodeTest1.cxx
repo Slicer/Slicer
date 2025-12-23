@@ -30,6 +30,9 @@
 
 #include <vtksys/SystemTools.hxx>
 
+// STD includes
+#include <iostream>
+
 //---------------------------------------------------------------------------
 int TestReadWriteWithoutSchema(vtkMRMLScene* scene);
 int TestReadWriteWithSchema(vtkMRMLScene* scene);

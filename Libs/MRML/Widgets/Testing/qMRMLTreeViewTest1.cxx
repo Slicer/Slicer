@@ -33,6 +33,7 @@
 #include <vtkTimerLog.h>
 
 // STD includes
+#include <iostream>
 
 int qMRMLTreeViewTest1(int argc, char* argv[])
 {

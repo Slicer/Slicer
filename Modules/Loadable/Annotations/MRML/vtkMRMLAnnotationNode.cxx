@@ -15,6 +15,7 @@
 #include <vtkStringArray.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 
 // KPs Todos

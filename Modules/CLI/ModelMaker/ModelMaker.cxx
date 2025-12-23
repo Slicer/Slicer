@@ -59,6 +59,9 @@ Version:   $Revision$
 #include <vtkUnstructuredGrid.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 
+// STD includes
+#include <iostream>
+
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
@@ -328,7 +331,7 @@ int main(int argc, char* argv[])
       labelsMax = Labels[Labels.size() - 1];
       if (debug)
       {
-        cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << endl;
+        std::cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << std::endl;
       }
     }
   }
@@ -1801,7 +1804,7 @@ int main(int argc, char* argv[])
   {
     if (debug)
     {
-      cout << "Deleting threshold" << endl;
+      std::cout << "Deleting threshold" << std::endl;
     }
     threshold->SetInputData(nullptr);
     threshold = nullptr;
@@ -1819,7 +1822,7 @@ int main(int argc, char* argv[])
   {
     if (debug)
     {
-      cout << "Deleting geometry filter" << endl;
+      std::cout << "Deleting geometry filter" << std::endl;
     }
     geometryFilter->SetInputData(nullptr);
     geometryFilter = nullptr;

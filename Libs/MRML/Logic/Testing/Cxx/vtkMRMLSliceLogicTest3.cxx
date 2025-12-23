@@ -42,6 +42,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {

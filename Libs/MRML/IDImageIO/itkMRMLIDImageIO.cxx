@@ -28,6 +28,9 @@ Version:   $Revision: 1.18 $
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>
 
+// STD includes
+#include <iostream>
+
 namespace itk
 {
 //----------------------------------------------------------------------------

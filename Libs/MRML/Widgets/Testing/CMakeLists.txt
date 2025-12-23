@@ -29,6 +29,8 @@ set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "
   DEBUG_LEAKS_ENABLE_EXIT_ERROR();
   ")
 
+set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <itkConfigure.h>\n\#include <itkFactoryRegistration.h>\n\#include <iostream>\n\#include \"vtkTestingOutputWindow.h")
+
 set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLCheckableNodeComboBoxTest1.cxx
@@ -127,6 +129,7 @@ endif()
 
 create_test_sourcelist(Tests ${KIT}CppTests.cxx
   ${TEST_SOURCES}
+  EXTRA_INCLUDE ${EXTRA_INCLUDE}
   )
 
 set(Tests_UtilityFiles

@@ -14,6 +14,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLInteractionNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLInteractionNode> node1;

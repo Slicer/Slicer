@@ -34,6 +34,9 @@
 #include <vtkNew.h>
 #include "vtkPolyData.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
 {
   // Test reading in a Slicer4 MRML scene with legacy annotation nodes (created using Slicer-4.1.1):

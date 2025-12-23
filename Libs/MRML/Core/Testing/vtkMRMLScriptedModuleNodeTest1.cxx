@@ -14,6 +14,9 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScriptedModuleNode.h"
 
+// STD includes
+#include <iostream>
+
 int TestScriptedModuleParameterSaveLoadSpecialCharacters();
 
 int vtkMRMLScriptedModuleNodeTest1(int, char*[])

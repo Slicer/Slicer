@@ -33,6 +33,9 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkTestingOutputWindow.h>
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 int testAddVolumePropertyFromFile(const std::string& temporaryDirectory);
 

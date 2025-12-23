@@ -27,6 +27,7 @@
 #include "qSlicerIOManager.h"
 
 // STD includes
+#include <iostream>
 
 int qSlicerApplicationTest1(int argc, char* argv[])
 {

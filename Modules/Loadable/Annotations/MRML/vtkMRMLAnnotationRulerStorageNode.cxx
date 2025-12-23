@@ -6,6 +6,9 @@
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
+// STD includes
+#include <iostream>
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerStorageNode);
 

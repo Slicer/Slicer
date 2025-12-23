@@ -20,6 +20,9 @@
 
 // Qt includes
 
+// STD includes
+#include <iostream>
+
 // CTK includes
 #include <ctkTest.h>
 

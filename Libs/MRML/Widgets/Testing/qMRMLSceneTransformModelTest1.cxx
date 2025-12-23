@@ -37,6 +37,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLSceneTransformModelTest1(int argc, char* argv[])
 {

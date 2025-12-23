@@ -40,6 +40,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLSceneCategoryModelTest1(int argc, char* argv[])
 {

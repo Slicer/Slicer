@@ -33,6 +33,9 @@ Care Ontario.
 #include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToFractionalLabelmapConversionRule.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLSegmentationStorageNode> node1;

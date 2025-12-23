@@ -16,6 +16,9 @@
 
 #include "itkDiffusionTensor3DRead.h"
 
+// STD includes
+#include <iostream>
+
 namespace itk
 {
 

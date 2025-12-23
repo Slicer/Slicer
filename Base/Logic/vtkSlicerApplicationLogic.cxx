@@ -37,6 +37,7 @@
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 
 #ifdef VTK_USE_PTHREADS
 # include <unistd.h>

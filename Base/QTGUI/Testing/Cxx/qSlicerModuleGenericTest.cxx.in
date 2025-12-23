@@ -55,6 +55,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int qSlicer@MODULENAME@ModuleGenericTest(int argc, char* argv[])
 {

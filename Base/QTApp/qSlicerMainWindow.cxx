@@ -90,6 +90,9 @@
 // VTK includes
 #include <vtkCollection.h>
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 

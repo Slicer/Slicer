@@ -33,6 +33,9 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 // Sequences logic includes
 #include <vtkSlicerSequencesLogic.h>
 

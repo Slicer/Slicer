@@ -23,6 +23,9 @@
 #include <QApplication>
 #include <QItemSelectionModel>
 
+// STD includes
+#include <iostream>
+
 // CTK includes
 #include "ctkTest.h"
 

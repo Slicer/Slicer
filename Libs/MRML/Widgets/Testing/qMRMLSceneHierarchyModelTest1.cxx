@@ -41,6 +41,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLSceneHierarchyModelTest1(int argc, char* argv[])
 {

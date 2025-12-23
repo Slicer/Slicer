@@ -14,6 +14,9 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkDataIOManagerLogic.h"
 
+// STD includes
+#include <iostream>
+
 int vtkDataIOManagerLogicTest1(int, char*[])
 {
   vtkNew<vtkDataIOManagerLogic> logic;

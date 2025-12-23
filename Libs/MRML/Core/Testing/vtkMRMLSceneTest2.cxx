@@ -24,6 +24,7 @@
 
 // STD includes
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <set>
 #include <sstream>

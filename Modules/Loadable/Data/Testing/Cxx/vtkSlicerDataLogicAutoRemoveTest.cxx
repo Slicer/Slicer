@@ -30,6 +30,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <iostream>
+
 bool testAutoRemoveModelFirst();
 bool testAutoRemoveDisplayFirst();
 

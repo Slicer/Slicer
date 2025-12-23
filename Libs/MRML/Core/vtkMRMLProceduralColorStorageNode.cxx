@@ -184,10 +184,10 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
 
     // put down a header
-    of << "# Color procedural file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << endl;
+    of << "# Color procedural file " << (this->GetFileName() != nullptr ? this->GetFileName() : "null") << std::endl;
     int numPoints = ctf->GetSize();
-    of << "# " << numPoints << " points" << endl;
-    of << "# position R G B" << endl;
+    of << "# " << numPoints << " points" << std::endl;
+    of << "# position R G B" << std::endl;
     for (int i = 0; i < numPoints; ++i)
     {
       double val[6];
@@ -200,7 +200,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       of << val[2];
       of << " ";
       of << val[3];
-      of << endl;
+      of << std::endl;
     }
     of.close();
   }

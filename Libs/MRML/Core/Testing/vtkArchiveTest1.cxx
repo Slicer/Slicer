@@ -20,6 +20,7 @@
 #include <vtksys/Directory.hxx>
 
 // STD includes
+#include <iostream>
 
 #include "vtkMRMLCoreTestingMacros.h"
 

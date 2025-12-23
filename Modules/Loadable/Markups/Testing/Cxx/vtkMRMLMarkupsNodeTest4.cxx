@@ -32,6 +32,7 @@
 
 // STL includes
 #include <sstream>
+#include <iostream>
 
 static const double EPSILON = 1e-5;
 

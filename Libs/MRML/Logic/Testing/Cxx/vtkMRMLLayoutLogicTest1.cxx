@@ -12,6 +12,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLLayoutLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;

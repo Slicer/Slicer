@@ -50,6 +50,9 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
+// STD includes
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 int vtkMRMLSliceLogicTest2(int argc, char* argv[])
 {

@@ -23,6 +23,7 @@
 
 // STD includes
 #include <list>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode

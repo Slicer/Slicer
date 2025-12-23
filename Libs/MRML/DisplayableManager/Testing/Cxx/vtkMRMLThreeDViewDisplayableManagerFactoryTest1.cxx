@@ -36,6 +36,9 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <iostream>
+
 // Initialize object factory
 #define MRMLDisplayableManagerCxxTests_AUTOINIT 1(MRMLDisplayableManagerCxxTests)
 #include <vtkAutoInit.h>

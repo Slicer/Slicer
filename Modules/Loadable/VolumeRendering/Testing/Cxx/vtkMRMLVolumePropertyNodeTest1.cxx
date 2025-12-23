@@ -27,6 +27,7 @@
 
 // STD includes
 #include <limits>
+#include <iostream>
 
 namespace
 {

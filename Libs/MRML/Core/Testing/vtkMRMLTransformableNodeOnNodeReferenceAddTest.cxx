@@ -32,6 +32,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 namespace
 {
 

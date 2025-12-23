@@ -28,6 +28,9 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
+#include <iostream>
+
 int vtkMRMLPlotSeriesNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;

@@ -22,6 +22,9 @@
 #include "vtkPoints.h"
 #include "vtkThinPlateSplineTransform.h"
 
+// STD includes
+#include <iostream>
+
 typedef itk::ThinPlateSplineKernelTransform<double, 3> itkThinPlateSplineType;
 typedef itkThinPlateSplineType::PointSetType PointSetType;
 

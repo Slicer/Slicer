@@ -36,6 +36,7 @@
 #include "qMRMLWidget.h"
 
 // STD includes
+#include <iostream>
 
 int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv[])
 {
