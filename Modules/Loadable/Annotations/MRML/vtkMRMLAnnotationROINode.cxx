@@ -16,7 +16,6 @@
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkVectorOperators.h>
 #include <vtkPlanes.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
