@@ -1024,8 +1024,48 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   {
     return;
   }
+
+  vtkNew<vtkImageData> transformedImage;
+  vtkNew<vtkMatrix4x4> transformedIJKToRAS;
+
+  if (!vtkMRMLVolumeNode::GetTransformedImageData(this, transform, transformedImage, transformedIJKToRAS))
+  {
+    vtkErrorMacro("ApplyNonLinearTransform: failed to get transformed image data");
+    return;
+  }
+
+  // Perform image data and origin update in one step
+  int wasModified = this->StartModify();
+  this->SetAndObserveImageData(transformedImage);
+  this->SetIJKToRASMatrix(transformedIJKToRAS);
+  this->EndModify(wasModified);
+}
+
+//-----------------------------------------------------------
+bool vtkMRMLVolumeNode::GetTransformedImageData( //
+  vtkMRMLVolumeNode* volumeNode,                 //
+  vtkAbstractTransform* transform,               //
+  vtkImageData* outputImage,                     //
+  vtkMatrix4x4* outputIJKToWorld)
+{
+  if (!volumeNode || volumeNode->GetImageData() == nullptr)
+  {
+    vtkGenericWarningMacro("GetTransformedImageData: invalid input volume node");
+    return false;
+  }
+  if (!transform)
+  {
+    vtkGenericWarningMacro("GetTransformedImageData: invalid transform");
+    return false;
+  }
+  if (!volumeNode->CanApplyNonLinearTransforms())
+  {
+    vtkGenericWarningMacro("GetTransformedImageData: cannot apply non-linear transform to this volume node");
+    return false;
+  }
+
   int extent[6];
-  this->GetImageData()->GetExtent(extent);
+  volumeNode->GetImageData()->GetExtent(extent);
 
   vtkNew<vtkMatrix4x4> rasToIJK;
 
@@ -1036,15 +1076,14 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   resampleXform->Identity();
   resampleXform->PostMultiply();
 
-  this->GetRASToIJKMatrix(rasToIJK.GetPointer());
+  volumeNode->GetRASToIJKMatrix(rasToIJK.GetPointer());
 
   vtkNew<vtkMatrix4x4> IJKToRAS;
-  IJKToRAS->DeepCopy(rasToIJK.GetPointer());
-  IJKToRAS->Invert();
-  transform->Inverse();
+  vtkMatrix4x4::Invert(rasToIJK.GetPointer(), IJKToRAS.GetPointer());
+  vtkAbstractTransform* transformFromWorld = transform->GetInverse();
 
   resampleXform->Concatenate(IJKToRAS.GetPointer());
-  resampleXform->Concatenate(transform);
+  resampleXform->Concatenate(transformFromWorld);
   resampleXform->Concatenate(rasToIJK.GetPointer());
 
   // vtkImageReslice works faster if the input is a linear transform, so try to convert it
@@ -1059,23 +1098,23 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     reslice->SetResliceTransform(resampleXform.GetPointer());
   }
 
-  reslice->SetInputConnection(this->ImageDataConnection);
+  reslice->SetInputConnection(volumeNode->ImageDataConnection);
 
   // GetResamplingInterpolationMode does not use VTK_RESLICE... constants because it is an implementation
   // detail that currently vtkImageReslice is used for resampling.
-  int resamplingMode = this->GetResamplingInterpolationMode();
+  int resamplingMode = volumeNode->GetResamplingInterpolationMode();
   switch (resamplingMode)
   {
     case VTK_NEAREST_INTERPOLATION: reslice->SetInterpolationModeToNearestNeighbor(); break;
     case VTK_LINEAR_INTERPOLATION: reslice->SetInterpolationModeToLinear(); break;
     case VTK_CUBIC_INTERPOLATION: reslice->SetInterpolationModeToCubic(); break;
-    default: vtkErrorMacro("ApplyNonLinearTransform: invalid interpolation mode: " << this->GetResamplingInterpolationMode());
+    default: vtkGenericWarningMacro("ApplyNonLinearTransform: invalid interpolation mode: " << volumeNode->GetResamplingInterpolationMode());
   }
 
   double backgroundColor[4] = { 0, 0, 0, 0 };
   for (int i = 0; i < 4; i++)
   {
-    backgroundColor[i] = this->GetImageBackgroundScalarComponentAsDouble(i);
+    backgroundColor[i] = volumeNode->GetImageBackgroundScalarComponentAsDouble(i);
   }
   reslice->SetBackgroundColor(backgroundColor);
 
@@ -1085,7 +1124,7 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   // GetBoundsInternal method takes samples all over the volume, therefore the
   // complete transformed volume is included in the output.
   double transformedBounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
-  this->GetBoundsInternal(transformedBounds, rasToIJK, true);
+  volumeNode->GetBoundsInternal(transformedBounds, rasToIJK, true);
   double spacing[3] = { 1.0, 1.0, 1.0 }; // output is specified in IJK coordinate system
   // transformedBounds is computed so that it includes the voxel corners, therefore the origin is half voxel towards the image center
   reslice->SetOutputOrigin(transformedBounds[0] + 0.5 * spacing[0], transformedBounds[2] + 0.5 * spacing[1], transformedBounds[4] + 0.5 * spacing[2]);
@@ -1105,28 +1144,22 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   reslice->SetOutputDimensionality(3);
 
   reslice->Update();
-
-  vtkNew<vtkImageData> resampleImage;
-  resampleImage->DeepCopy(reslice->GetOutput());
-
-  // Perform image data and origin update in one step
-  int wasModified = this->StartModify();
+  outputImage->DeepCopy(reslice->GetOutput());
 
   // Origin is stored in image node therefore origin in
   // image data object must be set to (0,0,0).
   double resampledOrigin_IJK[4] = { 0, 0, 0, 0 };
-  resampleImage->GetOrigin(resampledOrigin_IJK);
+  outputImage->GetOrigin(resampledOrigin_IJK);
   double resampledOrigin_RAS[4] = { 0, 0, 0, 0 };
   IJKToRAS->MultiplyPoint(resampledOrigin_IJK, resampledOrigin_RAS);
-  double* origin = this->GetOrigin();
-  this->SetOrigin(                      //
-    origin[0] + resampledOrigin_RAS[0], //
-    origin[1] + resampledOrigin_RAS[1], //
-    origin[2] + resampledOrigin_RAS[2]);
-  resampleImage->SetOrigin(0, 0, 0);
+  double* origin = volumeNode->GetOrigin();
+  outputIJKToWorld->DeepCopy(IJKToRAS);
+  outputIJKToWorld->SetElement(0, 3, origin[0] + resampledOrigin_RAS[0]);
+  outputIJKToWorld->SetElement(1, 3, origin[1] + resampledOrigin_RAS[1]);
+  outputIJKToWorld->SetElement(2, 3, origin[2] + resampledOrigin_RAS[2]);
+  outputImage->SetOrigin(0, 0, 0);
 
-  this->SetAndObserveImageData(resampleImage.GetPointer());
-  this->EndModify(wasModified);
+  return true;
 }
 
 //---------------------------------------------------------------------------
