@@ -36,6 +36,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLShaderPropertyNode.h"
 #include "vtkEventBroker.h"
@@ -46,6 +47,7 @@
 #include <vtkClipVolume.h>
 #include <vtkDoubleArray.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
+#include <vtkGeneralTransform.h>
 #include <vtkGPUVolumeRayCastMapper.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageChangeInformation.h>
@@ -148,6 +150,10 @@ public:
       this->Gaussian->SetInputConnection(this->StencilFilter->GetOutputPort());
 
       this->ImageMathematics = vtkSmartPointer<vtkImageMathematicsAddon>::New();
+
+      // For non-linear transforms: store resampled image data
+      this->TransformedImageData = vtkSmartPointer<vtkImageData>::New();
+      this->TransformedImageDataTrivialProducer = vtkSmartPointer<vtkTrivialProducer>::New();
     }
     virtual ~Pipeline() = default;
 
@@ -191,7 +197,6 @@ public:
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;
-    bool IJKToWorldLinear{ true };
     vtkSmartPointer<vtkImageLuminance> ComputeAlphaChannel;
     vtkSmartPointer<vtkImageAppendComponents> MergeAlphaChannelToRGB;
     vtkSmartPointer<vtkClipVolume> ClipVolume;
@@ -202,6 +207,18 @@ public:
     vtkSmartPointer<vtkImageStencil> StencilFilter;
     vtkSmartPointer<vtkImageGaussianSmooth> Gaussian;
     vtkSmartPointer<vtkImageMathematicsAddon> ImageMathematics;
+
+    /// Transformed (resampled) image data for volumes under non-linear transforms.
+    /// The renderer can only apply linear transformation matrix on-the-fly, so if parent transform is non-linear
+    /// then we resample the warped volume into a new image and render that.
+    vtkSmartPointer<vtkImageData> TransformedImageData;
+    vtkSmartPointer<vtkTrivialProducer> TransformedImageDataTrivialProducer;
+    bool UseTransformedImageData{ false };
+    /// Modification time of the original volume when the transform was applied.
+    /// This is used to detect if the volume needs to be resampled again.
+    vtkMTimeType TransformedImageDataMTime{ 0 };
+    /// Modification time of the transform when it was applied.
+    vtkMTimeType TransformMTime{ 0 };
 
     /// Whether to disable the SSAO render pass for this volume actor.
     /// As of VTK 9.5.1, SSAO requires per-fragment normals, which MIP and MinIP
@@ -266,7 +283,7 @@ public:
   // Return with true if pipelines may have changed.
   // If node==nullptr then all pipelines are updated.
   bool UpdatePipelineTransforms(vtkMRMLVolumeNode* node);
-  bool GetVolumeTransformToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix, bool& ijkToWorldLinear);
+  bool GetVolumeTransformMatrixToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix);
 
   // ROIs
   void UpdatePipelineROIs(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
@@ -727,7 +744,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
   {
     return;
   }
-
   PipelineListType::iterator pipelineIt = this->GetPipelineIt(displayNode);
   if (pipelineIt == this->DisplayPipelines.end())
   {
@@ -810,8 +826,6 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
     }
     this->UpdateDisplayNodePipeline(pipeline->DisplayNode, pipeline);
 
-    // Calculate and apply transform matrix
-    this->GetVolumeTransformToWorld(currentVolumeNode, pipeline->IJKToWorldMatrix, pipeline->IJKToWorldLinear);
     if (pipeline->DisplayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
     {
       const PipelineCPU* pipelineCpu = dynamic_cast<const PipelineCPU*>(pipeline);
@@ -851,12 +865,11 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformToWorld(vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix, bool& ijkToWorldLinear)
+bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformMatrixToWorld(vtkMRMLVolumeNode* volumeNode, vtkMatrix4x4* outputIjkToWorldMatrix)
 {
   if (volumeNode == nullptr)
   {
-    vtkErrorWithObjectMacro(this->External, "GetVolumeTransformToWorld: Invalid volume node");
-    ijkToWorldLinear = false;
+    vtkErrorWithObjectMacro(this->External, "GetVolumeTransformMatrixToWorld: Invalid volume node");
     return false;
   }
 
@@ -865,34 +878,27 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformTo
   if (transformNode == nullptr)
   {
     volumeNode->GetIJKToRASMatrix(outputIjkToWorldMatrix);
-    ijkToWorldLinear = true;
     return true;
   }
 
+  // Check if the transform is linear
+  if (!transformNode->IsTransformToWorldLinear())
+  {
+    vtkGenericWarningMacro("vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolumeTransformMatrixToWorld: Transform is non-linear");
+    return false;
+  }
+
   // IJK to RAS
-  vtkMatrix4x4* ijkToRasMatrix = vtkMatrix4x4::New();
+  vtkNew<vtkMatrix4x4> ijkToRasMatrix;
   volumeNode->GetIJKToRASMatrix(ijkToRasMatrix);
 
   // Parent transforms
-  vtkMatrix4x4* nodeToWorldMatrix = vtkMatrix4x4::New();
-  int success = transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
-  if (!success)
-  {
-    vtkWarningWithObjectMacro(this->External,
-                              "GetVolumeTransformToWorld: Non-linear parent transform found for volume node ("
-                                << volumeNode->GetName() << "). Volume rendering will not be displayed. See https://github.com/Slicer/Slicer/issues/6648 for details.");
-    outputIjkToWorldMatrix->Identity();
-    ijkToWorldLinear = false;
-    return false;
-  }
+  vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
+  transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
 
   // Transform world to RAS
   vtkMatrix4x4::Multiply4x4(nodeToWorldMatrix, ijkToRasMatrix, outputIjkToWorldMatrix);
   outputIjkToWorldMatrix->Modified(); // Needed because Multiply4x4 does not invoke Modified
-  ijkToWorldLinear = true;
-
-  ijkToRasMatrix->Delete();
-  nodeToWorldMatrix->Delete();
   return true;
 }
 
@@ -939,14 +945,68 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   bool displayNodeVisible = this->IsVisible(displayNode);
 
-  if (!pipeline->IJKToWorldLinear)
+  // Check if the volume is under a non-linear transform
+  vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
+  bool hasNonLinearTransform = (transformNode != nullptr && !transformNode->IsTransformToWorldLinear());
+
+  // Get the image connection - either from the original volume or from the resampled volume
+  vtkAlgorithmOutput* imageConnection = nullptr;
+
+  if (volumeNode->GetImageData() && hasNonLinearTransform)
   {
-    // Currently, volumes that are under a non-linear transform cannot be displayed.
-    // See details at https://github.com/Slicer/Slicer/issues/6648
-    displayNodeVisible = false;
+    // Volume is under a non-linear transform - we need to resample it
+
+    // Check if we already have an up-to-date resampled image
+    vtkMTimeType volumeMTime = volumeNode->GetImageData()->GetMTime();
+    vtkMTimeType transformMTime = transformNode->GetTransformToWorldMTime();
+    if (pipeline->TransformedImageDataMTime != volumeMTime //
+        || pipeline->TransformMTime != transformMTime      //
+        || pipeline->TransformedImageData->GetNumberOfPoints() == 0)
+    {
+      // Need to resample the volume
+
+      vtkNew<vtkGeneralTransform> rasToWorldTransform;
+      transformNode->GetTransformToWorld(rasToWorldTransform);
+      bool success = vtkMRMLVolumeNode::GetTransformedImageData(volumeNode, rasToWorldTransform, pipeline->TransformedImageData, pipeline->IJKToWorldMatrix);
+
+      if (success)
+      {
+        pipeline->TransformedImageDataMTime = volumeMTime;
+        pipeline->TransformMTime = transformMTime;
+      }
+      else
+      {
+        vtkWarningWithObjectMacro(this->External, //
+                                  "UpdateDisplayNodePipeline: Failed to resample volume " << volumeNode->GetName() << " with non-linear transform");
+        displayNodeVisible = false;
+        pipeline->TransformedImageData->Initialize();
+        pipeline->TransformedImageDataMTime = 0;
+        pipeline->TransformMTime = 0;
+      }
+
+      pipeline->TransformedImageDataTrivialProducer->SetOutput(pipeline->TransformedImageData);
+    }
+
+    imageConnection = pipeline->TransformedImageDataTrivialProducer->GetOutputPort();
+    pipeline->UseTransformedImageData = true;
+  }
+  else
+  {
+    // Linear transform or no transform - use original volume
+    imageConnection = volumeNode->GetImageDataConnection();
+    this->GetVolumeTransformMatrixToWorld(volumeNode, pipeline->IJKToWorldMatrix);
+
+    // Clear the transformed image data to free memory
+    if (pipeline->TransformedImageData->GetNumberOfPoints() > 0)
+    {
+      pipeline->TransformedImageData->Initialize();
+      pipeline->TransformedImageDataMTime = 0;
+      pipeline->TransformMTime = 0;
+    }
+    pipeline->UseTransformedImageData = false;
   }
 
-  vtkAlgorithmOutput* imageConnection = volumeNode->GetImageDataConnection();
+  // Clipping handling
   if (displayNode->GetClipping() && !displayNode->IsFastClippingAvailable())
   {
     vtkMRMLClipNode* clipNode = displayNode->GetClipNode();
@@ -964,19 +1024,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         pipeline->ImplicitFunctionToImageStencilFilter->Modified();
       }
 
-      vtkNew<vtkMatrix4x4> ijkToRASMatrix;
-      volumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
-
       vtkNew<vtkTransform> newIJKToRASTransform;
       newIJKToRASTransform->PostMultiply();
-      newIJKToRASTransform->Concatenate(ijkToRASMatrix);
-      if (volumeNode->GetParentTransformNode() && volumeNode->GetParentTransformNode()->IsTransformToWorldLinear())
-      {
-        vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
-        volumeNode->GetParentTransformNode()->GetMatrixTransformToWorld(nodeToWorldMatrix);
-        newIJKToRASTransform->Concatenate(nodeToWorldMatrix);
-      }
-
+      newIJKToRASTransform->Concatenate(pipeline->IJKToWorldMatrix);
       vtkSmartPointer<vtkTransform> oldIJKToRASTransform = vtkTransform::SafeDownCast(pipeline->ImplicitFunction->GetTransform());
       if (!oldIJKToRASTransform || !vtkAddonMathUtilities::MatrixAreEqual(newIJKToRASTransform->GetMatrix(), oldIJKToRASTransform->GetMatrix()))
       {
@@ -990,7 +1040,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
       }
       pipeline->StencilFilter->SetBackgroundValue(backgroundValue);
 
-      pipeline->ImplicitFunctionToImageStencilFilter->SetInformationInput(volumeNode->GetImageData());
+      // Use the appropriate image data for the stencil filter
+      vtkImageData* imageDataForClipping = pipeline->UseTransformedImageData ? pipeline->TransformedImageData.GetPointer() : volumeNode->GetImageData();
+      pipeline->ImplicitFunctionToImageStencilFilter->SetInformationInput(imageDataForClipping);
 
       double softEdgeVoxels = displayNode->GetClippingSoftEdgeVoxels();
       if (softEdgeVoxels <= 0)
@@ -1002,7 +1054,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
       }
       else
       {
-        vtkImageData* inputImage = volumeNode->GetImageData();
+        vtkImageData* inputImage = imageDataForClipping;
         int* tempExtent = pipeline->MaskImage->GetExtent();
         int* volumeExtent = inputImage->GetExtent();
         if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1]    //
@@ -1015,7 +1067,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
           pipeline->MaskImage->AllocateScalars(inputImage->GetScalarType(), inputImage->GetNumberOfScalarComponents());
         }
 
-        double* inputScalarRange = volumeNode->GetImageData()->GetScalarRange();
+        double* inputScalarRange = inputImage->GetScalarRange();
         double* tempScalarRange = pipeline->MaskImage->GetScalarRange();
         if (tempScalarRange[1] != inputScalarRange[1])
         {
@@ -1050,7 +1102,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     }
   }
 
-  vtkImageData* imageData = volumeNode->GetImageData();
+  vtkImageData* imageData = pipeline->UseTransformedImageData ? pipeline->TransformedImageData.GetPointer() : volumeNode->GetImageData();
   int numberOfChannels = (imageData == nullptr ? 1 : imageData->GetNumberOfScalarComponents());
   if (numberOfChannels == 3)
   {
@@ -1579,7 +1631,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
     double sampleDistance = 1.0;
     if (renderingQuality == vtkMRMLViewNode::Normal)
     {
-      // In this mode normally VTK would compute the spacing (LockSampleDistanceToInputSpacing=true),
+      // In this mode normally VTK would compute the spacing (LockSampleDistanceToInputSpacing=true);
       // it is only used in multi-volume rendering mode because there the automatic spacing computation
       // does now work correctly (due to interference of the "dummy image").
       // We use 1/2 the average spacing, to simulate LockSampleDistanceToInputSpacing=true behavior,

@@ -256,6 +256,15 @@ public:
   /// by inverting the K axis direction. The physical location of voxels do not change.
   static void ReverseSliceOrder(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix);
 
+  /// Resample a volume with a transform.
+  /// This method can be used to bake a non-linear transform into a volume.
+  /// The parent transform of the volume is ignored to make it easy to apply any transform to the volume, regardless
+  /// of the current transform.
+  /// transform: the modeling transform to apply, from the volume's RAS coordinate system to world coordinates.
+  /// outputImage and outputIJKToWorld are the resampled image data and its matrix to transform IJK to world coordinates.
+  /// \return true on success, false on failure.
+  static bool GetTransformedImageData(vtkMRMLVolumeNode* volumeNode, vtkAbstractTransform* transform, vtkImageData* outputImage, vtkMatrix4x4* outputIJKToWorld);
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode() override;
