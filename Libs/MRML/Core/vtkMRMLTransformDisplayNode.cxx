@@ -75,6 +75,7 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->GlyphDiameterMm = 5.0;
   this->GlyphShaftDiameterPercent = 40;
   this->GlyphResolution = 6;
+  this->GlyphTipLengthPercent2D = 30;
 
   this->GridScalePercent = 100;
   this->GridSpacingMm = 15.0;
@@ -143,6 +144,7 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " GlyphDiameterMm=\"" << this->GlyphDiameterMm << "\"";
   of << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
   of << " GlyphResolution=\"" << this->GlyphResolution << "\"";
+  of << " GlyphTipLengthPercent2D=\"" << this->GlyphTipLengthPercent2D << "\"";
 
   of << " GridScalePercent=\"" << this->GridScalePercent << "\"";
   of << " GridSpacingMm=\"" << this->GridSpacingMm << "\"";
@@ -209,6 +211,7 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
   READ_FROM_ATT(GlyphDiameterMm);
   READ_FROM_ATT(GlyphShaftDiameterPercent);
   READ_FROM_ATT(GlyphResolution);
+  READ_FROM_ATT(GlyphTipLengthPercent2D);
   READ_FROM_ATT(GridScalePercent);
   READ_FROM_ATT(GridSpacingMm);
   READ_FROM_ATT(GridLineDiameterMm);
@@ -314,6 +317,7 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "GlyphDiameterMm = " << this->GlyphDiameterMm << "\n";
   os << indent << "GlyphShaftDiameterPercent = " << this->GlyphShaftDiameterPercent << "\n";
   os << indent << "GlyphResolution = " << this->GlyphResolution << "\n";
+  os << indent << "GlyphTipLengthPercent2D = " << this->GlyphTipLengthPercent2D << "\n";
 
   os << indent << "GridScalePercent = " << this->GridScalePercent << "\n";
   os << indent << "GridSpacingMm = " << this->GridSpacingMm << "\n";

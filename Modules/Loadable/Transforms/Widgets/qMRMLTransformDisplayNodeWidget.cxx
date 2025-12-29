@@ -182,6 +182,10 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GlyphShaftDiameterPercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphShaftDiameterPercent(double)));
   QObject::connect(this->GlyphResolution, SIGNAL(valueChanged(double)), q, SLOT(setGlyphResolution(double)));
 
+  // 2D Glyph Parameters
+  QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setSliceIntersectionThickness(int)));
+  QObject::connect(this->GlyphTipLengthPercent2D, SIGNAL(valueChanged(double)), q, SLOT(setGlyphTipLengthPercent2D(double)));
+
   // Grid Parameters
   QObject::connect(this->GridScalePercent, SIGNAL(valueChanged(double)), q, SLOT(setGridScalePercent(double)));
   QObject::connect(this->GridSpacingMm, SIGNAL(valueChanged(double)), q, SLOT(setGridSpacingMm(double)));
@@ -280,6 +284,9 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   d->GlyphTipLengthPercent->setValue(d->TransformDisplayNode->GetGlyphTipLengthPercent());
   d->GlyphShaftDiameterPercent->setValue(d->TransformDisplayNode->GetGlyphShaftDiameterPercent());
   d->GlyphResolution->setValue(d->TransformDisplayNode->GetGlyphResolution());
+
+  // 2D Glyph Parameters
+  d->SliceIntersectionThicknessSpinBox->setValue(d->TransformDisplayNode->GetSliceIntersectionThickness());
 
   // Grid Parameters
   d->GridScalePercent->setValue(d->TransformDisplayNode->GetGridScalePercent());
@@ -559,6 +566,7 @@ void qMRMLTransformDisplayNodeWidget::updateGlyphSourceOptions(int glyphType)
     d->GlyphShaftDiameterPercent->setVisible(true);
     d->GlyphTipLengthLabel->setVisible(true);
     d->GlyphTipLengthPercent->setVisible(true);
+    d->GlyphTipLengthPercent2D->setVisible(true);
   }
   else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE)
   {
@@ -568,6 +576,7 @@ void qMRMLTransformDisplayNodeWidget::updateGlyphSourceOptions(int glyphType)
     d->GlyphShaftDiameterPercent->setVisible(false);
     d->GlyphTipLengthLabel->setVisible(false);
     d->GlyphTipLengthPercent->setVisible(false);
+    d->GlyphTipLengthPercent2D->setVisible(false);
   }
   else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE)
   {
@@ -577,6 +586,7 @@ void qMRMLTransformDisplayNodeWidget::updateGlyphSourceOptions(int glyphType)
     d->GlyphShaftDiameterPercent->setVisible(false);
     d->GlyphTipLengthLabel->setVisible(false);
     d->GlyphTipLengthPercent->setVisible(false);
+    d->GlyphTipLengthPercent2D->setVisible(false);
   }
 }
 
@@ -589,6 +599,28 @@ void qMRMLTransformDisplayNodeWidget::regionNodeChanged(vtkMRMLNode* node)
     return;
   }
   d->TransformDisplayNode->SetAndObserveRegionNode(node);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetSliceIntersectionThickness(thickness);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setGlyphTipLengthPercent2D(double lengthPercent)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetGlyphTipLengthPercent2D(lengthPercent);
 }
 
 //-----------------------------------------------------------------------------

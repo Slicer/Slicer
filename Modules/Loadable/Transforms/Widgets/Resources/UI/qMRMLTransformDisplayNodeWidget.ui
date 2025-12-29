@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>499</width>
-    <height>969</height>
+    <height>1148</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -333,139 +333,6 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="1" column="0">
-             <widget class="QLabel" name="GlyphSpacingLabel">
-              <property name="toolTip">
-               <string>Distance between the glyph points</string>
-              </property>
-              <property name="text">
-               <string>Spacing:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label">
-              <property name="toolTip">
-               <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
-              </property>
-              <property name="text">
-               <string>Scale factor:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="toolTip">
-               <string>Glyphs are shown if the displacement magnitude is within this range</string>
-              </property>
-              <property name="text">
-               <string>Visible range:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" colspan="2">
-             <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Distance between the glyph points</string>
-              </property>
-              <property name="decimals">
-               <number>0</number>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="pageStep">
-               <double>25.000000000000000</double>
-              </property>
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>100.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="quantity">
-               <string notr="true">length</string>
-              </property>
-              <property name="unitAwareProperties">
-               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" colspan="2">
-             <widget class="qMRMLRangeWidget" name="GlyphDisplayRangeMm">
-              <property name="toolTip">
-               <string>Only those glyphs are shown that have displacement magnitude within this range</string>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>100.000000000000000</double>
-              </property>
-              <property name="maximumValue">
-               <double>100.000000000000000</double>
-              </property>
-              <property name="suffix">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Choose a glyph type to use</string>
-              </property>
-              <property name="text">
-               <string>Glyph type:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1" colspan="2">
-             <widget class="ctkComboBox" name="GlyphTypeComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Choose a glyph type to use</string>
-              </property>
-              <property name="defaultText">
-               <string/>
-              </property>
-              <item>
-               <property name="text">
-                <string>Arrow</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Cone</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Sphere</string>
-               </property>
-              </item>
-             </widget>
-            </item>
             <item row="2" column="1" colspan="2">
              <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
               <property name="sizePolicy">
@@ -497,8 +364,8 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0" colspan="3">
-             <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions">
+            <item row="6" column="0" colspan="3">
+             <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions3D">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -586,6 +453,9 @@
                  <property name="toolTip">
                   <string>Diameter of the arrow shaft relative to the base diameter</string>
                  </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
                  <property name="singleStep">
                   <double>1.000000000000000</double>
                  </property>
@@ -610,31 +480,6 @@
                  </property>
                  <property name="text">
                   <string>Tip length:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="ctkSliderWidget" name="GlyphTipLengthPercent">
-                 <property name="toolTip">
-                  <string>Length of the arrow tip  as percentage of displacement</string>
-                 </property>
-                 <property name="decimals">
-                  <number>0</number>
-                 </property>
-                 <property name="singleStep">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="pageStep">
-                  <double>10.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>100.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>30.000000000000000</double>
-                 </property>
-                 <property name="suffix">
-                  <string>%</string>
                  </property>
                 </widget>
                </item>
@@ -673,7 +518,114 @@
                  </property>
                 </widget>
                </item>
+               <item row="2" column="1">
+                <widget class="ctkSliderWidget" name="GlyphTipLengthPercent">
+                 <property name="toolTip">
+                  <string>Length of the arrow tip  as percentage of displacement</string>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>30.000000000000000</double>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="toolTip">
+               <string>Glyphs are shown if the displacement magnitude is within this range</string>
+              </property>
+              <property name="text">
+               <string>Visible range:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Distance between the glyph points</string>
+              </property>
+              <property name="decimals">
+               <number>0</number>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>25.000000000000000</double>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string notr="true">length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="2">
+             <widget class="qMRMLRangeWidget" name="GlyphDisplayRangeMm">
+              <property name="toolTip">
+               <string>Only those glyphs are shown that have displacement magnitude within this range</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="maximumValue">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="suffix">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Choose a glyph type to use</string>
+              </property>
+              <property name="text">
+               <string>Glyph type:</string>
+              </property>
              </widget>
             </item>
             <item row="0" column="0">
@@ -705,6 +657,157 @@
               <property name="noneDisplay">
                <string>Entire region</string>
               </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="GlyphSpacingLabel">
+              <property name="toolTip">
+               <string>Distance between the glyph points</string>
+              </property>
+              <property name="text">
+               <string>Spacing:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" colspan="2">
+             <widget class="ctkComboBox" name="GlyphTypeComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Choose a glyph type to use</string>
+              </property>
+              <property name="defaultText">
+               <string/>
+              </property>
+              <item>
+               <property name="text">
+                <string>Arrow</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Cone</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sphere</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label">
+              <property name="toolTip">
+               <string>Percentage of displacement usef for setting the glyph size. 100% means the glyph size equals the actual displacement.</string>
+              </property>
+              <property name="text">
+               <string>Scale factor:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="3">
+             <widget class="ctkCollapsibleGroupBox" name="GlyphSourceOptions2D">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>2D glyph settings</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="collapsed">
+               <bool>true</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_10">
+               <property name="leftMargin">
+                <number>4</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>4</number>
+               </property>
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <item row="1" column="1">
+                <widget class="ctkSliderWidget" name="GlyphTipLengthPercent2D">
+                 <property name="toolTip">
+                  <string>Length of the arrow tip  as percentage of displacement</string>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="pageStep">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>30.000000000000000</double>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="GlyphDiameterMmLabel_2">
+                 <property name="toolTip">
+                  <string>Adjust radius of base of arrow tip</string>
+                 </property>
+                 <property name="text">
+                  <string>Line width:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="GlyphTipLengthLabel_2">
+                 <property name="toolTip">
+                  <string>Adjust how much of the tip the arrow will consist of as a decimal percentage</string>
+                 </property>
+                 <property name="text">
+                  <string>Tip length:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
+                 <property name="suffix">
+                  <string> px</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>6</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
