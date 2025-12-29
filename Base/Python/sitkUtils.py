@@ -15,6 +15,8 @@ def _get_lps_to_ras_matrix():
 def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRMLScalarVolumeNode"):
     """Given a SimpleITK image, push it back to slicer for viewing
 
+    A deep copy of the image data is created during conversion.
+
     :param targetNode: Target node that will store the image. If None then a new node will be created.
     :param className: if a new target node is created then this parameter determines node class. For label volumes, set it to vtkMRMLLabelMapVolumeNode.
     :param name: if a new target node is created then this parameter will be used as basis of node name.
@@ -123,8 +125,10 @@ def vtk2sitk(vtkimg, origin=None, spacing=None, direction=None):
     return sitkimg
 
 
-def sitk2vtk(img):
+def sitk2vtk(img, deep=1):
     """Convert SimpleITK image to VTK image suitable for MRML volume nodes.
+
+    Input: Image (SimpleITK.Image), deep copy (integer bool, default True)
 
     Note: Returns vtkImageData with origin=(0,0,0), spacing=(1,1,1), and identity direction.
     Spatial information should be set on the MRML volume node via IJKToRASMatrix.
@@ -146,7 +150,7 @@ def sitk2vtk(img):
     vtk_image.SetOrigin(0.0, 0.0, 0.0)
 
     # Set pixel data
-    depth_array = vtknp.numpy_to_vtk(npdata.ravel())
+    depth_array = vtknp.numpy_to_vtk(npdata.ravel(), deep=deep)
     depth_array.SetNumberOfComponents(img.GetNumberOfComponentsPerPixel())
     vtk_image.GetPointData().SetScalars(depth_array)
 
