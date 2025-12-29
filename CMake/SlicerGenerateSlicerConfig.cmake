@@ -159,10 +159,6 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG PythonLibs PythonInterp)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG PythonLibs PythonInterp)
 endif()
-if(Slicer_USE_SimpleITK)
-  list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG SWIG)
-  list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG SWIG)
-endif()
 # Prevent VTK displaying the warning "The `VTK_USE_FILE` is no longer used starting with 8.90."
 list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG VTK)
 
