@@ -73,7 +73,6 @@
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerApplication.h"
-#include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
 const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
@@ -432,6 +431,36 @@ const QString qSlicerSubjectHierarchyMarkupsPlugin::roleForPlugin() const
   return "Markup";
 }
 
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyMarkupsPlugin::tooltip(vtkIdType itemID) const
+{
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return tr("Invalid");
+  }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return tr("Invalid");
+  }
+
+  // Get basic tooltip from abstract plugin
+  QString tooltipString = Superclass::tooltip(itemID);
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (!markupsNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item not associated to valid markups node";
+    return tooltipString;
+  }
+
+  // Add number of control points info
+  tooltipString.append(tr(" (Number of control points: %1)").arg(markupsNode->GetNumberOfControlPoints()));
+  return tooltipString;
+}
+
 //---------------------------------------------------------------------------
 QIcon qSlicerSubjectHierarchyMarkupsPlugin::icon(vtkIdType itemID)
 {
@@ -524,7 +553,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   }
 
   d->ViewContextMenuEventData = eventData;
-  d->ViewContextMenuEventData["NodeID"] = qSlicerUtils::safeQStringFromUtf8Ptr(associatedNode->GetID());
+  d->ViewContextMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
   int componentType = d->ViewContextMenuEventData["ComponentType"].toInt();
   bool pointActionsDisabled = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle || //
