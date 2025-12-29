@@ -75,6 +75,8 @@ public slots:
   void setGlyphDiameterMm(double diameterMm);
   void setGlyphShaftDiameterPercent(double diameterPercent);
   void setGlyphResolution(double resolution);
+  void setSliceIntersectionThickness(int thickness);
+  void setGlyphTipLengthPercent2D(double lengthPercent);
   void setGridScalePercent(double scale);
   void setGridSpacingMm(double spacing);
   void setGridLineDiameterMm(double diameterMm);

@@ -904,6 +904,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
   {
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW:
       glyph2DSource->SetGlyphTypeToArrow();
+      glyph2DSource->SetTipLength(displayNode->GetGlyphTipLengthPercent2D() / 100.0);
       glyphFilter->SetScaleModeToScaleByVector();
       // move the origin from the middle of the arrow to the base of the arrow
       rotateArrow->Translate(0.5, 0, 0);
