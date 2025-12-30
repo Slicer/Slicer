@@ -155,10 +155,6 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   this->InteractiveAdvancedOptionsSliceFrame->hide();
 
   // Visualization panel
-  // by default the glyph option is selected, so hide the parameter sets for the other options
-  this->GlyphOptions->show();
-  this->ContourOptions->hide();
-  this->GridOptions->hide();
 
   QObject::connect(this->VisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility(bool)));
   QObject::connect(this->Visible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility2d(bool)));
@@ -169,6 +165,9 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GlyphToggle, SIGNAL(toggled(bool)), q, SLOT(setGlyphVisualizationMode(bool)));
   QObject::connect(this->GridToggle, SIGNAL(toggled(bool)), q, SLOT(setGridVisualizationMode(bool)));
   QObject::connect(this->ContourToggle, SIGNAL(toggled(bool)), q, SLOT(setContourVisualizationMode(bool)));
+
+  // Common Parameters
+  QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setSliceIntersectionThickness(int)));
 
   // Glyph Parameters
   QObject::connect(this->GlyphPointsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(glyphPointsNodeChanged(vtkMRMLNode*)));
@@ -183,8 +182,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->GlyphResolution, SIGNAL(valueChanged(double)), q, SLOT(setGlyphResolution(double)));
 
   // 2D Glyph Parameters
-  QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setSliceIntersectionThickness(int)));
   QObject::connect(this->GlyphTipLengthPercent2D, SIGNAL(valueChanged(double)), q, SLOT(setGlyphTipLengthPercent2D(double)));
+  QObject::connect(this->GlyphResolution2D, SIGNAL(valueChanged(double)), q, SLOT(setGlyphResolution2D(double)));
 
   // Grid Parameters
   QObject::connect(this->GridScalePercent, SIGNAL(valueChanged(double)), q, SLOT(setGridScalePercent(double)));
@@ -261,43 +260,91 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   d->Visible2dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility2D());
   d->Visible3dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility3D());
 
-  switch (d->TransformDisplayNode->GetVisualizationMode())
-  {
-    case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH: d->GlyphToggle->setChecked(true); break;
-    case vtkMRMLTransformDisplayNode::VIS_MODE_GRID: d->GridToggle->setChecked(true); break;
-    case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR: d->ContourToggle->setChecked(true); break;
-  }
+  bool glyphMode = (d->TransformDisplayNode->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+  bool gridMode = (d->TransformDisplayNode->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
+  bool contourMode = (d->TransformDisplayNode->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR);
+
+  d->GlyphToggle->setChecked(glyphMode);
+  d->GridToggle->setChecked(gridMode);
+  d->ContourToggle->setChecked(contourMode);
 
   d->RegionNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetRegionNode());
 
   // Update Visualization Parameters
+
+  // Common Parameters
+  d->SliceIntersectionThicknessSpinBox->setValue(d->TransformDisplayNode->GetSliceIntersectionThickness());
+
   // Glyph Parameters
+
+  bool arrowGlyph = (d->TransformDisplayNode->GetGlyphType() == vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW);
+  bool coneGlyph = (d->TransformDisplayNode->GetGlyphType() == vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE);
+  bool sphereGlyph = (d->TransformDisplayNode->GetGlyphType() == vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE);
+
   d->GlyphPointsNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetGlyphPointsNode());
+  d->GlyphPointsNodeComboBox->setVisible(glyphMode);
+  d->GlyphPointsLabel->setVisible(glyphMode);
   d->GlyphSpacingMm->setValue(d->TransformDisplayNode->GetGlyphSpacingMm());
   d->GlyphSpacingMm->setEnabled(d->TransformDisplayNode->GetGlyphPointsNode() == nullptr);
+  d->GlyphSpacingMm->setVisible(glyphMode);
+  d->GlyphSpacingLabel->setVisible(glyphMode);
   d->GlyphScalePercent->setValue(d->TransformDisplayNode->GetGlyphScalePercent());
+  d->GlyphScalePercent->setVisible(glyphMode);
+  d->GlyphScaleLabel->setVisible(glyphMode);
   d->GlyphDisplayRangeMm->setMaximumValue(d->TransformDisplayNode->GetGlyphDisplayRangeMaxMm());
   d->GlyphDisplayRangeMm->setMinimumValue(d->TransformDisplayNode->GetGlyphDisplayRangeMinMm());
+  d->GlyphDisplayRangeMm->setVisible(glyphMode);
+  d->GlyphDisplayRangeLabel->setVisible(glyphMode);
   d->GlyphTypeComboBox->setCurrentIndex(d->TransformDisplayNode->GetGlyphType());
-  // 3D Glyph Parameters
-  d->GlyphDiameterMm->setValue(d->TransformDisplayNode->GetGlyphDiameterMm());
-  d->GlyphTipLengthPercent->setValue(d->TransformDisplayNode->GetGlyphTipLengthPercent());
-  d->GlyphShaftDiameterPercent->setValue(d->TransformDisplayNode->GetGlyphShaftDiameterPercent());
-  d->GlyphResolution->setValue(d->TransformDisplayNode->GetGlyphResolution());
+  d->GlyphTypeComboBox->setVisible(glyphMode);
+  d->GlyphTypeLabel->setVisible(glyphMode);
 
   // 2D Glyph Parameters
-  d->SliceIntersectionThicknessSpinBox->setValue(d->TransformDisplayNode->GetSliceIntersectionThickness());
+  d->GlyphSourceOptions2D->setVisible(glyphMode);
+  d->GlyphTipLengthPercent2D->setValue(d->TransformDisplayNode->GetGlyphTipLengthPercent2D());
+  d->GlyphTipLengthPercent2D->setVisible(arrowGlyph);
+  d->GlyphTipLengthLabel2D->setVisible(arrowGlyph);
+  d->GlyphResolution2D->setValue(d->TransformDisplayNode->GetGlyphResolution2D());
+  d->GlyphResolution2D->setVisible(sphereGlyph);
+  d->GlyphResolutionLabel2D->setVisible(sphereGlyph);
+
+  // 3D Glyph Parameters
+  d->GlyphSourceOptions3D->setVisible(glyphMode);
+  d->GlyphDiameterMm->setValue(d->TransformDisplayNode->GetGlyphDiameterMm());
+  d->GlyphDiameterMmLabel->setVisible(arrowGlyph || coneGlyph);
+  d->GlyphDiameterMm->setVisible(arrowGlyph || coneGlyph);
+  d->GlyphTipLengthPercent->setValue(d->TransformDisplayNode->GetGlyphTipLengthPercent());
+  d->GlyphTipLengthLabel->setVisible(arrowGlyph);
+  d->GlyphTipLengthPercent->setVisible(arrowGlyph);
+  d->GlyphShaftDiameterPercent->setValue(d->TransformDisplayNode->GetGlyphShaftDiameterPercent());
+  d->GlyphShaftDiameterLabel->setVisible(arrowGlyph);
+  d->GlyphShaftDiameterPercent->setVisible(arrowGlyph);
+  d->GlyphResolution->setValue(d->TransformDisplayNode->GetGlyphResolution());
 
   // Grid Parameters
   d->GridScalePercent->setValue(d->TransformDisplayNode->GetGridScalePercent());
+  d->GridScalePercent->setVisible(gridMode);
+  d->GridScaleLabel->setVisible(gridMode);
   d->GridSpacingMm->setValue(d->TransformDisplayNode->GetGridSpacingMm());
+  d->GridSpacingMm->setVisible(gridMode);
+  d->GridSpacingLabel->setVisible(gridMode);
   d->GridLineDiameterMm->setValue(d->TransformDisplayNode->GetGridLineDiameterMm());
+  d->GridLineDiameterMm->setVisible(gridMode);
+  d->GridLineDiameterLabel->setVisible(gridMode);
   d->GridResolutionMm->setValue(d->TransformDisplayNode->GetGridResolutionMm());
+  d->GridResolutionMm->setVisible(gridMode);
+  d->GridResolutionLabel->setVisible(gridMode);
   d->GridShowNonWarped->setChecked(d->TransformDisplayNode->GetGridShowNonWarped());
+  d->GridShowNonWarped->setVisible(gridMode);
+  d->GridShowNonWarpedLabel->setVisible(gridMode);
 
   // Contour Parameters
   d->ContourResolutionMm->setValue(d->TransformDisplayNode->GetContourResolutionMm());
+  d->ContourResolutionMm->setVisible(contourMode);
+  d->ContourResolutionLabel->setVisible(contourMode);
   d->ContourOpacityPercent->setValue(d->TransformDisplayNode->GetContourOpacity() * 100.0);
+  d->ContourOpacityPercent->setVisible(contourMode);
+  d->ContourOpacityLabel->setVisible(contourMode);
   // Only update the text in the editbox if it is changed (to not interfere with editing of the values)
   std::vector<double> levelsInWidget = vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(d->ContourLevelsMm->text().toUtf8());
   std::vector<double> levelsInMRML;
@@ -306,6 +353,8 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   {
     d->ContourLevelsMm->setText(QLatin1String(d->TransformDisplayNode->GetContourLevelsMmAsString().c_str()));
   }
+  d->ContourLevelsMm->setVisible(contourMode);
+  d->ContourLevelsLabel->setVisible(contourMode);
 
   // Update ColorMap
   vtkColorTransferFunction* colorTransferFunctionInNode = d->TransformDisplayNode->GetColorMap();
@@ -554,43 +603,6 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget::updateGlyphSourceOptions(int glyphType)
-{
-  Q_D(qMRMLTransformDisplayNodeWidget);
-
-  if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW)
-  {
-    d->GlyphDiameterMmLabel->setVisible(true);
-    d->GlyphDiameterMm->setVisible(true);
-    d->GlyphShaftDiameterLabel->setVisible(true);
-    d->GlyphShaftDiameterPercent->setVisible(true);
-    d->GlyphTipLengthLabel->setVisible(true);
-    d->GlyphTipLengthPercent->setVisible(true);
-    d->GlyphTipLengthPercent2D->setVisible(true);
-  }
-  else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE)
-  {
-    d->GlyphDiameterMmLabel->setVisible(true);
-    d->GlyphDiameterMm->setVisible(true);
-    d->GlyphShaftDiameterLabel->setVisible(false);
-    d->GlyphShaftDiameterPercent->setVisible(false);
-    d->GlyphTipLengthLabel->setVisible(false);
-    d->GlyphTipLengthPercent->setVisible(false);
-    d->GlyphTipLengthPercent2D->setVisible(false);
-  }
-  else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE)
-  {
-    d->GlyphDiameterMmLabel->setVisible(false);
-    d->GlyphDiameterMm->setVisible(false);
-    d->GlyphShaftDiameterLabel->setVisible(false);
-    d->GlyphShaftDiameterPercent->setVisible(false);
-    d->GlyphTipLengthLabel->setVisible(false);
-    d->GlyphTipLengthPercent->setVisible(false);
-    d->GlyphTipLengthPercent2D->setVisible(false);
-  }
-}
-
-//-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::regionNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -610,6 +622,17 @@ void qMRMLTransformDisplayNodeWidget::setSliceIntersectionThickness(int thicknes
     return;
   }
   d->TransformDisplayNode->SetSliceIntersectionThickness(thickness);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setGlyphResolution2D(double resolution)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetGlyphResolution2D(static_cast<int>(resolution));
 }
 
 //-----------------------------------------------------------------------------
@@ -679,7 +702,6 @@ void qMRMLTransformDisplayNodeWidget::setGlyphType(int glyphType)
     return;
   }
   d->TransformDisplayNode->SetGlyphType(glyphType);
-  this->updateGlyphSourceOptions(glyphType);
 }
 
 //-----------------------------------------------------------------------------
@@ -723,7 +745,7 @@ void qMRMLTransformDisplayNodeWidget::setGlyphResolution(double resolution)
   {
     return;
   }
-  d->TransformDisplayNode->SetGlyphResolution(resolution);
+  d->TransformDisplayNode->SetGlyphResolution(static_cast<int>(resolution));
 }
 
 //-----------------------------------------------------------------------------

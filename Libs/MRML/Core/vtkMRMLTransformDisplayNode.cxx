@@ -75,6 +75,7 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->GlyphDiameterMm = 5.0;
   this->GlyphShaftDiameterPercent = 40;
   this->GlyphResolution = 6;
+  this->GlyphResolution2D = 12;
   this->GlyphTipLengthPercent2D = 30;
 
   this->GridScalePercent = 100;
@@ -144,6 +145,7 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " GlyphDiameterMm=\"" << this->GlyphDiameterMm << "\"";
   of << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
   of << " GlyphResolution=\"" << this->GlyphResolution << "\"";
+  of << " GlyphResolution2D=\"" << this->GlyphResolution2D << "\"";
   of << " GlyphTipLengthPercent2D=\"" << this->GlyphTipLengthPercent2D << "\"";
 
   of << " GridScalePercent=\"" << this->GridScalePercent << "\"";
@@ -211,6 +213,7 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
   READ_FROM_ATT(GlyphDiameterMm);
   READ_FROM_ATT(GlyphShaftDiameterPercent);
   READ_FROM_ATT(GlyphResolution);
+  READ_FROM_ATT(GlyphResolution2D);
   READ_FROM_ATT(GlyphTipLengthPercent2D);
   READ_FROM_ATT(GridScalePercent);
   READ_FROM_ATT(GridSpacingMm);
@@ -271,6 +274,9 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy 
   vtkMRMLCopyFloatMacro(GlyphShaftDiameterPercent);
   vtkMRMLCopyIntMacro(GlyphResolution);
 
+  vtkMRMLCopyIntMacro(GlyphResolution2D);
+  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent2D);
+
   vtkMRMLCopyFloatMacro(GridScalePercent);
   vtkMRMLCopyFloatMacro(GridSpacingMm);
   vtkMRMLCopyFloatMacro(GridLineDiameterMm);
@@ -317,6 +323,7 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "GlyphDiameterMm = " << this->GlyphDiameterMm << "\n";
   os << indent << "GlyphShaftDiameterPercent = " << this->GlyphShaftDiameterPercent << "\n";
   os << indent << "GlyphResolution = " << this->GlyphResolution << "\n";
+  os << indent << "GlyphResolution2D = " << this->GlyphResolution2D << "\n";
   os << indent << "GlyphTipLengthPercent2D = " << this->GlyphTipLengthPercent2D << "\n";
 
   os << indent << "GridScalePercent = " << this->GridScalePercent << "\n";

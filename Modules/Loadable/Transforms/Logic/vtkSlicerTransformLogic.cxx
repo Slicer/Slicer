@@ -917,6 +917,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
       break;
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE:
       glyph2DSource->SetGlyphTypeToCircle();
+      glyph2DSource->SetResolution(displayNode->GetGlyphResolution2D());
       glyphFilter->SetScaleModeToScaleByScalar();
       break;
     default: glyph2DSource->SetGlyphTypeToNone();
