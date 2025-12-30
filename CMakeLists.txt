@@ -461,23 +461,6 @@ mark_as_superbuild(Slicer_VTK_VERSION_MINOR)
 
 set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.2")
 
-#
-# SimpleITK has large internal libraries, which take an extremely long
-# time to link on windows when they are static. Creating shared
-# SimpleITK internal libraries can reduce linking time. Also the size
-# of the debug libraries are monstrous. Using shared libraries for
-# debug, reduce disc requirements, and can improve linking
-# times. However, these shared libraries take longer to load than the
-# monolithic target from static libraries.
-#
-set( Slicer_USE_SimpleITK_SHARED_DEFAULT OFF)
-string(TOUPPER "${CMAKE_BUILD_TYPE}" _CMAKE_BUILD_TYPE)
-if(MSVC OR _CMAKE_BUILD_TYPE MATCHES "DEBUG")
-  set(Slicer_USE_SimpleITK_SHARED_DEFAULT ON)
-endif()
-CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK_SHARED "Build SimpleITK with shared libraries. Reduces linking time, increases run-time load time." ${Slicer_USE_SimpleITK_SHARED_DEFAULT} "Slicer_USE_SimpleITK" OFF )
-mark_as_superbuild(Slicer_USE_SimpleITK_SHARED)
-
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
