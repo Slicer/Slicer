@@ -10,9 +10,9 @@ Slicer can also run on virtual machines and docker containers. For example, [3D 
 
 ### Operating system versions
 
-- Windows: Windows 10 or 11, with all recommended updates installed. Windows 10 Version 1903 (May 2019 Update) version or later is required for support of international characters (UTF-8) in filenames and text. Microsoft does not support Windows 8.1 and Windows 7 anymore and Slicer is not tested on these legacy operating system versions, but may still work.
+- Windows: Windows 11 with all recommended updates installed. Microsoft does not support Windows 10 (or older versions) anymore and Slicer is not tested on these legacy operating system versions, but may still work.
 - macOS: macOS Sonoma (14) or later (both Intel and ARM based systems). Latest public release is recommended.
-- Linux: Ubuntu 20.04 or later<br>Debian 10 or later<br>Fedora 35 or later<br>CentOS 7 or later. Latest LTS (Long-term-support) version is recommended.
+- Linux: Ubuntu 22.04 or later<br>Debian 11 or later<br>Fedora 35 or later<br>AlmaLinux 8 or later. Latest LTS (Long-term-support) version is recommended.
 
 ### Recommended hardware configuration
 - Memory: more than 4GB (8 or more is recommended). As a general rule, have 10x more memory than the amount of data that you load.
@@ -90,7 +90,7 @@ brew uninstall slicer-preview       # to uninstall
 
     sudo apt-get install libglu1-mesa libpulse-mainloop-glib0 libnss3 libasound2t64 qt5dxcb-plugin
 
-#### Ubuntu 22.04 (Jammy Jellyfish), 20.04 (Focal Fossa), Debian 12 (bookworm), Debian 11 (bullseye), Debian 10 (buster)
+#### Ubuntu 22.04 (Jammy Jellyfish), Debian 12 (bookworm), Debian 11 (bullseye)
 
     sudo apt-get install libglu1-mesa libpulse-mainloop-glib0 libnss3 libasound2 qt5dxcb-plugin libsm6
 
