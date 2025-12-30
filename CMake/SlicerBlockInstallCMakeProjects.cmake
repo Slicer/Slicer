@@ -33,14 +33,6 @@ if(NOT "${ITK_DIR}" STREQUAL "" AND EXISTS "${ITK_DIR}/CMakeCache.txt")
 endif()
 
 # -------------------------------------------------------------------------
-# Install SimpleITK
-#
-#-------------------------------------------------------------------------
-if(NOT "${SimpleITK_DIR}" STREQUAL "" AND EXISTS "${SimpleITK_DIR}/CMakeCache.txt" AND ${Slicer_USE_SimpleITK_SHARED})
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SimpleITK_DIR};SimpleITK;Runtime;/")
-endif()
-
-# -------------------------------------------------------------------------
 # Install JsonCpp
 # -------------------------------------------------------------------------
 
