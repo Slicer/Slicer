@@ -137,6 +137,8 @@ public:
   vtkSetMacro(GlyphResolution, int);
   vtkGetMacro(GlyphResolution, int);
   // 2d parameters
+  vtkSetMacro(GlyphResolution2D, int);
+  vtkGetMacro(GlyphResolution2D, int);
   vtkSetMacro(GlyphTipLengthPercent2D, double);
   vtkGetMacro(GlyphTipLengthPercent2D, double);
 
@@ -270,6 +272,7 @@ protected:
   double GlyphShaftDiameterPercent;
   int GlyphResolution;
   // 2d parameters
+  int GlyphResolution2D;
   double GlyphTipLengthPercent2D;
 
   // Grid Parameters

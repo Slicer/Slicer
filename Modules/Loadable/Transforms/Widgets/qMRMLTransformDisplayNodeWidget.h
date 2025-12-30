@@ -64,7 +64,6 @@ public slots:
   void setGridVisualizationMode(bool);
   void setContourVisualizationMode(bool);
 
-  void updateGlyphSourceOptions(int sourceOption);
   void regionNodeChanged(vtkMRMLNode* node);
   void glyphPointsNodeChanged(vtkMRMLNode* node);
   void setGlyphSpacingMm(double spacing);
@@ -76,6 +75,7 @@ public slots:
   void setGlyphShaftDiameterPercent(double diameterPercent);
   void setGlyphResolution(double resolution);
   void setSliceIntersectionThickness(int thickness);
+  void setGlyphResolution2D(double resolution);
   void setGlyphTipLengthPercent2D(double lengthPercent);
   void setGridScalePercent(double scale);
   void setGridSpacingMm(double spacing);
