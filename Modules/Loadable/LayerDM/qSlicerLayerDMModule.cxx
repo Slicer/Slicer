@@ -19,6 +19,8 @@
 
 #include "vtkMRMLLayerDisplayableManager.h"
 
+#include <vtkSlicerLayerDMLogic.h>
+
 //-----------------------------------------------------------------------------
 qSlicerLayerDMModule::qSlicerLayerDMModule(QObject* _parent)
   : Superclass(_parent)
@@ -88,5 +90,5 @@ qSlicerAbstractModuleRepresentation* qSlicerLayerDMModule ::createWidgetRepresen
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerLayerDMModule::createLogic()
 {
-  return nullptr;
+  return vtkSlicerLayerDMLogic::New();
 }
