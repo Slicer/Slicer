@@ -39,6 +39,29 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
   get_filename_component(_dir ${_filepath} PATH)
   set(qt_root_dir "${_dir}/..")
 
+  # Qt designer plugin (needed on all platforms)
+  if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      # Qt5 provides a CMake module for DesignerComponents
+      find_package(Qt${CTK_QT_VERSION} REQUIRED COMPONENTS
+        Designer
+        DesignerComponents
+        )
+      list(APPEND QT_LIBRARIES
+        "Qt${CTK_QT_VERSION}::Designer"
+        "Qt${CTK_QT_VERSION}::DesignerComponents"
+        )
+    else()
+      # Qt6 doesn't provide a CMake module for DesignerComponents
+      find_package(Qt${CTK_QT_VERSION} REQUIRED COMPONENTS
+        Designer
+        )
+      list(APPEND QT_LIBRARIES
+        "Qt${CTK_QT_VERSION}::Designer"
+        )
+    endif()
+  endif()
+
   if(UNIX)
 
     find_package(Qt${CTK_QT_VERSION} REQUIRED COMPONENTS
@@ -69,26 +92,6 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
         STRIP
         )
     endforeach()
-
-    # Qt designer plugin
-    if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
-      find_package(Qt${CTK_QT_VERSION} REQUIRED COMPONENTS
-        Designer
-        )
-      list(APPEND QT_LIBRARIES
-        "Qt${CTK_QT_VERSION}::Designer"
-        )
-    endif()
-
-    # Qt designer
-    if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
-      # Needed by designer. It is explicitly installed because there is
-      # no corresponding CMake module.
-      slicerInstallLibrary(FILE ${qt_root_dir}/lib/libQt${CTK_QT_VERSION}DesignerComponents.so
-        DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
-        STRIP
-        )
-    endif()
 
     # WebEngine Dependencies
     if("Qt${CTK_QT_VERSION}::WebEngine" IN_LIST QT_LIBRARIES)
@@ -175,11 +178,13 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       set(_args "${_args} -${module_lc}")
     endforeach()
 
-    # Qt designer
+    # Qt designer components
     if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
-      # Needed by designer. It is explicitly specified because there is
-      # no corresponding CMake module.
-      set(_args "${_args} -designercomponents")
+      if(CTK_QT_VERSION VERSION_EQUAL "6")
+        set(_args "${_args} -designercomponentsInternal")
+      elseif(CTK_QT_VERSION VERSION_EQUAL "5")
+        set(_args "${_args} -designercomponents")
+      endif()
     endif()
 
     set(executable "${Slicer_MAIN_PROJECT_APPLICATION_NAME}App-real.exe")
