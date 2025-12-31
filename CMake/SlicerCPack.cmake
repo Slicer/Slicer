@@ -36,6 +36,11 @@ if(NOT Slicer_USE_SYSTEM_QT)
     printsupport
     sqldrivers
     )
+    if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+      list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+        tls
+        )
+    endif()
     if(Slicer_BUILD_WEBENGINE_SUPPORT)
       list(APPEND SlicerBlockInstallQtPlugins_subdirectories
         designer:webengineview
