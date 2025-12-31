@@ -8,6 +8,7 @@
 #include <qSlicerNodeWriter.h>
 
 #include <QMenuBar>
+#include <QSettings>
 
 // SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
@@ -26,6 +27,7 @@ public:
   qSlicerSceneViewsModulePrivate();
   virtual ~qSlicerSceneViewsModulePrivate();
   qMRMLCaptureToolBar* CaptureToolBar;
+  bool SceneViewsModuleOwnsToolBar{ true };
   void addToolBar();
 };
 
@@ -102,7 +104,29 @@ void qSlicerSceneViewsModulePrivate::addToolBar()
     this->CaptureToolBar->setPopupsTimeOut(true);
   }
 
-  mainWindow->addToolBar(d->CaptureToolBar);
+  mainWindow->addToolBar(Qt::TopToolBarArea, this->CaptureToolBar);
+  this->SceneViewsModuleOwnsToolBar = false;
+  for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
+  {
+    if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
+    {
+      toolBarMenu->addAction(this->CaptureToolBar->toggleViewAction());
+      break;
+    }
+  }
+
+  // Main window takes care of saving and restoring toolbar geometry and state.
+  // However, when state is restored the capture toolbar was not created yet.
+  // We need to restore the main window state again, now, that the Capture toolbar is available.
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore)
+  {
+    mainWindow->restoreState(settings.value("windowState").toByteArray());
+  }
+  settings.endGroup();
+
   // Capture tool bar needs to listen to the layout manager
   QObject::connect(qSlicerApplication::application()->layoutManager(),
                    SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
