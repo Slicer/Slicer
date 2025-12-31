@@ -80,11 +80,15 @@ vtkMRMLScene* qMRMLWidget::mrmlScene() const
 void qMRMLWidget::preInitializeApplication()
 {
 #ifdef _WIN32
-  // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
+# if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  // Qt5 windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
   // on windows. Unfortunately, this doesn't work well on multi-screens setups.
   // By calling SetProcessDPIAware(), we force the value to
   // PROCESS_SYSTEM_DPI_AWARE instead which fixes those issues.
+  // Note: Qt6 uses DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 which handles
+  // multi-monitor setups correctly, so this workaround is not needed.
   SetProcessDPIAware();
+# endif
 #endif
 
   QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
