@@ -672,6 +672,7 @@ endif()
   if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
     list(APPEND Slicer_REQUIRED_QT_MODULES
       Core5Compat
+      OpenGLWidgets
       StateMachine
       )
   endif()
