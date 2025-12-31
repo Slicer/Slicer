@@ -231,7 +231,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             optionButton.connect("clicked()", partial(self.onEditParameters, plugin.name))
             editWidget = qt.QWidget()
             editWidget.setLayout(qt.QHBoxLayout())
-            editWidget.layout().margin = 0
+            editWidget.layout().setContentsMargins(0, 0, 0, 0)
             editWidget.layout().addWidget(checkbox, 0)
             editWidget.layout().addStretch(1)
             editWidget.layout().addWidget(optionButton, 0)
