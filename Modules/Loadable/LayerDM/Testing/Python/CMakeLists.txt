@@ -2,11 +2,13 @@
 set(EXTENSION_TEST_PYTHON_SCRIPTS
   CameraSynchronizerTest.py
   DisplayableManagerTest.py
+  EventTranslationNodeTest.py
   InteractionLogicTest.py
   LayerManagerTest.py
+  LogicTest.py
+  ObjectEventObserverScriptedTest.py
   PipelineFactoryTest.py
   PipelineManagerTest.py
-  ObjectEventObserverScriptedTest.py
 )
 
 set(EXTENSION_TEST_PYTHON_RESOURCES
