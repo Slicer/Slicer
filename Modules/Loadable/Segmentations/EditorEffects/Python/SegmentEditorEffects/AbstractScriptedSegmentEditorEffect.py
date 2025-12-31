@@ -104,7 +104,7 @@ class AbstractScriptedSegmentEditorEffect:
         if not imageData:
             return
         import math
-        spinbox.unitAwareProperties &= ~(slicer.qMRMLSpinBox.MinimumValue | slicer.qMRMLSpinBox.MaximumValue | slicer.qMRMLSpinBox.Precision)
+        spinbox.unitAwareProperties = spinbox.unitAwareProperties & ~(slicer.qMRMLSpinBox.MinimumValue | slicer.qMRMLSpinBox.MaximumValue | slicer.qMRMLSpinBox.Precision)
         stepSize = 10 ** (math.floor(math.log10(min(imageData.GetSpacing()) / 10.0)))
         spinbox.minimum = stepSize
         spinbox.maximum = 10 ** (math.ceil(math.log10(max(imageData.GetSpacing()) * 100.0)))
