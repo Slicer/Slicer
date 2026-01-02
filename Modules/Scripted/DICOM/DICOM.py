@@ -674,7 +674,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # Browser settings
         #
 
-        self.ui.browserSettingsFrame.collapsed = True
+        self.ui.browserSettingsFrame.collapsed = False
 
         self.updateDatabaseDirectoryFromBrowser(self.browserWidget.dicomBrowser.databaseDirectory)
         # Synchronize database selection between browser and this widget
@@ -703,6 +703,35 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # If not receiving new file for 2 seconds then a database update is triggered.
         self.databaseRefreshRequestTimer.setInterval(2000)
         self.databaseRefreshRequestTimer.connect("timeout()", self.requestDatabaseRefresh)
+
+        #
+        # Previous database locations
+        #
+
+        self.ui.previousDatabaseLocationsFrame.collapsed = True
+
+        settings = qt.QSettings()
+        numberOfDirectoriesToKeep = settings.value("DICOM/NumberOfDirectoriesToKeep")
+        # If numberOfDirectoriesToKeep is set, then populate the combobox
+        if numberOfDirectoriesToKeep:
+            for i in range(int(numberOfDirectoriesToKeep)):
+                directory = settings.value(f"DICOM/LastDatabaseDirectory/{i}")
+                if directory:
+                    self.ui.previousDatabaseLocationsPathLineEdit.comboBox().addItem(directory)
+            # If there are no previous directories stored then add current one
+            if self.ui.previousDatabaseLocationsPathLineEdit.comboBox().count == 0:
+                self.ui.previousDatabaseLocationsPathLineEdit.comboBox().addItem(self.browserWidget.dicomBrowser.databaseDirectory)
+                settings.setValue(f"DICOM/LastDatabaseDirectory/0", self.browserWidget.dicomBrowser.databaseDirectory)
+        else:
+            # If numberOfDirectoriesToKeep is not set, then initialize with current database directory
+            settings.setValue("DICOM/NumberOfDirectoriesToKeep", 10)
+            settings.setValue(f"DICOM/LastDatabaseDirectory/0", self.browserWidget.dicomBrowser.databaseDirectory)
+
+            self.ui.previousDatabaseLocationsPathLineEdit.comboBox().addItem(self.browserWidget.dicomBrowser.databaseDirectory)
+
+        self.ui.previousDatabaseLocationsPathLineEdit.connect("currentPathChanged(QString)", self.onPreviousDatabaseLocationSelected)
+        # Add connection to change database location to a previous one
+        self.ui.changeDatabaseToPreviousLocationButton.connect("clicked()", self.onChangeDatabaseToPreviousLocation)
 
         #
         # DICOM Plugins selection widget
@@ -919,6 +948,68 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
     def updateDatabaseDirectoryFromWidget(self, databaseDirectory):
         self.browserWidget.setDatabaseDirectory(databaseDirectory)
+
+        settings = qt.QSettings()
+        maxEntries = int(settings.value("DICOM/NumberOfDirectoriesToKeep", 10))
+        settings.beginGroup("DICOM/LastDatabaseDirectory")
+
+        # Read existing entries
+        directoryList = []
+        for i in range(maxEntries):
+            dirPath = settings.value(str(i))
+            if dirPath:
+                directoryList.append(dirPath)
+
+        # Remove if already present
+        if databaseDirectory in directoryList:
+            directoryList.remove(databaseDirectory)
+
+        # Insert new directory at the top
+        directoryList.insert(0, databaseDirectory)
+
+        # Keep only maxEntries
+        directoryList = directoryList[:maxEntries]
+
+        # Write back to settings
+        for i, dirPath in enumerate(directoryList):
+            settings.setValue(str(i), dirPath)
+        # Remove any extra old entries
+        for i in range(len(directoryList), maxEntries):
+            settings.remove(str(i))
+
+        settings.endGroup()
+
+        self.updateComboboxLastDatabaseLocations()
+
+    def updateComboboxLastDatabaseLocations(self):
+        settings = qt.QSettings()
+        numberOfDirectoriesToKeep = settings.value("DICOM/NumberOfDirectoriesToKeep")
+        # If numberOfDirectoriesToKeep is set, then populate the combobox
+        if numberOfDirectoriesToKeep:
+            self.ui.previousDatabaseLocationsPathLineEdit.comboBox().clear()
+            for i in range(int(numberOfDirectoriesToKeep)):
+                directory = settings.value(f"DICOM/LastDatabaseDirectory/{i}")
+                if directory:
+                    self.ui.previousDatabaseLocationsPathLineEdit.comboBox().addItem(directory)
+        else:
+            # If numberOfDirectoriesToKeep is not set, then initialize with current database directory
+            settings.setValue("DICOM/NumberOfDirectoriesToKeep", 10)
+            settings.setValue(f"DICOM/LastDatabaseDirectory/0", self.browserWidget.dicomBrowser.databaseDirectory)
+
+            self.ui.previousDatabaseLocationsPathLineEdit.comboBox().addItem(self.browserWidget.dicomBrowser.databaseDirectory)
+
+    def onChangeDatabaseToPreviousLocation(self):
+        selectedDatabaseDirectory = self.ui.previousDatabaseLocationsPathLineEdit.currentPath
+        if selectedDatabaseDirectory:
+            self.updateDatabaseDirectoryFromWidget(selectedDatabaseDirectory)
+            self.ui.changeDatabaseToPreviousLocationButton.enabled = False
+
+    def onPreviousDatabaseLocationSelected(self):
+        selectedDatabaseDirectory = self.ui.previousDatabaseLocationsPathLineEdit.currentPath
+        if os.path.isdir(selectedDatabaseDirectory) and selectedDatabaseDirectory != self.browserWidget.dicomBrowser.databaseDirectory:
+            self.ui.changeDatabaseToPreviousLocationButton.enabled = True
+        else:
+            self.ui.changeDatabaseToPreviousLocationButton.enabled = False
 
     def updateDatabaseDirectoryFromBrowser(self, databaseDirectory):
         wasBlocked = self.ui.directoryButton.blockSignals(True)
