@@ -64,13 +64,13 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/DCMTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/DCMTK/DCMTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "f390821c469c0897c1b5437164c8826e080a2581" # patched-DCMTK-3.6.8_20241024
+    "ccfd10b84ff3c9a40b7b331698aedf06d421fc43" # DCMTK-3.7.0
     QUIET
     )
 
