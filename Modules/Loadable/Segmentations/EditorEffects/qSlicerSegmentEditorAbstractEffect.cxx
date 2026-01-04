@@ -413,7 +413,7 @@ void qSlicerSegmentEditorAbstractEffect::addActor2D(qMRMLWidget* viewWidget, vtk
   vtkRenderer* renderer = qSlicerSegmentEditorAbstractEffect::renderer(viewWidget);
   if (renderer)
   {
-    renderer->AddActor2D(actor);
+    renderer->AddViewProp(actor);
     this->scheduleRender(viewWidget);
   }
   else
@@ -443,7 +443,7 @@ void qSlicerSegmentEditorAbstractEffect::removeActor2D(qMRMLWidget* viewWidget, 
   vtkRenderer* renderer = qSlicerSegmentEditorAbstractEffect::renderer(viewWidget);
   if (renderer)
   {
-    renderer->RemoveActor2D(actor);
+    renderer->RemoveViewProp(actor);
     this->scheduleRender(viewWidget);
   }
   else
