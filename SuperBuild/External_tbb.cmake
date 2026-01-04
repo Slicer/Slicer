@@ -54,7 +54,7 @@ if((NOT DEFINED TBB_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v2021.5.0"
+    "v2022.3.0"
     QUIET
     )
 
