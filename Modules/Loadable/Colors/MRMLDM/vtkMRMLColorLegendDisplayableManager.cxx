@@ -148,7 +148,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::ShowActor(vtkSlicerScala
   bool wasVisible = wasInRenderer && actor->GetVisibility();
   if (show && !wasInRenderer)
   {
-    this->ColorLegendRenderer->AddActor2D(actor);
+    this->ColorLegendRenderer->AddViewProp(actor);
   }
   else if (!show && wasInRenderer)
   {

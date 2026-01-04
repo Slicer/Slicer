@@ -120,7 +120,7 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   actor->SetMapper(mapper);
   actor->GetProperty()->SetDisplayLocationToBackground();
   vtkRenderer* renderer = vtkRenderer::New();
-  renderer->AddActor2D(actor);
+  renderer->AddViewProp(actor);
   rw->AddRenderer(renderer);
 
   // clean up
