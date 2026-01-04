@@ -38,7 +38,7 @@ if((NOT DEFINED LibFFI_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "46b9adc9f8391c31d15028766e6c6a04b5d78092" # libffi-cmake-buildsystem-v3.5.2-2025-12-26-2263d60
+    "90704ad36f27b65b78573172127e7bea4ccd82bb" # libffi-cmake-buildsystem-v3.5.2-2025-12-26-2263d60
     QUIET
     )
 
