@@ -32,6 +32,7 @@
 class qSlicerSimpleMarkupsWidgetPrivate;
 class vtkMRMLInteractionNode;
 class QTableWidget;
+class QTableWidgetItem;
 class qSlicerMarkupsPlaceWidget;
 class qMRMLNodeComboBox;
 
@@ -45,6 +46,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerSimpleMarkupsWidget : public
   Q_PROPERTY(QColor nodeColor READ nodeColor WRITE setNodeColor)
   Q_PROPERTY(QColor defaultNodeColor READ defaultNodeColor WRITE setDefaultNodeColor)
   Q_PROPERTY(int viewGroup READ viewGroup WRITE setViewGroup)
+  Q_PROPERTY(bool positionStatusColumnVisible READ positionStatusColumnVisible WRITE setPositionStatusColumnVisible)
 
 public:
   typedef qSlicerWidget Superclass;
@@ -96,6 +98,9 @@ public:
   /// Get view group where slice positions will be updated.
   int viewGroup() const;
 
+  /// Show/hide position status column in the table.
+  bool positionStatusColumnVisible() const;
+
 public slots:
 
   void setMRMLScene(vtkMRMLScene* scene) override;
@@ -128,6 +133,9 @@ public slots:
   /// Set the default color that is assigned to newly created markups nodes in the combo box.
   void setDefaultNodeColor(QColor color);
 
+  /// Show/hide position status column in the table.
+  void setPositionStatusColumnVisible(bool);
+
   /// Scrolls to and selects the Nth control point in the table of control points.
   void highlightNthControlPoint(int n);
 
@@ -154,6 +162,9 @@ protected slots:
 
   /// Clicked on a control point or used keyboard to move between control points in the table.
   void onMarkupsControlPointSelected(int row, int column);
+
+  /// Clicked on a control point cell (used for toggling position state).
+  void onMarkupsControlPointClicked(QTableWidgetItem* item);
 
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
