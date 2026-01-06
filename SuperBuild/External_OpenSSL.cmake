@@ -53,25 +53,12 @@ if(NOT DEFINED OPENSSL_LIBRARIES
 
   #------------------------------------------------------------------------------
   if(UNIX)
-    # Starting with Qt 5.12.4, official Qt binaries are build against OpenSSL 1.1.1
+    # Starting with Qt 5.12.4, official Qt binaries are built against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
-    if("${_qt_version}" VERSION_GREATER_EQUAL "5.12.4")
-      set(_default_version "1.1.1w")
-    else()
-      set(_default_version "1.0.2n")
-    endif()
+    set(_default_version "1.1.1w")
 
     set(OPENSSL_DOWNLOAD_VERSION "${_default_version}" CACHE STRING "Version of OpenSSL source package to download")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1e" "1.0.1l" "1.0.2n" "1.1.1g" "1.1.1w")
-
-    set(OpenSSL_1.0.1e_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.1e.tar.gz)
-    set(OpenSSL_1.0.1e_MD5 66bf6f10f060d561929de96f9dfe5b8c)
-
-    set(OpenSSL_1.0.1l_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.1l.tar.gz)
-    set(OpenSSL_1.0.1l_MD5 cdb22925fc9bc97ccbf1e007661f2aa6)
-
-    set(OpenSSL_1.0.2n_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.0.2n.tar.gz)
-    set(OpenSSL_1.0.2n_MD5 13bdc1b1d1ff39b6fd42a255e74676a4)
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g" "1.1.1w")
 
     # Workaround linking error when building against non-system zlib on macOS
     # See https://github.com/openssl/openssl/pull/12238
@@ -202,15 +189,11 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
   #------------------------------------------------------------------------------
   elseif(WIN32)
 
-    # Starting with Qt 5.12.4, official Qt binaries are build against OpenSSL 1.1.1
+    # Starting with Qt 5.12.4, official Qt binaries are built against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
-    if("${_qt_version}" VERSION_GREATER_EQUAL "5.12.4")
-      set(_default_version "1.1.1g")
-    else()
-      set(_default_version "1.0.1h")
-    endif()
+    set(_default_version "1.1.1g")
     set(OPENSSL_DOWNLOAD_VERSION "${_default_version}" CACHE STRING "Version of OpenSSL pre-compiled package to download.")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1h" "1.0.1l" "1.1.1g")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g")
 
     # Starting with Qt 4.8.6, we compiled [1] OpenSSL binaries specifically for each
     # version of Microsoft Visual Studio. To understand the motivation, read below.
@@ -245,68 +228,8 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
      The options to specify are OPENSSL_INCLUDE_DIR, LIB_EAY_DEBUG, LIB_EAY_RELEASE,
      SSL_EAY_DEBUG and SSL_EAY_RELEASE.")
 
-    #--------------------
-    if(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
-
-      # OpenSSL 1.0.1h
-      # VS2008
-      set(OpenSSL_1.0.1h_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
-      set(OpenSSL_1.0.1h_1500_MD5 8b110bb48063223c3b9f3a99f1fa9067)
-      # VS2010
-      set(OpenSSL_1.0.1h_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
-      set(OpenSSL_1.0.1h_1600_MD5 e80269ae7969276977a342cccc1df5c5)
-      # VS2013
-      set(OpenSSL_1.0.1h_1800_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1800-32.tar.gz)
-      set(OpenSSL_1.0.1h_1800_MD5 f10ceb422ab37f2b0bd5e225c74fd1d4)
-      # VS2015, VS2017, VS2019, VS2022 and VS2026
-      if(${MSVC_VERSION} VERSION_GREATER_EQUAL 1900)
-        set(OpenSSL_1.0.1h_${MSVC_VERSION}_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
-        set(OpenSSL_1.0.1h_${MSVC_VERSION}_MD5 e0e26ae6ac5693d266c804e738d7aa14)
-      endif()
-
-      # OpenSSL 1.0.1l
-      # VS2008
-      set(OpenSSL_1.0.1l_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
-      set(OpenSSL_1.0.1l_1500_MD5 85218e0ea7bd15457f66cc04170560d5)
-      # VS2010
-      set(OpenSSL_1.0.1l_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
-      set(OpenSSL_1.0.1l_1600_MD5 3f756fc731fb95f919ea24f2ec979732)
-
-    #--------------------
-    elseif(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
-
-      # OpenSSL 1.1.1g
-      # VS2015, VS2017, VS2019, VS2022 and VS2026
-      if(${MSVC_VERSION} VERSION_GREATER_EQUAL 1900)
-        set(OpenSSL_1.1.1g_${MSVC_VERSION}_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.1.1g/OpenSSL_1_1_1g-install-msvc1900-64.tar.gz)
-        set(OpenSSL_1.1.1g_${MSVC_VERSION}_MD5 f89ea6a4fcfb279af30cbe01c1d7f879)
-      endif()
-
-      # OpenSSL 1.0.1h
-      # VS2008
-      set(OpenSSL_1.0.1h_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
-      set(OpenSSL_1.0.1h_1500_MD5 dab0c026ab56fd0fbfe2843d14218fad)
-      # VS2010
-      set(OpenSSL_1.0.1h_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
-      set(OpenSSL_1.0.1h_1600_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
-      # VS2013
-      set(OpenSSL_1.0.1h_1800_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1800-64.tar.gz)
-      set(OpenSSL_1.0.1h_1800_MD5 7aefdd94babefbe603cca48ff86da768)
-      # VS2015, VS2017, VS2019, VS2022 and VS2026
-      if(${MSVC_VERSION} VERSION_GREATER_EQUAL 1900)
-        set(OpenSSL_1.0.1h_${MSVC_VERSION}_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
-        set(OpenSSL_1.0.1h_${MSVC_VERSION}_MD5 f93d266def384926015550452573e824)
-      endif()
-
-      # OpenSSL 1.0.1l
-      # VS2008
-      set(OpenSSL_1.0.1l_1500_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
-      set(OpenSSL_1.0.1l_1500_MD5 ce819931504f8e7c5d9024215b2cc9cf)
-      # VS2010
-      set(OpenSSL_1.0.1l_1600_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1l/OpenSSL_1_0_1l-install-msvc1600-64.tar.gz)
-      set(OpenSSL_1.0.1l_1600_MD5 07d259e1a467d9c7a7d9cddfd77e8915)
-
-    endif()
+    set(OpenSSL_1.1.1g_${MSVC_VERSION}_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.1.1g/OpenSSL_1_1_1g-install-msvc1900-64.tar.gz)
+    set(OpenSSL_1.1.1g_${MSVC_VERSION}_MD5 f89ea6a4fcfb279af30cbe01c1d7f879)
 
     if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_URL)
       message(FATAL_ERROR ${_error_msg})
