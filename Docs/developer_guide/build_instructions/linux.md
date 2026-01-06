@@ -109,17 +109,6 @@ sudo apt update && sudo apt install git build-essential \
   qtbase5-dev qt5-qmake
 ```
 
-### Ubuntu 21.10 (Impish Indri)
-
-Install the development tools and the support libraries:
-
-```console
-sudo apt update && sudo apt install git build-essential \
-  cmake cmake-curses-gui cmake-qt-gui \
-  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  libxt-dev libssl-dev
-```
-
 ### ArchLinux
 
 :::{warning}
@@ -127,26 +116,6 @@ ArchLinux uses a rolling-release package distribution approach. This means that 
 :::
 
 You could build Slicer using the `PKGBUILD` from AUR: [3dslicer](https://aur.archlinux.org/packages/3dslicer) and [3dslicer-git](https://aur.archlinux.org/packages/3dslicer-git).
-
-### CentOS 7
-:::{note}
-Slicer built on CentOS 7 will be available for many Linux distributions and releases
-:::
-
-Install Qt and CMake as described in [Any Distribution](./linux.md#any-distribution) section.
-
-Since by default CentOS 7 comes with `gcc 4.8.5` only having [experimental support for C++14](https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/C-Dialect-Options.html#C-Dialect-Options), the following allows to install and activate the `devtoolset-11` [providing](https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/11/html/11.0_release_notes/dts11.0_release#Changes_in_DTS) `gcc 11.2.1` [supporting C++20](https://en.cppreference.com/w/cpp/compiler_support/20):
-
-```console
-sudo yum install centos-release-scl
-sudo yum install devtoolset-11-gcc*
-scl enable devtoolset-11 bash         # activation is needed for every terminal session
-```
-
-Install pre-requisites:
-```console
-sudo yum install patch mesa-libGL-devel libuuid-devel
-```
 
 ### Any Distribution
 
