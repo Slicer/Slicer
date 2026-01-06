@@ -46,7 +46,8 @@ int CONTROL_POINT_LABEL_COLUMN = 0;
 int CONTROL_POINT_X_COLUMN = 1;
 int CONTROL_POINT_Y_COLUMN = 2;
 int CONTROL_POINT_Z_COLUMN = 3;
-int CONTROL_POINT_COLUMNS = 4;
+int CONTROL_POINT_STATE_COLUMN = 4;
+int CONTROL_POINT_COLUMNS = 5;
 
 //-----------------------------------------------------------------------------
 class qSlicerSimpleMarkupsWidgetPrivate : public Ui_qSlicerSimpleMarkupsWidget
@@ -61,13 +62,23 @@ public:
   ~qSlicerSimpleMarkupsWidgetPrivate();
   virtual void setupUi(qSlicerSimpleMarkupsWidget*);
 
+  void setupTableHeader();
+  void updateStateItem(QTableWidgetItem* stateItem, int positionStatus);
+
 public:
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   bool EnterPlaceModeOnNodeChange;
   bool JumpToSliceEnabled;
+  bool PositionStatusColumnVisible;
   int ViewGroup;
 
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
+
+  // Cached pixmaps for position status icons
+  QPixmap MarkupsDefinedIcon;
+  QPixmap MarkupsInProgressIcon;
+  QPixmap MarkupsMissingIcon;
+  QPixmap MarkupsUndefinedIcon;
 };
 
 // --------------------------------------------------------------------------
@@ -75,7 +86,12 @@ qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate(qSlicerSimp
   : q_ptr(&object)
   , EnterPlaceModeOnNodeChange(true)
   , JumpToSliceEnabled(false)
+  , PositionStatusColumnVisible(false)
   , ViewGroup(-1)
+  , MarkupsDefinedIcon(":/Icons/XSmall/MarkupsDefined.png")
+  , MarkupsInProgressIcon(":/Icons/XSmall/MarkupsInProgress.png")
+  , MarkupsMissingIcon(":/Icons/XSmall/MarkupsMissing.png")
+  , MarkupsUndefinedIcon(":/Icons/XSmall/MarkupsUndefined.png")
 {
 }
 
@@ -86,6 +102,50 @@ qSlicerSimpleMarkupsWidgetPrivate::~qSlicerSimpleMarkupsWidgetPrivate() = defaul
 void qSlicerSimpleMarkupsWidgetPrivate::setupUi(qSlicerSimpleMarkupsWidget* widget)
 {
   this->Ui_qSlicerSimpleMarkupsWidget::setupUi(widget);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidgetPrivate::setupTableHeader()
+{
+  Q_Q(qSlicerSimpleMarkupsWidget);
+
+  this->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList() << q->tr("Label") << q->tr("R") //: right
+                                                                                 << q->tr("A")                   //: anterior
+                                                                                 << q->tr("S")                   //: superior
+                                                                                 << q->tr("")                    //: position status (icon only)
+  );
+  this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_LABEL_COLUMN, QHeaderView::Stretch);
+  this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_X_COLUMN, QHeaderView::ResizeToContents);
+  this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_Y_COLUMN, QHeaderView::ResizeToContents);
+  this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_Z_COLUMN, QHeaderView::ResizeToContents);
+  this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_STATE_COLUMN, QHeaderView::ResizeToContents);
+
+  // Set the position status column header icon
+  QTableWidgetItem* positionHeader = this->MarkupsControlPointsTableWidget->horizontalHeaderItem(CONTROL_POINT_STATE_COLUMN);
+  positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
+  positionHeader->setToolTip(q->tr("Click to cycle through position states:\n"
+                                   "Defined -> Undefined (by clearing position) -> Preview (by entering into place mode) "
+                                   "-> Missing (by marking as skip from placement) -> Defined (by restoring last position)"));
+
+  // Hide position status column by default
+  this->MarkupsControlPointsTableWidget->setColumnHidden(CONTROL_POINT_STATE_COLUMN, !this->PositionStatusColumnVisible);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidgetPrivate::updateStateItem(QTableWidgetItem* stateItem, int positionStatus)
+{
+  stateItem->setData(Qt::UserRole, positionStatus);
+  switch (positionStatus)
+  {
+    case vtkMRMLMarkupsNode::PositionDefined: stateItem->setData(Qt::DecorationRole, this->MarkupsDefinedIcon); break;
+    case vtkMRMLMarkupsNode::PositionPreview: stateItem->setData(Qt::DecorationRole, this->MarkupsInProgressIcon); break;
+    case vtkMRMLMarkupsNode::PositionMissing: stateItem->setData(Qt::DecorationRole, this->MarkupsMissingIcon); break;
+    case vtkMRMLMarkupsNode::PositionUndefined: stateItem->setData(Qt::DecorationRole, this->MarkupsUndefinedIcon); break;
+    default:
+      qWarning() << Q_FUNC_INFO << ": Unknown position status:" << positionStatus;
+      stateItem->setData(Qt::DecorationRole, QVariant());
+      break;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -123,15 +183,7 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect(d->MarkupsPlaceWidget, SIGNAL(activeMarkupsPlaceModeChanged(bool)), this, SIGNAL(activeMarkupsPlaceModeChanged(bool)));
 
   d->MarkupsControlPointsTableWidget->setColumnCount(CONTROL_POINT_COLUMNS);
-  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()             //
-                                                                << tr("Label") << tr("R") //: right
-                                                                << tr("A")                //: anterior
-                                                                << tr("S")                //: superior
-  );
-  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+  d->setupTableHeader();
 
   // Reduce row height to minimum necessary
   d->MarkupsControlPointsTableWidget->setWordWrap(true);
@@ -144,6 +196,8 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect(d->MarkupsControlPointsTableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(onMarkupsControlPointEdited(int, int)));
   // listen for click on a markup
   connect(d->MarkupsControlPointsTableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onMarkupsControlPointSelected(int, int)));
+  // Add handler for cell clicks to toggle position state
+  connect(d->MarkupsControlPointsTableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onMarkupsControlPointClicked(QTableWidgetItem*)));
   // listen for the current cell selection change (happens when arrows are used to navigate)
   connect(d->MarkupsControlPointsTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(onMarkupsControlPointSelected(int, int)));
 }
@@ -319,6 +373,25 @@ int qSlicerSimpleMarkupsWidget::viewGroup() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
   return d->ViewGroup;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSimpleMarkupsWidget::positionStatusColumnVisible() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->PositionStatusColumnVisible;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setPositionStatusColumnVisible(bool visible)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  if (d->PositionStatusColumnVisible == visible)
+  {
+    return;
+  }
+  d->PositionStatusColumnVisible = visible;
+  d->MarkupsControlPointsTableWidget->setColumnHidden(CONTROL_POINT_STATE_COLUMN, !visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -549,6 +622,45 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::onMarkupsControlPointClicked(QTableWidgetItem* item)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  if (!item || item->column() != CONTROL_POINT_STATE_COLUMN)
+  {
+    return;
+  }
+
+  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->currentNode());
+  if (!currentMarkupsNode)
+  {
+    return;
+  }
+
+  int row = item->row();
+
+  // Cycle through position states: Defined -> Undefined -> Preview -> Missing -> Defined
+  int currentStatus = item->data(Qt::UserRole).toInt();
+
+  if (currentStatus == vtkMRMLMarkupsNode::PositionDefined)
+  {
+    currentMarkupsNode->UnsetNthControlPointPosition(row);
+  }
+  else if (currentStatus == vtkMRMLMarkupsNode::PositionUndefined)
+  {
+    currentMarkupsNode->ResetNthControlPointPosition(row);
+    d->MarkupsPlaceWidget->setPlaceModeEnabled(true);
+  }
+  else if (currentStatus == vtkMRMLMarkupsNode::PositionPreview)
+  {
+    currentMarkupsNode->SetNthControlPointPositionMissing(row);
+  }
+  else if (currentStatus == vtkMRMLMarkupsNode::PositionMissing)
+  {
+    currentMarkupsNode->RestoreNthControlPointPosition(row);
+  }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::updateWidget()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
@@ -584,9 +696,31 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel(i);
       currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
       d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_LABEL_COLUMN)->setText(QString::fromStdString(controlPointLabel));
-      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_X_COLUMN)->setText(QString::number(controlPointPosition[0], 'f', 3));
-      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Y_COLUMN)->setText(QString::number(controlPointPosition[1], 'f', 3));
-      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Z_COLUMN)->setText(QString::number(controlPointPosition[2], 'f', 3));
+
+      // Update position status
+      int positionStatus = currentMarkupsNode->GetNthControlPointPositionStatus(i);
+
+      // Show position values only if it is defined or under preview
+      bool showCoordinates = (positionStatus == vtkMRMLMarkupsNode::PositionDefined || //
+                              positionStatus == vtkMRMLMarkupsNode::PositionPreview);
+      if (showCoordinates)
+      {
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_X_COLUMN)->setText(QString::number(controlPointPosition[0], 'f', 3));
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Y_COLUMN)->setText(QString::number(controlPointPosition[1], 'f', 3));
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Z_COLUMN)->setText(QString::number(controlPointPosition[2], 'f', 3));
+      }
+      else
+      {
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_X_COLUMN)->setText(QString());
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Y_COLUMN)->setText(QString());
+        d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Z_COLUMN)->setText(QString());
+      }
+
+      QTableWidgetItem* stateItem = d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_STATE_COLUMN);
+      if (stateItem)
+      {
+        d->updateStateItem(stateItem, positionStatus);
+      }
     }
   }
   else
@@ -594,15 +728,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount(currentMarkupsNode->GetNumberOfControlPoints());
     d->MarkupsControlPointsTableWidget->setColumnCount(CONTROL_POINT_COLUMNS);
-    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()             //
-                                                                  << tr("Label") << tr("R") //: right
-                                                                  << tr("A")                //: anterior
-                                                                  << tr("S")                //: superior
-    );
-    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    d->setupTableHeader();
 
     double controlPointPosition[3] = { 0, 0, 0 };
     std::string controlPointLabel;
@@ -612,14 +738,38 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
       currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
 
       QTableWidgetItem* labelItem = new QTableWidgetItem(QString::fromStdString(controlPointLabel));
-      QTableWidgetItem* xItem = new QTableWidgetItem(QString::number(controlPointPosition[0], 'f', 3));
-      QTableWidgetItem* yItem = new QTableWidgetItem(QString::number(controlPointPosition[1], 'f', 3));
-      QTableWidgetItem* zItem = new QTableWidgetItem(QString::number(controlPointPosition[2], 'f', 3));
+
+      // Get position status to determine if we should show position values
+      int positionStatus = currentMarkupsNode->GetNthControlPointPositionStatus(i);
+
+      // Create position items - hide values if status is Missing or Undefined
+      QTableWidgetItem* xItem;
+      QTableWidgetItem* yItem;
+      QTableWidgetItem* zItem;
+
+      if (positionStatus == vtkMRMLMarkupsNode::PositionMissing || positionStatus == vtkMRMLMarkupsNode::PositionUndefined)
+      {
+        xItem = new QTableWidgetItem(QString());
+        yItem = new QTableWidgetItem(QString());
+        zItem = new QTableWidgetItem(QString());
+      }
+      else
+      {
+        xItem = new QTableWidgetItem(QString::number(controlPointPosition[0], 'f', 3));
+        yItem = new QTableWidgetItem(QString::number(controlPointPosition[1], 'f', 3));
+        zItem = new QTableWidgetItem(QString::number(controlPointPosition[2], 'f', 3));
+      }
 
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_LABEL_COLUMN, labelItem);
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_X_COLUMN, xItem);
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_Y_COLUMN, yItem);
       d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_Z_COLUMN, zItem);
+
+      // Add position status column
+      QTableWidgetItem* stateItem = new QTableWidgetItem();
+      stateItem->setFlags(stateItem->flags() & ~Qt::ItemIsEditable);
+      d->updateStateItem(stateItem, positionStatus);
+      d->MarkupsControlPointsTableWidget->setItem(i, CONTROL_POINT_STATE_COLUMN, stateItem);
     }
   }
 
