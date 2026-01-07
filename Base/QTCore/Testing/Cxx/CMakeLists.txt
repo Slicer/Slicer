@@ -89,11 +89,9 @@ if(BUILD_TESTING)
     )
 
   set(KIT_TEST_TARGET_LIBRARIES ${KIT})
-    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt${CTK_QT_VERSION}::Test)
-
-  list(APPEND Tests
-    ${resources_dir}/${KIT}Testing.qrc
-    )
+  list(APPEND Tests ${KIT_TEST_GENERATE_MOC_SRCS})
+  list(APPEND Tests ${resources_dir}/${KIT}Testing.qrc)
+  list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
 
   if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_TEST_TARGET_LIBRARIES
