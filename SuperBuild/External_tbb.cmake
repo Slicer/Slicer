@@ -72,6 +72,7 @@ if((NOT DEFINED TBB_DIR
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       # Install directories
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       # Options
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DTBB_TEST:BOOL=OFF
@@ -90,7 +91,7 @@ if((NOT DEFINED TBB_DIR
     set(tbb_bindir lib)
   endif()
 
-  set(TBB_DIR ${EP_INSTALL_DIR}/lib/cmake/TBB)
+  set(TBB_DIR ${EP_INSTALL_DIR}/${tbb_libdir}/cmake/TBB)
   set(TBB_BIN_DIR ${EP_INSTALL_DIR}/${tbb_bindir})
   set(TBB_LIB_DIR ${EP_INSTALL_DIR}/${tbb_libdir})
 
