@@ -525,7 +525,10 @@ bool vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsDisplayNodeFromJsonValue(vtkMRM
   {
     displayNode->SetPointLabelsVisibility(displayItem->GetBoolProperty("pointLabelsVisibility"));
   }
-
+  if (displayItem->HasMember("pointLabelsDistanceScale"))
+  {
+    displayNode->SetPointLabelsDistanceScale(displayItem->GetDoubleProperty("pointLabelsDistanceScale"));
+  }
   if (displayItem->HasMember("textScale"))
   {
     displayNode->SetTextScale(displayItem->GetDoubleProperty("textScale"));
@@ -1103,6 +1106,9 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* wr
 
   writer->WriteBoolProperty("propertiesLabelVisibility", markupsDisplayNode->GetPropertiesLabelVisibility());
   writer->WriteBoolProperty("pointLabelsVisibility", markupsDisplayNode->GetPointLabelsVisibility());
+
+  writer->WriteDoubleProperty("pointLabelsDistanceScale", markupsDisplayNode->GetPointLabelsDistanceScale());
+
   writer->WriteDoubleProperty("textScale", markupsDisplayNode->GetTextScale());
   writer->WriteStringProperty("glyphType", markupsDisplayNode->GetGlyphTypeAsString(markupsDisplayNode->GetGlyphType()));
   writer->WriteDoubleProperty("glyphScale", markupsDisplayNode->GetGlyphScale());

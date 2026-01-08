@@ -105,6 +105,7 @@ protected slots:
   void onCurveLineDiameterSliderWidgetChanged(double value);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
+  void onPointLabelsDistanceScaleSliderWidgetChanged(double value);
   void onSnapModeWidgetChanged();
   void onTextPropertyWidgetsChanged();
 
