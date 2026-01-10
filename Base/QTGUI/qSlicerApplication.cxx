@@ -34,8 +34,9 @@
 #include <QVBoxLayout>
 
 #if defined(Q_OS_WIN32)
-# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
 #  include <qpa/qplatformwindow_p.h>
+# elif (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #  include <QWindow>
 # else
 #  include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
@@ -922,10 +923,31 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel /*=QStr
 void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 {
 #if defined(Q_OS_WIN32)
-# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+# if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
   if (auto win = mainWindow()->windowHandle()->nativeInterface<QNativeInterface::Private::QWindowsWindow>())
   {
-    win->setHasBorderInFullScreen(true);
+    win->setHasBorderInFullScreen(hasBorder);
+  }
+# elif (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  // In Qt 6.0-6.8, setHasBorderInFullScreen is not accessible through public API
+  // Use Windows API directly to manipulate window styles
+  if (QWindow* window = this->mainWindow()->windowHandle())
+  {
+    HWND hwnd = reinterpret_cast<HWND>(window->winId());
+    if (hwnd)
+    {
+      LONG_PTR style = GetWindowLongPtr(hwnd, GWL_STYLE);
+      if (hasBorder)
+      {
+        style |= (WS_CAPTION | WS_THICKFRAME);
+      }
+      else
+      {
+        style &= ~(WS_CAPTION | WS_THICKFRAME);
+      }
+      SetWindowLongPtr(hwnd, GWL_STYLE, style);
+      SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+    }
   }
 # else
   QWindowsWindowFunctions::setHasBorderInFullScreen(this->mainWindow()->windowHandle(), hasBorder);
