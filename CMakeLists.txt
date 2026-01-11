@@ -689,6 +689,8 @@ endif()
       ${_webengine_qt_component}
       WebEngineWidgets
       WebChannel
+      Quick
+      QuickWidgets
       )
   endif()
   # Both "extension manager" and "application update" require qRestApi external
