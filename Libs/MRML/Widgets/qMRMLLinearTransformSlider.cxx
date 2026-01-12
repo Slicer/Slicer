@@ -69,6 +69,7 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
 {
   Q_D(qMRMLLinearTransformSlider);
   d->TypeOfTransform = _typeOfTransform;
+  emit TypeOfTransformChanged(d->TypeOfTransform);
   if (this->isRotation())
   {
     this->setUnitAwareProperties(qMRMLLinearTransformSlider::None);
@@ -109,6 +110,7 @@ void qMRMLLinearTransformSlider::setCoordinateReference(CoordinateReferenceType 
 {
   Q_D(qMRMLLinearTransformSlider);
   d->CoordinateReference = _coordinateReference;
+  emit CoordinateReferenceChanged(d->CoordinateReference);
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
 

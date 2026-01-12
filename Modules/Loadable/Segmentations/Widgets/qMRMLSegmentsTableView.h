@@ -53,22 +53,23 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsTableView : publ
   QVTK_OBJECT
 
 public:
-  Q_PROPERTY(int selectionMode READ selectionMode WRITE setSelectionMode)
-  Q_PROPERTY(bool headerVisible READ headerVisible WRITE setHeaderVisible)
-  Q_PROPERTY(bool visibilityColumnVisible READ visibilityColumnVisible WRITE setVisibilityColumnVisible)
-  Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
-  Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible)
-  Q_PROPERTY(bool statusColumnVisible READ statusColumnVisible WRITE setStatusColumnVisible)
-  Q_PROPERTY(bool layerColumnVisible READ layerColumnVisible WRITE setLayerColumnVisible)
-  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
-  Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
-  Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
-  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
+  Q_PROPERTY(int selectionMode READ selectionMode WRITE setSelectionMode NOTIFY selectionModeChanged);
+  Q_PROPERTY(bool headerVisible READ headerVisible WRITE setHeaderVisible NOTIFY headerVisibleChanged);
+  Q_PROPERTY(bool visibilityColumnVisible READ visibilityColumnVisible WRITE setVisibilityColumnVisible NOTIFY visibilityColumnVisibleChanged);
+  Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible NOTIFY colorColumnVisibleChanged);
+  Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible NOTIFY opacityColumnVisibleChanged);
+  Q_PROPERTY(bool statusColumnVisible READ statusColumnVisible WRITE setStatusColumnVisible NOTIFY statusColumnVisibleChanged);
+  Q_PROPERTY(bool layerColumnVisible READ layerColumnVisible WRITE setLayerColumnVisible NOTIFY layerColumnVisibleChanged);
+  Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged);
+  Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible NOTIFY filterBarVisibleChanged);
+  Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter NOTIFY textFilterChanged);
+  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled NOTIFY jumpToSelectedSegmentEnabledChanged);
   Q_PROPERTY(int segmentCount READ segmentCount)
-  Q_PROPERTY(QString useTerminologySelectorSettingsKey READ useTerminologySelectorSettingsKey WRITE setUseTerminologySelectorSettingsKey)
-  Q_PROPERTY(bool useTerminologySelector READ useTerminologySelector WRITE setUseTerminologySelector)
-  Q_PROPERTY(bool terminologySelectorOptionVisible READ terminologySelectorOptionVisible WRITE setTerminologySelectorOptionVisible)
-  Q_PROPERTY(bool terminologySelectorAutoDisable READ terminologySelectorAutoDisable WRITE setTerminologySelectorAutoDisable)
+  Q_PROPERTY(
+    QString useTerminologySelectorSettingsKey READ useTerminologySelectorSettingsKey WRITE setUseTerminologySelectorSettingsKey NOTIFY useTerminologySelectorSettingsKeyChanged)
+  Q_PROPERTY(bool useTerminologySelector READ useTerminologySelector WRITE setUseTerminologySelector NOTIFY useTerminologySelectorChanged);
+  Q_PROPERTY(bool terminologySelectorOptionVisible READ terminologySelectorOptionVisible WRITE setTerminologySelectorOptionVisible NOTIFY terminologySelectorOptionVisibleChanged)
+  Q_PROPERTY(bool terminologySelectorAutoDisable READ terminologySelectorAutoDisable WRITE setTerminologySelectorAutoDisable NOTIFY terminologySelectorAutoDisableChanged);
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -216,6 +217,22 @@ signals:
   /// Emitted when a segment property (e.g., name) is about to be changed.
   /// Can be used for capturing the current state of the segment, before it is modified.
   void segmentAboutToBeModified(const QString& segmentID);
+Q_SIGNALS:
+  void selectionModeChanged(int);
+  void headerVisibleChanged(bool);
+  void visibilityColumnVisibleChanged(bool);
+  void colorColumnVisibleChanged(bool);
+  void opacityColumnVisibleChanged(bool);
+  void statusColumnVisibleChanged(bool);
+  void layerColumnVisibleChanged(bool);
+  void readOnlyChanged(bool);
+  void filterBarVisibleChanged(bool);
+  void textFilterChanged(QString);
+  void jumpToSelectedSegmentEnabledChanged(bool);
+  void useTerminologySelectorChanged(bool);
+  void terminologySelectorAutoDisableChanged(bool);
+  void useTerminologySelectorSettingsKeyChanged(QString);
+  void terminologySelectorOptionVisibleChanged(bool);
 
 protected slots:
   /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.

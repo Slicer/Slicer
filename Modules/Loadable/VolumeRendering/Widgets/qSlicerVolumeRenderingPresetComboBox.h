@@ -35,7 +35,9 @@ class qSlicerVolumeRenderingPresetComboBoxPrivate;
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPresetComboBox : public qSlicerWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons)
+  Q_PROPERTY(bool showIcons READ showIcons WRITE setShowIcons NOTIFY showIconsChanged);
+Q_SIGNALS:
+  void showIconsChanged(bool);
 
 public:
   /// Constructors

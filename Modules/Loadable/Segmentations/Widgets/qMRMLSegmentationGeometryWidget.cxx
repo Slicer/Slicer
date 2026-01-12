@@ -238,6 +238,7 @@ void qMRMLSegmentationGeometryWidget::setEditEnabled(bool aEditEnabled)
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   d->EditEnabled = aEditEnabled;
+  emit editEnabledChanged(aEditEnabled);
   this->updateWidgetFromMRML();
 }
 
@@ -295,7 +296,7 @@ void qMRMLSegmentationGeometryWidget::onOversamplingFactorChanged(double oversam
   Q_D(qMRMLSegmentationGeometryWidget);
 
   d->Logic->SetOversamplingFactor(oversamplingFactor);
-
+  emit oversamplingFactorChanged(oversamplingFactor);
   // Calculate output geometry and update UI
   this->updateWidgetFromMRML();
 }
@@ -306,7 +307,7 @@ void qMRMLSegmentationGeometryWidget::onIsotropicSpacingChanged(bool isotropicSp
   Q_D(qMRMLSegmentationGeometryWidget);
 
   d->Logic->SetIsotropicSpacing(isotropicSpacing);
-
+  emit isotropicSpacingChanged(isotropicSpacing);
   // Calculate output geometry and update UI
   this->updateWidgetFromMRML();
 }
@@ -369,6 +370,7 @@ void qMRMLSegmentationGeometryWidget::setPadSegmentation(bool aPadSegmentation)
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   d->CheckBox_PadSegmentation->setChecked(aPadSegmentation);
+  emit padSegmentationChanged(aPadSegmentation);
 }
 
 //-----------------------------------------------------------------------------

@@ -49,19 +49,26 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsModel : public Q
   QVTK_OBJECT
 
   /// Control in which column the segment name is displayed
-  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn)
+  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn NOTIFY nameColumnChanged);
   /// Control in which column the segment visibility is displayed (Qt::DecorationRole).
   /// A value of -1 (default) hides the column
-  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn NOTIFY visibilityColumnChanged);
   /// Control in which column the segment color is displayed (qMRMLSegmentsModel::VisibilityRole).
   /// A value of -1 (default) hides the column
-  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
+  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn NOTIFY colorColumnChanged);
   /// Control in which column the segment opacity is displayed (Qt::EditRole).
-  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn)
+  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn NOTIFY opacityColumnChanged);
   /// Control in which column the segment status is displayed (qMRMLSegmentsModel::StatusRole).
-  Q_PROPERTY(int statusColumn READ statusColumn WRITE setStatusColumn)
+  Q_PROPERTY(int statusColumn READ statusColumn WRITE setStatusColumn NOTIFY statusColumnChanged);
   /// Control in which column the segment layer is displayed (qMRMLSegmentsModel::LayerRole).
-  Q_PROPERTY(int layerColumn READ layerColumn WRITE setLayerColumn)
+  Q_PROPERTY(int layerColumn READ layerColumn WRITE setLayerColumn NOTIFY layerColumnChanged);
+Q_SIGNALS:
+  void nameColumnChanged(int);
+  void visibilityColumnChanged(int);
+  void colorColumnChanged(int);
+  void opacityColumnChanged(int);
+  void statusColumnChanged(int);
+  void layerColumnChanged(int);
 
 public:
   enum SegmentTableItemDataRole

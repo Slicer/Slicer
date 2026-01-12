@@ -338,6 +338,7 @@ void qMRMLSegmentationFileExportWidget::setSettingsKey(const QString& key)
 {
   Q_D(qMRMLSegmentationFileExportWidget);
   d->SettingsKey = key;
+  emit settingsKeyChanged(key);
   this->updateWidgetFromSettings();
 }
 

@@ -35,7 +35,9 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
   /// The Expanded property is on vtkMRMLDisplayableHierarchyNode.
   /// \todo Move the Expanded property to vtkMRMLHierarchyNode.
   /// \sa nameColumn, idColumn, checkableColumn, visibilityColumn...
-  Q_PROPERTY(int expandColumn READ expandColumn WRITE setExpandColumn)
+  Q_PROPERTY(int expandColumn READ expandColumn WRITE setExpandColumn NOTIFY expandColumnChanged);
+Q_SIGNALS:
+  void expandColumnChanged(int);
 
 public:
   typedef qMRMLSceneModel Superclass;

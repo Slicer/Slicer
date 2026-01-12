@@ -75,15 +75,16 @@ struct UpdateDownloadInformation
   qint64 DownloadProgress{ 0 };
 };
 
+} // end of anonymous namespace
+
 // --------------------------------------------------------------------------
 class QStandardItemModelWithRole : public QStandardItemModel
 {
+  Q_OBJECT
 public:
   QHash<int, QByteArray> roleNames() const override { return this->CustomRoleNames; }
   QHash<int, QByteArray> CustomRoleNames;
 };
-
-} // end of anonymous namespace
 
 // --------------------------------------------------------------------------
 // qSlicerExtensionsManagerModelPrivate methods
@@ -3376,3 +3377,5 @@ bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec /*
     }
   }
 }
+
+#include "qSlicerExtensionsManagerModel.moc"

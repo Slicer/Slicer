@@ -56,6 +56,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyColorLegendPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyColorLegendPlugin);
 
 protected:
@@ -420,3 +421,5 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice(bool show,
 
   return true;
 }
+
+#include "qSlicerSubjectHierarchyColorLegendPlugin.moc"

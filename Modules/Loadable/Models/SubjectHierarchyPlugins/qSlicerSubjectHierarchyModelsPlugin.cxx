@@ -55,6 +55,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyModelsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyModelsPlugin);
 
 protected:
@@ -238,3 +239,5 @@ QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QM
 {
   return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetaData, false);
 }
+
+#include "qSlicerSubjectHierarchyModelsPlugin.moc"

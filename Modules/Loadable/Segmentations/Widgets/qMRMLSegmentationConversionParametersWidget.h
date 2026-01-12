@@ -46,7 +46,9 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationConversionPa
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(QString targetRepresentationName READ targetRepresentationName WRITE setTargetRepresentationName)
+  Q_PROPERTY(QString targetRepresentationName READ targetRepresentationName WRITE setTargetRepresentationName NOTIFY targetRepresentationNameChanged);
+Q_SIGNALS:
+  void targetRepresentationNameChanged(QString);
 
 public:
   /// Constructor

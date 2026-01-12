@@ -40,6 +40,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyTextsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTextsPlugin);
 
 protected:
@@ -177,3 +178,5 @@ QIcon qSlicerSubjectHierarchyTextsPlugin::icon(vtkIdType itemID)
   // Item unknown by plugin
   return QIcon();
 }
+
+#include "qSlicerSubjectHierarchyTextsPlugin.moc"
