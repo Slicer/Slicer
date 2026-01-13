@@ -28,7 +28,7 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/xz-mirror/xz.git"
+    "${EP_GIT_PROTOCOL}://github.com/tukaani-project/xz.git"
     QUIET
     )
 
