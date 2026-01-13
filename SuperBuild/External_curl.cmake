@@ -52,13 +52,13 @@ if((NOT DEFINED CURL_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/curl.git"
+    "${EP_GIT_PROTOCOL}://github.com/curl/curl.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "d73e360a78d97adda85364e6bd5c504a2eb1572a" # slicer-7.70.0-2020-04-29-53cdc2c
+    "curl-8_17_0"
     QUIET
     )
 
@@ -89,7 +89,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
       -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_CURL_EXE:BOOL=OFF
-      -DBUILD_SHARED_LIBS:BOOL=OFF  # Before enabling this option, see https://github.com/Slicer/curl/commit/ca5fe8e63df7faea0bfb988ef3fe58f538e6950b
+      -DBUILD_SHARED_LIBS:BOOL=OFF  # Before enabling this option, review CURL_STATICLIB in CFLAGS where cURL is used
       -DENABLE_ARES:BOOL=OFF
       -DCURL_ZLIB:BOOL=ON
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
@@ -101,10 +101,11 @@ if((NOT DEFINED CURL_INCLUDE_DIR
       -DCURL_DISABLE_DICT:BOOL=ON
       -DCURL_DISABLE_FILE:BOOL=ON
       -DCURL_DISABLE_TFTP:BOOL=ON
-      -DHAVE_LIBIDN2:BOOL=FALSE
-      -DCMAKE_USE_LIBSSH:BOOL=OFF
-      -DCMAKE_USE_LIBSSH2:BOOL=OFF
-      -DCMAKE_USE_OPENSSL:BOOL=${CURL_ENABLE_SSL}
+      -DHAVE_LIBIDN2:BOOL=OFF
+      -DCURL_USE_LIBPSL:BOOL=OFF
+      -DCURL_USE_LIBSSH:BOOL=OFF
+      -DCURL_USE_LIBSSH2:BOOL=OFF
+      -DCURL_USE_OPENSSL:BOOL=${CURL_ENABLE_SSL}
     ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
     DEPENDS
       ${${proj}_DEPENDENCIES}

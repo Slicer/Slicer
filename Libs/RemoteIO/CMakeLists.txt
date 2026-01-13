@@ -92,10 +92,22 @@ set(srcs ${RemoteIO_SRCS})
 
 add_library(${lib_name} ${srcs})
 
+# Define CURL_STATICLIB when linking against static curl on Windows
+if(WIN32)
+  target_compile_definitions(${lib_name} PRIVATE CURL_STATICLIB)
+endif()
+
 set(libs
   ${CURL_LIBRARIES}
   MRMLCore
   )
+if(WIN32)
+  list(APPEND libs
+    # For curl
+    iphlpapi  # for if_nametoindex
+    ws2_32  # for Windows sockets
+    )
+endif()
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND libs
     ${OPENSSL_LIBRARIES}
