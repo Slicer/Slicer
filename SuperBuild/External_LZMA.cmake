@@ -34,7 +34,7 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v5.2.5"
+    "v5.8.2"
     QUIET
     )
 
@@ -73,7 +73,7 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.lib)
   else()
     set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
   endif()
