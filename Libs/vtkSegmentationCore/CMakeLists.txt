@@ -113,10 +113,7 @@ include_directories( ${vtkSegmentationCore_INCLUDE_DIRS} )
 add_library(${PROJECT_NAME} ${vtkSegmentationCore_SRCS})
 target_link_libraries( ${PROJECT_NAME} ${vtkSegmentationCore_LIBS} )
 
-if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" AND NOT WIN32)
-  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")
-endif()
-
+set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${PROJECT_NAME} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
