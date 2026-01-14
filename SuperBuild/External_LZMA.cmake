@@ -43,11 +43,6 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
   set(EP_INSTALL_LIBDIR "lib")
 
-  set(${proj}_CMAKE_C_FLAGS ${ep_common_c_flags})
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
-    set(${proj}_CMAKE_C_FLAGS "${ep_common_c_flags} -fPIC")
-  endif()
-
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
@@ -59,7 +54,8 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${${proj}_CMAKE_C_FLAGS}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
       -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
