@@ -614,7 +614,7 @@ class _ui_DICOMSettingsPanel:
         thumbnailsSizeComboBox.addItem(_("Medium"), "medium")
         thumbnailsSizeComboBox.addItem(_("Large"), "large")
         thumbnailsSizeComboBox.currentIndex = 1
-        genericGroupBoxFormLayout.addRow(_("Thumbnails size:"), thumbnailsSizeComboBox)
+        genericGroupBoxFormLayout.addRow(_("Thumbnail size:"), thumbnailsSizeComboBox)
         parent.registerProperty(
             "DICOM/thumbnailsSize", thumbnailsSizeComboBox,
             "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
