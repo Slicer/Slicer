@@ -28,7 +28,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "3.30.1"
+    "3.51.2"
     QUIET
     )
 
@@ -54,12 +54,16 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       -DCMAKE_INSTALL_LIBDIR:PATH=${EP_INSTALL_LIBDIR}
+      -DBUILD_SHELL:BOOL=OFF
+      -DENABLE_DYNAMIC_EXTENSIONS:BOOL=OFF
+      -DENABLE_SHARED:BOOL=OFF
+      -DENABLE_STATIC:BOOL=ON
       -DSQLITE_BUILD_DOC:BOOL=OFF
       -DSQLITE_BUILD_EXAMPLES:BOOL=OFF
       -DSQLITE_BUILD_TESTS:BOOL=OFF
        # recommended options would define SQLITE_OMIT_DEPRECATED and SQLITE_OMIT_DECLTYPE,
        # which would cause build errors in Python, so go with default options instead
-      -DBUILD_RECOMMENDED_OPTS:BOOL=OFF
+      -DRECOMMENDED_OPTIONS:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -68,9 +72,9 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(${proj}_DIR ${EP_BINARY_DIR})
-  set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include/sqlite3)
+  set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/sqlite3.lib)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/sqlite3_s.lib)
   else()
     set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/libsqlite3.a)
   endif()
