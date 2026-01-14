@@ -22,7 +22,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/azadkuh/sqlite-amalgamation.git"
+    "${EP_GIT_PROTOCOL}://github.com/rhuijben/sqlite-amalgamation.git"
     QUIET
     )
 
