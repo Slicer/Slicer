@@ -20,7 +20,7 @@ class SlicerPythonSqlite3Tests(unittest.TestCase):
         print("database_filename=" + database_filename)
 
         self.connection = sqlite3.connect(database_filename)
-        print(sqlite3.version)
+        print(f"SQLite Library Version: {sqlite3.sqlite_version}")
         self.assertIsNotNone(self.connection)
         self.assertTrue(os.path.exists(database_filename))
 
