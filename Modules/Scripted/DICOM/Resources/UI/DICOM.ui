@@ -24,51 +24,7 @@
     <number>3</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="ctkMenuButton" name="importButton">
-       <property name="toolTip">
-        <string>Import files into DICOM database</string>
-       </property>
-       <property name="text">
-        <string>    Import DICOM files</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-         <normaloff>:/Icons/Medium/SlicerImportDICOM.png</normaloff>:/Icons/Medium/SlicerImportDICOM.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>32</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkMenuButton" name="showBrowserButton">
-       <property name="toolTip">
-        <string>Import files into DICOM database</string>
-       </property>
-       <property name="text">
-        <string>    Show DICOM database</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-         <normaloff>:/Icons/Medium/SlicerDatabase.png</normaloff>:/Icons/Medium/SlicerDatabase.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="buttonContainer" native="true"/>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -81,7 +37,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>6</height>
+       <height>3</height>
       </size>
      </property>
     </spacer>

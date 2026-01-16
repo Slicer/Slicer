@@ -149,6 +149,7 @@ QPalette qSlicerStyle::standardLightPalette() const
   palette.setColor(QPalette::ToolTipBase, "#ffffdc");
   palette.setColor(QPalette::ToolTipText, Qt::black);
   palette.setColor(QPalette::Text, Qt::black);
+  palette.setColor(QPalette::PlaceholderText, Qt::darkGray);
   palette.setColor(QPalette::Disabled, QPalette::Text, "#bebebe");
   palette.setColor(QPalette::Button, "#fcfcfc");
   palette.setColor(QPalette::ButtonText, Qt::black);
@@ -185,6 +186,7 @@ QPalette qSlicerStyle::standardDarkPalette() const
   palette.setColor(QPalette::ToolTipBase, Qt::white);
   palette.setColor(QPalette::ToolTipText, "#323232");
   palette.setColor(QPalette::Text, Qt::white);
+  palette.setColor(QPalette::PlaceholderText, Qt::lightGray);
   palette.setColor(QPalette::Disabled, QPalette::Text, "#6d6d6d");
   palette.setColor(QPalette::Button, "#323232");
   palette.setColor(QPalette::ButtonText, Qt::white);
