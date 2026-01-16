@@ -784,6 +784,70 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
+        # Setup ctkFlowLayout for buttons
+        flowLayout = ctk.ctkFlowLayout()
+        flowLayout.orientation = qt.Qt.Horizontal
+        flowLayout.preferredExpandingDirections = qt.Qt.Vertical
+        flowLayout.horizontalSpacing = 6
+        flowLayout.verticalSpacing = 6
+        flowLayout.alignItems = True  # Align items to same size based on largest item
+        self.ui.buttonContainer.setLayout(flowLayout)
+
+        # Set size policy for button container to not expand vertically
+        containerSizePolicy = qt.QSizePolicy(qt.QSizePolicy.Preferred, qt.QSizePolicy.Fixed)
+        self.ui.buttonContainer.setSizePolicy(containerSizePolicy)
+
+        # Size policy for equal width buttons
+        buttonSizePolicy = qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+        minButtonWidth = 270
+
+        # Create Import button
+        self.ui.importButton = ctk.ctkMenuButton(self.ui.buttonContainer)
+        self.ui.importButton.objectName = "importButton"
+        self.ui.importButton.toolTip = _("Import files into DICOM database")
+        self.ui.importButton.text = _("Import DICOM files")
+        self.ui.importButton.icon = qt.QIcon(":/Icons/Medium/SlicerImportDICOM.png")
+        self.ui.importButton.iconSize = qt.QSize(64, 32)
+        self.ui.importButton.setSizePolicy(buttonSizePolicy)
+        self.ui.importButton.minimumWidth = minButtonWidth
+        flowLayout.addWidget(self.ui.importButton)
+
+        # Create Show Browser button
+        self.ui.showBrowserButton = qt.QPushButton(self.ui.buttonContainer)
+        self.ui.showBrowserButton.objectName = "showBrowserButton"
+        self.ui.showBrowserButton.toolTip = _("Show DICOM database")
+        self.ui.showBrowserButton.text = _("Show DICOM database")
+        self.ui.showBrowserButton.icon = qt.QIcon(":/Icons/Medium/SlicerDatabase.png")
+        self.ui.showBrowserButton.iconSize = qt.QSize(64, 32)
+        self.ui.showBrowserButton.checkable = True
+        self.ui.showBrowserButton.setSizePolicy(buttonSizePolicy)
+        self.ui.showBrowserButton.minimumWidth = minButtonWidth
+        flowLayout.addWidget(self.ui.showBrowserButton)
+
+        # Create Show Visual Browser button
+        self.ui.showVisualBrowserButton = qt.QPushButton(self.ui.buttonContainer)
+        self.ui.showVisualBrowserButton.objectName = "showVisualBrowserButton"
+        self.ui.showVisualBrowserButton.toolTip = _("If enabled, the DICOM browser widget will be substituted with the visual browser.")
+        self.ui.showVisualBrowserButton.text = _("Show visual DICOM browser")
+        self.ui.showVisualBrowserButton.icon = qt.QIcon(":/Icons/Medium/SlicerVisualDICOMBrowser.svg")
+        self.ui.showVisualBrowserButton.iconSize = qt.QSize(64, 32)
+        self.ui.showVisualBrowserButton.checkable = True
+        self.ui.showVisualBrowserButton.setSizePolicy(buttonSizePolicy)
+        self.ui.showVisualBrowserButton.minimumWidth = minButtonWidth
+        flowLayout.addWidget(self.ui.showVisualBrowserButton)
+
+        # Create Dock to Right button
+        self.ui.dockToRightPushButton = qt.QPushButton(self.ui.buttonContainer)
+        self.ui.dockToRightPushButton.objectName = "dockToRightPushButton"
+        self.ui.dockToRightPushButton.toolTip = _("Show the dicom database in vertical mode allowing to use the Slicer views.")
+        self.ui.dockToRightPushButton.text = _("Show in side panel")
+        self.ui.dockToRightPushButton.icon = qt.QIcon(":/Icons/Medium/SlicerDockToRight.svg")
+        self.ui.dockToRightPushButton.iconSize = qt.QSize(64, 32)
+        self.ui.dockToRightPushButton.checkable = True
+        self.ui.dockToRightPushButton.setSizePolicy(buttonSizePolicy)
+        self.ui.dockToRightPushButton.minimumWidth = minButtonWidth
+        flowLayout.addWidget(self.ui.dockToRightPushButton)
+
         # Add SlicerDICOMBrowser
         self.browserWidget = DICOMLib.SlicerDICOMBrowser()
         self.browserWidget.objectName = "SlicerDICOMBrowser"
@@ -1022,6 +1086,13 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
             self.closeBrowser()
 
     def closeBrowser(self):
+        # Check if DICOMInstance still exists (may not exist during shutdown/restart)
+        if not hasattr(slicer.modules, "DICOMInstance"):
+            # Fallback: just close the browser widget if it exists
+            if self.browserWidget:
+                self.browserWidget.close()
+            return
+
         dicomInstance = slicer.modules.DICOMInstance
         if dicomInstance.isDockMode:
             # In dock mode, hide the dock widget and update button states
