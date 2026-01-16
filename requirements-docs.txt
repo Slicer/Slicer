@@ -12,5 +12,5 @@ sphinx-notfound-page
 sphinx-reredirects
 sphinx_rtd_theme>=0.5.2
 requests>=2.32.4 # not directly required, pinned by Snyk to avoid a vulnerability
-urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
