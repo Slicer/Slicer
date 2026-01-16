@@ -58,10 +58,11 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DENABLE_DYNAMIC_EXTENSIONS:BOOL=OFF
       -DENABLE_SHARED:BOOL=OFF
       -DENABLE_STATIC:BOOL=ON
+      -DOMIT_DECLTYPE:BOOL=OFF
       -DSQLITE_BUILD_DOC:BOOL=OFF
       -DSQLITE_BUILD_EXAMPLES:BOOL=OFF
       -DSQLITE_BUILD_TESTS:BOOL=OFF
-       # recommended options would define SQLITE_OMIT_DEPRECATED and SQLITE_OMIT_DECLTYPE,
+       # recommended options would define SQLITE_OMIT_DEPRECATED
        # which would cause build errors in Python, so go with default options instead
       -DRECOMMENDED_OPTIONS:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
