@@ -436,6 +436,7 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
     return;
   }
 
+  this->LastUsedControlPointNumber = 0;
   bool definedPointsExisted = false;
   bool missingPointsExisted = false;
   for (unsigned int i = 0; i < this->ControlPoints.size(); i++)
