@@ -94,7 +94,6 @@ public:
   static T* CreateDisplayNode(vtkMRMLNode* node, bool allowMultiple = false);
 
   /// Creates a reference node of given type and role and attach it to the input node.
-  /// The DisplayNode's modified event will be triggerred once the reference is set.
   ///
   /// \param node: instance of node for which the display node will be created. If the node is nullptr or not attached
   ///   to a scene, will not create any node.
@@ -105,7 +104,6 @@ public:
   static T* CreateReferenceNode(vtkMRMLNode* node, const char* role, bool allowMultiple = false);
 
   /// Creates a reference node of given type and role and attach it to the input node.
-  /// The DisplayNode's modified event will be triggerred once the reference is set.
   ///
   /// \param node: instance of node for which the display node will be created. If the node is nullptr or not attached
   ///   to a scene, will not create any node.
@@ -144,7 +142,6 @@ private:
     }
 
     modifyF();
-    nodeRef->Modified();
     return T::SafeDownCast(nodeRef);
   }
 

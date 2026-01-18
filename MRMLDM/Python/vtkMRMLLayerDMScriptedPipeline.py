@@ -98,6 +98,28 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
+    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+        """
+        Triggered when a reference to the display node is added
+        default behavior: does nothing.
+
+        See also: self.GetDisplayNode()
+        :param fromNode: Node which added a reference to the display node
+        :param role: Role of the added reference
+        """
+        pass
+
+    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+        """
+        Triggered when a reference to the display node is removed
+        default behavior: does nothing.
+
+        See also: self.GetDisplayNode()
+        :param fromNode: Node which removed a reference to the display node
+        :param role: Role of the removed reference
+        """
+        pass
+
     def OnRendererAdded(self, renderer: vtkRenderer | None) -> None:
         """
         Triggered when the pipeline is displayed on a new renderer.

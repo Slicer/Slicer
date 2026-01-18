@@ -1,5 +1,5 @@
 #pragma once
-#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
+#include "vtkSlicerLayerDMModuleMRMLExport.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -17,7 +17,7 @@
 /// VTK C++ objects and Python objects, managing Python object lifecycles, and calling
 /// Python methods from C++. It serves as a bridge layer for Python integration in the
 /// Layer Displayable Manager module.
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPythonUtil : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMPythonUtil : public vtkObject
 {
 public:
   static vtkMRMLLayerDMPythonUtil* New();
@@ -32,6 +32,11 @@ public:
   /// \param value Unsigned long value to convert
   /// \return PyObject* Python object representation of the value
   static PyObject* ToPyObject(unsigned long value);
+
+  /// \brief Convert a string value to a Python object
+  /// \param value string value to convert
+  /// \return PyObject* Python object representation of the value
+  static PyObject* ToPyObject(const std::string& value);
 
   /// \brief Convert a raw C pointer to a Python object
   /// \param ptr Raw pointer to convert

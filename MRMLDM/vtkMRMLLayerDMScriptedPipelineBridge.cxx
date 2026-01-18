@@ -154,6 +154,31 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* ca
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(camera), __func__, true);
 }
 
+inline vtkSmartPyObject ToPyArgs(vtkMRMLNode* fromNode, const std::string& s)
+{
+  return vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(fromNode), vtkMRMLLayerDMPythonUtil::ToPyObject(s) });
+}
+
+void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role)
+{
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
+  {
+    return;
+  }
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
+}
+
+void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role)
+{
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
+  {
+    return;
+  }
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
+}
+
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())

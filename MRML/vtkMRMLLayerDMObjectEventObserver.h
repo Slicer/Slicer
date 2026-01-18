@@ -1,6 +1,7 @@
 #pragma once
 
-#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
+// LayerDM includes
+#include "vtkSlicerLayerDMModuleMRMLExport.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -21,7 +22,7 @@ class vtkCallbackCommand;
 /// Can observe multiple objects and multiple events per object.
 ///
 /// Depending on the callback used, event id and call data can either be forwarded or ignored.
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMObjectEventObserver : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMObjectEventObserver : public vtkObject
 {
 public:
   static vtkMRMLLayerDMObjectEventObserver* New();

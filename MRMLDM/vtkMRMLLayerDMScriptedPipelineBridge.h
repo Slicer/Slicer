@@ -27,6 +27,8 @@ public:
   int GetWidgetState() const override;
   void LoseFocus(vtkMRMLInteractionEventData* eventData) override;
   void OnDefaultCameraModified(vtkCamera* camera) override;
+  void OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role) override;
+  void OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role) override;
   void OnRendererAdded(vtkRenderer* renderer) override;
   void OnRendererRemoved(vtkRenderer* renderer) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
