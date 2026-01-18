@@ -74,6 +74,13 @@ public:
   /// default behavior: does nothing.
   virtual void OnDefaultCameraModified(vtkCamera* camera);
 
+  /// @{
+  /// Triggered when a reference to the display node is added / removed
+  /// default behavior: Triggers onUpdate with the display node as argument and ReferenceAdded / Removed eventId.
+  virtual void OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role);
+  virtual void OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role);
+  /// @}
+
   /// Triggered when the pipeline is displayed on a new renderer.
   /// default behavior: does nothing.
   virtual void OnRendererAdded(vtkRenderer* renderer);

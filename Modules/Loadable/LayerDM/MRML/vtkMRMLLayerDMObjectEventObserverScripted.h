@@ -1,8 +1,8 @@
 #pragma once
 
-#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
-
+// LayerDM includes
 #include "vtkMRMLLayerDMObjectEventObserver.h"
+#include "vtkSlicerLayerDMModuleMRMLExport.h"
 
 // VTK includes
 #include <vtkPython.h>
@@ -12,7 +12,7 @@ class vtkCallbackCommand;
 
 /// Python lambda implementation of \sa vtkMRMLLayerDMObjectEventObserver
 /// Delegates full callback to underlying Python callable object.
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMObjectEventObserverScripted : public vtkMRMLLayerDMObjectEventObserver
+class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMObjectEventObserverScripted : public vtkMRMLLayerDMObjectEventObserver
 {
 public:
   static vtkMRMLLayerDMObjectEventObserverScripted* New();

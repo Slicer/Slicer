@@ -27,8 +27,6 @@ set(${KIT}_SRCS
   vtkMRMLLayerDMInteractionLogic.h
   vtkMRMLLayerDMLayerManager.cxx
   vtkMRMLLayerDMLayerManager.h
-  vtkMRMLLayerDMObjectEventObserver.cxx
-  vtkMRMLLayerDMObjectEventObserver.h
   vtkMRMLLayerDMPipelineCallbackCreator.cxx
   vtkMRMLLayerDMPipelineCallbackCreator.h
   vtkMRMLLayerDMPipelineCreateHelper.h
@@ -45,12 +43,8 @@ set(${KIT}_SRCS
 
 if (VTK_WRAP_PYTHON)
   list(APPEND ${KIT}_SRCS
-    vtkMRMLLayerDMObjectEventObserverScripted.cxx
-    vtkMRMLLayerDMObjectEventObserverScripted.h
     vtkMRMLLayerDMPipelineScriptedCreator.cxx
     vtkMRMLLayerDMPipelineScriptedCreator.h
-    vtkMRMLLayerDMPythonUtil.cxx
-    vtkMRMLLayerDMPythonUtil.h
     vtkMRMLLayerDMScriptedPipelineBridge.cxx
     vtkMRMLLayerDMScriptedPipelineBridge.h
   )
@@ -61,6 +55,7 @@ endif ()
 
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
+  vtkSlicer${MODULE_NAME}ModuleMRML
 )
 
 #-----------------------------------------------------------------------------
