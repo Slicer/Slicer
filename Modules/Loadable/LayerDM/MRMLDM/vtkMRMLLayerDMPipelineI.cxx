@@ -88,6 +88,16 @@ void vtkMRMLLayerDMPipelineI::LoseFocus(vtkMRMLInteractionEventData* eventData) 
 
 void vtkMRMLLayerDMPipelineI::OnDefaultCameraModified(vtkCamera* camera) {}
 
+void vtkMRMLLayerDMPipelineI::OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role)
+{
+  this->OnUpdate(this->GetDisplayNode(), vtkMRMLNode::ReferenceAddedEvent, nullptr);
+}
+
+void vtkMRMLLayerDMPipelineI::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role)
+{
+  this->OnUpdate(this->GetDisplayNode(), vtkMRMLNode::ReferenceRemovedEvent, nullptr);
+}
+
 bool vtkMRMLLayerDMPipelineI::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event) const
 {
   return this->m_obs->UpdateObserver(prevObj, obj, event);

@@ -18,6 +18,11 @@ PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(unsigned long value)
   return PyLong_FromUnsignedLong(value);
 }
 
+PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(const std::string& value)
+{
+  return PyUnicode_FromString(value.c_str());
+}
+
 PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
 {
   if (ptr)
