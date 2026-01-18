@@ -136,7 +136,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/slicer/VTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/VTK.git"
     QUIET
     )
 
@@ -150,6 +150,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.5")
     set(_git_tag "e21c90bd874fb15f1dc34986c238462b8aab4af8") # slicer-v9.5.2-2025-09-16-7c0494a68
     set(vtk_dist_info_version "9.5.2")
+  elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.6")
+    set(_git_tag "03bef31e45389eda4122b275f53cc75f38c22e76") # slicer-v9.6.0.rc2-2026-01-16-516a514a6
+    set(vtk_dist_info_version "9.6.0")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR.Slicer_VTK_VERSION_MINOR: ${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}")
   endif()
