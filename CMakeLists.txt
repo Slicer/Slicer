@@ -442,14 +442,14 @@ endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
 set(_default_vtk_minor_version "5")
-set(Slicer_VTK_VERSION_MINOR ${_default_vtk_minor_version} CACHE STRING "VTK minor version (2, 4 or 5)")
-set_property(CACHE Slicer_VTK_VERSION_MINOR PROPERTY STRINGS "2" "4" "5")
-if(NOT "${Slicer_VTK_VERSION_MINOR}" MATCHES "^(2|4|5)$")
-  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MINOR must be 2, 4 or 5.")
+set(Slicer_VTK_VERSION_MINOR ${_default_vtk_minor_version} CACHE STRING "VTK minor version (4 or 5)")
+set_property(CACHE Slicer_VTK_VERSION_MINOR PROPERTY STRINGS "4" "5")
+if(NOT "${Slicer_VTK_VERSION_MINOR}" MATCHES "^(4|5)$")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MINOR must be 4 or 5.")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MINOR)
 
-set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.2")
+set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.4")
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
