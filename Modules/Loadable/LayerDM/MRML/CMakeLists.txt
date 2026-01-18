@@ -8,9 +8,23 @@ set(${KIT}_INCLUDE_DIRECTORIES
 )
 
 set(${KIT}_SRCS
+  vtkMRMLLayerDMNodeReferenceObserver.cxx
+  vtkMRMLLayerDMNodeReferenceObserver.h
+  vtkMRMLLayerDMObjectEventObserver.cxx
+  vtkMRMLLayerDMObjectEventObserver.h
   vtkMRMLLayerDMWidgetEventTranslationNode.cxx
   vtkMRMLLayerDMWidgetEventTranslationNode.h
 )
+
+
+if (VTK_WRAP_PYTHON)
+  list(APPEND ${KIT}_SRCS
+    vtkMRMLLayerDMObjectEventObserverScripted.cxx
+    vtkMRMLLayerDMObjectEventObserverScripted.h
+    vtkMRMLLayerDMPythonUtil.cxx
+    vtkMRMLLayerDMPythonUtil.h
+  )
+endif ()
 
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}

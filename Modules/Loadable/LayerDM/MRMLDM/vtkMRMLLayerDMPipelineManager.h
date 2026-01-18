@@ -18,12 +18,13 @@ class vtkMRMLInteractionEventData;
 class vtkMRMLLayerDMCameraSynchronizer;
 class vtkMRMLLayerDMInteractionLogic;
 class vtkMRMLLayerDMLayerManager;
+class vtkMRMLLayerDMNodeReferenceObserver;
+class vtkMRMLLayerDMObjectEventObserver;
 class vtkMRMLLayerDMPipelineCreatorI;
 class vtkMRMLLayerDMPipelineFactory;
 class vtkMRMLLayerDMPipelineI;
 class vtkMRMLNode;
 class vtkMRMLScene;
-class vtkMRMLLayerDMObjectEventObserver;
 class vtkRenderWindow;
 class vtkRenderer;
 
@@ -151,6 +152,7 @@ private:
   vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> m_interactionLogic;
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_eventObs;
   vtkSmartPointer<vtkCamera> m_defaultCamera;
+  vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver> m_nodeRefObs;
 
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
   vtkWeakPointer<vtkMRMLScene> m_scene;

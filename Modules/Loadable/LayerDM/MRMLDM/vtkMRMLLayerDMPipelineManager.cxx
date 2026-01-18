@@ -4,9 +4,10 @@
 #include "vtkMRMLLayerDMCameraSynchronizer.h"
 #include "vtkMRMLLayerDMInteractionLogic.h"
 #include "vtkMRMLLayerDMLayerManager.h"
+#include "vtkMRMLLayerDMNodeReferenceObserver.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 #include "vtkMRMLLayerDMPipelineFactory.h"
 #include "vtkMRMLLayerDMPipelineI.h"
-#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // Slicer includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -235,6 +236,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
   , m_interactionLogic(vtkSmartPointer<vtkMRMLLayerDMInteractionLogic>::New())
   , m_eventObs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , m_defaultCamera(vtkSmartPointer<vtkCamera>::New())
+  , m_nodeRefObs{ vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver>::New() }
   , m_viewNode{ nullptr }
   , m_scene{ nullptr }
   , m_pipelineMap{}
@@ -242,6 +244,24 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
 {
   this->m_cameraSync->SetDefaultCamera(this->m_defaultCamera);
   this->m_layerManager->SetDefaultCamera(this->m_defaultCamera);
+
+  this->m_nodeRefObs->SetReferenceModifiedCallBack(
+    [this](vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role, int eventType)
+    {
+      auto pipeline = this->GetNodePipeline(toNode);
+      if (!pipeline)
+      {
+        return;
+      }
+      if (eventType == vtkMRMLLayerDMNodeReferenceObserver::ReferenceAddedEvent)
+      {
+        pipeline->OnReferenceToDisplayNodeAdded(fromNode, role);
+      }
+      else
+      {
+        pipeline->OnReferenceToDisplayNodeRemoved(fromNode, role);
+      }
+    });
 
   this->m_eventObs->SetUpdateCallback(
     [this](vtkObject* obj)
@@ -380,6 +400,7 @@ void vtkMRMLLayerDMPipelineManager::SetScene(vtkMRMLScene* scene)
   }
 
   this->m_scene = scene;
+  this->m_nodeRefObs->SetScene(scene);
   for (const auto& [node, pipeline] : m_pipelineMap)
   {
     pipeline->SetScene(scene);

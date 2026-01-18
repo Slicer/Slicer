@@ -36,6 +36,8 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.mockGetWidgetState = MagicMock(return_value=widgetState)
         self.mockLoseFocus = MagicMock()
         self.mockOnDefaultCameraModified = MagicMock()
+        self.mockOnReferenceToDisplayNodeAdded = MagicMock()
+        self.mockOnReferenceToDisplayNodeRemoved = MagicMock()
         self.mockOnRendererAdded = MagicMock()
         self.mockOnRendererRemoved = MagicMock()
         self.mockOnUpdate = MagicMock()
@@ -66,6 +68,12 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
 
     def OnDefaultCameraModified(self, camera: vtkCamera) -> None:
         self.mockOnDefaultCameraModified(camera)
+
+    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role: str) -> None:
+        self.mockOnReferenceToDisplayNodeAdded(fromNode, role)
+
+    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role: str) -> None:
+        self.mockOnReferenceToDisplayNodeRemoved(fromNode, role)
 
     def OnRendererAdded(self, renderer: vtkRenderer) -> None:
         self.mockOnRendererAdded(renderer)
