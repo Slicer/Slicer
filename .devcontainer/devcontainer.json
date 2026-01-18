@@ -1,0 +1,178 @@
+{
+    "name": "Slicer",
+    "initializeCommand": ".devcontainer/initialize-command.sh dever", // Bakes to tag slicer:devcontainer
+    "image": "slicer:devcontainer",
+    "runArgs": [
+        // ################################################################################
+        // # MARK: Debugging args - for profiling and advanced usage
+        // ################################################################################
+        // "--cap-add=SYS_PTRACE", // enable debugging, e.g. gdb
+        // "--ipc=host", // shared memory transport with host, e.g. with other host PIDs
+        // "--pid=host", // DDS discovery with host, without --network=host
+        // "--security-opt=seccomp=unconfined", // enable debugging, e.g. gdb
+        // "--ulimit", "nofile=1024:4096", // increase file descriptor limit for valgrind
+        // ################################################################################
+        // # MARK: Device args - for peripherals and host passthrough
+        // ################################################################################
+        "--privileged", // device access to host peripherals, e.g. USB
+        // "--volume=/dev/bus/usb:/dev/bus/usb", // explicitly bind mount USB bus interface
+        // "--device-cgroup-rule", "c 123:* rmw", // read, mknod, and write permissions for example cameras
+        // ################################################################################
+        // # MARK: Graphic args - for hardware acceleration displays
+        // ################################################################################
+        // "--device=/dev/dri", // enable Intel integrated graphics
+        "--device=nvidia.com/gpu=all", // enable NVIDIA Container Toolkit
+        // "--runtime=nvidia", // enable NVIDIA Container Toolkit on older systems
+        //     "--env=NVIDIA_VISIBLE_DEVICES=all", // enable GPUs with env as --gpus doesn't parse nicely
+        //     "--env=NVIDIA_DRIVER_CAPABILITIES=all", // enable all capabilities, including `graphics`
+        // ################################################################################
+        // # MARK: Network args - for middleware communication
+        // ################################################################################
+        // "--cap-add=NET_ADMIN", // enable network configuration, e.g. setting multicast
+        "--network=host", // network access to host interfaces, e.g. eth0
+        // ################################################################################
+        // # MARK: Utility args - for utilities and desktop passthrough
+        // ################################################################################
+        "--security-opt", "apparmor:unconfined", // connect dbus via unprivileged container
+        // "--group-add=${localEnv:DOCKER_GID}", // add docker group to match host permissions
+    ],
+    "workspaceFolder": "/opt/slicer_ws/src/Slicer",
+    "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+    "onCreateCommand": ".devcontainer/on-create-command.sh",
+    "updateContentCommand": ".devcontainer/update-content-command.sh",
+    "postCreateCommand": ".devcontainer/post-create-command.sh",
+    "postStartCommand": ".devcontainer/post-start-command.sh",
+    "remoteEnv": {
+        // Explicitly set DBUS_SESSION_BUS_ADDRESS for gh CLI authentication
+        "DBUS_SESSION_BUS_ADDRESS": "${localEnv:DBUS_SESSION_BUS_ADDRESS}",
+        // Denote Dev Container environment for scripts
+        "DEVCONTAINER": "true",
+        // Explicitly set DISPLAY for NVIDIA Container Toolkit
+        "DISPLAY": "${localEnv:DISPLAY}",
+        // Explicitly set LANG for git to match VSCode locale
+        "LANG": "${localEnv:LANG}",
+        // Explicitly set PULSE_SERVER for PulseAudio
+        "PULSE_SERVER": "unix:${env:XDG_RUNTIME_DIR}/pulse/native",
+        // Explicitly set SSH_AUTH_SOCK for devcontainer CLI
+        // "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}",
+        // Disable MIT-SHM for X11 forwarding compatibility
+        "QT_X11_NO_MITSHM": "1",
+        // Explicitly set XAUTHORITY for X11 on NixOS
+        "XAUTHORITY": "${localEnv:XAUTHORITY}",
+    },
+    "remoteUser": "ubuntu",
+    "mounts": [
+        // ################################################################################
+        // # MARK: Cache mounts - for development
+        // ################################################################################
+        {
+            // Cache apt downloads
+            "source": "apt-cache",
+            "target": "/var/cache/apt",
+            "type": "volume"
+        },
+        {
+            // Cache ccache caches
+            "source": "ccache",
+            "target": "/opt/slicer_ws/.ccache",
+            "type": "volume"
+        },
+        {
+            // Cache slicer workspace
+            "source": "overlay-${devcontainerId}",
+            "target": "/opt/slicer_ws",
+            "type": "volume"
+        },
+        {
+            // Cache slicer extensions
+            "source": "slicer.org.v5.11.0",
+            "target": "/opt/slicer/slicer.org",
+            "type": "volume"
+        },
+        // ################################################################################
+        // # MARK: Personal mounts - for convenience
+        // ################################################################################
+        {
+            // Mount home dotfiles
+            "source": "/var/tmp/home/slicer",
+            "target": "/home/ubuntu",
+            "type": "bind"
+        },
+        {
+            // Mount gh dotfiles
+            "source": "${localEnv:HOME}/.config/gh",
+            "target": "/home/ubuntu/.config/gh",
+            "type": "bind"
+        },
+        {
+            // Mount ssh dotfiles
+            "source": "${localEnv:HOME}/.ssh",
+            "target": "/home/ubuntu/.ssh",
+            "type": "bind"
+        },
+        // ################################################################################
+        // # MARK: Socket mounts - for tooling
+        // ################################################################################
+        {
+            // Mount docker socket
+            "source": "/var/run/docker.sock",
+            "target": "/var/run/docker-host.sock",
+            "type": "bind"
+        },
+        {
+            // Explicitly mount X11 socket for NVIDIA Container Toolkit
+            // as setting NVIDIA_DRIVER_CAPABILITIES to include `graphics`
+            // interferes with VSCode's default X11 forwarding behavior
+            "source": "/tmp/.X11-unix",
+            "target": "/tmp/.X11-unix",
+            "type": "bind"
+        },
+        {
+            // Mount XAUTHORITY for X11 on NixOS
+            "source": "${localEnv:XAUTHORITY}",
+            "target": "${localEnv:XAUTHORITY}",
+            "type": "bind"
+        },
+        {
+            // Mount dbus socket
+            "source": "${localEnv:XDG_RUNTIME_DIR}/bus",
+            "target": "${localEnv:XDG_RUNTIME_DIR}/bus",
+            "type": "bind"
+        },
+        {
+            // Mount PulseAudio socket
+            "source": "${localEnv:XDG_RUNTIME_DIR}/pulse/native",
+            "target": "${localEnv:XDG_RUNTIME_DIR}/pulse/native",
+            "type": "bind"
+        }
+        // {
+        //     // Explicitly mount SSH socket for devcontainer CLI
+        //     "source": "${localEnv:SSH_AUTH_SOCK}",
+        //     "target": "${localEnv:SSH_AUTH_SOCK}",
+        //     "type": "bind"
+        // },
+    ],
+    "features": {
+        // "ghcr.io/devcontainers/features/desktop-lite:1": {},
+        // "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    },
+    "customizations": {
+        "codespaces": {
+            "openFiles": [
+                ".devcontainer/README.md"
+            ]
+        },
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "eamodio.gitlens",
+                "GitHub.copilot",
+                "hashicorp.hcl",
+                "ms-azuretools.vscode-docker",
+                "ms-python.python",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools-extension-pack",
+            ]
+        }
+    }
+}
