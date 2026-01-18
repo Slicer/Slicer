@@ -41,7 +41,6 @@
 #include <vtkStripper.h>
 #include <vtkImageStencil.h>
 #include <vtkImageCast.h>
-#include <vtkVersion.h> // For VTK_VERSION_*
 
 // std includes
 #include <map>
@@ -588,12 +587,8 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(vtkImageStencil
       else
       {
         // if no polys, select polylines instead
-#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 2, 20230212))
         vtkSMPThreadLocalObject<vtkIdList> storage;
         this->PolyDataSelector(input, slice, storage.Local(), z, spacing[2]);
-#else
-        this->PolyDataSelector(input, slice, z, spacing[2]);
-#endif
       }
 
       if (!slice->GetNumberOfLines())

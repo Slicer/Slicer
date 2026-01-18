@@ -171,12 +171,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   checkDefaultArrayValue<vtkIntArray, int>(node3, "int", "some", 0);
 
   checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "3", 3);
-#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 3, 20230902)) // Fix integrated through kitware/vtk@90adad9b4d
   checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "-5", 0);
-#else
-  // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "-5", -5);
-#endif
   checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "3.3", 0);
   checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "", 0);
   checkDefaultArrayValue<vtkUnsignedIntArray, unsigned int>(node3, "unsigned int", "some", 0);
@@ -188,12 +183,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   checkDefaultArrayValue<vtkShortArray, short>(node3, "short", "some", 0);
 
   checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "3", 3);
-#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 3, 20230902)) // Fix integrated through kitware/vtk@90adad9b4d
   checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "-5", 0);
-#else
-  // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "-5", -5);
-#endif
   checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "3.3", 0);
   checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "", 0);
   checkDefaultArrayValue<vtkUnsignedShortArray, unsigned short>(node3, "unsigned short", "some", 0);
@@ -205,12 +195,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   checkDefaultArrayValue<vtkLongArray, long>(node3, "long", "some", 0);
 
   checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "3", 3);
-#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 3, 20230902)) // Fix integrated through kitware/vtk@90adad9b4d
   checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "-5", 0);
-#else
-  // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "-5", -5);
-#endif
   checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "3.3", 0);
   checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "", 0);
   checkDefaultArrayValue<vtkUnsignedLongArray, unsigned long>(node3, "unsigned long", "some", 0);
@@ -222,12 +207,7 @@ int vtkMRMLTableNodeTest1(int, char*[])
   checkDefaultArrayValue<vtkLongLongArray, long long>(node3, "long long", "some", 0);
 
   checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "3", 3);
-#if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 3, 20230902)) // Fix integrated through kitware/vtk@90adad9b4d
   checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "-5", 0);
-#else
-  // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "-5", -5);
-#endif
   checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "3.3", 0);
   checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "", 0);
   checkDefaultArrayValue<vtkUnsignedLongLongArray, unsigned long long>(node3, "unsigned long long", "some", 0);
