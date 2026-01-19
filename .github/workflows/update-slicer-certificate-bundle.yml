@@ -14,8 +14,8 @@ jobs:
     name: Update Slicer.crt certificate bundle
     runs-on: ubuntu-latest
     env:
-      CERTDATA_OWNER: mozilla
-      CERTDATA_REPO: gecko-dev
+      CERTDATA_OWNER: mozilla-firefox
+      CERTDATA_REPO: firefox
       CERTDATA_PATH: security/nss/lib/ckfw/builtins/certdata.txt
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -24,12 +24,12 @@ jobs:
         id: latest_certdata
         run: |
           sha=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ env.CERTDATA_OWNER }}/${{ env.CERTDATA_REPO }}/commits?path=${{ env.CERTDATA_PATH }}&sha=master&per_page=1" | jq ".[0] | .sha" -r)
+            "https://api.github.com/repos/${{ env.CERTDATA_OWNER }}/${{ env.CERTDATA_REPO }}/commits?path=${{ env.CERTDATA_PATH }}&sha=main&per_page=1" | jq ".[0] | .sha" -r)
           echo "sha=${sha}" >> $GITHUB_OUTPUT
           download_url="https://github.com/${{ env.CERTDATA_OWNER }}/${{ env.CERTDATA_REPO }}/blob/${sha}/${{ env.CERTDATA_PATH }}?raw=true"
           echo "download_url=${download_url}" >> $GITHUB_OUTPUT
 
-      - name: Download certdata.txt from https://github.com/mozilla/gecko-dev
+      - name: Download certdata.txt from https://github.com/mozilla-firefox/firefox
         run: |
           cd Base/QTCore/Resources/Certs                           &&
           curl -L# -o certdata.txt ${{ steps.latest_certdata.outputs.download_url }}
