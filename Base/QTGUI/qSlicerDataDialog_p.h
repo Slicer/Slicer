@@ -53,7 +53,11 @@ public slots:
 
 protected slots:
   void onFileTypeChanged(const QString&);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  void onFileTypeActivated(int activatedRow);
+#else
   void onFileTypeActivated(const QString&);
+#endif
 
   //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
   //  void updateCheckBoxHeader(int row, int column);
