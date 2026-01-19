@@ -248,10 +248,11 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   descriptionComboBox->setCurrentIndex(-1);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(descriptionComboBox, &QComboBox::currentTextChanged, this, &qSlicerDataDialogPrivate::onFileTypeChanged);
+  QObject::connect(descriptionComboBox, &QComboBox::activated, this, &qSlicerDataDialogPrivate::onFileTypeActivated);
 #else
   QObject::connect(descriptionComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(onFileTypeChanged(QString)));
-#endif
   QObject::connect(descriptionComboBox, SIGNAL(activated(QString)), this, SLOT(onFileTypeActivated(QString)));
+#endif
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
   if (!readerDescription.isEmpty() && ioProperties != nullptr)
@@ -379,7 +380,11 @@ void qSlicerDataDialogPrivate::onFileTypeChanged(const QString& description)
 }
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+void qSlicerDataDialogPrivate::onFileTypeActivated(int descriptionIndex)
+#else
 void qSlicerDataDialogPrivate::onFileTypeActivated(const QString& description)
+#endif
 {
   int activatedRow = this->senderRow();
   if (this->propagateChange(activatedRow))
@@ -391,7 +396,10 @@ void qSlicerDataDialogPrivate::onFileTypeActivated(const QString& description)
         continue;
       }
       QComboBox* selectedComboBox = qobject_cast<QComboBox*>(this->FileWidget->cellWidget(row, TypeColumn));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#else
       int descriptionIndex = selectedComboBox ? selectedComboBox->findText(description) : -1;
+#endif
       qDebug() << "id" << descriptionIndex;
       if (descriptionIndex != -1)
       {
