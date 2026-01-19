@@ -71,6 +71,7 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
   QObject::connect(this->VolumePropertyWidget, SIGNAL(chartsExtentChanged()), q, SIGNAL(chartsExtentChanged()));
   QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)), q, SIGNAL(thresholdChanged(bool)));
   QObject::connect(this->ComponentSpinBox, SIGNAL(valueChanged(int)), this->VolumePropertyWidget, SLOT(setCurrentComponent(int)));
+  QObject::connect(this->ComponentSpinBox, SIGNAL(valueChanged(int)), q, SIGNAL(componentChanged(int)));
 
   this->ComponentsButtonGroup = new QButtonGroup(q);
   this->ComponentsButtonGroup->addButton(this->RGBColorsRadioButton);
@@ -213,6 +214,36 @@ int qMRMLVolumePropertyNodeWidget::componentCount() const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->ComponentCount;
+}
+
+// --------------------------------------------------------------------------
+int qMRMLVolumePropertyNodeWidget::currentComponent() const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  vtkVolumeProperty* volumeProperty = d->VolumePropertyWidget->volumeProperty();
+  if (!volumeProperty || !volumeProperty->GetIndependentComponents())
+  {
+    return 0; // Always use component 0 for non-independent components
+  }
+  return d->VolumePropertyWidget->currentComponent();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setCurrentComponent(int component)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+
+  // Clamp component to valid range
+  component = std::clamp(component, 0, d->ComponentCount - 1);
+
+  // Update the component spinbox which will trigger the signal chain
+  {
+    QSignalBlocker blocker(d->ComponentSpinBox);
+    d->ComponentSpinBox->setValue(component);
+  }
+
+  // Directly set on the volume property widget
+  d->VolumePropertyWidget->setCurrentComponent(component);
 }
 
 // --------------------------------------------------------------------------
