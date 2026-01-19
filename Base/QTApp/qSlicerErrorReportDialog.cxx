@@ -82,11 +82,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     QVariant fileString(path);
     QFileInfo fi(path);
     QString fileName = fi.fileName();
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QStringList stringList = fileName.split("_", Qt::SkipEmptyParts);
-#else
-    QStringList stringList = fileName.split("_", QString::SkipEmptyParts);
-#endif
     itemApp->setText(stringList.at(0));
     itemApp->setData(Qt::UserRole, fileString);
     if (stringList.size() >= 6) // compatibility for log files with and without app version in filename

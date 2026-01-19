@@ -122,11 +122,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeCube);
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeHuman);
   orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeAxes);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->OrientationMarkerTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLThreeDViewControllerWidget::setOrientationMarkerType);
-#else
-  QObject::connect(this->OrientationMarkerTypesMapper, SIGNAL(mapped(int)), q, SLOT(setOrientationMarkerType(int)));
-#endif
   QObject::connect(orientationMarkerTypesActions, SIGNAL(triggered(QAction*)), this->OrientationMarkerTypesMapper, SLOT(map(QAction*)));
   // Size
   this->OrientationMarkerSizesMapper = new ctkSignalMapper(this->PopupWidget);
@@ -138,11 +134,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeSmall);
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeMedium);
   orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeLarge);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->OrientationMarkerSizesMapper, &QSignalMapper::mappedInt, q, &qMRMLThreeDViewControllerWidget::setOrientationMarkerSize);
-#else
-  QObject::connect(this->OrientationMarkerSizesMapper, SIGNAL(mapped(int)), q, SLOT(setOrientationMarkerSize(int)));
-#endif
   QObject::connect(orientationMarkerSizesActions, SIGNAL(triggered(QAction*)), this->OrientationMarkerSizesMapper, SLOT(map(QAction*)));
   // Menu
   QMenu* orientationMarkerMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Orientation marker"), this->PopupWidget);
@@ -163,11 +155,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   rulerTypesActions->addAction(this->actionRulerTypeNone);
   rulerTypesActions->addAction(this->actionRulerTypeThin);
   rulerTypesActions->addAction(this->actionRulerTypeThick);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->RulerTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLThreeDViewControllerWidget::setRulerType);
-#else
-  QObject::connect(this->RulerTypesMapper, SIGNAL(mapped(int)), q, SLOT(setRulerType(int)));
-#endif
   QObject::connect(rulerTypesActions, SIGNAL(triggered(QAction*)), this->RulerTypesMapper, SLOT(map(QAction*)));
   // Color
   this->RulerColorMapper = new ctkSignalMapper(this->PopupWidget);
@@ -179,11 +167,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   rulerColorActions->addAction(this->actionRulerColorWhite);
   rulerColorActions->addAction(this->actionRulerColorBlack);
   rulerColorActions->addAction(this->actionRulerColorYellow);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->RulerColorMapper, &QSignalMapper::mappedInt, q, &qMRMLThreeDViewControllerWidget::setRulerColor);
-#else
-  QObject::connect(this->RulerColorMapper, SIGNAL(mapped(int)), q, SLOT(setRulerColor(int)));
-#endif
   QObject::connect(rulerColorActions, SIGNAL(triggered(QAction*)), this->RulerColorMapper, SLOT(map(QAction*)));
 
   // Menu
@@ -228,11 +212,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   stereoTypesMenu->setObjectName("stereoTypesMenu");
   stereoTypesMenu->addActions(stereoTypesActions->actions());
   this->actionStereo->setMenu(stereoTypesMenu);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->StereoTypesMapper, &QSignalMapper::mappedInt, q, &qMRMLThreeDViewControllerWidget::setStereoType);
-#else
-  QObject::connect(this->StereoTypesMapper, SIGNAL(mapped(int)), q, SLOT(setStereoType(int)));
-#endif
   QObject::connect(stereoTypesActions, SIGNAL(triggered(QAction*)), this->StereoTypesMapper, SLOT(map(QAction*)));
   this->actionSwitchToQuadBufferStereo->setEnabled(false); // Disabled by default
 

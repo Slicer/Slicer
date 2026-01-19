@@ -1214,11 +1214,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->operationGroup->addButton(d->fillInsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillInside);
   d->operationGroup->addButton(d->fillOutsideRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::OperationFillOutside);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(d->operationGroup, &QButtonGroup::idClicked, this, &qSlicerSegmentEditorScissorsEffect::setOperation);
-#else
-  QObject::connect(d->operationGroup, SIGNAL(buttonClicked(int)), this, SLOT(setOperation(int)));
-#endif
 
   // Shape
 
@@ -1240,11 +1236,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->shapeGroup->addButton(d->circleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeCircle);
   d->shapeGroup->addButton(d->rectangleRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::ShapeRectangle);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(d->shapeGroup, &QButtonGroup::idClicked, this, &qSlicerSegmentEditorScissorsEffect::setShape);
-#else
-  QObject::connect(d->shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setShape(int)));
-#endif
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
   QObject::connect(d->shapeDrawCenteredCheckBox, &QCheckBox::checkStateChanged, this, &qSlicerSegmentEditorScissorsEffect::setShapeDrawCentered);
 #else
@@ -1297,11 +1289,7 @@ void qSlicerSegmentEditorScissorsEffect::setupOptionsFrame()
   d->sliceCutModeGroup->addButton(d->negativeRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeNegative);
   d->sliceCutModeGroup->addButton(d->symmetricRadioButton, qSlicerSegmentEditorScissorsEffectPrivate::SliceCutModeSymmetric);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(d->sliceCutModeGroup, &QButtonGroup::idClicked, this, &qSlicerSegmentEditorScissorsEffect::setSliceCutMode);
-#else
-  QObject::connect(d->sliceCutModeGroup, SIGNAL(buttonClicked(int)), this, SLOT(setSliceCutMode(int)));
-#endif
   QObject::connect(d->sliceCutDepthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onSliceCutDepthChanged(double)));
   QObject::connect(d->applyToAllVisibleSegmentsCheckBox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
 }

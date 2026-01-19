@@ -229,7 +229,6 @@ void qSlicerExtensionsLocalWidgetPrivate::init()
   q->setSpacing(1);
   q->setItemDelegate(new qSlicerExtensionsItemDelegate(q, q));
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(&this->InstallButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::installExtension);
   QObject::connect(&this->AddBookmarkButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::addBookmark);
   QObject::connect(&this->RemoveBookmarkButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::removeBookmark);
@@ -240,18 +239,6 @@ void qSlicerExtensionsLocalWidgetPrivate::init()
   QObject::connect(&this->ScheduleUpdateButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::scheduleExtensionForUpdate);
   QObject::connect(&this->CancelScheduledUpdateButtonMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::cancelExtensionScheduledForUpdate);
   QObject::connect(&this->IconDownloadMapper, &QSignalMapper::mappedString, q, &qSlicerExtensionsLocalWidget::onIconDownloadComplete);
-#else
-  QObject::connect(&this->InstallButtonMapper, SIGNAL(mapped(QString)), q, SLOT(installExtension(QString)));
-  QObject::connect(&this->AddBookmarkButtonMapper, SIGNAL(mapped(QString)), q, SLOT(addBookmark(QString)));
-  QObject::connect(&this->RemoveBookmarkButtonMapper, SIGNAL(mapped(QString)), q, SLOT(removeBookmark(QString)));
-  QObject::connect(&this->EnableButtonMapper, SIGNAL(mapped(QString)), q, SLOT(setExtensionEnabled(QString)));
-  QObject::connect(&this->DisableButtonMapper, SIGNAL(mapped(QString)), q, SLOT(setExtensionDisabled(QString)));
-  QObject::connect(&this->ScheduleUninstallButtonMapper, SIGNAL(mapped(QString)), q, SLOT(scheduleExtensionForUninstall(QString)));
-  QObject::connect(&this->CancelScheduledUninstallButtonMapper, SIGNAL(mapped(QString)), q, SLOT(cancelExtensionScheduledForUninstall(QString)));
-  QObject::connect(&this->ScheduleUpdateButtonMapper, SIGNAL(mapped(QString)), q, SLOT(scheduleExtensionForUpdate(QString)));
-  QObject::connect(&this->CancelScheduledUpdateButtonMapper, SIGNAL(mapped(QString)), q, SLOT(cancelExtensionScheduledForUpdate(QString)));
-  QObject::connect(&this->IconDownloadMapper, SIGNAL(mapped(QString)), q, SLOT(onIconDownloadComplete(QString)));
-#endif
 }
 
 // --------------------------------------------------------------------------
@@ -517,11 +504,7 @@ protected:
       if (moreLinkSpecified)
       {
         QString moreLinkText = QString(" %1").arg(this->MoreLinkText);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
         margin += this->fontMetrics().horizontalAdvance(moreLinkText);
-#else
-        margin += this->fontMetrics().width(moreLinkText);
-#endif
       }
       QString extensionDescription = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::DescriptionRole).toString();
       QString elidedExtensionDescription = this->fontMetrics().elidedText(extensionDescription, Qt::ElideRight, cr.width() - margin);

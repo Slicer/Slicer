@@ -223,11 +223,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
   this->VolumeDisplayPresetAction->setMenu(this->PresetSubmenu);
   QObject::connect(presetModeActions, SIGNAL(triggered(QAction*)), this->PresetModeMapper, SLOT(map(QAction*)));
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->PresetModeMapper, &QSignalMapper::mappedString, q, &qSlicerSubjectHierarchyVolumesPlugin::setVolumePreset);
-#else
-  QObject::connect(this->PresetModeMapper, SIGNAL(mapped(QString)), q, SLOT(setVolumePreset(QString)));
-#endif
 }
 
 //-----------------------------------------------------------------------------

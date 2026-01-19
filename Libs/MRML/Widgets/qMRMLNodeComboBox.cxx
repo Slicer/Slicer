@@ -1192,11 +1192,7 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
   d->ComboBox->setFocusProxy(this);
   d->setModel(oldModel);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   connect(d->ComboBox, &QComboBox::currentTextChanged, this, &qMRMLNodeComboBox::emitCurrentNodeChanged);
-#else
-  connect(d->ComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(emitCurrentNodeChanged()));
-#endif
   connect(d->ComboBox, SIGNAL(activated(int)), this, SLOT(emitNodeActivated(int)));
   d->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType));
   delete oldComboBox;

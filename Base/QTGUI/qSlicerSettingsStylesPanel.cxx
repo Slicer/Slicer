@@ -100,11 +100,7 @@ void qSlicerSettingsStylesPanelPrivate::init()
   // Style setting
   this->populateStyles();
   q->setCurrentStyle("Slicer");
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->StyleComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsStylesPanel::onStyleChanged);
-#else
-  QObject::connect(this->StyleComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onStyleChanged(QString)));
-#endif
   q->registerProperty("Styles/Style", q, "currentStyle", SIGNAL(currentStyleChanged(QString)), qSlicerSettingsStylesPanel::tr("Current style"));
 
   // Connect AdditionalStylePaths buttons
