@@ -128,8 +128,9 @@ public:
   vtkGetVector2Macro(EffectiveRange, double);
 
   /// Calculate effective range to include all the transfer functions.
+  /// \param component Component index (0-3). For independent components mode, this determines which component's transfer functions are used.
   /// \return True if calculation was successful, false is not (missing transfer functions)
-  bool CalculateEffectiveRange();
+  bool CalculateEffectiveRange(int component = 0);
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods

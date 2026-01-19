@@ -378,7 +378,7 @@ vtkColorTransferFunction* vtkMRMLVolumePropertyNode::GetColor(int component)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumePropertyNode::CalculateEffectiveRange()
+bool vtkMRMLVolumePropertyNode::CalculateEffectiveRange(int component)
 {
   if (!this->VolumeProperty)
   {
@@ -386,9 +386,9 @@ bool vtkMRMLVolumePropertyNode::CalculateEffectiveRange()
     return false;
   }
 
-  vtkColorTransferFunction* colorTransferFunction = this->VolumeProperty->GetRGBTransferFunction();
-  vtkPiecewiseFunction* opacityFunction = this->VolumeProperty->GetScalarOpacity();
-  vtkPiecewiseFunction* gradientFunction = this->VolumeProperty->GetGradientOpacity();
+  vtkColorTransferFunction* colorTransferFunction = this->VolumeProperty->GetRGBTransferFunction(component);
+  vtkPiecewiseFunction* opacityFunction = this->VolumeProperty->GetScalarOpacity(component);
+  vtkPiecewiseFunction* gradientFunction = this->VolumeProperty->GetGradientOpacity(component);
   if (!colorTransferFunction || !opacityFunction || !gradientFunction)
   {
     vtkErrorMacro("CalculateEffectiveRange: Invalid transfer functions in volume property");

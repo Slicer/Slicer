@@ -148,6 +148,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->VolumePropertyNodeWidget->setThreshold(!volumeRenderingLogic->GetUseLinearRamp());
   QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(thresholdChanged(bool)), q, SLOT(onThresholdChanged(bool)));
   QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(chartsExtentChanged()), q, SLOT(onChartsExtentChanged()));
+  QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(componentChanged(int)), q, SLOT(onEffectiveRangeModified()));
 
   QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this->PresetComboBox, SLOT(setMRMLVolumePropertyNode(vtkMRMLNode*)));
 
@@ -1068,7 +1069,9 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
   volumePropertyNode->GetEffectiveRange(effectiveRange);
   if (effectiveRange[0] > effectiveRange[1])
   {
-    if (!volumePropertyNode->CalculateEffectiveRange())
+    // Get the current component for independent components mode
+    int component = d->VolumePropertyNodeWidget->currentComponent();
+    if (!volumePropertyNode->CalculateEffectiveRange(component))
     {
       return; // Do not set undefined effective range
     }
