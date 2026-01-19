@@ -142,11 +142,7 @@ void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 //------------------------------------------------------------------------------
 bool qMRMLColorTableView::showOnlyNamedColors() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
   return this->sortFilterProxyModel()->filterRegularExpression().pattern().isEmpty();
-#else
-  return this->sortFilterProxyModel()->filterRegExp().isEmpty();
-#endif
 }
 
 //------------------------------------------------------------------------------

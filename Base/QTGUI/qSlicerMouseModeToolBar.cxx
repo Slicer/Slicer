@@ -118,12 +118,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->AdjustWindowLevelModeMapper->setMapping(this->AdjustWindowLevelRegionModeAction, vtkMRMLWindowLevelWidget::ModeRectangle);
   this->AdjustWindowLevelModeMapper->setMapping(this->AdjustWindowLevelCenteredRegionModeAction, vtkMRMLWindowLevelWidget::ModeRectangleCentered);
   QObject::connect(windowLevelModeActions, SIGNAL(triggered(QAction*)), this->AdjustWindowLevelModeMapper, SLOT(map(QAction*)));
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->AdjustWindowLevelModeMapper, &QSignalMapper::mappedInt, q, &qSlicerMouseModeToolBar::setAdjustWindowLevelMode);
-#else
-  QObject::connect(this->AdjustWindowLevelModeMapper, SIGNAL(mapped(int)), q, SLOT(setAdjustWindowLevelMode(int)));
-#endif
 
   // Menu
   this->AdjustWindowLevelMenu = new QMenu(qSlicerMouseModeToolBar::tr("Adjust window/level"), q);

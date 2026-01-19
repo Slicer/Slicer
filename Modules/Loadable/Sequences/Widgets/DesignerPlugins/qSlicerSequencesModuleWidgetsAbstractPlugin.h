@@ -22,11 +22,7 @@
 #define qSlicerSequencesModuleWidgetsAbstractPlugin_h
 
 #include <QtGlobal>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-# include <QDesignerCustomWidgetInterface>
-#else
-# include <QtUiPlugin/QDesignerCustomWidgetInterface>
-#endif
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
 
 #include "qSlicerSequencesModuleWidgetsPluginsExport.h"
 

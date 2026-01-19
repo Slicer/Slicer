@@ -42,13 +42,8 @@ qMRMLSceneViewMenuPrivate::qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object)
   : Superclass(&object)
   , q_ptr(&object)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   connect(&this->RestoreActionMapper, &QSignalMapper::mappedInt, this, &qMRMLSceneViewMenuPrivate::restoreSceneView);
   connect(&this->DeleteActionMapper, &QSignalMapper::mappedInt, this, &qMRMLSceneViewMenuPrivate::deleteSceneView);
-#else
-  connect(&this->RestoreActionMapper, SIGNAL(mapped(int)), SLOT(restoreSceneView(int)));
-  connect(&this->DeleteActionMapper, SIGNAL(mapped(int)), SLOT(deleteSceneView(int)));
-#endif
 
   this->SceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(qSlicerApplication::application()->applicationLogic()->GetModuleLogic("SceneViews"));
   qvtkConnect(this->SceneViewsLogic, vtkSlicerSceneViewsModuleLogic::SceneViewsModifiedEvent, this, SLOT(resetMenu()));

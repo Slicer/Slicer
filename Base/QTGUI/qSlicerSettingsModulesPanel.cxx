@@ -118,11 +118,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesModulesListView->filterModel()->setDynamicSortFilter(false);
   // Slicer_DEFAULT_FAVORITE_MODULES contains module names in a comma-separated list
   // (chosen this format because the same format is used for storing the favorites list in the .ini file).
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QStringList favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", Qt::SkipEmptyParts);
-#else
-  QStringList favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", QString::SkipEmptyParts);
-#endif
   // The separator commas have been removed, but we also need need to remove leading and trailing spaces from the retrieved names.
   QStringList favorites;
   for (const QString& s : favoritesRaw)

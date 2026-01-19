@@ -129,11 +129,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDefaultSurfaceSmoothing(bool)));
   QObject::connect(this->UseTerminologyCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseTerminology(bool)));
   QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()), q, SLOT(onEditDefaultTerminologyEntry()));
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(this->DefaultOverwriteModeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode);
-#else
-  QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(setDefaultOverwriteMode(QString)));
-#endif
 
   // Update default segmentation node from settings when startup completed.
   QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()), q, SLOT(updateDefaultSegmentationNodeFromWidget()));

@@ -3211,11 +3211,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     {
       continue;
     }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QStringList components = line.split(" ", Qt::SkipEmptyParts);
-#else
-    QStringList components = line.split(" ", QString::SkipEmptyParts);
-#endif
     if (components.size() == 0)
     {
       continue;

@@ -241,11 +241,7 @@ void qSlicerCropVolumeModuleWidget::setup()
   d->FitROIModeMapper->setMapping(d->ROIFitAlignToWorldAction, vtkMRMLCropVolumeParametersNode::FitROIAlignToWorld);
   d->FitROIModeMapper->setMapping(d->ROIFitKeepOrientationAction, vtkMRMLCropVolumeParametersNode::FitROIKeepOrientation);
   QObject::connect(fitROIModeActions, SIGNAL(triggered(QAction*)), d->FitROIModeMapper, SLOT(map(QAction*)));
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(d->FitROIModeMapper, &QSignalMapper::mappedInt, this, &qSlicerCropVolumeModuleWidget::setFitROIMode);
-#else
-  QObject::connect(d->FitROIModeMapper, SIGNAL(mapped(int)), this, SLOT(setFitROIMode(int)));
-#endif
 
   d->FitROIModeMenu = new QMenu(tr("ROI fit mode"), d->ROIFitPushButton);
   d->FitROIModeMenu->setObjectName("ROIFitModeMenu");
