@@ -60,6 +60,8 @@ Build takes several hours. Warnings will appear during the build (it is practica
 
 Specify source, build, and Qt location and compiler version and start the build using the following commands (these can be put into a .bat file so that they can be executed again easily), assuming default folder locations:
 
+#### Qt 5
+
 Release mode:
 
 ```bat
@@ -81,6 +83,37 @@ cd C:\D
 "C:\Program Files\CMake\bin\cmake.exe" ^
   -G "Visual Studio 17 2022" -A x64 ^
   -DQt5_DIR:PATH=C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5 ^
+  -S C:\D\S -B C:\D\SD
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\SD --config Debug
+```
+
+
+#### Qt 6
+
+Release mode:
+
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DSlicer_REQUIRED_QT_VERSION=6.10 ^
+  -DQt6_DIR:PATH=C:/Qt/6.10.1/msvc2022_64/lib/cmake/Qt6 ^
+  -S C:\D\S -B C:\D\SR
+
+"C:\Program Files\CMake\bin\cmake.exe" --build C:\D\SR --config Release
+```
+
+Debug mode:
+
+```bat
+cd C:\D
+
+"C:\Program Files\CMake\bin\cmake.exe" ^
+  -G "Visual Studio 17 2022" -A x64 ^
+  -DSlicer_REQUIRED_QT_VERSION=6.10 ^
+  -DQt6_DIR:PATH=C:/Qt/6.10.1/msvc2022_64/lib/cmake/Qt6 ^
   -S C:\D\S -B C:\D\SD
 
 "C:\Program Files\CMake\bin\cmake.exe" --build C:\D\SD --config Debug
