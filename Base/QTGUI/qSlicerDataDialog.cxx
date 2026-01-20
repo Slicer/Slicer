@@ -247,7 +247,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   // automatically create the option widget
   descriptionComboBox->setCurrentIndex(-1);
   QObject::connect(descriptionComboBox, &QComboBox::currentTextChanged, this, &qSlicerDataDialogPrivate::onFileTypeChanged);
-  QObject::connect(descriptionComboBox, SIGNAL(activated(QString)), this, SLOT(onFileTypeActivated(QString)));
+  QObject::connect(descriptionComboBox, &QComboBox::textActivated, this, &qSlicerDataDialogPrivate::onFileTypeActivated);
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
   if (!readerDescription.isEmpty() && ioProperties != nullptr)
