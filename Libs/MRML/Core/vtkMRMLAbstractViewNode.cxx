@@ -61,6 +61,7 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
   }
 
   this->MappedInLayout = false;
+  this->MarkupsOcclusionEnabled = true;
 }
 
 //----------------------------------------------------------------------------
