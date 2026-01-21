@@ -7,6 +7,12 @@ set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerLayerDMVersion.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerLayerDMVersion.h
+  @ONLY
+)
+
 set(${KIT}_SRCS
   vtkSlicer${MODULE_NAME}Logic.cxx
   vtkSlicer${MODULE_NAME}Logic.h
