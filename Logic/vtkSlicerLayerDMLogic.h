@@ -23,6 +23,11 @@ public:
   /// Registers the LayerDM MRML nodes in the scene
   void RegisterNodes() override;
 
+  static int GetVersionMajor();
+  static int GetVersionMinor();
+  static int GetVersionPatch();
+  static std::string GetVersion();
+
   /// Attach a translation node ref to the input node
   static void SetWidgetEventTranslationNode(vtkMRMLNode* node, vtkMRMLLayerDMWidgetEventTranslationNode* translationNode);
 

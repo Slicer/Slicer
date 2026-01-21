@@ -1,0 +1,8 @@
+#pragma once
+
+#include <string>
+
+static constexpr int vtkSlicerLayerDM_VERSION_MAJOR { @LayerDM_VERSION_MAJOR@ };
+static constexpr int vtkSlicerLayerDM_VERSION_MINOR { @LayerDM_VERSION_MINOR@ };
+static constexpr int vtkSlicerLayerDM_VERSION_PATCH { @LayerDM_VERSION_PATCH@ };
+static const std::string vtkSlicerLayerDM_VERSION { "@LayerDM_VERSION@" };

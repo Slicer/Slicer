@@ -3,6 +3,12 @@
 set(MODULE_NAME LayerDM)
 set(MODULE_TITLE ${MODULE_NAME})
 
+set(${MODULE_NAME}_VERSION_MAJOR 1)
+set(${MODULE_NAME}_VERSION_MINOR 0)
+set(${MODULE_NAME}_VERSION_PATCH 0)
+
+set(${MODULE_NAME}_VERSION "${${MODULE_NAME}_VERSION_MAJOR}.${${MODULE_NAME}_VERSION_MINOR}.${${MODULE_NAME}_VERSION_PATCH}")
+
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
