@@ -58,6 +58,7 @@ namespace
 {
 class qSlicerWebEngineView : public QWebEngineView
 {
+  Q_OBJECT
 public:
   qSlicerWebEngineView(QWidget* parent = Q_NULLPTR)
     : QWebEngineView(parent)
@@ -496,3 +497,5 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply, const QList<QSslErr
   }
 #endif
 }
+
+#include "qSlicerWebWidget.moc"
