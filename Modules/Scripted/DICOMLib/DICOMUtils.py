@@ -864,7 +864,13 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
         if not isinstance(node, slicer.vtkMRMLStorageNode) and not isinstance(node, slicer.vtkMRMLDisplayNode):
             loadedNodeIDs.append(node.GetID())
 
+    @vtk.calldata_type(vtk.VTK_OBJECT)
+    def onNodeRemoved(caller, event, calldata):
+        node = calldata
+        loadedNodeIDs.remove(node.GetID())
+
     sceneObserverTag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
+    sceneObserverTag2 = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeRemovedEvent, onNodeRemoved)
 
     for step, (loadable, plugin) in enumerate(selectedLoadables.items(), start=1):
         if progressCallback:
@@ -906,6 +912,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
             break
 
     slicer.mrmlScene.RemoveObserver(sceneObserverTag)
+    slicer.mrmlScene.RemoveObserver(sceneObserverTag2)
 
     return loadedNodeIDs
 
