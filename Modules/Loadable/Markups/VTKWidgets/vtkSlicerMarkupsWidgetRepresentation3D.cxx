@@ -695,7 +695,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport* viewport)
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     if (controlPoints->ControlPoints->GetNumberOfPoints() > 0)
     {
-      if (!this->MarkupsDisplayNode->GetOccludedVisibility())
+      if (!this->MarkupsDisplayNode->GetOccludedVisibility() && this->ViewNode && this->ViewNode->GetMarkupsOcclusionEnabled())
       {
         if (!zBuffer)
         {
