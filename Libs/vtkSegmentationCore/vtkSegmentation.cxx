@@ -928,22 +928,14 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
 
   // Remove all segmentIdsToMove from the segment ID list
   for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
-       /*upon deletion the increment is done already, so don't increment here*/)
+       /* increment handled manually */)
   {
-    std::string t = *segmentIdIt;
-    std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
+    std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), *segmentIdIt);
     if (foundSegmentIdToMove != segmentIdsToMove.end())
     {
       // this segment gets a new position, so remove it from current position
-      // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
       std::deque<std::string>::iterator segmentIdItToRemove = segmentIdIt;
-      ++segmentIdIt;
-      this->SegmentIds.erase(segmentIdItToRemove);
-      if (this->SegmentIds.empty())
-      {
-        // iterators are invalidated if the last element is deleted
-        break;
-      }
+      segmentIdIt = this->SegmentIds.erase(segmentIdItToRemove); // returns next valid iterator (or end)
     }
     else
     {
