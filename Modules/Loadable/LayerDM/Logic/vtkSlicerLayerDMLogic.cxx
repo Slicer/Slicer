@@ -1,5 +1,8 @@
 #include "vtkSlicerLayerDMLogic.h"
 
+// LayerDM includes
+#include <vtkSlicerLayerDMVersion.h>
+
 // Slicer includes
 #include <vtkMRMLLayerDMWidgetEventTranslationNode.h>
 
@@ -11,6 +14,26 @@ vtkStandardNewMacro(vtkSlicerLayerDMLogic);
 void vtkSlicerLayerDMLogic::RegisterNodes()
 {
   RegisterNodeIfNeeded<vtkMRMLLayerDMWidgetEventTranslationNode>(GetMRMLScene());
+}
+
+int vtkSlicerLayerDMLogic::GetVersionMajor()
+{
+  return vtkSlicerLayerDM_VERSION_MAJOR;
+}
+
+int vtkSlicerLayerDMLogic::GetVersionMinor()
+{
+  return vtkSlicerLayerDM_VERSION_MINOR;
+}
+
+int vtkSlicerLayerDMLogic::GetVersionPatch()
+{
+  return vtkSlicerLayerDM_VERSION_PATCH;
+}
+
+std::string vtkSlicerLayerDMLogic::GetVersion()
+{
+  return vtkSlicerLayerDM_VERSION;
 }
 
 void vtkSlicerLayerDMLogic::SetWidgetEventTranslationNode(vtkMRMLNode* node, vtkMRMLLayerDMWidgetEventTranslationNode* translationNode)
