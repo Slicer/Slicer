@@ -108,6 +108,76 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="browserSettingsFrame">
+     <property name="text">
+      <string>DICOM database settings</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="databaseDirectoryLabel">
+        <property name="text">
+         <string>Database location:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkDirectoryButton" name="directoryButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="browserAutoHideLabel">
+        <property name="text">
+         <string>Auto-hide browser window:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="databaseMaintenanceLabel">
+        <property name="text">
+         <string>Maintenance:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="browserAutoHideCheckBox">
+        <property name="toolTip">
+         <string>Hide DICOM database browser after data loaded</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="repairDatabaseButton">
+        <property name="toolTip">
+         <string>Remove all items from the DICOM database if referenced DICOM file is not found on disk.</string>
+        </property>
+        <property name="text">
+         <string>Remove unavailable data sets</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="clearDatabaseButton">
+        <property name="toolTip">
+         <string>Removes all data from the database and all files that were copied into the database during import.</string>
+        </property>
+        <property name="text">
+         <string>Remove all data sets</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="networkingFrame">
      <property name="text">
       <string>DICOM networking</string>
@@ -201,69 +271,44 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="browserSettingsFrame">
+    <widget class="ctkCollapsibleButton" name="previousDatabaseLocationsFrame">
      <property name="text">
-      <string>DICOM database settings</string>
+      <string>Previous database locations</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="databaseDirectoryLabel">
-        <property name="text">
-         <string>Database location:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="ctkDirectoryButton" name="directoryButton">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="previousLocationsLabel">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="browserAutoHideLabel">
         <property name="text">
-         <string>Auto-hide browser window:</string>
+         <string>List of previous locations:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="databaseMaintenanceLabel">
-        <property name="text">
-         <string>Maintenance:</string>
-        </property>
-       </widget>
+      <item>
+       <widget class="ctkPathLineEdit" name="previousDatabaseLocationsPathLineEdit"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="browserAutoHideCheckBox">
-        <property name="toolTip">
-         <string>Hide DICOM database browser after data loaded</string>
+      <item>
+       <widget class="QPushButton" name="changeDatabaseToPreviousLocationButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string/>
+         <string>Apply</string>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="repairDatabaseButton">
-        <property name="toolTip">
-         <string>Remove all items from the DICOM database if referenced DICOM file is not found on disk.</string>
-        </property>
-        <property name="text">
-         <string>Remove unavailable data sets</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QPushButton" name="clearDatabaseButton">
-        <property name="toolTip">
-         <string>Removes all data from the database and all files that were copied into the database during import.</string>
-        </property>
-        <property name="text">
-         <string>Remove all data sets</string>
+        <property name="icon">
+         <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+          <normaloff>:/Icons/Medium/SlicerDatabase.png</normaloff>:/Icons/Medium/SlicerDatabase.png</iconset>
         </property>
        </widget>
       </item>
@@ -301,6 +346,11 @@
    <class>ctkMenuButton</class>
    <extends>QPushButton</extends>
    <header>ctkMenuButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPathLineEdit</class>
+   <extends>QWidget</extends>
+   <header>ctkPathLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
