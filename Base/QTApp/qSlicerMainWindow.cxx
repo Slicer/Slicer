@@ -358,6 +358,15 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 
   QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)), q, SLOT(onErrorLogToggled(bool)));
 
+  QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
+  this->ErrorLogIconHighlighted = defaultIcon;
+
+  QIcon disabledIcon;
+  disabledIcon.addPixmap(defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
+  this->ErrorLogIconNormal = disabledIcon;
+
+  this->ErrorLogToggleViewAction->setIcon(this->ErrorLogIconNormal);
+
   this->ViewMenu->insertAction(this->ModuleHomeAction, this->ErrorLogToggleViewAction);
 
   // Change orientation depending on where the widget is docked
@@ -699,16 +708,13 @@ void qSlicerMainWindowPrivate::setupStatusBar()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
 {
-  Q_Q(qSlicerMainWindow);
-  QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
-  QIcon icon = defaultIcon;
-  if (!highlighted)
+  if (this->ErrorLogIconIsHighlighted == highlighted)
   {
-    QIcon disabledIcon;
-    disabledIcon.addPixmap(defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
-    icon = disabledIcon;
+    return;
   }
-  this->ErrorLogToggleViewAction->setIcon(icon);
+
+  this->ErrorLogIconIsHighlighted = highlighted;
+  this->ErrorLogToggleViewAction->setIcon(highlighted ? this->ErrorLogIconHighlighted : this->ErrorLogIconNormal);
 }
 
 //-----------------------------------------------------------------------------

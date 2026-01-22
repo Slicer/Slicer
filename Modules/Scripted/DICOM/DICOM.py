@@ -14,6 +14,8 @@ from DICOMLib import DICOMUtils
 from slicer.i18n import tr as _
 from slicer.i18n import translate
 
+import time
+import datetime
 
 #
 # Custom QDockWidget that notifies when it's closed
@@ -218,6 +220,10 @@ class DICOM(ScriptedLoadableModule):
         self.initializeDICOMDatabase()
 
         settings = qt.QSettings()
+
+        # Auto-disable detailed logging if it has been enabled for more than 4 hours
+        self.checkAndDisableStaleDetailedLogging(settings)
+
         if settings.contains("DICOM/RunListenerAtStart") and not slicer.app.commandOptions().testingEnabled:
             if settings.value("DICOM/RunListenerAtStart") == "true":
                 self.startListener()
@@ -512,6 +518,35 @@ class DICOM(ScriptedLoadableModule):
 
         slicer.app.layoutManager().setLayout(layoutId)
 
+    def checkAndDisableStaleDetailedLogging(self, settings):
+        """Check if detailed logging should be auto-disabled based on the stored disable time.
+
+        This prevents performance issues from unintentionally leaving detailed logging enabled.
+        """
+
+        disableTime = settings.value("DICOM/disableDetailedLoggingTime", 0)
+        try:
+            disableTime = float(disableTime)
+        except (ValueError, TypeError):
+            disableTime = 0
+
+        if disableTime == 0:
+            # No auto-disable time set, ensure logging is at Warning level
+            ctk.ctk.setDICOMDetailedLogging(False)
+            return
+
+        currentTime = time.time()
+
+        # If current time has passed the disable time, disable logging
+        if currentTime >= disableTime:
+            logging.info("Detailed DICOM logging auto-disabled after 4 hours.")
+            settings.remove("DICOM/disableDetailedLoggingTime")
+            # Update the log level immediately
+            ctk.ctk.setDICOMDetailedLogging(False)
+        else:
+            # Detailed logging is still active, set to Debug level
+            ctk.ctk.setDICOMDetailedLogging(True)
+
     def _onModuleAboutToBeUnloaded(self, moduleName):
         # Application is shutting down. Stop the listener.
         if moduleName == "DICOM":
@@ -551,20 +586,29 @@ class _ui_DICOMSettingsPanel:
             "DICOM/automaticallyLoadReferences", loadReferencesComboBox,
             "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
-        detailedLoggingCheckBox = qt.QCheckBox()
-        detailedLoggingCheckBox.toolTip = _(
+        # Detailed logging controls
+        detailedLoggingLayout = qt.QHBoxLayout()
+        self.detailedLoggingStatusLabel = qt.QLabel()
+        self.detailedLoggingStatusLabel.wordWrap = True
+        detailedLoggingLayout.addWidget(self.detailedLoggingStatusLabel, 1)
+
+        self.detailedLoggingToggleButton = qt.QPushButton()
+        self.detailedLoggingToggleButton.toolTip = _(
             "Log more details during DICOM operations."
-            " Useful for investigating DICOM loading issues but may impact performance.")
-        genericGroupBoxFormLayout.addRow(_("Detailed logging:"), detailedLoggingCheckBox)
-        detailedLoggingMapper = ctk.ctkBooleanMapper(detailedLoggingCheckBox, "checked", str(qt.SIGNAL("toggled(bool)")))
-        parent.registerProperty(
-            "DICOM/detailedLogging", detailedLoggingMapper,
-            "valueAsInt", str(qt.SIGNAL("valueAsIntChanged(int)")))
-        detailedLoggingCheckBox.stateChanged.connect(self.onDetailedLoggingStateChanged)
+            " Useful for investigating DICOM loading issues but may impact performance."
+            " Detailed logging will be automatically disabled after 4 hours.")
+        detailedLoggingLayout.addWidget(self.detailedLoggingToggleButton)
+        self.detailedLoggingToggleButton.clicked.connect(self.onDetailedLoggingToggle)
+
+        genericGroupBoxFormLayout.addRow(_("Detailed logging:"), detailedLoggingLayout)
+
+        # Initialize button state
+        self.updateDetailedLoggingUI()
 
         thumbnailsSizeComboBox = ctk.ctkComboBox()
         thumbnailsSizeComboBox.toolTip = _(
             "Determines the relative size of the thumbnails when using the visual DICOM browser")
+        thumbnailsSizeComboBox.addItem(_("Hidden"), "hidden")
         thumbnailsSizeComboBox.addItem(_("Small"), "small")
         thumbnailsSizeComboBox.addItem(_("Medium"), "medium")
         thumbnailsSizeComboBox.addItem(_("Large"), "large")
@@ -587,24 +631,67 @@ class _ui_DICOMSettingsPanel:
                 plugins[pluginName].settingsPanelEntry(parent, pluginGroupBox)
         vBoxLayout.addStretch(1)
 
-    def onDetailedLoggingStateChanged(self, detailedLoggingState):
-        if detailedLoggingState == qt.Qt.Checked:
-          ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Debug)
+    def onDetailedLoggingToggle(self):
+        settings = qt.QSettings()
+        disableTime = settings.value("DICOM/disableDetailedLoggingTime", 0)
+        try:
+            disableTime = float(disableTime)
+        except (ValueError, TypeError):
+            disableTime = 0
+
+        currentTime = time.time()
+        isEnabled = disableTime > 0 and currentTime < disableTime
+
+        if isEnabled:
+            # Currently enabled, so disable it
+            ctk.ctk.setDICOMDetailedLogging(False)
+            settings.remove("DICOM/disableDetailedLoggingTime")
+            logging.info("Detailed DICOM logging disabled.")
         else:
-          ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Warning)
+            # Currently disabled, so enable it for 4 hours
+            ctk.ctk.setDICOMDetailedLogging(True)
+            fourHoursInSeconds = 4 * 60 * 60
+            disableTime = currentTime + fourHoursInSeconds
+            settings.setValue("DICOM/disableDetailedLoggingTime", disableTime)
+            logging.info("Detailed DICOM logging enabled for 4 hours.")
+
+        self.updateDetailedLoggingUI()
+
+    def updateDetailedLoggingUI(self):
+        settings = qt.QSettings()
+        disableTime = settings.value("DICOM/disableDetailedLoggingTime", 0)
+        try:
+            disableTime = float(disableTime)
+        except (ValueError, TypeError):
+            disableTime = 0
+
+        currentTime = time.time()
+        isEnabled = disableTime > 0 and currentTime < disableTime
+
+        if isEnabled:
+            # Logging is enabled, show when it will be disabled
+            disableDateTime = datetime.datetime.fromtimestamp(disableTime)
+            dateTimeStr = disableDateTime.strftime("%H:%M, %d %b %Y")
+            self.detailedLoggingStatusLabel.text = _("Enabled until {time}").format(time=dateTimeStr)
+            self.detailedLoggingToggleButton.text = _("Disable")
+        else:
+            # Logging is disabled
+            self.detailedLoggingStatusLabel.text = _("Disabled")
+            self.detailedLoggingToggleButton.text = _("Enable for 4 hours")
 
     def onThumbnailsSizeChanged(self):
         browserWidget = slicer.modules.DICOMInstance.browserWidget
         if not browserWidget:
             return
-        thumbnailsSize = settingsValue("DICOM/thumbnailsSize", "medium")
+        thumbnailsSize = settingsValue("DICOM/thumbnailsSize", "small")
         if thumbnailsSize == "large":
             browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Large
         elif thumbnailsSize == "medium":
             browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Medium
         elif thumbnailsSize == "small":
             browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Small
-
+        elif thumbnailsSize == "hidden":
+            browserWidget.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Hidden
 
 class DICOMSettingsPanel(ctk.ctkSettingsPanel):
     def __init__(self, *args, **kwargs):
