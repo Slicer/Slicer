@@ -80,6 +80,9 @@ public:
   QAction*                        ErrorLogToggleViewAction{ nullptr };
   ctkErrorLogWidget*              ErrorLogWidget{ nullptr };
   QToolButton*                    ErrorLogToolButton{ nullptr };
+  QIcon                           ErrorLogIconHighlighted;
+  QIcon                           ErrorLogIconNormal;
+  bool                            ErrorLogIconIsHighlighted{ false };
   QToolButton*                    LayoutButton{ nullptr };
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar{ nullptr };
   QStringList                     FavoriteModules;

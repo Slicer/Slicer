@@ -65,6 +65,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             self.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Medium
         elif thumbnailsSize == "small":
             self.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Small
+        elif thumbnailsSize == "hidden":
+            self.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Hidden
 
         if settingsValue("DICOM/detailedLogging", False, converter=toBool):
             ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Debug)
