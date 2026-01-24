@@ -82,7 +82,7 @@ qSlicerCPURayCastVolumeRenderingPropertiesWidget::qSlicerCPURayCastVolumeRenderi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCPURayCastVolumeRenderingPropertiesWidget ::~qSlicerCPURayCastVolumeRenderingPropertiesWidget() = default;
+qSlicerCPURayCastVolumeRenderingPropertiesWidget::~qSlicerCPURayCastVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode* qSlicerCPURayCastVolumeRenderingPropertiesWidget::mrmlCPURayCastDisplayNode()
