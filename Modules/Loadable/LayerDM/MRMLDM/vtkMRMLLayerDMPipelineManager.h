@@ -63,6 +63,14 @@ public:
   /// Returns the pipeline associated with the input display node if any.
   vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
 
+  /// Returns the number of pipelines currently managed by the pipeline manager
+  int GetNumberOfPipelines() const;
+
+  /// Returns the list of currently managed display nodes of the pipeline manager.
+  ///
+  /// \sa GetNodePipeline
+  vtkMRMLLayerDMPipelineI* GetNthPipeline(int iPipeline) const;
+
   /// @{
   /// Makes the latest pipeline lose focus
   void LoseFocus() const;
