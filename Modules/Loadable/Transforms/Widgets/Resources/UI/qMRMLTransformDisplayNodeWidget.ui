@@ -1257,7 +1257,7 @@
          <item row="3" column="1">
           <widget class="QCheckBox" name="InteractiveScaling3DCheckBox">
            <property name="toolTip">
-            <string>Enable scaling by manpulating 3D widget (left click and drag the handle at the center of widget face)</string>
+            <string>Enable scaling by manipulating 3D widget (left click and drag the handle at the center of widget face)</string>
            </property>
            <property name="text">
             <string/>
@@ -1366,7 +1366,7 @@
          <item row="2" column="1">
           <widget class="QCheckBox" name="InteractiveRotation3DCheckBox">
            <property name="toolTip">
-            <string>Enable translating by manpulating 3D widget (left click and drag anywhere on the widget face)</string>
+            <string>Enable translating by manipulating 3D widget (left click and drag anywhere on the widget face)</string>
            </property>
            <property name="text">
             <string/>
@@ -1420,7 +1420,7 @@
          <item row="1" column="1">
           <widget class="QCheckBox" name="InteractiveTranslation3DCheckBox">
            <property name="toolTip">
-            <string>Enable scaling by manpulating 3D widget (shift +left click and drag the handle at the center of widget face, or left click and drag the center handle)</string>
+            <string>Enable scaling by manipulating 3D widget (shift +left click and drag the handle at the center of widget face, or left click and drag the center handle)</string>
            </property>
            <property name="text">
             <string/>
