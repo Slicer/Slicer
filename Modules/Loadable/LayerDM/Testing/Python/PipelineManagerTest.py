@@ -263,3 +263,36 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
 
         self.pipelineManager.RemoveNode(m1.GetDisplayNode())
         m1.mockOnRendererRemoved.assert_called_once_with(self.defaultRenderer)
+
+    def test_correctly_cleans_up_outdated_pipelines(self):
+        modelNodes = [slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
+        for modelNode in modelNodes:
+            self.pipelineManager.AddNode(modelNode)
+        pipelines = [self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in range(self.pipelineManager.GetNumberOfPipelines())]
+        modelPipelines = [p for p in pipelines if p.GetDisplayNode() in modelNodes]
+        assert len(modelPipelines) == 5
+        prevNumber = self.pipelineManager.GetNumberOfPipelines()
+        slicer.mrmlScene.RemoveNode(modelNodes[0])
+        slicer.mrmlScene.RemoveNode(modelNodes[1])
+        slicer.mrmlScene.RemoveNode(modelNodes[2])
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber
+        self.pipelineManager.UpdateFromScene()
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber - 3
+
+    def test_notifies_pipelines_when_references_are_added_or_removed(self):
+        # Create a display markups node
+        m1 = MockPipeline()
+        self.nextMock = m1
+        dNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode")
+        assert self.pipelineManager.AddNode(dNode)
+
+        # Create a markups node
+        markups = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+
+        # Set the markups node display to the previous display node and expect the pipeline to have been notified
+        markups.SetAndObserveDisplayNodeID(dNode.GetID())
+        m1.mockOnReferenceToDisplayNodeAdded.assert_called_once_with(markups, "display")
+
+        # Unset the display node and expect the pipeline to have been notified
+        markups.SetAndObserveDisplayNodeID("")
+        m1.mockOnReferenceToDisplayNodeRemoved.assert_called_once_with(markups, "display")
