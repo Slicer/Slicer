@@ -282,6 +282,21 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineManager::GetNodeP
   return found->second;
 }
 
+int vtkMRMLLayerDMPipelineManager::GetNumberOfPipelines() const
+{
+  return this->m_pipelineMap.size();
+}
+
+vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipeline) const
+{
+  if (iPipeline < 0 || iPipeline >= this->m_pipelineMap.size())
+  {
+    return nullptr;
+  }
+
+  return std::next(this->m_pipelineMap.begin(), iPipeline)->second;
+}
+
 void vtkMRMLLayerDMPipelineManager::SetRenderer(vtkRenderer* renderer) const
 {
   // Pass the renderer to the camera sync
@@ -306,12 +321,18 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
     return;
   }
 
+  std::vector<vtkWeakPointer<vtkMRMLNode>> outdatedPipelines;
   for (const auto& pipe : m_pipelineMap)
   {
     if (!pipe.first || !this->m_scene->GetNodeByID(pipe.first->GetID()))
     {
-      this->RemovePipeline(pipe.first);
+      outdatedPipelines.emplace_back(pipe.first);
     }
+  }
+
+  for (const auto& pipe : outdatedPipelines)
+  {
+    this->RemovePipeline(pipe);
   }
 }
 
