@@ -719,7 +719,7 @@ void vtkSlicerSceneViewsModuleLogic::SetNthSceneViewDescription(int index, std::
   vtkMRMLVolumeNode* screenshotNode = this->GetNthSceneViewScreenshotProxyNode(index);
   if (!screenshotNode)
   {
-    vtkErrorMacro("SetNthSceneViewName: Failed to get name proxy node.");
+    vtkErrorMacro("SetNthSceneViewDescription: Failed to get name proxy node.");
     return;
   }
 
@@ -732,7 +732,7 @@ std::string vtkSlicerSceneViewsModuleLogic::GetNthSceneViewDescription(int index
   vtkMRMLVolumeNode* screenshotNode = this->GetNthSceneViewScreenshotProxyNode(index);
   if (!screenshotNode)
   {
-    vtkErrorMacro("SetNthSceneViewName: Failed to get name proxy node.");
+    vtkErrorMacro("GetNthSceneViewDescription: Failed to get name proxy node.");
     return "";
   }
 
@@ -745,7 +745,7 @@ void vtkSlicerSceneViewsModuleLogic::SetNthSceneViewScreenshotType(int index, in
   vtkMRMLVolumeNode* screenshotNode = this->GetNthSceneViewScreenshotProxyNode(index);
   if (!screenshotNode)
   {
-    vtkErrorMacro("SetNthSceneViewName: Failed to get name proxy node.");
+    vtkErrorMacro("SetNthSceneViewScreenshotType: Failed to get name proxy node.");
     return;
   }
   this->SetNthNodeAttribute(screenshotNode, index, this->GetSceneViewScreenshotTypeAttributeName(), this->GetScreenShotTypeAsString(type));
@@ -757,7 +757,7 @@ int vtkSlicerSceneViewsModuleLogic::GetNthSceneViewScreenshotType(int index)
   vtkMRMLVolumeNode* screenshotNode = this->GetNthSceneViewScreenshotProxyNode(index);
   if (!screenshotNode)
   {
-    vtkErrorMacro("SetNthSceneViewName: Failed to get name proxy node.");
+    vtkErrorMacro("GetNthSceneViewScreenshotType: Failed to get name proxy node.");
     return -1;
   }
   std::string screenshotTypeString = this->GetNthNodeAttribute(screenshotNode, index, this->GetSceneViewScreenshotTypeAttributeName());
