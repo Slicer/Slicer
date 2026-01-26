@@ -3,7 +3,7 @@ import logging
 import ctk
 import qt
 import vtk
-
+import vtkSegmentationCorePython as vtkSegmentationCore
 import slicer
 from slicer.i18n import tr as _
 
@@ -170,8 +170,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             # just in case a queued request comes through
             return
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
-
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         segmentation = segmentationNode.GetSegmentation()
 
@@ -207,7 +205,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             self.delayedAutoUpdateTimer.start()
 
     def observeSegmentation(self, observationEnabled):
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        if not self.scriptedEffect:
+            return
 
         parameterSetNode = self.scriptedEffect.parameterSetNode()
         segmentationNode = None
@@ -397,8 +396,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         if self.selectedSegmentIds is None:
             return True
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
-
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
         # The effective extent for the current input segments
@@ -427,9 +424,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                 (masterImageExtent[5] != currentLabelExtent[5] and currentLabelExtent[5] < effectiveLabelExtent[5] + self.minimumExtentMargin))
 
     def preview(self):
-        # Get source volume image data
-        import vtkSegmentationCorePython as vtkSegmentationCore
-
         # Get segmentation
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
