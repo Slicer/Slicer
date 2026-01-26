@@ -207,6 +207,11 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             self.delayedAutoUpdateTimer.start()
 
     def observeSegmentation(self, observationEnabled):
+        if not self.scriptedEffect:
+            # This can be the case if the Python interpreter has already begun its shutdown process
+            # when observeSegmentation is called from __del__ method.
+            return
+
         import vtkSegmentationCorePython as vtkSegmentationCore
 
         parameterSetNode = self.scriptedEffect.parameterSetNode()
