@@ -246,6 +246,6 @@ void qMRMLVolumePropertyNodeWidget::updateIndependentComponents()
   }
 
   MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
-  bool indepdendentComponents = d->IndependentRadioButton->isChecked();
-  volumeProperty->SetIndependentComponents(indepdendentComponents);
+  bool independentComponents = d->IndependentRadioButton->isChecked();
+  volumeProperty->SetIndependentComponents(independentComponents);
 }

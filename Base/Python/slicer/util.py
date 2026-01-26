@@ -2851,8 +2851,8 @@ def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
 
     # Reset direction/origin/spacing of the VTK output image.
     # See https://github.com/Slicer/Slicer/issues/6911
-    identidyMatrix = vtk.vtkMatrix3x3()
-    vtkImage.SetDirectionMatrix(identidyMatrix)
+    identityMatrix = vtk.vtkMatrix3x3()
+    vtkImage.SetDirectionMatrix(identityMatrix)
     vtkImage.SetOrigin((0, 0, 0))
     vtkImage.SetSpacing((1.0, 1.0, 1.0))
 
@@ -3370,7 +3370,7 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
 
     :param message: Text shown in the message box.
     :param show: If show is False, the context manager has no effect.
-    :param waitCursor: If waitCrusor is set to True then mouse cursor is changed to
+    :param waitCursor: If waitCursor is set to True then mouse cursor is changed to
        wait cursor while the context manager is being run.
 
     .. code-block:: python
