@@ -410,7 +410,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         effectiveGeometryImage = slicer.vtkOrientedImageData()
         effectiveGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
             vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.selectedSegmentIds)
-        if effectiveGeometryString is None:
+        if not effectiveGeometryString:
             return True
         vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(effectiveGeometryString, effectiveGeometryImage)
 
