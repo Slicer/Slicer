@@ -55,10 +55,13 @@ if(NOT DEFINED OPENSSL_LIBRARIES
   if(UNIX)
     # Starting with Qt 5.12.4, official Qt binaries are built against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
-    set(_default_version "1.1.1w")
+    #
+    # Modern distributions (Ubuntu 24.04+, Debian 12+) ship with OpenSSL 3.x
+    # OpenSSL 3.0.x is LTS (supported until September 2026)
+    set(_default_version "3.0.19")
 
     set(OPENSSL_DOWNLOAD_VERSION "${_default_version}" CACHE STRING "Version of OpenSSL source package to download")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g" "1.1.1w")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g" "1.1.1w" "3.0.19")
 
     # Workaround linking error when building against non-system zlib on macOS
     # See https://github.com/openssl/openssl/pull/12238
@@ -69,6 +72,11 @@ if(NOT DEFINED OPENSSL_LIBRARIES
     # See https://github.com/openssl/openssl/pull/12238
     set(OpenSSL_1.1.1w_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.1.1w-pr12238.tar.gz)
     set(OpenSSL_1.1.1w_MD5 6d9543e9fbfac5914a8597e3a14c4ece)
+
+    # OpenSSL 3.0.x LTS series (supported until September 2026)
+    # Compatible with modern Linux distributions (Ubuntu 24.04+, Debian 12+)
+    set(OpenSSL_3.0.19_URL https://www.openssl.org/source/openssl-3.0.19.tar.gz)
+    set(OpenSSL_3.0.19_SHA256 fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072)
 
     if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL)
       message(FATAL_ERROR "There is no source version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available.
@@ -149,10 +157,17 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
 ")
 
     #------------------------------------------------------------------------------
+    # Use SHA256 for OpenSSL 3.x, MD5 for 1.x (legacy)
+    if(OPENSSL_DOWNLOAD_VERSION VERSION_GREATER_EQUAL "3.0.0")
+      set(_hash_type URL_HASH SHA256=${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_SHA256})
+    else()
+      set(_hash_type URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5})
+    endif()
+
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
       URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
-      URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5}
+      ${_hash_type}
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       BUILD_IN_SOURCE 1
@@ -191,6 +206,10 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
 
     # Starting with Qt 5.12.4, official Qt binaries are built against OpenSSL 1.1.1
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
+    #
+    # NOTE: OpenSSL 3.x support for Windows is not yet implemented in this file.
+    # Windows currently uses prebuilt binaries for OpenSSL 1.1.1.
+    # TODO: Add OpenSSL 3.x prebuilt binaries or source build for Windows.
     set(_default_version "1.1.1g")
     set(OPENSSL_DOWNLOAD_VERSION "${_default_version}" CACHE STRING "Version of OpenSSL pre-compiled package to download.")
     set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g")
