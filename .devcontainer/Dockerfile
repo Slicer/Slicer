@@ -81,7 +81,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
     libglu1-mesa \
     libnss3 \
     libpulse-mainloop-glib0 \
-    qt5dxcb-plugin
+    qt6-gtk-platformtheme
 
 ################################################################################
 # MARK: tester - setup test dependencies for validation
@@ -111,15 +111,15 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
 # install build dependencies
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
   apt-get install -y \
-    libqt5opengl5-dev \
-    libqt5svg5-dev \
-    libqt5x11extras5-dev \
-    libqt5xmlpatterns5-dev \
     libxt-dev \
-    qtbase5-private-dev \
-    qtmultimedia5-dev \
-    qttools5-dev \
-    qtwebengine5-dev
+    qt6-5compat-dev \
+    qt6-base-dev \
+    qt6-base-private-dev \
+    qt6-multimedia-dev \
+    qt6-scxml-dev \
+    qt6-svg-dev \
+    qt6-tools-dev \
+    qt6-webengine-dev
 
 # setup default ccache configuration
 ENV CCACHE_DIR="$OVERLAY_WS/.ccache"
