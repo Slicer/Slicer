@@ -30,13 +30,14 @@ class QWidget;
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
+// Qt6 requires complete type definitions for Q_INVOKABLE methods
+#include "qMRMLLayoutViewFactory.h"
 
 class qMRMLPlotWidget;
 class qMRMLTableWidget;
 class qMRMLThreeDWidget;
 class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
-class qMRMLLayoutViewFactory;
 
 class vtkMRMLAbstractViewNode;
 class vtkMRMLColorLogic;
