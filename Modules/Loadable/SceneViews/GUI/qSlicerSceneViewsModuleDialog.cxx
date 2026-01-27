@@ -92,16 +92,19 @@ void qSlicerSceneViewsModuleDialogPrivate::setupUi(QDialog* dialog)
 
   this->CaptureDisplayNodesCheckBox = new QCheckBox(dialog);
   this->CaptureDisplayNodesCheckBox->setObjectName(QString::fromUtf8("CaptureDisplayNodesCheckBox"));
-  this->CaptureDisplayNodesCheckBox->setText(qSlicerSceneViewsModuleDialog::tr("Capture display nodes"));
+  this->CaptureDisplayNodesCheckBox->setText(qSlicerSceneViewsModuleDialog::tr("Save display settings"));
   this->CaptureDisplayNodesCheckBox->setToolTip(
-    qSlicerSceneViewsModuleDialog::tr("If checked, all display nodes in the scene will be added or updated in the current scene view."));
+    qSlicerSceneViewsModuleDialog::tr("When enabled, the Scene View will store which objects are visible as well as color and transparency,"
+                                      " and restore them when the Scene View is loaded.\nThis option does not affect saving of view layout and window arrangement."));
   QObject::connect(this->CaptureDisplayNodesCheckBox, SIGNAL(clicked()), dialog, SLOT(onCaptureDisplayNodesClicked()));
   gridLayout->addWidget(this->CaptureDisplayNodesCheckBox, newRowIndex++, 0, 1, 2);
 
   this->CaptureViewNodesCheckBox = new QCheckBox(dialog);
   this->CaptureViewNodesCheckBox->setObjectName(QString::fromUtf8("CaptureViewNodesCheckBox"));
-  this->CaptureViewNodesCheckBox->setText(qSlicerSceneViewsModuleDialog::tr("Capture view nodes"));
-  this->CaptureViewNodesCheckBox->setToolTip(qSlicerSceneViewsModuleDialog::tr("If checked, all view nodes in the scene will be added or updated in the current scene view."));
+  this->CaptureViewNodesCheckBox->setText(qSlicerSceneViewsModuleDialog::tr("Save view layout"));
+  this->CaptureViewNodesCheckBox->setToolTip(
+    qSlicerSceneViewsModuleDialog::tr("When enabled, the Scene View will store the arrangement of views on the screen (for example, which slice and 3D views are shown, how they "
+                                      "are arranged, and their slice positions and 3D view orientations), and will restore this arrangement when the Scene View is loaded."));
   QObject::connect(this->CaptureViewNodesCheckBox, SIGNAL(clicked()), dialog, SLOT(onCaptureViewNodesClicked()));
   gridLayout->addWidget(this->CaptureViewNodesCheckBox, newRowIndex++, 0, 1, 2);
 
