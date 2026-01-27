@@ -4,6 +4,9 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/cli
   slicer/i18n
   slicer/logic
+  slicer/packaging/__init__
+  slicer/packaging/requirements
+  slicer/packaging/installer
   slicer/parameterNodeWrapper/__init__
   slicer/parameterNodeWrapper/default
   slicer/parameterNodeWrapper/guiCreation
@@ -24,6 +27,11 @@ set(Slicer_PYTHON_SCRIPTS
   vtkITK
   vtkSegmentationCore
   vtkTeem
+  )
+
+set(Slicer_PYTHON_RESOURCES
+  slicer/packaging/core-constraints.txt
+  slicer/packaging/core-requirements.txt
   )
 
 set(Slicer_PYTHON_MODULES_CONFIG "
@@ -47,9 +55,6 @@ configure_file(
   )
 
 list(APPEND Slicer_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/slicer/kits.py)
-
-set(Slicer_PYTHON_RESOURCES
-  )
 
 if(Slicer_USE_SimpleITK)
   list(APPEND Slicer_PYTHON_SCRIPTS

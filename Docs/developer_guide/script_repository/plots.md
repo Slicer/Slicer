@@ -69,11 +69,8 @@ Matplotlib may be used from within Slicer, but the default Tk backend locks up a
 #### Non-interactive plot
 
 ```python
-try:
-  import matplotlib
-except ModuleNotFoundError:
-  slicer.util.pip_install("matplotlib")
-  import matplotlib
+slicer.util.pip_install("matplotlib")
+import matplotlib
 
 matplotlib.use("Agg")
 from pylab import *
@@ -104,7 +101,7 @@ imageWidget.show()
 ```
 
 :::{tip}
-To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
+To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to [](/developer_guide/python_packages.md).
 :::
 
 ![Matplotlib example](https://www.slicer.org/w/img_auth.php/a/ab/MatplotlibExample.png)
@@ -113,11 +110,8 @@ To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refe
 
 ```python
 import JupyterNotebooksLib as slicernb
-try:
-  import matplotlib
-except ModuleNotFoundError:
-  pip_install("matplotlib")
-  import matplotlib
+pip_install("matplotlib")
+import matplotlib
 
 matplotlib.use("Agg")
 
@@ -155,12 +149,9 @@ slicernb.MatplotlibDisplay(matplotlib.pyplot)
 #### Interactive plot using wxWidgets GUI toolkit
 
 ```python
-try:
-  import matplotlib
-  import wx
-except ModuleNotFoundError:
-  pip_install("matplotlib wxPython")
-  import matplotlib
+pip_install("matplotlib wxPython")
+import matplotlib
+import wx
 
 # Get a volume from SampleData and compute its histogram
 import SampleData
@@ -182,7 +173,7 @@ plt.show(block=False)
 ```
 
 :::{tip}
-To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
+To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to [](/developer_guide/python_packages.md).
 :::
 
 ![Interactive Matplotlib Example](https://www.slicer.org/w/img_auth.php/d/d2/InteractiveMatplotlibExample.png)

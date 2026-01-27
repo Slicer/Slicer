@@ -10,6 +10,7 @@ parameter_nodes/index
 modules/index
 extensions
 python_faq
+python_packages
 script_repository
 build_instructions/index
 debugging/index
