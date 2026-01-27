@@ -705,6 +705,13 @@ QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID) const
     tooltipString.append(transformInfo);
   }
 
+  // Append the file path if available
+  QString filePath = this->tooltipWithStoragePath(itemID);
+  if (!filePath.isEmpty())
+  {
+    tooltipString.append(QString("\n  %1").arg(filePath));
+  }
+
   return tooltipString;
 }
 
