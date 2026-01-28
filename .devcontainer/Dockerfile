@@ -81,6 +81,7 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
     libglu1-mesa \
     libnss3 \
     libpulse-mainloop-glib0 \
+    libxcb-xinerama0 \
     qt6-gtk-platformtheme
 
 ################################################################################
