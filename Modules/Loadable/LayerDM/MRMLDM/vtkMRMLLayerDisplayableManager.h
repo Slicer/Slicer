@@ -65,7 +65,7 @@ protected:
   void Create() override;
 
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
-  void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneStartBatchProcess() override;
   void OnMRMLSceneEndBatchProcess() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;

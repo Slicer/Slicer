@@ -79,40 +79,41 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDisplayableManager::GetNode
   return m_pipelineManager->GetNodePipeline(node);
 }
 
-void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndClose()
+void vtkMRMLLayerDisplayableManager::OnMRMLSceneStartBatchProcess()
 {
-  this->UpdateFromMRML();
+  if (!this->m_pipelineManager)
+  {
+    return;
+  }
+  this->m_pipelineManager->BlockRequestRender(true);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
-  this->UpdateFromMRML();
+  if (!this->m_pipelineManager)
+  {
+    return;
+  }
+  this->m_pipelineManager->BlockRequestRender(false);
+  this->m_pipelineManager->RequestRender();
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() || !this->m_pipelineManager)
+  if (!this->m_pipelineManager)
   {
     return;
   }
-
-  if (this->m_pipelineManager->AddNode(node))
-  {
-    this->RequestRender();
-  }
+  this->m_pipelineManager->AddNode(node);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() || !this->m_pipelineManager)
+  if (!this->m_pipelineManager)
   {
     return;
   }
-
-  if (this->m_pipelineManager->RemoveNode(node))
-  {
-    this->RequestRender();
-  }
+  this->m_pipelineManager->RemoveNode(node);
 }
 
 void vtkMRMLLayerDisplayableManager::UnobserveMRMLScene()
