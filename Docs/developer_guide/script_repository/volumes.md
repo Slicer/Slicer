@@ -67,7 +67,7 @@ volumeNode=slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
 volumeNode.SetAndObserveImageData(imageData)
 volumeNode.SetSpacing(spacing)
 volumeNode.SetOrigin(origin)
-slicer.util.setSliceViewerLayers(volumeNode, fit=True)
+slicer.util.setSliceViewerLayers(background=volumeNode, fit=True)
 ```
 
 ### Load volume from a remote server
@@ -794,7 +794,7 @@ c = b - a
 
 volumeNode = slicer.modules.volumes.logic().CloneVolume(input1Volume, "Difference")
 slicer.util.updateVolumeFromArray(volumeNode, c)
-setSliceViewerLayers(background=volumeNode)
+slicer.util.setSliceViewerLayers(background=volumeNode)
 ```
 
 ### Add noise to image
@@ -837,7 +837,7 @@ maskedVoxels[mask==0] = 0
 # Write masked volume to volume node and show it
 maskedVolumeNode = slicer.modules.volumes.logic().CloneVolume(volumeNode, "Masked")
 slicer.util.updateVolumeFromArray(maskedVolumeNode, maskedVoxels)
-slicer.util.setSliceViewerLayers(maskedVolumeNode)
+slicer.util.setSliceViewerLayers(background=maskedVolumeNode)
 ```
 
 ### Apply random deformations to image

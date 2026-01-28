@@ -128,7 +128,7 @@ fileList = db.filesForSeries(seriesList[0])
 # Use pydicom to access the full header, which requires
 # re-reading the dataset instead of using the database cache
 import pydicom
-pydicom.dcmread(fileList[0])
+ds = pydicom.dcmread(fileList[0])
 ds.CTExposureSequence[0].ExposureModulationType
 ```
 
@@ -183,12 +183,12 @@ def pathFromNode(node):
     filepath = storageNode.GetFullNameFromFileName()
   else: # Loaded via DICOM browser
     instanceUIDs = node.GetAttribute("DICOM.instanceUIDs").split()
-    filepath = slicer.dicomDatabase.fileForInstance(instUids[0])
+    filepath = slicer.dicomDatabase.fileForInstance(instanceUIDs[0])
   return filepath
 
 # Example:
 node = slicer.util.getNode("volume1")
-path = self.pathFromNode(node)
+path = pathFromNode(node)
 print("DICOM path=%s" % path)
 ```
 

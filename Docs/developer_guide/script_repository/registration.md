@@ -27,7 +27,7 @@ cliBrainsFitRigidNode = slicer.cli.run(slicer.modules.brainsfit, None, parameter
 
 # Display fused result. Computed transformNode is automatically applied to the movingVolumeNode.
 # Ctrl + left-click-and-drag up/down to change opacity in slice views.
-slicer.util.setSliceViewerLayers(fixedVolumeNode, movingVolumeNode, foregroundOpacity=0.5)
+slicer.util.setSliceViewerLayers(background=fixedVolumeNode, foreground=movingVolumeNode, foregroundOpacity=0.5)
 ```
 
 All parameters for BRAINSFit can be found [here](https://github.com/BRAINSia/BRAINSTools/blob/main/BRAINSFit/BRAINSFit.xml).

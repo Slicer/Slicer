@@ -198,7 +198,7 @@ def onPointsModified(observer=None, eventid=None):
 # Initial update
 onPointsModified()
 # Automatic update each time when a markup point is modified
-pointListNodeObserverTag = markupsNode.AddObserver(slicer.vtkMRMLMarkupsFiducialNode.PointModifiedEvent, onPointsModified)
+pointListNodeObserverTag = pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, onPointsModified)
 
 # To stop updating selection, run this:
 # pointListNode.RemoveObserver(pointListNodeObserverTag)
