@@ -35,7 +35,7 @@ slicer.modules.markups.logic().ImportControlPointsFromCSV(markupsNode, "/path/to
 Markups point list can be loaded from legacy [fcsv file format](/developer_guide/modules/markups.md#markups-fiducial-point-list-file-format-fcsv). Note that this file format is no longer recommended, as it is not a standard csv file format and can only store a small fraction of information that is in a markups node.
 
 ```python
-slicer.util.loadMarkupsFiducialList("/path/to/list/F.fcsv")
+slicer.util.loadMarkups("/path/to/list/F.fcsv")
 ```
 
 ### Adding control points Programmatically

@@ -11,7 +11,7 @@ Create histogram plot of a volume and show it embedded in the view layout. More 
 import SampleData
 import numpy as np
 volumeNode = SampleData.SampleDataLogic().downloadMRHead()
-histogram = np.histogram(arrayFromVolume(volumeNode), bins=50)
+histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode), bins=50)
 
 chartNode = slicer.util.plot(histogram, xColumnIndex = 1)
 chartNode.SetYAxisRangeAuto(False)
@@ -29,11 +29,11 @@ volumeNode = SampleData.SampleDataLogic().downloadMRHead()
 
 # Compute histogram values
 import numpy as np
-histogram = np.histogram(arrayFromVolume(volumeNode), bins=50)
+histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode), bins=50)
 
 # Save results to a new table node
 tableNode=slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-updateTableFromArray(tableNode, histogram)
+slicer.util.updateTableFromArray(tableNode, histogram)
 tableNode.GetTable().GetColumn(0).SetName("Count")
 tableNode.GetTable().GetColumn(1).SetName("Intensity")
 
@@ -116,7 +116,7 @@ import JupyterNotebooksLib as slicernb
 try:
   import matplotlib
 except ModuleNotFoundError:
-  pip_install("matplotlib")
+  slicer.util.pip_install("matplotlib")
   import matplotlib
 
 matplotlib.use("Agg")
@@ -159,14 +159,14 @@ try:
   import matplotlib
   import wx
 except ModuleNotFoundError:
-  pip_install("matplotlib wxPython")
+  slicer.util.pip_install("matplotlib wxPython")
   import matplotlib
 
 # Get a volume from SampleData and compute its histogram
 import SampleData
 import numpy as np
 volumeNode = SampleData.SampleDataLogic().downloadMRHead()
-histogram = np.histogram(arrayFromVolume(volumeNode), bins=50)
+histogram = np.histogram(slicer.util.arrayFromVolume(volumeNode), bins=50)
 
 # Set matplotlib to use WXAgg backend
 import matplotlib

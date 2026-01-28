@@ -188,7 +188,7 @@ hollowModeler.SetAttribute("ShellThickness", "2.5")  # grow outside
 hollowModeler.SetContinuousUpdate(True)  # auto-update output model if input parameters are changed
 
 # Hide inputs, show output
-segmentation.GetDisplayNode().SetVisibility(False)
+segmentationNode.GetDisplayNode().SetVisibility(False)
 modelNode.GetDisplayNode().SetVisibility(False)
 hollowedModelNode.GetDisplayNode().SetOpacity(0.5)
 ```
@@ -430,7 +430,7 @@ segmentId = "Segment_1"
 
 # Get array voxel coordinates
 import numpy as np
-seg=arrayFromSegment(segmentation_node, segmentId)
+seg = slicer.util.arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId)
 # numpy array has voxel coordinates in reverse order (KJI instead of IJK)
 # and the array is cropped to minimum size in the segmentation
 mean_KjiCropped = [coords.mean() for coords in np.nonzero(seg)]
@@ -525,7 +525,7 @@ def printSegmentNames(unused1=None, unused2=None):
     print("Segment found at position {0}: {1}".format(ras, segment.GetName()))
 
 # Observe markup node changes
-pointListNode.AddObserver(slicer.vtkMRMLMarkupsPlaneNode.PointModifiedEvent, printSegmentNames)
+pointListNode.AddObserver(slicer.vtkMRMLMarkupsNode.PointModifiedEvent, printSegmentNames)
 printSegmentNames()
 ```
 
@@ -734,7 +734,7 @@ pointListNode.CreateDefaultDisplayNodes()
 for segmentId in stats["SegmentIDs"]:
   centroid_ras = stats[segmentId,"LabelmapSegmentStatisticsPlugin.centroid_ras"]
   segmentName = segmentationNode.GetSegmentation().GetSegment(segmentId).GetName()
-  pointListNode.AddFiducialFromArray(centroid_ras, segmentName)
+  pointListNode.AddControlPoint(centroid_ras, segmentName)
 ```
 
 #### Get size, position, and orientation of each segment

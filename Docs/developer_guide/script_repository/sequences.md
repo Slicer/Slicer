@@ -138,10 +138,10 @@ for segmentIdIndex in range(visibleSegmentIds.GetNumberOfValues()):
 
 Warp a segmentation with a sequence of transforms and write each transformed segmentation to a ply file. It can be used on sequence registration results created as shown in this [tutorial video](https://youtu.be/qVgXdXEEVFU).
 
-```
+```python
 # Inputs
-transformSequenceNode = getNode("OutputTransforms")
-segmentationNode = getNode("Segmentation")
+transformSequenceNode = slicer.util.getNode("OutputTransforms")
+segmentationNode = slicer.util.getNode("Segmentation")
 segmentIndex = 0
 outputFilePrefix = r"c:/tmp/20220312/seg"
 
