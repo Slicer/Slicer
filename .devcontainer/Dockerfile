@@ -8,7 +8,7 @@ ARG WS_CACHE_ID=slicer
 
 ARG FROM_IMAGE=base
 # Stage from full image tag name for dependabot detection
-FROM ubuntu:noble-20260113 AS base
+FROM ubuntu:resolute-20260106.1 AS base
 
 ################################################################################
 # MARK: baser - setup base image using snapshots
