@@ -139,7 +139,6 @@ RUN --mount=type=cache,sharing=locked,target=/var/cache/apt \
   apt-get install -y \
     # Debug utils
     gdb \
-    hotspot \
     python3-ipdb \
     valgrind \
     # Editors utils
