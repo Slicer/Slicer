@@ -57,11 +57,11 @@ if(NOT DEFINED OPENSSL_LIBRARIES
     # See https://www.qt.io/blog/2019/06/17/qt-5-12-4-released-support-openssl-1-1-1
     #
     # Modern distributions (Ubuntu 24.04+, Debian 12+) ship with OpenSSL 3.x
-    # OpenSSL 3.0.x is LTS (supported until September 2026)
-    set(_default_version "3.0.19")
+    # OpenSSL 3.5.x is LTS (supported until April 8, 2030)
+    set(_default_version "3.5.5")
 
     set(OPENSSL_DOWNLOAD_VERSION "${_default_version}" CACHE STRING "Version of OpenSSL source package to download")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g" "1.1.1w" "3.0.19")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.1.1g" "1.1.1w" "3.5.5")
 
     # Workaround linking error when building against non-system zlib on macOS
     # See https://github.com/openssl/openssl/pull/12238
@@ -73,10 +73,10 @@ if(NOT DEFINED OPENSSL_LIBRARIES
     set(OpenSSL_1.1.1w_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/sources/openssl-1.1.1w-pr12238.tar.gz)
     set(OpenSSL_1.1.1w_MD5 6d9543e9fbfac5914a8597e3a14c4ece)
 
-    # OpenSSL 3.0.x LTS series (supported until September 2026)
+    # OpenSSL 3.5.x LTS series (supported until April 8, 2030)
     # Compatible with modern Linux distributions (Ubuntu 24.04+, Debian 12+)
-    set(OpenSSL_3.0.19_URL https://www.openssl.org/source/openssl-3.0.19.tar.gz)
-    set(OpenSSL_3.0.19_SHA256 fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072)
+    set(OpenSSL_3.5.5_URL https://www.openssl.org/source/openssl-3.5.5.tar.gz)
+    set(OpenSSL_3.5.5_SHA256 b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89)
 
     if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL)
       message(FATAL_ERROR "There is no source version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available.
