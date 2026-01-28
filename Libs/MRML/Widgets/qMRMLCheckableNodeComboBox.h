@@ -23,8 +23,6 @@
 
 // qMRML includes
 #include "qMRMLNodeComboBox.h"
-// Qt6 requires complete type definitions for Q_INVOKABLE methods
-#include "vtkMRMLNode.h"
 
 class qMRMLCheckableNodeComboBoxPrivate;
 
