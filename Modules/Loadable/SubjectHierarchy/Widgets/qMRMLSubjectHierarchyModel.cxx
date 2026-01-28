@@ -1031,6 +1031,18 @@ void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardIte
         // Reparent items
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
         newParentItem->insertRow(newIndex, children);
+
+        // Make sure the selection is maintained after reparenting
+        QList<vtkIdType> childItemIds;
+        for (QStandardItem* child : children)
+        {
+          vtkIdType childItemId = this->subjectHierarchyItemFromItem(child);
+          if (childItemId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+          {
+            childItemIds.append(childItemId);
+          }
+        }
+        emit requestSelectItems(childItemIds);
       }
     }
   }
