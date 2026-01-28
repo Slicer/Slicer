@@ -72,15 +72,12 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    # Temporary: Use fork until PR #1347 is merged
-    # "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
-    "${EP_GIT_PROTOCOL}://github.com/ruffsl/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    # Temporary: Use PR #1347 commit from fork
     # https://github.com/commontk/CTK/pull/1347
     "9177808cc2a386bda07ab180e750a9fe10089d41"
     QUIET
