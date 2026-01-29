@@ -4247,6 +4247,35 @@ def pip_check(req, _seen=None):
     return all(pip_check(dep, _seen) for dep in activated)
 
 
+# Module-level flag to track whether a non-blocking pip install is in progress.
+# Used to prevent concurrent non-blocking pip operations which could corrupt
+# the Python environment.
+_pip_install_in_progress = False
+
+
+def isPipInstallInProgress():
+    """Check if a non-blocking pip install is currently in progress.
+
+    Use this to check before starting an operation that might conflict with
+    an ongoing pip installation.
+
+    :returns: True if a non-blocking pip install is in progress, False otherwise.
+
+    Example:
+
+    .. code-block:: python
+
+      if slicer.util.isPipInstallInProgress():
+          slicer.util.warningDisplay(
+              "Package installation is in progress. Please wait."
+          )
+      else:
+          slicer.util.pip_install("scipy", blocking=False)
+
+    """
+    return _pip_install_in_progress
+
+
 def pip_ensure(
     requirements,
     constraints=None,
@@ -4506,17 +4535,24 @@ def pip_install(
         _pip_install_simple(requirements, constraints, no_deps_requirements)
         return
 
+    # Check for concurrent non-blocking installs
+    if not blocking and _pip_install_in_progress:
+        raise RuntimeError(
+            "A non-blocking pip_install is already in progress. "
+            "Wait for it to complete or use blocking=True.",
+        )
+
     # Determine which mode to use based on show_progress and blocking
     if show_progress and blocking:
         # Modal progress dialog (blocking from user's perspective, but UI responsive)
         _pip_install_with_dialog(
-            requirements, constraints, no_deps_requirements, requester, parent
+            requirements, constraints, no_deps_requirements, requester, parent,
         )
     elif show_progress and not blocking:
         # Status bar progress (non-blocking)
         _pip_install_with_statusbar(
             requirements, constraints, no_deps_requirements, requester,
-            logCallback, completedCallback
+            logCallback, completedCallback,
         )
     elif not show_progress and blocking:
         # Busy cursor only
@@ -4525,7 +4561,7 @@ def pip_install(
         # Non-blocking, no progress (existing behavior)
         _pip_install_nonblocking(
             requirements, constraints, no_deps_requirements,
-            logCallback, completedCallback
+            logCallback, completedCallback,
         )
 
 
@@ -4591,7 +4627,7 @@ def _pip_install_with_dialog(requirements, constraints=None, no_deps_requirement
     # Run the installation (uses internal non-blocking path)
     _pip_install_nonblocking(
         requirements, constraints, no_deps_requirements,
-        logCallback=onLog, completedCallback=onComplete
+        logCallback=onLog, completedCallback=onComplete,
     )
 
     # Wait for completion while keeping UI responsive
@@ -4643,10 +4679,16 @@ def _pip_install_with_statusbar(requirements, constraints=None, no_deps_requirem
             import logging
             logging.error(f"pip install failed with return code {returnCode}")
 
-    _pip_install_nonblocking(
-        requirements, constraints, no_deps_requirements,
-        logCallback=wrappedLogCallback, completedCallback=wrappedCompletedCallback
-    )
+    try:
+        _pip_install_nonblocking(
+            requirements, constraints, no_deps_requirements,
+            logCallback=wrappedLogCallback, completedCallback=wrappedCompletedCallback,
+        )
+    except Exception:
+        # Not `finally` - on success, cursor stays busy until wrappedCompletedCallback fires
+        qt.QApplication.restoreOverrideCursor()
+        slicer.util.showStatusMessage("", 0)
+        raise
 
 
 def _pip_install_nonblocking(requirements, constraints=None, no_deps_requirements=None,
@@ -4654,25 +4696,38 @@ def _pip_install_nonblocking(requirements, constraints=None, no_deps_requirement
     """Non-blocking pip install.
 
     Handles no_deps_requirements by chaining the two pip calls.
+    Sets the _pip_install_in_progress flag to prevent concurrent operations.
     """
+    global _pip_install_in_progress
+    _pip_install_in_progress = True
+
+    # Wrapper to clear the flag when the operation completes
+    def wrappedCompletedCallback(returnCode):
+        global _pip_install_in_progress
+        _pip_install_in_progress = False
+        if completedCallback:
+            completedCallback(returnCode)
+
     if no_deps_requirements is None:
         # Simple case - single install
         args = _build_pip_args(requirements, constraints, no_deps=False)
         _executePythonModule("pip", args, blocking=False,
-                             logCallback=logCallback, completedCallback=completedCallback)
+                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
         return
 
     # Two-step installation: first no_deps, then regular
     def onNoDepsComplete(returnCode):
         if returnCode != 0:
-            # First step failed - abort and notify caller
+            # First step failed - abort, clear flag, and notify caller
+            global _pip_install_in_progress
+            _pip_install_in_progress = False
             if completedCallback:
                 completedCallback(returnCode)
             return
-        # Success - proceed to regular install
+        # Success - proceed to regular install (flag stays set until final completion)
         args = _build_pip_args(requirements, constraints, no_deps=False)
         _executePythonModule("pip", args, blocking=False,
-                             logCallback=logCallback, completedCallback=completedCallback)
+                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
 
     no_deps_args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
     _executePythonModule("pip", no_deps_args, blocking=False,
