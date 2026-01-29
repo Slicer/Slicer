@@ -4247,6 +4247,92 @@ def pip_check(req, _seen=None):
     return all(pip_check(dep, _seen) for dep in activated)
 
 
+def pip_ensure(
+    requirements,
+    prompt=True,
+    requester=None,
+    skip_in_testing=True,
+    show_progress=True,
+):
+    """Ensure requirements are satisfied, installing if needed.
+
+    Call at the point where dependencies are actually needed (e.g., in an
+    ``onApplyButton`` method). This function checks which requirements are
+    missing and installs them, optionally showing a confirmation dialog first.
+
+    :param requirements: List of :class:`packaging.requirements.Requirement` objects,
+        typically obtained from :func:`load_requirements`.
+    :param prompt: If True (default), show confirmation dialog before installing.
+    :param requester: Name shown in dialog to identify who is requesting the packages
+        (e.g., "TotalSegmentator", "MyFilter", "MyExtension").
+    :param skip_in_testing: If True (default), skip installation when Slicer is running
+        in testing mode (``slicer.app.testingEnabled()``). This prevents tests from
+        modifying the Python environment. Set to False if your test explicitly
+        needs to verify installation behavior.
+    :param show_progress: If True (default), show progress dialog during installation
+        with status updates and collapsible log details. If False, show only
+        a busy cursor during installation.
+
+    :raises RuntimeError: If user declines installation.
+    :raises subprocess.CalledProcessError: If installation fails.
+
+    Example:
+
+    .. code-block:: python
+
+      from typing import TYPE_CHECKING
+
+      if TYPE_CHECKING:
+          import skimage
+
+      class MyFilterWidget(ScriptedLoadableModuleWidget):
+
+          def onApplyButton(self):
+              reqs = slicer.util.load_requirements(
+                  self.resourcePath("requirements.txt")
+              )
+              slicer.util.pip_ensure(reqs, requester="MyFilter")
+              import skimage
+
+              # Now safe to use skimage
+              filtered = skimage.filters.gaussian(array, sigma=2.0)
+
+    """
+    import logging
+
+    import slicer
+
+    missing = [req for req in requirements if not pip_check(req)]
+
+    if not missing:
+        return  # All satisfied
+
+    # Skip installation in testing mode to avoid modifying the environment
+    if skip_in_testing and slicer.app.testingEnabled():
+        missing_str = ", ".join(str(req) for req in missing)
+        logging.info(f"Testing mode is enabled: skipping pip_ensure for [{missing_str}]")
+        return
+
+    if prompt:
+        package_list = "\n".join(f"• {req}" for req in missing)
+        title = f"{requester} - Install Python Packages" if requester else "Install Python Packages"
+        count = len(missing)
+        message = (
+            f"{count} Python package{'s' if count != 1 else ''} "
+            f"need{'s' if count == 1 else ''} to be installed.\n\n"
+            f"This will modify Slicer's Python environment. Continue?"
+        )
+        if not slicer.util.confirmOkCancelDisplay(message, title, detailedText=package_list):
+            raise RuntimeError("User declined package installation")
+
+    # Install missing packages with optional progress display
+    pip_install_with_progress(
+        [str(req) for req in missing],
+        show_progress=show_progress,
+        requester=requester,
+    )
+
+
 def pip_install(requirements, blocking=True, logCallback=None, completedCallback=None):
     """Install python packages.
 
