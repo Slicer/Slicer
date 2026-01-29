@@ -4022,6 +4022,110 @@ def load_requirements(path):
     return reqs
 
 
+def pip_check(req, _seen=None):
+    """Check if requirement(s) are satisfied.
+
+    For requirements with extras like ``package[extra1,extra2]>=1.0``, this:
+
+    1. Checks if the base package is installed at an acceptable version
+    2. Finds which dependencies are activated by the requested extras
+    3. Recursively verifies those dependencies are satisfied
+
+    Markers (e.g., ``; sys_platform == 'win32'``) are evaluated - if a marker
+    doesn't apply to the current environment, the requirement is considered
+    satisfied (since it doesn't need to be installed).
+
+    :param req: Either a :class:`packaging.requirements.Requirement` object
+        or a list of Requirement objects.
+    :param _seen: Internal parameter for tracking circular dependencies.
+        Do not pass this parameter.
+
+    :returns: True if all requirements are satisfied, False otherwise.
+
+    Example:
+
+    .. code-block:: python
+
+      from packaging.requirements import Requirement
+
+      # Single requirement
+      req = Requirement("numpy>=1.20")
+      if slicer.util.pip_check(req):
+          print("numpy is satisfied")
+
+      # Multiple requirements
+      reqs = [
+          Requirement("numpy>=1.20"),
+          Requirement("pandas[excel]>=2.0"),
+      ]
+      if slicer.util.pip_check(reqs):
+          print("All requirements satisfied")
+
+      # Using with load_requirements
+      reqs = slicer.util.load_requirements("requirements.txt")
+      if not slicer.util.pip_check(reqs):
+          print("Some requirements are missing")
+
+    """
+    from importlib.metadata import PackageNotFoundError, requires, version
+
+    from packaging.markers import default_environment
+    from packaging.requirements import Requirement
+
+    if _seen is None:
+        _seen = set()
+
+    # Handle list of requirements, sharing _seen across all of them
+    if isinstance(req, list):
+        return all(pip_check(r, _seen) for r in req)
+
+    # Check if requirement's marker applies to current environment
+    # If not, consider it satisfied (doesn't need to be installed here)
+    if req.marker is not None:
+        env = default_environment()
+        if not req.marker.evaluate(env):
+            return True
+
+    # Avoid rechecking the same requirement
+    key = (req.name.lower(), frozenset(req.extras))
+    if key in _seen:
+        return True
+    _seen.add(key)
+
+    # Check if base package is installed at acceptable version
+    try:
+        installed = version(req.name)
+    except PackageNotFoundError:
+        return False
+    if installed not in req.specifier:
+        return False
+
+    # If no extras then we are done
+    if not req.extras:
+        return True
+
+    # Find dependencies activated by the requested extras
+    dep_strings = requires(req.name) or []
+    env = default_environment()
+    activated = []
+
+    for dep_str in dep_strings:
+        dep = Requirement(dep_str)
+        if dep.marker is None:
+            continue
+
+        # Check if any requested extra activates this dependency
+        for extra in req.extras:
+            if dep.marker.evaluate({**env, "extra": extra}):
+                # Strip marker before recursive check - we've already determined it applies
+                dep_str_no_marker = str(dep).split(";")[0].strip()
+                activated.append(Requirement(dep_str_no_marker))
+                break  # Don't check other extras for same dep
+
+    # Recursively verify all activated dependencies
+    return all(pip_check(dep, _seen) for dep in activated)
+
+
 def pip_install(requirements):
     """Install python packages.
 
