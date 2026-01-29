@@ -359,10 +359,11 @@ Slicer provides several utility functions to help manage Python dependencies:
 | {func}`slicer.util.load_requirements` | Load a `requirements.txt` file |
 | {func}`slicer.util.pip_check` | Check if requirements are already satisfied |
 | {func}`slicer.util.pip_ensure` | Ensure requirements are installed, prompting the user if needed |
-| {func}`slicer.util.pip_install_with_progress` | Install packages with a progress dialog |
-| {func}`slicer.util.pip_install` | Install packages (also supports non-blocking mode) |
+| {func}`slicer.util.pip_install` | Install packages |
 
 The recommended approach is to use {func}`slicer.util.pip_ensure`, which handles checking, user confirmation, and installation with progress display in one call. It also automatically skips installation when running in testing mode (`slicer.app.testingEnabled()`).
+
+For direct installation with visual feedback, use {func}`slicer.util.pip_install` with `show_progress=True`. This displays a modal progress dialog during installation.
 
 For detailed usage examples, see [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) in the Script Repository.
 
