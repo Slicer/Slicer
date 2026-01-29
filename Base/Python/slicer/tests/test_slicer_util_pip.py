@@ -1,7 +1,7 @@
 """Unit tests for pip-related functions in slicer.util.
 
-Tests for: load_requirements, pip_check, pip_ensure, pip_install (non-blocking mode),
-pip_install_with_progress, and _PipProgressDialog.
+Tests for: load_requirements, pip_check, pip_ensure, pip_install (with progress
+and non-blocking modes), and _PipProgressDialog.
 """
 
 import importlib.metadata
@@ -206,7 +206,7 @@ class PipEnsureTest(unittest.TestCase):
             Requirement("scipy>=1.0"),
         ]
         # Should return without error or calling pip_install
-        with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+        with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
             slicer.util.pip_ensure(reqs, prompt=False)
             mock_install.assert_not_called()
 
@@ -216,7 +216,7 @@ class PipEnsureTest(unittest.TestCase):
 
         # Note: Can't mock slicer.app.testingEnabled() because it's a Qt slot
         if slicer.app.testingEnabled():
-            with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+            with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
                 # Should not raise, should not install
                 slicer.util.pip_ensure(reqs, prompt=False, skip_in_testing=True)
                 mock_install.assert_not_called()
@@ -224,12 +224,12 @@ class PipEnsureTest(unittest.TestCase):
             self.skipTest("Not in testing mode")
 
     def test_calls_pip_install_for_missing(self):
-        """Test that pip_install_with_progress is called for missing packages."""
+        """Test that pip_install is called for missing packages."""
         reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
 
         # Force skip_in_testing=False to test the install path
         if slicer.app.testingEnabled():
-            with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+            with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
                 slicer.util.pip_ensure(reqs, prompt=False, skip_in_testing=False)
                 mock_install.assert_called_once()
                 # Check that the requirement string was passed
@@ -370,26 +370,6 @@ class PipProgressDialogTest(unittest.TestCase):
         self.assertIn("Installing", dialog.statusLabel.text)
 
 
-class PipInstallWithProgressTest(unittest.TestCase):
-    """Tests for slicer.util.pip_install_with_progress."""
-
-    def test_testing_mode_behavior(self):
-        """Test pip_install_with_progress in current mode.
-
-        Note: We can't mock slicer.app.testingEnabled() because it's a Qt slot.
-        Instead, we test the actual behavior based on whether testing mode is enabled.
-        """
-        # If testing mode is enabled, this should use blocking install (no dialog)
-        if slicer.app.testingEnabled():
-            # In testing mode, should fall through to blocking pip_install
-            with unittest.mock.patch("slicer.util.pip_install") as mock_install:
-                slicer.util.pip_install_with_progress("--help")
-                mock_install.assert_called_once()
-        else:
-            # Not in testing mode - skip this test as it would show a dialog
-            self.skipTest("Not in testing mode - dialog would appear")
-
-
 class IntegrationTest(unittest.TestCase):
     """Integration tests combining multiple functions."""
 
@@ -410,7 +390,7 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue(satisfied)
 
             # Ensure (should be no-op since all satisfied)
-            with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+            with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
                 slicer.util.pip_ensure(reqs, prompt=False)
                 mock_install.assert_not_called()
         finally:
@@ -454,31 +434,8 @@ class ConstraintsTest(unittest.TestCase):
 
             self.assertNotIn("-c", args)
 
-    def test_pip_install_with_progress_passes_constraints(self):
-        """Test that pip_install_with_progress passes constraints to pip_install."""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
-            f.write("numpy<2.0\n")
-            constraints_path = f.name
-
-        try:
-            with unittest.mock.patch("slicer.util.pip_install") as mock_pip_install:
-                # We're in testing mode, so it will call pip_install directly
-                if slicer.app.testingEnabled():
-                    slicer.util.pip_install_with_progress(
-                        "scipy",
-                        constraints=constraints_path,
-                    )
-
-                    mock_pip_install.assert_called_once()
-                    call_kwargs = mock_pip_install.call_args[1]
-                    self.assertEqual(call_kwargs.get("constraints"), constraints_path)
-                else:
-                    self.skipTest("Not in testing mode")
-        finally:
-            os.unlink(constraints_path)
-
     def test_pip_ensure_passes_constraints(self):
-        """Test that pip_ensure passes constraints to pip_install_with_progress."""
+        """Test that pip_ensure passes constraints to pip_install."""
         reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
@@ -487,7 +444,7 @@ class ConstraintsTest(unittest.TestCase):
 
         try:
             if slicer.app.testingEnabled():
-                with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+                with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
                     slicer.util.pip_ensure(
                         reqs,
                         constraints=constraints_path,
@@ -496,8 +453,9 @@ class ConstraintsTest(unittest.TestCase):
                     )
 
                     mock_install.assert_called_once()
-                    call_kwargs = mock_install.call_args[1]
-                    self.assertEqual(call_kwargs.get("constraints"), constraints_path)
+                    # Check that constraints was passed as second positional arg
+                    call_args = mock_install.call_args
+                    self.assertEqual(call_args[0][1], constraints_path)
             else:
                 self.skipTest("Not in testing mode - would show dialog")
         finally:
