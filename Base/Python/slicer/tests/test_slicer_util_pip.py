@@ -415,3 +415,129 @@ class IntegrationTest(unittest.TestCase):
                 mock_install.assert_not_called()
         finally:
             os.unlink(temp_path)
+
+
+class ConstraintsTest(unittest.TestCase):
+    """Tests for constraints file support in pip functions."""
+
+    def test_pip_install_with_constraints_builds_correct_args(self):
+        """Test that pip_install passes -c flag when constraints provided."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("numpy<2.0\n")
+            constraints_path = f.name
+
+        try:
+            with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+                slicer.util.pip_install("scipy", constraints=constraints_path)
+
+                mock_exec.assert_called_once()
+                call_args = mock_exec.call_args
+                args = call_args[0][1]  # Second positional arg is the args list
+
+                self.assertIn("-c", args)
+                self.assertIn(constraints_path, args)
+                # -c should come after install and the package
+                c_index = args.index("-c")
+                self.assertGreater(c_index, 0)
+                self.assertEqual(args[c_index + 1], constraints_path)
+        finally:
+            os.unlink(constraints_path)
+
+    def test_pip_install_without_constraints_no_c_flag(self):
+        """Test that pip_install does not pass -c flag when constraints is None."""
+        with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+            slicer.util.pip_install("scipy")
+
+            mock_exec.assert_called_once()
+            call_args = mock_exec.call_args
+            args = call_args[0][1]
+
+            self.assertNotIn("-c", args)
+
+    def test_pip_install_with_progress_passes_constraints(self):
+        """Test that pip_install_with_progress passes constraints to pip_install."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("numpy<2.0\n")
+            constraints_path = f.name
+
+        try:
+            with unittest.mock.patch("slicer.util.pip_install") as mock_pip_install:
+                # We're in testing mode, so it will call pip_install directly
+                if slicer.app.testingEnabled():
+                    slicer.util.pip_install_with_progress(
+                        "scipy",
+                        constraints=constraints_path,
+                    )
+
+                    mock_pip_install.assert_called_once()
+                    call_kwargs = mock_pip_install.call_args[1]
+                    self.assertEqual(call_kwargs.get("constraints"), constraints_path)
+                else:
+                    self.skipTest("Not in testing mode")
+        finally:
+            os.unlink(constraints_path)
+
+    def test_pip_ensure_passes_constraints(self):
+        """Test that pip_ensure passes constraints to pip_install_with_progress."""
+        reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("numpy<2.0\n")
+            constraints_path = f.name
+
+        try:
+            if slicer.app.testingEnabled():
+                with unittest.mock.patch("slicer.util.pip_install_with_progress") as mock_install:
+                    slicer.util.pip_ensure(
+                        reqs,
+                        constraints=constraints_path,
+                        prompt=False,
+                        skip_in_testing=False,
+                    )
+
+                    mock_install.assert_called_once()
+                    call_kwargs = mock_install.call_args[1]
+                    self.assertEqual(call_kwargs.get("constraints"), constraints_path)
+            else:
+                self.skipTest("Not in testing mode - would show dialog")
+        finally:
+            os.unlink(constraints_path)
+
+    def test_load_requirements_can_load_constraints_file(self):
+        """Test that load_requirements works with constraints file format."""
+        # Constraints files have the same format as requirements files
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("numpy<2.0\n")
+            f.write("scipy>=1.0,<2.0\n")
+            f.write("# This is a constraint comment\n")
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_requirements(temp_path)
+            self.assertEqual(len(reqs), 2)
+            self.assertEqual(reqs[0].name, "numpy")
+            self.assertEqual(reqs[1].name, "scipy")
+        finally:
+            os.unlink(temp_path)
+
+    def test_pip_install_constraints_with_pathlib_path(self):
+        """Test that pip_install accepts pathlib.Path for constraints."""
+        from pathlib import Path
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("numpy<2.0\n")
+            constraints_path = Path(f.name)
+
+        try:
+            with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+                slicer.util.pip_install("scipy", constraints=constraints_path)
+
+                mock_exec.assert_called_once()
+                call_args = mock_exec.call_args
+                args = call_args[0][1]
+
+                self.assertIn("-c", args)
+                # Path should be converted to string
+                self.assertIn(str(constraints_path), args)
+        finally:
+            constraints_path.unlink()
