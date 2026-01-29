@@ -4616,7 +4616,6 @@ def _pip_install_with_dialog(requirements, constraints=None, no_deps_requirement
 
     def onLog(line):
         dialog.appendLog(line)
-        dialog.updateStatus(line)
         print(line)  # Still log to console
 
     def onComplete(returnCode):
@@ -4834,7 +4833,7 @@ class _PipProgressDialog:
         layout = qt.QVBoxLayout(self._dialog)
 
         # Status label
-        self.statusLabel = qt.QLabel("Preparing installation...")
+        self.statusLabel = qt.QLabel("Installing packages...")
         layout.addWidget(self.statusLabel)
 
         # Indeterminate progress bar
@@ -4885,27 +4884,6 @@ class _PipProgressDialog:
     def getFullLog(self):
         """Return the complete log as a string."""
         return "\n".join(self._logLines)
-
-    def updateStatus(self, line):
-        """Parse pip output to show friendly status message."""
-        line_lower = line.lower()
-        if "collecting" in line_lower:
-            # Extract package name if possible
-            parts = line.split()
-            if len(parts) >= 2:
-                self.statusLabel.setText(f"Collecting {parts[1]}...")
-            else:
-                self.statusLabel.setText("Collecting packages...")
-        elif "downloading" in line_lower:
-            self.statusLabel.setText("Downloading...")
-        elif "installing collected packages" in line_lower:
-            self.statusLabel.setText("Installing packages...")
-        elif "successfully installed" in line_lower:
-            self.statusLabel.setText("Finalizing...")
-        elif "requirement already satisfied" in line_lower:
-            parts = line.split()
-            if len(parts) >= 4:
-                self.statusLabel.setText(f"Already installed: {parts[3]}")
 
 
 def longPath(path):
