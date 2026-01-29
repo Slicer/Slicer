@@ -3988,6 +3988,40 @@ def _executePythonModule(module, args):
     logProcessOutput(proc)
 
 
+def load_requirements(path):
+    """Load requirements from a requirements.txt file.
+
+    Parses a requirements file and returns a list of Requirement objects
+    that can be used with :func:`pip_check` and :func:`pip_ensure`.
+
+    :param path: Path to the requirements.txt file. Can be a string or Path object.
+
+    :returns: List of :class:`packaging.requirements.Requirement` objects.
+
+    Lines starting with ``#`` (comments), empty lines, and lines starting with
+    ``-`` (pip options like ``-r``, ``-c``, ``--index-url``) are skipped.
+
+    Example:
+
+    .. code-block:: python
+
+      from pathlib import Path
+      reqs = slicer.util.load_requirements(Path(__file__).parent / "requirements.txt")
+      slicer.util.pip_ensure(reqs, requester="MyExtension")
+
+    """
+    from packaging.requirements import Requirement
+
+    reqs = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            # Skip comments, empty lines, and pip options (-r, -c, --index-url, etc.)
+            if line and not line.startswith("#") and not line.startswith("-"):
+                reqs.append(Requirement(line))
+    return reqs
+
+
 def pip_install(requirements):
     """Install python packages.
 
