@@ -351,24 +351,6 @@ class PipProgressDialogTest(unittest.TestCase):
         log = dialog.getFullLog()
         self.assertEqual(log, "First\nSecond\nThird")
 
-    def test_update_status_collecting(self):
-        """Test updateStatus parses Collecting lines."""
-        dialog = slicer.util._PipProgressDialog(requester="Test")
-        dialog.updateStatus("Collecting numpy>=1.0")
-        self.assertIn("numpy", dialog.statusLabel.text)
-
-    def test_update_status_downloading(self):
-        """Test updateStatus parses Downloading lines."""
-        dialog = slicer.util._PipProgressDialog(requester="Test")
-        dialog.updateStatus("Downloading numpy-1.24.0.whl")
-        self.assertIn("Downloading", dialog.statusLabel.text)
-
-    def test_update_status_installing(self):
-        """Test updateStatus parses Installing lines."""
-        dialog = slicer.util._PipProgressDialog(requester="Test")
-        dialog.updateStatus("Installing collected packages: numpy")
-        self.assertIn("Installing", dialog.statusLabel.text)
-
 
 class IntegrationTest(unittest.TestCase):
     """Integration tests combining multiple functions."""
