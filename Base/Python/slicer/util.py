@@ -4364,6 +4364,200 @@ def pip_uninstall(requirements, blocking=True, logCallback=None, completedCallba
                          logCallback=logCallback, completedCallback=completedCallback)
 
 
+class _PipProgressDialog:
+    """Modal dialog showing pip installation progress with collapsible log details.
+
+    Internal class used by :func:`pip_install_with_progress`.
+    """
+
+    def __init__(self, requester=None, parent=None):
+        import ctk
+        import qt
+        import slicer
+
+        self._dialog = qt.QDialog(parent or slicer.util.mainWindow())
+        self._dialog.setModal(True)
+        self._dialog.setWindowTitle(
+            f"{requester} - Installing Python Packages" if requester else "Installing Python Packages",
+        )
+        # Prevent closing via X button
+        self._dialog.setWindowFlags(self._dialog.windowFlags() & ~qt.Qt.WindowCloseButtonHint)
+
+        # Prevent closing via Escape key by capturing it with a shortcut that does nothing
+        self._escapeShortcut = qt.QShortcut(qt.QKeySequence(qt.Qt.Key_Escape), self._dialog)
+        self._escapeShortcut.setContext(qt.Qt.WidgetWithChildrenShortcut)
+
+        layout = qt.QVBoxLayout(self._dialog)
+
+        # Status label
+        self.statusLabel = qt.QLabel("Preparing installation...")
+        layout.addWidget(self.statusLabel)
+
+        # Indeterminate progress bar
+        self.progressBar = qt.QProgressBar()
+        self.progressBar.setRange(0, 0)  # Indeterminate mode
+        layout.addWidget(self.progressBar)
+
+        # Collapsible details section
+        self.detailsButton = ctk.ctkCollapsibleButton()
+        self.detailsButton.text = "Details"
+        self.detailsButton.collapsed = True
+        detailsLayout = qt.QVBoxLayout(self.detailsButton)
+
+        self.logText = qt.QPlainTextEdit()
+        self.logText.setReadOnly(True)
+        self.logText.setMinimumHeight(150)
+        self.logText.setMaximumHeight(300)
+        # Use monospace font for log output
+        font = qt.QFont("Monospace")
+        font.setStyleHint(qt.QFont.TypeWriter)
+        self.logText.setFont(font)
+        detailsLayout.addWidget(self.logText)
+
+        layout.addWidget(self.detailsButton)
+
+        # Set reasonable default size
+        self._dialog.resize(500, 120)
+
+        # Store log lines for retrieval
+        self._logLines = []
+
+    def show(self):
+        """Show the dialog."""
+        self._dialog.show()
+
+    def close(self):
+        """Close the dialog."""
+        self._dialog.close()
+
+    def appendLog(self, line):
+        """Append a line to the log display."""
+        self._logLines.append(line)
+        self.logText.appendPlainText(line)
+        # Auto-scroll to bottom
+        scrollBar = self.logText.verticalScrollBar()
+        scrollBar.setValue(scrollBar.maximum)
+
+    def getFullLog(self):
+        """Return the complete log as a string."""
+        return "\n".join(self._logLines)
+
+    def updateStatus(self, line):
+        """Parse pip output to show friendly status message."""
+        line_lower = line.lower()
+        if "collecting" in line_lower:
+            # Extract package name if possible
+            parts = line.split()
+            if len(parts) >= 2:
+                self.statusLabel.setText(f"Collecting {parts[1]}...")
+            else:
+                self.statusLabel.setText("Collecting packages...")
+        elif "downloading" in line_lower:
+            self.statusLabel.setText("Downloading...")
+        elif "installing collected packages" in line_lower:
+            self.statusLabel.setText("Installing packages...")
+        elif "successfully installed" in line_lower:
+            self.statusLabel.setText("Finalizing...")
+        elif "requirement already satisfied" in line_lower:
+            parts = line.split()
+            if len(parts) >= 4:
+                self.statusLabel.setText(f"Already installed: {parts[3]}")
+
+
+def pip_install_with_progress(requirements, show_progress=True, requester=None, parent=None):
+    """Install Python packages with a progress dialog.
+
+    This is a high-level wrapper around :func:`pip_install` that provides visual
+    feedback during installation. The UI remains responsive while pip runs in the
+    background.
+
+    :param requirements: Requirement specifier (string or list), same as :func:`pip_install`.
+    :param show_progress: If True (default), show modal progress dialog with status
+        and collapsible log details. If False, just show busy cursor.
+    :param requester: Name shown in dialog title (e.g., "MyExtension").
+    :param parent: Parent widget for the dialog.
+
+    :raises subprocess.CalledProcessError: If pip installation fails. Before raising,
+        an error dialog is shown with the full pip log in expandable details.
+
+    When the application is running in testing mode (``slicer.app.testingEnabled()``),
+    the progress dialog is skipped and installation proceeds with console output only.
+
+    Example:
+
+    .. code-block:: python
+
+      # Simple usage
+      slicer.util.pip_install_with_progress("pandas scipy")
+
+      # With requester name in title
+      slicer.util.pip_install_with_progress(
+          "scikit-image>=0.21",
+          requester="MyExtension"
+      )
+
+      # Quiet mode (busy cursor only)
+      slicer.util.pip_install_with_progress("requests", show_progress=False)
+
+    """
+    import logging
+    import threading
+    from subprocess import CalledProcessError
+
+    import qt
+    import slicer
+
+    # In testing mode, skip UI and use simple blocking install
+    if slicer.app.testingEnabled():
+        logging.info("Testing mode is enabled: skipping progress dialog for pip_install")
+        pip_install(requirements)  # blocking mode, raises on failure
+        return
+
+    if not show_progress:
+        # Simple case: just busy cursor with blocking install
+        qt.QApplication.setOverrideCursor(qt.Qt.BusyCursor)
+        try:
+            pip_install(requirements)  # blocking mode
+        finally:
+            qt.QApplication.restoreOverrideCursor()
+        return
+
+    # Create the progress dialog
+    dialog = _PipProgressDialog(requester=requester, parent=parent)
+    dialog.show()
+    slicer.app.processEvents()  # Ensure dialog is displayed
+
+    completed = threading.Event()
+    result = {"returnCode": None, "log": ""}
+
+    def onLog(line):
+        dialog.appendLog(line)
+        dialog.updateStatus(line)
+        print(line)  # Still log to console
+
+    def onComplete(returnCode):
+        result["returnCode"] = returnCode
+        result["log"] = dialog.getFullLog()
+        completed.set()
+
+    pip_install(requirements, blocking=False, logCallback=onLog, completedCallback=onComplete)
+
+    # Wait for completion while keeping UI responsive
+    while not completed.is_set():
+        slicer.app.processEvents()
+        qt.QThread.msleep(10)  # Reduce CPU usage
+
+    dialog.close()
+
+    if result["returnCode"] != 0:
+        slicer.util.errorDisplay(
+            "Package installation failed.",
+            windowTitle=f"{requester} - Installation Failed" if requester else "Installation Failed",
+            detailedText=result["log"],
+        )
+        raise CalledProcessError(result["returnCode"], "pip install")
+
+
 def longPath(path):
     r"""Make long paths work on Windows, where the maximum path length is 260 characters.
 
