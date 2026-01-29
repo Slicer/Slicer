@@ -1271,6 +1271,40 @@ This [code snippet](https://gist.github.com/pieper/a9c0ba57de3833c9f5aea68247bda
 
 It is recommended to only install a package at runtime when it is actually needed (not at startup, not even when the user opens a module, but just before that Python package is used the first time), and ask the user about it. For more comprehensive guidelines, refer to the [best practices](/developer_guide/python_faq.md#can-i-use-any-python-package-in-a-slicer-module).
 
+#### Recommended approach using pip_ensure
+
+The `slicer.util.pip_ensure()` function handles checking, prompting, and installing in one call with a progress dialog:
+
+```python
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import flywheel
+
+class MyModuleWidget(ScriptedLoadableModuleWidget):
+
+    def onApplyButton(self):
+        # Load requirements from file (recommended for multiple dependencies)
+        reqs = slicer.util.load_requirements(self.resourcePath("requirements.txt"))
+        slicer.util.pip_ensure(reqs, requester="MyModule")
+
+        # Or for a single package:
+        # from packaging.requirements import Requirement
+        # slicer.util.pip_ensure([Requirement("flywheel-sdk>=1.0")], requester="MyModule")
+
+        import flywheel
+        # Now safe to use flywheel
+```
+
+Key features of `pip_ensure()`:
+- Shows a confirmation dialog before installing (configurable via `prompt` parameter)
+- Shows a progress dialog during installation with collapsible log details
+- Automatically skips installation in testing mode (`slicer.app.testingEnabled()`)
+
+#### Alternative manual approach
+
+For simpler cases or when more control is needed:
+
 ```python
 try:
   import flywheel
