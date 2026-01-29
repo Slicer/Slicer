@@ -1301,15 +1301,29 @@ Key features of `pip_ensure()`:
 - Shows a progress dialog during installation with collapsible log details
 - Automatically skips installation in testing mode (`slicer.app.testingEnabled()`)
 
-#### Alternative manual approach
+#### Alternative: pip_install with progress dialog
 
-For simpler cases or when more control is needed:
+For direct installation with visual feedback without using `pip_ensure`. Note that `pip_install`
+now shows a progress dialog by default:
 
 ```python
 try:
   import flywheel
 except ModuleNotFoundError:
   if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
-    slicer.util.pip_install("flywheel-sdk")
+    slicer.util.pip_install("flywheel-sdk", requester="MyModule")
+    import flywheel
+```
+
+#### Simple approach (no progress dialog)
+
+For scripting or automation where no visual feedback is needed:
+
+```python
+try:
+  import flywheel
+except ModuleNotFoundError:
+  if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
+    slicer.util.pip_install("flywheel-sdk", show_progress=False)
     import flywheel
 ```
