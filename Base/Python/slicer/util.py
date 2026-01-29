@@ -4249,6 +4249,7 @@ def pip_check(req, _seen=None):
 
 def pip_ensure(
     requirements,
+    constraints=None,
     prompt=True,
     requester=None,
     skip_in_testing=True,
@@ -4262,6 +4263,11 @@ def pip_ensure(
 
     :param requirements: List of :class:`packaging.requirements.Requirement` objects,
         typically obtained from :func:`load_requirements`.
+    :param constraints: Path to a constraints file (string or Path object), or None.
+        When provided, passed to pip as ``-c constraints.txt`` during installation.
+        Constraints files use the same format as requirements files but only constrain
+        versions without triggering installation. Useful for ensuring compatible
+        versions across multiple extensions.
     :param prompt: If True (default), show confirmation dialog before installing.
     :param requester: Name shown in dialog to identify who is requesting the packages
         (e.g., "TotalSegmentator", "MyFilter", "MyExtension").
@@ -4297,6 +4303,19 @@ def pip_ensure(
               # Now safe to use skimage
               filtered = skimage.filters.gaussian(array, sigma=2.0)
 
+    Example with constraints:
+
+    .. code-block:: python
+
+      reqs = slicer.util.load_requirements(
+          self.resourcePath("requirements.txt")
+      )
+      slicer.util.pip_ensure(
+          reqs,
+          constraints=self.resourcePath("constraints.txt"),
+          requester="MyExtension"
+      )
+
     """
     import logging
 
@@ -4328,12 +4347,13 @@ def pip_ensure(
     # Install missing packages with optional progress display
     pip_install_with_progress(
         [str(req) for req in missing],
+        constraints=constraints,
         show_progress=show_progress,
         requester=requester,
     )
 
 
-def pip_install(requirements, blocking=True, logCallback=None, completedCallback=None):
+def pip_install(requirements, constraints=None, blocking=True, logCallback=None, completedCallback=None):
     """Install python packages.
 
     Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
@@ -4344,6 +4364,10 @@ def pip_install(requirements, blocking=True, logCallback=None, completedCallback
       It can be either a single string or a list of command-line arguments. In general, passing all arguments as a single string is
       the simplest. The only case when using a list may be easier is when there are arguments that may contain spaces, because
       each list item is automatically quoted (it is not necessary to put quotes around each string argument that may contain spaces).
+    :param constraints: Path to a constraints file (string or Path object), or None.
+        When provided, passed to pip as ``-c constraints.txt``. Constraints files use the
+        same format as requirements files but only constrain versions without triggering
+        installation. Useful for ensuring compatible versions across multiple extensions.
     :param blocking: If True (default), block until installation completes and raise
         CalledProcessError on failure. If False, return immediately and use callbacks.
     :param logCallback: When blocking=False, called with each line of pip output.
@@ -4381,6 +4405,12 @@ def pip_install(requirements, blocking=True, logCallback=None, completedCallback
 
       pip_install("--upgrade pandas")
 
+    Example: with constraints file
+
+    .. code-block:: python
+
+      pip_install("pandas scipy", constraints="/path/to/constraints.txt")
+
     Example: non-blocking mode with callbacks
 
     .. code-block:: python
@@ -4399,11 +4429,14 @@ def pip_install(requirements, blocking=True, logCallback=None, completedCallback
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
 
-        args = "install", *(shlex.split(requirements))
+        args = ["install", *(shlex.split(requirements))]
     elif type(requirements) == list:
-        args = "install", *requirements
+        args = ["install", *requirements]
     else:
         raise ValueError("pip_install requirement input must be string or list")
+
+    if constraints is not None:
+        args.extend(["-c", str(constraints)])
 
     _executePythonModule("pip", args, blocking=blocking,
                          logCallback=logCallback, completedCallback=completedCallback)
@@ -4550,7 +4583,7 @@ class _PipProgressDialog:
                 self.statusLabel.setText(f"Already installed: {parts[3]}")
 
 
-def pip_install_with_progress(requirements, show_progress=True, requester=None, parent=None):
+def pip_install_with_progress(requirements, constraints=None, show_progress=True, requester=None, parent=None):
     """Install Python packages with a progress dialog.
 
     This is a high-level wrapper around :func:`pip_install` that provides visual
@@ -4558,6 +4591,8 @@ def pip_install_with_progress(requirements, show_progress=True, requester=None, 
     background.
 
     :param requirements: Requirement specifier (string or list), same as :func:`pip_install`.
+    :param constraints: Path to a constraints file (string or Path object), or None.
+        Passed through to :func:`pip_install`.
     :param show_progress: If True (default), show modal progress dialog with status
         and collapsible log details. If False, just show busy cursor.
     :param requester: Name shown in dialog title (e.g., "MyExtension").
@@ -4582,6 +4617,13 @@ def pip_install_with_progress(requirements, show_progress=True, requester=None, 
           requester="MyExtension"
       )
 
+      # With constraints file
+      slicer.util.pip_install_with_progress(
+          "pandas scipy",
+          constraints="/path/to/constraints.txt",
+          requester="MyExtension"
+      )
+
       # Quiet mode (busy cursor only)
       slicer.util.pip_install_with_progress("requests", show_progress=False)
 
@@ -4596,14 +4638,14 @@ def pip_install_with_progress(requirements, show_progress=True, requester=None, 
     # In testing mode, skip UI and use simple blocking install
     if slicer.app.testingEnabled():
         logging.info("Testing mode is enabled: skipping progress dialog for pip_install")
-        pip_install(requirements)  # blocking mode, raises on failure
+        pip_install(requirements, constraints=constraints)  # blocking mode, raises on failure
         return
 
     if not show_progress:
         # Simple case: just busy cursor with blocking install
         qt.QApplication.setOverrideCursor(qt.Qt.BusyCursor)
         try:
-            pip_install(requirements)  # blocking mode
+            pip_install(requirements, constraints=constraints)  # blocking mode
         finally:
             qt.QApplication.restoreOverrideCursor()
         return
@@ -4626,7 +4668,7 @@ def pip_install_with_progress(requirements, show_progress=True, requester=None, 
         result["log"] = dialog.getFullLog()
         completed.set()
 
-    pip_install(requirements, blocking=False, logCallback=onLog, completedCallback=onComplete)
+    pip_install(requirements, constraints=constraints, blocking=False, logCallback=onLog, completedCallback=onComplete)
 
     # Wait for completion while keeping UI responsive
     while not completed.is_set():
