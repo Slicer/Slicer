@@ -3876,7 +3876,8 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
     return chartNode
 
 
-def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None):
+def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None,
+                         blocking=True, logCallback=None, completedCallback=None):
     """Launch a process. Hiding the console and captures the process output.
 
     The console window is hidden when running on Windows.
@@ -3885,18 +3886,50 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
     :param useStartupEnvironment: launch the process in the original environment as the original Slicer process
     :param updateEnvironment: map containing optional additional environment variables (existing variables are overwritten)
     :param cwd: current working directory
+    :param blocking: If True (default), return the process object for use with
+        :py:meth:`logProcessOutput`. If False, process output asynchronously using
+        a background thread and QTimer polling. The main thread remains free and
+        the Qt event loop runs normally.
+    :param logCallback: When blocking=False, called with each line of output.
+        If None, output is printed to console (same as blocking mode).
+        Signature: ``logCallback(line: str) -> None``
+    :param completedCallback: When blocking=False, called when process completes.
+        Receives the return code as argument. If the process failed (non-zero return
+        code) and no completedCallback is provided, a CalledProcessError is logged.
+        Signature: ``completedCallback(returnCode: int) -> None``
     :return: process object.
 
-    This method is typically used together with :py:meth:`logProcessOutput` to wait for the execution to complete and display the process output in the application log:
+    Blocking mode example (this is the typical usage pattern):
 
     .. code-block:: python
 
       proc = slicer.util.launchConsoleProcess(args)
       slicer.util.logProcessOutput(proc)
 
+    Non-blocking mode example:
+
+    .. code-block:: python
+
+      def onLog(line):
+          print(f"[pip] {line}")
+
+      def onComplete(returnCode):
+          if returnCode == 0:
+              print("Done!")
+          else:
+              print(f"Failed with code {returnCode}")
+
+      slicer.util.launchConsoleProcess(
+          args,
+          blocking=False,
+          logCallback=onLog,
+          completedCallback=onComplete
+      )
+      # Returns immediately, UI stays responsive
+
     """
-    import subprocess
     import os
+    import subprocess
 
     if useStartupEnvironment:
         startupEnv = startupEnvironment()
@@ -3916,7 +3949,79 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
         proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, startupinfo=info, cwd=cwd)
     else:
         proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, cwd=cwd)
+
+    if blocking:
+        return proc  # Caller will use logProcessOutput() as before
+
+    # Non-blocking mode: start background thread and QTimer polling
+    _startAsyncProcessHandling(proc, logCallback, completedCallback)
     return proc
+
+
+def _startAsyncProcessHandling(proc, logCallback=None, completedCallback=None):
+    """Start asynchronous handling of process output using a background thread and QTimer.
+
+    Internal function used by :py:meth:`launchConsoleProcess` when blocking=False.
+
+    :param proc: subprocess.Popen object
+    :param logCallback: Called with each line of output, or None for default console printing
+    :param completedCallback: Called when process completes with return code
+    """
+    import queue
+    import threading
+
+    import qt
+
+    outputQueue = queue.Queue()
+    CHECK_INTERVAL_MS = 100  # Poll every 100ms for responsive UI
+
+    def readOutputThread():
+        """Background thread: read stdout and put lines into queue."""
+        while True:
+            try:
+                line = proc.stdout.readline()
+                if not line:
+                    break
+                outputQueue.put(("line", line.rstrip()))
+            except UnicodeDecodeError:
+                # Same handling as logProcessOutput - ignore decode errors
+                pass
+        proc.wait()
+        outputQueue.put(("done", proc.returncode))
+
+    def checkOutput():
+        """Main thread: poll queue and process available output."""
+        while True:
+            try:
+                msgType, data = outputQueue.get_nowait()
+                if msgType == "line":
+                    if logCallback:
+                        logCallback(data)
+                    else:
+                        # Default behavior: print to console (matches blocking mode)
+                        print(data)
+                elif msgType == "done":
+                    returnCode = data
+                    if completedCallback:
+                        completedCallback(returnCode)
+                    elif returnCode != 0:
+                        # No callback provided and process failed - log the error
+                        import logging
+
+                        logging.error(f"Process failed with return code {returnCode}: {proc.args}")
+                    return  # Stop polling
+            except queue.Empty:
+                break
+
+        # Process still running or output still being read - reschedule
+        qt.QTimer.singleShot(CHECK_INTERVAL_MS, checkOutput)
+
+    # Start background thread
+    thread = threading.Thread(target=readOutputThread, daemon=True)
+    thread.start()
+
+    # Start polling from main thread
+    qt.QTimer.singleShot(0, checkOutput)
 
 
 def logProcessOutput(proc):
@@ -3954,12 +4059,18 @@ def logProcessOutput(proc):
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
 
-def _executePythonModule(module, args):
+def _executePythonModule(module, args, blocking=True, logCallback=None, completedCallback=None):
     """Execute a Python module as a script in Slicer's Python environment.
 
     Internally python -m is called with the module name and additional arguments.
 
-    :raises RuntimeError: in case of failure
+    :param module: Python module name to execute (e.g., "pip")
+    :param args: command-line arguments to pass to the module
+    :param blocking: If True (default), block until completion. If False, return immediately.
+    :param logCallback: When blocking=False, called with each line of output.
+    :param completedCallback: When blocking=False, called when process completes.
+    :raises RuntimeError: if PythonSlicer executable not found
+    :raises CalledProcessError: in blocking mode, if process fails
     """
     # Determine pythonSlicerExecutablePath
     try:
@@ -3984,11 +4095,323 @@ def _executePythonModule(module, args):
             pythonSlicerExecutablePath += ".exe"
 
     commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
-    proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
-    logProcessOutput(proc)
+
+    if blocking:
+        proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
+        logProcessOutput(proc)
+    else:
+        launchConsoleProcess(
+            commandLine,
+            useStartupEnvironment=False,
+            blocking=False,
+            logCallback=logCallback,
+            completedCallback=completedCallback,
+        )
 
 
-def pip_install(requirements):
+def load_requirements(path):
+    """Load requirements from a requirements.txt file.
+
+    Parses a requirements file and returns a list of Requirement objects
+    that can be used with :func:`pip_check` and :func:`pip_ensure`.
+
+    :param path: Path to the requirements.txt file. Can be a string or Path object.
+
+    :returns: List of :class:`packaging.requirements.Requirement` objects.
+
+    Lines starting with ``#`` (comments), empty lines, and lines starting with
+    ``-`` (pip options like ``-r``, ``-c``, ``--index-url``) are skipped.
+
+    Example:
+
+    .. code-block:: python
+
+      from pathlib import Path
+      reqs = slicer.util.load_requirements(Path(__file__).parent / "requirements.txt")
+      slicer.util.pip_ensure(reqs, requester="MyExtension")
+
+    """
+    from packaging.requirements import Requirement
+
+    reqs = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            # Skip comments, empty lines, and pip options (-r, -c, --index-url, etc.)
+            if line and not line.startswith("#") and not line.startswith("-"):
+                reqs.append(Requirement(line))
+    return reqs
+
+
+def pip_check(req, _seen=None):
+    """Check if requirement(s) are satisfied.
+
+    For requirements with extras like ``package[extra1,extra2]>=1.0``, this:
+
+    1. Checks if the base package is installed at an acceptable version
+    2. Finds which dependencies are activated by the requested extras
+    3. Recursively verifies those dependencies are satisfied
+
+    Markers (e.g., ``; sys_platform == 'win32'``) are evaluated - if a marker
+    doesn't apply to the current environment, the requirement is considered
+    satisfied (since it doesn't need to be installed).
+
+    :param req: Either a :class:`packaging.requirements.Requirement` object
+        or a list of Requirement objects.
+    :param _seen: Internal parameter for tracking circular dependencies.
+        Do not pass this parameter.
+
+    :returns: True if all requirements are satisfied, False otherwise.
+
+    Example:
+
+    .. code-block:: python
+
+      from packaging.requirements import Requirement
+
+      # Single requirement
+      req = Requirement("numpy>=1.20")
+      if slicer.util.pip_check(req):
+          print("numpy is satisfied")
+
+      # Multiple requirements
+      reqs = [
+          Requirement("numpy>=1.20"),
+          Requirement("pandas[excel]>=2.0"),
+      ]
+      if slicer.util.pip_check(reqs):
+          print("All requirements satisfied")
+
+      # Using with load_requirements
+      reqs = slicer.util.load_requirements("requirements.txt")
+      if not slicer.util.pip_check(reqs):
+          print("Some requirements are missing")
+
+    """
+    from importlib.metadata import PackageNotFoundError, requires, version
+
+    from packaging.markers import default_environment
+    from packaging.requirements import Requirement
+
+    if _seen is None:
+        _seen = set()
+
+    # Handle list of requirements, sharing _seen across all of them
+    if isinstance(req, list):
+        return all(pip_check(r, _seen) for r in req)
+
+    # Check if requirement's marker applies to current environment
+    # If not, consider it satisfied (doesn't need to be installed here)
+    if req.marker is not None:
+        env = default_environment()
+        if not req.marker.evaluate(env):
+            return True
+
+    # Avoid rechecking the same requirement
+    key = (req.name.lower(), frozenset(req.extras))
+    if key in _seen:
+        return True
+    _seen.add(key)
+
+    # Check if base package is installed at acceptable version
+    try:
+        installed = version(req.name)
+    except PackageNotFoundError:
+        return False
+    if installed not in req.specifier:
+        return False
+
+    # If no extras then we are done
+    if not req.extras:
+        return True
+
+    # Find dependencies activated by the requested extras
+    dep_strings = requires(req.name) or []
+    env = default_environment()
+    activated = []
+
+    for dep_str in dep_strings:
+        dep = Requirement(dep_str)
+        if dep.marker is None:
+            continue
+
+        # Check if any requested extra activates this dependency
+        for extra in req.extras:
+            if dep.marker.evaluate({**env, "extra": extra}):
+                # Strip marker before recursive check - we've already determined it applies
+                dep_str_no_marker = str(dep).split(";")[0].strip()
+                activated.append(Requirement(dep_str_no_marker))
+                break  # Don't check other extras for same dep
+
+    # Recursively verify all activated dependencies
+    return all(pip_check(dep, _seen) for dep in activated)
+
+
+# Module-level flag to track whether a non-blocking pip install is in progress.
+# Used to prevent concurrent non-blocking pip operations which could corrupt
+# the Python environment.
+_pip_install_in_progress = False
+
+
+def isPipInstallInProgress():
+    """Check if a non-blocking pip install is currently in progress.
+
+    Use this to check before starting an operation that might conflict with
+    an ongoing pip installation.
+
+    :returns: True if a non-blocking pip install is in progress, False otherwise.
+
+    Example:
+
+    .. code-block:: python
+
+      if slicer.util.isPipInstallInProgress():
+          slicer.util.warningDisplay(
+              "Package installation is in progress. Please wait."
+          )
+      else:
+          slicer.util.pip_install("scipy", blocking=False)
+
+    """
+    return _pip_install_in_progress
+
+
+def pip_ensure(
+    requirements,
+    constraints=None,
+    prompt=True,
+    requester=None,
+    skip_in_testing=True,
+    show_progress=True,
+):
+    """Ensure requirements are satisfied, installing if needed.
+
+    Call at the point where dependencies are actually needed (e.g., in an
+    ``onApplyButton`` method). This function checks which requirements are
+    missing and installs them, optionally showing a confirmation dialog first.
+
+    :param requirements: List of :class:`packaging.requirements.Requirement` objects,
+        typically obtained from :func:`load_requirements`.
+    :param constraints: Path to a constraints file (string or Path object), or None.
+        When provided, passed to pip as ``-c constraints.txt`` during installation.
+        Constraints files use the same format as requirements files but only constrain
+        versions without triggering installation. Useful for ensuring compatible
+        versions across multiple extensions.
+    :param prompt: If True (default), show confirmation dialog before installing.
+    :param requester: Name shown in dialog to identify who is requesting the packages
+        (e.g., "TotalSegmentator", "MyFilter", "MyExtension").
+    :param skip_in_testing: If True (default), skip installation when Slicer is running
+        in testing mode (``slicer.app.testingEnabled()``). This prevents tests from
+        modifying the Python environment. Set to False if your test explicitly
+        needs to verify installation behavior.
+    :param show_progress: If True (default), show progress dialog during installation
+        with status updates and collapsible log details. If False, show only
+        a busy cursor during installation.
+
+    :raises RuntimeError: If user declines installation.
+    :raises subprocess.CalledProcessError: If installation fails.
+
+    Example:
+
+    .. code-block:: python
+
+      from typing import TYPE_CHECKING
+
+      if TYPE_CHECKING:
+          import skimage
+
+      class MyFilterWidget(ScriptedLoadableModuleWidget):
+
+          def onApplyButton(self):
+              reqs = slicer.util.load_requirements(
+                  self.resourcePath("requirements.txt")
+              )
+              slicer.util.pip_ensure(reqs, requester="MyFilter")
+              import skimage
+
+              # Now safe to use skimage
+              filtered = skimage.filters.gaussian(array, sigma=2.0)
+
+    Example with constraints:
+
+    .. code-block:: python
+
+      reqs = slicer.util.load_requirements(
+          self.resourcePath("requirements.txt")
+      )
+      slicer.util.pip_ensure(
+          reqs,
+          constraints=self.resourcePath("constraints.txt"),
+          requester="MyExtension"
+      )
+
+    """
+    import logging
+
+    missing = [req for req in requirements if not pip_check(req)]
+
+    if not missing:
+        return  # All satisfied
+
+    # Check if we're in full Slicer or PythonSlicer
+    if not _isSlicerAppAvailable():
+        # Running in PythonSlicer - just do simple install (prompt not available)
+        pip_install([str(req) for req in missing], constraints=constraints)
+        return
+
+    import slicer
+
+    # Skip installation in testing mode to avoid modifying the environment
+    if skip_in_testing and slicer.app.testingEnabled():
+        missing_str = ", ".join(str(req) for req in missing)
+        logging.info(f"Testing mode is enabled: skipping pip_ensure for [{missing_str}]")
+        return
+
+    if prompt:
+        package_list = "\n".join(f"• {req}" for req in missing)
+        title = f"{requester} - Install Python Packages" if requester else "Install Python Packages"
+        count = len(missing)
+        message = (
+            f"{count} Python package{'s' if count != 1 else ''} "
+            f"need{'s' if count == 1 else ''} to be installed.\n\n"
+            f"This will modify Slicer's Python environment. Continue?"
+        )
+        if not slicer.util.confirmOkCancelDisplay(message, title, detailedText=package_list):
+            raise RuntimeError("User declined package installation")
+
+    # Install missing packages with optional progress display
+    pip_install(
+        [str(req) for req in missing],
+        constraints=constraints,
+        blocking=True,
+        show_progress=show_progress,
+        requester=requester,
+    )
+
+
+def _isSlicerAppAvailable():
+    """Check if slicer.app is available (running in full Slicer, not PythonSlicer).
+
+    :returns: True if slicer.app is available, False if running in PythonSlicer console.
+    """
+    try:
+        from slicer import app  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def pip_install(
+    requirements,
+    constraints=None,
+    no_deps_requirements=None,
+    blocking=True,
+    show_progress=True,
+    requester=None,
+    parent=None,
+    logCallback=None,
+    completedCallback=None,
+):
     """Install python packages.
 
     Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
@@ -3999,8 +4422,48 @@ def pip_install(requirements):
       It can be either a single string or a list of command-line arguments. In general, passing all arguments as a single string is
       the simplest. The only case when using a list may be easier is when there are arguments that may contain spaces, because
       each list item is automatically quoted (it is not necessary to put quotes around each string argument that may contain spaces).
+    :param constraints: Path to a constraints file (string or Path object), or None.
+        When provided, passed to pip as ``-c constraints.txt``. Constraints files use the
+        same format as requirements files but only constrain versions without triggering
+        installation. Useful for ensuring compatible versions across multiple extensions.
+    :param no_deps_requirements: Packages to install with ``--no-deps`` flag, installed before
+        ``requirements``. Use this when a package has overly strict dependency requirements
+        that conflict with other packages. Can be a string or list, same format as ``requirements``.
+        When provided, installation happens in two steps: first ``no_deps_requirements`` are
+        installed with ``--no-deps``, then ``requirements`` are installed normally.
+    :param blocking: If True (default), block until installation completes and raise
+        CalledProcessError on failure. If False, return immediately and use callbacks.
+        Note: When running in PythonSlicer (without the full application), blocking mode
+        is always used regardless of this setting.
+    :param show_progress: If True (default), show visual feedback during installation. When
+        blocking=True, shows a modal progress dialog with status updates and collapsible log
+        details. When blocking=False, shows pip output lines in the status bar as installation
+        progresses. Note: When running in PythonSlicer or in testing mode, progress display
+        is skipped and simple blocking mode is used.
+    :param requester: Name shown in dialog/status bar to identify who is requesting the packages
+        (e.g., "MyExtension"). Only used when show_progress=True.
+    :param parent: Parent widget for the progress dialog. Only used when show_progress=True
+        and blocking=True.
+    :param logCallback: When blocking=False, called with each line of pip output.
+        If None, output is printed to Python console as usual.
+        Signature: ``logCallback(line: str) -> None``
+    :param completedCallback: When blocking=False, called when pip completes.
+        Receives return code (0 = success). Recommended when blocking=False to know
+        when installation finished.
+        Signature: ``completedCallback(returnCode: int) -> None``
 
-    Example: calling from Slicer GUI
+    :raises subprocess.CalledProcessError: In blocking mode, if pip installation fails.
+        When show_progress=True, an error dialog with the full log is shown before raising.
+
+    .. warning::
+
+        When using blocking=False without a modal progress dialog, the user can
+        interact with the application while installation is in progress. This may
+        lead to conflicts if the user triggers another operation that depends on
+        or modifies the Python environment. Consider showing a modal dialog or
+        disabling relevant UI elements during installation.
+
+    Example: blocking mode (default)
 
     .. code-block:: python
 
@@ -4019,22 +4482,283 @@ def pip_install(requirements):
 
       pip_install("--upgrade pandas")
 
+    Example: with constraints file
+
+    .. code-block:: python
+
+      pip_install("pandas scipy", constraints="/path/to/constraints.txt")
+
+    Example: non-blocking mode with callbacks
+
+    .. code-block:: python
+
+      def onComplete(returnCode):
+          if returnCode == 0:
+              import pandas  # Now safe to import
+          else:
+              slicer.util.errorDisplay("Failed to install packages")
+
+      pip_install("pandas scipy", blocking=False, completedCallback=onComplete)
+      # Returns immediately, UI stays responsive
+
+    Example: without progress dialog (for scripting or automation)
+
+    .. code-block:: python
+
+      pip_install("pandas scipy", show_progress=False)
+
+    Example: with --no-deps for problematic packages
+
+    .. code-block:: python
+
+      # Install problematic-pkg without its dependencies, then install the
+      # actual dependencies you need
+      pip_install(
+          requirements="numpy scipy",
+          no_deps_requirements="problematic-pkg==1.0",
+      )
+
     """
+    # Check if we're running in full Slicer or PythonSlicer
+    if not _isSlicerAppAvailable():
+        # Running in PythonSlicer - use simple blocking mode
+        _pip_install_simple(requirements, constraints, no_deps_requirements)
+        return
 
+    import slicer
+
+    # In testing mode, skip UI and use simple blocking install
+    if slicer.app.testingEnabled():
+        import logging
+
+        logging.info("Testing mode is enabled: skipping progress UI for pip_install")
+        _pip_install_simple(requirements, constraints, no_deps_requirements)
+        return
+
+    # Check for concurrent non-blocking installs
+    if not blocking and _pip_install_in_progress:
+        raise RuntimeError(
+            "A non-blocking pip_install is already in progress. "
+            "Wait for it to complete or use blocking=True.",
+        )
+
+    # Determine which mode to use based on show_progress and blocking
+    if show_progress and blocking:
+        # Modal progress dialog (blocking from user's perspective, but UI responsive)
+        _pip_install_with_dialog(
+            requirements, constraints, no_deps_requirements, requester, parent,
+        )
+    elif show_progress and not blocking:
+        # Status bar progress (non-blocking)
+        _pip_install_with_statusbar(
+            requirements, constraints, no_deps_requirements, requester,
+            logCallback, completedCallback,
+        )
+    elif not show_progress and blocking:
+        # Busy cursor only
+        _pip_install_with_busy_cursor(requirements, constraints, no_deps_requirements)
+    else:
+        # Non-blocking, no progress (existing behavior)
+        _pip_install_nonblocking(
+            requirements, constraints, no_deps_requirements,
+            logCallback, completedCallback,
+        )
+
+
+def _pip_install_simple(requirements, constraints=None, no_deps_requirements=None):
+    """Simple blocking pip install without any UI (for PythonSlicer and testing mode).
+
+    :raises subprocess.CalledProcessError: If pip installation fails.
+    """
+    # Handle no_deps_requirements first
+    if no_deps_requirements is not None:
+        args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
+        _executePythonModule("pip", args, blocking=True)
+
+    # Then install regular requirements
+    args = _build_pip_args(requirements, constraints, no_deps=False)
+    _executePythonModule("pip", args, blocking=True)
+
+
+def _pip_install_with_busy_cursor(requirements, constraints=None, no_deps_requirements=None):
+    """Blocking pip install with busy cursor.
+
+    :raises subprocess.CalledProcessError: If pip installation fails.
+    """
+    import qt
+
+    qt.QApplication.setOverrideCursor(qt.Qt.BusyCursor)
+    try:
+        _pip_install_simple(requirements, constraints, no_deps_requirements)
+    finally:
+        qt.QApplication.restoreOverrideCursor()
+
+
+def _pip_install_with_dialog(requirements, constraints=None, no_deps_requirements=None,
+                              requester=None, parent=None):
+    """Blocking pip install with modal progress dialog.
+
+    :raises subprocess.CalledProcessError: If pip installation fails.
+    """
+    import threading
+    from subprocess import CalledProcessError
+
+    import qt
+    import slicer
+
+    # Create the progress dialog
+    dialog = _PipProgressDialog(requester=requester, parent=parent)
+    dialog.show()
+    slicer.app.processEvents()  # Ensure dialog is displayed
+
+    completed = threading.Event()
+    result = {"returnCode": None, "log": ""}
+
+    def onLog(line):
+        dialog.appendLog(line)
+        print(line)  # Still log to console
+
+    def onComplete(returnCode):
+        result["returnCode"] = returnCode
+        result["log"] = dialog.getFullLog()
+        completed.set()
+
+    # Run the installation (uses internal non-blocking path)
+    _pip_install_nonblocking(
+        requirements, constraints, no_deps_requirements,
+        logCallback=onLog, completedCallback=onComplete,
+    )
+
+    # Wait for completion while keeping UI responsive
+    while not completed.is_set():
+        slicer.app.processEvents()
+        qt.QThread.msleep(10)  # Reduce CPU usage
+
+    dialog.close()
+
+    if result["returnCode"] != 0:
+        slicer.util.errorDisplay(
+            "Package installation failed.",
+            windowTitle=f"{requester} - Installation Failed" if requester else "Installation Failed",
+            detailedText=result["log"],
+        )
+        raise CalledProcessError(result["returnCode"], "pip install")
+
+
+def _pip_install_with_statusbar(requirements, constraints=None, no_deps_requirements=None,
+                                 requester=None, logCallback=None, completedCallback=None):
+    """Non-blocking pip install with status bar messages.
+
+    Shows pip output lines in the status bar as installation progresses.
+    """
+    import qt
+    import slicer
+
+    prefix = f"{requester}: " if requester else ""
+
+    # Set busy cursor
+    qt.QApplication.setOverrideCursor(qt.Qt.BusyCursor)
+
+    def wrappedLogCallback(line):
+        # Show pip output in status bar (no timeout so it stays until next update)
+        slicer.util.showStatusMessage(f"{prefix}{line}", 0)
+        if logCallback:
+            logCallback(line)
+        else:
+            print(line)
+
+    def wrappedCompletedCallback(returnCode):
+        # Clean up cursor and clear status message
+        qt.QApplication.restoreOverrideCursor()
+        slicer.util.showStatusMessage("", 0)  # Clear status bar
+
+        if completedCallback:
+            completedCallback(returnCode)
+        elif returnCode != 0:
+            import logging
+            logging.error(f"pip install failed with return code {returnCode}")
+
+    try:
+        _pip_install_nonblocking(
+            requirements, constraints, no_deps_requirements,
+            logCallback=wrappedLogCallback, completedCallback=wrappedCompletedCallback,
+        )
+    except Exception:
+        # Not `finally` - on success, cursor stays busy until wrappedCompletedCallback fires
+        qt.QApplication.restoreOverrideCursor()
+        slicer.util.showStatusMessage("", 0)
+        raise
+
+
+def _pip_install_nonblocking(requirements, constraints=None, no_deps_requirements=None,
+                              logCallback=None, completedCallback=None):
+    """Non-blocking pip install.
+
+    Handles no_deps_requirements by chaining the two pip calls.
+    Sets the _pip_install_in_progress flag to prevent concurrent operations.
+    """
+    global _pip_install_in_progress
+    _pip_install_in_progress = True
+
+    # Wrapper to clear the flag when the operation completes
+    def wrappedCompletedCallback(returnCode):
+        global _pip_install_in_progress
+        _pip_install_in_progress = False
+        if completedCallback:
+            completedCallback(returnCode)
+
+    if no_deps_requirements is None:
+        # Simple case - single install
+        args = _build_pip_args(requirements, constraints, no_deps=False)
+        _executePythonModule("pip", args, blocking=False,
+                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
+        return
+
+    # Two-step installation: first no_deps, then regular
+    def onNoDepsComplete(returnCode):
+        if returnCode != 0:
+            # First step failed - abort, clear flag, and notify caller
+            global _pip_install_in_progress
+            _pip_install_in_progress = False
+            if completedCallback:
+                completedCallback(returnCode)
+            return
+        # Success - proceed to regular install (flag stays set until final completion)
+        args = _build_pip_args(requirements, constraints, no_deps=False)
+        _executePythonModule("pip", args, blocking=False,
+                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
+
+    no_deps_args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
+    _executePythonModule("pip", no_deps_args, blocking=False,
+                         logCallback=logCallback, completedCallback=onNoDepsComplete)
+
+
+def _build_pip_args(requirements, constraints=None, no_deps=False):
+    """Build pip install command-line arguments.
+
+    :param requirements: Package requirements (string or list).
+    :param constraints: Path to constraints file, or None.
+    :param no_deps: If True, add --no-deps flag.
+    :returns: List of arguments for pip install command.
+    """
     if type(requirements) == str:
-        # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
-
-        args = "install", *(shlex.split(requirements))
+        args = ["install", *(shlex.split(requirements))]
     elif type(requirements) == list:
-        args = "install", *requirements
+        args = ["install", *requirements]
     else:
         raise ValueError("pip_install requirement input must be string or list")
 
-    _executePythonModule("pip", args)
+    if no_deps:
+        args.append("--no-deps")
+
+    if constraints is not None:
+        args.extend(["-c", str(constraints)])
+
+    return args
 
 
-def pip_uninstall(requirements):
+def pip_uninstall(requirements, blocking=True, logCallback=None, completedCallback=None):
     """Uninstall python packages.
 
     Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
@@ -4044,6 +4768,11 @@ def pip_uninstall(requirements):
     :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
       It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
       if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
+    :param blocking: If True (default), block until uninstall completes. If False, return immediately.
+        Note: When running in PythonSlicer (without the full application), blocking mode
+        is always used regardless of this setting.
+    :param logCallback: When blocking=False, called with each line of pip output.
+    :param completedCallback: When blocking=False, called when pip completes with return code.
 
     Example: calling from Slicer GUI
 
@@ -4063,12 +4792,98 @@ def pip_uninstall(requirements):
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
 
-        args = "uninstall", *(shlex.split(requirements)), "--yes"
+        args = ["uninstall", *(shlex.split(requirements)), "--yes"]
     elif type(requirements) == list:
-        args = "uninstall", *requirements, "--yes"
+        args = ["uninstall", *requirements, "--yes"]
     else:
         raise ValueError("pip_uninstall requirement input must be string or list")
-    _executePythonModule("pip", args)
+
+    # In PythonSlicer, always use blocking mode
+    if not _isSlicerAppAvailable():
+        _executePythonModule("pip", args, blocking=True)
+        return
+
+    _executePythonModule("pip", args, blocking=blocking,
+                         logCallback=logCallback, completedCallback=completedCallback)
+
+
+class _PipProgressDialog:
+    """Modal dialog showing pip installation progress with collapsible log details.
+
+    Internal class used by :func:`pip_install` when show_progress=True and blocking=True.
+    """
+
+    def __init__(self, requester=None, parent=None):
+        import ctk
+        import qt
+        import slicer
+
+        self._dialog = qt.QDialog(parent or slicer.util.mainWindow())
+        self._dialog.setModal(True)
+        self._dialog.setWindowTitle(
+            f"{requester} - Installing Python Packages" if requester else "Installing Python Packages",
+        )
+        # Prevent closing via X button
+        self._dialog.setWindowFlags(self._dialog.windowFlags() & ~qt.Qt.WindowCloseButtonHint)
+
+        # Prevent closing via Escape key by capturing it with a shortcut that does nothing
+        self._escapeShortcut = qt.QShortcut(qt.QKeySequence(qt.Qt.Key_Escape), self._dialog)
+        self._escapeShortcut.setContext(qt.Qt.WidgetWithChildrenShortcut)
+
+        layout = qt.QVBoxLayout(self._dialog)
+
+        # Status label
+        self.statusLabel = qt.QLabel("Installing packages...")
+        layout.addWidget(self.statusLabel)
+
+        # Indeterminate progress bar
+        self.progressBar = qt.QProgressBar()
+        self.progressBar.setRange(0, 0)  # Indeterminate mode
+        layout.addWidget(self.progressBar)
+
+        # Collapsible details section
+        self.detailsButton = ctk.ctkCollapsibleButton()
+        self.detailsButton.text = "Details"
+        self.detailsButton.collapsed = True
+        detailsLayout = qt.QVBoxLayout(self.detailsButton)
+
+        self.logText = qt.QPlainTextEdit()
+        self.logText.setReadOnly(True)
+        self.logText.setMinimumHeight(150)
+        self.logText.setMaximumHeight(300)
+        # Use monospace font for log output
+        font = qt.QFont("Monospace")
+        font.setStyleHint(qt.QFont.TypeWriter)
+        self.logText.setFont(font)
+        detailsLayout.addWidget(self.logText)
+
+        layout.addWidget(self.detailsButton)
+
+        # Set reasonable default size
+        self._dialog.resize(500, 120)
+
+        # Store log lines for retrieval
+        self._logLines = []
+
+    def show(self):
+        """Show the dialog."""
+        self._dialog.show()
+
+    def close(self):
+        """Close the dialog."""
+        self._dialog.close()
+
+    def appendLog(self, line):
+        """Append a line to the log display."""
+        self._logLines.append(line)
+        self.logText.appendPlainText(line)
+        # Auto-scroll to bottom
+        scrollBar = self.logText.verticalScrollBar()
+        scrollBar.setValue(scrollBar.maximum)
+
+    def getFullLog(self):
+        """Return the complete log as a string."""
+        return "\n".join(self._logLines)
 
 
 def longPath(path):
