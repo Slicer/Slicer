@@ -58,6 +58,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDICOMPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDICOMPlugin);
 
 protected:
@@ -650,3 +651,5 @@ vtkIdType qSlicerSubjectHierarchyDICOMPlugin::createDefaultStudyItem()
 
   return studyItemID;
 }
+
+#include "qSlicerSubjectHierarchyDICOMPlugin.moc"

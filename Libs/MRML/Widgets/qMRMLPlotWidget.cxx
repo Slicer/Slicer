@@ -40,6 +40,7 @@
 // qMRMLSliceViewPrivate
 class qMRMLPlotWidgetPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLPlotWidget);
 
 protected:
@@ -165,3 +166,5 @@ qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget() const
 {
   return this->plotController();
 }
+
+#include "qMRMLPlotWidget.moc"
