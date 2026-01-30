@@ -29,7 +29,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageExtractComponents.h>
 #include <vtkImageLogic.h>
 #include <vtkImageMathematics.h>
-#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageMapToWindowLevelAddon.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
 #include <vtkMatrix4x4.h>

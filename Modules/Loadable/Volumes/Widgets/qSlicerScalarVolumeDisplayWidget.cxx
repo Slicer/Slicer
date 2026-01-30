@@ -128,6 +128,7 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)), q, SLOT(setInterpolate(bool)));
   QObject::connect(this->InvertDisplayScalarRangeCheckbox, SIGNAL(toggled(bool)), q, SLOT(setInvert(bool)));
+  QObject::connect(this->LogCompressWindowCheckbox, SIGNAL(toggled(bool)), q, SLOT(setLogCompressWindow(bool)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setColorNode(vtkMRMLNode*)));
   QObject::connect(this->HistogramGroupBox, SIGNAL(toggled(bool)), q, SLOT(onHistogramSectionExpanded(bool)));
 }
@@ -222,9 +223,11 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     QSignalBlocker blocker1(d->ColorTableComboBox);
     QSignalBlocker blocker2(d->InterpolateCheckbox);
     QSignalBlocker blocker3(d->InvertDisplayScalarRangeCheckbox);
+    QSignalBlocker blocker4(d->LogCompressWindowCheckbox);
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
     d->InvertDisplayScalarRangeCheckbox->setChecked(displayNode->GetInvertDisplayScalarRange());
+    d->LogCompressWindowCheckbox->setChecked(displayNode->GetLogCompressWindow());
   }
   this->updateHistogram();
 }
@@ -381,10 +384,21 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
       {
         int resolution = 50;
         double rgb[3] = { 0.0, 0.0, 0.0 };
+        bool logScaled = displayNode->GetLogCompressWindow();
+        double colorMapPosition;
+
         for (int i = 0; i < resolution; i++)
         {
+          if (logScaled)
+          {
+            colorMapPosition = std::log10(1.0 + 9.0 * (double(i) / (resolution - 1)));
+          }
+          else
+          {
+            colorMapPosition = double(i) / (resolution - 1);
+          }
+          mapToColors->GetColor((colorTableIndexRange[0] + (colorTableIndexRange[1] - colorTableIndexRange[0]) * colorMapPosition), rgb);
           currentPosition = colorTableVisibleRange[0] + (colorTableVisibleRange[1] - colorTableVisibleRange[0]) * double(i) / (resolution - 1) + eps;
-          mapToColors->GetColor((colorTableIndexRange[0] + (colorTableIndexRange[1] - colorTableIndexRange[0]) * double(i) / (resolution - 1)), rgb);
           d->ColorTransferFunction->AddRGBPoint(currentPosition, rgb[0], rgb[1], rgb[2]);
         }
       }
@@ -454,6 +468,17 @@ void qSlicerScalarVolumeDisplayWidget::setInvert(bool invert)
     return;
   }
   displayNode->SetInvertDisplayScalarRange(invert);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerScalarVolumeDisplayWidget::setLogCompressWindow(bool logCompress)
+{
+  vtkMRMLScalarVolumeDisplayNode* displayNode = this->volumeDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetLogCompressWindow(logCompress);
 }
 
 // --------------------------------------------------------------------------
