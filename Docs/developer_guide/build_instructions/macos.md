@@ -196,6 +196,8 @@ See list of issues common to all operating systems on [Common errors](common_err
 
 ## Recipe for MacOS on arm64 (New, work in progress)
 
+Issues are being tracked here: https://github.com/Slicer/Slicer/issues/6811
+
 ### Example config:
 ```
 frolick@IsabelMacBook % sw_vers
