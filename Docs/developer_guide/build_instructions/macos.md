@@ -1,6 +1,6 @@
 # macOS
 
-See example [Recipe for MacOS (Silicon)](#recipe-for-macos-silicon) below.
+See example [New experimental Recipe for MacOS (Silicon)](#recipe-for-macos-silicon) below.
 
 ## Prerequisites
 
@@ -194,7 +194,7 @@ See list of issues common to all operating systems on [Common errors](common_err
 
 --
 
-## Recipe for MacOS (Silicon)
+## Recipe for MacOS on arm64 (New, work in progress)
 
 ### Example config:
 ```
