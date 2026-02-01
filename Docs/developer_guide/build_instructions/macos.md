@@ -1,5 +1,7 @@
 # macOS
 
+See example [New experimental Recipe for MacOS (Silicon)](#recipe-for-macos-silicon) below.
+
 ## Prerequisites
 
 The prerequisites listed below are required to be able to configure/build/package/test Slicer.
@@ -189,3 +191,192 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 ## Common errors
 
 See list of issues common to all operating systems on [Common errors](common_errors.md) page.
+
+--
+
+## Recipe for MacOS on arm64 (New, work in progress)
+
+Issues are being tracked here: https://github.com/Slicer/Slicer/issues/6811
+
+### Example config:
+```
+frolick@IsabelMacBook % sw_vers
+ProductName:		macOS
+ProductVersion:		15.7.3
+BuildVersion:		24G419
+
+frolick@IsabelMacBook % qmake --version
+QMake version 3.1
+Using Qt version 6.10.1 in /opt/homebrew/lib
+
+frolick@IsabelMacBook % cmake --version
+cmake version 3.31.5
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
+frolick@IsabelMacBook % system_profiler SPHardwareDataType
+
+Hardware:
+    Hardware Overview:
+      Model Name: MacBook Pro
+      Model Identifier: Mac15,6
+      Chip: Apple M3 Pro
+      Total Number of Cores: 11 (5 performance and 6 efficiency)
+      Memory: 36 GB
+```
+
+##### Prerequisites
+
+###### Install Qt6
+
+Verify Qt6 Install
+```
+qmake --version
+```
+
+1. If not installed, Install Qt6 (via Homebrew)
+```
+brew install qt@6
+
+#Add Qt6 to shell environment
+echo 'export PATH="/opt/homebrew/opt/qt@6/bin:$PATH"' >> ~/.zshrc
+echo 'export CMAKE_PREFIX_PATH="/opt/homebrew/opt/qt@6:$CMAKE_PREFIX_PATH"' >> ~/.zshrc
+
+#Reload shell
+source ~/.zshrc
+
+#Verify Qt6 installation
+qmake --version
+```
+
+###### Install Xcode Command Line Tools
+```
+xcode-select --install
+```
+
+###### Install XCode (not strictly necessary (?) but I couldn't do it without XCode Desktop)
+
+
+If installing full Xcode from the App Store:
+```
+#Set it as the active developer directory
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+
+#Accept the license
+sudo xcodebuild -license accept
+
+#Verify
+xcodebuild -version
+xcode-select -p
+#Should return something like: /Applications/Xcode.app/Contents/Developer
+```
+
+
+Else, check the SDK path used by Xcode:
+```
+xcrun --show-sdk-path
+
+#Should return something like:
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+
+```
+---
+
+##### Directory Setup
+
+Create build directories and set ownership:
+```
+sudo mkdir -p /opt/scmake /opt/scd
+sudo chown -R $(whoami) /opt/scmake /opt/scd
+```
+
+##### Create Build Script
+
+```
+vim build_slicer.sh
+```
+
+Paste into script:
+```
+#!/bin/bash
+
+# Configuration
+SLICER_SOURCE_DIR="$HOME/slicer/latest/Slicer"
+SLICER_BUILD_DIR="/opt/scd"
+SLICER_SUPERBUILD_DIR="/opt/scmake"
+
+# Create directories
+mkdir -p "$SLICER_BUILD_DIR"
+mkdir -p "$SLICER_SUPERBUILD_DIR"
+
+# Clone Slicer source if it doesn't exist
+if [ ! -d "$SLICER_SOURCE_DIR" ]; then
+    echo "Cloning Slicer repository..."
+    mkdir -p "$(dirname "$SLICER_SOURCE_DIR")"
+    git clone https://github.com/Slicer/Slicer.git "$SLICER_SOURCE_DIR"
+fi
+
+cd "$SLICER_SUPERBUILD_DIR"
+
+# Configure with CMake
+cmake \
+  -DCMAKE_OSX_ARCHITECTURES=arm64 \ #CHANGE ME: OSX architecture (uname -m)
+  -DSlicer_REQUIRED_QT_VERSION="6.10" \ # CHANGEME: Qt version (qmake --version)
+  -DCMAKE_BUILD_TYPE:STRING=Debug \
+  -DSlicer_USE_SimpleITK:BOOL=OFF \
+  -DSlicer_BUILD_I18N_SUPPORT:BOOL=OFF \
+  -DSlicer_BUILD_DICOM_SUPPORT:BOOL=OFF \
+  -DSlicer_VTK_SMP_IMPLEMENTATION_TYPE:STRING=Sequential \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=15.7 \ # CHANGEME: OSX version (About this Mac -> macOS)
+  -DCMAKE_OSX_SYSROOT:STRING="$(xcrun --show-sdk-path)" \
+  "$SLICER_SOURCE_DIR"
+
+# Build (use -j for parallel jobs, -k to keep going on errors)
+make -j10 -k
+```
+
+
+##### Run Build
+
+```
+cd /opt/scmake
+chmod +x ./build_slicer.sh
+./build_slicer.sh
+```
+
+
+---
+
+##### Running Slicer Locally
+
+###### Option 1: Navigate to the build directory, make, launch:
+Executable path: /opt/scmake/Slicer-build/Slicer
+
+```
+cd /opt/scmake/Slicer-build
+make -j8 #Optional rebuild to show local changes
+./Slicer
+```
+
+###### Option 2: Run on XCode with Debugging
+
+Create a Dummy Xcode Project
+  Xcode requires an open project in order to attach a debugger.
+  1. Open Xcode
+  2. File → New → Project
+  3. Create a Command Line Tool project (macOS)
+  4. Enter an Organization Name (required!)
+
+Get the Slicer Process ID (PID)
+   1. Open local Slicer through the build directory (following the steps in Option (1)
+   2. In Python Interactor:
+      ```
+      import os
+      os.getpid()
+      ```
+      Copy the PID
+3. Attach the Debugger
+   In Xcode:
+   1. Debug → Attach to Process by Name or PID…
+   2. Paste the PID
+   3. Now you can attach process and use debugger functionality (breakpoints, etc.) as usual
