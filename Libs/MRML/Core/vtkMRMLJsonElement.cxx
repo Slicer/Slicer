@@ -1329,8 +1329,9 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
         while (std::getline(valueStream, singleValue, ' '))
         {
           std::string nextValue;
-          std::getline(valueStream, nextValue, ' ');
-          if (nextValue.front() == '{' && nextValue.back() == '}')
+          std::streampos currentPos = valueStream.tellg();
+
+          if (std::getline(valueStream, nextValue, ' ') && !nextValue.empty() && nextValue.front() == '{' && nextValue.back() == '}')
           {
             // for references: merge references properties to the node id
             // e.g. "vtkMRMLSliceNodeRed {clippingState=ClipPositiveSpace} vtkMRMLSliceNodeGreen {clippingState=ClipPositiveSpace}"
@@ -1338,7 +1339,12 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
           }
           else
           {
-            valueStream.seekg(-nextValue.size(), std::ios_base::cur);
+            // Not a property object or end of stream, restore position if we consumed anything
+            if (currentPos != std::streampos(-1))
+            {
+              valueStream.clear(); // Clear any error flags
+              valueStream.seekg(currentPos);
+            }
             valuesMap[attributeName].push_back(singleValue);
           }
         }
