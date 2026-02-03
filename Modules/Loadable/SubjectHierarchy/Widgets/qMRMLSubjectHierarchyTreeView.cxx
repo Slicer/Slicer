@@ -150,6 +150,9 @@ public:
   /// List of selected items to restore at the end of batch processing (the whole tree is rebuilt and selection is lost)
   QList<vtkIdType> SelectedItemsToRestore;
 
+  /// List of selected items saved before a model operation (reparenting/reordering) to restore after
+  QList<vtkIdType> SelectedItemsSavedByModel;
+
   /// Cached list of highlighted items to speed up clearing highlight after new selection
   QList<vtkIdType> HighlightedItems;
 
@@ -188,6 +191,8 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   QObject::connect(this->Model, SIGNAL(requestExpandItem(vtkIdType)), q, SLOT(expandItem(vtkIdType)));
   QObject::connect(this->Model, SIGNAL(requestCollapseItem(vtkIdType)), q, SLOT(collapseItem(vtkIdType)));
   QObject::connect(this->Model, SIGNAL(requestSelectItems(QList<vtkIdType>)), q, SLOT(setCurrentItems(QList<vtkIdType>)));
+  QObject::connect(this->Model, SIGNAL(requestSaveSelection()), q, SLOT(saveSelectionBeforeModelUpdate()));
+  QObject::connect(this->Model, SIGNAL(requestRestoreSelection()), q, SLOT(restoreSelectionAfterModelUpdate()));
   QObject::connect(this->Model, SIGNAL(subjectHierarchyUpdated()), q, SLOT(updateRootItem()));
 
   this->SortFilterModel = new qMRMLSortFilterSubjectHierarchyProxyModel(q);
@@ -2247,6 +2252,24 @@ void qMRMLSubjectHierarchyTreeView::onMRMLSceneEndBatchProcess(vtkObject* sceneO
   {
     this->setCurrentItems(d->SelectedItemsToRestore);
     d->SelectedItemsToRestore.clear();
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::saveSelectionBeforeModelUpdate()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->SelectedItemsSavedByModel = d->SelectedItems;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::restoreSelectionAfterModelUpdate()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!d->SelectedItemsSavedByModel.isEmpty())
+  {
+    this->setCurrentItems(d->SelectedItemsSavedByModel);
+    d->SelectedItemsSavedByModel.clear();
   }
 }
 

@@ -180,6 +180,11 @@ signals:
   void requestCollapseItem(vtkIdType itemID);
   /// Signal requesting selecting items in the tree
   void requestSelectItems(QList<vtkIdType> itemIDs);
+  /// Signal requesting each connected view to save its current selection before a model
+  /// operation (reparenting/reordering) that will clear selection for moved rows
+  void requestSaveSelection();
+  /// Signal requesting each connected view to restore the selection saved by requestSaveSelection
+  void requestRestoreSelection();
   /// Triggers invalidating the sort filter proxy model
   void invalidateFilter();
 
