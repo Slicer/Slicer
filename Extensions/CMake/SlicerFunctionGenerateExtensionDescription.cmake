@@ -41,6 +41,7 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_ICONURL
     EXTENSION_NAME
     EXTENSION_STATUS
+    EXTENSION_TIER
     EXTENSION_WC_REVISION
     EXTENSION_WC_ROOT
     EXTENSION_WC_TYPE
@@ -197,6 +198,7 @@ This is a line of text.<br>And another one."
   # Generate description file of an extension *without* dependencies
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
+    EXTENSION_TIER "5"
     #EXTENSION_BUILD_SUBDIRECTORY
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
@@ -222,6 +224,7 @@ This is a line of text.<br>And another one."
   # regenerate the description
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
+    EXTENSION_TIER "5"
     #EXTENSION_BUILD_SUBDIRECTORY
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
