@@ -837,8 +837,16 @@ macro(slicerMacroBuildApplication)
           )
         add_dependencies(${SLICERAPP_APPLICATION_NAME}UpdateLauncherIcon ${SLICERAPP_APPLICATION_NAME}ConfigureLauncher)
 
+        # Also embed icon into SlicerApp-real.exe (main application binary)
+        add_custom_target(${SLICERAPP_APPLICATION_NAME}UpdateRealAppIcon ALL
+          COMMAND
+            ${CTKResEdit_EXECUTABLE}
+              --update-resource-ico $<TARGET_FILE:${slicerapp_target}>
+              IDI_ICON1 ${SLICERAPP_WIN_ICON_FILE}
+          )
         # Folder
         set_target_properties(${SLICERAPP_APPLICATION_NAME}UpdateLauncherIcon PROPERTIES FOLDER ${SLICERAPP_FOLDER})
+        set_target_properties(${SLICERAPP_APPLICATION_NAME}UpdateRealAppIcon PROPERTIES FOLDER ${SLICERAPP_FOLDER})
       endif()
 
     endif()
