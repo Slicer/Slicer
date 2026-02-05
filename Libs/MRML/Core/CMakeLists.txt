@@ -150,6 +150,7 @@ set(MRMLCore_SRCS
   vtkDataIOManager.cxx
   vtkDataTransfer.cxx
   vtkEventBroker.cxx
+  vtkImageMapToWindowLevelAddon.cxx
   vtkImageMathematicsAddon.cxx
   vtkImplicitInvertableBoolean.cxx
   vtkMRMLAbstractLayoutNode.cxx

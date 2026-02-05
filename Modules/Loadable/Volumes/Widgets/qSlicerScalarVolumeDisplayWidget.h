@@ -47,6 +47,7 @@ public slots:
 
   void setInterpolate(bool interpolate);
   void setInvert(bool invert);
+  void setLogCompressWindow(bool logCompress);
   void setColorNode(vtkMRMLNode* node);
   void setPreset(const QString& presetName);
 

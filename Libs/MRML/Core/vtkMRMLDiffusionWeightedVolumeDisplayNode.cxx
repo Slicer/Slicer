@@ -19,7 +19,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageAppendComponents.h>
 #include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
-#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageMapToWindowLevelAddon.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkVersion.h>
