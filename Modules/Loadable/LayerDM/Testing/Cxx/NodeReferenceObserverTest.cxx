@@ -249,4 +249,5 @@ private slots:
 };
 
 CTK_TEST_MAIN(NodeReferenceObserverTest)
-#include "moc_NodeReferenceObserverTest.cxx"
+
+#include "NodeReferenceObserverTest.moc"
