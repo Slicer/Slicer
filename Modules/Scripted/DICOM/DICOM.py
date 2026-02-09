@@ -60,7 +60,7 @@ class DICOMDockWidget(qt.QDockWidget):
         closeButton.setIcon(self.style().standardIcon(qt.QStyle.SP_TitleBarCloseButton))
         closeButton.setIconSize(qt.QSize(iconSize, iconSize))
         closeButton.setToolTip(_("Close"))
-        closeButton.clicked.connect(lambda: self.close())
+        closeButton.clicked.connect(self.close)
         titleLayout.addWidget(closeButton)
 
         self.setTitleBarWidget(self.titleDockBarWidget)

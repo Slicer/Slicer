@@ -168,7 +168,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 self.cacheLoadables(files, loadablesForFiles)
 
         # sort the loadables by series number if possible
-        loadables.sort(key=cmp_to_key(lambda x, y: self.seriesSorter(x, y)))
+        loadables.sort(key=cmp_to_key(self.seriesSorter))
 
         return loadables
 
