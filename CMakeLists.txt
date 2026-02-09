@@ -430,6 +430,9 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
+option(Slicer_USE_IDImageIO "Build Slicer with IDImageIO support" OFF)
+mark_as_superbuild(Slicer_USE_IDImageIO)
+
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 

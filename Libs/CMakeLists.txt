@@ -34,8 +34,12 @@ list(APPEND dirs
   RemoteIO
   MRML/Logic
   MRML/DisplayableManager
-  MRML/IDImageIO
   )
+if(Slicer_USE_IDImageIO)
+  list(APPEND dirs
+    MRML/IDImageIO
+    )
+endif()
 list(APPEND dirs
   MRML/Widgets
   )
@@ -79,8 +83,10 @@ message(STATUS "  MRML_APPLICATION_SUPPORT_VERSION is ${MRML_APPLICATION_SUPPORT
 set(MRML_BUILD_QT_DESIGNER_PLUGINS ${Slicer_BUILD_QT_DESIGNER_PLUGINS})
 
 # ITKFactories directories
-set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
-set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+if(Slicer_USE_IDImageIO)
+  set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
+  set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+endif()
 
 # Name of the environment variable that contains the requested OpenGL profile.
 # Accepted values are "default" (same as not specifying a value) or
