@@ -17,10 +17,10 @@
  * Routine that is called when the shared library is loaded by
  * itk::ObjectFactoryBase::LoadDynamicFactories().
  *
- * itkLoad() is C (not C++) function.
+ * slicer_itkLoad() is C (not C++) function.
  */
 extern "C"
 {
-  MRMLIDIOPlugin_EXPORT itk::ObjectFactoryBase* itkLoad();
+  MRMLIDIOPlugin_EXPORT itk::ObjectFactoryBase* slicer_itkLoad();
 }
 #endif

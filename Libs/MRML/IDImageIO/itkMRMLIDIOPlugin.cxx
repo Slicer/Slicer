@@ -5,9 +5,9 @@
  * Routine that is called when the shared library is loaded by
  * itk::ObjectFactoryBase::LoadDynamicFactories().
  *
- * itkLoad() is C (not C++) function.
+ * slicer_itkLoad() is C (not C++) function.
  */
-itk::ObjectFactoryBase* itkLoad()
+itk::ObjectFactoryBase* slicer_itkLoad()
 {
   static itk::MRMLIDImageIOFactory::Pointer f = itk::MRMLIDImageIOFactory::New();
   return f;
