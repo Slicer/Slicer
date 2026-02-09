@@ -347,7 +347,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         # Ensure signal is received when selecting one item
         currentItemChangedArguments = []
-        shTreeView.currentItemChanged.connect(lambda x: currentItemChangedArguments.append(x))
+        shTreeView.currentItemChanged.connect(currentItemChangedArguments.append)
         shTreeView.setCurrentItem(self.patientItemID)
         self.assertEqual(currentItemChangedArguments, [self.patientItemID])
 
