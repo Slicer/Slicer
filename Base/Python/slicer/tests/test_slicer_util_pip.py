@@ -207,7 +207,7 @@ class PipEnsureTest(unittest.TestCase):
         ]
         # Should return without error or calling pip_install
         with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
-            slicer.util.pip_ensure(reqs, prompt=False)
+            slicer.util.pip_ensure(reqs, prompt_install=False)
             mock_install.assert_not_called()
 
     def test_skip_in_testing_mode(self):
@@ -218,7 +218,7 @@ class PipEnsureTest(unittest.TestCase):
         if slicer.app.testingEnabled():
             with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
                 # Should not raise, should not install
-                slicer.util.pip_ensure(reqs, prompt=False, skip_in_testing=True)
+                slicer.util.pip_ensure(reqs, prompt_install=False, skip_in_testing=True)
                 mock_install.assert_not_called()
         else:
             self.skipTest("Not in testing mode")
@@ -230,7 +230,7 @@ class PipEnsureTest(unittest.TestCase):
         # Force skip_in_testing=False to test the install path
         if slicer.app.testingEnabled():
             with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
-                slicer.util.pip_ensure(reqs, prompt=False, skip_in_testing=False)
+                slicer.util.pip_ensure(reqs, prompt_install=False, skip_in_testing=False)
                 mock_install.assert_called_once()
                 # Check that the requirement string was passed
                 call_args = mock_install.call_args
@@ -373,7 +373,7 @@ class IntegrationTest(unittest.TestCase):
 
             # Ensure (should be no-op since all satisfied)
             with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
-                slicer.util.pip_ensure(reqs, prompt=False)
+                slicer.util.pip_ensure(reqs, prompt_install=False)
                 mock_install.assert_not_called()
         finally:
             os.unlink(temp_path)
@@ -430,7 +430,7 @@ class ConstraintsTest(unittest.TestCase):
                     slicer.util.pip_ensure(
                         reqs,
                         constraints=constraints_path,
-                        prompt=False,
+                        prompt_install=False,
                         skip_in_testing=False,
                     )
 
@@ -481,3 +481,236 @@ class ConstraintsTest(unittest.TestCase):
                 self.assertIn(str(constraints_path), args)
         finally:
             constraints_path.unlink()
+
+
+class GetInstalledVersionsTest(unittest.TestCase):
+    """Tests for slicer.util._get_installed_versions."""
+
+    def test_returns_dict(self):
+        """Test that _get_installed_versions returns a dict."""
+        versions = slicer.util._get_installed_versions()
+        self.assertIsInstance(versions, dict)
+
+    def test_contains_known_packages(self):
+        """Test that known installed packages appear in the result."""
+        versions = slicer.util._get_installed_versions()
+        # numpy and scipy are always installed in Slicer
+        self.assertIn("numpy", versions)
+        self.assertIn("scipy", versions)
+
+    def test_names_are_canonical(self):
+        """Test that package names are canonicalized (lowercase, hyphens)."""
+        versions = slicer.util._get_installed_versions()
+        for name in versions:
+            self.assertEqual(name, name.lower(), f"Name not lowercase: {name}")
+            self.assertNotIn("_", name, f"Name contains underscore: {name}")
+
+
+class FindUpdatedImportedPackagesTest(unittest.TestCase):
+    """Tests for slicer.util._find_updated_imported_packages."""
+
+    def test_no_changes(self):
+        """Test that identical before/after returns empty list."""
+        versions = {"numpy": "1.24.0", "scipy": "1.11.0"}
+        result = slicer.util._find_updated_imported_packages(versions, versions.copy())
+        self.assertEqual(result, [])
+
+    def test_version_changed_but_not_imported(self):
+        """Test that changed but non-imported packages are not flagged."""
+        before = {"fakepkg-not-imported": "1.0.0"}
+        after = {"fakepkg-not-imported": "2.0.0"}
+
+        mock_pkg_dists = {"fakepkg_not_imported": ["fakepkg-not-imported"]}
+        with unittest.mock.patch(
+            "importlib.metadata.packages_distributions",
+            return_value=mock_pkg_dists,
+        ):
+            result = slicer.util._find_updated_imported_packages(before, after)
+
+        # fakepkg_not_imported is not in sys.modules
+        self.assertEqual(result, [])
+
+    def test_version_changed_and_imported(self):
+        """Test that changed AND imported packages are flagged."""
+        before = {"numpy": "1.24.0"}
+        after = {"numpy": "1.26.0"}
+
+        # numpy is already imported in sys.modules in Slicer
+        mock_pkg_dists = {"numpy": ["numpy"]}
+        with unittest.mock.patch(
+            "importlib.metadata.packages_distributions",
+            return_value=mock_pkg_dists,
+        ):
+            result = slicer.util._find_updated_imported_packages(before, after)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], ("numpy", "1.24.0", "1.26.0"))
+
+    def test_newly_installed_not_flagged(self):
+        """Test that packages absent before install are not flagged."""
+        before = {}  # Package was not installed before
+        after = {"newpkg": "1.0.0"}
+
+        result = slicer.util._find_updated_imported_packages(before, after)
+        self.assertEqual(result, [])
+
+    def test_reinstalled_package_flagged(self):
+        """Test that reinstalled packages with modules in sys.modules are flagged.
+
+        Scenario: package was imported, then uninstalled, then reinstalled.
+        It won't be in before_versions (uninstalled) but its modules are still
+        in sys.modules from the earlier import.
+        """
+        before = {}  # Package was uninstalled before pip_ensure ran
+        after = {"numpy": "1.26.0"}  # Now reinstalled
+
+        # numpy is already in sys.modules in Slicer
+        mock_pkg_dists = {"numpy": ["numpy"]}
+        with unittest.mock.patch(
+            "importlib.metadata.packages_distributions",
+            return_value=mock_pkg_dists,
+        ):
+            result = slicer.util._find_updated_imported_packages(before, after)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], ("numpy", None, "1.26.0"))
+
+
+class PipEnsureRestartPromptTest(unittest.TestCase):
+    """Tests for restart prompt logic in pip_ensure."""
+
+    def test_restart_check_called_after_install(self):
+        """Test that version snapshots are taken before and after install."""
+        reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
+
+        if not slicer.app.testingEnabled():
+            self.skipTest("Not in testing mode")
+
+        call_order = []
+
+        def mock_get_versions():
+            call_order.append("get_versions")
+            return {"numpy": "1.24.0"}
+
+        with unittest.mock.patch("slicer.util._pip_install_simple"):
+            with unittest.mock.patch(
+                "slicer.util._get_installed_versions",
+                side_effect=mock_get_versions,
+            ):
+                with unittest.mock.patch(
+                    "slicer.util._find_updated_imported_packages",
+                    return_value=[],
+                ) as mock_check:
+                    slicer.util.pip_ensure(
+                        reqs, prompt_install=False, skip_in_testing=False,
+                    )
+
+        # _get_installed_versions should be called twice (before and after)
+        self.assertEqual(call_order.count("get_versions"), 2)
+        mock_check.assert_called_once()
+
+    def test_no_restart_when_no_updates(self):
+        """Test that restart() is not called when nothing was updated."""
+        reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
+
+        if not slicer.app.testingEnabled():
+            self.skipTest("Not in testing mode")
+
+        with unittest.mock.patch("slicer.util._pip_install_simple"):
+            with unittest.mock.patch(
+                "slicer.util._get_installed_versions",
+                return_value={"numpy": "1.24.0"},
+            ):
+                with unittest.mock.patch(
+                    "slicer.util._find_updated_imported_packages",
+                    return_value=[],
+                ):
+                    with unittest.mock.patch("slicer.util.restart") as mock_restart:
+                        slicer.util.pip_ensure(
+                            reqs, prompt_install=False, skip_in_testing=False,
+                        )
+                        mock_restart.assert_not_called()
+
+    def test_restart_prompt_skipped_in_testing_mode(self):
+        """Test that restart dialog is skipped in testing mode (only logged)."""
+        reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
+
+        if not slicer.app.testingEnabled():
+            self.skipTest("Not in testing mode")
+
+        updated = [("numpy", "1.24.0", "1.26.0")]
+
+        with unittest.mock.patch("slicer.util._pip_install_simple"):
+            with unittest.mock.patch(
+                "slicer.util._get_installed_versions",
+                return_value={"numpy": "1.24.0"},
+            ):
+                with unittest.mock.patch(
+                    "slicer.util._find_updated_imported_packages",
+                    return_value=updated,
+                ):
+                    with unittest.mock.patch("slicer.util.restart") as mock_restart:
+                        slicer.util.pip_ensure(
+                            reqs, prompt_install=False, skip_in_testing=False,
+                        )
+                        # In testing mode, restart should NOT be called
+                        # (dialog is skipped, only logged)
+                        mock_restart.assert_not_called()
+
+    def test_prompt_restart_false_skips_check(self):
+        """Test that prompt_restart=False skips the version check entirely."""
+        reqs = [Requirement("nonexistent-package-xyz123>=1.0")]
+
+        if not slicer.app.testingEnabled():
+            self.skipTest("Not in testing mode")
+
+        with unittest.mock.patch("slicer.util._pip_install_simple"):
+            with unittest.mock.patch(
+                "slicer.util._get_installed_versions",
+            ) as mock_get_versions:
+                slicer.util.pip_ensure(
+                    reqs,
+                    prompt_install=False,
+                    prompt_restart=False,
+                    skip_in_testing=False,
+                )
+                # Should not be called at all when prompt_restart=False
+                mock_get_versions.assert_not_called()
+
+
+class GetInstalledVersionsSubprocessTest(unittest.TestCase):
+    """Test that _get_installed_versions sees packages installed by a pip subprocess.
+
+    Uses pip-install-test — a minimal stub package on PyPI specifically
+    designed for testing pip installs.
+    """
+
+    _TEST_PKG = "pip-install-test"
+
+    def test_get_installed_versions_sees_newly_installed_package(self):
+        """Verify _get_installed_versions reflects packages installed by pip subprocess."""
+        # Ensure the test package is not installed before we start
+        try:
+            slicer.util.pip_uninstall(self._TEST_PKG)
+        except Exception:
+            pass
+
+        versions_before = slicer.util._get_installed_versions()
+        self.assertNotIn(self._TEST_PKG, versions_before)
+
+        try:
+            # Install the test package via pip subprocess
+            slicer.util._pip_install_simple([self._TEST_PKG])
+
+            # _get_installed_versions must see the newly installed package
+            versions_after = slicer.util._get_installed_versions()
+            self.assertIn(
+                self._TEST_PKG, versions_after,
+                f"{self._TEST_PKG} not visible to importlib.metadata after pip install",
+            )
+        finally:
+            # Clean up regardless of test outcome
+            try:
+                slicer.util.pip_uninstall(self._TEST_PKG)
+            except Exception:
+                pass

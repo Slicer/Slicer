@@ -4305,10 +4305,79 @@ def isPipInstallInProgress() -> bool:
     return _pip_install_in_progress
 
 
+def _get_installed_versions() -> dict[str, str]:
+    """Return ``{canonical_distribution_name: version}`` for all installed packages.
+
+    Calls :func:`importlib.invalidate_caches` first so that metadata changes made by
+    a pip subprocess are visible to this process.
+    """
+    import importlib
+    import importlib.metadata
+
+    from packaging.utils import canonicalize_name
+
+    importlib.invalidate_caches()
+    return {
+        canonicalize_name(dist.metadata["Name"]): dist.metadata["Version"]
+        for dist in importlib.metadata.distributions()
+    }
+
+
+def _find_updated_imported_packages(
+    before_versions: dict[str, str],
+    after_versions: dict[str, str],
+) -> list[tuple[str, str | None, str]]:
+    """Find packages that were updated AND had modules already imported.
+
+    Compares *before_versions* and *after_versions* (both returned by
+    :func:`_get_installed_versions`) and checks whether any changed distribution
+    has top-level import names present in :data:`sys.modules`.
+
+    :param before_versions: ``{canonical_dist_name: version}`` before installation.
+    :param after_versions: ``{canonical_dist_name: version}`` after installation.
+    :returns: List of ``(dist_name, old_version, new_version)`` tuples for packages
+        that have import names present in ``sys.modules`` and either changed version
+        or were freshly installed (``old_version`` is ``None`` in that case).
+    """
+    import importlib.metadata
+    import sys
+
+    from packaging.utils import canonicalize_name
+
+    # Reverse mapping: canonical dist name → set of top-level import names
+    dist_to_imports: dict[str, set[str]] = {}
+    for import_name, dist_names in importlib.metadata.packages_distributions().items():
+        for dn in dist_names:
+            dist_to_imports.setdefault(canonicalize_name(dn), set()).add(import_name)
+
+    result = []
+    for name, old_ver in before_versions.items():
+        new_ver = after_versions.get(name)
+        if new_ver is None or old_ver == new_ver:
+            continue
+        import_names = dist_to_imports.get(name, set())
+        if any(imp in sys.modules for imp in import_names):
+            result.append((name, old_ver, new_ver))
+
+    # Also check packages that were freshly installed (not in before_versions).
+    # If their import names are already in sys.modules, that means they were
+    # previously installed and imported, then uninstalled, then reinstalled.
+    # The old module objects are still in memory.
+    for name, new_ver in after_versions.items():
+        if name in before_versions:
+            continue  # Already handled above
+        import_names = dist_to_imports.get(name, set())
+        if any(imp in sys.modules for imp in import_names):
+            result.append((name, None, new_ver))
+
+    return result
+
+
 def pip_ensure(
     requirements: list[Requirement],
     constraints: str | Path | None = None,
-    prompt: bool = True,
+    prompt_install: bool = True,
+    prompt_restart: bool = True,
     requester: str | None = None,
     skip_in_testing: bool = True,
     show_progress: bool = True,
@@ -4319,6 +4388,10 @@ def pip_ensure(
     ``onApplyButton`` method). This function checks which requirements are
     missing and installs them, optionally showing a confirmation dialog first.
 
+    After installation, if any updated packages were already imported in the
+    current session, a restart prompt is shown (the old versions remain loaded
+    in memory and may not work correctly until Slicer is restarted).
+
     :param requirements: List of :class:`packaging.requirements.Requirement` objects,
         typically obtained from :func:`load_requirements`.
     :param constraints: Path to a constraints file (string or Path object), or None.
@@ -4326,7 +4399,10 @@ def pip_ensure(
         Constraints files use the same format as requirements files but only constrain
         versions without triggering installation. Useful for ensuring compatible
         versions across multiple extensions.
-    :param prompt: If True (default), show confirmation dialog before installing.
+    :param prompt_install: If True (default), show confirmation dialog before installing.
+    :param prompt_restart: If True (default), check whether any updated packages were
+        already imported and, if so, show a dialog recommending a restart. The user
+        can choose to restart immediately or continue without restarting.
     :param requester: Name shown in dialog to identify who is requesting the packages
         (e.g., "TotalSegmentator", "MyFilter", "MyExtension").
     :param skip_in_testing: If True (default), skip installation when Slicer is running
@@ -4396,7 +4472,7 @@ def pip_ensure(
         logging.info(f"Testing mode is enabled: skipping pip_ensure for [{missing_str}]")
         return
 
-    if prompt:
+    if prompt_install:
         package_list = "\n".join(f"• {req}" for req in missing)
         title = f"{requester} - Install Python Packages" if requester else "Install Python Packages"
         count = len(missing)
@@ -4408,6 +4484,9 @@ def pip_ensure(
         if not slicer.util.confirmOkCancelDisplay(message, title, detailedText=package_list):
             raise RuntimeError("User declined package installation")
 
+    # Snapshot installed versions before installation
+    before_versions = _get_installed_versions() if prompt_restart else None
+
     # Install missing packages with optional progress display
     pip_install(
         [str(req) for req in missing],
@@ -4416,6 +4495,44 @@ def pip_ensure(
         show_progress=show_progress,
         requester=requester,
     )
+
+    if not prompt_restart:
+        return
+
+    # Check if any updated packages were already imported
+    after_versions = _get_installed_versions()
+    updated_imported = _find_updated_imported_packages(before_versions, after_versions)
+
+    if updated_imported:
+        detail_lines = [
+            f"• {name}: {old_ver} → {new_ver}" if old_ver else f"• {name}: (reinstalled) → {new_ver}"
+            for name, old_ver, new_ver in updated_imported
+        ]
+        detail_text = "\n".join(detail_lines)
+        logging.info(
+            f"Updated packages already imported (restart recommended): {detail_text}",
+        )
+
+        # confirmYesNoDisplay auto-returns True in testing mode, which would
+        # trigger an unwanted restart. Guard with testingEnabled() check and
+        # rely on the log message above for test verification.
+        if not slicer.app.testingEnabled():
+            count = len(updated_imported)
+            title = (
+                f"{requester} - Restart Recommended"
+                if requester
+                else "Restart Recommended"
+            )
+            message = (
+                f"{count} updated package{'s' if count != 1 else ''} "
+                f"{'were' if count != 1 else 'was'} already loaded in memory "
+                f"and may not work correctly until Slicer is restarted.\n\n"
+                f"Would you like to restart now?"
+            )
+            if slicer.util.confirmYesNoDisplay(
+                message, title, detailedText=detail_text,
+            ):
+                slicer.util.restart()
 
 
 def _isSlicerAppAvailable() -> bool:
