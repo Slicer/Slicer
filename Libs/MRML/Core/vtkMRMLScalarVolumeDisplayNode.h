@@ -25,7 +25,7 @@ class vtkImageHistogramStatistics;
 class vtkImageCast;
 class vtkImageLogic;
 class vtkImageMapToColors;
-class vtkImageMapToWindowLevelColors;
+class vtkImageMapToWindowLevelAddon;
 class vtkImageStencil;
 class vtkImageThreshold;
 class vtkImageExtractComponents;
@@ -151,6 +151,11 @@ public:
   virtual void SetInvertDisplayScalarRange(int invert);
   vtkBooleanMacro(InvertDisplayScalarRange, int);
 
+  /// Set/Get logarithmic display scaling
+  vtkGetMacro(LogCompressWindow, int);
+  virtual void SetLogCompressWindow(int logCompress);
+  vtkBooleanMacro(LogCompressWindow, int);
+
   void SetDefaultColorMap() override;
 
   ///
@@ -260,12 +265,13 @@ protected:
   int ApplyThreshold;
   int AutoThreshold;
   int InvertDisplayScalarRange;
+  int LogCompressWindow;
 
   vtkImageLogic* AlphaLogic;
   vtkImageMapToColors* MapToColors;
   vtkImageThreshold* Threshold;
   vtkImageAppendComponents* AppendComponents;
-  vtkImageMapToWindowLevelColors* MapToWindowLevelColors;
+  vtkImageMapToWindowLevelAddon* MapToWindowLevelColors;
   vtkImageExtractComponents* ExtractRGB;
   vtkImageExtractComponents* ExtractAlpha;
   vtkImageStencil* MultiplyAlpha;
