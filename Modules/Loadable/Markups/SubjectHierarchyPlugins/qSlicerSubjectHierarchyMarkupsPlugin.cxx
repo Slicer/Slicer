@@ -46,6 +46,7 @@
 #include <vtkMRMLAbstractViewNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
 #include <vtkMRMLMarkupsPlaneDisplayNode.h>
 #include <vtkMRMLMarkupsPlaneNode.h>
@@ -99,6 +100,8 @@ public:
   QAction* RenamePointAction{ nullptr };
   QAction* RefocusCameraAction{ nullptr };
   QAction* DeletePointAction{ nullptr };
+  QAction* AddPointAction{ nullptr };
+  QAction* ReversePointsAction{ nullptr };
   QAction* DeleteNodeAction{ nullptr };
   QAction* ToggleSelectPointAction{ nullptr };
   QAction* JumpToPreviousPointAction{ nullptr };
@@ -180,6 +183,16 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->DeletePointAction->setObjectName("DeletePointAction");
   q->setActionPosition(this->DeletePointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
   QObject::connect(this->DeletePointAction, SIGNAL(triggered()), q, SLOT(deletePoint()));
+
+  this->AddPointAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Add control point"), q);
+  this->AddPointAction->setObjectName("AddPointAction");
+  q->setActionPosition(this->AddPointAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
+  QObject::connect(this->AddPointAction, SIGNAL(triggered()), q, SLOT(addPoint()));
+
+  this->ReversePointsAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Reverse control points"), q);
+  this->ReversePointsAction->setObjectName("ReversePointsAction");
+  q->setActionPosition(this->ReversePointsAction, qSlicerSubjectHierarchyAbstractPlugin::SectionComponent);
+  QObject::connect(this->ReversePointsAction, SIGNAL(triggered()), q, SLOT(reversePoints()));
 
   this->DeleteNodeAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Delete markup"), q);
   this->DeleteNodeAction->setObjectName("DeleteNodeAction");
@@ -532,10 +545,11 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions() c
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction            //
-          << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction //
-          << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction             //
-          << d->ToggleHandleInteractive << d->HandleVisibilityAction << d->FlipPlaneNormalAction;
+  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction               //
+          << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction    //
+          << d->AddPointAction << d->ReversePointsAction << d->DeletePointAction << d->DeleteNodeAction //
+          << d->EditNodeTerminologyAction << d->ToggleHandleInteractive << d->HandleVisibilityAction    //
+          << d->FlipPlaneNormalAction;
   return actions;
 }
 
@@ -585,6 +599,9 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   d->RenamePointAction->setVisible(!pointActionsDisabled);
   d->DeletePointAction->setVisible(!pointActionsDisabled);
+  d->ReversePointsAction->setVisible(!pointActionsDisabled);
+  d->AddPointAction->setVisible(!pointActionsDisabled);
+  d->AddPointAction->setEnabled(associatedNode->GetNumberOfControlPoints() != associatedNode->GetMaximumNumberOfControlPoints());
   if (!pointActionsDisabled)
   {
     if (associatedNode->GetFixedNumberOfControlPoints())
@@ -824,6 +841,69 @@ void qSlicerSubjectHierarchyMarkupsPlugin::deletePoint()
   {
     markupsNode->RemoveNthControlPoint(componentIndex);
   }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::addPoint()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+  }
+  if (scene->IsClosing())
+  {
+    return;
+  }
+
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+  {
+    qCritical() << Q_FUNC_INFO << ": cannot get application logic";
+    return;
+  }
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic(/*no tr*/ "Markups"));
+  if (!markupsLogic)
+  {
+    qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
+    return;
+  }
+
+  vtkMRMLMarkupsNode* markupsNode = d->markupsNodeFromViewContextMenuEventData();
+  if (!markupsNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node";
+    return;
+  }
+
+  vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  if (!interactionNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No interaction node in the scene.";
+    return;
+  }
+
+  markupsLogic->SetActiveList(markupsNode);
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+  interactionNode->SetPlaceModePersistence(1);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::reversePoints()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  vtkMRMLMarkupsNode* markupsNode = d->markupsNodeFromViewContextMenuEventData();
+  if (!markupsNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node";
+    return;
+  }
+
+  markupsNode->ReverseControlPoints();
 }
 
 //-----------------------------------------------------------------------------
