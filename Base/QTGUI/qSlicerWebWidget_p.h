@@ -42,6 +42,7 @@ class QWebEngineDownloadItem;
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage : public QWebEnginePage
 {
+  Q_OBJECT
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
 

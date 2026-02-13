@@ -50,6 +50,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerLayoutManagerPrivate : public qMRMLLayoutManagerPrivate
 {
+  Q_OBJECT
 public:
   qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
 
@@ -108,3 +109,5 @@ void qSlicerLayoutManager::setCurrentModule(const QString& moduleName)
 {
   emit this->selectModule(moduleName);
 }
+
+#include "qSlicerLayoutManager.moc"
