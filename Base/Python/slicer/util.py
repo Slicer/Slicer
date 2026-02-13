@@ -1,6 +1,18 @@
+from __future__ import annotations
+
 #
 # General
 #
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+    from subprocess import Popen
+
+    import qt
+    from packaging.requirements import Requirement
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -3876,8 +3888,15 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
     return chartNode
 
 
-def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None,
-                         blocking=True, logCallback=None, completedCallback=None):
+def launchConsoleProcess(
+    args: list[str],
+    useStartupEnvironment: bool = True,
+    updateEnvironment: dict[str, str] | None = None,
+    cwd: str | None = None,
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> Popen[str]:
     """Launch a process. Hiding the console and captures the process output.
 
     The console window is hidden when running on Windows.
@@ -3958,7 +3977,11 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
     return proc
 
 
-def _startAsyncProcessHandling(proc, logCallback=None, completedCallback=None):
+def _startAsyncProcessHandling(
+    proc: Popen[str],
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Start asynchronous handling of process output using a background thread and QTimer.
 
     Internal function used by :py:meth:`launchConsoleProcess` when blocking=False.
@@ -4059,7 +4082,13 @@ def logProcessOutput(proc):
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
 
-def _executePythonModule(module, args, blocking=True, logCallback=None, completedCallback=None):
+def _executePythonModule(
+    module: str,
+    args: list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Execute a Python module as a script in Slicer's Python environment.
 
     Internally python -m is called with the module name and additional arguments.
@@ -4109,7 +4138,7 @@ def _executePythonModule(module, args, blocking=True, logCallback=None, complete
         )
 
 
-def load_requirements(path):
+def load_requirements(path: str | Path) -> list[Requirement]:
     """Load requirements from a requirements.txt file.
 
     Parses a requirements file and returns a list of Requirement objects
@@ -4143,7 +4172,7 @@ def load_requirements(path):
     return reqs
 
 
-def pip_check(req, _seen=None):
+def pip_check(req: Requirement | list[Requirement], _seen: set[tuple[str, frozenset[str]]] | None = None) -> bool:
     """Check if requirement(s) are satisfied.
 
     For requirements with extras like ``package[extra1,extra2]>=1.0``, this:
@@ -4250,10 +4279,10 @@ def pip_check(req, _seen=None):
 # Module-level flag to track whether a non-blocking pip install is in progress.
 # Used to prevent concurrent non-blocking pip operations which could corrupt
 # the Python environment.
-_pip_install_in_progress = False
+_pip_install_in_progress: bool = False
 
 
-def isPipInstallInProgress():
+def isPipInstallInProgress() -> bool:
     """Check if a non-blocking pip install is currently in progress.
 
     Use this to check before starting an operation that might conflict with
@@ -4277,13 +4306,13 @@ def isPipInstallInProgress():
 
 
 def pip_ensure(
-    requirements,
-    constraints=None,
-    prompt=True,
-    requester=None,
-    skip_in_testing=True,
-    show_progress=True,
-):
+    requirements: list[Requirement],
+    constraints: str | Path | None = None,
+    prompt: bool = True,
+    requester: str | None = None,
+    skip_in_testing: bool = True,
+    show_progress: bool = True,
+) -> None:
     """Ensure requirements are satisfied, installing if needed.
 
     Call at the point where dependencies are actually needed (e.g., in an
@@ -4389,7 +4418,7 @@ def pip_ensure(
     )
 
 
-def _isSlicerAppAvailable():
+def _isSlicerAppAvailable() -> bool:
     """Check if slicer.app is available (running in full Slicer, not PythonSlicer).
 
     :returns: True if slicer.app is available, False if running in PythonSlicer console.
@@ -4402,16 +4431,16 @@ def _isSlicerAppAvailable():
 
 
 def pip_install(
-    requirements,
-    constraints=None,
-    no_deps_requirements=None,
-    blocking=True,
-    show_progress=True,
-    requester=None,
-    parent=None,
-    logCallback=None,
-    completedCallback=None,
-):
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+    blocking: bool = True,
+    show_progress: bool = True,
+    requester: str | None = None,
+    parent: qt.QWidget | None = None,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Install python packages.
 
     Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
@@ -4565,7 +4594,11 @@ def pip_install(
         )
 
 
-def _pip_install_simple(requirements, constraints=None, no_deps_requirements=None):
+def _pip_install_simple(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+) -> None:
     """Simple blocking pip install without any UI (for PythonSlicer and testing mode).
 
     :raises subprocess.CalledProcessError: If pip installation fails.
@@ -4580,7 +4613,11 @@ def _pip_install_simple(requirements, constraints=None, no_deps_requirements=Non
     _executePythonModule("pip", args, blocking=True)
 
 
-def _pip_install_with_busy_cursor(requirements, constraints=None, no_deps_requirements=None):
+def _pip_install_with_busy_cursor(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+) -> None:
     """Blocking pip install with busy cursor.
 
     :raises subprocess.CalledProcessError: If pip installation fails.
@@ -4594,8 +4631,13 @@ def _pip_install_with_busy_cursor(requirements, constraints=None, no_deps_requir
         qt.QApplication.restoreOverrideCursor()
 
 
-def _pip_install_with_dialog(requirements, constraints=None, no_deps_requirements=None,
-                              requester=None, parent=None):
+def _pip_install_with_dialog(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+    requester: str | None = None,
+    parent: qt.QWidget | None = None,
+) -> None:
     """Blocking pip install with modal progress dialog.
 
     :raises subprocess.CalledProcessError: If pip installation fails.
@@ -4645,8 +4687,14 @@ def _pip_install_with_dialog(requirements, constraints=None, no_deps_requirement
         raise CalledProcessError(result["returnCode"], "pip install")
 
 
-def _pip_install_with_statusbar(requirements, constraints=None, no_deps_requirements=None,
-                                 requester=None, logCallback=None, completedCallback=None):
+def _pip_install_with_statusbar(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+    requester: str | None = None,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Non-blocking pip install with status bar messages.
 
     Shows pip output lines in the status bar as installation progresses.
@@ -4690,8 +4738,13 @@ def _pip_install_with_statusbar(requirements, constraints=None, no_deps_requirem
         raise
 
 
-def _pip_install_nonblocking(requirements, constraints=None, no_deps_requirements=None,
-                              logCallback=None, completedCallback=None):
+def _pip_install_nonblocking(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps_requirements: str | list[str] | None = None,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Non-blocking pip install.
 
     Handles no_deps_requirements by chaining the two pip calls.
@@ -4733,7 +4786,11 @@ def _pip_install_nonblocking(requirements, constraints=None, no_deps_requirement
                          logCallback=logCallback, completedCallback=onNoDepsComplete)
 
 
-def _build_pip_args(requirements, constraints=None, no_deps=False):
+def _build_pip_args(
+    requirements: str | list[str],
+    constraints: str | Path | None = None,
+    no_deps: bool = False,
+) -> list[str]:
     """Build pip install command-line arguments.
 
     :param requirements: Package requirements (string or list).
@@ -4758,7 +4815,12 @@ def _build_pip_args(requirements, constraints=None, no_deps=False):
     return args
 
 
-def pip_uninstall(requirements, blocking=True, logCallback=None, completedCallback=None):
+def pip_uninstall(
+    requirements: str | list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
     """Uninstall python packages.
 
     Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
@@ -4813,7 +4875,7 @@ class _PipProgressDialog:
     Internal class used by :func:`pip_install` when show_progress=True and blocking=True.
     """
 
-    def __init__(self, requester=None, parent=None):
+    def __init__(self, requester: str | None = None, parent: qt.QWidget | None = None) -> None:
         import ctk
         import qt
         import slicer
@@ -4865,15 +4927,15 @@ class _PipProgressDialog:
         # Store log lines for retrieval
         self._logLines = []
 
-    def show(self):
+    def show(self) -> None:
         """Show the dialog."""
         self._dialog.show()
 
-    def close(self):
+    def close(self) -> None:
         """Close the dialog."""
         self._dialog.close()
 
-    def appendLog(self, line):
+    def appendLog(self, line: str) -> None:
         """Append a line to the log display."""
         self._logLines.append(line)
         self.logText.appendPlainText(line)
@@ -4881,7 +4943,7 @@ class _PipProgressDialog:
         scrollBar = self.logText.verticalScrollBar()
         scrollBar.setValue(scrollBar.maximum)
 
-    def getFullLog(self):
+    def getFullLog(self) -> str:
         """Return the complete log as a string."""
         return "\n".join(self._logLines)
 
