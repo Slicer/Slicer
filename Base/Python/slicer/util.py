@@ -4172,6 +4172,59 @@ def load_requirements(path: str | Path) -> list[Requirement]:
     return reqs
 
 
+def load_pyproject_dependencies(path: str | Path) -> list[Requirement]:
+    """Load dependencies from a pyproject.toml file.
+
+    Reads the ``[project.dependencies]`` list (`PEP 621
+    <https://peps.python.org/pep-0621/>`_) and returns
+    :class:`~packaging.requirements.Requirement` objects that can be used
+    with :func:`pip_check` and :func:`pip_ensure`.
+
+    Only the ``dependencies`` list inside the ``[project]`` table is read.
+    Other fields in the table (``name``, ``version``, etc.) are not read or
+    validated.
+
+    :param path: Path to the pyproject.toml file. Can be a string or Path object.
+
+    :returns: List of :class:`packaging.requirements.Requirement` objects.
+        Returns an empty list if ``[project]`` exists but has no
+        ``dependencies`` key.
+
+    :raises KeyError: If the file has no ``[project]`` table.
+
+    Example pyproject.toml::
+
+      [project]
+      dependencies = [
+          "numpy>=1.20",
+          "scikit-image>=0.20",
+      ]
+
+    Example:
+
+    .. code-block:: python
+
+      from pathlib import Path
+      reqs = slicer.util.load_pyproject_dependencies(
+          Path(__file__).parent / "pyproject.toml"
+      )
+      slicer.util.pip_ensure(reqs, requester="MyExtension")
+
+    """
+    import tomllib
+
+    from packaging.requirements import Requirement
+
+    with open(path, "rb") as f:
+        data = tomllib.load(f)
+
+    if "project" not in data:
+        msg = f"pyproject.toml has no [project] table: {path}"
+        raise KeyError(msg)
+
+    return [Requirement(dep) for dep in data["project"].get("dependencies", [])]
+
+
 def pip_check(req: Requirement | list[Requirement], _seen: set[tuple[str, frozenset[str]]] | None = None) -> bool:
     """Check if requirement(s) are satisfied.
 
@@ -4213,6 +4266,11 @@ def pip_check(req: Requirement | list[Requirement], _seen: set[tuple[str, frozen
 
       # Using with load_requirements
       reqs = slicer.util.load_requirements("requirements.txt")
+      if not slicer.util.pip_check(reqs):
+          print("Some requirements are missing")
+
+      # Using with load_pyproject_dependencies
+      reqs = slicer.util.load_pyproject_dependencies("pyproject.toml")
       if not slicer.util.pip_check(reqs):
           print("Some requirements are missing")
 
@@ -4393,7 +4451,8 @@ def pip_ensure(
     in memory and may not work correctly until Slicer is restarted).
 
     :param requirements: List of :class:`packaging.requirements.Requirement` objects,
-        typically obtained from :func:`load_requirements`.
+        typically obtained from :func:`load_requirements` or
+        :func:`load_pyproject_dependencies`.
     :param constraints: Path to a constraints file (string or Path object), or None.
         When provided, passed to pip as ``-c constraints.txt`` during installation.
         Constraints files use the same format as requirements files but only constrain
