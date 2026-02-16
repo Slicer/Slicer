@@ -1,13 +1,14 @@
 """Unit tests for pip-related functions in slicer.util.
 
-Tests for: load_requirements, pip_check, pip_ensure, pip_install (with progress
-and non-blocking modes), and _PipProgressDialog.
+Tests for: load_requirements, load_pyproject_dependencies, pip_check, pip_ensure,
+pip_install (with progress and non-blocking modes), and _PipProgressDialog.
 """
 
 import importlib.metadata
 import os
 import tempfile
 import threading
+import tomllib
 import unittest
 import unittest.mock
 
@@ -97,6 +98,111 @@ class LoadRequirementsTest(unittest.TestCase):
             self.assertTrue(reqs[0].specifier.contains("1.25"))
             self.assertFalse(reqs[0].specifier.contains("1.19"))
             self.assertFalse(reqs[0].specifier.contains("2.1"))
+        finally:
+            os.unlink(temp_path)
+
+
+class LoadPyprojectDependenciesTest(unittest.TestCase):
+    """Tests for slicer.util.load_pyproject_dependencies."""
+
+    def test_simple_dependencies(self):
+        """Test loading simple dependencies from pyproject.toml."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\n")
+            f.write('dependencies = [\n    "numpy>=1.20",\n    "scipy>=1.0",\n]\n')
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertEqual(len(reqs), 2)
+            self.assertEqual(reqs[0].name, "numpy")
+            self.assertEqual(reqs[1].name, "scipy")
+        finally:
+            os.unlink(temp_path)
+
+    def test_empty_dependencies(self):
+        """Test that empty dependencies list returns empty list."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\ndependencies = []\n")
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertEqual(reqs, [])
+        finally:
+            os.unlink(temp_path)
+
+    def test_missing_dependencies_key(self):
+        """Test that missing dependencies key returns empty list (valid per PEP 621)."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\n")
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertEqual(reqs, [])
+        finally:
+            os.unlink(temp_path)
+
+    def test_missing_project_table(self):
+        """Test that missing [project] table raises KeyError with file path."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write('[build-system]\nrequires = ["setuptools"]\n')
+            temp_path = f.name
+
+        try:
+            with self.assertRaises(KeyError) as ctx:
+                slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertIn(temp_path, str(ctx.exception))
+        finally:
+            os.unlink(temp_path)
+
+    def test_returns_requirement_objects(self):
+        """Test that returned objects are Requirement instances with correct specifiers."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\n")
+            f.write('dependencies = ["numpy>=1.20,<2.0"]\n')
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertEqual(len(reqs), 1)
+            self.assertIsInstance(reqs[0], Requirement)
+            self.assertTrue(reqs[0].specifier.contains("1.25"))
+            self.assertFalse(reqs[0].specifier.contains("1.19"))
+            self.assertFalse(reqs[0].specifier.contains("2.1"))
+        finally:
+            os.unlink(temp_path)
+
+    def test_extras_and_markers(self):
+        """Test dependencies with extras and environment markers."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\n")
+            f.write("dependencies = [\n")
+            f.write('    "requests[socks]>=2.0",\n')
+            f.write("    'pywin32>=300; sys_platform == \"win32\"',\n")
+            f.write("]\n")
+            temp_path = f.name
+
+        try:
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
+            self.assertEqual(len(reqs), 2)
+            self.assertEqual(reqs[0].name, "requests")
+            self.assertIn("socks", reqs[0].extras)
+            self.assertEqual(reqs[1].name, "pywin32")
+            self.assertIsNotNone(reqs[1].marker)
+        finally:
+            os.unlink(temp_path)
+
+    def test_invalid_toml(self):
+        """Test that invalid TOML raises TOMLDecodeError."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project\nthis is not valid toml\n")
+            temp_path = f.name
+
+        try:
+            with self.assertRaises(tomllib.TOMLDecodeError):
+                slicer.util.load_pyproject_dependencies(temp_path)
         finally:
             os.unlink(temp_path)
 
@@ -365,6 +471,29 @@ class IntegrationTest(unittest.TestCase):
         try:
             # Load
             reqs = slicer.util.load_requirements(temp_path)
+            self.assertEqual(len(reqs), 2)
+
+            # Check
+            satisfied = slicer.util.pip_check(reqs)
+            self.assertTrue(satisfied)
+
+            # Ensure (should be no-op since all satisfied)
+            with unittest.mock.patch("slicer.util._pip_install_simple") as mock_install:
+                slicer.util.pip_ensure(reqs, prompt_install=False)
+                mock_install.assert_not_called()
+        finally:
+            os.unlink(temp_path)
+
+    def test_load_pyproject_check_ensure_workflow(self):
+        """Test the complete workflow with pyproject.toml: load -> check -> ensure."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+            f.write("[project]\n")
+            f.write('dependencies = [\n    "numpy>=1.0",\n    "scipy>=1.0",\n]\n')
+            temp_path = f.name
+
+        try:
+            # Load
+            reqs = slicer.util.load_pyproject_dependencies(temp_path)
             self.assertEqual(len(reqs), 2)
 
             # Check
