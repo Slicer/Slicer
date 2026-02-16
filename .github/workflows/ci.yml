@@ -41,7 +41,7 @@ jobs:
 
       # Retrieve changes in SuperBuild-related files relative to the 'nightly-main' branch
       - name: "Detect SuperBuild Changes"
-        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
+        uses: tj-actions/changed-files@8cba46e29c11878d930bca7870bb54394d3e8b21 # v47.0.2
         id: superbuild-changes
         with:
           files: |
