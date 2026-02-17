@@ -1131,6 +1131,40 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         self.assertNotIn("win-only>=1.0", installed_reqs)
         self.assertIn("numpy>=1.0", installed_reqs)
 
+    def test_strips_markers_before_pip_call(self):
+        """Test that env markers are stripped from args passed to pip.
+
+        When a sub-dependency has a marker that evaluates to True,
+        the marker has served its purpose. Passing it through as a
+        string would be mangled by shlex.split, so only name+specifier
+        should reach pip.
+        """
+        import sys
+
+        current_platform = sys.platform
+        tree = {"pkg": [f'scipy>=1.0; sys_platform == "{current_platform}"']}
+        patches = self._mock_dep_tree(tree)
+
+        with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+            for p in patches:
+                p.start()
+            try:
+                slicer.util._pip_install_with_skips("pkg", skip_packages=[])
+            finally:
+                for p in patches:
+                    p.stop()
+
+        # Should install both pkg and scipy
+        self.assertEqual(mock_exec.call_count, 2)
+
+        # The scipy call should have just "scipy>=1.0", no marker text
+        scipy_call = mock_exec.call_args_list[1]
+        args = scipy_call[0][1]
+        install_idx = args.index("install")
+        req_arg = args[install_idx + 1]
+        self.assertEqual(req_arg, "scipy>=1.0")
+        self.assertNotIn("sys_platform", " ".join(args))
+
     def test_already_satisfied_not_reinstalled(self):
         """Test that already-installed packages are not re-downloaded."""
         tree = {"pkg": ["numpy>=1.0"]}

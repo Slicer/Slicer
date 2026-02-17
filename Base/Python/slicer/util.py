@@ -5079,9 +5079,6 @@ def _pip_install_with_skips_dialog(
         skipped = _pip_install_with_skips(
             requirements, skip_packages, constraints, log_fn=dialog.appendLog,
         )
-    except Exception:
-        dialog.close()
-        raise
     finally:
         dialog.close()
 
@@ -5207,7 +5204,10 @@ def _pip_install_with_skips(
 
         # Install with --no-deps
         _log(f"Installing {req.name}...")
-        args = _build_pip_args(str(req), constraints, no_deps=True)
+        # Strip the marker — we already evaluated it above, and passing it
+        # through as a string would be mangled by shlex.split in _build_pip_args.
+        install_str = f"{req.name}{req.specifier}"
+        args = _build_pip_args(install_str, constraints, no_deps=True)
         try:
             _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
         except CalledProcessError:
