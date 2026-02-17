@@ -1232,6 +1232,63 @@ class PipInstallWithSkipsTest(unittest.TestCase):
             self.assertIn("/path/to/constraints.txt", args)
 
 
+    def test_top_level_failure_propagates(self):
+        """Test that a top-level install failure raises instead of being swallowed.
+
+        When the package the user explicitly asked for fails to install,
+        the exception should propagate to the caller rather than being
+        silently logged.
+        """
+        from subprocess import CalledProcessError
+
+        tree = {"pkg": []}
+        patches = self._mock_dep_tree(tree)
+
+        with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+            mock_exec.side_effect = CalledProcessError(1, "pip")
+            for p in patches:
+                p.start()
+            try:
+                with self.assertRaises(CalledProcessError):
+                    slicer.util._pip_install_with_skips("pkg", skip_packages=[])
+            finally:
+                for p in patches:
+                    p.stop()
+
+    def test_sub_dependency_failure_continues(self):
+        """Test that a sub-dependency failure is swallowed while other deps are still tried.
+
+        When a transitive dependency fails to install, the function should
+        log a warning and continue installing the remaining dependencies.
+        """
+        from subprocess import CalledProcessError
+
+        tree = {"pkg": ["dep-a>=1.0", "dep-b>=1.0"]}
+        patches = self._mock_dep_tree(tree)
+
+        def selective_fail(module, args, **kwargs):
+            # Find the requirement arg (first arg after "install")
+            install_idx = args.index("install")
+            req_arg = args[install_idx + 1]
+            if req_arg.startswith("dep-a"):
+                raise CalledProcessError(1, "pip")
+            # pkg and dep-b succeed
+
+        with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+            mock_exec.side_effect = selective_fail
+            for p in patches:
+                p.start()
+            try:
+                # Should NOT raise despite dep-a failing
+                slicer.util._pip_install_with_skips("pkg", skip_packages=[])
+            finally:
+                for p in patches:
+                    p.stop()
+
+        # Should have attempted all three: pkg, dep-a (fails), dep-b
+        self.assertEqual(mock_exec.call_count, 3)
+
+
 class SkipPackagesValidationTest(unittest.TestCase):
     """Tests for skip_packages parameter validation in pip_install."""
 
