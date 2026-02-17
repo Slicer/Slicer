@@ -1165,6 +1165,32 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         self.assertEqual(req_arg, "scipy>=1.0")
         self.assertNotIn("sys_platform", " ".join(args))
 
+    def test_preserves_extras_in_pip_call(self):
+        """Test that extras are preserved when constructing the pip argument.
+
+        The marker-stripping fix builds the install string from req.name and
+        req.specifier, but must also include req.extras so that
+        ``package[gpu]>=1.0`` reaches pip as ``package[gpu]>=1.0``, not
+        ``package>=1.0``.
+        """
+        tree = {"pkg[extra1]>=1.0": []}
+        patches = self._mock_dep_tree(tree)
+
+        with unittest.mock.patch("slicer.util._executePythonModule") as mock_exec:
+            for p in patches:
+                p.start()
+            try:
+                slicer.util._pip_install_with_skips("pkg[extra1]>=1.0", skip_packages=[])
+            finally:
+                for p in patches:
+                    p.stop()
+
+        self.assertEqual(mock_exec.call_count, 1)
+        args = mock_exec.call_args_list[0][0][1]
+        install_idx = args.index("install")
+        req_arg = args[install_idx + 1]
+        self.assertEqual(req_arg, "pkg[extra1]>=1.0")
+
     def test_already_satisfied_not_reinstalled(self):
         """Test that already-installed packages are not re-downloaded."""
         tree = {"pkg": ["numpy>=1.0"]}
