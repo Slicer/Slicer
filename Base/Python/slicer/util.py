@@ -5209,12 +5209,7 @@ def _pip_install_with_skips(
         extras_str = f"[{','.join(req.extras)}]" if req.extras else ""
         install_str = f"{req.name}{extras_str}{req.specifier}"
         args = _build_pip_args(install_str, constraints, no_deps=True)
-        try:
-            _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
-        except CalledProcessError:
-            logging.warning("Failed to install %s, continuing with remaining dependencies", req.name)
-            _log(f"WARNING: Failed to install {req.name}")
-            return
+        _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
 
         # Read sub-dependencies from installed metadata
         importlib.invalidate_caches()
@@ -5239,7 +5234,11 @@ def _pip_install_with_skips(
             if dep_req.marker is not None and "extra" in str(dep_req.marker):
                 continue
 
-            _install_one(dep_req)
+            try:
+                _install_one(dep_req)
+            except CalledProcessError:
+                logging.warning("Failed to install %s, continuing with remaining dependencies", dep_req.name)
+                _log(f"WARNING: Failed to install {dep_req.name}")
 
     # Process each top-level requirement
     for req_str in req_strings:
