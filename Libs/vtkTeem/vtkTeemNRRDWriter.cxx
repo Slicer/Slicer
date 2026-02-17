@@ -1,6 +1,7 @@
 #include <map>
 
 #include "vtkTeemNRRDWriter.h"
+#include "teem/nrrd.h"
 
 #include "vtkImageData.h"
 #include "vtkPointData.h"
@@ -475,4 +476,24 @@ void vtkTeemNRRDWriter::SetAxisUnit(unsigned int axis, const char* unit)
 void vtkTeemNRRDWriter::SetVectorAxisKind(int kind)
 {
   this->VectorAxisKind = kind;
+}
+
+void vtkTeemNRRDWriter::vtkSetSpaceToRAS()
+{
+  this->SetSpace(nrrdSpaceRightAnteriorSuperior);
+}
+
+void vtkTeemNRRDWriter::vtkSetSpaceToRAST()
+{
+  this->SetSpace(nrrdSpaceRightAnteriorSuperiorTime);
+}
+
+void vtkTeemNRRDWriter::vtkSetSpaceToLPS()
+{
+  this->SetSpace(nrrdSpaceLeftPosteriorSuperior);
+}
+
+void vtkTeemNRRDWriter::vtkSetSpaceToLPST()
+{
+  this->SetSpace(nrrdSpaceLeftPosteriorSuperiorTime);
 }

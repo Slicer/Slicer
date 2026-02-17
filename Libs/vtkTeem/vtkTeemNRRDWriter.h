@@ -7,7 +7,6 @@
 #include "vtkDoubleArray.h"
 #include "vtkMatrix4x4.h"
 #include "vtkSmartPointer.h"
-#include "teem/nrrd.h"
 
 #include "vtkTeemConfigure.h"
 
@@ -94,12 +93,12 @@ public:
   vtkGetMacro(Space, int);
 
   /// Set coordinate system to RAS
-  void vtkSetSpaceToRAS() { this->SetSpace(nrrdSpaceRightAnteriorSuperior); };
-  void vtkSetSpaceToRAST() { this->SetSpace(nrrdSpaceRightAnteriorSuperiorTime); };
+  void vtkSetSpaceToRAS();
+  void vtkSetSpaceToRAST();
 
   /// Set coordinate system to LPS
-  void vtkSetSpaceToLPS() { this->SetSpace(nrrdSpaceLeftPosteriorSuperior); };
-  void vtkSetSpaceToLPST() { this->SetSpace(nrrdSpaceLeftPosteriorSuperiorTime); };
+  void vtkSetSpaceToLPS();
+  void vtkSetSpaceToLPST();
 
   /// Force the addition of a range axis, even when the size of the first image dimension (components, or frame list) is 1.
   /// This is useful when attempting to write an image sequence with a single frame, as otherwise the range dimension would be omitted.

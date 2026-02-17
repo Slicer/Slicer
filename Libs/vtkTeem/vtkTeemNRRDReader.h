@@ -44,8 +44,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkVersion.h>
 
-#include "teem/nrrd.h"
-
 /// \brief Reads Nearly Raw Raster Data files.
 ///
 /// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
@@ -142,56 +140,9 @@ public:
   vtkSetMacro(DataArrayName, std::string);
   vtkGetMacro(DataArrayName, std::string);
 
-  int NrrdToVTKScalarType(const int nrrdPixelType) const
-  {
-    switch (nrrdPixelType)
-    {
-      default:
-      case nrrdTypeDefault: return VTK_VOID; break;
-      case nrrdTypeChar: return VTK_CHAR; break;
-      case nrrdTypeUChar: return VTK_UNSIGNED_CHAR; break;
-      case nrrdTypeShort: return VTK_SHORT; break;
-      case nrrdTypeUShort:
-        return VTK_UNSIGNED_SHORT;
-        break;
-        ///    case nrrdTypeLLong:
-        ///      return LONG ;
-        ///      break;
-        ///    case nrrdTypeULong:
-        ///      return ULONG;
-        ///      break;
-      case nrrdTypeInt: return VTK_INT; break;
-      case nrrdTypeUInt: return VTK_UNSIGNED_INT; break;
-      case nrrdTypeFloat: return VTK_FLOAT; break;
-      case nrrdTypeDouble: return VTK_DOUBLE; break;
-      case nrrdTypeBlock: return -1; break;
-    }
-  }
+  int NrrdToVTKScalarType(const int nrrdPixelType) const;
+  int VTKToNrrdPixelType(const int vtkPixelType) const;
 
-  int VTKToNrrdPixelType(const int vtkPixelType) const
-  {
-    switch (vtkPixelType)
-    {
-      default:
-      case VTK_VOID: return nrrdTypeDefault; break;
-      case VTK_CHAR: return nrrdTypeChar; break;
-      case VTK_UNSIGNED_CHAR: return nrrdTypeUChar; break;
-      case VTK_SHORT: return nrrdTypeShort; break;
-      case VTK_UNSIGNED_SHORT:
-        return nrrdTypeUShort;
-        break;
-        ///    case nrrdTypeLLong:
-        ///      return LONG ;
-        ///      break;
-        ///    case nrrdTypeULong:
-        ///      return ULONG;
-        ///      break;
-      case VTK_INT: return nrrdTypeInt; break;
-      case VTK_UNSIGNED_INT: return nrrdTypeUInt; break;
-      case VTK_FLOAT: return nrrdTypeFloat; break;
-      case VTK_DOUBLE: return nrrdTypeDouble; break;
-    }
-  }
   vtkImageData* AllocateOutputData(vtkDataObject* out, vtkInformation* outInfo) override;
   void AllocateOutputData(vtkImageData* out, vtkInformation* outInfo, int* uExtent) override { Superclass::AllocateOutputData(out, outInfo, uExtent); }
   void AllocatePointData(vtkImageData* out, vtkInformation* outInfo);
@@ -200,7 +151,7 @@ protected:
   vtkTeemNRRDReader();
   ~vtkTeemNRRDReader() override;
 
-  static bool GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& numOfComponents);
+  static bool GetPointType(void* nrrdTemp, int& pointDataType, int& numOfComponents);
 
   vtkSmartPointer<vtkMatrix4x4> RasToIjkMatrix;
   vtkSmartPointer<vtkMatrix4x4> MeasurementFrameMatrix;
@@ -208,7 +159,7 @@ protected:
 
   std::string CurrentFileName;
 
-  Nrrd* nrrd;
+  void* nrrd;
 
   int ReadStatus;
 
@@ -227,7 +178,7 @@ protected:
   void ExecuteInformation() override;
   void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 
-  int tenSpaceDirectionReduce(Nrrd* nout, const Nrrd* nin, double SD[9]);
+  int tenSpaceDirectionReduce(void* nout, const void* nin, double SD[9]);
 
 private:
   vtkTeemNRRDReader(const vtkTeemNRRDReader&) = delete;
