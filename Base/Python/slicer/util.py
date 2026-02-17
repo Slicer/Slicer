@@ -5206,7 +5206,8 @@ def _pip_install_with_skips(
         _log(f"Installing {req.name}...")
         # Strip the marker — we already evaluated it above, and passing it
         # through as a string would be mangled by shlex.split in _build_pip_args.
-        install_str = f"{req.name}{req.specifier}"
+        extras_str = f"[{','.join(req.extras)}]" if req.extras else ""
+        install_str = f"{req.name}{extras_str}{req.specifier}"
         args = _build_pip_args(install_str, constraints, no_deps=True)
         try:
             _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
@@ -5224,7 +5225,8 @@ def _pip_install_with_skips(
 
         # Scrub METADATA before recursing — if the walk is interrupted,
         # the METADATA for already-installed packages is still cleaned.
-        _scrub_metadata(canonical, skip_set)
+        if skip_set:
+            _scrub_metadata(canonical, skip_set)
 
         # Recurse on each sub-dependency
         for dep_str in sub_deps:
