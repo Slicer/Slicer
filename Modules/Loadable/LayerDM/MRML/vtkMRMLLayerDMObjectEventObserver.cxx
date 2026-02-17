@@ -134,3 +134,20 @@ void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
 
   this->m_obsMap.erase(node);
 }
+
+vtkMRMLLayerDMObjectEventObserver::UpdateGuard::UpdateGuard(vtkMRMLLayerDMObjectEventObserver* obs)
+  : m_obs(obs)
+{
+  if (m_obs)
+  {
+    m_wasBlocked = m_obs->SetBlocked(true);
+  }
+}
+
+vtkMRMLLayerDMObjectEventObserver::UpdateGuard::~UpdateGuard()
+{
+  if (m_obs)
+  {
+    m_obs->SetBlocked(m_wasBlocked);
+  }
+}

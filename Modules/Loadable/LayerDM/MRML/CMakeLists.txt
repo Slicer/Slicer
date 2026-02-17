@@ -12,6 +12,8 @@ set(${KIT}_SRCS
   vtkMRMLLayerDMNodeReferenceObserver.h
   vtkMRMLLayerDMObjectEventObserver.cxx
   vtkMRMLLayerDMObjectEventObserver.h
+  vtkMRMLLayerDMSelectionObserver.cxx
+  vtkMRMLLayerDMSelectionObserver.h
   vtkMRMLLayerDMWidgetEventTranslationNode.cxx
   vtkMRMLLayerDMWidgetEventTranslationNode.h
 )
@@ -28,7 +30,6 @@ endif ()
 
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
-  SlicerBaseLogic
 )
 
 #-----------------------------------------------------------------------------
@@ -47,4 +48,6 @@ target_include_directories(
   PUBLIC
   ${${KIT}_SOURCE_DIR}
   ${${KIT}_BINARY_DIR}
+  ${MRMLCore_INCLUDE_DIRS}
+  ${MRMLLogic_INCLUDE_DIRS}
 )

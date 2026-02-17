@@ -9,6 +9,7 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
   ObjectEventObserverScriptedTest.py
   PipelineFactoryTest.py
   PipelineManagerTest.py
+  SelectionTest.py
 )
 
 set(EXTENSION_TEST_PYTHON_RESOURCES
