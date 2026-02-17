@@ -4630,8 +4630,8 @@ def _isSlicerAppAvailable() -> bool:
     :returns: True if slicer.app is available, False if running in PythonSlicer console.
     """
     try:
-        from slicer import app  # noqa: F401
-        return True
+        from slicer import app
+        return app is not None
     except ImportError:
         return False
 
@@ -5035,30 +5035,34 @@ def _pip_install_nonblocking(
         if completedCallback:
             completedCallback(returnCode)
 
-    if no_deps_requirements is None:
-        # Simple case - single install
-        args = _build_pip_args(requirements, constraints, no_deps=False)
-        _executePythonModule("pip", args, blocking=False,
-                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
-        return
-
-    # Two-step installation: first no_deps, then regular
-    def onNoDepsComplete(returnCode):
-        if returnCode != 0:
-            # First step failed - abort, clear flag, and notify caller
-            global _pip_install_in_progress
-            _pip_install_in_progress = False
-            if completedCallback:
-                completedCallback(returnCode)
+    try:
+        if no_deps_requirements is None:
+            # Simple case - single install
+            args = _build_pip_args(requirements, constraints, no_deps=False)
+            _executePythonModule("pip", args, blocking=False,
+                                 logCallback=logCallback, completedCallback=wrappedCompletedCallback)
             return
-        # Success - proceed to regular install (flag stays set until final completion)
-        args = _build_pip_args(requirements, constraints, no_deps=False)
-        _executePythonModule("pip", args, blocking=False,
-                             logCallback=logCallback, completedCallback=wrappedCompletedCallback)
 
-    no_deps_args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
-    _executePythonModule("pip", no_deps_args, blocking=False,
-                         logCallback=logCallback, completedCallback=onNoDepsComplete)
+        # Two-step installation: first no_deps, then regular
+        def onNoDepsComplete(returnCode):
+            if returnCode != 0:
+                # First step failed - abort, clear flag, and notify caller
+                global _pip_install_in_progress
+                _pip_install_in_progress = False
+                if completedCallback:
+                    completedCallback(returnCode)
+                return
+            # Success - proceed to regular install (flag stays set until final completion)
+            args = _build_pip_args(requirements, constraints, no_deps=False)
+            _executePythonModule("pip", args, blocking=False,
+                                 logCallback=logCallback, completedCallback=wrappedCompletedCallback)
+
+        no_deps_args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
+        _executePythonModule("pip", no_deps_args, blocking=False,
+                             logCallback=logCallback, completedCallback=onNoDepsComplete)
+    except Exception:
+        _pip_install_in_progress = False
+        raise
 
 
 def _pip_install_with_skips_dialog(
