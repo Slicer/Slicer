@@ -25,6 +25,7 @@ class vtkCallbackCommand;
 class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMObjectEventObserver : public vtkObject
 {
 public:
+  struct UpdateGuard;
   static vtkMRMLLayerDMObjectEventObserver* New();
   vtkTypeMacro(vtkMRMLLayerDMObjectEventObserver, vtkObject);
 
@@ -52,6 +53,18 @@ public:
   /// Set update callback blocked.
   /// @return previous blocked state.
   bool SetBlocked(bool isBlocked);
+
+  /// Helper update guard.
+  /// Blocks update during struct lifetime for the given input observer.
+  struct UpdateGuard
+  {
+    UpdateGuard(vtkMRMLLayerDMObjectEventObserver* obs);
+    ~UpdateGuard();
+
+  private:
+    vtkMRMLLayerDMObjectEventObserver* m_obs;
+    bool m_wasBlocked{};
+  };
 
 protected:
   vtkMRMLLayerDMObjectEventObserver();
