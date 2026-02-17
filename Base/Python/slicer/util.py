@@ -4047,10 +4047,11 @@ def _startAsyncProcessHandling(
     qt.QTimer.singleShot(0, checkOutput)
 
 
-def logProcessOutput(proc):
+def logProcessOutput(proc, logCallback=None):
     """Continuously write process output to the application log and the Python console.
 
     :param proc: process object.
+    :param logCallback: optional callback called with each output line (str).
     """
     from subprocess import CalledProcessError
 
@@ -4067,7 +4068,10 @@ def logProcessOutput(proc):
             line = proc.stdout.readline()
             if not line:
                 break
-            print(line.rstrip())
+            line = line.rstrip()
+            print(line)
+            if logCallback:
+                logCallback(line)
             if guiApp:
                 guiApp.processEvents()  # give a chance the application to refresh GUI
         except UnicodeDecodeError as e:
@@ -4127,7 +4131,7 @@ def _executePythonModule(
 
     if blocking:
         proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
-        logProcessOutput(proc)
+        logProcessOutput(proc, logCallback=logCallback)
     else:
         launchConsoleProcess(
             commandLine,
@@ -4434,12 +4438,13 @@ def _find_updated_imported_packages(
 def pip_ensure(
     requirements: list[Requirement],
     constraints: str | Path | None = None,
+    skip_packages: list[str] | None = None,
     prompt_install: bool = True,
     prompt_restart: bool = True,
     requester: str | None = None,
     skip_in_testing: bool = True,
     show_progress: bool = True,
-) -> None:
+) -> list[str] | None:
     """Ensure requirements are satisfied, installing if needed.
 
     Call at the point where dependencies are actually needed (e.g., in an
@@ -4458,6 +4463,9 @@ def pip_ensure(
         Constraints files use the same format as requirements files but only constrain
         versions without triggering installation. Useful for ensuring compatible
         versions across multiple extensions.
+    :param skip_packages: Package names to exclude from installation (and from the
+        dependency tree). Forwarded to :func:`pip_install` — see its documentation
+        for full details.
     :param prompt_install: If True (default), show confirmation dialog before installing.
     :param prompt_restart: If True (default), check whether any updated packages were
         already imported and, if so, show a dialog recommending a restart. The user
@@ -4471,6 +4479,9 @@ def pip_ensure(
     :param show_progress: If True (default), show progress dialog during installation
         with status updates and collapsible log details. If False, show only
         a busy cursor during installation.
+
+    :returns: When ``skip_packages`` is provided, a list of skipped requirement strings
+        (forwarded from :func:`pip_install`). Otherwise ``None``.
 
     :raises RuntimeError: If user declines installation.
     :raises subprocess.CalledProcessError: If installation fails.
@@ -4509,19 +4520,35 @@ def pip_ensure(
           requester="MyExtension"
       )
 
+    Example with skip_packages:
+
+    .. code-block:: python
+
+      reqs = [Requirement("nnunetv2>=2.3")]
+      skipped = slicer.util.pip_ensure(
+          reqs,
+          skip_packages=["SimpleITK", "torch", "requests"],
+          requester="SlicerNNUNet",
+      )
+      # skipped contains requirement strings for the packages that were
+      # excluded, e.g. ["torch>=2.0", "SimpleITK>=2.0.2"]
+
     """
     import logging
 
     missing = [req for req in requirements if not pip_check(req)]
 
     if not missing:
-        return  # All satisfied
+        return None  # All satisfied
 
     # Check if we're in full Slicer or PythonSlicer
     if not _isSlicerAppAvailable():
         # Running in PythonSlicer - just do simple install (prompt not available)
-        pip_install([str(req) for req in missing], constraints=constraints)
-        return
+        return pip_install(
+            [str(req) for req in missing],
+            constraints=constraints,
+            skip_packages=skip_packages,
+        )
 
     import slicer
 
@@ -4529,7 +4556,7 @@ def pip_ensure(
     if skip_in_testing and slicer.app.testingEnabled():
         missing_str = ", ".join(str(req) for req in missing)
         logging.info(f"Testing mode is enabled: skipping pip_ensure for [{missing_str}]")
-        return
+        return None
 
     if prompt_install:
         package_list = "\n".join(f"• {req}" for req in missing)
@@ -4547,16 +4574,17 @@ def pip_ensure(
     before_versions = _get_installed_versions() if prompt_restart else None
 
     # Install missing packages with optional progress display
-    pip_install(
+    skipped = pip_install(
         [str(req) for req in missing],
         constraints=constraints,
+        skip_packages=skip_packages,
         blocking=True,
         show_progress=show_progress,
         requester=requester,
     )
 
     if not prompt_restart:
-        return
+        return skipped
 
     # Check if any updated packages were already imported
     after_versions = _get_installed_versions()
@@ -4593,6 +4621,8 @@ def pip_ensure(
             ):
                 slicer.util.restart()
 
+    return skipped
+
 
 def _isSlicerAppAvailable() -> bool:
     """Check if slicer.app is available (running in full Slicer, not PythonSlicer).
@@ -4610,13 +4640,14 @@ def pip_install(
     requirements: str | list[str],
     constraints: str | Path | None = None,
     no_deps_requirements: str | list[str] | None = None,
+    skip_packages: list[str] | None = None,
     blocking: bool = True,
     show_progress: bool = True,
     requester: str | None = None,
     parent: qt.QWidget | None = None,
     logCallback: Callable[[str], None] | None = None,
     completedCallback: Callable[[int], None] | None = None,
-) -> None:
+) -> list[str] | None:
     """Install python packages.
 
     Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
@@ -4636,6 +4667,27 @@ def pip_install(
         that conflict with other packages. Can be a string or list, same format as ``requirements``.
         When provided, installation happens in two steps: first ``no_deps_requirements`` are
         installed with ``--no-deps``, then ``requirements`` are installed normally.
+        Mutually exclusive with ``skip_packages``.
+    :param skip_packages: Package names to exclude from installation. When provided,
+        each requirement is installed one at a time, and its dependencies (and their
+        dependencies, recursively) are also installed — except for packages whose name
+        appears in this list. After installation, package metadata is updated to remove
+        references to skipped packages so that pip does not try to install them later.
+        Name matching is case-insensitive and treats hyphens and underscores as
+        equivalent (e.g., ``"SimpleITK"`` matches ``simpleitk``).
+        Returns a list of the requirement strings that were skipped (for example
+        ``["torch>=2.0", "SimpleITK>=2.0.2"]``).
+        Requires ``blocking=True``. Mutually exclusive with ``no_deps_requirements``.
+
+        **Choosing between** ``skip_packages`` **and** ``no_deps_requirements``:
+
+        - Use ``no_deps_requirements`` when a package has broken dependency declarations
+          and you want to provide the correct dependencies yourself. It is fast (2 pip
+          calls) and does not modify package metadata.
+        - Use ``skip_packages`` when you want all of a package's dependencies installed
+          automatically except for specific packages that are already provided by Slicer
+          (e.g., SimpleITK, torch). It is slower (one pip call per package) but handles
+          the dependency tree for you.
     :param blocking: If True (default), block until installation completes and raise
         CalledProcessError on failure. If False, return immediately and use callbacks.
         Note: When running in PythonSlicer (without the full application), blocking mode
@@ -4657,8 +4709,13 @@ def pip_install(
         when installation finished.
         Signature: ``completedCallback(returnCode: int) -> None``
 
+    :returns: When ``skip_packages`` is provided, a list of skipped requirement strings
+        (e.g., ``["torch>=2.0", "SimpleITK>=2.0.2"]``). Otherwise ``None``.
+
     :raises subprocess.CalledProcessError: In blocking mode, if pip installation fails.
         When show_progress=True, an error dialog with the full log is shown before raising.
+    :raises ValueError: If ``skip_packages`` is combined with ``no_deps_requirements``
+        or with ``blocking=False``.
 
     .. warning::
 
@@ -4723,12 +4780,40 @@ def pip_install(
           no_deps_requirements="problematic-pkg==1.0",
       )
 
+    Example: install a package but skip certain dependencies
+
+    .. code-block:: python
+
+      # Install nnunetv2 and all its dependencies, but skip SimpleITK
+      # (Slicer bundles a custom version) and torch (installed separately
+      # via SlicerPyTorch).
+      skipped = pip_install(
+          "nnunetv2>=2.3",
+          skip_packages=["SimpleITK", "torch", "requests"],
+      )
+      # skipped is a list like ["torch>=2.0", "SimpleITK>=2.0.2", "requests"]
+
     """
+    # Validate skip_packages constraints
+    if skip_packages is not None:
+        if no_deps_requirements is not None:
+            raise ValueError(
+                "skip_packages and no_deps_requirements are mutually exclusive. "
+                "skip_packages installs each package with --no-deps internally.",
+            )
+        if not blocking:
+            raise ValueError(
+                "skip_packages requires blocking=True. "
+                "The recursive dependency walk cannot run in non-blocking mode.",
+            )
+
     # Check if we're running in full Slicer or PythonSlicer
     if not _isSlicerAppAvailable():
         # Running in PythonSlicer - use simple blocking mode
+        if skip_packages is not None:
+            return _pip_install_with_skips(requirements, skip_packages, constraints)
         _pip_install_simple(requirements, constraints, no_deps_requirements)
-        return
+        return None
 
     import slicer
 
@@ -4737,8 +4822,10 @@ def pip_install(
         import logging
 
         logging.info("Testing mode is enabled: skipping progress UI for pip_install")
+        if skip_packages is not None:
+            return _pip_install_with_skips(requirements, skip_packages, constraints)
         _pip_install_simple(requirements, constraints, no_deps_requirements)
-        return
+        return None
 
     # Check for concurrent non-blocking installs
     if not blocking and _pip_install_in_progress:
@@ -4746,6 +4833,17 @@ def pip_install(
             "A non-blocking pip_install is already in progress. "
             "Wait for it to complete or use blocking=True.",
         )
+
+    # skip_packages dispatch (blocking only)
+    if skip_packages is not None:
+        if show_progress:
+            return _pip_install_with_skips_dialog(
+                requirements, skip_packages, constraints, requester, parent,
+            )
+        else:
+            return _pip_install_with_skips_busy_cursor(
+                requirements, skip_packages, constraints,
+            )
 
     # Determine which mode to use based on show_progress and blocking
     if show_progress and blocking:
@@ -4768,6 +4866,7 @@ def pip_install(
             requirements, constraints, no_deps_requirements,
             logCallback, completedCallback,
         )
+    return None
 
 
 def _pip_install_simple(
@@ -4962,6 +5061,48 @@ def _pip_install_nonblocking(
                          logCallback=logCallback, completedCallback=onNoDepsComplete)
 
 
+def _pip_install_with_skips_dialog(
+    requirements: str | list[str],
+    skip_packages: list[str],
+    constraints: str | Path | None = None,
+    requester: str | None = None,
+    parent: qt.QWidget | None = None,
+) -> list[str]:
+    """Recursive skip-packages install with modal progress dialog."""
+    import slicer
+
+    dialog = _PipProgressDialog(requester=requester, parent=parent)
+    dialog.show()
+    slicer.app.processEvents()
+
+    try:
+        skipped = _pip_install_with_skips(
+            requirements, skip_packages, constraints, log_fn=dialog.appendLog,
+        )
+    except Exception:
+        dialog.close()
+        raise
+    finally:
+        dialog.close()
+
+    return skipped
+
+
+def _pip_install_with_skips_busy_cursor(
+    requirements: str | list[str],
+    skip_packages: list[str],
+    constraints: str | Path | None = None,
+) -> list[str]:
+    """Recursive skip-packages install with busy cursor only."""
+    import qt
+
+    qt.QApplication.setOverrideCursor(qt.Qt.BusyCursor)
+    try:
+        return _pip_install_with_skips(requirements, skip_packages, constraints)
+    finally:
+        qt.QApplication.restoreOverrideCursor()
+
+
 def _build_pip_args(
     requirements: str | list[str],
     constraints: str | Path | None = None,
@@ -4989,6 +5130,178 @@ def _build_pip_args(
         args.extend(["-c", str(constraints)])
 
     return args
+
+
+def _pip_install_with_skips(
+    requirements: str | list[str],
+    skip_packages: list[str],
+    constraints: str | Path | None = None,
+    log_fn: Callable[[str], None] | None = None,
+) -> list[str]:
+    """Install packages while skipping named packages from the dependency tree.
+
+    Each package is installed with ``--no-deps``, and its dependencies (and
+    their dependencies, recursively) are also installed — except for packages
+    in *skip_packages*. Package metadata is updated after each install so that
+    pip does not later try to install the skipped packages.
+
+    This function is always blocking.
+
+    :param requirements: Package requirements (string or list).
+    :param skip_packages: Package names to exclude from installation.
+    :param constraints: Path to constraints file, or None.
+    :param log_fn: Optional callback for status and pip output lines.
+    :returns: List of skipped requirement strings (e.g. ``["torch>=2.0"]``).
+    """
+    import importlib.metadata
+    import logging
+    import shlex
+    from subprocess import CalledProcessError
+
+    from packaging.requirements import Requirement
+    from packaging.utils import canonicalize_name
+
+    # Parse requirements
+    if isinstance(requirements, str):
+        req_strings = shlex.split(requirements)
+    else:
+        req_strings = list(requirements)
+
+    skip_set = {canonicalize_name(name) for name in skip_packages}
+    seen: set[str] = set()
+    skipped: list[str] = []
+
+    def _log(msg):
+        if log_fn:
+            log_fn(msg)
+        # Keep UI responsive between pip calls
+        try:
+            from slicer import app
+            app.processEvents()
+        except ImportError:
+            pass
+
+    def _install_one(req):
+        """Recursively install a single requirement, skipping packages in skip_set."""
+        canonical = canonicalize_name(req.name)
+
+        # Cycle / duplicate detection
+        if canonical in seen:
+            return
+        seen.add(canonical)
+
+        # Check skip list
+        if canonical in skip_set:
+            skipped.append(str(req))
+            _log(f"Skipping {req.name} (in skip list)")
+            return
+
+        # Evaluate environment markers
+        if req.marker is not None and not req.marker.evaluate():
+            return
+
+        # Check if already satisfied
+        if pip_check(req):
+            _log(f"{req.name} already satisfied")
+            return
+
+        # Install with --no-deps
+        _log(f"Installing {req.name}...")
+        args = _build_pip_args(str(req), constraints, no_deps=True)
+        try:
+            _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
+        except CalledProcessError:
+            logging.warning("Failed to install %s, continuing with remaining dependencies", req.name)
+            _log(f"WARNING: Failed to install {req.name}")
+            return
+
+        # Read sub-dependencies from installed metadata
+        importlib.invalidate_caches()
+        try:
+            sub_deps = importlib.metadata.requires(req.name) or []
+        except importlib.metadata.PackageNotFoundError:
+            sub_deps = []
+
+        # Scrub METADATA before recursing — if the walk is interrupted,
+        # the METADATA for already-installed packages is still cleaned.
+        _scrub_metadata(canonical, skip_set)
+
+        # Recurse on each sub-dependency
+        for dep_str in sub_deps:
+            try:
+                dep_req = Requirement(dep_str)
+            except Exception:
+                continue  # skip malformed dependency strings
+
+            # Skip extras-gated dependencies (optional, not required)
+            if dep_req.marker is not None and "extra" in str(dep_req.marker):
+                continue
+
+            _install_one(dep_req)
+
+    # Process each top-level requirement
+    for req_str in req_strings:
+        try:
+            req = Requirement(req_str)
+        except Exception:
+            logging.warning("Could not parse requirement: %s", req_str)
+            continue
+        _install_one(req)
+
+    return skipped
+
+
+def _scrub_metadata(package_name: str, skip_set: set[str]) -> None:
+    """Remove Requires-Dist lines for skipped packages from installed METADATA.
+
+    After installing a package with ``--no-deps``, its METADATA file still
+    declares all original dependencies. This function removes the
+    ``Requires-Dist`` entries for packages in *skip_set* so that future
+    ``pip check`` or ``pip install --upgrade`` operations do not attempt to
+    install them.
+
+    :param package_name: Name of the installed package whose METADATA to modify.
+    :param skip_set: Set of **canonicalized** package names to remove.
+    """
+    import importlib.metadata
+    import logging
+
+    from packaging.requirements import Requirement
+    from packaging.utils import canonicalize_name
+
+    try:
+        dist = importlib.metadata.distribution(package_name)
+    except importlib.metadata.PackageNotFoundError:
+        logging.warning("_scrub_metadata: distribution not found for %s", package_name)
+        return
+
+    # Locate the METADATA file within the distribution
+    meta_path = None
+    if dist.files:
+        for p in dist.files:
+            if p.name == "METADATA":
+                meta_path = p.locate()
+                break
+
+    if meta_path is None:
+        logging.warning("_scrub_metadata: METADATA file not found for %s", package_name)
+        return
+
+    # Use latin-1 encoding because some packages have non-UTF-8 metadata
+    with open(meta_path, "r+", encoding="latin-1") as f:
+        lines = f.readlines()
+        f.seek(0)
+        for line in lines:
+            if line.startswith("Requires-Dist: "):
+                req_str = line[len("Requires-Dist: "):].strip()
+                try:
+                    req = Requirement(req_str)
+                    if canonicalize_name(req.name) in skip_set:
+                        continue  # drop this line
+                except Exception:
+                    pass  # keep malformed lines
+            f.write(line)
+        f.truncate()
 
 
 def pip_uninstall(
