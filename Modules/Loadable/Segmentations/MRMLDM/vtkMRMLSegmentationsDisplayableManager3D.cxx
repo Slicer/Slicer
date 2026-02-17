@@ -37,6 +37,7 @@
 #include <vtkCapPolyData.h>
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellPicker.h>
 #include <vtkClipPolyData.h>
@@ -103,6 +104,9 @@ public:
       this->Capper->SetInputConnection(this->ModelWarper->GetOutputPort());
 
       mapper->SetInputConnection(this->ModelWarper->GetOutputPort());
+
+      this->FastTransformationNodeToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      this->UsingFastTransformation = false;
     }
 
     vtkSmartPointer<vtkActor> Actor;
@@ -112,6 +116,11 @@ public:
     vtkSmartPointer<vtkClipPolyData> Clipper;
     vtkSmartPointer<vtkExtractPolyDataGeometry> ExtractPolyData;
     vtkSmartPointer<vtkCapPolyData> Capper;
+
+    // Cached matrix for linear transforms (used with SetUserMatrix for performance)
+    // Mutable because these are cache/state tracking members
+    mutable vtkSmartPointer<vtkMatrix4x4> FastTransformationNodeToWorldMatrix;
+    mutable bool UsingFastTransformation;
   };
 
   typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
@@ -294,18 +303,6 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayableTra
     if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
-      for (PipelineMapType::iterator pipelineIt = pipelinesIter->second.begin(); pipelineIt != pipelinesIter->second.end(); ++pipelineIt)
-      {
-        const Pipeline* currentPipeline = pipelineIt->second;
-        vtkNew<vtkGeneralTransform> nodeToWorld;
-        this->GetNodeTransformToWorld(mNode, nodeToWorld.GetPointer());
-        // It is important to only update the transform if the transform chain is actually changed,
-        // because recomputing a non-linear transformation on a complex model may be very time-consuming.
-        if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), currentPipeline->NodeToWorldTransform))
-        {
-          currentPipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
-        }
-      }
     }
   }
 }
@@ -581,38 +578,134 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
       continue;
     }
 
-    // Set node to world transform to identity by default
-    // For all pipelines (pipeline per segment)
-    vtkNew<vtkGeneralTransform> nodeToWorld;
-    this->GetNodeTransformToWorld(segmentationNode, nodeToWorld);
-    if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld, pipeline->NodeToWorldTransform))
-    {
-      pipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
-    }
-    if (pipeline->ModelWarper->GetInputDataObject(0, 0) != polyData)
-    {
-      pipeline->ModelWarper->SetInputData(polyData);
-    }
+    // We use a fast rendering path (positioning the actor in the renderer instead of transforming
+    // each polydata point using the CPU-based warping filter) if the segmentation is only under
+    // a linear transform.
+    vtkMRMLTransformNode* transformNode = segmentationNode->GetParentTransformNode();
+    bool fastTransformation = (transformNode == nullptr) || transformNode->IsTransformToWorldLinear();
 
-    if (clipNode && clipping)
+    if (fastTransformation)
     {
-      vtkImplicitFunction* clipFunction = clipNode->GetImplicitFunctionWorld();
-      pipeline->Clipper->SetClipFunction(clipFunction);
-      pipeline->ExtractPolyData->SetImplicitFunction(clipFunction);
-      pipeline->Capper->SetClipFunction(clipFunction);
-      if (clipNode->GetClippingMethod() == vtkMRMLClipNode::Straight)
+      // Fast clip path: mesh stays in node coordinate system. SetUserMatrix handles the transform to world.
+
+      vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
+      if (transformNode)
       {
-        pipeline->Actor->GetMapper()->SetInputConnection(pipeline->Clipper->GetOutputPort());
+        transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
+      }
+
+      bool needsUpdate = !pipeline->UsingFastTransformation || !vtkAddonMathUtilities::MatrixAreEqual(pipeline->FastTransformationNodeToWorldMatrix, nodeToWorldMatrix);
+      if (needsUpdate)
+      {
+        pipeline->UsingFastTransformation = true;
+        // Save state for fast path
+        pipeline->FastTransformationNodeToWorldMatrix->DeepCopy(nodeToWorldMatrix);
+        // Fast path: apply linear transform via SetUserMatrix (GPU-side, zero CPU cost)
+        pipeline->Actor->SetUserMatrix(nodeToWorldMatrix);
+        pipeline->CapActor->SetUserMatrix(nodeToWorldMatrix);
+      }
+
+      if (clipping && clipNode)
+      {
+        // Linear transform with clipping
+        // Connect clipper/extractor/capper to polyData (bypass ModelWarper)
+
+        vtkImplicitFunction* clipFunction = clipNode->GetImplicitFunctionWorld();
+        vtkNew<vtkImplicitBoolean> implicitBoolean;
+        implicitBoolean->AddFunction(clipFunction);
+
+        // Transform the clipping function from world coordinate system to the node coordinate system.
+        vtkNew<vtkTransform> nodeToWorldLinear;
+        nodeToWorldLinear->SetMatrix(nodeToWorldMatrix);
+        implicitBoolean->SetTransform(nodeToWorldLinear);
+
+        pipeline->Clipper->SetClipFunction(implicitBoolean);
+        pipeline->ExtractPolyData->SetImplicitFunction(implicitBoolean);
+        pipeline->Capper->SetClipFunction(implicitBoolean);
+
+        if (pipeline->Clipper->GetInputDataObject(0, 0) != polyData)
+        {
+          pipeline->Clipper->SetInputData(polyData);
+        }
+        if (pipeline->ExtractPolyData->GetInputDataObject(0, 0) != polyData)
+        {
+          pipeline->ExtractPolyData->SetInputData(polyData);
+        }
+        if (pipeline->Capper->GetInputDataObject(0, 0) != polyData)
+        {
+          pipeline->Capper->SetInputData(polyData);
+        }
+
+        if (clipNode->GetClippingMethod() == vtkMRMLClipNode::Straight)
+        {
+          pipeline->Actor->GetMapper()->SetInputConnection(pipeline->Clipper->GetOutputPort());
+        }
+        else
+        {
+          pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ExtractPolyData->GetOutputPort());
+        }
+        pipeline->CapActor->GetMapper()->SetInputConnection(pipeline->Capper->GetOutputPort());
       }
       else
       {
-        pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ExtractPolyData->GetOutputPort());
+        // Linear transform without clipping: connect polyData directly to the mapper (bypass ModelWarper and clipper/extractor/capper)
+        vtkPolyDataMapper* mapper = vtkPolyDataMapper::SafeDownCast(pipeline->Actor->GetMapper());
+        if (mapper->GetInputDataObject(0, 0) != polyData)
+        {
+          mapper->SetInputData(polyData);
+        }
       }
-      pipeline->CapActor->GetMapper()->SetInputConnection(pipeline->Capper->GetOutputPort());
     }
     else
     {
-      pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+      // General (slow) path: update NodeToWorldTransform and feed ModelWarper.
+      // Works for non-linear transforms, with or without clipping.
+
+      pipeline->UsingFastTransformation = false;
+      vtkNew<vtkGeneralTransform> nodeToWorld;
+      this->GetNodeTransformToWorld(segmentationNode, nodeToWorld.GetPointer());
+      if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), pipeline->NodeToWorldTransform))
+      {
+        pipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
+      }
+
+      if (pipeline->ModelWarper->GetInputDataObject(0, 0) != polyData)
+      {
+        pipeline->ModelWarper->SetInputData(polyData);
+      }
+
+      if (clipNode && clipping)
+      {
+        // Non-linear transform with clipping
+
+        pipeline->Clipper->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+        pipeline->ExtractPolyData->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+        pipeline->Capper->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+
+        vtkImplicitFunction* clipFunction = clipNode->GetImplicitFunctionWorld();
+        pipeline->Clipper->SetClipFunction(clipFunction);
+        pipeline->ExtractPolyData->SetImplicitFunction(clipFunction);
+        pipeline->Capper->SetClipFunction(clipFunction);
+
+        if (clipNode->GetClippingMethod() == vtkMRMLClipNode::Straight)
+        {
+          pipeline->Actor->GetMapper()->SetInputConnection(pipeline->Clipper->GetOutputPort());
+        }
+        else
+        {
+          pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ExtractPolyData->GetOutputPort());
+        }
+        pipeline->CapActor->GetMapper()->SetInputConnection(pipeline->Capper->GetOutputPort());
+      }
+      else
+      {
+        // Non-linear transform, no clipping
+        pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+      }
+
+      // Model is already in the world coordinate system
+      pipeline->Actor->SetUserMatrix(nullptr);
+      pipeline->CapActor->SetUserMatrix(nullptr);
     }
 
     // Get displayed color (if no override is defined then use the color from the segment)
