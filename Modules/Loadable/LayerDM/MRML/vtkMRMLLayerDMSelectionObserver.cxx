@@ -122,7 +122,7 @@ void vtkMRMLLayerDMSelectionObserver::StopPlace() const
 
 std::string vtkMRMLLayerDMSelectionObserver::GetActivePlaceNodeID() const
 {
-  if (!this->m_selectionNode)
+  if (!this->m_selectionNode || !this->m_selectionNode->GetActivePlaceNodeID())
   {
     return "";
   }
