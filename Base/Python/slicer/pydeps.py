@@ -199,28 +199,8 @@ def pip_check(req: Requirement | list[Requirement], _seen: set[tuple[str, frozen
 
       from packaging.requirements import Requirement
 
-      # Single requirement
-      req = Requirement("numpy>=1.20")
-      if slicer.pydeps.pip_check(req):
+      if slicer.pydeps.pip_check(Requirement("numpy>=1.20")):
           print("numpy is satisfied")
-
-      # Multiple requirements
-      reqs = [
-          Requirement("numpy>=1.20"),
-          Requirement("pandas[excel]>=2.0"),
-      ]
-      if slicer.pydeps.pip_check(reqs):
-          print("All requirements satisfied")
-
-      # Using with load_requirements
-      reqs = slicer.pydeps.load_requirements("requirements.txt")
-      if not slicer.pydeps.pip_check(reqs):
-          print("Some requirements are missing")
-
-      # Using with load_pyproject_dependencies
-      reqs = slicer.pydeps.load_pyproject_dependencies("pyproject.toml")
-      if not slicer.pydeps.pip_check(reqs):
-          print("Some requirements are missing")
 
     """
     from importlib.metadata import PackageNotFoundError, requires, version
@@ -438,31 +418,8 @@ def pip_ensure(
               # Now safe to use skimage
               filtered = skimage.filters.gaussian(array, sigma=2.0)
 
-    Example with constraints:
-
-    .. code-block:: python
-
-      reqs = slicer.pydeps.load_requirements(
-          self.resourcePath("requirements.txt")
-      )
-      slicer.pydeps.pip_ensure(
-          reqs,
-          constraints=self.resourcePath("constraints.txt"),
-          requester="MyExtension"
-      )
-
-    Example with skip_packages:
-
-    .. code-block:: python
-
-      reqs = [Requirement("nnunetv2>=2.3")]
-      skipped = slicer.pydeps.pip_ensure(
-          reqs,
-          skip_packages=["SimpleITK", "torch", "requests"],
-          requester="SlicerNNUNet",
-      )
-      # skipped contains requirement strings for the packages that were
-      # excluded, e.g. ["torch>=2.0", "SimpleITK>=2.0.2"]
+    For more examples (constraints, skip_packages), see
+    :doc:`/developer_guide/script_repository` (Python package management section).
 
     """
     missing = [req for req in requirements if not pip_check(req)]
@@ -597,26 +554,12 @@ def pip_install(
         When provided, installation happens in two steps: first ``no_deps_requirements`` are
         installed with ``--no-deps``, then ``requirements`` are installed normally.
         Mutually exclusive with ``skip_packages``.
-    :param skip_packages: Package names to exclude from installation. When provided,
-        each requirement is installed one at a time, and its dependencies (and their
-        dependencies, recursively) are also installed — except for packages whose name
-        appears in this list. After installation, package metadata is updated to remove
-        references to skipped packages so that pip does not try to install them later.
-        Name matching is case-insensitive and treats hyphens and underscores as
-        equivalent (e.g., ``"SimpleITK"`` matches ``simpleitk``).
-        Returns a list of the requirement strings that were skipped (for example
-        ``["torch>=2.0", "SimpleITK>=2.0.2"]``).
+    :param skip_packages: Package names to exclude from the dependency tree. Installs
+        each requirement with ``--no-deps``, walks its dependencies recursively, and
+        skips any package in this list. Metadata is scrubbed so pip won't try to install
+        them later. Name matching is case-insensitive and normalizes hyphens/underscores.
+        Returns a list of the skipped requirement strings.
         Requires ``blocking=True``. Mutually exclusive with ``no_deps_requirements``.
-
-        **Choosing between** ``skip_packages`` **and** ``no_deps_requirements``:
-
-        - Use ``no_deps_requirements`` when a package has broken dependency declarations
-          and you want to provide the correct dependencies yourself. It is fast (2 pip
-          calls) and does not modify package metadata.
-        - Use ``skip_packages`` when you want all of a package's dependencies installed
-          automatically except for specific packages that are already provided by Slicer
-          (e.g., SimpleITK, torch). It is slower (one pip call per package) but handles
-          the dependency tree for you.
     :param blocking: If True (default), block until installation completes and raise
         CalledProcessError on failure. If False, return immediately and use callbacks.
         Note: When running in PythonSlicer (without the full application), blocking mode
@@ -648,79 +591,29 @@ def pip_install(
 
     .. warning::
 
-        When using blocking=False without a modal progress dialog, the user can
-        interact with the application while installation is in progress. This may
-        lead to conflicts if the user triggers another operation that depends on
-        or modifies the Python environment. Consider showing a modal dialog or
-        disabling relevant UI elements during installation.
+        When using ``blocking=False``, the user can interact with the application
+        while installation is in progress. Consider disabling relevant UI elements
+        to prevent conflicts.
 
-    Example: blocking mode (default)
+    .. note::
+
+        **Choosing between** ``skip_packages`` **and** ``no_deps_requirements``:
+
+        - ``no_deps_requirements``: the package has broken dependency declarations
+          and you provide the correct deps yourself. Fast (2 pip calls), no metadata
+          changes.
+        - ``skip_packages``: you want the full dependency tree except for specific
+          packages already provided by Slicer (e.g., SimpleITK, torch). Slower (one
+          pip call per package) but automatic.
+
+    Example:
 
     .. code-block:: python
 
       pip_install("pandas scipy scikit-learn")
 
-    Example: calling from PythonSlicer console
-
-    .. code-block:: python
-
-      from slicer.pydeps import pip_install
-      pip_install("pandas>2")
-
-    Example: upgrading to latest version of a package
-
-    .. code-block:: python
-
-      pip_install("--upgrade pandas")
-
-    Example: with constraints file
-
-    .. code-block:: python
-
-      pip_install("pandas scipy", constraints="/path/to/constraints.txt")
-
-    Example: non-blocking mode with callbacks
-
-    .. code-block:: python
-
-      def onComplete(returnCode):
-          if returnCode == 0:
-              import pandas  # Now safe to import
-          else:
-              slicer.util.errorDisplay("Failed to install packages")
-
-      pip_install("pandas scipy", blocking=False, completedCallback=onComplete)
-      # Returns immediately, UI stays responsive
-
-    Example: without progress dialog (for scripting or automation)
-
-    .. code-block:: python
-
-      pip_install("pandas scipy", show_progress=False)
-
-    Example: with --no-deps for problematic packages
-
-    .. code-block:: python
-
-      # Install problematic-pkg without its dependencies, then install the
-      # actual dependencies you need
-      pip_install(
-          requirements="numpy scipy",
-          no_deps_requirements="problematic-pkg==1.0",
-      )
-
-    Example: install a package but skip certain dependencies
-
-    .. code-block:: python
-
-      # Install nnunetv2 and all its dependencies, but skip SimpleITK
-      # (Slicer bundles a custom version) and torch (installed separately
-      # via SlicerPyTorch).
-      skipped = pip_install(
-          "nnunetv2>=2.3",
-          skip_packages=["SimpleITK", "torch", "requests"],
-      )
-      # skipped is a list like ["torch>=2.0", "SimpleITK>=2.0.2", "requests"]
+    For more examples (constraints, non-blocking mode, skip_packages, no_deps_requirements),
+    see :doc:`/developer_guide/script_repository` (Python package management section).
 
     """
     # Validate skip_packages constraints
