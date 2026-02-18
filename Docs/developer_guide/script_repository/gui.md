@@ -1273,9 +1273,14 @@ It is recommended to only install a package at runtime when it is actually neede
 
 #### Recommended approach using pip_ensure
 
-The `slicer.util.pip_ensure()` function handles checking, prompting, and installing in one call with a progress dialog:
+:::{versionadded} 5.11
+The `slicer.pydeps` module and the `pip_ensure` workflow described below.
+:::
+
+The `slicer.pydeps.pip_ensure()` function handles checking, prompting, and installing in one call with a progress dialog:
 
 ```python
+import slicer.pydeps
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -1285,12 +1290,12 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
 
     def onApplyButton(self):
         # Load requirements from file (recommended for multiple dependencies)
-        reqs = slicer.util.load_requirements(self.resourcePath("requirements.txt"))
-        slicer.util.pip_ensure(reqs, requester="MyModule")
+        reqs = slicer.pydeps.load_requirements(self.resourcePath("requirements.txt"))
+        slicer.pydeps.pip_ensure(reqs, requester="MyModule")
 
         # Or for a single package:
         # from packaging.requirements import Requirement
-        # slicer.util.pip_ensure([Requirement("flywheel-sdk>=1.0")], requester="MyModule")
+        # slicer.pydeps.pip_ensure([Requirement("flywheel-sdk>=1.0")], requester="MyModule")
 
         import flywheel
         # Now safe to use flywheel

@@ -352,16 +352,20 @@ You can install any Python package within Slicer's built-in Python environment.
 
 ### Utility functions for dependency management
 
+:::{versionadded} 5.11
+The `slicer.pydeps` module with `pip_ensure`, `pip_check`, `load_requirements`, and `load_pyproject_dependencies`.
+:::
+
 Slicer provides several utility functions to help manage Python dependencies:
 
 | Function | Purpose |
 |----------|---------|
-| {func}`slicer.util.load_requirements` | Load a `requirements.txt` file |
-| {func}`slicer.util.pip_check` | Check if requirements are already satisfied |
-| {func}`slicer.util.pip_ensure` | Ensure requirements are installed, prompting the user if needed |
-| {func}`slicer.util.pip_install` | Install packages |
+| `slicer.pydeps.load_requirements` | Load a `requirements.txt` file |
+| `slicer.pydeps.pip_check` | Check if requirements are already satisfied |
+| `slicer.pydeps.pip_ensure` | Ensure requirements are installed, prompting the user if needed |
+| `slicer.pydeps.pip_install` | Install packages |
 
-The recommended approach is to use {func}`slicer.util.pip_ensure`, which handles checking, user confirmation, and installation with progress display in one call. It also automatically skips installation when running in testing mode (`slicer.app.testingEnabled()`).
+The recommended approach is to use {func}`slicer.pydeps.pip_ensure`, which handles checking, user confirmation, and installation with progress display in one call. It also automatically skips installation when running in testing mode (`slicer.app.testingEnabled()`).
 
 For direct installation with visual feedback, use {func}`slicer.util.pip_install` with `show_progress=True`. This displays a modal progress dialog during installation.
 
@@ -375,7 +379,7 @@ Since installing packages can have side effects on other extensions or the main 
 * ✅ Document the dependencies your module relies upon using a `requirements.txt` file.
 * ✅ Consider specifying version requirements using `>=X.Y` to avoid incompatible versions.
 * ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important for dependencies including compiled code, as installing a wheel eliminates the need for users to install a compiler.
-* ✅ Use the `requester` parameter in {func}`slicer.util.pip_ensure` to identify your extension in dialogs.
+* ✅ Use the `requester` parameter in {func}`slicer.pydeps.pip_ensure` to identify your extension in dialogs.
 
 **DON'T:**
 * ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor. This can significantly slow down application startup, and it may even prevent the module from loading.
