@@ -1351,3 +1351,171 @@ class SkipPackagesEnsureTest(unittest.TestCase):
             )
 
             self.assertEqual(result, ["torch>=2.0", "SimpleITK>=2.0"])
+
+
+class NoDepsRequirementsTwoStepTest(unittest.TestCase):
+    """Tests for the two-step no_deps_requirements install path."""
+
+    def test_two_step_builds_correct_args(self):
+        """Test that _pip_install_simple makes two pip calls with correct flags.
+
+        First call should have --no-deps for the no_deps_requirements,
+        second call should install regular requirements without --no-deps.
+        """
+        with unittest.mock.patch("slicer.pydeps._executePythonModule") as mock_exec:
+            slicer.pydeps._pip_install_simple(
+                requirements="numpy scipy",
+                no_deps_requirements="problematic-pkg==1.0",
+            )
+
+            self.assertEqual(mock_exec.call_count, 2)
+
+            # First call: no_deps_requirements with --no-deps
+            first_args = mock_exec.call_args_list[0][0][1]
+            self.assertIn("--no-deps", first_args)
+            self.assertIn("problematic-pkg==1.0", first_args)
+
+            # Second call: regular requirements without --no-deps
+            second_args = mock_exec.call_args_list[1][0][1]
+            self.assertNotIn("--no-deps", second_args)
+            self.assertIn("numpy", second_args)
+            self.assertIn("scipy", second_args)
+
+    def test_two_step_passes_constraints_to_both(self):
+        """Test that constraints file is passed to both steps."""
+        with unittest.mock.patch("slicer.pydeps._executePythonModule") as mock_exec:
+            slicer.pydeps._pip_install_simple(
+                requirements="numpy",
+                constraints="/path/to/constraints.txt",
+                no_deps_requirements="problematic-pkg",
+            )
+
+            self.assertEqual(mock_exec.call_count, 2)
+            for call in mock_exec.call_args_list:
+                args = call[0][1]
+                self.assertIn("-c", args)
+                self.assertIn("/path/to/constraints.txt", args)
+
+    def test_without_no_deps_requirements_single_call(self):
+        """Test that omitting no_deps_requirements makes only one pip call."""
+        with unittest.mock.patch("slicer.pydeps._executePythonModule") as mock_exec:
+            slicer.pydeps._pip_install_simple(requirements="numpy scipy")
+
+            mock_exec.assert_called_once()
+            args = mock_exec.call_args[0][1]
+            self.assertNotIn("--no-deps", args)
+
+
+class IsPipInstallInProgressTest(unittest.TestCase):
+    """Tests for isPipInstallInProgress flag management."""
+
+    def setUp(self):
+        """Reset the flag before each test."""
+        slicer.pydeps._pip_install_in_progress = False
+
+    def tearDown(self):
+        """Ensure flag is reset after each test."""
+        slicer.pydeps._pip_install_in_progress = False
+
+    def test_flag_set_during_nonblocking_install(self):
+        """Test that _pip_install_nonblocking sets the flag during execution."""
+        flag_during_install = []
+
+        def fake_exec(module, args, blocking=True, logCallback=None, completedCallback=None):
+            flag_during_install.append(slicer.pydeps.isPipInstallInProgress())
+            if completedCallback:
+                completedCallback(0)
+
+        with unittest.mock.patch("slicer.pydeps._executePythonModule", side_effect=fake_exec):
+            slicer.pydeps._pip_install_nonblocking("numpy")
+
+        # Flag should have been True during execution
+        self.assertEqual(len(flag_during_install), 1)
+        self.assertTrue(flag_during_install[0])
+        # Flag should be False after completion
+        self.assertFalse(slicer.pydeps.isPipInstallInProgress())
+
+    def test_flag_cleared_on_exception(self):
+        """Test that the flag is cleared if _executePythonModule raises."""
+        with unittest.mock.patch(
+            "slicer.pydeps._executePythonModule",
+            side_effect=RuntimeError("test error"),
+        ):
+            with self.assertRaises(RuntimeError):
+                slicer.pydeps._pip_install_nonblocking("numpy")
+
+        self.assertFalse(slicer.pydeps.isPipInstallInProgress())
+
+class NonBlockingPipInstallCallbackTest(unittest.TestCase):
+    """Tests for _pip_install_nonblocking callback invocation."""
+
+    def setUp(self):
+        slicer.pydeps._pip_install_in_progress = False
+
+    def tearDown(self):
+        slicer.pydeps._pip_install_in_progress = False
+
+    def test_completed_callback_receives_return_code(self):
+        """Test that completedCallback is called with the process return code."""
+        result = {"return_code": None}
+
+        def on_complete(return_code):
+            result["return_code"] = return_code
+
+        def fake_exec(module, args, blocking=True, logCallback=None, completedCallback=None):
+            if completedCallback:
+                completedCallback(42)
+
+        with unittest.mock.patch("slicer.pydeps._executePythonModule", side_effect=fake_exec):
+            slicer.pydeps._pip_install_nonblocking(
+                "numpy", completedCallback=on_complete,
+            )
+
+        self.assertEqual(result["return_code"], 42)
+        self.assertFalse(slicer.pydeps.isPipInstallInProgress())
+
+    def test_two_step_nonblocking_chains_calls(self):
+        """Test that no_deps_requirements chains two non-blocking calls."""
+        call_args_list = []
+
+        def fake_exec(module, args, blocking=True, logCallback=None, completedCallback=None):
+            call_args_list.append(args)
+            if completedCallback:
+                completedCallback(0)
+
+        with unittest.mock.patch("slicer.pydeps._executePythonModule", side_effect=fake_exec):
+            slicer.pydeps._pip_install_nonblocking(
+                "numpy", no_deps_requirements="problematic-pkg",
+            )
+
+        # Should have two calls: first with --no-deps, second without
+        self.assertEqual(len(call_args_list), 2)
+        self.assertIn("--no-deps", call_args_list[0])
+        self.assertNotIn("--no-deps", call_args_list[1])
+        self.assertFalse(slicer.pydeps.isPipInstallInProgress())
+
+    def test_two_step_nonblocking_aborts_on_first_failure(self):
+        """Test that failure in no_deps step prevents regular install."""
+        call_count = [0]
+
+        def fake_exec(module, args, blocking=True, logCallback=None, completedCallback=None):
+            call_count[0] += 1
+            if completedCallback:
+                completedCallback(1)  # Failure
+
+        result = {"return_code": None}
+
+        def on_complete(return_code):
+            result["return_code"] = return_code
+
+        with unittest.mock.patch("slicer.pydeps._executePythonModule", side_effect=fake_exec):
+            slicer.pydeps._pip_install_nonblocking(
+                "numpy",
+                no_deps_requirements="problematic-pkg",
+                completedCallback=on_complete,
+            )
+
+        # Only the first call should happen (it failed, so second is skipped)
+        self.assertEqual(call_count[0], 1)
+        self.assertEqual(result["return_code"], 1)
+        self.assertFalse(slicer.pydeps.isPipInstallInProgress())

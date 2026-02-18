@@ -25,6 +25,15 @@
     :show-inheritance:
 ```
 
+## slicer.pydeps
+
+```{eval-rst}
+.. automodule:: slicer.pydeps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
+
 ## slicer.ScriptedLoadableModule
 
 ```{eval-rst}
