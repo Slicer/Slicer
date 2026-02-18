@@ -338,7 +338,6 @@ void qMRMLTableView::copySelection()
     }
   }
 
-  d->CopiedText = textToCopy;
   QApplication::clipboard()->setText(textToCopy);
 }
 
@@ -349,11 +348,6 @@ void qMRMLTableView::pasteSelection()
   CTK_CHECK_AND_RETURN_IF_FAIL(d->verifyTableModelAndNode)
 
   QString text = QApplication::clipboard()->text();
-  if (text.isEmpty())
-  {
-    // Fall back to internal clipboard buffer (e.g., when system clipboard is unavailable on Windows)
-    text = d->CopiedText;
-  }
   if (text.isEmpty())
   {
     return;

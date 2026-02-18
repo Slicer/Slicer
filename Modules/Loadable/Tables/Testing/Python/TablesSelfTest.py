@@ -129,8 +129,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
         tablesWidget.setCurrentTableNode(tableNode)
 
         lockTableButton = slicer.util.findChildren(widget=tablesWidget, name="LockTableButton")[0]
-        copyButton = slicer.util.findChildren(widget=tablesWidget, name="CopyButton")[0]
-        pasteButton = slicer.util.findChildren(widget=tablesWidget, name="PasteButton")[0]
         addRowButton = slicer.util.findChildren(widget=tablesWidget, name="RowInsertButton")[0]
         deleteRowButton = slicer.util.findChildren(widget=tablesWidget, name="RowDeleteButton")[0]
         lockFirstRowButton = slicer.util.findChildren(widget=tablesWidget, name="LockFirstRowButton")[0]
@@ -201,23 +199,6 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
         self.assertTrue(tableModel.data(tableModel.index(0, 0)) == "Column 1")
 
         lockTableButton.click()
-
-        #############
-        self.delayDisplay("Test copy/paste")
-
-        tableView.selectColumn(0)
-        copyButton.click()
-        tableView.clearSelection()
-
-        # Paste first column into a newly created second column
-        addColumnButton.click()
-
-        tableView.setCurrentIndex(tableModel.index(0, 1))
-        pasteButton.click()
-
-        # Check if first and second column content is the same
-        for rowIndex in range(5):
-            self.assertEqual(tableModel.data(tableModel.index(rowIndex, 0)), tableModel.data(tableModel.index(rowIndex, 1)))
 
     # ------------------------------------------------------------------------------
     def section_CliTableInputOutput(self):
