@@ -35,6 +35,7 @@ endforeach()
 target_link_libraries(
   ${KIT}CxxTests
   ${MODULE_TARGET_LIBRARIES}
+  vtkSlicerMarkupsModuleMRML
 )
 
 include(SlicerMacroSimpleTest)
