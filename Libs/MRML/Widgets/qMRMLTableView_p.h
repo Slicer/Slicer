@@ -96,8 +96,6 @@ protected:
 
   QToolButton* PinButton;
   ctkPopupWidget* PopupWidget;
-
-  QString CopiedText;
 };
 
 #endif
