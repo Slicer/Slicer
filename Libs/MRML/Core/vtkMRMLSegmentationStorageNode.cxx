@@ -69,6 +69,8 @@
 # include <itkNrrdImageIO.h>
 #endif
 
+#include "teem/nrrd.h"
+
 // STL & C++ includes
 #include <iterator>
 #include <sstream>
