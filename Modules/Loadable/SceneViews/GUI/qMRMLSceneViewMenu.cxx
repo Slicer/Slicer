@@ -134,7 +134,7 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObjec
     return;
   }
 
-  if (this->SceneViewsLogic->IsSceneViewNode(sequenceBrowserNode))
+  if (!this->SceneViewsLogic->IsSceneViewNode(sequenceBrowserNode))
   {
     return;
   }
