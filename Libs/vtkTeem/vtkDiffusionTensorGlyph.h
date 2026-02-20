@@ -15,7 +15,7 @@
 #ifndef __vtkDiffusionTensorGlyph_h
 #define __vtkDiffusionTensorGlyph_h
 
-#include "vtkTeemConfigure.h"
+#include "vtkTeemExport.h"
 
 #include "vtkTensorGlyph.h"
 #include <vtkVersion.h>

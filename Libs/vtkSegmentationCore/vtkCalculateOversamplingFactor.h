@@ -32,7 +32,7 @@
 // SegmentationCore includes
 #include "vtkOrientedImageData.h"
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 class vtkPiecewiseFunction;
 

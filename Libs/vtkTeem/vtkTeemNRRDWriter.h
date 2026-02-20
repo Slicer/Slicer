@@ -8,7 +8,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkSmartPointer.h"
 
-#include "vtkTeemConfigure.h"
+#include "vtkTeemExport.h"
 
 class vtkImageData;
 class AttributeMapType;

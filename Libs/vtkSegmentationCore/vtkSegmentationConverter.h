@@ -33,7 +33,7 @@
 #include <vector>
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 #include "vtkSegmentationConverterRule.h"
 #include "vtkSegmentationConversionPath.h"

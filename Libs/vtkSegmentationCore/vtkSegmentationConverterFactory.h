@@ -21,7 +21,7 @@
 #ifndef __vtkSegmentationConverterFactory_h
 #define __vtkSegmentationConverterFactory_h
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 // VTK includes
 #include <vtkObject.h>

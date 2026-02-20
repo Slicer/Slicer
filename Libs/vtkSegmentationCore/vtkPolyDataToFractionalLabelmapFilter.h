@@ -37,7 +37,7 @@
 // std includes
 #include <map>
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 // Define the datatype and fractional constants for fractional labelmap conversion based on the value of VTK_FRACTIONAL_DATA_TYPE
 #define VTK_FRACTIONAL_DATA_TYPE VTK_CHAR

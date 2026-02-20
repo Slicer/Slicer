@@ -83,15 +83,6 @@ set(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS}
   CACHE INTERNAL "Slicer Base includes" FORCE)
 
 # --------------------------------------------------------------------------
-# Configure headers
-# --------------------------------------------------------------------------
-set(configure_header_file vtkSlicerBaseLogicConfigure.h)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-  )
-
-# --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
@@ -167,6 +158,15 @@ set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
+
+# --------------------------------------------------------------------------
+# Generate export header
+# --------------------------------------------------------------------------
+include(GenerateExportHeader)
+generate_export_header(${lib_name}
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseLogicExport.h
+  EXPORT_MACRO_NAME VTK_SLICER_BASE_LOGIC_EXPORT
+)
 
 # --------------------------------------------------------------------------
 # Export target

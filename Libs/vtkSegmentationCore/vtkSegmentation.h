@@ -35,7 +35,7 @@
 #include "vtkSegmentationConverter.h"
 #include "vtkSegmentationConverterRule.h"
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 #include <vtkSingleton.h>
 
