@@ -18,7 +18,7 @@
 
 #include <vtkVersion.h>
 
-#include "vtkTeemConfigure.h"
+#include "vtkTeemExport.h"
 
 #include "vtkThreadedImageAlgorithm.h"
 

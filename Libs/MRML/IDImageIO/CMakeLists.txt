@@ -52,15 +52,6 @@ set(include_dirs
 include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
-# Configure headers
-# --------------------------------------------------------------------------
-set(configure_header_file itkMRMLIDImageIOConfigure.h)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-  )
-
-# --------------------------------------------------------------------------
 # Install headers
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
@@ -97,6 +88,15 @@ target_link_libraries(${lib_name} ${libs})
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
+
+# --------------------------------------------------------------------------
+# Generate export header
+# --------------------------------------------------------------------------
+include(GenerateExportHeader)
+generate_export_header(${lib_name}
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/itkMRMLIDIOExport.h
+  EXPORT_MACRO_NAME MRMLIDImageIO_EXPORT
+)
 
 # --------------------------------------------------------------------------
 # Folder

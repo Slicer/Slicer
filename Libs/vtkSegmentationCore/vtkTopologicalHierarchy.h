@@ -27,7 +27,7 @@
 // VTK includes
 #include <vtkPolyDataCollection.h>
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 class vtkIntArray;
 

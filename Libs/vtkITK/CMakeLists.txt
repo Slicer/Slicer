@@ -171,6 +171,17 @@ if(Slicer_LIBRARY_PROPERTIES)
 endif()
 
 # --------------------------------------------------------------------------
+# Generate export header
+# --------------------------------------------------------------------------
+include(GenerateExportHeader)
+set(configure_include "#include <vtkITKConfigure.h>\n")
+generate_export_header(${lib_name}
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkITKExport.h
+  EXPORT_MACRO_NAME VTK_ITK_EXPORT
+  CUSTOM_CONTENT_FROM_VARIABLE configure_include
+)
+
+# --------------------------------------------------------------------------
 # Folder
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_FOLDER)

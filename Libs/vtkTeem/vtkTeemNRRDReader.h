@@ -33,7 +33,7 @@
 #include <map>
 #include <iostream>
 
-#include "vtkTeemConfigure.h"
+#include "vtkTeemExport.h"
 #include "vtkMedicalImageReader2.h"
 
 // #include "vtkDataObject.h"

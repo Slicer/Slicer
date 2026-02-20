@@ -25,7 +25,7 @@
 #include <vector>
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 class vtkSegmentationConverterRule;
 
