@@ -24,11 +24,8 @@
 // SegmentationCore includes
 #include <vtkSegmentationConverterRule.h>
 #include <vtkSegmentationConverter.h>
-#include <vtkSegmentationCoreConfigure.h>
+#include <vtkSegmentationCoreExport.h>
 #include <vtkClosedSurfaceToBinaryLabelmapConversionRule.h>
-
-// DicomRtImportExport includes
-#include "vtkSegmentationCoreConfigure.h"
 
 // VTK includes
 #include <vtkPolyDataToImageStencil.h>

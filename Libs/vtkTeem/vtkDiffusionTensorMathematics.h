@@ -26,7 +26,7 @@
 #define __vtkDiffusionTensorMathematics_h
 
 // vtkTeem includes
-#include "vtkTeemConfigure.h"
+#include "vtkTeemExport.h"
 
 // VTK includes
 #include <vtkThreadedImageAlgorithm.h>

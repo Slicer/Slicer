@@ -2,8 +2,7 @@
 #define __vtkHTTPHandler_h
 
 // RemoteIO includes
-#include <vtkRemoteIOConfigure.h>
-#include "vtkRemoteIO.h"
+#include <vtkRemoteIOExport.h>
 
 // VTK includes
 #include <vtkObject.h>

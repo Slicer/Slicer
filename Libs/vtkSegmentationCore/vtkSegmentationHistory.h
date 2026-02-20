@@ -30,7 +30,7 @@
 #include <map>
 #include <vector>
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 class vtkCallbackCommand;
 class vtkDataObject;

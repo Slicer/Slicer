@@ -24,7 +24,7 @@
 #include <vector>
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 /// \brief Store a list of conversion parameters.
 /// \details
