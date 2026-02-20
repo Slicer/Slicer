@@ -1,6 +1,15 @@
+from __future__ import annotations
+
 #
 # General
 #
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from subprocess import Popen
+
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -3876,7 +3885,15 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
     return chartNode
 
 
-def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None):
+def launchConsoleProcess(
+    args: list[str],
+    useStartupEnvironment: bool = True,
+    updateEnvironment: dict[str, str] | None = None,
+    cwd: str | None = None,
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> Popen[str]:
     """Launch a process. Hiding the console and captures the process output.
 
     The console window is hidden when running on Windows.
@@ -3885,18 +3902,50 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
     :param useStartupEnvironment: launch the process in the original environment as the original Slicer process
     :param updateEnvironment: map containing optional additional environment variables (existing variables are overwritten)
     :param cwd: current working directory
+    :param blocking: If True (default), return the process object for use with
+        :py:meth:`logProcessOutput`. If False, process output asynchronously using
+        a background thread and QTimer polling. The main thread remains free and
+        the Qt event loop runs normally.
+    :param logCallback: When blocking=False, called with each line of output.
+        If None, output is printed to console (same as blocking mode).
+        Signature: ``logCallback(line: str) -> None``
+    :param completedCallback: When blocking=False, called when process completes.
+        Receives the return code as argument. If the process failed (non-zero return
+        code) and no completedCallback is provided, a CalledProcessError is logged.
+        Signature: ``completedCallback(returnCode: int) -> None``
     :return: process object.
 
-    This method is typically used together with :py:meth:`logProcessOutput` to wait for the execution to complete and display the process output in the application log:
+    Blocking mode example (this is the typical usage pattern):
 
     .. code-block:: python
 
       proc = slicer.util.launchConsoleProcess(args)
       slicer.util.logProcessOutput(proc)
 
+    Non-blocking mode example:
+
+    .. code-block:: python
+
+      def onLog(line):
+          print(f"[pip] {line}")
+
+      def onComplete(returnCode):
+          if returnCode == 0:
+              print("Done!")
+          else:
+              print(f"Failed with code {returnCode}")
+
+      slicer.util.launchConsoleProcess(
+          args,
+          blocking=False,
+          logCallback=onLog,
+          completedCallback=onComplete
+      )
+      # Returns immediately, UI stays responsive
+
     """
-    import subprocess
     import os
+    import subprocess
 
     if useStartupEnvironment:
         startupEnv = startupEnvironment()
@@ -3916,13 +3965,90 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
         proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, startupinfo=info, cwd=cwd)
     else:
         proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, cwd=cwd)
+
+    if blocking:
+        return proc  # Caller will use logProcessOutput() as before
+
+    # Non-blocking mode: start background thread and QTimer polling
+    _startAsyncProcessHandling(proc, logCallback, completedCallback)
     return proc
 
 
-def logProcessOutput(proc):
+def _startAsyncProcessHandling(
+    proc: Popen[str],
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
+    """Start asynchronous handling of process output using a background thread and QTimer.
+
+    Internal function used by :py:meth:`launchConsoleProcess` when blocking=False.
+
+    :param proc: subprocess.Popen object
+    :param logCallback: Called with each line of output, or None for default console printing
+    :param completedCallback: Called when process completes with return code
+    """
+    import queue
+    import threading
+
+    import qt
+
+    outputQueue = queue.Queue()
+    CHECK_INTERVAL_MS = 100  # Poll every 100ms for responsive UI
+
+    def readOutputThread():
+        """Background thread: read stdout and put lines into queue."""
+        while True:
+            try:
+                line = proc.stdout.readline()
+                if not line:
+                    break
+                outputQueue.put(("line", line.rstrip()))
+            except UnicodeDecodeError:
+                # Same handling as logProcessOutput - ignore decode errors
+                pass
+        proc.wait()
+        outputQueue.put(("done", proc.returncode))
+
+    def checkOutput():
+        """Main thread: poll queue and process available output."""
+        while True:
+            try:
+                msgType, data = outputQueue.get_nowait()
+                if msgType == "line":
+                    if logCallback:
+                        logCallback(data)
+                    else:
+                        # Default behavior: print to console (matches blocking mode)
+                        print(data)
+                elif msgType == "done":
+                    returnCode = data
+                    if completedCallback:
+                        completedCallback(returnCode)
+                    elif returnCode != 0:
+                        # No callback provided and process failed - log the error
+                        import logging
+
+                        logging.error(f"Process failed with return code {returnCode}: {proc.args}")
+                    return  # Stop polling
+            except queue.Empty:
+                break
+
+        # Process still running or output still being read - reschedule
+        qt.QTimer.singleShot(CHECK_INTERVAL_MS, checkOutput)
+
+    # Start background thread
+    thread = threading.Thread(target=readOutputThread, daemon=True)
+    thread.start()
+
+    # Start polling from main thread
+    qt.QTimer.singleShot(0, checkOutput)
+
+
+def logProcessOutput(proc, logCallback=None):
     """Continuously write process output to the application log and the Python console.
 
     :param proc: process object.
+    :param logCallback: optional callback called with each output line (str).
     """
     from subprocess import CalledProcessError
 
@@ -3939,7 +4065,10 @@ def logProcessOutput(proc):
             line = proc.stdout.readline()
             if not line:
                 break
-            print(line.rstrip())
+            line = line.rstrip()
+            print(line)
+            if logCallback:
+                logCallback(line)
             if guiApp:
                 guiApp.processEvents()  # give a chance the application to refresh GUI
         except UnicodeDecodeError as e:
@@ -3954,121 +4083,28 @@ def logProcessOutput(proc):
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
 
-def _executePythonModule(module, args):
-    """Execute a Python module as a script in Slicer's Python environment.
-
-    Internally python -m is called with the module name and additional arguments.
-
-    :raises RuntimeError: in case of failure
-    """
-    # Determine pythonSlicerExecutablePath
-    try:
-        from slicer import app  # noqa: F401
-
-        # If we get to this line then import from "app" is succeeded,
-        # which means that we run this function from Slicer Python interpreter.
-        # PythonSlicer is added to PATH environment variable in Slicer
-        # therefore shutil.which will be able to find it.
-        import shutil
-
-        pythonSlicerExecutablePath = shutil.which("PythonSlicer")
-        if not pythonSlicerExecutablePath:
-            raise RuntimeError("PythonSlicer executable not found")
-    except ImportError:
-        # Running from console
-        import os
-        import sys
-
-        pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
-        if os.name == "nt":
-            pythonSlicerExecutablePath += ".exe"
-
-    commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
-    proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
-    logProcessOutput(proc)
-
-
-def pip_install(requirements):
+def pip_install(requirements, **kwargs):
     """Install python packages.
 
-    Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
-    user confirmation may be implemented, therefore it is recommended to use this method call instead of calling
-    pip install directly.
+    This is a convenience wrapper that delegates to :func:`slicer.pydeps.pip_install`.
+    See that function for full documentation and parameter details.
 
-    :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
-      It can be either a single string or a list of command-line arguments. In general, passing all arguments as a single string is
-      the simplest. The only case when using a list may be easier is when there are arguments that may contain spaces, because
-      each list item is automatically quoted (it is not necessary to put quotes around each string argument that may contain spaces).
-
-    Example: calling from Slicer GUI
-
-    .. code-block:: python
-
-      pip_install("pandas scipy scikit-learn")
-
-    Example: calling from PythonSlicer console
-
-    .. code-block:: python
-
-      from slicer.util import pip_install
-      pip_install("pandas>2")
-
-    Example: upgrading to latest version of a package
-
-    .. code-block:: python
-
-      pip_install("--upgrade pandas")
-
+    :param requirements: requirement specifier (string or list), same format as used by pip.
     """
-
-    if type(requirements) == str:
-        # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
-        import shlex
-
-        args = "install", *(shlex.split(requirements))
-    elif type(requirements) == list:
-        args = "install", *requirements
-    else:
-        raise ValueError("pip_install requirement input must be string or list")
-
-    _executePythonModule("pip", args)
+    from slicer.pydeps import pip_install as _pip_install
+    return _pip_install(requirements, **kwargs)
 
 
-def pip_uninstall(requirements):
+def pip_uninstall(requirements, **kwargs):
     """Uninstall python packages.
 
-    Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
-    user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
-    pip uninstall.
+    This is a convenience wrapper that delegates to :func:`slicer.pydeps.pip_uninstall`.
+    See that function for full documentation and parameter details.
 
-    :param requirements: requirement specifier in the same format as used by pip (https://docs.python.org/3/installing/index.html).
-      It can be either a single string or a list of command-line arguments. It may be simpler to pass command-line arguments as a list
-      if the arguments may contain spaces (because no escaping of the strings with quotes is necessary).
-
-    Example: calling from Slicer GUI
-
-    .. code-block:: python
-
-      pip_uninstall("tensorflow keras scikit-learn ipywidgets")
-
-    Example: calling from PythonSlicer console
-
-    .. code-block:: python
-
-      from slicer.util import pip_uninstall
-      pip_uninstall("tensorflow")
-
+    :param requirements: requirement specifier (string or list), same format as used by pip.
     """
-    if type(requirements) == str:
-        # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
-        import shlex
-
-        args = "uninstall", *(shlex.split(requirements)), "--yes"
-    elif type(requirements) == list:
-        args = "uninstall", *requirements, "--yes"
-    else:
-        raise ValueError("pip_uninstall requirement input must be string or list")
-    _executePythonModule("pip", args)
+    from slicer.pydeps import pip_uninstall as _pip_uninstall
+    return _pip_uninstall(requirements, **kwargs)
 
 
 def longPath(path):
