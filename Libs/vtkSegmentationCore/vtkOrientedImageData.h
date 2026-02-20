@@ -22,7 +22,7 @@
 #define __vtkOrientedImageData_h
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 #include "vtkImageData.h"
 

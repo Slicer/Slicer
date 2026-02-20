@@ -192,6 +192,22 @@ if(Slicer_LIBRARY_PROPERTIES)
 endif()
 
 # --------------------------------------------------------------------------
+# Generate export header
+# --------------------------------------------------------------------------
+include(GenerateExportHeader)
+set(autoinit_code [[
+#if defined(MRMLDisplayableManager_AUTOINIT)
+# include <vtkAutoInit.h>
+VTK_AUTOINIT(MRMLDisplayableManager)
+#endif
+]])
+generate_export_header(${lib_name}
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLDisplayableManagerExport.h
+  EXPORT_MACRO_NAME VTK_MRML_DISPLAYABLEMANAGER_EXPORT
+  CUSTOM_CONTENT_FROM_VARIABLE autoinit_code
+)
+
+# --------------------------------------------------------------------------
 # Folder
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_FOLDER)

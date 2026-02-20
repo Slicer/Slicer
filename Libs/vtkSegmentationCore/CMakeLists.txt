@@ -120,6 +120,17 @@ if(Slicer_LIBRARY_PROPERTIES)
 endif()
 
 # --------------------------------------------------------------------------
+# Generate export header
+# --------------------------------------------------------------------------
+include(GenerateExportHeader)
+set(configure_include "#include <vtkSegmentationCoreConfigure.h>\n")
+generate_export_header(${PROJECT_NAME}
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkSegmentationCoreExport.h
+  EXPORT_MACRO_NAME vtkSegmentationCore_EXPORT
+  CUSTOM_CONTENT_FROM_VARIABLE configure_include
+)
+
+# --------------------------------------------------------------------------
 # Folder
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_FOLDER)

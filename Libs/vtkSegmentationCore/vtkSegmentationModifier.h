@@ -22,7 +22,7 @@
 #define __vtkSegmentationModifier_h
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 // VTK includes
 #include "vtkObject.h"

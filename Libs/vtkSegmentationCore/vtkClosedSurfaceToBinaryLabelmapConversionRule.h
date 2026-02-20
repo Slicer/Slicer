@@ -25,7 +25,7 @@
 #include "vtkSegmentationConverterRule.h"
 #include "vtkSegmentationConverter.h"
 
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 class vtkPolyData;
 

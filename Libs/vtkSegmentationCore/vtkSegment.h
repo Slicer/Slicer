@@ -31,7 +31,7 @@
 #include <map>
 
 // Segmentation includes
-#include "vtkSegmentationCoreConfigure.h"
+#include "vtkSegmentationCoreExport.h"
 
 /// \brief This class encapsulates a segment that is part of a segmentation
 /// \details
