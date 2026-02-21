@@ -22,14 +22,15 @@
 #include "vtkIntArray.h"
 #include "vtkMRMLI18N.h"
 
+class vtkMRMLMessageCollection;
 class vtkMRMLScene;
-class vtkStringArray;
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 class vtkCallbackCommand;
+class vtkStringArray;
 
 // Slicer VTK add-on includes
 #include <vtkLoggingMacros.h>
@@ -226,6 +227,7 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
   /// SetID, but that's the only class that is allowed to do so
   friend class vtkMRMLScene;
   friend class vtkMRMLSceneViewNode;
+  friend class vtkSlicerApplicationLogic;
 
 public:
   vtkTypeMacro(vtkMRMLNode, vtkObject);
@@ -284,6 +286,16 @@ public:
 
   /// Write this node's body to a MRML file in XML format.
   virtual void WriteNodeBodyXML(ostream& of, int indent);
+
+  /// Convert this node's information to a string in JSON data structure.
+  ///
+  /// \sa WriteXML(), WriteNodeBodyXML()
+  virtual std::string WriteJSON(int indent = 0, vtkMRMLMessageCollection* userMessagesInput = nullptr);
+
+  /// Read this node's information from a string in JSON format.
+  ///
+  /// \sa ReadXMLAttributes(),
+  virtual void ReadJSON(const std::string json);
 
   /// \brief Copy node contents from another node of the same type.
   /// Does not copy node ID and Scene.

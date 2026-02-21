@@ -116,6 +116,11 @@ public:
   /// Write this node's body to a MRML file in XML format.
   void WriteNodeBodyXML(ostream& of, int indent) override;
 
+  /// Read this node's information from a string in JSON format.
+  ///
+  /// \sa ReadXMLAttributes(), ReadItemFromXML()
+  virtual void ReadJSON(const std::string json) override;
+
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode* node) override;
 
