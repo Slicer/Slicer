@@ -286,6 +286,31 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID) const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyAbstractPlugin::tooltipWithStoragePath(vtkIdType itemID) const
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return QString();
+  }
+
+  // If associated data node is a storable node, get the file path from the URL
+  vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
+  if (dataNode != nullptr)
+  {
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(dataNode);
+    if (storableNode != nullptr && storableNode->GetStorageNode() != nullptr
+      && storableNode->GetStorageNode()->GetFileName() != nullptr)
+    {
+      QString tooltipWithStoragePath = tr("Loaded from file: %1").arg(storableNode->GetStorageNode()->GetFileName());
+      return tooltipWithStoragePath;
+    }
+  }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();

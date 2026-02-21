@@ -112,8 +112,11 @@ public:
   /// The default implementation returns the associated data node's name if any, otherwise the item name
   Q_INVOKABLE virtual QString displayedItemName(vtkIdType itemID) const;
 
-  /// Generate tooltip for a owned subject hierarchy item
+  /// Generate tooltip for an owned subject hierarchy item
   Q_INVOKABLE virtual QString tooltip(vtkIdType itemID) const;
+
+  /// Generate tooltip with the file path the owned item was loaded from if any. Otherwise empty string.
+  Q_INVOKABLE virtual QString tooltipWithStoragePath(vtkIdType itemID) const;
 
   /// Set display visibility of an owned subject hierarchy item
   Q_INVOKABLE virtual void setDisplayVisibility(vtkIdType itemID, int visible);
