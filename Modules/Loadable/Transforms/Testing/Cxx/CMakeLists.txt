@@ -6,6 +6,10 @@ set(KIT_TEST_SRCS
   )
 
 #-----------------------------------------------------------------------------
+set(KIT_TEST_GENERATE_MOC_SRCS
+  qSlicer${MODULE_NAME}ModuleWidgetTest.cxx
+  )
+list(APPEND KIT_TEST_SRCS ${KIT_TEST_GENERATE_MOC_SRCS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #-----------------------------------------------------------------------------

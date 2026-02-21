@@ -62,6 +62,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchySegmentsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentsPlugin);
 
 protected:
@@ -1109,3 +1110,5 @@ void qSlicerSubjectHierarchySegmentsPlugin::setOpacityForCurrentItem(double opac
 
   displayNode->SetSegmentOpacity(segmentId, opacity);
 }
+
+#include "qSlicerSubjectHierarchySegmentsPlugin.moc"

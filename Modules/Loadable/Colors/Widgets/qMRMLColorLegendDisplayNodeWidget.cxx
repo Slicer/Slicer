@@ -46,6 +46,7 @@ class qMRMLColorLegendDisplayNodeWidgetPrivate
   : public QWidget
   , public Ui_qMRMLColorLegendDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLColorLegendDisplayNodeWidget);
 
 protected:
@@ -388,3 +389,5 @@ void qMRMLColorLegendDisplayNodeWidget::onNumberOfLabelsChanged(int numberOfLabe
 
   d->ColorLegendDisplayNode->SetNumberOfLabels(numberOfLabels);
 }
+
+#include "qMRMLColorLegendDisplayNodeWidget.moc"

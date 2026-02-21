@@ -24,6 +24,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSegmentEditorEraseEffectPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorEraseEffect);
 
 protected:
@@ -91,3 +92,5 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorEraseEffect::clone()
 {
   return new qSlicerSegmentEditorEraseEffect();
 }
+
+#include "qSlicerSegmentEditorEraseEffect.moc"
