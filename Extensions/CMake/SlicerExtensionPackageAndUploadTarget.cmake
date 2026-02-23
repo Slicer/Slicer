@@ -27,15 +27,19 @@
 # by the extension CMake build-system:
 #  EXTENSION_EXT_CATEGORY
 #  EXTENSION_EXT_ENABLED
+#  EXTENSION_EXT_TIER
+#  EXTENSION_EXT_DICOM_SUPPORT_RULE
 #
 # The following variables are internally set by extracting corresponding values
 # from the locally generated "<extension_name>.s4ext" file:
 #  EXTENSION_EXT_CONTRIBUTORS
 #  EXTENSION_EXT_DEPENDS
+#  EXTENSION_EXT_RECOMMENDS
 #  EXTENSION_EXT_DESCRIPTION
 #  EXTENSION_EXT_HOMEPAGE
 #  EXTENSION_EXT_ICONURL
 #  EXTENSION_EXT_SCREENSHOTURLS
+#  EXTENSION_EXT_KEYWORDS
 #
 # The following variables can either be defined in the including scope or
 # as environment variables:
@@ -54,6 +58,11 @@
 # Finally, each time the 'packageupload' target is built, this same module will be
 # executed with all variables previously defined as arguments.
 #
+
+if(NOT DEFINED Slicer_EXTENSIONS_CMAKE_DIR)
+  set(Slicer_EXTENSIONS_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
+endif()
+include(${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerFunctionGenerateExtensionDescription.cmake)
 
 # Macro allowing to set a variable to its default value if not already defined.
 # The default value is set with:
@@ -100,6 +109,7 @@ if(NOT PACKAGEUPLOAD)
 
   set(script_vars
     Slicer_CMAKE_DIR
+    Slicer_WC_ROOT
     SLICER_EXTENSION_MANAGER_CLIENT_EXECUTABLE
     SLICER_EXTENSION_MANAGER_URL
     SLICER_EXTENSION_MANAGER_API_KEY
@@ -140,6 +150,7 @@ if(NOT PACKAGEUPLOAD)
     # Variables set by SlicerMacroExtractRepositoryInfo
     EXTENSION_WC_TYPE
     EXTENSION_WC_URL
+    EXTENSION_WC_ROOT
     EXTENSION_WC_REVISION
     # Variables set in this script
     EXTENSION_BINARY_DIR
@@ -215,19 +226,49 @@ slicerFunctionExtractExtensionDescriptionFromJson(
 set(expected_defined_vars
   # From ".s4ext" file
   EXTENSION_EXT_DEPENDS
+  EXTENSION_EXT_RECOMMENDS
   EXTENSION_EXT_DESCRIPTION
   EXTENSION_EXT_ICONURL
   EXTENSION_EXT_HOMEPAGE
   EXTENSION_EXT_SCREENSHOTURLS
   EXTENSION_EXT_CONTRIBUTORS
+  EXTENSION_EXT_KEYWORDS
   # From ".json" file
   EXTENSION_EXT_CATEGORY
+  EXTENSION_EXT_TIER
+  EXTENSION_EXT_DICOM_SUPPORT_RULE
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
   endif()
 endforeach()
+
+# Rewrite the ".s4ext" with metadata extracted from ".json" and
+# ensure the expected metadata are associated with the archive.
+slicerFunctionGenerateExtensionDescription(
+  EXTENSION_NAME ${EXTENSION_NAME}
+  EXTENSION_CATEGORY ${EXTENSION_EXT_CATEGORY}
+  EXTENSION_ICONURL ${EXTENSION_EXT_ICONURL}
+  EXTENSION_STATUS ${EXTENSION_STATUS}
+  EXTENSION_HOMEPAGE ${EXTENSION_EXT_HOMEPAGE}
+  EXTENSION_CONTRIBUTORS ${EXTENSION_EXT_CONTRIBUTORS}
+  EXTENSION_DESCRIPTION ${EXTENSION_EXT_DESCRIPTION}
+  EXTENSION_SCREENSHOTURLS ${EXTENSION_EXT_SCREENSHOTURLS}
+  EXTENSION_DEPENDS ${EXTENSION_EXT_DEPENDS}
+  EXTENSION_ENABLED ${EXTENSION_EXT_ENABLED}
+  EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY}
+  EXTENSION_TIER ${EXTENSION_EXT_TIER}
+  EXTENSION_DICOM_SUPPORT_RULE ${EXTENSION_EXT_DICOM_SUPPORT_RULE}
+  EXTENSION_KEYWORDS ${EXTENSION_EXT_KEYWORDS}
+  EXTENSION_WC_TYPE ${EXTENSION_WC_TYPE}
+  EXTENSION_WC_REVISION ${EXTENSION_WC_REVISION}
+  EXTENSION_WC_ROOT ${EXTENSION_WC_ROOT}
+  EXTENSION_WC_URL ${EXTENSION_WC_URL}
+  DESTINATION_DIR ${EXTENSION_BINARY_DIR}
+  SLICER_REVISION ${Slicer_REVISION}
+  SLICER_WC_ROOT ${Slicer_WC_ROOT}
+  )
 
 #-----------------------------------------------------------------------------
 # The following code will build the 'package' target, extract the list
@@ -310,6 +351,7 @@ foreach(p ${package_list})
 
     # Convert to space separated list
     list(JOIN EXTENSION_EXT_DEPENDS " " dependency)
+    list(JOIN EXTENSION_EXT_RECOMMENDS " " recommends)
 
     message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
@@ -332,10 +374,14 @@ foreach(p ${package_list})
             --category "${EXTENSION_EXT_CATEGORY}"
             --desc "${EXTENSION_EXT_DESCRIPTION}"
             --dependency "${dependency}"
+            --recommends "${recommends}"
             --icon_url "${EXTENSION_EXT_ICONURL}"
             --homepage "${EXTENSION_EXT_HOMEPAGE}"
             --screenshots "${EXTENSION_EXT_SCREENSHOTURLS}"
             --contributors "${EXTENSION_EXT_CONTRIBUTORS}"
+            --tier "${EXTENSION_EXT_TIER}"
+            --dicom_support_rule "${EXTENSION_EXT_DICOM_SUPPORT_RULE}"
+            --keywords "${EXTENSION_EXT_KEYWORDS}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )
