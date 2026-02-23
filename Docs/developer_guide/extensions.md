@@ -254,6 +254,9 @@ It is named after the extension name (e.g `ExtensionName.json`) and may include 
 * - build_dependencies
   - List of extensions required to build this extension. For example: `["extensionA", "extensionB"]`.
   - N
+* - dicom_support_rule
+  - Rule engine expression to determine when the extension should be suggested for DICOM data based on DICOM attributes. The expression is evaluated using the [rule-engine](https://pypi.org/project/rule-engine/) library. DICOM attributes used include `Modality` (e.g., 'PT', 'MR', 'CT', 'SEG') and `SOPClassUID`. For example: `"Modality == 'PT' or Modality == 'RWVM'"` for PET imaging, or `"Modality == 'SEG'"` for segmentation objects. Complex expressions can combine multiple conditions: `"(Modality == 'SR' and SOPClassUID == '1.2.840.10008.5.1.4.1.1.88.22') or Modality == 'M3D'"`.
+  - N
 * - build_subdirectory
   - Name of the inner build directory in case of superbuild based extension. Default to `.`.
   - N
