@@ -27,6 +27,7 @@
 # by the extension CMake build-system:
 #  EXTENSION_EXT_CATEGORY
 #  EXTENSION_EXT_ENABLED
+#  EXTENSION_EXT_TIER
 #
 # The following variables are internally set by extracting corresponding values
 # from the locally generated "<extension_name>.s4ext" file:
@@ -105,6 +106,7 @@ if(NOT PACKAGEUPLOAD)
     SLICER_EXTENSION_MANAGER_API_KEY
     CTEST_MODEL
     Slicer_REVISION
+    Slicer_WC_ROOT
     EXTENSION_NAME
     EXTENSION_OPERATING_SYSTEM
     EXTENSION_ARCHITECTURE
@@ -222,12 +224,37 @@ set(expected_defined_vars
   EXTENSION_EXT_CONTRIBUTORS
   # From ".json" file
   EXTENSION_EXT_CATEGORY
+  EXTENSION_EXT_TIER
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
   endif()
 endforeach()
+
+# Rewrite the ".s4ext" with metadata extracted from ".json" and
+# ensure the expected metadata are associated with the archive.
+slicerFunctionGenerateExtensionDescription(
+  EXTENSION_NAME ${EXTENSION_NAME}
+  EXTENSION_CATEGORY ${EXTENSION_EXT_CATEGORY}
+  EXTENSION_ICONURL ${EXTENSION_EXT_ICONURL}
+  EXTENSION_STATUS ${EXTENSION_STATUS}
+  EXTENSION_HOMEPAGE ${EXTENSION_EXT_HOMEPAGE}
+  EXTENSION_CONTRIBUTORS ${EXTENSION_EXT_CONTRIBUTORS}
+  EXTENSION_DESCRIPTION ${EXTENSION_EXT_DESCRIPTION}
+  EXTENSION_SCREENSHOTURLS ${EXTENSION_EXT_SCREENSHOTURLS}
+  EXTENSION_DEPENDS ${EXTENSION_EXT_DEPENDS}
+  EXTENSION_ENABLED ${EXTENSION_EXT_ENABLED}
+  EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY}
+  EXTENSION_TIER ${EXTENSION_EXT_TIER}
+  EXTENSION_WC_TYPE ${EXTENSION_WC_TYPE}
+  EXTENSION_WC_REVISION ${EXTENSION_WC_REVISION}
+  EXTENSION_WC_ROOT ${${EXTENSION_NAME}_WC_READONLY_ROOT}
+  EXTENSION_WC_URL ${EXTENSION_WC_URL}
+  DESTINATION_DIR ${EXTENSION_BINARY_DIR}
+  SLICER_REVISION ${Slicer_REVISION}
+  SLICER_WC_ROOT ${Slicer_WC_ROOT}
+  )
 
 #-----------------------------------------------------------------------------
 # The following code will build the 'package' target, extract the list
@@ -336,6 +363,7 @@ foreach(p ${package_list})
             --homepage "${EXTENSION_EXT_HOMEPAGE}"
             --screenshots "${EXTENSION_EXT_SCREENSHOTURLS}"
             --contributors "${EXTENSION_EXT_CONTRIBUTORS}"
+            --tier "${EXTENSION_EXT_TIER}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )

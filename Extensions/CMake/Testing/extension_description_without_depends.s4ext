@@ -34,6 +34,10 @@ iconurl https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png
 #  - Is it just a test or something you stand behind?
 status Development
 
+# Extension tier: 1, 3, or 5
+# See https://slicer.readthedocs.io/en/latest/developer_guide/extensions.html
+tier 5
+
 # One line stating what the module does
 description The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.<br>This is a line of text.<br>And another one.
 
