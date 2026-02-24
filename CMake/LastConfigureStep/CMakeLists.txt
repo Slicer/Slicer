@@ -41,4 +41,30 @@ include(${Slicer_SOURCE_DIR}/CMake/SlicerGenerateSlicerConfig.cmake)
 include(SlicerPackageAndUploadTarget)
 
 #-----------------------------------------------------------------------------
+set(VS_CODE_WORKSPACE_Slicer_EXTENSION_SOURCE_DIRS_CONFIG "")
+
+macro(_add_vs_code_workspace_path extension_source_dir)
+  set(VS_CODE_WORKSPACE_Slicer_EXTENSION_SOURCE_DIRS_CONFIG "${VS_CODE_WORKSPACE_Slicer_EXTENSION_SOURCE_DIRS_CONFIG}
+    {
+      \"path\": \"${extension_source_dir}\"
+    },")
+endmacro()
+
+foreach(varname ${Slicer_EP_LABEL_REMOTE_MODULE})
+  _add_vs_code_workspace_path(${${varname}})
+endforeach()
+foreach(varname ${Slicer_EP_LABEL_REMOTE_EXTENSION})
+  _add_vs_code_workspace_path(${${varname}})
+endforeach()
+foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
+  _add_vs_code_workspace_path(${extension_source_dir})
+endforeach()
+
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/template.code-workspace
+  ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}.code-workspace
+  @ONLY
+)
+
+#-----------------------------------------------------------------------------
 include(${Slicer_SOURCE_DIR}/CMake/SlicerCPack.cmake)
