@@ -266,6 +266,7 @@ qSlicerVolumeRenderingModuleWidget::~qSlicerVolumeRenderingModuleWidget() = defa
 void qSlicerVolumeRenderingModuleWidget::setup()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 }
 
