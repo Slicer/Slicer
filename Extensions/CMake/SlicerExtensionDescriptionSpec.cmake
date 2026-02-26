@@ -79,6 +79,11 @@ _define_metadata("DEPENDS"
   0
   "NA")
 
+_define_metadata("RECOMMENDS"
+  "Space separated list of extensions recommended to use this extension"
+  0
+  "NA")
+
 _define_metadata("BUILD_SUBDIRECTORY"
   "Name of the inner build directory in case of superbuild based extension"
   0
@@ -124,6 +129,21 @@ _define_metadata("STATUS"
   0
   "")
 
+_define_metadata("TIER"
+  "Extension tier"
+  0
+  "1")
+
+_define_metadata("DICOM_SUPPORT_RULE"
+  "Rule expression to determine if extension should handle specific DICOM data"
+  0
+  "")
+
+_define_metadata("KEYWORDS"
+  "Space-separated list of keywords to help when searching for extensions"
+  0
+  "")
+
 set(Slicer_EXT_REQUIRED_METADATA_NAMES )
 set(Slicer_EXT_OPTIONAL_METADATA_NAMES )
 foreach(name IN LISTS Slicer_EXT_METADATA_NAMES)
@@ -164,7 +184,7 @@ function(slicer_extension_description_spec_defaults_test)
   list(LENGTH Slicer_EXT_REQUIRED_METADATA_NAMES required_metadata_count)
   list(LENGTH Slicer_EXT_OPTIONAL_METADATA_NAMES optional_metadata_count)
 
-  set(expected 13)
+  set(expected 17)
   set(actual ${metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -178,7 +198,7 @@ function(slicer_extension_description_spec_defaults_test)
       "Problem with metadata_count. Expected: ${expected}, actual: ${actual}")
   endif()
 
-  set(expected 10)
+  set(expected 14)
   set(actual ${optional_metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -202,6 +222,10 @@ function(slicer_extension_description_spec_defaults_test)
     SCREENSHOTURLS
     ENABLED
     STATUS
+    RECOMMENDS
+    TIER
+    DICOM_SUPPORT_RULE
+    KEYWORDS
     )
   foreach(name IN LISTS required optional)
     foreach(varsuffix IN ITEMS "REQUIRED" "DEFAULT" "DESCRIPTION")
