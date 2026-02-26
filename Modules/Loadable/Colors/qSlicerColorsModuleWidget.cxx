@@ -133,6 +133,7 @@ qSlicerColorsModuleWidget::~qSlicerColorsModuleWidget() = default;
 void qSlicerColorsModuleWidget::setup()
 {
   Q_D(qSlicerColorsModuleWidget);
+  this->Superclass::setup();
 
   d->setupUi(this);
 
