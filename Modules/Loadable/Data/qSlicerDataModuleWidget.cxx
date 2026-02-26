@@ -135,6 +135,7 @@ void qSlicerDataModuleWidget::enter()
 void qSlicerDataModuleWidget::setup()
 {
   Q_D(qSlicerDataModuleWidget);
+  this->Superclass::setup();
 
   d->setupUi(this);
 

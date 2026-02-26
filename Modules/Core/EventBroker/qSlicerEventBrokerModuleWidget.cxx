@@ -55,6 +55,7 @@ qSlicerEventBrokerModuleWidget::~qSlicerEventBrokerModuleWidget() = default;
 void qSlicerEventBrokerModuleWidget::setup()
 {
   Q_D(qSlicerEventBrokerModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 }
 

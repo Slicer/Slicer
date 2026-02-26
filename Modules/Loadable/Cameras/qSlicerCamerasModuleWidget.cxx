@@ -50,6 +50,7 @@ qSlicerCamerasModuleWidget::~qSlicerCamerasModuleWidget() = default;
 void qSlicerCamerasModuleWidget::setup()
 {
   Q_D(qSlicerCamerasModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   connect(d->ViewNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onCurrentViewNodeChanged(vtkMRMLNode*)));

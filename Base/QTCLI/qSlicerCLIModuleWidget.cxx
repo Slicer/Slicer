@@ -323,6 +323,7 @@ qSlicerCLIModuleWidget::~qSlicerCLIModuleWidget() = default;
 void qSlicerCLIModuleWidget::setup()
 {
   Q_D(qSlicerCLIModuleWidget);
+  this->Superclass::setup();
 
   d->setupUi(this);
 }
