@@ -38,8 +38,10 @@
 #include <ctkVTKObject.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkNew.h>
 #include <vtkRenderStepsPass.h>
+#include <vtkSmartPointer.h>
 #include <vtkSSAOPass.h>
 
 // qMRML includes
@@ -83,6 +85,8 @@ protected:
 
   vtkNew<vtkSSAOPass> ShadowsRenderPass;
   vtkNew<vtkRenderStepsPass> BasicRenderPass;
+
+  vtkSmartPointer<vtkCallbackCommand> ClickCallback;
 };
 
 #endif

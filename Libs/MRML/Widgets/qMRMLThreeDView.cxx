@@ -260,20 +260,27 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
 
   vtkRenderWindowInteractor* renderWindowInteractor = this->interactor();
 
-  vtkSmartPointer<vtkCallbackCommand> clickCallback = vtkSmartPointer<vtkCallbackCommand>::New();
-  clickCallback->SetClientData(this);
-  clickCallback->SetCallback(ClickCallbackFunction);
+  d->ClickCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+  d->ClickCallback->SetClientData(this);
+  d->ClickCallback->SetCallback(ClickCallbackFunction);
 
-  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelForwardEvent, clickCallback);
-  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelBackwardEvent, clickCallback);
-  renderWindowInteractor->AddObserver(vtkCommand::InteractionEvent, clickCallback);
-  renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, clickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelForwardEvent, d->ClickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::MouseWheelBackwardEvent, d->ClickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::InteractionEvent, d->ClickCallback);
+  renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, d->ClickCallback);
 }
 
 // --------------------------------------------------------------------------
 qMRMLThreeDView::~qMRMLThreeDView()
 {
   Q_D(qMRMLThreeDView);
+
+  // Remove interactor observers to prevent use-after-free callbacks
+  vtkRenderWindowInteractor* interactor = this->interactor();
+  if (interactor && d->ClickCallback)
+  {
+    interactor->RemoveObserver(d->ClickCallback);
+  }
 
   if (this->renderer())
   {
