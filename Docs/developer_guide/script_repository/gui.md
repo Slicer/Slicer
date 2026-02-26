@@ -1271,11 +1271,64 @@ This [code snippet](https://gist.github.com/pieper/a9c0ba57de3833c9f5aea68247bda
 
 It is recommended to only install a package at runtime when it is actually needed (not at startup, not even when the user opens a module, but just before that Python package is used the first time), and ask the user about it. For more comprehensive guidelines, refer to the [best practices](/developer_guide/python_faq.md#can-i-use-any-python-package-in-a-slicer-module).
 
+#### Recommended approach using pip_ensure
+
+:::{versionadded} 5.11
+The `slicer.pydeps` module and the `pip_ensure` workflow described below.
+:::
+
+The `slicer.pydeps.pip_ensure()` function handles checking, prompting, and installing in one call with a progress dialog:
+
+```python
+import slicer.pydeps
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import flywheel
+
+class MyModuleWidget(ScriptedLoadableModuleWidget):
+
+    def onApplyButton(self):
+        # Load requirements from file (recommended for multiple dependencies)
+        reqs = slicer.pydeps.load_requirements(self.resourcePath("requirements.txt"))
+        slicer.pydeps.pip_ensure(reqs, requester="MyModule")
+
+        # Or for a single package:
+        # from packaging.requirements import Requirement
+        # slicer.pydeps.pip_ensure([Requirement("flywheel-sdk>=1.0")], requester="MyModule")
+
+        import flywheel
+        # Now safe to use flywheel
+```
+
+Key features of `pip_ensure()`:
+- Shows a confirmation dialog before installing (configurable via `prompt` parameter)
+- Shows a progress dialog during installation with collapsible log details
+- Automatically skips installation in testing mode (`slicer.app.testingEnabled()`)
+
+#### Alternative: pip_install with progress dialog
+
+For direct installation with visual feedback without using `pip_ensure`. Note that `pip_install`
+now shows a progress dialog by default:
+
 ```python
 try:
   import flywheel
 except ModuleNotFoundError:
   if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
-    slicer.util.pip_install("flywheel-sdk")
+    slicer.util.pip_install("flywheel-sdk", requester="MyModule")
+    import flywheel
+```
+
+#### Simple approach (no progress dialog)
+
+For scripting or automation where no visual feedback is needed:
+
+```python
+try:
+  import flywheel
+except ModuleNotFoundError:
+  if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
+    slicer.util.pip_install("flywheel-sdk", show_progress=False)
     import flywheel
 ```
