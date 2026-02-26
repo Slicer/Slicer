@@ -507,9 +507,8 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
   {
-    // qDebug() << "qMRMLLayoutManagerPrivate::onLayoutNodeAddedEvent";
-    //  Only one Layout node is expected
-    Q_ASSERT(this->MRMLLayoutNode == nullptr);
+    // Only one Layout node is expected, but during scene operations (restore, etc.)
+    // a layout node may be added when one already exists. Handle gracefully.
     if (this->MRMLLayoutNode != nullptr)
     {
       return;
