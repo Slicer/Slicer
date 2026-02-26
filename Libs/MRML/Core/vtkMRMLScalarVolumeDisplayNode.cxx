@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkImageMapToWindowLevelAddon.h"
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
@@ -27,7 +28,6 @@ Version:   $Revision: 1.2 $
 #include <vtkImageExtractComponents.h>
 #include <vtkImageHistogramStatistics.h>
 #include <vtkImageLogic.h>
-#include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageStencil.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
@@ -55,6 +55,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->AutoThreshold = 0;
   this->ApplyThreshold = 0;
   this->InvertDisplayScalarRange = 0;
+  this->LogCompressWindow = 0;
 
   // try setting a default grayscale color map
   // this->SetDefaultColorMap(0);
@@ -69,10 +70,11 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->ExtractAlpha = vtkImageExtractComponents::New();
   this->MultiplyAlpha = vtkImageStencil::New();
 
-  this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
+  this->MapToWindowLevelColors = vtkImageMapToWindowLevelAddon::New();
   this->MapToWindowLevelColors->SetOutputFormatToLuminance();
   this->MapToWindowLevelColors->SetWindow(256.);
   this->MapToWindowLevelColors->SetLevel(128.);
+  this->MapToWindowLevelColors->SetLogCompressWindow(0);
 
   this->MapToColors->SetOutputFormatToRGBA();
   // This input may be changed later if ScalarRangeFlag is modified.
@@ -245,6 +247,11 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   }
   {
     std::stringstream ss;
+    ss << this->LogCompressWindow;
+    of << " logCompressWindow=\"" << ss.str() << "\"";
+  }
+  {
+    std::stringstream ss;
     ss << this->AutoWindowLevel;
     of << " autoWindowLevel=\"" << ss.str() << "\"";
   }
@@ -327,6 +334,12 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->InvertDisplayScalarRange;
     }
+    else if (!strcmp(attName, "logCompressWindow"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LogCompressWindow;
+    }
     else if (!strcmp(attName, "autoWindowLevel"))
     {
       std::stringstream ss;
@@ -378,6 +391,7 @@ void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
     this->SetThreshold(node->GetLowerThreshold(), node->GetUpperThreshold());
     this->SetInterpolate(node->Interpolate);
     this->SetInvertDisplayScalarRange(node->GetInvertDisplayScalarRange());
+    this->SetLogCompressWindow(node->GetLogCompressWindow());
     this->SetWindowLevelPresets(node->WindowLevelPresets);
   }
 
@@ -404,6 +418,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LowerThreshold:    " << this->GetLowerThreshold() << "\n";
   os << indent << "Interpolate:       " << this->Interpolate << "\n";
   os << indent << "InvertDisplayScalarRange: " << this->InvertDisplayScalarRange << "\n";
+  os << indent << "LogCompressWindow: " << this->LogCompressWindow << "\n";
 }
 
 //---------------------------------------------------------------------------
@@ -881,5 +896,18 @@ void vtkMRMLScalarVolumeDisplayNode::SetInvertDisplayScalarRange(int invert)
   }
   this->InvertDisplayScalarRange = invert;
   this->UpdateLookupTable(this->GetColorNode());
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetLogCompressWindow(int logCompress)
+{
+  if (this->LogCompressWindow == logCompress)
+  {
+    // no change
+    return;
+  }
+  this->LogCompressWindow = logCompress;
+  this->MapToWindowLevelColors->SetLogCompressWindow(logCompress);
   this->Modified();
 }

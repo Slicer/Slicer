@@ -469,9 +469,9 @@ void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], vtkScalarsToColors* colors, vtkVolumeProperty* volumeProp)
+void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], bool logAxis, vtkScalarsToColors* colors, vtkVolumeProperty* volProp)
 {
-  if (!volumeProp || !scalarRange || !windowLevel)
+  if (!volProp || !scalarRange || !windowLevel)
   {
     vtkWarningMacro("SetWindowLevelToVolumeProp: Inputs do not exist.");
     return;
@@ -534,48 +534,73 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     else // if (numberOfColors > 1)
     {
       double color[4] = { 0.0, 0.0, 0.0, 1.0 };
-      vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
-      lut->GetTableValue(firstColorTableIndex, color);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
+      double predictedColor[3] = { 0.0, 0.0, 0.0 };
+      const double colorDeviationThreshold = 0.1;
 
-      // We place up to maxNumberOfPoints points in the color transfer function.
-      // The number is high enough to accurately describe most color tables,
-      // but not too high so that the user can still edit the function manually.
-      const vtkIdType maxNumberOfPoints = 24;
-
-      const vtkIdType numberOfPoints = std::min(numberOfColors, maxNumberOfPoints);
-      // convert from point index to color index
-      double pointIndexScale = static_cast<double>(numberOfColors - 1) / (numberOfPoints - 1);
-      double offset = outputRange[0];
-      double scale = fabs(windowLevel[0]) / (numberOfColors - 1);
-      for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
-      {
-        vtkIdType colorIndex = pointIndex * pointIndexScale;
-        const double value = offset + colorIndex * scale;
-        vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
-        lut->GetTableValue(colorTableIndex, color);
-        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous), color[0], color[1], color[2]);
-      }
-
+      // We start with all relevant endpoints.
       vtkIdType lastColorTableIndex = (invertColorTable ? 0 : numberOfColors - 1);
       lut->GetTableValue(lastColorTableIndex, color);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
+      previous = VTK_DOUBLE_MIN;
+      vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
+      lut->GetTableValue(firstColorTableIndex, color);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], previous), color[0], color[1], color[2]);
+
+      // We place up to maxNumberOfPoints points in the color transfer function.
+      // The number is high enough to accurately describe most color tables,
+      // but not too high so that the user can still edit the function manually.
+      const vtkIdType maxNumberOfPoints = 50;
+
+      const vtkIdType numberOfPoints = std::min(numberOfColors, maxNumberOfPoints);
+      // convert from point index to color index
+      double pointIndexScale = static_cast<double>(numberOfColors - 1) / (numberOfPoints - 1);
+      const double colorMaxIndex = static_cast<double>(numberOfColors - 1);
+      const double invColorMaxIndex = 1.0 / colorMaxIndex;
+      const double windowScale = fabs(windowLevel[0]);
+      const double offset = outputRange[0];
+      for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
+      {
+        double xValue;
+        vtkIdType colorIndex = pointIndex * pointIndexScale;
+        if (logAxis)
+        {
+          const double t = static_cast<double>(colorIndex) * invColorMaxIndex;
+          xValue = offset + windowScale * (1.0 - std::log10(1.0 + 9.0 * (1.0 - t)));
+        }
+        else
+        {
+          xValue = offset + windowScale * invColorMaxIndex * colorIndex;
+        }
+        vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
+        lut->GetTableValue(colorTableIndex, color);
+        colorTransfer->GetColor(xValue, predictedColor);
+
+        const double d0 = std::fabs(color[0] - predictedColor[0]);
+        const double d1 = std::fabs(color[1] - predictedColor[1]);
+        const double d2 = std::fabs(color[2] - predictedColor[2]);
+
+        if ((d0 > colorDeviationThreshold) || (d1 > colorDeviationThreshold) || (d2 > colorDeviationThreshold))
+        {
+          colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(xValue, previous), color[0], color[1], color[2]);
+        }
+      }
     }
   }
 
-  vtkColorTransferFunction* volumePropColorTransfer = volumeProp->GetRGBTransferFunction();
+  vtkColorTransferFunction* volumePropColorTransfer = volProp->GetRGBTransferFunction();
   if (this->IsDifferentFunction(colorTransfer.GetPointer(), volumePropColorTransfer))
   {
     volumePropColorTransfer->DeepCopy(colorTransfer.GetPointer());
   }
 
-  volumeProp->SetInterpolationTypeToLinear();
-  volumeProp->ShadeOn();
-  volumeProp->SetAmbient(0.30);
-  volumeProp->SetDiffuse(0.60);
-  volumeProp->SetSpecular(0.50);
-  volumeProp->SetSpecularPower(40);
+  volProp->SetInterpolationTypeToLinear();
+  volProp->ShadeOn();
+  volProp->SetAmbient(0.30);
+  volProp->SetDiffuse(0.60);
+  volProp->SetSpecular(0.50);
+  volProp->SetSpecularPower(40);
 }
 
 //----------------------------------------------------------------------------
@@ -614,12 +639,12 @@ void vtkSlicerVolumeRenderingLogic::SetLabelMapToVolumeProp(vtkScalarsToColors* 
 
   vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
   const int colorCount = colors->GetNumberOfAvailableColors();
-  double value = colors->GetRange()[0];
+  double xValue = colors->GetRange()[0];
   double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
   double color[4] = { 0., 0., 0., 1. };
   const double midPoint = 0.5;
   const double sharpness = 1.0;
-  for (int i = 0; i < colorCount; ++i, value += step)
+  for (int i = 0; i < colorCount; ++i, xValue += step)
   {
     // Short circuit for luts as it is faster
     if (lut)
@@ -628,10 +653,10 @@ void vtkSlicerVolumeRenderingLogic::SetLabelMapToVolumeProp(vtkScalarsToColors* 
     }
     else
     {
-      colors->GetColor(value, color);
+      colors->GetColor(xValue, color);
     }
-    opacity->AddPoint(value, color[3], midPoint, sharpness);
-    colorTransfer->AddRGBPoint(value, color[0], color[1], color[2], midPoint, sharpness);
+    opacity->AddPoint(xValue, color[3], midPoint, sharpness);
+    colorTransfer->AddRGBPoint(xValue, color[0], color[1], color[2], midPoint, sharpness);
   }
 
   vtkPiecewiseFunction* volumePropOpacity = volumeProp->GetScalarOpacity();
@@ -744,7 +769,7 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
   {
     windowLevel[0] *= -1;
   }
-  this->SetWindowLevelToVolumeProp(scalarRange, windowLevel, lut, prop);
+  this->SetWindowLevelToVolumeProp(scalarRange, windowLevel, vpNode->GetLogCompressWindow(), lut, prop);
   this->SetGradientOpacityToVolumeProp(scalarRange, prop);
 
   vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
