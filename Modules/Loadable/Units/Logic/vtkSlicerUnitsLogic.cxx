@@ -260,13 +260,13 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   // 30.436875 is average number of days in a month
   this->AddUnitNodeToScene(scene,
-    "Year", "time", "", "year", 2, -10000., 10000., 1.0 / 12.0*30.436875*24.0*60.0*60.0, 0.);
+    "Year", "time", "", "year", 2, -10000., 10000., 1.0 / (12.0*30.436875*24.0*60.0*60.0), 0.);
   this->AddUnitNodeToScene(scene,
-    "Month", "time", "", "month", 2, -10000., 10000., 1.0 / 30.436875*24.0*60.0*60.0, 0.);
+    "Month", "time", "", "month", 2, -10000., 10000., 1.0 / (30.436875*24.0*60.0*60.0), 0.);
   this->AddUnitNodeToScene(scene,
-    "Day", "time", "", "day", 2, -10000., 10000., 1.0 / 24.0*60.0*60.0, 0.);
+    "Day", "time", "", "day", 2, -10000., 10000., 1.0 / (24.0*60.0*60.0), 0.);
   this->AddUnitNodeToScene(scene,
-    "Hour", "time", "", "h", 2, -10000., 10000., 1.0 / 60.0*60.0, 0.);
+    "Hour", "time", "", "h", 2, -10000., 10000., 1.0 / (60.0*60.0), 0.);
   this->AddUnitNodeToScene(scene,
     "Minute", "time", "", "min", 2, -10000., 10000., 1.0/60.0, 0.);
   this->AddUnitNodeToScene(scene,
