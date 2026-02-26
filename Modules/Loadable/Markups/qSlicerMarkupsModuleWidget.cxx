@@ -2765,6 +2765,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeTransformModifiedEvent()
   // update the transform check box label
   // update the coordinates in the table
   this->updateWidgetFromMRML();
+  this->updateRows();
 }
 
 //-----------------------------------------------------------------------------
@@ -2867,6 +2868,7 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(int index)
     d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 240);
   }
   this->updateWidgetFromMRML();
+  this->updateRows();
 }
 
 //-----------------------------------------------------------------------------
