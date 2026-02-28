@@ -110,6 +110,7 @@ qSlicerPlotsModuleWidget::~qSlicerPlotsModuleWidget() = default;
 void qSlicerPlotsModuleWidget::setup()
 {
   Q_D(qSlicerPlotsModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   this->connect(d->PlotChartNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(onNodeSelected(vtkMRMLNode*)));

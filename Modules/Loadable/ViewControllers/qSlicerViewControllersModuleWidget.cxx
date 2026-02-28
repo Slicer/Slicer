@@ -212,6 +212,7 @@ qSlicerViewControllersModuleWidget::~qSlicerViewControllersModuleWidget() = defa
 void qSlicerViewControllersModuleWidget::setup()
 {
   Q_D(qSlicerViewControllersModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   connect(d->MRMLViewNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onAdvancedViewNodeChanged(vtkMRMLNode*)));

@@ -110,6 +110,7 @@ qSlicerTablesModuleWidget::~qSlicerTablesModuleWidget() = default;
 void qSlicerTablesModuleWidget::setup()
 {
   Q_D(qSlicerTablesModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   // Create shortcuts for copy/paste

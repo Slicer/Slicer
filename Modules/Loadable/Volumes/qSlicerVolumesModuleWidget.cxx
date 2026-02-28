@@ -65,6 +65,7 @@ qSlicerVolumesModuleWidget::~qSlicerVolumesModuleWidget() = default;
 void qSlicerVolumesModuleWidget::setup()
 {
   Q_D(qSlicerVolumesModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->MRMLVolumeInfoWidget, SLOT(setVolumeNode(vtkMRMLNode*)));
