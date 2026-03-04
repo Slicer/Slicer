@@ -254,10 +254,10 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   vtkSmartPointer<vtkPiecewiseFunction> oversamplingLow = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingLow->AddPoint(-1.25, 1);
   oversamplingLow->AddPoint(-0.75, 1);
-  oversamplingLow->AddPoint(0.25, 0);
+  oversamplingLow->AddPoint(-0.25, 0);
   vtkSmartPointer<vtkPiecewiseFunction> oversamplingNormal = vtkSmartPointer<vtkPiecewiseFunction>::New();
   oversamplingNormal->AddPoint(-0.75, 0);
-  oversamplingNormal->AddPoint(0.25, 1);
+  oversamplingNormal->AddPoint(-0.25, 1);
   oversamplingNormal->AddPoint(0.25, 1);
   oversamplingNormal->AddPoint(0.75, 0);
   vtkSmartPointer<vtkPiecewiseFunction> oversamplingHigh = vtkSmartPointer<vtkPiecewiseFunction>::New();
