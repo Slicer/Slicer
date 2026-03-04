@@ -54,7 +54,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
         <li>Click <dfn>Apply</dfn> to update segmentation with the previewed result.
         </ul><p>
         If segments overlap, segment higher in the segments table will have priority.
-        The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPapers/Paper%204/IMIC_ID4_FastGrowCut.pdf">fast grow-cut method</a>.
+        The effect uses <a href="https://www.nature.com/articles/s41598-024-80206-7">fast grow-cut method</a>.
         <p>""")
 
     def reset(self):
