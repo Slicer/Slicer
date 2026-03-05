@@ -446,6 +446,10 @@ void qSlicerSceneViewsModuleDialog::loadSceneViewInfo(int index)
   vtkImageData* imageData = this->m_Logic->GetNthSceneViewScreenshot(index);
   this->setImageData(imageData);
 
+  /// Set check states so that updateNodeSelection can update the list of nodes that will be
+  /// included in the scene view.
+  /// Because loadSceneViewInfo is called, we are editing an existing scene.
+  /// Options are left unchecked so that we only modify the metadata and not scene view content by default.
   d->UpdateExistingNodesCheckBox->setVisible(true);
   d->UpdateExistingNodesCheckBox->setChecked(false);
   d->CaptureDisplayNodesCheckBox->setChecked(false);
@@ -477,8 +481,11 @@ void qSlicerSceneViewsModuleDialog::reset()
   this->resetDialog();
   this->setNameEdit(name);
 
+  /// Set check states so that updateNodeSelection can update the list of nodes that will be
+  /// included in the scene view.
+  /// By default we want to include all nodes (existing from other scene views, display and view) by default.
   d->UpdateExistingNodesCheckBox->setVisible(false);
-  d->UpdateExistingNodesCheckBox->setChecked(false);
+  d->UpdateExistingNodesCheckBox->setChecked(true);
   d->CaptureDisplayNodesCheckBox->setChecked(true);
   d->CaptureViewNodesCheckBox->setChecked(true);
 
