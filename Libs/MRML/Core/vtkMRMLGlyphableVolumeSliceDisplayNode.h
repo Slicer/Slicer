@@ -84,7 +84,7 @@ public:
 
   /// Return the glyph polydata for the input slice image.
   /// This is the polydata to use in a 3D view.
-  /// Reimplemented to by-pass the check on the input polydata.
+  /// Reimplemented to bypass the check on the input polydata.
   /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
   vtkPolyData* GetOutputMesh() override;
 
