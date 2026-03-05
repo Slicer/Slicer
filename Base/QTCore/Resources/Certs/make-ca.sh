@@ -300,7 +300,7 @@ for tempfile in ${TEMPDIR}/certs/*.tmp; do
   if test "${satrust}x" == "Cx"; then
     # GnuTLS certificate bundle
     cat tempfile.crt >> "${TEMPDIR}/ssl/ca-bundle.crt"
-    echo "Added to GnuTLS ceritificate bundle."
+    echo "Added to GnuTLS certificate bundle."
   fi
 
   # Import certificate into the temporary certificate directory with

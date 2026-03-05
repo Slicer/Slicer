@@ -223,7 +223,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
     """Review the selected state and confidence of the loadables
     across plugins so that the options the user is most likely
     to want are listed at the top of the table and are selected
-    by default. Only offer one pre-selected loadable per series
+    by default. Only offer one preselected loadable per series
     unless both plugins mark it as selected and they have equal
     confidence.
     """
