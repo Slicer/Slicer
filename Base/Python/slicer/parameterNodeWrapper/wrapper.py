@@ -131,6 +131,7 @@ def _initMethod(self, parameterNode, prefix: str | None = None):
     self.parameterNode = parameterNode
     self._parameterGUIs = dict()
     self._nextParameterGUIsTag = 0
+    self._guiVtkObserverTags = dict()
     self._updatingGUIFromParameterNode = False
     for parameterInfo in self.allParameters.values():
         parameter = _Parameter(parameterInfo, prefix)
@@ -209,7 +210,8 @@ def _connectParametersToGui(self, mapping):
         connector.write(self.getValue(paramName))
         connector.onChanged(_makeGuiToParamCallback(self, paramName, connector))
 
-    self.AddObserver(vtk.vtkCommand.ModifiedEvent, lambda caller, event: _updateGUIFromParameterNode(self))
+    vtkObserverTag = self.AddObserver(vtk.vtkCommand.ModifiedEvent, lambda caller, event: _updateGUIFromParameterNode(self))
+    self._guiVtkObserverTags[tag] = vtkObserverTag
     return tag
 
 
@@ -258,6 +260,9 @@ def _disconnectGui(self, guiTag):
         for _, connector in self._parameterGUIs[guiTag].items():
             connector.onChanged(None)  # remove callback
         del self._parameterGUIs[guiTag]
+    if guiTag in self._guiVtkObserverTags:
+        self.RemoveObserver(self._guiVtkObserverTags[guiTag])
+        del self._guiVtkObserverTags[guiTag]
 
 
 def _getValue(self, name):

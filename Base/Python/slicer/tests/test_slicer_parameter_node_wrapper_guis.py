@@ -1171,3 +1171,32 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         param.connectParametersToGui(mapping)
 
         self.impl_parameterPacks_test_connected_parameter_node_wrapper(param, ui)
+
+    def test_disconnectGui_removes_vtk_observer(self):
+        """Verify that disconnectGui removes the ModifiedEvent VTK observer added by connectGui."""
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            alpha: bool
+
+        mappingWidget = qt.QWidget()
+        mappingWidget.setLayout(qt.QVBoxLayout())
+        widgetAlpha = qt.QCheckBox()
+        widgetAlpha.setProperty(SlicerParameterNamePropertyName, "alpha")
+        mappingWidget.layout().addWidget(widgetAlpha)
+        mappingWidget.deleteLater()
+
+        param = ParameterNodeWrapper(newParameterNode())
+
+        self.assertEqual(len(param._guiVtkObserverTags), 0)
+
+        tag = param.connectGui(mappingWidget)
+        self.assertEqual(len(param._guiVtkObserverTags), 1)
+
+        param.disconnectGui(tag)
+        self.assertEqual(len(param._guiVtkObserverTags), 0)
+
+        # Multiple cycles should not accumulate observers
+        for _ in range(10):
+            tag = param.connectGui(mappingWidget)
+            param.disconnectGui(tag)
+        self.assertEqual(len(param._guiVtkObserverTags), 0)
