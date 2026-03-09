@@ -106,8 +106,16 @@ void vtkMRMLLayerDMSelectionObserver::StartPlace(vtkMRMLNode* node, bool isPersi
     return;
   }
 
+  // Avoid triggering modified if the node is already in place mode
+  if (IsPlacing(node))
+  {
+    this->m_interactionNode->SetPlaceModePersistence(isPersistent);
+    return;
+  }
+
   {
     vtkMRMLLayerDMObjectEventObserver::UpdateGuard guard(m_obs);
+    this->m_selectionNode->SetActivePlaceNodeClassName(node->GetClassName());
     this->m_selectionNode->SetActivePlaceNodeID(node->GetID());
     this->m_interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
     this->m_interactionNode->SetPlaceModePersistence(isPersistent);
