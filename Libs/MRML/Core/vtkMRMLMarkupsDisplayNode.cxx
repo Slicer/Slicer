@@ -107,6 +107,15 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->LineColorFadingSaturation = 1.;
   this->LineColorFadingHueOffset = 0.;
 
+  // Direction markers
+  this->LineDirectionVisibility = false;
+  this->LineDirectionVisibility3D = true;
+  this->LineDirectionVisibility2D = true;
+  this->LineDirectionMarkerScale = 1.5;
+  this->LineDirectionMarkerSpacingScale = 2.0;
+  this->LineDirectionFirstToLastControlPoint = true;
+  this->LineSliceIntersectionPointVisibility = true;
+
   this->OccludedVisibility = false;
   this->OccludedOpacity = 0.3;
 
@@ -179,6 +188,13 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
+  vtkMRMLWriteXMLBooleanMacro(lineDirectionVisibility, LineDirectionVisibility);
+  vtkMRMLWriteXMLBooleanMacro(lineDirectionVisibility3D, LineDirectionVisibility3D);
+  vtkMRMLWriteXMLBooleanMacro(lineDirectionVisibility2D, LineDirectionVisibility2D);
+  vtkMRMLWriteXMLFloatMacro(lineDirectionMarkerScale, LineDirectionMarkerScale);
+  vtkMRMLWriteXMLFloatMacro(lineDirectionMarkerSpacingScale, LineDirectionMarkerSpacingScale);
+  vtkMRMLWriteXMLBooleanMacro(lineDirectionFirstToLastControlPoint, LineDirectionFirstToLastControlPoint);
+  vtkMRMLWriteXMLBooleanMacro(lineSliceIntersectionPointVisibility, LineSliceIntersectionPointVisibility);
   vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLWriteXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
@@ -228,6 +244,13 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLReadXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
+  vtkMRMLReadXMLBooleanMacro(lineDirectionVisibility, LineDirectionVisibility);
+  vtkMRMLReadXMLBooleanMacro(lineDirectionVisibility3D, LineDirectionVisibility3D);
+  vtkMRMLReadXMLBooleanMacro(lineDirectionVisibility2D, LineDirectionVisibility2D);
+  vtkMRMLReadXMLFloatMacro(lineDirectionMarkerScale, LineDirectionMarkerScale);
+  vtkMRMLReadXMLFloatMacro(lineDirectionMarkerSpacingScale, LineDirectionMarkerSpacingScale);
+  vtkMRMLReadXMLBooleanMacro(lineDirectionFirstToLastControlPoint, LineDirectionFirstToLastControlPoint);
+  vtkMRMLReadXMLBooleanMacro(lineSliceIntersectionPointVisibility, LineSliceIntersectionPointVisibility);
   vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLReadXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
@@ -309,6 +332,13 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   vtkMRMLCopyFloatMacro(LineColorFadingEnd);
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
   vtkMRMLCopyFloatMacro(LineColorFadingHueOffset);
+  vtkMRMLCopyBooleanMacro(LineDirectionVisibility);
+  vtkMRMLCopyBooleanMacro(LineDirectionVisibility3D);
+  vtkMRMLCopyBooleanMacro(LineDirectionVisibility2D);
+  vtkMRMLCopyFloatMacro(LineDirectionMarkerScale);
+  vtkMRMLCopyFloatMacro(LineDirectionMarkerSpacingScale);
+  vtkMRMLCopyBooleanMacro(LineDirectionFirstToLastControlPoint);
+  vtkMRMLCopyBooleanMacro(LineSliceIntersectionPointVisibility);
   vtkMRMLCopyBooleanMacro(HandlesInteractive);
   vtkMRMLCopyBooleanMacro(TranslationHandleVisibility);
   vtkMRMLCopyBooleanMacro(RotationHandleVisibility);
@@ -507,6 +537,13 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(LineColorFadingEnd);
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);
   vtkMRMLPrintFloatMacro(LineColorFadingHueOffset);
+  vtkMRMLPrintBooleanMacro(LineDirectionVisibility);
+  vtkMRMLPrintBooleanMacro(LineDirectionVisibility3D);
+  vtkMRMLPrintBooleanMacro(LineDirectionVisibility2D);
+  vtkMRMLPrintFloatMacro(LineDirectionMarkerScale);
+  vtkMRMLPrintFloatMacro(LineDirectionMarkerSpacingScale);
+  vtkMRMLPrintBooleanMacro(LineDirectionFirstToLastControlPoint);
+  vtkMRMLPrintBooleanMacro(LineSliceIntersectionPointVisibility);
   vtkMRMLPrintBooleanMacro(HandlesInteractive);
   vtkMRMLPrintBooleanMacro(TranslationHandleVisibility);
   vtkMRMLPrintBooleanMacro(RotationHandleVisibility);

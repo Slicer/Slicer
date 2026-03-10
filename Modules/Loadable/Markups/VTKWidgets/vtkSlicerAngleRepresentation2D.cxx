@@ -26,8 +26,6 @@
 #include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
-#include "vtkPoints.h"
-#include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper2D.h"
 #include "vtkProperty2D.h"
@@ -35,8 +33,6 @@
 #include "vtkSampleImplicitFunctionFilter.h"
 #include "vtkSlicerAngleRepresentation2D.h"
 #include "vtkTextActor.h"
-#include "vtkTextProperty.h"
-#include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTubeFilter.h"
 
@@ -52,6 +48,7 @@ vtkStandardNewMacro(vtkSlicerAngleRepresentation2D);
 vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
 {
   this->Line = vtkSmartPointer<vtkPolyData>::New();
+  this->ArcLine = vtkSmartPointer<vtkPolyData>::New();
   this->Arc = vtkSmartPointer<vtkArcSource>::New();
   this->Arc->SetResolution(30);
 
@@ -64,8 +61,8 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->ArcWorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->LineWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
   this->ArcWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
-  this->LineWorldToSliceTransformer->SetInputConnection(this->LineSliceDistance->GetOutputPort());
-  this->ArcWorldToSliceTransformer->SetInputConnection(this->ArcSliceDistance->GetOutputPort());
+  this->LineWorldToSliceTransformer->SetInputData(this->Line);
+  this->ArcWorldToSliceTransformer->SetInputData(this->ArcLine);
 
   this->TubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
   this->TubeFilter->SetInputConnection(this->LineWorldToSliceTransformer->GetOutputPort());
@@ -227,7 +224,6 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->BuildArc();
 
   // Update lines display properties
-
   double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
@@ -238,12 +234,36 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->LineActor->SetVisibility(numberOfDefinedControlPoints >= 2);
   this->ArcActor->SetVisibility(numberOfDefinedControlPoints == 3);
 
-  // Hide the actor if it doesn't intersect the current slice
+  // Hide the line actor if it doesn't intersect the current slice
   this->LineSliceDistance->Update();
   if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->LineSliceDistance->GetOutput()), this->LineSliceDistance->GetScalarArrayName()))
   {
     this->LineActor->SetVisibility(false);
+  }
+
+  // Hide the arc actor if it doesn't intersect the current slice
+  this->ArcSliceDistance->Update();
+  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->ArcSliceDistance->GetOutput()), this->ArcSliceDistance->GetScalarArrayName()))
+  {
     this->ArcActor->SetVisibility(false);
+  }
+
+  // Compute fading scalars for accurate line/arc projection on the 2D slice.
+  if (this->LineActor->GetVisibility())
+  {
+    vtkPolyData* worldCurve = markupsNode->GetCurveWorld();
+    if (worldCurve && worldCurve->GetNumberOfPoints() >= 2)
+    {
+      this->ComputeIntersectionFadingScalars(worldCurve, this->SlicePlane, this->Line);
+    }
+  }
+  if (this->ArcActor->GetVisibility())
+  {
+    vtkPolyData* arcPolyData = this->Arc->GetOutput();
+    if (arcPolyData && arcPolyData->GetNumberOfPoints() >= 2)
+    {
+      this->ComputeIntersectionFadingScalars(arcPolyData, this->SlicePlane, this->ArcLine);
+    }
   }
 
   int controlPointType = Unselected;

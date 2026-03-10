@@ -544,6 +544,197 @@
         </property>
        </widget>
       </item>
+      <item row="15" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="LineDirectionMarkersCollapsibleGroupBox">
+        <property name="title">
+         <string>Direction Markers</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="LineDirectionMarkersGridLayout">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="LineDirectionVisibilityLabel">
+           <property name="text">
+            <string>Show Direction Markers:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show or hide directional arrow markers along curve and line markups.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="LineDirectionVisibilityCheckBox">
+           <property name="toolTip">
+            <string>Show or hide directional arrow markers along curve and line markups.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="LineDirectionVisibility3DLabel">
+           <property name="text">
+            <string>3D Visibility:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show direction markers in 3D views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="LineDirectionVisibility3DCheckBox">
+           <property name="toolTip">
+            <string>Show direction markers in 3D views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LineDirectionVisibility2DLabel">
+           <property name="text">
+            <string>2D Visibility:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show direction markers in 2D slice views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="LineDirectionVisibility2DCheckBox">
+           <property name="toolTip">
+            <string>Show direction markers in 2D slice views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="LineSliceIntersectionPointVisibilityLabel">
+           <property name="text">
+            <string>Slice Intersection Points:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show markers at positions where the curve/line crosses the current slice plane.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="LineSliceIntersectionPointVisibilityCheckBox">
+           <property name="toolTip">
+            <string>Show markers at positions where the curve/line crosses the current slice plane.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="LineDirectionMarkerReversedLabel">
+           <property name="text">
+            <string>Reverse Direction:</string>
+           </property>
+           <property name="toolTip">
+            <string>Reverse the direction of the arrow markers so they point in the opposite direction along the curve or line.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="LineDirectionMarkerReversedCheckBox">
+           <property name="toolTip">
+            <string>Reverse the direction of the arrow markers so they point in the opposite direction along the curve or line.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="LineDirectionMarkerSizeLabel">
+           <property name="text">
+            <string>Marker Size:</string>
+           </property>
+           <property name="toolTip">
+            <string>Size of each direction marker relative to the physical line thickness.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="ctkSliderWidget" name="LineDirectionMarkerScaleSliderWidget">
+           <property name="toolTip">
+            <string>Size of each direction marker relative to the physical line thickness.</string>
+           </property>
+           <property name="minimum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>150.000000000000000</double>
+           </property>
+           <property name="suffix">
+            <string> %</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="LineDirectionMarkerSpacingLabel">
+           <property name="text">
+            <string>Marker Spacing:</string>
+           </property>
+           <property name="toolTip">
+            <string>Distance between direction markers relative to the marker height.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="ctkSliderWidget" name="LineDirectionMarkerSpacingScaleSliderWidget">
+           <property name="toolTip">
+            <string>Distance between consecutive direction markers relative to the marker height. 100% = markers touch, 200% = one gap, 300% = two gaps.</string>
+           </property>
+           <property name="minimum">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>2000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>50.000000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>200.000000000000000</double>
+           </property>
+           <property name="suffix">
+            <string> %</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

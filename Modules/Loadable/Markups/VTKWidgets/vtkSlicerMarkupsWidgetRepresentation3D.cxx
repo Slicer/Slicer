@@ -20,17 +20,20 @@
 #include "vtkCallbackCommand.h"
 #include "vtkCamera.h"
 #include "vtkCellPicker.h"
+#include "vtkConeSource.h"
+#include "vtkDoubleArray.h"
 #include "vtkLabelPlacementMapper.h"
 #include "vtkLine.h"
 #include "vtkFloatArray.h"
 #include "vtkGlyph3DMapper.h"
 #include "vtkMarkupsGlyphSource2D.h"
 #include "vtkMath.h"
-#include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPointSetToLabelHierarchy.h"
 #include "vtkPolyDataMapper.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
@@ -40,8 +43,6 @@
 #include "vtkStringArray.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
-#include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
 
 // MRML includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
@@ -173,6 +174,41 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::~ControlPointsPipeline3D() = default;
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidgetRepresentation3D::LineDirectionArrowPipeline3D::LineDirectionArrowPipeline3D()
+{
+  // 'coneSource' is a local variable; VTK's pipeline keeps it alive as needed.
+  vtkNew<vtkConeSource> coneSource;
+  coneSource->SetHeight(1.0);
+  coneSource->SetRadius(0.4);
+  coneSource->SetResolution(6);
+  coneSource->SetDirection(1, 0, 0);
+
+  this->Normals = vtkSmartPointer<vtkDoubleArray>::New();
+  this->Normals->SetNumberOfComponents(3);
+  this->Normals->SetName("Normals");
+
+  this->Points = vtkSmartPointer<vtkPoints>::New();
+
+  this->PointsPoly = vtkSmartPointer<vtkPolyData>::New();
+  this->PointsPoly->SetPoints(this->Points);
+  this->PointsPoly->GetPointData()->AddArray(this->Normals);
+  this->PointsPoly->GetPointData()->SetActiveNormals("Normals");
+
+  this->Mapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+  this->Mapper->SetSourceConnection(coneSource->GetOutputPort());
+  this->Mapper->SetInputData(this->PointsPoly);
+  this->Mapper->SetOrientationArray("Normals");
+  this->Mapper->SetOrientationModeToDirection();
+  this->Mapper->SetScaleModeToNoDataScaling();
+  this->Mapper->ScalarVisibilityOff();
+  this->Mapper->SetScaleFactor(1.0); // updated dynamically in subclass UpdateFromMRMLInternal
+
+  this->Actor = vtkSmartPointer<vtkActor>::New();
+  this->Actor->SetMapper(this->Mapper);
+  this->Actor->SetVisibility(false);
+}
+
+//----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
 {
   for (int i = 0; i < NumberOfControlPointTypes; i++)
@@ -212,6 +248,9 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   this->RenderCompletedCallback = vtkSmartPointer<vtkCallbackCommand>::New();
   this->RenderCompletedCallback->SetClientData(this);
   this->RenderCompletedCallback->SetCallback(vtkSlicerMarkupsWidgetRepresentation3D::OnRenderCompleted);
+
+  // Direction arrow glyph pipeline (3D)
+  this->LineDirectionArrowPipeline = std::make_unique<LineDirectionArrowPipeline3D>();
 }
 
 //----------------------------------------------------------------------
@@ -668,6 +707,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection* pc)
     controlPoints->LabelsOccludedActor->GetActors(pc);
   }
   this->TextActor->GetActors(pc);
+  this->LineDirectionArrowPipeline->Actor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -683,6 +723,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::ReleaseGraphicsResources(vtkWindow*
     controlPoints->LabelsOccludedActor->ReleaseGraphicsResources(win);
   }
   this->TextActor->ReleaseGraphicsResources(win);
+  this->LineDirectionArrowPipeline->Actor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -765,6 +806,10 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport* viewport)
     {
       count += this->TextActor->RenderOverlay(viewport);
     }
+  }
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    count += this->LineDirectionArrowPipeline->Actor->RenderOverlay(viewport);
   }
   return count;
 }
@@ -903,7 +948,43 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(vtkViewport* vi
     }
     count += this->TextActor->RenderOpaqueGeometry(viewport);
   }
-
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    if (this->MarkupsDisplayNode)
+    {
+      // ControlPointSize may have been recalculated by the base class due to camera zoom/pan.
+      // Propagate the updated size to the direction arrow scale factor immediately.
+      double lineDiameter =
+        (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
+                                                                                                        : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
+      double markerSizeWorld = vtkMRMLMarkupsDisplayNode::LineDirectionMarkerBaseScaleFactor * this->MarkupsDisplayNode->GetLineDirectionMarkerScale() * lineDiameter;
+      double markerSpacingWorld = this->MarkupsDisplayNode->GetLineDirectionMarkerSpacingScale() * markerSizeWorld;
+      this->LineDirectionArrowPipeline->Mapper->SetScaleFactor(markerSizeWorld);
+      // Rebuild marker positions only when spacing or curve geometry changed.
+      vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+      vtkPolyData* curveWorld = markupsNode ? markupsNode->GetCurveWorld() : nullptr;
+      if (curveWorld && curveWorld->GetNumberOfPoints() >= 2)
+      {
+        vtkMTimeType curveMTime = curveWorld->GetMTime();
+        bool lineDirectionFirstToLastControlPoint = this->MarkupsDisplayNode->GetLineDirectionFirstToLastControlPoint();
+        if (markerSpacingWorld != this->LineDirectionMarkerLastSpacing || curveMTime != this->LineDirectionMarkerLastGeometryMTime
+            || lineDirectionFirstToLastControlPoint != this->LineDirectionFirstToLastControlPoint)
+        {
+          vtkMRMLMarkupsNode::BuildLineDirectionMarkers(curveWorld->GetPoints(),
+                                                        this->CurveClosed,
+                                                        markerSpacingWorld,
+                                                        this->LineDirectionArrowPipeline->Points,
+                                                        this->LineDirectionArrowPipeline->Normals,
+                                                        lineDirectionFirstToLastControlPoint);
+          this->LineDirectionArrowPipeline->PointsPoly->Modified();
+          this->LineDirectionMarkerLastSpacing = markerSpacingWorld;
+          this->LineDirectionMarkerLastGeometryMTime = curveMTime;
+          this->LineDirectionFirstToLastControlPoint = lineDirectionFirstToLastControlPoint;
+        }
+      }
+    }
+    count += this->LineDirectionArrowPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
   return count;
 }
 
@@ -939,6 +1020,10 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderTranslucentPolygonalGeometry(v
   {
     count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
   }
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    count += this->LineDirectionArrowPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
   return count;
 }
 
@@ -973,6 +1058,10 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation3D::HasTranslucentPolygonalGeome
   {
     return true;
   }
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility() && this->LineDirectionArrowPipeline->Actor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
   return false;
 }
 
@@ -982,7 +1071,8 @@ double* vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Unselected])->Actor,
                                        reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Selected])->Actor,
-                                       reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor });
+                                       reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor,
+                                       this->LineDirectionArrowPipeline->Actor });
   this->AddActorsBounds(boundingBox, actors, Superclass::GetBounds());
   boundingBox.GetBounds(this->Bounds);
   return this->Bounds;
@@ -1030,6 +1120,14 @@ void vtkSlicerMarkupsWidgetRepresentation3D::PrintSelf(ostream& os, vtkIndent in
   else
   {
     os << indent << "Text Visibility: (none)\n";
+  }
+  if (this->LineDirectionArrowPipeline->Actor)
+  {
+    os << indent << "Arrow Actor Visibility: " << this->LineDirectionArrowPipeline->Actor->GetVisibility() << "\n";
+  }
+  else
+  {
+    os << indent << "Arrow Actor: (none)\n";
   }
 }
 
@@ -1114,12 +1212,12 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
   this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
   pickPositions->GetPoint(0, pickPoint);
   double minDist2 = vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition);
-  for (vtkIdType i = 1; i < numberOfPickedPositions; i++)
+  for (vtkIdType pointIndex = 1; pointIndex < numberOfPickedPositions; pointIndex++)
   {
-    double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
+    double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(pointIndex), cameraPosition);
     if (currentMinDist2 < minDist2)
     {
-      pickPositions->GetPoint(i, pickPoint);
+      pickPositions->GetPoint(pointIndex, pickPoint);
       minDist2 = currentMinDist2;
     }
   }

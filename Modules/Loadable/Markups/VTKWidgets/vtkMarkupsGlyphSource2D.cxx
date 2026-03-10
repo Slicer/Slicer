@@ -108,6 +108,8 @@ int vtkMarkupsGlyphSource2D::RequestData(vtkInformation* vtkNotUsed(request), vt
     case GlyphArrow: this->CreateArrow(pts, lines, polys, colors); break;
     case GlyphThickArrow: this->CreateThickArrow(pts, lines, polys, colors); break;
     case GlyphHookedArrow: this->CreateHookedArrow(pts, lines, polys, colors); break;
+    case GlyphCircledCross: this->CreateCircledCross(pts, lines, polys, colors); break;
+    case GlyphCircledPoint: this->CreateCircledPoint(pts, lines, polys, colors); break;
   }
 
   this->TransformGlyph(pts);
@@ -491,6 +493,81 @@ void vtkMarkupsGlyphSource2D::CreateHookedArrow(vtkPoints* pts, vtkCellArray* li
     colors->InsertNextValue(this->RGB[1]);
     colors->InsertNextValue(this->RGB[2]);
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkMarkupsGlyphSource2D::CreateCircledCross(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* vtkNotUsed(polys), vtkUnsignedCharArray* colors)
+{
+  // Circle outline (16-segment polyline, radius 0.5)
+  const unsigned int numberOfCirclePoints = 16;
+  vtkIdType circlePtIds[numberOfCirclePoints + 1];
+  double theta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfCirclePoints);
+  for (unsigned int i = 0; i < numberOfCirclePoints; i++)
+  {
+    double x = 0.5 * cos(static_cast<double>(i) * theta);
+    double y = 0.5 * sin(static_cast<double>(i) * theta);
+    circlePtIds[i] = pts->InsertNextPoint(x, y, 0.0);
+  }
+  circlePtIds[numberOfCirclePoints] = circlePtIds[0];
+  lines->InsertNextCell(numberOfCirclePoints + 1, circlePtIds);
+  colors->InsertNextValue(this->RGB[0]);
+  colors->InsertNextValue(this->RGB[1]);
+  colors->InsertNextValue(this->RGB[2]);
+
+  // Diagonal cross arms (45 degrees)
+  double crossRadius = 0.35;
+  double diag = crossRadius * 0.70710678118; // cos(45°) = sin(45°) = sqrt(2)/2
+  vtkIdType aIds[2];
+  aIds[0] = pts->InsertNextPoint(-diag, -diag, 0.0);
+  aIds[1] = pts->InsertNextPoint(diag, diag, 0.0);
+  lines->InsertNextCell(2, aIds);
+  colors->InsertNextValue(this->RGB[0]);
+  colors->InsertNextValue(this->RGB[1]);
+  colors->InsertNextValue(this->RGB[2]);
+
+  vtkIdType bIds[2];
+  bIds[0] = pts->InsertNextPoint(-diag, diag, 0.0);
+  bIds[1] = pts->InsertNextPoint(diag, -diag, 0.0);
+  lines->InsertNextCell(2, bIds);
+  colors->InsertNextValue(this->RGB[0]);
+  colors->InsertNextValue(this->RGB[1]);
+  colors->InsertNextValue(this->RGB[2]);
+}
+
+//----------------------------------------------------------------------------
+void vtkMarkupsGlyphSource2D::CreateCircledPoint(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors)
+{
+  // Circle outline (16-segment polyline, radius 0.5)
+  const unsigned int numberOfCirclePoints = 16;
+  vtkIdType circlePtIds[numberOfCirclePoints + 1];
+  double theta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfCirclePoints);
+  for (unsigned int i = 0; i < numberOfCirclePoints; i++)
+  {
+    double x = 0.5 * cos(static_cast<double>(i) * theta);
+    double y = 0.5 * sin(static_cast<double>(i) * theta);
+    circlePtIds[i] = pts->InsertNextPoint(x, y, 0.0);
+  }
+  circlePtIds[numberOfCirclePoints] = circlePtIds[0];
+  lines->InsertNextCell(numberOfCirclePoints + 1, circlePtIds);
+  colors->InsertNextValue(this->RGB[0]);
+  colors->InsertNextValue(this->RGB[1]);
+  colors->InsertNextValue(this->RGB[2]);
+
+  // Filled center dot
+  const unsigned int numberOfDotPoints = 8;
+  vtkIdType dotPtIds[numberOfDotPoints];
+  double dotTheta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfDotPoints);
+  double dotRadius = 0.2;
+  for (unsigned int i = 0; i < numberOfDotPoints; i++)
+  {
+    double x = dotRadius * cos(static_cast<double>(i) * dotTheta);
+    double y = dotRadius * sin(static_cast<double>(i) * dotTheta);
+    dotPtIds[i] = pts->InsertNextPoint(x, y, 0.0);
+  }
+  polys->InsertNextCell(numberOfDotPoints, dotPtIds);
+  colors->InsertNextValue(this->RGB[0]);
+  colors->InsertNextValue(this->RGB[1]);
+  colors->InsertNextValue(this->RGB[2]);
 }
 
 //----------------------------------------------------------------------------
