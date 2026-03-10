@@ -62,6 +62,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleUser.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersionMacros.h>
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -96,6 +97,16 @@ void qMRMLSliceViewPrivate::init()
   Q_Q(qMRMLSliceView);
 
   this->ctkVTKSliceViewPrivate::init();
+
+  // Disable touch event processing on macOS with Qt6 to prevent spurious
+  // LeftButtonPressEvent from trackpad touch events without matching releases.
+  // See https://github.com/Slicer/Slicer/issues/9068
+#if defined(Q_OS_MACOS) && (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)) && (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 5, 0))
+  if (q->VTKWidget() != nullptr)
+  {
+    q->VTKWidget()->setEnableTouchEventProcessing(false);
+  }
+#endif
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 

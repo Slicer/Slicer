@@ -58,6 +58,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersionMacros.h>
 
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewPrivate methods
@@ -95,6 +96,18 @@ void qMRMLThreeDViewPrivate::init()
   Q_Q(qMRMLThreeDView);
 
   this->ctkVTKRenderViewPrivate::init();
+
+  // Disable touch event processing on macOS with Qt6 to prevent the 3D view from
+  // getting stuck in rotation mode. On macOS, trackpad touch events generate
+  // LeftButtonPressEvent in VTK without matching release events, causing the
+  // interactor style to remain in ROTATE state permanently.
+  // See https://github.com/Slicer/Slicer/issues/9068
+#if defined(Q_OS_MACOS) && (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)) && (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 5, 0))
+  if (q->VTKWidget() != nullptr)
+  {
+    q->VTKWidget()->setEnableTouchEventProcessing(false);
+  }
+#endif
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
