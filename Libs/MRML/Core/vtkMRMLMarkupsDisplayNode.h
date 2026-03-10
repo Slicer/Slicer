@@ -400,6 +400,40 @@ public:
   vtkSetClampMacro(LineColorFadingHueOffset, double, 0.0, 1.0);
   vtkGetMacro(LineColorFadingHueOffset, double);
 
+  /// Show or hide direction markers (arrows) along the curve/line.
+  /// Default value = false
+  vtkSetMacro(LineDirectionVisibility, bool);
+  vtkGetMacro(LineDirectionVisibility, bool);
+  vtkBooleanMacro(LineDirectionVisibility, bool);
+
+  /// Show direction markers in 3D views (effective only when LineDirectionVisibility is true).
+  /// Default value = true
+  vtkSetMacro(LineDirectionVisibility3D, bool);
+  vtkGetMacro(LineDirectionVisibility3D, bool);
+  vtkBooleanMacro(LineDirectionVisibility3D, bool);
+
+  /// Show direction markers in 2D slice views (effective only when LineDirectionVisibility is true).
+  /// Default value = true
+  vtkSetMacro(LineDirectionVisibility2D, bool);
+  vtkGetMacro(LineDirectionVisibility2D, bool);
+  vtkBooleanMacro(LineDirectionVisibility2D, bool);
+
+  /// Base multiplier applied to DirectionMarkerScale before converting to physical size.
+  /// Ensures that at the default scale (150%) the marker is clearly visible relative to the line.
+  static constexpr double DirectionMarkerBaseScaleFactor = 3.0;
+
+  /// Size of the direction marker relative to the physical line thickness, expressed as a decimal fraction
+  /// (1.0 = 100% = same as line thickness, 1.5 = 150% = one and a half times the line thickness).
+  /// Default value = 1.5 (150% of line thickness)
+  vtkSetMacro(DirectionMarkerScale, double);
+  vtkGetMacro(DirectionMarkerScale, double);
+
+  /// Distance between consecutive direction markers relative to the physical marker height
+  /// (1.0 = 100% = markers touch, 2.0 = 200% = one gap-width between markers).
+  /// Default value = 2.0 (200% of marker height)
+  vtkSetMacro(DirectionMarkerSpacingScale, double);
+  vtkGetMacro(DirectionMarkerSpacingScale, double);
+
   /// Set the line color node ID used for the projection on the line actors on the 2D viewers.
   /// Setting a line color node allows to define any arbitrary color mapping.
   /// Setting a line color node will overwrite the settings given by the
@@ -539,6 +573,12 @@ protected:
   double LineColorFadingEnd;
   double LineColorFadingSaturation;
   double LineColorFadingHueOffset;
+
+  bool LineDirectionVisibility;
+  bool LineDirectionVisibility3D;
+  bool LineDirectionVisibility2D;
+  double DirectionMarkerScale;
+  double DirectionMarkerSpacingScale;
 
   bool OccludedVisibility;
   double OccludedOpacity;

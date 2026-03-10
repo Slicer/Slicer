@@ -33,6 +33,11 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
+class vtkConeSource;
+class vtkDoubleArray;
+class vtkFloatArray;
+class vtkGlyph2D;
+class vtkPoints;
 class vtkTubeFilter;
 class vtkSampleImplicitFunctionFilter;
 
@@ -81,6 +86,22 @@ protected:
 
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
+
+  // Direction marker (arrow) glyph pipeline (2D)
+  vtkSmartPointer<vtkPoints> DirectionArrowPoints;
+  vtkSmartPointer<vtkDoubleArray> DirectionArrowNormals;
+  vtkSmartPointer<vtkFloatArray> DirectionArrowSliceDistances; ///< signed dist to slice per marker, drives opacity fading
+  vtkSmartPointer<vtkPolyData> DirectionArrowPointsPoly;
+  vtkSmartPointer<vtkGlyph2D> DirectionGlypher;
+  vtkSmartPointer<vtkPolyDataMapper2D> DirectionArrowMapper2D;
+  vtkSmartPointer<vtkActor2D> DirectionArrowActor2D;
+
+  /// Cached BuildDirectionMarkers output; rebuilt only when spacing or control point geometry changes.
+  /// The view-dependent projection loop (world → display) always runs.
+  vtkSmartPointer<vtkPoints> DirectionMarkerCachedWorldPositions;
+  vtkSmartPointer<vtkDoubleArray> DirectionMarkerCachedWorldTangents;
+  double DirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType DirectionMarkerLastNodeMTime = 0;
 
 private:
   vtkSlicerLineRepresentation2D(const vtkSlicerLineRepresentation2D&) = delete;

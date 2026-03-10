@@ -20,6 +20,7 @@
 #include "vtkActor2D.h"
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
+#include "vtkConeSource.h"
 #include "vtkGlyph3DMapper.h"
 #include "vtkLookupTable.h"
 #include "vtkPolyDataMapper.h"
@@ -34,6 +35,7 @@
 // MRML includes
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerCurveRepresentation3D);
@@ -65,6 +67,36 @@ vtkSlicerCurveRepresentation3D::vtkSlicerCurveRepresentation3D()
 
   this->CurvePointLocator = vtkSmartPointer<vtkCellLocator>::New();
 
+  // Direction marker (arrow) glyph pipeline
+  this->DirectionConeSource = vtkSmartPointer<vtkConeSource>::New();
+  this->DirectionConeSource->SetHeight(1.0);
+  this->DirectionConeSource->SetRadius(0.4);
+  this->DirectionConeSource->SetResolution(6);
+  this->DirectionConeSource->SetDirection(1, 0, 0); // tip points along +X; Glyph3DMapper rotates to match tangent
+
+  this->DirectionArrowNormals = vtkSmartPointer<vtkDoubleArray>::New();
+  this->DirectionArrowNormals->SetNumberOfComponents(3);
+  this->DirectionArrowNormals->SetName("Normals");
+
+  this->DirectionArrowPoints = vtkSmartPointer<vtkPoints>::New();
+
+  this->DirectionArrowPointsPoly = vtkSmartPointer<vtkPolyData>::New();
+  this->DirectionArrowPointsPoly->SetPoints(this->DirectionArrowPoints);
+  this->DirectionArrowPointsPoly->GetPointData()->AddArray(this->DirectionArrowNormals);
+  this->DirectionArrowPointsPoly->GetPointData()->SetActiveNormals("Normals");
+
+  this->DirectionArrowMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+  this->DirectionArrowMapper->SetSourceConnection(this->DirectionConeSource->GetOutputPort());
+  this->DirectionArrowMapper->SetInputData(this->DirectionArrowPointsPoly);
+  this->DirectionArrowMapper->SetOrientationArray("Normals");
+  this->DirectionArrowMapper->SetOrientationModeToDirection();
+  this->DirectionArrowMapper->SetScaleModeToNoDataScaling();
+  this->DirectionArrowMapper->SetScaleFactor(1.0); // updated dynamically in UpdateFromMRMLInternal
+
+  this->DirectionArrowActor = vtkSmartPointer<vtkActor>::New();
+  this->DirectionArrowActor->SetMapper(this->DirectionArrowMapper);
+  this->DirectionArrowActor->SetVisibility(false);
+
   this->HideTextActorIfAllPointsOccluded = true;
 }
 
@@ -78,7 +110,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   this->NeedToRenderOn();
 
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsCurveNode* markupsNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || !this->IsDisplayable())
   {
     this->VisibilityOff();
@@ -86,6 +118,37 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   this->VisibilityOn();
+
+  // Direction markers update
+  bool directionMarkersWasModified = false;
+  vtkPolyData* curveWorld = markupsNode->GetCurveWorld();
+  if (this->MarkupsDisplayNode->GetLineDirectionVisibility() && this->MarkupsDisplayNode->GetLineDirectionVisibility3D() && curveWorld && curveWorld->GetNumberOfPoints() > 1)
+  {
+    // Physical line diameter: absolute (mm) or relative to line thickness.
+    double lineDiameter =
+      (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
+                                                                                                      : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
+    double markerSizeWorld = vtkMRMLMarkupsDisplayNode::DirectionMarkerBaseScaleFactor * this->MarkupsDisplayNode->GetDirectionMarkerScale() * lineDiameter;
+    double markerSpacingWorld = this->MarkupsDisplayNode->GetDirectionMarkerSpacingScale() * markerSizeWorld;
+    this->DirectionArrowMapper->SetScaleFactor(markerSizeWorld);
+
+    // Only rebuild marker positions when spacing or curve geometry actually changed.
+    // UpdateFromMRMLInternal is called on mouse hover, selection changes, etc.
+    vtkMTimeType curveMTime = curveWorld->GetMTime();
+    if (markerSpacingWorld != this->DirectionMarkerLastSpacing || curveMTime != this->DirectionMarkerLastCurveMTime)
+    {
+      vtkMRMLMarkupsNode::BuildDirectionMarkers(curveWorld->GetPoints(), this->CurveClosed, markerSpacingWorld, this->DirectionArrowPoints, this->DirectionArrowNormals);
+      directionMarkersWasModified = true;
+      this->DirectionArrowPointsPoly->Modified();
+      this->DirectionMarkerLastSpacing = markerSpacingWorld;
+      this->DirectionMarkerLastCurveMTime = curveMTime;
+    }
+    this->DirectionArrowActor->SetVisibility(true);
+  }
+  else
+  {
+    this->DirectionArrowActor->SetVisibility(false);
+  }
 
   // Properties label display
   // Display if there is at least one control point (even if preview)
@@ -140,6 +203,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
+  this->UpdateRelativeCoincidentTopologyOffsets(this->DirectionArrowMapper, nullptr);
 
   double diameter =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
@@ -154,7 +218,16 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
   }
-  this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  vtkProperty* pipelineProperty = this->GetControlPointsPipeline(controlPointType)->Property;
+  this->LineActor->SetProperty(pipelineProperty);
+  if (this->DirectionArrowActor->GetVisibility())
+  {
+    this->DirectionArrowActor->SetProperty(pipelineProperty);
+    if (!directionMarkersWasModified)
+    {
+      this->DirectionArrowPointsPoly->Modified();
+    }
+  }
 
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
@@ -252,6 +325,7 @@ void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection* pc)
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
   this->LineOccludedActor->GetActors(pc);
+  this->DirectionArrowActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -260,6 +334,7 @@ void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
   this->LineOccludedActor->ReleaseGraphicsResources(win);
+  this->DirectionArrowActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -275,6 +350,10 @@ int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport* viewport)
   {
     count += this->LineOccludedActor->RenderOverlay(viewport);
   }
+  if (this->DirectionArrowActor->GetVisibility())
+  {
+    count += this->DirectionArrowActor->RenderOverlay(viewport);
+  }
   return count;
 }
 
@@ -283,6 +362,7 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
+
   if (this->LineActor->GetVisibility())
   {
     double diameter =
@@ -294,6 +374,35 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
   if (this->LineOccludedActor->GetVisibility())
   {
     count += this->LineOccludedActor->RenderOpaqueGeometry(viewport);
+  }
+  if (this->DirectionArrowActor->GetVisibility())
+  {
+    if (this->MarkupsDisplayNode)
+    {
+      // ControlPointSize may have been recalculated by the base class due to camera zoom/pan.
+      // Propagate the updated size to the direction arrow scale factor immediately.
+      double lineDiameter =
+        (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
+                                                                                                        : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
+      double markerSizeWorld = vtkMRMLMarkupsDisplayNode::DirectionMarkerBaseScaleFactor * this->MarkupsDisplayNode->GetDirectionMarkerScale() * lineDiameter;
+      double markerSpacingWorld = this->MarkupsDisplayNode->GetDirectionMarkerSpacingScale() * markerSizeWorld;
+      this->DirectionArrowMapper->SetScaleFactor(markerSizeWorld);
+      // Rebuild marker positions only when spacing or curve geometry changed.
+      vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+      vtkPolyData* curveWorld = markupsNode ? markupsNode->GetCurveWorld() : nullptr;
+      if (curveWorld && curveWorld->GetNumberOfPoints() >= 2)
+      {
+        vtkMTimeType curveMTime = curveWorld->GetMTime();
+        if (markerSpacingWorld != this->DirectionMarkerLastSpacing || curveMTime != this->DirectionMarkerLastCurveMTime)
+        {
+          vtkMRMLMarkupsNode::BuildDirectionMarkers(curveWorld->GetPoints(), this->CurveClosed, markerSpacingWorld, this->DirectionArrowPoints, this->DirectionArrowNormals);
+          this->DirectionArrowPointsPoly->Modified();
+          this->DirectionMarkerLastSpacing = markerSpacingWorld;
+          this->DirectionMarkerLastCurveMTime = curveMTime;
+        }
+      }
+    }
+    count += this->DirectionArrowActor->RenderOpaqueGeometry(viewport);
   }
   return count;
 }
@@ -317,6 +426,13 @@ int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(vtkViewpo
     this->LineOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
   }
+  if (this->DirectionArrowActor->GetVisibility())
+  {
+    // The internal actor needs to share property keys.
+    // This ensures the mapper state is consistent and allows depth peeling to work as expected.
+    this->DirectionArrowActor->SetPropertyKeys(this->GetPropertyKeys());
+    count += this->DirectionArrowActor->RenderTranslucentPolygonalGeometry(viewport);
+  }
   return count;
 }
 
@@ -335,6 +451,10 @@ vtkTypeBool vtkSlicerCurveRepresentation3D::HasTranslucentPolygonalGeometry()
   {
     return true;
   }
+  if (this->DirectionArrowActor->GetVisibility() && this->DirectionArrowActor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
   return false;
 }
 
@@ -342,7 +462,7 @@ vtkTypeBool vtkSlicerCurveRepresentation3D::HasTranslucentPolygonalGeometry()
 double* vtkSlicerCurveRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
-  const std::vector<vtkProp*> actors({ this->LineActor });
+  const std::vector<vtkProp*> actors({ this->LineActor, this->DirectionArrowActor });
   this->AddActorsBounds(boundingBox, actors, Superclass::GetBounds());
   boundingBox.GetBounds(this->Bounds);
   return this->Bounds;
@@ -380,6 +500,14 @@ void vtkSlicerCurveRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   else
   {
     os << indent << "Line Visibility: (none)\n";
+  }
+  if (this->DirectionArrowActor)
+  {
+    os << indent << "Arrow Glyph Actor Visibility: " << this->DirectionArrowActor->GetVisibility() << "\n";
+  }
+  else
+  {
+    os << indent << "Arrow Glyph Actor: (none)\n";
   }
 }
 

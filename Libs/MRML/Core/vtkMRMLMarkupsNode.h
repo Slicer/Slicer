@@ -676,6 +676,17 @@ public:
   /// Converts curve point index to control point index.
   int GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex);
 
+  /// Compute evenly-spaced direction marker positions and unit tangents along a curve.
+  /// Markers are placed starting at half the spacing from the first point so they are
+  /// centered within each interval. For closed curves the closing segment is included.
+  /// \param curvePoints input polyline points (world or local coordinates)
+  /// \param closedCurve if true the last point is connected back to the first
+  /// \param spacing arc-length distance between successive markers (same units as curvePoints)
+  /// \param outPositions output marker positions (Reset() is called before filling)
+  /// \param outTangents output unit tangent vectors, one 3-tuple per marker (Reset() is called before filling)
+  /// \return true on success
+  static bool BuildDirectionMarkers(vtkPoints* curvePoints, bool closedCurve, double spacing, vtkPoints* outPositions, vtkDoubleArray* outTangents);
+
   /// Returns true if the curve generator creates a closed curve.
   vtkGetMacro(CurveClosed, bool);
 

@@ -34,7 +34,12 @@
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
 class vtkCellLocator;
+class vtkCleanPolyData;
 class vtkDiscretizableColorTransferFunction;
+class vtkDoubleArray;
+class vtkFloatArray;
+class vtkGlyph2D;
+class vtkPoints;
 class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
 
@@ -77,6 +82,8 @@ protected:
 
   void UpdateLineColorMap();
 
+  /// Compute fading scalars for accurate curve projection on the 2D slice.
+  /// The 2D mapper interpolates RGBA per-vertex (not scalars), so long tube segments
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;
@@ -85,9 +92,26 @@ protected:
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
+  vtkSmartPointer<vtkCleanPolyData> SliceCurvePointsCleaner;
   vtkSmartPointer<vtkCellLocator> SliceCurvePointLocator;
 
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
+
+  // Direction marker (arrow) glyph pipeline (2D)
+  vtkSmartPointer<vtkPolyData> DirectionArrowPointsPoly;
+  vtkSmartPointer<vtkGlyph2D> DirectionGlypher;
+  vtkSmartPointer<vtkPolyDataMapper2D> DirectionArrowMapper2D;
+  vtkSmartPointer<vtkActor2D> DirectionArrowActor2D;
+  vtkSmartPointer<vtkPoints> DirectionArrowPoints;
+  vtkSmartPointer<vtkDoubleArray> DirectionArrowNormals;
+  vtkSmartPointer<vtkFloatArray> DirectionArrowSliceDistances; ///< signed dist to slice per marker, drives opacity fading
+
+  /// Cached BuildDirectionMarkers output; rebuilt only when spacing or curve geometry changes.
+  /// The view-dependent projection loop (world → display) always runs.
+  vtkSmartPointer<vtkPoints> DirectionMarkerCachedWorldPositions;
+  vtkSmartPointer<vtkDoubleArray> DirectionMarkerCachedWorldTangents;
+  double DirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType DirectionMarkerLastCurveMTime = 0;
 
 private:
   vtkSlicerCurveRepresentation2D(const vtkSlicerCurveRepresentation2D&) = delete;

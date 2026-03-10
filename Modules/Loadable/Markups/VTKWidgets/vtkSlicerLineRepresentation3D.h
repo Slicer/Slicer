@@ -34,6 +34,10 @@
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
 class vtkActor;
+class vtkConeSource;
+class vtkDoubleArray;
+class vtkGlyph3DMapper;
+class vtkPoints;
 class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
@@ -80,6 +84,19 @@ protected:
 
   vtkSmartPointer<vtkActor> LineActor;
   vtkSmartPointer<vtkActor> LineOccludedActor;
+
+  // Direction marker (arrow) glyph pipeline
+  vtkSmartPointer<vtkConeSource> DirectionConeSource;
+  vtkSmartPointer<vtkPoints> DirectionArrowPoints;
+  vtkSmartPointer<vtkDoubleArray> DirectionArrowNormals;
+  vtkSmartPointer<vtkPolyData> DirectionArrowPointsPoly;
+  vtkSmartPointer<vtkGlyph3DMapper> DirectionArrowMapper;
+  vtkSmartPointer<vtkActor> DirectionArrowActor;
+
+  /// Cached marker spacing from the last BuildDirectionMarkers call in RenderOpaqueGeometry.
+  /// Avoids expensive marker rebuild every frame when only the scale factor (not spacing) changed.
+  double DirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType DirectionMarkerLastLineMTime = 0;
 
 private:
   vtkSlicerLineRepresentation3D(const vtkSlicerLineRepresentation3D&) = delete;

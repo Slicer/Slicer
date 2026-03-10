@@ -544,6 +544,157 @@
         </property>
        </widget>
       </item>
+      <item row="15" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="DirectionMarkersCollapsibleGroupBox">
+        <property name="title">
+         <string>Direction Markers</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_DirectionMarkers">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="LineDirectionVisibilityLabel">
+           <property name="text">
+            <string>Show Direction Markers:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show or hide directional arrow markers along curve and line markups.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="lineDirectionVisibilityCheckBox">
+           <property name="toolTip">
+            <string>Show or hide directional arrow markers along curve and line markups.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="LineDirectionVisibility3DLabel">
+           <property name="text">
+            <string>3D Visibility:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show direction markers in 3D views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="lineDirectionVisibility3DCheckBox">
+           <property name="toolTip">
+            <string>Show direction markers in 3D views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LineDirectionVisibility2DLabel">
+           <property name="text">
+            <string>2D Visibility:</string>
+           </property>
+           <property name="toolTip">
+            <string>Show direction markers in 2D slice views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="lineDirectionVisibility2DCheckBox">
+           <property name="toolTip">
+            <string>Show direction markers in 2D slice views. Requires &quot;Show Direction Markers&quot; to be enabled.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="DirectionMarkerSizeLabel">
+           <property name="text">
+            <string>Marker Size:</string>
+           </property>
+           <property name="toolTip">
+            <string>Size of each direction marker relative to the physical line thickness.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="ctkSliderWidget" name="directionMarkerScaleSliderWidget">
+           <property name="toolTip">
+            <string>Size of each direction marker relative to the physical line thickness.</string>
+           </property>
+           <property name="minimum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>150.000000000000000</double>
+           </property>
+           <property name="suffix">
+            <string> %</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="DirectionMarkerSpacingLabel">
+           <property name="text">
+            <string>Marker Spacing:</string>
+           </property>
+           <property name="toolTip">
+            <string>Distance between direction markers relative to the marker height.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="ctkSliderWidget" name="directionMarkerSpacingScaleSliderWidget">
+           <property name="toolTip">
+            <string>Distance between consecutive direction markers relative to the marker height. 100% = markers touch, 200% = one gap, 300% = two gaps.</string>
+           </property>
+           <property name="minimum">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>2000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>50.000000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>100.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>200.000000000000000</double>
+           </property>
+           <property name="suffix">
+            <string> %</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

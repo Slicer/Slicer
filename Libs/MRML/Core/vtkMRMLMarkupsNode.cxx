@@ -2159,6 +2159,78 @@ vtkAlgorithmOutput* vtkMRMLMarkupsNode::GetCurveWorldConnection()
   return this->CurvePolyToWorldTransformer->GetOutputPort();
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsNode::BuildDirectionMarkers(vtkPoints* curvePoints, bool closedCurve, double spacing, vtkPoints* outPositions, vtkDoubleArray* outTangents)
+{
+  if (!curvePoints || !outPositions || !outTangents || spacing <= 0.0)
+  {
+    vtkGenericWarningMacro("vtkMRMLMarkupsNode::BuildDirectionMarkers failed: invalid inputs");
+    return false;
+  }
+
+  outPositions->Reset();
+  outTangents->Reset();
+  outTangents->SetNumberOfComponents(3);
+
+  vtkIdType numberOfPoints = curvePoints->GetNumberOfPoints();
+  if (numberOfPoints < 2)
+  {
+    return true;
+  }
+
+  // Start half a spacing from the beginning so markers are centered within each interval.
+  double distanceFromLastMarker = spacing * 0.5;
+
+  double previousPoint[3] = { 0.0 };
+  curvePoints->GetPoint(0, previousPoint);
+
+  bool addClosingSegment = closedCurve;
+  for (vtkIdType pointIndex = 1; pointIndex < numberOfPoints || addClosingSegment; ++pointIndex)
+  {
+    double currentPoint[3] = { 0.0 };
+    if (pointIndex >= numberOfPoints)
+    {
+      addClosingSegment = false;
+      curvePoints->GetPoint(0, currentPoint);
+    }
+    else
+    {
+      curvePoints->GetPoint(pointIndex, currentPoint);
+    }
+
+    double segmentVec[3] = { currentPoint[0] - previousPoint[0], currentPoint[1] - previousPoint[1], currentPoint[2] - previousPoint[2] };
+    double segmentLength = vtkMath::Norm(segmentVec);
+    if (segmentLength <= 0.0)
+    {
+      continue;
+    }
+    double tangent[3] = { segmentVec[0] / segmentLength, segmentVec[1] / segmentLength, segmentVec[2] / segmentLength };
+
+    // Walk along this segment emitting markers whenever the distance from the last
+    // marker reaches the requested spacing.
+    double distanceTravelledInSegment = 0.0;
+    double distanceToNextMarker = spacing - distanceFromLastMarker;
+    while (distanceTravelledInSegment + distanceToNextMarker <= segmentLength)
+    {
+      distanceTravelledInSegment += distanceToNextMarker;
+      double markerPoint[3] = { previousPoint[0] + tangent[0] * distanceTravelledInSegment,
+                                previousPoint[1] + tangent[1] * distanceTravelledInSegment,
+                                previousPoint[2] + tangent[2] * distanceTravelledInSegment };
+      outPositions->InsertNextPoint(markerPoint);
+      outTangents->InsertNextTuple(tangent);
+      distanceFromLastMarker = 0.0;
+      distanceToNextMarker = spacing;
+    }
+    distanceFromLastMarker += segmentLength - distanceTravelledInSegment;
+
+    previousPoint[0] = currentPoint[0];
+    previousPoint[1] = currentPoint[1];
+    previousPoint[2] = currentPoint[2];
+  }
+
+  return true;
+}
+
 //----------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex)
 {

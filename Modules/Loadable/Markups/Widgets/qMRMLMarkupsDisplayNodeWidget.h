@@ -91,6 +91,12 @@ public slots:
   void setOccludedVisibility(bool visibility);
   void setOccludedOpacity(double OccludedOpacity);
 
+  void setLineDirectionVisibility(bool visible);
+  void onDirectionMarkerScaleChanged(double value);
+  void onDirectionMarkerSpacingScaleChanged(double value);
+  void setLineDirectionVisibility3D(bool visible);
+  void setLineDirectionVisibility2D(bool visible);
+
 protected slots:
   void updateWidgetFromMRML();
   vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene* mrmlScene);
