@@ -18,8 +18,12 @@
 
 // VTK includes
 #include "vtkCamera.h"
+#include "vtkCellArray.h"
 #include "vtkCellLocator.h"
+#include "vtkConeSource.h"
+#include "vtkDoubleArray.h"
 #include "vtkDiscretizableColorTransferFunction.h"
+#include "vtkFloatArray.h"
 #include "vtkGlyph2D.h"
 #include "vtkLabelPlacementMapper.h"
 #include "vtkLine.h"
@@ -38,15 +42,17 @@
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 #include "vtkSphereSource.h"
 #include "vtkStringArray.h"
-#include "vtkTensorGlyph.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
 
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLInteractionEventData.h>
+#include <vtkMRMLProceduralColorNode.h>
+
+#include <cmath>
+#include <vector>
 
 vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPipeline2D()
 {
@@ -103,6 +109,82 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
 vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::~ControlPointsPipeline2D() = default;
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidgetRepresentation2D::LineDirectionArrowPipeline2D::LineDirectionArrowPipeline2D()
+{
+  this->Points = vtkSmartPointer<vtkPoints>::New();
+
+  this->Normals = vtkSmartPointer<vtkDoubleArray>::New();
+  this->Normals->SetNumberOfComponents(3);
+  this->Normals->SetName("Normals");
+
+  this->SliceDistances = vtkSmartPointer<vtkFloatArray>::New();
+  this->SliceDistances->SetName("SliceDistance");
+
+  this->PointsPoly = vtkSmartPointer<vtkPolyData>::New();
+  this->PointsPoly->SetPoints(this->Points);
+  this->PointsPoly->GetPointData()->AddArray(this->Normals);
+  this->PointsPoly->GetPointData()->SetActiveNormals("Normals");
+  this->PointsPoly->GetPointData()->AddArray(this->SliceDistances);
+  this->PointsPoly->GetPointData()->SetActiveScalars("SliceDistance");
+
+  // 'coneSource' is a local variable; VTK's pipeline keeps it alive as needed.
+  vtkNew<vtkConeSource> coneSource;
+  coneSource->SetHeight(1.0);
+  coneSource->SetRadius(0.4);
+  coneSource->SetResolution(6);
+  coneSource->SetDirection(1, 0, 0);
+
+  this->Glypher = vtkSmartPointer<vtkGlyph2D>::New();
+  this->Glypher->SetInputData(this->PointsPoly);
+  this->Glypher->SetSourceConnection(coneSource->GetOutputPort());
+  this->Glypher->SetVectorModeToUseNormal();
+  this->Glypher->OrientOn();
+  this->Glypher->SetScaleModeToDataScalingOff();
+  this->Glypher->SetScaleFactor(1.0);
+
+  this->Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+  this->Mapper->SetInputConnection(this->Glypher->GetOutputPort());
+  this->Mapper->SetScalarVisibility(true);
+
+  this->Actor = vtkSmartPointer<vtkActor2D>::New();
+  this->Actor->SetMapper(this->Mapper);
+  this->Actor->SetVisibility(false);
+}
+
+//----------------------------------------------------------------------
+vtkSlicerMarkupsWidgetRepresentation2D::LineIntersectionPointsPipeline2D::LineIntersectionPointsPipeline2D(vtkAlgorithmOutput* glyphSourcePort, vtkProperty2D* property)
+{
+  this->DisplayPoints = vtkSmartPointer<vtkPoints>::New();
+
+  this->PointsPoly = vtkSmartPointer<vtkPolyData>::New();
+  this->PointsPoly->SetPoints(this->DisplayPoints);
+
+  this->Glypher = vtkSmartPointer<vtkGlyph2D>::New();
+  this->Glypher->SetInputData(this->PointsPoly);
+  this->Glypher->SetSourceConnection(glyphSourcePort);
+  this->Glypher->SetScaleModeToDataScalingOff();
+  this->Glypher->SetScaleFactor(1.0);
+
+  this->Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+  this->Mapper->SetInputConnection(this->Glypher->GetOutputPort());
+  this->Mapper->SetScalarVisibility(false);
+  vtkNew<vtkCoordinate> coord;
+  coord->SetCoordinateSystemToDisplay();
+  this->Mapper->SetTransformCoordinate(coord);
+
+  this->Property = vtkSmartPointer<vtkProperty2D>::New();
+  this->Property->SetColor(property->GetColor());
+  this->Property->SetOpacity(property->GetOpacity());
+  this->Property->SetPointSize(property->GetPointSize());
+  this->Property->SetLineWidth(property->GetLineWidth());
+
+  this->Actor = vtkSmartPointer<vtkActor2D>::New();
+  this->Actor->SetMapper(this->Mapper);
+  this->Actor->SetProperty(this->Property);
+  this->Actor->SetVisibility(false);
+}
+
+//----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
 {
   for (int i = 0; i < NumberOfControlPointTypes; i++)
@@ -126,6 +208,38 @@ vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
 
   this->SlicePlane = vtkSmartPointer<vtkPlane>::New();
   this->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
+
+  // Slice intersection point glyph pipelines
+  this->LineSliceIntersectionWorldPoints = vtkSmartPointer<vtkPoints>::New();
+  this->LineSliceIntersectionApproachingSigns = vtkSmartPointer<vtkFloatArray>::New();
+  this->LineSliceIntersectionApproachingSigns->SetName("ApproachingSign");
+  this->LineSliceIntersectionApproachingSigns->SetNumberOfComponents(1);
+
+  // Direction arrow glyph pipeline (2D)
+  this->LineDirectionArrowPipeline = std::make_unique<LineDirectionArrowPipeline2D>();
+  this->LineDirectionMarkerCachedWorldPositions = vtkSmartPointer<vtkPoints>::New();
+  this->LineDirectionMarkerCachedWorldTangents = vtkSmartPointer<vtkDoubleArray>::New();
+  this->LineDirectionMarkerCachedWorldTangents->SetNumberOfComponents(3);
+
+  this->LineSliceIntersectionProperty = vtkSmartPointer<vtkProperty2D>::New();
+  this->LineSliceIntersectionProperty->SetColor(1.0, 1.0, 1.0);
+  this->LineSliceIntersectionProperty->SetOpacity(1.0);
+  this->LineSliceIntersectionProperty->SetPointSize(3.0);
+  this->LineSliceIntersectionProperty->SetLineWidth(3.0);
+
+  // Entering pipeline (CircledCross glyph)
+  // 'enteringGlyphSource' is a local variable; VTK's pipeline keeps it alive as needed.
+  vtkNew<vtkMarkupsGlyphSource2D> enteringGlyphSource;
+  enteringGlyphSource->SetGlyphTypeToCircledCross();
+  enteringGlyphSource->FilledOff();
+  this->LineSliceIntersectionEnteringPipeline = std::make_unique<LineIntersectionPointsPipeline2D>(enteringGlyphSource->GetOutputPort(), this->LineSliceIntersectionProperty);
+
+  // Exiting pipeline (CircledPoint glyph)
+  // 'exitingGlyphSource' is a local variable; VTK's pipeline keeps it alive as needed.
+  vtkNew<vtkMarkupsGlyphSource2D> exitingGlyphSource;
+  exitingGlyphSource->SetGlyphTypeToCircledPoint();
+  exitingGlyphSource->FilledOff();
+  this->LineSliceIntersectionExitingPipeline = std::make_unique<LineIntersectionPointsPipeline2D>(exitingGlyphSource->GetOutputPort(), this->LineSliceIntersectionProperty);
 }
 
 //----------------------------------------------------------------------
@@ -625,6 +739,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(vtkMRMLInteract
 void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   Superclass::GetActors(pc);
+  this->LineDirectionArrowPipeline->Actor->GetActors(pc);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -632,12 +747,15 @@ void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection* pc)
     controlPoints->LabelsActor->GetActors(pc);
   }
   this->TextActor->GetActors(pc);
+  this->LineSliceIntersectionEnteringPipeline->Actor->GetActors(pc);
+  this->LineSliceIntersectionExitingPipeline->Actor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 {
   Superclass::ReleaseGraphicsResources(win);
+  this->LineDirectionArrowPipeline->Actor->ReleaseGraphicsResources(win);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -645,12 +763,18 @@ void vtkSlicerMarkupsWidgetRepresentation2D::ReleaseGraphicsResources(vtkWindow*
     controlPoints->LabelsActor->ReleaseGraphicsResources(win);
   }
   this->TextActor->ReleaseGraphicsResources(win);
+  this->LineSliceIntersectionEnteringPipeline->Actor->ReleaseGraphicsResources(win);
+  this->LineSliceIntersectionExitingPipeline->Actor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
   int count = Superclass::RenderOverlay(viewport);
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    count += this->LineDirectionArrowPipeline->Actor->RenderOverlay(viewport);
+  }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -667,6 +791,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport* viewport)
   {
     count += this->TextActor->RenderOverlay(viewport);
   }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOverlay(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOverlay(viewport);
+  }
   return count;
 }
 
@@ -674,6 +806,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport* viewport)
 int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = 0;
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    count += this->LineDirectionArrowPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
   if (this->TextActor->GetVisibility())
   {
     count += this->TextActor->RenderOpaqueGeometry(viewport);
@@ -690,6 +826,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(vtkViewport* vi
       count += controlPoints->LabelsActor->RenderOpaqueGeometry(viewport);
     }
   }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
   return count;
 }
 
@@ -697,6 +841,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(vtkViewport* vi
 int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    count += this->LineDirectionArrowPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
   if (this->TextActor->GetVisibility())
   {
     count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
@@ -713,6 +861,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(v
       count += controlPoints->LabelsActor->RenderTranslucentPolygonalGeometry(viewport);
     }
   }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
   return count;
 }
 
@@ -720,6 +876,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(v
 vtkTypeBool vtkSlicerMarkupsWidgetRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility() && this->LineDirectionArrowPipeline->Actor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
@@ -738,6 +898,14 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation2D::HasTranslucentPolygonalGeome
     {
       return true;
     }
+  }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility() && this->LineSliceIntersectionEnteringPipeline->Actor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility() && this->LineSliceIntersectionExitingPipeline->Actor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
   }
   return false;
 }
@@ -784,6 +952,30 @@ void vtkSlicerMarkupsWidgetRepresentation2D::PrintSelf(ostream& os, vtkIndent in
     else
     {
       os << indent << "Property: (none)\n";
+    }
+    if (this->LineDirectionArrowPipeline->Actor)
+    {
+      os << indent << "Arrow Glyph Actor 2D Visibility: " << this->LineDirectionArrowPipeline->Actor->GetVisibility() << "\n";
+    }
+    else
+    {
+      os << indent << "Arrow Glyph Actor 2D: (none)\n";
+    }
+    if (this->LineSliceIntersectionEnteringPipeline->Actor)
+    {
+      os << indent << "Slice entering intersection Glyph Actor 2D Visibility: " << this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility() << "\n";
+    }
+    else
+    {
+      os << indent << "Slice entering intersection Actor 2D: (none)\n";
+    }
+    if (this->LineSliceIntersectionExitingPipeline->Actor)
+    {
+      os << indent << "Slice exiting intersection Actor 2D Visibility: " << this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility() << "\n";
+    }
+    else
+    {
+      os << indent << "Slice exiting intersection Actor 2D: (none)\n";
     }
   }
 }
@@ -1183,4 +1375,330 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsRepresentationIntersectingSlice(v
     return false;
   }
   return true;
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::ComputeIntersectionFadingScalars(vtkPolyData* worldPolyData,
+                                                                              vtkPlane* slicePlane,
+                                                                              vtkPolyData* outputPolyData,
+                                                                              vtkFloatArray* distanceArray,
+                                                                              vtkPoints* intersectionPoints)
+{
+  vtkPoints* inputPoints = worldPolyData ? worldPolyData->GetPoints() : nullptr;
+  if (!inputPoints || !slicePlane || !outputPolyData || inputPoints->GetNumberOfPoints() < 2)
+  {
+    if (outputPolyData)
+    {
+      outputPolyData->Initialize();
+    }
+    return;
+  }
+
+  // Determine the fading range: the tube is fully transparent beyond fadingEnd.
+  double fadingEnd = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+
+  // MTime guard: skip recomputation if inputs haven't changed since last call.
+  // This avoids expensive polyline walking and subdivision when neither the curve
+  // geometry, slice plane position, nor fading range have been modified.
+  // When cached, intersectionPoints is left untouched (still valid from previous call).
+  vtkMTimeType worldMTime = worldPolyData->GetMTime();
+  vtkMTimeType planeMTime = slicePlane->GetMTime();
+  if (worldMTime == this->FadingScalarsLastWorldDataMTime && planeMTime == this->FadingScalarsLastSlicePlaneMTime && fadingEnd == this->FadingScalarsLastFadingEnd
+      && outputPolyData->GetNumberOfPoints() > 0)
+  {
+    return;
+  }
+
+  // Number of subdivisions within the fading range for smooth opacity gradient
+  const int numFadingSteps = 10;
+  double subdivisionStep = fadingEnd / numFadingSteps;
+  vtkIdType numInputPts = inputPoints->GetNumberOfPoints();
+
+  vtkNew<vtkFloatArray> signedDist;
+  if (!distanceArray)
+  {
+    // Compute signed perpendicular distance from each input point to the slice plane.
+    signedDist->SetNumberOfValues(numInputPts);
+    slicePlane->EvaluateFunction(inputPoints->GetData(), signedDist);
+  }
+  else
+  {
+    signedDist->ShallowCopy(distanceArray);
+  }
+
+  // Walk along the polyline, detect plane crossings, and build the output point list.
+  // - Insert exact intersection points (scalar = 0) and collect them in intersectionPoints.
+  // - Subdivide segments that are near or cross the slice plane so that the per-vertex
+  //   opacity mapping produces an accurate fading gradient.
+  // - Skip portions of segments that are entirely beyond the fading range (both endpoints
+  //   beyond fadingEnd on the same side) to avoid rendering invisible geometry.
+  vtkNew<vtkPoints> outPoints;
+  outPoints->Allocate(numInputPts * (numFadingSteps + 3));
+  vtkNew<vtkFloatArray> outScalars;
+  outScalars->SetName("SliceDistance");
+  outScalars->SetNumberOfComponents(1);
+  outScalars->Allocate(numInputPts * (numFadingSteps + 3));
+
+  // Reset intersection points output for this polydata source.
+  if (intersectionPoints)
+  {
+    intersectionPoints->Reset();
+  }
+  this->LineSliceIntersectionApproachingSigns->Reset();
+
+  // Add first point (only if within the visible range)
+  double prevPt[3];
+  inputPoints->GetPoint(0, prevPt);
+  bool prevAdded = (fabs(signedDist->GetValue(0)) <= fadingEnd);
+  if (prevAdded)
+  {
+    outPoints->InsertNextPoint(prevPt);
+    outScalars->InsertNextValue(static_cast<float>(signedDist->GetValue(0)));
+  }
+
+  for (vtkIdType pointIndex = 1; pointIndex < numInputPts; pointIndex++)
+  {
+    double pt[3];
+    inputPoints->GetPoint(pointIndex, pt);
+
+    double d0 = signedDist->GetValue(pointIndex - 1);
+    double d1 = signedDist->GetValue(pointIndex);
+
+    // Check if both endpoints are beyond the fading range on the same side.
+    // No intersection is possible: segments entirely on one side of the plane
+    // that are also beyond the fading range cannot cross the slice plane.
+    if ((d0 > fadingEnd && d1 > fadingEnd) || (d0 < -fadingEnd && d1 < -fadingEnd))
+    {
+      // Entire segment is invisible — skip it
+      prevAdded = false;
+      vtkMath::Assign(pt, prevPt);
+      continue;
+    }
+
+    // This segment is at least partially visible. Compute the parameter range [tStart, tEnd]
+    // within [0,1] that corresponds to the visible portion (|distance| <= fadingEnd).
+    // d(t) = d0 + t*(d1 - d0), so t for a given distance D is: t = (D - d0)/(d1 - d0).
+    double tStart = 0.0;
+    double tEnd = 1.0;
+    double dDiff = d1 - d0;
+    bool notInPlane = fabs(dDiff) > 1e-6;
+    if (notInPlane)
+    {
+      // t where distance = +/-fadingEnd
+      double tPlus = (fadingEnd - d0) / dDiff;
+      double tMinus = (-fadingEnd - d0) / dDiff;
+
+      double tLow = (tPlus < tMinus) ? tPlus : tMinus;
+      double tHigh = (tPlus < tMinus) ? tMinus : tPlus;
+      tStart = (tLow > tStart) ? tLow : tStart;
+      tEnd = (tHigh < tEnd) ? tHigh : tEnd;
+    }
+
+    // Clamp to [0, 1]
+    tStart = vtkMath::ClampValue(tStart, 0.0, 1.0);
+    tEnd = vtkMath::ClampValue(tEnd, 0.0, 1.0);
+
+    if (tStart >= tEnd)
+    {
+      prevAdded = false;
+      vtkMath::Assign(pt, prevPt);
+      continue;
+    }
+
+    // Compute segment direction vector using vtkMath
+    double dir[3];
+    vtkMath::Subtract(pt, prevPt, dir);
+
+    // Add the start of the visible portion (if not already added)
+    if (tStart > 0.0 || !prevAdded)
+    {
+      double scaledStart[3] = { dir[0], dir[1], dir[2] };
+      vtkMath::MultiplyScalar(scaledStart, tStart);
+      double startPt[3];
+      vtkMath::Add(prevPt, scaledStart, startPt);
+      outPoints->InsertNextPoint(startPt);
+      outScalars->InsertNextValue(static_cast<float>(d0 + tStart * dDiff));
+    }
+
+    // Find the intersection of this segment with the slice plane (if any)
+    double tZero = 0.0;
+    double isectPt[3] = { 0.0, 0.0, 0.0 };
+    bool hasZeroCrossing = (slicePlane->IntersectWithLine(prevPt, pt, tZero, isectPt) != 0);
+
+    // Collect intersection point for the glyph display pipeline
+    if (hasZeroCrossing && intersectionPoints && notInPlane)
+    {
+      // Only add intersection point if it's not too close to the last one
+      vtkIdType numIsectPts = intersectionPoints->GetNumberOfPoints();
+      bool addIntersection = true;
+      if (numIsectPts > 0)
+      {
+        double lastIsectPt[3];
+        intersectionPoints->GetPoint(numIsectPts - 1, lastIsectPt);
+        double dist = vtkMath::Distance2BetweenPoints(isectPt, lastIsectPt);
+        // Use a small threshold (e.g., 1e-6) to avoid duplicate points
+        if (dist < 1e-6)
+        {
+          addIntersection = false;
+        }
+      }
+      if (addIntersection)
+      {
+        intersectionPoints->InsertNextPoint(isectPt);
+        this->LineSliceIntersectionApproachingSigns->InsertNextValue(static_cast<float>(d0 > 0. ? 1.0 : -1.0));
+      }
+    }
+
+    // Subdivide the visible portion [tStart, tEnd] at regular distance intervals
+    // and insert the zero crossing at the right position.
+    double distRange = fabs(dDiff * (tEnd - tStart));
+    int numSubdivisions = static_cast<int>(distRange / subdivisionStep);
+    if (numSubdivisions < 1)
+    {
+      numSubdivisions = 1;
+    }
+    double tStep = (tEnd - tStart) / numSubdivisions;
+    bool zeroCrossingInserted = (!hasZeroCrossing || tZero < tStart || tZero > tEnd);
+
+    for (int s = 1; s <= numSubdivisions; s++)
+    {
+      double t = tStart + s * tStep;
+
+      // Insert the zero-crossing point at its exact position if we pass it
+      if (!zeroCrossingInserted && t >= tZero)
+      {
+        outPoints->InsertNextPoint(isectPt);
+        outScalars->InsertNextValue(0.0f);
+        zeroCrossingInserted = true;
+
+        // Don't add a subdivision point if it's essentially at the same location
+        if (fabs(t - tZero) < tStep * 0.01)
+        {
+          continue;
+        }
+      }
+
+      // Add subdivision point (skip the last one, we'll add the end point below)
+      if (s < numSubdivisions)
+      {
+        double scaledSub[3] = { dir[0], dir[1], dir[2] };
+        vtkMath::MultiplyScalar(scaledSub, t);
+        double subPt[3];
+        vtkMath::Add(prevPt, scaledSub, subPt);
+        outPoints->InsertNextPoint(subPt);
+        outScalars->InsertNextValue(static_cast<float>(d0 + t * dDiff));
+      }
+    }
+
+    // Add the end of the visible portion
+    double scaledEnd[3] = { dir[0], dir[1], dir[2] };
+    vtkMath::MultiplyScalar(scaledEnd, tEnd);
+    double endPt[3];
+    vtkMath::Add(prevPt, scaledEnd, endPt);
+    outPoints->InsertNextPoint(endPt);
+    outScalars->InsertNextValue(static_cast<float>(d0 + tEnd * dDiff));
+    prevAdded = (tEnd >= 1.0);
+    vtkMath::Assign(pt, prevPt);
+  }
+
+  // Build polyline cell connecting all points in order
+  vtkIdType numOutPts = outPoints->GetNumberOfPoints();
+  vtkNew<vtkCellArray> outLines;
+  if (numOutPts > 1)
+  {
+    vtkNew<vtkIdList> ids;
+    ids->SetNumberOfIds(numOutPts);
+    for (vtkIdType pointIndex = 0; pointIndex < numOutPts; pointIndex++)
+    {
+      ids->SetId(pointIndex, pointIndex);
+    }
+    outLines->InsertNextCell(ids);
+  }
+
+  outputPolyData->SetPoints(outPoints);
+  outputPolyData->SetLines(outLines);
+  outputPolyData->GetPointData()->SetScalars(outScalars);
+  outputPolyData->Modified();
+
+  // Update cached MTimes so the guard can skip recomputation next time.
+  this->FadingScalarsLastWorldDataMTime = worldMTime;
+  this->FadingScalarsLastSlicePlaneMTime = planeMTime;
+  this->FadingScalarsLastFadingEnd = fadingEnd;
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdateSliceIntersectionPointDisplay(double glyphSize, vtkScalarsToColors* colorMap)
+{
+  if (!this->MarkupsDisplayNode || !this->MarkupsDisplayNode->GetLineSliceIntersectionPointVisibility() || !this->MarkupsDisplayNode->GetLineDirectionVisibility()
+      || !this->MarkupsDisplayNode->GetLineDirectionVisibility2D() || !this->Renderer)
+  {
+    this->LineSliceIntersectionEnteringPipeline->Actor->SetVisibility(false);
+    this->LineSliceIntersectionExitingPipeline->Actor->SetVisibility(false);
+    return;
+  }
+
+  this->LineSliceIntersectionEnteringPipeline->DisplayPoints->Reset();
+  this->LineSliceIntersectionExitingPipeline->DisplayPoints->Reset();
+
+  // Use half of fadingEnd as scalar offset so the LUT picks a clearly
+  // distinguishable fading color from the correct side of the slice plane.
+  double fadingEnd = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+  double sideOffset = fadingEnd * 0.5;
+  if (sideOffset <= 0.0)
+  {
+    sideOffset = 0.01;
+  }
+
+  for (vtkIdType pointIndex = 0; pointIndex < this->LineSliceIntersectionWorldPoints->GetNumberOfPoints(); pointIndex++)
+  {
+    double worldPos[3];
+    this->LineSliceIntersectionWorldPoints->GetPoint(pointIndex, worldPos);
+    double displayPos[4] = { 0.0 };
+    this->GetWorldToDisplayCoordinates(worldPos, displayPos);
+    double dp[3] = { displayPos[0], displayPos[1], 0.0 };
+
+    float sign = (pointIndex < this->LineSliceIntersectionApproachingSigns->GetNumberOfTuples()) ? this->LineSliceIntersectionApproachingSigns->GetValue(pointIndex) : 1.0f;
+    // When direction markers are reversed, swap entering/exiting assignment
+    if (!this->MarkupsDisplayNode->GetLineDirectionFirstToLastControlPoint())
+    {
+      sign = -sign;
+    }
+
+    // Entering: sign > 0 (curve approaches from positive side)
+    // Exiting: sign < 0 (curve approaches from negative side)
+    if (sign >= 0.0f)
+    {
+      this->LineSliceIntersectionEnteringPipeline->DisplayPoints->InsertNextPoint(dp);
+    }
+    else
+    {
+      this->LineSliceIntersectionExitingPipeline->DisplayPoints->InsertNextPoint(dp);
+    }
+  }
+
+  // Sample color from the LUT for each side and set on per-pipeline properties.
+  // Opacity is not mapped — intersection glyphs are always fully opaque.
+  if (colorMap)
+  {
+    double enteringColor[3];
+    colorMap->GetColor(+sideOffset, enteringColor);
+    this->LineSliceIntersectionEnteringPipeline->Property->SetColor(enteringColor);
+
+    double exitingColor[3];
+    colorMap->GetColor(-sideOffset, exitingColor);
+    this->LineSliceIntersectionExitingPipeline->Property->SetColor(exitingColor);
+  }
+
+  // Update entering pipeline (CircledCross)
+  this->LineSliceIntersectionEnteringPipeline->DisplayPoints->Modified();
+  this->LineSliceIntersectionEnteringPipeline->PointsPoly->Modified();
+  this->LineSliceIntersectionEnteringPipeline->Glypher->SetScaleFactor(glyphSize);
+
+  // Update exiting pipeline (CircledPoint)
+  this->LineSliceIntersectionExitingPipeline->DisplayPoints->Modified();
+  this->LineSliceIntersectionExitingPipeline->PointsPoly->Modified();
+  this->LineSliceIntersectionExitingPipeline->Glypher->SetScaleFactor(glyphSize);
+
+  this->LineSliceIntersectionEnteringPipeline->Actor->SetVisibility(this->LineSliceIntersectionEnteringPipeline->DisplayPoints->GetNumberOfPoints() > 0);
+  this->LineSliceIntersectionExitingPipeline->Actor->SetVisibility(this->LineSliceIntersectionExitingPipeline->DisplayPoints->GetNumberOfPoints() > 0);
 }

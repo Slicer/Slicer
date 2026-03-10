@@ -17,22 +17,17 @@
 =========================================================================*/
 
 // VTK includes
-#include "vtkActor2D.h"
-#include "vtkGlyph3D.h"
-#include "vtkMatrix4x4.h"
+#include "vtkGlyph3DMapper.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkSlicerLineRepresentation3D.h"
 #include "vtkTextActor.h"
-#include "vtkTextProperty.h"
-#include "vtkTransform.h"
 #include "vtkTubeFilter.h"
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-
 vtkStandardNewMacro(vtkSlicerLineRepresentation3D);
 
 //----------------------------------------------------------------------
@@ -85,8 +80,7 @@ void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
 //----------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
-  int count = 0;
-  count = this->Superclass::RenderOverlay(viewport);
+  int count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderOverlay(viewport);
@@ -101,8 +95,7 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count = 0;
-  count = this->Superclass::RenderOpaqueGeometry(viewport);
+  int count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
     double diameter =
@@ -121,8 +114,7 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count = 0;
-  count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
+  int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
     // The internal actor needs to share property keys.
@@ -182,14 +174,61 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     return;
   }
 
+  vtkPolyData* curveWorld = markupsNode->GetCurveWorld();
+  if (!curveWorld)
+  {
+    this->VisibilityOff();
+    return;
+  }
+
   this->VisibilityOn();
 
-  // Line geometry
+  // Line geometry – only rebuild when the number or position of control points changed
+  if (!event || event == vtkMRMLMarkupsNode::PointModifiedEvent || event == vtkMRMLMarkupsNode::PointAddedEvent || event == vtkMRMLMarkupsNode::PointRemovedEvent
+      || event == vtkMRMLMarkupsNode::PointPositionDefinedEvent || event == vtkMRMLMarkupsNode::PointPositionUndefinedEvent
+      || event == vtkMRMLMarkupsNode::PointPositionMissingEvent || event == vtkMRMLMarkupsNode::PointPositionNonMissingEvent
+      || event == vtkMRMLTransformableNode::TransformModifiedEvent || this->Line->GetNumberOfPoints() == 0)
+  {
+    this->BuildLine(this->Line, false);
+  }
 
-  this->BuildLine(this->Line, false);
+  // Direction markers update
+  bool directionMarkersWasModified = false;
+  if (this->MarkupsDisplayNode->GetLineDirectionVisibility() && this->MarkupsDisplayNode->GetLineDirectionVisibility3D() && this->Line->GetNumberOfPoints() >= 2)
+  {
+    double lineDiameter =
+      (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter()
+                                                                                                      : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
+    double markerSizeWorld = vtkMRMLMarkupsDisplayNode::LineDirectionMarkerBaseScaleFactor * this->MarkupsDisplayNode->GetLineDirectionMarkerScale() * lineDiameter;
+    double markerSpacingWorld = this->MarkupsDisplayNode->GetLineDirectionMarkerSpacingScale() * markerSizeWorld;
+    this->LineDirectionArrowPipeline->Mapper->SetScaleFactor(markerSizeWorld);
+    // Only rebuild marker positions when spacing or line geometry actually changed.
+    // UpdateFromMRMLInternal is called on mouse hover, selection changes, etc.
+    vtkMTimeType worldMTime = curveWorld ? curveWorld->GetMTime() : markupsNode->GetMTime();
+    bool lineDirectionFirstToLastControlPoint = this->MarkupsDisplayNode->GetLineDirectionFirstToLastControlPoint();
+    if (markerSpacingWorld != this->LineDirectionMarkerLastSpacing || worldMTime != this->LineDirectionMarkerLastGeometryMTime
+        || lineDirectionFirstToLastControlPoint != this->LineDirectionFirstToLastControlPoint)
+    {
+      vtkMRMLMarkupsNode::BuildLineDirectionMarkers(curveWorld->GetPoints(),
+                                                    /*closedCurve=*/false,
+                                                    markerSpacingWorld,
+                                                    this->LineDirectionArrowPipeline->Points,
+                                                    this->LineDirectionArrowPipeline->Normals,
+                                                    lineDirectionFirstToLastControlPoint);
+      directionMarkersWasModified = true;
+      this->LineDirectionArrowPipeline->PointsPoly->Modified();
+      this->LineDirectionMarkerLastSpacing = markerSpacingWorld;
+      this->LineDirectionMarkerLastGeometryMTime = worldMTime;
+      this->LineDirectionFirstToLastControlPoint = lineDirectionFirstToLastControlPoint;
+    }
+    this->LineDirectionArrowPipeline->Actor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+  }
+  else
+  {
+    this->LineDirectionArrowPipeline->Actor->SetVisibility(false);
+  }
 
   // Line display
-
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
   double diameter =
@@ -203,7 +242,16 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
   }
-  this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  vtkProperty* pipelineProperty = this->GetControlPointsPipeline(controlPointType)->Property;
+  this->LineActor->SetProperty(pipelineProperty);
+  if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
+  {
+    this->LineDirectionArrowPipeline->Actor->SetProperty(pipelineProperty);
+    if (!directionMarkersWasModified)
+    {
+      this->LineDirectionArrowPipeline->PointsPoly->Modified();
+    }
+  }
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);

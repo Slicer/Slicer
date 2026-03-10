@@ -31,13 +31,18 @@
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 
 #include <map>
+#include <memory>
 
 class vtkActor;
 class vtkActor2D;
 class vtkCellPicker;
+class vtkConeSource;
+class vtkDoubleArray;
 class vtkFastSelectVisiblePoints;
 class vtkGlyph3DMapper;
 class vtkLabelPlacementMapper;
+class vtkPoints;
+class vtkPolyData;
 class vtkPolyDataMapper;
 class vtkProperty;
 
@@ -137,6 +142,29 @@ protected:
   virtual void UpdateNthPointAndLabelFromMRML(int n);
 
   virtual void UpdateAllPointsAndLabelsFromMRML();
+
+  /// Per-glyph rendering pipeline for direction arrow markers (3D).
+  /// Holds the cone source, world-space points, normals, polydata, Glyph3DMapper, and actor.
+  class LineDirectionArrowPipeline3D
+  {
+  public:
+    LineDirectionArrowPipeline3D();
+    ~LineDirectionArrowPipeline3D() = default;
+
+    vtkSmartPointer<vtkPoints> Points;
+    vtkSmartPointer<vtkDoubleArray> Normals;
+    vtkSmartPointer<vtkPolyData> PointsPoly;
+    vtkSmartPointer<vtkGlyph3DMapper> Mapper;
+    vtkSmartPointer<vtkActor> Actor;
+  };
+
+  /// Direction arrow glyph pipeline (3D).
+  std::unique_ptr<LineDirectionArrowPipeline3D> LineDirectionArrowPipeline;
+
+  /// Cached marker spacing/geometry MTime/reversed flag for BuildLineDirectionMarkers guard.
+  double LineDirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType LineDirectionMarkerLastGeometryMTime = 0;
+  bool LineDirectionFirstToLastControlPoint = true;
 
   /// Update the occluded relative offsets for an occluded mapper
   /// Allows occluded regions to be rendered on top.

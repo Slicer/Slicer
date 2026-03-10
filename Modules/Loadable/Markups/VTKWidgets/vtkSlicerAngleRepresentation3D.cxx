@@ -17,18 +17,12 @@
 =========================================================================*/
 
 // VTK includes
-#include "vtkActor2D.h"
 #include "vtkArcSource.h"
-#include "vtkCellLocator.h"
-#include "vtkGlyph3D.h"
 #include "vtkPolyDataMapper.h"
-#include "vtkPointData.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
-#include "vtkSelectVisiblePoints.h"
 #include "vtkSlicerAngleRepresentation3D.h"
 #include "vtkTextActor.h"
-#include "vtkTextProperty.h"
 #include "vtkTubeFilter.h"
 
 // MRML includes
@@ -192,12 +186,16 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->VisibilityOn();
 
   // Update lines geometry
-
-  this->BuildLine(this->Line, false);
-  this->BuildArc();
+  if (!event || event == vtkMRMLMarkupsNode::PointModifiedEvent || event == vtkMRMLMarkupsNode::PointAddedEvent || event == vtkMRMLMarkupsNode::PointRemovedEvent
+      || event == vtkMRMLMarkupsNode::PointPositionDefinedEvent || event == vtkMRMLMarkupsNode::PointPositionUndefinedEvent
+      || event == vtkMRMLMarkupsNode::PointPositionMissingEvent || event == vtkMRMLMarkupsNode::PointPositionNonMissingEvent
+      || event == vtkMRMLTransformableNode::TransformModifiedEvent)
+  {
+    this->BuildLine(this->Line, false);
+    this->BuildArc();
+  }
 
   // Update lines display properties
-
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
   this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper, this->ArcOccludedMapper);
 

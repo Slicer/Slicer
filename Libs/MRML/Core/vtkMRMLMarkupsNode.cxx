@@ -2159,6 +2159,108 @@ vtkAlgorithmOutput* vtkMRMLMarkupsNode::GetCurveWorldConnection()
   return this->CurvePolyToWorldTransformer->GetOutputPort();
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsNode::BuildLineDirectionMarkers(vtkPoints* curvePoints,
+                                                   bool closedCurve,
+                                                   double spacing,
+                                                   vtkPoints* outPositions,
+                                                   vtkDoubleArray* outTangents,
+                                                   bool directionFirstToLastControlPoint /*=true*/)
+{
+  if (!curvePoints || !outPositions || !outTangents)
+  {
+    vtkGenericWarningMacro("vtkMRMLMarkupsNode::BuildLineDirectionMarkers failed: invalid inputs");
+    return false;
+  }
+
+  outPositions->Reset();
+  outTangents->Reset();
+  outTangents->SetNumberOfComponents(3);
+
+  vtkIdType numberOfPoints = curvePoints->GetNumberOfPoints();
+  if (numberOfPoints < 2 || spacing <= 1.e-6)
+  {
+    return false;
+  }
+
+  // Compute total curve length so we can anchor markers to the curve center.
+  // Same algorithm as vtkMRMLMarkupsCurveNode::GetCurveLength.
+  double totalLength = 0.0;
+  double previousPoint[3] = { 0.0 };
+  double nextPoint[3] = { 0.0 };
+  curvePoints->GetPoint(0, previousPoint);
+  for (vtkIdType pointIndex = 1; pointIndex < numberOfPoints; ++pointIndex)
+  {
+    curvePoints->GetPoint(pointIndex, nextPoint);
+    totalLength += std::sqrt(vtkMath::Distance2BetweenPoints(previousPoint, nextPoint));
+    vtkMath::Assign(nextPoint, previousPoint);
+  }
+  if (closedCurve)
+  {
+    curvePoints->GetPoint(0, nextPoint);
+    totalLength += std::sqrt(vtkMath::Distance2BetweenPoints(previousPoint, nextPoint));
+  }
+
+  // Start from the center of the curve so that a marker always lands exactly at the midpoint.
+  // Markers are at positions: fmod(half, spacing), fmod(half, spacing)+spacing, ...
+  // so the initial "distance already travelled since last marker" is spacing - fmod(half, spacing).
+  // Special-case fmod==0 to avoid a zero distanceToNextMarker in the walk loop.
+  double halfMod = std::fmod(totalLength * 0.5, spacing);
+  double distanceFromLastMarker = (halfMod > 0.0) ? (spacing - halfMod) : 0.0;
+  curvePoints->GetPoint(0, previousPoint);
+
+  bool addClosingSegment = closedCurve;
+  for (vtkIdType pointIndex = 1; pointIndex < numberOfPoints || addClosingSegment; ++pointIndex)
+  {
+    double currentPoint[3] = { 0.0 };
+    if (pointIndex >= numberOfPoints)
+    {
+      addClosingSegment = false;
+      curvePoints->GetPoint(0, currentPoint);
+    }
+    else
+    {
+      curvePoints->GetPoint(pointIndex, currentPoint);
+    }
+
+    // Compute normalized tangent; vtkMath::Normalize returns the original norm.
+    double tangent[3];
+    vtkMath::Subtract(currentPoint, previousPoint, tangent);
+    double segmentLength = vtkMath::Normalize(tangent);
+    if (segmentLength <= 0.0)
+    {
+      continue;
+    }
+    double sign = directionFirstToLastControlPoint ? 1.0 : -1.0;
+    double outputTangent[3];
+    vtkMath::Assign(tangent, outputTangent);
+    vtkMath::MultiplyScalar(outputTangent, sign);
+
+    // Walk along this segment emitting markers whenever the distance from the last
+    // marker reaches the requested spacing.
+    double distanceTravelledInSegment = 0.0;
+    double distanceToNextMarker = spacing - distanceFromLastMarker;
+    while (distanceTravelledInSegment + distanceToNextMarker <= segmentLength)
+    {
+      distanceTravelledInSegment += distanceToNextMarker;
+      double markerPoint[3];
+      vtkMath::Assign(tangent, markerPoint);
+      vtkMath::MultiplyScalar(markerPoint, distanceTravelledInSegment);
+      vtkMath::Add(previousPoint, markerPoint, markerPoint);
+
+      outPositions->InsertNextPoint(markerPoint);
+      outTangents->InsertNextTuple(outputTangent);
+      distanceFromLastMarker = 0.0;
+      distanceToNextMarker = spacing;
+    }
+    distanceFromLastMarker += segmentLength - distanceTravelledInSegment;
+
+    vtkMath::Assign(currentPoint, previousPoint);
+  }
+
+  return true;
+}
+
 //----------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex)
 {
