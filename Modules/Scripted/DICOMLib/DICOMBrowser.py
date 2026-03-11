@@ -169,6 +169,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             selectedSeriesInstanceUIDs = self.dicomBrowser.selectedItems(ctk.ctkDICOMModel.IndexType.SeriesType)
 
         self.dicomVisualBrowser.visible = self.useVisualDICOMBrowser
+        if self.dicomVisualBrowser.visible:
+            self.dicomVisualBrowser.refreshBrowser()
         self.dicomBrowser.visible = not self.useVisualDICOMBrowser
 
         if self.dicomVisualBrowser.visible:
