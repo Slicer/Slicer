@@ -172,6 +172,7 @@ class DICOM(ScriptedLoadableModule):
         self.dockWidget = None  # Dockable panel for the browser widget (used in dock mode)
         self.isDockMode = False  # Track whether browser is in dock mode or layout mode
         self.currentViewArrangement = 0
+        self.databaseChanged = False  # Set to True when database changes, cleared after visual browser is refreshed
         # This variable is set to true if we temporarily
         # hide the data probe (and so we need to restore its visibility).
         self.dataProbeHasBeenTemporarilyHidden = False
@@ -959,8 +960,11 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.ui.browserAutoHideCheckBox.stateChanged.connect(self.onBrowserAutoHideStateChanged)
         self.browserWidget.setBrowserPersistence(not self.ui.browserAutoHideCheckBox.checked)
 
-        self.ui.repairDatabaseButton.connect("clicked()", self.browserWidget.dicomBrowser, "onRepairAction()")
+        self.ui.repairDatabaseButton.connect("clicked()", self.onRepairDatabase)
         self.ui.clearDatabaseButton.connect("clicked()", self.onClearDatabase)
+        self.ui.refreshBrowserButton.connect("clicked()", self.onRefreshBrowserButton)
+
+        slicer.dicomDatabase.connect("databaseChanged()", self.onDatabaseChanged)
 
         # connect to the main window's dicom button
         mw = slicer.util.mainWindow()
@@ -1011,6 +1015,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.onOpenBrowserWidget()
         self.addListenerObservers()
         self.onListenerStateChanged()
+        self.refreshVisualBrowserIfNeeded()
 
     def exit(self):
         self.removeListenerObservers()
@@ -1085,6 +1090,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if browserIsShown:
             self.ui.showBrowserButton.text = _("Hide DICOM database")
             self.onOpenBrowserWidget()
+            self.refreshVisualBrowserIfNeeded()
         else:
             self.ui.showBrowserButton.text = _("Show DICOM database")
             self.closeBrowser()
@@ -1121,10 +1127,26 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         else:
             self.browserWidget.setImportDirectoryMode(ctk.ctkDICOMBrowser.ImportDirectoryAddLink)
 
+    def onDatabaseChanged(self):
+        slicer.modules.DICOMInstance.databaseChanged = True
+
+    def refreshVisualBrowserIfNeeded(self):
+        if slicer.modules.DICOMInstance.databaseChanged and self.browserWidget:
+            self.browserWidget.dicomVisualBrowser.refreshBrowser()
+            slicer.modules.DICOMInstance.databaseChanged = False
+
+    def onRefreshBrowserButton(self):
+        """Force a refresh of the visual DICOM browser regardless of the databaseChanged flag."""
+        if self.browserWidget:
+            self.browserWidget.dicomVisualBrowser.refreshBrowser()
+        slicer.modules.DICOMInstance.databaseChanged = False
+
     def onShowVisualDICOMBrowser(self, toggled):
         settings = qt.QSettings()
         settings.setValue("DICOM/UseVisualDICOMBrowser", bool(toggled))
         self.browserWidget.toggleBrowsers(toggled)
+        if toggled:
+            self.refreshVisualBrowserIfNeeded()
 
     def importFolder(self):
         if not DICOMFileDialog.createDefaultDatabase():
@@ -1364,6 +1386,11 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if self.browserWidget:
             self.browserWidget.setBrowserPersistence(browserPersistent)
 
+    def onRepairDatabase(self):
+        if self.browserWidget:
+            self.browserWidget.dicomBrowser.onRepairAction()
+            self.refreshVisualBrowserIfNeeded()
+
     def onClearDatabase(self):
         patientIds = slicer.dicomDatabase.patients()
         if len(patientIds) == 0:
@@ -1377,6 +1404,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
         DICOMLib.clearDatabase(slicer.dicomDatabase)
         slicer.app.restoreOverrideCursor()
+        self.refreshVisualBrowserIfNeeded()
 
 
 class DICOMFileReader:

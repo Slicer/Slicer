@@ -319,6 +319,16 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="refreshBrowserButton">
+        <property name="toolTip">
+         <string>Refresh the visual DICOM browser to show the current state of the database.</string>
+        </property>
+        <property name="text">
+         <string>Refresh browser</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
