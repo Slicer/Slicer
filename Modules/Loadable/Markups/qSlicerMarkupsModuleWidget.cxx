@@ -20,8 +20,10 @@
 #include <QButtonGroup>
 #include <QClipboard>
 #include <QDebug>
+#include <QDockWidget>
 #include <QInputDialog>
 #include <QList>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QModelIndex>
@@ -43,11 +45,8 @@
 #include "ctkMessageBox.h"
 
 // Slicer includes
-#include "qMRMLNodeFactory.h"
-#include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
 #include "qMRMLSubjectHierarchyModel.h"
-#include "qMRMLUtils.h"
 #include "qSlicerApplication.h"
 
 // MRML includes
@@ -60,10 +59,6 @@
 #include "vtkMRMLSubjectHierarchyNode.h"
 #include "vtkMRMLTableNode.h"
 
-// MRMLDM includes
-#include "vtkMRMLMarkupsDisplayableManager.h"
-#include "vtkMRMLMarkupsDisplayableManagerHelper.h"
-
 // Module logic includes
 #include <vtkSlicerColorLogic.h>
 
@@ -73,7 +68,6 @@
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
 #include "ui_qSlicerMarkupsModule.h"
-#include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
@@ -81,9 +75,10 @@
 #include "qMRMLMarkupsToolBar.h"
 
 // VTK includes
+#include <vtkCollectionIterator.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
-#include "vtkPoints.h"
+#include <vtkPoints.h>
 #include <math.h>
 
 static const int JUMP_MODE_COMBOBOX_INDEX_IGNORE = 0;
@@ -194,8 +189,6 @@ private:
 qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMarkupsModuleWidget& object)
   : q_ptr(&object)
 {
-  Q_Q(qSlicerMarkupsModuleWidget);
-
   this->columnLabels << qSlicerMarkupsModuleWidget::tr("Selected") << qSlicerMarkupsModuleWidget::tr("Locked") << qSlicerMarkupsModuleWidget::tr("Visible")
                      << qSlicerMarkupsModuleWidget::tr("Name") << qSlicerMarkupsModuleWidget::tr("Description") << qSlicerMarkupsModuleWidget::tr("R") //: right
                      << qSlicerMarkupsModuleWidget::tr("A")                                                                                            //: anterior
@@ -254,7 +247,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->activeMarkupTreeView->setNodeTypes(registeredMarkups);
   this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->idColumn(), true);
   this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->transformColumn(), true);
-  this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->descriptionColumn(), false);
+  this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->descriptionColumn(), true);
 
   // We need to disable the controlPointsCollapsibleButton here because doing so in the .ui file would lead to
   // "child widget is not accessible" warning in debug mode whenever a point is selected in the control point list.
@@ -485,6 +478,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // hide measurement settings table until markups node containing measurement is set
   this->measurementSettingsTableWidget->setVisible(false);
+  QHeaderView* horizontalHeader = this->measurementSettingsTableWidget->horizontalHeader();
+  horizontalHeader->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
 
   // Export/import
   this->ImportExportOperationButtonGroup = new QButtonGroup(this->exportImportCollapsibleButton);
@@ -535,19 +530,17 @@ int qSlicerMarkupsModuleWidgetPrivate::numberOfColumns()
 //-----------------------------------------------------------------------------
 vtkMRMLSelectionNode* qSlicerMarkupsModuleWidgetPrivate::selectionNode()
 {
-  Q_Q(qSlicerMarkupsModuleWidget);
-  if (!q->mrmlScene() || !q->markupsLogic())
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
   {
     return nullptr;
   }
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->markupsLogic()->GetSelectionNodeID().c_str()));
-  return selectionNode;
+  return appLogic->GetSelectionNode();
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* qSlicerMarkupsModuleWidgetPrivate::markupsDisplayNode()
 {
-  Q_Q(qSlicerMarkupsModuleWidget);
   if (!this->MarkupsNode)
   {
     return nullptr;
@@ -793,7 +786,6 @@ qSlicerMarkupsModuleWidget::qSlicerMarkupsModuleWidget(QWidget* _parent)
 //-----------------------------------------------------------------------------
 qSlicerMarkupsModuleWidget::~qSlicerMarkupsModuleWidget()
 {
-  Q_D(qSlicerMarkupsModuleWidget);
   this->setMRMLMarkupsNode(nullptr);
 }
 
@@ -1864,7 +1856,6 @@ void qSlicerMarkupsModuleWidget::enableMarkupTableButtons(bool enable)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onCreateMarkupByClass(const QString& className)
 {
-  Q_D(qSlicerMarkupsModuleWidget);
   if (!this->markupsLogic())
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
@@ -3035,8 +3026,19 @@ void qSlicerMarkupsModuleWidget::onMeasurementModified(vtkObject* caller)
       QList<QTableWidgetItem*> nameItemsFound = d->measurementSettingsTableWidget->findItems(measurementName, Qt::MatchExactly);
       for (QTableWidgetItem* const nameItem : nameItemsFound)
       {
-        QCheckBox* checkbox = qobject_cast<QCheckBox*>(d->measurementSettingsTableWidget->cellWidget(nameItem->row(), 1));
-        checkbox->setChecked(measurement->GetEnabled());
+        QWidget* layoutObject = d->measurementSettingsTableWidget->cellWidget(nameItem->row(), 1);
+        if (!layoutObject)
+        {
+          continue;
+        }
+
+        QCheckBox* enabledCheckbox = layoutObject->findChild<QCheckBox*>("enabledCheckbox");
+        if (!enabledCheckbox)
+        {
+          continue;
+        }
+
+        enabledCheckbox->setChecked(measurement->GetEnabled());
       }
     }
   }
@@ -3047,35 +3049,27 @@ void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  if (!d->MarkupsNode)
+  if (!d->MarkupsNode || d->MarkupsNode->GetNumberOfEnabledAndDefinedMeasurements() == 0)
   {
     d->measurementsLabel->setText(tr("No measurement"));
     return;
   }
 
   QString measurementsString;
-  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  if (d->MarkupsNode->GetNumberOfEnabledAndDefinedMeasurements() == 1)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
-    if (!currentMeasurement || !currentMeasurement->GetEnabled() || !currentMeasurement->GetValueDefined())
+    vtkMRMLMeasurement* measurement = d->MarkupsNode->GetNthMeasurement(0);
+    if (measurement && measurement->GetEnabled() && measurement->GetValueDefined())
     {
-      continue;
-    }
-    measurementsString.append(QString::fromStdString(currentMeasurement->GetName()));
-    measurementsString.append(": ");
-    if (currentMeasurement->GetLastComputationResult() == vtkMRMLMeasurement::OK)
-    {
-      measurementsString.append(currentMeasurement->GetValueWithUnitsAsPrintableString().c_str());
-    }
-    else
-    {
-      measurementsString.append(currentMeasurement->GetLastComputationResultAsPrintableString());
-    }
-    if (i != d->MarkupsNode->Measurements->GetNumberOfItems() - 1)
-    {
-      measurementsString.append("\n");
+      QString name = QString::fromStdString(measurement->GetName());
+      measurementsString = name + ": " + QString::fromStdString(d->MarkupsNode->GetPropertiesLabelText());
     }
   }
+  else
+  {
+    measurementsString = QString::fromStdString(d->MarkupsNode->GetPropertiesLabelText());
+  }
+
   d->measurementsLabel->setText(measurementsString.isEmpty() ? tr("No measurement") : measurementsString);
 }
 
@@ -3106,10 +3100,19 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
     d->measurementSettingsTableWidget->setItem(i, 0, nameItem);
 
     QCheckBox* enabledCheckbox = new QCheckBox();
+    enabledCheckbox->setObjectName("enabledCheckbox");
     enabledCheckbox->setChecked(currentMeasurement->GetEnabled());
     enabledCheckbox->setProperty(NAME_PROPERTY, QString::fromStdString(currentMeasurement->GetName()));
+
+    QWidget* layoutObject = new QWidget();
+    QHBoxLayout* hLayout = new QHBoxLayout();
+    hLayout->setMargin(0);
+    hLayout->setAlignment(Qt::AlignCenter);
+    hLayout->addWidget(enabledCheckbox);
+    layoutObject->setLayout(hLayout);
+
     QObject::connect(enabledCheckbox, SIGNAL(toggled(bool)), this, SLOT(onMeasurementEnabledCheckboxToggled(bool)));
-    d->measurementSettingsTableWidget->setCellWidget(i, 1, enabledCheckbox);
+    d->measurementSettingsTableWidget->setCellWidget(i, 1, layoutObject);
     d->measurementSettingsTableWidget->setRowHeight(i, enabledCheckbox->sizeHint().height());
   }
 }
