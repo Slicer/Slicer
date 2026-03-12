@@ -101,6 +101,7 @@
         # Additional tools useful during Slicer development but not
         # strictly required for the build itself.
         devDeps = with pkgs; [
+          ccache
           python312
           uv
         ];
@@ -138,6 +139,11 @@
             # Bridge Nix's cmake prefix path so that cmake invoked
             # manually in the shell can find Qt6 and other dependencies.
             export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+            # Enable ccache for C/C++ compilation. CMake will use these
+            # as compiler launchers, speeding up subsequent rebuilds.
+            export CMAKE_C_COMPILER_LAUNCHER=ccache
+            export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
             # Ensure OpenGL drivers are available at runtime on NixOS
             if [ -d /run/opengl-driver/lib ]; then
