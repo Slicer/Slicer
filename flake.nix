@@ -33,10 +33,12 @@
           qt6.qtbase
           qt6.qtmultimedia
           qt6.qtsvg
-          qt6.qttools # includes UiTools
-          qt6.qtwebengine
+          qt6.qttools # includes UiTools, LinguistTools
+          qt6.qtwebengine # WebEngineCore, WebEngineWidgets
           qt6.qtwebchannel
-          qt6.qt5compat # XMLPatterns moved here in Qt6
+          qt6.qtdeclarative # Quick, QuickWidgets, Qml
+          qt6.qtscxml # StateMachine
+          qt6.qt5compat # Core5Compat (XMLPatterns moved here in Qt6)
           qt6.wrapQtAppsHook
 
           # Required system libraries
@@ -133,8 +135,12 @@
           packages = buildDeps ++ runtimeDeps ++ devDeps;
 
           shellHook = ''
-            # Make Qt6 discoverable by CMake
-            export QT_PLUGIN_PATH="${pkgs.qt6.qtbase}/${pkgs.qt6.qtbase.qtPluginPrefix}"
+            # Bridge Nix's cmake prefix path so that cmake invoked
+            # manually in the shell can find Qt6 and other dependencies.
+            export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+            # Tell Slicer's CMake to use Qt6 instead of Qt5.
+            export cmakeFlags="$cmakeFlags -DSlicer_REQUIRED_QT_VERSION:STRING=6.8"
 
             # Ensure OpenGL drivers are available at runtime on NixOS
             if [ -d /run/opengl-driver/lib ]; then
