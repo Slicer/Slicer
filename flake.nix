@@ -139,9 +139,6 @@
             # manually in the shell can find Qt6 and other dependencies.
             export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
-            # Tell Slicer's CMake to use Qt6 instead of Qt5.
-            export cmakeFlags="$cmakeFlags -DSlicer_REQUIRED_QT_VERSION:STRING=6.8"
-
             # Ensure OpenGL drivers are available at runtime on NixOS
             if [ -d /run/opengl-driver/lib ]; then
               export LD_LIBRARY_PATH="/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
