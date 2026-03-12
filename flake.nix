@@ -17,6 +17,51 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        # Python 3.12 with packages required by the Slicer superbuild's
+        # system-package checks when Slicer_USE_SYSTEM_python=ON.
+        # Each python-* sub-project verifies its modules are importable.
+        slicerPython = pkgs.python312.withPackages (
+          ps: with ps; [
+            # python-ensurepip / python-pip / python-setuptools / python-wheel
+            pip
+            setuptools
+            wheel
+            # python-numpy
+            numpy
+            # python-scipy
+            scipy
+            # python-SimpleITK
+            simpleitk
+            # python-pythonqt-requirements
+            packaging
+            pyparsing
+            # python-dicom-requirements
+            pydicom
+            six
+            pillow
+            dicomweb-client
+            # python-requests-requirements
+            certifi
+            idna
+            chardet
+            urllib3
+            requests
+            # python-extension-manager-ssl-requirements
+            pyjwt
+            wrapt
+            deprecated
+            pycparser
+            cffi
+            pynacl
+            python-dateutil
+            pygithub
+            # python-extension-manager-requirements
+            gitpython
+            gitdb
+            smmap
+          ]
+        );
+
         # ── Build-time dependencies ──────────────────────────────────
         # Tools and libraries needed to configure and compile Slicer
         # from source using the CMake superbuild.
@@ -42,9 +87,9 @@
           qt6.wrapQtAppsHook
 
           # Required system libraries
-          libffi # Use system libffi to avoid GCC 15 asm compat issue
           libxt
           openssl
+          slicerPython # Python 3.12 + pip/setuptools (USE_SYSTEM_python)
 
           # Build helpers
           pkg-config
@@ -103,8 +148,16 @@
         # strictly required for the build itself.
         devDeps = with pkgs; [
           ccache
-          python312
           uv
+
+          # Wrapper script that invokes cmake with NixOS-specific flags.
+          # Uses a bash script rather than a shell alias so that flags are
+          # word-split correctly in any shell (fish, zsh, bash, etc.).
+          (writeShellScriptBin "slicer-cmake" ''
+            exec cmake \
+              -DSlicer_USE_SYSTEM_python:BOOL=ON \
+              "$@"
+          '')
         ];
 
         # # ── Pre-built binary runtime libs (commented out) ──────────
@@ -141,9 +194,13 @@
             # manually in the shell can find Qt6 and other dependencies.
             export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
-            # Use system libffi to avoid GCC 15 assembly syntax
-            # incompatibility in the superbuild's bundled libffi.
-            export cmakeFlags="-DSlicer_USE_SYSTEM_LibFFI:BOOL=ON"
+            # Use 'slicer-cmake' instead of 'cmake' to configure Slicer.
+            # It passes NixOS-specific flags to use Nix's Python 3.12 and all
+            # its packages instead of building them from source. All python-*
+            # sub-project dependencies are provided by Nix.
+            #
+            # Example:
+            #   slicer-cmake ../../src/Slicer
 
             # Enable ccache for C/C++ compilation. CMake will use these
             # as compiler launchers, speeding up subsequent rebuilds.
