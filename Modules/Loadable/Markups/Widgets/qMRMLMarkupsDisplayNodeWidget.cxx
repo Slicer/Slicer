@@ -46,6 +46,7 @@ class qMRMLMarkupsDisplayNodeWidgetPrivate
   : public QWidget
   , public Ui_qMRMLMarkupsDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLMarkupsDisplayNodeWidget);
 
 protected:
@@ -751,3 +752,5 @@ void qMRMLMarkupsDisplayNodeWidget::onSnapModeWidgetChanged()
   int snapMode = d->SnapModeComboBox->currentData().toInt();
   d->MarkupsDisplayNode->SetSnapMode(snapMode);
 }
+
+#include "qMRMLMarkupsDisplayNodeWidget.moc"
