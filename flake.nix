@@ -42,6 +42,7 @@
           qt6.wrapQtAppsHook
 
           # Required system libraries
+          libffi # Use system libffi to avoid GCC 15 asm compat issue
           libxt
           openssl
 
@@ -139,6 +140,10 @@
             # Bridge Nix's cmake prefix path so that cmake invoked
             # manually in the shell can find Qt6 and other dependencies.
             export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+            # Use system libffi to avoid GCC 15 assembly syntax
+            # incompatibility in the superbuild's bundled libffi.
+            export cmakeFlags="-DSlicer_USE_SYSTEM_LibFFI:BOOL=ON"
 
             # Enable ccache for C/C++ compilation. CMake will use these
             # as compiler launchers, speeding up subsequent rebuilds.
