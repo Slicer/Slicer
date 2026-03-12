@@ -15,15 +15,10 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS
-    nose
-    numpy
+  ExternalProject_FindPythonPackage(
+    MODULE_NAME "numpy"
+    REQUIRED
     )
-    ExternalProject_FindPythonPackage(
-      MODULE_NAME "${module_name}"
-      REQUIRED
-      )
-  endforeach()
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
