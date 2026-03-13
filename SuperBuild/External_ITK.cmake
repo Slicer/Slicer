@@ -141,6 +141,9 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      # HDF5 - use system HDF5 to avoid dual-library symbol conflict
+      # when system VTK transitively loads libhdf5_cpp.so
+      -DITK_USE_SYSTEM_HDF5:BOOL=ON
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     INSTALL_COMMAND ""
     DEPENDS

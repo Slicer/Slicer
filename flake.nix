@@ -150,6 +150,7 @@
           jsoncpp # v1.9.6 in nixpkgs matches superbuild pin
           rapidjson # header-only
           libarchive
+          hdf5-cpp # HDF5 with C++ bindings (ITK_USE_SYSTEM_HDF5)
 
           # Build helpers
           pkg-config
