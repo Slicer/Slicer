@@ -68,6 +68,7 @@ qSlicerTextsModuleWidget::~qSlicerTextsModuleWidget() = default;
 void qSlicerTextsModuleWidget::setup()
 {
   Q_D(qSlicerTextsModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 }
 
