@@ -191,6 +191,7 @@
           # Graphics
           libGL
           libGLU
+          libgbm # QtWebEngine's Chromium needs GBM for EGL/native GPU rendering
           vulkan-loader
 
           # Wayland
@@ -216,6 +217,116 @@
           # C++ runtime
           stdenv.cc.cc.lib
         ];
+
+        # ── NVIDIA workaround ───────────────────────────────────────
+        # QtWebEngine's Chromium scans /proc/self/mem (reading 64 bytes
+        # from every VMA). When the process has NVIDIA GPU mappings (from
+        # VTK's OpenGL rendering), this triggers a NULL pointer dereference
+        # in nvidia_vma_access (kernel module bug in driver 595.x with
+        # Open Kernel Module on kernel 6.18+). The kernel oopses and
+        # SIGKILL's the process.
+        #
+        # This LD_PRELOAD library intercepts pread/pread64 and returns EIO
+        # for any fd pointing to /proc/self/mem. Chromium handles EIO
+        # gracefully (some VMAs already return EIO normally).
+        blockProcMem = pkgs.stdenv.mkDerivation {
+          name = "block-proc-self-mem";
+          dontUnpack = true;
+          buildPhase = ''
+            cat > block_proc_mem.c << 'CSRC'
+            #define _GNU_SOURCE
+            #include <dlfcn.h>
+            #include <errno.h>
+            #include <fcntl.h>
+            #include <string.h>
+            #include <unistd.h>
+            #include <sys/types.h>
+            #include <stdio.h>
+            #include <stdarg.h>
+
+            static int is_proc_self_mem(const char *path) {
+                return path && strcmp(path, "/proc/self/mem") == 0;
+            }
+
+            static int is_proc_self_mem_fd(int fd) {
+                char link[64], target[256];
+                snprintf(link, sizeof(link), "/proc/self/fd/%d", fd);
+                ssize_t len = readlink(link, target, sizeof(target) - 1);
+                if (len > 0) { target[len] = '\0'; return is_proc_self_mem(target); }
+                return 0;
+            }
+
+            /* Block open/openat for /proc/self/mem (catches libc callers) */
+            int open(const char *path, int flags, ...) {
+                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
+                static int (*real)(const char *, int, ...) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "open");
+                if (flags & (O_CREAT | O_TMPFILE)) {
+                    va_list ap; va_start(ap, flags);
+                    int mode = va_arg(ap, int); va_end(ap);
+                    return real(path, flags, mode);
+                }
+                return real(path, flags);
+            }
+
+            int open64(const char *path, int flags, ...) {
+                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
+                static int (*real)(const char *, int, ...) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "open64");
+                if (flags & (O_CREAT | O_TMPFILE)) {
+                    va_list ap; va_start(ap, flags);
+                    int mode = va_arg(ap, int); va_end(ap);
+                    return real(path, flags, mode);
+                }
+                return real(path, flags);
+            }
+
+            int openat(int dirfd, const char *path, int flags, ...) {
+                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
+                static int (*real)(int, const char *, int, ...) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "openat");
+                if (flags & (O_CREAT | O_TMPFILE)) {
+                    va_list ap; va_start(ap, flags);
+                    int mode = va_arg(ap, int); va_end(ap);
+                    return real(dirfd, path, flags, mode);
+                }
+                return real(dirfd, path, flags);
+            }
+
+            int openat64(int dirfd, const char *path, int flags, ...) {
+                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
+                static int (*real)(int, const char *, int, ...) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "openat64");
+                if (flags & (O_CREAT | O_TMPFILE)) {
+                    va_list ap; va_start(ap, flags);
+                    int mode = va_arg(ap, int); va_end(ap);
+                    return real(dirfd, path, flags, mode);
+                }
+                return real(dirfd, path, flags);
+            }
+
+            /* Block pread on /proc/self/mem (catches raw-syscall openers) */
+            ssize_t pread(int fd, void *buf, size_t count, off_t offset) {
+                if (is_proc_self_mem_fd(fd)) { errno = EIO; return -1; }
+                static ssize_t (*real)(int, void *, size_t, off_t) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "pread");
+                return real(fd, buf, count, offset);
+            }
+
+            ssize_t pread64(int fd, void *buf, size_t count, off_t offset) {
+                if (is_proc_self_mem_fd(fd)) { errno = EIO; return -1; }
+                static ssize_t (*real)(int, void *, size_t, off_t) = NULL;
+                if (!real) real = dlsym(RTLD_NEXT, "pread64");
+                return real(fd, buf, count, offset);
+            }
+            CSRC
+            $CC -shared -fPIC -o block_proc_mem.so block_proc_mem.c -ldl
+          '';
+          installPhase = ''
+            mkdir -p $out/lib
+            cp block_proc_mem.so $out/lib/
+          '';
+        };
 
         # ── Development extras ───────────────────────────────────────
         # Additional tools useful during Slicer development but not
@@ -287,10 +398,28 @@
             export CMAKE_C_COMPILER_LAUNCHER=ccache
             export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
-            # Ensure OpenGL drivers are available at runtime on NixOS
-            if [ -d /run/opengl-driver/lib ]; then
+            # Ensure GPU drivers are available at runtime on NixOS.
+            # LD_LIBRARY_PATH: OpenGL driver .so files for VTK rendering.
+            # XDG_DATA_DIRS: Vulkan ICD manifests for QtWebEngine's Chromium.
+            if [ -d /run/opengl-driver ]; then
               export LD_LIBRARY_PATH="/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+              export XDG_DATA_DIRS="/run/opengl-driver/share''${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
             fi
+
+            # QtWebEngine's process binary, resources, and locales are in a
+            # separate nix store path from qtbase. Without these env vars,
+            # QtWebEngine can't find its Chromium subprocess or .pak files.
+            export QTWEBENGINEPROCESS_PATH="${pkgs.qt6.qtwebengine}/libexec/QtWebEngineProcess"
+            export QTWEBENGINE_RESOURCES_PATH="${pkgs.qt6.qtwebengine}/resources"
+            export QTWEBENGINE_LOCALES_PATH="${pkgs.qt6.qtwebengine}/qtwebengine_locales"
+
+            # Work around NVIDIA driver bug: nvidia_vma_access NULL deref
+            # when Chromium scans /proc/self/mem over NVIDIA GPU mappings.
+            # The LD_PRELOAD intercepts pread on /proc/self/mem (returns EIO).
+            # --disable-gpu prevents Chromium from using GPU (VTK unaffected).
+            # --no-zygote avoids multi-process setup that also reads /proc/*/mem.
+            export LD_PRELOAD="${blockProcMem}/lib/block_proc_mem.so''${LD_PRELOAD:+:$LD_PRELOAD}"
+            export QTWEBENGINE_CHROMIUM_FLAGS="--disable-gpu --no-zygote"
 
             # Force uv to use the Nix-provided Python instead of
             # downloading standalone builds that break on NixOS.
