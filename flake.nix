@@ -17,6 +17,39 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        # ── USE_SYSTEM toggles ──────────────────────────────────────────
+        # Set to true to use Nix-provided system packages instead of the
+        # superbuild compiling them from source. Reduces build time but
+        # may introduce version mismatches.
+        #
+        # Not toggleable (Slicer cmake FATAL_ERROR): CTK
+        useSystem = {
+          # Always-on: proven to work on NixOS
+          python = true;
+
+          # Low-risk: stable libraries unlikely to cause version issues
+          zlib = true;
+          curl = true;
+          tbb = true;
+          JsonCpp = true;
+          RapidJSON = true;
+          LibArchive = true;
+
+          # Higher-risk: tightly coupled to Slicer's version expectations.
+          # Slicer uses a custom VTK fork (SplineDrivenImageSlicer module)
+          # and nixpkgs has VTK 9.5.2 while Slicer wants 9.6.0.
+          VTK = true;
+          ITK = true;
+          DCMTK = true;
+        };
+
+        # Helper: collect USE_SYSTEM cmake flags from the toggle map
+        useSystemFlags = pkgs.lib.concatStringsSep " \\\n              " (
+          pkgs.lib.mapAttrsToList (
+            name: value: "-DSlicer_USE_SYSTEM_${name}:BOOL=${if value then "ON" else "OFF"}"
+          ) useSystem
+        );
+
         # Python 3.12 with packages required by the Slicer superbuild's
         # system-package checks when Slicer_USE_SYSTEM_python=ON.
         # Each python-* sub-project verifies its modules are importable.
@@ -62,6 +95,25 @@
           ]
         );
 
+        # VTK with Qt6 and Python wrapping enabled.
+        # The default nixpkgs vtk has neither; vtkWithQt6 adds Qt but not
+        # Python. We need both so that CTK can find WrappingPythonCore.
+        slicerVtk = pkgs.vtkWithQt6.override {
+          pythonSupport = true;
+          python3Packages = pkgs.python312Packages;
+        };
+
+        # ITK must be built against slicerVtk so that ITKVtkGlue.cmake
+        # hardcodes the same VTK store path (with Qt6 + Python wrapping).
+        # Otherwise ITK overrides VTK_DIR to a plain VTK without those.
+        slicerItk = (pkgs.itk.override { vtk = slicerVtk; }).overrideAttrs (old: {
+          buildInputs = (old.buildInputs or [ ]) ++ [
+            pkgs.qt6.qtbase # Widgets, Gui, OpenGL, Sql, OpenGLWidgets
+            pkgs.qt6.qtdeclarative # Quick, Qml
+          ];
+          dontWrapQtApps = true; # ITK is a library, not an app
+        });
+
         # ── Build-time dependencies ──────────────────────────────────
         # Tools and libraries needed to configure and compile Slicer
         # from source using the CMake superbuild.
@@ -89,12 +141,24 @@
           # Required system libraries
           libxt
           openssl
-          slicerPython # Python 3.12 + pip/setuptools (USE_SYSTEM_python)
+          slicerPython # Python 3.12 + all packages (USE_SYSTEM_python)
+
+          # System libraries for USE_SYSTEM toggles
+          zlib # also in runtimeDeps
+          curl
+          tbb # oneTBB (v2022.3.0 in nixpkgs matches superbuild pin)
+          jsoncpp # v1.9.6 in nixpkgs matches superbuild pin
+          rapidjson # header-only
+          libarchive
 
           # Build helpers
           pkg-config
           ninja
-        ];
+        ]
+        # Conditionally include system packages for higher-risk toggles
+        ++ pkgs.lib.optionals useSystem.VTK [ slicerVtk ]
+        ++ pkgs.lib.optionals useSystem.ITK [ slicerItk ]
+        ++ pkgs.lib.optionals useSystem.DCMTK [ pkgs.dcmtk ];
 
         # ── Runtime dependencies ─────────────────────────────────────
         # Libraries needed at runtime by the built Slicer application.
@@ -153,9 +217,10 @@
           # Wrapper script that invokes cmake with NixOS-specific flags.
           # Uses a bash script rather than a shell alias so that flags are
           # word-split correctly in any shell (fish, zsh, bash, etc.).
+          # Flags are generated from the useSystem toggle map above.
           (writeShellScriptBin "slicer-cmake" ''
             exec cmake \
-              -DSlicer_USE_SYSTEM_python:BOOL=ON \
+              ${useSystemFlags} \
               -DSlicer_BUILD_MULTIMEDIA_SUPPORT:BOOL=OFF \
               "$@"
           '')
@@ -196,9 +261,9 @@
             export CMAKE_PREFIX_PATH="$NIXPKGS_CMAKE_PREFIX_PATH''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
             # Use 'slicer-cmake' instead of 'cmake' to configure Slicer.
-            # It passes NixOS-specific flags to use Nix's Python 3.12 and all
-            # its packages instead of building them from source. All python-*
-            # sub-project dependencies are provided by Nix.
+            # It passes NixOS-specific USE_SYSTEM flags generated from the
+            # useSystem toggle map in flake.nix. Edit the toggles at the
+            # top of the flake to switch between system and superbuild.
             #
             # Example:
             #   slicer-cmake ../../src/Slicer
