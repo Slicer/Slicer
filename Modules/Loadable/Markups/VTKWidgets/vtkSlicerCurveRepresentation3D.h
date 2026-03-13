@@ -36,6 +36,9 @@
 
 class vtkActor;
 class vtkCellLocator;
+class vtkConeSource;
+class vtkDoubleArray;
+class vtkGlyph3DMapper;
 class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
@@ -90,6 +93,19 @@ protected:
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 
   double PreviousSpecularLightingCoeff{ 0.0 };
+
+  // Direction marker (arrow) glyph pipeline
+  vtkSmartPointer<vtkPolyData> DirectionArrowPointsPoly;
+  vtkSmartPointer<vtkPoints> DirectionArrowPoints;
+  vtkSmartPointer<vtkDoubleArray> DirectionArrowNormals;
+  vtkSmartPointer<vtkConeSource> DirectionConeSource;
+  vtkSmartPointer<vtkGlyph3DMapper> DirectionArrowMapper;
+  vtkSmartPointer<vtkActor> DirectionArrowActor;
+
+  /// Cached marker spacing from the last BuildDirectionMarkers call in RenderOpaqueGeometry.
+  /// Avoids expensive marker rebuild every frame when only the scale factor (not spacing) changed.
+  double DirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType DirectionMarkerLastCurveMTime = 0;
 
 private:
   vtkSlicerCurveRepresentation3D(const vtkSlicerCurveRepresentation3D&) = delete;

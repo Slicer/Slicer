@@ -132,6 +132,17 @@ protected:
   /// Check if the representation polydata intersects the slice
   bool IsRepresentationIntersectingSlice(vtkPolyData* representation, const char* arrayName);
 
+  /// Compute fading scalars for accurate line/curve projection on the 2D slice.
+  /// The 2D mapper interpolates RGBA per-vertex (not scalars), so long tube segments
+  /// with few vertices produce incorrect linear opacity gradients. This method:
+  /// 1. Clips the polydata to the fading range (|distance| <= fadingEnd), discarding
+  ///    invisible portions entirely.
+  /// 2. Inserts exact intersection points where the curve crosses the slice plane.
+  /// 3. Subdivides the visible portion into enough vertices that per-vertex opacity
+  ///    mapping accurately represents the nonlinear transfer function.
+  /// The result is a compact polydata covering only the visible region around the slice.
+  void ComputeIntersectionFadingScalars(vtkPolyData* worldPolyData, vtkPlane* slicePlane, vtkPolyData* outputPolyData);
+
   class ControlPointsPipeline2D : public ControlPointsPipeline
   {
   public:
@@ -156,6 +167,13 @@ protected:
 
   vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkPlane> SlicePlane;
+
+  /// Cached input timestamps for ComputeIntersectionFadingScalars MTime guard.
+  /// Avoids expensive polyline walking when neither curve geometry, slice plane,
+  /// nor fading range have changed.
+  vtkMTimeType FadingScalarsLastWorldDataMTime = 0;
+  vtkMTimeType FadingScalarsLastSlicePlaneMTime = 0;
+  double FadingScalarsLastFadingEnd = -1.0;
 
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
 

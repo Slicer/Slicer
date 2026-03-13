@@ -18,8 +18,10 @@
 
 // VTK includes
 #include "vtkCamera.h"
+#include "vtkCellArray.h"
 #include "vtkCellLocator.h"
 #include "vtkDiscretizableColorTransferFunction.h"
+#include "vtkFloatArray.h"
 #include "vtkGlyph2D.h"
 #include "vtkLabelPlacementMapper.h"
 #include "vtkLine.h"
@@ -47,6 +49,9 @@
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLInteractionEventData.h>
+
+#include <cmath>
+#include <vector>
 
 vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPipeline2D()
 {
@@ -1183,4 +1188,255 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsRepresentationIntersectingSlice(v
     return false;
   }
   return true;
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::ComputeIntersectionFadingScalars(vtkPolyData* worldPolyData, vtkPlane* slicePlane, vtkPolyData* outputPolyData)
+{
+  vtkPoints* inputPoints = worldPolyData ? worldPolyData->GetPoints() : nullptr;
+  if (!inputPoints || !slicePlane || !outputPolyData || inputPoints->GetNumberOfPoints() < 2)
+  {
+    if (outputPolyData)
+    {
+      outputPolyData->Initialize();
+    }
+    return;
+  }
+
+  // Determine the fading range: the tube is fully transparent beyond fadingEnd.
+  // We subdivide segments so that per-vertex opacity mapping is accurate (the 2D mapper
+  // interpolates RGBA per-vertex, not the scalar, so long tube segments with few vertices
+  // produce incorrect linear opacity gradients).
+  double fadingEnd = 10.0;
+  if (this->MarkupsDisplayNode)
+  {
+    fadingEnd = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+  }
+
+  // MTime guard: skip recomputation if inputs haven't changed since last call.
+  // This avoids expensive polyline walking and subdivision when neither the curve
+  // geometry, slice plane position, nor fading range have been modified.
+  vtkMTimeType worldMTime = worldPolyData->GetMTime();
+  vtkMTimeType planeMTime = slicePlane->GetMTime();
+  if (worldMTime == this->FadingScalarsLastWorldDataMTime && planeMTime == this->FadingScalarsLastSlicePlaneMTime && fadingEnd == this->FadingScalarsLastFadingEnd
+      && outputPolyData->GetNumberOfPoints() > 0)
+  {
+    return;
+  }
+
+  // Number of subdivisions within the fading range for smooth opacity gradient
+  const int numFadingSteps = 10;
+  double subdivisionStep = fadingEnd / numFadingSteps;
+  if (subdivisionStep < 0.01)
+  {
+    subdivisionStep = 0.01;
+  }
+
+  vtkIdType numInputPts = inputPoints->GetNumberOfPoints();
+
+  // Compute signed perpendicular distance from each input point to the slice plane.
+  std::vector<double> signedDist(numInputPts);
+  for (vtkIdType i = 0; i < numInputPts; i++)
+  {
+    double pt[3];
+    inputPoints->GetPoint(i, pt);
+    signedDist[i] = slicePlane->EvaluateFunction(pt);
+  }
+
+  // Walk along the polyline, detect plane crossings, and build the output point list.
+  // - Insert exact intersection points (scalar = 0).
+  // - Subdivide segments that are near or cross the slice plane so that the per-vertex
+  //   opacity mapping produces an accurate fading gradient.
+  // - Skip portions of segments that are entirely beyond the fading range (both endpoints
+  //   beyond fadingEnd on the same side) to avoid rendering invisible geometry.
+  vtkNew<vtkPoints> outPoints;
+  outPoints->Allocate(numInputPts * (numFadingSteps + 3));
+  vtkNew<vtkFloatArray> outScalars;
+  outScalars->SetName("SliceDistance");
+  outScalars->SetNumberOfComponents(1);
+  outScalars->Allocate(numInputPts * (numFadingSteps + 3));
+
+  auto addPoint = [&](const double p[3], double dist)
+  {
+    outPoints->InsertNextPoint(p);
+    outScalars->InsertNextValue(static_cast<float>(dist));
+  };
+
+  // Add first point (only if within the visible range)
+  // prevPt is cached across iterations to avoid a redundant GetPoint(i-1) each iteration.
+  double prevPt[3];
+  inputPoints->GetPoint(0, prevPt);
+  bool prevAdded = (std::abs(signedDist[0]) <= fadingEnd);
+  if (prevAdded)
+  {
+    addPoint(prevPt, signedDist[0]);
+  }
+
+  for (vtkIdType i = 1; i < numInputPts; i++)
+  {
+    double pt[3];
+    inputPoints->GetPoint(i, pt);
+
+    double d0 = signedDist[i - 1];
+    double d1 = signedDist[i];
+
+    // Check if both endpoints are beyond the fading range on the same side
+    if ((d0 > fadingEnd && d1 > fadingEnd) || (d0 < -fadingEnd && d1 < -fadingEnd))
+    {
+      // Entire segment is invisible — skip it
+      prevAdded = false;
+      prevPt[0] = pt[0];
+      prevPt[1] = pt[1];
+      prevPt[2] = pt[2];
+      continue;
+    }
+
+    // This segment is at least partially visible. Compute the parameter range [tStart, tEnd]
+    // within [0,1] that corresponds to the visible portion (|distance| <= fadingEnd).
+    // d(t) = d0 + t*(d1 - d0), so t for a given distance D is: t = (D - d0)/(d1 - d0).
+    double tStart = 0.0;
+    double tEnd = 1.0;
+    double dDiff = d1 - d0;
+
+    if (std::abs(dDiff) > 1e-12)
+    {
+      // t where distance = +fadingEnd
+      double tPlus = (fadingEnd - d0) / dDiff;
+      // t where distance = -fadingEnd
+      double tMinus = (-fadingEnd - d0) / dDiff;
+
+      double tLow = (tPlus < tMinus) ? tPlus : tMinus;
+      double tHigh = (tPlus < tMinus) ? tMinus : tPlus;
+
+      if (tLow > tStart)
+      {
+        tStart = tLow;
+      }
+      if (tHigh < tEnd)
+      {
+        tEnd = tHigh;
+      }
+    }
+
+    // Clamp to [0, 1]
+    if (tStart < 0.0)
+    {
+      tStart = 0.0;
+    }
+    if (tEnd > 1.0)
+    {
+      tEnd = 1.0;
+    }
+    if (tStart >= tEnd)
+    {
+      prevAdded = false;
+      prevPt[0] = pt[0];
+      prevPt[1] = pt[1];
+      prevPt[2] = pt[2];
+      continue;
+    }
+
+    // Compute the segment direction and length
+    double dir[3] = { pt[0] - prevPt[0], pt[1] - prevPt[1], pt[2] - prevPt[2] };
+
+    // Helper to interpolate along the segment
+    auto interpPoint = [&](double t, double outPt[3])
+    {
+      outPt[0] = prevPt[0] + t * dir[0];
+      outPt[1] = prevPt[1] + t * dir[1];
+      outPt[2] = prevPt[2] + t * dir[2];
+    };
+
+    auto interpDist = [&](double t) -> double { return d0 + t * dDiff; };
+
+    // Add the start of the visible portion (if not already added)
+    if (tStart > 0.0 || !prevAdded)
+    {
+      double startPt[3];
+      interpPoint(tStart, startPt);
+      addPoint(startPt, interpDist(tStart));
+    }
+
+    // Find the t-parameter of the zero crossing (intersection with slice plane), if any
+    double tZero = -1.0;
+    if (d0 * d1 < 0.0)
+    {
+      tZero = d0 / (d0 - d1);
+    }
+
+    // Subdivide the visible portion [tStart, tEnd] at regular distance intervals
+    // and insert the zero crossing at the right position.
+    double distAtStart = interpDist(tStart);
+    double distAtEnd = interpDist(tEnd);
+    double distRange = std::abs(distAtEnd - distAtStart);
+    int numSubdivisions = static_cast<int>(distRange / subdivisionStep);
+    if (numSubdivisions < 1)
+    {
+      numSubdivisions = 1;
+    }
+    double tStep = (tEnd - tStart) / numSubdivisions;
+
+    bool zeroCrossingInserted = (tZero < tStart || tZero > tEnd || tZero < 0.0);
+
+    for (int s = 1; s <= numSubdivisions; s++)
+    {
+      double t = tStart + s * tStep;
+
+      // Insert the zero-crossing point at its exact position if we pass it
+      if (!zeroCrossingInserted && t >= tZero)
+      {
+        double isectPt[3];
+        interpPoint(tZero, isectPt);
+        addPoint(isectPt, 0.0);
+        zeroCrossingInserted = true;
+
+        // Don't add a subdivision point if it's essentially at the same location
+        if (std::abs(t - tZero) < tStep * 0.01)
+        {
+          continue;
+        }
+      }
+
+      // Add subdivision point (skip the last one, we'll add the end point below)
+      if (s < numSubdivisions)
+      {
+        double subPt[3];
+        interpPoint(t, subPt);
+        addPoint(subPt, interpDist(t));
+      }
+    }
+
+    // Add the end of the visible portion
+    double endPt[3];
+    interpPoint(tEnd, endPt);
+    addPoint(endPt, interpDist(tEnd));
+    prevAdded = (tEnd >= 1.0);
+    prevPt[0] = pt[0];
+    prevPt[1] = pt[1];
+    prevPt[2] = pt[2];
+  }
+
+  // Build polyline cell connecting all points in order
+  vtkIdType numOutPts = outPoints->GetNumberOfPoints();
+  vtkNew<vtkCellArray> outLines;
+  if (numOutPts > 1)
+  {
+    vtkNew<vtkIdList> ids;
+    ids->SetNumberOfIds(numOutPts);
+    for (vtkIdType i = 0; i < numOutPts; i++)
+    {
+      ids->SetId(i, i);
+    }
+    outLines->InsertNextCell(ids);
+  }
+
+  outputPolyData->SetPoints(outPoints);
+  outputPolyData->SetLines(outLines);
+  outputPolyData->GetPointData()->SetScalars(outScalars);
+  outputPolyData->Modified();
+
+  // Update cached MTimes so the guard can skip recomputation next time.
+  this->FadingScalarsLastWorldDataMTime = worldMTime;
+  this->FadingScalarsLastSlicePlaneMTime = planeMTime;
+  this->FadingScalarsLastFadingEnd = fadingEnd;
 }
