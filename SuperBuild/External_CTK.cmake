@@ -25,6 +25,18 @@ endif()
 
 if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
+  # When Slicer uses system VTK/ITK/DCMTK, CTK should too.
+  # CTK has its own superbuild that expects CTK_USE_SYSTEM_* variables.
+  if(Slicer_USE_SYSTEM_VTK)
+    set(CTK_USE_SYSTEM_VTK ON)
+  endif()
+  if(Slicer_USE_SYSTEM_ITK)
+    set(CTK_USE_SYSTEM_ITK ON)
+  endif()
+  if(Slicer_USE_SYSTEM_DCMTK)
+    set(CTK_USE_SYSTEM_DCMTK ON)
+  endif()
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
     set(_wrap_qtwebkit 0)
@@ -139,6 +151,21 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  # When using system VTK, CTK's CMakeExternals/VTK.cmake doesn't
+  # propagate VTK_VERSION to the inner build, but
+  # Libs/Visualization/VTK/Core/CMakeLists.txt checks it before
+  # calling find_package(VTK). Patch to add mark_as_superbuild.
+  if(Slicer_USE_SYSTEM_VTK)
+    file(WRITE "${CMAKE_BINARY_DIR}/${proj}-patch-vtk-system.cmake"
+      "file(APPEND \"${EP_SOURCE_DIR}/CMakeExternals/VTK.cmake\"\n  \"\\nmark_as_superbuild(VTK_VERSION:STRING)\\n\")\n")
+
+    ExternalProject_Add_Step(${proj} patch_vtk_system_support
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/${proj}-patch-vtk-system.cmake"
+      DEPENDEES download
+      DEPENDERS configure
+      )
+  endif()
 
   if(Slicer_USE_PYTHONQT)
     if(APPLE)
