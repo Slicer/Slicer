@@ -156,6 +156,7 @@
           (writeShellScriptBin "slicer-cmake" ''
             exec cmake \
               -DSlicer_USE_SYSTEM_python:BOOL=ON \
+              -DSlicer_BUILD_MULTIMEDIA_SUPPORT:BOOL=OFF \
               "$@"
           '')
         ];
