@@ -23,39 +23,70 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   if(NOT DEFINED CTKAppLauncher_DIR)
 
-    SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.34")
-    # On windows, use i386 launcher unconditionally
-    if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
-      set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      set(sha256 "8b91093a18476749b5687dc433909d61916a9983e832be3fb0a43d494b208924")
-    elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
-      set(sha256 "e39f82151be485e2e097a254077c4f3b7c962765c0e1564cbc09360355f87b76")
-    elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
-      set(sha256 "9d2f08fd68071562b17a2bfc18b6510a2a19596c593bf19deda1a9f1d3038ad0")
-    endif()
-
     set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj})
 
-    set(CTKAppLauncherFileName CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz)
-    ExternalProject_Add(${proj}
-      ${${proj}_EP_ARGS}
-      URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/${CTKAppLauncherFileName}
-      URL_HASH SHA256=${sha256}
-      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
-      SOURCE_DIR ${EP_BINARY_DIR}
-      BUILD_IN_SOURCE 1
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND ""
-      DEPENDS
-        ${${proj}_DEPENDENCIES}
-      )
+    if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
+      # Build from source with Qt6 support.
+      # The pre-built launcher is statically linked against Qt5 and cannot
+      # load Qt6 platform plugins (e.g. wayland), producing warnings on
+      # Wayland sessions. Building from source links dynamically against
+      # the system Qt6, enabling native Wayland support.
+      set(launcher_git_tag "add-qt6-support") # f66a751 - COMP: Add support for building against Qt 6
 
-    ExternalProject_GenerateProjectDescription_Step(${proj}
-      VERSION ${launcher_version}
-      LICENSE_FILES "https://raw.githubusercontent.com/commontk/AppLauncher/v${launcher_version}/LICENSE_Apache_20"
-      )
+      ExternalProject_Add(${proj}
+        ${${proj}_EP_ARGS}
+        GIT_REPOSITORY "https://github.com/commontk/AppLauncher.git"
+        GIT_TAG "${launcher_git_tag}"
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-src
+        BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build
+        INSTALL_DIR ${EP_BINARY_DIR}
+        CMAKE_CACHE_ARGS
+          -DCMAKE_INSTALL_PREFIX:PATH=${EP_BINARY_DIR}
+          -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+          -DCTKAppLauncher_QT_VERSION:STRING=6
+          -DQt6_DIR:PATH=${Qt6_DIR}
+          -DBUILD_TESTING:BOOL=OFF
+        DEPENDS
+          ${${proj}_DEPENDENCIES}
+        )
+
+      ExternalProject_GenerateProjectDescription_Step(${proj}
+        VERSION ${launcher_git_tag}
+        LICENSE_FILES "https://raw.githubusercontent.com/commontk/AppLauncher/${launcher_git_tag}/LICENSE_Apache_20"
+        )
+    else()
+      SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
+      set(launcher_version "0.1.34")
+      # On windows, use i386 launcher unconditionally
+      if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
+        set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
+        set(sha256 "8b91093a18476749b5687dc433909d61916a9983e832be3fb0a43d494b208924")
+      elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
+        set(sha256 "e39f82151be485e2e097a254077c4f3b7c962765c0e1564cbc09360355f87b76")
+      elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
+        set(sha256 "9d2f08fd68071562b17a2bfc18b6510a2a19596c593bf19deda1a9f1d3038ad0")
+      endif()
+
+      set(CTKAppLauncherFileName CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz)
+      ExternalProject_Add(${proj}
+        ${${proj}_EP_ARGS}
+        URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/${CTKAppLauncherFileName}
+        URL_HASH SHA256=${sha256}
+        DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+        SOURCE_DIR ${EP_BINARY_DIR}
+        BUILD_IN_SOURCE 1
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        DEPENDS
+          ${${proj}_DEPENDENCIES}
+        )
+
+      ExternalProject_GenerateProjectDescription_Step(${proj}
+        VERSION ${launcher_version}
+        LICENSE_FILES "https://raw.githubusercontent.com/commontk/AppLauncher/v${launcher_version}/LICENSE_Apache_20"
+        )
+    endif()
 
     set(CTKAppLauncher_DIR ${EP_BINARY_DIR})
 
