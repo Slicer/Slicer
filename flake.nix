@@ -221,6 +221,7 @@
         # strictly required for the build itself.
         devDeps = with pkgs; [
           ccache
+          gdb
           uv
 
           # Wrapper script that invokes cmake with NixOS-specific flags.
