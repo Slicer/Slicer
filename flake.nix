@@ -168,6 +168,12 @@
           # X11 / xcb
           libx11
           libxcb
+          libxcb-wm # libxcb-icccm, libxcb-ewmh
+          libxcb-image
+          libxcb-keysyms
+          libxcb-render-util
+          libxcb-cursor
+          libxcb-util
           libxext
           libxi
           libxrandr
@@ -197,6 +203,7 @@
           libxkbcommon
           nss
           nspr
+          pcre2
           zlib
 
           # Audio / multimedia
@@ -254,6 +261,9 @@
       {
         devShells.default = pkgs.mkShell {
           packages = buildDeps ++ runtimeDeps ++ devDeps;
+
+          # Runtime library path for superbuild binaries (not nix-wrapped)
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath runtimeDeps;
 
           shellHook = ''
             # Bridge Nix's cmake prefix path so that cmake invoked
