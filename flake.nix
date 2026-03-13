@@ -40,7 +40,7 @@
           # and nixpkgs has VTK 9.5.2 while Slicer wants 9.6.0.
           VTK = true;
           ITK = false; # nixpkgs ITK lacks Slicer remote modules (MGHIO, IOScanco)
-          DCMTK = true;
+          DCMTK = false; # Dual DCMTK copies (system + ITK-bundled) cause crash on exit
         };
 
         # Helper: collect USE_SYSTEM cmake flags from the toggle map
