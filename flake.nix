@@ -191,7 +191,7 @@
           # Graphics
           libGL
           libGLU
-          libgbm # QtWebEngine's Chromium needs GBM for EGL/native GPU rendering
+          libgbm
           vulkan-loader
 
           # Wayland
@@ -219,16 +219,16 @@
         ];
 
         # ── NVIDIA workaround ───────────────────────────────────────
-        # QtWebEngine's Chromium scans /proc/self/mem (reading 64 bytes
-        # from every VMA). When the process has NVIDIA GPU mappings (from
-        # VTK's OpenGL rendering), this triggers a NULL pointer dereference
-        # in nvidia_vma_access (kernel module bug in driver 595.x with
-        # Open Kernel Module on kernel 6.18+). The kernel oopses and
-        # SIGKILL's the process.
+        # Chromium (inside QtWebEngine) scans /proc/self/mem, reading 64
+        # bytes from every VMA. When the process has NVIDIA GPU mappings
+        # (from VTK's OpenGL), this triggers a NULL deref in the kernel's
+        # nvidia_vma_access (driver 595.x, Open Kernel Module, kernel
+        # 6.18+). The kernel oopses and SIGKILL's the process.
         #
-        # This LD_PRELOAD library intercepts pread/pread64 and returns EIO
-        # for any fd pointing to /proc/self/mem. Chromium handles EIO
-        # gracefully (some VMAs already return EIO normally).
+        # This LD_PRELOAD library blocks /proc/self/mem at two layers:
+        #  1. open/openat → EACCES  (catches libc callers)
+        #  2. pread/pread64 → EIO   (catches raw-syscall openers)
+        # Chromium handles both errors gracefully.
         blockProcMem = pkgs.stdenv.mkDerivation {
           name = "block-proc-self-mem";
           dontUnpack = true;
@@ -238,87 +238,51 @@
             #include <dlfcn.h>
             #include <errno.h>
             #include <fcntl.h>
+            #include <stdarg.h>
+            #include <stdio.h>
             #include <string.h>
             #include <unistd.h>
-            #include <sys/types.h>
-            #include <stdio.h>
-            #include <stdarg.h>
 
-            static int is_proc_self_mem(const char *path) {
-                return path && strcmp(path, "/proc/self/mem") == 0;
+            static int is_proc_self_mem(const char *p) {
+                return p && strcmp(p, "/proc/self/mem") == 0;
             }
-
             static int is_proc_self_mem_fd(int fd) {
-                char link[64], target[256];
+                char link[64], tgt[256];
                 snprintf(link, sizeof(link), "/proc/self/fd/%d", fd);
-                ssize_t len = readlink(link, target, sizeof(target) - 1);
-                if (len > 0) { target[len] = '\0'; return is_proc_self_mem(target); }
+                ssize_t n = readlink(link, tgt, sizeof(tgt) - 1);
+                if (n > 0) { tgt[n] = '\0'; return is_proc_self_mem(tgt); }
                 return 0;
             }
 
-            /* Block open/openat for /proc/self/mem (catches libc callers) */
-            int open(const char *path, int flags, ...) {
-                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
-                static int (*real)(const char *, int, ...) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "open");
-                if (flags & (O_CREAT | O_TMPFILE)) {
-                    va_list ap; va_start(ap, flags);
-                    int mode = va_arg(ap, int); va_end(ap);
-                    return real(path, flags, mode);
-                }
-                return real(path, flags);
-            }
+            #define COMMA ,
 
-            int open64(const char *path, int flags, ...) {
-                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
-                static int (*real)(const char *, int, ...) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "open64");
-                if (flags & (O_CREAT | O_TMPFILE)) {
-                    va_list ap; va_start(ap, flags);
-                    int mode = va_arg(ap, int); va_end(ap);
-                    return real(path, flags, mode);
-                }
-                return real(path, flags);
+            /* Macro: generate open/open64/openat/openat64 interceptors */
+            #define DEF_OPEN(NAME, DIRFD_PARAM, DIRFD_ARG)                      \
+            int NAME(DIRFD_PARAM const char *path, int flags, ...) {            \
+                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }      \
+                static int (*real)(DIRFD_PARAM const char *, int, ...) = NULL;   \
+                if (!real) real = dlsym(RTLD_NEXT, #NAME);                      \
+                if (flags & (O_CREAT | O_TMPFILE)) {                            \
+                    va_list ap; va_start(ap, flags);                            \
+                    int m = va_arg(ap, int); va_end(ap);                        \
+                    return real(DIRFD_ARG path, flags, m);                      \
+                }                                                               \
+                return real(DIRFD_ARG path, flags);                             \
             }
+            DEF_OPEN(open,     , )
+            DEF_OPEN(open64,   , )
+            DEF_OPEN(openat,   int dirfd COMMA, dirfd COMMA)
+            DEF_OPEN(openat64, int dirfd COMMA, dirfd COMMA)
 
-            int openat(int dirfd, const char *path, int flags, ...) {
-                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
-                static int (*real)(int, const char *, int, ...) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "openat");
-                if (flags & (O_CREAT | O_TMPFILE)) {
-                    va_list ap; va_start(ap, flags);
-                    int mode = va_arg(ap, int); va_end(ap);
-                    return real(dirfd, path, flags, mode);
-                }
-                return real(dirfd, path, flags);
+            #define DEF_PREAD(NAME)                                             \
+            ssize_t NAME(int fd, void *buf, size_t cnt, off_t off) {            \
+                if (is_proc_self_mem_fd(fd)) { errno = EIO; return -1; }        \
+                static ssize_t (*real)(int, void *, size_t, off_t) = NULL;      \
+                if (!real) real = dlsym(RTLD_NEXT, #NAME);                      \
+                return real(fd, buf, cnt, off);                                 \
             }
-
-            int openat64(int dirfd, const char *path, int flags, ...) {
-                if (is_proc_self_mem(path)) { errno = EACCES; return -1; }
-                static int (*real)(int, const char *, int, ...) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "openat64");
-                if (flags & (O_CREAT | O_TMPFILE)) {
-                    va_list ap; va_start(ap, flags);
-                    int mode = va_arg(ap, int); va_end(ap);
-                    return real(dirfd, path, flags, mode);
-                }
-                return real(dirfd, path, flags);
-            }
-
-            /* Block pread on /proc/self/mem (catches raw-syscall openers) */
-            ssize_t pread(int fd, void *buf, size_t count, off_t offset) {
-                if (is_proc_self_mem_fd(fd)) { errno = EIO; return -1; }
-                static ssize_t (*real)(int, void *, size_t, off_t) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "pread");
-                return real(fd, buf, count, offset);
-            }
-
-            ssize_t pread64(int fd, void *buf, size_t count, off_t offset) {
-                if (is_proc_self_mem_fd(fd)) { errno = EIO; return -1; }
-                static ssize_t (*real)(int, void *, size_t, off_t) = NULL;
-                if (!real) real = dlsym(RTLD_NEXT, "pread64");
-                return real(fd, buf, count, offset);
-            }
+            DEF_PREAD(pread)
+            DEF_PREAD(pread64)
             CSRC
             $CC -shared -fPIC -o block_proc_mem.so block_proc_mem.c -ldl
           '';
@@ -413,11 +377,7 @@
             export QTWEBENGINE_RESOURCES_PATH="${pkgs.qt6.qtwebengine}/resources"
             export QTWEBENGINE_LOCALES_PATH="${pkgs.qt6.qtwebengine}/qtwebengine_locales"
 
-            # Work around NVIDIA driver bug: nvidia_vma_access NULL deref
-            # when Chromium scans /proc/self/mem over NVIDIA GPU mappings.
-            # The LD_PRELOAD intercepts pread on /proc/self/mem (returns EIO).
-            # --disable-gpu prevents Chromium from using GPU (VTK unaffected).
-            # --no-zygote avoids multi-process setup that also reads /proc/*/mem.
+            # Work around NVIDIA kernel driver bug (see blockProcMem above).
             export LD_PRELOAD="${blockProcMem}/lib/block_proc_mem.so''${LD_PRELOAD:+:$LD_PRELOAD}"
             export QTWEBENGINE_CHROMIUM_FLAGS="--disable-gpu --no-zygote"
 
