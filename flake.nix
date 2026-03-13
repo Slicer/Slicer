@@ -194,6 +194,7 @@
 
           # Wayland
           wayland
+          qt6.qtwayland
 
           # System libs
           dbus
@@ -209,6 +210,7 @@
           # Audio / multimedia
           alsa-lib
           libpulseaudio
+          pipewire
 
           # C++ runtime
           stdenv.cc.cc.lib
