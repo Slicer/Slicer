@@ -350,16 +350,36 @@ In our example:
 
 You can install any Python package within Slicer's built-in Python environment.
 
-The convenience function {func}`slicer.util.pip_install` can be used to install packages into your Slicer module. To understand its usage, examine the [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) example within the Script Repository.
+### Utility functions for dependency management
+
+:::{versionadded} 5.11
+The `slicer.pydeps` module with `pip_ensure`, `pip_check`, `load_requirements`, and `load_pyproject_dependencies`.
+:::
+
+Slicer provides several utility functions to help manage Python dependencies:
+
+| Function | Purpose |
+|----------|---------|
+| `slicer.pydeps.load_requirements` | Load a `requirements.txt` file |
+| `slicer.pydeps.pip_check` | Check if requirements are already satisfied |
+| `slicer.pydeps.pip_ensure` | Ensure requirements are installed, prompting the user if needed |
+| `slicer.pydeps.pip_install` | Install packages |
+
+The recommended approach is to use {func}`slicer.pydeps.pip_ensure`, which handles checking, user confirmation, and installation with progress display in one call. It also automatically skips installation when running in testing mode (`slicer.app.testingEnabled()`).
+
+For direct installation with visual feedback, use {func}`slicer.util.pip_install` with `show_progress=True`. This displays a modal progress dialog during installation.
+
+For detailed usage examples, see [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) in the Script Repository.
 
 :::{warning}
 Since installing packages can have side effects on other extensions or the main application, here are some best practices to adhere to:
 
 **DO:**
 * ✅ Always include a confirmation dialog that clearly communicates the installation process, mirroring the approach in the linked example.
-* ✅ Document the dependencies your module relies upon.
+* ✅ Document the dependencies your module relies upon using a `requirements.txt` file.
 * ✅ Consider specifying version requirements using `>=X.Y` to avoid incompatible versions.
 * ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important for dependencies including compiled code, as installing a wheel eliminates the need for users to install a compiler.
+* ✅ Use the `requester` parameter in {func}`slicer.pydeps.pip_ensure` to identify your extension in dialogs.
 
 **DON'T:**
 * ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor. This can significantly slow down application startup, and it may even prevent the module from loading.
