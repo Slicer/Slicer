@@ -13,8 +13,10 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 # Sanity checks
-if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
-  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+if(NOT Slicer_USE_SYSTEM_${proj})
+  if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
+    message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+  endif()
 endif()
 
 if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
@@ -89,7 +91,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(${proj}_DIR "${EP_INSTALL_DIR}/lib/cmake/RapidJSON/")
 
-else()
+elseif(NOT Slicer_USE_SYSTEM_${proj})
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
