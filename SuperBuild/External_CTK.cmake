@@ -140,7 +140,7 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=${Slicer_USE_PYTHONQT}
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=${Slicer_USE_PYTHONQT}
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=${Slicer_USE_PYTHONQT}
-      -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=OFF # PythonQt generator fails to produce uitools wrappers for Qt 6
+      -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=${Slicer_USE_PYTHONQT}
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTNETWORK:BOOL=${Slicer_USE_PYTHONQT}
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTMULTIMEDIA:BOOL=${_wrap_qtmultimedia}
       -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTWEBKIT:BOOL=${_wrap_qtwebkit}
@@ -151,6 +151,41 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  # On NixOS, Qt headers are split across multiple store paths (one per
+  # Qt module). The PythonQt generator uses QLibraryInfo::HeadersPath which
+  # only points to qtbase's include dir. Patch the generator launcher to
+  # pass --include-paths so it can find headers from other Qt modules
+  # (e.g., QtUiTools from qttools, QtMultimedia, QtSvg).
+  #
+  # Find Qt include dirs outside qtbase by locating known modules.
+  set(_qt_extra_include_paths "")
+  foreach(_qt_mod QtUiTools QtMultimedia QtSvg QtWebEngineCore)
+    find_path(_mod_inc_${_qt_mod} NAME "${_qt_mod}" PATH_SUFFIXES include
+      HINTS ENV CMAKE_PREFIX_PATH)
+    if(_mod_inc_${_qt_mod} AND NOT _mod_inc_${_qt_mod} MATCHES "NOTFOUND")
+      list(APPEND _qt_extra_include_paths "${_mod_inc_${_qt_mod}}")
+    endif()
+    unset(_mod_inc_${_qt_mod} CACHE)
+  endforeach()
+  list(REMOVE_DUPLICATES _qt_extra_include_paths)
+  if(_qt_extra_include_paths)
+    list(JOIN _qt_extra_include_paths ":" _qt_include_paths_str)
+    # Patch CTK's PythonQt.cmake to pass --include-paths to the generator
+    file(WRITE "${CMAKE_BINARY_DIR}/${proj}-patch-pythonqt-include-paths.cmake"
+      "file(READ \"${EP_SOURCE_DIR}/CMakeExternals/PythonQt.cmake\" _content)\n\
+string(REPLACE\n\
+  \"--output-directory=@PythonQtGenerator_OUTPUT_DIR@\"\n\
+  \"--include-paths=${_qt_include_paths_str}\\n    --output-directory=@PythonQtGenerator_OUTPUT_DIR@\"\n\
+  _content \"\${_content}\")\n\
+file(WRITE \"${EP_SOURCE_DIR}/CMakeExternals/PythonQt.cmake\" \"\${_content}\")\n")
+
+    ExternalProject_Add_Step(${proj} patch_pythonqt_include_paths
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/${proj}-patch-pythonqt-include-paths.cmake"
+      DEPENDEES download
+      DEPENDERS configure
+      )
+  endif()
 
   # When using system VTK, CTK's CMakeExternals/VTK.cmake doesn't
   # propagate VTK_VERSION to the inner build, but
