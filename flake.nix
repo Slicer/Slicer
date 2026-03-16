@@ -381,6 +381,12 @@
             export LD_PRELOAD="${blockProcMem}/lib/block_proc_mem.so''${LD_PRELOAD:+:$LD_PRELOAD}"
             export QTWEBENGINE_CHROMIUM_FLAGS="--disable-gpu --no-zygote"
 
+            # Use EGL instead of GLX for VTK render windows. Without this,
+            # vtkXOpenGLRenderWindow::WindowInitialize() calls glXMakeCurrent
+            # which crashes with BadAccess on NVIDIA when another GL context
+            # is already current (e.g. Volume Rendering chart widgets).
+            export VTK_DEFAULT_OPENGL_WINDOW=vtkEGLRenderWindow
+
             # Force uv to use the Nix-provided Python instead of
             # downloading standalone builds that break on NixOS.
             export UV_PYTHON_PREFERENCE=only-system
