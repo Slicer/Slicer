@@ -21,6 +21,9 @@
 #ifndef __qMRMLCheckableNodeComboBox_h
 #define __qMRMLCheckableNodeComboBox_h
 
+// vtkMRML includes
+#include "vtkMRMLNode.h"
+
 // qMRML includes
 #include "qMRMLNodeComboBox.h"
 

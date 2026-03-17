@@ -30,6 +30,7 @@ class QWidget;
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
+#include "qMRMLLayoutViewFactory.h"
 
 class qMRMLPlotWidget;
 class qMRMLTableWidget;
