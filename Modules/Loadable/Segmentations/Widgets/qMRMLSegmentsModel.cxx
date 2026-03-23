@@ -385,6 +385,8 @@ Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column) co
   Qt::ItemFlags flags;
   flags.setFlag(Qt::ItemIsEnabled);
   flags.setFlag(Qt::ItemIsSelectable);
+  flags.setFlag(Qt::ItemIsDragEnabled);
+  flags.setFlag(Qt::ItemIsDropEnabled);
 
   if (!d->SegmentationNode)
   {
