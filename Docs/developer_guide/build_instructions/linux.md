@@ -45,7 +45,7 @@ part of the *superbuild*:
 :::{tab-item} Qt 6
 :sync: qt6
 
-- Qt6 with the components listed below. Qt version 6.4 or later is recommended.
+- Qt6 with the components listed below. Qt version **6.8 or later** is required.
   - Multimedia
   - UiTools
   - SVG
@@ -64,9 +64,9 @@ part of the *superbuild*:
 
 Install the development tools and the support libraries:
 
-::::{tab-set}
+:::::{tab-set}
 
-:::{tab-item} Qt 5
+::::{tab-item} Qt 5
 :sync: qt5
 
 ```console
@@ -75,10 +75,17 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
-:::
+::::
 
-:::{tab-item} Qt 6
+::::{tab-item} Qt 6
 :sync: qt6
+
+:::{warning}
+Debian 12 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). Builds with
+the system Qt6 packages are **not officially supported and are used at your own risk**. For a
+fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly in the configure step.
+:::
 
 ```console
 sudo apt update && sudo apt install git build-essential cmake-curses-gui cmake-qt-gui \
@@ -87,9 +94,9 @@ sudo apt update && sudo apt install git build-essential cmake-curses-gui cmake-q
   libxt-dev libssl-dev
 ```
 
-:::
-
 ::::
+
+:::::
 
 :::{note}
 The CMake version currently included in Debian 12 Bookworm (Stable) (3.25.1) is not compatible
@@ -157,9 +164,9 @@ The CMake version currently included in Ubuntu 25.04 is CMake 3.31.6 which is co
 
 Install the development tools and the support libraries:
 
-::::{tab-set}
+:::::{tab-set}
 
-:::{tab-item} Qt 5
+::::{tab-item} Qt 5
 :sync: qt5
 
 ```console
@@ -168,10 +175,17 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev
 ```
 
-:::
+::::
 
-:::{tab-item} Qt 6
+::::{tab-item} Qt 6
 :sync: qt6
+
+:::{warning}
+Ubuntu 24.04 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). Builds with
+the system Qt6 packages are **not officially supported and are used at your own risk**. For a
+fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly in the configure step.
+:::
 
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
@@ -180,9 +194,9 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev libssl-dev
 ```
 
-:::
-
 ::::
+
+:::::
 
 :::{note}
 The CMake version currently included in Ubuntu 24.04 is CMake 3.28.3 which is compatible with the current development version of Slicer. **Last time tested: 2026-03-20.**
@@ -211,7 +225,8 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
 :sync: qt6
 
 :::{warning}
-Ubuntu 22.04 ships Qt 6.2.4, which is below the minimum version required by Slicer's dependencies (Qt 6.4.0). Qt6 builds on Ubuntu 22.04 require installing Qt 6.4 or later from the [Qt online installer](#any-distribution).
+Ubuntu 22.04 ships Qt 6.2.4, which is below the officially supported minimum (Qt 6.8). Qt6 builds
+on Ubuntu 22.04 require installing Qt 6.8 or later from the [Qt online installer](#any-distribution).
 
 Install the system dependencies first:
 
@@ -220,7 +235,8 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
   libxt-dev libssl-dev
 ```
 
-Then follow the [Any Distribution](#any-distribution) section to install Qt 6.4 or later, and configure the build with `-DQt6_DIR` pointing to the installer location.
+Then follow the [Any Distribution](#any-distribution) section to install Qt 6.8 or later, and
+configure the build with `-DQt6_DIR` pointing to the installer location.
 :::
 
 ::::
@@ -378,9 +394,9 @@ change the built type (Debug as default) to Release:
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
-::::{tab-set}
+:::::{tab-set}
 
-:::{tab-item} Qt 5
+::::{tab-item} Qt 5
 :sync: qt5
 
 If Qt5 was installed from the [Qt Company online installer](#any-distribution), the CMake variable
@@ -390,19 +406,18 @@ If Qt5 was installed from the [Qt Company online installer](#any-distribution), 
 cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer
 ```
 
-:::
+::::
 
-:::{tab-item} Qt 6
+::::{tab-item} Qt 6
 :sync: qt6
 
-To build with Qt6, pass `-DSlicer_REQUIRED_QT_VERSION=6` and `-DQt6_DIR` pointing to the Qt6 cmake
-directory. When using distribution-provided Qt6 packages the `Qt6_DIR` is typically
-`/usr/lib/x86_64-linux-gnu/cmake/Qt6`:
+To build with Qt6, set `-DQt6_DIR` pointing to the Qt6 cmake directory. Slicer will automatically
+enforce the minimum required Qt6 version (6.8). When using distribution-provided Qt6 packages
+(e.g. Ubuntu 25.04), `Qt6_DIR` is typically `/usr/lib/x86_64-linux-gnu/cmake/Qt6`:
 
 ```console
 cmake \
   -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DSlicer_REQUIRED_QT_VERSION=6 \
   -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
   ../Slicer
 ```
@@ -413,14 +428,27 @@ to the installer location instead:
 ```console
 cmake \
   -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DSlicer_REQUIRED_QT_VERSION=6 \
   -DQt6_DIR:PATH=/opt/qt/6.8.0/gcc_64/lib/cmake/Qt6 \
   ../Slicer
 ```
 
+:::{warning}
+On distributions shipping Qt6 < 6.8 (e.g. Debian 12, Ubuntu 24.04), the cmake configure step
+will fail with a version error. To bypass the check and build anyway — **at your own risk and
+without official support** — explicitly set `Slicer_REQUIRED_QT_VERSION=6`:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DSlicer_REQUIRED_QT_VERSION=6 \
+  -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+  ../Slicer
+```
 :::
 
 ::::
+
+:::::
 
 :::{warning}
 On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.x) is not compatible with the OpenSSL versions (1.0 - 1.1) used in Slicer, and attempting to run Slicer will emit the following warning, indicating that SSL support is disabled:
