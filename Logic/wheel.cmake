@@ -10,10 +10,13 @@ configure_file(
   @ONLY
 )
 
-set(classes vtkSlicerLayerDMLogic)
+set(classes
+  vtkSlicerLayerDMLogic
+)
 
 set(headers
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerLayerDMVersion.h"
+  vtkSlicerLayerDMModuleLogicExport.h
 )
 
 vtk_module_add_module(SlicerLayerDM::Logic
