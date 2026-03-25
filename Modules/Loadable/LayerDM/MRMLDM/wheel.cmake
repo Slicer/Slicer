@@ -13,6 +13,7 @@ set(classes
 )
 
 set(headers
+  vtkMRMLLayerDMPipelineCreateHelper.h
   vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h
 )
 
