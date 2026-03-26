@@ -81,10 +81,12 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
 :sync: qt6
 
 :::{warning}
-Debian 12 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). Builds with
-the system Qt6 packages are **not officially supported and are used at your own risk**. For a
-fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
-and set `Qt6_DIR` accordingly in the configure step.
+Debian 12 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). It is possible
+to build Slicer with Qt 6.4.2, but this is **not officially supported and is used at your own risk**.
+When configuring, you must explicitly override the Qt version check by adding
+`-DSlicer_REQUIRED_QT_VERSION=6.4` (see the [Configure section](#configure-and-generate-the-slicer-build-project-files)).
+For a fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly.
 :::
 
 ```console
@@ -190,10 +192,12 @@ sudo apt update && sudo apt install git git-lfs build-essential \
 :sync: qt6
 
 :::{warning}
-Ubuntu 24.04 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). Builds with
-the system Qt6 packages are **not officially supported and are used at your own risk**. For a
-fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
-and set `Qt6_DIR` accordingly in the configure step.
+Ubuntu 24.04 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). It is possible
+to build Slicer with Qt 6.4.2, but this is **not officially supported and is used at your own risk**.
+When configuring, you must explicitly override the Qt version check by adding
+`-DSlicer_REQUIRED_QT_VERSION=6.4` (see the [Configure section](#configure-and-generate-the-slicer-build-project-files)).
+For a fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly.
 :::
 
 ```console
@@ -334,7 +338,7 @@ When configuring the Slicer build project, set the CMake variable `Qt6_DIR` to t
 ```console
 cmake \
   -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DSlicer_REQUIRED_QT_VERSION=6 \
+  -DSlicer_REQUIRED_QT_VERSION=6.4 \
   -DQt6_DIR:PATH=/opt/qt/6.8.0/gcc_64/lib/cmake/Qt6 \
   ../Slicer
 ```
@@ -466,12 +470,12 @@ cmake \
 :::{warning}
 On distributions shipping Qt6 < 6.8 (e.g. Debian 12, Ubuntu 24.04), the cmake configure step
 will fail with a version error. To bypass the check and build anyway — **at your own risk and
-without official support** — explicitly set `Slicer_REQUIRED_QT_VERSION=6`:
+without official support** — explicitly set `Slicer_REQUIRED_QT_VERSION=6.4`:
 
 ```console
 cmake \
   -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DSlicer_REQUIRED_QT_VERSION=6 \
+  -DSlicer_REQUIRED_QT_VERSION=6.4 \
   -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
   ../Slicer
 ```
