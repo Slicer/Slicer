@@ -121,15 +121,15 @@ On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.x) requires pa
 [Configure section](#configure-and-generate-the-slicer-build-project-files) below).
 :::
 
-### Ubuntu 25.04 (Plucky Puffin)
+### Ubuntu 25.10 (Questing Quokka)
 
-*Standard release, EOL Jan 2026.*
+*Standard release, EOL Jul 2026.*
 
 Install the development tools and the support libraries:
 
-::::{tab-set}
+:::::{tab-set}
 
-:::{tab-item} Qt 5
+::::{tab-item} Qt 5
 :sync: qt5
 
 ```console
@@ -138,24 +138,33 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev
 ```
 
-:::
+::::
 
-:::{tab-item} Qt 6
+::::{tab-item} Qt 6
 :sync: qt6
+
+Ubuntu 25.10 ships Qt 6.9.2, which meets the minimum Qt 6.8 requirement.
 
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
-  qt6-base-dev qt6-base-private-dev qt6-multimedia-dev qt6-tools-dev \
+  qt6-base-dev qt6-base-private-dev qt6-multimedia-dev qt6-tools-dev qt6-tools-dev-tools \
   qt6-svg-dev qt6-5compat-dev qt6-webengine-dev qt6-webengine-dev-tools qt6-scxml-dev \
   libxt-dev libssl-dev
 ```
 
-:::
-
 ::::
 
+:::::
+
 :::{note}
-The CMake version currently included in Ubuntu 25.04 is CMake 3.31.6 which is compatible with the current development version of Slicer. **Last time tested: 2026-03-20.**
+Ubuntu 25.10 ships GCC 15, which defaults to the C23 standard. This causes a build failure in
+ITK's MINC library due to old-style function pointer declarations incompatible with C23. Add
+`-DADDITIONAL_C_FLAGS=-std=gnu11` to the cmake configure command to work around this (see
+[Configure section](#configure-and-generate-the-slicer-build-project-files) below).
+:::
+
+:::{note}
+The CMake version currently included in Ubuntu 25.10 is CMake 3.31.6 which is compatible with the current development version of Slicer. **Last time tested: 2026-03-26.**
 :::
 
 ### Ubuntu 24.04 (Noble Numbat)
@@ -406,6 +415,15 @@ If Qt5 was installed from the [Qt Company online installer](#any-distribution), 
 cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer
 ```
 
+:::{note}
+On Ubuntu 25.10 (GCC 15), add `-DADDITIONAL_C_FLAGS=-std=gnu11` to work around a C23
+incompatibility in ITK's MINC library:
+
+```console
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DADDITIONAL_C_FLAGS=-std=gnu11 ../Slicer
+```
+:::
+
 ::::
 
 ::::{tab-item} Qt 6
@@ -413,7 +431,7 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib
 
 To build with Qt6, set `-DQt6_DIR` pointing to the Qt6 cmake directory. Slicer will automatically
 enforce the minimum required Qt6 version (6.8). When using distribution-provided Qt6 packages
-(e.g. Ubuntu 25.04), `Qt6_DIR` is typically `/usr/lib/x86_64-linux-gnu/cmake/Qt6`:
+(e.g. Ubuntu 25.10), `Qt6_DIR` is typically `/usr/lib/x86_64-linux-gnu/cmake/Qt6`:
 
 ```console
 cmake \
@@ -421,6 +439,19 @@ cmake \
   -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
   ../Slicer
 ```
+
+:::{note}
+On Ubuntu 25.10 (GCC 15), add `-DADDITIONAL_C_FLAGS=-std=gnu11` to work around a C23
+incompatibility in ITK's MINC library:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DADDITIONAL_C_FLAGS=-std=gnu11 \
+  -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+  ../Slicer
+```
+:::
 
 If Qt6 was installed from the [Qt Company online installer](#any-distribution), set `Qt6_DIR`
 to the installer location instead:
