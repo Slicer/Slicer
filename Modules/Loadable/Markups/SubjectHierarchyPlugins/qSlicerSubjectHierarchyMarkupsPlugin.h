@@ -123,6 +123,10 @@ protected slots:
   void refocusCamera();
   /// Called when clicking on delete point action
   void deletePoint();
+  /// Called when clicking on add point action
+  void addPoint();
+  /// Called when clicking on reverse points action
+  void reversePoints();
   /// Called when clicking on delete node action
   void requestDeleteNode();
   /// Called by a timer to remove those nodes from the scene that were requested to be deleted.
