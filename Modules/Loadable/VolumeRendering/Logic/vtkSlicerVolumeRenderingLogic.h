@@ -195,6 +195,7 @@ public:
   ///  * max = level + window/2
   ///  * scalarRange[1]
   ///
+  /// If \a logAxis, the windowed \a lut x-axis is treated as logarithmic.
   /// If \a lut is 0, the colors go from black (0, 0, 0) to white (1, 1, 1)
   /// If \a lut contains only 1 value, that color is used for all the
   /// generated points.
@@ -202,7 +203,7 @@ public:
   /// The generated transfer function will be made of lut->size() + 2 points.
   /// The function is then applied to the volume property \a node.
   /// \sa SetThresholdToVolumeProp
-  void SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], vtkScalarsToColors* lut, vtkVolumeProperty* node);
+  void SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], bool logAxis, vtkScalarsToColors* lut, vtkVolumeProperty* node);
 
   /// Create an opacity transfer function for gradient opacity.
   /// It ranges from 0 to scalarRange[1] - scalarRange[0].

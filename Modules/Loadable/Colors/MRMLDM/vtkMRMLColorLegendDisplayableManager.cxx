@@ -498,6 +498,25 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     lut = invertedLut;
   }
 
+  // Handle window log compression for scalar volume display nodes
+  if (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetLogCompressWindow())
+  {
+    // Compress the colors logarithmically
+    vtkNew<vtkLookupTable> compressedLut;
+    compressedLut->DeepCopy(lut);
+    int numColors = compressedLut->GetNumberOfTableValues();
+    double magnitude = (double)(numColors - 1);
+
+    for (int i = 0; i < numColors; i++)
+    {
+      double rgba[4] = { 0.0, 0.0, 0.0, 0.0 };
+      double lookupLocale = magnitude * std::log10(1.0 + 9.0 * (double(i) / magnitude));
+      lut->GetTableValue(lookupLocale, rgba);
+      compressedLut->SetTableValue(i, rgba);
+    }
+    lut = compressedLut;
+  }
+
   lut->SetTableRange(range);
 
   // Color name == label with valid number of colors (size of validColorMask vector in non zero)
