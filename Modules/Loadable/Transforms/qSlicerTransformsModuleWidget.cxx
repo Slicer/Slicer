@@ -121,6 +121,7 @@ qSlicerTransformsModuleWidget::~qSlicerTransformsModuleWidget() = default;
 void qSlicerTransformsModuleWidget::setup()
 {
   Q_D(qSlicerTransformsModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   // Add coordinate reference button to a button group
