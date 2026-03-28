@@ -24,6 +24,11 @@ code of Slicer, generating the project files, and building the project.
 In addition, Slicer requires a set of support libraries that are not included as
 part of the *superbuild*:
 
+::::{tab-set}
+
+:::{tab-item} Qt 5
+:sync: qt5
+
 - Qt5 with the components listed below. Qt version 5.15.2 is recommended; other Qt versions are not tested and may cause build errors or may cause problems when running the application.
   - Multimedia
   - UiTools
@@ -35,9 +40,34 @@ part of the *superbuild*:
   - Private
 - libXt
 
-### Debian 12 Bookworm (Stable) and Bullseye 11 (OldStable)
+:::
+
+:::{tab-item} Qt 6
+:sync: qt6
+
+- Qt6 with the components listed below. Qt version **6.8 or later** is required.
+  - Multimedia
+  - UiTools
+  - SVG
+  - WebEngine
+  - Core5Compat
+  - Private
+- libXt
+
+:::
+
+::::
+
+### Debian 12 Bookworm (Stable)
+
+*Supported until ~2028.*
 
 Install the development tools and the support libraries:
+
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
 
 ```console
 sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
@@ -45,15 +75,64 @@ sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui c
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
-:::{note}
-The CMake version currently included in Debian 12 Bookworm (Stable) is not compatible with the current development version of Slicer.
-For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file. On Debian 12 Bookworm (Stable), you will need to upgrade CMake manually by downloading CMake version >= 3.25.3 from the [CMake website](https://cmake.org/download/) and following the CMake installation instructions.
+::::
 
+::::{tab-item} Qt 6
+:sync: qt6
+
+:::{warning}
+Debian 12 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). It is possible
+to build Slicer with Qt 6.4.2, but this is **not officially supported and is used at your own risk**.
+When configuring, you must explicitly override the Qt version check by adding
+`-DSlicer_REQUIRED_QT_VERSION=6.4` (see the [Configure section](#configure-and-generate-the-slicer-build-project-files)).
+For a fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly.
 :::
 
-### Ubuntu 25.04 (Plucky Puffin)
+```console
+sudo apt update && sudo apt install git build-essential cmake-curses-gui cmake-qt-gui \
+  qt6-base-dev qt6-base-private-dev qt6-multimedia-dev qt6-tools-dev \
+  qt6-svg-dev qt6-5compat-dev qt6-webengine-dev qt6-webengine-dev-tools qt6-scxml-dev \
+  libxt-dev libssl-dev
+```
+
+::::
+
+:::::
+
+:::{note}
+The CMake version currently included in Debian 12 Bookworm (Stable) (3.25.1) is not compatible
+with the current development version of Slicer — Slicer explicitly blocks CMake 3.25.0–3.25.2
+due to a [known CMake bug](https://gitlab.kitware.com/cmake/cmake/-/issues/24567). You will need to
+install CMake manually by downloading CMake version >= 3.25.3 from the
+[CMake releases page](https://github.com/Kitware/CMake/releases/latest) and following the
+installation instructions below.
+
+```console
+wget https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6-linux-x86_64.sh
+chmod +x cmake-3.31.6-linux-x86_64.sh
+sudo ./cmake-3.31.6-linux-x86_64.sh --prefix=/usr/local --skip-license --exclude-subdir
+```
+
+After installation, verify: `cmake --version` should report `3.31.6`.
+:::
+
+:::{note}
+On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.x) requires passing
+`-DSlicer_USE_SYSTEM_OpenSSL=ON` to the cmake configuration command (see the
+[Configure section](#configure-and-generate-the-slicer-build-project-files) below).
+:::
+
+### Ubuntu 25.10 (Questing Quokka)
+
+*Standard release, EOL Jul 2026.*
 
 Install the development tools and the support libraries:
+
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
 
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
@@ -61,13 +140,45 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev
 ```
 
+::::
+
+::::{tab-item} Qt 6
+:sync: qt6
+
+Ubuntu 25.10 ships Qt 6.9.2, which meets the minimum Qt 6.8 requirement.
+
+```console
+sudo apt update && sudo apt install git git-lfs build-essential \
+  qt6-base-dev qt6-base-private-dev qt6-multimedia-dev qt6-tools-dev qt6-tools-dev-tools \
+  qt6-svg-dev qt6-5compat-dev qt6-webengine-dev qt6-webengine-dev-tools qt6-scxml-dev \
+  libxt-dev libssl-dev
+```
+
+::::
+
+:::::
+
 :::{note}
-The CMake version currently included in Ubuntu 25.04 is CMake 3.31.6 which is compatible with the current development version of Slicer. **Last time tested: 2025-08-08.**
+Ubuntu 25.10 ships GCC 15, which defaults to the C23 standard. This causes a build failure in
+ITK's MINC library due to old-style function pointer declarations incompatible with C23. Add
+`-DADDITIONAL_C_FLAGS=-std=gnu11` to the cmake configure command to work around this (see
+[Configure section](#configure-and-generate-the-slicer-build-project-files) below).
+:::
+
+:::{note}
+The CMake version currently included in Ubuntu 25.10 is CMake 3.31.6 which is compatible with the current development version of Slicer. **Last time tested: 2026-03-26.**
 :::
 
 ### Ubuntu 24.04 (Noble Numbat)
 
+*LTS, supported until Apr 2029.*
+
 Install the development tools and the support libraries:
+
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
 
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
@@ -75,39 +186,75 @@ sudo apt update && sudo apt install git git-lfs build-essential \
   libxt-dev
 ```
 
-:::{note}
-The CMake version currently included in Ubuntu 24.04 is CMake 3.28.3 which is compatible with the current development version of Slicer. **Last time tested: 2025-05-27.**
+::::
+
+::::{tab-item} Qt 6
+:sync: qt6
+
+:::{warning}
+Ubuntu 24.04 ships Qt 6.4.2, which is below the officially supported minimum (Qt 6.8). It is possible
+to build Slicer with Qt 6.4.2, but this is **not officially supported and is used at your own risk**.
+When configuring, you must explicitly override the Qt version check by adding
+`-DSlicer_REQUIRED_QT_VERSION=6.4` (see the [Configure section](#configure-and-generate-the-slicer-build-project-files)).
+For a fully supported Qt6 build, install Qt 6.8 or later from the [Qt online installer](#any-distribution)
+and set `Qt6_DIR` accordingly.
 :::
 
-### Ubuntu 23.04 (Lunar Lobster)
-
-Install the development tools and the support libraries:
-
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
-  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  libxt-dev
+  qt6-base-dev qt6-base-private-dev qt6-multimedia-dev qt6-tools-dev \
+  qt6-svg-dev qt6-5compat-dev qt6-webengine-dev qt6-webengine-dev-tools qt6-scxml-dev \
+  libxt-dev libssl-dev
 ```
 
-Install CMake manually by downloading CMake >=3.25.3 from the [CMake website](https://cmake.org/download/)
-and by following the CMake installation instructions.
+::::
+
+:::::
 
 :::{note}
-The CMake version currently included in Ubuntu 23.04 is CMake 3.25.1 (see [here](https://packages.ubuntu.com/lunar/cmake))
-and is not compatible with the current development version of Slicer.
-For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file.
+The CMake version currently included in Ubuntu 24.04 is CMake 3.28.3 which is compatible with the current development version of Slicer. **Last time tested: 2026-03-20.**
 :::
 
 ### Ubuntu 22.04 (Jammy Jellyfish)
 
+*LTS, supported until Apr 2027.*
+
 Install the development tools and the support libraries:
 
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
+
 ```console
-sudo apt update && sudo apt install git build-essential \
-  cmake cmake-curses-gui cmake-qt-gui \
+sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
   libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  qtbase5-dev qt5-qmake
+  libxt-dev libssl-dev
 ```
+
+::::
+
+::::{tab-item} Qt 6
+:sync: qt6
+
+:::{warning}
+Ubuntu 22.04 ships Qt 6.2.4, which is below the officially supported minimum (Qt 6.8). Qt6 builds
+on Ubuntu 22.04 require installing Qt 6.8 or later from the [Qt online installer](#any-distribution).
+
+Install the system dependencies first:
+
+```console
+sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
+  libxt-dev libssl-dev
+```
+
+Then follow the [Any Distribution](#any-distribution) section to install Qt 6.8 or later, and
+configure the build with `-DQt6_DIR` pointing to the installer location.
+:::
+
+::::
+
+:::::
 
 ### ArchLinux
 
@@ -132,6 +279,12 @@ Download the Qt Linux online installer and make it executable:
  curl -LO https://download.qt.io/official_releases/online_installers/qt-online-installer-linux-x64-online.run
  chmod +x qt-online-installer-linux-x64-online.run
 ```
+
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
+
 You can run the installer and follow the instructions in the GUI. Keep in mind that the components needed by 3D Slicer are: `qt.qt5.5152.gcc_64`, `qt.qt5.5152.qtwebengine` and `qt.qt5.5152.qtwebengine.gcc_64`.
 
 Alternatively, you can request the installation of the components with the following command (you will be prompted for license agreements and permissions):
@@ -148,10 +301,52 @@ export QT_ACCOUNT_PASSWORD=<set your password here>
   --email $QT_ACCOUNT_LOGIN \
   --pw $QT_ACCOUNT_PASSWORD
 ```
-:::{hint}
-When configuring the Slicer build project, the CMake variable `Qt5_DIR` need to be set using the full path to the Qt5 installation directory ending with `5.15.2/gcc_64/lib/cmake/Qt5`. For example, assuming you installed Qt in `/opt/qt`, you may use `cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer`.
 
+:::{hint}
+When configuring the Slicer build project, set the CMake variable `Qt5_DIR` to the full path of the Qt5 installation directory ending with `5.15.2/gcc_64/lib/cmake/Qt5`. For example, assuming Qt is installed in `/opt/qt`:
+
+```console
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer
+```
 :::
+
+::::
+
+::::{tab-item} Qt 6
+:sync: qt6
+
+You can run the installer and follow the instructions in the GUI. The components needed by 3D Slicer include the base Qt6 libraries, Qt WebEngine, and Qt5Compat. Select Qt version 6.8 or later.
+
+Alternatively, you can request the installation of the components with the following command (you will be prompted for license agreements and permissions):
+
+```console
+export QT_ACCOUNT_LOGIN=<set your qt.io account email here>
+export QT_ACCOUNT_PASSWORD=<set your password here>
+./qt-online-installer-linux-x64-online.run \
+  install \
+    qt.qt6.680.gcc_64 \
+    qt.qt6.680.addons.qtwebengine \
+    qt.qt6.680.addons.qt5compat \
+  --root /opt/qt \
+  --email $QT_ACCOUNT_LOGIN \
+  --pw $QT_ACCOUNT_PASSWORD
+```
+
+:::{hint}
+When configuring the Slicer build project, set the CMake variable `Qt6_DIR` to the full path of the Qt6 installation directory ending with `6.8.0/gcc_64/lib/cmake/Qt6`. For example, assuming Qt is installed in `/opt/qt`:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DSlicer_REQUIRED_QT_VERSION=6.4 \
+  -DQt6_DIR:PATH=/opt/qt/6.8.0/gcc_64/lib/cmake/Qt6 \
+  ../Slicer
+```
+:::
+
+::::
+
+:::::
 
 ## Checkout Slicer source files
 
@@ -212,8 +407,86 @@ change the built type (Debug as default) to Release:
 cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ```
 
+:::::{tab-set}
+
+::::{tab-item} Qt 5
+:sync: qt5
+
+If Qt5 was installed from the [Qt Company online installer](#any-distribution), the CMake variable
+`Qt5_DIR` must be set:
+
+```console
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DQt5_DIR:PATH=/opt/qt/5.15.2/gcc_64/lib/cmake/Qt5 ../Slicer
+```
+
+:::{note}
+On Ubuntu 25.10 (GCC 15), add `-DADDITIONAL_C_FLAGS=-std=gnu11` to work around a C23
+incompatibility in ITK's MINC library:
+
+```console
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DADDITIONAL_C_FLAGS=-std=gnu11 ../Slicer
+```
+:::
+
+::::
+
+::::{tab-item} Qt 6
+:sync: qt6
+
+To build with Qt6, set `-DQt6_DIR` pointing to the Qt6 cmake directory. Slicer will automatically
+enforce the minimum required Qt6 version (6.8). When using distribution-provided Qt6 packages
+(e.g. Ubuntu 25.10), `Qt6_DIR` is typically `/usr/lib/x86_64-linux-gnu/cmake/Qt6`:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+  ../Slicer
+```
+
+:::{note}
+On Ubuntu 25.10 (GCC 15), add `-DADDITIONAL_C_FLAGS=-std=gnu11` to work around a C23
+incompatibility in ITK's MINC library:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DADDITIONAL_C_FLAGS=-std=gnu11 \
+  -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+  ../Slicer
+```
+:::
+
+If Qt6 was installed from the [Qt Company online installer](#any-distribution), set `Qt6_DIR`
+to the installer location instead:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DQt6_DIR:PATH=/opt/qt/6.8.0/gcc_64/lib/cmake/Qt6 \
+  ../Slicer
+```
+
 :::{warning}
-On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.9) is not compatible with the OpenSSL versions (1.0 - 1.1) used in Slicer, and attempting to run Slicer will emit the following warning, indicating that SSL support is disabled:
+On distributions shipping Qt6 < 6.8 (e.g. Debian 12, Ubuntu 24.04), the cmake configure step
+will fail with a version error. To bypass the check and build anyway — **at your own risk and
+without official support** — explicitly set `Slicer_REQUIRED_QT_VERSION=6.4`:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DSlicer_REQUIRED_QT_VERSION=6.4 \
+  -DQt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+  ../Slicer
+```
+:::
+
+::::
+
+:::::
+
+:::{warning}
+On Debian 12 Bookworm (Stable), the included OpenSSL version (3.0.x) is not compatible with the OpenSSL versions (1.0 - 1.1) used in Slicer, and attempting to run Slicer will emit the following warning, indicating that SSL support is disabled:
 ```
 qt.network.ssl: Incompatible version of OpenSSL (built with OpenSSL >= 3.x, runtime version is < 3.x)
 [SSL] SSL support disabled - Failed to load SSL library !
