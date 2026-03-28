@@ -20,6 +20,9 @@ The Slicer source code has Python [scripted modules](https://github.com/Slicer/S
 ```{include} script_repository/gui.md
 ```
 
+```{include} script_repository/packaging.md
+```
+
 ```{include} script_repository/dicom.md
 ```
 
