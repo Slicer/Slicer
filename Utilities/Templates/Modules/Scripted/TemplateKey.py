@@ -67,6 +67,8 @@ def registerSampleData():
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
 
+    SampleData.SampleDataLogic.registerCustomSampleDataCategory("TemplateKey", title=_("TemplateKey"))
+
     # TemplateKey1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
