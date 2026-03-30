@@ -412,8 +412,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         for category in categories:
             frame = ctk.ctkCollapsibleGroupBox(categoryLayout.parentWidget())
             categoryLayout.addWidget(frame)
-            frame.title = category
-            frame.name = "%sCollapsibleGroupBox" % category
+            frame.title = logic.categoryTitle(category)
+            frame.name = "%sCollapsibleGroupBox" % category  # For backward compatibility
+            frame.setProperty("sampleDataCategory", category)
             layout = ctk.ctkFlowLayout()
             layout.preferredExpandingDirections = qt.Qt.Vertical
             frame.setLayout(layout)
@@ -448,7 +449,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
                 qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
                 b.setSizePolicy(qSize)
 
-                b.name = "%sPushButton" % name
+                b.name = "%sPushButton" % source.sampleName
                 layout.addWidget(b)
                 if source.customDownloader:
                     b.connect("clicked()", lambda s=source: s.customDownloader(s))
@@ -476,6 +477,11 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
         slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
+    @staticmethod
+    def findCategoryWidget(parent, category):
+        """Find the category widget (frame) by its custom property 'sampleDataCategory'."""
+        return slicer.util.findChild(parent, None, options={"sampleDataCategory": category})
+
     def isCategoryVisible(self, category):
         """Check the visibility of a SampleData category given its name.
 
@@ -484,7 +490,10 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         """
         if not SampleDataLogic.sampleDataSourcesByCategory(category):
             return False
-        return slicer.util.findChild(self.parent, "%sCollapsibleGroupBox" % category).isVisible()
+        frame = slicer.util.findChild(self.parent, None, options={"sampleDataCategory": category})
+        if frame is None:
+            return False
+        return frame.isVisible()
 
     def setCategoryVisible(self, category, visible):
         """Update visibility of a SampleData category given its name.
@@ -493,7 +502,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         """
         if not SampleDataLogic.sampleDataSourcesByCategory(category):
             return
-        slicer.util.findChild(self.parent, "%sCollapsibleGroupBox" % category).setVisible(visible)
+        frame = slicer.util.findChild(self.parent, None, options={"sampleDataCategory": category})
+        if frame is not None:
+            frame.setVisible(visible)
 
 
 #
@@ -513,6 +524,27 @@ class SampleDataLogic:
     Checksums are expected to be formatted as a string of the form
     ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     """
+
+    @staticmethod
+    def registerCustomSampleDataCategory(category, title):
+        """Register a sample data category and its display properties.
+
+        Call this before (or independently of) :func:`registerCustomSampleDataSource` to set
+        human-readable metadata for a category.
+
+        :param category: Machine-readable category identifier (used as the key in
+            ``slicer.modules.sampleDataSources``).
+        :param title: Human-readable, translatable category title shown in the SampleData module GUI.
+        """
+        try:
+            slicer.modules.sampleDataSourceCategories
+        except AttributeError:
+            slicer.modules.sampleDataSourceCategories = {}
+
+        if category not in slicer.modules.sampleDataSourceCategories:
+            slicer.modules.sampleDataSourceCategories[category] = {}
+
+        slicer.modules.sampleDataSourceCategories[category]["title"] = title
 
     @staticmethod
     def registerCustomSampleDataSource(category="Custom",
@@ -569,6 +601,14 @@ class SampleDataLogic:
         slicer.modules.sampleDataSources[category].append(dataSource)
 
     @staticmethod
+    def categoryTitle(category):
+        """Return the human-readable display title for a category, or the category name if no title is registered."""
+        try:
+            return slicer.modules.sampleDataSourceCategories.get(category, {}).get("title", category)
+        except AttributeError:
+            return category
+
+    @staticmethod
     def sampleDataSourcesByCategory(category=None):
         """Return the registered SampleDataSources for with the given category.
 
@@ -616,8 +656,10 @@ class SampleDataLogic:
     def __init__(self, logMessage=None):
         if logMessage:
             self.logMessage = logMessage
-        self.builtInCategoryName = _("General")
-        self.developmentCategoryName = _("Development")
+        self.builtInCategoryName = "General"
+        SampleDataLogic.registerCustomSampleDataCategory(self.builtInCategoryName, title=_("General"))
+        self.developmentCategoryName = "Development"
+        SampleDataLogic.registerCustomSampleDataCategory(self.developmentCategoryName, title=_("Development"))
         self.registerBuiltInSampleDataSources()
         self.registerDevelopmentSampleDataSources()
         if slicer.app.testingEnabled():
@@ -729,6 +771,7 @@ class SampleDataLogic:
 
     def registerTestingDataSources(self):
         """Register sample data sources used by SampleData self-test to test module functionalities."""
+        SampleDataLogic.registerCustomSampleDataCategory("Testing", title=_("Testing"))
         self.registerCustomSampleDataSource(**SampleDataTest.CustomDownloaderDataSource)
 
     def registerBuiltInUrlRewriteRules(self):
