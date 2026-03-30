@@ -200,7 +200,7 @@ QString qMRMLLayoutViewFactory::viewClassName() const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement) const
+bool qMRMLLayoutViewFactory::isElementSupported(const QDomElement& layoutElement) const
 {
   if (!this->Superclass::isElementSupported(layoutElement))
   {
@@ -529,7 +529,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNodeFromXML(QDomElement vie
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::createViewFromXML(QDomElement viewElement)
+QWidget* qMRMLLayoutViewFactory::createViewFromXML(const QDomElement& viewElement)
 {
   Q_D(qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = this->viewNodeFromXML(viewElement);
@@ -571,7 +571,7 @@ QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory::viewNodesFromXML(QDomEle
 }
 
 //------------------------------------------------------------------------------
-QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewElement)
+QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(const QDomElement& viewElement)
 {
   Q_D(qMRMLLayoutViewFactory);
   QList<vtkMRMLAbstractViewNode*> viewNodes = this->viewNodesFromXML(viewElement);
@@ -587,7 +587,7 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
+void qMRMLLayoutViewFactory::setupView(const QDomElement& viewElement, QWidget* view)
 {
   this->Superclass::setupView(viewElement, view);
   vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
