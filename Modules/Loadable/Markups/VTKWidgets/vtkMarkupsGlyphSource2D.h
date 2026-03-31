@@ -120,6 +120,8 @@ public:
   void SetGlyphTypeToArrow() { this->SetGlyphType(GlyphArrow); }
   void SetGlyphTypeToThickArrow() { this->SetGlyphType(GlyphThickArrow); }
   void SetGlyphTypeToHookedArrow() { this->SetGlyphType(GlyphHookedArrow); }
+  void SetGlyphTypeToCircledCross() { this->SetGlyphType(GlyphCircledCross); }
+  void SetGlyphTypeToCircledPoint() { this->SetGlyphType(GlyphCircledPoint); }
 
   void SetNextGlyphType();
 
@@ -139,6 +141,8 @@ public:
     GlyphArrow,
     GlyphThickArrow,
     GlyphHookedArrow,
+    GlyphCircledCross,
+    GlyphCircledPoint,
     GlyphType_Last // insert new types above this line
   };
 
@@ -173,6 +177,8 @@ protected:
   void CreateArrow(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
   void CreateThickArrow(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
   void CreateHookedArrow(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateCircledCross(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateCircledPoint(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
   void CreateStarBurst(vtkPoints* pts, vtkCellArray* lines, vtkCellArray* polys, vtkUnsignedCharArray* colors);
 
 private:

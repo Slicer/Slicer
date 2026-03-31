@@ -43,6 +43,7 @@ extensions = [
     "sphinx-jsonschema",
     "github_alerts",
     "sphinx_reredirects",  # Handle page redirects
+    "sphinx_design",  # Tabs, cards, and other design components
 ]
 
 # Redirect renamed/moved pages for keeping external links working

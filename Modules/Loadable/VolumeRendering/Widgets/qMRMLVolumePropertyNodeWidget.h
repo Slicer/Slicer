@@ -45,6 +45,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidg
   QVTK_OBJECT
   Q_PROPERTY(bool threshold READ hasThreshold WRITE setThreshold)
   Q_PROPERTY(int componentCount READ componentCount WRITE setComponentCount)
+  Q_PROPERTY(int currentComponent READ currentComponent WRITE setCurrentComponent NOTIFY componentChanged)
 
 public:
   /// Constructors
@@ -81,6 +82,10 @@ public slots:
   int componentCount() const;
   /// Set the number of components that can be edited in the widget.
   void setComponentCount(int component);
+  /// Get the currently selected component for independent components mode.
+  int currentComponent() const;
+  /// Set the currently selected component for independent components mode.
+  void setCurrentComponent(int component);
   /// Set if independent components are enabled.
   void updateIndependentComponents();
 

@@ -24,19 +24,11 @@ if(NOT DEFINED CTKAppLauncherLib_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     QUIET
     )
 
-  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
-    ExternalProject_SetIfNotDefined(
-      Slicer_${proj}_GIT_TAG
-      "f66a751cf5e2dba8b11c91446a60ac096f76255e" # add-qt6-support
-      QUIET
-      )
-  else()
-    ExternalProject_SetIfNotDefined(
-      Slicer_${proj}_GIT_TAG
-      "a2c2f83401eddc72f30a1a6dd6769eb17a46fd41"
-      QUIET
-      )
-  endif()
+  ExternalProject_SetIfNotDefined(
+    Slicer_${proj}_GIT_TAG
+    "a37ad37c06e6fb4fc203434787f8bbffb52749bb"
+    QUIET
+    )
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
   if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")

@@ -35,14 +35,22 @@
 
 #include "vtkMRMLSliceNode.h"
 
+#include <memory>
+
 class vtkActor2D;
+class vtkAlgorithmOutput;
+class vtkDoubleArray;
 class vtkDiscretizableColorTransferFunction;
+class vtkFloatArray;
 class vtkGlyph2D;
 class vtkLabelPlacementMapper;
 class vtkMarkupsGlyphSource2D;
 class vtkPlane;
+class vtkPoints;
+class vtkPolyData;
 class vtkPolyDataMapper2D;
 class vtkProperty2D;
+class vtkScalarsToColors;
 
 class vtkMRMLInteractionEventData;
 
@@ -132,6 +140,26 @@ protected:
   /// Check if the representation polydata intersects the slice
   bool IsRepresentationIntersectingSlice(vtkPolyData* representation, const char* arrayName);
 
+  /// Compute fading scalars for accurate line/curve projection on the 2D slice.
+  /// 1. Clips the polydata to the fading range (|distance| <= fadingEnd), discarding
+  ///    invisible portions entirely.
+  /// 2. Inserts exact intersection points where the curve crosses the slice plane.
+  /// 3. Subdivides the visible portion into enough vertices that per-vertex opacity
+  ///    mapping accurately represents the nonlinear transfer function.
+  /// If intersectionPoints is non-null, detected zero-crossings are appended to it.
+  /// The caller is responsible for resetting intersectionPoints before the first call.
+  /// When the MTime guard triggers an early return, intersectionPoints is left untouched
+  /// (still valid from the previous computation with the same inputs).
+  virtual void ComputeIntersectionFadingScalars(vtkPolyData* worldPolyData,
+                                                vtkPlane* slicePlane,
+                                                vtkPolyData* outputPolyData,
+                                                vtkFloatArray* distanceArray = nullptr,
+                                                vtkPoints* intersectionPoints = nullptr);
+
+  /// Project accumulated SliceIntersectionWorldPoints to display coordinates and update
+  /// the intersection point glyph pipeline (actor visibility, color, scale, LUT).
+  virtual void UpdateSliceIntersectionPointDisplay(double glyphSize, vtkScalarsToColors* colorMap);
+
   class ControlPointsPipeline2D : public ControlPointsPipeline
   {
   public:
@@ -156,6 +184,73 @@ protected:
 
   vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkPlane> SlicePlane;
+
+  /// Per-glyph rendering pipeline for slice intersection points.
+  /// Each instance holds the display points, polydata, glypher, mapper, and actor
+  /// for one glyph type (entering = CircledCross, exiting = CircledPoint).
+  class LineIntersectionPointsPipeline2D
+  {
+  public:
+    LineIntersectionPointsPipeline2D(vtkAlgorithmOutput* glyphSourcePort, vtkProperty2D* property);
+    ~LineIntersectionPointsPipeline2D() = default;
+
+    vtkSmartPointer<vtkPoints> DisplayPoints;
+    vtkSmartPointer<vtkPolyData> PointsPoly;
+    vtkSmartPointer<vtkGlyph2D> Glypher;
+    vtkSmartPointer<vtkPolyDataMapper2D> Mapper;
+    vtkSmartPointer<vtkProperty2D> Property;
+    vtkSmartPointer<vtkActor2D> Actor;
+  };
+
+  /// Per-glyph rendering pipeline for direction arrow markers (2D).
+  /// Holds the display-space points, normals, slice-distance scalars, polydata,
+  /// glyph2D, mapper, and actor for cone-shaped direction markers.
+  /// The mapper's lookup table is not set here — callers must configure it after
+  /// construction via LineDirectionArrowPipeline->Mapper->SetLookupTable(...).
+  class LineDirectionArrowPipeline2D
+  {
+  public:
+    LineDirectionArrowPipeline2D();
+    ~LineDirectionArrowPipeline2D() = default;
+
+    vtkSmartPointer<vtkPoints> Points;
+    vtkSmartPointer<vtkDoubleArray> Normals;
+    vtkSmartPointer<vtkFloatArray> SliceDistances; ///< signed distance to slice per marker, drives opacity fading
+    vtkSmartPointer<vtkPolyData> PointsPoly;
+    vtkSmartPointer<vtkGlyph2D> Glypher;
+    vtkSmartPointer<vtkPolyDataMapper2D> Mapper;
+    vtkSmartPointer<vtkActor2D> Actor;
+  };
+
+  /// Direction arrow glyph pipeline (2D).
+  std::unique_ptr<LineDirectionArrowPipeline2D> LineDirectionArrowPipeline;
+
+  /// Cached BuildLineDirectionMarkers output; rebuilt only when spacing or geometry changes.
+  /// The view-dependent projection loop (world -> display) always runs.
+  vtkSmartPointer<vtkPoints> LineDirectionMarkerCachedWorldPositions;
+  vtkSmartPointer<vtkDoubleArray> LineDirectionMarkerCachedWorldTangents;
+  double LineDirectionMarkerLastSpacing = -1.0;
+  vtkMTimeType LineDirectionMarkerLastGeometryMTime = 0;
+  vtkMTimeType LineDirectionMarkerLastSlicePlaneMTime = 0;
+  vtkMTimeType LineDirectionMarkerLastMarkupsDisplayMTime = 0;
+  bool LineDirectionFirstToLastControlPoint = true;
+
+  // Line slice intersection point glyph pipelines (2D).
+  // Mark the exact positions where a curve/line crosses the slice plane.
+  // Entering (CircledCross) and exiting (CircledPoint) are driven by
+  // SliceIntersectionApproachingSigns.
+  vtkSmartPointer<vtkPoints> LineSliceIntersectionWorldPoints;
+  vtkSmartPointer<vtkFloatArray> LineSliceIntersectionApproachingSigns;
+  vtkSmartPointer<vtkProperty2D> LineSliceIntersectionProperty;
+  std::unique_ptr<LineIntersectionPointsPipeline2D> LineSliceIntersectionEnteringPipeline;
+  std::unique_ptr<LineIntersectionPointsPipeline2D> LineSliceIntersectionExitingPipeline;
+
+  /// Cached input timestamps for ComputeIntersectionFadingScalars MTime guard.
+  /// Avoids expensive polyline walking when neither curve geometry, slice plane,
+  /// nor fading range have changed.
+  vtkMTimeType FadingScalarsLastWorldDataMTime = 0;
+  vtkMTimeType FadingScalarsLastSlicePlaneMTime = 0;
+  double FadingScalarsLastFadingEnd = -1.0;
 
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
 

@@ -36,11 +36,13 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_BUILD_SUBDIRECTORY
     EXTENSION_CATEGORY
     EXTENSION_DESCRIPTION
+    EXTENSION_DICOM_SUPPORT_RULE
     EXTENSION_ENABLED
     EXTENSION_HOMEPAGE
     EXTENSION_ICONURL
     EXTENSION_NAME
     EXTENSION_STATUS
+    EXTENSION_TIER
     EXTENSION_WC_REVISION
     EXTENSION_WC_ROOT
     EXTENSION_WC_TYPE
@@ -52,6 +54,8 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_CONTRIBUTORS
     EXTENSION_DEPENDS
     EXTENSION_SCREENSHOTURLS
+    EXTENSION_RECOMMENDS
+    EXTENSION_KEYWORDS
     )
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -95,8 +99,10 @@ function(slicerFunctionGenerateExtensionDescription)
   # screenshoturls: Convert to space separated list
   _convert_items_to_s4ext("${MY_EXTENSION_SCREENSHOTURLS}" " " MY_EXTENSION_SCREENSHOTURLS)
 
-  # depends: Convert to space separated list
+  # Convert to space separated list
   list_to_string(" " "${MY_EXTENSION_DEPENDS}" MY_EXTENSION_DEPENDS)
+  list_to_string(" " "${MY_EXTENSION_RECOMMENDS}" MY_EXTENSION_RECOMMENDS)
+  list_to_string(" " "${MY_EXTENSION_KEYWORDS}" MY_EXTENSION_KEYWORDS)
 
   set(expected_existing_vars DESTINATION_DIR)
   foreach(var ${expected_existing_vars})
@@ -197,6 +203,7 @@ This is a line of text.<br>And another one."
   # Generate description file of an extension *without* dependencies
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
+    EXTENSION_TIER "5"
     #EXTENSION_BUILD_SUBDIRECTORY
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
@@ -222,6 +229,7 @@ This is a line of text.<br>And another one."
   # regenerate the description
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
+    EXTENSION_TIER "5"
     #EXTENSION_BUILD_SUBDIRECTORY
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED

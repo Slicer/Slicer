@@ -20,7 +20,8 @@
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
 #include "vtkDiscretizableColorTransferFunction.h"
-#include "vtkLine.h"
+#include "vtkFloatArray.h"
+#include "vtkGlyph2D.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
@@ -33,13 +34,13 @@
 #include "vtkSampleImplicitFunctionFilter.h"
 #include "vtkSlicerCurveRepresentation2D.h"
 #include "vtkTextActor.h"
-#include "vtkTextProperty.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTubeFilter.h"
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
@@ -55,10 +56,11 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
 
   this->WorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->WorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
-  this->WorldToSliceTransformer->SetInputConnection(this->SliceDistance->GetOutputPort());
+  this->WorldToSliceTransformer->SetInputData(this->Line);
 
   this->TubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
 
+  // 'cleaner' is a local variable; VTK's pipeline keeps it alive as needed.
   vtkNew<vtkCleanPolyData> cleaner;
   cleaner->PointMergingOn();
   cleaner->SetInputConnection(this->WorldToSliceTransformer->GetOutputPort());
@@ -78,6 +80,9 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
   this->SliceCurvePointLocator = vtkSmartPointer<vtkCellLocator>::New();
+
+  // Share the LineColorMap LUT with the direction arrow mapper (initialized in base class)
+  this->LineDirectionArrowPipeline->Mapper->SetLookupTable(this->LineColorMap);
 }
 
 //----------------------------------------------------------------------
@@ -90,29 +95,42 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   this->NeedToRenderOn();
 
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsCurveNode* markupsNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || !this->IsDisplayable())
   {
     this->VisibilityOff();
     return;
   }
+
+  vtkPolyData* curveWorld = markupsNode->GetCurveWorld();
+  if (!curveWorld)
+  {
+    this->VisibilityOff();
+    return;
+  }
+
   this->VisibilityOn();
 
-  // Line display
-
-  double diameter =
+  // Physical line diameter in pixels: absolute (mm->px) or relative to line thickness.
+  double lineDiameterPx =
     (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
                                                                                                     : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
-  this->TubeFilter->SetRadius(diameter * 0.5);
+  double markerSizePx = vtkMRMLMarkupsDisplayNode::LineDirectionMarkerBaseScaleFactor * this->MarkupsDisplayNode->GetLineDirectionMarkerScale() * lineDiameterPx;
 
-  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
+  // Line display
+  this->TubeFilter->SetRadius(lineDiameterPx * 0.5);
 
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
-  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
+  vtkPolyData* representation = vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput());
+  const char* arrayName = this->SliceDistance->GetScalarArrayName();
+  vtkFloatArray* distanceArray = nullptr;
+  if (representation)
   {
-    this->LineActor->SetVisibility(false);
+    distanceArray = vtkFloatArray::SafeDownCast(representation->GetPointData()->GetArray(this->SliceDistance->GetScalarArrayName()));
   }
+  bool isRepresentationIntersectingSlice = this->IsRepresentationIntersectingSlice(representation, arrayName);
+  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() > 1 && isRepresentationIntersectingSlice);
 
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
@@ -123,18 +141,22 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
+  vtkColorTransferFunction* colorMap = nullptr;
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {
     // Update the line color mapping from the colorNode stored in the markups display node
-    this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
+    colorMap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
   }
   else
   {
     // if there is no line color node, build the color mapping from few variables
     // (color, opacity, distance fading, saturation and hue offset) stored in the display node
     this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
-    this->LineMapper->SetLookupTable(this->LineColorMap);
+    colorMap = this->LineColorMap;
   }
+
+  this->LineMapper->SetLookupTable(colorMap);
+  this->LineDirectionArrowPipeline->Mapper->SetLookupTable(colorMap);
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
@@ -176,7 +198,6 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   // Properties label display
-
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()   //
       && this->AnyPointVisibilityOnSlice                         //
       && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
@@ -201,6 +222,143 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   else
   {
     this->TextActor->SetVisibility(false);
+  }
+
+  // Compute fading scalars for the 2D line projection
+  this->ComputeIntersectionFadingScalars(curveWorld, this->SlicePlane, this->Line, distanceArray, this->LineSliceIntersectionWorldPoints);
+
+  // Direction markers update (2D)
+  // Sample in world space then filter by proximity to the current slice plane.
+  if (isRepresentationIntersectingSlice && this->MarkupsDisplayNode->GetLineDirectionVisibility() && this->MarkupsDisplayNode->GetLineDirectionVisibility2D() && curveWorld
+      && curveWorld->GetNumberOfPoints() > 1)
+  {
+    // Spacing in mm, relative to cone height (100% = touching).
+    double markerSpacingMm = this->MarkupsDisplayNode->GetLineDirectionMarkerSpacingScale() * markerSizePx * this->ViewScaleFactorMmPerPixel;
+    double intersectionExclR2 = markerSizePx * markerSizePx * 0.75;
+    // Rebuild the sampled world positions/tangents only when spacing or curve geometry changed.
+    vtkMTimeType curveMTime = curveWorld->GetMTime();
+    bool lineDirectionFirstToLastControlPoint = this->MarkupsDisplayNode->GetLineDirectionFirstToLastControlPoint();
+    bool updateDirectionMarkers = markerSpacingMm != this->LineDirectionMarkerLastSpacing || curveMTime != this->LineDirectionMarkerLastGeometryMTime
+                                  || lineDirectionFirstToLastControlPoint != this->LineDirectionFirstToLastControlPoint;
+    if (updateDirectionMarkers)
+    {
+      vtkMRMLMarkupsNode::BuildLineDirectionMarkers(curveWorld->GetPoints(),
+                                                    this->CurveClosed,
+                                                    markerSpacingMm,
+                                                    this->LineDirectionMarkerCachedWorldPositions,
+                                                    this->LineDirectionMarkerCachedWorldTangents,
+                                                    lineDirectionFirstToLastControlPoint);
+      this->LineDirectionMarkerLastSpacing = markerSpacingMm;
+      this->LineDirectionMarkerLastGeometryMTime = curveMTime;
+      this->LineDirectionFirstToLastControlPoint = lineDirectionFirstToLastControlPoint;
+    }
+    vtkMTimeType slicePlaneMTime = this->SlicePlane->GetMTime();
+    vtkMTimeType markupsDisplayMTime = this->GetMarkupsDisplayNode()->GetMTime();
+    bool hoverUpdate = caller == this->GetMarkupsNode() && event == vtkMRMLDisplayableNode::DisplayModifiedEvent;
+    if (updateDirectionMarkers || slicePlaneMTime != this->LineDirectionMarkerLastSlicePlaneMTime || markupsDisplayMTime != this->LineDirectionMarkerLastMarkupsDisplayMTime)
+    {
+      this->LineDirectionArrowPipeline->Points->Reset();
+      this->LineDirectionArrowPipeline->Normals->Reset();
+      this->LineDirectionArrowPipeline->SliceDistances->Reset();
+
+      for (vtkIdType pointIndex = 0; pointIndex < this->LineDirectionMarkerCachedWorldPositions->GetNumberOfPoints(); ++pointIndex)
+      {
+        double worldPos[3];
+        this->LineDirectionMarkerCachedWorldPositions->GetPoint(pointIndex, worldPos);
+
+        // Signed distance to the slice plane; drives opacity fading through LineColorMap.
+        double sliceDist = this->SlicePlane->EvaluateFunction(worldPos);
+
+        double displayPos[4] = { 0.0 };
+        this->GetWorldToDisplayCoordinates(worldPos, displayPos);
+        // Skip arrows that are completely outside the fading range (avoids projecting far-off markers).
+        double limit = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+        if (std::abs(sliceDist) > limit)
+        {
+          continue;
+        }
+
+        // Project the world tangent onto the slice plane using WorldToSliceTransform.
+        double worldTangent[3];
+        this->LineDirectionMarkerCachedWorldTangents->GetTuple(pointIndex, worldTangent);
+        double sliceTangent[3];
+        this->WorldToSliceTransform->TransformVector(worldTangent, sliceTangent);
+        sliceTangent[2] = 0.0;
+        double norm2D = std::sqrt(sliceTangent[0] * sliceTangent[0] + sliceTangent[1] * sliceTangent[1]);
+        if (norm2D < 1e-6)
+        {
+          continue; // tangent is perpendicular to the slice; no meaningful 2D direction
+        }
+        sliceTangent[0] /= norm2D;
+        sliceTangent[1] /= norm2D;
+
+        double arrowPos[3] = { displayPos[0], displayPos[1], 0.0 };
+
+        // Skip arrows that overlap with slice intersection points (only when intersection points are visible)
+        bool tooCloseToIntersection = false;
+        if (this->MarkupsDisplayNode->GetLineSliceIntersectionPointVisibility())
+        {
+          for (vtkIdType intersectionPointIndex = 0; intersectionPointIndex < this->LineSliceIntersectionWorldPoints->GetNumberOfPoints(); ++intersectionPointIndex)
+          {
+            double isectWorld[3];
+            this->LineSliceIntersectionWorldPoints->GetPoint(intersectionPointIndex, isectWorld);
+            double isectDisplay[4] = { 0.0 };
+            this->GetWorldToDisplayCoordinates(isectWorld, isectDisplay);
+            double isectPos[3] = { isectDisplay[0], isectDisplay[1], 0.0 };
+            if (vtkMath::Distance2BetweenPoints(arrowPos, isectPos) < intersectionExclR2)
+            {
+              tooCloseToIntersection = true;
+              break;
+            }
+          }
+        }
+        if (tooCloseToIntersection)
+        {
+          continue;
+        }
+
+        this->LineDirectionArrowPipeline->Points->InsertNextPoint(arrowPos);
+        this->LineDirectionArrowPipeline->Normals->InsertNextTuple(sliceTangent);
+        this->LineDirectionArrowPipeline->SliceDistances->InsertNextValue(static_cast<float>(sliceDist));
+      }
+
+      this->LineDirectionArrowPipeline->Points->Modified();
+      this->LineDirectionArrowPipeline->Normals->Modified();
+      this->LineDirectionArrowPipeline->SliceDistances->Modified();
+      this->LineDirectionArrowPipeline->PointsPoly->Modified();
+      this->LineDirectionArrowPipeline->Glypher->SetScaleFactor(markerSizePx);
+      this->LineDirectionArrowPipeline->Actor->SetVisibility(this->LineDirectionArrowPipeline->Points->GetNumberOfPoints() > 0);
+
+      // Update slice intersection point markers (same size as direction arrows, same color LUT)
+      this->UpdateSliceIntersectionPointDisplay(markerSizePx, colorMap);
+
+      this->LineDirectionMarkerLastSlicePlaneMTime = slicePlaneMTime;
+      this->LineDirectionMarkerLastMarkupsDisplayMTime = markupsDisplayMTime;
+    }
+    else if (hoverUpdate)
+    {
+      double fadingEnd = this->MarkupsDisplayNode->GetLineColorFadingEnd();
+      double sideOffset = fadingEnd * 0.5;
+      if (sideOffset <= 0.0)
+      {
+        sideOffset = 0.01;
+      }
+
+      double enteringColor[3];
+      colorMap->GetColor(+sideOffset, enteringColor);
+      this->LineSliceIntersectionEnteringPipeline->Property->SetColor(enteringColor);
+
+      double exitingColor[3];
+      colorMap->GetColor(-sideOffset, exitingColor);
+      this->LineSliceIntersectionExitingPipeline->Property->SetColor(exitingColor);
+    }
+    this->LineDirectionArrowPipeline->Actor->GetProperty()->SetColor(this->LineActor->GetProperty()->GetColor());
+  }
+  else
+  {
+    this->LineDirectionArrowPipeline->Actor->SetVisibility(false);
+    this->LineSliceIntersectionEnteringPipeline->Actor->SetVisibility(false);
+    this->LineSliceIntersectionExitingPipeline->Actor->SetVisibility(false);
   }
 }
 
@@ -247,7 +405,6 @@ int vtkSlicerCurveRepresentation2D::RenderOverlay(vtkViewport* viewport)
     count += this->LineActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
-
   return count;
 }
 
@@ -260,7 +417,6 @@ int vtkSlicerCurveRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
     count += this->LineActor->RenderOpaqueGeometry(viewport);
   }
   count += this->Superclass::RenderOpaqueGeometry(viewport);
-
   return count;
 }
 
@@ -273,18 +429,17 @@ int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewpo
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
   }
   count += this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
-
   return count;
 }
 
 //-----------------------------------------------------------------------------
 vtkTypeBool vtkSlicerCurveRepresentation2D::HasTranslucentPolygonalGeometry()
 {
-  if (this->Superclass::HasTranslucentPolygonalGeometry())
+  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
-  if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
+  if (this->Superclass::HasTranslucentPolygonalGeometry())
   {
     return true;
   }

@@ -316,8 +316,8 @@ if(Slicer_BUILD_BRAINSTOOLS)
 endif()
 
 Slicer_Remote_Add(CompareVolumes
-  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
-  GIT_TAG b5270a2d42e42824eaba1adcc8fc309a514403a3
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/CompareVolumes"
+  GIT_TAG 4bef316767f6ba62868a05db582f2289704458eb
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE

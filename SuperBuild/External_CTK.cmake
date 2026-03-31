@@ -90,7 +90,7 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "fd37b874033c6589e28f5cefdd56a5f605d09960"
+    "935c4e0413a2e074175a8e015a95c3475940142e"
     QUIET
     )
 

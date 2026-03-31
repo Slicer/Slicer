@@ -34,6 +34,7 @@
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
 class vtkCellLocator;
+class vtkCleanPolyData;
 class vtkDiscretizableColorTransferFunction;
 class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
@@ -77,6 +78,8 @@ protected:
 
   void UpdateLineColorMap();
 
+  /// Compute fading scalars for accurate curve projection on the 2D slice.
+  /// The 2D mapper interpolates RGBA per-vertex (not scalars), so long tube segments
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;
@@ -85,6 +88,7 @@ protected:
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
+  vtkSmartPointer<vtkCleanPolyData> SliceCurvePointsCleaner;
   vtkSmartPointer<vtkCellLocator> SliceCurvePointLocator;
 
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;

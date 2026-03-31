@@ -29,7 +29,9 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
+#include <vtkMRMLMarkupsCurveNode.h>
 #include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsLineNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -107,6 +109,14 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->OccludedOpacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(setOccludedOpacity(double)));
 
   QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));
+
+  QObject::connect(this->LineDirectionVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLineDirectionVisibility(bool)));
+  QObject::connect(this->LineDirectionVisibility3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLineDirectionVisibility3D(bool)));
+  QObject::connect(this->LineDirectionVisibility2DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLineDirectionVisibility2D(bool)));
+  QObject::connect(this->LineDirectionMarkerScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onLineDirectionMarkerScaleChanged(double)));
+  QObject::connect(this->LineDirectionMarkerSpacingScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onLineDirectionMarkerSpacingScaleChanged(double)));
+  QObject::connect(this->LineDirectionMarkerReversedCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLineDirectionMarkerReversed(bool)));
+  QObject::connect(this->LineSliceIntersectionPointVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLineSliceIntersectionPointVisibility(bool)));
 
   this->TextFontFamilyComboBox->addItem(vtkTextProperty::GetFontFamilyAsString(VTK_ARIAL), VTK_ARIAL);
   this->TextFontFamilyComboBox->addItem(vtkTextProperty::GetFontFamilyAsString(VTK_COURIER), VTK_COURIER);
@@ -204,7 +214,6 @@ void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsDisplayNode(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* node)
 {
-  Q_D(qMRMLMarkupsDisplayNodeWidget);
   this->setMRMLMarkupsDisplayNode(node ? vtkMRMLMarkupsDisplayNode::SafeDownCast(node->GetDisplayNode()) : nullptr);
 }
 
@@ -388,6 +397,39 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   property->GetBackgroundColor(textBackgroundColorF);
   d->TextBackgroundColorPickerButton->setColor(QColor::fromRgbF(textBackgroundColorF[0], textBackgroundColorF[1], textBackgroundColorF[2]));
   d->TextBackgroundColorPickerButton->blockSignals(wasBlocking);
+
+  // Direction markers: only visible for Line and Curve nodes
+  vtkMRMLNode* displayableNode = d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetDisplayableNode() : nullptr;
+  bool isLineOrCurve = (vtkMRMLMarkupsLineNode::SafeDownCast(displayableNode) != nullptr || vtkMRMLMarkupsCurveNode::SafeDownCast(displayableNode) != nullptr);
+  d->LineDirectionMarkersCollapsibleGroupBox->setVisible(isLineOrCurve);
+
+  wasBlocking = d->LineDirectionVisibilityCheckBox->blockSignals(true);
+  d->LineDirectionVisibilityCheckBox->setChecked(markupsDisplayNode->GetLineDirectionVisibility());
+  d->LineDirectionVisibilityCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineDirectionVisibility3DCheckBox->blockSignals(true);
+  d->LineDirectionVisibility3DCheckBox->setChecked(markupsDisplayNode->GetLineDirectionVisibility3D());
+  d->LineDirectionVisibility3DCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineDirectionVisibility2DCheckBox->blockSignals(true);
+  d->LineDirectionVisibility2DCheckBox->setChecked(markupsDisplayNode->GetLineDirectionVisibility2D());
+  d->LineDirectionVisibility2DCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineDirectionMarkerScaleSliderWidget->blockSignals(true);
+  d->LineDirectionMarkerScaleSliderWidget->setValue(markupsDisplayNode->GetLineDirectionMarkerScale() * 100.0);
+  d->LineDirectionMarkerScaleSliderWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineDirectionMarkerSpacingScaleSliderWidget->blockSignals(true);
+  d->LineDirectionMarkerSpacingScaleSliderWidget->setValue(markupsDisplayNode->GetLineDirectionMarkerSpacingScale() * 100.0);
+  d->LineDirectionMarkerSpacingScaleSliderWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineDirectionMarkerReversedCheckBox->blockSignals(true);
+  d->LineDirectionMarkerReversedCheckBox->setChecked(!markupsDisplayNode->GetLineDirectionFirstToLastControlPoint());
+  d->LineDirectionMarkerReversedCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->LineSliceIntersectionPointVisibilityCheckBox->blockSignals(true);
+  d->LineSliceIntersectionPointVisibilityCheckBox->setChecked(markupsDisplayNode->GetLineSliceIntersectionPointVisibility());
+  d->LineSliceIntersectionPointVisibilityCheckBox->blockSignals(wasBlocking);
 
   // Scalars
   d->ScalarsDisplayWidget->updateWidgetFromMRML();
@@ -738,6 +780,83 @@ void qMRMLMarkupsDisplayNodeWidget::onTextPropertyWidgetsChanged()
   textProperty->SetShadow(textShadow);
   textProperty->SetBackgroundOpacity(backgroundOpacity);
   textProperty->SetBackgroundColor(backgroundColorF);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setLineDirectionVisibility(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionVisibility(visible);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setLineDirectionVisibility3D(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionVisibility3D(visible);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setLineDirectionVisibility2D(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionVisibility2D(visible);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onLineDirectionMarkerScaleChanged(double value)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionMarkerScale(value * 0.01);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onLineDirectionMarkerSpacingScaleChanged(double value)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionMarkerSpacingScale(value * 0.01);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setLineDirectionMarkerReversed(bool reversed)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineDirectionFirstToLastControlPoint(!reversed);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setLineSliceIntersectionPointVisibility(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetLineSliceIntersectionPointVisibility(visible);
 }
 
 //-----------------------------------------------------------------------------

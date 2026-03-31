@@ -80,7 +80,10 @@ protected:
 
   void BuildArc();
 
+  /// Compute fading scalars for accurate line/arc projection on the 2D slice.
+  /// The 2D mapper interpolates RGBA per-vertex (not scalars), so long tube segments
   vtkSmartPointer<vtkPolyData> Line;
+  vtkSmartPointer<vtkPolyData> ArcLine;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;
   vtkSmartPointer<vtkArcSource> Arc;
