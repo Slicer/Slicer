@@ -31,7 +31,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       # load Qt6 platform plugins (e.g. wayland), producing warnings on
       # Wayland sessions. Building from source links dynamically against
       # the system Qt6, enabling native Wayland support.
-      set(launcher_git_tag "add-qt6-support") # f66a751 - COMP: Add support for building against Qt 6
+      set(launcher_git_tag "a37ad37c06e6fb4fc203434787f8bbffb52749bb") # main - COMP: Add support for building against Qt 6
 
       ExternalProject_Add(${proj}
         ${${proj}_EP_ARGS}
