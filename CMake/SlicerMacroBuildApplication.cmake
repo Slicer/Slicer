@@ -293,7 +293,7 @@ macro(slicerMacroBuildApplication)
     APPLICATION_DEFAULT_ARGUMENTS # space separated list
     )
   set(multiValueArgs
-    SRCS
+    SRCS # Expected to include the file implementing SlicerAppMain (default: Main.cxx)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
@@ -319,6 +319,7 @@ macro(slicerMacroBuildApplication)
   # Check expected variables
   set(expected_defined_vars
     NAME
+    SRCS
     APPLE_ICON_FILE
     WIN_ICON_FILE
     LICENSE_FILE
@@ -452,7 +453,7 @@ macro(slicerMacroBuildApplication)
 
   ctk_add_executable_utf8(${slicerapp_target}
     ${SLICERAPP_EXE_OPTIONS}
-    Main.cxx
+    ${SLICERAPP_SRCS}
     ${apple_bundle_sources}
     )
   set_target_properties(${slicerapp_target} PROPERTIES
