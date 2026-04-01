@@ -2,7 +2,7 @@
 set(proj DCMTK)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "OpenJPEG" "DCMTKcs")
 if(DCMTK_WITH_OPENSSL)
   if(NOT Slicer_USE_SYSTEM_${proj})
     list(APPEND ${proj}_DEPENDENCIES OpenSSL)
@@ -61,6 +61,12 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
       )
   endif()
+
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DDCMTK_EXTERNAL_MODULES:STRING=${DCMTKcs_SOURCE_DIR}/dcmjp2kcs
+    -DDCMTK_WITH_OPENJPEG:BOOL=ON
+    -DOpenJPEG_DIR:PATH=${OpenJPEG_DIR}
+    )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
