@@ -293,7 +293,7 @@ macro(slicerMacroBuildApplication)
     APPLICATION_DEFAULT_ARGUMENTS # space separated list
     )
   set(multiValueArgs
-    SRCS
+    SRCS # Expected to include the file implementing SlicerAppMain (default: Main.cxx)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     )
@@ -319,6 +319,7 @@ macro(slicerMacroBuildApplication)
   # Check expected variables
   set(expected_defined_vars
     NAME
+    SRCS
     APPLE_ICON_FILE
     WIN_ICON_FILE
     LICENSE_FILE
@@ -450,9 +451,29 @@ macro(slicerMacroBuildApplication)
   endif()
   message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} executable name to '${executable_name}${CMAKE_EXECUTABLE_SUFFIX}'")
 
+  if(WIN32)
+    # Generate a minimal resource file so the icon is always embedded into the
+    # executable at link time without requiring custom apps to provide a .rc file.
+    # This allows for the ${executable_name}App-real (e.g. SlicerApp-real.exe) as shown in
+    # Windows task manager to be displayed with the application icon instead of a missing icon.
+    # On Windows there is both the AppLauncher executable as well as the main application
+    # executable (e.g. Slicer.exe and SlicerApp-real.exe) where we want to define an icon.
+    get_filename_component(_slicerapp_icon_name "${SLICERAPP_WIN_ICON_FILE}" NAME)
+    get_filename_component(_slicerapp_icon_dir "${SLICERAPP_WIN_ICON_FILE}" DIRECTORY)
+    set(_slicerapp_rc "${CMAKE_CURRENT_BINARY_DIR}/${SLICERAPP_NAME}.rc")
+    file(WRITE "${_slicerapp_rc}" "IDI_ICON1 ICON \"${_slicerapp_icon_name}\"\n")
+    # Override AdditionalIncludeDirectories for this source file to contain only
+    # the icon's directory, preventing propagation of all target include directories
+    # to rc.exe which would cause MSB6002 command-line length failures.
+    set_source_files_properties("${_slicerapp_rc}" PROPERTIES
+      VS_SETTINGS "AdditionalIncludeDirectories=${_slicerapp_icon_dir}"
+      )
+    list(APPEND SLICERAPP_SRCS "${_slicerapp_rc}")
+  endif()
+
   ctk_add_executable_utf8(${slicerapp_target}
     ${SLICERAPP_EXE_OPTIONS}
-    Main.cxx
+    ${SLICERAPP_SRCS}
     ${apple_bundle_sources}
     )
   set_target_properties(${slicerapp_target} PROPERTIES

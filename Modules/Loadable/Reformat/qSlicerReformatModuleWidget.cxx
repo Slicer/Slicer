@@ -299,6 +299,7 @@ qSlicerReformatModuleWidget::~qSlicerReformatModuleWidget() = default;
 void qSlicerReformatModuleWidget::setup()
 {
   Q_D(qSlicerReformatModuleWidget);
+  this->Superclass::setup();
   d->setupUi(this);
 
   // Populate the Linked menu

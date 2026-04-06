@@ -1,4 +1,18 @@
-cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
+# ==== Define cmake build policies that affect compilation and linkage default behaviors
+#
+# Set the NEWEST_VALIDATED_POLICIES_VERSION string to the newest cmake version
+# policies that provide successful builds. By setting NEWEST_VALIDATED_POLICIES_VERSION
+# to a value greater than the oldest policies, all policies between
+# OLDEST_VALIDATED_POLICIES_VERSION and CMAKE_VERSION (used for this build)
+# are set to their NEW behavior, thereby suppressing policy warnings related to policies
+# between the OLDEST_VALIDATED_POLICIES_VERSION and CMAKE_VERSION.
+#
+# CMake versions greater than the NEWEST_VALIDATED_POLICIES_VERSION policies will
+# continue to generate policy warnings "CMake Warning (dev)...Policy CMP0XXX is not set:"
+#
+set(OLDEST_VALIDATED_POLICIES_VERSION "3.20.6")
+set(NEWEST_VALIDATED_POLICIES_VERSION "3.22.6")
+cmake_minimum_required(VERSION ${OLDEST_VALIDATED_POLICIES_VERSION}...${NEWEST_VALIDATED_POLICIES_VERSION} FATAL_ERROR)
 
 if("${CMAKE_VERSION}" VERSION_EQUAL "3.21.0")
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake==3.21.0 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/22476")
