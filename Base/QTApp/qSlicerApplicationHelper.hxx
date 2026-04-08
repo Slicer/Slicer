@@ -47,6 +47,14 @@
 // STD includes
 #include <iostream>
 
+// Minimal class definition so that Qt lupdate can parse qSlicerApplicationHelper::
+// method definitions when processing this .hxx file (forward declaration is not sufficient).
+#ifndef __qSlicerApplicationHelper_h
+class qSlicerApplicationHelper
+{
+};
+#endif
+
 namespace
 {
 
