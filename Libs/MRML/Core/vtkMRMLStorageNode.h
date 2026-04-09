@@ -82,6 +82,7 @@ public:
   /// \sa ReadData(), WriteData()
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
+  void SetFileName(const std::string& fileName) { this->SetFileName(fileName.c_str()); };
 
   /// Return complete file extension for the specified filename.
   /// Longest matched extension will be returned (.seg.nrrd will be returned
@@ -182,7 +183,7 @@ public:
   /// the file content then it may return with much higher confidence values.
   /// Subclasses should implement this method.
   virtual int SupportedFileType(const char* fileName);
-
+  int SupportedFileType(const std::string& fileName) { return this->SupportedFileType(fileName.c_str()); }
   ///
   /// Get all the supported read file types
   /// Subclasses should overwrite InitializeSupportedReadFileTypes().
@@ -210,6 +211,8 @@ public:
   ///
   /// Add in another file name to the list of file names
   unsigned int AddFileName(const char* fileName);
+  unsigned int AddFileName(const std::string& fileName) { return this->AddFileName(fileName.c_str()); };
+
   ///
   /// Clear the array of file names
   void ResetFileNameList();
@@ -317,6 +320,7 @@ public:
   /// Remove supported extension from filename.
   /// If filename is not specified then the current FileName will be used.
   std::string GetFileNameWithoutExtension(const char* fileName = nullptr);
+  std::string GetFileNameWithoutExtension(const std::string& fileName) { return GetFileNameWithoutExtension(fileName.c_str()); }
 
   /// Compression parameter that is used to save the node
   vtkSetMacro(CompressionParameter, std::string);
