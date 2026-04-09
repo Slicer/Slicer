@@ -67,6 +67,7 @@ public:
 
   /// Set URL (file name) of the scene
   void SetURL(const char* url);
+  void SetURL(const std::string& url) { return this->SetURL(url.c_str()); };
 
   /// Get URL (file name) of the scene
   const char* GetURL();
