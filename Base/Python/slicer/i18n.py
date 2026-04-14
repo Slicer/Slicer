@@ -11,9 +11,11 @@ def translate(context, text):
     This `translate(context, message)` function is recognized by Qt's lupdate tool.
     See example use in DICOM module.
     """
-    from slicer import app
-
-    return app.translate(context, text)
+    try:
+        from slicer import app
+        return app.translate(context, text)
+    except ImportError:
+        return text
 
 
 def getContext(sourceFile):
