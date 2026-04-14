@@ -14,6 +14,11 @@ scmrevision 9d7341e978df954a2c875240290833d7528ef29c
 # - The dependencies will be built first
 depends NA
 
+# list recommendations
+# - These should be names of other modules that have .s4ext files
+# - The user is recommended to install the extensions
+recommends RecFoo RecBar
+
 # Inner build directory (default is ".")
 build_subdirectory .
 
@@ -47,10 +52,8 @@ screenshoturls https://www.slicer.org/w/images/9/9e/SlicerToKiwiExporter_Kiwivie
 # 0 or 1: Define if the extension should be enabled after its installation.
 enabled 1
 
-dicom_support_rule
+# Rule expression to determine if extension should handle specific DICOM data
+dicom_support_rule Modality="SEG"
 
-#
-recommends RecFoo RecBar
-
-#
+# Space separated list of keywords to help when searching for extensions
 keywords KeyFoo KeyBar

@@ -90,8 +90,8 @@ function(slicerFunctionExtractExtensionDescription)
     string(REGEX REPLACE "[ \t\r\n]+$" "" str "${str}")
     set(ext_${upper_case_token} ${str})
 
-    # depends
-    if(${token} STREQUAL "depends")
+    # depends / recommends
+    if(${token} STREQUAL "depends" OR ${token} STREQUAL "recommends")
       # Replace "NA"
       string(REGEX REPLACE "^NA$" "" ext_${upper_case_token} "${ext_${upper_case_token}}")
       # Convert to list
@@ -401,6 +401,8 @@ function(slicer_extract_extension_description_from_json_test)
     \"enabled\": false,
     \"tier\": 5,
     \"dicom_support_rule\": \"Modality = \\\"SEG\\\"\",
+    \"recommends\": [\"RecFoo\", \"RecBar\"],
+    \"keywords\": [\"KeyFoo\", \"KeyBar\"]
 }
 ")
 

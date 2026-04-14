@@ -198,15 +198,15 @@ This is a line of text.<br>And another one."
     EXTENSION_WC_URL "https://github.com/jcfr/SlicerToKiwiExporter.git"
     SLICER_REVISION "29196"
     SLICER_WC_ROOT "https://github.com/Slicer/Slicer.git"
+    EXTENSION_DICOM_SUPPORT_RULE "Modality=\"SEG\""
+    EXTENSION_KEYWORDS "KeyFoo" "KeyBar"
+    EXTENSION_RECOMMENDS "RecFoo" "RecBar"
     )
 
   # Generate description file of an extension *without* dependencies
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
     EXTENSION_TIER "5"
-    #EXTENSION_BUILD_SUBDIRECTORY
-    #EXTENSION_DEPENDS
-    #EXTENSION_ENABLED
     )
   _check_generated_description_file(
     GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
@@ -230,9 +230,6 @@ This is a line of text.<br>And another one."
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
     EXTENSION_TIER "5"
-    #EXTENSION_BUILD_SUBDIRECTORY
-    #EXTENSION_DEPENDS
-    #EXTENSION_ENABLED
     )
   _check_generated_description_file(
     GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
