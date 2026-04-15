@@ -101,6 +101,10 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   - Presets: Predefined volume display presets that set window/level and the lookup table for common visualization requirements.
   - Lookup Table: Select the color mapping for scalar volumes to colors.
   - Interpolate: When checked, slice views will display linearly interpolated slices through input volumes. Unchecked indicates nearest neighbor resampling
+  - Scalar Mapping Mode: Determines how scalar values within the window/level range are distributed across the lookup table. Useful for reducing saturation of the displayed image and emphasizing lower or higher intensity regions. In the formulas below, value is the voxel value being mapped, and colorIndex is the resulting normalized position (0-1 range) used to look up the corresponding color in the colormap.
+    - Linear (default): maps values proportionally. `colorIndex = (value - level + window/2) / window`
+    - Logarithmic: emphasizes the low end of the intensity range. `colorIndex = log10(1 + 9 * (value - level + window/2) / window)`
+    - Inverse logarithmic: emphasizes the high end of the intensity range. `colorIndex = 1 - log10(1 + 9 * (level + window/2 - value) / window)`
   - Window/Level Controls: Double slider with text input to define the range of input volume data that should be mapped to the display grayscale. Auto window level tries to estimate the intensity range of the foreground image data. An advanced options button can be clicked to display controls to add support for large dynamic range by giving control over the range of the window level double slider.
   - Threshold: Controls the range of the image that should be considered transparent when used in the foreground layer of the slice display. Same parameters also control transparency of slice models displayed in the 3D viewers.
   - Histogram: Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.

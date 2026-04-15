@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLVolumeNode.h"
+#include "vtkImageMapToWindowLevelAddon.h"
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
@@ -27,7 +28,6 @@ Version:   $Revision: 1.2 $
 #include <vtkImageExtractComponents.h>
 #include <vtkImageHistogramStatistics.h>
 #include <vtkImageLogic.h>
-#include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageStencil.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
@@ -55,6 +55,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->AutoThreshold = 0;
   this->ApplyThreshold = 0;
   this->InvertDisplayScalarRange = 0;
+  this->WindowMappingMethod = vtkImageMapToWindowLevelAddon::Linear;
 
   // try setting a default grayscale color map
   // this->SetDefaultColorMap(0);
@@ -69,10 +70,11 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->ExtractAlpha = vtkImageExtractComponents::New();
   this->MultiplyAlpha = vtkImageStencil::New();
 
-  this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
+  this->MapToWindowLevelColors = vtkImageMapToWindowLevelAddon::New();
   this->MapToWindowLevelColors->SetOutputFormatToLuminance();
   this->MapToWindowLevelColors->SetWindow(256.);
   this->MapToWindowLevelColors->SetLevel(128.);
+  this->SetWindowMappingMethod(this->WindowMappingMethod);
 
   this->MapToColors->SetOutputFormatToRGBA();
   // This input may be changed later if ScalarRangeFlag is modified.
@@ -245,6 +247,11 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   }
   {
     std::stringstream ss;
+    ss << vtkMRMLNode::XMLAttributeEncodeString(GetWindowMappingMethodAsString(GetWindowMappingMethod()));
+    of << " windowMappingMethod=\"" << ss.str() << "\"";
+  }
+  {
+    std::stringstream ss;
     ss << this->AutoWindowLevel;
     of << " autoWindowLevel=\"" << ss.str() << "\"";
   }
@@ -327,6 +334,18 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->InvertDisplayScalarRange;
     }
+    else if (!strcmp(attName, "windowMappingMethod"))
+    {
+      int propertyValue = this->GetWindowMappingMethodFromString(attValue);
+      if (propertyValue >= 0)
+      {
+        this->SetWindowMappingMethod(propertyValue);
+      }
+      else
+      {
+        vtkErrorMacro("Failed to read windowMappingMethod attribute value from string '" << attValue << "'");
+      }
+    }
     else if (!strcmp(attName, "autoWindowLevel"))
     {
       std::stringstream ss;
@@ -378,6 +397,7 @@ void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
     this->SetThreshold(node->GetLowerThreshold(), node->GetUpperThreshold());
     this->SetInterpolate(node->Interpolate);
     this->SetInvertDisplayScalarRange(node->GetInvertDisplayScalarRange());
+    this->SetWindowMappingMethod(node->GetWindowMappingMethod());
     this->SetWindowLevelPresets(node->WindowLevelPresets);
   }
 
@@ -404,6 +424,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LowerThreshold:    " << this->GetLowerThreshold() << "\n";
   os << indent << "Interpolate:       " << this->Interpolate << "\n";
   os << indent << "InvertDisplayScalarRange: " << this->InvertDisplayScalarRange << "\n";
+  os << indent << "WindowMappingMethod: " << this->GetWindowMappingMethodAsString(this->WindowMappingMethod) << "\n";
 }
 
 //---------------------------------------------------------------------------
@@ -882,4 +903,82 @@ void vtkMRMLScalarVolumeDisplayNode::SetInvertDisplayScalarRange(int invert)
   this->InvertDisplayScalarRange = invert;
   this->UpdateLookupTable(this->GetColorNode());
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetWindowMappingMethod(int method)
+{
+  switch (method)
+  {
+    case vtkImageMapToWindowLevelAddon::Linear:
+    {
+      this->MapToWindowLevelColors->SetMappingMode(vtkImageMapToWindowLevelAddon::Linear);
+      break;
+    }
+    case vtkImageMapToWindowLevelAddon::Logarithmic:
+    {
+      this->MapToWindowLevelColors->SetMappingMode(vtkImageMapToWindowLevelAddon::Logarithmic);
+      break;
+    }
+    case vtkImageMapToWindowLevelAddon::InverseLogarithmic:
+    {
+      this->MapToWindowLevelColors->SetMappingMode(vtkImageMapToWindowLevelAddon::InverseLogarithmic);
+      break;
+    }
+    default:
+    {
+      return;
+    }
+  }
+  this->WindowMappingMethod = method;
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+vtkImageMapToWindowLevelAddon::WindowMappingMode vtkMRMLScalarVolumeDisplayNode::GetWindowMappingMethodFromIndex(int method)
+{
+  switch (method)
+  {
+    case vtkImageMapToWindowLevelAddon::Logarithmic: return vtkImageMapToWindowLevelAddon::Logarithmic;
+    case vtkImageMapToWindowLevelAddon::InverseLogarithmic: return vtkImageMapToWindowLevelAddon::InverseLogarithmic;
+    default: return vtkImageMapToWindowLevelAddon::Linear;
+  }
+}
+
+//-----------------------------------------------------------------------------
+int vtkMRMLScalarVolumeDisplayNode::GetWindowMappingMethodFromString(const char* name)
+{
+  if (name == nullptr)
+  {
+    // invalid name
+    return -1;
+  }
+  if (!strcmp(name, "Linear"))
+  {
+    return vtkImageMapToWindowLevelAddon::Linear;
+  }
+  else if (!strcmp(name, "Logarithmic"))
+  {
+    return vtkImageMapToWindowLevelAddon::Logarithmic;
+  }
+  else if (!strcmp(name, "InverseLogarithmic"))
+  {
+    return vtkImageMapToWindowLevelAddon::InverseLogarithmic;
+  }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
+const char* vtkMRMLScalarVolumeDisplayNode::GetWindowMappingMethodAsString(int type)
+{
+  switch (type)
+  {
+    case vtkImageMapToWindowLevelAddon::Linear: return "Linear";
+    case vtkImageMapToWindowLevelAddon::Logarithmic: return "Logarithmic";
+    case vtkImageMapToWindowLevelAddon::InverseLogarithmic: return "InverseLogarithmic";
+    default:
+      // invalid id
+      return "";
+  }
 }
