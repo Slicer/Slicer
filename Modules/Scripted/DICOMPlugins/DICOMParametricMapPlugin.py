@@ -87,8 +87,8 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
 
     result = subprocess.run(
         [self._dcmqi_binary('paramap2itkimage'),
-         '--inputFileName', pmFileName,
-         '--outputDirName', self.tempDir],
+         '--inputDICOM', pmFileName,
+         '--outputDirectory', self.tempDir],
         capture_output=True, text=True)
     if result.returncode != 0:
       logging.debug('paramap2itkimage failed, unable to load DICOM ParametricMap:\n' + result.stderr)

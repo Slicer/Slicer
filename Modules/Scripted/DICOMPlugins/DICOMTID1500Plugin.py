@@ -637,7 +637,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     # will store the info needed for table too. 
     poly_infos = [] 
 
-    # First get the planar roi measurement gorups 
+    # First get the planar roi measurement groups 
     groups = sr.content.get_planar_roi_measurement_groups()
 
     for group in groups: 
@@ -791,7 +791,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     # will store the info needed for table too. 
     line_infos = [] 
 
-    # First get the planar roi measurement gorups 
+    # First get the planar roi measurement groups 
     groups = sr.content.get_planar_roi_measurement_groups(
         reference_type=self.getSRCode("Image Region"),
         graphic_type=hd.sr.GraphicTypeValues.POLYLINE, 
@@ -1086,7 +1086,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
       lineNode.GetMeasurement('length').SetEnabled(False)
       # change size of glyph 
       display_node = lineNode.GetDisplayNode() 
-      # lock the dispay 
+      # lock the display 
       lineNode.GetDisplayNode().SetHandlesInteractive(False)
       for controlPointIndex in range(lineNode.GetNumberOfControlPoints()):
           lineNode.SetNthControlPointLocked(controlPointIndex, True)
@@ -1166,8 +1166,8 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
         result = subprocess.run(
             [self._dcmqi_binary('tid1500reader'),
-             '--inputSRFileName', param['inputSRFileName'],
-             '--metaDataFileName', param['metaDataFileName']],
+             '--inputDICOM', param['inputSRFileName'],
+             '--outputMetadata', param['metaDataFileName']],
             capture_output=True, text=True)
         if result.returncode != 0:
           logging.debug('tid1500reader failed, unable to load DICOM SR TID1500:\n' + result.stderr)

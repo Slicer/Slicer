@@ -97,8 +97,8 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
     result = subprocess.run(
         [self._dcmqi_binary('segimage2itkimage'),
-         '--inputSEGFileName', segFileName,
-         '--outputDirName', self.tempDir,
+         '--inputDICOM', segFileName,
+         '--outputDirectory', self.tempDir,
          '--mergeSegments'],
         capture_output=True, text=True)
     if result.returncode != 0:
@@ -547,8 +547,8 @@ class DICOMSegmentationExporter:
         [DICOMPlugin._dcmqi_binary('itkimage2segimage'),
          '--inputDICOMDirectory', cliTempDir,
          '--inputImageList', ','.join(segmentFiles),
-         '--metaDataFileName', metaFilePath,
-         '--outputSEGFileName', segFilePath],
+         '--inputMetadata', metaFilePath,
+         '--outputDICOM', segFilePath],
         capture_output=True, text=True)
 
     shutil.rmtree(cliTempDir)
