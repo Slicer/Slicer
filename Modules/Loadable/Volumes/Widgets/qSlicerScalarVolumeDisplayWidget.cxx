@@ -16,6 +16,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkImageMapToWindowLevelAddon.h"
 
 // VTK includes
 #include <vtkAlgorithm.h>
@@ -89,6 +90,11 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   barsItem->setBarWidth(1.);
   scene->addItem(barsItem);
 
+  // Set up options for linear or logarithmic color mapping
+  this->ScalarMappingComboBox->insertItem(vtkImageMapToWindowLevelAddon::Linear, "Linear");
+  this->ScalarMappingComboBox->insertItem(vtkImageMapToWindowLevelAddon::LogCompressLowValues, "Log Compress Towards Low Values");
+  this->ScalarMappingComboBox->insertItem(vtkImageMapToWindowLevelAddon::LogCompressHighValues, "Log Compress Towards High Values");
+
   // Add mapping from presets defined in the Volumes module logic (VolumeDisplayPresets.json)
 
   // read volume preset names from volumes logic
@@ -128,6 +134,7 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)), q, SLOT(setInterpolate(bool)));
   QObject::connect(this->InvertDisplayScalarRangeCheckbox, SIGNAL(toggled(bool)), q, SLOT(setInvert(bool)));
+  QObject::connect(this->ScalarMappingComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setScalarMappingMethod(int)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setColorNode(vtkMRMLNode*)));
   QObject::connect(this->HistogramGroupBox, SIGNAL(toggled(bool)), q, SLOT(onHistogramSectionExpanded(bool)));
 }
@@ -222,9 +229,11 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     QSignalBlocker blocker1(d->ColorTableComboBox);
     QSignalBlocker blocker2(d->InterpolateCheckbox);
     QSignalBlocker blocker3(d->InvertDisplayScalarRangeCheckbox);
+    QSignalBlocker blocker4(d->ScalarMappingComboBox);
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
     d->InvertDisplayScalarRangeCheckbox->setChecked(displayNode->GetInvertDisplayScalarRange());
+    d->ScalarMappingComboBox->setCurrentIndex(displayNode->GetWindowMappingMethod());
   }
   this->updateHistogram();
 }
@@ -381,10 +390,14 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
       {
         int resolution = 50;
         double rgb[3] = { 0.0, 0.0, 0.0 };
+        double colorMapPosition;
+        auto mode = this->scalarMappingMethod();
+
         for (int i = 0; i < resolution; i++)
         {
+          colorMapPosition = vtkImageMapToWindowLevelAddon::mapScalarToWindow(double(i), 0.0, double(resolution - 1), mode);
+          mapToColors->GetColor((colorTableIndexRange[0] + (colorTableIndexRange[1] - colorTableIndexRange[0]) * colorMapPosition), rgb);
           currentPosition = colorTableVisibleRange[0] + (colorTableVisibleRange[1] - colorTableVisibleRange[0]) * double(i) / (resolution - 1) + eps;
-          mapToColors->GetColor((colorTableIndexRange[0] + (colorTableIndexRange[1] - colorTableIndexRange[0]) * double(i) / (resolution - 1)), rgb);
           d->ColorTransferFunction->AddRGBPoint(currentPosition, rgb[0], rgb[1], rgb[2]);
         }
       }
@@ -457,6 +470,17 @@ void qSlicerScalarVolumeDisplayWidget::setInvert(bool invert)
 }
 
 // --------------------------------------------------------------------------
+void qSlicerScalarVolumeDisplayWidget::setScalarMappingMethod(int method)
+{
+  vtkMRMLScalarVolumeDisplayNode* displayNode = this->volumeDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetWindowMappingMethod(method);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::setColorNode(vtkMRMLNode* colorNode)
 {
   vtkMRMLScalarVolumeDisplayNode* displayNode = this->volumeDisplayNode();
@@ -486,4 +510,17 @@ void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetId)
     return;
   }
   volumesModuleLogic->ApplyVolumeDisplayPreset(this->volumeDisplayNode(), presetId.toStdString());
+}
+
+// --------------------------------------------------------------------------
+vtkImageMapToWindowLevelAddon::WindowMappingMode qSlicerScalarVolumeDisplayWidget::scalarMappingMethod()
+{
+  Q_D(qSlicerScalarVolumeDisplayWidget);
+  int mode = d->ScalarMappingComboBox->currentIndex();
+  switch (mode)
+  {
+    case vtkImageMapToWindowLevelAddon::LogCompressLowValues: return vtkImageMapToWindowLevelAddon::LogCompressLowValues;
+    case vtkImageMapToWindowLevelAddon::LogCompressHighValues: return vtkImageMapToWindowLevelAddon::LogCompressHighValues;
+    default: return vtkImageMapToWindowLevelAddon::Linear;
+  }
 }

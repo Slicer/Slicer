@@ -469,17 +469,18 @@ void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], vtkScalarsToColors* colors, vtkVolumeProperty* volumeProp)
+void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRange[2],
+                                                               double windowLevel[2],
+                                                               vtkScalarsToColors* colors,
+                                                               vtkVolumeProperty* volumeProp,
+                                                               vtkImageMapToWindowLevelAddon::WindowMappingMode mappingMode,
+                                                               bool invertColormap)
 {
   if (!volumeProp || !scalarRange || !windowLevel)
   {
     vtkWarningMacro("SetWindowLevelToVolumeProp: Inputs do not exist.");
     return;
   }
-
-  // Note that window can be negative, which means that the color lookup table should be reversed
-  // (low voxel values are assigned to high values in the color lookup table).
-  bool invertColorTable = (windowLevel[0] < 0.0);
 
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
@@ -496,7 +497,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     double color_X_RGB_MS[6] = { 0., 0., 0., 0., 0.5, 1.0 }; // x, RGB, midpoint, sharpness
     for (vtkIdType i = 0; i < colorCount; ++i)
     {
-      vtkIdType colorIndex = (invertColorTable ? colorCount - 1 - i : i);
+      vtkIdType colorIndex = (invertColormap ? colorCount - 1 - i : i);
       inputColorTransfer->GetNodeValue(colorIndex, color_X_RGB_MS);
       colorTransfer->AddRGBPoint(offset + color_X_RGB_MS[0] * scale, color_X_RGB_MS[1], color_X_RGB_MS[2], color_X_RGB_MS[3], color_X_RGB_MS[4], color_X_RGB_MS[5]);
     }
@@ -534,7 +535,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     else // if (numberOfColors > 1)
     {
       double color[4] = { 0.0, 0.0, 0.0, 1.0 };
-      vtkIdType firstColorTableIndex = (invertColorTable ? numberOfColors - 1 : 0);
+      vtkIdType firstColorTableIndex = (invertColormap ? numberOfColors - 1 : 0);
       lut->GetTableValue(firstColorTableIndex, color);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
 
@@ -544,20 +545,26 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
       const vtkIdType maxNumberOfPoints = 24;
 
       const vtkIdType numberOfPoints = std::min(numberOfColors, maxNumberOfPoints);
-      // convert from point index to color index
-      double pointIndexScale = static_cast<double>(numberOfColors - 1) / (numberOfPoints - 1);
-      double offset = outputRange[0];
-      double scale = fabs(windowLevel[0]) / (numberOfColors - 1);
+      double pointMaxIndex = static_cast<double>(numberOfPoints - 1);
+      double colorMaxIndex = static_cast<double>(numberOfColors - 1);
+
+      const double window = fabs(windowLevel[0]);
+      const double xOffset = outputRange[0];
+      double xStepSize = window / numberOfPoints;
+
       for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
       {
-        vtkIdType colorIndex = pointIndex * pointIndexScale;
-        const double value = offset + colorIndex * scale;
-        vtkIdType colorTableIndex = (invertColorTable ? numberOfColors - 1 - colorIndex : colorIndex);
-        lut->GetTableValue(colorTableIndex, color);
-        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous), color[0], color[1], color[2]);
+        double xValue = xOffset + pointIndex * xStepSize;
+        double normalizedColorIndex = vtkImageMapToWindowLevelAddon::mapScalarToWindow(double(pointIndex), 0.0, pointMaxIndex, mappingMode);
+        if (invertColormap)
+        {
+          normalizedColorIndex = 1.0 - normalizedColorIndex;
+        }
+        vtkIdType colorIndex = normalizedColorIndex * colorMaxIndex;
+        lut->GetTableValue(colorIndex, color);
+        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(xValue, previous), color[0], color[1], color[2]);
       }
-
-      vtkIdType lastColorTableIndex = (invertColorTable ? 0 : numberOfColors - 1);
+      vtkIdType lastColorTableIndex = (invertColormap ? 0 : numberOfColors - 1);
       lut->GetTableValue(lastColorTableIndex, color);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
       colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
@@ -734,17 +741,15 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
 
   vtkScalarsToColors* lut = vpNode->GetColorNode() ? vpNode->GetColorNode()->GetScalarsToColors() : nullptr;
   vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+  vtkImageMapToWindowLevelAddon::WindowMappingMode scalarMappingMode = vpNode->GetWindowMappingMethodFromIndex(vpNode->GetWindowMappingMethod());
+  bool invertedColormap = vpNode->GetInvertDisplayScalarRange();
 
   int disabledModify = vspNode->StartModify();
   int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
 
   this->SetThresholdToVolumeProp(scalarRange, threshold, prop, this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
 
-  if (vpNode->GetInvertDisplayScalarRange())
-  {
-    windowLevel[0] *= -1;
-  }
-  this->SetWindowLevelToVolumeProp(scalarRange, windowLevel, lut, prop);
+  this->SetWindowLevelToVolumeProp(scalarRange, windowLevel, lut, prop, scalarMappingMode, invertedColormap);
   this->SetGradientOpacityToVolumeProp(scalarRange, prop);
 
   vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
