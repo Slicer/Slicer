@@ -92,7 +92,7 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
     - Surface smoothing: check this checkbox to reduce staircase artifacts by adding a random noise pattern (jitter) to the raycasting lines
   - Volume Properties: Advanced views of the transfer functions.
     - Synchronize with Volumes module: show volume rendering with the same color mapping that is used in slice views
-      - Click: Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.
+      - Click: Apply once the properties (window/level, threshold, lut, scalar mapping mode) of the Volumes module to the Volume Rendering module.
       - Checkbox: By clicking on the checkbox, you can toggle the button. When toggled, any modification occurring in the Volumes module is continuously applied to the volume rendering
     - Control point properties: X = scalar value, O = opacity, M = mid-point, S = sharpness
     - Keyboard/mouse shortcuts:
