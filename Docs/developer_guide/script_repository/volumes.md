@@ -848,17 +848,14 @@ https://gist.github.com/lassoan/428af5285da75dc033d32ebff65ba940
 
 ### Thick slab reconstruction and maximum/minimum intensity volume projections
 
-Set up `red` slice viewer to show thick slab reconstructed from 3 slices:
+Set up `red` slice viewer to show thick slab reconstructed from 3 mm:
 
 ```python
 sliceNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
-appLogic = slicer.app.applicationLogic()
-sliceLogic = appLogic.GetSliceLogic(sliceNode)
-sliceLayerLogic = sliceLogic.GetBackgroundLayer()
-reslice = sliceLayerLogic.GetReslice()
-reslice.SetSlabModeToMean()
-reslice.SetSlabNumberOfSlices(10) # mean of 10 slices will computed
-reslice.SetSlabSliceSpacingFraction(0.3) # spacing between each slice is 0.3 pixel (total 10 * 0.3 = 3 pixel neighborhood)
+sliceNode.SetSlabReconstructionEnabled(True)
+sliceNode.SetSlabReconstructionType(2) # mean projection
+sliceNode.SetSlabReconstructionOversamplingFactor(1)
+sliceNode.SetSlabReconstructionThickness(3)
 sliceNode.Modified()
 ```
 
@@ -866,17 +863,12 @@ Set up `red` slice viewer to show maximum intensity projection (MIP):
 
 ```python
 sliceNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
-appLogic = slicer.app.applicationLogic()
-sliceLogic = appLogic.GetSliceLogic(sliceNode)
-sliceLayerLogic = sliceLogic.GetBackgroundLayer()
-reslice = sliceLayerLogic.GetReslice()
-reslice.SetSlabModeToMax()
-reslice.SetSlabNumberOfSlices(600) # use a large number of slices (600) to cover the entire volume
-reslice.SetSlabSliceSpacingFraction(0.5) # spacing between slices are 0.5 pixel (supersampling is useful to reduce interpolation artifacts)
+sliceNode.SetSlabReconstructionEnabled(True)
+sliceNode.SetSlabReconstructionType(1) # max projection
+sliceNode.SetSlabReconstructionOversamplingFactor(2) # (supersampling is useful to reduce interpolation artifacts)
+sliceNode.SetSlabReconstructionThickness(600) # use a large number of slices (600) to cover the entire volume
 sliceNode.Modified()
 ```
-
-The projected image is available in a `vtkImageData` object by calling `reslice.GetOutput()`.
 
 ### Display volume using volume rendering
 
