@@ -75,6 +75,22 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [dicomweb-client]
   dicomweb-client==0.60.1 --hash=sha256:e128866a797b7acdcd4ad280a10ebced5af77a3ce1d1bde709389ad56583955d
   # [/dicomweb-client]
+  # [dcmqi]
+  # Binary distribution of the DCMQI tools (segimage2itkimage, itkimage2segimage,
+  # paramap2itkimage, tid1500reader, tid1500writer, etc.) used by DICOM plugins.
+  # Note: macOS wheels require macOS 13+; Linux wheel is manylinux_2_28 x86_64 only.
+  # Hashes correspond to the following packages:
+  #  - dcmqi-0.3.3-py3-none-macosx_13_0_arm64.whl
+  #  - dcmqi-0.3.3-py3-none-macosx_13_0_x86_64.whl
+  #  - dcmqi-0.3.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+  #  - dcmqi-0.3.3-py3-none-win32.whl
+  #  - dcmqi-0.3.3-py3-none-win_amd64.whl
+  dcmqi==0.3.3 --hash=sha256:92f5f942d0349357e511c6a5d3a3703884c3f2127e822e2a204dec8021aa83c4 \
+               --hash=sha256:cb007a8991928ff09c864d4c468255f460f6457629a449ad3d52390bf11489f3 \
+               --hash=sha256:5a689b17c1163094a73468d8a624611d460ad86969d24ffd22aeccfee7cb4dc1 \
+               --hash=sha256:daf19ba9326574eb5df6bed91598e6ee55852637c277e37ff29231936526d5ab \
+               --hash=sha256:ca684f09857323389355196cba3c58fce30f4581f1d5220725e2ab08596f6e0f
+  # [/dcmqi]
   ]===])
 
   ExternalProject_Add(${proj}
