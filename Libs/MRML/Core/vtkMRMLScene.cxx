@@ -124,6 +124,11 @@ Version:   $Revision: 1.18 $
 #include <iostream>
 #include <numeric>
 
+// rapidjson includes
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
 // #define MRMLSCENE_VERBOSE
 
 #ifdef MRMLSCENE_VERBOSE
@@ -156,6 +161,8 @@ vtkMRMLScene::vtkMRMLScene()
   this->SaveToXMLString = 0;
 
   this->ReadDataOnLoad = 1;
+
+  this->SetUseJSONFormat = 0;
 
   this->LastLoadedVersion = nullptr;
   this->LastLoadedExtensions = nullptr;
@@ -1041,26 +1048,145 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
 
   int success = 0; // 0 means failure
   {
-    vtkNew<vtkMRMLParser> parser;
-    parser->SetMRMLScene(this);
-    userMessages->SetObservedObject(parser);
-    if (nodeCollection != this->Nodes)
+    if (!this->SetUseJSONFormat)
     {
-      parser->SetNodeCollection(nodeCollection);
-    }
+      vtkNew<vtkMRMLParser> parser;
+      parser->SetMRMLScene(this);
+      userMessages->SetObservedObject(parser);
+      if (nodeCollection != this->Nodes)
+      {
+        parser->SetNodeCollection(nodeCollection);
+      }
 
-    if (this->GetLoadFromXMLString())
-    {
-      success = parser->Parse(this->GetSceneXMLString().c_str());
+      if (this->GetLoadFromXMLString())
+      {
+        success = parser->Parse(this->GetSceneXMLString().c_str());
+      }
+      else
+      {
+        vtkDebugMacro("Parsing: " << this->URL.c_str());
+        parser->SetFileName(URL.c_str());
+        success = parser->Parse();
+      }
+
+      userMessages->SetObservedObject(nullptr);
     }
     else
     {
-      vtkDebugMacro("Parsing: " << this->URL.c_str());
-      parser->SetFileName(URL.c_str());
-      success = parser->Parse();
-    }
+      rapidjson::Document document;
 
-    userMessages->SetObservedObject(nullptr);
+      if (this->GetLoadFromXMLString())
+      {
+        document.Parse(this->GetSceneXMLString().c_str());
+        if (document.HasParseError())
+        {
+          vtkErrorMacro(<< "Error parsing JSON string.");
+          return 0;
+        }
+      }
+      else
+      {
+        std::ifstream ifs(this->URL.c_str());
+        if (!ifs.is_open())
+        {
+          vtkErrorMacro(<< "Error opening file: " << this->URL.c_str());
+          return 0;
+        }
+        std::stringstream buffer;
+        buffer << ifs.rdbuf();
+
+        document.Parse(buffer.str().c_str());
+        if (document.HasParseError())
+        {
+          vtkErrorMacro(<< "Error parsing JSON file.");
+          return 0;
+        }
+      }
+      if (document.HasMember("MRML") && document["MRML"].IsObject())
+      {
+        const rapidjson::Value& mrmlObject = document["MRML"];
+
+        if (mrmlObject.HasMember("version") && mrmlObject["version"].IsString())
+        {
+          const char* version = mrmlObject["version"].GetString();
+          this->SetLastLoadedVersion(version);
+        }
+
+        if (mrmlObject.HasMember("extensions") && mrmlObject["extensions"].IsString())
+        {
+          const char* extensions = mrmlObject["extensions"].GetString();
+          this->SetLastLoadedExtensions(extensions);
+        }
+
+        if (mrmlObject.HasMember("userTags") && mrmlObject["userTags"].IsObject())
+        {
+          const rapidjson::Value& userTags = mrmlObject["userTags"];
+          for (rapidjson::Value::ConstMemberIterator itr = userTags.MemberBegin(); itr != userTags.MemberEnd(); ++itr)
+          {
+            const std::string kwd = itr->name.GetString();
+            const std::string val = itr->value.GetString();
+            this->GetUserTagTable()->AddOrUpdateTag(kwd.c_str(), val.c_str(), 0);
+          }
+        }
+
+        if (mrmlObject.HasMember("nodes") && mrmlObject["nodes"].IsObject())
+        {
+          for (rapidjson::Value::ConstMemberIterator itr = mrmlObject["nodes"].MemberBegin(); itr != mrmlObject["nodes"].MemberEnd(); ++itr)
+          {
+            const char* tagName = itr->name.GetString();
+            const char* tmp = this->GetClassNameByTag(tagName);
+            std::string className = tmp ? tmp : "";
+
+            // CreateNodeByClass should have a chance to instantiate non-registered node
+            if (className.empty())
+            {
+              className = "vtkMRML";
+              className += tagName;
+              // Append 'Node' prefix only if required
+              if (className.rfind("Node") != className.size() - 4)
+              {
+                className += "Node";
+              }
+            }
+
+            vtkMRMLNode* node = this->CreateNodeByClass(className.c_str());
+            if (!node)
+            {
+              vtkErrorMacro("Failed to CreateNodeByClass: " << className);
+              continue;
+            }
+
+            if (vtkMRMLStorageNode::SafeDownCast(node) != nullptr)
+            {
+              node->SetScene(this);
+            }
+
+            rapidjson::StringBuffer buffer;
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+            writer.StartObject();
+            writer.Key(tagName);
+            itr->value.Accept(writer);
+            writer.EndObject();
+            node->ReadJSON(buffer.GetString());
+
+            if (nodeCollection)
+            {
+              if (node->GetAddToScene())
+              {
+                nodeCollection->vtkCollection::AddItem((vtkObject*)node);
+              }
+            }
+            else
+            {
+              this->AddNode(node);
+            }
+            node->Delete();
+          }
+        }
+      }
+
+      success = 1;
+    }
   }
 
   vtkDebugMacro("Done Parsing: " << this->URL.c_str());
@@ -1127,100 +1253,179 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
   // to write data in another thread, causing GUI to crash.
   // this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
 
-  // file << "<?xml version=\"1.0\" standalone='no'?>\n";
-  // file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
-
-  // Add XML encoding specification. Slicer uses the UTF-8 character set.
-  *os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-
-  //--- BEGIN test of user tags
-  // file << "<MRML>\n";
-  *os << "<MRML";
-
-  // write version
-  if (this->GetVersion())
+  if (!this->SetUseJSONFormat)
   {
-    *os << " version=\"" << this->GetVersion() << "\"";
-  }
-  if (this->GetExtensions() && strlen(this->GetExtensions()) > 0)
-  {
-    *os << " extensions=\"" << this->GetExtensions() << "\"";
-  }
+    // file << "<?xml version=\"1.0\" standalone='no'?>\n";
+    // file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
 
-  //---write any user tags.
-  std::stringstream ss;
-  if (this->GetUserTagTable() != nullptr)
-  {
-    ss.clear();
-    ss.str("");
-    int numc = this->GetUserTagTable()->GetNumberOfTags();
-    const char *kwd, *val;
-    for (int i = 0; i < numc; i++)
+    // Add XML encoding specification. Slicer uses the UTF-8 character set.
+    *os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+
+    //--- BEGIN test of user tags
+    // file << "<MRML>\n";
+    *os << "<MRML";
+
+    // write version
+    if (this->GetVersion())
     {
-      kwd = this->GetUserTagTable()->GetTagAttribute(i);
-      val = this->GetUserTagTable()->GetTagValue(i);
-      if (kwd != nullptr && val != nullptr)
+      *os << " version=\"" << this->GetVersion() << "\"";
+    }
+    if (this->GetExtensions() && strlen(this->GetExtensions()) > 0)
+    {
+      *os << " extensions=\"" << this->GetExtensions() << "\"";
+    }
+
+    //---write any user tags.
+    std::stringstream ss;
+    if (this->GetUserTagTable() != nullptr)
+    {
+      ss.clear();
+      ss.str("");
+      int numc = this->GetUserTagTable()->GetNumberOfTags();
+      const char *kwd, *val;
+      for (int i = 0; i < numc; i++)
       {
-        ss << kwd << "=" << val;
-        if (i < (numc - 1))
+        kwd = this->GetUserTagTable()->GetTagAttribute(i);
+        val = this->GetUserTagTable()->GetTagValue(i);
+        if (kwd != nullptr && val != nullptr)
         {
-          ss << " ";
+          ss << kwd << "=" << val;
+          if (i < (numc - 1))
+          {
+            ss << " ";
+          }
         }
       }
+      if (ss.str().c_str() != nullptr)
+      {
+        *os << " userTags=\"" << ss.str().c_str() << "\"";
+      }
     }
-    if (ss.str().c_str() != nullptr)
+
+    *os << ">\n";
+    //--- END test of user tags
+
+    // Write each node
+    int n;
+    for (n = 0; n < this->Nodes->GetNumberOfItems(); n++)
     {
-      *os << " userTags=\"" << ss.str().c_str() << "\"";
+      node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
+      if (!node->GetSaveWithScene())
+      {
+        continue;
+      }
+
+      vtkIndent vindent(indent);
+      *os << vindent << "<" << node->GetNodeTagName() << "\n ";
+
+      if (indent <= 0)
+      {
+        indent = 1;
+      }
+
+      vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
+      nodeWritingMessages->SetObservedObject(node);
+      node->WriteXML(*os, indent);
+      nodeWritingMessages->SetObservedObject(nullptr);
+      if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+      {
+        vtkErrorToMessageCollectionMacro(userMessages,
+                                         "vtkMRMLScene::Commit",
+                                         "Error writing " << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
+                                                          << " node to XML");
+      }
+      else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+      {
+        vtkErrorToMessageCollectionMacro(userMessages,
+                                         "vtkMRMLScene::Commit",
+                                         "Warnings encountered while writing " << (node->GetName() ? node->GetName() : "(unknown)") << " ("
+                                                                               << (node->GetID() ? node->GetID() : "unknown") << ")"
+                                                                               << " node to XML - see application log for details");
+      }
+
+      *os << vindent << ">";
+      node->WriteNodeBodyXML(*os, indent);
+      *os << "</" << node->GetNodeTagName() << ">\n";
     }
+
+    *os << "</MRML>\n";
   }
-
-  *os << ">\n";
-  //--- END test of user tags
-
-  // Write each node
-  int n;
-  for (n = 0; n < this->Nodes->GetNumberOfItems(); n++)
+  else
   {
-    node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
-    if (!node->GetSaveWithScene())
+    rapidjson::Document document;
+    document.SetObject();
+    rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+
+    // Create MRML object
+    rapidjson::Value mrml(rapidjson::kObjectType);
+
+    // Write version
+    if (this->GetVersion())
     {
-      continue;
+      mrml.AddMember("version", rapidjson::Value(this->GetVersion(), allocator), allocator);
     }
 
-    vtkIndent vindent(indent);
-    *os << vindent << "<" << node->GetNodeTagName() << "\n ";
-
-    if (indent <= 0)
+    if (this->GetExtensions() && strlen(this->GetExtensions()) > 0)
     {
-      indent = 1;
+      mrml.AddMember("extensions", rapidjson::Value(this->GetExtensions(), allocator), allocator);
     }
 
-    vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
-    nodeWritingMessages->SetObservedObject(node);
-    node->WriteXML(*os, indent);
-    nodeWritingMessages->SetObservedObject(nullptr);
-    if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+    // Write any user tags
+    if (this->GetUserTagTable() != nullptr)
     {
-      vtkErrorToMessageCollectionMacro(userMessages,
-                                       "vtkMRMLScene::Commit",
-                                       "Error writing " << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
-                                                        << " node to XML");
-    }
-    else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
-    {
-      vtkErrorToMessageCollectionMacro(userMessages,
-                                       "vtkMRMLScene::Commit",
-                                       "Warnings encountered while writing " << (node->GetName() ? node->GetName() : "(unknown)") << " ("
-                                                                             << (node->GetID() ? node->GetID() : "unknown") << ")"
-                                                                             << " node to XML - see application log for details");
+      rapidjson::Value userTags(rapidjson::kObjectType);
+      int numc = this->GetUserTagTable()->GetNumberOfTags();
+      const char* kwd;
+      const char* val;
+      for (int i = 0; i < numc; i++)
+      {
+        kwd = this->GetUserTagTable()->GetTagAttribute(i);
+        val = this->GetUserTagTable()->GetTagValue(i);
+        if (kwd != nullptr && val != nullptr)
+        {
+          userTags.AddMember(rapidjson::Value(kwd, allocator), rapidjson::Value(val, allocator), allocator);
+        }
+      }
+      mrml.AddMember("userTags", userTags, allocator);
     }
 
-    *os << vindent << ">";
-    node->WriteNodeBodyXML(*os, indent);
-    *os << "</" << node->GetNodeTagName() << ">\n";
+    // Add MRML object to the document
+    document.AddMember("MRML", mrml, allocator);
+
+    // Write each node
+    rapidjson::Value nodes(rapidjson::kObjectType);
+    for (int nodeIndex = 0; nodeIndex < this->Nodes->GetNumberOfItems(); ++nodeIndex)
+    {
+      vtkMRMLNode* node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(nodeIndex);
+      if (!node->GetSaveWithScene())
+      {
+        continue;
+      }
+
+      std::string jsonNodeString = node->WriteJSON(indent, userMessages);
+      rapidjson::Document nodeDocument;
+      nodeDocument.Parse(jsonNodeString.c_str());
+      if (document.HasParseError())
+      {
+        vtkErrorMacro(<< "Error parsing JSON string.");
+        continue;
+      }
+
+      rapidjson::Value jsonNode(nodeDocument[node->GetNodeTagName()], allocator);
+      nodes.AddMember(rapidjson::Value(node->GetNodeTagName(), allocator), jsonNode, allocator);
+    }
+
+    // Add nodes array to the MRML object
+    document["MRML"].AddMember("nodes", nodes, allocator);
+
+    // Convert JSON document to string with pretty formatting
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    document.Accept(writer);
+
+    // Output the JSON string
+    *os << buffer.GetString();
   }
-
-  *os << "</MRML>\n";
 
   // Close file
   if (this->GetSaveToXMLString())
