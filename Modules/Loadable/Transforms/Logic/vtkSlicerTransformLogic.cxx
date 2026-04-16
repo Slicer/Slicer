@@ -116,13 +116,13 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     useURI = scene->GetCacheManager()->IsRemoteReference(filename);
   }
 
-  const char* localFile;
+  std::string localFile;
   if (useURI)
   {
     vtkDebugMacro("AddTransforn: file name is remote: " << filename);
     storageNode->SetURI(filename);
     // reset filename to the local file name
-    localFile = ((scene)->GetCacheManager())->GetFilenameFromURI(filename);
+    localFile = scene->GetCacheManager()->GetFilenameFromURI(filename);
   }
   else
   {
@@ -130,10 +130,9 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     localFile = filename;
   }
 
-  const std::string fname(localFile);
   // the model name is based on the file name (itksys call should work even if
   // file is not on disk yet)
-  const std::string name = itksys::SystemTools::GetFilenameName(fname);
+  const std::string name = itksys::SystemTools::GetFilenameName(localFile);
 
   if (!storageNode->SupportedFileType(name.c_str()))
   {
@@ -190,7 +189,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     userMessages->AddMessages(storageNode->GetUserMessages());
   }
 
-  const std::string basename(storageNode->GetFileNameWithoutExtension(fname.c_str()));
+  const std::string basename(storageNode->GetFileNameWithoutExtension(localFile));
   const std::string uname(scene->GetUniqueNameByString(basename.c_str()));
   tnode->SetName(uname.c_str());
   scene->AddNode(storageNode.GetPointer());

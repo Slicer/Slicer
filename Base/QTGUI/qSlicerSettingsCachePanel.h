@@ -53,14 +53,19 @@ public:
 public slots:
   void setCachePath(const QString& path);
   void setCacheSize(int sizeInMB);
-  void setCacheFreeBufferSize(int sizeInMB);
   void setForceRedownload(bool force);
+  void removeSelectedCacheItems();
+  void pruneCache();
   void clearCache();
 
 protected slots:
   void updateFromCacheManager();
+  void updateRemoveSelectedButton();
 
 protected:
+  void showEvent(QShowEvent* event) override;
+  bool confirmCacheOperationWithMissingSentinel(const QString& operationText, const QString& directoryPath);
+
   QScopedPointer<qSlicerSettingsCachePanelPrivate> d_ptr;
 
 private:
