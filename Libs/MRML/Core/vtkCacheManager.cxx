@@ -10,43 +10,295 @@
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <algorithm>
+#include <cstring>
+#include <numeric>
+#include <set>
+#include <utility>
+#include <vector>
+
 vtkStandardNewMacro(vtkCacheManager);
 
 #define MB 1000000.0
 
+namespace
+{
+bool IsNullOrEmpty(const char* value)
+{
+  return value == nullptr || value[0] == '\0';
+}
+
+bool IsDirectoryNavigationEntry(const char* fileName)
+{
+  return std::strcmp(fileName, ".") == 0 || std::strcmp(fileName, "..") == 0;
+}
+} // namespace
+
+//----------------------------------------------------------------------------
+std::string vtkCacheManager::CanonicalizePath(const char* path) const
+{
+  if (IsNullOrEmpty(path))
+  {
+    return std::string();
+  }
+
+  std::string canonicalPath = vtksys::SystemTools::GetRealPath(path);
+  if (canonicalPath.empty())
+  {
+    canonicalPath = vtksys::SystemTools::CollapseFullPath(path);
+  }
+  return canonicalPath;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkCacheManager::JoinPath(const std::string& directoryPath, const std::string& fileName) const
+{
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(directoryPath, pathComponents);
+  pathComponents.push_back(fileName);
+  return vtksys::SystemTools::JoinPath(pathComponents);
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::PathIsWithinDirectory(const std::string& directoryPath, const std::string& path) const
+{
+  if (directoryPath.empty() || path.empty())
+  {
+    return false;
+  }
+
+  std::string relativePath = vtksys::SystemTools::RelativePath(directoryPath.c_str(), path.c_str());
+  if (relativePath.empty())
+  {
+    return directoryPath == path;
+  }
+
+  if (relativePath == ".")
+  {
+    return true;
+  }
+
+  if (vtksys::SystemTools::FileIsFullPath(relativePath.c_str()))
+  {
+    return false;
+  }
+
+  return !(relativePath == ".." || relativePath.rfind("../", 0) == 0 || relativePath.rfind("..\\", 0) == 0);
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::IsDirectoryEmpty(const std::string& directoryPath) const
+{
+  vtksys::Directory directory;
+  if (directoryPath.empty() || !directory.Load(directoryPath))
+  {
+    return false;
+  }
+
+  for (size_t fileNum = 0; fileNum < directory.GetNumberOfFiles(); ++fileNum)
+  {
+    const char* fileName = directory.GetFile(static_cast<unsigned long>(fileNum));
+    if (!strcmp(fileName, ".") || !strcmp(fileName, ".."))
+    {
+      continue;
+    }
+    return false;
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkCacheManager::GetSentinelFilePath(const std::string& cacheDirectory) const
+{
+  if (cacheDirectory.empty())
+  {
+    return std::string();
+  }
+  return this->JoinPath(cacheDirectory, this->GetSentinelFileName());
+}
+
+//----------------------------------------------------------------------------
+std::string vtkCacheManager::GetSentinelFilePath(const char* cacheDirectory) const
+{
+  if (IsNullOrEmpty(cacheDirectory))
+  {
+    return std::string();
+  }
+  return this->JoinPath(cacheDirectory, this->GetSentinelFileName());
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::HasSentinelFileInDirectory(const std::string& cacheDirectory) const
+{
+  std::string sentinelFilePath = this->GetSentinelFilePath(cacheDirectory);
+  return !sentinelFilePath.empty() && vtksys::SystemTools::FileExists(sentinelFilePath.c_str());
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::CreateSentinelFileInDirectory(const std::string& cacheDirectory) const
+{
+  if (cacheDirectory.empty() || !vtksys::SystemTools::FileIsDirectory(cacheDirectory))
+  {
+    return false;
+  }
+
+  std::string sentinelFilePath = this->GetSentinelFilePath(cacheDirectory);
+  if (sentinelFilePath.empty())
+  {
+    return false;
+  }
+  if (vtksys::SystemTools::FileExists(sentinelFilePath.c_str()))
+  {
+    return true;
+  }
+
+  return vtksys::SystemTools::Touch(sentinelFilePath, true).IsSuccess();
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::CanDeletePathInCache(const char* cacheDirectory, const char* pathToDelete, std::string& reason) const
+{
+  reason.clear();
+  if (IsNullOrEmpty(cacheDirectory))
+  {
+    reason = "cache directory is empty";
+    return false;
+  }
+  if (IsNullOrEmpty(pathToDelete))
+  {
+    reason = "path to delete is empty";
+    return false;
+  }
+
+  if (!this->HasSentinelFileInDirectory(cacheDirectory))
+  {
+    reason = std::string("cache sentinel file is missing (") + this->GetSentinelFileName() + ")";
+    return false;
+  }
+
+  std::string canonicalCachePath = this->CanonicalizePath(cacheDirectory);
+  std::string canonicalDeletePath = this->CanonicalizePath(pathToDelete);
+
+  if (canonicalCachePath.empty() || canonicalDeletePath.empty())
+  {
+    reason = "unable to resolve canonical path";
+    return false;
+  }
+
+  if (!this->PathIsWithinDirectory(canonicalCachePath, canonicalDeletePath))
+  {
+    reason = "path resolves outside the cache directory";
+    return false;
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::CollectCachedFilesRecursively(const std::string& directoryPath,
+                                                    const std::string& rootDirectoryPath,
+                                                    std::vector<vtkCacheManagerCachedFile>& cachedFiles) const
+{
+  if (!vtksys::SystemTools::FileIsDirectory(directoryPath.c_str()))
+  {
+    return false;
+  }
+
+  std::string canonicalRootDirectory;
+  if (!rootDirectoryPath.empty())
+  {
+    canonicalRootDirectory = this->CanonicalizePath(rootDirectoryPath.c_str());
+  }
+
+  std::set<std::string> visitedCanonicalDirectories;
+  std::vector<std::string> pendingDirectories;
+  pendingDirectories.push_back(directoryPath);
+
+  while (!pendingDirectories.empty())
+  {
+    const std::string currentDirectoryPath = pendingDirectories.back();
+    pendingDirectories.pop_back();
+
+    if (!vtksys::SystemTools::FileIsDirectory(currentDirectoryPath.c_str()))
+    {
+      continue;
+    }
+
+    std::string canonicalCurrentDirectory = this->CanonicalizePath(currentDirectoryPath.c_str());
+    if (!canonicalCurrentDirectory.empty())
+    {
+      if (!visitedCanonicalDirectories.insert(canonicalCurrentDirectory).second)
+      {
+        // Skipping already visited cache directory (possible symlink/junction cycle)
+        continue;
+      }
+    }
+
+    vtksys::Directory directory;
+    if (!directory.Load(currentDirectoryPath.c_str()))
+    {
+      continue;
+    }
+
+    for (size_t fileNum = 0; fileNum < directory.GetNumberOfFiles(); ++fileNum)
+    {
+      const char* fileName = directory.GetFile(static_cast<unsigned long>(fileNum));
+      if (IsDirectoryNavigationEntry(fileName))
+      {
+        continue;
+      }
+
+      if (this->GetSentinelFileName() == fileName)
+      {
+        continue;
+      }
+
+      std::string fullPath = this->JoinPath(currentDirectoryPath, fileName);
+
+      std::string canonicalPath = this->CanonicalizePath(fullPath.c_str());
+
+      if (!canonicalPath.empty() && !canonicalRootDirectory.empty() && !this->PathIsWithinDirectory(canonicalRootDirectory, canonicalPath))
+      {
+        vtkWarningMacro("Skipping cache entry outside of traversal root: " << fullPath);
+        continue;
+      }
+
+      if (vtksys::SystemTools::FileIsDirectory(fullPath.c_str()))
+      {
+        pendingDirectories.push_back(fullPath);
+        continue;
+      }
+
+      vtkCacheManagerCachedFile cachedFile;
+      cachedFile.Path = fullPath;
+      cachedFile.ModifiedTime = static_cast<long long>(vtksys::SystemTools::ModifiedTime(fullPath));
+      cachedFiles.push_back(cachedFile);
+    }
+  }
+
+  return true;
+}
+
 //----------------------------------------------------------------------------
 vtkCacheManager::vtkCacheManager()
 {
-  this->MRMLScene = nullptr;
   this->CallbackCommand = vtkCallbackCommand::New();
-  this->CachedFileList.clear();
-  //--- what seem reasonable default values here?
-  this->RemoteCacheLimit = 200;
-  this->RemoteCacheFreeBufferSize = 10;
-  this->CurrentCacheSize = 0;
+  this->RemoteCacheLimit = 1000; // MB (a 3D image is around a few hundred MB, so this allows at least a few files to be cached)
+  this->CurrentCacheSize = 0;    // MB
   this->EnableForceRedownload = 0;
   this->InsufficientFreeBufferNotificationFlag = 0;
-  // this->EnableRemoteCacheOverwriting = 1;
-  this->uriMap.clear();
+  this->UpdatingCacheInformation = false;
 }
 
 //----------------------------------------------------------------------------
 vtkCacheManager::~vtkCacheManager()
 {
-
-  this->MRMLScene = nullptr;
-  this->uriMap.clear();
   if (this->CallbackCommand)
   {
     this->CallbackCommand->Delete();
   }
-  this->CachedFileList.clear();
-  this->RemoteCacheLimit = 0;
-  this->CurrentCacheSize = 0;
-  this->RemoteCacheFreeBufferSize = 0;
-  this->EnableForceRedownload = 0;
-  this->InsufficientFreeBufferNotificationFlag = 0;
-  //  this->EnableRemoteCacheOverwriting = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -55,8 +307,8 @@ const char* vtkCacheManager::GetFileFromURIMap(const char* uri)
   std::string uriString(uri);
 
   //--- URI is first, local name is second
-  std::map<std::string, std::string>::iterator iter = this->uriMap.find(uriString);
-  if (iter != this->uriMap.end())
+  std::map<std::string, std::string>::iterator iter = this->UriMap.find(uriString);
+  if (iter != this->UriMap.end())
   {
     return iter->second.c_str();
   }
@@ -76,22 +328,14 @@ void vtkCacheManager::MapFileToURI(const char* uri, const char* fname)
   std::string remote(uri);
   std::string local(fname);
 
-  std::map<std::string, std::string>::iterator iter;
-  //--- see if it's already here and update if so.
-
-  //--- URI is first, local name is second
-  int added = 0;
-  for (iter = this->uriMap.begin(); iter != this->uriMap.end(); iter++)
+  std::map<std::string, std::string>::iterator iter = this->UriMap.find(remote);
+  if (iter != this->UriMap.end())
   {
-    if (iter->first == remote)
-    {
-      iter->second = local;
-      added = 1;
-    }
+    iter->second = local;
   }
-  if (!added)
+  else
   {
-    this->uriMap.insert(std::make_pair(remote, local));
+    this->UriMap.insert(std::make_pair(remote, local));
     this->Modified();
   }
 }
@@ -99,36 +343,73 @@ void vtkCacheManager::MapFileToURI(const char* uri, const char* fname)
 //----------------------------------------------------------------------------
 void vtkCacheManager::SetRemoteCacheDirectory(const char* dir)
 {
-  std::string dirstring = dir;
-  size_t len = (int)dirstring.size();
-
-  if (len == 0)
+  if (dir == nullptr)
   {
-    vtkWarningMacro("Setting RemoteCacheDirectory to be a null string.");
+    vtkWarningMacro("Setting RemoteCacheDirectory from null pointer is not allowed.");
+    return;
   }
-  else
+
+  std::string dirstring = dir;
+  if (!dirstring.empty())
   {
-    //---
-    //--- make sure to remove backslash on the end of the dirstring.
-    //---
-    const char lastChar = dirstring.at(len - 1);
+    // make sure to remove backslash on the end of the dirstring.
+    const char lastChar = dirstring.at(dirstring.length() - 1);
     if (lastChar == '/' || lastChar == '\\')
     {
-      dirstring = dirstring.substr(0, len - 1);
+      dirstring = dirstring.substr(0, dirstring.length() - 1);
+    }
+    std::string canonicalDirectory = this->CanonicalizePath(dirstring.c_str());
+    if (!canonicalDirectory.empty())
+    {
+      dirstring = canonicalDirectory;
     }
   }
 
   if (this->RemoteCacheDirectory == dirstring)
   {
+    // no change
     return;
   }
 
   this->RemoteCacheDirectory = dirstring;
-  if (!vtksys::SystemTools::FileExists(this->RemoteCacheDirectory.c_str()))
+
+  if (!dirstring.empty())
   {
-    vtksys::SystemTools::MakeDirectory(this->RemoteCacheDirectory.c_str());
+    if (!vtksys::SystemTools::FileExists(this->RemoteCacheDirectory.c_str()))
+    {
+      if (!vtksys::SystemTools::MakeDirectory(this->RemoteCacheDirectory.c_str()))
+      {
+        vtkErrorMacro("Failed to create cache directory " << this->RemoteCacheDirectory << ".");
+      }
+      else
+      {
+        if (!this->CreateSentinelFileInDirectory(this->RemoteCacheDirectory))
+        {
+          vtkErrorMacro("Failed to initialize cache sentinel file in " << this->RemoteCacheDirectory << ".");
+        }
+      }
+    }
+    else if (!vtksys::SystemTools::FileIsDirectory(this->RemoteCacheDirectory.c_str()))
+    {
+      vtkErrorMacro("Cache path is not a directory: " << this->RemoteCacheDirectory << ".");
+    }
+    else if (!this->HasSentinelFileInDirectory(this->RemoteCacheDirectory))
+    {
+      if (this->IsDirectoryEmpty(this->RemoteCacheDirectory))
+      {
+        if (!this->CreateSentinelFileInDirectory(this->RemoteCacheDirectory))
+        {
+          vtkErrorMacro("Failed to initialize cache sentinel file in empty directory " << this->RemoteCacheDirectory << ".");
+        }
+      }
+      else
+      {
+        vtkWarningMacro("Cache directory does not contain sentinel file " << this->GetSentinelFileName()
+                                                                          << ". Destructive cache operations are disabled until the sentinel is created.");
+      }
+    }
   }
-  // scan files in cache, it calls Modified
+
   this->UpdateCacheInformation();
 }
 
@@ -139,16 +420,33 @@ const char* vtkCacheManager::GetRemoteCacheDirectory()
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::IsRemoteReference(const char* uri)
+std::string vtkCacheManager::GetSentinelFileName() const
 {
-  int index;
+  return std::string(".slicer-cache");
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::HasSentinelFile() const
+{
+  return this->HasSentinelFileInDirectory(this->RemoteCacheDirectory.c_str());
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::CreateSentinelFile() const
+{
+  return this->CreateSentinelFileInDirectory(this->RemoteCacheDirectory.c_str());
+}
+
+//----------------------------------------------------------------------------
+bool vtkCacheManager::IsRemoteReference(const char* uri)
+{
   std::string uriString(uri);
-  std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
+  int index;
   if ((index = (int)(uriString.find("://", 0))) != (int)(std::string::npos))
   {
-    prefix = uriString.substr(0, index);
+    std::string prefix = uriString.substr(0, index);
     //--- check to see if any leading bracketed characters are
     //--- in this part of the string.
     if ((index = (int)(prefix.find("]:", 0))) != (int)(std::string::npos))
@@ -159,23 +457,23 @@ int vtkCacheManager::IsRemoteReference(const char* uri)
     }
     if (prefix == "file")
     {
-      return (0);
+      return false;
     }
     else
     {
-      return (1);
+      return true;
     }
   }
   else
   {
     vtkDebugMacro("URI " << uri << " contains no file:// or other prefix.");
     //--- doesn't seem to be a :// in the string.
-    return (0);
+    return false;
   }
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::IsLocalReference(const char* uri)
+bool vtkCacheManager::IsLocalReference(const char* uri)
 {
   int index;
   std::string uriString(uri);
@@ -195,22 +493,22 @@ int vtkCacheManager::IsLocalReference(const char* uri)
     }
     if (prefix == "file")
     {
-      return (1);
+      return true;
     }
     else
     {
-      return (0);
+      return false;
     }
   }
   else
   {
     vtkWarningMacro("URI " << uri << " contains no file:// or other prefix.");
-    return (0);
+    return false;
   }
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::LocalFileExists(const char* uri)
+bool vtkCacheManager::LocalFileExists(const char* uri)
 {
   int index;
   std::string uriString(uri);
@@ -229,11 +527,11 @@ int vtkCacheManager::LocalFileExists(const char* uri)
 
   if (vtksys::SystemTools::FileExists(filename.c_str()))
   {
-    return (1);
+    return true;
   }
   else
   {
-    return (0);
+    return false;
   }
 }
 
@@ -244,82 +542,57 @@ void vtkCacheManager::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RemoteCacheDirectory: " << this->GetRemoteCacheDirectory() << "\n";
   os << indent << "RemoteCacheLimit: " << this->GetRemoteCacheLimit() << "\n";
   os << indent << "CurrentCacheSize: " << this->GetCurrentCacheSize() << "\n";
-  os << indent << "RemoteCacheFreeBufferSize: " << this->GetRemoteCacheFreeBufferSize() << "\n";
-  // os << indent << "EnableRemoteCacheOverwriting: " << this->GetEnableRemoteCacheOverwriting() << "\n";
   os << indent << "EnableForceRedownload: " << this->GetEnableForceRedownload() << "\n";
-}
-
-//----------------------------------------------------------------------------
-std::vector<std::string> vtkCacheManager::GetAllCachedFiles()
-{
-  this->CachedFileList.clear();
-  this->GetCachedFileList(this->GetRemoteCacheDirectory());
-  return (this->CachedFileList);
 }
 
 //----------------------------------------------------------------------------
 std::vector<std::string> vtkCacheManager::GetCachedFiles() const
 {
-  return this->CachedFileList;
+  std::vector<std::string> paths;
+  paths.reserve(this->CacheEntries.size());
+  for (const CacheEntry& e : this->CacheEntries)
+  {
+    paths.push_back(e.Path);
+  }
+  return paths;
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::GetCachedFileList(const char* dirname)
+std::vector<std::string> vtkCacheManager::GetCachedFilesInDirectory(const std::string& dirname)
 {
-
-  //  std::string convdir = vtksys::SystemTools::ConvertToOutputPath ( dirname );
-  if (vtksys::SystemTools::FileIsDirectory(dirname))
+  std::vector<std::string> cachedFiles;
+  std::vector<vtkCacheManagerCachedFile> cachedFileInfo;
+  if (!this->CollectCachedFilesRecursively(dirname, dirname, cachedFileInfo))
   {
-    vtksys::Directory dir;
-    dir.Load(dirname);
-    size_t fileNum;
+    vtkDebugMacro("vtkCacheManager::GetCachedFilesInDirectory: Directory " << dirname << " doesn't look like a directory.\n");
+    return cachedFiles;
+  }
 
-    //--- get files in cache dir and add to vector of strings.
-    for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
-    {
-      {
-        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
-            && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
-        {
-          std::string fullName = dirname;
-          //--- add backslash to end if not present.
-          if ((fullName.rfind("/", 0)) != (fullName.size() - 1))
-          {
-            fullName += "/";
-          }
-          fullName += dir.GetFile(static_cast<unsigned long>(fileNum));
-
-          //--- if the file is a directory, have to go inside and
-          //--- do some recursive thing to add those files to cached list
-          if (vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
-          {
-            if (!this->GetCachedFileList(fullName.c_str()))
+  std::sort(cachedFileInfo.begin(),
+            cachedFileInfo.end(),
+            [](const vtkCacheManagerCachedFile& left, const vtkCacheManagerCachedFile& right)
             {
-              return (0);
-            }
-          }
-          else
-          {
-            this->CachedFileList.emplace_back(dir.GetFile(static_cast<unsigned long>(fileNum)));
-          }
-        }
-      }
-    }
-  }
-  else
+              if (left.ModifiedTime == right.ModifiedTime)
+              {
+                return left.Path < right.Path;
+              }
+              return left.ModifiedTime > right.ModifiedTime;
+            });
+  cachedFiles.reserve(cachedFileInfo.size());
+  for (std::vector<vtkCacheManagerCachedFile>::const_iterator it = cachedFileInfo.begin(); it != cachedFileInfo.end(); ++it)
   {
-    vtkDebugMacro("vtkCacheManager::GetCachedFileList: Cache Directory " << this->GetRemoteCacheDirectory() << " doesn't look like a directory.\n");
-    return (0);
+    cachedFiles.push_back(it->Path);
   }
-  return (1);
+
+  return cachedFiles;
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::EncodeURI(const char* uri)
+std::string vtkCacheManager::EncodeURI(const char* uri)
 {
   if (uri == nullptr)
   {
-    return "(null)";
+    return std::string();
   }
   std::string kwInString = std::string(uri);
   // encode %
@@ -335,49 +608,17 @@ const char* vtkCacheManager::EncodeURI(const char* uri)
   // encode double quote
   vtksys::SystemTools::ReplaceString(kwInString, "\"", "%22");
 
-  const char* inStr = kwInString.c_str();
-  char* returnString = nullptr;
-  size_t n = strlen(inStr) + 1;
-  char* cp1 = new char[n];
-  const char* cp2 = (inStr);
-  returnString = cp1;
-  do
-  {
-    *cp1++ = *cp2++;
-  } while (--n);
-  return (returnString);
+  return kwInString;
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::AddCachePathToFilename(const char* filename)
+std::string vtkCacheManager::GetFilenameFromURI(const std::string& uri)
 {
-  std::string cachedir(this->GetRemoteCacheDirectory());
-  if (cachedir.c_str() != nullptr)
-  {
-    std::string ret = cachedir;
-    ret += "/";
-    ret += filename;
-
-    const char* outStr = ret.c_str();
-    char* absoluteName = nullptr;
-    size_t n = strlen(outStr) + 1;
-    char* cp1 = new char[n];
-    const char* cp2 = (outStr);
-    absoluteName = cp1;
-    do
-    {
-      *cp1++ = *cp2++;
-    } while (--n);
-    return absoluteName;
-  }
-  else
-  {
-    return (nullptr);
-  }
+  return this->GetFilenameFromURI(uri.c_str());
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
+std::string vtkCacheManager::GetFilenameFromURI(const char* uri)
 {
   //--- this method should return the absolute path of the
   //--- file that a storage node will read from in cache
@@ -386,7 +627,7 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
   if (uri == nullptr)
   {
     vtkDebugMacro("GetFilenameFromURI: input uri is null");
-    return "(null)";
+    return std::string();
   }
 
   const char* mapcheck = this->GetFileFromURIMap(uri);
@@ -468,54 +709,161 @@ const char* vtkCacheManager::GetFilenameFromURI(const char* uri)
   pathComponents.push_back(newFileName);
   fileName = vtksys::SystemTools::JoinPath(pathComponents);
 
-  const char* inStr = fileName.c_str();
-  char* returnString = nullptr;
-  size_t n = strlen(inStr) + 1;
-  char* cp1 = new char[n];
-  const char* cp2 = (inStr);
-  returnString = cp1;
-  do
-  {
-    *cp1++ = *cp2++;
-  } while (--n);
-  vtkDebugMacro("GetFilenameFromURI: returning " << returnString);
-
-  return returnString;
+  vtkDebugMacro("GetFilenameFromURI: returning " << fileName.c_str());
+  return fileName;
 }
 
 //----------------------------------------------------------------------------
 void vtkCacheManager::UpdateCacheInformation()
 {
-  //--- now recompute cache size
-  // this->CurrentCacheSize = ?;
+  if (this->UpdatingCacheInformation)
+  {
+    return;
+  }
+  this->UpdatingCacheInformation = true;
 
-  //--- recompute free buffer size
-  // this->RemoteCacheFreeBufferSize = ?;
+  // Scan the top-level cache directory entries.
+  std::vector<CacheEntry> newEntries;
+  if (!this->RemoteCacheDirectory.empty())
+  {
+    const std::string canonicalCacheDirectory = this->CanonicalizePath(this->GetRemoteCacheDirectory());
+    vtksys::Directory cacheDirectory;
+    if (cacheDirectory.Load(this->GetRemoteCacheDirectory()))
+    {
+      newEntries.reserve(cacheDirectory.GetNumberOfFiles());
+      for (size_t fileNum = 0; fileNum < cacheDirectory.GetNumberOfFiles(); ++fileNum)
+      {
+        const char* fileName = cacheDirectory.GetFile(static_cast<unsigned long>(fileNum));
+        if (IsDirectoryNavigationEntry(fileName) || this->GetSentinelFileName() == fileName)
+        {
+          continue;
+        }
 
-  //--- and refresh list of cached files.
-  this->CachedFileList.clear();
-  this->GetCachedFileList(this->GetRemoteCacheDirectory());
-  this->Modified();
+        CacheEntry entry;
+        entry.Path = this->JoinPath(this->GetRemoteCacheDirectory(), fileName);
+        entry.SizeBytes = 0;
+        entry.ModifiedTime = 0;
+        entry.IsDirectory = vtksys::SystemTools::FileIsDirectory(entry.Path.c_str());
+        entry.FileCount = 0;
+        entry.ExceedsCacheSize = false;
+
+        std::string canonicalTargetPath = this->CanonicalizePath(entry.Path.c_str());
+        if (!canonicalTargetPath.empty() && !canonicalCacheDirectory.empty() && !this->PathIsWithinDirectory(canonicalCacheDirectory, canonicalTargetPath))
+        {
+          vtkWarningMacro("Skipping cache entry outside cache root: " << entry.Path);
+          continue;
+        }
+
+        if (entry.IsDirectory)
+        {
+          std::vector<vtkCacheManagerCachedFile> cachedFilesInDirectory;
+          if (!this->CollectCachedFilesRecursively(entry.Path, entry.Path, cachedFilesInDirectory))
+          {
+            vtkWarningMacro("UpdateCacheInformation could not inspect directory: " << entry.Path);
+            continue;
+          }
+          for (const vtkCacheManagerCachedFile& cachedFile : cachedFilesInDirectory)
+          {
+            entry.SizeBytes += static_cast<unsigned long long>(vtksys::SystemTools::FileLength(cachedFile.Path.c_str()));
+            entry.ModifiedTime = std::max(entry.ModifiedTime, cachedFile.ModifiedTime);
+            entry.FileCount++;
+          }
+          if (entry.FileCount == 0)
+          {
+            entry.ModifiedTime = static_cast<long long>(vtksys::SystemTools::ModifiedTime(entry.Path));
+          }
+        }
+        else
+        {
+          entry.SizeBytes = static_cast<unsigned long long>(vtksys::SystemTools::FileLength(entry.Path.c_str()));
+          entry.ModifiedTime = static_cast<long long>(vtksys::SystemTools::ModifiedTime(entry.Path));
+        }
+
+        newEntries.push_back(entry);
+      }
+    }
+  }
+
+  // Compute total size in MB.
+  unsigned long long cacheSizeBytes = 0;
+  for (const CacheEntry& e : newEntries)
+  {
+    cacheSizeBytes += e.SizeBytes;
+  }
+  float newCacheSize = static_cast<float>(cacheSizeBytes / MB);
+
+  // Mark entries that PruneCache() would evict: oldest-first until within limit.
+  const unsigned long long cacheLimitBytes = static_cast<unsigned long long>(this->GetRemoteCacheLimit()) * static_cast<unsigned long long>(MB);
+  if (cacheSizeBytes > cacheLimitBytes)
+  {
+    std::vector<size_t> byAge(newEntries.size());
+    std::iota(byAge.begin(), byAge.end(), 0);
+    std::sort(byAge.begin(),
+              byAge.end(),
+              [&newEntries](size_t a, size_t b)
+              {
+                if (newEntries[a].ModifiedTime == newEntries[b].ModifiedTime)
+                {
+                  return newEntries[a].Path < newEntries[b].Path;
+                }
+                return newEntries[a].ModifiedTime < newEntries[b].ModifiedTime;
+              });
+    unsigned long long remaining = cacheSizeBytes;
+    for (size_t idx : byAge)
+    {
+      if (remaining <= cacheLimitBytes)
+      {
+        break;
+      }
+      newEntries[idx].ExceedsCacheSize = true;
+      remaining = (newEntries[idx].SizeBytes < remaining) ? remaining - newEntries[idx].SizeBytes : 0;
+    }
+  }
+
+  // Sort newest-first for consumers.
+  std::sort(newEntries.begin(),
+            newEntries.end(),
+            [](const CacheEntry& a, const CacheEntry& b)
+            {
+              if (a.ModifiedTime == b.ModifiedTime)
+              {
+                return a.Path < b.Path;
+              }
+              return a.ModifiedTime > b.ModifiedTime;
+            });
+
+  // Detect changes by comparing sorted entry paths and total size.
+  std::vector<std::string> oldPaths, newPaths;
+  for (const CacheEntry& e : this->CacheEntries)
+  {
+    oldPaths.push_back(e.Path);
+  }
+  for (const CacheEntry& e : newEntries)
+  {
+    newPaths.push_back(e.Path);
+  }
+  const bool changed = (oldPaths != newPaths || newCacheSize != this->CurrentCacheSize);
+
+  this->CacheEntries = std::move(newEntries);
+  this->CurrentCacheSize = newCacheSize;
+
+  if (this->CurrentCacheSize > static_cast<float>(this->RemoteCacheLimit))
+  {
+    this->InvokeEvent(vtkCacheManager::CacheLimitExceededEvent);
+  }
+
+  if (changed)
+  {
+    this->Modified();
+  }
+
+  this->UpdatingCacheInformation = false;
 }
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::DeleteFromCachedFileList(const char* target)
+void vtkCacheManager::DeleteFromCache(const std::string& filename)
 {
-
-  std::string tstring = target;
-  std::vector<std::string> tmp = this->CachedFileList;
-  std::vector<std::string>::iterator it;
-  this->CachedFileList.clear();
-
-  for (it = tmp.begin(); it < tmp.end(); it++)
-  {
-    // look at each filename in the list and keep all but filename to delete
-    if (*it != tstring)
-    {
-      this->CachedFileList.push_back(*it);
-    }
-  }
-  tmp.clear();
+  this->DeleteFromCache(filename.c_str());
 }
 
 //----------------------------------------------------------------------------
@@ -529,135 +877,128 @@ void vtkCacheManager::DeleteFromCache(const char* target)
   //--- discover if target already has Remote Cache Directory prepended to path.
   //--- if not, put it there.
 
-  if (this->FindCachedFile(target, this->GetRemoteCacheDirectory()) == nullptr)
+  std::string foundPath = this->FindCachedFile(target, this->GetRemoteCacheDirectory());
+  if (foundPath.empty())
   {
     vtkDebugMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
     return;
   }
 
-  std::string str = this->FindCachedFile(target, this->GetRemoteCacheDirectory());
-  if (str.c_str() != nullptr)
+  std::string reason;
+  if (!this->CanDeletePathInCache(this->GetRemoteCacheDirectory(), foundPath.c_str(), reason))
   {
-    this->MarkNodesBeforeDeletingDataFromCache(target);
+    vtkWarningMacro("DeleteFromCache was blocked for safety (" << reason << "): " << foundPath);
+    return;
+  }
 
-    //--- remove the file or directory in str....
-    vtkDebugMacro("Removing " << str.c_str() << " from disk and from record of cached files.");
-    if (vtksys::SystemTools::FileIsDirectory(str.c_str()))
+  this->MarkNodesBeforeDeletingDataFromCache(target);
+
+  //--- remove the file or directory in str....
+  vtkDebugMacro("Removing " << foundPath << " from disk and from record of cached files.");
+  bool deleted = false;
+  if (vtksys::SystemTools::FileIsDirectory(foundPath))
+  {
+    deleted = vtksys::SystemTools::RemoveADirectory(foundPath).IsSuccess();
+    if (!deleted)
     {
-      if (!vtksys::SystemTools::RemoveADirectory(str.c_str()))
-      {
-        vtkWarningMacro("Unable to remove cached directory " << str.c_str() << "from disk.");
-      }
-      else
-      {
-        this->UpdateCacheInformation();
-        this->InvokeEvent(vtkCacheManager::CacheDeleteEvent);
-      }
+      vtkWarningMacro("Unable to remove cached directory " << foundPath << " from disk.");
     }
-    else
+  }
+  else
+  {
+    deleted = vtksys::SystemTools::RemoveFile(foundPath).IsSuccess();
+    if (!deleted)
     {
-      if (!vtksys::SystemTools::RemoveFile(str.c_str()))
-      {
-        vtkWarningMacro("Unable to remove cached file" << str.c_str() << "from disk.");
-      }
-      else
-      {
-        this->UpdateCacheInformation();
-        this->InvokeEvent(vtkCacheManager::CacheDeleteEvent);
-      }
+      vtkWarningMacro("Unable to remove cached file " << foundPath << " from disk.");
     }
-    this->DeleteFromCachedFileList(str.c_str());
+  }
+
+  if (deleted)
+  {
+    this->UpdateCacheInformation();
+    this->InvokeEvent(vtkCacheManager::CacheDeleteEvent);
   }
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::ClearCacheCheck()
+bool vtkCacheManager::ClearCache()
 {
-  //
-  // This method is called after ClearCache(),
-  // to see if that method actually cleaned the cache.
-  // If not, an event is invoked.
-  // Things to do: get cache dir
-  // check to see how many files are in it.
-  // if more than... 0? invoke CacheDirtyEvent.
-  //
-  std::string cachedir = this->GetRemoteCacheDirectory();
-  if (cachedir.c_str() != nullptr)
-  {
-    unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory(cachedir.c_str());
-    //--- assume method will return . and ..
-    if (numFiles > 2)
-    {
-      this->InvokeEvent(vtkCacheManager::CacheDirtyEvent);
-      return 0;
-    }
-  }
-  return 1;
-}
-
-//----------------------------------------------------------------------------
-int vtkCacheManager::ClearCache()
-{
-
   //--- Careful! Before making this call, prompt user
   //--- with the RemoteCacheDirectory name and
   //--- ask for confirmation whether to delete the
   //--- directory and all of its contents...
   //--- Removes the CacheDirectory all together
   //--- and then creates the directory again.
-  if (this->RemoteCacheDirectory.c_str() != nullptr)
+  if (this->RemoteCacheDirectory.empty())
   {
-    this->MarkNodesBeforeDeletingDataFromCache(this->RemoteCacheDirectory.c_str());
-    vtksys::SystemTools::RemoveADirectory(this->RemoteCacheDirectory.c_str());
+    return true;
+  }
+
+  if (!this->HasSentinelFile())
+  {
+    vtkWarningMacro("ClearCache was blocked, as sentinel file was not found: " << this->GetSentinelFilePath(this->RemoteCacheDirectory.c_str()));
+    return false;
+  }
+
+  this->MarkNodesBeforeDeletingDataFromCache(this->RemoteCacheDirectory.c_str());
+
+  if (!vtksys::SystemTools::RemoveADirectory(this->RemoteCacheDirectory.c_str()))
+  {
+    vtkWarningMacro("Cache cleared: Error: unable to remove cache directory and its contents.");
+    return false;
   }
   if (!vtksys::SystemTools::MakeDirectory(this->RemoteCacheDirectory.c_str()))
   {
     vtkWarningMacro("Cache cleared: Error: unable to recreate cache directory after deleting its contents.");
-    return 0;
+    return false;
   }
+  if (!this->CreateSentinelFileInDirectory(this->RemoteCacheDirectory.c_str()))
+  {
+    vtkWarningMacro("Cache cleared: Error: unable to recreate cache sentinel file.");
+    return false;
+  }
+
   this->UpdateCacheInformation();
   this->InvokeEvent(vtkCacheManager::CacheClearEvent);
-  return 1;
+  return true;
 }
 
 //----------------------------------------------------------------------------
 float vtkCacheManager::GetCurrentCacheSize()
 {
-  if (this->RemoteCacheDirectory.c_str() == nullptr)
-  {
-    return (0.0);
-  }
-  float size = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
-  this->SetCurrentCacheSize(size);
-  return (this->CurrentCacheSize);
+  return this->CurrentCacheSize;
 }
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::MarkNode(std::string str)
+void vtkCacheManager::MarkNode(std::string nodeStoragePath)
 {
   //--- Find the MRML node that points to this file in cache.
   //--- If such a node exists, mark it as modified since read,
   //--- so that a user will be prompted to save the
   //--- data elsewhere (since it'll be deleted from cache.)
+  if (this->MRMLScene == nullptr)
+  {
+    return;
+  }
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
-  vtkMRMLStorableNode* node;
-  std::string uri;
   for (int n = 0; n < nnodes; n++)
   {
-    node = vtkMRMLStorableNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLStorableNode"));
-    if (node != nullptr)
+    vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLStorableNode"));
+    if (!node)
     {
-      int numStorageNodes = node->GetNumberOfStorageNodes();
-      for (int i = 0; i < numStorageNodes; i++)
+      continue;
+    }
+    int numStorageNodes = node->GetNumberOfStorageNodes();
+    for (int i = 0; i < numStorageNodes; i++)
+    {
+      if (!node->GetNthStorageNode(i))
       {
-        if (node->GetNthStorageNode(i) != nullptr)
-        {
-          uri = node->GetNthStorageNode(i)->GetFullNameFromFileName();
-          if (str == uri)
-          {
-            node->GetNthStorageNode(i)->InvalidateFile();
-          }
-        }
+        continue;
+      }
+      std::string uri = node->GetNthStorageNode(i)->GetFullNameFromFileName();
+      if (nodeStoragePath == uri)
+      {
+        node->GetNthStorageNode(i)->InvalidateFile();
       }
     }
   }
@@ -674,192 +1015,190 @@ void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache(const char* target)
   //--- to any of the files within as ModifiedSinceRead.
   //--- might be a slow performer....(?)
 
-  if (target != nullptr)
+  if (!target)
   {
-    std::string testFile;
-    std::string longName;
-    ;
-    std::string subdirString;
-    if (vtksys::SystemTools::FileIsDirectory(target))
-    {
-      vtkDebugMacro("MarkNodesBeforeDeletingDataFromCache: target is a directory: " << target);
-      vtksys::Directory dir;
-      dir.Load(target);
-      size_t fileNum;
-      //--- get files in cache dir and add to vector of strings.
-      for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
-      {
-        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
-            && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
-        {
-          //--- test to see if the file is a directory;
-          //--- if so, go inside and count up file sizes, return value
-          subdirString = target;
-          subdirString += "/";
-          subdirString += dir.GetFile(static_cast<unsigned long>(fileNum));
-          if (vtksys::SystemTools::FileIsDirectory(subdirString.c_str()))
-          {
-            ///--- check in subdir too...
-            this->MarkNodesBeforeDeletingDataFromCache(subdirString.c_str());
-          }
-          else
-          {
-            //--- mark any nodes that point to this file as modified since read.
-            longName = target;
-            longName += "/";
-            testFile = dir.GetFile(static_cast<unsigned long>(fileNum));
-            longName += testFile;
-            this->MarkNode(longName);
-          }
-        }
-      }
-    }
-    else
-    {
-      if (vtksys::SystemTools::FileExists(target))
-      {
-        this->MarkNode(target);
-      }
-    }
+    return;
   }
-}
 
-//----------------------------------------------------------------------------
-float vtkCacheManager::ComputeCacheSize(const char* dirName, unsigned long sz)
-{
-
-  //--- Traverses cache directory and computes the combined size
-  //--- of all files. I guess this is a reasonable guess to the cache size,
-  //--- subdirectory size notwithstanding.
-  //--- TODO: is there a more accurate way to assess?
-
-  unsigned long cachesize = sz;
-  std::string testFile;
-  std::string longName;
-  ;
-  std::string subdirString;
-  if (vtksys::SystemTools::FileIsDirectory(dirName))
+  if (vtksys::SystemTools::FileIsDirectory(target))
   {
-    vtkDebugMacro("FindCachedFile: dirName is a directory: " << dirName);
-    vtksys::Directory dir;
-    dir.Load(dirName);
-    size_t fileNum;
-    cachesize += vtksys::SystemTools::FileLength(dirName);
-
-    //--- get files in cache dir and add to vector of strings.
-    for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
+    vtkDebugMacro("MarkNodesBeforeDeletingDataFromCache: target is a directory: " << target);
+    std::vector<vtkCacheManagerCachedFile> cachedFiles;
+    if (!this->CollectCachedFilesRecursively(target, target, cachedFiles))
     {
-      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
-          && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
-      {
-        //--- test to see if the file is a directory;
-        //--- if so, go inside and count up file sizes, return value
-        subdirString = dirName;
-        subdirString += "/";
-        subdirString += dir.GetFile(static_cast<unsigned long>(fileNum));
-        if (vtksys::SystemTools::FileIsDirectory(subdirString.c_str()))
-        {
-          ///---compute dir and filename for recursive hunt
-          cachesize += (long unsigned int)ceil(this->ComputeCacheSize(subdirString.c_str(), 0));
-        }
-        else
-        {
-          longName = dirName;
-          longName += "/";
-          testFile = dir.GetFile(static_cast<unsigned long>(fileNum));
-          longName += testFile;
-          //--- get its size
-          cachesize += vtksys::SystemTools::FileLength(longName.c_str());
-        }
-      }
+      return;
+    }
+    for (std::vector<vtkCacheManagerCachedFile>::const_iterator it = cachedFiles.begin(); it != cachedFiles.end(); ++it)
+    {
+      this->MarkNode(it->Path);
     }
   }
   else
   {
-    vtkDebugMacro("vtkCacheManager::ComputeCacheSize: Cache Directory " << this->GetRemoteCacheDirectory() << " doesn't look like a directory. \n");
-    return (-1);
-  }
-
-  int byteSize = static_cast<int>(cachesize);
-  this->CurrentCacheSize = (float)byteSize / MB;
-  return (this->CurrentCacheSize);
-}
-
-//----------------------------------------------------------------------------
-void vtkCacheManager::CacheSizeCheck()
-{
-
-  //--- Compute size of the current cache
-  this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
-  //--- Invoke an event if cache size is exceeded.
-  if (this->CurrentCacheSize > (float)(this->RemoteCacheLimit))
-  {
-    // remove the file just downloaded?
-    this->InvokeEvent(vtkCacheManager::CacheLimitExceededEvent);
+    if (vtksys::SystemTools::FileExists(target))
+    {
+      this->MarkNode(target);
+    }
   }
 }
 
 //----------------------------------------------------------------------------
 float vtkCacheManager::GetFreeCacheSpaceRemaining()
 {
-
-  float cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
-  // cache limit - current cache size = total space left in cache.
-  // total space in cache - free buffer size = amount that can be used.
-  float diff = (float(this->RemoteCacheLimit) - cachesize);
-  diff = diff - (float)this->RemoteCacheFreeBufferSize;
+  float diff = (float(this->RemoteCacheLimit) - this->CurrentCacheSize);
   return (diff);
 }
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::FreeCacheBufferCheck()
+std::vector<vtkCacheManager::CacheEntry> vtkCacheManager::GetCacheEntries() const
 {
-
-  float buf = this->GetFreeCacheSpaceRemaining();
-  if ((buf * MB) < (float)(this->RemoteCacheFreeBufferSize) * MB)
-  {
-    this->InvokeEvent(vtkCacheManager::InsufficientFreeBufferEvent);
-  }
+  return this->CacheEntries;
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::CachedFileExists(const char* filename)
+bool vtkCacheManager::PruneCache()
 {
-  if (vtksys::SystemTools::FileExists(filename))
+  if (this->RemoteCacheDirectory.empty())
   {
-    return 1;
+    return false;
   }
-  else
+
+  if (!this->HasSentinelFile())
   {
-    //--- check to see if RemoteCacheDirectory/filename exists.
-    std::string testFile = this->RemoteCacheDirectory;
-    testFile += "/";
-    testFile += filename;
-    if (vtksys::SystemTools::FileExists(testFile.c_str()))
+    vtkWarningMacro("Cache pruning is disabled as no sentinel file is found in the cache directory.");
+    return false;
+  }
+
+  const unsigned long long cacheLimitBytes = static_cast<unsigned long long>(this->GetRemoteCacheLimit()) * static_cast<unsigned long long>(MB);
+  const std::string canonicalCacheDirectory = this->CanonicalizePath(this->GetRemoteCacheDirectory());
+  if (canonicalCacheDirectory.empty())
+  {
+    vtkWarningMacro("Cache pruning is disabled as cache directory could not be canonicalized: " << this->GetRemoteCacheDirectory());
+    return false;
+  }
+
+  std::vector<CacheEntry> pruneTargets = this->GetCacheEntries();
+
+  unsigned long long totalSizeBytes = 0;
+  for (const CacheEntry& entry : pruneTargets)
+  {
+    totalSizeBytes += entry.SizeBytes;
+  }
+
+  if (totalSizeBytes <= cacheLimitBytes)
+  {
+    // Cache is already within limit, no need to prune, but refresh
+    // cached bookkeeping so callers observe up-to-date cache usage.
+    this->UpdateCacheInformation();
+    return true;
+  }
+
+  // We will evict cache entries starting with the oldest modified time
+  std::sort(pruneTargets.begin(),
+            pruneTargets.end(),
+            [](const CacheEntry& left, const CacheEntry& right)
+            {
+              if (left.ModifiedTime == right.ModifiedTime)
+              {
+                return left.Path < right.Path;
+              }
+              return left.ModifiedTime < right.ModifiedTime;
+            });
+
+  bool wasModified = false;
+  for (const CacheEntry& entry : pruneTargets)
+  {
+    if (totalSizeBytes <= cacheLimitBytes)
     {
-      return 1;
+      break;
+    }
+
+    std::string reason;
+    if (!this->CanDeletePathInCache(this->GetRemoteCacheDirectory(), entry.Path.c_str(), reason))
+    {
+      vtkWarningMacro("PruneCache was blocked for safety (" << reason << "): " << entry.Path);
+      continue;
+    }
+
+    this->MarkNodesBeforeDeletingDataFromCache(entry.Path.c_str());
+
+    bool deleted = false;
+    if (entry.IsDirectory)
+    {
+      deleted = vtksys::SystemTools::RemoveADirectory(entry.Path).IsSuccess();
     }
     else
     {
-      return 0;
+      deleted = vtksys::SystemTools::RemoveFile(entry.Path).IsSuccess();
+    }
+
+    if (!deleted)
+    {
+      vtkWarningMacro("Failed to evict cached " << (entry.IsDirectory ? "directory " : "file ") << entry.Path << ".");
+      continue;
+    }
+
+    wasModified = true;
+    if (entry.SizeBytes > totalSizeBytes)
+    {
+      totalSizeBytes = 0;
+    }
+    else
+    {
+      totalSizeBytes -= entry.SizeBytes;
     }
   }
+
+  if (wasModified)
+  {
+    this->UpdateCacheInformation();
+    this->InvokeEvent(vtkCacheManager::CacheDeleteEvent);
+  }
+
+  if (totalSizeBytes > cacheLimitBytes)
+  {
+    vtkWarningMacro("PruneCache could not bring cache size within limit. Remaining bytes: " << totalSizeBytes << ", limit bytes: " << cacheLimitBytes);
+    return false;
+  }
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::FindCachedFile(const char* target, const char* dirname)
+bool vtkCacheManager::CachedFileExists(const std::string& filename)
 {
-  std::string testFile;
-  const char* result = nullptr;
-  char* returnString;
-  size_t n;
-  char* cp1;
-  const char* cp2;
+  return this->CachedFileExists(filename.c_str());
+}
 
+//----------------------------------------------------------------------------
+bool vtkCacheManager::CachedFileExists(const char* filename)
+{
+  if (IsNullOrEmpty(filename))
+  {
+    return false;
+  }
+
+  if (vtksys::SystemTools::FileExists(filename))
+  {
+    return true;
+  }
+
+  std::string testFile = this->JoinPath(this->RemoteCacheDirectory, filename);
+  if (vtksys::SystemTools::FileExists(testFile.c_str()))
+  {
+    return true;
+  }
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkCacheManager::FindCachedFile(const char* target, const char* dirname)
+{
   if (target == nullptr || dirname == nullptr)
   {
     vtkErrorMacro("FindCachedFile: target or dirname null");
-    return (nullptr);
+    return "";
   }
 
   if (vtksys::SystemTools::FileIsDirectory(dirname))
@@ -872,49 +1211,22 @@ const char* vtkCacheManager::FindCachedFile(const char* target, const char* dirn
     //--- get files in cache dir and add to vector of strings.
     for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
-      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
-          && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
+      const char* fileName = dir.GetFile(static_cast<unsigned long>(fileNum));
+      if (!IsDirectoryNavigationEntry(fileName))
       {
-        testFile = dir.GetFile(static_cast<unsigned long>(fileNum));
+        std::string testFile = fileName;
         //--- Check for match to target
         //--- does the file or directory match the target?
         if (!strcmp(target, testFile.c_str()))
         {
-          //--- append the directory
-          std::string accum = dirname;
-          accum += "/";
-          testFile = accum + testFile;
-          result = testFile.c_str();
-          n = strlen(result) + 1;
-          cp1 = new char[n];
-          cp2 = (result);
-          returnString = cp1;
-          do
-          {
-            *cp1++ = *cp2++;
-          } while (--n);
-          return returnString;
+          return this->JoinPath(dirname, testFile);
         }
+
         //--- does the file or directory match the target with full path?
-        //--- add backslash if missing
-        std::string fullName = dirname;
-        if ((fullName.rfind("/", 0)) != (fullName.size() - 1))
-        {
-          fullName += "/";
-        }
-        fullName += testFile;
+        std::string fullName = this->JoinPath(dirname, testFile);
         if (!strcmp(target, fullName.c_str()))
         {
-          result = fullName.c_str();
-          n = strlen(result) + 1;
-          cp1 = new char[n];
-          cp2 = (result);
-          returnString = cp1;
-          do
-          {
-            *cp1++ = *cp2++;
-          } while (--n);
-          return returnString;
+          return fullName;
         }
 
         //--- if no match, and the file is a directory, go inside and
@@ -922,17 +1234,10 @@ const char* vtkCacheManager::FindCachedFile(const char* target, const char* dirn
         if (vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
         {
           ///---compute dir and filename for recursive hunt
-          if ((result = this->FindCachedFile(target, fullName.c_str())) != nullptr)
+          std::string result = this->FindCachedFile(target, fullName.c_str());
+          if (!result.empty())
           {
-            n = strlen(result) + 1;
-            cp1 = new char[n];
-            cp2 = (result);
-            returnString = cp1;
-            do
-            {
-              *cp1++ = *cp2++;
-            } while (--n);
-            return returnString;
+            return result;
           }
         }
       }
@@ -940,24 +1245,9 @@ const char* vtkCacheManager::FindCachedFile(const char* target, const char* dirn
   }
   else
   {
-    vtkDebugMacro("vtkCacheManager::GetCachedFileList: Cache Directory " << this->GetRemoteCacheDirectory() << " doesn't look like a directory. \n");
-    return (nullptr);
+    vtkDebugMacro("FindCachedFile: Directory " << dirname << " doesn't look like a directory. \n");
+    return "";
   }
 
-  if (result != nullptr)
-  {
-    n = strlen(result) + 1;
-    cp1 = new char[n];
-    cp2 = (result);
-    returnString = cp1;
-    do
-    {
-      *cp1++ = *cp2++;
-    } while (--n);
-    return returnString;
-  }
-  else
-  {
-    return (nullptr);
-  }
+  return "";
 }

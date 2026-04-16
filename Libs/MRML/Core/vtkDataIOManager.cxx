@@ -331,7 +331,6 @@ void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
   // vtkURIHandler* handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
   const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
-  const char* dest;
 
   if (source == nullptr)
   {
@@ -341,8 +340,8 @@ void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
   vtkCacheManager* cm = this->GetCacheManager();
   if (cm != nullptr)
   {
-    dest = cm->GetFilenameFromURI(source);
-    if (dest == nullptr)
+    std::string dest = cm->GetFilenameFromURI(source);
+    if (dest.empty())
     {
       vtkDebugMacro("QueueRead: unable to get file name from source URI " << source);
       return;
@@ -374,8 +373,8 @@ void vtkDataIOManager::QueueRead(vtkMRMLNode* node)
     //--- a large scene that consists of multiple datasets.
     //--- ***The risk with this implementation  is that they may
     //--- forget to adjust the cache size, but aren't notified again...
-    float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
-    if ((cm->GetCurrentCacheSize() * 1000000.0) >= bufsize)
+    cm->UpdateCacheInformation();
+    if (cm->GetFreeCacheSpaceRemaining() <= 0.0)
     {
       //--- No space left in cache. Don't trigger logic to download;
       //--- by invoking a RemoteReadEvent.

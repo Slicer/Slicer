@@ -121,6 +121,7 @@
 #include <vtkSystemInformation.h>
 
 // MRML includes
+#include <vtkCacheManager.h>
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
@@ -440,8 +441,19 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Extensions"), settingsExtensionsPanel);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
-  cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
+  vtkCacheManager* cacheManager = this->MRMLScene->GetCacheManager();
+  cachePanel->setCacheManager(cacheManager);
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Cache"), cachePanel);
+
+  // Now that cachePanel set the cache sizes from user settings, we prune the cache.
+  if (cacheManager && q->userSettings())
+  {
+    bool autoPruneEnabled = q->userSettings()->value("Cache/AutoPrune", true).toBool();
+    if (autoPruneEnabled)
+    {
+      cacheManager->PruneCache();
+    }
+  }
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel = new qSlicerSettingsInternationalizationPanel;

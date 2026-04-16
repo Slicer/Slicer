@@ -1003,7 +1003,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
   // check to see if the mrml file lives on a remote disk
   if (this->GetCacheManager())
   {
-    int remote = this->GetCacheManager()->IsRemoteReference(this->URL.c_str());
+    bool remote = this->GetCacheManager()->IsRemoteReference(this->URL.c_str());
     if (remote)
     {
       vtkDebugMacro("LoadIntoScene: mrml file lives on a remote disk: " << this->URL.c_str());
@@ -1012,8 +1012,8 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
       if (handler != nullptr)
       {
         // put it on disk somewhere
-        const char* localURL = this->GetCacheManager()->GetFilenameFromURI(this->URL.c_str());
-        handler->StageFileRead(this->URL.c_str(), localURL);
+        std::string localURL = this->GetCacheManager()->GetFilenameFromURI(this->URL);
+        handler->StageFileRead(this->URL, localURL);
         // now over ride the URL setting
         vtkDebugMacro("LoadIntoScene: downloaded the remote MRML file " << this->URL.c_str() << ", resetting URL to local file " << localURL);
         this->SetURL(localURL);

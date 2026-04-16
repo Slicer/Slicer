@@ -165,11 +165,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
     volumeSequenceStorageNode->SetURI(filename);
     transformSequenceStorageNode->SetURI(filename);
     // reset filename to the local file name
-    const char* localFilePtr = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
-    if (localFilePtr)
-    {
-      localFile = localFilePtr;
-    }
+    localFile = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
   }
   else
   {

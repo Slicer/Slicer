@@ -162,7 +162,6 @@ void vtkDataIOManagerLogic::DeleteDataTransferFromCache(vtkDataTransfer* dt)
         {
           cm->DeleteFromCache(dt->GetDestinationURI());
           dt->SetTransferCached(0);
-          cm->InvokeEvent(vtkCacheManager::CacheDeleteEvent);
         }
       }
     }
@@ -272,7 +271,7 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
   }
 
   const char* source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
-  const char* dest = cm->GetFilenameFromURI(source);
+  std::string dest = cm->GetFilenameFromURI(source);
   vtkDebugMacro("QueueRead: got the source " << source << " and dest " << dest);
 
   //--- set the destination filename in the node.
@@ -286,8 +285,8 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
     const char* sourceN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(uriNum);
     if (sourceN)
     {
-      const char* destN = cm->GetFilenameFromURI(sourceN);
-      if (destN)
+      std::string destN = cm->GetFilenameFromURI(sourceN);
+      if (!destN.empty())
       {
         dnode->GetNthStorageNode(storageNodeIndex)->AddFileName(destN);
         vtkDebugMacro("QueueRead: set " << uriNum << " filename to " << destN << ", source uri = " << sourceN);
@@ -305,8 +304,8 @@ int vtkDataIOManagerLogic::QueueRead(vtkMRMLNode* node)
   //--- This test has been done in MRML (DataIOManager), but with asynchIO,
   //--- Cache may have become full since the remote read was queued.
   //---
-  float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) - (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
-  if ((cm->GetCurrentCacheSize() * 1000000.0) >= bufsize)
+  cm->UpdateCacheInformation();
+  if (cm->GetFreeCacheSpaceRemaining() <= 0)
   {
     //--- No space left in cache.
     if (cm->CachedFileExists(dest))
