@@ -25,6 +25,18 @@ endif()
 
 if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
+  # When Slicer uses system VTK/ITK/DCMTK, CTK should too.
+  # CTK has its own superbuild that expects CTK_USE_SYSTEM_* variables.
+  if(Slicer_USE_SYSTEM_VTK)
+    set(CTK_USE_SYSTEM_VTK ON)
+  endif()
+  if(Slicer_USE_SYSTEM_ITK)
+    set(CTK_USE_SYSTEM_ITK ON)
+  endif()
+  if(Slicer_USE_SYSTEM_DCMTK)
+    set(CTK_USE_SYSTEM_DCMTK ON)
+  endif()
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
     set(_wrap_qtwebkit 0)
@@ -139,6 +151,56 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  # On NixOS, Qt headers are split across multiple store paths (one per
+  # Qt module). The PythonQt generator uses QLibraryInfo::HeadersPath which
+  # only points to qtbase's include dir. Patch the generator launcher to
+  # pass --include-paths so it can find headers from other Qt modules
+  # (e.g., QtUiTools from qttools, QtMultimedia, QtSvg).
+  #
+  # Find Qt include dirs outside qtbase by locating known modules.
+  set(_qt_extra_include_paths "")
+  foreach(_qt_mod QtUiTools QtMultimedia QtSvg QtWebEngineCore)
+    find_path(_mod_inc_${_qt_mod} NAME "${_qt_mod}" PATH_SUFFIXES include
+      HINTS ENV CMAKE_PREFIX_PATH)
+    if(_mod_inc_${_qt_mod} AND NOT _mod_inc_${_qt_mod} MATCHES "NOTFOUND")
+      list(APPEND _qt_extra_include_paths "${_mod_inc_${_qt_mod}}")
+    endif()
+    unset(_mod_inc_${_qt_mod} CACHE)
+  endforeach()
+  list(REMOVE_DUPLICATES _qt_extra_include_paths)
+  if(_qt_extra_include_paths)
+    list(JOIN _qt_extra_include_paths ":" _qt_include_paths_str)
+    # Patch CTK's PythonQt.cmake to pass --include-paths to the generator
+    file(WRITE "${CMAKE_BINARY_DIR}/${proj}-patch-pythonqt-include-paths.cmake"
+      "file(READ \"${EP_SOURCE_DIR}/CMakeExternals/PythonQt.cmake\" _content)\n\
+string(REPLACE\n\
+  \"--output-directory=@PythonQtGenerator_OUTPUT_DIR@\"\n\
+  \"--include-paths=${_qt_include_paths_str}\\n    --output-directory=@PythonQtGenerator_OUTPUT_DIR@\"\n\
+  _content \"\${_content}\")\n\
+file(WRITE \"${EP_SOURCE_DIR}/CMakeExternals/PythonQt.cmake\" \"\${_content}\")\n")
+
+    ExternalProject_Add_Step(${proj} patch_pythonqt_include_paths
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/${proj}-patch-pythonqt-include-paths.cmake"
+      DEPENDEES download
+      DEPENDERS configure
+      )
+  endif()
+
+  # When using system VTK, CTK's CMakeExternals/VTK.cmake doesn't
+  # propagate VTK_VERSION to the inner build, but
+  # Libs/Visualization/VTK/Core/CMakeLists.txt checks it before
+  # calling find_package(VTK). Patch to add mark_as_superbuild.
+  if(Slicer_USE_SYSTEM_VTK)
+    file(WRITE "${CMAKE_BINARY_DIR}/${proj}-patch-vtk-system.cmake"
+      "file(APPEND \"${EP_SOURCE_DIR}/CMakeExternals/VTK.cmake\"\n  \"\\nmark_as_superbuild(VTK_VERSION:STRING)\\n\")\n")
+
+    ExternalProject_Add_Step(${proj} patch_vtk_system_support
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/${proj}-patch-vtk-system.cmake"
+      DEPENDEES download
+      DEPENDERS configure
+      )
+  endif()
 
   if(Slicer_USE_PYTHONQT)
     if(APPLE)

@@ -7,12 +7,23 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-# Sanity checks
 if(Slicer_USE_SYSTEM_${proj})
-  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported !")
+  find_package(jsoncpp REQUIRED)
+  get_target_property(${proj}_INCLUDE_DIR jsoncpp_lib INTERFACE_INCLUDE_DIRECTORIES)
+  get_target_property(${proj}_LIBRARY jsoncpp_lib IMPORTED_LOCATION_RELEASE)
+  if(NOT ${proj}_LIBRARY)
+    get_target_property(${proj}_LIBRARY jsoncpp_lib IMPORTED_LOCATION_NOCONFIG)
+  endif()
+  if(NOT ${proj}_LIBRARY)
+    get_target_property(${proj}_LIBRARY jsoncpp_lib IMPORTED_LOCATION)
+  endif()
 endif()
-if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
-  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+
+# Sanity checks
+if(NOT Slicer_USE_SYSTEM_${proj})
+  if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
+    message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+  endif()
 endif()
 
 if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})

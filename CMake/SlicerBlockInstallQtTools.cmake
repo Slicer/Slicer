@@ -50,7 +50,15 @@ endif()
 foreach(tool IN LISTS Slicer_INSTALLED_QT_TOOLS)
   set(tool_executable ${qt_root_dir}/bin/${tool}${CMAKE_EXECUTABLE_SUFFIX})
   if(NOT EXISTS "${tool_executable}")
-    message(FATAL_ERROR "Qt tool ${tool} not found: ${tool_executable}")
+    # On NixOS, Qt tools may be in a different prefix than qtbase.
+    # Fall back to searching PATH (e.g. qttools provides lconvert).
+    find_program(_found_tool_executable ${tool})
+    if(_found_tool_executable)
+      set(tool_executable "${_found_tool_executable}")
+    else()
+      message(FATAL_ERROR "Qt tool ${tool} not found: ${tool_executable}")
+    endif()
+    unset(_found_tool_executable CACHE)
   endif()
   install(PROGRAMS ${tool_executable}
     DESTINATION ${Slicer_INSTALL_BIN_DIR}

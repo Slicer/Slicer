@@ -8,8 +8,11 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  # When adding support for finding TBB on the system, make sure to set TBB_BIN_DIR and TBB_LIB_DIR
-  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
+  find_package(TBB REQUIRED)
+  get_target_property(_tbb_lib_location TBB::tbb LOCATION)
+  get_filename_component(TBB_LIB_DIR "${_tbb_lib_location}" DIRECTORY)
+  set(TBB_BIN_DIR "${TBB_LIB_DIR}")
+  unset(_tbb_lib_location)
 endif()
 
 # Sanity checks

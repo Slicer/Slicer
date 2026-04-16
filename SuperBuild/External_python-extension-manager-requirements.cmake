@@ -17,7 +17,6 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(Slicer_USE_SYSTEM_${proj})
   foreach(module_name IN ITEMS
     chardet
-    couchdb
     git
     gitdb
     six
@@ -36,9 +35,6 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [chardet]
   chardet==5.2.0 --hash=sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970
   # [/chardet]
-  # [CouchDB]
-  couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
-  # [/CouchDB]
   # [gitdb]
   gitdb==4.0.12 --hash=sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf
   # [/gitdb]
