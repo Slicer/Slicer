@@ -20,6 +20,7 @@ if(Slicer_USE_SYSTEM_${proj})
   foreach(module_name IN ITEMS
     pydicom
     six
+    highdicom
     )
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
@@ -91,6 +92,12 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                --hash=sha256:daf19ba9326574eb5df6bed91598e6ee55852637c277e37ff29231936526d5ab \
                --hash=sha256:ca684f09857323389355196cba3c58fce30f4581f1d5220725e2ab08596f6e0f
   # [/dcmqi]
+  # [highdicom]
+  # Pure-Python package for creating/reading complex DICOM objects (SR, SEG, PM, etc.)
+  # Hashes correspond to the following packages:
+  #  - highdicom-0.27.0-py3-none-any.whl
+  highdicom==0.27.0 --hash=sha256:90a14ef75f67b7df2c3fd83df9c0bddd787dfdfab2b08c8c68828207389aed3f
+  # [/highdicom]
   ]===])
 
   ExternalProject_Add(${proj}

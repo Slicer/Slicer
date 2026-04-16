@@ -9,6 +9,7 @@ from collections import Counter
 import numpy
 import numpy as np
 import random
+import highdicom as hd
 import pydicom
 from pydicom.sr.codedict import codes
 
@@ -63,7 +64,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
   def examineFiles(self, files):
 
-    import pydicom
     loadables = []
 
     for cFile in files:
@@ -100,14 +100,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     This function checks if the dataset is a TID1500 or not. 
     """
 
-    # Install/import highdicom 
-    try:
-      import highdicom as hd
-    except ModuleNotFoundError:
-      if slicer.util.confirmOkCancelDisplay("This module requires 'highdicom' Python package. Click OK to install it now."):
-        slicer.util.pip_install("highdicom") 
-        import highdicom as hd
-
     try:
       isDicomTID1500 = self.getDICOMValue(dataset, "Modality") == 'SR' and \
                        (self.getDICOMValue(dataset, "SOPClassUID") == self.UID_EnhancedSRStorage or
@@ -133,9 +125,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     This function takes as input a standardized string, and returns 
     the highdicom code, either using pydicom or defining it.
     """
-
-    import highdicom as hd 
-    from pydicom.sr.codedict import codes
 
     if (code_meaning == "Image Region"): 
       highdicom_code = codes.DCM.ImageRegion # instead of using hd.sr.value_types.Code(value='111030',scheme_designator='DCM',meaning='Image Region')
@@ -174,10 +163,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     """
     Main function to create the loadable and add the necessary references. 
     """
-
-    import highdicom as hd
-    import pydicom 
-    from pydicom.sr.codedict import codes
 
     loadable = DICOMLoadable()
     loadable.selected = True
@@ -353,7 +338,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     return sorted(uids, key=lambda uid: self.getDateTime(uid))
 
   def getDateTime(self, uid):
-    import pydicom 
     filename = slicer.dicomDatabase.fileForInstance(uid)
     dataset = pydicom.dcmread(filename)
     if hasattr(dataset, 'SeriesDate') and hasattr(dataset, "SeriesTime"):
@@ -397,9 +381,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     Checks if the SR contains a bbox, polyline, or point3D.
     """
 
-    import highdicom as hd 
-    from pydicom.sr.codedict import codes
-
     # If SR contains a bounding box 
     if (geometry_type == "bbox2D"):
       for group in sr.content.get_planar_roi_measurement_groups(reference_type=codes.DCM.ImageRegion, graphic_type=hd.sr.GraphicTypeValues.POLYLINE):
@@ -432,10 +413,8 @@ class DICOMTID1500PluginClass(DICOMPlugin):
   def getIPPFromSOP(self, referenced_sop_instance_uid, referenced_series_instance_uid):
     """
     In order to display the bounding box markups in Slicer, we need the IPP corresponding 
-    to the referenced SOPInstanceUID. We get this from the Slicer DICOM database. 
+    to the referenced SOPInstanceUID. We get this from the Slicer DICOM database.
     """
-
-    import pydicom 
 
     # Get the dicom database 
     db = slicer.dicomDatabase 
@@ -699,15 +678,12 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     and creates a table node. 
     """
 
-    import highdicom as hd
-    from pydicom.sr.codedict import codes
-
     # We use the SeriesNumber and the SeriesDescription of the SR to name the table
     SeriesNumber = sr.SeriesNumber
     SeriesDescription = sr.SeriesDescription
     table_name = str(SeriesNumber) + ": " + SeriesDescription
 
-    # get image region code 
+    # get image region code
     image_region_code = self.getSRCode("Image Region")
 
     # will store the info needed for table too. 
@@ -778,17 +754,15 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     and creates a table node. 
     """
 
-    import highdicom as hd
-
     # We use the SeriesNumber and the SeriesDescription of the SR to name the table
     SeriesNumber = sr.SeriesNumber
     SeriesDescription = sr.SeriesDescription
     table_name = str(SeriesNumber) + ": " + SeriesDescription
 
-    # get the referenced SeriesInstanceUID 
+    # get the referenced SeriesInstanceUID
     referenced_series_instance_uid = str(sr.CurrentRequestedProcedureEvidenceSequence[0].ReferencedSeriesSequence[0].SeriesInstanceUID)
 
-    # will store the info needed for table too. 
+    # will store the info needed for table too.
     line_infos = [] 
 
     # First get the planar roi measurement groups 
@@ -1106,7 +1080,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     Loads the SR and checks for planar annotations. 
     """
 
-    import highdicom as hd
     logging.debug('DICOM SR TID1500 load()')
 
     logging.debug("before sorting: %s" % loadable.uids)
@@ -1376,7 +1349,6 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     Loads length measements as annotation rulers
     TODO: need to generalize to other report contents
     """
-    import pydicom 
     srFilePath = slicer.dicomDatabase.fileForInstance(srUID)
     sr = pydicom.dcmread(srFilePath)
 
@@ -1454,7 +1426,6 @@ class DICOMLongitudinalTID1500PluginClass(DICOMTID1500PluginClass):
     self.loadType = "Longitudinal DICOM Structured Report TID1500"
 
   def examineFiles(self, files):
-    import pydicom 
     loadables = []
 
     for cFile in files:
@@ -1488,7 +1459,6 @@ class DICOMLongitudinalTID1500PluginClass(DICOMTID1500PluginClass):
     return loadables
 
   def getRelatedSRs(self, dataset):
-    import pydicom 
     otherSRFiles = []
     otherSRDatasets = []
     studyInstanceUID = self.getDICOMValue(dataset, "StudyInstanceUID")
