@@ -870,6 +870,16 @@ sliceNode.SetSlabReconstructionThickness(600) # use a large number of slices (60
 sliceNode.Modified()
 ```
 
+
+The projected image is available in a `vtkImageData` object by calling:
+```python
+appLogic = slicer.app.applicationLogic()
+sliceLogic = appLogic.GetSliceLogic(sliceNode)
+sliceLayerLogic = sliceLogic.GetBackgroundLayer()
+reslice = sliceLayerLogic.GetReslice()
+projectedImage = reslice.output
+```
+
 ### Display volume using volume rendering
 
 ```python
