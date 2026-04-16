@@ -1,7 +1,5 @@
-import os
 import shutil
 import tempfile
-import urllib.request
 
 import slicer
 from slicer.ScriptedLoadableModule import *
@@ -66,18 +64,6 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         self.test_DICOMM3DPlugin()
 
     # -------------------------------------------------------------------------
-    # Helpers
-    # -------------------------------------------------------------------------
-
-    def _downloadDICOMFile(self, url, destDir):
-        """Download a single DICOM file via HTTPS into destDir. Returns the local path."""
-        filename = url.split("/")[-1]
-        destPath = os.path.join(destDir, filename)
-        self.delayDisplay(f"Downloading {filename} ...")
-        urllib.request.urlretrieve(url, destPath)
-        return destPath
-
-    # -------------------------------------------------------------------------
     # Test: DICOMSegmentationPlugin
     # -------------------------------------------------------------------------
 
@@ -101,16 +87,20 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         """
         self.delayDisplay("Starting test_DICOMSegmentationPlugin")
 
+        import SampleData
         SEG_URL = (
             "https://storage.googleapis.com/idc-open-data/"
             "8676c8bb-3bdd-4106-be09-97223b5126e7/"
             "6936cea9-f0ac-49bd-91c4-86904f5c3650.dcm"
         )
+        SEG_FILENAME = "6936cea9-f0ac-49bd-91c4-86904f5c3650.dcm"
+        SEG_CHECKSUM = "SHA256:27b2132aad76a2c1fed06aef62b9a1cdfcf774ca588012a3b7a4789328ec2f64"
         SEG_SERIES_UID = "1.3.6.1.4.1.14519.5.2.1.27661008822762431370973483522020876264"
 
+        cachedPath = SampleData.SampleDataLogic().downloadFileIntoCache(SEG_URL, SEG_FILENAME, SEG_CHECKSUM)
         tmpDir = tempfile.mkdtemp()
         try:
-            self._downloadDICOMFile(SEG_URL, tmpDir)
+            shutil.copy(cachedPath, tmpDir)
 
             with DICOMUtils.TemporaryDICOMDatabase() as db:
                 self.assertTrue(db.isOpen, "Temporary DICOM database failed to open")
@@ -164,16 +154,20 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         """
         self.delayDisplay("Starting test_DICOMTID1500Plugin")
 
+        import SampleData
         SR_URL = (
             "https://storage.googleapis.com/idc-open-data/"
             "72555341-016b-4483-a4e9-928e03a12b17/"
             "6cfb33f2-65a7-413f-9e01-d06aaf38f2ef.dcm"
         )
+        SR_FILENAME = "6cfb33f2-65a7-413f-9e01-d06aaf38f2ef.dcm"
+        SR_CHECKSUM = "SHA256:b5584fc2df0a3e0f88948a02301f5e22f1aadb7fc152398a32a5df7fb4baa4d3"
         SR_SERIES_UID = "1.2.276.0.7230010.3.1.3.3166326398.17020.1513205119.297"
 
+        cachedPath = SampleData.SampleDataLogic().downloadFileIntoCache(SR_URL, SR_FILENAME, SR_CHECKSUM)
         tmpDir = tempfile.mkdtemp()
         try:
-            self._downloadDICOMFile(SR_URL, tmpDir)
+            shutil.copy(cachedPath, tmpDir)
 
             with DICOMUtils.TemporaryDICOMDatabase() as db:
                 self.assertTrue(db.isOpen, "Temporary DICOM database failed to open")
@@ -226,16 +220,20 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         """
         self.delayDisplay("Starting test_DICOMM3DPlugin")
 
+        import SampleData
         M3D_URL = (
             "https://storage.googleapis.com/idc-open-data/"
             "e5db2185-8d0a-4e35-aa63-231ad7aa6e1b/"
             "c9a91b1e-0bb4-4f35-98b9-c55aa6217e22.dcm"
         )
+        M3D_FILENAME = "c9a91b1e-0bb4-4f35-98b9-c55aa6217e22.dcm"
+        M3D_CHECKSUM = "SHA256:7b22fd756a35dddd8ea72c0bb34f9f8f19fd41541ad42a42e7d9270242c90824"
         M3D_SERIES_UID = "1.3.6.1.4.1.5962.99.1.1972223737.1083348708.1694189371129.3.0"
 
+        cachedPath = SampleData.SampleDataLogic().downloadFileIntoCache(M3D_URL, M3D_FILENAME, M3D_CHECKSUM)
         tmpDir = tempfile.mkdtemp()
         try:
-            self._downloadDICOMFile(M3D_URL, tmpDir)
+            shutil.copy(cachedPath, tmpDir)
 
             with DICOMUtils.TemporaryDICOMDatabase() as db:
                 self.assertTrue(db.isOpen, "Temporary DICOM database failed to open")

@@ -34,7 +34,7 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
       if desc == "":
         desc = "Unknown"
 
-      isDicomPM = (slicer.dicomDatabase.fileValue(cFile, self.tags["classUID"]) == "1.2.840.10008.5.1.4.1.1.30")
+      isDicomPM = (slicer.dicomDatabase.fileValue(cFile, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.30")
 
       if isDicomPM:
         loadable = DICOMLoadable()

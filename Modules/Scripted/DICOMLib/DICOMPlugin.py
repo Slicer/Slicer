@@ -96,7 +96,7 @@ class DICOMPlugin:
         self.tags["seriesInstanceUID"] = "0020,000E"
         self.tags["modality"] = "0008,0060"
         self.tags["instanceUID"] = "0008,0018"
-        self.tags["classUID"] = "0008,0016"
+        self.tags["sopClassUID"] = "0008,0016"
         # Temporary directory used during loading; cleaned up by cleanup()
         self.tempDir = None
 
@@ -148,24 +148,33 @@ class DICOMPlugin:
     def _dcmqi_binary(name):
         """Return the path to a dcmqi binary installed via the pip 'dcmqi' package.
 
-        Slicer adds its bin directory to PATH, so console_scripts installed in
-        Slicer's embedded Python environment are discoverable via shutil.which().
+        Uses sysconfig to locate the pip scripts directory for Slicer's embedded
+        Python environment, avoiding accidental resolution of a system-installed
+        binary via PATH. On Windows, pip installs console_scripts into a Scripts/
+        subdirectory separate from sys.executable, so sysconfig is more correct
+        than os.path.dirname(sys.executable) on all platforms.
         Raises RuntimeError if the binary cannot be found.
         """
-        path = shutil.which(name)
-        if path is None:
-            # Fallback: look in same directory as the Python executable
-            import sys
-            candidate = os.path.join(os.path.dirname(sys.executable), name)
-            if os.path.isfile(candidate):
-                path = candidate
-            elif os.path.isfile(candidate + ".exe"):
-                path = candidate + ".exe"
-        if path is None:
-            raise RuntimeError(
-                "dcmqi binary '%s' not found. "
-                "Ensure the 'dcmqi' pip package is installed." % name)
-        return path
+        import sys
+        import sysconfig
+
+        scripts_dir = sysconfig.get_path("scripts")
+        candidate = os.path.join(scripts_dir, name)
+        if os.name == "nt":
+            candidate += ".exe"
+        if os.path.isfile(candidate):
+            return candidate
+
+        # Fallback: same directory as sys.executable (equivalent on Linux/macOS).
+        candidate = os.path.join(os.path.dirname(sys.executable), name)
+        if os.name == "nt" and not candidate.endswith(".exe"):
+            candidate += ".exe"
+        if os.path.isfile(candidate):
+            return candidate
+
+        raise RuntimeError(
+            f"dcmqi binary '{name}' not found. "
+            "Ensure the 'dcmqi' pip package is installed.")
 
     def findPrivateTag(self, ds, group, element, privateCreator):
         """Helper function to get private tag from private creator name.
@@ -321,7 +330,7 @@ class DICOMPlugin:
         tags["patientSex"] = "0010,0040"
         tags["patientBirthDate"] = "0010,0030"
         tags["patientComments"] = "0010,4000"
-        tags["classUID"] = "0008,0016"
+        tags["sopClassUID"] = "0008,0016"
         tags["instanceUID"] = "0008,0018"
 
         # Import and check dependencies
