@@ -1,8 +1,4 @@
-from __future__ import absolute_import
-import glob
 import os
-import json
-import vtk
 import io
 import shutil
 import vtkSegmentationCorePython as vtkSegmentationCore
@@ -21,11 +17,11 @@ from DICOMLib import DICOMLoadable, DICOMPlugin
 class DICOMM3DPluginClass(DICOMPlugin):
 
   def __init__(self):
-    super(DICOMM3DPluginClass, self).__init__()
+    super().__init__()
     self.loadType = "DICOMM3D"
 
   def examineFiles(self, files):
-    """ Returns a list of DICOMLoadable instances
+    """Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
     """
@@ -33,26 +29,26 @@ class DICOMM3DPluginClass(DICOMPlugin):
 
     for candidateFile in files:
       #read modality type to flag M3D object.
-      isDicomM3D = (slicer.dicomDatabase.fileValue(candidateFile, self.tags['modality']) == 'M3D')
+      isDicomM3D = (slicer.dicomDatabase.fileValue(candidateFile, self.tags["modality"]) == "M3D")
       if isDicomM3D:
-        uid = slicer.dicomDatabase.fileValue(candidateFile, self.tags['instanceUID'])
-        if uid == '':
+        uid = slicer.dicomDatabase.fileValue(candidateFile, self.tags["instanceUID"])
+        if uid == "":
           return []
 
-        desc = slicer.dicomDatabase.fileValue(candidateFile, self.tags['seriesDescription'])
-        if desc == '':
+        desc = slicer.dicomDatabase.fileValue(candidateFile, self.tags["seriesDescription"])
+        if desc == "":
           desc = "Unknown"
 
         loadable = DICOMLoadable()
         loadable.files = [candidateFile]
         loadable.name = desc
-        loadable.tooltip = loadable.name + ' - as a DICOM M3D object'
+        loadable.tooltip = loadable.name + " - as a DICOM M3D object"
         loadable.selected = True
         loadable.confidence = 0.95
         loadable.uid = uid
         loadables.append(loadable)
 
-        logging.debug('DICOM M3D modality found')
+        logging.debug("DICOM M3D modality found")
 
     return loadables
 
@@ -62,11 +58,11 @@ class DICOMM3DPluginClass(DICOMPlugin):
     if hasattr(dcm, "FrameOfReferenceUID"):
       return dcm.FrameOfReferenceUID
     else:
-      return 'Unnamed FrameOfReferenceUID'
+      return "Unnamed FrameOfReferenceUID"
 
   def getEncapsulatedDocumentAttributes(self, candidateFile):
     dcm = pydicom.dcmread(candidateFile)
-    encapsulatedDocument = b''
+    encapsulatedDocument = b""
     encapsulatedDocumentLength = 0
     if hasattr(dcm, "EncapsulatedDocument"):
       encapsulatedDocument = dcm.EncapsulatedDocument
@@ -75,12 +71,11 @@ class DICOMM3DPluginClass(DICOMPlugin):
     return encapsulatedDocument, encapsulatedDocumentLength
 
   def load(self, loadable):
-    """ Load the DICOM M3D object
-    """
-    logging.debug('DICOM M3D load()')
+    """Load the DICOM M3D object"""
+    logging.debug("DICOM M3D load()")
     if hasattr(loadable, "uid"):
       uid = loadable.uid
-      logging.debug('in load(): uid = ' + uid)
+      logging.debug("in load(): uid = " + uid)
     else:
       return False
 
@@ -92,7 +87,7 @@ class DICOMM3DPluginClass(DICOMPlugin):
 
     stlFileName = slicer.dicomDatabase.fileForInstance(uid)
     if stlFileName is None:
-      logging.error('Failed to get the filename from the DICOM database for ' + uid)
+      logging.error("Failed to get the filename from the DICOM database for " + uid)
       self.cleanup()
       return False
 
@@ -111,7 +106,7 @@ class DICOMM3DPluginClass(DICOMPlugin):
 
     # Save processed binary IO buffer into a temporary .STL file
     stlFilePath = os.path.join(self.tempDir, "temp.STL")
-    with open(stlFilePath, 'wb') as file:
+    with open(stlFilePath, "wb") as file:
       shutil.copyfileobj(read_buffer, file)
     assert os.path.exists(stlFilePath)
     file.close()
@@ -176,6 +171,7 @@ class DICOMM3DPlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM M3D Object Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
@@ -184,7 +180,7 @@ class DICOMM3DPlugin:
     Plugin to the DICOM Module to parse and load DICOM M3D modality.
     No module interface here, only in the DICOM module
     """
-    parent.dependencies = ['DICOM', 'Colors']
+    parent.dependencies = ["DICOM", "Colors"]
     parent.acknowledgementText = """
     This DICOM Plugin was developed by
     Cosmin Ciausu, BWH.
@@ -197,4 +193,4 @@ class DICOMM3DPlugin:
       slicer.modules.dicomPlugins
     except AttributeError:
       slicer.modules.dicomPlugins = {}
-    slicer.modules.dicomPlugins['DICOMM3DPlugin'] = DICOMM3DPluginClass
+    slicer.modules.dicomPlugins["DICOMM3DPlugin"] = DICOMM3DPluginClass

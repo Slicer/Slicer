@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import glob
 import json
 import logging
@@ -19,11 +18,11 @@ from DICOMLib import DICOMLoadable, DICOMPlugin
 class DICOMSegmentationPluginClass(DICOMPlugin):
 
   def __init__(self):
-    super(DICOMSegmentationPluginClass, self).__init__()
+    super().__init__()
     self.loadType = "DICOMSegmentation"
 
   def examineFiles(self, files):
-    """ Returns a list of DICOMLoadable instances
+    """Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
     """
@@ -31,21 +30,21 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
     for cFile in files:
 
-      uid = slicer.dicomDatabase.fileValue(cFile, self.tags['instanceUID'])
-      if uid == '':
+      uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])
+      if uid == "":
         return []
 
-      desc = slicer.dicomDatabase.fileValue(cFile, self.tags['seriesDescription'])
-      if desc == '':
+      desc = slicer.dicomDatabase.fileValue(cFile, self.tags["seriesDescription"])
+      if desc == "":
         desc = "Unknown"
 
-      isDicomSeg = (slicer.dicomDatabase.fileValue(cFile, self.tags['modality']) == 'SEG')
+      isDicomSeg = (slicer.dicomDatabase.fileValue(cFile, self.tags["modality"]) == "SEG")
 
       if isDicomSeg:
         loadable = DICOMLoadable()
         loadable.files = [cFile]
         loadable.name = desc
-        loadable.tooltip = loadable.name + ' - as a DICOM SEG object'
+        loadable.tooltip = loadable.name + " - as a DICOM SEG object"
         loadable.selected = True
         loadable.confidence = 0.95
         loadable.uid = uid
@@ -53,7 +52,7 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
         loadables.append(loadable)
 
-        logging.debug('DICOM SEG modality found')
+        logging.debug("DICOM SEG modality found")
 
     return loadables
 
@@ -69,15 +68,14 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
       cs = segment[codeSequenceName]
       return cs["CodeValue"], cs["CodingSchemeDesignator"], cs["CodeMeaning"]
     except KeyError:
-      return defaults if defaults else ['', '', '']
+      return defaults if defaults else ["", "", ""]
 
   def load(self, loadable):
-    """ Load the DICOM SEG object
-    """
-    logging.debug('DICOM SEG load()')
+    """Load the DICOM SEG object"""
+    logging.debug("DICOM SEG load()")
     try:
       uid = loadable.uid
-      logging.debug('in load(): uid = ' + uid)
+      logging.debug("in load(): uid = " + uid)
     except AttributeError:
       return False
 
@@ -91,22 +89,22 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
     # the terminology information for each segment
     segFileName = slicer.dicomDatabase.fileForInstance(uid)
     if segFileName is None:
-      logging.error('Failed to get the filename from the DICOM database for ' + uid)
+      logging.error("Failed to get the filename from the DICOM database for " + uid)
       self.cleanup()
       return False
 
     result = subprocess.run(
-        [self._dcmqi_binary('segimage2itkimage'),
-         '--inputDICOM', segFileName,
-         '--outputDirectory', self.tempDir,
-         '--mergeSegments'],
-        capture_output=True, text=True)
+        [self._dcmqi_binary("segimage2itkimage"),
+         "--inputDICOM", segFileName,
+         "--outputDirectory", self.tempDir,
+         "--mergeSegments"],
+        capture_output=True, text=True, check=False)
     if result.returncode != 0:
-      logging.error('segimage2itkimage failed, unable to load DICOM Segmentation:\n' + result.stderr)
+      logging.error("segimage2itkimage failed, unable to load DICOM Segmentation:\n" + result.stderr)
       self.cleanup()
       return False
 
-    numberOfSegmentations = len(glob.glob(os.path.join(self.tempDir, '*.nrrd')))
+    numberOfSegmentations = len(glob.glob(os.path.join(self.tempDir, "*.nrrd")))
 
     # resize the color table to include the segments plus 0 for the background
 
@@ -132,11 +130,11 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
     with open(metaFileName) as metaFile:
       data = json.load(metaFile)
-      logging.debug('Loaded segmentation metadata from ' + metaFileName)
+      logging.debug("Loaded segmentation metadata from " + metaFileName)
 
-      logging.debug('number of segmentation files = ' + str(numberOfSegmentations))
+      logging.debug("number of segmentation files = " + str(numberOfSegmentations))
       if numberOfSegmentations != len(data["segmentAttributes"]):
-        logging.error('Loading failed: Inconsistent number of segments in the descriptor file and on disk')
+        logging.error("Loading failed: Inconsistent number of segments in the descriptor file and on disk")
         return
 
       for segmentationId, segmentAttributes in enumerate(data["segmentAttributes"]):
@@ -144,7 +142,7 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
         labelFileName = os.path.join(self.tempDir, str(segmentationId + 1) + ".nrrd")
         # The temporary folder contains 1.nrrd, 2.nrrd,... files. We must specify singleFile=True to ensure
         # they are not loaded as an image stack (could happen if each image file has a single slice only).
-        labelNode = slicer.util.loadLabelVolume(labelFileName, {'singleFile': True})
+        labelNode = slicer.util.loadLabelVolume(labelFileName, {"singleFile": True})
 
         labelNode.labelAttributes = []
 
@@ -299,7 +297,7 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
           matches.append(shn.GetItemDataNode(childID))
 
     reference = None
-    if len(matches):
+    if matches:
       if any(x.GetAttribute("DICOM.RWV.instanceUID") is not None for x in matches):
         for x in matches:
           if x.GetAttribute("DICOM.RWV.instanceUID") is not None:
@@ -320,16 +318,16 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
   def _examineExportableForSegmentationNode(self, shNode, subjectHierarchyItemID):
     dataNode = shNode.GetItemDataNode(subjectHierarchyItemID)
     exportable = None
-    if dataNode and dataNode.IsA('vtkMRMLSegmentationNode'):
+    if dataNode and dataNode.IsA("vtkMRMLSegmentationNode"):
       # Check to make sure all referenced UIDs exist in the database.
       instanceUIDs = shNode.GetItemAttribute(subjectHierarchyItemID, "DICOM.ReferencedInstanceUIDs").split()
       if instanceUIDs != "" and all(slicer.dicomDatabase.fileForInstance(uid) != "" for uid in instanceUIDs):
         exportable = slicer.qSlicerDICOMExportable()
         exportable.confidence = 1.0
         # Define common required tags and default values
-        exportable.setTag('Modality', 'SEG')
-        exportable.setTag('SeriesDescription', dataNode.GetName())
-        exportable.setTag('SeriesNumber', '100')
+        exportable.setTag("Modality", "SEG")
+        exportable.setTag("SeriesDescription", dataNode.GetName())
+        exportable.setTag("SeriesNumber", "100")
     return exportable
 
   def _setupExportable(self, exportable, subjectHierarchyItemID):
@@ -383,14 +381,14 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
         # Generic error
         import traceback
         traceback.print_exc()
-        return "Segmentation object export failed.\n{0}".format(str(exc))
+        return "Segmentation object export failed.\n{}".format(str(exc))
       finally:
         exporter.cleanup()
     return ""
 
 
 class DICOMSegmentationExporter:
-  """This class can be used for exporting a segmentation into DICOM """
+  """This class can be used for exporting a segmentation into DICOM"""
 
   class EmptySegmentsFoundError(ValueError):
     pass
@@ -412,7 +410,7 @@ class DICOMSegmentationExporter:
 
   @staticmethod
   def saveJSON(data, destination):
-    with open(os.path.join(destination), 'w') as outfile:
+    with open(os.path.join(destination), "w") as outfile:
       json.dump(data, outfile, indent=2)
     return destination
 
@@ -460,7 +458,7 @@ class DICOMSegmentationExporter:
   @property
   def currentDateTime(self):
     from datetime import datetime
-    return datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    return datetime.now().strftime("%Y-%m-%d_%H%M%S")
 
   def __init__(self, segmentationNode, contentCreatorName=None):
     self.segmentationNode = segmentationNode
@@ -544,12 +542,12 @@ class DICOMSegmentationExporter:
       shutil.copyfile(inputFilePath, destFile)
 
     result = subprocess.run(
-        [DICOMPlugin._dcmqi_binary('itkimage2segimage'),
-         '--inputDICOMDirectory', cliTempDir,
-         '--inputImageList', ','.join(segmentFiles),
-         '--inputMetadata', metaFilePath,
-         '--outputDICOM', segFilePath],
-        capture_output=True, text=True)
+        [DICOMPlugin._dcmqi_binary("itkimage2segimage"),
+         "--inputDICOMDirectory", cliTempDir,
+         "--inputImageList", ",".join(segmentFiles),
+         "--inputMetadata", metaFilePath,
+         "--outputDICOM", segFilePath],
+        capture_output=True, text=True, check=False)
 
     shutil.rmtree(cliTempDir)
 
@@ -571,7 +569,7 @@ class DICOMSegmentationExporter:
     if instanceUIDs:
       seriesNumber = slicer.dicomDatabase.fileValue(
           slicer.dicomDatabase.fileForInstance(instanceUIDs.split()[0]), "0020,0011")
-    attributes["SeriesNumber"] = "100" if seriesNumber in [None, ''] else str(int(seriesNumber) + 100)
+    attributes["SeriesNumber"] = "100" if seriesNumber in [None, ""] else str(int(seriesNumber) + 100)
     attributes["InstanceNumber"] = "1"
     return attributes
 
@@ -603,7 +601,7 @@ class DICOMSegmentationExporter:
     attributeName = "DICOM.instanceUIDs"
     instanceUIDs = volumeNode.GetAttribute(attributeName)
     if not instanceUIDs:
-      raise ValueError("VolumeNode {0} has no attribute {1}".format(volumeNode.GetName(), attributeName))
+      raise ValueError("VolumeNode {} has no attribute {}".format(volumeNode.GetName(), attributeName))
     fileList = []
     rootDir = None
     for uid in instanceUIDs.split():
@@ -623,7 +621,7 @@ class DICOMSegmentationExporter:
     for segmentID in segmentIDs:
       segmentData = self._createSegmentData(segmentID)
       segmentsData.append([segmentData])
-    if not len(segmentsData):
+    if not segmentsData:
       raise ValueError("No segments with pixel data found.")
     return segmentsData
 
@@ -635,13 +633,13 @@ class DICOMSegmentationExporter:
     category = terminologyEntry.GetCategoryObject()
     segmentData["SegmentLabel"] = segment.GetName()
     segmentData["SegmentDescription"] = category.GetCodeMeaning()
-    algorithmType = vtk.mutable('')
+    algorithmType = vtk.mutable("")
     if not segment.GetTag("DICOM.SegmentAlgorithmType", algorithmType):
       algorithmType = "MANUAL"
     if algorithmType not in ["MANUAL", "SEMIAUTOMATIC", "AUTOMATIC"]:
       raise ValueError("Segment {} has invalid attribute for SegmentAlgorithmType."
         "Should be one of (MANUAL,SEMIAUTOMATIC,AUTOMATIC).".format(segment.GetName()))
-    algorithmName = vtk.mutable('')
+    algorithmName = vtk.mutable("")
     if not segment.GetTag("DICOM.SegmentAlgorithmName", algorithmName):
       algorithmName = None
     if algorithmType != "MANUAL" and not algorithmName:
@@ -734,6 +732,7 @@ class DICOMSegmentationPlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Segmentation Object Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
@@ -742,7 +741,7 @@ class DICOMSegmentationPlugin:
     Plugin to the DICOM Module to parse and load DICOM SEG modality.
     No module interface here, only in the DICOM module
     """
-    parent.dependencies = ['DICOM', 'Colors']
+    parent.dependencies = ["DICOM", "Colors"]
     parent.acknowledgementText = """
     This DICOM Plugin was developed by
     Andrey Fedorov, BWH.
@@ -756,4 +755,4 @@ class DICOMSegmentationPlugin:
       slicer.modules.dicomPlugins
     except AttributeError:
       slicer.modules.dicomPlugins = {}
-    slicer.modules.dicomPlugins['DICOMSegmentationPlugin'] = DICOMSegmentationPluginClass
+    slicer.modules.dicomPlugins["DICOMSegmentationPlugin"] = DICOMSegmentationPluginClass

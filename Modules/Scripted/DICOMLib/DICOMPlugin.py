@@ -106,7 +106,7 @@ class DICOMPlugin:
         try:
             return self._currentDateTime
         except AttributeError:
-            self._currentDateTime = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+            self._currentDateTime = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         return self._currentDateTime
 
     def cleanup(self):

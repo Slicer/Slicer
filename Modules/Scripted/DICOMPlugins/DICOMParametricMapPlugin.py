@@ -14,12 +14,11 @@ from DICOMLib import DICOMLoadable, DICOMPlugin
 class DICOMParametricMapPluginClass(DICOMPlugin):
 
   def __init__(self):
-    super(DICOMParametricMapPluginClass, self).__init__()
+    super().__init__()
     self.loadType = "DICOMParametricMap"
 
   def examineFiles(self, files):
-
-    """ Returns a list of DICOMLoadable instances
+    """Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
     """
@@ -27,20 +26,20 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
 
     for cFile in files:
 
-      uid = slicer.dicomDatabase.fileValue(cFile, self.tags['instanceUID'])
-      if uid == '':
+      uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])
+      if uid == "":
         return []
 
-      desc = slicer.dicomDatabase.fileValue(cFile, self.tags['seriesDescription'])
-      if desc == '':
+      desc = slicer.dicomDatabase.fileValue(cFile, self.tags["seriesDescription"])
+      if desc == "":
         desc = "Unknown"
 
-      isDicomPM = (slicer.dicomDatabase.fileValue(cFile, self.tags['classUID']) == '1.2.840.10008.5.1.4.1.1.30')
+      isDicomPM = (slicer.dicomDatabase.fileValue(cFile, self.tags["classUID"]) == "1.2.840.10008.5.1.4.1.1.30")
 
       if isDicomPM:
         loadable = DICOMLoadable()
         loadable.files = [cFile]
-        loadable.name = desc + ' - as a DICOM Parametric Map object'
+        loadable.name = desc + " - as a DICOM Parametric Map object"
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.confidence = 0.95
@@ -52,7 +51,7 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
 
         loadables.append(loadable)
 
-        logging.debug('DICOM Parametric Map found')
+        logging.debug("DICOM Parametric Map found")
 
     return loadables
 
@@ -64,12 +63,11 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
     return referencedName
 
   def load(self, loadable):
-    """ Load the DICOM PM object
-    """
-    logging.debug('DICOM PM load()')
+    """Load the DICOM PM object"""
+    logging.debug("DICOM PM load()")
     try:
       uid = loadable.uid
-      logging.debug('in load(): uid = %s' % uid)
+      logging.debug("in load(): uid = %s" % uid)
     except AttributeError:
       return False
 
@@ -81,17 +79,17 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
 
     pmFileName = slicer.dicomDatabase.fileForInstance(uid)
     if pmFileName is None:
-      logging.debug('Failed to get the filename from the DICOM database for %s' % uid)
+      logging.debug("Failed to get the filename from the DICOM database for %s" % uid)
       self.cleanup()
       return False
 
     result = subprocess.run(
-        [self._dcmqi_binary('paramap2itkimage'),
-         '--inputDICOM', pmFileName,
-         '--outputDirectory', self.tempDir],
-        capture_output=True, text=True)
+        [self._dcmqi_binary("paramap2itkimage"),
+         "--inputDICOM", pmFileName,
+         "--outputDirectory", self.tempDir],
+        capture_output=True, text=True, check=False)
     if result.returncode != 0:
-      logging.debug('paramap2itkimage failed, unable to load DICOM ParametricMap:\n' + result.stderr)
+      logging.debug("paramap2itkimage failed, unable to load DICOM ParametricMap:\n" + result.stderr)
       self.cleanup()
       return False
 
@@ -130,6 +128,7 @@ class DICOMParametricMapPlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM ParametricMap Object Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
@@ -138,7 +137,7 @@ class DICOMParametricMapPlugin:
     Plugin to the DICOM Module to parse and load DICOM Parametric Map modality.
     No module interface here, only in the DICOM module
     """
-    parent.dependencies = ['DICOM', 'Colors']
+    parent.dependencies = ["DICOM", "Colors"]
     parent.acknowledgementText = """
     This DICOM Plugin was developed by
     Andrey Fedorov, BWH.
@@ -152,4 +151,4 @@ class DICOMParametricMapPlugin:
       slicer.modules.dicomPlugins
     except AttributeError:
       slicer.modules.dicomPlugins = {}
-    slicer.modules.dicomPlugins['DICOMParametricMapPlugin'] = DICOMParametricMapPluginClass
+    slicer.modules.dicomPlugins["DICOMParametricMapPlugin"] = DICOMParametricMapPluginClass
