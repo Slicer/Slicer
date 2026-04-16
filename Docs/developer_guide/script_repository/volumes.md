@@ -856,7 +856,6 @@ sliceNode.SetSlabReconstructionEnabled(True)
 sliceNode.SetSlabReconstructionType(2) # mean projection
 sliceNode.SetSlabReconstructionOversamplingFactor(1)
 sliceNode.SetSlabReconstructionThickness(3)
-sliceNode.Modified()
 ```
 
 Set up `red` slice viewer to show maximum intensity projection (MIP):
@@ -867,9 +866,7 @@ sliceNode.SetSlabReconstructionEnabled(True)
 sliceNode.SetSlabReconstructionType(1) # max projection
 sliceNode.SetSlabReconstructionOversamplingFactor(2) # (supersampling is useful to reduce interpolation artifacts)
 sliceNode.SetSlabReconstructionThickness(600) # use a large number of slices (600) to cover the entire volume
-sliceNode.Modified()
 ```
-
 
 The projected image is available in a `vtkImageData` object by calling:
 ```python
