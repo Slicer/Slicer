@@ -24,7 +24,9 @@ public:
   /// virtual methods to be defined in subclasses.
   /// (Maybe these should be defined to handle default file operations)
   virtual void StageFileRead(const char* source, const char* destination);
+  void StageFileRead(const std::string& source, const std::string& destination) { this->StageFileRead(source.c_str(), destination.c_str()); }
   virtual void StageFileWrite(const char* source, const char* destination);
+  void StageFileWrite(const std::string& source, const std::string& destination) { this->StageFileWrite(source.c_str(), destination.c_str()); }
 
   ///
   /// various Read/Write method footprints useful to redefine in specific handlers.

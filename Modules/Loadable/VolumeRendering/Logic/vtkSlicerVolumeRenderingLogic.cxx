@@ -1180,13 +1180,13 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
   }
 
-  const char* localFile;
+  std::string localFile;
   if (useURI)
   {
     vpStorageNode->SetURI(filename);
     vpJsonStorageNode->SetURI(filename);
     // reset filename to the local file name
-    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    localFile = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
   }
   else
   {
@@ -1326,24 +1326,24 @@ vtkMRMLShaderPropertyNode* vtkSlicerVolumeRenderingLogic::AddShaderPropertyFromF
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
   }
 
-  const char* localFile = nullptr;
+  std::string localFile;
   if (useURI)
   {
     spStorageNode->SetURI(filename);
     // reset filename to the local file name
-    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    localFile = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
   }
   else
   {
     spStorageNode->SetFileName(filename);
     localFile = filename;
   }
-  const std::string fname(localFile);
+
   // the node name is based on the file name
-  const std::string name = spStorageNode->GetFileNameWithoutExtension(fname.c_str());
+  const std::string name = spStorageNode->GetFileNameWithoutExtension(localFile);
 
   // check to see which node can read this type of file
-  if (spStorageNode->SupportedFileType(fname.c_str()))
+  if (spStorageNode->SupportedFileType(localFile))
   {
     std::string uname(this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
 

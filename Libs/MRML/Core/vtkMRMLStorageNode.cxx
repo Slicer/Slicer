@@ -34,6 +34,7 @@ Version:   $Revision: 1.1.1.1 $
 
 // STD includes
 #include <algorithm>
+#include <cstring>
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -441,7 +442,7 @@ void vtkMRMLStorageNode::StageReadData(vtkMRMLNode* refNode)
   }
 
   vtkCacheManager* cacheManager = this->Scene->GetCacheManager();
-  const char* fname = nullptr;
+  std::string fname;
   if (cacheManager != nullptr)
   {
     fname = cacheManager->GetFilenameFromURI(this->GetURI());
@@ -691,15 +692,15 @@ int vtkMRMLStorageNode::SupportedFileType(const char* fileName)
 {
   // check to see which file name we need to check
   std::string name;
-  if (fileName)
+  if (fileName && strlen(fileName) > 0)
   {
     name = std::string(fileName);
   }
-  else if (this->FileName != nullptr)
+  else if (this->FileName && strlen(this->FileName) > 0)
   {
     name = std::string(this->FileName);
   }
-  else if (this->URI != nullptr)
+  else if (this->URI && strlen(this->URI) > 0)
   {
     name = std::string(this->URI);
   }
