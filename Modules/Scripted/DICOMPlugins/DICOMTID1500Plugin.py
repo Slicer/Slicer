@@ -6,7 +6,6 @@ import vtk
 import datetime
 from collections import Counter
 
-import numpy
 import numpy as np
 import highdicom as hd
 import pydicom
@@ -1371,7 +1370,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
       colorIndex = 1 + slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLMarkupsLineNode")
       colorNode = slicer.mrmlScene.GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt")
-      color = numpy.zeros(4)
+      color = np.zeros(4)
       colorNode.GetColor(colorIndex, color)
       markupsNode.GetDisplayNode().SetSelectedColor(*color[:3])
 
@@ -1380,13 +1379,13 @@ class DICOMTID1500PluginClass(DICOMPlugin):
         raise Exception(f"Referenced image is not found in the database (referencedSOPInstanceUID={measurement['referencedSOPInstanceUID']}). Polyline point positions cannot be determined in 3D.")
 
       reference = pydicom.dcmread(referenceFilePath)
-      origin = numpy.array(reference.ImagePositionPatient)
-      alongColumnVector = numpy.array(reference.ImageOrientationPatient[:3])
-      alongRowVector = numpy.array(reference.ImageOrientationPatient[3:])
+      origin = np.array(reference.ImagePositionPatient)
+      alongColumnVector = np.array(reference.ImageOrientationPatient[:3])
+      alongRowVector = np.array(reference.ImageOrientationPatient[3:])
       alongColumnVector *= reference.PixelSpacing[1]
       alongRowVector *= reference.PixelSpacing[0]
       col1,row1,col2,row2 = measurement["polyline"]
-      lpsToRAS = numpy.array([-1,-1,1])
+      lpsToRAS = np.array([-1,-1,1])
       p1 = (origin + col1 * alongColumnVector + row1 * alongRowVector) * lpsToRAS
       p2 = (origin + col2 * alongColumnVector + row2 * alongRowVector) * lpsToRAS
       markupsNode.AddControlPoint(vtk.vtkVector3d(p1))
