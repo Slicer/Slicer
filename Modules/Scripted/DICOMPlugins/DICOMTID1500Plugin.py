@@ -1204,7 +1204,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
         trackingUID = measurement[tagName]
         segment = segments[idx]
         segment.SetTag(tagName, trackingUID)
-        logging.debug("Setting tag '{}' to {} for segment with name {}".format(tagName, trackingUID, segment.GetName()))
+        logging.debug(f"Setting tag '{tagName}' to {trackingUID} for segment with name {segment.GetName()}")
 
   def determineAndApplyRWVMToReferencedSeries(self, loadable, segLoadable):
     rwvmUID = loadable.ReferencedRWVMSeriesInstanceUIDs[0]

@@ -381,7 +381,7 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
         # Generic error
         import traceback
         traceback.print_exc()
-        return "Segmentation object export failed.\n{}".format(str(exc))
+        return f"Segmentation object export failed.\n{str(exc)}"
       finally:
         exporter.cleanup()
     return ""
@@ -433,7 +433,7 @@ class DICOMSegmentationExporter:
     if not segmentationsLogic.CreateLabelmapVolumeFromOrientedImageData(mergedImageData, labelNode):
       slicer.mrmlScene.RemoveNode(labelNode)
       return None
-    labelNode.SetName("{}_label".format(segmentID))
+    labelNode.SetName(f"{segmentID}_label")
     return labelNode
 
   @staticmethod
@@ -468,7 +468,7 @@ class DICOMSegmentationExporter:
 
   def cleanup(self):
     try:
-      logging.debug("Cleaning up temporarily created directory {}".format(self.tempDir))
+      logging.debug(f"Cleaning up temporarily created directory {self.tempDir}")
       shutil.rmtree(self.tempDir)
     except AttributeError:
       pass
@@ -557,7 +557,7 @@ class DICOMSegmentationExporter:
     if not os.path.exists(segFilePath):
       raise RuntimeError("DICOM Segmentation was not created. Check Error Log for further information.")
 
-    logging.debug("Saved DICOM Segmentation to {}".format(segFilePath))
+    logging.debug(f"Saved DICOM Segmentation to {segFilePath}")
     return True
 
   def getSeriesAttributes(self):
@@ -591,7 +591,7 @@ class DICOMSegmentationExporter:
     segmentFiles = []
     for segmentID in segmentIDs:
       segmentLabelmap = self.createLabelNodeFromSegment(self.segmentationNode, segmentID)
-      filename = os.path.join(self.tempDir, "{}.nrrd".format(segmentLabelmap.GetName()))
+      filename = os.path.join(self.tempDir, f"{segmentLabelmap.GetName()}.nrrd")
       slicer.util.saveNode(segmentLabelmap, filename)
       slicer.mrmlScene.RemoveNode(segmentLabelmap)
       segmentFiles.append(filename)
@@ -601,7 +601,7 @@ class DICOMSegmentationExporter:
     attributeName = "DICOM.instanceUIDs"
     instanceUIDs = volumeNode.GetAttribute(attributeName)
     if not instanceUIDs:
-      raise ValueError("VolumeNode {} has no attribute {}".format(volumeNode.GetName(), attributeName))
+      raise ValueError(f"VolumeNode {volumeNode.GetName()} has no attribute {attributeName}")
     fileList = []
     rootDir = None
     for uid in instanceUIDs.split():
@@ -661,7 +661,7 @@ class DICOMSegmentationExporter:
       category = terminologyEntry.GetCategoryObject()
       propType = terminologyEntry.GetTypeObject()
       if any(v is None for v in [category, propType]):
-        raise ValueError("Segment {} has missing attributes. Make sure to set terminology.".format(segment.GetName()))
+        raise ValueError(f"Segment {segment.GetName()} has missing attributes. Make sure to set terminology.")
 
   def createJSONFromTerminologyContext(self, terminologyEntry):
     segmentData = dict()
