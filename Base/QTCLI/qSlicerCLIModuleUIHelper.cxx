@@ -57,10 +57,9 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
 
 //-----------------------------------------------------------------------------
 #define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _GETTER, _SETTER, _CONVERTER, _NOTIFY)           \
-  namespace                                                                                   \
-  {                                                                                           \
   class _NAME##WidgetValueWrapper : public qSlicerWidgetValueWrapper                          \
   {                                                                                           \
+    Q_OBJECT                                                                                  \
   public:                                                                                     \
     _NAME##WidgetValueWrapper(const QString& _name, const QString& _label, _WIDGET* _widget)  \
       : qSlicerWidgetValueWrapper(_name, _label, _widget)                                     \
@@ -84,8 +83,7 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
       }                                                                                       \
     }                                                                                         \
     _WIDGET* Widget;                                                                          \
-  };                                                                                          \
-  }
+  };
 
 //-----------------------------------------------------------------------------
 WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, QSpinBox, value, setValue, Int, valueChanged(int));
@@ -1242,3 +1240,5 @@ void qSlicerCLIModuleUIHelper::onValueChanged()
 
   emit this->valueChanged(name, value);
 }
+
+#include "qSlicerCLIModuleUIHelper.moc"

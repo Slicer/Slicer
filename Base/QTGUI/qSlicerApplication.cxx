@@ -144,6 +144,7 @@
 //-----------------------------------------------------------------------------
 class ctkSlicerPythonConsoleCompleter : public ctkPythonConsoleCompleter
 {
+  Q_OBJECT
 public:
   ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
     : ctkPythonConsoleCompleter(pythonManager)
@@ -1525,3 +1526,5 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime,
   }
 }
 #endif
+
+#include "qSlicerApplication.moc"
