@@ -67,7 +67,7 @@ public:
 
   /// Returns true if the layoutElement matches the viewClassName
   /// \sa viewClassName, isViewNodeSupported()
-  bool isElementSupported(QDomElement layoutElement) const override;
+  bool isElementSupported(const QDomElement& layoutElement) const override;
 
   /// Returns true if the viewNode matches the viewClassName.
   /// \sa viewClassName, isElementSupported()
@@ -132,12 +132,12 @@ Q_SIGNALS:
 protected:
   QScopedPointer<qMRMLLayoutViewFactoryPrivate> d_ptr;
 
-  void setupView(QDomElement viewElement, QWidget* view) override;
+  void setupView(const QDomElement& viewElement, QWidget* view) override;
   /// Reimplemented to search view node matching QDomElement.
   /// \sa viewFromXML(), createViewFromNode()
-  QWidget* createViewFromXML(QDomElement layoutElement) override;
+  QWidget* createViewFromXML(const QDomElement& layoutElement) override;
   /// Reimplemented to support
-  QList<QWidget*> createViewsFromXML(QDomElement layoutElement) override;
+  QList<QWidget*> createViewsFromXML(const QDomElement& layoutElement) override;
 
   virtual vtkMRMLAbstractViewNode* viewNodeFromXML(QDomElement viewElement) const;
   virtual QList<vtkMRMLAbstractViewNode*> viewNodesFromXML(QDomElement viewElement) const;

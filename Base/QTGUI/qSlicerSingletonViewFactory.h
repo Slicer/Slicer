@@ -64,7 +64,7 @@ protected:
   QScopedPointer<qSlicerSingletonViewFactoryPrivate> d_ptr;
 
   /// Reimplemented to instantiate desired singleton widget from the element.
-  Q_INVOKABLE QWidget* createViewFromXML(QDomElement layoutElement) override;
+  Q_INVOKABLE QWidget* createViewFromXML(const QDomElement& layoutElement) override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSingletonViewFactory)
