@@ -1,5 +1,9 @@
 import logging
+import os
+import shutil
+from datetime import datetime
 
+import pydicom
 import slicer
 
 #########################################################
@@ -89,6 +93,88 @@ class DICOMPlugin:
         self.tags["seriesDescription"] = "0008,103E"
         self.tags["seriesNumber"] = "0020,0011"
         self.tags["frameOfReferenceUID"] = "0020,0052"
+        self.tags["seriesInstanceUID"] = "0020,000E"
+        self.tags["modality"] = "0008,0060"
+        self.tags["instanceUID"] = "0008,0018"
+        self.tags["sopClassUID"] = "0008,0016"
+        # Temporary directory used during loading; cleaned up by cleanup()
+        self.tempDir = None
+
+    @property
+    def currentDateTime(self):
+        """Return a timestamp string suitable for temporary directory names."""
+        try:
+            return self._currentDateTime
+        except AttributeError:
+            self._currentDateTime = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        return self._currentDateTime
+
+    def cleanup(self):
+        """Remove the temporary directory created during loading, if any."""
+        if not self.tempDir:
+            return
+        try:
+            logging.debug("Cleaning up temporary directory %s" % self.tempDir)
+            shutil.rmtree(self.tempDir)
+            self.tempDir = None
+        except OSError:
+            pass
+
+    def addReferences(self, loadable):
+        """Populate loadable.referencedInstanceUIDs and loadable.referencedSeriesUID
+        by reading referenced series/image sequences from the first DICOM file.
+        """
+        dcm = pydicom.dcmread(loadable.files[0])
+        loadable.referencedInstanceUIDs = []
+        self._addReferencedSeries(loadable, dcm)
+        self._addReferencedImages(loadable, dcm)
+        loadable.referencedInstanceUIDs = list(set(loadable.referencedInstanceUIDs))
+
+    def _addReferencedSeries(self, loadable, dcm):
+        if hasattr(dcm, "ReferencedSeriesSequence"):
+            if hasattr(dcm.ReferencedSeriesSequence[0], "SeriesInstanceUID"):
+                for f in slicer.dicomDatabase.filesForSeries(dcm.ReferencedSeriesSequence[0].SeriesInstanceUID):
+                    refDCM = pydicom.dcmread(f)
+                    loadable.referencedInstanceUIDs.append(refDCM.SOPInstanceUID)
+                loadable.referencedSeriesUID = dcm.ReferencedSeriesSequence[0].SeriesInstanceUID
+
+    def _addReferencedImages(self, loadable, dcm):
+        if hasattr(dcm, "ReferencedImageSequence"):
+            for item in dcm.ReferencedImageSequence:
+                if hasattr(item, "ReferencedSOPInstanceUID"):
+                    loadable.referencedInstanceUIDs.append(item.ReferencedSOPInstanceUID)
+
+    @staticmethod
+    def _dcmqi_binary(name):
+        """Return the path to a dcmqi binary installed via the pip 'dcmqi' package.
+
+        Uses sysconfig to locate the pip scripts directory for Slicer's embedded
+        Python environment, avoiding accidental resolution of a system-installed
+        binary via PATH. On Windows, pip installs console_scripts into a Scripts/
+        subdirectory separate from sys.executable, so sysconfig is more correct
+        than os.path.dirname(sys.executable) on all platforms.
+        Raises RuntimeError if the binary cannot be found.
+        """
+        import sys
+        import sysconfig
+
+        scripts_dir = sysconfig.get_path("scripts")
+        candidate = os.path.join(scripts_dir, name)
+        if os.name == "nt":
+            candidate += ".exe"
+        if os.path.isfile(candidate):
+            return candidate
+
+        # Fallback: same directory as sys.executable (equivalent on Linux/macOS).
+        candidate = os.path.join(os.path.dirname(sys.executable), name)
+        if os.name == "nt" and not candidate.endswith(".exe"):
+            candidate += ".exe"
+        if os.path.isfile(candidate):
+            return candidate
+
+        raise RuntimeError(
+            f"dcmqi binary '{name}' not found. "
+            "Ensure the 'dcmqi' pip package is installed.")
 
     def findPrivateTag(self, ds, group, element, privateCreator):
         """Helper function to get private tag from private creator name.
@@ -145,8 +231,26 @@ class DICOMPlugin:
 
     def examineForImport(self, fileList):
         """Look at the list of lists of filenames and return
-        a list of DICOMLoadables that are options for loading
-        Virtual: should be overridden by the subclass
+        a list of DICOMLoadables that are options for loading.
+        Default implementation calls examineFiles() for each file group with caching.
+        Subclasses may override either examineForImport() (bypasses caching) or
+        examineFiles() (uses inherited caching).
+        """
+        loadables = []
+        for files in fileList:
+            cachedLoadables = self.getCachedLoadables(files)
+            if cachedLoadables is not None:
+                loadables += cachedLoadables
+            else:
+                loadablesForFiles = self.examineFiles(files)
+                loadables += loadablesForFiles
+                self.cacheLoadables(files, loadablesForFiles)
+        return loadables
+
+    def examineFiles(self, files):
+        """Examine a single group of files and return a list of DICOMLoadables.
+        Virtual: should be overridden by the subclass when using the default
+        examineForImport() caching wrapper.
         """
         return []
 
@@ -226,7 +330,7 @@ class DICOMPlugin:
         tags["patientSex"] = "0010,0040"
         tags["patientBirthDate"] = "0010,0030"
         tags["patientComments"] = "0010,4000"
-        tags["classUID"] = "0008,0016"
+        tags["sopClassUID"] = "0008,0016"
         tags["instanceUID"] = "0008,0018"
 
         # Import and check dependencies
