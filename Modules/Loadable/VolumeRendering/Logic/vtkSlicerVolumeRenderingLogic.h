@@ -39,6 +39,7 @@ class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkScalarsToColors;
 class vtkVolumeProperty;
+#include "vtkImageMapToWindowLevelAddon.h"
 
 // STD includes
 #include <map>
@@ -200,9 +201,17 @@ public:
   /// generated points.
   /// If \a lut contains more than 1 value, each color is used in the ramp.
   /// The generated transfer function will be made of lut->size() + 2 points.
+  /// The optional \a mappingMethod adjusts how values are compressed within
+  /// the scalar range. The default option is linear compression.
+  /// \a invertColormap optionally flips the colormap.
   /// The function is then applied to the volume property \a node.
   /// \sa SetThresholdToVolumeProp
-  void SetWindowLevelToVolumeProp(double scalarRange[2], double windowLevel[2], vtkScalarsToColors* lut, vtkVolumeProperty* node);
+  void SetWindowLevelToVolumeProp(double scalarRange[2],
+                                  double windowLevel[2],
+                                  vtkScalarsToColors* lut,
+                                  vtkVolumeProperty* node,
+                                  vtkImageMapToWindowLevelAddon::WindowMappingMode mode = vtkImageMapToWindowLevelAddon::Linear,
+                                  bool invertColormap = false);
 
   /// Create an opacity transfer function for gradient opacity.
   /// It ranges from 0 to scalarRange[1] - scalarRange[0].

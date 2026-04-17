@@ -17,6 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkImageMapToWindowLevelAddon.h"
 
 // VTK includes
 class vtkImageAlgorithm;
@@ -25,7 +26,6 @@ class vtkImageHistogramStatistics;
 class vtkImageCast;
 class vtkImageLogic;
 class vtkImageMapToColors;
-class vtkImageMapToWindowLevelColors;
 class vtkImageStencil;
 class vtkImageThreshold;
 class vtkImageExtractComponents;
@@ -144,12 +144,23 @@ public:
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);
 
-  ///
   /// Set/Get invert order of colors
   /// If non-zero then colors at the end of the color table are assigned to low values.
   vtkGetMacro(InvertDisplayScalarRange, int);
   virtual void SetInvertDisplayScalarRange(int invert);
   vtkBooleanMacro(InvertDisplayScalarRange, int);
+
+  /// Get or set the mapping method.
+  /// The mapping method determines how scalar values are assigned an integer value within the colormap
+  /// \sa WindowMappingMethodType
+  vtkGetMacro(WindowMappingMethod, int);
+  virtual void SetWindowMappingMethod(int method);
+
+  /// Get the mapping method from/as a string
+  /// \sa WindowMappingMethodType
+  static int GetWindowMappingMethodFromString(const char* name);
+  static const char* GetWindowMappingMethodAsString(int type);
+  static vtkImageMapToWindowLevelAddon::WindowMappingMode GetWindowMappingMethodFromIndex(int idx);
 
   void SetDefaultColorMap() override;
 
@@ -260,12 +271,13 @@ protected:
   int ApplyThreshold;
   int AutoThreshold;
   int InvertDisplayScalarRange;
+  int WindowMappingMethod;
 
   vtkImageLogic* AlphaLogic;
   vtkImageMapToColors* MapToColors;
   vtkImageThreshold* Threshold;
   vtkImageAppendComponents* AppendComponents;
-  vtkImageMapToWindowLevelColors* MapToWindowLevelColors;
+  vtkImageMapToWindowLevelAddon* MapToWindowLevelColors;
   vtkImageExtractComponents* ExtractRGB;
   vtkImageExtractComponents* ExtractAlpha;
   vtkImageStencil* MultiplyAlpha;

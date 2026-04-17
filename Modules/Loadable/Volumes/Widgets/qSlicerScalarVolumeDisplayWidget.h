@@ -9,8 +9,10 @@
 
 // Slicer includes
 #include <qSlicerWidget.h>
+#include "vtkImageMapToWindowLevelAddon.h"
 
 #include "qSlicerVolumesModuleWidgetsExport.h"
+
 
 class vtkMRMLNode;
 class vtkMRMLScalarVolumeDisplayNode;
@@ -23,6 +25,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
   QVTK_OBJECT
   Q_PROPERTY(bool enableColorTableComboBox READ isColorTableComboBoxEnabled WRITE setColorTableComboBoxEnabled)
   Q_PROPERTY(bool enableMRMLWindowLevelWidget READ isMRMLWindowLevelWidgetEnabled WRITE setMRMLWindowLevelWidgetEnabled)
+
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
@@ -38,8 +41,13 @@ public:
   bool isMRMLWindowLevelWidgetEnabled() const;
   void setMRMLWindowLevelWidgetEnabled(bool);
 
-public slots:
 
+
+  /// Get the option for how to map scalar values within the current window
+  /// \sa scalarMappingMethod, setScalarMappingMethod()
+  vtkImageMapToWindowLevelAddon::WindowMappingMode scalarMappingMethod();
+
+public slots:
   ///
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
@@ -49,6 +57,10 @@ public slots:
   void setInvert(bool invert);
   void setColorNode(vtkMRMLNode* node);
   void setPreset(const QString& presetName);
+
+  /// Set the option for how to map scalar values within the current window
+  /// \sa scalarMappingMethod
+  void setScalarMappingMethod(int mappingMethod);
 
 protected slots:
   void updateWidgetFromMRML();

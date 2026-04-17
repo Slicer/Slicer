@@ -481,21 +481,33 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     return false;
   }
 
-  // Handle invert flag for scalar volume display nodes
-  if (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInvertDisplayScalarRange())
+  // Handle invert flag and different scalar mapping methods
+
+  if (scalarVolumeDisplayNode)
   {
-    // Invert the lookup table colors
-    vtkNew<vtkLookupTable> invertedLut;
-    invertedLut->DeepCopy(lut);
-    // Reverse the order of colors in the table
-    int numColors = invertedLut->GetNumberOfTableValues();
+    bool invertMap = scalarVolumeDisplayNode->GetInvertDisplayScalarRange();
+    auto mappingMode = scalarVolumeDisplayNode->GetWindowMappingMethodFromIndex(scalarVolumeDisplayNode->GetWindowMappingMethod());
+
+    vtkNew<vtkLookupTable> resampledLut;
+    resampledLut->DeepCopy(lut);
+
+    int numColors = resampledLut->GetNumberOfTableValues();
+    double lutScale = (double)(numColors - 1);
+    int lookupIndex = 0;
+    double normalizedWindowLocation = 0.0;
+    double rgba[4] = { 0.0, 0.0, 0.0, 0.0 };
     for (int i = 0; i < numColors; i++)
     {
-      double rgba[4] = { 0.0, 0.0, 0.0, 0.0 };
-      lut->GetTableValue(i, rgba);
-      invertedLut->SetTableValue(numColors - 1 - i, rgba);
+      normalizedWindowLocation = vtkImageMapToWindowLevelAddon::mapScalarToWindow(double(i), 0.0, lutScale, mappingMode);
+      if (invertMap)
+      {
+        normalizedWindowLocation = 1.0 - normalizedWindowLocation;
+      }
+      lookupIndex = round(lutScale * normalizedWindowLocation);
+      lut->GetTableValue(lookupIndex, rgba);
+      resampledLut->SetTableValue(i, rgba);
     }
-    lut = invertedLut;
+    lut = resampledLut;
   }
 
   lut->SetTableRange(range);
