@@ -10,7 +10,14 @@ import qt
 import vtk  # noqa: F401
 
 import slicer
-from slicer.util import *
+
+from slicer.util import (  # noqa: F401
+    array,
+    exit,
+    getNode,
+    getNodesByClass,
+    mainWindow,
+)
 
 # HACK Ideally constant from vtkSlicerConfigure should be wrapped,
 #      that way the following try/except could be avoided.

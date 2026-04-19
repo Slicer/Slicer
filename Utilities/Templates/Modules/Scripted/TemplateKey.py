@@ -243,6 +243,15 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onApplyButton(self) -> None:
         """Run processing when user clicks "Apply" button."""
+        # TODO: If your module requires additional Python packages, uncomment
+        # the following lines and add your dependencies to the
+        # Resources/requirements.txt file (one per line, e.g. "scikit-image>=0.20").
+        # import slicer.packaging
+        # slicer.packaging.pip_ensure(
+        #     slicer.packaging.load_requirements(self.resourcePath("requirements.txt")),
+        #     requester="TemplateKey",
+        # )
+
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
             # Compute output
             self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),

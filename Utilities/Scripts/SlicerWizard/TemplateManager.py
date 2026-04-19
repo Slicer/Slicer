@@ -19,6 +19,7 @@ _sourcePatterns = [
     "*.png",
     "*.dox",
     "*.sha256",
+    "requirements.txt",
 ]
 
 _templateCategories = [
