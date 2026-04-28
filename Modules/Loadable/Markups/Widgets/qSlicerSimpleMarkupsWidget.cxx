@@ -109,11 +109,17 @@ void qSlicerSimpleMarkupsWidgetPrivate::setupTableHeader()
 {
   Q_Q(qSlicerSimpleMarkupsWidget);
 
-  this->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList() << q->tr("Label") << q->tr("R") //: right
-                                                                                 << q->tr("A")                   //: anterior
-                                                                                 << q->tr("S")                   //: superior
-                                                                                 << q->tr("")                    //: position status (icon only)
-  );
+  QStringList headers;
+  headers << qSlicerSimpleMarkupsWidget::tr("Label");
+  //: right
+  headers << qSlicerSimpleMarkupsWidget::tr("R");
+  //: anterior
+  headers << qSlicerSimpleMarkupsWidget::tr("A");
+  //: superior
+  headers << qSlicerSimpleMarkupsWidget::tr("S");
+  headers << ""; // position status (no text, icon only)
+  this->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(headers);
+
   this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_LABEL_COLUMN, QHeaderView::Stretch);
   this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_X_COLUMN, QHeaderView::ResizeToContents);
   this->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(CONTROL_POINT_Y_COLUMN, QHeaderView::ResizeToContents);
@@ -123,9 +129,9 @@ void qSlicerSimpleMarkupsWidgetPrivate::setupTableHeader()
   // Set the position status column header icon
   QTableWidgetItem* positionHeader = this->MarkupsControlPointsTableWidget->horizontalHeaderItem(CONTROL_POINT_STATE_COLUMN);
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
-  positionHeader->setToolTip(q->tr("Click to cycle through position states:\n"
-                                   "Defined -> Undefined (by clearing position) -> Preview (by entering into place mode) "
-                                   "-> Missing (by marking as skip from placement) -> Defined (by restoring last position)"));
+  positionHeader->setToolTip(qSlicerSimpleMarkupsWidget::tr("Click to cycle through position states:\n"
+                                                            "Defined -> Undefined (by clearing position) -> Preview (by entering into place mode) "
+                                                            "-> Missing (by marking as skip from placement) -> Defined (by restoring last position)"));
 
   // Hide position status column by default
   this->MarkupsControlPointsTableWidget->setColumnHidden(CONTROL_POINT_STATE_COLUMN, !this->PositionStatusColumnVisible);

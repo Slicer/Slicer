@@ -10,6 +10,10 @@ set(MODULE_PYTHON_SCRIPTS
   DICOMScalarVolumePlugin.py
   DICOMVolumeSequencePlugin.py
   DICOMSlicerDataBundlePlugin.py
+  DICOMSegmentationPlugin.py
+  DICOMParametricMapPlugin.py
+  DICOMTID1500Plugin.py
+  DICOMM3DPlugin.py
   )
 
 set(MODULE_PYTHON_RESOURCES

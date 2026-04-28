@@ -67,6 +67,8 @@ def registerSampleData():
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
 
+    SampleData.SampleDataLogic.registerCustomSampleDataCategory("TemplateKey", title=_("TemplateKey"))
+
     # TemplateKey1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
@@ -241,6 +243,15 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onApplyButton(self) -> None:
         """Run processing when user clicks "Apply" button."""
+        # TODO: If your module requires additional Python packages, uncomment
+        # the following lines and add your dependencies to the
+        # Resources/requirements.txt file (one per line, e.g. "scikit-image>=0.20").
+        # import slicer.packaging
+        # slicer.packaging.pip_ensure(
+        #     slicer.packaging.load_requirements(self.resourcePath("requirements.txt")),
+        #     requester="TemplateKey",
+        # )
+
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
             # Compute output
             self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),

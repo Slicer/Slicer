@@ -1,6 +1,8 @@
 import sys
 import os
 
+from slicer.util import EXIT_SUCCESS
+
 SENTINEL = "/test/slicer-start-preserve-sys-path/directory"
 if SENTINEL not in sys.path:
     raise RuntimeError(f"{SENTINEL} not in sys.path as expected")

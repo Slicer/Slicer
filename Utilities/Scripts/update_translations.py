@@ -195,7 +195,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     # Create final file list using filtering and write out paths to translatableFilesList file
     source_files_filtered = []
     logging.debug(f"Filter source files with regex: {source_file_regex}")
-    with open(translatableFilesListPath, "w") as f:
+    with open(translatableFilesListPath, "w", encoding="utf-8") as f:
         for source_file in source_files:
             relative_path = str(source_file.relative_to(Path(source_code_dir)))
 
@@ -207,8 +207,12 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
             # Skip Python file if internationalization is explicitly disabled in it
             if str(source_file).endswith(".py"):
-                with open(source_file) as file_object:
-                    source_code = file_object.read()
+                try:
+                    with open(source_file, encoding="utf-8") as file_object:
+                        source_code = file_object.read()
+                except UnicodeDecodeError as e:
+                    logging.error(f"Failed to read {source_file} as text file, skipping it from translation - {e}")
+                    continue
                 if "-*- i18n: disabled -*-" in source_code:
                     # Translation of the file is explicitly disabled
                     logging.debug(f"Translation of {source_file} was disabled in the source code.")

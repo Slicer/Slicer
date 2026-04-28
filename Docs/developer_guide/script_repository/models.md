@@ -342,7 +342,7 @@ outputLabelmapVolumeArray = (slicer.util.arrayFromVolume(outputLabelmapVolumeNod
 try:
   import imageio
 except ModuleNotFoundError:
-  slicer.util.pip_install("imageio")
+  slicer.packaging.pip_install("imageio")
   import imageio
 
 # Write labelmap volume to series of TIFF files
@@ -351,5 +351,5 @@ for i in range(len(outputLabelmapVolumeArray)):
 ```
 
 :::{tip}
-To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
+To learn how to use {func}`slicer.packaging.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
 :::

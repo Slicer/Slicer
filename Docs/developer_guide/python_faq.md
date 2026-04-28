@@ -25,7 +25,7 @@ modules, are not available.
 :::
 
 :::{tip}
-To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+To install additional packages, you can use the {func}`slicer.packaging.pip_install()` function.
 :::
 
 ## What is the Python Console?
@@ -50,7 +50,7 @@ For example, this applies to the [Segment Editor effects](/user_guide/modules/se
 :::
 
 :::{tip}
-To install additional packages, you can use the {func}`slicer.util.pip_install()` function.
+To install additional packages, you can use the {func}`slicer.packaging.pip_install()` function.
 :::
 
 :::{versionchanged} 5.2.0
@@ -350,14 +350,33 @@ In our example:
 
 You can install any Python package within Slicer's built-in Python environment.
 
-The convenience function {func}`slicer.util.pip_install` can be used to install packages into your Slicer module. To understand its usage, examine the [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) example within the Script Repository.
+### Utility functions for dependency management
+
+:::{versionadded} 5.11
+The `slicer.packaging` module with `pip_ensure`, `pip_check`, `load_requirements`, and `load_pyproject_dependencies`.
+:::
+
+Slicer provides several utility functions to help manage Python dependencies:
+
+| Function | Purpose |
+|----------|---------|
+| `slicer.packaging.load_requirements` | Load a `requirements.txt` file |
+| `slicer.packaging.pip_check` | Check if requirements are already satisfied |
+| `slicer.packaging.pip_ensure` | Ensure requirements are installed, prompting the user if needed |
+| `slicer.packaging.pip_install` | Install packages |
+
+The recommended approach is to use {func}`slicer.packaging.pip_ensure`, which handles checking, user confirmation, and installation with progress display in one call. It also automatically skips installation when running in testing mode (`slicer.app.testingEnabled()`).
+
+For direct installation with visual feedback, use {func}`slicer.packaging.pip_install` with `show_progress=True`. This displays a modal progress dialog during installation.
+
+For detailed usage examples, see [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) in the Script Repository.
 
 :::{warning}
 Since installing packages can have side effects on other extensions or the main application, here are some best practices to adhere to:
 
 **DO:**
-* ✅ Always include a confirmation dialog that clearly communicates the installation process, mirroring the approach in the linked example.
-* ✅ Document the dependencies your module relies upon.
+* ✅ Ask the user before installing. {func}`slicer.packaging.pip_ensure` does this for you; if you go through the lower-level {func}`slicer.packaging.pip_install`, write your own confirmation dialog as shown in the linked example.
+* ✅ Document the dependencies your module relies upon using a `requirements.txt` file.
 * ✅ Consider specifying version requirements using `>=X.Y` to avoid incompatible versions.
 * ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important for dependencies including compiled code, as installing a wheel eliminates the need for users to install a compiler.
 
