@@ -70,6 +70,7 @@
             pyparsing
             # python-dicom-requirements
             pydicom
+            highdicom
             six
             pillow
             dicomweb-client
