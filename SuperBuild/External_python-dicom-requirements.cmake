@@ -98,6 +98,29 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   #  - highdicom-0.27.0-py3-none-any.whl
   highdicom==0.27.0 --hash=sha256:90a14ef75f67b7df2c3fd83df9c0bddd787dfdfab2b08c8c68828207389aed3f
   # [/highdicom]
+  # [pyjpegls]
+  # JPEG-LS codec used by highdicom for DICOM image compression.
+  # Platform-specific C extension; no win_arm64 wheel is published upstream.
+  # Hashes correspond to the following packages:
+  #  - pyjpegls-1.5.1-cp312-cp312-macosx_10_13_x86_64.whl
+  #  - pyjpegls-1.5.1-cp312-cp312-macosx_11_0_arm64.whl
+  #  - pyjpegls-1.5.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - pyjpegls-1.5.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - pyjpegls-1.5.1-cp312-cp312-win_amd64.whl
+  #  - pyjpegls-1.5.1.tar.gz (source dist, fallback for platforms without a binary wheel)
+  pyjpegls==1.5.1 --hash=sha256:a5430dcd735bc4c0c1eb478510d73a5178a4743cbad1d72113926accdd738921 \
+                  --hash=sha256:c3e6355a4bc9d3da46f7d4377793576b261bf60df297cea7167b3556adb98eb7 \
+                  --hash=sha256:45630167eb37990701854f882455f4611c24902a2de1d27635076c3fed4a04a7 \
+                  --hash=sha256:5e8c7257bfd1700d563c4fdc60a8794519e00da21798221d964271bc5a027a49 \
+                  --hash=sha256:14d7cf5e61ffdb9343a888dde5e3f9b7e527cc805c31c7f48a1e2cdb73d9d9fa \
+                  --hash=sha256:d0fe09dfb7f75ce78e3b1e0519912a42f1827d68bbc3609652f4f8743c956025
+  # [/pyjpegls]
+  # [typing-extensions]
+  # Pure-Python backport of typing module features; required by highdicom on Python < 3.13.
+  # Hashes correspond to the following packages:
+  #  - typing_extensions-4.15.0-py3-none-any.whl
+  typing_extensions==4.15.0 --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
+  # [/typing-extensions]
   ]===])
 
   ExternalProject_Add(${proj}
