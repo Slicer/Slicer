@@ -24,7 +24,7 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
-  set(requirements_file ${CMAKE_CURRENT_SOURCE_DIR}/requirements/${proj}.txt)
+  set(requirements_file ${CMAKE_SOURCE_DIR}/SuperBuild/requirements/${proj}.txt)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
