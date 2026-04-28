@@ -1,0 +1,68 @@
+name: CI (pip requirements)
+
+# Verify that every SuperBuild requirements file is self-contained under
+# pip --require-hashes: all transitive dependencies must be explicitly pinned
+# with a hash so that no unverified package can be silently pulled in.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "SuperBuild/requirements/*.txt"
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "SuperBuild/requirements/*.txt"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.file }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # baseline: packages already installed by upstream ExternalProjects
+          # (pip and setuptools are always present in a fresh venv)
+          - file: python-pip.txt
+            baseline: ""
+          - file: python-setuptools.txt
+            baseline: ""
+          - file: python-wheel.txt
+            baseline: ""
+          - file: python-numpy.txt
+            baseline: ""
+          - file: python-requests-requirements.txt
+            baseline: ""
+          - file: python-pythonqt-requirements.txt
+            baseline: "wheel"
+          - file: python-SimpleITK.txt
+            baseline: "numpy"
+          - file: python-scipy.txt
+            baseline: "numpy"
+          - file: python-extension-manager-requirements.txt
+            baseline: ""
+          - file: python-extension-manager-ssl-requirements.txt
+            baseline: "requests"
+          - file: python-dicom-requirements.txt
+            baseline: "numpy requests"
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate ${{ matrix.file }}
+        run: |
+          python -m venv /tmp/venv
+          source /tmp/venv/bin/activate
+          if [ -n "${{ matrix.baseline }}" ]; then
+            pip install --quiet ${{ matrix.baseline }}
+          fi
+          pip install --require-hashes -r SuperBuild/requirements/${{ matrix.file }}
