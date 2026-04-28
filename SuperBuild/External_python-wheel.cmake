@@ -24,12 +24,7 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
-  set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-  file(WRITE ${requirements_file} [===[
-  # [wheel]
-  wheel==0.45.1 --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
-  # [/wheel]
-  ]===])
+  set(requirements_file ${CMAKE_CURRENT_SOURCE_DIR}/requirements/${proj}.txt)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
