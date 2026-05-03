@@ -56,12 +56,41 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
+        self.test_dcmqi_binary()
         self.setUp()
         self.test_DICOMSegmentationPlugin()
         self.setUp()
         self.test_DICOMTID1500Plugin()
         self.setUp()
         self.test_DICOMM3DPlugin()
+
+    # -------------------------------------------------------------------------
+    # Test: _dcmqi_binary helper
+    # -------------------------------------------------------------------------
+
+    def test_dcmqi_binary(self):
+        """Test that _dcmqi_binary() resolves each bundled dcmqi executable.
+
+        Verifies the importlib.metadata-based lookup finds the binaries that
+        dcmqi ships as package data under dcmqi/bin/, and that a bogus name
+        raises RuntimeError.
+        """
+        import os
+
+        from DICOMLib.DICOMPlugin import DICOMPlugin
+
+        self.delayDisplay("Starting test_dcmqi_binary")
+
+        for name in ("segimage2itkimage", "itkimage2segimage", "paramap2itkimage",
+                     "tid1500reader", "tid1500writer"):
+            path = DICOMPlugin._dcmqi_binary(name)
+            self.assertTrue(os.path.isfile(path), f"Binary not found: {path}")
+            self.assertTrue(os.access(path, os.X_OK), f"Binary not executable: {path}")
+
+        with self.assertRaises(RuntimeError):
+            DICOMPlugin._dcmqi_binary("nonexistent_dcmqi_binary")
+
+        self.delayDisplay("test_dcmqi_binary passed!")
 
     # -------------------------------------------------------------------------
     # Test: DICOMSegmentationPlugin

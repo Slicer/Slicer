@@ -1,5 +1,4 @@
 import logging
-import os
 import shutil
 from datetime import datetime
 
@@ -146,31 +145,28 @@ class DICOMPlugin:
 
     @staticmethod
     def _dcmqi_binary(name):
-        """Return the path to a dcmqi binary installed via the pip 'dcmqi' package.
+        """Return the path to a dcmqi binary bundled inside the 'dcmqi' pip package.
 
-        Uses sysconfig to locate the pip scripts directory for Slicer's embedded
-        Python environment, avoiding accidental resolution of a system-installed
-        binary via PATH. On Windows, pip installs console_scripts into a Scripts/
-        subdirectory separate from sys.executable, so sysconfig is more correct
-        than os.path.dirname(sys.executable) on all platforms.
+        dcmqi ships executables as package data under dcmqi/bin/ rather than as
+        pip console_scripts, so sysconfig paths do not apply. Uses
+        importlib.metadata to walk the distribution RECORD and resolve the path,
+        mirroring dcmqi's own _lookup() helper.
         Raises RuntimeError if the binary cannot be found.
         """
-        import sys
-        import sysconfig
+        from importlib.metadata import PackageNotFoundError, distribution
+        from pathlib import Path
 
-        scripts_dir = sysconfig.get_path("scripts")
-        candidate = os.path.join(scripts_dir, name)
-        if os.name == "nt":
-            candidate += ".exe"
-        if os.path.isfile(candidate):
-            return candidate
+        try:
+            files = distribution("dcmqi").files
+        except PackageNotFoundError:
+            files = None
 
-        # Fallback: same directory as sys.executable (equivalent on Linux/macOS).
-        candidate = os.path.join(os.path.dirname(sys.executable), name)
-        if os.name == "nt" and not candidate.endswith(".exe"):
-            candidate += ".exe"
-        if os.path.isfile(candidate):
-            return candidate
+        if files is not None:
+            prefix = f"dcmqi/bin/{name}"
+            for f in files:
+                # startswith handles the Windows .exe suffix automatically
+                if str(f).startswith(prefix):
+                    return str(Path(f.locate()).resolve(strict=True))
 
         raise RuntimeError(
             f"dcmqi binary '{name}' not found. "
