@@ -4082,6 +4082,75 @@ def logProcessOutput(proc, logCallback=None):
     if retcode != 0:
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
+def _executePythonModule(
+    module: str,
+    args: list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
+    """Execute a Python module as a script in Slicer's Python environment.
+    .. deprecated:: 5.11.0
+       Use :func:`executePythonModule` function instead.
+    """
+    import warnings
+    warnings.warn("_executePythonModule is deprecated, use executePythonModule instead", DeprecationWarning, stacklevel=2)
+    return executePythonModule(module, args, blocking, logCallback, completedCallback)
+
+
+def executePythonModule(
+    module: str,
+    args: list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
+    """Execute a Python module as a script in Slicer's Python environment.
+
+    Internally python -m is called with the module name and additional arguments.
+
+    :param module: Python module name to execute (e.g., "pip")
+    :param args: command-line arguments to pass to the module
+    :param blocking: If True (default), block until completion. If False, return immediately.
+    :param logCallback: When blocking=False, called with each line of output.
+    :param completedCallback: When blocking=False, called when process completes.
+    :raises RuntimeError: if PythonSlicer executable not found
+    :raises CalledProcessError: in blocking mode, if process fails
+    """
+    import os, sys
+    import shutil
+
+    # Determine pythonSlicerExecutablePath
+    try:
+        from slicer import app  # noqa: F401
+
+        # If we get to this line then import from "app" is succeeded,
+        # which means that we run this function from Slicer Python interpreter.
+        # PythonSlicer is added to PATH environment variable in Slicer
+        # therefore shutil.which will be able to find it.
+        pythonSlicerExecutablePath = shutil.which("PythonSlicer")
+        if not pythonSlicerExecutablePath:
+            raise RuntimeError("PythonSlicer executable not found")
+    except ImportError:
+        # Running from console
+        pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
+        if os.name == "nt":
+            pythonSlicerExecutablePath += ".exe"
+
+    commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
+
+    if blocking:
+        proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
+        logProcessOutput(proc, logCallback=logCallback)
+    else:
+        launchConsoleProcess(
+            commandLine,
+            useStartupEnvironment=False,
+            blocking=False,
+            logCallback=logCallback,
+            completedCallback=completedCallback,
+        )
+
 
 def pip_install(requirements, **kwargs):
     """Install python packages.
