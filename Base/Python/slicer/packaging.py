@@ -21,6 +21,7 @@ import importlib
 import importlib.metadata
 import logging
 import shlex
+import slicer.util
 import sys
 import tomllib
 from pathlib import Path
@@ -32,17 +33,12 @@ from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 
 from slicer.i18n import tr as _
-from slicer.util import executePythonModule
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     import qt
 
-
-# Tests can monkeypatch _executePythonModule to perform mock actions instead of actually executing
-# the Python module by using slicer.packaging._executePythonModule.
-_executePythonModule = executePythonModule
 def load_requirements(path: str | Path) -> list[Requirement]:
     """Load requirements from a requirements.txt file.
 
@@ -688,11 +684,11 @@ def _pip_install_simple(
     # Handle no_deps_requirements first
     if no_deps_requirements is not None:
         args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
-        _executePythonModule("pip", args, blocking=True)
+        slicer.util.executePythonModule("pip", args, blocking=True)
 
     # Then install regular requirements
     args = _build_pip_args(requirements, constraints, no_deps=False)
-    _executePythonModule("pip", args, blocking=True)
+    slicer.util.executePythonModule("pip", args, blocking=True)
 
 
 def _pip_install_with_busy_cursor(
@@ -844,8 +840,10 @@ def _pip_install_nonblocking(
         if no_deps_requirements is None:
             # Simple case - single install
             args = _build_pip_args(requirements, constraints, no_deps=False)
-            _executePythonModule("pip", args, blocking=False,
-                                 logCallback=logCallback, completedCallback=wrappedCompletedCallback)
+            slicer.util.executePythonModule(
+                "pip", args, blocking=False,
+                logCallback=logCallback, completedCallback=wrappedCompletedCallback,
+            )
             return
 
         # Two-step installation: first no_deps, then regular
@@ -859,12 +857,16 @@ def _pip_install_nonblocking(
                 return
             # Success - proceed to regular install (flag stays set until final completion)
             args = _build_pip_args(requirements, constraints, no_deps=False)
-            _executePythonModule("pip", args, blocking=False,
-                                 logCallback=logCallback, completedCallback=wrappedCompletedCallback)
+            slicer.util.executePythonModule(
+                "pip", args, blocking=False,
+                logCallback=logCallback, completedCallback=wrappedCompletedCallback,
+            )
 
         no_deps_args = _build_pip_args(no_deps_requirements, constraints, no_deps=True)
-        _executePythonModule("pip", no_deps_args, blocking=False,
-                             logCallback=logCallback, completedCallback=onNoDepsComplete)
+        slicer.util.executePythonModule(
+            "pip", no_deps_args, blocking=False,
+            logCallback=logCallback, completedCallback=onNoDepsComplete,
+        )
     except Exception:
         _pip_install_in_progress = False
         raise
@@ -1009,7 +1011,7 @@ def _pip_install_with_skips(
         extras_str = f"[{','.join(req.extras)}]" if req.extras else ""
         install_str = f"{req.name}{extras_str}{req.specifier}"
         args = _build_pip_args(install_str, constraints, no_deps=True)
-        _executePythonModule("pip", args, blocking=True, logCallback=log_fn)
+        slicer.util.executePythonModule("pip", args, blocking=True, logCallback=log_fn)
 
         # Read sub-dependencies from installed metadata
         importlib.invalidate_caches()
@@ -1144,11 +1146,13 @@ def pip_uninstall(
 
     # In PythonSlicer, always use blocking mode
     if not _isSlicerAppAvailable():
-        _executePythonModule("pip", args, blocking=True)
+        slicer.util.executePythonModule("pip", args, blocking=True)
         return
 
-    _executePythonModule("pip", args, blocking=blocking,
-                         logCallback=logCallback, completedCallback=completedCallback)
+    slicer.util.executePythonModule(
+        "pip", args, blocking=blocking,
+        logCallback=logCallback, completedCallback=completedCallback,
+    )
 
 
 class _PipProgressDialog:

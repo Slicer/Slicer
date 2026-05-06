@@ -408,7 +408,7 @@ class PipInstallNonBlockingTest(unittest.TestCase):
             completed.set()
 
         # Use --version which is quick
-        slicer.packaging._executePythonModule(
+        slicer.util.executePythonModule(
             "pip", ["--version"],
             blocking=False,
             logCallback=on_log,
@@ -430,7 +430,7 @@ class PipInstallNonBlockingTest(unittest.TestCase):
         """Test that blocking mode still works (backward compatibility)."""
         # pip --version should succeed without callbacks
         try:
-            slicer.packaging._executePythonModule("pip", ["--version"])
+            slicer.util.executePythonModule("pip", ["--version"])
         except Exception as e:
             self.fail(f"Blocking mode failed: {e}")
 
@@ -564,7 +564,7 @@ class ConstraintsTest(unittest.TestCase):
             constraints_path = f.name
 
         try:
-            with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+            with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
                 slicer.packaging.pip_install("scipy", constraints=constraints_path)
 
                 mock_exec.assert_called_once()
@@ -582,7 +582,7 @@ class ConstraintsTest(unittest.TestCase):
 
     def test_pip_install_without_constraints_no_c_flag(self):
         """Test that pip_install does not pass -c flag when constraints is None."""
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             slicer.packaging.pip_install("scipy")
 
             mock_exec.assert_called_once()
@@ -644,7 +644,7 @@ class ConstraintsTest(unittest.TestCase):
             constraints_path = Path(f.name)
 
         try:
-            with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+            with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
                 slicer.packaging.pip_install("scipy", constraints=constraints_path)
 
                 mock_exec.assert_called_once()
@@ -1031,7 +1031,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"top-pkg": ["torch>=2.0", "numpy>=1.0"]}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1070,7 +1070,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         }
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1092,7 +1092,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": ["torch>=2.0.1", "SimpleITK>=2.0.2"]}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule"):
+        with unittest.mock.patch("slicer.util.executePythonModule"):
             for p in patches:
                 p.start()
             try:
@@ -1117,7 +1117,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         }
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule"):
+        with unittest.mock.patch("slicer.util.executePythonModule"):
             for p in patches:
                 p.start()
             try:
@@ -1132,7 +1132,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": ['ruff>=0.1; extra == "dev"', "numpy>=1.0"]}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1157,7 +1157,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": ['win-only>=1.0; sys_platform == "nonexistent"', "numpy>=1.0"]}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1190,7 +1190,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": [f'scipy>=1.0; sys_platform == "{current_platform}"']}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1221,7 +1221,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg[extra1]>=1.0": []}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1242,7 +1242,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         # numpy is marked as already installed
         patches = self._mock_dep_tree(tree, installed={"numpy"})
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1259,7 +1259,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": ["numpy>=1.0"]}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             for p in patches:
                 p.start()
             try:
@@ -1289,7 +1289,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
         tree = {"pkg": []}
         patches = self._mock_dep_tree(tree)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             mock_exec.side_effect = CalledProcessError(1, "pip")
             for p in patches:
                 p.start()
@@ -1319,7 +1319,7 @@ class PipInstallWithSkipsTest(unittest.TestCase):
                 raise CalledProcessError(1, "pip")
             # pkg and dep-b succeed
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             mock_exec.side_effect = selective_fail
             for p in patches:
                 p.start()
@@ -1406,7 +1406,7 @@ class NoDepsRequirementsTwoStepTest(unittest.TestCase):
         First call should have --no-deps for the no_deps_requirements,
         second call should install regular requirements without --no-deps.
         """
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             slicer.packaging._pip_install_simple(
                 requirements="numpy scipy",
                 no_deps_requirements="problematic-pkg==1.0",
@@ -1427,7 +1427,7 @@ class NoDepsRequirementsTwoStepTest(unittest.TestCase):
 
     def test_two_step_passes_constraints_to_both(self):
         """Test that constraints file is passed to both steps."""
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             slicer.packaging._pip_install_simple(
                 requirements="numpy",
                 constraints="/path/to/constraints.txt",
@@ -1442,7 +1442,7 @@ class NoDepsRequirementsTwoStepTest(unittest.TestCase):
 
     def test_without_no_deps_requirements_single_call(self):
         """Test that omitting no_deps_requirements makes only one pip call."""
-        with unittest.mock.patch("slicer.packaging._executePythonModule") as mock_exec:
+        with unittest.mock.patch("slicer.util.executePythonModule") as mock_exec:
             slicer.packaging._pip_install_simple(requirements="numpy scipy")
 
             mock_exec.assert_called_once()
@@ -1470,7 +1470,7 @@ class IsPipInstallInProgressTest(unittest.TestCase):
             if completedCallback:
                 completedCallback(0)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule", side_effect=fake_exec):
+        with unittest.mock.patch("slicer.util.executePythonModule", side_effect=fake_exec):
             slicer.packaging._pip_install_nonblocking("numpy")
 
         # Flag should have been True during execution
@@ -1480,9 +1480,9 @@ class IsPipInstallInProgressTest(unittest.TestCase):
         self.assertFalse(slicer.packaging.isPipInstallInProgress())
 
     def test_flag_cleared_on_exception(self):
-        """Test that the flag is cleared if _executePythonModule raises."""
+        """Test that the flag is cleared if executePythonModule raises."""
         with unittest.mock.patch(
-            "slicer.packaging._executePythonModule",
+            "slicer.util.executePythonModule",
             side_effect=RuntimeError("test error"),
         ):
             with self.assertRaises(RuntimeError):
@@ -1510,7 +1510,7 @@ class NonBlockingPipInstallCallbackTest(unittest.TestCase):
             if completedCallback:
                 completedCallback(42)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule", side_effect=fake_exec):
+        with unittest.mock.patch("slicer.util.executePythonModule", side_effect=fake_exec):
             slicer.packaging._pip_install_nonblocking(
                 "numpy", completedCallback=on_complete,
             )
@@ -1527,7 +1527,7 @@ class NonBlockingPipInstallCallbackTest(unittest.TestCase):
             if completedCallback:
                 completedCallback(0)
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule", side_effect=fake_exec):
+        with unittest.mock.patch("slicer.util.executePythonModule", side_effect=fake_exec):
             slicer.packaging._pip_install_nonblocking(
                 "numpy", no_deps_requirements="problematic-pkg",
             )
@@ -1552,7 +1552,7 @@ class NonBlockingPipInstallCallbackTest(unittest.TestCase):
         def on_complete(return_code):
             result["return_code"] = return_code
 
-        with unittest.mock.patch("slicer.packaging._executePythonModule", side_effect=fake_exec):
+        with unittest.mock.patch("slicer.util.executePythonModule", side_effect=fake_exec):
             slicer.packaging._pip_install_nonblocking(
                 "numpy",
                 no_deps_requirements="problematic-pkg",
