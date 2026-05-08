@@ -4,7 +4,7 @@
 # This file is based on SlicerGenerateSlicerConfig.cmake.
 #
 # Example:
-#
+
 # Add these lines near the end of top-level CMakeLists.txt in Sequences extension
 # to allow other extensions to use it.
 #
@@ -99,7 +99,7 @@ set(EXTENSION_SOURCE_DIR_CONFIG "set(${EXTENSION_NAME}_SOURCE_DIR \"${${EXTENSIO
 # Variables that will be used for populating AdditionalLauncherSettings.ini.
 set(EXTENSION_ADDITIONAL_LAUNCHER_SETTINGS_FILE_CONTENT_CONFIG "set(${EXTENSION_NAME}_LIBRARY_PATHS_LAUNCHER_BUILD \"${EXTENSION_LIBRARY_PATHS_BUILD}\")
 set(${EXTENSION_NAME}_PATHS_LAUNCHER_BUILD \"${EXTENSION_PATHS_BUILD}\")
-set(${EXTENSION_NAME}_ENVVARS_LAUNCHER_BUILD \"${EXTENSION_LAUNCHER_SETTINGS_ENVVARS}\")
+set(${EXTENSION_NAME}_ENVVARS_LAUNCHER_BUILD \"${EXTENSION_ENVVARS_BUILD}\")
 set(${EXTENSION_NAME}_PYTHONPATH_LAUNCHER_BUILD \"${EXTENSION_PYTHONPATH_BUILD}\")")
 
 # Allow extensions to add some custom content.
