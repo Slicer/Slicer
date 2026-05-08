@@ -1136,15 +1136,18 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 
   double offsetRange[2] = { -1.0, 1.0 };
   double offsetResolution = 1.0;
-  if (!this->SliceLogic || !this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution))
+  if (this->SliceLogic)
   {
-    return;
+    this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution);
   }
 
   bool wasBlocking = this->SliceOffsetSlider->blockSignals(true);
-  q->setSliceOffsetRange(offsetRange[0], offsetRange[1]);
+  q->setSliceOffsetRange(offsetRange[0], offsetRange[1] - 0.00001); // Slightly reduce range to ensure volume is displayed at max offset
   q->setSliceOffsetResolution(offsetResolution);
-  this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
+  if (this->SliceLogic)
+  {
+    this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
+  }
   this->SliceOffsetSlider->blockSignals(wasBlocking);
 
   emit q->renderRequested();

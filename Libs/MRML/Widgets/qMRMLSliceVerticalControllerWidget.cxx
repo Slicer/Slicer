@@ -121,7 +121,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
   }
 
   bool wasBlocking = this->SliceVerticalOffsetSlider->blockSignals(true);
-  q->setSliceOffsetRange(offsetRange[0], offsetRange[1]);
+  q->setSliceOffsetRange(offsetRange[0], offsetRange[1] - 0.00001); // Slightly reduce range to ensure volume is displayed at max offset
   q->setSliceOffsetResolution(offsetResolution);
   this->SliceVerticalOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
   this->SliceVerticalOffsetSlider->blockSignals(wasBlocking);
