@@ -48,6 +48,7 @@ private:
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsServerWidgetPrivate : public qSlicerWebWidgetPrivate
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerExtensionsServerWidget);
 
 protected:

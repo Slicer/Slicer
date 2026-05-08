@@ -60,6 +60,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyTablesPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);
 
 protected:
@@ -331,3 +332,5 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() co
 
   return nullptr;
 }
+
+#include "qSlicerSubjectHierarchyTablesPlugin.moc"

@@ -76,6 +76,7 @@ const int MAX_NUMBER_OF_DISPLAY_NODE_PRESETS = 4;
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyVolumesPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumesPlugin);
 
 protected:
@@ -1365,3 +1366,5 @@ void qSlicerSubjectHierarchyVolumesPlugin::toggleVisibilityForCurrentItem(bool o
     }
   }
 }
+
+#include "qSlicerSubjectHierarchyVolumesPlugin.moc"

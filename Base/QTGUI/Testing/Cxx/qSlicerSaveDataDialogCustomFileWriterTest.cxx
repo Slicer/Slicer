@@ -40,6 +40,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerDummyFileWriter : public qSlicerFileWriter
 {
+  Q_OBJECT
 public:
   qSlicerDummyFileWriter(qSlicerIO::IOFileType fileType, QObject* parent = nullptr)
     : qSlicerFileWriter(parent)
@@ -87,3 +88,5 @@ int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char* argv[])
 
   return saveDataDialog.exec();
 }
+
+#include "qSlicerSaveDataDialogCustomFileWriterTest.moc"

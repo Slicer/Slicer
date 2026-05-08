@@ -57,6 +57,7 @@ class qMRMLThreeDViewControllerWidgetPrivate
   : public qMRMLViewControllerBarPrivate
   , public Ui_qMRMLThreeDViewControllerWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLThreeDViewControllerWidget);
 
 public:

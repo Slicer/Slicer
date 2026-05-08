@@ -41,6 +41,7 @@ class qSlicerPersistentCookieJarPrivate;
 /// \sa QSettings::IniFormat, QNetworkAccessManager::setCookieJar
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPersistentCookieJar : public QNetworkCookieJar
 {
+  Q_OBJECT
 public:
   typedef QNetworkCookieJar Superclass;
   qSlicerPersistentCookieJar(QObject* parent = nullptr);

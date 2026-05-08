@@ -56,6 +56,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyLabelMapsPlugin);
 
 protected:
@@ -359,3 +360,5 @@ bool qSlicerSubjectHierarchyLabelMapsPlugin::showItemInView(vtkIdType itemID, vt
   }
   return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
 }
+
+#include "qSlicerSubjectHierarchyLabelMapsPlugin.moc"

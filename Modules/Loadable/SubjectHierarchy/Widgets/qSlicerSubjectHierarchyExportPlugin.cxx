@@ -46,6 +46,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyExportPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExportPlugin);
 
 protected:
@@ -260,3 +261,5 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
 
   qSlicerApplication::application()->ioManager()->openDialog(QString("GenericNodeExport"), qSlicerFileDialog::Write, properties);
 }
+
+#include "qSlicerSubjectHierarchyExportPlugin.moc"

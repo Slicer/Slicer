@@ -56,6 +56,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyRegisterPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyRegisterPlugin);
 
 protected:
@@ -444,3 +445,5 @@ void qSlicerSubjectHierarchyRegisterPlugin::cancel()
   // Reset saved 'from' item
   this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 }
+
+#include "qSlicerSubjectHierarchyRegisterPlugin.moc"

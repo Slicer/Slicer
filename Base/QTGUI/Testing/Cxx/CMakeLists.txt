@@ -70,6 +70,17 @@ if(BUILD_TESTING)
   list(APPEND Tests
     Resources/${KIT}Testing.qrc
     )
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND KIT_TEST_GENERATE_MOC_SRCS
+      qSlicerLoadableModuleWithPythonTest.cxx
+      qSlicerPythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedLoadableModuleTest.cxx
+      qSlicerScriptedLoadableModuleWidgetTest.cxx
+      )
+  endif()
+
+  list(APPEND Tests ${KIT_TEST_GENERATE_MOC_SRCS})
+  list(APPEND Tests Resources/${KIT}Testing.qrc)
 
   ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})

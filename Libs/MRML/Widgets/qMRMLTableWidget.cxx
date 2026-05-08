@@ -43,6 +43,7 @@
 // qMRMLTableWidgetPrivate
 class qMRMLTableWidgetPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLTableWidget);
 
 protected:
@@ -171,3 +172,5 @@ qMRMLViewControllerBar* qMRMLTableWidget::controllerWidget() const
   Q_D(const qMRMLTableWidget);
   return this->tableController();
 }
+
+#include "qMRMLTableWidget.moc"

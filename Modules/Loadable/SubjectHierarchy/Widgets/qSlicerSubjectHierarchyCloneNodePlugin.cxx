@@ -42,6 +42,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyCloneNodePluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyCloneNodePlugin);
 
 protected:
@@ -171,3 +172,5 @@ const QString qSlicerSubjectHierarchyCloneNodePlugin::getCloneNodeNamePostfix()
 {
   return QString(vtkSlicerSubjectHierarchyModuleLogic::CLONED_NODE_NAME_POSTFIX);
 }
+
+#include "qSlicerSubjectHierarchyCloneNodePlugin.moc"

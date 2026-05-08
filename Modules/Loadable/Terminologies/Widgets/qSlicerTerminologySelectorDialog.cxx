@@ -35,6 +35,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorDialog);
 
 protected:
@@ -203,3 +204,5 @@ void qSlicerTerminologySelectorDialog::setOverrideSectionVisible(bool visible)
   Q_D(qSlicerTerminologySelectorDialog);
   d->NavigatorWidget->setOverrideSectionVisible(visible);
 }
+
+#include "qSlicerTerminologySelectorDialog.moc"

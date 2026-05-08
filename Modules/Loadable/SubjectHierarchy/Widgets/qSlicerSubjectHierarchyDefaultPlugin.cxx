@@ -40,6 +40,7 @@
 //----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDefaultPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDefaultPlugin);
 
 protected:
@@ -313,3 +314,5 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
     ownerPlugin->setDisplayVisibility(childItemID, 0);
   }
 }
+
+#include "qSlicerSubjectHierarchyDefaultPlugin.moc"
