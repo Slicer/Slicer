@@ -20,7 +20,13 @@
 
 // Qt includes
 #include <qSlicerCoreApplication.h>
+#include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QJSEngine>
+#include <QProcess>
+#include <QTemporaryFile>
+#include <QTextStream>
 
 // CTK includes
 #include <ctkTest.h>
@@ -31,6 +37,7 @@
 
 // QtCore includes
 #include "qSlicerExtensionsManagerModel.h"
+#include "vtkArchive.h"
 #include "vtkSlicerConfigure.h"
 #include "vtkSlicerVersionConfigureMinimal.h"
 
@@ -63,6 +70,24 @@ private:
   void installHelper(qSlicerExtensionsManagerModel* model, const QString& os, int extensionId, const QString& tmp);
 
   bool uninstallHelper(qSlicerExtensionsManagerModel* model, const QString& extensionName);
+
+  bool writeSourceScriptedManifest(const QString& sourcePath,
+                                   const QString& extensionName,
+                                   const QString& modulePath = "SourceModule.py",
+                                   const QStringList& pythonPaths = QStringList(),
+                                   const QString& extensionType = "source-scripted",
+                                   const QStringList& depends = QStringList());
+  bool setSourceScriptedManifestInstallSource(const QString& sourcePath, const QJsonObject& installSource);
+  QString createSourceScriptedExtension(const QString& extensionName,
+                                        const QString& modulePath = "SourceModule.py",
+                                        const QStringList& pythonPaths = QStringList(),
+                                        const QStringList& depends = QStringList());
+  bool runGit(const QString& workingDirectory, const QStringList& arguments, QString* output = nullptr);
+  bool commitGitRepository(const QString& repositoryPath, const QString& message, QString* revision = nullptr);
+  QString createSourceScriptedGitRepository(const QString& extensionName,
+                                            QString* revision = nullptr,
+                                            const QString& tagName = QString(),
+                                            const QJsonObject& installSource = QJsonObject());
 
   bool resetTmp();
   QDir Tmp;
@@ -106,7 +131,17 @@ private slots:
   void testWriteAndParseExtensionDescriptionFile();
   void testWriteAndParseExtensionDescriptionFile_data();
 
+  void testParseSourceScriptedExtensionManifest();
+  void testParseSourceScriptedExtensionInstallSource();
+
   void testInstallExtension();
+
+  void testInspectSourceScriptedExtensionArchiveFailures();
+  void testDownloadAndInspectSourceScriptedExtension();
+  void testInstallSourceScriptedExtension();
+  void testInstallSourceScriptedExtensionFromArchive();
+  void testInspectSourceScriptedExtensionFromGit();
+  void testInstallSourceScriptedExtensionFromGit();
 
   void testUninstallExtension();
 
@@ -307,6 +342,209 @@ bool qSlicerExtensionsManagerModelTester::uninstallHelper(qSlicerExtensionsManag
   bool success = model->scheduleExtensionForUninstall(extensionName);
   success = success && model->uninstallScheduledExtensions();
   return success;
+}
+
+// ----------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelTester::writeSourceScriptedManifest(const QString& sourcePath,
+                                                                      const QString& extensionName,
+                                                                      const QString& modulePath,
+                                                                      const QStringList& pythonPaths,
+                                                                      const QString& extensionType,
+                                                                      const QStringList& depends)
+{
+  QFile manifestFile(QDir(sourcePath).filePath("slicer-extension.json"));
+  if (!manifestFile.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    return false;
+  }
+
+  QTextStream stream(&manifestFile);
+  stream << "{\n";
+  stream << "  \"schema\": \"https://slicer.org/schemas/source-scripted-extension/v1\",\n";
+  stream << "  \"type\": \"" << extensionType << "\",\n";
+  stream << "  \"extensionname\": \"" << extensionName << "\",\n";
+  stream << "  \"description\": \"Source scripted test extension\",\n";
+  stream << "  \"contributors\": \"Slicer Test\",\n";
+  stream << "  \"modules\": [\n";
+  stream << "    { \"name\": \"" << QFileInfo(modulePath).completeBaseName() << "\", \"path\": \"" << modulePath << "\" }\n";
+  stream << "  ],\n";
+  stream << "  \"depends\": [";
+  for (int i = 0; i < depends.size(); ++i)
+  {
+    stream << (i == 0 ? "" : ", ") << "\"" << depends.at(i) << "\"";
+  }
+  stream << "],\n";
+  stream << "  \"pythonPaths\": [";
+  for (int i = 0; i < pythonPaths.size(); ++i)
+  {
+    stream << (i == 0 ? "" : ", ") << "\"" << pythonPaths.at(i) << "\"";
+  }
+  stream << "]\n";
+  stream << "}\n";
+  manifestFile.close();
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelTester::setSourceScriptedManifestInstallSource(const QString& sourcePath, const QJsonObject& installSource)
+{
+  const QString manifestPath = QDir(sourcePath).filePath("slicer-extension.json");
+  QFile manifestFile(manifestPath);
+  if (!manifestFile.open(QFile::ReadOnly))
+  {
+    return false;
+  }
+  const QJsonDocument document = QJsonDocument::fromJson(manifestFile.readAll());
+  manifestFile.close();
+  if (!document.isObject())
+  {
+    return false;
+  }
+
+  QJsonObject manifest = document.object();
+  manifest.insert("installSource", installSource);
+  manifestFile.setFileName(manifestPath);
+  if (!manifestFile.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    return false;
+  }
+  manifestFile.write(QJsonDocument(manifest).toJson(QJsonDocument::Indented));
+  manifestFile.close();
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModelTester::createSourceScriptedExtension(const QString& extensionName,
+                                                                           const QString& modulePath,
+                                                                           const QStringList& pythonPaths,
+                                                                           const QStringList& depends)
+{
+  const QString sourcePath = this->Tmp.filePath(extensionName + "-source");
+  QDir().mkpath(sourcePath);
+
+  const QString moduleFilePath = QDir(sourcePath).filePath(modulePath);
+  QDir().mkpath(QFileInfo(moduleFilePath).absolutePath());
+  QFile moduleFile(moduleFilePath);
+  if (!moduleFile.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    return QString();
+  }
+  moduleFile.write("from slicer.ScriptedLoadableModule import ScriptedLoadableModule\n\n");
+  moduleFile.write("class SourceModule(ScriptedLoadableModule):\n");
+  moduleFile.write("    pass\n");
+  moduleFile.close();
+
+  for (const QString& pythonPath : pythonPaths)
+  {
+    QDir().mkpath(QDir(sourcePath).filePath(pythonPath));
+  }
+
+  if (!this->writeSourceScriptedManifest(sourcePath, extensionName, modulePath, pythonPaths, "source-scripted", depends))
+  {
+    return QString();
+  }
+
+  return sourcePath;
+}
+
+// ----------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelTester::runGit(const QString& workingDirectory, const QStringList& arguments, QString* output)
+{
+  QProcess process;
+  if (!workingDirectory.isEmpty())
+  {
+    process.setWorkingDirectory(workingDirectory);
+  }
+  process.start("git", arguments);
+  if (!process.waitForStarted(30000) || !process.waitForFinished(300000))
+  {
+    return false;
+  }
+  if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0)
+  {
+    qWarning() << "git" << arguments << "failed:" << process.readAllStandardError();
+    return false;
+  }
+  if (output)
+  {
+    *output = QString::fromLocal8Bit(process.readAllStandardOutput()).trimmed();
+  }
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelTester::commitGitRepository(const QString& repositoryPath, const QString& message, QString* revision)
+{
+  if (!this->runGit(repositoryPath,
+                    QStringList() << "add"
+                                  << "-A"))
+  {
+    return false;
+  }
+  if (!this->runGit(repositoryPath,
+                    QStringList() << "commit"
+                                  << "-m" << message))
+  {
+    return false;
+  }
+  return this->runGit(repositoryPath,
+                      QStringList() << "rev-parse"
+                                    << "HEAD",
+                      revision);
+}
+
+// ----------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModelTester::createSourceScriptedGitRepository(const QString& extensionName,
+                                                                               QString* revision,
+                                                                               const QString& tagName,
+                                                                               const QJsonObject& installSource)
+{
+  const QString repositoryPath = this->Tmp.filePath(extensionName + "-git");
+  QDir().mkpath(repositoryPath);
+
+  const QString modulePath = "Modules/" + extensionName + "/" + extensionName + ".py";
+  const QString moduleFilePath = QDir(repositoryPath).filePath(modulePath);
+  QDir().mkpath(QFileInfo(moduleFilePath).absolutePath());
+  QFile moduleFile(moduleFilePath);
+  if (!moduleFile.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    return QString();
+  }
+  moduleFile.write("from slicer.ScriptedLoadableModule import ScriptedLoadableModule\n\n");
+  moduleFile.write("class SourceModule(ScriptedLoadableModule):\n");
+  moduleFile.write("    pass\n");
+  moduleFile.close();
+
+  if (!this->writeSourceScriptedManifest(repositoryPath, extensionName, modulePath))
+  {
+    return QString();
+  }
+  if (!installSource.isEmpty() && !this->setSourceScriptedManifestInstallSource(repositoryPath, installSource))
+  {
+    return QString();
+  }
+  if (!this->runGit(repositoryPath, QStringList() << "init") //
+      || !this->runGit(repositoryPath,
+                       QStringList() << "checkout"
+                                     << "-B"
+                                     << "main") //
+      || !this->runGit(repositoryPath,
+                       QStringList() << "config"
+                                     << "user.email"
+                                     << "slicer@example.invalid") //
+      || !this->runGit(repositoryPath,
+                       QStringList() << "config"
+                                     << "user.name"
+                                     << "Slicer Test") //
+      || !this->commitGitRepository(repositoryPath, "Initial source-scripted extension", revision))
+  {
+    return QString();
+  }
+  if (!tagName.isEmpty() && !this->runGit(repositoryPath, QStringList() << "tag" << tagName))
+  {
+    return QString();
+  }
+  return repositoryPath;
 }
 
 // ----------------------------------------------------------------------------
@@ -825,6 +1063,125 @@ void qSlicerExtensionsManagerModelTester::testWriteAndParseExtensionDescriptionF
 }
 
 // ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testParseSourceScriptedExtensionManifest()
+{
+  QVERIFY(this->resetTmp());
+
+  {
+    const QString sourcePath =
+      this->createSourceScriptedExtension("SourceScripted", "Modules/SourceScripted/SourceScripted.py", QStringList() << "Lib", QStringList() << "SampleData");
+    QVERIFY(!sourcePath.isEmpty());
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY2(!metadata.isEmpty(), qPrintable(error));
+    QCOMPARE(metadata.value("extensiontype").toString(), QString("source-scripted"));
+    QCOMPARE(metadata.value("extensionname").toString(), QString("SourceScripted"));
+    QCOMPARE(metadata.value("depends").toString(), QString("SampleData"));
+    QCOMPARE(metadata.value("pythonpaths").toStringList(), QStringList() << "Lib");
+    QCOMPARE(metadata.value("modulepaths").toStringList(), QStringList() << "Modules/SourceScripted");
+  }
+
+  {
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(this->Tmp.filePath("missing/slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY(!error.isEmpty());
+  }
+
+  {
+    const QString sourcePath = this->Tmp.filePath("WrongType-source");
+    QDir().mkpath(sourcePath);
+    QFile moduleFile(QDir(sourcePath).filePath("WrongType.py"));
+    QVERIFY(moduleFile.open(QFile::WriteOnly | QFile::Truncate));
+    moduleFile.write("class WrongType:\n    pass\n");
+    moduleFile.close();
+    QVERIFY(this->writeSourceScriptedManifest(sourcePath, "WrongType", "WrongType.py", QStringList(), "packaged", QStringList()));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY(error.contains("source-scripted"));
+  }
+
+  {
+    const QString sourcePath = this->Tmp.filePath("Traversal-source");
+    QDir().mkpath(sourcePath);
+    QVERIFY(this->writeSourceScriptedManifest(sourcePath, "Traversal", "../Traversal.py"));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY(!error.isEmpty());
+  }
+
+  {
+    const QString sourcePath = this->Tmp.filePath("MissingModule-source");
+    QDir().mkpath(sourcePath);
+    QVERIFY(this->writeSourceScriptedManifest(sourcePath, "MissingModule", "MissingModule.py"));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY(!error.isEmpty());
+  }
+
+  {
+    const QString sourcePath = this->Tmp.filePath("NotPython-source");
+    QDir().mkpath(sourcePath);
+    QFile moduleFile(QDir(sourcePath).filePath("NotPython.txt"));
+    QVERIFY(moduleFile.open(QFile::WriteOnly | QFile::Truncate));
+    moduleFile.write("not python\n");
+    moduleFile.close();
+    QVERIFY(this->writeSourceScriptedManifest(sourcePath, "NotPython", "NotPython.txt"));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY(error.contains(".py"));
+  }
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testParseSourceScriptedExtensionInstallSource()
+{
+  QVERIFY(this->resetTmp());
+
+  {
+    const QString sourcePath = this->createSourceScriptedExtension("InstallSourceDescriptor", "InstallSourceDescriptor.py");
+    QVERIFY(!sourcePath.isEmpty());
+    QJsonObject installSource;
+    installSource.insert("type", "git");
+    installSource.insert("url", "https://example.invalid/InstallSourceDescriptor.git");
+    installSource.insert("ref", "main");
+    QVERIFY(this->setSourceScriptedManifestInstallSource(sourcePath, installSource));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY2(!metadata.isEmpty(), qPrintable(error));
+    const QVariantMap parsedInstallSource = metadata.value("installSource").toMap();
+    QCOMPARE(parsedInstallSource.value("type").toString(), QString("git"));
+    QCOMPARE(parsedInstallSource.value("url").toString(), QString("https://example.invalid/InstallSourceDescriptor.git"));
+    QCOMPARE(parsedInstallSource.value("ref").toString(), QString("main"));
+    QVERIFY(!metadata.contains("origin"));
+  }
+
+  {
+    const QString sourcePath = this->createSourceScriptedExtension("BadInstallSourceDescriptor", "BadInstallSourceDescriptor.py");
+    QVERIFY(!sourcePath.isEmpty());
+    QJsonObject installSource;
+    installSource.insert("type", "directory");
+    installSource.insert("path", "/tmp/BadInstallSourceDescriptor");
+    QVERIFY(this->setSourceScriptedManifestInstallSource(sourcePath, installSource));
+
+    QString error;
+    ExtensionMetadataType metadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(sourcePath).filePath("slicer-extension.json"), &error);
+    QVERIFY(metadata.isEmpty());
+    QVERIFY2(error.contains("installSource"), qPrintable(error));
+  }
+}
+
+// ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testInstallExtension()
 {
   QVERIFY(this->resetTmp());
@@ -883,6 +1240,372 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   QCOMPARE(spyExtensionUninstalled.count(), 0);
   QCOMPARE(spySlicerRequirementsChanged.count(), 0);
   QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionNames.count());
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testInspectSourceScriptedExtensionArchiveFailures()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString sourcePath = this->Tmp.filePath("NoManifestSource");
+  QDir().mkpath(sourcePath);
+  QFile file(QDir(sourcePath).filePath("Module.py"));
+  QVERIFY(file.open(QFile::WriteOnly | QFile::Truncate));
+  file.write("print('no manifest')\n");
+  file.close();
+
+  const QString archivePath = this->Tmp.filePath("NoManifestSource.zip");
+  QVERIFY(vtkArchive::Zip(qPrintable(archivePath), qPrintable(sourcePath)));
+
+  qSlicerExtensionsManagerModel model;
+  QString error;
+  ExtensionMetadataType metadata = model.inspectSourceScriptedExtension(archivePath, &error);
+  QVERIFY(metadata.isEmpty());
+  QVERIFY2(error.contains("slicer-extension.json"), qPrintable(error));
+  QVERIFY2(error.contains("archive root"), qPrintable(error));
+  QVERIFY2(error.contains("one top-level directory"), qPrintable(error));
+
+  const QString htmlPath = this->Tmp.filePath("download.zip");
+  QFile htmlFile(htmlPath);
+  QVERIFY(htmlFile.open(QFile::WriteOnly | QFile::Truncate));
+  htmlFile.write("<html>not an archive</html>\n");
+  htmlFile.close();
+
+  error.clear();
+  metadata = model.inspectSourceScriptedExtension(htmlPath, &error);
+  QVERIFY(metadata.isEmpty());
+  QVERIFY2(error.contains("not a supported archive"), qPrintable(error));
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testDownloadAndInspectSourceScriptedExtension()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString installPath = this->Tmp.filePath("Extensions");
+  QSettings().setValue("Extensions/InstallPath", installPath);
+
+  const QString sourcePath = this->createSourceScriptedExtension("DownloadedSourceScripted", "DownloadedSourceScripted.py");
+  QVERIFY(!sourcePath.isEmpty());
+  const QString archivePath = this->Tmp.filePath("DownloadedSourceScripted.zip");
+  QVERIFY(vtkArchive::Zip(qPrintable(archivePath), qPrintable(sourcePath)));
+
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+
+  QSignalSpy spyDownloadReady(&model, SIGNAL(sourceScriptedExtensionDownloadReady(QUrl, QString, QVariantMap, bool)));
+  QVERIFY(model.downloadAndInspectSourceScriptedExtension(QUrl::fromLocalFile(archivePath), /* installDependencies= */ false));
+  QCOMPARE(spyDownloadReady.count(), 1);
+
+  QCOMPARE(spyDownloadReady.at(0).at(1).toString(), archivePath);
+  QCOMPARE(spyDownloadReady.at(0).at(2).toMap().value("extensionname").toString(), QString("DownloadedSourceScripted"));
+  QVERIFY(!model.isExtensionInstalled("DownloadedSourceScripted"));
+
+  QFile archiveFile(archivePath);
+  QVERIFY(archiveFile.open(QFile::ReadOnly));
+  QTemporaryFile stagedArchive(this->Tmp.filePath("main.XXXXXX.zip"));
+  stagedArchive.setAutoRemove(false);
+  QVERIFY(stagedArchive.open());
+  stagedArchive.write(archiveFile.readAll());
+  const QString stagedArchivePath = stagedArchive.fileName();
+  stagedArchive.close();
+  QVERIFY2(stagedArchivePath.endsWith(".zip"), qPrintable(stagedArchivePath));
+  QString error;
+  ExtensionMetadataType metadata = model.inspectSourceScriptedExtension(stagedArchivePath, &error);
+  QVERIFY2(!metadata.isEmpty(), qPrintable(error));
+
+  QFile::remove(stagedArchivePath);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testInstallSourceScriptedExtension()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString installPath = this->Tmp.filePath("Extensions");
+  QSettings().setValue("Extensions/InstallPath", installPath);
+
+  const QString sourcePath = this->createSourceScriptedExtension("SourceScripted", "Modules/SourceScripted/SourceScripted.py", QStringList() << "Lib");
+  QVERIFY(!sourcePath.isEmpty());
+
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+
+  QSignalSpy spyExtensionInstalled(&model, SIGNAL(extensionInstalled(QString)));
+  QVERIFY(model.installSourceScriptedExtension(sourcePath, /* installDependencies= */ false));
+  QCOMPARE(spyExtensionInstalled.count(), 1);
+  QCOMPARE(spyExtensionInstalled.at(0).at(0).toString(), QString("SourceScripted"));
+
+  QVERIFY(model.isExtensionInstalled("SourceScripted"));
+  QVERIFY(model.isExtensionEnabled("SourceScripted"));
+  QCOMPARE(model.extensionMetadata("SourceScripted").value("extensiontype").toString(), QString("source-scripted"));
+  QCOMPARE(model.extensionMetadata("SourceScripted").value("description").toString(), QString("Source scripted test extension"));
+
+  QVERIFY(QFileInfo(installPath + "/SourceScripted/source/Modules/SourceScripted/SourceScripted.py").isFile());
+  QVERIFY(QFileInfo(installPath + "/SourceScripted/source-scripted-extension.json").isFile());
+  QVERIFY(QFileInfo(installPath + "/SourceScripted.s4ext").isFile());
+
+  const QStringList expectedModulePaths = QStringList() << installPath + "/SourceScripted/source/Modules/SourceScripted";
+  QCOMPARE(model.extensionModulePaths("SourceScripted"), expectedModulePaths);
+  QCOMPARE(QSettings().value("Modules/AdditionalPaths").toStringList(), expectedModulePaths);
+
+  QSettings extensionsSettings(model.extensionsSettingsFilePath(), QSettings::IniFormat);
+  QCOMPARE(qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "LibraryPaths", "path"), QStringList());
+  QCOMPARE(qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "Paths", "path"), QStringList());
+#ifdef Slicer_USE_PYTHONQT
+  QCOMPARE(qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "PYTHONPATH", "path"), QStringList() << installPath + "/SourceScripted/source/Lib");
+#endif
+
+  model.setExtensionEnabled("SourceScripted", false);
+  QCOMPARE(QSettings().value("Modules/AdditionalPaths").toStringList(), QStringList());
+  QSettings disabledExtensionsSettings(model.extensionsSettingsFilePath(), QSettings::IniFormat);
+#ifdef Slicer_USE_PYTHONQT
+  QCOMPARE(qSlicerExtensionsManagerModel::readArrayValues(disabledExtensionsSettings, "PYTHONPATH", "path"), QStringList());
+#endif
+
+  model.setExtensionEnabled("SourceScripted", true);
+  QCOMPARE(QSettings().value("Modules/AdditionalPaths").toStringList(), expectedModulePaths);
+
+  {
+    qSlicerExtensionsManagerModel reloadedModel;
+    reloadedModel.setExtensionsSettingsFilePath(QSettings().fileName());
+    reloadedModel.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+    reloadedModel.updateModel();
+    QVERIFY(reloadedModel.isExtensionInstalled("SourceScripted"));
+    QVERIFY(reloadedModel.isExtensionEnabled("SourceScripted"));
+    QCOMPARE(reloadedModel.extensionModulePaths("SourceScripted"), expectedModulePaths);
+    QCOMPARE(reloadedModel.extensionMetadata("SourceScripted").value("extensiontype").toString(), QString("source-scripted"));
+  }
+
+  QVERIFY(model.uninstallExtension("SourceScripted"));
+  QVERIFY(!QFileInfo(installPath + "/SourceScripted").exists());
+  QVERIFY(!QFileInfo(installPath + "/SourceScripted.s4ext").exists());
+  QCOMPARE(QSettings().value("Modules/AdditionalPaths").toStringList(), QStringList());
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testInstallSourceScriptedExtensionFromArchive()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString installPath = this->Tmp.filePath("Extensions");
+  QSettings().setValue("Extensions/InstallPath", installPath);
+
+  const QString sourcePath = this->createSourceScriptedExtension("ArchivedSourceScripted", "ArchivedSourceScripted.py");
+  QVERIFY(!sourcePath.isEmpty());
+  QJsonObject installSource;
+  installSource.insert("type", "git");
+  installSource.insert("url", "https://example.invalid/ArchivedSourceScripted.git");
+  installSource.insert("ref", "main");
+  QVERIFY(this->setSourceScriptedManifestInstallSource(sourcePath, installSource));
+
+  const QString archivePath = this->Tmp.filePath("ArchivedSourceScripted.zip");
+  QVERIFY(vtkArchive::Zip(qPrintable(archivePath), qPrintable(sourcePath)));
+
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+
+  QVERIFY(model.installSourceScriptedExtension(archivePath, /* installDependencies= */ false));
+  QVERIFY(model.isExtensionInstalled("ArchivedSourceScripted"));
+  QVERIFY(QFileInfo(installPath + "/ArchivedSourceScripted/source/ArchivedSourceScripted.py").isFile());
+  QVERIFY(QFileInfo(installPath + "/ArchivedSourceScripted/source-scripted-extension.json").isFile());
+  QCOMPARE(model.extensionModulePaths("ArchivedSourceScripted"), QStringList() << installPath + "/ArchivedSourceScripted/source");
+
+  ExtensionMetadataType metadata = model.extensionMetadata("ArchivedSourceScripted");
+  QCOMPARE(metadata.value("extensiontype").toString(), QString("source-scripted"));
+  QCOMPARE(metadata.value("archivename").toString(), QString("ArchivedSourceScripted.zip"));
+  QCOMPARE(metadata.value("scm").toString(), QString("NA"));
+  QCOMPARE(metadata.value("revision").toString(), QString("NA"));
+
+  QFile sidecarFile(installPath + "/ArchivedSourceScripted/source-scripted-extension.json");
+  QVERIFY(sidecarFile.open(QFile::ReadOnly));
+  const QJsonObject sidecar = QJsonDocument::fromJson(sidecarFile.readAll()).object();
+  const QJsonObject installedOrigin = sidecar.value("origin").toObject();
+  QCOMPARE(installedOrigin.value("type").toString(), QString("archive"));
+  QCOMPARE(installedOrigin.value("path").toString(), archivePath);
+  QVERIFY(!sidecar.contains("installSource"));
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testInspectSourceScriptedExtensionFromGit()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString installPath = this->Tmp.filePath("Extensions");
+  QSettings().setValue("Extensions/InstallPath", installPath);
+
+  QString branchRevision;
+  QJsonObject manifestInstallSource;
+  manifestInstallSource.insert("type", "url");
+  manifestInstallSource.insert("url", "https://example.invalid/GitPreviewSourceScripted.zip");
+  const QString repositoryPath = this->createSourceScriptedGitRepository("GitPreviewSourceScripted", &branchRevision, QString(), manifestInstallSource);
+  QVERIFY(!repositoryPath.isEmpty());
+
+  QString defaultBranchRevision;
+  const QString defaultBranchRepositoryPath = this->createSourceScriptedGitRepository("GitDefaultSourceScripted", &defaultBranchRevision);
+  QVERIFY(!defaultBranchRepositoryPath.isEmpty());
+
+  const QString noManifestRepositoryPath = this->Tmp.filePath("GitNoManifest-source");
+  QVERIFY(QDir().mkpath(noManifestRepositoryPath));
+  QVERIFY(this->runGit(noManifestRepositoryPath, QStringList() << "init"));
+  QVERIFY(this->runGit(noManifestRepositoryPath,
+                       QStringList() << "checkout"
+                                     << "-B"
+                                     << "main"));
+  QVERIFY(this->runGit(noManifestRepositoryPath,
+                       QStringList() << "config"
+                                     << "user.email"
+                                     << "slicer@example.invalid"));
+  QVERIFY(this->runGit(noManifestRepositoryPath,
+                       QStringList() << "config"
+                                     << "user.name"
+                                     << "Slicer Test"));
+  QVERIFY(this->runGit(noManifestRepositoryPath,
+                       QStringList() << "commit"
+                                     << "--allow-empty"
+                                     << "-m"
+                                     << "No source-scripted manifest"));
+
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+
+  QString defaultBranchCheckoutPath;
+  QVariantMap defaultBranchOriginMetadata;
+  QString error;
+  ExtensionMetadataType metadata =
+    model.inspectSourceScriptedExtensionFromGit(defaultBranchRepositoryPath, QString(), &defaultBranchCheckoutPath, &defaultBranchOriginMetadata, &error);
+  QVERIFY2(!metadata.isEmpty(), qPrintable(error));
+  QVERIFY(QFileInfo(defaultBranchCheckoutPath).isDir());
+  QCOMPARE(defaultBranchOriginMetadata.value("url").toString(), defaultBranchRepositoryPath);
+  QCOMPARE(defaultBranchOriginMetadata.value("ref").toString(), QString("main"));
+  QCOMPARE(defaultBranchOriginMetadata.value("refKind").toString(), QString("branch"));
+  QCOMPARE(defaultBranchOriginMetadata.value("resolvedRevision").toString(), defaultBranchRevision);
+  QVERIFY(ctk::removeDirRecursively(defaultBranchCheckoutPath));
+
+  QString noManifestCheckoutPath;
+  QVariantMap noManifestOriginMetadata;
+  error.clear();
+  metadata = model.inspectSourceScriptedExtensionFromGit(noManifestRepositoryPath, "main", &noManifestCheckoutPath, &noManifestOriginMetadata, &error);
+  QVERIFY(metadata.isEmpty());
+  QVERIFY(noManifestCheckoutPath.isEmpty());
+  QVERIFY(noManifestOriginMetadata.isEmpty());
+  QVERIFY2(error.contains("slicer-extension.json"), qPrintable(error));
+
+  QString checkoutPath;
+  QVariantMap originMetadata;
+  metadata = model.inspectSourceScriptedExtensionFromGit(repositoryPath, "main", &checkoutPath, &originMetadata, &error);
+  QVERIFY2(!metadata.isEmpty(), qPrintable(error));
+  QVERIFY(QFileInfo(checkoutPath).isDir());
+  QVERIFY(!model.isExtensionInstalled("GitPreviewSourceScripted"));
+
+  QCOMPARE(metadata.value("extensionname").toString(), QString("GitPreviewSourceScripted"));
+  const QVariantMap parsedInstallSource = metadata.value("installSource").toMap();
+  QCOMPARE(parsedInstallSource.value("type").toString(), QString("url"));
+  QCOMPARE(parsedInstallSource.value("url").toString(), QString("https://example.invalid/GitPreviewSourceScripted.zip"));
+  const QVariantMap origin = metadata.value("origin").toMap();
+  QCOMPARE(origin.value("type").toString(), QString("git"));
+  QCOMPARE(origin.value("url").toString(), repositoryPath);
+  QCOMPARE(origin.value("ref").toString(), QString("main"));
+  QCOMPARE(origin.value("refKind").toString(), QString("branch"));
+  QCOMPARE(origin.value("resolvedRevision").toString(), branchRevision);
+  QCOMPARE(originMetadata, origin);
+
+  QVERIFY(model.installInspectedSourceScriptedExtensionFromGit(checkoutPath, originMetadata, /* installDependencies= */ false));
+  QCOMPARE(model.extensionMetadata("GitPreviewSourceScripted").value("revision").toString(), branchRevision);
+  QCOMPARE(model.extensionMetadata("GitPreviewSourceScripted").value("scmurl").toString(), repositoryPath);
+  QFile sidecarFile(installPath + "/GitPreviewSourceScripted/source-scripted-extension.json");
+  QVERIFY(sidecarFile.open(QFile::ReadOnly));
+  const QJsonObject sidecar = QJsonDocument::fromJson(sidecarFile.readAll()).object();
+  const QJsonObject installedOrigin = sidecar.value("origin").toObject();
+  QCOMPARE(installedOrigin.value("url").toString(), repositoryPath);
+  QCOMPARE(installedOrigin.value("resolvedRevision").toString(), branchRevision);
+  QVERIFY(!sidecar.contains("installSource"));
+
+  QVERIFY(ctk::removeDirRecursively(checkoutPath));
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testInstallSourceScriptedExtensionFromGit()
+{
+  QVERIFY(this->resetTmp());
+
+  const QString installPath = this->Tmp.filePath("Extensions");
+  QSettings().setValue("Extensions/InstallPath", installPath);
+
+  QString branchRevision;
+  const QString branchRepositoryPath = this->createSourceScriptedGitRepository("GitBranchSourceScripted", &branchRevision);
+  QVERIFY(!branchRepositoryPath.isEmpty());
+
+  QString tagRevision;
+  const QString tagRepositoryPath = this->createSourceScriptedGitRepository("GitTagSourceScripted", &tagRevision, "v1.0.0");
+  QVERIFY(!tagRepositoryPath.isEmpty());
+
+  QString commitRevision;
+  const QString commitRepositoryPath = this->createSourceScriptedGitRepository("GitCommitSourceScripted", &commitRevision);
+  QVERIFY(!commitRepositoryPath.isEmpty());
+
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements("30987", Slicer_OS_LINUX_NAME, "amd64");
+
+  QVERIFY(model.installSourceScriptedExtensionFromGit(branchRepositoryPath, "main", /* installDependencies= */ false));
+  QVERIFY(model.installSourceScriptedExtensionFromGit(tagRepositoryPath, "v1.0.0", /* installDependencies= */ false));
+  QVERIFY(model.installSourceScriptedExtensionFromGit(commitRepositoryPath, commitRevision, /* installDependencies= */ false));
+
+  QCOMPARE(model.extensionMetadata("GitBranchSourceScripted").value("scm").toString(), QString("git"));
+  QCOMPARE(model.extensionMetadata("GitBranchSourceScripted").value("scmurl").toString(), branchRepositoryPath);
+  QCOMPARE(model.extensionMetadata("GitBranchSourceScripted").value("revision").toString(), branchRevision);
+
+  QFile sidecarFile(installPath + "/GitBranchSourceScripted/source-scripted-extension.json");
+  QVERIFY(sidecarFile.open(QFile::ReadOnly));
+  const QJsonObject sidecar = QJsonDocument::fromJson(sidecarFile.readAll()).object();
+  const QJsonObject origin = sidecar.value("origin").toObject();
+  QCOMPARE(origin.value("type").toString(), QString("git"));
+  QCOMPARE(origin.value("url").toString(), branchRepositoryPath);
+  QCOMPARE(origin.value("ref").toString(), QString("main"));
+  QCOMPARE(origin.value("refKind").toString(), QString("branch"));
+  QCOMPARE(origin.value("resolvedRevision").toString(), branchRevision);
+
+  QFile branchModuleFile(QDir(branchRepositoryPath).filePath("Modules/GitBranchSourceScripted/GitBranchSourceScripted.py"));
+  QVERIFY(branchModuleFile.open(QFile::WriteOnly | QFile::Append));
+  branchModuleFile.write("\nUPDATED = True\n");
+  branchModuleFile.close();
+  QString updatedBranchRevision;
+  QVERIFY(this->commitGitRepository(branchRepositoryPath, "Update branch source", &updatedBranchRevision));
+  QVERIFY(updatedBranchRevision != branchRevision);
+
+  QFile tagModuleFile(QDir(tagRepositoryPath).filePath("Modules/GitTagSourceScripted/GitTagSourceScripted.py"));
+  QVERIFY(tagModuleFile.open(QFile::WriteOnly | QFile::Append));
+  tagModuleFile.write("\nUPDATED = True\n");
+  tagModuleFile.close();
+  QString updatedTagRepositoryRevision;
+  QVERIFY(this->commitGitRepository(tagRepositoryPath, "Update tag repository source", &updatedTagRepositoryRevision));
+
+  QFile commitModuleFile(QDir(commitRepositoryPath).filePath("Modules/GitCommitSourceScripted/GitCommitSourceScripted.py"));
+  QVERIFY(commitModuleFile.open(QFile::WriteOnly | QFile::Append));
+  commitModuleFile.write("\nUPDATED = True\n");
+  commitModuleFile.close();
+  QString updatedCommitRepositoryRevision;
+  QVERIFY(this->commitGitRepository(commitRepositoryPath, "Update commit repository source", &updatedCommitRepositoryRevision));
+
+  model.checkForExtensionsUpdates();
+  QVERIFY(model.isExtensionUpdateAvailable("GitBranchSourceScripted"));
+  QVERIFY(!model.isExtensionUpdateAvailable("GitTagSourceScripted"));
+  QVERIFY(!model.isExtensionUpdateAvailable("GitCommitSourceScripted"));
+  const qSlicerExtensionsManagerModel::ExtensionMetadataType gitBranchUpdateMetadata =
+    model.extensionMetadata("GitBranchSourceScripted", qSlicerExtensionsManagerModel::MetadataServer);
+  QCOMPARE(gitBranchUpdateMetadata.value("revision").toString(), updatedBranchRevision);
+  QCOMPARE(gitBranchUpdateMetadata.value("scmurl").toString(), branchRepositoryPath);
+
+  QVERIFY(model.scheduleExtensionForUpdate("GitBranchSourceScripted"));
+  QStringList updatedExtensions;
+  QVERIFY(model.updateScheduledExtensions(updatedExtensions));
+  QVERIFY(updatedExtensions.contains("GitBranchSourceScripted"));
+  QCOMPARE(model.extensionMetadata("GitBranchSourceScripted").value("revision").toString(), updatedBranchRevision);
 }
 
 // ----------------------------------------------------------------------------

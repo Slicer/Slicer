@@ -258,6 +258,11 @@ protected slots:
   /// Request editing of a MRML node
   void editNode(vtkObject*, void*, unsigned long) override;
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  /// Handle built-in slicer:// extension install URLs.
+  void onUrlReceived(const QString& url);
+#endif
+
 #ifdef Slicer_USE_PYTHONQT
   /// Add log message to Python console
   void logToPythonConsole(const QDateTime& currentDateTime,

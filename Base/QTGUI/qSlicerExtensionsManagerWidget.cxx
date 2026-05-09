@@ -21,16 +21,27 @@
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_WEBENGINE_SUPPORT
 
 // Qt includes
+#include <QCheckBox>
 #include <QDesktopServices>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QDir>
+#include <QFile>
 #include <QFileDialog>
+#include <QFormLayout>
 #include <QInputDialog>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QRegularExpression>
+#include <QSettings>
 #include <QTimer>
 #include <QTimerEvent>
 #include <QToolButton>
 #include <QUrlQuery>
+#include <QVBoxLayout>
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
 # include <QWebEngineHistory>
 # include <QWebEnginePage>
@@ -96,6 +107,161 @@ void setThemeIcon(QAction* action, const QString& name)
 {
   // TODO: Can do this in the .ui once Qt 4.8 is required
   action->setIcon(QIcon::fromTheme(name, action->icon()));
+}
+
+//---------------------------------------------------------------------------
+QString sourceScriptedManifestPreview(const qSlicerExtensionsManagerModel::ExtensionMetadataType& metadata, const QString& source)
+{
+  QStringList moduleDescriptions;
+  for (const QVariant& moduleVariant : metadata.value("modules").toList())
+  {
+    const QVariantMap module = moduleVariant.toMap();
+    moduleDescriptions << QString("%1 (%2)").arg(module.value("name").toString(), module.value("path").toString());
+  }
+
+  QStringList lines;
+  lines << qSlicerExtensionsManagerWidget::tr("Source: %1").arg(source);
+  lines << qSlicerExtensionsManagerWidget::tr("Modules: %1").arg(moduleDescriptions.join(", "));
+  const QVariantMap origin = metadata.value("origin").toMap();
+  const QString originType = origin.value("type").toString();
+  if (originType == "git")
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Git repository: %1").arg(origin.value("url").toString());
+    const QString ref = origin.value("ref").toString();
+    const QString refKind = origin.value("refKind").toString();
+    if (!ref.isEmpty())
+    {
+      lines << qSlicerExtensionsManagerWidget::tr("Git ref: %1%2").arg(ref, refKind.isEmpty() ? QString() : qSlicerExtensionsManagerWidget::tr(" (%1)").arg(refKind));
+    }
+    const QString resolvedRevision = origin.value("resolvedRevision").toString();
+    if (!resolvedRevision.isEmpty())
+    {
+      lines << qSlicerExtensionsManagerWidget::tr("Resolved commit: %1").arg(resolvedRevision);
+    }
+  }
+  else if (!origin.isEmpty())
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Origin: %1").arg(origin.value("url", origin.value("path")).toString());
+  }
+  const QVariantMap installSource = metadata.value("installSource").toMap();
+  const QString installSourceType = installSource.value("type").toString();
+  if (origin.isEmpty() && installSourceType == "git")
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Install source Git repository: %1").arg(installSource.value("url").toString());
+    const QString ref = installSource.value("ref").toString();
+    if (!ref.isEmpty())
+    {
+      lines << qSlicerExtensionsManagerWidget::tr("Install source Git ref: %1").arg(ref);
+    }
+  }
+  else if (origin.isEmpty() && !installSource.isEmpty())
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Install source: %1").arg(installSource.value("url", installSource.value("path")).toString());
+  }
+  const QStringList pythonPaths = metadata.value("pythonpaths").toStringList();
+  if (!pythonPaths.isEmpty())
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Python paths: %1").arg(pythonPaths.join(", "));
+  }
+  const QString depends = metadata.value("depends").toString();
+  if (!depends.isEmpty())
+  {
+    lines << qSlicerExtensionsManagerWidget::tr("Dependencies: %1").arg(depends);
+  }
+  return lines.join("\n");
+}
+
+//---------------------------------------------------------------------------
+bool confirmSourceScriptedSecurityWarning(QWidget* parent)
+{
+  QSettings settings;
+  if (settings.value("Extensions/SourceScriptedInstall/HideSecurityWarning").toBool())
+  {
+    return true;
+  }
+
+  QMessageBox warning(parent);
+  warning.setWindowTitle(qSlicerExtensionsManagerWidget::tr("Install source-scripted extension"));
+  warning.setIcon(QMessageBox::Warning);
+  warning.setText(qSlicerExtensionsManagerWidget::tr("Only install source-scripted extensions from sources you trust."));
+  warning.setInformativeText(qSlicerExtensionsManagerWidget::tr("Source-scripted extensions are copied from source and run Python code in Slicer after restart."));
+  warning.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  warning.setDefaultButton(QMessageBox::Cancel);
+  QCheckBox* hideWarningCheckBox = new QCheckBox(qSlicerExtensionsManagerWidget::tr("Do not show this warning again"));
+  warning.setCheckBox(hideWarningCheckBox);
+  if (warning.exec() != QMessageBox::Ok)
+  {
+    return false;
+  }
+  if (hideWarningCheckBox->isChecked())
+  {
+    settings.setValue("Extensions/SourceScriptedInstall/HideSecurityWarning", true);
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool confirmSourceScriptedManifestPreview(QWidget* parent, const qSlicerExtensionsManagerModel::ExtensionMetadataType& metadata, const QString& source)
+{
+  QMessageBox preview(parent);
+  preview.setWindowTitle(qSlicerExtensionsManagerWidget::tr("Install source-scripted extension"));
+  preview.setIcon(QMessageBox::Question);
+  preview.setText(qSlicerExtensionsManagerWidget::tr("Install source-scripted extension '%1'?").arg(metadata.value("extensionname").toString()));
+  preview.setInformativeText(sourceScriptedManifestPreview(metadata, source));
+  preview.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  preview.setDefaultButton(QMessageBox::Cancel);
+  return preview.exec() == QMessageBox::Ok;
+}
+
+//---------------------------------------------------------------------------
+void removeSourceScriptedGitCheckout(const QString& checkoutPath)
+{
+  if (!checkoutPath.isEmpty())
+  {
+    QDir(checkoutPath).removeRecursively();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool promptSourceScriptedGitSource(QWidget* parent, QString& repositoryUrl, QString& ref)
+{
+  repositoryUrl.clear();
+  ref.clear();
+
+  QDialog dialog(parent);
+  dialog.setWindowTitle(qSlicerExtensionsManagerWidget::tr("Source-scripted extension Git repository"));
+
+  QVBoxLayout* layout = new QVBoxLayout(&dialog);
+  QLabel* description = new QLabel(qSlicerExtensionsManagerWidget::tr("Enter a Git repository containing a slicer-extension.json manifest."));
+  description->setWordWrap(true);
+  layout->addWidget(description);
+
+  QFormLayout* formLayout = new QFormLayout;
+  QLineEdit* repositoryLineEdit = new QLineEdit;
+  repositoryLineEdit->setPlaceholderText(qSlicerExtensionsManagerWidget::tr("https://github.com/example/MyExtension.git"));
+  QLineEdit* refLineEdit = new QLineEdit;
+  refLineEdit->setPlaceholderText(qSlicerExtensionsManagerWidget::tr("Optional branch, tag, or commit"));
+  formLayout->addRow(qSlicerExtensionsManagerWidget::tr("Repository URL:"), repositoryLineEdit);
+  formLayout->addRow(qSlicerExtensionsManagerWidget::tr("Ref:"), refLineEdit);
+  layout->addLayout(formLayout);
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+  QPushButton* okButton = buttonBox->button(QDialogButtonBox::Ok);
+  okButton->setEnabled(false);
+  QObject::connect(
+    repositoryLineEdit, &QLineEdit::textChanged, okButton, [repositoryLineEdit, okButton]() { okButton->setEnabled(!repositoryLineEdit->text().trimmed().isEmpty()); });
+  QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+  QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+  layout->addWidget(buttonBox);
+
+  if (dialog.exec() != QDialog::Accepted)
+  {
+    return false;
+  }
+
+  repositoryUrl = repositoryLineEdit->text().trimmed();
+  ref = refLineEdit->text().trimmed();
+  return !repositoryUrl.isEmpty();
 }
 
 // --------------------------------------------------------------------------
@@ -256,6 +422,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   QObject::connect(this->ToolsWidget->InstallUpdatesButton, SIGNAL(clicked()), q, SLOT(onInstallUpdatesTriggered()));
   QObject::connect(this->ToolsWidget->InstallBookmarkedButton, SIGNAL(clicked()), q, SLOT(onInstallBookmarkedTriggered()));
   QObject::connect(this->ToolsWidget->InstallFromFileButton, SIGNAL(clicked()), q, SLOT(onInstallFromFileTriggered()));
+  QObject::connect(this->ToolsWidget->InstallFromSourceButton, SIGNAL(clicked()), q, SLOT(onInstallFromSourceTriggered()));
 
   this->MessageWidget = new QMessageBox(q);
   this->MessageWidget->setWindowTitle(qSlicerExtensionsManagerWidget::tr("Extensions Manager"));
@@ -321,6 +488,7 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
 
   disconnect(this, SLOT(onModelUpdated()));
   disconnect(this, SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
+  disconnect(this, SLOT(onSourceScriptedExtensionDownloadReady(QUrl, QString, QVariantMap, bool)));
 
   d->ExtensionsLocalWidget->setExtensionsManagerModel(model);
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
@@ -335,6 +503,8 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
     this->onModelUpdated();
     connect(model, SIGNAL(modelUpdated()), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(messageLogged(QString, ctkErrorLogLevel::LogLevels)), this, SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
+    connect(
+      model, SIGNAL(sourceScriptedExtensionDownloadReady(QUrl, QString, QVariantMap, bool)), this, SLOT(onSourceScriptedExtensionDownloadReady(QUrl, QString, QVariantMap, bool)));
     connect(model, SIGNAL(extensionInstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionUninstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(onModelUpdated()));
@@ -708,6 +878,153 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onInstallFromSourceTriggered()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
+  if (!model)
+  {
+    return;
+  }
+
+  QMessageBox sourceDialog(this);
+  sourceDialog.setWindowTitle(tr("Install source-scripted extension"));
+  sourceDialog.setText(tr("Select a source-scripted extension source."));
+  QPushButton* directoryButton = sourceDialog.addButton(tr("Directory..."), QMessageBox::AcceptRole);
+  QPushButton* archiveButton = sourceDialog.addButton(tr("Archive..."), QMessageBox::AcceptRole);
+  QPushButton* urlButton = sourceDialog.addButton(tr("Archive URL..."), QMessageBox::AcceptRole);
+  QPushButton* gitButton = sourceDialog.addButton(tr("Git..."), QMessageBox::AcceptRole);
+  sourceDialog.addButton(QMessageBox::Cancel);
+  sourceDialog.exec();
+
+  QString sourcePath;
+  QUrl sourceUrl;
+  QString gitRepositoryUrl;
+  QString gitRef;
+  if (sourceDialog.clickedButton() == directoryButton)
+  {
+    sourcePath = QFileDialog::getExistingDirectory(this, tr("Select source-scripted extension directory..."));
+  }
+  else if (sourceDialog.clickedButton() == archiveButton)
+  {
+    sourcePath = QFileDialog::getOpenFileName(
+      this, tr("Select source-scripted extension archive..."), QString(), tr("Archives") + " (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;" + tr("All files") + " (*)");
+  }
+  else if (sourceDialog.clickedButton() == urlButton)
+  {
+    bool ok = false;
+    const QString urlString = QInputDialog::getText(this, tr("Source-scripted extension archive URL"), tr("Archive URL:"), QLineEdit::Normal, QString(), &ok);
+    if (!ok || urlString.trimmed().isEmpty())
+    {
+      return;
+    }
+    sourceUrl = QUrl::fromUserInput(urlString.trimmed());
+  }
+  else if (sourceDialog.clickedButton() == gitButton)
+  {
+    if (!promptSourceScriptedGitSource(this, gitRepositoryUrl, gitRef))
+    {
+      return;
+    }
+  }
+  else
+  {
+    return;
+  }
+
+  if (sourcePath.isEmpty() && sourceUrl.isEmpty() && gitRepositoryUrl.isEmpty())
+  {
+    return;
+  }
+
+  if (!confirmSourceScriptedSecurityWarning(this))
+  {
+    return;
+  }
+
+  bool wasBatchProcessing = d->setBatchProcessing(true);
+  if (!sourcePath.isEmpty())
+  {
+    QString error;
+    qSlicerExtensionsManagerModel::ExtensionMetadataType metadata = model->inspectSourceScriptedExtension(sourcePath, &error);
+    if (metadata.isEmpty())
+    {
+      QMessageBox::critical(this, tr("Install source-scripted extension"), error);
+      d->setBatchProcessing(wasBatchProcessing);
+      return;
+    }
+    if (!confirmSourceScriptedManifestPreview(this, metadata, sourcePath))
+    {
+      d->setBatchProcessing(wasBatchProcessing);
+      return;
+    }
+    model->installSourceScriptedExtension(sourcePath);
+  }
+  else if (!sourceUrl.isEmpty())
+  {
+    model->downloadAndInspectSourceScriptedExtension(sourceUrl);
+  }
+  else
+  {
+    QString error;
+    QString checkoutPath;
+    QVariantMap originMetadata;
+    qSlicerExtensionsManagerModel::ExtensionMetadataType metadata = model->inspectSourceScriptedExtensionFromGit(gitRepositoryUrl, gitRef, &checkoutPath, &originMetadata, &error);
+    if (metadata.isEmpty())
+    {
+      QMessageBox::critical(this, tr("Install source-scripted extension"), error);
+      removeSourceScriptedGitCheckout(checkoutPath);
+      d->setBatchProcessing(wasBatchProcessing);
+      return;
+    }
+    if (!confirmSourceScriptedManifestPreview(this, metadata, gitRepositoryUrl))
+    {
+      removeSourceScriptedGitCheckout(checkoutPath);
+      d->setBatchProcessing(wasBatchProcessing);
+      return;
+    }
+    model->installInspectedSourceScriptedExtensionFromGit(checkoutPath, originMetadata);
+    removeSourceScriptedGitCheckout(checkoutPath);
+  }
+  d->setBatchProcessing(wasBatchProcessing);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onSourceScriptedExtensionDownloadReady(const QUrl& sourceUrl,
+                                                                            const QString& archivePath,
+                                                                            const QVariantMap& metadata,
+                                                                            bool installDependencies)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
+  if (!model)
+  {
+    if (!sourceUrl.isLocalFile())
+    {
+      QFile::remove(archivePath);
+    }
+    return;
+  }
+
+  if (!confirmSourceScriptedManifestPreview(this, metadata, sourceUrl.toString()))
+  {
+    if (!sourceUrl.isLocalFile())
+    {
+      QFile::remove(archivePath);
+    }
+    return;
+  }
+
+  bool wasBatchProcessing = d->setBatchProcessing(true);
+  model->installDownloadedSourceScriptedExtension(archivePath, sourceUrl, installDependencies);
+  d->setBatchProcessing(wasBatchProcessing);
+  if (!sourceUrl.isLocalFile())
+  {
+    QFile::remove(archivePath);
+  }
+}
+
+// --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerWidget::confirmClose()
 {
   Q_D(qSlicerExtensionsManagerWidget);
@@ -774,9 +1091,10 @@ bool qSlicerExtensionsManagerWidget::isInBatchProcessing()
 void qSlicerExtensionsManagerWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  if (d->tabWidget->currentWidget() != d->ManageExtensionsTab)
+  if (d->tabWidget->currentWidget() != d->ManageExtensionsTab && level != ctkErrorLogLevel::Critical && level != ctkErrorLogLevel::Fatal)
   {
-    // only display messages when we are in the extensions tab (the web view uses its own style)
+    // The web view has its own message style, but critical source-install
+    // failures must still be visible when the install tab is active.
     return;
   }
 

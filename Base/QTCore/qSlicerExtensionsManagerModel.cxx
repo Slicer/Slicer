@@ -22,15 +22,21 @@
 #include <QDebug>
 #include <QDir>
 #include <QElapsedTimer>
+#include <QFileInfo>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonParseError>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QProcess>
+#include <QRegularExpression>
 #include <QScopedPointer>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QTextStream>
 #include <QThread>
@@ -61,6 +67,14 @@
 namespace
 {
 
+const char SOURCE_SCRIPTED_EXTENSION_TYPE[] = "source-scripted";
+const char SOURCE_SCRIPTED_MANIFEST_FILE[] = "slicer-extension.json";
+const char SOURCE_SCRIPTED_INSTALLED_SOURCE_DIR[] = "source";
+const char SOURCE_SCRIPTED_SIDECAR_FILE[] = "source-scripted-extension.json";
+const char SOURCE_SCRIPTED_INSTALL_SOURCE_KEY[] = "installSource";
+const char SOURCE_SCRIPTED_ORIGIN_TYPE_GIT[] = "git";
+const char SOURCE_SCRIPTED_GIT_UPDATE_TYPE[] = "source-scripted-git";
+
 // --------------------------------------------------------------------------
 struct UpdateDownloadInformation
 {
@@ -73,6 +87,11 @@ struct UpdateDownloadInformation
   QString ArchiveName;
   qint64 DownloadSize{ 0 };
   qint64 DownloadProgress{ 0 };
+  QString SourceType;
+  QString SourceUrl;
+  QString SourceRef;
+  QString SourceRevision;
+  QString SourceRefKind;
 };
 
 // --------------------------------------------------------------------------
@@ -82,6 +101,321 @@ public:
   QHash<int, QByteArray> roleNames() const override { return this->CustomRoleNames; }
   QHash<int, QByteArray> CustomRoleNames;
 };
+
+// --------------------------------------------------------------------------
+void setErrorMessage(QString* errorMessage, const QString& message)
+{
+  if (errorMessage)
+  {
+    *errorMessage = message;
+  }
+}
+
+// --------------------------------------------------------------------------
+bool isSafeRelativePath(const QString& path, QString* errorMessage, QString* cleanPath = nullptr)
+{
+  QString normalizedPath = path.trimmed();
+  if (normalizedPath.isEmpty())
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Path is empty"));
+    return false;
+  }
+  if (normalizedPath.contains("\\"))
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Path '%1' must use forward slashes").arg(path));
+    return false;
+  }
+  if (normalizedPath.contains(":") || QDir::isAbsolutePath(normalizedPath))
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Path '%1' must be relative").arg(path));
+    return false;
+  }
+
+  const QString cleanedPath = QDir::cleanPath(normalizedPath);
+  if (cleanedPath == "." || cleanedPath == ".." || cleanedPath.startsWith("../") || cleanedPath.startsWith("/"))
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Path '%1' must stay inside the extension source").arg(path));
+    return false;
+  }
+  if (cleanPath)
+  {
+    *cleanPath = cleanedPath;
+  }
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool pathIsInsideDirectory(const QString& path, const QString& directory)
+{
+  const QString canonicalPath = QFileInfo(path).canonicalFilePath();
+  QString canonicalDirectory = QFileInfo(directory).canonicalFilePath();
+  if (canonicalPath.isEmpty() || canonicalDirectory.isEmpty())
+  {
+    return false;
+  }
+  canonicalDirectory = QDir::cleanPath(canonicalDirectory);
+  const QString cleanedPath = QDir::cleanPath(canonicalPath);
+  return cleanedPath == canonicalDirectory || cleanedPath.startsWith(canonicalDirectory + "/");
+}
+
+// --------------------------------------------------------------------------
+bool readStringValue(const QJsonObject& object, const QString& key, bool required, QString& value, QString* errorMessage)
+{
+  if (!object.contains(key))
+  {
+    if (required)
+    {
+      setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest is missing required key '%1'").arg(key));
+      return false;
+    }
+    value.clear();
+    return true;
+  }
+  if (!object.value(key).isString())
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest key '%1' must be a string").arg(key));
+    return false;
+  }
+  value = object.value(key).toString().trimmed();
+  if (required && value.isEmpty())
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest key '%1' must not be empty").arg(key));
+    return false;
+  }
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool readStringArrayValue(const QJsonObject& object, const QString& key, QStringList& values, QString* errorMessage)
+{
+  values.clear();
+  if (!object.contains(key))
+  {
+    return true;
+  }
+  if (!object.value(key).isArray())
+  {
+    setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest key '%1' must be an array of strings").arg(key));
+    return false;
+  }
+  const QJsonArray array = object.value(key).toArray();
+  for (const QJsonValue& value : array)
+  {
+    if (!value.isString() || value.toString().trimmed().isEmpty())
+    {
+      setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest key '%1' must contain only non-empty strings").arg(key));
+      return false;
+    }
+    values << value.toString().trimmed();
+  }
+  values.removeDuplicates();
+  return true;
+}
+
+// --------------------------------------------------------------------------
+QStringList splitDependencyList(const QString& depends)
+{
+  return depends.split(" ", Qt::SkipEmptyParts);
+}
+
+// --------------------------------------------------------------------------
+QJsonArray stringListToJsonArray(const QStringList& values)
+{
+  QJsonArray array;
+  for (const QString& value : values)
+  {
+    array.append(value);
+  }
+  return array;
+}
+
+// --------------------------------------------------------------------------
+QString sourceScriptedArchiveTemporaryFileTemplate(const QString& archiveName)
+{
+  QFileInfo archiveInfo(archiveName);
+  QString baseName = archiveInfo.fileName();
+  if (baseName.isEmpty())
+  {
+    baseName = "source-scripted-extension.tar.gz";
+  }
+
+  const QString completeSuffix = QFileInfo(baseName).completeSuffix();
+  if (completeSuffix.isEmpty())
+  {
+    return QDir::temp().filePath(baseName + ".XXXXXX");
+  }
+
+  const QString suffix = "." + completeSuffix;
+  if (baseName.endsWith(suffix))
+  {
+    baseName.chop(suffix.size());
+  }
+  if (baseName.isEmpty())
+  {
+    baseName = "source-scripted-extension";
+  }
+  return QDir::temp().filePath(baseName + ".XXXXXX" + suffix);
+}
+
+// --------------------------------------------------------------------------
+QString sourceScriptedArchiveNameFromUrl(const QUrl& archiveUrl)
+{
+  const QFileInfo archiveInfo(archiveUrl.path());
+  return archiveInfo.fileName().isEmpty() ? QString("source-scripted-extension.tar.gz") : archiveInfo.fileName();
+}
+
+// --------------------------------------------------------------------------
+QJsonObject sourceScriptedOriginObject(const QString& originType, const QString& originLocation)
+{
+  QJsonObject originObject;
+  if (originType.isEmpty() || originLocation.isEmpty())
+  {
+    return originObject;
+  }
+  originObject.insert("type", originType);
+  originObject.insert(originType == "url" || originType == SOURCE_SCRIPTED_ORIGIN_TYPE_GIT ? "url" : "path", originLocation);
+  return originObject;
+}
+
+// --------------------------------------------------------------------------
+bool validateSourceScriptedInstallSource(const QJsonObject& installSource, QString* errorMessage)
+{
+  QString installSourceType;
+  if (!readStringValue(installSource, "type", /* required= */ true, installSourceType, errorMessage))
+  {
+    return false;
+  }
+  if (installSourceType == SOURCE_SCRIPTED_ORIGIN_TYPE_GIT || installSourceType == "url")
+  {
+    QString installSourceUrl;
+    if (!readStringValue(installSource, "url", /* required= */ true, installSourceUrl, errorMessage))
+    {
+      return false;
+    }
+    QString installSourceRef;
+    if (!readStringValue(installSource, "ref", /* required= */ false, installSourceRef, errorMessage))
+    {
+      return false;
+    }
+    return true;
+  }
+
+  setErrorMessage(errorMessage, qSlicerExtensionsManagerModel::tr("Manifest installSource type '%1' is not supported").arg(installSourceType));
+  return false;
+}
+
+// --------------------------------------------------------------------------
+bool sourceScriptedReplyHasDownloadError(QNetworkReply* reply, const QString& sourceUrl, QString& error)
+{
+  if (reply->error() != QNetworkReply::NoError)
+  {
+    error = qSlicerExtensionsManagerModel::tr("Failed downloading source-scripted extension archive from %1: %2").arg(sourceUrl, reply->errorString());
+    return true;
+  }
+
+  const QVariant statusCodeValue = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+  if (statusCodeValue.isValid())
+  {
+    const int statusCode = statusCodeValue.toInt();
+    if (statusCode < 200 || statusCode >= 300)
+    {
+      error = qSlicerExtensionsManagerModel::tr("Failed downloading source-scripted extension archive from %1: HTTP status %2").arg(sourceUrl).arg(statusCode);
+      return true;
+    }
+  }
+
+  const QVariant redirectTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+  if (redirectTarget.isValid() && !redirectTarget.toUrl().isEmpty())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Download of source-scripted extension archive from %1 was redirected to %2")
+              .arg(sourceUrl, reply->url().resolved(redirectTarget.toUrl()).toString());
+    return true;
+  }
+
+  return false;
+}
+
+// --------------------------------------------------------------------------
+bool writeSourceScriptedReplyToTemporaryArchive(QNetworkReply* reply, const QString& archiveName, const QString& sourceUrl, QString& archivePath, QString& error)
+{
+  archivePath.clear();
+
+  if (sourceScriptedReplyHasDownloadError(reply, sourceUrl, error))
+  {
+    return false;
+  }
+
+  const QByteArray body = reply->readAll();
+  if (body.isEmpty())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Downloaded source-scripted extension archive from %1 is empty").arg(sourceUrl);
+    return false;
+  }
+
+  QTemporaryFile file(sourceScriptedArchiveTemporaryFileTemplate(archiveName));
+  file.setAutoRemove(false);
+  if (!file.open())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Could not create temporary file for writing: %1").arg(file.errorString());
+    return false;
+  }
+  if (file.write(body) != body.size())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Could not write temporary source-scripted extension archive: %1").arg(file.errorString());
+    file.close();
+    QFile::remove(file.fileName());
+    return false;
+  }
+  archivePath = file.fileName();
+  file.close();
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool parseFirstGitLsRemoteRevision(const QString& output, QString& revision)
+{
+  revision.clear();
+  const QStringList lines = output.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
+  if (lines.isEmpty())
+  {
+    return false;
+  }
+  revision = lines.first().section(QRegularExpression("\\s+"), 0, 0).trimmed();
+  return !revision.isEmpty();
+}
+
+// --------------------------------------------------------------------------
+bool isGitCommitReference(const QString& ref)
+{
+  static QRegularExpression commitReferenceExpression("^[0-9a-fA-F]{7,40}$");
+  return commitReferenceExpression.match(ref).hasMatch();
+}
+
+// --------------------------------------------------------------------------
+QString normalizedGitBranchRef(QString ref)
+{
+  if (ref.startsWith("refs/heads/"))
+  {
+    ref.remove(0, QString("refs/heads/").size());
+  }
+  return ref;
+}
+
+// --------------------------------------------------------------------------
+QString normalizedGitTagRef(QString ref)
+{
+  if (ref.startsWith("refs/tags/"))
+  {
+    ref.remove(0, QString("refs/tags/").size());
+  }
+  return ref;
+}
+
+// --------------------------------------------------------------------------
+QString compactJsonObject(const QJsonObject& object)
+{
+  return QString::fromUtf8(QJsonDocument(object).toJson(QJsonDocument::Compact));
+}
 
 } // end of anonymous namespace
 
@@ -101,6 +435,7 @@ public:
   {
     IdColumn = 0,
     NameColumn,
+    ExtensionTypeColumn,
     ScmColumn,
     ScmUrlColumn,
     DependsColumn,
@@ -129,6 +464,7 @@ public:
   {
     IdRole = Qt::UserRole + 1,
     NameRole,
+    ExtensionTypeRole,
     ScmRole,
     ScmUrlRole,
     DependsRole,
@@ -194,10 +530,22 @@ public:
   void removeExtensionFromScheduledForUninstallList(const QString& extensionName);
 
   QString extractArchive(const QDir& extensionsDir, const QString& archiveFile);
+  bool extractSourceScriptedArchive(const QString& archiveFile,
+                                    const QString& destinationPath,
+                                    QString& sourcePath,
+                                    QString& error,
+                                    const QString& sourceDescription = QString()) const;
+
+  bool installSourceScriptedExtensionFromPath(const QString& sourcePath, const QJsonObject& originObject, bool installDependencies);
+  bool runGit(const QStringList& arguments, const QString& workingDirectory, QString* standardOutput, QString& error) const;
+  bool resolveRemoteGitBranchRevision(const QString& repositoryUrl, const QString& branch, QString& revision, QString& error) const;
+  bool checkoutSourceScriptedGitExtension(const QString& repositoryUrl, const QString& ref, const QString& destinationPath, QJsonObject& originObject, QString& error) const;
+  bool updateSourceScriptedGitExtension(const QString& extensionName, const QJsonObject& updateDescriptor);
 
   qSlicerExtensionDownloadTask* downloadExtensionByName(const QString& extensionName);
 
   QStringList dependenciesToInstall(const QStringList& directDependencies, QStringList& unresolvedDependencies);
+  bool installExtensionDependencies(const QString& extensionName, const QStringList& directDependencies);
 
   /// Update (reinstall) specified extension.
   ///
@@ -219,9 +567,13 @@ public:
   QStringList extensionLibraryPaths(const QString& extensionName) const;
   QStringList extensionQtPluginPaths(const QString& extensionName) const;
   QStringList extensionPaths(const QString& extensionName) const;
+  bool isSourceScriptedExtension(const QString& extensionName) const;
+  QJsonObject sourceScriptedExtensionManifest(const QString& extensionName) const;
+  QStringList sourceScriptedExtensionModulePaths(const QString& extensionName) const;
 
 #ifdef Slicer_USE_PYTHONQT
   QStringList extensionPythonPaths(const QString& extensionName) const;
+  QStringList sourceScriptedExtensionPythonPaths(const QString& extensionName) const;
 #endif
   static bool validateExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI);
 
@@ -286,6 +638,7 @@ void qSlicerExtensionsManagerModelPrivate::init()
 
   this->initializeColumnIdToNameMap(Self::IdColumn, "extension_id");
   this->initializeColumnIdToNameMap(Self::NameColumn, "extensionname");
+  this->initializeColumnIdToNameMap(Self::ExtensionTypeColumn, "extensiontype");
   this->initializeColumnIdToNameMap(Self::ScmColumn, "scm");
   this->initializeColumnIdToNameMap(Self::ScmUrlColumn, "scmurl");
   this->initializeColumnIdToNameMap(Self::SlicerRevisionColumn, "slicer_revision");
@@ -515,6 +868,83 @@ QStringList qSlicerExtensionsManagerModelPrivate::dependenciesToInstall(const QS
     dependencies.removeDuplicates();
   }
   return toInstall;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::installExtensionDependencies(const QString& extensionName, const QStringList& directDependencies)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+  bool success = true;
+
+  QStringList unresolvedDependencies;
+  QStringList dependenciesToInstall = this->dependenciesToInstall(directDependencies, unresolvedDependencies);
+
+  // Prompt to install dependencies (if any)
+  if (!dependenciesToInstall.isEmpty())
+  {
+    QMessageBox::StandardButton result = QMessageBox::Yes;
+    if (this->Interactive && !this->AutoInstallDependencies)
+    {
+      QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
+      for (const QString& dependencyName : dependenciesToInstall)
+      {
+        msg += QString("<li>%1</li>").arg(dependencyName);
+      }
+      msg += "</ul><p>Would you like to install them now?</p>";
+      result = QMessageBox::question(nullptr, "Install dependencies", msg, QMessageBox::Yes | QMessageBox::No);
+    }
+    else
+    {
+      QString msg =
+        QString("The following extensions are required by %1 extension therefore they will be installed now: %2").arg(extensionName).arg(dependenciesToInstall.join(", "));
+      qDebug() << msg;
+    }
+
+    if (result == QMessageBox::Yes)
+    {
+      // Install dependencies
+      QString msg;
+      for (const QString& dependency : dependenciesToInstall)
+      {
+        bool res = q->downloadAndInstallExtensionByName(dependency, false /*installation of dependencies already confirmed*/);
+        if (!res)
+        {
+          msg += QString("<li>%1</li>").arg(dependency);
+          success = false;
+        }
+      }
+      if (!msg.isEmpty())
+      {
+        this->critical(qSlicerExtensionsManagerModel::tr("Error while installing dependent extensions:<ul>%1<ul>").arg(msg));
+      }
+    }
+    else
+    {
+      // Skip installing dependencies
+      qWarning() << QString("%1 extension requires extensions %2 but the user chose not to install them.").arg(extensionName).arg(dependenciesToInstall.join(", "));
+      success = false;
+    }
+  }
+
+  // Warn about unresolved dependencies
+  if (!unresolvedDependencies.isEmpty())
+  {
+    success = false;
+    qWarning() << QString(/*no tr*/ "%1 extension depends on the following extensions, which could not be found: %2").arg(extensionName).arg(unresolvedDependencies.join(", "));
+    if (this->Interactive)
+    {
+      //: %1 is the extension name
+      QString msg = QString("<p>%1</p><ul>").arg(qSlicerExtensionsManagerModel::tr("%1 depends on the following extensions, which could not be found:").arg(extensionName));
+      for (const QString& dependencyName : unresolvedDependencies)
+      {
+        msg += QString("<li>%1</li>").arg(dependencyName);
+      }
+      msg += QString("</ul><p>%1</p>").arg(qSlicerExtensionsManagerModel::tr("The extension may not function properly."));
+      QMessageBox::warning(nullptr, qSlicerExtensionsManagerModel::tr("Unresolved dependencies"), msg);
+    }
+  }
+
+  return success;
 }
 
 // --------------------------------------------------------------------------
@@ -878,9 +1308,529 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::extractSourceScriptedArchive(const QString& archiveFile,
+                                                                        const QString& destinationPath,
+                                                                        QString& sourcePath,
+                                                                        QString& error,
+                                                                        const QString& sourceDescription /*=QString()*/) const
+{
+  sourcePath.clear();
+  const QString displaySource = sourceDescription.isEmpty() ? archiveFile : sourceDescription;
+
+  std::vector<std::string> archiveContents;
+  if (!vtkArchive::ListArchive(qPrintable(archiveFile), archiveContents))
+  {
+    error = qSlicerExtensionsManagerModel::tr("Source-scripted extension archive '%1' is not a supported archive").arg(displaySource);
+    return false;
+  }
+  if (archiveContents.empty())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Source-scripted extension archive '%1' is empty").arg(displaySource);
+    return false;
+  }
+
+  QStringList topLevelEntries;
+  bool manifestAtArchiveRoot = false;
+  for (const std::string& archiveEntry : archiveContents)
+  {
+    const QString entryPath = QString::fromLocal8Bit(archiveEntry.data(), static_cast<int>(archiveEntry.size()));
+    QString cleanEntryPath;
+    QString pathError;
+    if (!isSafeRelativePath(entryPath, &pathError, &cleanEntryPath))
+    {
+      error = qSlicerExtensionsManagerModel::tr("Unsafe archive entry '%1': %2").arg(entryPath).arg(pathError);
+      return false;
+    }
+    const QStringList components = cleanEntryPath.split("/", Qt::SkipEmptyParts);
+    if (components.isEmpty())
+    {
+      error = qSlicerExtensionsManagerModel::tr("Unsafe archive entry '%1'").arg(entryPath);
+      return false;
+    }
+    topLevelEntries << components.first();
+    if (components.size() == 1 && components.first() == SOURCE_SCRIPTED_MANIFEST_FILE)
+    {
+      manifestAtArchiveRoot = true;
+    }
+  }
+  topLevelEntries.removeDuplicates();
+
+  QDir destinationDir(destinationPath);
+  if (!destinationDir.exists())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Temporary extraction directory '%1' does not exist").arg(destinationPath);
+    return false;
+  }
+
+  ctkScopedCurrentDir scopedCurrentDir(destinationDir.absolutePath());
+  std::vector<std::string> extractedFiles;
+  if (!vtkArchive::ExtractTar(qPrintable(archiveFile), /* verbose= */ false, /* extract= */ true, &extractedFiles))
+  {
+    error = qSlicerExtensionsManagerModel::tr("Failed to extract source-scripted extension archive '%1'").arg(displaySource);
+    return false;
+  }
+
+  if (manifestAtArchiveRoot && QFileInfo(destinationDir.filePath(SOURCE_SCRIPTED_MANIFEST_FILE)).isFile())
+  {
+    sourcePath = destinationDir.absolutePath();
+    return true;
+  }
+
+  if (topLevelEntries.size() == 1)
+  {
+    const QString candidateSourcePath = destinationDir.filePath(topLevelEntries.first());
+    if (QFileInfo(candidateSourcePath + "/" + SOURCE_SCRIPTED_MANIFEST_FILE).isFile())
+    {
+      sourcePath = candidateSourcePath;
+      return true;
+    }
+  }
+
+  error = qSlicerExtensionsManagerModel::tr("Source-scripted extension archive '%1' must contain '%2' at the archive root or in one top-level directory")
+            .arg(displaySource, SOURCE_SCRIPTED_MANIFEST_FILE);
+  return false;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::installSourceScriptedExtensionFromPath(const QString& sourcePath, const QJsonObject& originObject, bool withDependencies)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  const QString manifestFilePath = QDir(sourcePath).filePath(SOURCE_SCRIPTED_MANIFEST_FILE);
+  QString error;
+  ExtensionMetadataType extensionMetadata = qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(manifestFilePath, &error);
+  if (extensionMetadata.isEmpty())
+  {
+    this->critical(error);
+    return false;
+  }
+
+  const QString extensionName = extensionMetadata.value("extensionname").toString();
+  if (q->isExtensionInstalled(extensionName))
+  {
+    this->warning(qSlicerExtensionsManagerModel::tr("Skip installation of %1 extension. It is already installed.").arg(extensionName));
+    return false;
+  }
+  if (q->extensionsInstallPath().isEmpty())
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Extensions/InstallPath setting is not set"));
+    return false;
+  }
+  if (!QDir().mkpath(q->extensionsInstallPath()))
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to create extension installation directory %1").arg(q->extensionsInstallPath()));
+    return false;
+  }
+  if (!this->checkExtensionSettingsPermissions(error))
+  {
+    this->critical(error);
+    return false;
+  }
+
+  const QString extensionInstallPath = q->extensionInstallPath(extensionName);
+  ctk::removeDirRecursively(extensionInstallPath);
+  if (!QDir().mkpath(extensionInstallPath))
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to create extension installation directory %1").arg(extensionInstallPath));
+    return false;
+  }
+
+  const QString installedSourcePath = extensionInstallPath + "/" + SOURCE_SCRIPTED_INSTALLED_SOURCE_DIR;
+  if (!ctk::copyDirRecursively(QFileInfo(sourcePath).absoluteFilePath(), installedSourcePath))
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to copy directory %1 into directory %2").arg(sourcePath, installedSourcePath));
+    return false;
+  }
+
+  QJsonObject sidecarManifest;
+  sidecarManifest.insert("schema", extensionMetadata.value("schema").toString());
+  sidecarManifest.insert("type", SOURCE_SCRIPTED_EXTENSION_TYPE);
+  sidecarManifest.insert("extensionname", extensionName);
+
+  const QStringList optionalStringKeys = QStringList() << "description"
+                                                       << "contributors"
+                                                       << "homepage"
+                                                       << "iconurl"
+                                                       << "category"
+                                                       << "screenshots"
+                                                       << "status";
+  for (const QString& key : optionalStringKeys)
+  {
+    const QString value = extensionMetadata.value(key).toString();
+    if (!value.isEmpty())
+    {
+      sidecarManifest.insert(key, value);
+    }
+  }
+
+  QJsonArray modulesArray;
+  const QVariantList modules = extensionMetadata.value("modules").toList();
+  for (const QVariant& moduleVariant : modules)
+  {
+    const QVariantMap moduleMap = moduleVariant.toMap();
+    QJsonObject moduleObject;
+    moduleObject.insert("name", moduleMap.value("name").toString());
+    moduleObject.insert("path", moduleMap.value("path").toString());
+    modulesArray.append(moduleObject);
+  }
+  sidecarManifest.insert("modules", modulesArray);
+
+  sidecarManifest.insert("depends", stringListToJsonArray(splitDependencyList(extensionMetadata.value("depends").toString())));
+  sidecarManifest.insert("pythonPaths", stringListToJsonArray(extensionMetadata.value("pythonpaths").toStringList()));
+
+  if (!originObject.isEmpty())
+  {
+    sidecarManifest.insert("origin", originObject);
+  }
+
+  QFile sidecarFile(extensionInstallPath + "/" + SOURCE_SCRIPTED_SIDECAR_FILE);
+  if (!sidecarFile.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to write source-scripted extension manifest %1").arg(sidecarFile.fileName()));
+    return false;
+  }
+  sidecarFile.write(QJsonDocument(sidecarManifest).toJson(QJsonDocument::Indented));
+  sidecarFile.close();
+
+  if (!extensionMetadata.contains("enabled"))
+  {
+    extensionMetadata.insert("enabled", this->NewExtensionEnabledByDefault);
+  }
+  extensionMetadata.insert("installed", true);
+  const QString originType = originObject.value("type").toString();
+  const QString originLocation =
+    originType == "url" || originType == SOURCE_SCRIPTED_ORIGIN_TYPE_GIT ? originObject.value("url").toString() : originObject.value("path").toString();
+  extensionMetadata.insert("archivename", QFileInfo(originLocation).fileName());
+  if (originType == SOURCE_SCRIPTED_ORIGIN_TYPE_GIT)
+  {
+    extensionMetadata.insert("scm", SOURCE_SCRIPTED_ORIGIN_TYPE_GIT);
+    extensionMetadata.insert("scmurl", originObject.value("url").toString());
+    extensionMetadata.insert("revision", originObject.value("resolvedRevision").toString());
+  }
+  else
+  {
+    extensionMetadata.insert("scm", "NA");
+    extensionMetadata.insert("scmurl", "NA");
+    extensionMetadata.insert("revision", "NA");
+  }
+
+  bool success = true;
+  if (withDependencies)
+  {
+    success = this->installExtensionDependencies(extensionName, splitDependencyList(extensionMetadata.value("depends").toString()));
+  }
+
+  const bool bookmarked = QSettings().value("Extensions/Bookmarked").toStringList().contains(extensionName);
+  extensionMetadata.insert("bookmarked", bookmarked);
+  this->addExtensionModelRow(extensionMetadata);
+  this->addExtensionSettings(extensionName);
+
+  q->writeExtensionDescriptionFile(q->extensionDescriptionFile(extensionName), q->extensionMetadata(extensionName));
+
+  emit q->extensionInstalled(extensionName);
+  this->info(qSlicerExtensionsManagerModel::tr("Installed source-scripted extension %1").arg(extensionName));
+
+  return success;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::runGit(const QStringList& arguments, const QString& workingDirectory, QString* standardOutput, QString& error) const
+{
+  QProcess process;
+  if (!workingDirectory.isEmpty())
+  {
+    process.setWorkingDirectory(workingDirectory);
+  }
+  process.start("git", arguments);
+  if (!process.waitForStarted(30000))
+  {
+    error = qSlicerExtensionsManagerModel::tr("Failed to start git: %1").arg(process.errorString());
+    return false;
+  }
+  if (!process.waitForFinished(300000))
+  {
+    process.kill();
+    process.waitForFinished();
+    error = qSlicerExtensionsManagerModel::tr("Git command timed out: git %1").arg(arguments.join(" "));
+    return false;
+  }
+
+  const QString output = QString::fromLocal8Bit(process.readAllStandardOutput());
+  const QString gitError = QString::fromLocal8Bit(process.readAllStandardError()).trimmed();
+  if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0)
+  {
+    error = qSlicerExtensionsManagerModel::tr("Git command failed: git %1").arg(arguments.join(" "));
+    if (!gitError.isEmpty())
+    {
+      error += "\n" + gitError;
+    }
+    return false;
+  }
+  if (standardOutput)
+  {
+    *standardOutput = output.trimmed();
+  }
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::resolveRemoteGitBranchRevision(const QString& repositoryUrl, const QString& branch, QString& revision, QString& error) const
+{
+  QString output;
+  const QString normalizedBranch = normalizedGitBranchRef(branch);
+  if (!this->runGit(QStringList() << "ls-remote"
+                                  << "--heads" << repositoryUrl << normalizedBranch,
+                    QString(),
+                    &output,
+                    error))
+  {
+    return false;
+  }
+  if (!parseFirstGitLsRemoteRevision(output, revision))
+  {
+    error = qSlicerExtensionsManagerModel::tr("Failed to resolve git branch '%1' from %2").arg(normalizedBranch, repositoryUrl);
+    return false;
+  }
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::checkoutSourceScriptedGitExtension(const QString& repositoryUrl,
+                                                                              const QString& requestedRef,
+                                                                              const QString& destinationPath,
+                                                                              QJsonObject& originObject,
+                                                                              QString& error) const
+{
+  originObject = QJsonObject();
+  if (repositoryUrl.trimmed().isEmpty())
+  {
+    error = qSlicerExtensionsManagerModel::tr("Git repository URL is empty");
+    return false;
+  }
+  if (!QDir().mkpath(destinationPath))
+  {
+    error = qSlicerExtensionsManagerModel::tr("Failed to create temporary git checkout directory %1").arg(destinationPath);
+    return false;
+  }
+
+  QString ref = requestedRef.trimmed();
+  QString refKind;
+  if (ref.isEmpty())
+  {
+    refKind = "branch";
+    if (!this->runGit(QStringList() << "clone"
+                                    << "--depth"
+                                    << "1"
+                                    << "--no-recurse-submodules" << repositoryUrl << destinationPath,
+                      QString(),
+                      nullptr,
+                      error))
+    {
+      return false;
+    }
+    QString currentBranch;
+    if (!this->runGit(QStringList() << "rev-parse"
+                                    << "--abbrev-ref"
+                                    << "HEAD",
+                      destinationPath,
+                      &currentBranch,
+                      error))
+    {
+      return false;
+    }
+    ref = currentBranch == "HEAD" ? QString("HEAD") : currentBranch;
+  }
+  else
+  {
+    QString output;
+    const QString branchRef = normalizedGitBranchRef(ref);
+    if (!this->runGit(QStringList() << "ls-remote"
+                                    << "--heads" << repositoryUrl << branchRef,
+                      QString(),
+                      &output,
+                      error))
+    {
+      return false;
+    }
+    if (!output.trimmed().isEmpty())
+    {
+      ref = branchRef;
+      refKind = "branch";
+      if (!this->runGit(QStringList() << "clone"
+                                      << "--depth"
+                                      << "1"
+                                      << "--branch" << ref << "--no-recurse-submodules" << repositoryUrl << destinationPath,
+                        QString(),
+                        nullptr,
+                        error))
+      {
+        return false;
+      }
+    }
+    else
+    {
+      const QString tagRef = normalizedGitTagRef(ref);
+      if (!this->runGit(QStringList() << "ls-remote"
+                                      << "--tags"
+                                      << "--refs" << repositoryUrl << tagRef,
+                        QString(),
+                        &output,
+                        error))
+      {
+        return false;
+      }
+      if (!output.trimmed().isEmpty())
+      {
+        ref = tagRef;
+        refKind = "tag";
+        if (!this->runGit(QStringList() << "clone"
+                                        << "--depth"
+                                        << "1"
+                                        << "--branch" << ref << "--no-recurse-submodules" << repositoryUrl << destinationPath,
+                          QString(),
+                          nullptr,
+                          error))
+        {
+          return false;
+        }
+      }
+      else if (isGitCommitReference(ref))
+      {
+        refKind = "commit";
+        if (!this->runGit(QStringList() << "init", destinationPath, nullptr, error) //
+            || !this->runGit(QStringList() << "remote"
+                                           << "add"
+                                           << "origin" << repositoryUrl,
+                             destinationPath,
+                             nullptr,
+                             error)
+            || !this->runGit(QStringList() << "fetch"
+                                           << "--depth"
+                                           << "1"
+                                           << "origin" << ref,
+                             destinationPath,
+                             nullptr,
+                             error)
+            || !this->runGit(QStringList() << "checkout"
+                                           << "--detach"
+                                           << "FETCH_HEAD",
+                             destinationPath,
+                             nullptr,
+                             error))
+        {
+          return false;
+        }
+      }
+      else
+      {
+        error = qSlicerExtensionsManagerModel::tr("Git ref '%1' was not found as a branch or tag in %2").arg(ref, repositoryUrl);
+        return false;
+      }
+    }
+  }
+
+  QString resolvedRevision;
+  if (!this->runGit(QStringList() << "rev-parse"
+                                  << "HEAD",
+                    destinationPath,
+                    &resolvedRevision,
+                    error))
+  {
+    return false;
+  }
+
+  originObject.insert("type", SOURCE_SCRIPTED_ORIGIN_TYPE_GIT);
+  originObject.insert("url", repositoryUrl);
+  originObject.insert("ref", ref);
+  originObject.insert("resolvedRevision", resolvedRevision);
+  originObject.insert("refKind", refKind);
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::updateSourceScriptedGitExtension(const QString& extensionName, const QJsonObject& updateDescriptor)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  QString error;
+  if (!this->checkExtensionSettingsPermissions(error))
+  {
+    this->critical(error);
+    return false;
+  }
+
+  QStandardItem* item = this->extensionItem(extensionName);
+  if (!item)
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension").arg(extensionName));
+    return false;
+  }
+  if (!q->isExtensionScheduledForUpdate(extensionName))
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to update %1 extension: it is not scheduled for update").arg(extensionName));
+    return false;
+  }
+
+  QTemporaryDir checkoutDir;
+  if (!checkoutDir.isValid())
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Failed to create temporary directory for source-scripted extension git checkout"));
+    return false;
+  }
+
+  QJsonObject originObject;
+  const QString repositoryUrl = updateDescriptor.value("url").toString();
+  const QString ref = updateDescriptor.value("ref").toString();
+  if (!this->checkoutSourceScriptedGitExtension(repositoryUrl, ref, checkoutDir.path(), originObject, error))
+  {
+    this->critical(error);
+    return false;
+  }
+
+  ExtensionMetadataType extensionMetadata =
+    qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(QDir(checkoutDir.path()).filePath(SOURCE_SCRIPTED_MANIFEST_FILE), &error);
+  if (extensionMetadata.isEmpty())
+  {
+    this->critical(error);
+    return false;
+  }
+  if (extensionMetadata.value("extensionname").toString() != extensionName)
+  {
+    this->critical(qSlicerExtensionsManagerModel::tr("Updated source-scripted extension manifest name '%1' does not match installed extension '%2'")
+                     .arg(extensionMetadata.value("extensionname").toString(), extensionName));
+    return false;
+  }
+
+  const QString& installPath = q->extensionInstallPath(extensionName);
+  const QString& descriptionFile = q->extensionDescriptionFile(extensionName);
+  bool success = true;
+  if (QFile::exists(installPath))
+  {
+    success = ctk::removeDirRecursively(installPath);
+  }
+  if (QFile::exists(descriptionFile))
+  {
+    success = success && QFile::remove(descriptionFile);
+  }
+  success = success && this->Model.removeRow(item->row());
+  success = success && this->installSourceScriptedExtensionFromPath(checkoutDir.path(), originObject, /* installDependencies= */ true);
+  if (success)
+  {
+    this->removeExtensionFromScheduledForUpdateList(extensionName);
+  }
+
+  emit q->extensionUpdated(extensionName);
+  return success;
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->isSourceScriptedExtension(extensionName))
+  {
+    return QStringList();
+  }
   if (this->SlicerVersion.isEmpty())
   {
     return QStringList();
@@ -900,6 +1850,10 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QS
 QStringList qSlicerExtensionsManagerModelPrivate::extensionQtPluginPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->isSourceScriptedExtension(extensionName))
+  {
+    return QStringList();
+  }
   if (this->SlicerVersion.isEmpty())
   {
     return QStringList();
@@ -912,6 +1866,10 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionQtPluginPaths(const Q
 QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->isSourceScriptedExtension(extensionName))
+  {
+    return QStringList();
+  }
   if (this->SlicerVersion.isEmpty())
   {
     return QStringList();
@@ -929,6 +1887,10 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& 
 QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->isSourceScriptedExtension(extensionName))
+  {
+    return this->sourceScriptedExtensionPythonPaths(extensionName);
+  }
   if (this->SlicerVersion.isEmpty())
   {
     return QStringList();
@@ -946,6 +1908,83 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QSt
                             << path + "/" + QString(Slicer_QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)        //
                             << path + "/" + QString(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion) //
                             << path + "/" + QString(PYTHON_SITE_PACKAGES_SUBDIR));
+}
+#endif
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::isSourceScriptedExtension(const QString& extensionName) const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+  const qSlicerExtensionsManagerModel::ExtensionMetadataType metadata = q->extensionMetadata(extensionName, qSlicerExtensionsManagerModel::MetadataLocal);
+  if (metadata.value("extensiontype").toString() == SOURCE_SCRIPTED_EXTENSION_TYPE)
+  {
+    return true;
+  }
+  return QFileInfo(q->extensionInstallPath(extensionName) + "/" + SOURCE_SCRIPTED_SIDECAR_FILE).exists();
+}
+
+// --------------------------------------------------------------------------
+QJsonObject qSlicerExtensionsManagerModelPrivate::sourceScriptedExtensionManifest(const QString& extensionName) const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+  QFile manifestFile(q->extensionInstallPath(extensionName) + "/" + SOURCE_SCRIPTED_SIDECAR_FILE);
+  if (!manifestFile.open(QFile::ReadOnly))
+  {
+    return QJsonObject();
+  }
+
+  QJsonParseError parseError;
+  const QJsonDocument document = QJsonDocument::fromJson(manifestFile.readAll(), &parseError);
+  if (parseError.error != QJsonParseError::NoError || !document.isObject())
+  {
+    return QJsonObject();
+  }
+  return document.object();
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModelPrivate::sourceScriptedExtensionModulePaths(const QString& extensionName) const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+  const QJsonObject manifest = this->sourceScriptedExtensionManifest(extensionName);
+  const QJsonArray modules = manifest.value("modules").toArray();
+  const QString sourcePath = q->extensionInstallPath(extensionName) + "/" + SOURCE_SCRIPTED_INSTALLED_SOURCE_DIR;
+
+  QStringList modulePaths;
+  for (const QJsonValue& moduleValue : modules)
+  {
+    const QString modulePath = moduleValue.toObject().value("path").toString();
+    if (modulePath.isEmpty())
+    {
+      continue;
+    }
+    const QString moduleDirectory = QFileInfo(modulePath).path();
+    modulePaths << (moduleDirectory == "." ? sourcePath : sourcePath + "/" + moduleDirectory);
+  }
+  modulePaths.removeDuplicates();
+  return appendToPathList(QStringList(), modulePaths);
+}
+
+#ifdef Slicer_USE_PYTHONQT
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModelPrivate::sourceScriptedExtensionPythonPaths(const QString& extensionName) const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+  const QJsonObject manifest = this->sourceScriptedExtensionManifest(extensionName);
+  const QJsonArray pythonPathsArray = manifest.value("pythonPaths").toArray();
+  const QString sourcePath = q->extensionInstallPath(extensionName) + "/" + SOURCE_SCRIPTED_INSTALLED_SOURCE_DIR;
+
+  QStringList pythonPaths;
+  for (const QJsonValue& pythonPathValue : pythonPathsArray)
+  {
+    const QString pythonPath = pythonPathValue.toString();
+    if (!pythonPath.isEmpty())
+    {
+      pythonPaths << sourcePath + "/" + pythonPath;
+    }
+  }
+  pythonPaths.removeDuplicates();
+  return appendToPathList(QStringList(), pythonPaths);
 }
 #endif
 
@@ -1138,6 +2177,10 @@ QString qSlicerExtensionsManagerModel::extensionInstallPath(const QString& exten
 QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
+  if (d->isSourceScriptedExtension(extensionName))
+  {
+    return d->sourceScriptedExtensionModulePaths(extensionName);
+  }
   QString path = this->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(),
                           QStringList()                            //
@@ -1267,6 +2310,17 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
       && d->ExtensionsMetadataFromServer.contains(extensionName))
   {
     metadata = d->ExtensionsMetadataFromServer[extensionName];
+  }
+  const UpdateDownloadInformation updateInfo = d->AvailableUpdates.value(extensionName);
+  if ((source == MetadataAll || source == MetadataServer)         //
+      && updateInfo.SourceType == SOURCE_SCRIPTED_GIT_UPDATE_TYPE //
+      && !updateInfo.SourceRevision.isEmpty())
+  {
+    metadata.insert("extensionname", extensionName);
+    metadata.insert("extensiontype", SOURCE_SCRIPTED_EXTENSION_TYPE);
+    metadata.insert("scm", SOURCE_SCRIPTED_ORIGIN_TYPE_GIT);
+    metadata.insert("scmurl", updateInfo.SourceUrl);
+    metadata.insert("revision", updateInfo.SourceRevision);
   }
   if (source == MetadataAll || source == MetadataLocal)
   {
@@ -1681,6 +2735,103 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
   return true;
 }
 
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::downloadAndInstallSourceScriptedExtension(const QUrl& archiveUrl, bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (!archiveUrl.isValid() || archiveUrl.isEmpty())
+  {
+    d->critical(tr("Download of source-scripted extension failed, URL is invalid."));
+    return false;
+  }
+
+  if (archiveUrl.isLocalFile())
+  {
+    return this->installSourceScriptedExtension(archiveUrl.toLocalFile(), installDependencies);
+  }
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+  {
+    d->critical(error);
+    return false;
+  }
+
+  QNetworkRequest request(archiveUrl);
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+  QNetworkReply* const reply = d->NetworkManager.get(request);
+  qSlicerExtensionDownloadTask* const task = new qSlicerExtensionDownloadTask(reply);
+  const QString archiveName = sourceScriptedArchiveNameFromUrl(archiveUrl);
+  QVariantMap taskMetadata;
+  taskMetadata.insert("sourceurl", archiveUrl.toString());
+  task->setMetadata(taskMetadata);
+  task->setArchiveName(archiveName);
+  task->setExtensionName(archiveName);
+  task->setInstallDependencies(installDependencies);
+  d->ActiveTasks[task] = tr("install source-scripted extension from %1").arg(archiveUrl.toString());
+
+  connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)), this, SLOT(onInstallSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask*)));
+  connect(task, SIGNAL(progress(qSlicerExtensionDownloadTask*, qint64, qint64)), this, SLOT(onInstallDownloadProgress(qSlicerExtensionDownloadTask*, qint64, qint64)));
+
+  emit this->downloadStarted(reply);
+  emit this->activeTasksChanged();
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::downloadAndInspectSourceScriptedExtension(const QUrl& archiveUrl, bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (!archiveUrl.isValid() || archiveUrl.isEmpty())
+  {
+    d->critical(tr("Download of source-scripted extension failed, URL is invalid."));
+    return false;
+  }
+
+  if (archiveUrl.isLocalFile())
+  {
+    QString error;
+    ExtensionMetadataType metadata = this->inspectSourceScriptedExtension(archiveUrl.toLocalFile(), &error);
+    if (metadata.isEmpty())
+    {
+      d->critical(error);
+      return false;
+    }
+    metadata.insert("origin", sourceScriptedOriginObject("url", archiveUrl.toString()).toVariantMap());
+    emit this->sourceScriptedExtensionDownloadReady(archiveUrl, archiveUrl.toLocalFile(), metadata, installDependencies);
+    return true;
+  }
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+  {
+    d->critical(error);
+    return false;
+  }
+
+  QNetworkRequest request(archiveUrl);
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+  QNetworkReply* const reply = d->NetworkManager.get(request);
+  qSlicerExtensionDownloadTask* const task = new qSlicerExtensionDownloadTask(reply);
+  const QString archiveName = sourceScriptedArchiveNameFromUrl(archiveUrl);
+  QVariantMap taskMetadata;
+  taskMetadata.insert("sourceurl", archiveUrl.toString());
+  task->setMetadata(taskMetadata);
+  task->setArchiveName(archiveName);
+  task->setExtensionName(archiveName);
+  task->setInstallDependencies(installDependencies);
+  d->ActiveTasks[task] = tr("inspect source-scripted extension from %1").arg(archiveUrl.toString());
+
+  connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)), this, SLOT(onInspectSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask*)));
+  connect(task, SIGNAL(progress(qSlicerExtensionDownloadTask*, qint64, qint64)), this, SLOT(onInstallDownloadProgress(qSlicerExtensionDownloadTask*, qint64, qint64)));
+
+  emit this->downloadStarted(reply);
+  emit this->activeTasksChanged();
+  return true;
+}
+
 //-----------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart, bool update)
 {
@@ -1833,6 +2984,95 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(qSlicerExtensionDo
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::onInstallSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask* task)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  task->deleteLater();
+
+  QNetworkReply* const reply = task->reply();
+  QUrl downloadUrl = reply->url();
+
+  emit this->downloadFinished(reply);
+
+  const QString sourceUrl = task->metadata().value("sourceurl").toString().isEmpty() ? downloadUrl.toString() : task->metadata().value("sourceurl").toString();
+  const QString archiveName = task->archiveName().isEmpty() ? QString("source-scripted-extension.tar.gz") : task->archiveName();
+  QString archivePath;
+  QString error;
+  if (!writeSourceScriptedReplyToTemporaryArchive(reply, archiveName, sourceUrl, archivePath, error))
+  {
+    d->critical(error);
+    d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
+    return;
+  }
+
+  this->installDownloadedSourceScriptedExtension(archivePath, QUrl(sourceUrl), task->installDependencies());
+  QFile::remove(archivePath);
+  d->ActiveTasks.remove(task);
+  emit activeTasksChanged();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::onInspectSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask* task)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  task->deleteLater();
+
+  QNetworkReply* const reply = task->reply();
+  const QUrl downloadUrl = reply->url();
+
+  emit this->downloadFinished(reply);
+
+  const QString sourceUrl = task->metadata().value("sourceurl").toString().isEmpty() ? downloadUrl.toString() : task->metadata().value("sourceurl").toString();
+  const QString archiveName = task->archiveName().isEmpty() ? QString("source-scripted-extension.tar.gz") : task->archiveName();
+  QString archivePath;
+  QString error;
+  if (!writeSourceScriptedReplyToTemporaryArchive(reply, archiveName, sourceUrl, archivePath, error))
+  {
+    d->critical(error);
+    d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
+    return;
+  }
+
+  QTemporaryDir extractionDir;
+  if (!extractionDir.isValid())
+  {
+    d->critical(tr("Failed to create temporary directory for source-scripted extension archive extraction"));
+    QFile::remove(archivePath);
+    d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
+    return;
+  }
+  QString extractedSourcePath;
+  if (!d->extractSourceScriptedArchive(archivePath, extractionDir.path(), extractedSourcePath, error, sourceUrl))
+  {
+    d->critical(error);
+    QFile::remove(archivePath);
+    d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
+    return;
+  }
+
+  ExtensionMetadataType metadata = Self::parseSourceScriptedExtensionManifest(QDir(extractedSourcePath).filePath(SOURCE_SCRIPTED_MANIFEST_FILE), &error);
+  if (metadata.isEmpty())
+  {
+    d->critical(error);
+    QFile::remove(archivePath);
+    d->ActiveTasks.remove(task);
+    emit activeTasksChanged();
+    return;
+  }
+  metadata.insert("origin", sourceScriptedOriginObject("url", sourceUrl).toVariantMap());
+
+  emit this->sourceScriptedExtensionDownloadReady(QUrl(sourceUrl), archivePath, metadata, task->installDependencies());
+  d->ActiveTasks.remove(task);
+  emit activeTasksChanged();
+}
+
+// --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::installExtension(const QString& archiveFile, bool installDependencies /*=true*/, bool waitForCompletion /*=false*/)
 {
   Q_D(qSlicerExtensionsManagerModel);
@@ -1857,6 +3097,230 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& archiveFile,
 
   d->critical(tr("No extension description found in archive '%1'").arg(archiveFile));
   return false;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::installSourceScriptedExtension(const QString& sourcePath, bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (sourcePath.isEmpty())
+  {
+    d->critical(tr("Source-scripted extension path is empty"));
+    return false;
+  }
+
+  const QFileInfo sourceInfo(sourcePath);
+  if (sourceInfo.isDir())
+  {
+    return d->installSourceScriptedExtensionFromPath(sourceInfo.absoluteFilePath(), sourceScriptedOriginObject("directory", sourceInfo.absoluteFilePath()), installDependencies);
+  }
+
+  if (!sourceInfo.isFile())
+  {
+    d->critical(tr("Source-scripted extension source does not exist: %1").arg(sourcePath));
+    return false;
+  }
+
+  QTemporaryDir extractionDir;
+  if (!extractionDir.isValid())
+  {
+    d->critical(tr("Failed to create temporary directory for source-scripted extension archive extraction"));
+    return false;
+  }
+
+  QString extractedSourcePath;
+  QString error;
+  if (!d->extractSourceScriptedArchive(sourceInfo.absoluteFilePath(), extractionDir.path(), extractedSourcePath, error))
+  {
+    d->critical(error);
+    return false;
+  }
+
+  return d->installSourceScriptedExtensionFromPath(extractedSourcePath, sourceScriptedOriginObject("archive", sourceInfo.absoluteFilePath()), installDependencies);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::installDownloadedSourceScriptedExtension(const QString& archivePath, const QUrl& sourceUrl, bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (archivePath.isEmpty() || !QFileInfo(archivePath).isFile())
+  {
+    d->critical(tr("Downloaded source-scripted extension archive does not exist: %1").arg(archivePath));
+    return false;
+  }
+
+  QTemporaryDir extractionDir;
+  if (!extractionDir.isValid())
+  {
+    d->critical(tr("Failed to create temporary directory for source-scripted extension archive extraction"));
+    return false;
+  }
+
+  QString extractedSourcePath;
+  QString error;
+  const QString sourceDescription = sourceUrl.isEmpty() ? archivePath : sourceUrl.toString();
+  if (!d->extractSourceScriptedArchive(archivePath, extractionDir.path(), extractedSourcePath, error, sourceDescription))
+  {
+    d->critical(error);
+    return false;
+  }
+
+  return d->installSourceScriptedExtensionFromPath(extractedSourcePath, sourceScriptedOriginObject("url", sourceDescription), installDependencies);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::installSourceScriptedExtensionFromGit(const QString& repositoryUrl, const QString& ref /*=QString()*/, bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+  {
+    d->critical(error);
+    return false;
+  }
+
+  QTemporaryDir checkoutDir;
+  if (!checkoutDir.isValid())
+  {
+    d->critical(tr("Failed to create temporary directory for source-scripted extension git checkout"));
+    return false;
+  }
+
+  QJsonObject originObject;
+  if (!d->checkoutSourceScriptedGitExtension(repositoryUrl, ref, checkoutDir.path(), originObject, error))
+  {
+    d->critical(error);
+    return false;
+  }
+  return d->installSourceScriptedExtensionFromPath(checkoutDir.path(), originObject, installDependencies);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::installInspectedSourceScriptedExtensionFromGit(const QString& checkoutPath,
+                                                                                   const QVariantMap& originMetadata,
+                                                                                   bool installDependencies /*=true*/)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (checkoutPath.isEmpty() || !QFileInfo(checkoutPath).isDir())
+  {
+    d->critical(tr("Source-scripted extension git checkout does not exist: %1").arg(checkoutPath));
+    return false;
+  }
+
+  const QJsonObject originObject = QJsonObject::fromVariantMap(originMetadata);
+  if (originObject.value("type").toString() != SOURCE_SCRIPTED_ORIGIN_TYPE_GIT || originObject.value("url").toString().isEmpty()
+      || originObject.value("resolvedRevision").toString().isEmpty())
+  {
+    d->critical(tr("Source-scripted extension git origin metadata is incomplete."));
+    return false;
+  }
+
+  return d->installSourceScriptedExtensionFromPath(checkoutPath, originObject, installDependencies);
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::inspectSourceScriptedExtension(const QString& sourcePath, QString* errorMessage) const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+
+  const QFileInfo sourceInfo(sourcePath);
+  if (sourceInfo.isDir())
+  {
+    ExtensionMetadataType metadata = Self::parseSourceScriptedExtensionManifest(QDir(sourceInfo.absoluteFilePath()).filePath(SOURCE_SCRIPTED_MANIFEST_FILE), errorMessage);
+    if (!metadata.isEmpty())
+    {
+      metadata.insert("origin", sourceScriptedOriginObject("directory", sourceInfo.absoluteFilePath()).toVariantMap());
+    }
+    return metadata;
+  }
+
+  if (!sourceInfo.isFile())
+  {
+    setErrorMessage(errorMessage, tr("Source-scripted extension source does not exist: %1").arg(sourcePath));
+    return ExtensionMetadataType();
+  }
+
+  QTemporaryDir extractionDir;
+  if (!extractionDir.isValid())
+  {
+    setErrorMessage(errorMessage, tr("Failed to create temporary directory for source-scripted extension archive extraction"));
+    return ExtensionMetadataType();
+  }
+
+  QString extractedSourcePath;
+  QString error;
+  if (!d->extractSourceScriptedArchive(sourceInfo.absoluteFilePath(), extractionDir.path(), extractedSourcePath, error))
+  {
+    setErrorMessage(errorMessage, error);
+    return ExtensionMetadataType();
+  }
+
+  ExtensionMetadataType metadata = Self::parseSourceScriptedExtensionManifest(QDir(extractedSourcePath).filePath(SOURCE_SCRIPTED_MANIFEST_FILE), errorMessage);
+  if (!metadata.isEmpty())
+  {
+    metadata.insert("origin", sourceScriptedOriginObject("archive", sourceInfo.absoluteFilePath()).toVariantMap());
+  }
+  return metadata;
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::inspectSourceScriptedExtensionFromGit(const QString& repositoryUrl,
+                                                                                                                          const QString& ref,
+                                                                                                                          QString* checkoutPath,
+                                                                                                                          QVariantMap* originMetadata,
+                                                                                                                          QString* errorMessage) const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+
+  if (checkoutPath)
+  {
+    checkoutPath->clear();
+  }
+  if (originMetadata)
+  {
+    originMetadata->clear();
+  }
+
+  QTemporaryDir checkoutDir(QDir::temp().filePath("slicer-source-scripted-git.XXXXXX"));
+  if (!checkoutDir.isValid())
+  {
+    setErrorMessage(errorMessage, tr("Failed to create temporary directory for source-scripted extension git checkout"));
+    return ExtensionMetadataType();
+  }
+  checkoutDir.setAutoRemove(false);
+
+  QString error;
+  QJsonObject originObject;
+  if (!d->checkoutSourceScriptedGitExtension(repositoryUrl, ref, checkoutDir.path(), originObject, error))
+  {
+    QDir(checkoutDir.path()).removeRecursively();
+    setErrorMessage(errorMessage, error);
+    return ExtensionMetadataType();
+  }
+
+  ExtensionMetadataType metadata = Self::parseSourceScriptedExtensionManifest(QDir(checkoutDir.path()).filePath(SOURCE_SCRIPTED_MANIFEST_FILE), &error);
+  if (metadata.isEmpty())
+  {
+    QDir(checkoutDir.path()).removeRecursively();
+    setErrorMessage(errorMessage, error);
+    return ExtensionMetadataType();
+  }
+
+  const QVariantMap originMap = originObject.toVariantMap();
+  metadata.insert("origin", originMap);
+  if (checkoutPath)
+  {
+    *checkoutPath = checkoutDir.path();
+  }
+  if (originMetadata)
+  {
+    *originMetadata = originMap;
+  }
+  return metadata;
 }
 
 // --------------------------------------------------------------------------
@@ -1950,74 +3414,7 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
   bool success = true;
   if (withDependencies)
   {
-    QStringList unresolvedDependencies;
-    QStringList directDependencies = extensionMetadata.value("depends").toString().split(" ");
-    QStringList dependenciesToInstall = d->dependenciesToInstall(directDependencies, unresolvedDependencies);
-
-    // Prompt to install dependencies (if any)
-    if (!dependenciesToInstall.isEmpty())
-    {
-      QMessageBox::StandardButton result = QMessageBox::Yes;
-      if (d->Interactive && !d->AutoInstallDependencies)
-      {
-        QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
-        for (const QString& dependencyName : dependenciesToInstall)
-        {
-          msg += QString("<li>%1</li>").arg(dependencyName);
-        }
-        msg += "</ul><p>Would you like to install them now?</p>";
-        result = QMessageBox::question(nullptr, "Install dependencies", msg, QMessageBox::Yes | QMessageBox::No);
-      }
-      else
-      {
-        QString msg =
-          QString("The following extensions are required by %1 extension therefore they will be installed now: %2").arg(extensionName).arg(dependenciesToInstall.join(", "));
-        qDebug() << msg;
-      }
-
-      if (result == QMessageBox::Yes)
-      {
-        // Install dependencies
-        QString msg;
-        for (const QString& dependency : dependenciesToInstall)
-        {
-          bool res = this->downloadAndInstallExtensionByName(dependency, false /*installation of dependencies already confirmed*/);
-          if (!res)
-          {
-            msg += QString("<li>%1</li>").arg(dependency);
-            success = false;
-          }
-        }
-        if (!msg.isEmpty())
-        {
-          d->critical(tr("Error while installing dependent extensions:<ul>%1<ul>").arg(msg));
-        }
-      }
-      else
-      {
-        // Skip installing dependencies
-        qWarning() << QString("%1 extension requires extensions %2 but the user chose not to install them.").arg(extensionName).arg(dependenciesToInstall.join(", "));
-        success = false;
-      }
-    }
-
-    // Warn about unresolved dependencies
-    if (!unresolvedDependencies.isEmpty())
-    {
-      success = false;
-      qWarning() << QString(/*no tr*/ "%1 extension depends on the following extensions, which could not be found: %2").arg(extensionName).arg(unresolvedDependencies.join(", "));
-      if (d->Interactive)
-      {
-        //: %1 is the extension name
-        QString msg = QString("<p>%1</p><ul>").arg(tr("%1 depends on the following extensions, which could not be found:").arg(extensionName));
-        for (const QString& dependencyName : unresolvedDependencies)
-        {
-          msg += QString("<li>%1</li>").arg(dependencyName);
-        }
-        msg += QString("</ul><p>%1</p>").arg(tr("The extension may not function properly."));
-        QMessageBox::warning(nullptr, tr("Unresolved dependencies"), msg);
-      }
-    }
+    success = d->installExtensionDependencies(extensionName, splitDependencyList(extensionMetadata.value("depends").toString()));
   }
 
   // Finish installing the extension
@@ -2251,6 +3648,56 @@ void qSlicerExtensionsManagerModel::checkForExtensionsUpdates()
     }
   }
 
+  for (const QString& extensionName : this->installedExtensions())
+  {
+    if (!d->isSourceScriptedExtension(extensionName) || d->AvailableUpdates.contains(extensionName))
+    {
+      continue;
+    }
+    const QJsonObject manifest = d->sourceScriptedExtensionManifest(extensionName);
+    const QJsonObject origin = manifest.value("origin").toObject();
+    if (origin.value("type").toString() != SOURCE_SCRIPTED_ORIGIN_TYPE_GIT || origin.value("refKind").toString() != "branch")
+    {
+      continue;
+    }
+
+    const QString repositoryUrl = origin.value("url").toString();
+    const QString ref = origin.value("ref").toString();
+    const QString installedRevision = origin.value("resolvedRevision").toString();
+    if (repositoryUrl.isEmpty() || ref.isEmpty() || installedRevision.isEmpty())
+    {
+      d->warning(tr("Source-scripted git update check for %1 missed origin URL, ref, or resolved revision").arg(extensionName));
+      continue;
+    }
+
+    QString remoteRevision;
+    QString error;
+    if (!d->resolveRemoteGitBranchRevision(repositoryUrl, ref, remoteRevision, error))
+    {
+      d->warning(error);
+      continue;
+    }
+    if (remoteRevision == installedRevision)
+    {
+      continue;
+    }
+
+    d->debug(tr("Update found for %1 source-scripted extension: '%2' installed, '%3' available").arg(extensionName, installedRevision, remoteRevision));
+    UpdateDownloadInformation updateInfo;
+    updateInfo.SourceType = SOURCE_SCRIPTED_GIT_UPDATE_TYPE;
+    updateInfo.SourceUrl = repositoryUrl;
+    updateInfo.SourceRef = ref;
+    updateInfo.SourceRevision = remoteRevision;
+    updateInfo.SourceRefKind = "branch";
+    d->AvailableUpdates.insert(extensionName, updateInfo);
+    if (d->AutoUpdateInstall)
+    {
+      this->scheduleExtensionForUpdate(extensionName);
+    }
+    emit this->extensionUpdateAvailable(extensionName);
+    updatedExtensionsFound = true;
+  }
+
   if (updatedExtensionsFound)
   {
     QSettings extensionSettings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
@@ -2390,6 +3837,22 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(const QString& ex
   }
 
   const UpdateDownloadInformation& updateInfo = d->AvailableUpdates.value(extensionName);
+  if (updateInfo.SourceType == SOURCE_SCRIPTED_GIT_UPDATE_TYPE)
+  {
+    QJsonObject updateDescriptor;
+    updateDescriptor.insert("type", SOURCE_SCRIPTED_GIT_UPDATE_TYPE);
+    updateDescriptor.insert("url", updateInfo.SourceUrl);
+    updateDescriptor.insert("ref", updateInfo.SourceRef);
+    updateDescriptor.insert("refKind", updateInfo.SourceRefKind);
+    updateDescriptor.insert("resolvedRevision", updateInfo.SourceRevision);
+    scheduled[extensionName] = compactJsonObject(updateDescriptor);
+    settings.setValue("Extensions/ScheduledForUpdate", scheduled);
+
+    d->info(tr("%1 extension scheduled for update").arg(extensionName));
+    emit this->extensionScheduledForUpdate(extensionName);
+    return true;
+  }
+
   if (updateInfo.ArchiveName.isEmpty())
   {
     if (updateInfo.ExtensionId.isEmpty())
@@ -2457,6 +3920,13 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUpdate(const QStr
 bool qSlicerExtensionsManagerModelPrivate::updateExtension(const QString& extensionName, const QString& archiveFile)
 {
   Q_Q(qSlicerExtensionsManagerModel);
+
+  QJsonParseError parseError;
+  const QJsonDocument updateDocument = QJsonDocument::fromJson(archiveFile.toUtf8(), &parseError);
+  if (parseError.error == QJsonParseError::NoError && updateDocument.isObject() && updateDocument.object().value("type").toString() == SOURCE_SCRIPTED_GIT_UPDATE_TYPE)
+  {
+    return this->updateSourceScriptedGitExtension(extensionName, updateDocument.object());
+  }
 
   QString error;
   if (!this->checkExtensionSettingsPermissions(error))
@@ -2609,6 +4079,8 @@ bool qSlicerExtensionsManagerModel::uninstallExtension(const QString& extensionN
 
   bool bookmarked = this->isExtensionBookmarked(extensionName);
 
+  d->removeExtensionSettings(extensionName);
+
   bool success = true;
   if (QDir(this->extensionInstallPath(extensionName)).exists())
   {
@@ -2633,8 +4105,11 @@ bool qSlicerExtensionsManagerModel::uninstallExtension(const QString& extensionN
 
   if (success)
   {
-    d->removeExtensionSettings(extensionName);
     d->removeExtensionFromScheduledForUninstallList(extensionName);
+  }
+  else
+  {
+    d->addExtensionSettings(extensionName);
   }
 
   emit this->extensionUninstalled(extensionName);
@@ -3228,6 +4703,195 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     {
       metadata["installed"] = "true";
     }
+  }
+
+  return metadata;
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifest(const QString& manifestFile, QString* errorMessage)
+{
+  QFile inputFile(manifestFile);
+  if (!inputFile.open(QFile::ReadOnly))
+  {
+    setErrorMessage(errorMessage, tr("Failed to open source-scripted extension manifest '%1'").arg(manifestFile));
+    return ExtensionMetadataType();
+  }
+
+  return Self::parseSourceScriptedExtensionManifestContent(inputFile.readAll(), QFileInfo(manifestFile).absolutePath(), /* validateSourceFiles= */ true, errorMessage);
+}
+
+// --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::parseSourceScriptedExtensionManifestContent(const QByteArray& manifestContent,
+                                                                                                                                const QString& sourceRoot,
+                                                                                                                                bool validateSourceFiles,
+                                                                                                                                QString* errorMessage)
+{
+  ExtensionMetadataType metadata;
+  const QString manifestDescription =
+    sourceRoot.isEmpty() ? tr("source-scripted extension manifest") : tr("source-scripted extension manifest '%1'").arg(QDir(sourceRoot).filePath(SOURCE_SCRIPTED_MANIFEST_FILE));
+
+  QJsonParseError parseError;
+  const QJsonDocument document = QJsonDocument::fromJson(manifestContent, &parseError);
+  if (parseError.error != QJsonParseError::NoError)
+  {
+    setErrorMessage(errorMessage, tr("Failed to parse %1: %2").arg(manifestDescription, parseError.errorString()));
+    return metadata;
+  }
+  if (!document.isObject())
+  {
+    setErrorMessage(errorMessage, tr("%1 must contain a JSON object").arg(manifestDescription));
+    return metadata;
+  }
+
+  const QJsonObject manifest = document.object();
+  QString schema;
+  QString extensionType;
+  QString extensionName;
+  if (!readStringValue(manifest, "schema", /* required= */ true, schema, errorMessage) //
+      || !readStringValue(manifest, "type", /* required= */ true, extensionType, errorMessage)
+      || !readStringValue(manifest, "extensionname", /* required= */ true, extensionName, errorMessage))
+  {
+    return metadata;
+  }
+  if (extensionType != SOURCE_SCRIPTED_EXTENSION_TYPE)
+  {
+    setErrorMessage(errorMessage, tr("Manifest type must be '%1'").arg(SOURCE_SCRIPTED_EXTENSION_TYPE));
+    return metadata;
+  }
+
+  if (!manifest.contains("modules") || !manifest.value("modules").isArray())
+  {
+    setErrorMessage(errorMessage, tr("Manifest key 'modules' must be a non-empty array"));
+    return metadata;
+  }
+  const QJsonArray modules = manifest.value("modules").toArray();
+  if (modules.isEmpty())
+  {
+    setErrorMessage(errorMessage, tr("Manifest key 'modules' must be a non-empty array"));
+    return metadata;
+  }
+
+  QVariantList parsedModules;
+  QStringList moduleNames;
+  QStringList modulePaths;
+  QStringList moduleDirectories;
+  for (const QJsonValue& moduleValue : modules)
+  {
+    if (!moduleValue.isObject())
+    {
+      setErrorMessage(errorMessage, tr("Each source-scripted module entry must be a JSON object"));
+      return ExtensionMetadataType();
+    }
+    const QJsonObject moduleObject = moduleValue.toObject();
+    QString moduleName;
+    QString modulePath;
+    if (!readStringValue(moduleObject, "name", /* required= */ true, moduleName, errorMessage) //
+        || !readStringValue(moduleObject, "path", /* required= */ true, modulePath, errorMessage))
+    {
+      return ExtensionMetadataType();
+    }
+    QString cleanModulePath;
+    if (!isSafeRelativePath(modulePath, errorMessage, &cleanModulePath))
+    {
+      return ExtensionMetadataType();
+    }
+    if (!cleanModulePath.endsWith(".py", Qt::CaseInsensitive))
+    {
+      setErrorMessage(errorMessage, tr("Module path '%1' must reference a .py file").arg(modulePath));
+      return ExtensionMetadataType();
+    }
+    const QString absoluteModulePath = QDir(sourceRoot).filePath(cleanModulePath);
+    if (validateSourceFiles && (!QFileInfo(absoluteModulePath).isFile() || !pathIsInsideDirectory(absoluteModulePath, sourceRoot)))
+    {
+      setErrorMessage(errorMessage, tr("Module file '%1' does not exist inside the extension source").arg(modulePath));
+      return ExtensionMetadataType();
+    }
+    if (moduleNames.contains(moduleName) || modulePaths.contains(cleanModulePath))
+    {
+      setErrorMessage(errorMessage, tr("Module names and paths must be unique"));
+      return ExtensionMetadataType();
+    }
+
+    QVariantMap parsedModule;
+    parsedModule.insert("name", moduleName);
+    parsedModule.insert("path", cleanModulePath);
+    parsedModules << parsedModule;
+    moduleNames << moduleName;
+    modulePaths << cleanModulePath;
+    const QString moduleDirectory = QFileInfo(cleanModulePath).path();
+    moduleDirectories << (moduleDirectory == "." ? QString() : moduleDirectory);
+  }
+
+  QStringList pythonPaths;
+  if (!readStringArrayValue(manifest, "pythonPaths", pythonPaths, errorMessage))
+  {
+    return ExtensionMetadataType();
+  }
+  for (QString& pythonPath : pythonPaths)
+  {
+    QString cleanPythonPath;
+    if (!isSafeRelativePath(pythonPath, errorMessage, &cleanPythonPath))
+    {
+      return ExtensionMetadataType();
+    }
+    const QString absolutePythonPath = QDir(sourceRoot).filePath(cleanPythonPath);
+    if (validateSourceFiles && (!QFileInfo(absolutePythonPath).isDir() || !pathIsInsideDirectory(absolutePythonPath, sourceRoot)))
+    {
+      setErrorMessage(errorMessage, tr("Python path '%1' does not exist inside the extension source").arg(pythonPath));
+      return ExtensionMetadataType();
+    }
+    pythonPath = cleanPythonPath;
+  }
+
+  QStringList dependencies;
+  if (!readStringArrayValue(manifest, "depends", dependencies, errorMessage))
+  {
+    return ExtensionMetadataType();
+  }
+
+  metadata.insert("schema", schema);
+  metadata.insert("extensiontype", SOURCE_SCRIPTED_EXTENSION_TYPE);
+  metadata.insert("extensionname", extensionName);
+  metadata.insert("modules", parsedModules);
+  moduleDirectories.removeDuplicates();
+  metadata.insert("modulepaths", moduleDirectories);
+  metadata.insert("pythonpaths", pythonPaths);
+  metadata.insert("depends", dependencies.join(" "));
+
+  QString value;
+  const QStringList optionalStringKeys = QStringList() << "description"
+                                                       << "contributors"
+                                                       << "homepage"
+                                                       << "iconurl"
+                                                       << "category"
+                                                       << "screenshots"
+                                                       << "status";
+  for (const QString& key : optionalStringKeys)
+  {
+    if (!readStringValue(manifest, key, /* required= */ false, value, errorMessage))
+    {
+      return ExtensionMetadataType();
+    }
+    if (!value.isEmpty())
+    {
+      metadata.insert(key, value);
+    }
+  }
+
+  if (manifest.contains(SOURCE_SCRIPTED_INSTALL_SOURCE_KEY))
+  {
+    if (!manifest.value(SOURCE_SCRIPTED_INSTALL_SOURCE_KEY).isObject())
+    {
+      setErrorMessage(errorMessage, tr("Manifest key 'installSource' must be a JSON object"));
+      return ExtensionMetadataType();
+    }
+    const QJsonObject installSource = manifest.value(SOURCE_SCRIPTED_INSTALL_SOURCE_KEY).toObject();
+    if (!validateSourceScriptedInstallSource(installSource, errorMessage))
+    {
+      return ExtensionMetadataType();
+    }
+    metadata.insert(SOURCE_SCRIPTED_INSTALL_SOURCE_KEY, installSource.toVariantMap());
   }
 
   return metadata;

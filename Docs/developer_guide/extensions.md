@@ -225,6 +225,52 @@ After installing an extension, the directories are added to revision-specific se
 - Folders containing modules bundled within an extension are added to Modules / AdditionalPaths. This ensures that libraries associated with modules are found.
 - Folders containing third-party dynamic libraries, Python libraries, etc. are added to LibraryPaths, Paths, PYTHONPATH, QT_PLUGIN_PATH. This ensures that libraries associated with modules can be successfully loaded.
 
+(source-scripted-extension-manifest)=
+## Source-scripted extension manifest
+
+Python-only scripted extensions can be installed directly from source without using the extension build system. This is intended for extensions that only need scripted modules and Python helper packages. Use the normal extension build and catalog submission workflow when the extension contains C++, CLI modules, Qt plugins, compiled Python packages, or needs automated catalog builds.
+
+The source directory or archive must contain a `slicer-extension.json` file:
+
+```json
+{
+  "schema": "https://slicer.org/schemas/source-scripted-extension/v1",
+  "type": "source-scripted",
+  "extensionname": "MyExtension",
+  "description": "One-line description.",
+  "contributors": "Firstname Lastname (Organization)",
+  "homepage": "https://example.org/MyExtension",
+  "iconurl": "https://example.org/MyExtension.png",
+  "depends": ["SampleData"],
+  "pythonPaths": ["Lib"],
+  "modules": [
+    {
+      "name": "MyModule",
+      "path": "Modules/MyModule/MyModule.py"
+    }
+  ]
+}
+```
+
+Required fields are `schema`, `type`, `extensionname`, and `modules`. The `type` value must be `source-scripted`. Each module entry must have a `name` and a relative `.py` `path`. Paths must stay inside the source tree; absolute paths and parent-directory traversal are rejected. `depends` lists Slicer extension dependencies. `pythonPaths` lists relative directories that are added to the launcher's `PYTHONPATH`.
+
+Source-scripted installs are managed snapshots. Slicer copies the source into the revision-specific extensions installation path, records normalized installed metadata in `source-scripted-extension.json`, and requires restart before the modules are loaded.
+
+When installing from a directory, archive, archive URL, or Git repository URL, Slicer records that selected source as the installed extension origin. For direct Git installs, the repository URL and ref entered by the user are authoritative. Git installs record the resolved commit SHA in the installed metadata. Branch origins are checked for updates; tag and commit origins are treated as fixed snapshots.
+
+An `installSource` object may be included in a manifest that is used as an install badge target. It is only used when Slicer is given a standalone manifest URL and needs to know where to fetch the installable source. Supported install sources are:
+
+- `{"type": "url", "url": "https://example.org/MyExtension.zip"}` for a source archive.
+- `{"type": "git", "url": "https://github.com/example/MyExtension.git", "ref": "main"}` for a git repository branch, tag, or commit.
+
+Install badges can point Slicer at a remote source-scripted manifest:
+
+```text
+slicer://extensions/install-source?manifest=https%3A%2F%2Fexample.org%2FMyExtension%2Fslicer-extension.json
+```
+
+The remote manifest must contain an `installSource` because the badge URL only identifies the manifest to fetch. Slicer downloads the manifest, shows the interpreted preview and trust warning, then installs from the declared source. A source tree manifest used for direct directory, archive, archive URL, or Git URL installs does not need an `installSource`; the selected source is recorded as the installed origin.
+
 (extension-catalog-entry-file)=
 ## Extension catalog entry file
 

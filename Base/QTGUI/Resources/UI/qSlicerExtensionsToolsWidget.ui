@@ -87,6 +87,24 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="InstallFromSourceButton">
+     <property name="toolTip">
+      <string>Install a source-scripted extension from a source directory, archive, archive URL, or Git repository</string>
+     </property>
+     <property name="text">
+      <string>Install from source...</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/Icons/Add.svg</normalon>
+      </iconset>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="ConfigureButton">
      <property name="icon">
       <iconset resource="../qSlicerBaseQTGUI.qrc">

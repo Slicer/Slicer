@@ -26,6 +26,7 @@
 
 // Qt includes
 #include <QUrl>
+#include <QVariantMap>
 #include <QWidget>
 
 // QtGUI includes
@@ -82,12 +83,14 @@ protected slots:
   void onManageUrlChanged(const QUrl& newUrl);
   void onInstallUrlChanged(const QUrl& newUrl);
   void onSearchTextChanged(const QString& newText);
+  void onSourceScriptedExtensionDownloadReady(const QUrl& sourceUrl, const QString& archivePath, const QVariantMap& metadata, bool installDependencies);
 
   void onCheckForUpdatesTriggered();
   void onEditBookmarksTriggered();
   void onInstallUpdatesTriggered();
   void onInstallBookmarkedTriggered();
   void onInstallFromFileTriggered();
+  void onInstallFromSourceTriggered();
 
   void setAutoUpdateCheck(bool toggle);
   void setAutoUpdateInstall(bool toggle);

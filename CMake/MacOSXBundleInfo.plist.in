@@ -30,6 +30,17 @@
         <string>????</string>
         <key>CFBundleVersion</key>
         <string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
+        <key>CFBundleURLTypes</key>
+        <array>
+          <dict>
+            <key>CFBundleURLName</key>
+            <string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+              <string>${Slicer_MAIN_PROJECT_APPLICATION_NAME}</string>
+            </array>
+          </dict>
+        </array>
         <key>CSResourcesFileMapped</key>
         <true/>
         <key>LSRequiresCarbon</key>
