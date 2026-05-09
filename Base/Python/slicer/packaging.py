@@ -20,9 +20,11 @@ from __future__ import annotations
 import importlib
 import importlib.metadata
 import logging
+import os
 import shlex
 import slicer.util
 import sys
+import sysconfig
 import tomllib
 from pathlib import Path
 from subprocess import CalledProcessError
@@ -911,6 +913,20 @@ def _pip_install_with_skips_busy_cursor(
         qt.QApplication.restoreOverrideCursor()
 
 
+def _get_user_site_packages_dir() -> Path:
+    """Return Slicer user site-packages directory path.
+
+    Used as pip ``--target`` when the default site-packages is not writable
+    (e.g. system-wide installation).
+    Path format: ``~/.local/lib/Slicer/python{X.Y}/site-packages/``
+    """
+    return (
+        Path.home() / ".local" / "lib" / "Slicer"
+        / f"python{sys.version_info.major}.{sys.version_info.minor}"
+        / "site-packages"
+    )
+
+
 def _build_pip_args(
     requirements: str | list[str],
     constraints: str | Path | None = None,
@@ -935,6 +951,13 @@ def _build_pip_args(
 
     if constraints is not None:
         args.extend(["-c", str(constraints)])
+
+    default_site = sysconfig.get_path("purelib")
+    if not os.access(default_site, os.W_OK):
+        user_site = str(_get_user_site_packages_dir())
+        args.extend(["--target", user_site])
+        if user_site not in sys.path:
+            sys.path.append(user_site)
 
     return args
 

@@ -220,6 +220,20 @@ if not standalone_python:
         print(detail)
 
 # -----------------------------------------------------------------------------
+# Add Slicer user site-packages to sys.path so that packages installed via
+# pip --target are importable.
+from pathlib import Path as _Path
+
+_user_site = str(
+    _Path.home() / ".local" / "lib" / "Slicer"
+    / f"python{sys.version_info.major}.{sys.version_info.minor}"
+    / "site-packages"
+)
+if os.path.isdir(_user_site) and _user_site not in sys.path:
+    sys.path.append(_user_site)
+del _user_site, _Path
+
+# -----------------------------------------------------------------------------
 # Cleanup: Removing things the user shouldn't have to see.
 
 del _createModule
