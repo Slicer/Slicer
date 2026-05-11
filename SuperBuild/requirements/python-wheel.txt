@@ -1,0 +1,3 @@
+# [wheel]
+wheel==0.45.1 --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
+# [/wheel]
