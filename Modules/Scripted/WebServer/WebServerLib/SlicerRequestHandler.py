@@ -1049,10 +1049,17 @@ space origin: %%origin%%
             orbitY = float(q["orbitY"][0].strip())
         except (KeyError, ValueError):
             orbitY = None
+        try:
+            dolly = float(q["dolly"][0].strip())
+        except (KeyError, ValueError):
+            dolly = None
 
         layoutManager = slicer.app.layoutManager()
         view = layoutManager.threeDWidget(0).threeDView()
         view.renderEnabled = False
+        # qMRMLThreeDView has no .renderer() accessor — go via the render
+        # window.  The 3D view always has a single renderer.
+        renderer = view.renderWindow().GetRenderers().GetFirstRenderer()
 
         if lookFromAxis:
             axes = ["None", "r", "l", "s", "i", "a", "p"]
@@ -1061,6 +1068,60 @@ space origin: %%origin%%
                 view.lookFromAxis(axis)
             except ValueError:
                 pass
+
+        # Apply camera transforms if requested.  Angles in degrees, pan in
+        # window pixels (scaled to world units via the camera's parallel
+        # scale and the 3D view size), dolly is a multiplicative factor.
+        if any(v is not None for v in (orbitX, orbitY, roll, panX, panY, dolly)):
+            camera = renderer.GetActiveCamera()
+            # Sign conventions chosen to match Slicer's native 3D drag
+            # behaviour (vtkMRMLThreeDViewInteractorStyle): left-drag
+            # rotates the scene the same way you drag, shift+left-drag
+            # pans the scene with the cursor, right-drag dollies toward
+            # the cursor direction.
+            if orbitX is not None:
+                camera.Azimuth(-orbitX)
+            if orbitY is not None:
+                camera.Elevation(orbitY)
+            if orbitX is not None or orbitY is not None:
+                camera.OrthogonalizeViewUp()
+            if roll is not None:
+                camera.Roll(roll)
+            if dolly is not None and dolly > 0.0:
+                camera.Dolly(dolly)
+            if panX is not None or panY is not None:
+                import math
+                vup = list(camera.GetViewUp())
+                dop = list(camera.GetDirectionOfProjection())
+                right = [
+                    vup[1] * dop[2] - vup[2] * dop[1],
+                    vup[2] * dop[0] - vup[0] * dop[2],
+                    vup[0] * dop[1] - vup[1] * dop[0],
+                ]
+                n = math.sqrt(sum(c * c for c in right)) or 1.0
+                right = [c / n for c in right]
+                winSize = view.renderWindow().GetSize()
+                winH = max(1, winSize[1])
+                if camera.GetParallelProjection():
+                    world_per_pixel = (2.0 * camera.GetParallelScale()) / winH
+                else:
+                    fp = camera.GetFocalPoint()
+                    pos = camera.GetPosition()
+                    dist = math.sqrt(sum((fp[i] - pos[i]) ** 2 for i in range(3)))
+                    world_per_pixel = (2.0 * dist * math.tan(math.radians(camera.GetViewAngle()) / 2)) / winH
+                dx = (panX or 0.0) * world_per_pixel
+                dy = (panY or 0.0) * world_per_pixel
+                fp = list(camera.GetFocalPoint())
+                pos = list(camera.GetPosition())
+                for i in range(3):
+                    # Camera moves with the drag so the scene appears
+                    # to follow the cursor.
+                    delta = right[i] * dx + vup[i] * dy
+                    fp[i] += delta
+                    pos[i] += delta
+                camera.SetFocalPoint(*fp)
+                camera.SetPosition(*pos)
+            renderer.ResetCameraClippingRange()
 
         view.renderWindow().Render()
         view.renderEnabled = True
