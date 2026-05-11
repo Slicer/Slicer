@@ -121,6 +121,7 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLSceneEndBatchProcess() override;
 
   void OnInteractorStyleEvent(int eventId) override;
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
@@ -138,6 +139,10 @@ protected:
   void RemoveModelObservers(int clearCache);
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
   void RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode* model);
+
+  /// Remove display pipelines for nodes that are not in the scene anymore
+  /// (e.g. because they were removed during batch processing).
+  void PruneMissingNodes();
 
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLDisplayableNode* model);
