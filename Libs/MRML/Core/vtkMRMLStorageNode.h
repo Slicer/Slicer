@@ -320,7 +320,11 @@ public:
   /// Remove supported extension from filename.
   /// If filename is not specified then the current FileName will be used.
   std::string GetFileNameWithoutExtension(const char* fileName = nullptr);
+// Make sure that the Python wrapper uses the char* version
+// (because the std::string& version does not have a default argument)
+#ifndef __VTK_WRAP__
   std::string GetFileNameWithoutExtension(const std::string& fileName) { return GetFileNameWithoutExtension(fileName.c_str()); }
+#endif
 
   /// Compression parameter that is used to save the node
   vtkSetMacro(CompressionParameter, std::string);
