@@ -480,7 +480,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     @staticmethod
     def findCategoryWidget(parent, category):
         """Find the category widget (frame) by its custom property 'sampleDataCategory'."""
-        return slicer.util.findChild(parent, None, options={"sampleDataCategory": category})
+        return slicer.util.findChild(parent, None, properties={"sampleDataCategory": category})
 
     def isCategoryVisible(self, category):
         """Check the visibility of a SampleData category given its name.
@@ -490,8 +490,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         """
         if not SampleDataLogic.sampleDataSourcesByCategory(category):
             return False
-        frame = slicer.util.findChild(self.parent, None, options={"sampleDataCategory": category})
-        if frame is None:
+        try:
+            frame = SampleDataWidget.findCategoryWidget(self.parent, category)
+        except RuntimeError:
             return False
         return frame.isVisible()
 
@@ -502,9 +503,11 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         """
         if not SampleDataLogic.sampleDataSourcesByCategory(category):
             return
-        frame = slicer.util.findChild(self.parent, None, options={"sampleDataCategory": category})
-        if frame is not None:
-            frame.setVisible(visible)
+        try:
+            frame = SampleDataWidget.findCategoryWidget(self.parent, category)
+        except RuntimeError:
+            return
+        frame.setVisible(visible)
 
 
 #
