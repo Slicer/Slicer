@@ -121,6 +121,25 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         displayNode.SetSegmentVisibility(thirdSegmentID, True)
         segmentsTableView.filterBarVisible = False
 
+        def segmentNamesInOrder():
+            return [self.inputSegmentationNode.GetSegmentation().GetSegment(segmentID).GetName()
+                    for segmentID in self.inputSegmentationNode.GetSegmentation().GetSegmentIDs()]
+
+        self.assertEqual(segmentNamesInOrder(), ["first", "second", "third"])
+
+        self.assertTrue(segmentsTableView.moveSegmentsToRow([thirdSegmentID], 0))
+        self.assertEqual(segmentNamesInOrder(), ["third", "first", "second"])
+        slicer.app.processEvents()
+        slicer.util.delayDisplay("Dragged 'third' to the top")
+
+        self.assertTrue(segmentsTableView.moveSegmentsToRow([thirdSegmentID], 3))
+        self.assertEqual(segmentNamesInOrder(), ["first", "second", "third"])
+        slicer.app.processEvents()
+        slicer.util.delayDisplay("Dragged 'third' back to the end")
+
+        self.assertFalse(segmentsTableView.moveSegmentsToRow([firstSegmentID], 0))
+        self.assertEqual(segmentNamesInOrder(), ["first", "second", "third"])
+
         # Reset the filtering parameters in the segmentation node to avoid interference with other tests that
         # use this segmentation node
         self.inputSegmentationNode.SetSegmentListFilterEnabled(False)

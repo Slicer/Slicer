@@ -65,20 +65,29 @@
 
 // Qt includes
 #include <QAction>
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QDebug>
+#include <QDrag>
+#include <QDropEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QModelIndex>
+#include <QMouseEvent>
 #include <QSettings>
 #include <QStringList>
 #include <QTimer>
 #include <QToolButton>
+#include <QtGlobal>
 
 #define ID_PROPERTY "ID"
 #define VISIBILITY_PROPERTY "Visible"
 #define STATUS_PROPERTY "Status"
+
+//------------------------------------------------------------------------------
+static const char* SEGMENTS_TABLE_REORDER_MIME_TYPE = "application/x-slicer-segments-table-reorder";
 
 //-----------------------------------------------------------------------------
 struct SegmentListFilterParameters
@@ -181,6 +190,11 @@ public:
   /// Sets table message and takes care of the visibility of the label
   void setMessage(const QString& message);
 
+  int segmentDropRowForPosition(const QPoint& viewportPosition) const;
+  bool isSegmentsTableReorderDrag(QDropEvent* event) const;
+  QStringList segmentIDsAfterDisplayedRowMove(
+    const QStringList& currentSegmentIDs, const QStringList& displayedSegmentIDs, const QStringList& movedSegmentIDs, int row) const;
+
 public:
   /// Segmentation MRML node containing shown segments
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
@@ -221,6 +235,11 @@ public:
   /// Use terminology selector if UseTerminologySelectorSettingsKey is empty
   bool NoSettingsUseTerminologySelector{ false };
   bool TerminologySelectorAutoDisable{ true };
+
+  QPoint DragStartPosition;
+  bool DragStartPositionValid{ false };
+  QString PressedSegmentID;
+  QStringList DraggedSegmentIDs;
 };
 
 //-----------------------------------------------------------------------------
@@ -231,6 +250,87 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   {
     this->ShowStatusButtons[status] = nullptr;
   }
+}
+
+//-----------------------------------------------------------------------------
+int qMRMLSegmentsTableViewPrivate::segmentDropRowForPosition(const QPoint& viewportPosition) const
+{
+  if (!this->SegmentsTable || !this->SegmentsTable->model() || this->SegmentsTable->model()->rowCount() == 0)
+  {
+    return 0;
+  }
+
+  int row = this->SegmentsTable->rowAt(viewportPosition.y());
+  if (row < 0)
+  {
+    QRect firstRowRect = this->SegmentsTable->visualRect(this->SegmentsTable->model()->index(0, 0));
+    if (viewportPosition.y() < firstRowRect.center().y())
+    {
+      return 0;
+    }
+    return this->SegmentsTable->model()->rowCount();
+  }
+
+  QRect rowRect = this->SegmentsTable->visualRect(this->SegmentsTable->model()->index(row, 0));
+  return viewportPosition.y() < rowRect.center().y() ? row : row + 1;
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSegmentsTableViewPrivate::isSegmentsTableReorderDrag(QDropEvent* event) const
+{
+  return this->SegmentsTable && event && event->source() == this->SegmentsTable && event->mimeData()
+    && event->mimeData()->hasFormat(SEGMENTS_TABLE_REORDER_MIME_TYPE);
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSegmentsTableViewPrivate::segmentIDsAfterDisplayedRowMove(
+  const QStringList& currentSegmentIDs, const QStringList& displayedSegmentIDs, const QStringList& movedSegmentIDs, int row) const
+{
+  // The requested row is in proxy/view coordinates. Remove the moved displayed
+  // segments first, then translate the target row to an insertion point in the
+  // complete segmentation order so hidden segments keep their relative position.
+  QStringList remainingDisplayedSegmentIDs;
+  int insertIndex = 0;
+  for (int displayedRow = 0; displayedRow < displayedSegmentIDs.size(); ++displayedRow)
+  {
+    const QString& displayedSegmentID = displayedSegmentIDs[displayedRow];
+    bool isMoved = movedSegmentIDs.contains(displayedSegmentID);
+    if (displayedRow < row && !isMoved)
+    {
+      ++insertIndex;
+    }
+    if (!isMoved)
+    {
+      remainingDisplayedSegmentIDs << displayedSegmentID;
+    }
+  }
+
+  QString insertBeforeSegmentID;
+  if (insertIndex < remainingDisplayedSegmentIDs.size())
+  {
+    insertBeforeSegmentID = remainingDisplayedSegmentIDs[insertIndex];
+  }
+
+  QStringList reorderedSegmentIDs;
+  bool movedSegmentsInserted = false;
+  for (const QString& currentSegmentID : currentSegmentIDs)
+  {
+    if (!movedSegmentsInserted && !insertBeforeSegmentID.isEmpty() && currentSegmentID == insertBeforeSegmentID)
+    {
+      reorderedSegmentIDs.append(movedSegmentIDs);
+      movedSegmentsInserted = true;
+    }
+    if (!movedSegmentIDs.contains(currentSegmentID))
+    {
+      reorderedSegmentIDs << currentSegmentID;
+    }
+  }
+  if (!movedSegmentsInserted)
+  {
+    reorderedSegmentIDs.append(movedSegmentIDs);
+  }
+
+  return reorderedSegmentIDs;
 }
 
 //-----------------------------------------------------------------------------
@@ -288,6 +388,12 @@ void qMRMLSegmentsTableViewPrivate::init()
 
   // Select rows
   this->SegmentsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+  this->SegmentsTable->setDragEnabled(false);
+  this->SegmentsTable->setAcceptDrops(true);
+  this->SegmentsTable->setDropIndicatorShown(true);
+  this->SegmentsTable->setDragDropMode(QAbstractItemView::DropOnly);
+  this->SegmentsTable->setDragDropOverwriteMode(false);
+  this->SegmentsTable->setDefaultDropAction(Qt::MoveAction);
 
   // Unset read-only by default (edit triggers are double click and edit key press)
   q->setReadOnly(false);
@@ -323,6 +429,7 @@ void qMRMLSegmentsTableViewPrivate::init()
   this->SegmentsTable->setItemDelegateForColumn(this->Model->nameColumn(), this->TerminologyItemDelegate);
   this->SegmentsTable->setItemDelegateForColumn(this->Model->opacityColumn(), new qMRMLItemDelegate(this->SegmentsTable));
   this->SegmentsTable->installEventFilter(q);
+  this->SegmentsTable->viewport()->installEventFilter(q);
 }
 
 //-----------------------------------------------------------------------------
@@ -972,6 +1079,129 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
       }
     }
   }
+  else if ((target == d->SegmentsTable || target == d->SegmentsTable->viewport())
+           && (event->type() == QEvent::DragEnter || event->type() == QEvent::DragMove))
+  {
+    QDropEvent* dropEvent = static_cast<QDropEvent*>(event);
+    if (this->readOnly() || !d->isSegmentsTableReorderDrag(dropEvent))
+    {
+      dropEvent->ignore();
+      return true;
+    }
+    // Keep the default item-view drag handling out of the reorder path.
+    // The actual segment move is handled explicitly on Drop below.
+    dropEvent->setDropAction(Qt::MoveAction);
+    dropEvent->accept();
+    return true;
+  }
+  else if ((target == d->SegmentsTable || target == d->SegmentsTable->viewport()) && event->type() == QEvent::Drop)
+  {
+    QDropEvent* dropEvent = static_cast<QDropEvent*>(event);
+    if (this->readOnly() || !d->isSegmentsTableReorderDrag(dropEvent))
+    {
+      dropEvent->ignore();
+      return true;
+    }
+    QStringList draggedSegmentIDs = d->DraggedSegmentIDs;
+    if (draggedSegmentIDs.isEmpty())
+    {
+      dropEvent->ignore();
+      return true;
+    }
+
+    QPoint dropPosition;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    dropPosition = dropEvent->position().toPoint();
+#else
+    dropPosition = dropEvent->pos();
+#endif
+    if (target == d->SegmentsTable)
+    {
+      dropPosition = d->SegmentsTable->viewport()->mapFrom(d->SegmentsTable, dropPosition);
+    }
+    int dropRow = d->segmentDropRowForPosition(dropPosition);
+    this->moveSegmentsToRow(draggedSegmentIDs, dropRow);
+    dropEvent->setDropAction(Qt::MoveAction);
+    dropEvent->accept();
+    return true;
+  }
+  else if (target == d->SegmentsTable->viewport() && event->type() == QEvent::MouseButtonPress)
+  {
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+    if (mouseEvent->button() != Qt::LeftButton || this->readOnly())
+    {
+      d->DragStartPositionValid = false;
+      d->PressedSegmentID.clear();
+      return this->QWidget::eventFilter(target, event);
+    }
+
+    QModelIndex pressedIndex = d->SegmentsTable->indexAt(mouseEvent->pos());
+    d->DragStartPositionValid = pressedIndex.isValid();
+    d->PressedSegmentID = d->DragStartPositionValid ? d->SortFilterModel->segmentIDFromIndex(pressedIndex) : QString();
+    d->DragStartPosition = mouseEvent->pos();
+  }
+  else if (target == d->SegmentsTable->viewport() && event->type() == QEvent::MouseMove)
+  {
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+    if (!d->DragStartPositionValid || this->readOnly() || !(mouseEvent->buttons() & Qt::LeftButton)
+        || (mouseEvent->pos() - d->DragStartPosition).manhattanLength() < QApplication::startDragDistance())
+    {
+      return this->QWidget::eventFilter(target, event);
+    }
+
+    // If the mouse press started on an already selected row, drag the full
+    // selection. Otherwise drag only the pressed segment and select it first so
+    // the drop operation keeps the table selection synchronized with the move.
+    QStringList draggedSegmentIDs;
+    if (d->SegmentsTable->selectionModel()->hasSelection()
+        && d->SegmentsTable->selectionModel()->isRowSelected(
+          d->SortFilterModel->indexFromSegmentID(d->PressedSegmentID).row(), QModelIndex()))
+    {
+      draggedSegmentIDs = this->selectedSegmentIDs();
+    }
+    else if (!d->PressedSegmentID.isEmpty())
+    {
+      draggedSegmentIDs << d->PressedSegmentID;
+    }
+    if (draggedSegmentIDs.isEmpty())
+    {
+      d->DragStartPositionValid = false;
+      d->PressedSegmentID.clear();
+      return this->QWidget::eventFilter(target, event);
+    }
+
+    this->setSelectedSegmentIDs(draggedSegmentIDs);
+    QModelIndexList selectedIndexes = d->SegmentsTable->selectionModel()->selectedIndexes();
+    if (selectedIndexes.isEmpty())
+    {
+      d->DragStartPositionValid = false;
+      d->PressedSegmentID.clear();
+      return this->QWidget::eventFilter(target, event);
+    }
+
+    QMimeData* mimeData = d->SegmentsTable->model()->mimeData(selectedIndexes);
+    if (!mimeData)
+    {
+      d->DragStartPositionValid = false;
+      d->PressedSegmentID.clear();
+      return this->QWidget::eventFilter(target, event);
+    }
+    mimeData->setData(SEGMENTS_TABLE_REORDER_MIME_TYPE, "1");
+
+    QDrag drag(d->SegmentsTable);
+    drag.setMimeData(mimeData);
+    d->DraggedSegmentIDs = draggedSegmentIDs;
+    d->DragStartPositionValid = false;
+    drag.exec(Qt::MoveAction);
+    d->PressedSegmentID.clear();
+    d->DraggedSegmentIDs.clear();
+    return true;
+  }
+  else if (target == d->SegmentsTable->viewport() && (event->type() == QEvent::MouseButtonRelease || event->type() == QEvent::Leave))
+  {
+    d->DragStartPositionValid = false;
+    d->PressedSegmentID.clear();
+  }
   return this->QWidget::eventFilter(target, event);
 }
 
@@ -1034,10 +1264,12 @@ void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
   if (aReadOnly)
   {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    d->SegmentsTable->setDragDropMode(QAbstractItemView::NoDragDrop);
   }
   else
   {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    d->SegmentsTable->setDragDropMode(QAbstractItemView::DropOnly);
   }
 }
 
@@ -1532,6 +1764,72 @@ void qMRMLSegmentsTableView::jumpSlices()
       }
     }
   }
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::moveSegmentsToRow(QStringList segmentIDs, int row)
+{
+  if (segmentIDs.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << ": No segment specified";
+    return false;
+  }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return false;
+  }
+
+  QStringList displayedSegmentIDs = this->displayedSegmentIDs();
+  QStringList movedSegmentIDs;
+  for (const QString& segmentID : segmentIDs)
+  {
+    if (displayedSegmentIDs.contains(segmentID) && !movedSegmentIDs.contains(segmentID))
+    {
+      movedSegmentIDs << segmentID;
+    }
+  }
+  if (movedSegmentIDs.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << ": No displayed segments to move";
+    return false;
+  }
+  row = qBound(0, row, displayedSegmentIDs.size());
+
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  std::vector<std::string> currentSegmentIDsStd;
+  segmentation->GetSegmentIDs(currentSegmentIDsStd);
+  QStringList currentSegmentIDsQt;
+  for (const std::string& currentSegmentID : currentSegmentIDsStd)
+  {
+    currentSegmentIDsQt << QString::fromStdString(currentSegmentID);
+  }
+
+  QStringList reorderedSegmentIDs =
+    d->segmentIDsAfterDisplayedRowMove(currentSegmentIDsQt, displayedSegmentIDs, movedSegmentIDs, row);
+  if (reorderedSegmentIDs == currentSegmentIDsQt)
+  {
+    return false;
+  }
+
+  std::vector<std::string> reorderedSegmentIDsStd;
+  reorderedSegmentIDsStd.reserve(reorderedSegmentIDs.size());
+  for (const QString& segmentID : reorderedSegmentIDs)
+  {
+    reorderedSegmentIDsStd.push_back(segmentID.toStdString());
+  }
+
+  segmentation->ReorderSegments(reorderedSegmentIDsStd);
+  this->setSelectedSegmentIDs(movedSegmentIDs);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::moveSelectedSegmentsToRow(int row)
+{
+  return this->moveSegmentsToRow(this->selectedSegmentIDs(), row);
 }
 
 //------------------------------------------------------------------------------
