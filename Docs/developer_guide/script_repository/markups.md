@@ -506,6 +506,36 @@ pointListDisplayNode.SetSelectedColor(1,1,0) # Set color to yellow
 pointListDisplayNode.SetViewNodeIDs(["vtkMRMLSliceNodeRed", "vtkMRMLViewNode1"]) # Only show in red slice view and first 3D view
 ```
 
+### Set per-control-point colors
+
+Each control point can be assigned its own color. Per-point colors apply to
+the control point glyphs and override the display node's Selected/Unselected
+colors for points where a color has been set; the Active color still
+highlights the active control point. The line or curve connecting the
+control points keeps the display node's line color.
+
+```python
+m = slicer.modules.markups.logic().AddNewMarkupsNode("vtkMRMLMarkupsFiducialNode")
+m.AddControlPoint([0, 0, 0])
+m.AddControlPoint([10, 0, 0])
+m.AddControlPoint([20, 0, 0])
+
+# Override colors on individual control points (RGBA, 0..1)
+m.SetNthControlPointColor(0, 1.0, 0.0, 0.0)        # red
+m.SetNthControlPointColor(2, 0.0, 0.7, 1.0, 0.8)   # blue, 80% opacity
+
+# Enable per-point colors on the display node
+m.GetDisplayNode().SetUseControlPointColors(True)
+
+# Inspect / clear per-point colors
+print(m.IsNthControlPointColorOverridden(0))   # True
+print(m.IsNthControlPointColorOverridden(1))   # False (uses Selected/Unselected fallback)
+rgba = [0.0, 0.0, 0.0, 0.0]
+m.GetNthControlPointColor(0, rgba); print(rgba)  # [1.0, 0.0, 0.0, 1.0]
+m.ClearNthControlPointColor(0)                # revert point 0 to fallback
+m.ClearAllControlPointColors()                # revert every point
+```
+
 ### Get a notification if a markup control point position is modified
 
 Event management of Slicer-4.11 version is still subject to change. The example below shows how control point manipulation can be observed now.
