@@ -2,7 +2,7 @@
 set(proj DCMTK)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "OpenJPEG" "DCMTKcs")
 if(DCMTK_WITH_OPENSSL)
   if(NOT Slicer_USE_SYSTEM_${proj})
     list(APPEND ${proj}_DEPENDENCIES OpenSSL)
@@ -62,6 +62,12 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       )
   endif()
 
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DDCMTK_EXTERNAL_MODULES:STRING=${DCMTKcs_SOURCE_DIR}/dcmjp2kcs
+    -DDCMTK_WITH_OPENJPEG:BOOL=ON
+    -DOpenJPEG_DIR:PATH=${OpenJPEG_DIR}
+    )
+
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/DCMTK/DCMTK.git"
@@ -70,7 +76,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "a7369385d91f40e19a9b2d4ef922c61370dfc5b1" # DCMTK 3.7.0++ 2026-01-22
+    "2dd54ca1c28100b820ccf1383a0948e889246f96" # DCMTK 3.7.0++ 2026-05-08
     QUIET
     )
 
