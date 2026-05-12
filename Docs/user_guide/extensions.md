@@ -109,6 +109,23 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 - Wait for the installations to complete.
 - Click "Restart" button to restart the application.
 
+#### Install source-scripted extensions
+
+Source-scripted extensions are Python-only extensions that can be installed from a source directory, a source archive, an archive URL, or a Git repository when the source contains a `slicer-extension.json` manifest.
+
+- Open Extensions manager using menu: View / Extensions manager.
+- Click the "Install from source..." button.
+- Choose a local directory, a local archive, an archive URL, or a Git repository.
+- Review the manifest preview and trust warning.
+- Wait for the installation to complete.
+- Click "Restart" button to restart the application.
+
+For Git installs, the repository URL and optional branch, tag, or commit ref entered in the dialog are recorded as the extension origin. Branch installs can be checked for updates; tag and commit installs are fixed snapshots.
+
+Some source-scripted extensions provide install badges using `slicer://extensions/install-source?manifest=...` links. The link opens Slicer, downloads the referenced manifest, shows the same preview and trust warning, and installs from the `installSource` declared by the manifest. Operating system protocol registration is automatic for Windows installers and macOS application bundles. Portable builds and some Linux desktop environments may require manual `slicer://` protocol association.
+
+Only install source-scripted extensions from sources you trust. They run Python code in Slicer after restart.
+
 ### Troubleshooting
 
 #### Extensions manager takes very long time to start

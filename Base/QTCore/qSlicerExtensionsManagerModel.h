@@ -22,6 +22,7 @@
 #define __qSlicerExtensionsManagerModel_h
 
 // Qt includes
+#include <QByteArray>
 #include <QHash>
 #include <QStringList>
 #include <QUrl>
@@ -296,6 +297,27 @@ public:
   /// \sa installExtension(const QString&,ExtensionMetadataType,const QString&)
   Q_INVOKABLE bool installExtension(const QString& archiveFile, bool installDependencies = true, bool waitForCompletion = false);
 
+  /// Install a source-scripted extension from a local source directory or archive.
+  ///
+  /// The source must contain a valid slicer-extension.json manifest.
+  Q_INVOKABLE bool installSourceScriptedExtension(const QString& sourcePath, bool installDependencies = true);
+
+  /// Install a source-scripted extension from a downloaded source archive.
+  ///
+  /// The source URL is recorded as the managed snapshot origin.
+  Q_INVOKABLE bool installDownloadedSourceScriptedExtension(const QString& archivePath, const QUrl& sourceUrl, bool installDependencies = true);
+
+  /// Install a source-scripted extension from a git repository.
+  ///
+  /// The optional ref may name a branch, tag, or commit. Branch refs are update-checkable.
+  Q_INVOKABLE bool installSourceScriptedExtensionFromGit(const QString& repositoryUrl, const QString& ref = QString(), bool installDependencies = true);
+
+  /// Install a source-scripted extension from a previously inspected git checkout.
+  ///
+  /// The caller owns the staged checkout directory and may remove it after this method returns.
+  /// The supplied origin metadata is recorded as the installed extension origin.
+  Q_INVOKABLE bool installInspectedSourceScriptedExtensionFromGit(const QString& checkoutPath, const QVariantMap& originMetadata, bool installDependencies = true);
+
   /// Install extension.
   ///
   /// This attempts to install an extension with the specified name and
@@ -353,6 +375,29 @@ public:
 
   static ExtensionMetadataType parseExtensionDescriptionFile(const QString& file);
 
+  static ExtensionMetadataType parseSourceScriptedExtensionManifest(const QString& manifestFile, QString* errorMessage = nullptr);
+  static ExtensionMetadataType parseSourceScriptedExtensionManifestContent(const QByteArray& manifestContent,
+                                                                           const QString& sourceRoot = QString(),
+                                                                           bool validateSourceFiles = false,
+                                                                           QString* errorMessage = nullptr);
+
+  /// Inspect a local source-scripted directory or archive without installing it.
+  ///
+  /// The returned metadata includes an origin object describing the selected
+  /// source. A manifest installSource, if present, is retained for descriptor
+  /// previews but is not used by direct installs.
+  ExtensionMetadataType inspectSourceScriptedExtension(const QString& sourcePath, QString* errorMessage = nullptr) const;
+
+  /// Inspect a git repository checkout without installing it.
+  ///
+  /// On success, checkoutPath is set to a staged checkout directory owned by the caller, and
+  /// originMetadata contains the resolved git origin that should be passed to installInspectedSourceScriptedExtensionFromGit().
+  ExtensionMetadataType inspectSourceScriptedExtensionFromGit(const QString& repositoryUrl,
+                                                              const QString& ref,
+                                                              QString* checkoutPath,
+                                                              QVariantMap* originMetadata,
+                                                              QString* errorMessage = nullptr) const;
+
 public slots:
 
   /// \brief Add/remove bookmark for an extension.
@@ -374,6 +419,16 @@ public slots:
   /// This method is used by the extensions.slicer.org extension installer.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
   bool downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies = true, bool waitForCompletion = false);
+
+  /// \brief Download and install a source-scripted extension archive.
+  ///
+  /// The downloaded archive must contain a valid slicer-extension.json manifest.
+  bool downloadAndInstallSourceScriptedExtension(const QUrl& archiveUrl, bool installDependencies = true);
+
+  /// \brief Download and inspect a source-scripted extension archive.
+  ///
+  /// Emits sourceScriptedExtensionDownloadReady() after a valid manifest is found.
+  bool downloadAndInspectSourceScriptedExtension(const QUrl& archiveUrl, bool installDependencies = true);
 
   /// \brief Download and install an extension from the extensions server.
   ///
@@ -514,6 +569,8 @@ signals:
 
   void downloadFinished(QNetworkReply* reply);
 
+  void sourceScriptedExtensionDownloadReady(const QUrl& sourceUrl, const QString& archivePath, const QVariantMap& metadata, bool installDependencies);
+
   void updateDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
 
   void modelUpdated();
@@ -579,6 +636,12 @@ protected slots:
 
   /// \sa downloadAndInstallExtension
   void onInstallDownloadFinished(qSlicerExtensionDownloadTask* task);
+
+  /// \sa downloadAndInstallSourceScriptedExtension
+  void onInstallSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask* task);
+
+  /// \sa downloadAndInspectSourceScriptedExtension
+  void onInspectSourceScriptedDownloadFinished(qSlicerExtensionDownloadTask* task);
 
   /// \sa scheduleExtensionForUpdate
   void onUpdateDownloadFinished(qSlicerExtensionDownloadTask* task);
