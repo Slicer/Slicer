@@ -68,6 +68,7 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkNew.h>
 #include <vtkLogger.h>
+#include <vtkOutputWindow.h>
 
 // PythonQt includes
 #ifdef Slicer_USE_PYTHONQT
@@ -97,6 +98,18 @@ void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkPr
 #endif
 
   vtkLogger::SetStderrVerbosity(vtkLogger::VERBOSITY_OFF);
+
+#ifdef _WIN32
+  // vtkWin32OutputWindow::DisplayText() unconditionally shows a GUI popup for any
+  // VTK message, ignoring DisplayMode. Replace it early with the base class which
+  // properly suppresses output in NEVER mode, until CTK's error log handler takes over.
+  {
+    vtkNew<vtkOutputWindow> suppressingWindow;
+    suppressingWindow->SetDisplayModeToNever();
+    vtkOutputWindow::SetInstance(suppressingWindow);
+  }
+#endif
+
   itk::itkFactoryRegistration();
   qMRMLWidget::preInitializeApplication();
 
