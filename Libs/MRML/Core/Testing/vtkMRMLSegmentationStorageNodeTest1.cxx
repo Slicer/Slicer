@@ -26,6 +26,9 @@ Care Ontario.
 #include "vtkOrientedImageData.h"
 #include "vtkSegmentationConverterFactory.h"
 
+// VTK includes
+#include <vtkPointData.h>
+
 // Converter rules
 #include "vtkClosedSurfaceToBinaryLabelmapConversionRule.h"
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
@@ -35,6 +38,100 @@ Care Ontario.
 
 // STD includes
 #include <iostream>
+#include <thread>
+#include <chrono>
+
+//----------------------------------------------------------------------------
+int TestConcurrentWriting(const char* tempDir)
+{
+  std::cout << "Testing concurrent writing protection..." << std::endl;
+
+  std::vector<std::thread> threads;
+  int numberOfThreads = 3;
+  bool writeResults[3] = { false, false, false };
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+  scene->AddNode(segmentationNode);
+
+  vtkNew<vtkOrientedImageData> imageData;
+  imageData->SetDimensions(500, 500, 500);
+  imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  imageData->GetPointData()->GetScalars()->Fill(1);
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  vtkNew<vtkSegment> segment;
+  segment->SetName("TestSegment");
+  segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), imageData);
+  segmentation->AddSegment(segment);
+  // Fill the segment with label value 1
+  vtkOrientedImageData* segmentImageData = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
+  if (segmentImageData)
+  {
+    void* ptr = segmentImageData->GetScalarPointer();
+    if (ptr)
+    {
+      memset(ptr, 1, segmentImageData->GetScalarSize() * segmentImageData->GetNumberOfPoints());
+    }
+  }
+
+  vtkNew<vtkMRMLSegmentationStorageNode> storageNode;
+  scene->AddNode(storageNode);
+
+  // IMPORTANT: Each thread writes to the SAME file to test locking
+  std::string filename = vtksys::SystemTools::JoinPath({ tempDir, "/concurrent_segmentation.seg.nrrd" });
+  storageNode->SetFileName(filename.c_str());
+
+  // Lambda function for concurrent writing
+  auto writeSegmentation = [&](int threadId, bool* result)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10 + threadId * 500));
+    *result = storageNode->WriteData(segmentationNode);
+    if (*result)
+    {
+      *result = vtksys::SystemTools::FileExists(filename);
+    }
+  };
+
+  // Launch multiple threads to write concurrently to the SAME file
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    threads.emplace_back(writeSegmentation, threadId, &writeResults[threadId]);
+  }
+
+  // Wait for all threads to complete
+  for (auto& thread : threads)
+  {
+    thread.join();
+  }
+
+  int successfulWrites = 0;
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    if (writeResults[threadId])
+    {
+      successfulWrites++;
+      std::cout << "Thread " << threadId << " write succeeded" << std::endl;
+    }
+    else
+    {
+      std::cout << "Thread " << threadId << " write failed" << std::endl;
+    }
+  }
+
+  if (successfulWrites != numberOfThreads)
+  {
+    std::cerr << "Expected exactly " << numberOfThreads << " successful writes, got " << successfulWrites << std::endl;
+    std::cerr << "This suggests the atomic locking mechanism is not working properly" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Clean up
+  vtksys::SystemTools::RemoveFile(filename);
+
+  std::cout << "Concurrent writing test passed - atomic locking is working!" << std::endl;
+  return EXIT_SUCCESS;
+}
 
 int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 {
@@ -130,7 +227,7 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
     vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
     scene->AddNode(segmentationStorageNode);
     std::string emptySegmentationFilename = std::string(tempDir) + "/EmptySegmentation.seg.nrrd";
-    std::cout << "Write empty segmentation file: " << emptySegmentationFilename;
+    std::cout << "Write empty segmentation file: " << emptySegmentationFilename << std::endl;
     segmentationStorageNode->SetFileName(emptySegmentationFilename.c_str());
     CHECK_INT(segmentationStorageNode->WriteData(segmentationNode), 1);
 
@@ -154,6 +251,9 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
     // Clean up
     vtksys::SystemTools::RemoveFile(emptySegmentationFilename);
   }
+
+  // Test concurrent writing protection
+  CHECK_EXIT_SUCCESS(TestConcurrentWriting(tempDir));
 
   return EXIT_SUCCESS;
 }
