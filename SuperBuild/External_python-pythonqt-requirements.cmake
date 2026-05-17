@@ -32,10 +32,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [packaging]
-  packaging==25.0 --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484
+  packaging==26.2 --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e
   # [/packaging]
   # [pyparsing]
-  pyparsing==3.2.5 --hash=sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e
+  pyparsing==3.3.2 --hash=sha256:850ba148bd908d7e2411587e247a1e4f0327839c40e2e5e6d05a007ecc69911d
   # [/pyparsing]
   # [six]
   six==1.17.0 --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274
