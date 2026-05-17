@@ -350,7 +350,27 @@ signals:
   /// Only nodes with valid type emit the signal
   void nodeAdded(vtkMRMLNode* node);
 
-  /// Signal emitted when \a node is added by the user
+  /// Signal emitted on every successful call to \a addNode() (which is a
+  /// Q_INVOKABLE that may be triggered either by a user interaction with
+  /// the combo box or by programmatic / scripted callers, e.g. extensions
+  /// that pre-populate nodes via the same API).
+  ///
+  /// \warning The signal name predates the existence of programmatic
+  /// \a addNode() callers and is retained for backward compatibility,
+  /// but the name is no longer accurate: \a nodeAddedByUser fires for
+  /// any add through \a addNode(), not only direct user actions. Callers
+  /// that need to react only to true user-triggered adds must filter on
+  /// the surrounding context (for example, by also listening to the
+  /// combo box's own user-action signals such as \a currentNodeChanged
+  /// or by tracking whether the call originated from their own scripted
+  /// \a addNode() invocation).
+  ///
+  /// Historical note (see issue #9143): user-action call sites in this
+  /// class (\a onComboBoxIndexChanged and \a createNodeAs) used to emit
+  /// this signal a second time after \a addNode() returned, so callers
+  /// connected via direct connection received it twice per single user
+  /// action. The duplicate emits have been removed; \a addNode() is now
+  /// the single canonical emit site.
   void nodeAddedByUser(vtkMRMLNode* node);
 
   /// Signal emitted when \a node is about to be removed from
