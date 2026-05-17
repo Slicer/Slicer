@@ -27,16 +27,16 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [simpleitk]
   # Hashes correspond to the following packages:
-  #  - simpleitk-2.5.3-cp311-abi3-macosx_10_9_x86_64.whl
-  #  - simpleitk-2.5.3-cp311-abi3-macosx_11_0_arm64.whl
-  #  - simpleitk-2.5.3-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl
-  #  - simpleitk-2.5.3-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
-  #  - simpleitk-2.5.3-cp311-abi3-win_amd64.whl
-  simpleitk==2.5.3 --hash=sha256:eda739126d3cdda29266b722c3bb182a534ee4b4b60a6e565c20e1ebbd7ca2da \
-                   --hash=sha256:5438fb87b7e3380b1ba02b2447bf9f474560b51a649b2ad6973195c6515a43a5 \
-                   --hash=sha256:724a8fba4a493a9da06cbba545521174092927acf99fbc0594f4f257d66061ff \
-                   --hash=sha256:b615a96826815471965899d50d089fb67381a4d59b65750eafe58a6a980ecce2 \
-                   --hash=sha256:31b187922c53c858f8604b4f90ebd7aae809e680de751674f5f95ccefcf674d5
+  #  - simpleitk-2.5.5-cp311-abi3-macosx_10_9_x86_64.whl
+  #  - simpleitk-2.5.5-cp311-abi3-macosx_11_0_arm64.whl
+  #  - simpleitk-2.5.5-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl
+  #  - simpleitk-2.5.5-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+  #  - simpleitk-2.5.5-cp311-abi3-win_amd64.whl
+  simpleitk==2.5.5 --hash=sha256:e831d15f5ea5b0e02ed3a6ac5f2dd34ba0a0eeaa4ebacfb1d970999836b19ee0 \
+                   --hash=sha256:ee87416622cec6ed6b96747a0648c82c6e88f10b6553668ce90736f09ab5a994 \
+                   --hash=sha256:847f42057d7bf01b5721b107dd3e00d4ee8d514f6f1ff85794ffedacaf4afc53 \
+                   --hash=sha256:8ace5e392be00d5bec28c87ef1d73016f8ebe671dafffe9e9d045f20b0968033 \
+                   --hash=sha256:a5fcfcfe9242d3d509b254b3213ca0f5db2c15903f2fc375d9ac5d38e57d415d
   # [/simpleitk]
   ]===])
 
