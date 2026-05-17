@@ -404,8 +404,8 @@ void vtkCacheManager::SetRemoteCacheDirectory(const char* dir)
       }
       else
       {
-        vtkWarningMacro("Cache directory does not contain sentinel file " << this->GetSentinelFileName()
-                                                                          << ". Destructive cache operations are disabled until the sentinel is created.");
+        vtkWarningMacro("Cache directory '" << this->RemoteCacheDirectory << "' does not contain sentinel file " << this->GetSentinelFileName()
+                                            << ". Destructive cache operations are disabled until the sentinel is created.");
       }
     }
   }
