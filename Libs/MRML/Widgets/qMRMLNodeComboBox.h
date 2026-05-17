@@ -350,8 +350,16 @@ signals:
   /// Only nodes with valid type emit the signal
   void nodeAdded(vtkMRMLNode* node);
 
-  /// Signal emitted when \a node is added by the user
+  /// Deprecated. Use \a nodeAdded or \a nodeAddedByUserAction signal instead.
+  ///
+  /// The signal is deprecated, because the name is not accurate.
+  /// The name would suggest that it is emitted only when the user adds a new node
+  /// via GUI, but it is actually emitted whenever a node is added (even if not
+  /// triggered from the GUI).
   void nodeAddedByUser(vtkMRMLNode* node);
+
+  /// Signal emitted when \a node is added by the user
+  void nodeAddedByUserAction(vtkMRMLNode* node);
 
   /// Signal emitted when \a node is about to be removed from
   /// the comboBox. Only nodes with valid type emit the signal

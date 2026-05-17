@@ -450,7 +450,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
         if (newNode != nullptr)
         {
           this->setCurrentNode(newNode);
-          emit this->nodeAddedByUser(newNode);
+          emit this->nodeAddedByUserAction(newNode);
         }
       }
     }
@@ -703,7 +703,7 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
     {
       newNode->SetName(nodeName.toUtf8());
       this->setCurrentNode(newNode);
-      emit this->nodeAddedByUser(newNode);
+      emit this->nodeAddedByUserAction(newNode);
     }
   }
 }
