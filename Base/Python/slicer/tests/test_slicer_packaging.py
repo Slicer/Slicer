@@ -155,7 +155,13 @@ class LoadPyprojectDependenciesTest(unittest.TestCase):
         try:
             with self.assertRaises(KeyError) as ctx:
                 slicer.packaging.load_pyproject_dependencies(temp_path)
-            self.assertIn(temp_path, str(ctx.exception))
+            # KeyError.__str__ returns repr(args[0]), which on Windows doubles
+            # backslashes and adds surrounding quotes, e.g.:
+            #   temp_path          ->  C:\Users\...\tmp.toml
+            #   str(ctx.exception) -> 'some message: C:\\Users\\...\\tmp.toml'
+            # repr(temp_path)[1:-1] produces the same escaped form without the
+            # surrounding quotes, making the substring check work on all platforms.
+            self.assertIn(repr(temp_path)[1:-1], str(ctx.exception))
         finally:
             os.unlink(temp_path)
 
