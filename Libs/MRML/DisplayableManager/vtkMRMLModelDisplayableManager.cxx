@@ -407,6 +407,14 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneEndClose()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneEndBatchProcess()
+{
+  this->PruneMissingNodes();
+  this->SetUpdateFromMRMLRequested(true);
+  Superclass::OnMRMLSceneEndBatchProcess();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateFromMRMLScene()
 {
   // UpdateFromMRML will be executed only if there has been some actions
@@ -1231,6 +1239,29 @@ void vtkMRMLModelDisplayableManager::RemoveModelObservers(int clearCache)
   if (clearCache)
   {
     this->ClearDisplayMaps();
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::PruneMissingNodes()
+{
+  if (!this->GetMRMLScene())
+  {
+    return;
+  }
+
+  std::vector<vtkMRMLDisplayableNode*> removedDisplayableNodes;
+  for (auto iter = this->Internal->DisplayableNodes.begin(); iter != this->Internal->DisplayableNodes.end(); iter++)
+  {
+    vtkMRMLDisplayNode* modelDisplayNode = vtkMRMLDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
+    if (modelDisplayNode == nullptr)
+    {
+      removedDisplayableNodes.push_back(iter->second);
+    }
+  }
+  for (auto displayableNode : removedDisplayableNodes)
+  {
+    this->RemoveDisplayable(displayableNode);
   }
 }
 
