@@ -450,7 +450,10 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
         if (newNode != nullptr)
         {
           this->setCurrentNode(newNode);
-          emit this->nodeAddedByUser(newNode);
+          // Do not emit nodeAddedByUser here; addNode() already emits it
+          // on every successful call. Emitting again at this call site
+          // caused the signal to fire twice for a single user action
+          // (see issue #9143).
         }
       }
     }
@@ -703,7 +706,10 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
     {
       newNode->SetName(nodeName.toUtf8());
       this->setCurrentNode(newNode);
-      emit this->nodeAddedByUser(newNode);
+      // Do not emit nodeAddedByUser here; addNode() already emits it
+      // on every successful call. Emitting again at this call site
+      // caused the signal to fire twice for a single user action
+      // (see issue #9143).
     }
   }
 }
