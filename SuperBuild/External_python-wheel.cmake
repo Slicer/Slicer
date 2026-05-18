@@ -15,7 +15,7 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS wheel)
+  foreach(module_name IN ITEMS packaging wheel)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
@@ -26,8 +26,11 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [packaging]
+  packaging==26.2 --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e
+  # [/packaging]
   # [wheel]
-  wheel==0.45.1 --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
+  wheel==0.47.0 --hash=sha256:212281cab4dff978f6cedd499cd893e1f620791ca6ff7107cf270781e587eced
   # [/wheel]
   ]===])
 
