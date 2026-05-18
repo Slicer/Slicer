@@ -147,6 +147,13 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
         labelNode.labelAttributes = []
 
         for segment in segmentAttributes:
+          # Skip the background segment (labelID 0). In DICOM Labelmap Segmentation objects,
+          # pixel value 0 is reserved for background and may appear as a defined segment in the
+          # metadata. ImportLabelmapToSegmentationNode does not create a VTK segment for pixel
+          # value 0, so including this entry would shift all subsequent metadata assignments by one.
+          if segment.get("labelID", 1) == 0:
+            continue
+
           try:
             rgb255 = segment["recommendedDisplayRGBValue"]
             rgb = [float(c) / 255. for c in rgb255]
