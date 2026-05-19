@@ -657,6 +657,15 @@ void qSlicerCoreApplicationPrivate::initDataIO()
       q->setCachePath(newCacheFolder);
     }
   }
+
+  // Older Slicer versions did not add sentinel file to the cache folder, so we add it now if it was missing.
+  // But we only do that if the folder was not manually changed by the user (in that case we cannot be sure that the folder only contains temporary files, so it is safer to not add
+  // the sentinel file, because that would enable file deletion from the cache folder).
+  if (!this->MRMLRemoteIOLogic->GetCacheManager()->HasSentinelFileInDirectory(q->cachePath().toStdString()) && q->cachePath() == q->defaultCachePath())
+  {
+    this->MRMLRemoteIOLogic->GetCacheManager()->CreateSentinelFileInDirectory(q->cachePath().toStdString());
+  }
+
   this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->cachePath().toUtf8());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();

@@ -803,6 +803,12 @@ bool qMRMLSegmentEditorWidget::setSourceRepresentationToBinaryLabelmap()
     return d->Logic->TrivialSetSourceRepresentationToBinaryLabelmap();
   }
 
+  if (!d->SegmentationNode)
+  {
+    qDebug() << Q_FUNC_INFO << " failed: No segmentation node.";
+    return false;
+  }
+
   // Editing is only possible if binary labelmap is the source representation
   // If source is not binary labelmap, then ask the user if they wants to make it source
   QString message = tr("Editing requires binary labelmap source representation, but currently the source representation is %1. "

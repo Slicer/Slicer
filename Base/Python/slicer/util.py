@@ -332,20 +332,29 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     return children
 
 
-def findChild(widget, name):
-    """Convenience method to access a widget by its ``name``.
+def findChild(widget, name, properties=None):
+    """Convenience method to access a widget by its ``name`` and/or Qt dynamic properties.
 
-    :raises RuntimeError: if the widget with the given ``name`` does not exist.
+    :param widget: parent widget to search within.
+    :param name: name of the child widget, or ``None`` to skip name filtering.
+    :param properties: optional dict of Qt dynamic property names and expected values.
+        When provided, only children whose properties match all entries are considered.
+    :raises RuntimeError: if a matching widget does not exist.
     """
-    errorMessage = "Widget named " + str(name) + " does not exist."
-    child = None
-    try:
-        child = findChildren(widget, name=name)[0]
-        if not child:
-            raise RuntimeError(errorMessage)
-    except IndexError:
-        raise RuntimeError(errorMessage)
-    return child
+    candidates = findChildren(widget, name=name) if name else findChildren(widget)
+    if properties is not None:
+        candidates = [c for c in candidates if all(c.property(k) == v for k, v in properties.items())]
+    if not candidates:
+        descriptionParts = []
+        if name:
+            descriptionParts.append(f"name={name!r}")
+        if properties:
+            descriptionParts.append(f"properties={properties}")
+        if descriptionParts:
+            raise RuntimeError(f"Widget with {', '.join(descriptionParts)} does not exist.")
+        else:
+            raise RuntimeError("No child widget was found.")
+    return candidates[0]
 
 
 def loadUI(path):
@@ -4081,6 +4090,75 @@ def logProcessOutput(proc, logCallback=None):
     retcode = proc.returncode
     if retcode != 0:
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
+
+def _executePythonModule(
+    module: str,
+    args: list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
+    """Execute a Python module as a script in Slicer's Python environment.
+    .. deprecated:: 5.11.0
+       Use :func:`executePythonModule` function instead.
+    """
+    import warnings
+    warnings.warn("_executePythonModule is deprecated, use executePythonModule instead", DeprecationWarning, stacklevel=2)
+    return executePythonModule(module, args, blocking, logCallback, completedCallback)
+
+
+def executePythonModule(
+    module: str,
+    args: list[str],
+    blocking: bool = True,
+    logCallback: Callable[[str], None] | None = None,
+    completedCallback: Callable[[int], None] | None = None,
+) -> None:
+    """Execute a Python module as a script in Slicer's Python environment.
+
+    Internally python -m is called with the module name and additional arguments.
+
+    :param module: Python module name to execute (e.g., "pip")
+    :param args: command-line arguments to pass to the module
+    :param blocking: If True (default), block until completion. If False, return immediately.
+    :param logCallback: When blocking=False, called with each line of output.
+    :param completedCallback: When blocking=False, called when process completes.
+    :raises RuntimeError: if PythonSlicer executable not found
+    :raises CalledProcessError: in blocking mode, if process fails
+    """
+    import os, sys
+    import shutil
+
+    # Determine pythonSlicerExecutablePath
+    try:
+        from slicer import app  # noqa: F401
+
+        # If we get to this line then import from "app" is succeeded,
+        # which means that we run this function from Slicer Python interpreter.
+        # PythonSlicer is added to PATH environment variable in Slicer
+        # therefore shutil.which will be able to find it.
+        pythonSlicerExecutablePath = shutil.which("PythonSlicer")
+        if not pythonSlicerExecutablePath:
+            raise RuntimeError("PythonSlicer executable not found")
+    except ImportError:
+        # Running from console
+        pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
+        if os.name == "nt":
+            pythonSlicerExecutablePath += ".exe"
+
+    commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
+
+    if blocking:
+        proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
+        logProcessOutput(proc, logCallback=logCallback)
+    else:
+        launchConsoleProcess(
+            commandLine,
+            useStartupEnvironment=False,
+            blocking=False,
+            logCallback=logCallback,
+            completedCallback=completedCallback,
+        )
 
 
 def pip_install(requirements, **kwargs):

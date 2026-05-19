@@ -17,8 +17,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkGetStringMacro(SourceURI);
   vtkSetStringMacro(SourceURI);
+  void SetSourceURI(const std::string& sourceURI) { this->SetSourceURI(sourceURI.c_str()); }
   vtkGetStringMacro(DestinationURI);
   vtkSetStringMacro(DestinationURI);
+  void SetDestinationURI(const std::string& destinationURI) { this->SetDestinationURI(destinationURI.c_str()); }
   vtkGetObjectMacro(Handler, vtkURIHandler);
   virtual void SetHandler(vtkURIHandler* uriHandler);
   vtkGetMacro(TransferType, int);

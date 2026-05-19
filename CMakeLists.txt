@@ -220,13 +220,10 @@ mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 #-----------------------------------------------------------------------------
 # QtTesting compatibility check
 #-----------------------------------------------------------------------------
-if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
-  if(Slicer_USE_QtTesting)
-    message(WARNING "QtTesting is not yet compatible with Qt 6. Forcing Slicer_USE_QtTesting to OFF. "
-                    "Please review the state of https://github.com/Slicer/Slicer/issues/8839")
-  endif()
-  set(Slicer_USE_QtTesting OFF CACHE BOOL "Integrate QtTesting framework into Slicer." FORCE)
-endif()
+# QtTesting is now supported under both Qt 5 and Qt 6 by the upstream
+# commontk/QtTesting and CTK projects. The previous Qt 6 force-disable
+# has been removed; Slicer_USE_QtTesting follows its user-facing default
+# regardless of Qt major version. See https://github.com/Slicer/Slicer/issues/8839
 
 #-----------------------------------------------------------------------------
 # Python requirements
@@ -670,7 +667,9 @@ endif()
     Svg Sql
     )
 
-  if(Slicer_USE_QtTesting)
+  if(Slicer_USE_QtTesting AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "6")
+    # XmlPatterns was removed in Qt 6; CTK's QtTesting wrapper already guards
+    # its usage. Only require the module for Qt 5 builds.
     list(APPEND Slicer_REQUIRED_QT_MODULES
       XmlPatterns
       )

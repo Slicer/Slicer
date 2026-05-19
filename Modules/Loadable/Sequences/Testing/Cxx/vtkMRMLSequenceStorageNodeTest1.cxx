@@ -32,6 +32,8 @@
 #include <vtkMRMLVolumeSequenceStorageNode.h>
 
 // VTK includes
+#include <vtksys/SystemTools.hxx>
+
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -87,9 +89,17 @@ int vtkMRMLSequenceStorageNodeTest1(int argc, char* argv[])
   }
 
   vtkNew<vtkMRMLScene> scene;
+
+  std::string cacheDir = tempDir + "/" + scene->GetTemporaryBundleDirectory();
+  if (!vtksys::SystemTools::MakeDirectory(cacheDir.c_str()))
+  {
+    std::cerr << "Failed to create cache directory: " << cacheDir << std::endl;
+    return EXIT_FAILURE;
+  }
+
   scene->SetDataIOManager(vtkNew<vtkDataIOManager>());
   scene->GetDataIOManager()->SetCacheManager(vtkNew<vtkCacheManager>());
-  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(tempDir.c_str());
+  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(cacheDir.c_str());
 
   // Add generic node sequence
   {
@@ -158,5 +168,6 @@ int vtkMRMLSequenceStorageNodeTest1(int argc, char* argv[])
     CHECK_NOT_NULL(createdTransformStorageNode);
   }
 
+  vtksys::SystemTools::RemoveADirectory(cacheDir);
   return EXIT_SUCCESS;
 }

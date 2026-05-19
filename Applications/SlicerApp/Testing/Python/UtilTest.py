@@ -72,6 +72,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.test_setSliceViewerLayers()
         self.test_loadUI()
         self.test_findChild()
+        self.test_findChild_properties()
         self.test_arrayFromVolume()
         self.test_updateVolumeFromArray()
         self.test_updateTableFromArray()
@@ -191,6 +192,44 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
         # Parent window is created automatically, delete it now to prevent memory leaks
         utilWidget.parent.deleteLater()
+
+    def test_findChild_properties(self):
+        # Create a parent widget with two labeled children
+        parent = qt.QWidget()
+        child1 = qt.QLabel("first", parent)
+        child1.setProperty("myCategory", "alpha")
+        child2 = qt.QLabel("second", parent)
+        child2.setProperty("myCategory", "beta")
+
+        # Find by property alone
+        found = slicer.util.findChild(parent, None, properties={"myCategory": "alpha"})
+        self.assertEqual(found, child1)
+
+        found = slicer.util.findChild(parent, None, properties={"myCategory": "beta"})
+        self.assertEqual(found, child2)
+
+        # Find by name and property together
+        child1.setObjectName("child_one")
+        found = slicer.util.findChild(parent, "child_one", properties={"myCategory": "alpha"})
+        self.assertEqual(found, child1)
+
+        # Name matches but property does not — should raise
+        caughtException = False
+        try:
+            slicer.util.findChild(parent, "child_one", properties={"myCategory": "beta"})
+        except RuntimeError:
+            caughtException = True
+        self.assertTrue(caughtException)
+
+        # Property does not exist — should raise
+        caughtException = False
+        try:
+            slicer.util.findChild(parent, None, properties={"myCategory": "gamma"})
+        except RuntimeError:
+            caughtException = True
+        self.assertTrue(caughtException)
+
+        parent.deleteLater()
 
     def test_arrayFromVolume(self):
         # Test if retrieving voxels as a numpy array works

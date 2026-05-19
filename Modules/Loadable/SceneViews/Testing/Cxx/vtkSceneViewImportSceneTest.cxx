@@ -27,6 +27,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtksys/SystemTools.hxx>
 
 #include <vtkImageData.h>
 #include <vtkNew.h>
@@ -87,9 +88,17 @@ int vtkSceneViewImportSceneTest(int argc, char* argv[])
 
   // Save a scene containing a viewnode and a sceneview node.
   vtkNew<vtkMRMLScene> scene;
+
+  std::string cacheDir = std::string(tempDir) + "/" + scene->GetTemporaryBundleDirectory();
+  if (!vtksys::SystemTools::MakeDirectory(cacheDir.c_str()))
+  {
+    std::cerr << "Failed to create cache directory: " << cacheDir << std::endl;
+    return EXIT_FAILURE;
+  }
+
   scene->SetDataIOManager(vtkNew<vtkDataIOManager>());
   scene->GetDataIOManager()->SetCacheManager(vtkNew<vtkCacheManager>());
-  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(tempDir);
+  scene->GetDataIOManager()->GetCacheManager()->SetRemoteCacheDirectory(cacheDir.c_str());
 
   vtkNew<vtkMRMLApplicationLogic> appLogic;
 
@@ -126,5 +135,6 @@ int vtkSceneViewImportSceneTest(int argc, char* argv[])
 
   CHECK_INT(sceneViewLogic->GetNumberOfSceneViews(), 1);
 
+  vtksys::SystemTools::RemoveADirectory(cacheDir);
   return EXIT_SUCCESS;
 }
