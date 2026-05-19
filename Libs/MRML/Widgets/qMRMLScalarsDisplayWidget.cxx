@@ -138,7 +138,10 @@ QList<vtkMRMLDisplayNode*> qMRMLScalarsDisplayWidget::mrmlDisplayNodes() const
   QList<vtkMRMLDisplayNode*> displayNodes; // this list will only contain valid (non-null) display node pointers
   for (vtkMRMLDisplayNode* displayNode : d->CurrentDisplayNodes)
   {
-    displayNodes << displayNode;
+    if (displayNode)
+    {
+      displayNodes << displayNode;
+    }
   }
   return displayNodes;
 }
@@ -149,6 +152,24 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNodes(QList<vtkMRMLDisplayNode*> d
   Q_D(qMRMLScalarsDisplayWidget);
 
   displayNodes.removeAll(nullptr);
+
+  // Return if the list of display nodes did not change to avoid unnecessary updates.
+  if (displayNodes.size() == d->CurrentDisplayNodes.size())
+  {
+    bool same = true;
+    for (int i = 0; i < displayNodes.size(); ++i)
+    {
+      if (displayNodes[i] != d->CurrentDisplayNodes[i])
+      {
+        same = false;
+        break;
+      }
+    }
+    if (same)
+    {
+      return;
+    }
+  }
 
   // Only the first display node is observed
   qvtkReconnect((d->CurrentDisplayNodes.size() > 0 ? d->CurrentDisplayNodes[0] : nullptr),
@@ -194,8 +215,14 @@ void qMRMLScalarsDisplayWidget::setScalarsVisibility(bool visible)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
+    if (!displayNode)
+    {
+      continue;
+    }
     displayNode->SetScalarVisibility(visible);
     displayNode->UpdateAssignedAttribute();
   }
@@ -220,8 +247,14 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
+    if (!displayNode)
+    {
+      continue;
+    }
     int wasModified = displayNode->StartModify();
 
     displayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
@@ -256,7 +289,9 @@ void qMRMLScalarsDisplayWidget::setScalarsColorNode(vtkMRMLColorNode* colorNode)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
     if (displayNode)
     {
@@ -278,8 +313,14 @@ void qMRMLScalarsDisplayWidget::setScalarRangeMode(vtkMRMLDisplayNode::ScalarRan
   Q_D(qMRMLScalarsDisplayWidget);
 
   bool modified = false;
-  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
+    if (!displayNode)
+    {
+      continue;
+    }
     int currentScalarRangeMode = displayNode->GetScalarRangeFlag();
     if (currentScalarRangeMode != mode)
     {
@@ -311,12 +352,18 @@ void qMRMLScalarsDisplayWidget::setScalarsDisplayRange(double min, double max)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
   {
+    if (!displayNode)
+    {
+      continue;
+    }
     double* range = displayNode->GetScalarRange();
     if (range[0] == min && range[1] == max)
     {
-      return;
+      continue;
     }
     displayNode->SetScalarRange(min, max);
   }
