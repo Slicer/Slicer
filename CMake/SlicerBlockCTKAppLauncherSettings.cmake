@@ -149,6 +149,17 @@ if(UNIX AND NOT APPLE)
     "QTWEBENGINE_DISABLE_SANDBOX=1"
     )
 endif()
+if(WIN32)
+  # Route Qt WebEngine's Chromium GPU process through ANGLE/D3D11 instead of
+  # desktop OpenGL. With AA_ShareOpenGLContexts set, WebEngine on Windows can
+  # otherwise be pulled onto the desktop OpenGL backend and contend with VTK's
+  # GL context (observed on NVIDIA), causing 3D view gray-flashes during
+  # interaction and Extensions Manager rendering glitches. ANGLE/D3D11 keeps
+  # WebEngine hardware-accelerated without sharing the GL context.
+  list(APPEND SLICER_ENVVARS_BUILD
+    "QTWEBENGINE_CHROMIUM_FLAGS=--use-angle=d3d11"
+    )
+endif()
 
 # External projects - environment variables
 foreach(varname IN LISTS Slicer_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
@@ -289,6 +300,17 @@ if(UNIX AND NOT APPLE)
   # (see https://github.com/Slicer/Slicer/issues/6577)
   list(APPEND SLICER_ENVVARS_INSTALLED
     "QTWEBENGINE_DISABLE_SANDBOX=1"
+    )
+endif()
+if(WIN32)
+  # Route Qt WebEngine's Chromium GPU process through ANGLE/D3D11 instead of
+  # desktop OpenGL. With AA_ShareOpenGLContexts set, WebEngine on Windows can
+  # otherwise be pulled onto the desktop OpenGL backend and contend with VTK's
+  # GL context (observed on NVIDIA), causing 3D view gray-flashes during
+  # interaction and Extensions Manager rendering glitches. ANGLE/D3D11 keeps
+  # WebEngine hardware-accelerated without sharing the GL context.
+  list(APPEND SLICER_ENVVARS_INSTALLED
+    "QTWEBENGINE_CHROMIUM_FLAGS=--use-angle=d3d11"
     )
 endif()
 
