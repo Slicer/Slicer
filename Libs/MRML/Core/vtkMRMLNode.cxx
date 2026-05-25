@@ -473,6 +473,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
       }
     }
   }
+
   this->EndModify(disabledModify);
 
   return;
@@ -766,6 +767,13 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     if (referenceFound)
     {
       ssRef << ";";
+    }
+    else if (this->NodeReferenceEvents.count(referenceRole) > 0 && !this->IsReferenceRoleGeneric(referenceRole.c_str()))
+    {
+      // This is a registered (non-generic) role with no referenced nodes.
+      // Write an explicit empty entry so that readers can clear this role
+      // during state synchronization.
+      ssRef << referenceRole << ":;";
     }
   }
 

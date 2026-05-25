@@ -1348,6 +1348,14 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
             valuesMap[attributeName].push_back(singleValue);
           }
         }
+
+        // If the role was parsed (colon found) but produced no IDs, record it explicitly as
+        // empty so that "role": "" is written to JSON, allowing readers to clear the role
+        // during state synchronization
+        if (colonIndex >= 0 && !attributeName.empty() && valuesMap.find(attributeName) == valuesMap.end())
+        {
+          valuesMap[attributeName].push_back("");
+        }
       }
       this->WriteObjectPropertyStart(name);
 
