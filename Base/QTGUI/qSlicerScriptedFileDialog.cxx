@@ -129,6 +129,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   d->PythonClassName = className;
 
   // Get actual module from sys.modules
+  PYTHONQT_GIL_SCOPE;
   PyObject* sysModules = PyImport_GetModuleDict();
   PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
@@ -209,6 +210,8 @@ PyObject* qSlicerScriptedFileDialog::self() const
 bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties)
 {
   Q_D(qSlicerScriptedFileDialog);
+  PYTHONQT_GIL_SCOPE;
+
   d->Properties = ioProperties;
   PyObject* result = d->PythonCppAPI.callMethod(d->ExecMethod);
   if (!result)
@@ -228,6 +231,8 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) const
 {
   Q_D(const qSlicerScriptedFileDialog);
+  PYTHONQT_GIL_SCOPE;
+
   d->MimeData = mimeData;
   d->MimeDataAccepted = false;
   PyObject* result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
@@ -242,6 +247,7 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) co
 void qSlicerScriptedFileDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerScriptedFileDialog);
+  PYTHONQT_GIL_SCOPE;
   d->DropEvent = event;
   d->MimeData = event->mimeData();
   d->PythonCppAPI.callMethod(d->DropEventMethod);

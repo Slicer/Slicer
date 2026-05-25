@@ -43,6 +43,8 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 {
   this->Factory = nullptr;
 
+  this->setThreadSupportEnabled(true);
+
   // https://docs.python.org/3/c-api/init_config.html#init-config
   PyStatus status;
   PyConfig config;

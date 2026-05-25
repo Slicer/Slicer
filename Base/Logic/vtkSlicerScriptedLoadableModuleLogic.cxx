@@ -85,6 +85,7 @@ vtkSlicerScriptedLoadableModuleLogic::vtkInternal::~vtkInternal()
 {
   if (this->PythonSelf)
   {
+    vtkPythonScopeGilEnsurer gilEnsurer;
     Py_DECREF(this->PythonSelf);
   }
 }
@@ -191,6 +192,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   // std::cout << "SetPythonSource - className:" << className << std::endl;
 
   // Get a reference to the main module and global dictionary
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* main_module = PyImport_AddModule("__main__");
   PyObject* global_dict = PyModule_GetDict(main_module);
 

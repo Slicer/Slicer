@@ -158,6 +158,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
   QString className = moduleName;
 
   // Get a reference to the main module and global dictionary
+  PYTHONQT_GIL_SCOPE;
   PyObject* main_module = PyImport_AddModule("__main__");
   PyObject* global_dict = PyModule_GetDict(main_module);
 
@@ -234,6 +235,7 @@ void qSlicerScriptedLoadableModule::setup()
   Q_D(qSlicerScriptedLoadableModule);
   this->registerFileDialog();
   this->registerIO();
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(Pimpl::SetupMethod);
 }
 
@@ -253,6 +255,7 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
 //-----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModule::registerIO()
 {
+  PYTHONQT_GIL_SCOPE;
   Q_D(qSlicerScriptedLoadableModule);
   vtkSlicerApplicationLogic* appLogic = this->appLogic();
   vtkMRMLFileIOManager* fileIOManager = appLogic ? appLogic->GetFileIOManager() : nullptr;

@@ -95,6 +95,7 @@ vtkMRMLScriptedDisplayableManager::vtkInternal::~vtkInternal()
 {
   if (this->PythonSelf)
   {
+    vtkPythonScopeGilEnsurer gilEnsurer;
     for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
     {
       Py_XDECREF(this->PythonAPIMethods[i]);
@@ -127,6 +128,7 @@ void vtkMRMLScriptedDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::Create()
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::CreateMethod];
   if (!method)
   {
@@ -142,11 +144,14 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   vtkIntArray* sceneEventsAsPointer = nullptr;
 
   // Obtain list of event to listen
-  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::GetMRMLSceneEventsToObserveMethod];
-  if (method)
   {
-    sceneEventsAsPointer = vtkIntArray::SafeDownCast(vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
-    PyErr_Print();
+    vtkPythonScopeGilEnsurer gilEnsurer;
+    PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::GetMRMLSceneEventsToObserveMethod];
+    if (method)
+    {
+      sceneEventsAsPointer = vtkIntArray::SafeDownCast(vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
+      PyErr_Print();
+    }
   }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
@@ -160,6 +165,7 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData)
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
   {
@@ -180,6 +186,7 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject* caller
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)
   {
@@ -200,13 +207,15 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::RemoveMRMLObservers()
 {
-  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::RemoveMRMLObserversMethod];
-  if (!method)
   {
-    return;
+    vtkPythonScopeGilEnsurer gilEnsurer;
+    PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::RemoveMRMLObserversMethod];
+    if (method)
+    {
+      PyObject_CallObject(method, nullptr);
+      PyErr_Print();
+    }
   }
-  PyObject_CallObject(method, nullptr);
-  PyErr_Print();
 
   this->Superclass::RemoveMRMLObservers();
 }
@@ -214,6 +223,7 @@ void vtkMRMLScriptedDisplayableManager::RemoveMRMLObservers()
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::UpdateFromMRML()
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::UpdateFromMRMLMethod];
   if (!method)
   {
@@ -226,6 +236,7 @@ void vtkMRMLScriptedDisplayableManager::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::OnInteractorStyleEventMethod];
   if (!method)
   {
@@ -244,6 +255,7 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
+  vtkPythonScopeGilEnsurer gilEnsurer;
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::OnMRMLDisplayableNodeModifiedEventMethod];
   if (!method)
   {
@@ -271,6 +283,8 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
   // Extract filename - It should match the associated python class
   std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
   // std::cout << "SetPythonSource - className:" << className << std::endl;
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
 
   // Get a reference to the main module and global dictionary
   PyObject* main_module = PyImport_AddModule("__main__");
