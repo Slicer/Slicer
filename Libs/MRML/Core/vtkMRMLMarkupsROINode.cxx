@@ -1036,6 +1036,7 @@ void vtkMRMLMarkupsROINode::UpdateControlPointsFromBoxROI()
   double center_World[3] = { 0.0, 0.0, 0.0 };
   this->GetCenterWorld(center_World);
   vtkNew<vtkPoints> points_World;
+  points_World->SetDataTypeToDouble();
   points_World->InsertNextPoint(center_World);
   this->SetControlPointPositionsWorld(points_World);
   this->MaximumNumberOfControlPoints = 1;
@@ -1141,6 +1142,7 @@ void vtkMRMLMarkupsROINode::GetPlanes(vtkPlanes* planes, bool insideOut /*=false
   normals->SetNumberOfComponents(3);
 
   vtkNew<vtkPoints> points;
+  points->SetDataTypeToDouble();
 
   double lNormal_Node[3] = { -1.0, 0.0, 0.0 };
   this->GetAxis(0, lNormal_Node);
@@ -1227,6 +1229,7 @@ void vtkMRMLMarkupsROINode::GetPlanesWorld(vtkPlanes* planes, bool insideOut /*=
   normals->SetNumberOfComponents(3);
 
   vtkNew<vtkPoints> points;
+  points->SetDataTypeToDouble();
 
   double lNormal_World[3] = { -1.0, 0.0, 0.0 };
   this->GetAxisWorld(0, lNormal_World);
