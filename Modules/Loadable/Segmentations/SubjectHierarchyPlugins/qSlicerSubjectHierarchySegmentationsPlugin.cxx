@@ -377,8 +377,7 @@ QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID) co
   tooltipString.append(tr(" (Representations: "));
   if (containedRepresentationNames.empty())
   {
-    tooltipString.append(tr("None)") //: used when there are no representations defined for the segmentation
-    );
+    tooltipString.append(tr("None)")); // Used when there are no representations defined for the segmentation
   }
   else
   {
@@ -395,6 +394,13 @@ QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID) co
 
   // Number of segments
   tooltipString.append(tr(" (Number of segments: %1)").arg(segmentation->GetNumberOfSegments()));
+
+  // Append the storage path if available
+  QString storagePath = this->tooltipWithStoragePath(itemID);
+  if (!storagePath.isEmpty())
+  {
+    tooltipString.append(QString("\n  %1").arg(storagePath));
+  }
 
   return tooltipString;
 }

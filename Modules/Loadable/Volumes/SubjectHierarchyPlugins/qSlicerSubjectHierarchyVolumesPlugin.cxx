@@ -491,6 +491,13 @@ QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkIdType itemID) const
                            .arg(spacing[0], 0, 'g', 3)
                            .arg(spacing[1], 0, 'g', 3)
                            .arg(spacing[2], 0, 'g', 3));
+
+    // Append the file path if available
+    QString filePath = this->tooltipWithStoragePath(itemID);
+    if (!filePath.isEmpty())
+    {
+      tooltipString.append(QString("\n  %1").arg(filePath));
+    }
   }
   else
   {
