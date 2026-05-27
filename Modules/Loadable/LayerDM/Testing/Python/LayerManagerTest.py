@@ -10,9 +10,7 @@ OptionalCamera = vtkCamera | None
 
 
 class Pipeline(vtkMRMLLayerDMScriptedPipeline):
-    """
-    Simple sphere pipeline displaying a sphere with given render order / radius and center position.
-    """
+    """Simple sphere pipeline displaying a sphere with given render order / radius and center position."""
 
     def __init__(
         self,
@@ -25,7 +23,7 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
         center = center or [0.0] * 3
         self._renderOrders = renderOrders if isinstance(renderOrders, list) else [renderOrders]
         cameras = cameras if isinstance(cameras, list) else [cameras]
-        self._cameraDict = {order: camera for order, camera in zip(self._renderOrders, cameras)}
+        self._cameraDict = dict(zip(self._renderOrders, cameras, strict=True))
 
         self._sphere = vtkSphereSource()
         self._sphere.SetRadius(radius)
@@ -112,7 +110,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
         centers = [[0, 0, 0], [10, 10, 10], [-10, -10, -10], [0, 0, 0]]
 
         # Add pipelines to the layer manager
-        pipelines = [Pipeline(order, cam, radius, center) for order, center, cam in zip(renderOrders, centers, cameras)]
+        pipelines = [Pipeline(order, cam, radius, center) for order, center, cam in zip(renderOrders, centers, cameras, strict=True)]
 
         for pipeline in pipelines:
             self.layerManager.AddPipeline(pipeline)
@@ -254,7 +252,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
         self.layerManager.ResetCameraClippingRange()
         next_clipping_ranges = [renderer.GetActiveCamera().GetClippingRange() for renderer in renderers]
 
-        for prev_clipping, next_clipping in zip(prev_clipping_ranges, next_clipping_ranges):
+        for prev_clipping, next_clipping in zip(prev_clipping_ranges, next_clipping_ranges, strict=True):
             assert prev_clipping != next_clipping
 
     def test_on_reset_camera_clipping_ranges_are_valid(self):

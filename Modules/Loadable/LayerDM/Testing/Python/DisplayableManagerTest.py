@@ -28,10 +28,10 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
 
         # Verify registration is correct for both 2D and 3D views
         assert vtkMRMLLayerDisplayableManager.IsRegisteredInFactory(
-            vtkMRMLSliceViewDisplayableManagerFactory.GetInstance()
+            vtkMRMLSliceViewDisplayableManagerFactory.GetInstance(),
         )
         assert vtkMRMLLayerDisplayableManager.IsRegisteredInFactory(
-            vtkMRMLThreeDViewDisplayableManagerFactory.GetInstance()
+            vtkMRMLThreeDViewDisplayableManagerFactory.GetInstance(),
         )
 
         self.threeDNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
@@ -42,7 +42,7 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         self.factory = vtkMRMLLayerDMPipelineFactory.GetInstance()
         self.creator = vtkMRMLLayerDMPipelineScriptedCreator()
         self.creator.SetPythonCallback(
-            lambda view, node: self.pipeline if view == self.threeDNode and node == self.node else None
+            lambda view, node: self.pipeline if view == self.threeDNode and node == self.node else None,
         )
         self.factory.AddPipelineCreator(self.creator)
 
@@ -94,7 +94,7 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
 
         otherCreator = vtkMRMLLayerDMPipelineScriptedCreator()
         otherCreator.SetPythonCallback(
-            lambda view, node: otherPipeline if view == self.threeDNode and node == otherNode else None
+            lambda view, node: otherPipeline if view == self.threeDNode and node == otherNode else None,
         )
         self.factory.AddPipelineCreator(otherCreator)
 
