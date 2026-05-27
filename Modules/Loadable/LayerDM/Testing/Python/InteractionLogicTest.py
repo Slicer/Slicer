@@ -26,7 +26,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
 
     def test_with_pipeline_with_state_not_idle_returns_negative_distance(self):
         self.logic.AddPipeline(
-            MockPipeline(canProcess=True, widgetState=vtkMRMLAbstractWidget.WidgetStateTranslate, processDistance=10)
+            MockPipeline(canProcess=True, widgetState=vtkMRMLAbstractWidget.WidgetStateTranslate, processDistance=10),
         )
 
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)

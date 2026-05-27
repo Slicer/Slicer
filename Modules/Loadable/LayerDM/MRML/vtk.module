@@ -1,5 +1,5 @@
 NAME
-  SlicerLayerDM::MRML
+  Slicer::LayerDMModuleMRML
 LIBRARY_NAME
   vtkSlicerLayerDMModuleMRML
 DEPENDS

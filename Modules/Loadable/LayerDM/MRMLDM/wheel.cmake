@@ -33,7 +33,7 @@ vtk_object_factory_configure(
   EXPORT_MACRO "")
 
 # Module configuration
-vtk_module_add_module(SlicerLayerDM::MRMLDisplayableManager
+vtk_module_add_module(Slicer::LayerDMModuleMRMLDisplayableManager
   EXPORT_MACRO_PREFIX VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER
   CLASSES ${classes}
   SOURCES ${vtk_object_factory_source}
@@ -41,7 +41,7 @@ vtk_module_add_module(SlicerLayerDM::MRMLDisplayableManager
   PRIVATE_HEADERS ${vtk_object_factory_header}
 )
 
-vtk_module_definitions(SlicerLayerDM::MRMLDisplayableManager PRIVATE
+vtk_module_definitions(Slicer::LayerDMModuleMRMLDisplayableManager PRIVATE
   "vtkSlicerLayerDMModuleMRMLDisplayableManager_AUTOINIT=1(vtkSlicerLayerDMModuleMRMLDisplayableManager)")
 
 add_subdirectory(Python)

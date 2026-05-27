@@ -14,25 +14,19 @@ from vtk import vtkCamera, vtkRenderer, vtkObject
 
 
 class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
-    """
-    Python base class for all Layer Displayable Manager pipelines.
-    """
+    """Python base class for all Layer Displayable Manager pipelines."""
 
     def __init__(self):
         self.SetPythonObject(self)
 
     @property
     def viewNode(self) -> vtkMRMLAbstractViewNode:
-        """
-        Property returning the current view node on which the pipeline is attached.
-        """
+        """Property returning the current view node on which the pipeline is attached."""
         return self.GetViewNode()
 
     @property
     def displayNode(self) -> vtkMRMLNode:
-        """
-        Property returning the current display node for which the pipeline was created.
-        """
+        """Property returning the current display node for which the pipeline was created."""
         return self.GetDisplayNode()
 
     def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:

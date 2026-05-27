@@ -7,6 +7,7 @@ include(${Slicer_CMAKE_DIR}/SlicerMacroBuildLoadableModule.cmake)
 # when configuring module A).
 
 set(qtmodules
+  LayerDM
   Cameras
   Units
   Terminologies
