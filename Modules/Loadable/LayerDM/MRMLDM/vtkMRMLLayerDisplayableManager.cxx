@@ -182,6 +182,18 @@ void vtkMRMLLayerDisplayableManager::Create()
   this->UpdateFromMRML();
 }
 
+void vtkMRMLLayerDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
+{
+  Superclass::SetRenderer(newRenderer);
+  if (!this->m_pipelineManager)
+  {
+    return;
+  }
+
+  this->m_pipelineManager->SetRenderWindow(newRenderer ? newRenderer->GetRenderWindow() : nullptr);
+  this->m_pipelineManager->SetRenderer(newRenderer);
+}
+
 void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   Superclass ::SetHasFocus(hasFocus, eventData);

@@ -11,6 +11,8 @@
 #include <vtkSmartPointer.h>
 
 // CTK includes
+#include "vtkSlicerLayerDMLogic.h"
+
 #include <ctkTest.h>
 
 namespace
@@ -199,6 +201,7 @@ private slots:
   void testTriggersAddedWhenSettingAlreadyExistingScene() const
   {
     auto scene = vtkSmartPointer<vtkMRMLScene>::New();
+    vtkSlicerLayerDMLogic::RegisterNodeIfNeeded<vtkMRMLMarkupsFiducialDisplayNode>(scene);
     auto markups = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->AddNode(vtkNew<vtkMRMLMarkupsFiducialNode>{}));
     markups->CreateDefaultDisplayNodes();
 
@@ -217,6 +220,8 @@ private slots:
   void testNodesRemovedFromSceneAreCorrectlyRemovedFromObserver()
   {
     auto scene = vtkSmartPointer<vtkMRMLScene>::New();
+    vtkSlicerLayerDMLogic::RegisterNodeIfNeeded<vtkMRMLMarkupsFiducialDisplayNode>(scene);
+
     auto markups = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->AddNode(vtkNew<vtkMRMLMarkupsFiducialNode>{}));
     markups->CreateDefaultDisplayNodes();
 
