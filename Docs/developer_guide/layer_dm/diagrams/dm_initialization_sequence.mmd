@@ -1,0 +1,20 @@
+---
+title: Rendering initialization sequence
+---
+
+sequenceDiagram
+    participant User
+    participant LayoutManager as Layout Manager
+    participant Widget as Widget
+    participant DMGroup as Displayable Manager Group
+    participant DM as Displayable Manager
+    participant Scene
+    participant RW as Render Window
+    User ->> LayoutManager: Switch layout
+    LayoutManager ->> LayoutManager: Load layout XML
+    LayoutManager ->> Scene: Add missing view node
+    LayoutManager ->> Widget: Create widget from node
+    Widget ->> DMGroup: Create / Initialize
+    DMGroup ->> DM: Create / Initialize
+    DM ->> Scene: Update from MRML
+    DM ->> RW: Add VTK actors
