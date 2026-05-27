@@ -1,0 +1,23 @@
+flowchart LR
+    modelNode_1 --> modelDisplayNode_1
+    modelNode... --> modelDisplayNode...
+
+    modelDisplayNode_1 --> VTKPipeline_3D_1
+    modelDisplayNode_1 --> VTKPipeline_2D_1
+
+    modelDisplayNode... --> VTKPipeline_3D...
+    modelDisplayNode... --> VTKPipeline_2D...
+
+    subgraph view_3d [3D View]
+        subgraph model_dm_3d [Model Displayable Manager]
+            VTKPipeline_3D_1
+            VTKPipeline_3D...
+        end
+    end
+
+    subgraph view_axial [Axial View]
+        subgraph model_dm_axial [Model Displayable Manager]
+            VTKPipeline_2D_1
+            VTKPipeline_2D...
+        end
+    end

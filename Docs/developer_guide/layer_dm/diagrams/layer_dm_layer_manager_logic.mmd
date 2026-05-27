@@ -1,0 +1,27 @@
+---
+title: Layer Manager update Sequence
+---
+
+stateDiagram-v2
+    state if_start <<choice>>
+    [*] --> if_start
+
+    RemoveAll: Remove all layers
+    RemoveOutdatedPipelines: Remove outdated pipeline ref
+    RemoveOutdatedLayers: Remove outdated renderers
+    AddMissingLayers: Add missing renderers
+    UpdateLayerOrdering: Update render window layer order
+    UpdateCamera: Update layer camera
+    SynchronizeRenderers: Update pipeline renderers
+
+    if_start --> RemoveAll : m_renderWindow == nullptr
+    if_start --> RemoveOutdatedPipelines : else
+
+    RemoveOutdatedPipelines --> RemoveOutdatedLayers
+    RemoveOutdatedLayers --> AddMissingLayers
+    AddMissingLayers --> UpdateLayerOrdering
+    UpdateLayerOrdering --> UpdateCamera
+    UpdateCamera --> SynchronizeRenderers
+
+    RemoveAll --> [*]
+    SynchronizeRenderers --> [*]
