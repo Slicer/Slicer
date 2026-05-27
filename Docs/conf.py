@@ -44,6 +44,7 @@ extensions = [
     "github_alerts",
     "sphinx_reredirects",  # Handle page redirects
     "sphinx_design",  # Tabs, cards, and other design components
+    "sphinxcontrib.mermaid",  # Mermaid UML graph rendering
 ]
 
 # Redirect renamed/moved pages for keeping external links working

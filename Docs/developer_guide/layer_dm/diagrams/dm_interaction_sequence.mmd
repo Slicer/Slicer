@@ -1,0 +1,23 @@
+---
+title: Simplified Displayable Manager interaction logic
+---
+stateDiagram-v2
+    state if_start <<choice>>
+    [*] --> if_start
+    if_start --> [*]: DisplayableManagers == nullptr
+    Handle3DEvent: Handle 3D Events
+    Handle3DEvent --> FindCandidate
+    if_start --> FindCandidate: else
+    if_start --> Handle3DEvent: 3D Event
+    FindCandidate: Find closest DM that can process
+    state if_find <<choice>>
+    FindCandidate --> if_find
+    if_find --> [*]: Closest == nullptr
+    if_find --> UpdateFocus: else
+    state if_focus <<choice>>
+    UpdateFocus: Update Focused
+    UpdateFocus --> if_focus
+    if_focus --> [*]: Focused == nullptr
+    ProcessEvent: ProcessInteraction
+    if_focus --> ProcessEvent: else
+    ProcessEvent --> [*]
