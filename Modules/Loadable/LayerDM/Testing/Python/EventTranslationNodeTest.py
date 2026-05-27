@@ -48,7 +48,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
             vtkEvent.ControlModifier,
         )
         self.tl_node.SetTranslationKeyboard(
-            vtkMRMLAbstractWidget.WidgetStateIdle, "Delete", vtkMRMLAbstractWidget.WidgetEventReset
+            vtkMRMLAbstractWidget.WidgetStateIdle, "Delete", vtkMRMLAbstractWidget.WidgetEventReset,
         )
 
         loaded_node = self.save_restore_scene()
@@ -74,7 +74,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         )
 
         actual_event = self.tl_node.Translate(
-            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent)
+            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent),
         )
         assert actual_event == vtkMRMLAbstractWidget.WidgetEventPick
 
@@ -103,7 +103,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         )
 
         e1 = self.tl_node.Translate(
-            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent)
+            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent),
         )
 
         e2 = self.tl_node.Translate(
@@ -122,7 +122,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         )
 
         actual_event = self.tl_node.Translate(
-            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent)
+            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent),
         )
         assert actual_event == vtkMRMLAbstractWidget.WidgetEventUser
 
@@ -140,7 +140,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         )
 
         actual_event = self.tl_node.Translate(
-            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent)
+            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonReleaseEvent),
         )
         assert actual_event == vtkMRMLAbstractWidget.WidgetEventMenu
 
@@ -158,7 +158,7 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         )
 
         actual_start_event = self.tl_node.Translate(
-            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonPressEvent)
+            vtkMRMLAbstractWidget.WidgetStateOnWidget, self.click_event(vtkCommand.LeftButtonPressEvent),
         )
         assert actual_start_event == start_event
 
