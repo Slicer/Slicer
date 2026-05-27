@@ -63,6 +63,7 @@ protected:
   void operator=(const vtkMRMLLayerDisplayableManager&) = delete;
 
   void Create() override;
+  void SetRenderer(vtkRenderer* newRenderer) override;
 
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
   void OnMRMLSceneStartBatchProcess() override;
