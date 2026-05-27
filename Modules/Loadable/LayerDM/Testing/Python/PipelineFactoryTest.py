@@ -7,7 +7,7 @@ from slicer import (
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLLayerDMPipelineCreatorI,
     vtkMRMLViewNode,
-    vtkMRMLCameraNode
+    vtkMRMLCameraNode,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkCommand

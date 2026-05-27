@@ -49,8 +49,8 @@ public:
   /// @}
 
   /// @{
-  /// Set the callback triggerred when a reference from a node to another node with a given role is added / removed.
-  /// If the callbacks are defined before the scene is set to the object, the callbacks will be triggerred for existing nodes in the scene.
+  /// Set the callback triggered when a reference from a node to another node with a given role is added / removed.
+  /// If the callbacks are defined before the scene is set to the object, the callbacks will be triggered for existing nodes in the scene.
   using CallBackT = std::function<void(vtkMRMLNode*, vtkMRMLNode*, const std::string&, int eventType)>;
   void SetReferenceModifiedCallBack(const CallBackT& modifiedCallback);
   /// @}
