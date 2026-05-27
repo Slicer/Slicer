@@ -1,0 +1,29 @@
+---
+title: Pipeline lifecycle sequence
+---
+
+sequenceDiagram
+    participant User
+    participant Scene
+    participant LayerDM as Layer Displayable Manager
+    participant PipelineMan as Pipeline Manager
+    participant PipelineFactory as Pipeline Factory
+    participant PipelineCreator as Pipeline Creator
+    participant Pipeline
+    Note over User, Pipeline: --- Add sequence ---
+    User ->> Scene: Add display node
+    Scene ->> LayerDM: Node Added
+    LayerDM ->> PipelineMan: Node Added
+    PipelineMan ->> PipelineFactory: Try Create
+    PipelineFactory ->> PipelineCreator: Try Create
+    PipelineCreator ->> Pipeline: Create
+    Pipeline ->> PipelineMan: Pipeline instance
+    PipelineMan ->> Pipeline: Set View node / display node / renderer
+    PipelineMan ->> Pipeline: Reset Display
+    PipelineMan ->> LayerDM: Request Render
+    Note over User, Pipeline: --- Remove sequence ---
+    User ->> Scene: Remove display node
+    Scene ->> LayerDM: Node Removed
+    LayerDM ->> PipelineMan: Node Removed
+    PipelineMan ->> Pipeline: Remove / Remove renderer
+    PipelineMan ->> LayerDM: Request Render
