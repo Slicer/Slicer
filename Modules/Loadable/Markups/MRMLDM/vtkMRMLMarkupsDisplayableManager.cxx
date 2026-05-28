@@ -637,11 +637,12 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   vtkMRMLInteractionNode* interactionNode = this->GetInteractionNode();
   // New point can be placed anywhere
   int eventid = eventData->GetType();
-  // We allow mouse move with the shift modifier to be processed while in place mode so that we can continue to update the
-  // preview position, even when using shift + mouse-move to adjust the crosshair position.
+  // We allow mouse move with the shift or control modifier to be processed while in place mode so that we can continue to update the
+  // preview position, even when using Shift or Control key is depressed (for example due to adjusting the crosshair position
+  // using Shift + mouse-move, or zooming using Control + mouse-wheel).
   if ((eventid == vtkCommand::MouseMoveEvent                                                                    //
        && (eventData->GetModifiers() == vtkEvent::NoModifier ||                                                 //
-           (eventData->GetModifiers() & vtkEvent::ShiftModifier &&                                              //
+           (eventData->GetModifiers() & (vtkEvent::ShiftModifier | vtkEvent::ControlModifier)  &&                                              //
             interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place))) //
       || eventid == vtkCommand::Move3DEvent)
   {
