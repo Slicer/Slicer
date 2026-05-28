@@ -161,10 +161,26 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
   {
     this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPositionBackground);
   }
+  if (this->GetActionEnabled(ActionRotate))
+  {
+    // Ctrl-left-click-and-drag rolls the current slice in-plane about the view center
+    // (the 2D analog of the ctrl-left-click-and-drag camera roll in 3D views).
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::ControlModifier,
+                                          WidgetStateRotateFieldOfView,
+                                          WidgetEventRotateFieldOfViewStart,
+                                          WidgetEventRotateFieldOfViewEnd);
+  }
   if (this->GetActionEnabled(ActionBlend))
   {
-    this->SetEventTranslationClickAndDrag(
-      WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetStateBlend, WidgetEventBlendStart, WidgetEventBlendEnd);
+    // Blend drag uses ctrl+shift+left because ctrl+left is reserved for slice roll (ActionRotate).
+    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
+                                          vtkCommand::LeftButtonPressEvent,
+                                          vtkEvent::ControlModifier + vtkEvent::ShiftModifier,
+                                          WidgetStateBlend,
+                                          WidgetEventBlendStart,
+                                          WidgetEventBlendEnd);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "g", WidgetEventToggleLabelOpacity);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "t", WidgetEventToggleForegroundOpacity);
   }
@@ -369,6 +385,7 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   if (this->WidgetState == WidgetStateMoveCrosshair                             //
       || this->WidgetState == WidgetStateTranslate                              //
       || this->WidgetState == WidgetStateRotateIntersectingSlices               //
+      || this->WidgetState == WidgetStateRotateFieldOfView                      //
       || this->WidgetState == WidgetStateBlend                                  //
       || this->WidgetState == WidgetStateTranslateSlice                         //
       || this->WidgetState == WidgetStateZoomSlice                              //
@@ -475,6 +492,15 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = this->ProcessRotateIntersectingSlicesStart(eventData);
       break;
     case WidgetEventRotateIntersectingSlicesEnd:
+      processedEvent = this->ProcessEndMouseDrag(eventData);
+      this->SliceLogic->EndSliceNodeInteraction();
+      break;
+    case WidgetEventRotateFieldOfViewStart:
+      this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
+      this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
+      processedEvent = this->ProcessRotateFieldOfViewStart(eventData);
+      break;
+    case WidgetEventRotateFieldOfViewEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       this->SliceLogic->EndSliceNodeInteraction();
       break;
@@ -630,6 +656,7 @@ void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventDat
       || this->WidgetState == WidgetStateZoomSlice                              //
       || this->WidgetState == WidgetStateBlend                                  //
       || this->WidgetState == WidgetStateRotateIntersectingSlices               //
+      || this->WidgetState == WidgetStateRotateFieldOfView                      //
       || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle      //
       || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle //
       || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle         //
@@ -663,6 +690,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
   switch (this->WidgetState)
   {
     case WidgetStateRotateIntersectingSlices: this->ProcessRotateIntersectingSlices(eventData); break;
+    case WidgetStateRotateFieldOfView: this->ProcessRotateFieldOfView(eventData); break;
     case WidgetStateTranslate:
     {
       const double* worldPos = eventData->GetWorldPosition();
@@ -1160,6 +1188,76 @@ bool vtkMRMLSliceIntersectionWidget::Rotate(double sliceRotationAngleRad)
   this->PreviousRotationAngleRad = sliceRotationAngleRad;
 
   rep->TransformIntersectingSlices(rotatedSliceToSliceTransform->GetMatrix());
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessRotateFieldOfViewStart(vtkMRMLInteractionEventData* eventData)
+{
+  if (!this->GetRenderer() || !this->GetSliceNode())
+  {
+    return false;
+  }
+
+  this->SetWidgetState(WidgetStateRotateFieldOfView);
+
+  // Roll the slice in-plane about the center of the view (the 2D analog of the camera roll
+  // performed with ctrl+left-click-and-drag in 3D views).
+  double* viewCenter = this->GetRenderer()->GetCenter();
+  this->StartRotationCenter[0] = viewCenter[0];
+  this->StartRotationCenter[1] = viewCenter[1];
+  double startRotationCenterXY[4] = { viewCenter[0], viewCenter[1], 0.0, 1.0 };
+  this->GetSliceNode()->GetXYToRAS()->MultiplyPoint(startRotationCenterXY, this->StartRotationCenter_RAS);
+
+  // Save initial rotation angle
+  const int* displayPos = eventData->GetDisplayPosition();
+  double displayPosDouble[2] = { static_cast<double>(displayPos[0]), static_cast<double>(displayPos[1]) };
+  this->PreviousRotationAngleRad = this->GetSliceRotationAngleRad(displayPosDouble);
+
+  return this->ProcessStartMouseDrag(eventData);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessRotateFieldOfView(vtkMRMLInteractionEventData* eventData)
+{
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+  {
+    return false;
+  }
+
+  const int* displayPos = eventData->GetDisplayPosition();
+  double displayPosDouble[2] = { static_cast<double>(displayPos[0]), static_cast<double>(displayPos[1]) };
+  double sliceRotationAngleRad = this->GetSliceRotationAngleRad(displayPosDouble);
+
+  vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
+  vtkNew<vtkTransform> rotatedSliceToSliceTransform;
+
+  // Rotate about the slice normal (3rd column of SliceToRAS) through the view-center pivot,
+  // so the displayed image rolls in-plane while the pivot stays fixed on screen.
+  // Note: here we rotate the current slice's own SliceToRAS (the view frame), so the
+  // displayed image appears to rotate opposite to the frame. Negate the angle so the image
+  // follows the cursor direction.
+  rotatedSliceToSliceTransform->Translate(this->StartRotationCenter_RAS[0], this->StartRotationCenter_RAS[1], this->StartRotationCenter_RAS[2]);
+  double rotationDirection = vtkMath::Determinant3x3(sliceToRAS->Element[0], sliceToRAS->Element[1], sliceToRAS->Element[2]) >= 0 ? 1.0 : -1.0;
+  rotatedSliceToSliceTransform->RotateWXYZ(-rotationDirection * vtkMath::DegreesFromRadians(sliceRotationAngleRad - this->PreviousRotationAngleRad),
+                                           sliceToRAS->GetElement(0, 2),
+                                           sliceToRAS->GetElement(1, 2),
+                                           sliceToRAS->GetElement(2, 2));
+  rotatedSliceToSliceTransform->Translate(-this->StartRotationCenter_RAS[0], -this->StartRotationCenter_RAS[1], -this->StartRotationCenter_RAS[2]);
+
+  this->PreviousRotationAngleRad = sliceRotationAngleRad;
+  this->PreviousEventPosition[0] = displayPos[0];
+  this->PreviousEventPosition[1] = displayPos[1];
+
+  // Apply the roll to the current slice only (not all intersecting slices).
+  int wasModified = sliceNode->StartModify();
+  vtkNew<vtkMatrix4x4> rotatedSliceToRAS;
+  vtkMatrix4x4::Multiply4x4(rotatedSliceToSliceTransform->GetMatrix(), sliceToRAS, rotatedSliceToRAS);
+  sliceNode->GetSliceToRAS()->DeepCopy(rotatedSliceToRAS);
+  sliceNode->UpdateMatrices();
+  sliceNode->EndModify(wasModified);
+
   return true;
 }
 
