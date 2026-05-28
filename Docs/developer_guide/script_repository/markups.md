@@ -6,7 +6,7 @@ Any markup node can be saved as a [markups json file](/developer_guide/modules/m
 
 ```python
 markupsNode = slicer.util.getNode('F')
-slicer.util.saveNode(markupsNode, "/path/to/MyMarkups.mkp.json")
+slicer.util.saveNode(markupsNode, "/path/to/MyMarkups.mrk.json")
 ```
 
 Generally the markups json file format is recommended for saving all properties of a markups node, but for exporting only control point information (name, position, and basic state) a [control points table can be exported in standard csv file format](/developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):
@@ -20,7 +20,7 @@ slicer.modules.markups.logic().ExportControlPointsToCSV(markupsNode, "/path/to/M
 Any markup node can be loaded from a [markups json file](/developer_guide/modules/markups.md#markups):
 
 ```python
-markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mkp.json")
+markupsNode = slicer.util.loadMarkups("/path/to/MyMarkups.mrk.json")
 ```
 
 Control points can be loaded from [control points table csv file](/developer_guide/modules/markups.md#markups-control-points-table-file-format-csv-tsv):

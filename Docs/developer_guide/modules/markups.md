@@ -17,6 +17,16 @@ A simple example that specifies a markups point list with 3 points that can be s
 
 ## Markups fiducial point list file format (.fcsv)
 
+:::{warning}
+The fcsv file format is a legacy format that only stores control point coordinates and a limited set of display properties in a custom CSV-like file format.
+Support for this file format will be removed in future software versions.
+
+It is recommended to use [Markups JSON format](#markups-json-file-format-mrk-json) instead. Existing fcsv files can be converted using Slicer application
+(by loading from fcsv and saving as mrk.json) or - outside the 3D Slicer Python environment - using the [slicerio](https://pypi.org/project/slicerio/) Python package (see [example](https://github.com/lassoan/slicerio#convert-legacy-markup-fiducial-file-fcsv-to-current-format-mrkjson)).
+
+To save control point coordinates in standard CSV format, markups control point coordinates can be exported to a table node and save in standard CSV format.
+:::
+
 vtkMRMLMarkupsFiducialStorageNode uses a comma separated value file with a custom header to store the control points on disk. A simple example:
 
 ```
