@@ -29,6 +29,8 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <cmath>
+#include <fstream>
 #include <iostream>
 
 //---------------------------------------------------------------------------
@@ -116,6 +118,184 @@ int CompareVolumeProperty(vtkVolumeProperty* actualVolumeProperty, vtkVolumeProp
 }
 
 //---------------------------------------------------------------------------
+// Verify that loading a JSON file with duplicate x coordinates in scalarOpacity,
+// gradientOpacity, and rgbTransferFunction preserves all points, separates them
+// so x values are strictly increasing, and retains file order for duplicate pairs.
+//
+// Duplicate x values arise when VTK widget arithmetic passes coordinates through
+// float32 (vtkVector2f), collapsing two near-duplicate doubles into the same
+// float32 value after a shift operation.
+int TestTransferFunctionDuplicateXValuesOnLoad(const char* tempDir)
+{
+  // Write the JSON directly to control exact x values including duplicates,
+  // bypassing VTK's piecewise/color function insert which would deduplicate.
+  //
+  // scalarOpacity / gradientOpacity: duplicate in the middle with y=1 then y=0
+  //   (a sharp opacity spike — rises then immediately falls).
+  // rgbTransferFunction: duplicate in the middle with distinct colors
+  //   (red then green) so file order is unambiguous.
+  std::string fileName = std::string(tempDir) + "/TransferFunctionWithDuplicateX.vp.json";
+  {
+    std::ofstream f(fileName);
+    f << R"({
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/main/Modules/Loadable/VolumeRendering/Resources/Schema/volume-property-schema-v1.0.0.json#",
+    "volumeProperties": [{ "components": [{
+        "scalarOpacity": { "type": "piecewiseLinearFunction", "points": [
+            { "x": -300.0, "y": 0.0 },
+            { "x": -150.0, "y": 1.0 },
+            { "x": -150.0, "y": 0.0 },
+            { "x": 2000.0, "y": 0.0 }
+        ]},
+        "gradientOpacity": { "type": "piecewiseLinearFunction", "points": [
+            { "x":    0.0, "y": 0.0 },
+            { "x":  500.0, "y": 1.0 },
+            { "x":  500.0, "y": 0.0 },
+            { "x": 1000.0, "y": 0.0 }
+        ]},
+        "rgbTransferFunction": { "type": "colorTransferFunction", "points": [
+            { "x":  10000.0, "color": [0.0, 0.0, 0.0] },
+            { "x":  15000.0, "color": [1.0, 0.0, 0.0] },
+            { "x":  15000.0, "color": [0.0, 1.0, 0.0] },
+            { "x": 100000.0, "color": [1.0, 1.0, 1.0] }
+        ]}
+    }]}]
+    })";
+  }
+
+  vtkNew<vtkMRMLVolumePropertyJsonStorageNode> storageNode;
+  storageNode->SetFileName(fileName.c_str());
+  vtkNew<vtkMRMLVolumePropertyNode> vpNode;
+  CHECK_INT(storageNode->ReadData(vpNode), 1);
+
+  // --- scalarOpacity ---
+  {
+    vtkPiecewiseFunction* opacity = vpNode->GetVolumeProperty()->GetScalarOpacity(0);
+    // All 4 points must survive — without the HigherAndUnique fix, AddPoint's
+    // deduplication (AllowDuplicateScalars=false) silently drops the first point.
+    CHECK_INT(opacity->GetSize(), 4);
+    double p[4][4];
+    for (int i = 0; i < 4; ++i)
+    {
+      opacity->GetNodeValue(i, p[i]);
+    }
+    CHECK_BOOL(p[0][0] < p[1][0], true);
+    CHECK_BOOL(p[1][0] < p[2][0], true);
+    CHECK_BOOL(p[2][0] < p[3][0], true);
+    CHECK_DOUBLE_TOLERANCE(p[0][0], -300.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[3][0], 2000.0, DOUBLE_TOLERANCE);
+    CHECK_BOOL(std::abs(p[1][0] - -150.0) < 1.0, true);
+    CHECK_BOOL(std::abs(p[2][0] - -150.0) < 1.0, true);
+    // File order preserved: spike up (y=1) before spike down (y=0).
+    CHECK_DOUBLE_TOLERANCE(p[0][1], 0.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[1][1], 1.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[2][1], 0.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[3][1], 0.0, DOUBLE_TOLERANCE);
+  }
+
+  // --- gradientOpacity ---
+  {
+    vtkPiecewiseFunction* gradient = vpNode->GetVolumeProperty()->GetGradientOpacity(0);
+    CHECK_INT(gradient->GetSize(), 4);
+    double p[4][4];
+    for (int i = 0; i < 4; ++i)
+    {
+      gradient->GetNodeValue(i, p[i]);
+    }
+    CHECK_BOOL(p[0][0] < p[1][0], true);
+    CHECK_BOOL(p[1][0] < p[2][0], true);
+    CHECK_BOOL(p[2][0] < p[3][0], true);
+    CHECK_DOUBLE_TOLERANCE(p[0][0], 0.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[3][0], 1000.0, DOUBLE_TOLERANCE);
+    CHECK_BOOL(std::abs(p[1][0] - 500.0) < 1.0, true);
+    CHECK_BOOL(std::abs(p[2][0] - 500.0) < 1.0, true);
+    CHECK_DOUBLE_TOLERANCE(p[0][1], 0.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[1][1], 1.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[2][1], 0.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[3][1], 0.0, DOUBLE_TOLERANCE);
+  }
+
+  // --- rgbTransferFunction ---
+  // GetNodeValue returns [x, r, g, b, midpoint, sharpness].
+  {
+    vtkColorTransferFunction* color = vpNode->GetVolumeProperty()->GetRGBTransferFunction(0);
+    CHECK_INT(color->GetSize(), 4);
+    double p[4][6];
+    for (int i = 0; i < 4; ++i)
+    {
+      color->GetNodeValue(i, p[i]);
+    }
+    CHECK_BOOL(p[0][0] < p[1][0], true);
+    CHECK_BOOL(p[1][0] < p[2][0], true);
+    CHECK_BOOL(p[2][0] < p[3][0], true);
+    CHECK_DOUBLE_TOLERANCE(p[0][0], 10000.0, DOUBLE_TOLERANCE);
+    CHECK_DOUBLE_TOLERANCE(p[3][0], 100000.0, DOUBLE_TOLERANCE);
+    CHECK_BOOL(std::abs(p[1][0] - 15000.0) < 1.0, true);
+    CHECK_BOOL(std::abs(p[2][0] - 15000.0) < 1.0, true);
+    // File order preserved: red before green.
+    CHECK_DOUBLE_TOLERANCE(p[0][1], 0.0, DOUBLE_TOLERANCE); // black r
+    CHECK_DOUBLE_TOLERANCE(p[1][1], 1.0, DOUBLE_TOLERANCE); // red   r
+    CHECK_DOUBLE_TOLERANCE(p[1][2], 0.0, DOUBLE_TOLERANCE); // red   g
+    CHECK_DOUBLE_TOLERANCE(p[2][1], 0.0, DOUBLE_TOLERANCE); // green r
+    CHECK_DOUBLE_TOLERANCE(p[2][2], 1.0, DOUBLE_TOLERANCE); // green g
+    CHECK_DOUBLE_TOLERANCE(p[3][1], 1.0, DOUBLE_TOLERANCE); // white r
+    CHECK_DOUBLE_TOLERANCE(p[3][2], 1.0, DOUBLE_TOLERANCE); // white g
+    CHECK_DOUBLE_TOLERANCE(p[3][3], 1.0, DOUBLE_TOLERANCE); // white b
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+// Verify that gradient opacity points stored out of x order in the JSON are
+// sorted correctly on load.
+int TestTransferFunctionUnsortedXValuesOnLoad(const char* tempDir)
+{
+  std::string fileName = std::string(tempDir) + "/GradientOpacityUnsorted.vp.json";
+  {
+    std::ofstream f(fileName);
+    f << R"({
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/main/Modules/Loadable/VolumeRendering/Resources/Schema/volume-property-schema-v1.0.0.json#",
+    "volumeProperties": [{ "components": [{ "gradientOpacity": {
+        "type": "piecewiseLinearFunction",
+        "points": [
+            { "x": 1000.0, "y": 0.0 },
+            { "x":    0.0, "y": 0.0 },
+            { "x":  500.0, "y": 0.5 },
+            { "x":  750.0, "y": 1.0 }
+    ]}}]}]
+    })";
+  }
+
+  vtkNew<vtkMRMLVolumePropertyJsonStorageNode> storageNode;
+  storageNode->SetFileName(fileName.c_str());
+  vtkNew<vtkMRMLVolumePropertyNode> vpNode;
+  CHECK_INT(storageNode->ReadData(vpNode), 1);
+
+  vtkPiecewiseFunction* gradient = vpNode->GetVolumeProperty()->GetGradientOpacity(0);
+  CHECK_INT(gradient->GetSize(), 4);
+
+  double p[4][4];
+  for (int i = 0; i < 4; ++i)
+  {
+    gradient->GetNodeValue(i, p[i]);
+  }
+
+  // Points must be sorted by x regardless of file order.
+  CHECK_DOUBLE_TOLERANCE(p[0][0], 0.0, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[1][0], 500.0, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[2][0], 750.0, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[3][0], 1000.0, DOUBLE_TOLERANCE);
+
+  // y values must follow the sorted x values, not the original file order.
+  CHECK_DOUBLE_TOLERANCE(p[0][1], 0.0, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[1][1], 0.5, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[2][1], 1.0, DOUBLE_TOLERANCE);
+  CHECK_DOUBLE_TOLERANCE(p[3][1], 0.0, DOUBLE_TOLERANCE);
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLVolumePropertyJsonStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
@@ -194,6 +374,9 @@ int vtkMRMLVolumePropertyJsonStorageNodeTest1(int argc, char* argv[])
   CHECK_DOUBLE_TOLERANCE(actualVolumePropertyNode->GetEffectiveRange()[1], expectedVolumePropertyNode->GetEffectiveRange()[1], DOUBLE_TOLERANCE);
 
   CHECK_EXIT_SUCCESS(CompareVolumeProperty(actualVolumePropertyNode->GetVolumeProperty(), expectedVolumePropertyNode->GetVolumeProperty()));
+
+  CHECK_EXIT_SUCCESS(TestTransferFunctionDuplicateXValuesOnLoad(tempDir));
+  CHECK_EXIT_SUCCESS(TestTransferFunctionUnsortedXValuesOnLoad(tempDir));
 
   return EXIT_SUCCESS;
 }
