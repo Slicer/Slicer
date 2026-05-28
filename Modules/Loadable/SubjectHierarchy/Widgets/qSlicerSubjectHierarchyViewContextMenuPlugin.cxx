@@ -174,8 +174,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
 
   this->FlipSliceViewHorizontalAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Flip horizontal"), q);
   this->FlipSliceViewHorizontalAction->setObjectName("FlipSliceViewHorizontalAction");
-  this->FlipSliceViewHorizontalAction->setToolTip(
-    qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Mirror the slice view horizontally (view the slice from the opposite side)."));
+  this->FlipSliceViewHorizontalAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Mirror the slice view horizontally (view the slice from the opposite side)."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FlipSliceViewHorizontalAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 6);
   QObject::connect(this->FlipSliceViewHorizontalAction, SIGNAL(triggered()), q, SLOT(flipSliceViewHorizontal()));
 

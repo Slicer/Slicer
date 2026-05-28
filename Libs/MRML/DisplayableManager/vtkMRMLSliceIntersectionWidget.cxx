@@ -175,12 +175,8 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
   if (this->GetActionEnabled(ActionBlend))
   {
     // Blend drag uses ctrl+shift+left because ctrl+left is reserved for slice roll (ActionRotate).
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle,
-                                          vtkCommand::LeftButtonPressEvent,
-                                          vtkEvent::ControlModifier + vtkEvent::ShiftModifier,
-                                          WidgetStateBlend,
-                                          WidgetEventBlendStart,
-                                          WidgetEventBlendEnd);
+    this->SetEventTranslationClickAndDrag(
+      WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier + vtkEvent::ShiftModifier, WidgetStateBlend, WidgetEventBlendStart, WidgetEventBlendEnd);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "g", WidgetEventToggleLabelOpacity);
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "t", WidgetEventToggleForegroundOpacity);
   }
