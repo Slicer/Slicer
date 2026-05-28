@@ -361,3 +361,11 @@ for inputpath in inputpaths:
                 dom = ET.parse(os.path.join(root, name))
                 _generatemd(dom, docsfolder, outpath, "cli_module_overview_to_md.xsl", "Overview")
                 _generatemd(dom, docsfolder, outpath, "cli_module_parameters_to_md.xsl", "Parameters")
+
+
+def setup(app):
+    # Hide "Edit on GitHub" on auto-generated pages that have no source file.
+    def _hide_edit_link_on_special_pages(app, pagename, templatename, context, doctree):
+        if pagename in ("genindex", "search"):
+            context["display_github"] = False
+    app.connect("html-page-context", _hide_edit_link_on_special_pages)
