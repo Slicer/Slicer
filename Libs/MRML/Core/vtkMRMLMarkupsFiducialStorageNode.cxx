@@ -741,7 +741,13 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent, "fcsv file format only stores control point coordinates and a limited set of display properties.");
+  vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal",
+                                     vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode",
+                                               "The fcsv format is deprecated and it will not be supported in future software versions.\n"
+                                               "Use JSON file format (.mrk.json) instead.\n"
+                                               "If using fcsv file format then only control point coordinates"
+                                               " and a limited set of display properties will be saved."));
 
   // open the file for writing
   fstream of;
