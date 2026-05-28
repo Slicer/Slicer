@@ -567,9 +567,19 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::flipSliceViewHorizontal()
   // This negates the in-plane horizontal axis and the slice normal (column 0 and column 2 of
   // SliceToRAS), mirroring the displayed image left-right while keeping the matrix right-handed
   // (i.e. viewing the slice from the opposite side). Triggering it again restores the orientation.
+  //
+  // Pivot the mirror about the current field of view center rather than the slice origin, so the
+  // point the user is looking at stays put even when zoomed in and panned off the slice origin.
+  // The slice X coordinate at the view center equals XYZOrigin[0] (see vtkMRMLSliceNode::UpdateMatrices,
+  // where the -FieldOfView/2 and spacing terms cancel at the window center).
+  double xyzOrigin[3] = { 0.0, 0.0, 0.0 };
+  sliceNode->GetXYZOrigin(xyzOrigin);
+
   vtkNew<vtkTransform> sliceToRASTransform;
   sliceToRASTransform->SetMatrix(sliceNode->GetSliceToRAS());
+  sliceToRASTransform->Translate(xyzOrigin[0], 0.0, 0.0);
   sliceToRASTransform->RotateY(180.0);
+  sliceToRASTransform->Translate(-xyzOrigin[0], 0.0, 0.0);
 
   int wasModifying = sliceNode->StartModify();
   sliceNode->GetSliceToRAS()->DeepCopy(sliceToRASTransform->GetMatrix());
