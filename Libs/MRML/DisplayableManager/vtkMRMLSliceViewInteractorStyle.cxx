@@ -35,8 +35,8 @@
 #include "vtkCommand.h"
 #include "vtkNew.h"
 
-// STL includes
-#include <algorithm>
+// vtkAddon includes
+#include "vtkAddonMathUtilities.h"
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLSliceViewInteractorStyle, SliceLogic, vtkMRMLSliceLogic);
@@ -140,7 +140,26 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     }
   }
 
+  vtkNew<vtkMatrix4x4> xyToRasBefore;
+  xyToRasBefore->DeepCopy(xyToRasMatrix);
   bool result = this->DelegateInteractionEventDataToDisplayableManagers(ed);
+
+  // If the slice view moved or zoomed during event processing (for any reason:
+  // scroll, zoom, keyboard shortcut, linked slice, etc.), fire a synthetic mouse
+  // move so that widgets in placement mode can update their preview point to the
+  // correct position under the cursor on the new slice.
+  if (!vtkAddonMathUtilities::MatrixAreEqual(xyToRasBefore, xyToRasMatrix, 0.0))
+  {
+    // XYToRAS is a live pointer — recompute world position for the updated view
+    xyToRasMatrix->MultiplyPoint(displayPosition, worldPosition);
+    vtkNew<vtkMRMLInteractionEventData> mouseMoveEd;
+    mouseMoveEd->SetType(vtkCommand::MouseMoveEvent);
+    mouseMoveEd->SetDisplayPosition(displayPositionCorrected);
+    mouseMoveEd->SetWorldPosition(worldPosition);
+    mouseMoveEd->SetAttributesFromInteractor(this->GetInteractor());
+    this->DelegateInteractionEventDataToDisplayableManagers(mouseMoveEd);
+  }
+
   if (appLogic)
   {
     appLogic->ResumeRender();
