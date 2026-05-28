@@ -36,7 +36,9 @@
 #include <vtkVolumeProperty.h>
 
 // std includes
+#include <algorithm>
 #include <sstream>
+#include <vector>
 
 namespace
 {
@@ -298,7 +300,28 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction(vtkObject* trans
     colorTransferFunction->RemoveAllPoints();
   }
 
+  // Collect all points first, then sort by x before inserting.
+  // Sorting before applying HigherAndUnique ensures that out-of-order points in the file
+  // (the schema does not require ordering) do not result in points being shifted rightward
+  // by HigherAndUnique's std::max.
+  struct PiecewisePoint
+  {
+    double x, y, midpoint, sharpness;
+  };
+  struct ColorPoint
+  {
+    double x, r, g, b, midpoint, sharpness;
+  };
+  std::vector<PiecewisePoint> pwPoints;
+  std::vector<ColorPoint> colorPoints;
+
   vtkSmartPointer<vtkMRMLJsonElement> pointsElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(transferFunctionElement->GetArrayProperty("points"));
+  if (!pointsElement)
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction", "Reading transfer function failed: 'points' array is missing.");
+    return false;
+  }
   for (int i = 0; i < pointsElement->GetArraySize(); ++i)
   {
     vtkSmartPointer<vtkMRMLJsonElement> pointElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(pointsElement->GetArrayItem(i));
@@ -319,14 +342,39 @@ bool vtkMRMLVolumePropertyJsonStorageNode::ReadTransferFunction(vtkObject* trans
     {
       double y = 0.0;
       pointElement->GetDoubleProperty("y", y);
-      piecewiseFunction->AddPoint(x, y, midpoint, sharpness);
+      pwPoints.push_back({ x, y, midpoint, sharpness });
     }
     else if (colorTransferFunction)
     {
       double color[3] = { 0.0, 0.0, 0.0 };
       pointElement->GetVectorProperty("color", color, 3);
-      colorTransferFunction->AddRGBPoint(x, color[0], color[1], color[2], midpoint, sharpness);
+      colorPoints.push_back({ x, color[0], color[1], color[2], midpoint, sharpness });
     }
+  }
+
+  // Using stable_sort preserves file order for points with equal x, which matters for equal or near-equal x values
+  // because they may be intentionally placed in a specific order in the file.
+  // For example, y=0.0 then y=1.0 at the same x to create a sharp opacity step.
+  std::stable_sort(pwPoints.begin(), pwPoints.end(), [](const PiecewisePoint& a, const PiecewisePoint& b) { return a.x < b.x; });
+  std::stable_sort(colorPoints.begin(), colorPoints.end(), [](const ColorPoint& a, const ColorPoint& b) { return a.x < b.x; });
+
+  // Ensure x is greater than the previous point's x.
+  // This is critical because vtkPiecewiseFunction::AddPoint() silently removes any existing point at the same x
+  // before inserting the new one, so duplicate or near-duplicate x values in the file would cause points to be lost.
+  // Near-duplicate x values may be introduced for example by temporary conversions of coordinates through float32, collapsing
+  // values that were distinct as double into the same float32.
+
+  double previousX = VTK_DOUBLE_MIN;
+  for (auto& p : pwPoints)
+  {
+    p.x = vtkMRMLVolumePropertyNode::HigherAndUnique(p.x, previousX);
+    piecewiseFunction->AddPoint(p.x, p.y, p.midpoint, p.sharpness);
+  }
+  previousX = VTK_DOUBLE_MIN;
+  for (auto& p : colorPoints)
+  {
+    p.x = vtkMRMLVolumePropertyNode::HigherAndUnique(p.x, previousX);
+    colorTransferFunction->AddRGBPoint(p.x, p.r, p.g, p.b, p.midpoint, p.sharpness);
   }
 
   return true;

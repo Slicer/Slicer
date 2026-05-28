@@ -16,6 +16,7 @@
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <limits>
 #include <sstream>
 
@@ -243,7 +244,9 @@ int vtkMRMLVolumePropertyNode::NodesFromString(const std::string& dataString, do
     vtkGenericWarningMacro("vtkMRMLVolumePropertyNode::NodesFromString: Error parsing data string");
     return 0;
   }
-  // Ensure uniqueness
+  // Ensure uniqueness with a float32-safe minimum spacing. This may shift x
+  // coordinates upward even when they are already strictly increasing but too
+  // close to survive float32 round-tripping.
   double previous = VTK_DOUBLE_MIN;
   for (int i = 0; i < size; i += nodeSize)
   {
@@ -291,34 +294,39 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(const std::st
 //----------------------------------------------------------------------------
 double vtkMRMLVolumePropertyNode::NextHigher(double value)
 {
-  if (value == 0.)
+  // Advance by 10 float32 ULPs so the result remains distinguishable from
+  // value even when coordinates pass through float32 arithmetic (e.g., in
+  // VTK widget MovePoints which stores positions in vtkVector2f). 10 ULPs
+  // provides a comfortable margin against accumulated numerical inaccuracies.
+  float fNext = static_cast<float>(value);
+  // Start from the smallest normal float when f is zero so that the ULP steps
+  // advance through normal (non-subnormal) values only, as subnormal floats
+  // could be flushed back to 0.0f on some systems.
+  if (fNext == 0.0f)
   {
-    // special case to avoid denormalized numbers
-    return std::numeric_limits<double>::min();
+    fNext = std::numeric_limits<float>::min();
   }
-  // Increment the value by the smallest offset possible
-  // The challenge here is to find the offset, if the value is 100000000., an
-  // offset of epsilon won't work.
-  typedef union
+  for (int i = 0; i < 10; ++i)
   {
-    long long i64;
-    double d64;
-  } dbl_64;
-  dbl_64 d;
-  d.d64 = value;
-  d.i64 += (value < 0.) ? -1 : 1;
-  return d.d64;
+    fNext = std::nextafter(fNext, std::numeric_limits<float>::infinity());
+  }
+  // fNext in theory can be infinity if value is very large, but in practice it
+  // should not be an issue because volume rendering transfer function points with
+  // such large x values would not make sense.
+  return static_cast<double>(fNext);
 }
 
 //----------------------------------------------------------------------------
 double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double& previousValue)
 {
   value = std::max(value, previousValue);
-  if (value == previousValue)
+  // Ensure a very small but safe gap to ensure adjacent point remain distinct,
+  // even if point coordinates are temporarily converted to float32.
+  double minAcceptable = vtkMRMLVolumePropertyNode::NextHigher(previousValue);
+  if (value < minAcceptable)
   {
-    value = vtkMRMLVolumePropertyNode::NextHigher(value);
+    value = minAcceptable;
   }
-  assert(value != previousValue);
   previousValue = value;
   return value;
 }

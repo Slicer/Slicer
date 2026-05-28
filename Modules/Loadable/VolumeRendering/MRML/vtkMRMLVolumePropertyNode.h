@@ -112,12 +112,22 @@ public:
   static inline void GetColorTransferFunctionFromString(const char* str, vtkColorTransferFunction* result);
 
   /// Utility function:
-  /// Return the nearest higher value.
+  /// Return a slightly higher value that is guaranteed to remain distinct
+  /// from the input after float32 round-tripping.
+  ///
+  /// This intentionally uses a larger-than-minimal increment (multiple
+  /// float32 ULPs) so that values that are distinct in double precision do not
+  /// collapse to the same coordinate after operations that temporarily use
+  /// float32.
   /// \sa HigherAndUnique()
   static double NextHigher(double value);
   /// Utility function:
-  /// Return the value or the nearest higher value if the value is equal
-  /// to previousValue. Update previousValue with the new higher value.
+  /// Return a value that is strictly greater than previousValue and robust to
+  /// float32 round-tripping. Update previousValue with the returned value.
+  ///
+  /// Note: the returned value may be shifted upward even when input values are
+  /// already strictly increasing, if adjacent points are too close to remain
+  /// distinct after float32 conversion.
   /// \sa NextHigher()
   static double HigherAndUnique(double value, double& previousValue);
 
