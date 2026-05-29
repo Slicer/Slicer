@@ -87,9 +87,11 @@ void vtkMRMLViewInteractorStyle::OnKeyRelease()
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnChar()
 {
-  // Do not call this->GetInteractorStyle->OnChar(), because char OnChar events perform various
-  // low-level operations on the actors (change their rendering style to wireframe, pick them,
-  // change rendering mode to stereo, etc.), which would interfere with displayable managers.
+  // Abort CharEvent so VTK's vtkInteractorStyle::OnChar() does not get invoked
+  // after this callback, because that would perform various low-level operations
+  // on the actors (such as "3" change to stereo rendering, "w" change rendering
+  // style to wireframe, etc.), which would interfere with displayable managers.
+  this->EventCallbackCommand->AbortFlagOn();
 }
 
 //----------------------------------------------------------------------------
