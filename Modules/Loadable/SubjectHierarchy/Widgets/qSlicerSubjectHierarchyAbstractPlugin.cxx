@@ -32,6 +32,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QPainter>
 #include <QStandardItem>
 #include <QAction>
 #include <QColor>
@@ -123,6 +124,75 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
   // Default implementation applies to plugins that do not define roles, only functions and/or levels
   // If there is no role, then there is no visibility icon to set
   return QIcon();
+}
+
+//---------------------------------------------------------------------------
+// static
+QIcon qSlicerSubjectHierarchyAbstractPlugin::applyParentHiddenEffect(const QIcon& icon)
+{
+  if (icon.isNull())
+  {
+    return icon;
+  }
+  QSize iconLogicalSize = icon.availableSizes().value(0, QSize(16, 16));
+  // Render at higher physical resolution so the arrow is sharp on HiDPI displays.
+  const qreal renderScale = qMax(2.0, qApp->devicePixelRatio());
+  QSize physicalSize(qRound(iconLogicalSize.width() * renderScale), qRound(iconLogicalSize.height() * renderScale));
+  QPixmap srcPixmap = icon.pixmap(physicalSize);
+  QPixmap result(physicalSize);
+  result.fill(Qt::transparent);
+  QPainter painter(&result);
+  painter.setRenderHint(QPainter::Antialiasing);
+
+  // Draw the main icon faded to indicate the item is not effectively visible.
+  painter.setOpacity(0.35);
+  painter.drawPixmap(QRect(QPoint(0, 0), physicalSize), srcPixmap, srcPixmap.rect());
+  painter.setOpacity(1.0);
+
+  // Overlay an upward-pointing arrow in the bottom-right corner.
+  // The arrow signals that visibility is controlled by a parent item.
+  const qreal pw = physicalSize.width();
+  const qreal ph = physicalSize.height();
+  const qreal badgeSize = pw * 0.42;
+  const qreal margin = renderScale; // 1 logical-pixel margin from icon edge
+
+  const qreal bx = pw - badgeSize - margin;
+  const qreal by = ph - badgeSize - margin;
+
+  // Up-arrow (arrowhead + stem polygon)
+  const qreal pad = badgeSize * 0.05;
+  const qreal aw = badgeSize - 2.0 * pad;      // arrow bounding width
+  const qreal ah = badgeSize - 2.0 * pad;      // arrow bounding height
+  const qreal ax = bx + pad;                   // arrow bounding-box origin x
+  const qreal ay = by + pad;                   // arrow bounding-box origin y
+  const qreal headH = ah * 0.55;               // height of the triangular head
+  const qreal stemW = aw * 0.35;               // width of the stem
+  const qreal stemX = ax + (aw - stemW) * 0.5; // left edge of stem
+
+  QPolygonF arrow;
+  arrow << QPointF(ax + aw * 0.5, ay)         // tip
+        << QPointF(ax + aw, ay + headH)       // right shoulder
+        << QPointF(stemX + stemW, ay + headH) // right stem-top
+        << QPointF(stemX + stemW, ay + ah)    // right stem-bottom
+        << QPointF(stemX, ay + ah)            // left stem-bottom
+        << QPointF(stemX, ay + headH)         // left stem-top
+        << QPointF(ax, ay + headH);           // left shoulder
+
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(QColor(60, 60, 60));
+  painter.drawPolygon(arrow);
+
+  painter.end();
+  result.setDevicePixelRatio(renderScale);
+  return QIcon(result);
+}
+
+//---------------------------------------------------------------------------
+QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIconWithParentHidden(int visible)
+{
+  // Apply the grayed-out effect to whatever icon this plugin returns for the given
+  // visibility state. Plugins that return no visibility icon get no grayed icon either.
+  return applyParentHiddenEffect(this->visibilityIcon(visible));
 }
 
 //---------------------------------------------------------------------------

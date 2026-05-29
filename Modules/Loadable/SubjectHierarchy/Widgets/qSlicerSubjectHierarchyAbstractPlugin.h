@@ -189,6 +189,13 @@ public:
   /// Get visibility icon for a visibility state
   Q_INVOKABLE virtual QIcon visibilityIcon(int visible);
 
+  /// Get the visibility icon for an item that is nominally visible or hidden
+  /// but whose effective visibility is overridden because a parent item is hidden.
+  /// The default implementation calls applyParentHiddenEffect() on the result of
+  /// visibilityIcon(), which renders the icon at reduced opacity and overlays a
+  /// small upward-pointing arrow in the bottom-right corner.
+  Q_INVOKABLE virtual QIcon visibilityIconWithParentHidden(int visible);
+
   /// Returns true if the module can edit properties of this item using editProperties.
   Q_INVOKABLE virtual bool canEditProperties(vtkIdType itemID);
 
@@ -325,6 +332,13 @@ public:
   /// Switch to module with given name
   /// \return Widget representation of the module if found, nullptr otherwise
   Q_INVOKABLE static qSlicerAbstractModuleWidget* switchToModule(QString moduleName);
+
+  /// Apply the "parent hidden" visual effect to a visibility icon: render it at
+  /// reduced opacity and overlay a small upward-pointing arrow in the bottom-right
+  /// corner to indicate that the item's own visibility setting is irrelevant because
+  /// a parent item is hidden.
+  /// Plugins can call this helper when implementing visibilityIconWithParentHidden().
+  static QIcon applyParentHiddenEffect(const QIcon& icon);
 
 public:
   /// Get the name of the plugin

@@ -178,6 +178,11 @@ public:
 
   void setupVisibilityButton(const QModelIndex& proxyIndex);
   void setupColorButton(const QModelIndex& proxyIndex);
+  void setupAllButtons();
+  void setupRowsRecursively(const QModelIndex& parent);
+  void setupInsertedRows(QPersistentModelIndex parent, int first, int last);
+  void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void onColorButtonClicked(vtkIdType itemID, QPersistentModelIndex persistentIndex);
 };
 
 //------------------------------------------------------------------------------
@@ -267,73 +272,26 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   QObject::connect(q, SIGNAL(expanded(const QModelIndex&)), q, SLOT(onItemExpanded(const QModelIndex&)));
   QObject::connect(q, SIGNAL(collapsed(const QModelIndex&)), q, SLOT(onItemCollapsed(const QModelIndex&)));
 
-  // Visibility buttons: create on row insert, update icon on data change, recreate on reset.
+  // Visibility buttons: create on row insert, update icon on data change, recreate on reset/layout change.
   QObject::connect(this->SortFilterModel,
                    &QAbstractItemModel::rowsInserted,
                    q,
                    [this, q](const QModelIndex& parent, int first, int last)
                    {
-                     QTimer::singleShot(0,
-                                        q,
-                                        [this, q, parent, first, last]()
-                                        {
-                                          for (int row = first; row <= last; ++row)
-                                          {
-                                            this->setupVisibilityButton(this->SortFilterModel->index(row, this->Model->visibilityColumn(), parent));
-                                            this->setupColorButton(this->SortFilterModel->index(row, this->Model->colorColumn(), parent));
-                                          }
-                                        });
+                     // Capture parent as QPersistentModelIndex so it remains valid after
+                     // further model changes (e.g. reparenting during drag-and-drop) that
+                     // would otherwise invalidate a plain QModelIndex before the timer fires.
+                     QPersistentModelIndex persistentParent(parent);
+                     QTimer::singleShot(0, q, [this, persistentParent, first, last]() { this->setupInsertedRows(persistentParent, first, last); });
                    });
-  QObject::connect(this->SortFilterModel,
-                   &QAbstractItemModel::dataChanged,
-                   q,
-                   [this, q](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>&)
-                   {
-                     QModelIndex parent = topLeft.parent();
-                     int visCol = this->Model->visibilityColumn();
-                     int colorCol = this->Model->colorColumn();
-                     for (int row = topLeft.row(); row <= bottomRight.row(); ++row)
-                     {
-                       if (topLeft.column() <= visCol && visCol <= bottomRight.column())
-                       {
-                         QModelIndex index = this->SortFilterModel->index(row, visCol, parent);
-                         auto* button = qobject_cast<QToolButton*>(q->indexWidget(index));
-                         if (button)
-                         {
-                           button->setIcon(index.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
-                         }
-                       }
-                       if (topLeft.column() <= colorCol && colorCol <= bottomRight.column())
-                       {
-                         QModelIndex index = this->SortFilterModel->index(row, colorCol, parent);
-                         auto* button = qobject_cast<QToolButton*>(q->indexWidget(index));
-                         if (button)
-                         {
-                           button->setIcon(QIcon(qMRMLUtils::createColorPixmap(qApp->style(), //
-                                                                               index.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>())));
-                         }
-                       }
-                     }
-                   });
-  QObject::connect(this->SortFilterModel,
-                   &QAbstractItemModel::modelReset,
-                   q,
-                   [this, q]()
-                   {
-                     // Recreate buttons for all currently visible rows after a reset.
-                     std::function<void(const QModelIndex&)> setupRows = [&](const QModelIndex& parent)
-                     {
-                       int visCol = this->Model->visibilityColumn();
-                       int colorCol = this->Model->colorColumn();
-                       for (int row = 0; row < this->SortFilterModel->rowCount(parent); ++row)
-                       {
-                         this->setupVisibilityButton(this->SortFilterModel->index(row, visCol, parent));
-                         this->setupColorButton(this->SortFilterModel->index(row, colorCol, parent));
-                         setupRows(this->SortFilterModel->index(row, 0, parent));
-                       }
-                     };
-                     setupRows(QModelIndex());
-                   });
+  QObject::connect(this->SortFilterModel, &QAbstractItemModel::dataChanged, q, &qMRMLSubjectHierarchyTreeView::onSortFilterDataChanged);
+
+  // Recreate all buttons after a model reset or filter invalidation.
+  // Both operations rebuild the proxy model's internal mapping, which changes the
+  // internalPointer() of every proxy index and orphans any QWidget stored via
+  // setIndexWidget() (Qt stores them by QPersistentModelIndex keyed on that pointer).
+  QObject::connect(this->SortFilterModel, &QAbstractItemModel::modelReset, q, &qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged);
+  QObject::connect(this->SortFilterModel, &QAbstractItemModel::layoutChanged, q, &qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged);
 
   // Set up scene and node actions for the tree view
   this->updateMenuActions();
@@ -360,11 +318,12 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupVisibilityButton(const QModelInd
   button->setIconSize(QSize(iconSize, iconSize));
   button->setStyleSheet("QToolButton { padding: 0px; }");
   button->setIcon(proxyIndex.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
+  button->setProperty("itemID", QVariant::fromValue(itemID));
 
-  QObject::connect(button, &QToolButton::clicked, q, [this, itemID]() { this->setSubjectHierarchyItemVisibility(itemID, ToggleVisibility); });
+  QObject::connect(button, &QToolButton::clicked, q, &qMRMLSubjectHierarchyTreeView::onVisibilityButtonClicked);
 
   button->setContextMenuPolicy(Qt::CustomContextMenu);
-  QObject::connect(button, &QWidget::customContextMenuRequested, q, [q, button](const QPoint& pos) { q->onCustomContextMenu(button->mapToParent(pos)); });
+  QObject::connect(button, &QWidget::customContextMenuRequested, q, &qMRMLSubjectHierarchyTreeView::onButtonContextMenuRequested);
 
   q->setIndexWidget(proxyIndex, button);
 }
@@ -394,134 +353,197 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& p
   button->setStyleSheet("QToolButton { padding: 0px; }");
   button->setIcon(QIcon(qMRMLUtils::createColorPixmap(qApp->style(), color)));
 
-  QPersistentModelIndex persistentIndex(proxyIndex);
-  QObject::connect(button,
-                   &QToolButton::clicked,
-                   q,
-                   [this, q, persistentIndex, itemID]()
-                   {
-                     if (!q->useTerminologySelector())
-                     {
-                       QModelIndex currentProxyIndex = persistentIndex;
-                       if (!currentProxyIndex.isValid())
-                       {
-                         currentProxyIndex = this->SortFilterModel->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
-                       }
-                       if (!currentProxyIndex.isValid())
-                       {
-                         return;
-                       }
+  button->setProperty("itemID", QVariant::fromValue(itemID));
+  button->setProperty("persistentIndex", QVariant::fromValue(QPersistentModelIndex(proxyIndex)));
 
-                       QColor currentColor = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>();
-
-                       ctkColorPickerButton* colorPicker = new ctkColorPickerButton(q);
-                       colorPicker->setProperty("changeColorOnSet", true);
-                       colorPicker->setDisplayColorName(false);
-                       ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
-                       colorPicker->setDialogOptions(options);
-                       colorPicker->setColor(currentColor);
-
-                       QObject::connect(colorPicker,
-                                        &ctkColorPickerButton::colorChanged,
-                                        q,
-                                        [this, persistentIndex, itemID](const QColor& newColor)
-                                        {
-                                          QModelIndex sourceIndex = this->Model->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
-                                          if (!sourceIndex.isValid())
-                                          {
-                                            sourceIndex = this->SortFilterModel->mapToSource(persistentIndex);
-                                          }
-                                          if (!sourceIndex.isValid())
-                                          {
-                                            return;
-                                          }
-                                          this->Model->setData(sourceIndex, newColor, qMRMLSubjectHierarchyModel::ColorRole);
-                                          this->Model->setData(sourceIndex, false, qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
-                                        });
-
-                       colorPicker->changeColor();
-                       colorPicker->deleteLater();
-                       return;
-                     }
-
-                     QModelIndex currentProxyIndex = persistentIndex;
-                     if (!currentProxyIndex.isValid())
-                     {
-                       currentProxyIndex = this->SortFilterModel->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
-                     }
-                     if (!currentProxyIndex.isValid())
-                     {
-                       return;
-                     }
-
-                     vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
-                     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-                     if (app)
-                     {
-                       terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(app->moduleLogic("Terminologies"));
-                     }
-
-                     // Build current terminology info from model roles
-                     vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
-                     QString terminologyString = currentProxyIndex.data(qMRMLSubjectHierarchyModel::TerminologyRole).toString();
-                     if (terminologiesLogic && !terminologyString.isEmpty())
-                     {
-                       terminologiesLogic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
-                     }
-                     QString name = currentProxyIndex.data(qMRMLSubjectHierarchyModel::NameRole).toString();
-                     QColor color = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>();
-                     bool nameAutoGenerated = currentProxyIndex.data(qMRMLSubjectHierarchyModel::NameAutoGeneratedRole).toBool();
-                     QVariant colorAutoGeneratedData = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
-                     bool colorAutoGenerated = colorAutoGeneratedData.isValid() ? colorAutoGeneratedData.toBool() : true;
-                     QColor generatedColor = currentProxyIndex.data(qMRMLSubjectHierarchyModel::GeneratedColorRole).value<QColor>();
-                     if (!generatedColor.isValid())
-                     {
-                       // Fallback to current color when no generated color is stored yet.
-                       generatedColor = color;
-                     }
-
-                     qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo( //
-                       terminologyEntry,
-                       name,
-                       nameAutoGenerated,
-                       color,
-                       colorAutoGenerated,
-                       generatedColor);
-
-                     if (!qSlicerTerminologySelectorDialog::getTerminology(terminologyInfo, q))
-                     {
-                       return;
-                     }
-
-                     // Resolve source index by item ID (robust against proxy model refreshes during the dialog)
-                     QModelIndex sourceIndex = this->Model->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
-                     if (!sourceIndex.isValid())
-                     {
-                       sourceIndex = this->SortFilterModel->mapToSource(persistentIndex);
-                     }
-                     if (!sourceIndex.isValid())
-                     {
-                       return;
-                     }
-
-                     this->Model->setData(sourceIndex, terminologyInfo.Color, qMRMLSubjectHierarchyModel::ColorRole);
-                     this->Model->setData(sourceIndex, terminologyInfo.ColorAutoGenerated, qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
-                     this->Model->setData(sourceIndex,                                                                                       //
-                                          terminologyInfo.GeneratedColor.isValid() ? terminologyInfo.GeneratedColor : terminologyInfo.Color, //
-                                          qMRMLSubjectHierarchyModel::GeneratedColorRole);
-                     this->Model->setData(sourceIndex, terminologyInfo.Name, qMRMLSubjectHierarchyModel::NameRole);
-                     this->Model->setData(sourceIndex, terminologyInfo.NameAutoGenerated, qMRMLSubjectHierarchyModel::NameAutoGeneratedRole);
-                     if (terminologiesLogic)
-                     {
-                       std::string terminologyStr = terminologiesLogic->SerializeTerminologyEntry(terminologyInfo.GetTerminologyEntry());
-                       this->Model->setData(sourceIndex, QString::fromStdString(terminologyStr), qMRMLSubjectHierarchyModel::TerminologyRole);
-                     }
-                   });
+  QObject::connect(button, &QToolButton::clicked, q, &qMRMLSubjectHierarchyTreeView::onColorButtonClicked);
 
   button->setContextMenuPolicy(Qt::CustomContextMenu);
-  QObject::connect(button, &QWidget::customContextMenuRequested, q, [q, button](const QPoint& pos) { q->onCustomContextMenu(button->mapToParent(pos)); });
+  QObject::connect(button, &QWidget::customContextMenuRequested, q, &qMRMLSubjectHierarchyTreeView::onButtonContextMenuRequested);
 
   q->setIndexWidget(proxyIndex, button);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setupAllButtons()
+{
+  this->setupRowsRecursively(QModelIndex());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setupRowsRecursively(const QModelIndex& parent)
+{
+  int visCol = this->Model->visibilityColumn();
+  int colorCol = this->Model->colorColumn();
+  for (int row = 0; row < this->SortFilterModel->rowCount(parent); ++row)
+  {
+    this->setupVisibilityButton(this->SortFilterModel->index(row, visCol, parent));
+    this->setupColorButton(this->SortFilterModel->index(row, colorCol, parent));
+    this->setupRowsRecursively(this->SortFilterModel->index(row, 0, parent));
+  }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setupInsertedRows(QPersistentModelIndex parent, int first, int last)
+{
+  int visCol = this->Model->visibilityColumn();
+  int colorCol = this->Model->colorColumn();
+  for (int row = first; row <= last; ++row)
+  {
+    this->setupVisibilityButton(this->SortFilterModel->index(row, visCol, parent));
+    this->setupColorButton(this->SortFilterModel->index(row, colorCol, parent));
+    QModelIndex childParent = this->SortFilterModel->index(row, 0, parent);
+    int childCount = this->SortFilterModel->rowCount(childParent);
+    if (childCount > 0)
+    {
+      this->setupInsertedRows(childParent, 0, childCount - 1);
+    }
+  }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  QModelIndex parent = topLeft.parent();
+  int visCol = this->Model->visibilityColumn();
+  int colorCol = this->Model->colorColumn();
+  for (int row = topLeft.row(); row <= bottomRight.row(); ++row)
+  {
+    if (topLeft.column() <= visCol && visCol <= bottomRight.column())
+    {
+      QModelIndex index = this->SortFilterModel->index(row, visCol, parent);
+      auto* button = qobject_cast<QToolButton*>(q->indexWidget(index));
+      if (button)
+      {
+        button->setIcon(index.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
+      }
+    }
+    if (topLeft.column() <= colorCol && colorCol <= bottomRight.column())
+    {
+      QModelIndex index = this->SortFilterModel->index(row, colorCol, parent);
+      QColor color = index.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>();
+      auto* button = qobject_cast<QToolButton*>(q->indexWidget(index));
+      if (button && color.isValid() && color.alpha() != 0)
+      {
+        // Button already exists and color is still valid: just update the icon.
+        button->setIcon(QIcon(qMRMLUtils::createColorPixmap(qApp->style(), color)));
+      }
+      else if (button || (color.isValid() && color.alpha() != 0))
+      {
+        // Button needs to be created (color became valid) or removed (color became transparent).
+        this->setupColorButton(index);
+      }
+      // No button and no valid color: nothing to do.
+    }
+  }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::onColorButtonClicked(vtkIdType itemID, QPersistentModelIndex persistentIndex)
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  if (!q->useTerminologySelector())
+  {
+    QModelIndex currentProxyIndex = persistentIndex;
+    if (!currentProxyIndex.isValid())
+    {
+      currentProxyIndex = this->SortFilterModel->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
+    }
+    if (!currentProxyIndex.isValid())
+    {
+      return;
+    }
+
+    QColor currentColor = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>();
+
+    ctkColorPickerButton* colorPicker = new ctkColorPickerButton(q);
+    colorPicker->setProperty("changeColorOnSet", true);
+    colorPicker->setDisplayColorName(false);
+    ctkColorPickerButton::ColorDialogOptions options = ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
+    colorPicker->setDialogOptions(options);
+    colorPicker->setColor(currentColor);
+
+    colorPicker->setProperty("itemID", QVariant::fromValue(itemID));
+    colorPicker->setProperty("persistentIndex", QVariant::fromValue(persistentIndex));
+    QObject::connect(colorPicker, &ctkColorPickerButton::colorChanged, q, &qMRMLSubjectHierarchyTreeView::onColorPickerColorChanged);
+
+    colorPicker->changeColor();
+    colorPicker->deleteLater();
+    return;
+  }
+
+  QModelIndex currentProxyIndex = persistentIndex;
+  if (!currentProxyIndex.isValid())
+  {
+    currentProxyIndex = this->SortFilterModel->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
+  }
+  if (!currentProxyIndex.isValid())
+  {
+    return;
+  }
+
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (app)
+  {
+    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(app->moduleLogic("Terminologies"));
+  }
+
+  // Build current terminology info from model roles
+  vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
+  QString terminologyString = currentProxyIndex.data(qMRMLSubjectHierarchyModel::TerminologyRole).toString();
+  if (terminologiesLogic && !terminologyString.isEmpty())
+  {
+    terminologiesLogic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
+  }
+  QString name = currentProxyIndex.data(qMRMLSubjectHierarchyModel::NameRole).toString();
+  QColor color = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorRole).value<QColor>();
+  bool nameAutoGenerated = currentProxyIndex.data(qMRMLSubjectHierarchyModel::NameAutoGeneratedRole).toBool();
+  QVariant colorAutoGeneratedData = currentProxyIndex.data(qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
+  bool colorAutoGenerated = colorAutoGeneratedData.isValid() ? colorAutoGeneratedData.toBool() : true;
+  QColor generatedColor = currentProxyIndex.data(qMRMLSubjectHierarchyModel::GeneratedColorRole).value<QColor>();
+  if (!generatedColor.isValid())
+  {
+    generatedColor = color;
+  }
+
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo( //
+    terminologyEntry,
+    name,
+    nameAutoGenerated,
+    color,
+    colorAutoGenerated,
+    generatedColor);
+
+  if (!qSlicerTerminologySelectorDialog::getTerminology(terminologyInfo, q))
+  {
+    return;
+  }
+
+  // Resolve source index by item ID (robust against proxy model refreshes during the dialog)
+  QModelIndex sourceIndex = this->Model->indexFromSubjectHierarchyItem(itemID, this->Model->colorColumn());
+  if (!sourceIndex.isValid())
+  {
+    sourceIndex = this->SortFilterModel->mapToSource(persistentIndex);
+  }
+  if (!sourceIndex.isValid())
+  {
+    return;
+  }
+
+  this->Model->setData(sourceIndex, terminologyInfo.Color, qMRMLSubjectHierarchyModel::ColorRole);
+  this->Model->setData(sourceIndex, terminologyInfo.ColorAutoGenerated, qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
+  this->Model->setData(sourceIndex,                                                                                       //
+                       terminologyInfo.GeneratedColor.isValid() ? terminologyInfo.GeneratedColor : terminologyInfo.Color, //
+                       qMRMLSubjectHierarchyModel::GeneratedColorRole);
+  this->Model->setData(sourceIndex, terminologyInfo.Name, qMRMLSubjectHierarchyModel::NameRole);
+  this->Model->setData(sourceIndex, terminologyInfo.NameAutoGenerated, qMRMLSubjectHierarchyModel::NameAutoGeneratedRole);
+  if (terminologiesLogic)
+  {
+    std::string terminologyStr = terminologiesLogic->SerializeTerminologyEntry(terminologyInfo.GetTerminologyEntry());
+    this->Model->setData(sourceIndex, QString::fromStdString(terminologyStr), qMRMLSubjectHierarchyModel::TerminologyRole);
+  }
 }
 
 //--------------------------------------------------------------------------
@@ -2575,6 +2597,94 @@ bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility /*=false
   }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onVisibilityButtonClicked()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  auto* button = qobject_cast<QToolButton*>(sender());
+  if (!button)
+  {
+    return;
+  }
+  vtkIdType itemID = button->property("itemID").value<vtkIdType>();
+  if (!itemID)
+  {
+    return;
+  }
+  d->setSubjectHierarchyItemVisibility(itemID, qMRMLSubjectHierarchyTreeViewPrivate::ToggleVisibility);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onColorPickerColorChanged(const QColor& newColor)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  auto* colorPicker = qobject_cast<ctkColorPickerButton*>(sender());
+  if (!colorPicker)
+  {
+    return;
+  }
+  vtkIdType itemID = colorPicker->property("itemID").value<vtkIdType>();
+  if (!itemID)
+  {
+    return;
+  }
+  QPersistentModelIndex persistentIndex = colorPicker->property("persistentIndex").value<QPersistentModelIndex>();
+  QModelIndex sourceIndex = d->Model->indexFromSubjectHierarchyItem(itemID, d->Model->colorColumn());
+  if (!sourceIndex.isValid())
+  {
+    sourceIndex = d->SortFilterModel->mapToSource(persistentIndex);
+  }
+  if (!sourceIndex.isValid())
+  {
+    return;
+  }
+  d->Model->setData(sourceIndex, newColor, qMRMLSubjectHierarchyModel::ColorRole);
+  d->Model->setData(sourceIndex, false, qMRMLSubjectHierarchyModel::ColorAutoGeneratedRole);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onColorButtonClicked()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  auto* button = qobject_cast<QToolButton*>(sender());
+  if (!button)
+  {
+    return;
+  }
+  vtkIdType itemID = button->property("itemID").value<vtkIdType>();
+  if (!itemID)
+  {
+    return;
+  }
+  QPersistentModelIndex persistentIndex = button->property("persistentIndex").value<QPersistentModelIndex>();
+  d->onColorButtonClicked(itemID, persistentIndex);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onButtonContextMenuRequested(const QPoint& pos)
+{
+  auto* button = qobject_cast<QWidget*>(sender());
+  if (!button)
+  {
+    return;
+  }
+  this->onCustomContextMenu(button->mapToParent(pos));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onSortFilterDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->onDataChanged(topLeft, bottomRight);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->setupAllButtons();
 }
 
 //------------------------------------------------------------------------------

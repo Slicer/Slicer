@@ -116,8 +116,11 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
   if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent //
       && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller))
   {
-    // No-op if this folder node does not apply display properties on its branch
-    if (!this->ApplyDisplayPropertiesOnBranch)
+    // Skip if this folder neither applies display properties nor is hidden.
+    // A visible folder with no property override has no effect on a reparented item.
+    // A hidden folder must always notify the reparented node so the display manager
+    // re-evaluates GetHierarchyVisibility(), which checks parent visibility unconditionally.
+    if (!this->ApplyDisplayPropertiesOnBranch && this->GetVisibility() != 0)
     {
       return;
     }
@@ -132,19 +135,30 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
       }
     }
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
-    vtkMRMLDisplayableNode* displayableReparentedNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(reparentedItemID));
-    if (displayableReparentedNode)
+
+    // Collect the reparented item's entire subtree, then prepend the item itself.
+    // GetItemChildren clears the vector before filling it, so reparentedItemID
+    // must be inserted after the call, not before.
+    std::vector<vtkIdType> itemsToNotify;
+    shNode->GetItemChildren(reparentedItemID, itemsToNotify, /*recursive=*/true);
+    itemsToNotify.insert(itemsToNotify.begin(), reparentedItemID);
+
+    for (vtkIdType notifyItemID : itemsToNotify)
     {
-      // Trigger display update for reparented displayable node if it is in a folder that applies
-      // display properties on its branch (only display nodes that allow overriding)
-      for (int i = 0; i < displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
+      vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(notifyItemID));
+      if (!displayableNode)
       {
-        vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
+        continue;
+      }
+      // Trigger display update so the displayable manager re-evaluates hierarchy visibility.
+      for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+      {
+        vtkMRMLDisplayNode* currentDisplayNode = displayableNode->GetNthDisplayNode(i);
         if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
         {
           currentDisplayNode->Modified();
         }
-      } // For all display nodes
+      }
     }
   } // SubjectHierarchyItemReparentedEvent
 }

@@ -411,6 +411,14 @@ protected slots:
 
   virtual void addNode();
 
+private slots:
+  void onSortFilterModelChanged();
+  void onSortFilterDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void onVisibilityButtonClicked();
+  void onColorButtonClicked();
+  void onColorPickerColorChanged(const QColor& newColor);
+  void onButtonContextMenuRequested(const QPoint& pos);
+
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);

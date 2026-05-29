@@ -956,7 +956,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     return flags;
   }
 
-  if (column == this->nameColumn() || column == this->colorColumn() || column == this->descriptionColumn())
+  if (column == this->nameColumn() || column == this->descriptionColumn())
   {
     flags |= Qt::ItemIsEditable;
   }
@@ -1157,15 +1157,44 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     int visible = ownerPlugin->getDisplayVisibility(shItemID);
     QIcon visibilityIcon = ownerPlugin->visibilityIcon(visible);
 
+    // Check if any ancestor item has visibility turned off; if so the item's own
+    // visibility setting has no effect and the icon should be grayed out.
+    bool parentVisible = true;
+    {
+      vtkIdType parentID = d->SubjectHierarchyNode->GetItemParent(shItemID);
+      vtkIdType sceneItemID = d->SubjectHierarchyNode->GetSceneItemID();
+      while (parentID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID && parentID != sceneItemID)
+      {
+        qSlicerSubjectHierarchyAbstractPlugin* parentPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(parentID);
+        if (parentPlugin && parentPlugin->getDisplayVisibility(parentID) == 0)
+        {
+          parentVisible = false;
+          break;
+        }
+        parentID = d->SubjectHierarchyNode->GetItemParent(parentID);
+      }
+    }
+
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
     // it would fire a superfluous itemChanged() signal.
-    if (item->data(VisibilityRole).isNull() || item->data(VisibilityRole).toInt() != visible)
+    if (item->data(VisibilityRole).isNull() || item->data(VisibilityRole).toInt() != visible || item->data(ParentVisibilityRole).isNull()
+        || item->data(ParentVisibilityRole).toBool() != parentVisible)
     {
       item->setData(visible, VisibilityRole);
+      item->setData(parentVisible, ParentVisibilityRole);
       if (!visibilityIcon.isNull())
       {
-        item->setData(visibilityIcon, VisibilityIconRole);
+        if (!parentVisible)
+        {
+          // The default plugin caches these icons; other plugins fall back to the plain icon.
+          QIcon parentHiddenIcon = ownerPlugin->visibilityIconWithParentHidden(visible);
+          item->setData(!parentHiddenIcon.isNull() ? parentHiddenIcon : visibilityIcon, VisibilityIconRole);
+        }
+        else
+        {
+          item->setData(visibilityIcon, VisibilityIconRole);
+        }
       }
     }
   }
@@ -1559,8 +1588,8 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent: sceneModel->onSubjectHierarchyItemRemoved(itemID); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent:
-    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent: sceneModel->onSubjectHierarchyItemModified(itemID); break;
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent: sceneModel->onSubjectHierarchyItemDisplayModified(itemID); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent: sceneModel->onSubjectHierarchyItemChildrenReordered(itemID); break;
     case vtkMRMLScene::EndImportEvent: sceneModel->onMRMLSceneImported(scene); break;
     case vtkMRMLScene::EndCloseEvent: sceneModel->onMRMLSceneClosed(scene); break;
@@ -1647,7 +1676,69 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemModified(vtkIdType itemID)
 {
+  Q_D(qMRMLSubjectHierarchyModel);
+
+  // Snapshot both the item's own visibility and its parent-hidden state before
+  // the update so we can detect either kind of change afterwards.
+  // - VisibilityRole changes when the item's own display node is toggled
+  //   (folder items fire SubjectHierarchyItemModifiedEvent for this, not DisplayModifiedEvent).
+  // - ParentVisibilityRole changes when the item is reparented into/out of a
+  //   hidden subtree via drag-and-drop (SubjectHierarchyItemReparentedEvent).
+  // In both cases we need to cascade the update to all descendants.
+  int previousVisible = -1;
+  bool previousParentVisible = true;
+  if (this->visibilityColumn() >= 0)
+  {
+    QStandardItem* visItem = this->itemFromSubjectHierarchyItem(itemID, this->visibilityColumn());
+    if (visItem)
+    {
+      if (!visItem->data(VisibilityRole).isNull())
+      {
+        previousVisible = visItem->data(VisibilityRole).toInt();
+      }
+      if (!visItem->data(ParentVisibilityRole).isNull())
+      {
+        previousParentVisible = visItem->data(ParentVisibilityRole).toBool();
+      }
+    }
+  }
+
   this->updateModelItems(itemID);
+
+  // Cascade to descendants whenever own visibility or effective parent visibility changed.
+  if (this->visibilityColumn() >= 0 && d->SubjectHierarchyNode)
+  {
+    QStandardItem* visItem = this->itemFromSubjectHierarchyItem(itemID, this->visibilityColumn());
+    int currentVisible = visItem ? visItem->data(VisibilityRole).toInt() : -1;
+    bool currentParentVisible = visItem ? visItem->data(ParentVisibilityRole).toBool() : true;
+    if (currentVisible != previousVisible || currentParentVisible != previousParentVisible)
+    {
+      std::vector<vtkIdType> childrenIDs;
+      d->SubjectHierarchyNode->GetItemChildren(itemID, childrenIDs, /*recursive=*/true);
+      for (vtkIdType childID : childrenIDs)
+      {
+        this->updateModelItems(childID);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemDisplayModified(vtkIdType itemID)
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  this->updateModelItems(itemID);
+  // Also update all descendants: their visibility icons may need to be grayed out or restored
+  // depending on whether this item's visibility was turned on or off.
+  if (d->SubjectHierarchyNode)
+  {
+    std::vector<vtkIdType> childrenIDs;
+    d->SubjectHierarchyNode->GetItemChildren(itemID, childrenIDs, /*recursive=*/true);
+    for (vtkIdType childID : childrenIDs)
+    {
+      this->updateModelItems(childID);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
