@@ -32,6 +32,9 @@ set(APPLE_ICON_FILE
 set(WIN_ICON_FILE
   "${CMAKE_CURRENT_LIST_DIR}/Resources/${APPLICATION_NAME}.ico"
   )
+set(LINUX_ICON_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/Resources/Icons/XXLarge/${APPLICATION_NAME}-DesktopIcon.png"
+  )
 
 set(LICENSE_FILE
   "${Slicer_SOURCE_DIR}/License.txt"
