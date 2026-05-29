@@ -136,6 +136,10 @@ bool qSlicerTerminologyEditorDialog::exec()
   // Initialize dialog
   d->EditorWidget->setTerminologyInfo(d->TerminologyInfo);
 
+  // Pre-size the dialog so Qt's WA_Resized flag is set before exec() creates the platform window.
+  // Without this, Qt creates the window at a small default size, which Windows rejects and logs a geometry warning in debug mode.
+  d->adjustSize();
+
   // Show dialog
   bool result = false;
   if (d->exec() != QDialog::Accepted)
