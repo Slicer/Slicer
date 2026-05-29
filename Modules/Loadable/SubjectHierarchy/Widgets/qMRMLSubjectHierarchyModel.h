@@ -96,6 +96,9 @@ public:
     /// Integer that contains the visibility property of an item.
     /// It is closely related to the item icon.
     VisibilityRole,
+    /// Boolean indicating whether all ancestor items have visibility turned on.
+    /// When false, the item's own visibility icon is grayed out.
+    ParentVisibilityRole,
     /// MRML node ID of the parent transform
     TransformIDRole,
     /// QIcon for the visibility button; stored here instead of DecorationRole so the delegate does not paint it
@@ -211,6 +214,7 @@ protected slots:
   virtual void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemModified(vtkIdType itemID);
+  virtual void onSubjectHierarchyItemDisplayModified(vtkIdType itemID);
   virtual void onSubjectHierarchyItemChildrenReordered(vtkIdType itemID);
 
   virtual void onMRMLSceneImported(vtkMRMLScene* scene);

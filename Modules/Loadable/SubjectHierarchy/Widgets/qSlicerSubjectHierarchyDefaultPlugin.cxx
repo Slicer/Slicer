@@ -57,6 +57,10 @@ public:
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
 
+  QIcon VisibleWithParentHiddenIcon;
+  QIcon HiddenWithParentHiddenIcon;
+  QIcon PartiallyVisibleWithParentHiddenIcon;
+
   QAction* ShowAllChildrenAction;
   QAction* HideAllChildrenAction;
 };
@@ -113,6 +117,10 @@ void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visib
   d->VisibleIcon = visibleIcon;
   d->HiddenIcon = hiddenIcon;
   d->PartiallyVisibleIcon = partiallyVisibleIcon;
+  // Invalidate derived caches so they are rebuilt from the new base icons.
+  d->VisibleWithParentHiddenIcon = QIcon();
+  d->HiddenWithParentHiddenIcon = QIcon();
+  d->PartiallyVisibleWithParentHiddenIcon = QIcon();
 }
 
 //---------------------------------------------------------------------------
@@ -187,6 +195,30 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
     case 2: return d->PartiallyVisibleIcon;
     default: return QIcon();
   }
+}
+
+//---------------------------------------------------------------------------
+QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIconWithParentHidden(int visible)
+{
+  Q_D(qSlicerSubjectHierarchyDefaultPlugin);
+
+  QIcon* cached = nullptr;
+  switch (visible)
+  {
+    case 0: cached = &d->HiddenWithParentHiddenIcon; break;
+    case 1: cached = &d->VisibleWithParentHiddenIcon; break;
+    case 2: cached = &d->PartiallyVisibleWithParentHiddenIcon; break;
+  }
+  if (cached && !cached->isNull())
+  {
+    return *cached;
+  }
+  QIcon result = applyParentHiddenEffect(this->visibilityIcon(visible));
+  if (cached)
+  {
+    *cached = result;
+  }
+  return result;
 }
 
 //-----------------------------------------------------------------------------

@@ -69,6 +69,10 @@ public:
   /// Get visibility icon for a visibility state
   QIcon visibilityIcon(int visible) override;
 
+  /// Get the visibility icon for an item whose effective visibility is overridden
+  /// because a parent item is hidden. Icons are lazily created and cached.
+  QIcon visibilityIconWithParentHidden(int visible) override;
+
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
