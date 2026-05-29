@@ -286,6 +286,7 @@ macro(slicerMacroBuildApplication)
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
+    LINUX_ICON_FILE
     LICENSE_FILE
 
     TARGET_NAME_VAR
@@ -379,6 +380,9 @@ macro(slicerMacroBuildApplication)
   endif()
   _set_path_var(APPLE_ICON_FILE)
   _set_path_var(WIN_ICON_FILE)
+  if(DEFINED SLICERAPP_LINUX_ICON_FILE)
+    _set_path_var(LINUX_ICON_FILE)
+  endif()
   _set_path_var(LICENSE_FILE)
   if(DEFINED SLICERAPP_DEFAULT_SETTINGS_FILE)
     _set_path_var(DEFAULT_SETTINGS_FILE)
@@ -829,6 +833,20 @@ macro(slicerMacroBuildApplication)
           install(
             FILES ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
             DESTINATION ${Slicer_INSTALL_BIN_DIR}
+            COMPONENT Runtime
+            )
+        endif()
+
+        # On linux there is no standard way of application icon in a standard and portable way.
+        # To make it easier to add application icon using external setup scripts,
+        # we make an application icon availablein the same folder as the launcher,
+        # with the same name as the launcher (with the file extension of an image file, .png by default).
+        if(UNIX AND DEFINED SLICERAPP_LINUX_ICON_FILE)
+          get_filename_component(_linux_icon_ext "${SLICERAPP_LINUX_ICON_FILE}" EXT)
+          install(
+            FILES "${SLICERAPP_LINUX_ICON_FILE}"
+            DESTINATION "."
+            RENAME "${SLICERAPP_APPLICATION_NAME}${_linux_icon_ext}"
             COMPONENT Runtime
             )
         endif()

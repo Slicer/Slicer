@@ -78,6 +78,7 @@ function(SlicerReadApplicationProperties)
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
+    LINUX_ICON_FILE
 
     LICENSE_FILE
     )
