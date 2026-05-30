@@ -123,6 +123,24 @@ public:
   /// If \param isBlocked is true, \sa UpdatePipeline is not called during \sa ResetDisplay.
   bool BlockResetDisplay(bool isBlocked);
 
+  /// If \param isBlocked is true, blocks \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent to be called.
+  /// \sa vtkMRMLLayerDMInteractionLogic
+  bool BlockInteractionProcessing(bool isBlocked);
+
+  /// Current state of interaction processing blocking.
+  bool IsInteractionProcessingBlocked() const;
+
+  /// If \param isBlocked is true, blocks \sa OnUpdate method from being triggered by external changes.
+  bool BlockUpdateObserver(bool isBlocked) const;
+
+  /// If \param isFrozen is true, blocks all reactiveness from the pipeline (ResetDisplay, Interaction and Update).
+  /// Reactiveness cannot be toggled back on unless the pipeline is unfrozen first.
+  /// Used to deactivate pipelines during removal.
+  ///
+  /// \sa BlockResetDisplay \sa BlockInteractionProcessing \sa BlockUpdateObserver
+  void SetFrozen(bool isFrozen);
+  bool IsFrozen() const;
+
   /// Returns the current display node.
   vtkMRMLNode* GetDisplayNode() const;
 
@@ -189,6 +207,8 @@ private:
   vtkWeakPointer<vtkMRMLNode> m_displayNode;
   vtkWeakPointer<vtkRenderer> m_renderer;
   bool m_isResetDisplayBlocked;
+  bool m_isFrozen;
+  bool m_isInteractionProcessingBlocked;
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
   vtkWeakPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
   vtkWeakPointer<vtkMRMLScene> m_scene;

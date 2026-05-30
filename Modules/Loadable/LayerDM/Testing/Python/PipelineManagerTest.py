@@ -268,7 +268,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         modelNodes = [slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
         for modelNode in modelNodes:
             self.pipelineManager.AddNode(modelNode)
-        pipelines = [self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in range(self.pipelineManager.GetNumberOfPipelines())]
+        pipelines = [self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in
+                     range(self.pipelineManager.GetNumberOfPipelines())]
         modelPipelines = [p for p in pipelines if p.GetDisplayNode() in modelNodes]
         assert len(modelPipelines) == 5
         prevNumber = self.pipelineManager.GetNumberOfPipelines()
@@ -296,3 +297,10 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         # Unset the display node and expect the pipeline to have been notified
         markups.SetAndObserveDisplayNodeID("")
         m1.mockOnReferenceToDisplayNodeRemoved.assert_called_once_with(markups, "display")
+
+    def test_pipelines_removed_are_frozen_during_cleanup(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        assert not m1.IsFrozen()
+
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        assert m1.IsFrozen()
