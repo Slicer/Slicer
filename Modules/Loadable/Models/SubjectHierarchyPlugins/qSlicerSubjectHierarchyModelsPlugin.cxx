@@ -27,7 +27,6 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 
 // Terminologies includes
-#include "qSlicerTerminologyItemDelegate.h"
 #include "vtkSlicerTerminologiesModuleLogic.h"
 
 // MRML includes
@@ -228,13 +227,13 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID) const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QColor color, const qSlicerTerminologyMetadata& terminologyMetadata)
 {
-  this->setColorAndTerminologyToDisplayableNode(itemID, color, terminologyMetaData, false, true);
+  this->setColorAndTerminologyToDisplayableNode(itemID, color, terminologyMetadata, false, true);
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData) const
+QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, qSlicerTerminologyMetadata& terminologyMetadata) const
 {
-  return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetaData, false);
+  return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetadata, false);
 }

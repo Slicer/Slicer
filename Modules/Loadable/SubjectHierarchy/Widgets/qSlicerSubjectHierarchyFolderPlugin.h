@@ -107,13 +107,13 @@ public:
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
   /// \param color Display color to set
-  /// \param terminologyMetaData Map containing terminology meta data. Not used in this plugin
-  void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData) override;
+  /// \param terminologyMetadata Strongly typed terminology metadata. Not used in this plugin.
+  void setDisplayColor(vtkIdType itemID, QColor color, const qSlicerTerminologyMetadata& terminologyMetadata) override;
 
   /// Get display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
-  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData) const override;
+  QColor getDisplayColor(vtkIdType itemID, qSlicerTerminologyMetadata& terminologyMetadata) const override;
 
   /// Get item context menu item actions to add to tree view
   QList<QAction*> itemContextMenuActions() const override;

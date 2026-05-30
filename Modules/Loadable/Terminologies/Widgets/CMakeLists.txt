@@ -11,8 +11,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   qMRMLSimpleColorTableView.cxx
   qMRMLSimpleColorTableView.h
-  qSlicerTerminologyItemDelegate.cxx
-  qSlicerTerminologyItemDelegate.h
   qSlicerTerminologyNavigatorWidget.cxx
   qSlicerTerminologyNavigatorWidget.h
   qSlicerTerminologySelectorButton.cxx

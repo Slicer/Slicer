@@ -105,7 +105,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
-  /// Double-clicking the color will show a standard terminology selector if true, otherwise show simple color picker
+  /// Clicking the color will show a standard terminology selector if true, otherwise show simple color picker
   Q_PROPERTY(bool useTerminologySelector READ useTerminologySelector WRITE setUseTerminologySelector)
 
 public:
