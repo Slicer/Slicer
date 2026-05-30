@@ -231,8 +231,6 @@ protected slots:
   /// Handles clicks on the show status buttons
   void onShowStatusButtonClicked();
 
-  /// Handles clicks on a table cell (visibility + state)
-  void onSegmentsTableClicked(const QModelIndex& modelIndex);
   /// Handles clicks on a table cell (name + color change / terminology change)
   void onSegmentsTableDoubleClicked(const QModelIndex& modelIndex);
 

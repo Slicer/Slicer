@@ -18,9 +18,9 @@ Define category, type, type modifier and region of a data object, such as model 
 
 ## Panels and their use
 
-The terminology navigator dialog is displayed when double-clicking the color selector box in data trees and lists where the color of the objects is shown in a column as a color swatch. Such selectors are there for data nodes in the [Data](data.md), [Models](models.md), [Markups](markups.md) modules, and for the segments within segmentation nodes in the [Segmentations](segmentations.md) and [Segment Editor](segmenteditor.md) modules.
+The terminology navigator dialog is displayed when clicking the color selector box in data trees and lists where the color of the objects is shown in a column as a color swatch. Such selectors are there for data nodes in the [Data](data.md), [Models](models.md), [Markups](markups.md) modules, and for the segments within segmentation nodes in the [Segmentations](segmentations.md) and [Segment Editor](segmenteditor.md) modules.
 
-After double-clicking, the basic selector window opens:
+After clicking, the basic selector window opens:
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/terminology_selector_basic.png)
 

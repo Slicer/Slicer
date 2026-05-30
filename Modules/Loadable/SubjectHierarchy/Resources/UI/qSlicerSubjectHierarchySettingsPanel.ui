@@ -155,7 +155,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="UseTerminologyLabel">
         <property name="toolTip">
-         <string>If enabled, double-clicking the color column opens the terminology selector. Otherwise the color can be edited via simple color selector. True by default.</string>
+         <string>If enabled, clicking the color column opens the terminology selector. Otherwise the color can be edited via simple color selector. True by default.</string>
         </property>
         <property name="text">
          <string>Use standard terminology:</string>
@@ -165,7 +165,7 @@
       <item row="2" column="1">
        <widget class="QCheckBox" name="UseTerminologyCheckBox">
         <property name="toolTip">
-         <string>If enabled, double-clicking the color column opens the terminology selector. Otherwise the color can be edited via simple color selector. True by default.</string>
+         <string>If enabled, clicking the color column opens the terminology selector. Otherwise the color can be edited via simple color selector. True by default.</string>
         </property>
         <property name="text">
          <string/>
