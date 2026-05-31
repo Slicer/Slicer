@@ -140,7 +140,6 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
                       << "vtkMRMLViewDisplayableManager"
-                      << "vtkMRMLModelDisplayableManager"
                       << "vtkMRMLThreeDReformatDisplayableManager"
                       << "vtkMRMLThreeDSliceEdgeDisplayableManager"
                       << "vtkMRMLCrosshairDisplayableManager3D"

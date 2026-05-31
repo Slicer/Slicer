@@ -11,6 +11,12 @@
 #include "vtkSlicerModelsLogic.h"
 #include "vtkMRMLSliceLogic.h"
 
+/// SlicerLayerDM includes
+#include "vtkSlicerLayerDMLogic.h"
+
+/// Module MRML Includes
+#include "vtkMRMLModelPickingNode.h"
+
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLClipModelsNode.h>
@@ -514,4 +520,38 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     }
   }
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+}
+
+vtkMRMLModelPickingNode* vtkSlicerModelsLogic::GetModelPickingNodeSingleton() const
+{
+  if (!this->GetMRMLScene())
+  {
+    return nullptr;
+  }
+  return vtkMRMLModelPickingNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ModelPickingSingletonID));
+}
+
+void vtkSlicerModelsLogic::RegisterNodes()
+{
+  if (!this->GetMRMLScene())
+  {
+    return;
+  }
+
+  Superclass::RegisterNodes();
+  vtkSlicerLayerDMLogic::RegisterNodeIfNeeded<vtkMRMLModelPickingNode>(this->GetMRMLScene());
+
+  // Create a singleton picking node if needed.
+  // The picking node is meant for passing information between DM and logic regarding model picking state.
+  // As such it's configured as a singleton and not saved with the scene.
+  vtkSmartPointer<vtkMRMLModelPickingNode> node = GetModelPickingNodeSingleton();
+  if (node)
+  {
+    return;
+  }
+
+  node = vtkSmartPointer<vtkMRMLModelPickingNode>::New();
+  node->SetSingletonTag(this->ModelPickingSingletonID);
+  node->SetSaveWithScene(false);
+  this->GetMRMLScene()->AddNode(node);
 }
