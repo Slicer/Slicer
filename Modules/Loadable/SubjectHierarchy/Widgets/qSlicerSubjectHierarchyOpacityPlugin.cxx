@@ -21,6 +21,7 @@
 ==============================================================================*/
 
 // SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
 
@@ -144,27 +145,45 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
     return;
   }
 
-  // Show opacity for every non-scene items with display node
-  vtkMRMLDisplayNode* displayNode = nullptr;
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(displayableNode);
-  if (displayableNode)
+  vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
+  vtkMRMLDisplayNode* displayNode = displayableNode ? displayableNode->GetDisplayNode() : nullptr;
+  bool canCreateFolderDisplayNode = false;
+
+  if (!displayableNode)
   {
-    displayNode = displayableNode->GetDisplayNode();
+    // Folder items may have a display node directly, or none yet.
+    // Offer opacity even before the folder display node has been created.
+    qSlicerSubjectHierarchyFolderPlugin* folderPlugin =
+      qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
+    if (folderPlugin)
+    {
+      displayNode = folderPlugin->displayNodeForItem(itemID);
+      canCreateFolderDisplayNode = !displayNode && !dataNode && folderPlugin->canOwnSubjectHierarchyItem(itemID) > 0.0;
+    }
+  }
+
+  // Opacity of volume nodes is a special case (it could be done by adjusting volume rendering opacity
+  // transfer functions and/or foreground slice opacity) but we do not implement it here.
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(displayableNode);
+  if (volumeNode)
+  {
+    displayNode = nullptr;
+  }
+
+  if (displayNode || canCreateFolderDisplayNode)
+  {
+    // Populating the menu must not create or modify MRML nodes. Block signals
+    // so setting the default folder opacity does not call setOpacityForCurrentItem().
+    bool wasBlocked = d->OpacitySlider->blockSignals(true);
+    d->OpacitySlider->setValue(displayNode ? displayNode->GetOpacity() : 1.0);
+    d->OpacitySlider->blockSignals(wasBlocked);
+    d->OpacityAction->setVisible(true);
   }
   else
   {
-    // Folder nodes may have display nodes directly associated
-    displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    d->OpacityAction->setVisible(false);
   }
-
-  if (displayNode)
-  {
-    d->OpacitySlider->setValue(displayNode->GetOpacity());
-  }
-
-  // Show opacity action if there is a valid display node and if the node is not a volume
-  d->OpacityAction->setVisible(displayNode && !volumeNode);
 }
 
 //---------------------------------------------------------------------------
@@ -184,18 +203,26 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
     return;
   }
 
-  // Get display node
-  vtkMRMLDisplayNode* displayNode = nullptr;
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  if (displayableNode)
+  vtkMRMLNode* dataNode = shNode->GetItemDataNode(currentItemID);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
+  vtkMRMLDisplayNode* displayNode = displayableNode ? displayableNode->GetDisplayNode() : nullptr;
+
+  if (!displayableNode)
   {
-    displayNode = displayableNode->GetDisplayNode();
+    // Folder items may have a display node directly, or none yet.
+    // Create one on first opacity change.
+    qSlicerSubjectHierarchyFolderPlugin* folderPlugin =
+      qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
+    if (folderPlugin)
+    {
+      displayNode = folderPlugin->displayNodeForItem(currentItemID);
+      if (!displayNode && !dataNode && folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)
+      {
+        displayNode = folderPlugin->createDisplayNodeForItem(currentItemID);
+      }
+    }
   }
-  else
-  {
-    // Folder nodes may have display nodes directly associated
-    displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  }
+
   if (!displayNode)
   {
     qCritical() << Q_FUNC_INFO << ": Unable to find display node for subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
