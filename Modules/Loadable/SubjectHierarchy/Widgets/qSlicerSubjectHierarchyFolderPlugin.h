@@ -146,6 +146,9 @@ public:
   /// Create display node for given item.
   vtkMRMLDisplayNode* createDisplayNodeForItem(vtkIdType itemID);
 
+  /// Retrieve display node for given item.
+  vtkMRMLDisplayNode* displayNodeForItem(vtkIdType itemID) const;
+
   /// Add tree view to the list of view from which empty folders have been created.
   /// This function is called from the DICOM plugin, which can create patient and study items (which are special folders).
   void emptyFolderCreatedFromTreeView(qMRMLSubjectHierarchyTreeView* treeView);
@@ -164,10 +167,6 @@ protected slots:
   void onShowEmptyFoldersToggled(bool);
 
 protected:
-  /// Retrieve display node for given item.
-  /// with a display node.
-  vtkMRMLDisplayNode* displayNodeForItem(vtkIdType itemID) const;
-
   /// Determine if apply color to branch option is enabled to a given item or not
   bool isApplyColorToBranchEnabledForItem(vtkIdType itemID) const;
   /// Determine if apply color to branch option is enabled to a given item or not

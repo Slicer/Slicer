@@ -1,5 +1,6 @@
 #-----------------------------------------------------------------------------
 set(EXTENSION_TEST_PYTHON_SCRIPTS
+  SubjectHierarchyFolderOpacityTest.py
   SubjectHierarchyFoldersTest1.py
   )
 
