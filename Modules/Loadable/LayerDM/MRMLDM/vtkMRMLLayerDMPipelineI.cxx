@@ -59,9 +59,31 @@ void vtkMRMLLayerDMPipelineI::SetRenderer(vtkRenderer* renderer)
 
 bool vtkMRMLLayerDMPipelineI::BlockResetDisplay(bool isBlocked)
 {
+  if (this->m_isFrozen)
+  {
+    return true;
+  }
+
   bool prev = this->m_isResetDisplayBlocked;
   this->m_isResetDisplayBlocked = isBlocked;
   return prev;
+}
+
+bool vtkMRMLLayerDMPipelineI::BlockInteractionProcessing(bool isBlocked)
+{
+  if (this->m_isFrozen)
+  {
+    return true;
+  }
+
+  const auto prev = this->m_isInteractionProcessingBlocked;
+  this->m_isInteractionProcessingBlocked = isBlocked;
+  return prev;
+}
+
+bool vtkMRMLLayerDMPipelineI::IsInteractionProcessingBlocked() const
+{
+  return this->m_isInteractionProcessingBlocked;
 }
 
 bool vtkMRMLLayerDMPipelineI::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
@@ -142,6 +164,37 @@ vtkMRMLAbstractViewNode* vtkMRMLLayerDMPipelineI::GetViewNode() const
   return this->m_viewNode;
 }
 
+bool vtkMRMLLayerDMPipelineI::BlockUpdateObserver(bool isBlocked) const
+{
+  if (this->m_isFrozen)
+  {
+    return true;
+  }
+
+  return this->m_obs->SetBlocked(isBlocked);
+}
+
+void vtkMRMLLayerDMPipelineI::SetFrozen(bool isFrozen)
+{
+  if (this->m_isFrozen == isFrozen)
+  {
+    return;
+  }
+
+  // Block states are only updated when the pipeline is not frozen.
+  // Unfreeze to update all before saving the frozen state.
+  this->m_isFrozen = false;
+  this->BlockInteractionProcessing(isFrozen);
+  this->BlockResetDisplay(isFrozen);
+  this->BlockUpdateObserver(isFrozen);
+  this->m_isFrozen = isFrozen;
+}
+
+bool vtkMRMLLayerDMPipelineI::IsFrozen() const
+{
+  return this->m_isFrozen;
+}
+
 vtkMRMLNode* vtkMRMLLayerDMPipelineI::GetDisplayNode() const
 {
   return this->m_displayNode;
@@ -182,6 +235,8 @@ vtkMRMLLayerDMPipelineI::vtkMRMLLayerDMPipelineI()
   , m_displayNode{ nullptr }
   , m_renderer{ nullptr }
   , m_isResetDisplayBlocked{ false }
+  , m_isFrozen{ false }
+  , m_isInteractionProcessingBlocked{ false }
   , m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , m_pipelineManager(nullptr)
 {

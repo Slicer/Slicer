@@ -296,3 +296,21 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         # Unset the display node and expect the pipeline to have been notified
         markups.SetAndObserveDisplayNodeID("")
         m1.mockOnReferenceToDisplayNodeRemoved.assert_called_once_with(markups, "display")
+
+    def test_pipelines_removed_are_frozen_during_cleanup(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        assert not m1.IsFrozen()
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        assert m1.IsFrozen()
+
+    def test_pipelines_removed_while_having_interaction_lose_focus_during_cleanup(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        m1.mockCanProcess.return_value = (True, 0.0)
+        m1.mockProcess.return_value = True
+        distance = ref(0.0)
+        self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        m1.mockProcess.assert_called_once()
+        m1.mockLoseFocus.assert_not_called()
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        m1.mockLoseFocus.assert_called_once()

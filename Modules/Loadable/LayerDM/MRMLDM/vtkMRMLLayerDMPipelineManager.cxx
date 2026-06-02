@@ -128,8 +128,10 @@ bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
   }
 
   RequestRenderOnceGuard renderGuard{ *this };
-  this->m_layerManager->RemovePipeline(pipeline);
+  pipeline->SetFrozen(true);
+  // Let interaction logic process the removal first if the pipeline needs to lose focus.
   this->m_interactionLogic->RemovePipeline(pipeline);
+  this->m_layerManager->RemovePipeline(pipeline);
   this->m_pipelineMap.erase(displayNode);
   this->InvokeEvent(vtkCommand::ModifiedEvent);
   return true;
