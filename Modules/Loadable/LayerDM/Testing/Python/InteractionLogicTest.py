@@ -105,3 +105,33 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         p2.mockProcess.assert_called_once_with(self.event)
 
         assert self.logic.GetLastFocusedPipeline() == p2
+
+    def test_pipelines_with_blocked_interactions_are_not_called_during_can_process(self):
+        p1 = MockPipeline(canProcess=True, processDistance=0)
+        self.logic.AddPipeline(p1)
+
+        assert not p1.BlockInteractionProcessing(True)
+        self.logic.CanProcessInteractionEvent(self.event, self.distance)
+        p1.mockCanProcess.assert_not_called()
+
+        assert p1.BlockInteractionProcessing(False)
+        self.logic.CanProcessInteractionEvent(self.event, self.distance)
+        p1.mockCanProcess.assert_called_once()
+
+    def test_pipelines_with_blocked_interactions_are_not_called_during_process(self):
+        # Blocking can happen after the pipeline had claimed it could process the interaction.
+        # Make sure that it doesn't actually process it if blocked afterwards.
+        p1 = MockPipeline(canProcess=True, didProcess=True, processDistance=0)
+        self.logic.AddPipeline(p1)
+
+        assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
+
+        assert not p1.BlockInteractionProcessing(True)
+        assert not self.logic.ProcessInteractionEvent(self.event)
+        p1.mockProcess.assert_not_called()
+
+        assert p1.BlockInteractionProcessing(False)
+        assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
+        assert self.logic.ProcessInteractionEvent(self.event)
+
+        p1.mockProcess.assert_called_once()
