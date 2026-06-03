@@ -751,6 +751,9 @@ void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForItem(vtkI
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
 
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
+
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     // There are no scene actions in this plugin
@@ -799,6 +802,9 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::visibilityContextMenuAc
 void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -861,8 +867,10 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::viewContextMenuActions(
 void qSlicerSubjectHierarchyTransformsPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+
   // make sure we don't use metadata from some previous view context menu calls
   d->ViewContextMenuEventData.clear();
+
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
@@ -1164,6 +1172,10 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleCurrentItemHandleTypeVisibil
 void qSlicerSubjectHierarchyTransformsPlugin::showTransformContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+
+  // make sure we don't use metadata from some previous view context menu calls
+  d->ViewContextMenuEventData.clear();
+
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
