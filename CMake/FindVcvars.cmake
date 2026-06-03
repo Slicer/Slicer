@@ -388,10 +388,20 @@ function(Vcvars_GetVisualStudioPaths msvc_version msvc_arch output_var)
   if(vs_version VERSION_GREATER_EQUAL "15.0")
     # Query the VS Installer tool for locations of VS 2017 and above.
     string(REGEX REPLACE "^([0-9]+)\.[0-9]+$" "\\1" vs_installer_version ${vs_version})
-    cmake_host_system_information(RESULT _vs_dir QUERY VS_${vs_installer_version}_DIR)
-    if(_vs_dir)
-      list(APPEND _vs_installer_paths "${_vs_dir}/VC/Auxiliary/Build")
-    endif()
+    # Probe the matching VS version and any newer versions, since a newer VS installation
+    # (e.g., VS 2026) may host older toolsets (e.g., v143) as optional components.
+    set(_known_vs_major_versions 15 16 17 18)
+    foreach(_probe_vs IN LISTS _known_vs_major_versions)
+      if(_probe_vs LESS vs_installer_version)
+        continue()
+      endif()
+      cmake_host_system_information(RESULT _vs_dir QUERY VS_${_probe_vs}_DIR)
+      if(_vs_dir)
+        list(APPEND _vs_installer_paths "${_vs_dir}/VC/Auxiliary/Build")
+      endif()
+    endforeach()
+    unset(_probe_vs)
+    unset(_known_vs_major_versions)
   else()
     # Registry keys for locations of VS 2015 and below
     set(_hkeys
