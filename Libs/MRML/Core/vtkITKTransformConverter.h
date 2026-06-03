@@ -293,14 +293,19 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerO
   if (itkTransformClassName.find("AffineTransform") != std::string::npos || //
       itkTransformClassName == "MatrixOffsetTransformBase" ||               //
       itkTransformClassName == "Rigid3DTransform" ||                        //
+      itkTransformClassName == "Rigid2DTransform" ||                        //
       itkTransformClassName == "Euler3DTransform" ||                        //
+      itkTransformClassName == "Euler2DTransform" ||                        //
       itkTransformClassName == "CenteredEuler3DTransform" ||                //
+      itkTransformClassName == "CenteredEuler2DTransform" ||                //
+      itkTransformClassName == "CenteredSimilarity2DTransform" ||           //
       itkTransformClassName == "QuaternionRigidTransform" ||                //
       itkTransformClassName == "VersorTransform" ||                         //
       itkTransformClassName == "VersorRigid3DTransform" ||                  //
       itkTransformClassName == "ScaleSkewVersor3DTransform" ||              //
       itkTransformClassName == "ScaleVersor3DTransform" ||                  //
       itkTransformClassName == "Similarity3DTransform" ||                   //
+      itkTransformClassName == "Similarity2DTransform" ||                   //
       itkTransformClassName == "ScaleTransform" ||                          //
       itkTransformClassName == "ScaleLogarithmicTransform")
   {
