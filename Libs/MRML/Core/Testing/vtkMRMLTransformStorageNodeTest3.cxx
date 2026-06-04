@@ -32,6 +32,7 @@
 #include <itkBSplineDeformableTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkAffineTransform.h>
+#include <itkSimilarity2DTransform.h>
 #include <itksys/Directory.hxx>
 
 // MRML / project testing utilities
@@ -144,6 +145,59 @@ int PointsCheck(typename itk::Transform<T, 2, 2>::Pointer itkTransform, vtkMRMLT
   }
 
   return EXIT_SUCCESS;
+}
+
+template <typename T>
+int TestSimilarityTransform2DConversionFromITKToVTK(const char* tempDir, vtkMRMLScene* scene)
+{
+  using Similarity2DType = itk::Similarity2DTransform<T>;
+
+  std::cout << "TestSimilarityTransform2DConversionFromITKToVTK<" << typeid(T).name() << ">" << std::endl;
+
+  // Create an example 2D similarity transform
+  typename Similarity2DType::Pointer similarity2d = Similarity2DType::New();
+  similarity2d->SetScale(1.5);
+  similarity2d->SetRotation(0.1);
+  typename Similarity2DType::OutputVectorType translation;
+  translation[0] = 3.75;
+  translation[1] = -2.65;
+  similarity2d->SetTranslation(translation);
+
+  // Write it to a temporary file (to test realistic read from file scenario)
+  std::string tempFilePath = tempFilename(tempDir, "Similarity2D", "tfm", true);
+  typename itk::TransformFileWriterTemplate<T>::Pointer writer = itk::TransformFileWriterTemplate<T>::New();
+  writer->SetFileName(tempFilePath);
+  writer->SetInput(similarity2d);
+  TRY_EXPECT_NO_ITK_EXCEPTION(writer->Update());
+
+  // Now read back the transform from the file using Slicer machinery
+  vtkMRMLLinearTransformNode* readTransformNode = readTransformUsingSlicer<vtkMRMLLinearTransformNode>(tempFilePath, scene);
+
+  vtkTransform* affineTransform = vtkTransform::SafeDownCast(readTransformNode->GetTransformFromParent());
+  if (!affineTransform)
+  {
+    std::cerr << "Converting to vtkTransform failed." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  vtkMatrix4x4* vtkMat = affineTransform->GetMatrix();
+  if (!vtkMat)
+  {
+    std::cerr << "vtkTransform has no matrix." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Write the 3D transform to a new temporary file to ease debugging
+  tempFilePath = tempFilename(tempDir, "Similarity3D", "tfm", true);
+  if (writeTransformUsingSlicer(affineTransform, tempFilePath, scene) != EXIT_SUCCESS)
+  {
+    std::cerr << "Failed to write transform to file: " << tempFilePath << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  constexpr double tol = 100 * std::max<double>(std::numeric_limits<T>::epsilon(), std::numeric_limits<itk::SpacePrecisionType>::epsilon());
+
+  return PointsCheck<T>(similarity2d, readTransformNode, scene, tol);
 }
 
 template <typename T>
@@ -600,6 +654,9 @@ int vtkMRMLTransformStorageNodeTest3(int argc, char* argv[])
 
   vtkNew<vtkMRMLScene> scene;
   scene->SetRootDirectory(tempDir);
+
+  CHECK_EXIT_SUCCESS(TestSimilarityTransform2DConversionFromITKToVTK<double>(tempDir, scene));
+  CHECK_EXIT_SUCCESS(TestSimilarityTransform2DConversionFromITKToVTK<float>(tempDir, scene));
 
   CHECK_EXIT_SUCCESS(TestAffineTransform2DConversionFromITKToVTK<double>(tempDir, scene));
   CHECK_EXIT_SUCCESS(TestAffineTransform2DConversionFromITKToVTK<float>(tempDir, scene));
