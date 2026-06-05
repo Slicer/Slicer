@@ -227,11 +227,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     message(STATUS \"build_${proj}_error_file: ${build_error_file}\")
     ")
 
-  if(CMAKE_VERSION GREATER_EQUAL "3.28")
-    set(maybe_BUILD_JOB_SERVER_AWARE BUILD_JOB_SERVER_AWARE 1)
-  else()
-    set(maybe_BUILD_JOB_SERVER_AWARE "")
-  endif()
+  set(maybe_BUILD_JOB_SERVER_AWARE BUILD_JOB_SERVER_AWARE 1)
 
   # Add extension external project
   #message("ext_ep_download_command:${ext_ep_download_command}")
