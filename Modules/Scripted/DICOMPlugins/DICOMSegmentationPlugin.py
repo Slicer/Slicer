@@ -147,6 +147,22 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
         labelNode.labelAttributes = []
 
         for segment in segmentAttributes:
+          # Skip the background segment (labelID 0). In DICOM Labelmap Segmentation objects,
+          # pixel value 0 is reserved for background and may appear as a defined segment in the
+          # metadata. ImportLabelmapToSegmentationNode does not create a VTK segment for pixel
+          # value 0, so including this entry would shift all subsequent metadata assignments by one.
+          if segment.get("labelID", 1) == 0:
+            typeCode, typeCodingScheme, typeCodeMeaning = \
+              self.getValuesFromCodeSequence(segment, "SegmentedPropertyTypeCodeSequence")
+            if typeCode != "125040" or typeCodingScheme != "DCM":
+              logging.warning(
+                f"Segment with labelID 0 has unexpected type code: "
+                f"{typeCodingScheme}:{typeCode} ({typeCodeMeaning}). "
+                f"Expected DCM:125040 (Background). "
+                f"This segment will not be loaded as a Slicer segment.",
+              )
+            continue
+
           try:
             rgb255 = segment["recommendedDisplayRGBValue"]
             rgb = [float(c) / 255. for c in rgb255]
