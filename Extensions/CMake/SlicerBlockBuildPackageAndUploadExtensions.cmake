@@ -167,7 +167,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         message(STATUS \"Generating '${EXTENSION_SOURCE_DIR}/CMakeLists.txt'\")
         file(MAKE_DIRECTORY \"${EXTENSION_SOURCE_DIR}\")
         file(WRITE \"${EXTENSION_SOURCE_DIR}/CMakeLists.txt\"
-          \"cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
+          \"cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
           project(${proj} NONE)
           message(FATAL_ERROR \\\"Failed to download extension using ${ext_ep_options_repository}\\n\${sanitized_error}\\\")
           \"

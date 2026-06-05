@@ -10,17 +10,9 @@
 # CMake versions greater than the NEWEST_VALIDATED_POLICIES_VERSION policies will
 # continue to generate policy warnings "CMake Warning (dev)...Policy CMP0XXX is not set:"
 #
-set(OLDEST_VALIDATED_POLICIES_VERSION "3.20.6")
-set(NEWEST_VALIDATED_POLICIES_VERSION "3.22.6")
+set(OLDEST_VALIDATED_POLICIES_VERSION "3.28.0")
+set(NEWEST_VALIDATED_POLICIES_VERSION "3.28.0")
 cmake_minimum_required(VERSION ${OLDEST_VALIDATED_POLICIES_VERSION}...${NEWEST_VALIDATED_POLICIES_VERSION} FATAL_ERROR)
-
-if("${CMAKE_VERSION}" VERSION_EQUAL "3.21.0")
-  message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake==3.21.0 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/22476")
-endif()
-
-if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.25.0" AND "${CMAKE_VERSION}" VERSION_LESS_EQUAL "3.25.2")
-  message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake >=3.25.0,<=3.25.2 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/24567")
-endif()
 
 #-----------------------------------------------------------------------------
 # Setting C++ Standard
@@ -1027,6 +1019,9 @@ include(ctkFunctionAddExecutableUtf8)
 # Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
 #-----------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
+  # CMP0148 (CMake 3.27) removes FindPythonLibs/FindPythonInterp when NEW.
+  # Retain them until the migration to find_package(Python3) is completed.
+  cmake_policy(SET CMP0148 OLD)
   find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
   find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
 

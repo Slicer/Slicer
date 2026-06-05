@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
 
 foreach(varname IN ITEMS
   OPENSSL_SOURCE_DIR

@@ -220,7 +220,7 @@ This module also supports the following COMPONENTS:
 
 #]=======================================================================]
 
-cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
 
 # See https://github.com/Kitware/CMake/blob/v4.0.3/Modules/Platform/Windows-MSVC.cmake#L72-L101
 

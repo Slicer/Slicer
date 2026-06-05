@@ -38,6 +38,9 @@ if(Slicer_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
   unset(PYTHON_LIBRARY CACHE)
   unset(PYTHON_EXECUTABLE CACHE)
+  # CMP0148 (CMake 3.27) removes FindPythonLibs/FindPythonInterp when NEW.
+  # Retain them until the migration to find_package(Python3) is completed.
+  cmake_policy(SET CMP0148 OLD)
   find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
   find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
   set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIRS})
