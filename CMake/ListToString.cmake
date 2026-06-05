@@ -21,28 +21,10 @@
 cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
 
 function(list_to_string separator input_list output_string_var)
-  set(_string "")
-  # Get list length
-  list(LENGTH input_list list_length)
-  # If the list has 0 or 1 element, there is no need to loop over.
-  if(list_length LESS 2)
-    set(_string  "${input_list}")
-  else()
-    math(EXPR last_element_index "${list_length} - 1")
-    foreach(index RANGE ${last_element_index})
-      # Get current item_value
-      list(GET input_list ${index} item_value)
-      if(NOT item_value STREQUAL "")
-        # .. and append non-empty value to output string
-        set(_string  "${_string}${item_value}")
-        # Append separator if current element is NOT the last one.
-        if(NOT index EQUAL last_element_index)
-          set(_string  "${_string}${separator}")
-        endif()
-      endif()
-    endforeach()
-  endif()
-  set(${output_string_var} ${_string} PARENT_SCOPE)
+  # Drop empty elements so no spurious separators are emitted, then join.
+  list(FILTER input_list EXCLUDE REGEX "^$")
+  list(JOIN input_list "${separator}" _string)
+  set(${output_string_var} "${_string}" PARENT_SCOPE)
 endfunction()
 
 
