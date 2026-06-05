@@ -2,8 +2,10 @@
 get_property(_filepath TARGET "Qt${CTK_QT_VERSION}::Core" PROPERTY LOCATION_RELEASE)
 get_filename_component(_dir ${_filepath} PATH)
 if(APPLE)
-  # "_dir" of the form "<qt_root_dir>/lib/QtCore.framework"
-  set(qt_root_dir "${_dir}/../..")
+  # "_dir" is "<qt_root_dir>/lib/QtCore.framework" (Qt5) or
+  # "<qt_root_dir>/lib/QtCore.framework/Versions/<v>" (Qt6); strip from
+  # "/lib/QtCore.framework" onward to recover the root for either layout.
+  string(REGEX REPLACE "/lib/QtCore\\.framework.*$" "" qt_root_dir "${_dir}")
 else()
   if(DEFINED CMAKE_LIBRARY_ARCHITECTURE AND "${_dir}" MATCHES "${CMAKE_LIBRARY_ARCHITECTURE}$")
     # "_dir" of the form "<qt_root_dir>/lib/<arch>" (e.g "<qt_root_dir>/lib/x86_64-linux-gnu")
