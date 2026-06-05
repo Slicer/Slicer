@@ -1,0 +1,153 @@
+#include "vtkMRMLLayerDMObjectEventObserver.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
+
+vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserver);
+
+template <class... Ts>
+struct Overloaded : Ts...
+{
+  using Ts::operator()...;
+};
+
+template <class... Ts>
+Overloaded(Ts...) -> Overloaded<Ts...>;
+
+vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
+  : m_updateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
+  , m_isBlocked(false)
+{
+  this->m_updateCommand->SetClientData(this);
+  this->m_updateCommand->SetCallback(
+    [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+    {
+      auto client = static_cast<vtkMRMLLayerDMObjectEventObserver*>(clientData);
+      if (client->m_isBlocked)
+      {
+        return;
+      }
+
+      try
+      {
+        // Dispatch to callback depending on current std variant content
+        std::visit(Overloaded{ [&](const std::function<void(vtkObject * node)>& f) { f(caller); },
+                               [&](const std::function<void(vtkObject * node, unsigned long eventId)>& f) { f(caller, eid); },
+                               [&](const std::function<void(vtkObject * node, unsigned long eventId, void* callData)>& f) { f(caller, eid, callData); } },
+                   client->m_callback);
+      }
+      catch (const std::bad_function_call&)
+      {
+        // Ignore unset function callbacks
+      }
+    });
+}
+
+vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
+{
+  for (const auto& obs : m_obsMap)
+  {
+    if (obs.first)
+    {
+      for (auto& event : obs.second)
+      {
+        obs.first->RemoveObserver(event);
+      }
+    }
+  }
+}
+
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event)
+{
+  return this->UpdateObserver(prevObj, obj, std::vector<unsigned long>{ event });
+}
+
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
+{
+  if (prevObj == obj)
+  {
+    return false;
+  }
+
+  this->RemoveObserver(prevObj);
+  for (const auto& event : events)
+  {
+    this->AddObserver(obj, event);
+  }
+  return true;
+}
+
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
+{
+  this->m_callback = callback;
+}
+
+bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
+{
+  bool wasBlocked = this->m_isBlocked;
+  this->m_isBlocked = isBlocked;
+  return wasBlocked;
+}
+
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
+{
+  this->m_callback = callback;
+}
+
+void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback)
+{
+  this->m_callback = callback;
+}
+
+void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
+{
+  if (!node)
+  {
+    return;
+  }
+
+  if (this->m_obsMap.find(node) == std::end(this->m_obsMap))
+  {
+    this->m_obsMap[node] = std::set<unsigned long>{};
+  }
+
+  if (this->m_obsMap[node].find(event) != std::end(this->m_obsMap[node]))
+  {
+    return;
+  }
+
+  this->m_obsMap[node].insert(node->AddObserver(event, this->m_updateCommand));
+}
+
+void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
+{
+  if (!node || this->m_obsMap.find(node) == std::end(this->m_obsMap))
+  {
+    return;
+  }
+
+  for (auto& event : m_obsMap[node])
+  {
+    node->RemoveObserver(event);
+  }
+
+  this->m_obsMap.erase(node);
+}
+
+vtkMRMLLayerDMObjectEventObserver::UpdateGuard::UpdateGuard(vtkMRMLLayerDMObjectEventObserver* obs)
+  : m_obs(obs)
+{
+  if (m_obs)
+  {
+    m_wasBlocked = m_obs->SetBlocked(true);
+  }
+}
+
+vtkMRMLLayerDMObjectEventObserver::UpdateGuard::~UpdateGuard()
+{
+  if (m_obs)
+  {
+    m_obs->SetBlocked(m_wasBlocked);
+  }
+}

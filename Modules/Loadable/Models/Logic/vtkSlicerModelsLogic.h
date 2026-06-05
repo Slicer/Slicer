@@ -31,6 +31,7 @@ class vtkMRMLStorageNode;
 class vtkMRMLTransformNode;
 class vtkAlgorithmOutput;
 class vtkPolyData;
+class vtkMRMLModelPickingNode;
 
 class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerModuleLogic
 {
@@ -86,7 +87,11 @@ public:
   /// nodes with display nodes
   void SetAllModelsVisibility(int flag);
 
+  vtkMRMLModelPickingNode* GetModelPickingNodeSingleton() const;
+
 protected:
+  void RegisterNodes() override;
+
   vtkSlicerModelsLogic();
   ~vtkSlicerModelsLogic() override;
   vtkSlicerModelsLogic(const vtkSlicerModelsLogic&);
@@ -96,6 +101,9 @@ protected:
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   void OnMRMLSceneEndImport() override;
+
+private:
+  const char* ModelPickingSingletonID{ "ModelPickingSingleton" };
 };
 
 #endif
