@@ -18,7 +18,7 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.19.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
 
 include(CMakeParseArguments)
 

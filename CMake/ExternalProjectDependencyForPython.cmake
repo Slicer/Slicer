@@ -87,6 +87,9 @@ function(ExternalProject_FindPythonPackage)
   # Python interpreter
   if(NOT DEFINED MY_PYTHON_EXECUTABLE)
     if(NOT DEFINED PYTHON_EXECUTABLE)
+      # CMP0148 (CMake 3.27) removes FindPythonInterp when NEW.
+      # Retain it until the migration to find_package(Python3) is completed.
+      cmake_policy(SET CMP0148 OLD)
       find_package(PythonInterp REQUIRED)
     endif()
     set(MY_PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
