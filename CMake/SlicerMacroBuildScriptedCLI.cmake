@@ -44,11 +44,7 @@ macro(SlicerMacroBuildScriptedCLI)
   set(binary_dir "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}")
 
   if(CMAKE_CONFIGURATION_TYPES)
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.20")
-      set(binary_dir "${binary_dir}/$<CONFIG>")
-    else()
-      set(binary_dir "${binary_dir}/${CMAKE_CFG_INTDIR}")
-    endif()
+    set(binary_dir "${binary_dir}/$<CONFIG>")
   endif()
 
   add_custom_command(
