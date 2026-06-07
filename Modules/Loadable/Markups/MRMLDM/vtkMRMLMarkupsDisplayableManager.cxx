@@ -642,7 +642,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   // using Shift + mouse-move, or zooming using Control + mouse-wheel).
   if ((eventid == vtkCommand::MouseMoveEvent                                                                    //
        && (eventData->GetModifiers() == vtkEvent::NoModifier ||                                                 //
-           (eventData->GetModifiers() & (vtkEvent::ShiftModifier | vtkEvent::ControlModifier)  &&                                              //
+           (eventData->GetModifiers() & (vtkEvent::ShiftModifier | vtkEvent::ControlModifier) &&                //
             interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place))) //
       || eventid == vtkCommand::Move3DEvent)
   {
