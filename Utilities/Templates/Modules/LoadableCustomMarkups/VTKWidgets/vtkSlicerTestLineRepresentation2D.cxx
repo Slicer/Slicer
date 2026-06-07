@@ -129,7 +129,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewpor
   {
     count += this->MiddlePointActor->RenderOpaqueGeometry(viewport);
   }
-  count = this->Superclass::RenderOpaqueGeometry(viewport);
+  count += this->Superclass::RenderOpaqueGeometry(viewport);
   return count;
 }
 
@@ -141,7 +141,7 @@ int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkVie
   {
     count += this->MiddlePointActor->RenderTranslucentPolygonalGeometry(viewport);
   }
-  count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
+  count += this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   return count;
 }
 
