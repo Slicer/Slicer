@@ -66,9 +66,19 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   scene->AddNode(markupsNode);
 
-  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode;
+  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> dispNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
+  if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode))
+  {
+    dispNode = vtkSmartPointer<vtkMRMLMarkupsPlaneDisplayNode>::New();
+  }
   scene->AddNode(dispNode);
   markupsNode->SetAndObserveDisplayNodeID(dispNode->GetID());
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(dispNode);
+  if (planeDisplayNode)
+  {
+    planeDisplayNode->SetNormalVisibility(false);
+    planeDisplayNode->SetNormalOpacity(0.25);
+  }
 
   scene->AddNode(storageNode);
   markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -194,11 +204,23 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   }
 
   // now read it again with a display node defined
-  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode2;
-  scene->AddNode(dispNode2);
+  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> dispNode2 = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
+  if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode2))
+  {
+    dispNode2 = vtkSmartPointer<vtkMRMLMarkupsPlaneDisplayNode>::New();
+  }
+  scene2->AddNode(dispNode2);
   markupsNode2->SetAndObserveDisplayNodeID(dispNode2->GetID());
   std::cout << "Added display node, re-reading from " << snode2->GetFileName() << std::endl;
   CHECK_BOOL(snode2->ReadData(markupsNode2), true);
+
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode2 = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(markupsNode2->GetDisplayNode());
+  if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode2))
+  {
+    CHECK_NOT_NULL(planeDisplayNode2);
+    CHECK_BOOL(planeDisplayNode2->GetNormalVisibility(), false);
+    CHECK_DOUBLE(planeDisplayNode2->GetNormalOpacity(), 0.25);
+  }
 
   //
   // test with RAS coordinate system
