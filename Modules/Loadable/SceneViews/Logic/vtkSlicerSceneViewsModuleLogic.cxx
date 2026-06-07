@@ -866,7 +866,7 @@ bool vtkSlicerSceneViewsModuleLogic::RestoreSceneView(int sceneIndex)
   if (sequenceBrowserIndex < 0 || sequenceBrowserIndex >= sequenceBrowser->GetNumberOfItems())
   {
     vtkErrorMacro("RestoreSceneView: Invalid item number.");
-    return -1;
+    return false;
   }
 
   if (sequenceBrowser->GetSelectedItemNumber() != sequenceBrowserIndex)
