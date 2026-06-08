@@ -2614,6 +2614,7 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
   {
     qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementsCollectionModified()));
   }
+  this->unobserveMeasurementsInCurrentMarkupsNode();
   if (markupsNode)
   {
     qvtkConnect(markupsNode->Measurements, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementsCollectionModified()));
@@ -3011,6 +3012,30 @@ void qSlicerMarkupsModuleWidget::observeMeasurementsInCurrentMarkupsNode()
     if (!qvtkIsConnected(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*))))
     {
       qvtkConnect(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*)));
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::unobserveMeasurementsInCurrentMarkupsNode()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!d->MarkupsNode)
+  {
+    return;
+  }
+
+  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
+    if (!currentMeasurement)
+    {
+      continue;
+    }
+
+    if (qvtkIsConnected(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*))))
+    {
+      qvtkDisconnect(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*)));
     }
   }
 }

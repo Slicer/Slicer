@@ -235,6 +235,8 @@ public slots:
 
   /// Make sure all measurements in the current markups node are observed
   void observeMeasurementsInCurrentMarkupsNode();
+  /// Stop observing all measurements in the current markups node
+  void unobserveMeasurementsInCurrentMarkupsNode();
   /// Update measurements description label
   void updateMeasurementsDescriptionLabel();
   /// Populate measurement settings frame from the available measurements in the current markup
