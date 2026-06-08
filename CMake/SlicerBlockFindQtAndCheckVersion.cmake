@@ -47,6 +47,14 @@ macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
                         "-- you cannot use Qt ${_major}.${_minor}.${_patch}. ${extra_error_message}")
   endif()
 
+  # MSVC 1951 (VS 2022 17.11) introduced ABI changes that require Qt 5.15.17 or newer.
+  if(WIN32 AND MSVC_VERSION VERSION_GREATER_EQUAL 1951)
+    if("${_major}.${_minor}.${_patch}" VERSION_LESS "5.15.17")
+      message(FATAL_ERROR "error: MSVC toolset version ${MSVC_VERSION} requires that Qt 5 is 5.15.17 or newer "
+                          "-- you cannot use Qt ${_major}.${_minor}.${_patch} with this compiler.")
+    endif()
+  endif()
+
   set(command_separated_module_list)
   # Check if all expected Qt modules have been discovered
   foreach(module ${Slicer_REQUIRED_QT_MODULES})
