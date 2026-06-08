@@ -16,6 +16,7 @@
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
 #include <itkImage.h>
+#include <itkImageRegionIteratorWithIndex.h>
 #include <itkInterpolateImageFunction.h>
 #include "itkSeparateComponentsOfADiffusionTensorImage.h"
 

@@ -26,6 +26,7 @@
 #include <itkImage.h>
 #include <itkVector.h>
 #include <itkImageRegionIterator.h>
+#include <itkImageRegionIteratorWithIndex.h>
 #include <itkDisplacementFieldTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
 #include <itkBSplineTransform.h>
