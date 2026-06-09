@@ -390,7 +390,10 @@ function(Vcvars_GetVisualStudioPaths msvc_version msvc_arch output_var)
     string(REGEX REPLACE "^([0-9]+)\.[0-9]+$" "\\1" vs_installer_version ${vs_version})
     # Probe the matching VS version and any newer versions, since a newer VS installation
     # (e.g., VS 2026) may host older toolsets (e.g., v143) as optional components.
-    set(_known_vs_major_versions 15 16 17 18)
+    set(_known_vs_major_versions 15 16 17)  # VS 2017, 2019, 2022
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.2.0")
+      list(APPEND _known_vs_major_versions 18) # VS 2026
+    endif()
     foreach(_probe_vs IN LISTS _known_vs_major_versions)
       if(_probe_vs LESS vs_installer_version)
         continue()
