@@ -8,16 +8,19 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  unset(OpenJPEG_DIR CACHE)
-  find_package(OpenJPEG REQUIRED)
+  unset(${proj}_DIR CACHE)
+  find_package(${proj} REQUIRED)
 endif()
 
 # Sanity checks
-if(DEFINED OpenJPEG_DIR AND NOT EXISTS ${OpenJPEG_DIR})
-  message(FATAL_ERROR "OpenJPEG_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
+  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+if(DEFINED ${proj}_INSTALL_DIR AND NOT EXISTS ${${proj}_INSTALL_DIR})
+  message(FATAL_ERROR "${proj}_INSTALL_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED OpenJPEG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
+if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
@@ -43,11 +46,13 @@ if(NOT DEFINED OpenJPEG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
+      # Compiler settings
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+      # Options
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DBUILD_STATIC_LIBS:BOOL=OFF  # Remove static OpenJPEG library target to avoid conflict with ITK GDCM OpenJPEG
       -DBUILD_TESTING:BOOL=OFF
@@ -62,7 +67,9 @@ if(NOT DEFINED OpenJPEG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   # OpenJPEG installs its cmake config to lib/cmake/openjpeg-<MAJOR>.<MINOR>
-  set(OpenJPEG_DIR ${EP_INSTALL_DIR}/lib/cmake/openjpeg-2.5)
+  string(REGEX REPLACE "^v([0-9]+\\.[0-9]+).*$" "\\1" _openjpeg_version "${Slicer_${proj}_GIT_TAG}")
+  set(OpenJPEG_DIR ${EP_INSTALL_DIR}/lib/cmake/openjpeg-${_openjpeg_version})
+  set(${proj}_INSTALL_DIR ${EP_INSTALL_DIR})
 
   set(_lib_subdir lib)
   if(WIN32)
@@ -79,10 +86,17 @@ if(NOT DEFINED OpenJPEG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     )
 
 else()
+  # The project is provided using OpenJPEG_DIR, nevertheless since other projects may depend on OpenJPEG,
+  # let's add an 'empty' one
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
 mark_as_superbuild(
-  VARS OpenJPEG_DIR:PATH
+  VARS ${proj}_INSTALL_DIR:PATH
+  )
+
+ExternalProject_Message(${proj} "OpenJPEG_DIR:${OpenJPEG_DIR}")
+mark_as_superbuild(
+  VARS ${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
