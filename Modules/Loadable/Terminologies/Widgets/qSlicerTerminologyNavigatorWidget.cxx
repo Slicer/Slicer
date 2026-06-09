@@ -938,21 +938,15 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setCurrentTerminology(QString ter
         terminologyOrColorName = QString::fromUtf8(colorNode->GetName());
       }
     }
-    if (!lastTerminologyContextNames.isEmpty())
+    // Remove the terminology name from the list so that there are no duplicate entries in the list
+    lastTerminologyContextNames.removeOne(terminologyOrColorName);
+    // Prepend terminology name to the list so that the last used terminology is first
+    lastTerminologyContextNames.insert(0, terminologyOrColorName);
+    // Trim to a reasonable maximum to prevent unbounded growth
+    const int maxLastTerminologyContextNames = 30;
+    if (lastTerminologyContextNames.size() > maxLastTerminologyContextNames)
     {
-      if (lastTerminologyContextNames.size() == 1 && lastTerminologyContextNames[0] == terminologyOrColorName)
-      {
-        // Nothing to change
-        return;
-      }
-      // Remove the terminology name from the list so that there are no duplicate entries in the list
-      lastTerminologyContextNames.removeOne(terminologyOrColorName);
-      // Prepend terminology name to the list so that the last used terminology is first
-      lastTerminologyContextNames.insert(0, terminologyOrColorName);
-    }
-    else
-    {
-      lastTerminologyContextNames.push_back(terminologyOrColorName);
+      lastTerminologyContextNames = lastTerminologyContextNames.mid(0, maxLastTerminologyContextNames);
     }
     settings->setValue("Terminology/LastTerminologyContexts", lastTerminologyContextNames);
   }
