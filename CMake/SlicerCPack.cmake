@@ -158,6 +158,9 @@ if(NOT APPLE)
   if(NOT Slicer_USE_SYSTEM_LibArchive)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallLibArchive.cmake)
   endif()
+  if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_OpenJPEG)
+    include(${Slicer_CMAKE_DIR}/SlicerBlockInstallOpenJPEG.cmake)
+  endif()
   # XXX Note that installation of OpenMP libraries is available only
   #     when using msvc compiler.
   if(NOT DEFINED CMAKE_INSTALL_OPENMP_LIBRARIES)
