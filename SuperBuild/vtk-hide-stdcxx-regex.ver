@@ -1,0 +1,26 @@
+/*
+ * Linker version script for VTK libraries -- workaround for
+ * https://github.com/Slicer/Slicer/issues/9181
+ *
+ * VTK 9.6 uses std::regex (vtk::is_printf_format / vtk::to_std_format in
+ * Common/Core/vtkStringFormatter.cxx). The std::regex compiler/scanner
+ * machinery (std::__detail::_Scanner, _Compiler, ...) is header-instantiated
+ * and emitted as *weak, default-visibility* symbols into every library that
+ * uses std::regex. The prebuilt Qt WebEngine bundled with Slicer is built by a
+ * different toolchain with the legacy std::string ABI and exports its own
+ * copies of these same symbols. Under ELF global symbol interposition, VTK's
+ * regex calls can bind to WebEngine's ABI-incompatible copy, crashing in
+ * std::__detail::_Scanner<char>::_M_scan_normal() (observed during GPU volume
+ * rendering, which loads a noise-texture JPEG through the regex path).
+ *
+ * Marking these libstdc++ internals "local" makes each VTK library bind its
+ * own matching copy and stop participating in interposition. Every other VTK
+ * symbol keeps its default (global) binding. This mirrors the symbol-control
+ * approach already used by Libs/krb5-gssapi-stub/gssapi_krb5.ver.
+ */
+{
+  local:
+    _ZNSt8__detail*;     /* std::__detail::  _Scanner / _Compiler / _Executor   */
+    _ZNKSt8__detail*;    /* std::__detail::  const members (_AnyMatcher, ...)   */
+    _ZGVZNKSt8__detail*; /* guard variables for _AnyMatcher static __nul        */
+};
