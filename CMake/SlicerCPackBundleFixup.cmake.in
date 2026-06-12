@@ -288,6 +288,30 @@ function(fixup_bundle_with_plugins app)
     list(APPEND libs_path ${extension_libs_path})
   endif()
 
+  # On macOS with Qt6, framework binaries live inside versioned subdirectories
+  # (e.g. QtCore.framework/Versions/A/QtCore). BundleUtilities resolves @rpath
+  # references by stripping the @rpath prefix and searching for the bare filename
+  # via find_file(). That search only succeeds when the containing directory is
+  # listed in libs_path, so add every Qt framework Versions/* dir here.
+  set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
+  if(APPLE AND NOT Slicer_USE_SYSTEM_QT)
+    set(_qt_libs_dir "@qt_root_dir@")
+    file(GLOB _qt_fw_dirs "${_qt_libs_dir}/Qt*.framework")
+    foreach(_fw_dir ${_qt_fw_dirs})
+      file(GLOB _ver_subdirs "${_fw_dir}/Versions/*/")
+      foreach(_ver_dir ${_ver_subdirs})
+        if(IS_DIRECTORY "${_ver_dir}")
+          list(APPEND libs_path "${_ver_dir}")
+        endif()
+      endforeach()
+    endforeach()
+    unset(_qt_libs_dir)
+    unset(_qt_fw_dirs)
+    unset(_ver_subdirs)
+    unset(_fw_dir)
+    unset(_ver_dir)
+  endif()
+
   list(REMOVE_DUPLICATES libs_path)
 
   gp_clear_log()
