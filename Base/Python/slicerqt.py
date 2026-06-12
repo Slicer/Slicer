@@ -11,6 +11,7 @@ import vtk  # noqa: F401
 
 import slicer
 
+# Import everything from slicer.util to make frequently used functions conveniently available in the Python console
 from slicer.util import *
 
 # HACK Ideally constant from vtkSlicerConfigure should be wrapped,
