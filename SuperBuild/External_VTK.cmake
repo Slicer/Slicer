@@ -134,6 +134,29 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:BOOL=NO
     )
 
+  # Workaround for https://github.com/Slicer/Slicer/issues/9181
+  #
+  # VTK 9.6 uses std::regex (vtk::is_printf_format / vtk::to_std_format). The
+  # regex compiler/scanner machinery (std::__detail::_Scanner / _Compiler) is
+  # header-instantiated and emitted as weak, default-visibility symbols into
+  # every VTK library that uses std::regex. The prebuilt Qt WebEngine bundled
+  # with Slicer is built by a different toolchain (legacy std::string ABI) and
+  # exports its own copies of these symbols. Under ELF global symbol
+  # interposition, VTK's regex calls can bind to WebEngine's ABI-incompatible
+  # copy and crash in _Scanner::_M_scan_normal() (e.g. during volume rendering).
+  #
+  # Hide these libstdc++ internals in VTK's libraries with a linker version
+  # script so each VTK library binds its own matching copy. Mirrors the
+  # symbol-control approach used in Libs/krb5-gssapi-stub. ELF/Linux only:
+  # macOS uses two-level namespaces and Windows is unaffected.
+  if(UNIX AND NOT APPLE)
+    set(_vtk_regex_version_script "${CMAKE_CURRENT_LIST_DIR}/vtk-hide-stdcxx-regex.ver")
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      "-DCMAKE_SHARED_LINKER_FLAGS:STRING=-Wl,--version-script=${_vtk_regex_version_script}"
+      "-DCMAKE_MODULE_LINKER_FLAGS:STRING=-Wl,--version-script=${_vtk_regex_version_script}"
+      )
+  endif()
+
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/slicer/VTK.git"
