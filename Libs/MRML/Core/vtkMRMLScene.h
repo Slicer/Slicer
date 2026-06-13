@@ -97,6 +97,8 @@ public:
   /// Save scene into URL
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
+  /// Private storable nodes (i.e., storable nodes with HideFromEditors enabled) are saved
+  /// into <SceneFileName>_Private subfolder.
   /// Returns nonzero on success
   int Commit(const char* url = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
@@ -784,6 +786,13 @@ public:
   /// being in the list. Don't forget to clear it as soon as you don't need it.
   bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = nullptr);
 
+  /// \brief Search the scene for private storable nodes (i.e., storable nodes with HideFromEditors enabled)
+  /// that are "ModifiedSinceRead".
+  ///
+  /// Returns true if at least 1 matching node is found.
+  /// If \a modifiedStorableNodes is passed the modified nodes are appended.
+  bool GetPrivateStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = nullptr);
+
   /// \brief Search the scene for storable nodes that are not "ModifiedSinceRead".
   ///
   /// Useful after loading a scene from a temporary directory and deleting
@@ -850,9 +859,6 @@ public:
   /// determining extension automatically (for example, file extension of some.file.nii.gz
   /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
   static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension = "");
-
-  /// Returns name of the subfolder where hidden nodes (scene view nodes, etc.) are saved.
-  static std::string GetPrivateFolderName();
 
 protected:
   typedef std::map<std::string, std::set<std::string>> NodeReferencesType;
@@ -938,6 +944,30 @@ protected:
                                                    std::string& dataDir,
                                                    std::map<vtkMRMLStorageNode*, std::vector<std::string>>& originalStorageNodeFileNames,
                                                    vtkMRMLMessageCollection* userMessages);
+
+  /// \brief Computes the "<SceneFileName>_Private" subfolder path for \a url, where
+  /// SceneFileName is the scene file name without extension.
+  ///
+  /// The subfolder is prefixed with the scene file name
+  /// to avoid overwriting private files when multiple scenes are saved into the same folder.
+  ///
+  /// Returns false (and clears \a privateDir) if the folder cannot be safely determined,
+  /// for example if \a url has no file name, or if the computed folder would not be a
+  /// "<SceneFileName>_Private"-named subfolder of RootDirectory. This avoids accidentally
+  /// clearing or removing an unrelated, generically-named folder.
+  bool GetPrivateStorableNodesDirectory(const std::string& url, std::string& privateDir);
+
+  /// Saves data of all Private storable nodes (i.e., storable nodes with HideFromEditors
+  /// and SaveWithScene enabled) into a "<SceneFileName>_Private" subfolder next
+  /// to the scene file at \a url, where SceneFileName is the scene file name without extension.
+  /// Always called by Commit() (even if the private nodes are not modified since last read)
+  /// to make sure latest data is saved in the correct location.
+  /// If the private subfolder already exists and is not empty then it is cleared before
+  /// writing the new files into it.
+  /// Returns true on success.
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  bool SavePrivateStorableNodes(const std::string& url, vtkMRMLMessageCollection* userMessages = nullptr);
 
   vtkCollection* Nodes;
 

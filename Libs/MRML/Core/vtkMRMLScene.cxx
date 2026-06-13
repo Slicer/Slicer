@@ -1107,6 +1107,12 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     // set the root directory from the URL
     this->RootDirectory = vtksys::SystemTools::GetParentDirectory(url);
 
+    // Save "private" storable nodes' data into a "<SceneFileName>_Private" subfolder next to
+    // the scene file, before writing node XML, so that storage nodes reference their final
+    // location. Always done (even if not modified since last read) to make sure no private
+    // node's data is lost.
+    this->SavePrivateStorableNodes(url, userMessages);
+
     // Open file
 #ifdef _WIN32
     ofs.open(url, std::ios::out | std::ios::binary);
@@ -3769,6 +3775,13 @@ bool vtkMRMLScene::GetModifiedSinceRead(vtkCollection* modifiedNodes /*=nullptr*
   }
 
   bool sceneModified = false;
+
+  if (this->GetPrivateStorableNodesModifiedSinceRead(modifiedNodes))
+  {
+    // At least one private storable node's data needs to be (re)written, so saving the
+    // scene now would change what is on disk, even if no node's MTime has changed.
+    sceneModified = true;
+  }
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   for (this->Nodes->InitTraversal(it); (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it));)
@@ -3803,6 +3816,35 @@ bool vtkMRMLScene::GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStor
   for (storableNodes->InitTraversal(it); (storableNode = vtkMRMLStorableNode::SafeDownCast(storableNodes->GetNextItemAsObject(it)));)
   {
     if (!storableNode->GetHideFromEditors() && //
+        storableNode->GetModifiedSinceRead())
+    {
+      if (!storableNode->GetStorageNode() && storableNode->GetDefaultStorageNodeClassName().empty())
+      {
+        // The storable node does not have a storage node, but it does not need one (because content is stored in the scene
+        // (for example vtkMRMLTextNode containing short text).
+        continue;
+      }
+      found = true;
+      if (modifiedStorableNodes)
+      {
+        modifiedStorableNodes->AddItem(storableNode);
+      }
+    }
+  }
+  return found;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLScene::GetPrivateStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes /*=nullptr*/)
+{
+  bool found = false;
+  vtkSmartPointer<vtkCollection> storableNodes;
+  storableNodes.TakeReference(this->GetNodesByClass("vtkMRMLStorableNode"));
+  vtkCollectionSimpleIterator it;
+  vtkMRMLStorableNode* storableNode;
+  for (storableNodes->InitTraversal(it); (storableNode = vtkMRMLStorableNode::SafeDownCast(storableNodes->GetNextItemAsObject(it)));)
+  {
+    if (storableNode->GetHideFromEditors() && storableNode->GetSaveWithScene() && //
         storableNode->GetModifiedSinceRead())
     {
       if (!storableNode->GetStorageNode() && storableNode->GetDefaultStorageNodeClassName().empty())
@@ -4306,23 +4348,6 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
     }
   }
 
-  // the new private directory
-  vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
-  pathComponents.emplace_back(vtkMRMLScene::GetPrivateFolderName());
-  std::string privateDir = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkDebugMacro("using private dir of " << privateDir);
-
-  // create the private dir
-  if (!vtksys::SystemTools::FileExists(privateDir.c_str()))
-  {
-    if (!vtksys::SystemTools::MakeDirectory(privateDir.c_str()))
-    {
-      vtkErrorToMessageCollectionMacro(
-        userMessages, "vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory", "Save scene to data bundle directory failed: Unable to make private directory " << privateDir);
-      return false;
-    }
-  }
-
   //
   // start changing the scene - don't return from below here
   // until scene has been restored to original state
@@ -4361,13 +4386,31 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
       // and store them in the map by ID to avoid duplicates for the scene views
       vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(mrmlNode);
 
-      std::string saveDir = dataDir;
       if (storableNode->GetHideFromEditors())
       {
-        saveDir = privateDir;
+        if (storableNode->GetSaveWithScene())
+        {
+          // The scene's storage location has changed, so the hidden node's data needs to be
+          // (re)written, too. Commit() (called below) saves the data of all hidden storable
+          // nodes that are "ModifiedSinceRead" into a "<SceneFileName>_Private" subfolder.
+          // Record the current filenames here so that they can be restored to their original
+          // (pre-save) values further below.
+          vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
+          if (storageNode)
+          {
+            std::vector<std::string>& fileNames = originalStorageNodeFileNames[storageNode];
+            fileNames.push_back(storageNode->GetFileName() ? storageNode->GetFileName() : "");
+            for (int fileIndex = 0; fileIndex < storageNode->GetNumberOfFileNames(); ++fileIndex)
+            {
+              fileNames.push_back(storageNode->GetNthFileName(fileIndex) ? storageNode->GetNthFileName(fileIndex) : "");
+            }
+          }
+          storableNode->StorableModified();
+        }
+        continue;
       }
 
-      if (!this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, saveDir, originalStorageNodeFileNames, userMessages))
+      if (!this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir, originalStorageNodeFileNames, userMessages))
       {
         success = false;
       }
@@ -4613,6 +4656,81 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLScene::GetPrivateStorableNodesDirectory(const std::string& url, std::string& privateDir)
+{
+  privateDir.clear();
+
+  std::string sceneFileName = vtksys::SystemTools::GetFilenameWithoutExtension(url);
+
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(this->RootDirectory.c_str(), pathComponents);
+  pathComponents.emplace_back(sceneFileName + "_Private");
+  std::string candidatePrivateDir = vtksys::SystemTools::JoinPath(pathComponents);
+
+  // Make sure the computed folder is a "<SceneFileName>_Private"-named subfolder of
+  // RootDirectory (with a non-empty SceneFileName), so that clearing it in
+  // SavePrivateStorableNodes() cannot remove an unrelated folder,
+  // for example if url or RootDirectory is empty or invalid.
+  if (sceneFileName.empty()
+      || vtksys::SystemTools::GetFilenamePath(vtksys::SystemTools::CollapseFullPath(candidatePrivateDir)) != vtksys::SystemTools::CollapseFullPath(this->RootDirectory))
+  {
+    return false;
+  }
+
+  privateDir = candidatePrivateDir;
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLScene::SavePrivateStorableNodes(const std::string& url, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
+{
+  std::string privateDir;
+  if (!this->GetPrivateStorableNodesDirectory(url, privateDir))
+  {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::SavePrivateStorableNodes", "Unable to determine private data folder for scene file " << url);
+    return false;
+  }
+
+  // Clear the private subfolder if it already exists, so that afterwards it only contains
+  // files for the private nodes that are saved below.
+  if (vtksys::SystemTools::FileIsDirectory(privateDir) && !vtksys::SystemTools::RemoveADirectory(privateDir))
+  {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::SavePrivateStorableNodes", "Unable to clear directory " << privateDir);
+    return false;
+  }
+
+  std::vector<vtkMRMLNode*> storableNodes;
+  this->GetNodesByClass("vtkMRMLStorableNode", storableNodes);
+
+  bool success = true;
+  bool privateDirCreated = false;
+  std::map<vtkMRMLStorageNode*, std::vector<std::string>> originalStorageNodeFileNames;
+  for (vtkMRMLNode* node : storableNodes)
+  {
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+    if (!storableNode->GetHideFromEditors() || !storableNode->GetSaveWithScene())
+    {
+      continue;
+    }
+    if (!privateDirCreated)
+    {
+      if (!vtksys::SystemTools::MakeDirectory(privateDir))
+      {
+        vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::SavePrivateStorableNodes", "Unable to create directory " << privateDir);
+        return false;
+      }
+      privateDirCreated = true;
+    }
+
+    if (!this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, privateDir, originalStorageNodeFileNames, userMessages))
+    {
+      success = false;
+    }
+  }
+  return success;
+}
+
+//----------------------------------------------------------------------------
 std::string vtkMRMLScene::PercentEncode(std::string s)
 {
   std::string validchars = " -_.,@#$%^&()[]{}<>+=";
@@ -4675,10 +4793,4 @@ bool vtkMRMLScene::ParseVersion(const char* versionString, std::string& applicat
   patch = atoi(patchStr.c_str());
   revision = atoi(revisionStr.c_str());
   return true;
-}
-
-//-----------------------------------------------------------------------------
-std::string vtkMRMLScene::GetPrivateFolderName()
-{
-  return "Private";
 }
