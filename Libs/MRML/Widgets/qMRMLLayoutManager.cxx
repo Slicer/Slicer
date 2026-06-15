@@ -548,8 +548,7 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
   {
-    // The layout to be removed should be the same as the stored one
-    Q_ASSERT(this->MRMLLayoutNode == layoutNode);
+    qWarning() << Q_FUNC_INFO << ": The layout to be removed is not the same as the stored one";
     this->setMRMLLayoutNode(nullptr);
   }
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
