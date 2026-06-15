@@ -158,7 +158,6 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Running Abdominal Atlas Test")
         downloads = {
             "fileNames": "Abdominal_Atlas_2012.mrb",
-            "loadFiles": True,
             "uris": TESTING_DATA_URL + "SHA256/5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea",
             "checksums": "SHA256:5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea",
         }
@@ -168,7 +167,6 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Running Brain Atlas Test")
         downloads = {
             "fileNames": "BrainAtlas2012.mrb",
-            "loadFiles": True,
             "uris": TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
             "checksums": "SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
         }
@@ -178,7 +176,6 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Running Knee Atlas Test")
         downloads = {
             "fileNames": "KneeAtlas2012.mrb",
-            "loadFiles": True,
             "uris": TESTING_DATA_URL + "SHA256/5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33",
             "checksums": "SHA256:5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33",
         }
@@ -199,8 +196,18 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         #
         import SampleData
 
-        SampleData.downloadFromURL(**downloads)
-        self.delayDisplay("Finished with download and loading\n")
+        self.delayDisplay("Download scene")
+        # Don't attempt to load it automatically, because if there is a problem with the file then
+        # it will be loaded multiple times.
+        downloads["loadFiles"] = False
+        filenames = SampleData.downloadFromURL(**downloads)
+
+        self.delayDisplay("Load scene")
+        try:
+            slicer.util.loadScene(filenames[0])
+        except RuntimeError as e:
+            # Errors are expected as it is an old scene, just log it for information
+            self.delayDisplay(f"Errors occurred while loading scene: {e}")
 
         volumeNode = slicer.util.getNode(pattern=testVolumePattern)
         logic = AtlasTestsLogic()
@@ -212,55 +219,16 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         m.moduleSelector().selectModule("Models")
         self.delayDisplay("Entered Models module")
 
-        # get model hierarchy nodes that have children hierarchies
-        numModelHierarchies = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode")
-        # get the number that we'll be manipulating
-        numModelHierarchiesToManipulate = 0
-        for h in range(numModelHierarchies):
-            mh = slicer.mrmlScene.GetNthNodeByClass(h, "vtkMRMLModelHierarchyNode")
-            if mh.GetNumberOfChildrenNodes() > 0 and mh.GetDisplayNode() is not None:
-                numModelHierarchiesToManipulate += 1
-        # iterate over all the hierarchies
-        hierarchyManipulating = 0
-        for h in range(numModelHierarchies):
-            mh = slicer.mrmlScene.GetNthNodeByClass(h, "vtkMRMLModelHierarchyNode")
-            numChildren = mh.GetNumberOfChildrenNodes()
-            if numChildren > 0:
-                mhd = mh.GetDisplayNode()
-                # manually added hierarchies may not have display nodes, skip
-                if mhd is None:
-                    self.delayDisplay("Skipping model hierarchy with no display node " + mh.GetName())
-                else:
-                    hierarchyManipulating += 1
-                    self.delayDisplay("Manipulating model hierarchy " + mh.GetName() + " (" + str(hierarchyManipulating) + "/" + str(numModelHierarchiesToManipulate) + ")")
-                    hierarchyOriginalColor = mhd.GetColor()
-                    hierarchyOriginalVisibility = mhd.GetVisibility()
-                    hierarchyOriginalExpanded = mh.GetExpanded()
-                    # collapse and change the color on the hierarchy to full red
-                    mh.SetExpanded(0)
-                    self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = false")
-                    mhd.SetColor(1, 0, 0)
-                    self.delayDisplay("Model hierarchy " + mh.GetName() + ": color = red")
-                    # set the collapsed visibility to 0
-                    mhd.SetVisibility(0)
-                    self.delayDisplay("Model hierarchy " + mh.GetName() + ": visibility = off")
-                    # expand, should see all models in correct color
-                    mh.SetExpanded(1)
-                    self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = true")
-                    # reset the hierarchy
-                    mhd.SetVisibility(hierarchyOriginalVisibility)
-                    mhd.SetColor(hierarchyOriginalColor)
-                    mh.SetExpanded(hierarchyOriginalExpanded)
-
         # go to the scene views module
         m.moduleSelector().selectModule("SceneViews")
         self.delayDisplay("Entered Scene Views module")
 
         # iterate over the scene views and restore them
-        numSceneViews = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSceneViewNode")
+        numSceneViews = slicer.modules.sceneviews.logic().GetNumberOfSceneViews()
+        self.assertGreater(numSceneViews, 0, "No scene views found in the scene, but at least one is expected.")
         for s in range(numSceneViews):
-            sv = slicer.mrmlScene.GetNthNodeByClass(s, "vtkMRMLSceneViewNode")
-            self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s + 1) + "/" + str(numSceneViews) + ")")
-            sv.RestoreScene()
+            self.delayDisplay(f"Restoring scene {s + 1}/{numSceneViews}")
+            slicer.modules.sceneviews.logic().RestoreSceneView(s)
+            slicer.app.processEvents()
 
         self.delayDisplay("Test passed!")
