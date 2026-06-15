@@ -39,6 +39,15 @@ public:
     std::cout << s;
     std::cout.flush();
   }
+
+  static void Debug(const char* title, const char* message)
+  {
+    if (vtkArchiveTools::LogDebugEnabled)
+    {
+      vtkArchiveTools::Message(title, message);
+    }
+  }
+
   static void Error(const char* m1, const char* m2)
   {
     std::string message = "vtkArchive Error: ";
@@ -53,7 +62,11 @@ public:
     }
     vtkArchiveTools::Message(message.c_str(), "Error");
   }
+
+  static bool LogDebugEnabled;
 };
+
+bool vtkArchiveTools::LogDebugEnabled{ false };
 
 // --------------------------------------------------------------------------
 #define BSDTAR_FILESIZE_PRINTF "%lu"
@@ -420,7 +433,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   sit = files.begin();
   while (sit != files.end() && success)
   {
-    vtkArchiveTools::Message("Zip: adding:", sit->c_str());
+    vtkArchiveTools::Debug("Zip: adding:", sit->c_str());
     const char* fileName = sit->c_str();
     ++sit;
 
@@ -431,7 +444,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     // use a relative path for the entry file name, including the top
     // directory so it unzips into a directory of it's own
     std::string relFileName = vtksys::SystemTools::RelativePath(vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), fileName);
-    vtkArchiveTools::Message("Zip: adding rel:", relFileName.c_str());
+    vtkArchiveTools::Debug("Zip: adding rel:", relFileName.c_str());
     archive_entry_set_pathname(entry, relFileName.c_str());
     // size is required, for now use the vtksys call though it uses struct stat
     // and may not be portable
