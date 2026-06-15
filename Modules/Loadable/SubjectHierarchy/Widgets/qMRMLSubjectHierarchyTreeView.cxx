@@ -180,9 +180,12 @@ public:
   void setupColorButton(const QModelIndex& proxyIndex);
   void setupAllButtons();
   void setupRowsRecursively(const QModelIndex& parent);
-  void setupInsertedRows(QPersistentModelIndex parent, int first, int last);
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
   void onColorButtonClicked(vtkIdType itemID, QPersistentModelIndex persistentIndex);
+  QIcon colorIcon(const QColor& color);
+
+  /// Set while a coalesced setupAllButtons() call is pending (scheduled but not yet run)
+  bool ButtonSetupPending{ false };
 };
 
 //------------------------------------------------------------------------------
@@ -273,16 +276,27 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   QObject::connect(q, SIGNAL(collapsed(const QModelIndex&)), q, SLOT(onItemCollapsed(const QModelIndex&)));
 
   // Visibility buttons: create on row insert, update icon on data change, recreate on reset/layout change.
+  // Row insertions are coalesced into a single deferred setupAllButtons() call: while loading a large
+  // scene, many rowsInserted signals are emitted (potentially many levels deep), and recursively setting
+  // up buttons for each inserted row's subtree individually would redo the same work many times over
+  // (once per ancestor), causing severe slowdowns and excessive temporary widget/icon allocations.
   QObject::connect(this->SortFilterModel,
                    &QAbstractItemModel::rowsInserted,
                    q,
-                   [this, q](const QModelIndex& parent, int first, int last)
+                   [this, q](const QModelIndex&, int, int)
                    {
-                     // Capture parent as QPersistentModelIndex so it remains valid after
-                     // further model changes (e.g. reparenting during drag-and-drop) that
-                     // would otherwise invalidate a plain QModelIndex before the timer fires.
-                     QPersistentModelIndex persistentParent(parent);
-                     QTimer::singleShot(0, q, [this, persistentParent, first, last]() { this->setupInsertedRows(persistentParent, first, last); });
+                     if (this->ButtonSetupPending)
+                     {
+                       return;
+                     }
+                     this->ButtonSetupPending = true;
+                     QTimer::singleShot(0,
+                                        q,
+                                        [this]()
+                                        {
+                                          this->ButtonSetupPending = false;
+                                          this->setupAllButtons();
+                                        });
                    });
   QObject::connect(this->SortFilterModel, &QAbstractItemModel::dataChanged, q, &qMRMLSubjectHierarchyTreeView::onSortFilterDataChanged);
 
@@ -329,6 +343,23 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupVisibilityButton(const QModelInd
 }
 
 //--------------------------------------------------------------------------
+QIcon qMRMLSubjectHierarchyTreeViewPrivate::colorIcon(const QColor& color)
+{
+  // Shared across all qMRMLSubjectHierarchyTreeView instances: the same anatomical/segmentation
+  // colors are used app-wide, so a single cache avoids repeated QPixmap (GDI object) allocations.
+  static QHash<QRgb, QIcon> colorIconCache;
+  QRgb key = color.rgba();
+  auto it = colorIconCache.constFind(key);
+  if (it != colorIconCache.constEnd())
+  {
+    return it.value();
+  }
+  QIcon icon(qMRMLUtils::createColorPixmap(qApp->style(), color));
+  colorIconCache.insert(key, icon);
+  return icon;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& proxyIndex)
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
@@ -351,7 +382,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& p
   int iconSize = button->style()->pixelMetric(QStyle::PM_SmallIconSize);
   button->setIconSize(QSize(iconSize, iconSize));
   button->setStyleSheet("QToolButton { padding: 0px; }");
-  button->setIcon(QIcon(qMRMLUtils::createColorPixmap(qApp->style(), color)));
+  button->setIcon(this->colorIcon(color));
 
   button->setProperty("itemID", QVariant::fromValue(itemID));
   button->setProperty("persistentIndex", QVariant::fromValue(QPersistentModelIndex(proxyIndex)));
@@ -384,24 +415,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupRowsRecursively(const QModelInde
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeViewPrivate::setupInsertedRows(QPersistentModelIndex parent, int first, int last)
-{
-  int visCol = this->Model->visibilityColumn();
-  int colorCol = this->Model->colorColumn();
-  for (int row = first; row <= last; ++row)
-  {
-    this->setupVisibilityButton(this->SortFilterModel->index(row, visCol, parent));
-    this->setupColorButton(this->SortFilterModel->index(row, colorCol, parent));
-    QModelIndex childParent = this->SortFilterModel->index(row, 0, parent);
-    int childCount = this->SortFilterModel->rowCount(childParent);
-    if (childCount > 0)
-    {
-      this->setupInsertedRows(childParent, 0, childCount - 1);
-    }
-  }
-}
-
-//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeViewPrivate::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
@@ -427,7 +440,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::onDataChanged(const QModelIndex& topL
       if (button && color.isValid() && color.alpha() != 0)
       {
         // Button already exists and color is still valid: just update the icon.
-        button->setIcon(QIcon(qMRMLUtils::createColorPixmap(qApp->style(), color)));
+        button->setIcon(this->colorIcon(color));
       }
       else if (button || (color.isValid() && color.alpha() != 0))
       {
