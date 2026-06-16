@@ -98,19 +98,27 @@ initLogging(logging.getLogger())
 def getSlicerRCFileName():
     """Return application startup file (Slicer resource script) file name.
     If a .slicerrc.py file is found in slicer.app.slicerHome folder then that will be used.
-    If that is not found then the path defined in SLICERRC environment variable will be used.
-    If that environment variable is not specified then .slicerrc.py in the user's home folder
-    will be used ('~/.slicerrc.py').
+    If that is not found then it will search for a path defined in a SLICERRC environment variable.
+    If that environment variable is not specified or the path does not exist then .slicerrc.py in the user's home folder
+    will be used ('~/.slicerrc.py'). If the path does not exist then the default path in slicer.app.slicerHome will be used.
     """
     import os
 
-    rcfile = os.path.join(slicer.app.slicerHome, ".slicerrc.py")
-    if not os.path.exists(rcfile):
-        if "SLICERRC" in os.environ:
-            rcfile = os.environ["SLICERRC"]
-        else:
-            rcfile = os.path.expanduser("~/.slicerrc.py")
-    rcfile = rcfile.replace("\\", "/")  # make slashed consistent on Windows
+    # Ordered candidate paths
+    candidates = [
+        os.path.join(slicer.app.slicerHome, ".slicerrc.py"),
+        os.environ.get("SLICERRC"),
+        os.path.expanduser("~/.slicerrc.py"),
+    ]
+
+    # Default to application slicerHome path; pick first existing candidate
+    rcfile = candidates[0]
+    for c in candidates:
+        if c and os.path.exists(c):
+            rcfile = c
+            break
+
+    rcfile = rcfile.replace("\\", "/")  # make slashes consistent on Windows
     return rcfile
 
 
