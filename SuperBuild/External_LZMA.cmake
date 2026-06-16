@@ -43,6 +43,15 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
   set(EP_INSTALL_LIBDIR "lib")
 
+  set(_lzma_osx_cache_args)
+  if(APPLE)
+    list(APPEND _lzma_osx_cache_args
+      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}
+      -DCMAKE_OSX_SYSROOT:PATH=${CMAKE_OSX_SYSROOT}
+      )
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
@@ -61,6 +70,10 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       -DCMAKE_INSTALL_LIBDIR:PATH=${EP_INSTALL_LIBDIR}
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+      -DCMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/make
+      -DENABLE_NLS:BOOL=OFF
+      -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH:BOOL=OFF
+      ${_lzma_osx_cache_args}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
