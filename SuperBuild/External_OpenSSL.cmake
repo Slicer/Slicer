@@ -129,8 +129,25 @@ if(NOT Slicer_USE_SYSTEM_zlib)
 ExternalProject_Execute(${proj} \"configure-zlib\" cp ${ZLIB_LIBRARY} ${_zlib_library_dir}/libz.a
   )
 endif()
-ExternalProject_Execute(${proj} \"configure\" sh config --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
-  )
+if(APPLE AND NOT \"\${CMAKE_OSX_ARCHITECTURES}\" STREQUAL \"\")
+  set(_openssl_target)
+  if(\"\${CMAKE_OSX_ARCHITECTURES}\" STREQUAL \"arm64\")
+    set(_openssl_target darwin64-arm64-cc)
+  elseif(\"\${CMAKE_OSX_ARCHITECTURES}\" STREQUAL \"x86_64\")
+    set(_openssl_target darwin64-x86_64-cc)
+  endif()
+
+  if(_openssl_target)
+    ExternalProject_Execute(${proj} \"configure\" perl ./Configure \${_openssl_target} --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
+      )
+  else()
+    ExternalProject_Execute(${proj} \"configure\" sh config --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
+      )
+  endif()
+else()
+  ExternalProject_Execute(${proj} \"configure\" sh config --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
+    )
+endif()
 ")
 
     # build step
