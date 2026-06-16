@@ -484,6 +484,13 @@ function(_sb_get_external_project_arguments proj varname)
     CMAKE_JOB_POOL_LINK:STRING
     CMAKE_JOB_POOLS:STRING
     )
+  if(APPLE)
+    list(APPEND _options
+      CMAKE_OSX_ARCHITECTURES:STRING
+      CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+      CMAKE_OSX_SYSROOT:PATH
+      )
+  endif()
   if(NOT CMAKE_VERSION VERSION_LESS "3.16")
     list(APPEND _options
       CMAKE_FIND_USE_PACKAGE_REGISTRY:BOOL
