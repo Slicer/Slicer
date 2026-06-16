@@ -72,6 +72,7 @@
 #cmakedefine Slicer_BUILD_MULTIMEDIA_SUPPORT
 #cmakedefine Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT
 #cmakedefine Slicer_BUILD_WEBENGINE_SUPPORT
+#cmakedefine Slicer_USE_SLICERRC
 
 // CLI support is always enabled and cannot be disabled.
 // This variable is retained only for backward compatibility with dependent projects (e.g., Slicer extensions).

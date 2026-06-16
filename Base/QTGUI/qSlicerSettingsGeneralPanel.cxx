@@ -124,6 +124,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->ApplicationUpdateServerURLLineEdit->setVisible(applicationUpdateEnabled);
 
 #ifdef Slicer_USE_PYTHONQT
+# ifdef Slicer_USE_SLICERRC
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     PythonQt::init();
@@ -139,6 +140,11 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     this->SlicerRCFileOpenButton->setVisible(false);
     this->SlicerRCFileValueLabel->setVisible(false);
   }
+# else
+  this->SlicerRCFileLabel->setVisible(false);
+  this->SlicerRCFileOpenButton->setVisible(false);
+  this->SlicerRCFileValueLabel->setVisible(false);
+# endif
 #else
   this->SlicerRCFileLabel->setVisible(false);
   this->SlicerRCFileValueLabel->setVisible(false);
