@@ -61,6 +61,19 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       -DCMAKE_INSTALL_LIBDIR:PATH=${EP_INSTALL_LIBDIR}
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+      # Slicer only needs the liblzma library. Disabling the command line
+      # tools (xz, xzdec, lzmadec, lzmainfo) and Native Language Support
+      # (NLS) avoids depending on gettext/libintl, which on macOS can
+      # resolve to a Homebrew-provided library built for a different
+      # architecture than the one being targeted (e.g. x86_64 libintl
+      # found while building for arm64), causing linker errors.
+      -DXZ_NLS:BOOL=OFF
+      -DXZ_TOOL_XZ:BOOL=OFF
+      -DXZ_TOOL_XZDEC:BOOL=OFF
+      -DXZ_TOOL_LZMADEC:BOOL=OFF
+      -DXZ_TOOL_LZMAINFO:BOOL=OFF
+      -DXZ_TOOL_SCRIPTS:BOOL=OFF
+      -DXZ_DOC:BOOL=OFF
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
