@@ -156,9 +156,13 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::ignoreSlicerRC() const
 {
+#ifdef Slicer_USE_SLICERRC
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("ignore-slicerrc").toBool() || //
          this->isTestingEnabled();
+#else
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -418,7 +422,7 @@ void qSlicerCoreCommandOptions::addArguments()
 #endif
                     /*no tr*/ "Display available command line arguments.");
 
-#ifdef Slicer_USE_PYTHONQT
+#if defined(Slicer_USE_PYTHONQT) && defined(Slicer_USE_SLICERRC)
   QString testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings and --ignore-slicerrc.";
 #else
   QString testingDescription = /*no tr*/ "Activate testing mode. It implies --disable-settings.";
@@ -470,14 +474,16 @@ void qSlicerCoreCommandOptions::addArguments()
 # endif
                     /*no tr*/ "Python code to execute after slicer loads. By default, no modules are loaded and Slicer exits afterward.");
 
+# ifdef Slicer_USE_SLICERRC
   this->addArgument("ignore-slicerrc",
                     "",
-# if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#  if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
                     QMetaType::Bool,
-# else
+#  else
                     QVariant::Bool,
+#  endif
+                    /*no tr*/ "Do not load the application startup resource file.");
 # endif
-                    /*no tr*/ "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
 
   this->addArgument("additional-module-path",

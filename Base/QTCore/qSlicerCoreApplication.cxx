@@ -1361,11 +1361,13 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     pythonArgc = 0;
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
+# ifdef Slicer_USE_SLICERRC
     if (!(options->displayMessageAndExit() || //
           options->ignoreSlicerRC()))
     {
       this->corePythonManager()->executeString("loadSlicerRCFile()");
     }
+# endif
 
     if (this->testAttribute(AA_EnableTesting))
     {

@@ -300,6 +300,11 @@ option(Slicer_USE_PYTHONQT "Integrate a Python-Qt interpreter into Slicer." ON)
 mark_as_superbuild(Slicer_USE_PYTHONQT)
 
 CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_SLICERRC "Load application startup file (.<appname>rc.py or custom app equivalent)" ON
+  "Slicer_USE_PYTHONQT" OFF)
+mark_as_superbuild(Slicer_USE_SLICERRC)
+
+CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python Qt Modules" ON
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)

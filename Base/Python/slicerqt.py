@@ -97,18 +97,26 @@ initLogging(logging.getLogger())
 
 def getSlicerRCFileName():
     """Return application startup file (Slicer resource script) file name.
-    If a .slicerrc.py file is found in slicer.app.slicerHome folder then that will be used.
-    If that is not found then it will search for a path defined in a SLICERRC environment variable.
-    If that environment variable is not specified or the path does not exist then .slicerrc.py in the user's home folder
-    will be used ('~/.slicerrc.py'). If the path does not exist then the default path in slicer.app.slicerHome will be used.
+    The filename convention is ``.<appname>rc.py`` where ``appname`` is
+    ``slicer.app.mainApplicationName.lower()``. For the base Slicer application
+    this resolves to ``.slicerrc.py``.
+    If such a file is found in the ``slicer.app.slicerHome`` folder then that will be used.
+    If that is not found then the path defined in the ``<APPNAME>RC`` environment variable
+    will be used (e.g. ``SLICERRC`` for the base Slicer application).
+    If that environment variable is not specified then the rc file in the user's home
+    folder will be used (e.g. ``~/.slicerrc.py``).
     """
     import os
 
-    # Ordered candidate paths
+    app_name = slicer.app.mainApplicationName
+    rc_filename = f".{app_name.lower()}rc.py"
+    env_var = f"{app_name.upper()}RC"
+
+    # Ordered candidate paths (highest to lowest priority)
     candidates = [
-        os.path.join(slicer.app.slicerHome, ".slicerrc.py"),
-        os.environ.get("SLICERRC"),
-        os.path.expanduser("~/.slicerrc.py"),
+        os.path.join(slicer.app.slicerHome, rc_filename),
+        os.environ.get(env_var),
+        os.path.expanduser(f"~/{rc_filename}"),
     ]
 
     # Default to application slicerHome path; pick first existing candidate
@@ -118,8 +126,7 @@ def getSlicerRCFileName():
             rcfile = c
             break
 
-    rcfile = rcfile.replace("\\", "/")  # make slashes consistent on Windows
-    return rcfile
+    return rcfile.replace("\\", "/")  # make slashes consistent on Windows
 
 
 # -----------------------------------------------------------------------------

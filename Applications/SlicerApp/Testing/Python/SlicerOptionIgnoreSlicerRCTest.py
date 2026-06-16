@@ -42,6 +42,19 @@ if __name__ == "__main__":
     slicer_executable = os.path.expanduser(sys.argv[1])
     common_args = ["--disable-modules", "--no-main-window"]
 
+    # Derive the RC environment variable name from the application executable name.
+    # For example: "Slicer" -> "SLICERRC", "MyApp" -> "MYAPPRC"
+    app_name = os.path.splitext(os.path.basename(slicer_executable))[0]
+    rc_env_var = f"{app_name.upper()}RC"
+
+    # Skip when Slicer_USE_SLICERRC is OFF. The --ignore-slicerrc flag is only
+    # registered when the feature is compiled in, so its presence in --help
+    # output serves as a reliable probe.
+    (_, helpStdout, helpStderr) = runSlicerAndExit(slicer_executable, ["--help"])
+    if "--ignore-slicerrc" not in (helpStdout + helpStderr):
+        print("Slicer_USE_SLICERRC is OFF: slicerrc tests skipped.")
+        exit(EXIT_SUCCESS)
+
     fd, slicerrc = tempfile.mkstemp()
     assert os.path.isfile(slicerrc)
     try:
@@ -54,10 +67,10 @@ if __name__ == "__main__":
                        "os.close(fd)\n")
 
         slicerrctestoutput = slicerrc + ".out"
-        os.environ["SLICERRC"] = slicerrc
+        os.environ[rc_env_var] = slicerrc
         os.environ["SLICERRCTESTOUTPUT"] = slicerrctestoutput
         if debug:
-            print("SLICERRC=%s" % slicerrc)
+            print(f"{rc_env_var}={slicerrc}")
             print("SLICERRCTESTOUTPUT=%s" % slicerrctestoutput)
 
         # Check that slicerrc file is loaded
