@@ -424,8 +424,17 @@ function(fixup_bundle_with_plugins app)
        set(changes ${changes} "-change" "${item}" "${embedded_item}")
      endforeach()
      # Update executable
+     # Remove the Qt-install-tree rpath if present (Qt5 has it; Qt6 may not,
+     # so ignore the error rather than using "-rpath old new" which requires old to exist).
      execute_process(COMMAND install_name_tool
-       -rpath "@executable_path/../Frameworks" "@loader_path/../../../../"
+       -delete_rpath "@executable_path/../Frameworks"
+       "${designer_executable}"
+       RESULT_VARIABLE _rpath_delete_result
+       OUTPUT_QUIET ERROR_QUIET
+       )
+     # Add the bundle-relative rpath and apply all LC_LOAD_DYLIB changes.
+     execute_process(COMMAND install_name_tool
+       -add_rpath "@loader_path/../../../../"
        ${changes} "${designer_executable}"
        )
      # Generate qt.conf file to override plugin paths and ensure plugins provided
@@ -435,25 +444,34 @@ Plugins=../../../@Slicer_QtPlugins_DIR@
 ")
 
      # QtDesignerComponents.framework
-     set(resolved_item "${qt_root_dir}/QtDesignerComponents.framework/Versions/5/QtDesignerComponents")
-     set(resolved_embedded_item "${app_dir}/Contents/Frameworks/QtDesignerComponents.framework/Versions/5/QtDesignerComponents")
-     copy_resolved_framework_into_bundle("${resolved_item}" "${resolved_embedded_item}")
-     # Collect list of Qt framework dependencies
-     set(prereqs )
-     get_prerequisites(${resolved_embedded_item} "prereqs" 1 0 "" "")
-     # Generate list of "-change" arguments
-     set(changes "")
-     foreach(item ${prereqs})
-       gp_item_default_embedded_path_override("${item}" path)
-       get_filename_component(item_name "${item}" NAME)
-       string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
-       set(changes ${changes} "-change" "${item}" "${embedded_item}")
-     endforeach()
-     # Update executable
-     execute_process(COMMAND install_name_tool
-       ${changes} -id "@rpath/Frameworks/QtDesignerComponents.framework/Versions/5/QtDesignerComponents"
-       "${resolved_embedded_item}"
-       )
+     # Dynamically resolve the versioned binary path (e.g. Versions/A for Qt6, Versions/5 for Qt5)
+     # to avoid hardcoding the framework version string.
+     file(GLOB _qtdc_candidates
+       "${qt_root_dir}/QtDesignerComponents.framework/Versions/*/QtDesignerComponents")
+     list(FILTER _qtdc_candidates EXCLUDE REGEX "/Versions/Current/")
+     if(_qtdc_candidates)
+       list(GET _qtdc_candidates 0 resolved_item)
+       string(REGEX REPLACE ".*/Versions/([^/]+)/QtDesignerComponents$" "\\1"
+         _qtdc_version "${resolved_item}")
+       set(resolved_embedded_item "${app_dir}/Contents/Frameworks/QtDesignerComponents.framework/Versions/${_qtdc_version}/QtDesignerComponents")
+       copy_resolved_framework_into_bundle("${resolved_item}" "${resolved_embedded_item}")
+       # Collect list of Qt framework dependencies
+       set(prereqs )
+       get_prerequisites(${resolved_embedded_item} "prereqs" 1 0 "" "")
+       # Generate list of "-change" arguments
+       set(changes "")
+       foreach(item ${prereqs})
+         gp_item_default_embedded_path_override("${item}" path)
+         get_filename_component(item_name "${item}" NAME)
+         string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
+         set(changes ${changes} "-change" "${item}" "${embedded_item}")
+       endforeach()
+       # Update executable
+       execute_process(COMMAND install_name_tool
+         ${changes} -id "@rpath/Frameworks/QtDesignerComponents.framework/Versions/${_qtdc_version}/QtDesignerComponents"
+         "${resolved_embedded_item}"
+         )
+     endif()
    endif()
   endif()
 
