@@ -196,6 +196,11 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType
     // Folder with no hierarchy node
     return 1.0;
   }
+  else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()))
+  {
+    // Virtual branch items (for example segments) are not folders, even though they have level information
+    return 0.0;
+  }
   else if (!shNode->GetItemLevel(itemID).empty())
   {
     // There is any level information (for example for DICOM levels which are also folders)
