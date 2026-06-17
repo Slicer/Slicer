@@ -86,9 +86,13 @@ int readOldScene(const char* mrmlScenePath)
   expectedScalarOpacity->AddPoint(0., 0.00001);
   expectedScalarOpacity->AddPoint(0.1, 1.0000);
   expectedScalarOpacity->AddPoint(7.0, 0.122);
-  // precision is important as it is used for "threshold" (points are very
-  // close to each other).
-  expectedScalarOpacity->AddPoint(7.000000000001, 1.0);
+  // The file purposely encodes this point right next to the previous one (a
+  // "threshold": 7.000000000001 instead of 7.0) to represent a sharp step.
+  // vtkMRMLVolumePropertyNode::NodesFromString() spaces out x coordinates
+  // that are closer than a float32-safe minimum (see HigherAndUnique()), so
+  // the point ends up shifted to vtkMRMLVolumePropertyNode::NextHigher(7.0)
+  // rather than keeping the literal value from the file.
+  expectedScalarOpacity->AddPoint(vtkMRMLVolumePropertyNode::NextHigher(7.0), 1.0);
   expectedScalarOpacity->AddPoint(10., 0.000000001);
 
   vtkPiecewiseFunction* actualScalarOpacity = vpNode->GetScalarOpacity();
@@ -116,7 +120,12 @@ int piecewiseFunctionFromString()
 {
   std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
                 " 0 154.266067504883 0.699999988079071 228 1");
-  double expectedData[10] = { 0, 0, 4.94065645841247e-324, 0, 69.5504608154297, 0, 154.266067504883, 0.699999988079071, 228, 1 };
+  // The second x value in the string (the smallest positive denormalized
+  // double) is closer to the first (0) than the float32-safe minimum spacing
+  // enforced by vtkMRMLVolumePropertyNode::NodesFromString() (see
+  // HigherAndUnique()), so it gets shifted to NextHigher(0) instead of
+  // keeping its literal value.
+  double expectedData[10] = { 0, 0, vtkMRMLVolumePropertyNode::NextHigher(0.0), 0, 69.5504608154297, 0, 154.266067504883, 0.699999988079071, 228, 1 };
   vtkSmartPointer<vtkPiecewiseFunction> function = vtkSmartPointer<vtkPiecewiseFunction>::New();
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
   CHECK_INT(function->GetSize(), 5);
