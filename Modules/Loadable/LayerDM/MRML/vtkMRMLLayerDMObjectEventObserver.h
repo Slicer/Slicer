@@ -53,6 +53,7 @@ public:
   /// Set update callback blocked.
   /// @return previous blocked state.
   bool SetBlocked(bool isBlocked);
+  bool IsBlocked() const;
 
   /// Helper update guard.
   /// Blocks update during struct lifetime for the given input observer.
