@@ -420,7 +420,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayColor(vtkIdType itemID, QC
     terminologyMetadataOutput.setGeneratedColor(terminologyMetadataInput[qMRMLSubjectHierarchyModel::GeneratedColorRole].value<QColor>());
   }
 
-  this->setDisplayColor(itemID, color, terminologyMetadataInput);
+  this->setDisplayColor(itemID, color, terminologyMetadataOutput);
 }
 
 //-----------------------------------------------------------------------------
