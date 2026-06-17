@@ -90,6 +90,11 @@ bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
   return wasBlocked;
 }
 
+bool vtkMRMLLayerDMObjectEventObserver::IsBlocked() const
+{
+  return this->m_isBlocked;
+}
+
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
 {
   this->m_callback = callback;

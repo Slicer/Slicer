@@ -123,15 +123,18 @@ public:
   /// If \param isBlocked is true, \sa UpdatePipeline is not called during \sa ResetDisplay.
   bool BlockResetDisplay(bool isBlocked);
 
+  /// @{
   /// If \param isBlocked is true, blocks \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent to be called.
   /// \sa vtkMRMLLayerDMInteractionLogic
   bool BlockInteractionProcessing(bool isBlocked);
-
-  /// Current state of interaction processing blocking.
   bool IsInteractionProcessingBlocked() const;
+  /// @}
 
+  /// @{
   /// If \param isBlocked is true, blocks \sa OnUpdate method from being triggered by external changes.
   bool BlockUpdateObserver(bool isBlocked) const;
+  bool IsUpdateObserverBlocked() const;
+  /// @}
 
   /// @{
   /// If \param isFrozen is true, blocks all reactiveness from the pipeline (ResetDisplay, Interaction and Update).

@@ -174,6 +174,11 @@ bool vtkMRMLLayerDMPipelineI::BlockUpdateObserver(bool isBlocked) const
   return this->m_obs->SetBlocked(isBlocked);
 }
 
+bool vtkMRMLLayerDMPipelineI::IsUpdateObserverBlocked() const
+{
+  return this->m_obs->IsBlocked();
+}
+
 void vtkMRMLLayerDMPipelineI::SetFrozen(bool isFrozen)
 {
   if (this->m_isFrozen == isFrozen)
