@@ -560,6 +560,18 @@ void vtkMRMLTableStorageNode::AddColumnToTable(vtkTable* table, vtkMRMLTableStor
     // schema is not defined or no valid column type is defined for column
     valueTypeId = VTK_STRING;
   }
+  if (valueTypeId != VTK_STRING //
+      && vtkSmartPointer<vtkDataArray>::Take(vtkDataArray::CreateDataArray(valueTypeId)) == nullptr)
+  {
+    // Some value types (such as 'variant' or 'object') cannot be represented by a vtkDataArray,
+    // so vtkDataArray::CreateDataArray() returns nullptr for them. Fall back to reading the column
+    // as string instead of dereferencing the null array (which would crash the application).
+    vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLTableStorageNode::AddColumnToTable",
+                                       "Column '" << columnName << "' has unsupported value type '" //
+                                                  << vtkMRMLTableNode::GetValueTypeAsString(valueTypeId) << "'. The column is read as string.");
+    valueTypeId = VTK_STRING;
+  }
   if (valueTypeId == VTK_STRING)
   {
     if (rawComponentArrays.size() > 0)
@@ -879,7 +891,19 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
         schemaRowIndex = schemaTable->InsertNextBlankRow();
         columnNameArray->SetValue(schemaRowIndex, column->GetName());
       }
-      columnTypeArray->SetValue(schemaRowIndex, vtkMRMLTableNode::GetValueTypeAsString(column->GetDataType()));
+      int columnDataType = column->GetDataType();
+      if (columnDataType == VTK_VARIANT)
+      {
+        // Slicer cannot store a per-cell data type, so a variant array cannot be saved losslessly.
+        // The cell values are written to the data file as text anyway, so save the column as string
+        // (instead of an unsupported 'variant' type that would fail to load) and warn the user.
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                           "vtkMRMLTableStorageNode::WriteSchema",
+                                           "Column '" << column->GetName() << "' has 'variant' type, which cannot be saved. "
+                                                      << "The column is saved as string.");
+        columnDataType = VTK_STRING;
+      }
+      columnTypeArray->SetValue(schemaRowIndex, vtkMRMLTableNode::GetValueTypeAsString(columnDataType));
     }
   }
 
