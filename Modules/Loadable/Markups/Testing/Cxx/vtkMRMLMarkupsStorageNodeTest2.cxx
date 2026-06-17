@@ -135,7 +135,18 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   storageNode->SetFileName(fileName.c_str());
   std::cout << "Writing " << storageNode->GetFileName() << std::endl;
+  // Writing fcsv files is expected to log a deprecation warning.
+  bool isDeprecatedFcsvFormat = storageNode->IsA("vtkMRMLMarkupsFiducialStorageNode") != 0;
+  if (isDeprecatedFcsvFormat)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  }
   CHECK_BOOL(storageNode->WriteData(markupsNode), true);
+  if (isDeprecatedFcsvFormat)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS(1);
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+  }
 
   //
   // test read
@@ -204,7 +215,16 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // test with RAS coordinate system
   storageNode->UseRASOn();
   std::cout << "Writing file in RAS coordinate system: " << storageNode->GetFileName() << std::endl;
+  if (isDeprecatedFcsvFormat)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  }
   CHECK_BOOL(storageNode->WriteData(markupsNode), true);
+  if (isDeprecatedFcsvFormat)
+  {
+    TESTING_OUTPUT_ASSERT_WARNINGS(1);
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+  }
 
   // read it in after clearing out the test data
   // Set to use LPS to verify that not this hint but the coordinate system that
