@@ -92,7 +92,14 @@ void PrintAvailableTests()
 
 int main(int ac, char* av[])
 {
+  // See Base/CLI/Testing/itkTestMain.h for the rationale: a test executable can
+  // opt out of floating point exception trapping (e.g. for benign exceptions
+  // raised by third-party filters, or spurious SIGFPE on macOS) by compiling
+  // with SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS defined.
+  // See https://github.com/Slicer/Slicer/issues/9239
+#ifndef SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS
   itk::FloatingPointExceptions::Enable();
+#endif
 
   double intensityTolerance = 2.0;
   unsigned int numberOfPixelsTolerance = 0;

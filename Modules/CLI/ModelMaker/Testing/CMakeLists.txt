@@ -15,6 +15,15 @@ target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTAB
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
+# On macOS, surface extraction with vtkDiscreteFlyingEdges3D raises benign
+# floating point exceptions (and the OS delivers spurious SIGFPE for masked
+# exceptions) that abort the CLI test driver. Disable floating point exception
+# trapping for this test executable on macOS only; it is kept enabled elsewhere.
+# See https://github.com/Slicer/Slicer/issues/9239
+if(APPLE)
+  target_compile_definitions(${CLP}Test PRIVATE SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS)
+endif()
+
 foreach(filenum RANGE 1 5)
   configure_file(${INPUT}/ModelMakerTest.mrml
       ${TEMP}/ModelMakerTest${filenum}.mrml
