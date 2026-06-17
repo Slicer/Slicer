@@ -69,12 +69,14 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
         modelNode = vtkMRMLModelNode()
         self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
         wasBlocked = self.observer.SetBlocked(True)
+        assert self.observer.IsBlocked()
         assert not wasBlocked
 
         modelNode.Modified()
         self.mock.assert_not_called()
 
         self.observer.SetBlocked(wasBlocked)
+        assert not self.observer.IsBlocked()
         modelNode.Modified()
         self.mock.assert_called_once_with(modelNode, vtkCommand.ModifiedEvent, None)
 
