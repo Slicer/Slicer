@@ -87,7 +87,16 @@ void PrintAvailableTests()
 
 int main(int ac, char* av[])
 {
+  // Floating point exceptions are trapped by default to catch genuine numerical
+  // errors in CLI modules. A few tests exercise third-party filters (e.g. VTK
+  // surface extraction) that raise benign floating point exceptions, and on
+  // macOS the operating system may even deliver a spurious SIGFPE for masked
+  // exceptions. Such test executables opt out by compiling with
+  // SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS defined.
+  // See https://github.com/Slicer/Slicer/issues/9239
+#ifndef SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS
   itk::FloatingPointExceptions::Enable();
+#endif
 
   double intensityTolerance = 2.0;
   unsigned int numberOfPixelsTolerance = 0;
