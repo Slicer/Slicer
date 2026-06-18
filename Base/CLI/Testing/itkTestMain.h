@@ -87,13 +87,58 @@ void PrintAvailableTests()
 
 int main(int ac, char* av[])
 {
-  // Floating point exceptions are trapped by default to catch genuine numerical
-  // errors in CLI modules. A few tests exercise third-party filters (e.g. VTK
-  // surface extraction) that raise benign floating point exceptions, and on
-  // macOS the operating system may even deliver a spurious SIGFPE for masked
-  // exceptions. Such test executables opt out by compiling with
-  // SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS defined.
-  // See https://github.com/Slicer/Slicer/issues/9239
+  // ---------------------------------------------------------------------------
+  // Floating point exception trapping in CLI module tests
+  //
+  // By default this test driver enables ITK floating point exception trapping
+  // (itk::FloatingPointExceptions::Enable(), which unmasks FE_INVALID and
+  // FE_DIVBYZERO) so that a CLI module performing an invalid operation or a
+  // divide-by-zero aborts loudly instead of silently producing NaN/inf. Whether
+  // the capability is compiled in at all is autodetected by ITK per platform
+  // (Slicer's SuperBuild sets nothing): glibc Linux uses feenableexcept();
+  // macOS, which has no working feenableexcept(), uses the fegetenv()/fesetenv()
+  // fallback (see the _GNU_SOURCE / __APPLE__ handling in ITK's
+  // Modules/Core/Common/src/itkFloatingPointExceptions_unix.cxx).
+  //
+  // A test executable can opt OUT of this trapping by compiling with
+  // SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS defined (set per target
+  // via target_compile_definitions() in the test's CMakeLists.txt). Trapping
+  // stays enabled for every other CLI test.
+  //
+  // Why some tests opt out (Slicer issue #9239, PR #9241):
+  // The ModelMaker and MergeModels CLI tests abort with SIGFPE on the macOS
+  // nightly dashboard, while the Linux and Windows nightlies of the same
+  // revision pass. Investigation showed these are false alarms, not defects in
+  // the modules under test:
+  //   - Every signal fires inside the stock VTK filter vtkDiscreteFlyingEdges3D
+  //     (Discrete Marching Cubes) during gradient/normal computation on a label
+  //     (step-function) image. Observed codes, in one run: FPE_FLTOVF ->
+  //     FPE_FLTRES -> FPE_FLTINV -> FPE_FLTRES.
+  //   - FE_UNDERFLOW (FLTUND) and FE_INEXACT (FLTRES) occur during normal,
+  //     correct floating point arithmetic; they are not errors. vtkMath::
+  //     Normalize() is zero-guarded, so a flat-region zero gradient does not
+  //     even produce a divide.
+  //   - The single FE_INVALID is a transient NaN inside that VTK filter; VTK is
+  //     not built or run with traps and produces a correct mesh. It is
+  //     third-party numerics, not a Slicer defect.
+  //   - macOS additionally over-traps: several aborts report all exceptions
+  //     masked in the FP control word (MXCSR 0x1f80 / x87 0x37f) yet a SIGFPE
+  //     was still delivered. This macOS behavior is long-standing - the Qt5/VTK8
+  //     migration recorded the same "SIGFPE with code FPE_FLTUND" on Mac for
+  //     ModelToLabelMapTest, ModelToLabelMapTestLabelValue and
+  //     N4ITKBiasFieldCorrectionTest
+  //     (https://www.slicer.org/wiki/Documentation/Labs/Qt5-and-VTK8).
+  //
+  // The same remedy was applied upstream in VTK by @RafaelPalomar in vtk!8799
+  // ("Disable floating point exceptions on some tests", vtk#17683,
+  // https://gitlab.kitware.com/vtk/vtk/-/merge_requests/8799): disable trapping
+  // for the affected tests rather than chase benign exceptions into third-party
+  // numerics.
+  //
+  // The opt-out is currently scoped to macOS (if(APPLE) in the test
+  // CMakeLists.txt), so Linux and Windows keep real FE_INVALID/FE_DIVBYZERO
+  // coverage for these tests.
+  // ---------------------------------------------------------------------------
 #ifndef SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS
   itk::FloatingPointExceptions::Enable();
 #endif
