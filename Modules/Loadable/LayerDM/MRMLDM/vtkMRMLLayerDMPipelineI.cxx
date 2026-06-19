@@ -44,19 +44,6 @@ void vtkMRMLLayerDMPipelineI::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
   this->m_viewNode = viewNode;
 }
 
-void vtkMRMLLayerDMPipelineI::SetRenderer(vtkRenderer* renderer)
-{
-  if (this->m_renderer == renderer)
-  {
-    return;
-  }
-
-  this->OnRendererRemoved(this->m_renderer);
-  this->m_renderer = renderer;
-  this->OnRendererAdded(this->m_renderer);
-  this->ResetDisplay();
-}
-
 bool vtkMRMLLayerDMPipelineI::BlockResetDisplay(bool isBlocked)
 {
   if (this->m_isFrozen)
@@ -135,9 +122,118 @@ unsigned int vtkMRMLLayerDMPipelineI::GetRenderOrder() const
   return 0;
 }
 
+std::vector<vtkRenderer*> vtkMRMLLayerDMPipelineI::GetRenderers() const
+{
+  std::vector<vtkRenderer*> renderers;
+  for (const auto& [_, renderer] : this->m_renderersMap)
+  {
+    renderers.emplace_back(renderer);
+  }
+  return renderers;
+}
+
+std::vector<unsigned int> vtkMRMLLayerDMPipelineI::GetRenderOrders() const
+{
+  return { this->GetRenderOrder() };
+}
+
 vtkCamera* vtkMRMLLayerDMPipelineI::GetCustomCamera() const
 {
   return nullptr;
+}
+
+vtkCamera* vtkMRMLLayerDMPipelineI::GetCustomCamera(unsigned int renderOrder) const
+{
+  return GetCustomCamera();
+}
+
+unsigned int vtkMRMLLayerDMPipelineI::GetMaxRenderOrder() const
+{
+  const auto renderOrders = GetRenderOrders();
+  if (renderOrders.empty())
+  {
+    return 0;
+  }
+  return *std::max_element(renderOrders.begin(), renderOrders.end());
+}
+
+unsigned int vtkMRMLLayerDMPipelineI::GetVtkRendererOrder(const vtkRenderer* renderer) const
+{
+  if (!renderer)
+  {
+    return 0;
+  }
+
+  for (const auto& [order, mappedRenderers] : this->m_renderersMap)
+  {
+    if (mappedRenderers.GetPointer() == renderer)
+    {
+      return order;
+    }
+  }
+  return 0;
+}
+
+void vtkMRMLLayerDMPipelineI::SetRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders)
+{
+  if (this->RenderersMatchPipelineRenderers(renderers, renderOrders))
+  {
+    return;
+  }
+
+  if (renderers.size() != renderOrders.size())
+  {
+    const std::string viewId = this->GetViewNode() ? this->GetViewNode()->GetID() : "null";
+    const std::string displayId = this->GetDisplayNode() ? this->GetDisplayNode()->GetID() : "null";
+    vtkErrorMacro("Renderer / render order mismatch for DM pipeline ViewNode: " << viewId << ", DisplayNode: " << displayId);
+    return;
+  }
+
+  // Remove the previous renderers
+  for (const auto& [order, renderer] : this->m_renderersMap)
+  {
+    this->OnRendererRemoved(renderer);
+  }
+  this->m_renderersMap.clear();
+
+  // Early return if not currently added to any renderer
+  if (renderers.empty())
+  {
+    return;
+  }
+
+  // Add the new renderers
+  for (size_t i = 0; i < renderers.size(); ++i)
+  {
+    this->m_renderersMap[renderOrders[i]] = renderers[i];
+    this->OnRendererAdded(renderers[i]);
+  }
+  this->ResetDisplay();
+}
+
+bool vtkMRMLLayerDMPipelineI::RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders)
+{
+  if (renderers.size() != this->m_renderersMap.size() || renderOrders.size() != this->m_renderersMap.size())
+  {
+    return false;
+  }
+
+  for (size_t i = 0; i < renderOrders.size(); ++i)
+  {
+    const auto expectedOrder = renderOrders[i];
+    const auto expectedRenderer = renderers[i];
+
+    if (const auto it = this->m_renderersMap.find(expectedOrder); it == this->m_renderersMap.end() || it->second.GetPointer() != expectedRenderer)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+void vtkMRMLLayerDMPipelineI::SetRenderer(vtkRenderer* renderer)
+{
+  this->SetRenderers({ renderer }, { this->GetRenderOrder() });
 }
 
 void vtkMRMLLayerDMPipelineI::SetScene(vtkMRMLScene* scene)
@@ -207,7 +303,21 @@ vtkMRMLNode* vtkMRMLLayerDMPipelineI::GetDisplayNode() const
 
 vtkRenderer* vtkMRMLLayerDMPipelineI::GetRenderer() const
 {
-  return this->m_renderer;
+  if (this->m_renderersMap.empty())
+  {
+    return nullptr;
+  }
+  return this->m_renderersMap.begin()->second;
+}
+
+vtkRenderer* vtkMRMLLayerDMPipelineI::GetRenderer(unsigned int renderOrder) const
+{
+  const auto it = this->m_renderersMap.find(renderOrder);
+  if (it == std::end(this->m_renderersMap))
+  {
+    return nullptr;
+  }
+  return it->second;
 }
 
 vtkMRMLScene* vtkMRMLLayerDMPipelineI::GetScene() const
@@ -238,7 +348,7 @@ void vtkMRMLLayerDMPipelineI::SetPipelineManager(vtkMRMLLayerDMPipelineManager* 
 vtkMRMLLayerDMPipelineI::vtkMRMLLayerDMPipelineI()
   : m_viewNode{ nullptr }
   , m_displayNode{ nullptr }
-  , m_renderer{ nullptr }
+  , m_renderersMap{}
   , m_isResetDisplayBlocked{ false }
   , m_isFrozen{ false }
   , m_isInteractionProcessingBlocked{ false }

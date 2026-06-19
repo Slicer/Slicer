@@ -1,8 +1,12 @@
+from unittest.mock import MagicMock
+
 import slicer
 from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
-from slicer import vtkMRMLLayerDMLayerManager
+from slicer import vtkMRMLLayerDMLayerManager, vtkMRMLLayerDMPipelineI
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkActor, vtkCamera, vtkPolyDataMapper, vtkRenderWindow, vtkRenderer, vtkSphereSource
+
+OptionalCamera = vtkCamera | None
 
 
 class Pipeline(vtkMRMLLayerDMScriptedPipeline):
@@ -11,12 +15,17 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
     """
 
     def __init__(
-        self, renderOrder: int = 0, camera: vtkCamera = None, radius: float = 2, center: list[float] | None = None
+        self,
+        renderOrders: int | list[int] = 0,
+        cameras: OptionalCamera | list[OptionalCamera] = None,
+        radius: float = 2,
+        center: list[float] | None = None,
     ):
         super().__init__()
         center = center or [0.0] * 3
-        self._renderOrder = renderOrder
-        self._camera = camera
+        self._renderOrders = renderOrders if isinstance(renderOrders, list) else [renderOrders]
+        cameras = cameras if isinstance(cameras, list) else [cameras]
+        self._cameraDict = {order: camera for order, camera in zip(self._renderOrders, cameras)}
 
         self._sphere = vtkSphereSource()
         self._sphere.SetRadius(radius)
@@ -40,10 +49,13 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
         renderer.RemoveViewProp(self._actor)
 
     def GetRenderOrder(self) -> int:
-        return self._renderOrder
+        return self.GetRenderOrders()[0]
 
-    def GetCustomCamera(self) -> vtkCamera | None:
-        return self._camera
+    def GetRenderOrders(self) -> list[int]:
+        return self._renderOrders
+
+    def GetCustomCamera(self, renderOrder: int) -> OptionalCamera:
+        return self._cameraDict.get(renderOrder, None)
 
 
 class LayerManagerTest(ScriptedLoadableModuleTest):
@@ -257,7 +269,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
 
     def test_reset_clipping_range_affects_unmanaged_cameras(self):
         pipelines = self.configure_layer_manager_with_multiple_pipelines()
-        custom_camera = pipelines[-1].GetCustomCamera()
+        custom_camera = pipelines[-1].GetCustomCamera(pipelines[-1].GetRenderOrder())
         assert custom_camera is not None
 
         prev_clipping_range = custom_camera.GetClippingRange()
@@ -265,3 +277,51 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
 
         assert custom_camera.GetClippingRange()[0] != prev_clipping_range[0]
         assert custom_camera.GetClippingRange()[1] != prev_clipping_range[1]
+
+    def test_supports_pipelines_with_multi_renderers(self):
+        pipeline = Pipeline(renderOrders=[0, 10, 1000], cameras=[None, None, None])
+        pipeline.OnRendererAdded = MagicMock()
+        pipeline.GetCustomCamera = MagicMock(return_value=None)
+
+        self.layerManager.AddPipeline(pipeline)
+
+        assert len({pipeline.GetRenderer(renderOrder) for renderOrder in pipeline.GetRenderOrders()}) == 3
+        assert pipeline.OnRendererAdded.call_count == 3
+        assert pipeline.GetCustomCamera.call_count == 3
+
+    def test_supports_pipelines_with_dynamic_render_orders(self):
+        p1 = Pipeline(renderOrders=[0, 10, 1000], cameras=[None, None, None])
+        p2 = Pipeline(renderOrders=[0, 10, 10000], cameras=[None, None, None])
+
+        self.layerManager.AddPipeline(p1)
+        self.layerManager.AddPipeline(p2)
+        assert p1.GetRenderer(1000).GetLayer() == 2
+        assert p2.GetRenderer(10000).GetLayer() == 3
+
+        p2._renderOrders = [0, 1, 2]
+        p2.InvokeEvent(vtkMRMLLayerDMPipelineI.RenderGroupingModified)
+
+        assert p1.GetRenderer(1000).GetLayer() == 4
+        assert p2.GetRenderer(2).GetLayer() == 2
+
+    def test_pipelines_can_return_renderers_render_order(self):
+        p1_render_orders = [0, 10, 1000]
+        p1 = Pipeline(renderOrders=p1_render_orders, cameras=[None, None, None])
+
+        p2_render_orders = [0, 10, 10000]
+        p2 = Pipeline(renderOrders=p2_render_orders, cameras=[None, None, None])
+
+        self.layerManager.AddPipeline(p1)
+        self.layerManager.AddPipeline(p2)
+
+        for order in p1_render_orders:
+            assert p1.GetVtkRendererOrder(p1.GetRenderer(order)) == order
+
+        for order in p2_render_orders:
+            assert p2.GetVtkRendererOrder(p2.GetRenderer(order)) == order
+
+        # Verify that order from a renderer not matched to pipeline returns 0
+        assert p2.GetVtkRendererOrder(p1.GetRenderer(1000)) == 0
+
+        # Verify that order from a None renderer is 0
+        assert p2.GetVtkRendererOrder(None) == 0
