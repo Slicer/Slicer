@@ -46,7 +46,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
     def test_with_same_state_processes_max_order_first(self):
         pipelines = []
         for i in range(5):
-            pipeline = MockPipeline(canProcess=True, didProcess=True, renderOrder=i)
+            pipeline = MockPipeline(canProcess=True, didProcess=True, renderOrders=[i])
             pipelines.append(pipeline)
             self.logic.AddPipeline(pipeline)
 
@@ -95,7 +95,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
         assert self.logic.ProcessInteractionEvent(self.event)
 
-        p2 = MockPipeline(canProcess=True, didProcess=True, renderOrder=10)
+        p2 = MockPipeline(canProcess=True, didProcess=True, renderOrders=[10])
         self.logic.AddPipeline(p2)
 
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
