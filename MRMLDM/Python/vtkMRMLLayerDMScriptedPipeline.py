@@ -45,10 +45,11 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
         return False, sys.float_info.max
 
-    def GetCustomCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self, renderOrder: int) -> vtkCamera | None:
         """
-        Custom pipeline camera.
-        If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera.
+        Custom pipeline camera for the input renderOrder.
+        If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera
+        for the given input render order.
         Otherwise, the pipeline will be moved in a renderer with a default camera synchronized on its view default camera.
 
         :return: None by default
@@ -74,6 +75,16 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         return 0
 
+    def GetRenderOrders(self) -> list[int]:
+        """
+        Arbitrary render orders number where the pipeline wants to be displayed.
+        Allows the pipeline to be displayed in more than one renderer (for instance in the background / foreground).
+        Return larger values to be rendered on top of pipelines with lower render orders.
+
+        :return: default = [self.GetRenderOrder()]
+        """
+        return [self.GetRenderOrder()]
+
     def GetWidgetState(self) -> int:
         """
         Current widget state of the pipeline.
@@ -98,7 +109,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role: str) -> None:
         """
         Triggered when a reference to the display node is added
         default behavior: does nothing.
@@ -109,7 +120,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role: str) -> None:
         """
         Triggered when a reference to the display node is removed
         default behavior: does nothing.

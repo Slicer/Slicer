@@ -67,15 +67,16 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
   return false;
 }
 
-vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera() const
+vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int renderOrder) const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
-    return Superclass::GetCustomCamera();
+    return Superclass::GetCustomCamera(renderOrder);
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
-  auto result = this->CallPythonMethod({}, __func__, false);
+  vtkSmartPyObject pyArgs = vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject((unsigned long)renderOrder) });
+  auto result = this->CallPythonMethod(pyArgs, __func__, false);
   if (result)
   {
     if (result != Py_None)
@@ -84,7 +85,7 @@ vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera() const
     }
     Py_DECREF(result);
   }
-  return Superclass::GetCustomCamera();
+  return Superclass::GetCustomCamera(renderOrder);
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
@@ -115,6 +116,39 @@ unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
     return CastToIntAndDecrement(result);
   }
   return Superclass::GetRenderOrder();
+}
+
+std::vector<unsigned int> vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrders() const
+{
+  if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
+  {
+    return Superclass::GetRenderOrders();
+  }
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  if (const auto result = this->CallPythonMethod({}, __func__, false))
+  {
+    if (PyList_Check(result))
+    {
+      std::vector<unsigned int> orders;
+      for (Py_ssize_t i = 0; i < PyList_Size(result); ++i)
+      {
+        PyObject* item = PyList_GetItem(result, i);
+        long value = PyLong_AsLong(item);
+        if (value == -1 && PyErr_Occurred())
+        {
+          Py_DECREF(result);
+          PyErr_Clear();
+          return Superclass::GetRenderOrders();
+        }
+        orders.emplace_back(static_cast<unsigned int>(value));
+      }
+      Py_DECREF(result);
+      return orders;
+    }
+    Py_DECREF(result);
+  }
+  return Superclass::GetRenderOrders();
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const

@@ -35,6 +35,13 @@ public:
   static vtkMRMLLayerDMPipelineI* New();
   vtkTypeMacro(vtkMRMLLayerDMPipelineI, vtkObject);
 
+  enum Events
+  {
+    /// To emit when the pipeline grouping configuration changes (e.g., custom camera or render orders).
+    /// \sa vtkMRMLLayerDMLayerManager
+    RenderGroupingModified = vtkCommand::UserEvent + 1
+  };
+
   /// true if the pipeline can process the input event data
   /// \param eventData: The MRML event needing to be processed
   /// \param distance2: Return value for the distance to the interaction (preferably actual RAS distance)
@@ -47,6 +54,7 @@ public:
   /// \sa vtkMRMLLayerDMCameraSynchronizer
   /// \return nullptr by default.
   virtual vtkCamera* GetCustomCamera() const;
+  virtual vtkCamera* GetCustomCamera(unsigned int renderOrder) const;
 
   /// Custom mouse cursor from VTK mouse cursor enum.
   /// This value is only used if the pipeline actually processes an event and is ignore otherwise.
@@ -60,6 +68,17 @@ public:
   /// \sa vtkMRMLLayerDMLayerManager
   /// \return default = 0
   virtual unsigned int GetRenderOrder() const;
+
+  /// Pipeline render orders.
+  /// \sa GetRenderOrder
+  virtual std::vector<unsigned int> GetRenderOrders() const;
+
+  /// Maximum render order handled by the DM
+  unsigned int GetMaxRenderOrder() const;
+
+  /// Get the render order associated with the input renderer
+  /// If the renderer is not associated with the pipeline or nullptr, returns 0
+  unsigned int GetVtkRendererOrder(const vtkRenderer* renderer) const;
 
   /// Current widget state of the pipeline.
   /// \return default = WidgetStateIdle
@@ -157,10 +176,22 @@ public:
   /// Returns the instance of pipeline manager which created the pipeline.
   vtkMRMLLayerDMPipelineManager* GetPipelineManager() const;
 
-  /// Returns the current renderer attached to the pipeline.
+  /// Returns a renderer from the map of renderers attached to the pipeline.
+  /// The returned renderer corresponds to the lowest render order key in the render map.
+  /// Use GetRenderOrders() and GetRenderer(renderOrder) for access to all attached renderers.
+  ///
   /// \sa OnRendererAdded
   /// \sa OnRendererRemoved
+  /// \sa GetRenderOrders
+  /// \sa GetRenderer(unsigned int)
   vtkRenderer* GetRenderer() const;
+
+  /// Returns the renderer associated with the input render order
+  /// If the renderer with the given render order isn't found, returns nullptr.
+  vtkRenderer* GetRenderer(unsigned int renderOrder) const;
+
+  /// Returns the current renderers attached to the pipeline in increasing order of GetRenderOrders.
+  std::vector<vtkRenderer*> GetRenderers() const;
 
   /// Returns the current scene.
   vtkMRMLScene* GetScene() const;
@@ -195,8 +226,16 @@ public:
   /// Called the first time after pipeline initialization.
   void ResetDisplay();
 
+  /// Set the new renderers.
+  /// Triggers \sa OnRendererAdded and \sa OnRendererRemoved.
+  void SetRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders);
+
   /// Set the new renderer.
   /// Triggers \sa OnRendererAdded and \sa OnRendererRemoved if renderer has changed.
+  /// Used for testing purposes mainly. Please use \sa SetRenderers for a complete definition of the renderers for each render order.
+  ///
+  /// \deprecated Usage outside of testing is deprecated.
+  /// \sa SetRenderers
   void SetRenderer(vtkRenderer* renderer);
 
 protected:
@@ -208,9 +247,11 @@ protected:
   virtual void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData);
 
 private:
+  bool RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders);
+
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
   vtkWeakPointer<vtkMRMLNode> m_displayNode;
-  vtkWeakPointer<vtkRenderer> m_renderer;
+  std::map<unsigned int, vtkWeakPointer<vtkRenderer>> m_renderersMap;
   bool m_isResetDisplayBlocked;
   bool m_isFrozen;
   bool m_isInteractionProcessingBlocked;

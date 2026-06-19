@@ -21,9 +21,10 @@ public:
   vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipelineI);
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
-  vtkCamera* GetCustomCamera() const override;
+  vtkCamera* GetCustomCamera(unsigned int renderOrder) const override;
   int GetMouseCursor() const override;
   unsigned int GetRenderOrder() const override;
+  std::vector<unsigned int> GetRenderOrders() const override;
   int GetWidgetState() const override;
   void LoseFocus(vtkMRMLInteractionEventData* eventData) override;
   void OnDefaultCameraModified(vtkCamera* camera) override;
