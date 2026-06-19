@@ -16,7 +16,7 @@ from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import settingsValue, toBool
 
-from WebServerLib.BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+from WebServerLib.BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction, KEEP_OPEN
 
 logger = logging.getLogger(__name__)
 
@@ -469,6 +469,54 @@ class SlicerHTTPServer(HTTPServer):
                 else:
                     contentType = b"text/plain"
                     responseBody = b""
+
+                if responseBody is KEEP_OPEN:
+                    # Handler wants ownership of the socket (Server-Sent Events,
+                    # WebSocket upgrade, long-polling, etc.). Send initial
+                    # streaming headers without a Content-Length, then transfer
+                    # the socket and notifiers to the handler and stop managing
+                    # this connection from the server side.
+                    headers = f"HTTP/1.1 {httpStatus}\r\n".encode()
+                    if self.enableCORS:
+                        headers += b"Access-Control-Allow-Origin: *\r\n"
+                    headers += b"Content-Type: %s\r\n" % contentType
+                    headers += b"Cache-Control: no-cache\r\n"
+                    headers += b"Connection: keep-alive\r\n"
+                    headers += b"\r\n"
+                    try:
+                        self.connectionSocket.sendall(headers)
+                    except OSError as e:
+                        self.logMessage("Socket error while sending takeover headers: %s" % e)
+                        try:
+                            self.connectionSocket.close()
+                        except OSError:
+                            pass
+                        return
+                    # Fresh write notifier for the handler to own. The existing
+                    # read notifier has already been disabled above (line 408-409).
+                    takeoverWriteNotifier = qt.QSocketNotifier(self.connectionSocket.fileno(), qt.QSocketNotifier.Write)
+                    takeoverWriteNotifier.setEnabled(False)
+                    takeoverSocket = self.connectionSocket
+                    # Drop our reference before invoking the handler so we can't
+                    # accidentally touch the socket from this communicator again.
+                    self.connectionSocket = None
+                    try:
+                        highestConfidenceHandler.onConnectionTakeover(
+                            socket=takeoverSocket,
+                            writeNotifier=takeoverWriteNotifier,
+                            readNotifier=self.readNotifier,
+                        )
+                    except Exception as e:
+                        etype, value, tb = sys.exc_info()
+                        import traceback
+                        for frame in traceback.format_tb(tb):
+                            self.logMessage(frame)
+                        self.logMessage("onConnectionTakeover raised: ", etype, value)
+                        try:
+                            takeoverSocket.close()
+                        except OSError:
+                            pass
+                    return
 
                 if responseBody:
                     self.response = f"HTTP/1.1 {httpStatus}\r\n".encode()

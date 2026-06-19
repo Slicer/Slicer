@@ -28,13 +28,15 @@ class StaticPagesRequestHandler(BaseRequestHandler):
     def __init__(self, docroot, logMessage: BaseRequestLoggingFunction | None = None):
         """
         Initialize a new request handler instance.
-        :param docroot: directory path of static pages content
+        :param docroot: directory path of static pages content; accepted as
+            ``str`` or ``bytes`` and stored as ``bytes`` so it composes with
+            the ``bytes`` URIs used elsewhere in the handler.
         :param logMessage: An optional external handle for message logging.
         """
         self.uriRewriteRules = []
-        self.docroot = docroot
+        self.docroot = docroot.encode() if isinstance(docroot, str) else docroot
         self.logMessage = logMessage or self.defaultLogMessage
-        self.logMessage("docroot: %s" % self.docroot)
+        self.logMessage("docroot: %s" % self.docroot.decode(errors="replace"))
 
     def canHandleRequest(self, **_kwargs) -> float:
         """
@@ -73,7 +75,7 @@ class StaticPagesRequestHandler(BaseRequestHandler):
         if uri.startswith(b"/"):
             uri = uri[1:]
         path = os.path.join(self.docroot, uri)
-        self.logMessage("docroot: %s" % self.docroot)
+        self.logMessage("docroot: %s" % self.docroot.decode(errors="replace"))
         if os.path.isdir(path):
             for index in b"index.html", b"index.htm":
                 index = os.path.join(path, index)
