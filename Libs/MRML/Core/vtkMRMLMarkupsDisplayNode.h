@@ -484,6 +484,20 @@ public:
   /// Get the active color of the markup. This color is used when the mouse pointer hovers over a markup.
   vtkGetVector3Macro(ActiveColor, double);
 
+  ///@{
+  /// When enabled, control points that have a per-control-point color override
+  /// (set via vtkMRMLMarkupsNode::SetNthControlPointColor) are rendered in
+  /// that color, overriding the display node's `Color` (unselected) and
+  /// `SelectedColor` (selected). `ActiveColor` still applies to the active
+  /// control point so interaction feedback is preserved. Folder display
+  /// overrides take precedence over per-point colors. Per-point colors apply
+  /// to the control point glyphs only; lines and curves continue to use the
+  /// display-node Color/SelectedColor. Default false.
+  vtkSetMacro(UseControlPointColors, bool);
+  vtkGetMacro(UseControlPointColors, bool);
+  vtkBooleanMacro(UseControlPointColors, bool);
+  ///@}
+
   //@{
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
@@ -602,6 +616,8 @@ protected:
   vtkTextProperty* TextProperty;
 
   double ActiveColor[3];
+
+  bool UseControlPointColors{ false };
 
   bool HandlesInteractive;
   bool TranslationHandleVisibility;

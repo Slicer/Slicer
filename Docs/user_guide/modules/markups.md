@@ -86,6 +86,7 @@ The following keyboard shortcuts are active when the markups toolbar is displaye
   - Selected Color: Select the color that will be used to display the glyph and text when the markup is marked as selected.
   - Unselected Color: Select the color that will be used to display the glyph and text when the markup is not marked as selected.
   - Active Color: Select the color that will be used to display the glyph and text when the mouse hovers over the markup.
+  - Per-point colors: Enable to give each control point its own color, set via the Color column that appears in the control points table (click a swatch, or right-click for batch operations on multiple selected rows). Per-point colors apply to the control point glyphs only; the line or curve connecting them, and any control point without its own color, use the Selected/Unselected colors above.
   - Glyph Type: Select the symbol that will be used to mark each location. Default is the Sphere3D.
   - Line thickness: The thickness of lines in markups. Defined as either an absolute thickness, or as a percentage of the glyph size.
   - Outline: Visibility and opacity of the markups outline.

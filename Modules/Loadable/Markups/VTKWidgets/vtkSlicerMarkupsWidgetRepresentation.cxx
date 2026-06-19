@@ -743,6 +743,17 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
 }
 
 //----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation::IsFolderDisplayOverrideActive()
+{
+  if (!this->MarkupsDisplayNode || !this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+  {
+    return false;
+  }
+  vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+  return vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode) != nullptr;
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::GetActors(vtkPropCollection* vtkNotUsed(pc)) {}
 
 //----------------------------------------------------------------------
