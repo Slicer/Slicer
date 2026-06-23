@@ -82,6 +82,15 @@ protected:
   ~vtkMRMLTransformHandleWidget() override;
 
   virtual bool ProcessWidgetTranslateTransformCenterStart(vtkMRMLInteractionEventData* eventData);
+
+  /// True if a plain (non-Alt) click-and-drag of the active handle should move the center of
+  /// transformation instead of translating the transform. This is the case when the view plane
+  /// translation handle is grabbed precisely (not via the "wide" click-anywhere hit-test area) while
+  /// vtkMRMLTransformDisplayNode::GetEditorTranslationSliceAnywhereEnabled() is true in a slice view:
+  /// since any other click in the view already translates the transform, the handle itself is freed
+  /// up to adjust the center of transformation instead.
+  virtual bool ShouldTranslateTransformCenter();
+
   bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData) override;

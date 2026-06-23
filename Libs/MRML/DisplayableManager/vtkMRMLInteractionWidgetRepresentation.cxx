@@ -70,6 +70,16 @@ static const double INTERACTION_TRANSLATION_HANDLE_LENGTH = 0.75;
 static const double INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS = 0.15;
 static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS = 0.05;
 
+// Crosshair glyph: four short bars pointing away from the center, with a gap in the middle
+// so that whatever is underneath the handle position remains visible. Rendered as thin filled
+// quads (polygons), not as line primitives: VTK's "always on top" depth-offset trick used for the
+// interaction handles is applied much less reliably to line primitives than to polygons, which made
+// a line-based crosshair disappear intermittently (e.g. when another transform's handle was also
+// visible in the same slice view).
+static const double INTERACTION_HANDLE_CROSSHAIR_INNER_RADIUS = 0.10;
+static const double INTERACTION_HANDLE_CROSSHAIR_OUTER_RADIUS = 0.28;
+static const double INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH = 0.025;
+
 //----------------------------------------------------------------------
 vtkMRMLInteractionWidgetRepresentation::vtkMRMLInteractionWidgetRepresentation()
 {
@@ -155,7 +165,7 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteract(vtkMRMLInteractionEvent
       continue;
     }
 
-    if (handleInfo.GlyphType == GlyphCircle)
+    if (handleInfo.GlyphType == GlyphCircle || handleInfo.GlyphType == GlyphCrosshair)
     {
       this->CanInteractWithCircleHandle(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2, handleInfo);
     }
@@ -487,6 +497,14 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
   transformRingOutlineGlyph->SetInputData(this->Pipeline->RingOutlinePolyData);
   transformRingOutlineGlyph->SetTransform(transform);
 
+  vtkNew<vtkTransformPolyDataFilter> transformCrosshairGlyph;
+  transformCrosshairGlyph->SetInputData(this->Pipeline->CrosshairPolyData);
+  transformCrosshairGlyph->SetTransform(transform);
+
+  vtkNew<vtkTransformPolyDataFilter> transformCrosshairOutlineGlyph;
+  transformCrosshairOutlineGlyph->SetInputData(this->Pipeline->CrosshairOutlinePolyData);
+  transformCrosshairOutlineGlyph->SetTransform(transform);
+
   vtkTransformPolyDataFilter* transformGlyph = transformCircleGlyph;
   vtkTransformPolyDataFilter* transformOutlineGlyph = transformCircleOutlineGlyph;
 
@@ -512,6 +530,10 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
       case GlyphRing:
         transformGlyph = transformRingGlyph;
         transformOutlineGlyph = transformRingOutlineGlyph;
+        break;
+      case GlyphCrosshair:
+        transformGlyph = transformCrosshairGlyph;
+        transformOutlineGlyph = transformCrosshairOutlineGlyph;
         break;
       default: break;
     }
@@ -547,6 +569,15 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     if (handleInfo.ComponentType == InteractionRotationHandle && handleInfo.Index == 3)
     {
       scale *= 1.2;
+    }
+    if (!handleInfo.IsVisible())
+    {
+      // Collapse hidden handles to a single degenerate point at the origin instead of leaving their
+      // full-size geometry in place with zero opacity. Otherwise the invisible geometry can still
+      // interfere with depth testing/blending of other (visible) handles that overlap it on screen,
+      // showing up as a transparent gap cutting through them (e.g. a hidden rotation ring, viewed
+      // edge-on, cutting a line through the translation handles).
+      scale = 0.0;
     }
     transform->Scale(scale, scale, scale);
     transform->Translate(point[0], point[1], point[2]);
@@ -891,6 +922,55 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
   this->CircleOutlinePolyData->SetLines(vtkNew<vtkCellArray>());
   this->CircleOutlinePolyData->InsertNextCell(VTK_POLY_LINE, scaleLine);
 
+  // Crosshair: four short thin bars pointing away from the center (+X, -X, +Y, -Y), leaving the
+  // center empty. Each bar is a thin quad (not a line primitive, see comment above on
+  // INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH), with an outline drawn around it, same as the other
+  // handle glyphs (circle, arrow, ring).
+  vtkNew<vtkPoints> crosshairPoints;
+  vtkNew<vtkCellArray> crosshairPolys;
+  vtkNew<vtkCellArray> crosshairLines;
+  double crosshairBarDirections[4][2] = {
+    { 1.0, 0.0 },
+    { -1.0, 0.0 },
+    { 0.0, 1.0 },
+    { 0.0, -1.0 },
+  };
+  for (int barIndex = 0; barIndex < 4; ++barIndex)
+  {
+    double along[2] = { crosshairBarDirections[barIndex][0], crosshairBarDirections[barIndex][1] };
+    double across[2] = { -along[1], along[0] }; // perpendicular to "along"
+
+    double innerPoint[2] = { along[0] * INTERACTION_HANDLE_CROSSHAIR_INNER_RADIUS, along[1] * INTERACTION_HANDLE_CROSSHAIR_INNER_RADIUS };
+    double outerPoint[2] = { along[0] * INTERACTION_HANDLE_CROSSHAIR_OUTER_RADIUS, along[1] * INTERACTION_HANDLE_CROSSHAIR_OUTER_RADIUS };
+
+    double barCorners[4][3] = {
+      { innerPoint[0] - across[0] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, innerPoint[1] - across[1] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, 0.0 },
+      { outerPoint[0] - across[0] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, outerPoint[1] - across[1] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, 0.0 },
+      { outerPoint[0] + across[0] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, outerPoint[1] + across[1] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, 0.0 },
+      { innerPoint[0] + across[0] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, innerPoint[1] + across[1] * INTERACTION_HANDLE_CROSSHAIR_BAR_HALF_WIDTH, 0.0 },
+    };
+
+    vtkNew<vtkIdList> barPoly;
+    vtkNew<vtkIdList> barLine;
+    for (int cornerIndex = 0; cornerIndex < 4; ++cornerIndex)
+    {
+      vtkIdType id = crosshairPoints->InsertNextPoint(barCorners[cornerIndex]);
+      barPoly->InsertNextId(id);
+      barLine->InsertNextId(id);
+    }
+    barLine->InsertNextId(barLine->GetId(0));
+    crosshairPolys->InsertNextCell(barPoly);
+    crosshairLines->InsertNextCell(barLine);
+  }
+
+  this->CrosshairPolyData = vtkSmartPointer<vtkPolyData>::New();
+  this->CrosshairPolyData->SetPoints(crosshairPoints);
+  this->CrosshairPolyData->SetPolys(crosshairPolys);
+
+  this->CrosshairOutlinePolyData = vtkSmartPointer<vtkPolyData>::New();
+  this->CrosshairOutlinePolyData->SetPoints(crosshairPoints);
+  this->CrosshairOutlinePolyData->SetLines(crosshairLines);
+
   this->ScaleHandlePoints = vtkSmartPointer<vtkPolyData>::New();
 
   this->Append = vtkSmartPointer<vtkAppendPolyData>::New();
@@ -912,7 +992,7 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
 
   this->Property3D = vtkSmartPointer<vtkProperty>::New();
   this->Property3D->SetPointSize(1.e-6); // NOTE: The point size value must be greater than zero. Refer to vtkOpenGLState::vtkglPointSize(float).
-  this->Property3D->SetLineWidth(2.0);
+  this->Property3D->SetLineWidth(1.0);
   this->Property3D->SetDiffuse(0.0);
   this->Property3D->SetAmbient(1.0);
   this->Property3D->SetMetallic(0.0);
@@ -1283,7 +1363,6 @@ void vtkMRMLInteractionWidgetRepresentation::CreateScaleHandles()
   orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
   orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
   orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0); // Free translation
   this->Pipeline->ScaleHandlePoints->GetPointData()->AddArray(orientationArray);
 
   vtkNew<vtkIdTypeArray> visibilityArray;
@@ -1436,7 +1515,7 @@ void vtkMRMLInteractionWidgetRepresentation::GetHandleColor(int type, int index,
   double opacity = this->GetHandleOpacity(type, index);
   if (selected)
   {
-    opacity = 1.0;
+    opacity = this->GetInteractionHandleOpacity();
   }
 
   for (int i = 0; i < 3; ++i)
@@ -1493,7 +1572,7 @@ double vtkMRMLInteractionWidgetRepresentation::GetHandleOpacity(int type, int in
   if (axis_World[0] == 0.0 && axis_World[1] == 0.0 && axis_World[2] == 0.0)
   {
     // No axis specified. The handle should be viewable from any direction.
-    return opacity;
+    return opacity * this->GetInteractionHandleOpacity();
   }
 
   double handlePosition_World[3] = { 0.0, 0.0, 0.0 };
@@ -1534,7 +1613,7 @@ double vtkMRMLInteractionWidgetRepresentation::GetHandleOpacity(int type, int in
       opacity = (difference / fadeAngleRange);
     }
   }
-  return opacity;
+  return opacity * this->GetInteractionHandleOpacity();
 }
 
 //----------------------------------------------------------------------
@@ -1933,6 +2012,18 @@ double vtkMRMLInteractionWidgetRepresentation::GetInteractionSizeMm()
 bool vtkMRMLInteractionWidgetRepresentation::GetInteractionSizeAbsolute()
 {
   return false;
+}
+
+//----------------------------------------------------------------------
+double vtkMRMLInteractionWidgetRepresentation::GetInteractionHandleOpacity()
+{
+  return 1.0;
+}
+
+//----------------------------------------------------------------------
+double vtkMRMLInteractionWidgetRepresentation::GetTranslationScaleFactor()
+{
+  return 1.0;
 }
 
 //----------------------------------------------------------------------

@@ -135,6 +135,13 @@ protected:
   virtual bool ProcessJumpCursor(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessCancelEvent(vtkMRMLInteractionEventData* eventData);
 
+  /// Update the active component and hover state (WidgetStateIdle/OnTranslationHandle/OnRotationHandle/
+  /// OnScaleHandle) based on the component currently found at the event position. Used while hovering
+  /// (ProcessMouseMove) and right after ending an interaction (ProcessEndMouseDrag), so that the widget
+  /// state reflects what is actually under the cursor instead of assuming it has not changed, even if
+  /// no further mouse move event arrives before the next button press.
+  virtual void UpdateActiveComponent(vtkMRMLInteractionEventData* eventData);
+
   virtual vtkMRMLNode* GetMRMLNode() = 0;
   virtual void SaveInitialState();
   virtual void RestoreInitialState();

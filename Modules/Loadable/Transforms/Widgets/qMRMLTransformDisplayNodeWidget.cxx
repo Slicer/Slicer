@@ -116,6 +116,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->InteractiveScaling3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingEnabled(bool)));
 
   QObject::connect(this->InteractiveTranslationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationSliceEnabled(bool)));
+  QObject::connect(this->EditorTranslationSliceAnywhereEnabledCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationSliceAnywhereEnabled(bool)));
+  QObject::connect(this->editorTranslationSliceAnywhereSensitivitySlider, SIGNAL(valueChanged(double)), q, SLOT(setEditorTranslationSliceAnywhereSensitivity(double)));
   QObject::connect(this->InteractiveRotationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationSliceEnabled(bool)));
   QObject::connect(this->InteractiveScalingSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingSliceEnabled(bool)));
 
@@ -150,6 +152,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate::init()
   QObject::connect(this->scaleViewPlaneSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
 
   QObject::connect(this->interactionHandleScaleSlider, SIGNAL(valueChanged(double)), q, SLOT(updateInteractionHandleScale()));
+  QObject::connect(this->interactionHandleOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(updateInteractionHandleOpacity()));
 
   this->InteractiveAdvancedOptions3DFrame->hide();
   this->InteractiveAdvancedOptionsSliceFrame->hide();
@@ -388,6 +391,10 @@ void qMRMLTransformDisplayNodeWidget::updateWidgetFromDisplayNode()
   d->interactionHandleScaleSlider->setValue(d->TransformDisplayNode->GetInteractionScalePercent());
   d->interactionHandleScaleSlider->blockSignals(wasBlocking);
 
+  wasBlocking = d->interactionHandleOpacitySlider->blockSignals(true);
+  d->interactionHandleOpacitySlider->setValue(d->TransformDisplayNode->GetInteractionHandleOpacity());
+  d->interactionHandleOpacitySlider->blockSignals(wasBlocking);
+
   this->updateInteraction3DWidgetsFromDisplayNode();
   this->updateInteractionSliceWidgetsFromDisplayNode();
 }
@@ -540,6 +547,17 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
   d->translateViewPlaneSliceCheckBox->setChecked(translationComponentVisibility[3]);
   d->translateViewPlaneSliceCheckBox->blockSignals(wasBlocking);
   d->translateViewPlaneSliceCheckBox->setEnabled(translationEnabled && enabledSlice);
+
+  wasBlocking = d->EditorTranslationSliceAnywhereEnabledCheckBox->blockSignals(true);
+  bool translationSliceAnywhereEnabled = d->TransformDisplayNode->GetEditorTranslationSliceAnywhereEnabled();
+  d->EditorTranslationSliceAnywhereEnabledCheckBox->setChecked(translationSliceAnywhereEnabled);
+  d->EditorTranslationSliceAnywhereEnabledCheckBox->blockSignals(wasBlocking);
+  d->EditorTranslationSliceAnywhereEnabledCheckBox->setEnabled(translationEnabled && enabledSlice);
+
+  wasBlocking = d->editorTranslationSliceAnywhereSensitivitySlider->blockSignals(true);
+  d->editorTranslationSliceAnywhereSensitivitySlider->setValue(d->TransformDisplayNode->GetEditorTranslationSliceAnywhereSensitivity());
+  d->editorTranslationSliceAnywhereSensitivitySlider->blockSignals(wasBlocking);
+  d->editorTranslationSliceAnywhereSensitivitySlider->setEnabled(translationSliceAnywhereEnabled && translationEnabled && enabledSlice);
 
   //////////////
   // Rotation
@@ -937,6 +955,28 @@ void qMRMLTransformDisplayNodeWidget::setEditorTranslationSliceEnabled(bool enab
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorTranslationSliceAnywhereEnabled(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetEditorTranslationSliceAnywhereEnabled(enabled);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorTranslationSliceAnywhereSensitivity(double sensitivity)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+  d->TransformDisplayNode->SetEditorTranslationSliceAnywhereSensitivity(sensitivity);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setEditorRotationEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -1155,4 +1195,16 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionHandleScale()
 
   double scale = d->interactionHandleScaleSlider->value();
   d->TransformDisplayNode->SetInteractionScalePercent(scale);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateInteractionHandleOpacity()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+
+  d->TransformDisplayNode->SetInteractionHandleOpacity(d->interactionHandleOpacitySlider->value());
 }

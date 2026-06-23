@@ -154,30 +154,7 @@ bool vtkMRMLInteractionWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
       || state == WidgetStateOnRotationHandle    //
       || state == WidgetStateOnScaleHandle)
   {
-    // update state
-    int foundComponentType = InteractionNone;
-    int foundComponentIndex = -1;
-    double closestDistance2 = 0.0;
-    rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2);
-    if (foundComponentType == InteractionNone)
-    {
-      this->SetWidgetState(WidgetStateIdle);
-    }
-    else if (foundComponentType == InteractionTranslationHandle)
-    {
-      this->SetWidgetState(WidgetStateOnTranslationHandle);
-    }
-    else if (foundComponentType == InteractionRotationHandle)
-    {
-      this->SetWidgetState(WidgetStateOnRotationHandle);
-    }
-    else if (foundComponentType == InteractionScaleHandle)
-    {
-      this->SetWidgetState(WidgetStateOnScaleHandle);
-    }
-
-    this->SetActiveComponentIndex(foundComponentIndex);
-    this->SetActiveComponentType(foundComponentType);
+    this->UpdateActiveComponent(eventData);
   }
   else
   {
@@ -326,25 +303,50 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
     return false;
   }
 
-  int activeComponentType = this->GetActiveComponentType();
-  if (activeComponentType == InteractionTranslationHandle)
-  {
-    this->SetWidgetState(WidgetStateOnTranslationHandle);
-  }
-  else if (activeComponentType == InteractionRotationHandle)
-  {
-    this->SetWidgetState(WidgetStateOnRotationHandle);
-  }
-  else if (activeComponentType == InteractionScaleHandle)
-  {
-    this->SetWidgetState(WidgetStateOnScaleHandle);
-  }
-
   this->EndWidgetInteraction();
+
+  // Update the active component and hover state based on where the cursor actually is now, instead of
+  // assuming that the handle that was being dragged is still the one under the cursor. This makes sure
+  // the state is correct even if no mouse move event arrives before the next button press.
+  this->UpdateActiveComponent(eventData);
 
   // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
   return processedEvent;
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLInteractionWidget::UpdateActiveComponent(vtkMRMLInteractionEventData* eventData)
+{
+  vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  if (!rep || !eventData)
+  {
+    return;
+  }
+
+  int foundComponentType = InteractionNone;
+  int foundComponentIndex = -1;
+  double closestDistance2 = 0.0;
+  rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType == InteractionNone)
+  {
+    this->SetWidgetState(WidgetStateIdle);
+  }
+  else if (foundComponentType == InteractionTranslationHandle)
+  {
+    this->SetWidgetState(WidgetStateOnTranslationHandle);
+  }
+  else if (foundComponentType == InteractionRotationHandle)
+  {
+    this->SetWidgetState(WidgetStateOnRotationHandle);
+  }
+  else if (foundComponentType == InteractionScaleHandle)
+  {
+    this->SetWidgetState(WidgetStateOnScaleHandle);
+  }
+
+  this->SetActiveComponentIndex(foundComponentIndex);
+  this->SetActiveComponentType(foundComponentType);
 }
 
 //-------------------------------------------------------------------------
@@ -531,6 +533,8 @@ void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
     translationVector_World[1] = distance * translationAxis_World[1];
     translationVector_World[2] = distance * translationAxis_World[2];
   }
+
+  vtkMath::MultiplyScalar(translationVector_World, rep->GetTranslationScaleFactor());
 
   vtkNew<vtkTransform> translationTransform;
   translationTransform->Translate(translationVector_World);

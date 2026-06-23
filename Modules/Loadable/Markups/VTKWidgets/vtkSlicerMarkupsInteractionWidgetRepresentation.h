@@ -81,6 +81,7 @@ public:
   double GetInteractionScalePercent() override; // Size relative to screen
   double GetInteractionSizeMm() override;       // Size in mm
   bool GetInteractionSizeAbsolute() override;   // True -> size in mm; false -> relative to screen
+  double GetInteractionHandleOpacity() override;
 
   void GetInteractionHandlePositionWorld(int type, int index, double positionWorld[3]) override;
 

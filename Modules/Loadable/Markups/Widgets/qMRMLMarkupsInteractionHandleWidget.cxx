@@ -75,6 +75,7 @@ void qMRMLMarkupsInteractionHandleWidgetPrivate::init()
   QObject::connect(this->scaleZCheckBox, SIGNAL(clicked()), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->scaleViewPlaneCheckBox, SIGNAL(clicked()), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->interactionHandleScaleSlider, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->interactionHandleOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
 
   this->xLabel->hide();
   this->yLabel->hide();
@@ -148,6 +149,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->scaleYCheckBox->setEnabled(d->DisplayNode != nullptr);
   d->scaleZCheckBox->setEnabled(d->DisplayNode != nullptr);
   d->interactionHandleScaleSlider->setEnabled(d->DisplayNode != nullptr);
+  d->interactionHandleOpacitySlider->setEnabled(d->DisplayNode != nullptr);
 
   if (!d->DisplayNode)
   {
@@ -247,6 +249,10 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   }
   d->interactionHandleScaleSlider->setValue(d->DisplayNode->GetInteractionHandleScale());
   wasBlocking = d->interactionHandleScaleSlider->blockSignals(wasBlocking);
+
+  wasBlocking = d->interactionHandleOpacitySlider->blockSignals(true);
+  d->interactionHandleOpacitySlider->setValue(d->DisplayNode->GetInteractionHandleOpacity());
+  d->interactionHandleOpacitySlider->blockSignals(wasBlocking);
 }
 
 // --------------------------------------------------------------------------
@@ -276,4 +282,5 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
   d->DisplayNode->SetScaleHandleVisibility(d->scaleVisibilityCheckBox->isChecked());
 
   d->DisplayNode->SetInteractionHandleScale(d->interactionHandleScaleSlider->value());
+  d->DisplayNode->SetInteractionHandleOpacity(d->interactionHandleOpacitySlider->value());
 }

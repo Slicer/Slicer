@@ -80,6 +80,7 @@ The following keyboard shortcuts are active when the markups toolbar is displaye
   - Visibility: Check `Visible` to enable translation/rotation/scaling of the entire markups in slice and 3D views with an interactive widget.
   - Translate, Rotate, Scale: enable/disable adjustment types.
   - Size: size of the handles (relative to the application window size).
+  - Opacity: overall opacity of the handle. It is combined with the orientation-based fading of handles.
   - More options: Clicking more options will show/hide check boxes for controlling the visibility of each interaction handle axis separately.
 - Advanced:
   - View: Select which views the markup is displayed in

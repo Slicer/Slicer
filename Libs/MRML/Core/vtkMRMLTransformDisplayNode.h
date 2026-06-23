@@ -186,6 +186,20 @@ public:
   vtkGetMacro(EditorTranslationSliceEnabled, bool);
   vtkSetMacro(EditorTranslationSliceEnabled, bool);
   vtkBooleanMacro(EditorTranslationSliceEnabled, bool);
+  /// If enabled, the transform can be translated in slice views by click-and-dragging
+  /// anywhere in the slice view, not at the small view plane translation handle.
+  /// Dragging the center moves the center of rotation point instead of changing the translation.
+  /// Only affects slice views (it has no effect in 3D views).
+  vtkGetMacro(EditorTranslationSliceAnywhereEnabled, bool);
+  vtkSetMacro(EditorTranslationSliceAnywhereEnabled, bool);
+  vtkBooleanMacro(EditorTranslationSliceAnywhereEnabled, bool);
+  /// Determines how much the transform translates in response to click-and-drag, when dragging
+  /// anywhere in the slice view (see EditorTranslationSliceAnywhereEnabled). 1.0 means the transform
+  /// moves in lock-step with the mouse cursor; lower values make the drag less sensitive, which makes
+  /// high-precision alignment easier. Default is 0.2.
+  /// Does not affect dragging transform handles (as a sensitivity != 1 would move the mouse pointer off the handle).
+  vtkSetClampMacro(EditorTranslationSliceAnywhereSensitivity, double, 0.0, 1.0);
+  vtkGetMacro(EditorTranslationSliceAnywhereSensitivity, double);
   vtkGetMacro(EditorRotationEnabled, bool);
   vtkSetMacro(EditorRotationEnabled, bool);
   vtkBooleanMacro(EditorRotationEnabled, bool);
@@ -226,6 +240,11 @@ public:
   vtkSetMacro(InteractionSizeAbsolute, bool);
   vtkGetMacro(InteractionSizeAbsolute, bool);
   vtkBooleanMacro(InteractionSizeAbsolute, bool);
+
+  /// Opacity of the interaction handles, in the range (0, 1].
+  /// This is combined with the fade effect that is already applied when a handle is viewed edge-on.
+  vtkSetClampMacro(InteractionHandleOpacity, double, 0.0, 1.0);
+  vtkGetMacro(InteractionHandleOpacity, double);
 
   /// The type of the active interaction handle.
   vtkSetMacro(ActiveInteractionType, int);
@@ -298,6 +317,8 @@ protected:
   bool EditorSliceIntersectionVisibility;
   bool EditorTranslationEnabled;
   bool EditorTranslationSliceEnabled;
+  bool EditorTranslationSliceAnywhereEnabled;
+  double EditorTranslationSliceAnywhereSensitivity;
   bool EditorRotationEnabled;
   bool EditorRotationSliceEnabled;
   bool EditorScalingEnabled;
@@ -308,6 +329,7 @@ protected:
   bool InteractionSizeAbsolute{ false };
   double InteractionSizeMm{ 5.0 };
   double InteractionScalePercent{ 15.0 };
+  double InteractionHandleOpacity{ 1.0 };
 
   bool RotationHandleComponentVisibility3D[4];
   bool ScaleHandleComponentVisibility3D[4];
