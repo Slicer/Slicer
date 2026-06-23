@@ -143,7 +143,8 @@ public:
   {
     GlyphArrow,
     GlyphCircle,
-    GlyphRing
+    GlyphRing,
+    GlyphCrosshair
   };
 
   virtual int GetActiveComponentType() = 0;
@@ -168,6 +169,11 @@ public:
   virtual void GetHandleColor(int type, int index, double color[4]);
   /// Get the opacity of the specified handle
   virtual double GetHandleOpacity(int type, int index);
+  /// Get the overall opacity multiplier applied to all interaction handles. Default is 1.0.
+  virtual double GetInteractionHandleOpacity();
+  /// Get the factor that the translation vector is scaled by during an interactive translate
+  /// operation. Default is 1.0 (no scaling).
+  virtual double GetTranslationScaleFactor();
   /// Get the visibility of the specified handle
   virtual bool GetHandleVisibility(int type, int index);
   ///  Get the type of glyph (Arrow, Circle, Ring, etc.) of the specified handle.
@@ -200,9 +206,11 @@ protected:
     vtkSmartPointer<vtkPolyData> ArrowPolyData;
     vtkSmartPointer<vtkPolyData> CirclePolyData;
     vtkSmartPointer<vtkPolyData> RingPolyData;
+    vtkSmartPointer<vtkPolyData> CrosshairPolyData;
     vtkSmartPointer<vtkPolyData> ArrowOutlinePolyData;
     vtkSmartPointer<vtkPolyData> CircleOutlinePolyData;
     vtkSmartPointer<vtkPolyData> RingOutlinePolyData;
+    vtkSmartPointer<vtkPolyData> CrosshairOutlinePolyData;
 
     std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleGlyphPolyDataMap;
     std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleOutlineGlyphPolyDataMap;

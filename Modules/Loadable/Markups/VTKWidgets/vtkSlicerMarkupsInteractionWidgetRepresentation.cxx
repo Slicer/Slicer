@@ -619,6 +619,12 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetInteractionSizeAbsolute
 }
 
 //----------------------------------------------------------------------
+double vtkSlicerMarkupsInteractionWidgetRepresentation::GetInteractionHandleOpacity()
+{
+  return this->GetDisplayNode()->GetInteractionHandleOpacity();
+}
+
+//----------------------------------------------------------------------
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleVisibility(int type, int index)
 {
   if (!this->GetDisplayNode())
@@ -876,7 +882,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleColor(int type, i
   if (this->GetActiveComponentType() == type && this->GetActiveComponentIndex() == index)
   {
     currentColor = selectedColor;
-    opacity = 1.0;
+    opacity = this->GetInteractionHandleOpacity();
   }
 
   for (int i = 0; i < 3; ++i)

@@ -510,6 +510,13 @@ public:
   //@}
 
   //@{
+  /// Get/Set opacity of the interaction handles.
+  /// This is combined with the orientation-based fading.
+  vtkSetClampMacro(InteractionHandleOpacity, double, 0.0, 1.0);
+  vtkGetMacro(InteractionHandleOpacity, double);
+  //@}
+
+  //@{
   /// Get/Set the visibility of the individual handle axes
   /// The order of the vector is: [X, Y, Z, ViewPlane]
   /// "ViewPlane" scale/translation allows transformations to take place along the active view plane.
@@ -608,6 +615,7 @@ protected:
   bool RotationHandleVisibility;
   bool ScaleHandleVisibility;
   double InteractionHandleScale;
+  double InteractionHandleOpacity;
 
   bool RotationHandleComponentVisibility[4];
   bool ScaleHandleComponentVisibility[4];

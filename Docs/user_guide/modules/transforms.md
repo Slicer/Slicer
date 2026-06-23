@@ -101,6 +101,10 @@ For macOS, refer to [alternate macOS keybindings](../user_interface.md#alternate
 | Any | `Right-click` during interaction | Cancel and return to original state |
 | Any | `Escape` during interaction | Cancel and return to original state |
 
+:::{note}
+In slice views, if "Enable view plane translation anywhere" is enabled (Display section / Interaction / More options), left-click and drag anywhere in the slice view adjusts the translation, instead of only when clicking precisely on the small handle at the center of the transform. While this option is enabled, that handle is drawn as a crosshair (with an empty center) instead of a filled circle. Dragging this crosshair modifies the position of the center of rotation.
+:::
+
 #### Context menu
 
 ![Context menu showing the following options when right-clicking on a transform node.](https://github.com/Slicer/Slicer/releases/download/docs-resources/interaction_context_menu_1.png)
@@ -153,6 +157,11 @@ This section allows visualization of how much and what direction of displacement
 ![Display options widget for controlling interaction handle visibility.](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_display_interaction.png)
 
 The interaction section controls the visibility of interaction handles for manual positioning of transforms. Individual axes can be enabled/disabled separately for 3D and Slice views by clicking the "More options" button.
+
+In the slice view's "More options" panel, the "Enable view plane translation anywhere" option allows adjusting translation by left-clicking and dragging anywhere in the slice view, instead of only by grabbing the small handle at the center of the transform. While this option is enabled, that handle is drawn as a crosshair (with an empty center) instead of a filled circle. This option is disabled by default, and only takes effect if translation is enabled for the slice view. The "View plane translation sensitivity" slider (default 0.2) controls how much the transform moves relative to the mouse cursor movement while dragging anywhere; it does not affect dragging handles.
+
+- Size: Size of the interaction handles, relative to the application window size (or as an absolute size in mm, if `absolute` is enabled).
+- Opacity: Overall opacity of the interaction handles, in addition to the fade effect that is already applied when a handle is viewed edge-on.
 
 #### Visualization modes
 
