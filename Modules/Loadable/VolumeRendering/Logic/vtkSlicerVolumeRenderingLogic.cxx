@@ -538,15 +538,22 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
       double predictedColor[3] = { 0.0, 0.0, 0.0 };
       const double colorDeviationThreshold = 0.25;
 
-      // We start with all relevant endpoints.
+      // Create a temporary transfer function just for comparisons
+      vtkNew<vtkColorTransferFunction> comparisonColorTransfer;
+
+      // Initialize with window endpoints.
       vtkIdType firstColorTableIndex = (invertColormap ? numberOfColors - 1 : 0);
-      lut->GetTableValue(firstColorTableIndex, color);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], previous), color[0], color[1], color[2]);
       vtkIdType lastColorTableIndex = (invertColormap ? 0 : numberOfColors - 1);
+      double tmpPrevious = previous;
+      lut->GetTableValue(firstColorTableIndex, color);
+      comparisonColorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], tmpPrevious), color[0], color[1], color[2]);
       lut->GetTableValue(lastColorTableIndex, color);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), color[0], color[1], color[2]);
-      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), color[0], color[1], color[2]);
+      comparisonColorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], tmpPrevious), color[0], color[1], color[2]);
+
+      // Begin populating output transfer function
+      comparisonColorTransfer->GetColor(scalarRange[0], predictedColor);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), predictedColor[0], predictedColor[1], predictedColor[2]);
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[0], previous), predictedColor[0], predictedColor[1], predictedColor[2]);
 
       // We place up to maxNumberOfPoints points in the color transfer function.
       // The number is high enough to accurately describe most color tables,
@@ -558,11 +565,15 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
 
       const double window = fabs(windowLevel[0]);
       const double xOffset = outputRange[0];
-      double xStepSize = window / numberOfPoints;
+      double xStepSize = window / double(numberOfPoints - 1);
 
-      for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
+      for (vtkIdType pointIndex = 1; pointIndex < numberOfPoints - 1; ++pointIndex)
       {
         double xValue = xOffset + pointIndex * xStepSize;
+        if (xValue > scalarRange[1])
+        {
+          break;
+        }
         double normalizedColorIndex = vtkImageMapToWindowLevelAddon::mapScalarToWindow(double(pointIndex), 0.0, pointMaxIndex, mappingMode);
         if (invertColormap)
         {
@@ -570,15 +581,22 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
         }
         vtkIdType colorIndex = std::lround(normalizedColorIndex * colorMaxIndex);
         lut->GetTableValue(colorIndex, color);
-        colorTransfer->GetColor(xValue, predictedColor);
+        comparisonColorTransfer->GetColor(xValue, predictedColor);
         const double d0 = std::fabs(color[0] - predictedColor[0]);
         const double d1 = std::fabs(color[1] - predictedColor[1]);
         const double d2 = std::fabs(color[2] - predictedColor[2]);
         if ((d0 + d1 + d2) > colorDeviationThreshold)
         {
           colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(xValue, previous), color[0], color[1], color[2]);
+          comparisonColorTransfer->AddRGBPoint(previous, color[0], color[1], color[2]);
         }
       }
+      comparisonColorTransfer->GetColor(scalarRange[1], predictedColor);
+      if (outputRange[1] < scalarRange[1])
+      {
+        colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(outputRange[1], previous), predictedColor[0], predictedColor[1], predictedColor[2]);
+      }
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), predictedColor[0], predictedColor[1], predictedColor[2]);
     }
   }
 
