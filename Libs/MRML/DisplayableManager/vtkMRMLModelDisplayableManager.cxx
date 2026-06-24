@@ -28,6 +28,7 @@
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSubjectHierarchyConstants.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkMRMLTransformableNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLVolumeNode.h>
@@ -66,6 +67,7 @@
 #include <vtkProp3DCollection.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkReverseSense.h>
 #include <vtkSmartPointer.h>
 #include <vtkTexture.h>
 #include <vtkTransform.h>
@@ -114,6 +116,8 @@ public:
   std::map<std::string, vtkSmartPointer<vtkCapPolyData>>        Cappers;
   std::map<std::string, vtkSmartPointer<vtkProp3D>>             DisplayedCapActors;
   std::map<std::string, vtkSmartPointer<vtkTransformFilter>>    DisplayNodeCapTransformFilters;
+  std::map<std::string, vtkSmartPointer<vtkReverseSense>>      DisplayNodeReverseSenseFilters;
+  std::map<std::string, vtkSmartPointer<vtkReverseSense>>      DisplayNodeCapReverseSenseFilters;
   // clang-format on
 
   bool IsUpdatingModelsFromMRML;
@@ -684,6 +688,11 @@ void vtkMRMLModelDisplayableManager::ClearDisplayMaps()
     transformFilter->SetTransform(nullptr);
   }
   this->Internal->DisplayNodeTransformFilters.clear();
+  for (auto iter = this->Internal->DisplayNodeReverseSenseFilters.begin(); iter != this->Internal->DisplayNodeReverseSenseFilters.end(); iter++)
+  {
+    iter->second->SetInputConnection(nullptr);
+  }
+  this->Internal->DisplayNodeReverseSenseFilters.clear();
   this->Internal->Clippers.clear();
   this->Internal->Cappers.clear();
   if (this->GetRenderer())
@@ -701,6 +710,11 @@ void vtkMRMLModelDisplayableManager::ClearDisplayMaps()
     transformFilter->SetTransform(nullptr);
   }
   this->Internal->DisplayNodeCapTransformFilters.clear();
+  for (auto iter = this->Internal->DisplayNodeCapReverseSenseFilters.begin(); iter != this->Internal->DisplayNodeCapReverseSenseFilters.end(); iter++)
+  {
+    iter->second->SetInputConnection(nullptr);
+  }
+  this->Internal->DisplayNodeCapReverseSenseFilters.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -1166,6 +1180,13 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayedID(const std::string& id)
     this->Internal->DisplayNodeTransformFilters.erase(displayNodeTransformFilterIter);
   }
 
+  auto reverseSenseIter = this->Internal->DisplayNodeReverseSenseFilters.find(id);
+  if (reverseSenseIter != this->Internal->DisplayNodeReverseSenseFilters.end())
+  {
+    reverseSenseIter->second->SetInputConnection(nullptr);
+    this->Internal->DisplayNodeReverseSenseFilters.erase(reverseSenseIter);
+  }
+
   auto clipperIter = this->Internal->Clippers.find(id);
   if (clipperIter != this->Internal->Clippers.end())
   {
@@ -1191,6 +1212,13 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayedID(const std::string& id)
     capTransformFilterIter->second->SetInputConnection(nullptr);
     capTransformFilterIter->second->SetTransform(nullptr);
     this->Internal->DisplayNodeCapTransformFilters.erase(capTransformFilterIter);
+  }
+
+  auto capReverseSenseIter = this->Internal->DisplayNodeCapReverseSenseFilters.find(id);
+  if (capReverseSenseIter != this->Internal->DisplayNodeCapReverseSenseFilters.end())
+  {
+    capReverseSenseIter->second->SetInputConnection(nullptr);
+    this->Internal->DisplayNodeCapReverseSenseFilters.erase(capReverseSenseIter);
   }
 }
 
@@ -1261,6 +1289,25 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     transformNode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
   }
 
+  // Determine if the transform reverses orientation (reflection). This is per-model,
+  // not per-display-node, so compute it once before the display node loop.
+  // For linear transforms, use the already-computed matrix determinant directly.
+  // For composite transforms, use the full IsOrientationReversingTransform method.
+  bool needReverseSense = false;
+  if (model->GetAutoReverseOrientation() && transformNode)
+  {
+    if (transformNode->IsTransformToWorldLinear())
+    {
+      needReverseSense = (matrixTransformToWorld->Determinant() < 0.0);
+    }
+    else
+    {
+      vtkNew<vtkGeneralTransform> transformToWorld;
+      transformNode->GetTransformToWorld(transformToWorld.GetPointer());
+      needReverseSense = vtkMRMLTransformableNode::IsOrientationReversingTransform(transformToWorld.GetPointer());
+    }
+  }
+
   // Get display node from hierarchy that applies display properties on branch
   vtkMRMLDisplayNode* overrideHierarchyDisplayNode = vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(model);
 
@@ -1316,6 +1363,76 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
     vtkImageActor* imageActor = vtkImageActor::SafeDownCast(prop);
     prop->SetUserMatrix(matrixTransformToWorld);
+
+    // Handle orientation-reversing transforms (reflections).
+    // When a transform reverses orientation (negative determinant), polygon winding
+    // reverses on the GPU, causing back faces to be rendered instead of front faces.
+    // Insert a vtkReverseSense filter to pre-flip cell winding so it is correct after
+    // the GPU applies the transform. Only cell winding is reversed, not stored normals,
+    // because the GPU normal matrix (inverse-transpose) already correctly transforms
+    // normals for reflection. This is applied to both the main actor and the cap actor
+    // (used for clipping cap surfaces).
+    std::string displayNodeID(modelDisplayNode->GetID());
+
+    // Apply reverse sense to both the main actor and cap actor (clipping cap surface).
+    // Each actor has its own map of reverse sense filters.
+    struct ActorFilterMap
+    {
+      vtkActor* Actor;
+      std::map<std::string, vtkSmartPointer<vtkReverseSense>>* FilterMap;
+    };
+    ActorFilterMap actorFilterMaps[2] = { { actor, &this->Internal->DisplayNodeReverseSenseFilters }, { capActor, &this->Internal->DisplayNodeCapReverseSenseFilters } };
+    for (const auto& afm : actorFilterMaps)
+    {
+      if (!afm.Actor)
+      {
+        continue;
+      }
+      vtkPolyDataMapper* polyMapper = vtkPolyDataMapper::SafeDownCast(afm.Actor->GetMapper());
+      if (!polyMapper || polyMapper->GetNumberOfInputConnections(0) == 0)
+      {
+        continue;
+      }
+
+      auto rsIt = afm.FilterMap->find(displayNodeID);
+      // Guard against nullptr entries in the map
+      if (rsIt != afm.FilterMap->end() && !rsIt->second)
+      {
+        afm.FilterMap->erase(rsIt);
+        rsIt = afm.FilterMap->end();
+      }
+
+      vtkAlgorithmOutput* mapperInput = polyMapper->GetInputConnection(0, 0);
+      bool hasReverseSense = (rsIt != afm.FilterMap->end() && mapperInput && mapperInput->GetProducer() == rsIt->second.GetPointer());
+
+      if (needReverseSense && !hasReverseSense)
+      {
+        vtkSmartPointer<vtkReverseSense> reverseSense;
+        if (rsIt != afm.FilterMap->end())
+        {
+          reverseSense = rsIt->second;
+        }
+        else
+        {
+          reverseSense = vtkSmartPointer<vtkReverseSense>::New();
+          reverseSense->ReverseCellsOn();
+          (*afm.FilterMap)[displayNodeID] = reverseSense;
+        }
+        reverseSense->SetInputConnection(mapperInput);
+        polyMapper->SetInputConnection(reverseSense->GetOutputPort());
+      }
+      else if (!needReverseSense && hasReverseSense)
+      {
+        vtkReverseSense* reverseSense = rsIt->second;
+        vtkAlgorithmOutput* originalInput = reverseSense->GetNumberOfInputConnections(0) > 0 ? reverseSense->GetInputConnection(0, 0) : nullptr;
+        if (originalInput)
+        {
+          polyMapper->SetInputConnection(originalInput);
+        }
+        reverseSense->SetInputConnection(nullptr);
+        afm.FilterMap->erase(rsIt);
+      }
+    }
 
     // If there is an overriding hierarchy display node, then consider its visibility as well
     // as the model's. It is important to consider the model's visibility, because the user will

@@ -49,6 +49,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override = 0;
 
+  /// Copy node content (excludes basic data, such as name and node
+  /// references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLTransformableNode);
+
   ///
   /// Set a reference to transform node
   /// Returns true on success.
@@ -120,6 +125,24 @@ public:
   /// the implicit function in world coordinates, or by applying a transform.
   virtual vtkImplicitFunction* GetImplicitFunctionWorld() { return nullptr; };
 
+  /// Returns true if the given transform reverses orientation (i.e., has a negative determinant).
+  /// For linear transforms, the matrix determinant is checked. For composite transforms, the
+  /// method concatenates the linear components; if any non-linear component is present, the
+  /// transform is considered non-orientation-reversing (the Jacobian determinant of a non-linear
+  /// transform varies by position and cannot be summarized by a single sign).
+  /// This is used by display pipelines and ApplyTransform to compensate for polygon winding
+  /// reversal that occurs when surface meshes are rendered or hardened under reflection transforms.
+  static bool IsOrientationReversingTransform(vtkAbstractTransform* transform);
+
+  /// Enable/disable automatic reversal of surface mesh orientation when the parent
+  /// transform reverses orientation (negative determinant). When enabled (the default),
+  /// the display pipeline and ApplyTransform will automatically apply vtkReverseSense
+  /// to compensate for polygon winding reversal caused by reflection transforms.
+  /// Developers can disable this for nodes where custom transform handling is preferred.
+  vtkGetMacro(AutoReverseOrientation, bool);
+  vtkSetMacro(AutoReverseOrientation, bool);
+  vtkBooleanMacro(AutoReverseOrientation, bool);
+
 protected:
   vtkMRMLTransformableNode();
   ~vtkMRMLTransformableNode() override;
@@ -146,6 +169,8 @@ protected:
 
   /// Called when transform node reference added/modified/removed
   virtual void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode);
+
+  bool AutoReverseOrientation{ true };
 
 private:
   char* TransformNodeIDInternal;
