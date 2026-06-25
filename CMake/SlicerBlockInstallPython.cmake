@@ -140,7 +140,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     set(python_include_subdir /include/python${Slicer_PYTHON_VERSION_DOT}${Slicer_PYTHON_ABIFLAGS}/)
   endif()
 
-  install(FILES "${PYTHON_DIR}${python_include_subdir}/pyconfig.h"
+  install(DIRECTORY "${PYTHON_DIR}${python_include_subdir}"
     DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_include_subdir}
     COMPONENT Runtime
     )
