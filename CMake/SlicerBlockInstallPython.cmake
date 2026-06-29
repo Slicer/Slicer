@@ -87,6 +87,12 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     install(FILES "${PYTHON_LIBRARY_PATH}/python3.dll"
       DESTINATION bin
       COMPONENT Runtime)
+    # Copy the import library (e.g. python312.lib). It is not needed to run Slicer, but
+    # without it, the installed Python cannot be used to build/link native extensions
+    # against the Python C API (e.g. compiling C++ kernels with torch.compile).
+    install(FILES "${PYTHON_LIBRARY}"
+      DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/libs
+      COMPONENT Runtime)
   endif()
 
   # Install interpreter
