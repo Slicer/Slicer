@@ -87,7 +87,7 @@ set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 
 if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_BUILDDATE}")
+  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_BUILDDATE} (${Slicer_RELEASE_TYPE})")
 endif()
 
 message(STATUS "Configuring Slicer version [${Slicer_VERSION_FULL}]")
@@ -143,7 +143,7 @@ set(Slicer_MAIN_PROJECT_VERSION      "${Slicer_MAIN_PROJECT_VERSION_MAJOR}.${Sli
 set(Slicer_MAIN_PROJECT_VERSION_FULL "${Slicer_MAIN_PROJECT_VERSION}.${Slicer_MAIN_PROJECT_VERSION_PATCH}")
 
 if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
-  set(Slicer_MAIN_PROJECT_VERSION_FULL "${Slicer_MAIN_PROJECT_VERSION_FULL}-${Slicer_MAIN_PROJECT_BUILDDATE}")
+  set(Slicer_MAIN_PROJECT_VERSION_FULL "${Slicer_MAIN_PROJECT_VERSION_FULL}-${Slicer_MAIN_PROJECT_BUILDDATE} (${Slicer_RELEASE_TYPE})")
 endif()
 
 if(NOT "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "Slicer")
