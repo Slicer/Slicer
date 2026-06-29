@@ -5,7 +5,7 @@
 set(DCMTK_Apps storescu storescp dcmdump dump2dcm img2dcm dcmdjpeg dcmqrscp dcm2xml xml2dcm dsr2html dsr2xml xml2dsr dsrdump echoscu)
 set(int_dir "")
 if(CMAKE_CONFIGURATION_TYPES)
-  set(int_dir "Release/")
+  set(int_dir "$<CONFIG>/")
 endif()
 foreach(dcmtk_App ${DCMTK_Apps})
   install(PROGRAMS ${DCMTK_DIR}/bin/${int_dir}${dcmtk_App}${CMAKE_EXECUTABLE_SUFFIX}

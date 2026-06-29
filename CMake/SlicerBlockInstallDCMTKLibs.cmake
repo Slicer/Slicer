@@ -6,7 +6,7 @@ find_package(DCMTK REQUIRED)
 foreach(dcmtk_Lib ${DCMTK_LIBRARIES})
   if(WIN32)
     if(CMAKE_CONFIGURATION_TYPES)
-      set(int_dir "Release/")
+      set(int_dir "$<CONFIG>/")
     endif()
     install(FILES ${DCMTK_DIR}/bin/${int_dir}${dcmtk_Lib}.dll
       DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Runtime)
