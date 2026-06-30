@@ -319,10 +319,13 @@ vtkSegmentationConversionPath* vtkSegmentationConverter::GetCheapestPath(vtkSegm
   unsigned int cheapestPathCost = VTK_UNSIGNED_INT_MAX;
   unsigned int cheapestPathNumberOfConversions = 0;
   vtkSegmentationConversionPath* cheapestPath = nullptr;
-  vtkSegmentationConversionPath* path = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
+  for (int i = 0; i < paths->GetNumberOfPaths(); ++i)
   {
+    vtkSegmentationConversionPath* path = paths->GetPath(i);
+    if (!path)
+    {
+      continue;
+    }
     if (path->GetCost() <= cheapestPathCost)
     {
       size_t numberOfConversions = path->GetNumberOfRules();
@@ -402,10 +405,13 @@ void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationN
       this->FindPath(thisRuleTargetRepresentationName, targetRepresentationName, pathsFromNext, skipRepresentationsNew);
       if (pathsFromNext->GetNumberOfPaths() > 0)
       {
-        vtkSegmentationConversionPath* pathFromNext = nullptr;
-        vtkCollectionSimpleIterator it;
-        for (pathsFromNext->InitTraversal(it); (pathFromNext = pathsFromNext->GetNextPath(it));)
+        for (int i = 0; i < pathsFromNext->GetNumberOfPaths(); ++i)
         {
+          vtkSegmentationConversionPath* pathFromNext = pathsFromNext->GetPath(i);
+          if (!pathFromNext)
+          {
+            continue;
+          }
           vtkNew<vtkSegmentationConversionPath> pathFromSource;
           pathFromSource->AddRule(*representationRuleIt);
           pathFromSource->AddRules(pathFromNext);
@@ -433,9 +439,13 @@ void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationN
     // Special case: there is just one possible continuation from source
     // just append the only possible continuation here to all known paths to the source and return
     vtkSegmentationConversionPath* pathToSource = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (pathsToSource->InitTraversal(it); (pathToSource = pathsToSource->GetNextPath(it));)
+    for (int i = 0; i < pathsToSource->GetNumberOfPaths(); ++i)
     {
+      pathToSource = pathsToSource->GetPath(i);
+      if (!pathToSource)
+      {
+        continue;
+      }
       pathToSource->AddRules(pathsFromSource->GetPath(0));
     }
     return;
@@ -446,15 +456,20 @@ void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationN
   vtkNew<vtkSegmentationConversionPaths> pathsToSourceOriginal;
   pathsToSourceOriginal->AddPaths(pathsToSource); // first save all the possible paths to source
   pathsToSource->RemoveAllItems();
-  vtkSegmentationConversionPath* pathFromSource = nullptr;
-  vtkCollectionSimpleIterator itFromSource;
-  for (pathsFromSource->InitTraversal(itFromSource); (pathFromSource = pathsFromSource->GetNextPath(itFromSource));)
+  for (int fi = 0; fi < pathsFromSource->GetNumberOfPaths(); ++fi)
   {
-    // append each path from source to a copy of the original pathsToSource
-    vtkSegmentationConversionPath* pathToSource = nullptr;
-    vtkCollectionSimpleIterator itToSource;
-    for (pathsToSourceOriginal->InitTraversal(itToSource); (pathToSource = pathsToSourceOriginal->GetNextPath(itToSource));)
+    vtkSegmentationConversionPath* pathFromSource = pathsFromSource->GetPath(fi);
+    if (!pathFromSource)
     {
+      continue;
+    }
+    for (int ti = 0; ti < pathsToSourceOriginal->GetNumberOfPaths(); ++ti)
+    {
+      vtkSegmentationConversionPath* pathToSource = pathsToSourceOriginal->GetPath(ti);
+      if (!pathToSource)
+      {
+        continue;
+      }
       vtkNew<vtkSegmentationConversionPath> path;
       path->AddRules(pathToSource);
       path->AddRules(pathFromSource);
