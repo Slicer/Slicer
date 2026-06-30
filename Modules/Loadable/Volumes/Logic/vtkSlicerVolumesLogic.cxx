@@ -51,7 +51,11 @@
 #include <vtkErrorSink.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
-#include <vtkImageThreshold.h>
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
+# include <vtkImageBinaryThreshold.h>
+#else
+# include <vtkImageThreshold.h>
+#endif
 #include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -924,7 +928,11 @@ void vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode* volumeNode)
   }
 
   // Make an image data of the same size and shape as the input volume, but filled with zeros
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
+  vtkNew<vtkImageBinaryThreshold> thresh;
+#else
   vtkNew<vtkImageThreshold> thresh;
+#endif
   thresh->ReplaceInOn();
   thresh->ReplaceOutOn();
   thresh->SetInValue(0);
