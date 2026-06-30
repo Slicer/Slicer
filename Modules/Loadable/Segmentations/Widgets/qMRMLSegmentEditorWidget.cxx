@@ -1650,11 +1650,9 @@ void qMRMLSegmentEditorWidget::showSourceVolumeInSliceViewers(bool forceShowInBa
   {
     return;
   }
-  vtkObject* object = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
+  for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
   {
-    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
     if (!sliceLogic)
     {
       continue;
@@ -2462,11 +2460,9 @@ void qMRMLSegmentEditorWidget::hideLabelLayer()
   {
     return;
   }
-  vtkObject* object = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (sliceLogics->InitTraversal(it); (object = sliceLogics->GetNextItemAsObject(it));)
+  for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
   {
-    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(object);
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
     if (!sliceLogic)
     {
       continue;

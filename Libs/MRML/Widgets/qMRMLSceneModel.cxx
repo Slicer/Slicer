@@ -559,9 +559,13 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node) const
   // First try to find based on ptr value, as it's much faster than comparing string IDs.
   vtkCollection* nodes = d->MRMLScene->GetNodes();
   vtkMRMLNode* n = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (n = (vtkMRMLNode*)(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    n = (vtkMRMLNode*)(nodes->GetItemAsObject(i));
+    if (!n)
+    {
+      continue;
+    }
     // note: parent can be nullptr, it means that the scene is the parent
     if (parent == this->parentNode(n))
     {
@@ -575,8 +579,13 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node) const
   }
 
   // Not found by node ptr, try to find it by ID (much slower)
-  for (nodes->InitTraversal(it); (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    n = (vtkMRMLNode*)nodes->GetItemAsObject(i);
+    if (!n)
+    {
+      continue;
+    }
     // note: parent can be nullptr, it means that the scene is the parent
     if (parent == this->parentNode(n))
     {
@@ -783,14 +792,18 @@ void qMRMLSceneModel::populateScene()
   // Add nodes
   int index = -1;
   vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
   d->MisplacedNodes.clear();
   if (!d->MRMLScene)
   {
     return;
   }
-  for (d->MRMLScene->GetNodes()->InitTraversal(it); (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it));)
+  for (int i = 0; i < d->MRMLScene->GetNodes()->GetNumberOfItems(); ++i)
   {
+    node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetItemAsObject(i);
+    if (!node)
+    {
+      continue;
+    }
     index++;
     d->insertNode(node, index);
   }
@@ -1308,9 +1321,13 @@ void qMRMLSceneModel::updateNodeItems()
   sceneItem->setColumnCount(this->columnCount());
   vtkCollection* nodes = this->mrmlScene()->GetNodes();
   vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = (vtkMRMLNode*)nodes->GetNextItemAsObject(it));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    node = (vtkMRMLNode*)nodes->GetItemAsObject(i);
+    if (!node)
+    {
+      continue;
+    }
     this->updateNodeItems(node, QString(node->GetID()));
   }
 }

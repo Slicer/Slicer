@@ -1788,16 +1788,18 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationHierarchyToSubjectHierarchy(vtkMRML
   }
 
   // Convert legacy annotation hierarchy nodes into subject hierarchy folders
-  vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator mhIt;
   vtkSmartPointer<vtkCollection> mhNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLAnnotationHierarchyNode"));
   std::string newFolderName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   std::map<std::string, vtkIdType> mhNodeIdToShItemIdMap;
   std::map<std::string, std::string> mhNodeIdToParentNodeIdMap;
-  for (mhNodes->InitTraversal(mhIt); (node = (vtkMRMLNode*)mhNodes->GetNextItemAsObject(mhIt));)
+  for (int i = 0; i < mhNodes->GetNumberOfItems(); ++i)
   {
     // Get direct child hierarchy nodes
-    vtkMRMLAnnotationHierarchyNode* mhNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+    vtkMRMLAnnotationHierarchyNode* mhNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mhNodes->GetItemAsObject(i));
+    if (!mhNode)
+    {
+      continue;
+    }
     std::vector<vtkMRMLHierarchyNode*> childHierarchyNodes = mhNode->GetChildrenNodes();
 
     vtkIdType folderItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
