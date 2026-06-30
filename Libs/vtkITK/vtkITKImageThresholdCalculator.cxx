@@ -129,7 +129,20 @@ void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
+bool vtkITKImageThresholdCalculator::Update()
+{
+  return this->UpdateImpl();
+}
+#else
 void vtkITKImageThresholdCalculator::Update()
+{
+  this->UpdateImpl();
+}
+#endif
+
+//----------------------------------------------------------------------------
+bool vtkITKImageThresholdCalculator::UpdateImpl()
 {
   vtkImageData* inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = nullptr;
@@ -140,7 +153,7 @@ void vtkITKImageThresholdCalculator::Update()
   if (pointData == nullptr)
   {
     vtkErrorMacro(<< "vtkITKImageThresholdCalculator: No input image");
-    return;
+    return false;
   }
 
   this->UpdateInformation();
@@ -152,21 +165,22 @@ void vtkITKImageThresholdCalculator::Update()
   if (pointData->GetScalars() == nullptr)
   {
     vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image is required");
-    return;
+    return false;
   }
   int inputNumberOfScalarComponents = pointData->GetScalars()->GetNumberOfComponents();
   if (inputNumberOfScalarComponents != 1)
   {
     vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image with a single component is required");
-    return;
+    return false;
   }
 
   int inputDataType = pointData->GetScalars()->GetDataType();
   switch (inputDataType)
   {
     vtkTemplateMacro(ITKComputeThresholdFromVTKImage<VTK_TT>(this, inputImage, this->Threshold));
-    default: vtkErrorMacro("Execute: Unknown ScalarType" << inputDataType); return;
+    default: vtkErrorMacro("Execute: Unknown ScalarType" << inputDataType); return false;
   }
+  return true;
 }
 
 //----------------------------------------------------------------------------
