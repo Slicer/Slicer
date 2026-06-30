@@ -104,7 +104,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         volumesLogic = slicer.modules.volumes.logic()
         labelmapNode = volumesLogic.CreateAndAddLabelVolume(slicer.mrmlScene, backgroundNode, "Labelmap")
 
-        thresholder = vtk.vtkImageThreshold()
+        thresholder = vtk.vtkImageBinaryThreshold() if hasattr(vtk, "vtkImageBinaryThreshold") else vtk.vtkImageThreshold()
         thresholder.SetInputData(backgroundNode.GetImageData())
         thresholder.ThresholdByLower(80)
         thresholder.Update()
