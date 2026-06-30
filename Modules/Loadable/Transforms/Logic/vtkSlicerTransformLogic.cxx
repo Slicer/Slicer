@@ -58,7 +58,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <vtkSphereSource.h>
 #include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransformFilter.h>
 #include <vtkTubeFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkVectorNorm.h>
@@ -1162,7 +1162,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
   contourFilter->SetInputData(magnitudeImage.GetPointer());
   contourFilter->Update();
 
-  vtkNew<vtkTransformPolyDataFilter> transformSliceToRas;
+  vtkNew<vtkTransformFilter> transformSliceToRas;
   vtkNew<vtkTransform> sliceToRasTransform;
   sliceToRasTransform->SetMatrix(ijkToRAS.GetPointer());
   transformSliceToRas->SetTransform(sliceToRasTransform.GetPointer());
@@ -1226,7 +1226,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
   contourFilter->Update();
 
   //  Transform contours to RAS
-  vtkNew<vtkTransformPolyDataFilter> transformSliceToRas;
+  vtkNew<vtkTransformFilter> transformSliceToRas;
   vtkNew<vtkTransform> sliceToRasTransform;
   sliceToRasTransform->SetMatrix(ijkToRAS.GetPointer());
   transformSliceToRas->SetTransform(sliceToRasTransform.GetPointer());
