@@ -85,13 +85,15 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::ReadXMLAttributes(const char** a
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
 
-  vtkMRMLDiffusionWeightedVolumeDisplayNode* node = (vtkMRMLDiffusionWeightedVolumeDisplayNode*)anode;
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* node = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(anode);
+  if (!node)
+  {
+    return;
+  }
   this->SetDiffusionComponent(node->DiffusionComponent);
   this->Superclass::Copy(anode);
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
