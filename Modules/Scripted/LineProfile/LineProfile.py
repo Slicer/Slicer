@@ -362,7 +362,7 @@ class LineProfileLogic(ScriptedLoadableModuleLogic):
         sampledCurvePoly_RAS = vtk.vtkPolyData()
         sampledCurvePoly_RAS.SetPoints(sampledCurvePoints_RAS)
 
-        transformRasToIjk = vtk.vtkTransformPolyDataFilter()
+        transformRasToIjk = vtk.vtkTransformFilter()
         transformRasToIjk.SetInputData(sampledCurvePoly_RAS)
         transformRasToIjk.SetTransform(rasToIJKTransform)
         transformRasToIjk.Update()
