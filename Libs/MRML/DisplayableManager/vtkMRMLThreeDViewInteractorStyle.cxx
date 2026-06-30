@@ -192,11 +192,13 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     // (run each time the mouse moves over a 3D view).
     pickList->RemoveAllItems();
     vtkPropCollection* props = pokedRenderer->GetViewProps();
-    vtkCollectionSimpleIterator pit;
-    vtkProp* aProp = nullptr;
-    for (props->InitTraversal(pit); (aProp = props->GetNextProp(pit));)
+    for (int i = 0; i < props->GetNumberOfItems(); ++i)
     {
-      aProp->GetVolumes(pickList);
+      vtkProp* aProp = vtkProp::SafeDownCast(props->GetItemAsObject(i));
+      if (aProp)
+      {
+        aProp->GetVolumes(pickList);
+      }
     }
 
     if (pickList->GetNumberOfItems() > 0 //

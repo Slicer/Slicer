@@ -955,12 +955,10 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
     {
       return false;
     }
-    vtkMRMLVolumeRenderingDisplayNode* displayNode = nullptr;
-    vtkObject* itNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (scene->GetNodes()->InitTraversal(it); (itNode = scene->GetNodes()->GetNextItemAsObject(it));)
+    vtkCollection* nodes = scene->GetNodes();
+    for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
     {
-      displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(itNode);
+      vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes->GetItemAsObject(i));
       if (!displayNode)
       {
         continue;

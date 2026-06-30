@@ -686,11 +686,13 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateIntersectingSliceNodes()
   {
     return;
   }
-  vtkMRMLSliceLogic* sliceLogic;
-  vtkCollectionSimpleIterator it;
-  for (sliceLogics->InitTraversal(it); (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sliceLogics->GetNumberOfItems(); ++i)
   {
-    this->AddIntersectingSliceLogic(sliceLogic);
+    vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(i));
+    if (sliceLogic)
+    {
+      this->AddIntersectingSliceLogic(sliceLogic);
+    }
   }
 }
 
