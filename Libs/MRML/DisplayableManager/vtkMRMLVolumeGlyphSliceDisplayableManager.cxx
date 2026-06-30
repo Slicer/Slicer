@@ -164,12 +164,10 @@ vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInterna
     return nullptr;
   }
 
-  vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
-  for (scene->InitTraversal(it); (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it));)
+  for (int i = 0; i < scene->GetNumberOfItems(); ++i)
   {
-    vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+    vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetItemAsObject(i));
     if (sliceCompositeNode)
     {
       const char* compositeLayoutName = sliceCompositeNode->GetLayoutName();

@@ -47,7 +47,6 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkCollectionIterator.h>
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
@@ -860,11 +859,9 @@ void qMRMLTreeView::loadTreeExpandState()
   {
     return;
   }
-  // Iterate over the vtkCollection of expanded nodes
-  vtkCollectionIterator* iter = d->ExpandedNodes->NewIterator();
-  for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+  for (int i = 0; i < d->ExpandedNodes->GetNumberOfItems(); ++i)
   {
-    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(d->ExpandedNodes->GetItemAsObject(i));
     // Check if the node is currently present in the scene.
     if (node && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(node))
     {
@@ -875,7 +872,6 @@ void qMRMLTreeView::loadTreeExpandState()
   }
   // Clear the vtkCollection now
   d->ExpandedNodes->RemoveAllItems();
-  iter->Delete();
 }
 
 //------------------------------------------------------------------------------
