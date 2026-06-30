@@ -143,6 +143,20 @@ public:
   ///  Override vtkSource's Update so that we can access
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
   using vtkAlgorithm::Update;
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
+  bool Update() override
+  {
+    this->vtkCast->Update();
+    this->vtkImporter->Update();
+    return true;
+  }
+  bool Update(int port) override
+  {
+    this->vtkCast->Update();
+    this->vtkImporter->Update(port);
+    return true;
+  }
+#else
   void Update() override
   {
     this->vtkCast->Update();
@@ -153,6 +167,7 @@ public:
     this->vtkCast->Update();
     this->vtkImporter->Update(port);
   }
+#endif
   void HandleProgressEvent()
   {
     if (this->m_Process)
