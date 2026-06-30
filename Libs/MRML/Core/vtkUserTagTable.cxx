@@ -194,8 +194,7 @@ const char* vtkUserTagTable::GetUserTagValue(const char* keyword)
         d = this->TagTable->GetValue(0, i);
         ss = d.ToString();
         val = ss.c_str();
-        size_t n = strlen(ss.c_str()) + 1;
-        val = ss.c_str();
+        size_t n = strlen(val) + 1;
         char* cptr = new char[n];
         returnString = cptr;
         do
