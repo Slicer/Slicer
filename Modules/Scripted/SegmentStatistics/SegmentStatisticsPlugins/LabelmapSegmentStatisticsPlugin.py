@@ -70,10 +70,15 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
         labelValue = 1
         backgroundValue = 0
-        thresh = vtk.vtkImageThreshold()
+        thresh = vtk.vtkImageBinaryThreshold() if hasattr(vtk, "vtkImageBinaryThreshold") else vtk.vtkImageThreshold()
         thresh.SetInputData(segmentLabelmap)
-        thresh.ThresholdByLower(0)
+        if hasattr(thresh, "SetUpperThreshold"):
+            thresh.SetUpperThreshold(0)
+        else:
+            thresh.ThresholdByLower(0)
+        thresh.ReplaceInOn()
         thresh.SetInValue(backgroundValue)
+        thresh.ReplaceOutOn()
         thresh.SetOutValue(labelValue)
         thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
         thresh.Update()
