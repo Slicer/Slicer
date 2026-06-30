@@ -1700,6 +1700,52 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_24">
+           <property name="text">
+            <string>Enable view plane translation anywhere: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="EditorTranslationSliceAnywhereEnabledCheckBox">
+           <property name="toolTip">
+            <string>Allow grabbing and dragging the transform by left clicking anywhere in the slice view, not just by grabbing the small translation handle at the center of the transform.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_26">
+           <property name="text">
+            <string>View plane translation scale: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="5">
+          <widget class="ctkSliderWidget" name="editorTranslationSliceAnywhereSensitivitySlider">
+           <property name="toolTip">
+            <string>How much the transform translates in response to click-and-drag, when dragging anywhere in the slice view. 1.0 means the transform moves in lock-step with the mouse cursor; lower values make the translation change less in response to the same mouse motion.</string>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="minimum">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.200000000000000</double>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -1723,6 +1769,29 @@
         </property>
         <property name="quantity">
          <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Opacity:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1" colspan="2">
+       <widget class="ctkSliderWidget" name="interactionHandleOpacitySlider">
+        <property name="singleStep">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="pageStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
         </property>
        </widget>
       </item>

@@ -20,7 +20,9 @@
 
 // VTK includes
 #include <vtkGeneralTransform.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 
 // Transform MRMLDM includes
 #include "vtkMRMLTransformHandleWidgetRepresentation.h"
@@ -192,6 +194,119 @@ double vtkMRMLTransformHandleWidgetRepresentation::GetInteractionSizeMm()
 bool vtkMRMLTransformHandleWidgetRepresentation::GetInteractionSizeAbsolute()
 {
   return this->GetDisplayNode()->GetInteractionSizeAbsolute();
+}
+
+//----------------------------------------------------------------------
+double vtkMRMLTransformHandleWidgetRepresentation::GetInteractionHandleOpacity()
+{
+  return this->GetDisplayNode()->GetInteractionHandleOpacity();
+}
+
+//----------------------------------------------------------------------
+double vtkMRMLTransformHandleWidgetRepresentation::GetTranslationScaleFactor()
+{
+  vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
+  if (this->LastInteractionWasWideHit && displayNode)
+  {
+    return displayNode->GetEditorTranslationSliceAnywhereSensitivity();
+  }
+  return 1.0;
+}
+
+//----------------------------------------------------------------------
+int vtkMRMLTransformHandleWidgetRepresentation::GetHandleGlyphType(int type, int index)
+{
+  vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
+  if (type == InteractionTranslationHandle && index == HandleIndexViewPlane && this->GetSliceNode() //
+      && displayNode && displayNode->GetEditorTranslationSliceAnywhereEnabled())
+  {
+    return GlyphCrosshair;
+  }
+  return this->Superclass::GetHandleGlyphType(type, index);
+}
+
+//----------------------------------------------------------------------
+void vtkMRMLTransformHandleWidgetRepresentation::GetHandleColor(int type, int index, double color[4])
+{
+  if (!color)
+  {
+    return;
+  }
+
+  // Covers both the view plane translation handle (rendered as a plain circle, or as a crosshair
+  // when wide translation is enabled, see GetHandleGlyphType()) and the in-plane rotation handle.
+  bool isViewPlaneTranslation = (type == InteractionTranslationHandle && index == HandleIndexViewPlane);
+  bool isInPlaneRotation = (type == InteractionRotationHandle && index == HandleIndexViewPlane);
+  if (!isViewPlaneTranslation && !isInPlaneRotation)
+  {
+    this->Superclass::GetHandleColor(type, index, color);
+    return;
+  }
+
+  bool selected = this->GetActiveComponentType() == type && this->GetActiveComponentIndex() == index;
+  // Same value (0.8) and saturation (0.5625) as the red/green/blue axis colors below, at the cyan hue.
+  double cyan[3] = { 0.35, 0.80, 0.80 };
+  double cyanSelected[3] = { 0.07, 0.70, 0.70 };
+  double* currentColor = selected ? cyanSelected : cyan;
+
+  double opacity = this->GetHandleOpacity(type, index);
+  if (selected)
+  {
+    opacity = this->GetInteractionHandleOpacity();
+  }
+
+  for (int i = 0; i < 3; ++i)
+  {
+    color[i] = currentColor[i];
+  }
+  color[3] = opacity;
+}
+
+//----------------------------------------------------------------------
+void vtkMRMLTransformHandleWidgetRepresentation::CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+                                                             int& foundComponentType,
+                                                             int& foundComponentIndex,
+                                                             double& closestDistance2)
+{
+  this->LastInteractionWasWideHit = false;
+
+  this->Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType != InteractionNone)
+  {
+    // A handle was hit precisely, prefer that over the wide hit-test area below.
+    return;
+  }
+
+  vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  if (!this->IsDisplayable() || !displayNode || !displayNode->GetEditorTranslationSliceAnywhereEnabled() //
+      || !sliceNode                                                                                      // wide dragging is only supported in slice views
+      || !interactionEventData || !interactionEventData->IsDisplayPositionValid()                        //
+      || !this->GetHandleVisibility(InteractionTranslationHandle, HandleIndexViewPlane))                 // view plane translation handle must be enabled
+  {
+    return;
+  }
+
+  // Compute the (squared) display-coordinate distance between the event position and the transform
+  // center, so that if multiple transforms can be dragged from anywhere in the same slice view, the
+  // one whose center is closest to the cursor can be given priority.
+  double handleWorldPos[3] = { 0.0, 0.0, 0.0 };
+  this->GetInteractionHandlePositionWorld(InteractionTranslationHandle, HandleIndexViewPlane, handleWorldPos);
+  double handleWorldPos4[4] = { handleWorldPos[0], handleWorldPos[1], handleWorldPos[2], 1.0 };
+
+  vtkNew<vtkMatrix4x4> rasToxyMatrix;
+  vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToxyMatrix);
+  double handleDisplayPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+  rasToxyMatrix->MultiplyPoint(handleWorldPos4, handleDisplayPos);
+  handleDisplayPos[2] = 0.0; // Handles are always projected
+
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+
+  foundComponentType = InteractionTranslationHandle;
+  foundComponentIndex = HandleIndexViewPlane;
+  this->LastSliceWideHitDistance2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
+  this->LastInteractionWasWideHit = true;
 }
 
 //----------------------------------------------------------------------

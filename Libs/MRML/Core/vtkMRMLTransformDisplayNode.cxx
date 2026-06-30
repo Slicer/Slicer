@@ -97,6 +97,8 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->EditorSliceIntersectionVisibility = true;
   this->EditorTranslationEnabled = true;
   this->EditorTranslationSliceEnabled = true;
+  this->EditorTranslationSliceAnywhereEnabled = false;
+  this->EditorTranslationSliceAnywhereSensitivity = 0.2;
   this->EditorRotationEnabled = true;
   this->EditorRotationSliceEnabled = true;
   this->EditorScalingEnabled = false;
@@ -165,9 +167,12 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " EditorScalingEnabled=\"" << this->EditorScalingEnabled << "\"";
 
   vtkMRMLWriteXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
+  vtkMRMLWriteXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
+  vtkMRMLWriteXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
   vtkMRMLWriteXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
   vtkMRMLWriteXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
   vtkMRMLWriteXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
+  vtkMRMLWriteXMLFloatMacro(InteractionHandleOpacity, InteractionHandleOpacity);
   vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibility3D, TranslationHandleComponentVisibility3D, bool, 4);
   vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibility3D, ScaleHandleComponentVisibility3D, bool, 4);
@@ -234,9 +239,12 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
   READ_FROM_ATT(EditorScalingEnabled);
 
   vtkMRMLReadXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
+  vtkMRMLReadXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
+  vtkMRMLReadXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
   vtkMRMLReadXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
   vtkMRMLReadXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
   vtkMRMLReadXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
+  vtkMRMLReadXMLFloatMacro(InteractionHandleOpacity, InteractionHandleOpacity);
 
   vtkMRMLReadXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLReadXMLVectorMacro(ScaleHandleComponentVisibility3D, ScaleHandleComponentVisibility3D, bool, 4);
@@ -296,7 +304,10 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy 
   vtkMRMLCopyBooleanMacro(EditorRotationEnabled);
   vtkMRMLCopyBooleanMacro(EditorScalingEnabled);
   vtkMRMLCopyBooleanMacro(EditorVisibility3D);
+  vtkMRMLCopyBooleanMacro(EditorTranslationSliceAnywhereEnabled);
+  vtkMRMLCopyFloatMacro(EditorTranslationSliceAnywhereSensitivity);
   vtkMRMLCopyBooleanMacro(EditorScalingSliceEnabled);
+  vtkMRMLCopyFloatMacro(InteractionHandleOpacity);
   vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
   vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility3D, bool, 4);
@@ -343,6 +354,9 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << " EditorScalingEnabled=\"" << this->EditorScalingEnabled << "\n";
 
   vtkMRMLPrintBooleanMacro(EditorVisibility3D);
+  vtkMRMLPrintBooleanMacro(EditorTranslationSliceAnywhereEnabled);
+  vtkMRMLPrintFloatMacro(EditorTranslationSliceAnywhereSensitivity);
+  vtkMRMLPrintFloatMacro(InteractionHandleOpacity);
   vtkMRMLPrintVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
   vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibility3D, bool, 4);

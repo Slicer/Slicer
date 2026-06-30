@@ -137,6 +137,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->RotationHandleVisibility = true;
   this->ScaleHandleVisibility = false;
   this->InteractionHandleScale = 3.0; // size of the handles as percent in screen size
+  this->InteractionHandleOpacity = 1.0;
 
   // By default, all interaction handle axes are visible
   for (int i = 0; i < 4; ++i)
@@ -200,6 +201,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLWriteXMLFloatMacro(interactionHandleScale, InteractionHandleScale);
+  vtkMRMLWriteXMLFloatMacro(interactionHandleOpacity, InteractionHandleOpacity);
   vtkMRMLWriteXMLBooleanMacro(fillVisibility, FillVisibility);
   vtkMRMLWriteXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLWriteXMLFloatMacro(fillOpacity, FillOpacity);
@@ -256,6 +258,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLReadXMLFloatMacro(interactionHandleScale, InteractionHandleScale);
+  vtkMRMLReadXMLFloatMacro(interactionHandleOpacity, InteractionHandleOpacity);
   vtkMRMLReadXMLBooleanMacro(fillVisibility, FillVisibility);
   vtkMRMLReadXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLReadXMLFloatMacro(fillOpacity, FillOpacity);
@@ -344,6 +347,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   vtkMRMLCopyBooleanMacro(RotationHandleVisibility);
   vtkMRMLCopyBooleanMacro(ScaleHandleVisibility);
   vtkMRMLCopyFloatMacro(InteractionHandleScale);
+  vtkMRMLCopyFloatMacro(InteractionHandleOpacity);
   vtkMRMLCopyBooleanMacro(FillVisibility);
   vtkMRMLCopyBooleanMacro(OutlineVisibility);
   vtkMRMLCopyFloatMacro(FillOpacity);
@@ -549,6 +553,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(RotationHandleVisibility);
   vtkMRMLPrintBooleanMacro(ScaleHandleVisibility);
   vtkMRMLPrintFloatMacro(InteractionHandleScale);
+  vtkMRMLPrintFloatMacro(InteractionHandleOpacity);
   vtkMRMLPrintBooleanMacro(FillVisibility);
   vtkMRMLPrintBooleanMacro(OutlineVisibility);
   vtkMRMLPrintFloatMacro(FillOpacity);

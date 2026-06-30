@@ -75,6 +75,26 @@ bool vtkMRMLTransformHandleWidget::CanProcessInteractionEvent(vtkMRMLInteraction
   bool canProcess = Superclass::CanProcessInteractionEvent(eventData, distance2);
   if (canProcess)
   {
+    // The "wide" hit-test area (clicking anywhere in the slice view, away from the actual handle) is
+    // given a much lower priority than a precise handle grab, so that it only claims events that no
+    // other, more specific widget wants (it does not take over events that another widget needs).
+    // Once an interaction has actually started, keep the usual high priority so that the drag is not
+    // interrupted by another widget claiming a closer hit partway through.
+    bool activelyInteracting = (this->WidgetState == WidgetStateTranslate       //
+                                || this->WidgetState == WidgetStateRotate       //
+                                || this->WidgetState == WidgetStateScale        //
+                                || this->WidgetState == WidgetStateUniformScale //
+                                || this->WidgetState == WidgetStateTranslateTransformCenter);
+    vtkMRMLTransformHandleWidgetRepresentation* rep = vtkMRMLTransformHandleWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+    if (!activelyInteracting && rep && rep->GetLastInteractionWasWideHit())
+    {
+      // Lower priority than precise handle grabs and explicit single-purpose tool modes (e.g. ~1e9),
+      // but higher priority than generic view background actions (e.g. ~1e10), matching the convention
+      // used by vtkMRMLWindowLevelWidget and vtkMRMLSliceIntersectionWidget. The actual (squared) display
+      // distance to the transform center is added on top, so that if multiple transforms can be dragged
+      // from anywhere in the same slice view, the one whose center is closest to the cursor wins.
+      distance2 = 5e9 + rep->GetLastSliceWideHitDistance2();
+    }
     return true;
   }
 
@@ -194,6 +214,13 @@ vtkMRMLTransformNode* vtkMRMLTransformHandleWidget::GetTransformNode()
 bool vtkMRMLTransformHandleWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  if (widgetEvent == WidgetEventTranslateStart && this->ShouldTranslateTransformCenter())
+  {
+    // A plain click-and-drag of the view plane translation handle normally translates the transform,
+    // but while slice-wide translation is enabled, any other click in the slice view already does
+    // that, so grabbing the handle itself instead moves the center of transformation.
+    widgetEvent = WidgetEventTranslateTransformCenterStart;
+  }
 
   bool processedEvent = false;
   switch (widgetEvent)
@@ -204,6 +231,27 @@ bool vtkMRMLTransformHandleWidget::ProcessInteractionEvent(vtkMRMLInteractionEve
     default: processedEvent = Superclass::ProcessInteractionEvent(eventData); break;
   }
   return processedEvent;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLTransformHandleWidget::ShouldTranslateTransformCenter()
+{
+  vtkMRMLTransformHandleWidgetRepresentation* rep = vtkMRMLTransformHandleWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
+  if (!rep || !displayNode || !rep->GetSliceNode() || !displayNode->GetEditorTranslationSliceAnywhereEnabled())
+  {
+    return false;
+  }
+
+  if (this->GetActiveComponentType() != InteractionTranslationHandle //
+      || this->GetActiveComponentIndex() != vtkMRMLTransformHandleWidgetRepresentation::HandleIndexViewPlane)
+  {
+    return false;
+  }
+
+  // A precise grab of the handle moves the center of transformation; a "wide" click elsewhere in the
+  // slice view (anywhere away from the handle) translates the transform as usual.
+  return !rep->GetLastInteractionWasWideHit();
 }
 
 //-------------------------------------------------------------------------
@@ -232,13 +280,12 @@ bool vtkMRMLTransformHandleWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventDa
     return Superclass::ProcessEndMouseDrag(eventData);
   }
 
-  int activeComponentType = this->GetActiveComponentType();
-  if (activeComponentType == InteractionTranslationHandle)
-  {
-    this->SetWidgetState(WidgetStateOnTranslationHandle);
-  }
-
   this->EndWidgetInteraction();
+
+  // Update the active component and hover state based on where the cursor actually is now, instead of
+  // assuming that the handle that was being dragged is still the one under the cursor. This makes sure
+  // the state is correct even if no mouse move event arrives before the next button press.
+  this->UpdateActiveComponent(eventData);
 
   // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
   bool processedEvent = eventData->GetMouseMovedSinceButtonDown();

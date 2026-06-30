@@ -92,6 +92,8 @@ public slots:
 
   void setEditorTranslationEnabled(bool enabled);
   void setEditorTranslationSliceEnabled(bool enabled);
+  void setEditorTranslationSliceAnywhereEnabled(bool enabled);
+  void setEditorTranslationSliceAnywhereSensitivity(double sensitivity);
 
   void setEditorRotationEnabled(bool enabled);
   void setEditorRotationSliceEnabled(bool enabled);
@@ -105,6 +107,7 @@ public slots:
   void updateRotationComponentVisibility();
   void updateScalingComponentVisibility();
   void updateInteractionHandleScale();
+  void updateInteractionHandleOpacity();
 
   void setColorTableNode(vtkMRMLNode* colorTableNode);
 
