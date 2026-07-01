@@ -78,6 +78,17 @@ public:
   /// allows modification (the original stored transform).
   static bool IsTransformFromParentStored(vtkMRMLTransformNode* transformNode);
 
+  /// Serialize this node's data into a JSON-formatted string representation.
+  /// \param refNode The node whose data will be serialized
+  /// \return A string containing the node data in JSON format
+  virtual std::string WriteDataToJSONString(vtkMRMLNode* refNode) override;
+
+  /// Parse a JSON-formatted string and populate this node's data from it.
+  /// \param refNode The node whose data will be populated from the JSON
+  /// \param json The JSON-formatted string containing the node data
+  /// \return True on successful parse and data update, false otherwise
+  virtual bool ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json) override;
+
 protected:
   vtkMRMLTransformStorageNode();
   ~vtkMRMLTransformStorageNode() override;
