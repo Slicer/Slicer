@@ -36,7 +36,7 @@ if(APPLE)
   if(NOT "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
     list(LENGTH CMAKE_OSX_ARCHITECTURES arch_count)
     if(arch_count GREATER 1)
-      message(FATAL_ERROR "error: Only one value (i386 or x86_64) should be associated with CMAKE_OSX_ARCHITECTURES.")
+      message(FATAL_ERROR "error: Only one value should be associated with CMAKE_OSX_ARCHITECTURES (for example: arm64 or x86_64).")
     endif()
   endif()
 

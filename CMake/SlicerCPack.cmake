@@ -186,8 +186,16 @@ else()
 
   # Get Qt root directory
   get_property(_filepath TARGET "Qt${CTK_QT_VERSION}::Core" PROPERTY LOCATION_RELEASE)
-  get_filename_component(_dir ${_filepath} PATH)
-  set(qt_root_dir "${_dir}/..")
+  if(APPLE)
+    # On macOS, Qt::Core lives inside a framework. Two possible layouts:
+    #   Qt5: .../lib/QtCore.framework/QtCore          (symlink → Versions/N/QtCore)
+    #   Qt6: .../lib/QtCore.framework/Versions/A/QtCore  (versioned path)
+    # Strip everything from the framework name onward to get the lib directory.
+    string(REGEX REPLACE "/Qt[^/]+\\.framework.*" "" qt_root_dir "${_filepath}")
+  else()
+    get_filename_component(_dir ${_filepath} PATH)
+    set(qt_root_dir "${_dir}/..")
+  endif()
 
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_CANDIDATES_PATTERNS
