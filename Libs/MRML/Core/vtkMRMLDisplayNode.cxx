@@ -416,12 +416,10 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
       return this->LastFoundDisplayableNode;
     }
   }
-  vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
-    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
     if (displayableNode && displayableNode->HasDisplayNodeID(this->GetID()))
     {
       this->LastFoundDisplayableNode = displayableNode;

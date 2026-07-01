@@ -129,11 +129,13 @@ inline void vtkSegmentationConversionPaths::AddPath(vtkSegmentationConversionPat
 //----------------------------------------------------------------------------
 inline void vtkSegmentationConversionPaths::AddPaths(vtkSegmentationConversionPaths* paths)
 {
-  vtkSegmentationConversionPath* path = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
+  for (int i = 0; i < paths->GetNumberOfPaths(); ++i)
   {
-    this->AddItem(path);
+    vtkSegmentationConversionPath* path = paths->GetPath(i);
+    if (path)
+    {
+      this->AddItem(path);
+    }
   }
 }
 
