@@ -51,7 +51,16 @@ Once downloaded, follow the instructions below to complete installation:
   - This step is necessary because content of a .dmg file is opened as a read-only volume, and you cannot install extensions or Python packages into a read-only volume.
 - Delete the Slicer.app folder to uninstall.
 
-Note for installing a Preview Release: Currently, preview release packages are not signed. Therefore, when the application is started the first time the following message is displayed: "Slicer... can't be opened because it is from an unidentified developer". To resolve this error, locate the application in Finder and right-click (two-finger click) and click `Open`. When it says `This app can’t be opened` go ahead and hit cancel. Right click again and say `Open` (yes, you need to repeat the same as you did before - the outcome will be different than the first time). Click the `Open` (or `Open anyway`) button to start the application. See more explanation and alternative techniques [here](https://support.apple.com/en-my/guide/mac-help/mh40616/mac).
+#### Installing Preview Releases
+
+Slicer Preview Release packages are not signed. Therefore, when the application is started the first time the following message is displayed: "Slicer... can't be opened because it is from an unidentified developer". To resolve this error:
+- Try to open the app normally (it'll be blocked, but this step makes application temporarily highlighted in the system settings).
+- Go to `System Settings` -> `Privacy & Security`.
+- Scroll down - you'll see a message like "Slicer was blocked to protect your Mac" with an `Open Anyway` button.
+- Click `Open Anyway`, then enter your password/Touch ID.
+- A final confirmation dialog appears - click `Open`.
+
+See more explanation and alternative techniques [here](https://support.apple.com/en-my/guide/mac-help/mh40616/mac).
 
 #### Installing using Homebrew
 
