@@ -53,6 +53,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
+  ADDITIONAL_SRCS itkDCMTKFileReader.cxx
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   # LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h
   TARGET_LIBRARIES ${${MODULE_NAME}_TARGET_LIBRARIES}
