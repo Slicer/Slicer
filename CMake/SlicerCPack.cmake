@@ -552,3 +552,33 @@ DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
 endif()
 
 include(CPack)
+
+# -------------------------------------------------------------------------
+# macOS: 'packageverify' convenience target
+# -------------------------------------------------------------------------
+# Add a 'packageverify' target that checks whether the already-built application
+# bundle is self-contained by running SlicerCPackBundleVerify.cmake on the bundle
+# staged by CPack. It does NOT (re)build the package; run 'make package' first.
+# This avoids having to locate the staged bundle and pass the required variable
+# by hand.
+if(APPLE)
+
+  # Directory where the CPack DragNDrop generator stages the packaged bundle:
+  #   <build>/_CPack_Packages/<system>/DragNDrop/<package-file-name>/<app>.app
+  # The <system> component is built directly from Slicer_OS/Slicer_ARCHITECTURE
+  # rather than from CPACK_SYSTEM_NAME, since including CPack repurposes the
+  # CPACK_SYSTEM_NAME and CPACK_PACKAGE_FILE_NAME variables for the source
+  # package. The <package-file-name> and bundle name embed a build date and are
+  # discovered by the verify script, so only the DragNDrop directory is passed.
+  set(_packageverify_dir
+    "${CMAKE_BINARY_DIR}/_CPack_Packages/${Slicer_OS}-${Slicer_ARCHITECTURE}/DragNDrop")
+
+  add_custom_target(packageverify
+    COMMAND ${CMAKE_COMMAND}
+      "-DSlicer_INSTALL_DIR=${_packageverify_dir}"
+      -P "${Slicer_CMAKE_DIR}/SlicerCPackBundleVerify.cmake"
+    COMMENT "Verifying packaged application bundle is self-contained"
+    VERBATIM
+    )
+
+endif()
