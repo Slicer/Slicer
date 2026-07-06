@@ -437,3 +437,28 @@ endfunction()
 
 set(app_name "@Slicer_MAIN_PROJECT_APPLICATION_NAME@.app")
 fixup_bundle_with_plugins(${app_name})
+
+#-----------------------------------------------------------------------------
+# Rename the bundle to use the full application name (e.g. "3D Slicer 5.10.0")
+#-----------------------------------------------------------------------------
+# The bundle is built and fixed up using the internal application name (e.g.
+# "Slicer.app") so that the executable and all embedded paths remain stable.
+# As a final packaging step, rename the top-level bundle directory to the full
+# application name so that, like the Windows installer, the application appears
+# with its full name (display name and version) in Finder after being copied to
+# the Applications folder.
+#
+# For preview releases the version carries a build-date suffix (e.g.
+# "5.13.0-2026-07-04"). Finder elides long unbroken names in the middle, which
+# would hide the version number, so the separator before the date is replaced
+# with a space ("5.13.0 2026-07-04") to give Finder a place to wrap the name.
+set(installed_app_version "@Slicer_MAIN_PROJECT_VERSION_FULL@")
+string(REGEX REPLACE "^([^-]+)-(.*)$" "\\1 \\2" installed_app_version "${installed_app_version}")
+set(installed_app_name "@Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME@ ${installed_app_version}.app")
+if(NOT app_name STREQUAL installed_app_name)
+  message(STATUS "Renaming bundle '${app_name}' to '${installed_app_name}'")
+  file(RENAME
+    "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app_name}"
+    "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${installed_app_name}"
+    )
+endif()
