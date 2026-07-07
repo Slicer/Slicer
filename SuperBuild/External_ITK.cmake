@@ -2,7 +2,7 @@
 set(proj ITK)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" "VTK")
+set(${proj}_DEPENDENCIES "zlib" "VTK" "OpenJPEG")
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
@@ -136,6 +136,14 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      # OpenJPEG: ITK vendors a copy of GDCM, which in turn vendors its own
+      # copy of OpenJPEG (gdcmopenjpeg). Force GDCM to use the same system
+      # OpenJPEG built by the SuperBuild instead, otherwise GDCM's bundled
+      # copy conflicts with the OpenJPEG imported targets already pulled in
+      # (e.g. transitively via DCMTK), causing a CMake
+      # "add_library cannot create target ... imported target ... already exists" error.
+      -DGDCM_USE_SYSTEM_OPENJPEG:BOOL=ON
+      -DCMAKE_PREFIX_PATH:PATH=${OpenJPEG_INSTALL_DIR}
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
