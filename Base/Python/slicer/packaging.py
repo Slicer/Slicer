@@ -514,6 +514,17 @@ def _isSlicerAppAvailable() -> bool:
         return False
 
 
+def _isMainQtThread() -> bool:
+    """Check if the current Python call is running on Slicer's main Qt thread."""
+    if not _isSlicerAppAvailable():
+        return False
+
+    import qt
+    import slicer
+
+    return qt.QThread.currentThread() == slicer.app.thread()
+
+
 def pip_install(
     requirements: str | list[str],
     constraints: str | Path | None = None,
@@ -621,6 +632,21 @@ def pip_install(
         return None
 
     import slicer
+
+    if not _isMainQtThread():
+        logging.warning(
+            "pip_install was called from a non-main thread; disabling progress UI.",
+        )
+        if not blocking:
+            raise RuntimeError(
+                "pip_install(blocking=False) is only supported on the main thread",
+            )
+        if skip_packages is not None:
+            raise RuntimeError(
+                "pip_install(skip_packages=...) is only supported on the main thread",
+            )
+        _pip_install_simple(requirements, constraints, no_deps_requirements)
+        return None
 
     # In testing mode, skip UI and use simple blocking install
     if slicer.app.testingEnabled():
