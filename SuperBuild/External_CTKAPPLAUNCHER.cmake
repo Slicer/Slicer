@@ -25,13 +25,16 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
     set(launcher_version "0.1.34")
-    # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
+      # CTKAppLauncher is only released as an i386 Windows binary, so use it unconditionally.
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
       set(sha256 "8b91093a18476749b5687dc433909d61916a9983e832be3fb0a43d494b208924")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
       set(sha256 "e39f82151be485e2e097a254077c4f3b7c962765c0e1564cbc09360355f87b76")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
+      # CTKAppLauncher is only released as an amd64 macOS binary (it runs fine
+      # on arm64 Macs through Rosetta 2), so use it unconditionally.
+      set(CTKAPPLAUNCHER_ARCHITECTURE "amd64")
       set(sha256 "9d2f08fd68071562b17a2bfc18b6510a2a19596c593bf19deda1a9f1d3038ad0")
     endif()
 
