@@ -36,10 +36,11 @@
 #      Python wheels). A stale rpath is harmless on its own -- dyld skips paths
 #      that do not exist -- so this is a hygiene signal, not a loadability error;
 #      genuinely unsatisfied dependencies are caught by check 2 instead.
-#   4. Dependencies on optional external backends under /usr/local or /opt (e.g.
-#      the ODBC / PostgreSQL / Mimer Qt SQL drivers), and unresolved weak
-#      dependencies. These are not bundled by design and only disable the
-#      corresponding optional plugin.
+#   4. Dependencies on known optional database backends under /usr/local or
+#      /opt (the ODBC / PostgreSQL / MySQL / Mimer Qt SQL drivers), and
+#      unresolved weak dependencies. These are not bundled by design and only
+#      disable the corresponding optional plugin. Any other dependency under
+#      /usr/local or /opt is treated as check 2 (FATAL).
 #
 # This intentionally does NOT use BundleUtilities' verify_app(): that routine
 # treats unresolved @rpath references as non-fatal warnings and therefore passes
@@ -107,10 +108,18 @@ if(app_count EQUAL 0)
   message(FATAL_ERROR "No '.app' bundle found under directory ! "
     "Has the package been built (e.g. 'make package') ? [${Slicer_INSTALL_DIR}]")
 elseif(app_count GREATER 1)
-  string(REPLACE ";" "\n  " _app_list "${app_candidates}")
-  message(FATAL_ERROR "Expected exactly one '.app' bundle under [${Slicer_INSTALL_DIR}] "
-    "but found ${app_count}:\n  ${_app_list}\n"
-    "Remove stale packages (e.g. clean the _CPack_Packages directory) and retry.")
+  # Date-stamped staged bundles accumulate across packaging runs; verify the newest.
+  set(_newest "")
+  set(_newest_ts "")
+  foreach(_c IN LISTS app_candidates)
+    file(TIMESTAMP "${_c}" _ts "%Y%m%d%H%M%S")
+    if(_newest_ts STRLESS _ts)
+      set(_newest "${_c}")
+      set(_newest_ts "${_ts}")
+    endif()
+  endforeach()
+  set(app_candidates "${_newest}")
+  message(STATUS "Found ${app_count} '.app' bundles; verifying the newest: ${_newest}")
 endif()
 
 list(GET app_candidates 0 app_path)
@@ -130,7 +139,8 @@ message(STATUS "Verifying bundle is self-contained: ${app_path}")
 
 # Return TRUE in ${out} if ${f} is a Mach-O file (checked via its magic number).
 function(_bv_is_macho f out)
-  if(IS_DIRECTORY "${f}")
+  # EXISTS follows symlinks, so dangling symlinks are rejected here.
+  if(IS_DIRECTORY "${f}" OR NOT EXISTS "${f}")
     set(${out} FALSE PARENT_SCOPE)
     return()
   endif()
@@ -204,23 +214,32 @@ function(_bv_resolve dep loader_dir rpaths out_status)
   set(_resolved "")
   if(dep MATCHES "^@rpath/")
     string(REGEX REPLACE "^@rpath/" "" _rest "${dep}")
-    # Search the binary's own LC_RPATH entries first, ...
+    # Search the binary's own LC_RPATH entries, then the main executable's
+    # run-path directories (see note where global_rpath_dirs is computed).
+    # A candidate inside the bundle wins over an earlier match outside it:
+    # leaked build-tree rpaths resolve on the packaging machine but not on a
+    # user machine, where dyld skips them and loads the bundled copy.
+    set(_dirs "")
     foreach(_rp IN LISTS rpaths)
       _bv_expand_at("${_rp}" "${loader_dir}" _rpdir)
-      if(EXISTS "${_rpdir}/${_rest}")
-        set(_resolved "${_rpdir}/${_rest}")
-        break()
+      list(APPEND _dirs "${_rpdir}")
+    endforeach()
+    list(APPEND _dirs ${global_rpath_dirs})
+    set(_first_outside "")
+    foreach(_d IN LISTS _dirs)
+      if(EXISTS "${_d}/${_rest}")
+        get_filename_component(_rr "${_d}/${_rest}" REALPATH)
+        string(FIND "${_rr}" "${app_real}/" _idx)
+        if(_idx EQUAL 0)
+          set(_resolved "${_d}/${_rest}")
+          break()
+        elseif(_first_outside STREQUAL "")
+          set(_first_outside "${_d}/${_rest}")
+        endif()
       endif()
     endforeach()
-    # ... then the main executable's run-path directories (see note where
-    # global_rpath_dirs is computed).
-    if(_resolved STREQUAL "")
-      foreach(_gp IN LISTS global_rpath_dirs)
-        if(EXISTS "${_gp}/${_rest}")
-          set(_resolved "${_gp}/${_rest}")
-          break()
-        endif()
-      endforeach()
+    if(_resolved STREQUAL "" AND NOT _first_outside STREQUAL "")
+      set(_resolved "${_first_outside}")
     endif()
   elseif(dep MATCHES "^@(loader_path|executable_path)/")
     _bv_expand_at("${dep}" "${loader_dir}" _cand)
@@ -232,8 +251,13 @@ function(_bv_resolve dep loader_dir rpaths out_status)
       set(${out_status} "SYSTEM" PARENT_SCOPE)
       return()
     elseif(dep MATCHES "^(/usr/local/|/opt/)")
-      set(${out_status} "EXTERNAL" PARENT_SCOPE)
-      return()
+      # Only known optional runtime backends (Qt SQL/ODBC drivers) are
+      # external-by-design; anything else under /usr/local or /opt would make
+      # the bundle depend on the packaging machine and is a hard error.
+      if(dep MATCHES "(libiodbc|libodbc|libpq|libmimerapi|libmysqlclient|libmariadb)[^/]*$")
+        set(${out_status} "EXTERNAL" PARENT_SCOPE)
+        return()
+      endif()
     endif()
     if(EXISTS "${dep}")
       set(_resolved "${dep}")
@@ -322,12 +346,10 @@ foreach(_fw IN LISTS _framework_dirs)
   endif()
 endforeach()
 
-# Executables that carry no extension (main app, tools, CLI modules, ...).
-file(GLOB_RECURSE _maybe_exes
-  "${app_real}/Contents/MacOS/*"
-  "${app_real}/Contents/bin/*"
-  "${app_real}/Contents/libexec/*"
-  )
+# Executables that carry no extension can live anywhere in the bundle (main
+# app, helper tools, CLI modules under lib/Slicer-X.Y/cli-modules, framework
+# bin directories, ...), so scan the whole bundle by magic number.
+file(GLOB_RECURSE _maybe_exes "${app_real}/*")
 foreach(_f IN LISTS _maybe_exes)
   if(NOT IS_DIRECTORY "${_f}")
     _bv_is_macho("${_f}" _im)
