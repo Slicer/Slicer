@@ -140,37 +140,14 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::SetActiveComponentIndex(in
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!displayNode                             //
-      || !markupsNode                          //
+      || !this->GetMarkupsNode()               //
       || !this->GetViewNode()                  //
       || !displayNode->GetVisibility()         //
       || !displayNode->GetHandlesInteractive() //
       || !displayNode->IsDisplayableInView(this->GetViewNode()->GetID()))
   {
     return false;
-  }
-
-  if (markupsNode->GetLocked())
-  {
-    return false;
-  }
-  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
-  if (numberOfControlPoints > 0)
-  {
-    bool allControlPointsLocked = true;
-    for (int i = 0; i < numberOfControlPoints; ++i)
-    {
-      if (!markupsNode->GetNthControlPointLocked(i))
-      {
-        allControlPointsLocked = false;
-        break;
-      }
-    }
-    if (allControlPointsLocked)
-    {
-      return false;
-    }
   }
 
   if (vtkMRMLSliceNode::SafeDownCast(this->GetViewNode()))

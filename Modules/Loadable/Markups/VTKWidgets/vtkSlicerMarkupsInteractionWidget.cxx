@@ -508,6 +508,31 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     return;
   }
 
+  // Similarly to translation, scaling must not move locked control points.
+  bool anyControlPointLocked = false;
+  for (int controlPointIndex = 0; controlPointIndex < roiNode->GetNumberOfControlPoints(); ++controlPointIndex)
+  {
+    if (roiNode->GetNthControlPointLocked(controlPointIndex))
+    {
+      anyControlPointLocked = true;
+      break;
+    }
+  }
+  if (anyControlPointLocked)
+  {
+    if (roiNode->GetROIType() == vtkMRMLMarkupsROINode::ROITypeBox)
+    {
+      // The only control point of a box ROI is the center.
+      // The locked center is kept in place by scaling symmetrically around it.
+      symmetricScale = true;
+    }
+    else
+    {
+      // Scaling would reposition all control points, do not scale.
+      return;
+    }
+  }
+
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
   if (!displayNode)
   {
