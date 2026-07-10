@@ -1913,7 +1913,8 @@ void qSlicerMarkupsModuleWidget::onListLockedUnlockedPushButtonClicked()
   {
     return;
   }
-  d->MarkupsNode->SetLocked(!d->MarkupsNode->GetLocked());
+  bool locked = d->MarkupsNode->GetLocked();
+  d->MarkupsNode->SetLocked(!locked);
   this->updateWidgetFromMRML();
 }
 
