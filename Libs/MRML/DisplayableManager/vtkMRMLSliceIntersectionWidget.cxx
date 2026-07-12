@@ -310,7 +310,6 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     vtkNew<vtkMRMLSliceIntersectionInteractionRepresentation> newRepInteraction;
     newRepInteraction->SetMRMLApplicationLogic(mrmlAppLogic);
     newRepInteraction->SetRenderer(this->GetRenderer());
-    newRepInteraction->SetSliceNode(this->SliceNode);
     this->WidgetRep = newRepInteraction;
   }
   else
@@ -318,9 +317,9 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     vtkNew<vtkMRMLSliceIntersectionRepresentation2D> newRep;
     newRep->SetMRMLApplicationLogic(mrmlAppLogic);
     newRep->SetRenderer(this->GetRenderer());
-    newRep->SetSliceNode(this->SliceNode);
     this->WidgetRep = newRep;
   }
+  this->WidgetRep->SetViewNode(this->SliceNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1042,15 +1041,9 @@ void vtkMRMLSliceIntersectionWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
   }
 
   // Update representation
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
-  if (rep)
+  if (this->WidgetRep)
   {
-    rep->SetSliceNode(sliceNode);
-  }
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
-  if (repInteraction)
-  {
-    repInteraction->SetSliceNode(sliceNode);
+    this->WidgetRep->SetViewNode(sliceNode);
   }
 }
 
