@@ -146,9 +146,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 ### DICOM export
 
 - Make sure the source representation is `binary labelmap` (as the source representation is used when exporting into DICOM, and currently only binary labelmap representation is supported). The source representation can be set in `Segmentations` module, `Representations` section. If the yellow star (that designates the source representation) is in the `binary labelmap` row then the representation is already good, no further action is needed. If the yellow star is in another row then click `Make source` button in the `binary labelmap` row (if that button is not shown then click `Create` button first).
-- Make sure the necessary extensions are installed:
-  - `QuantitativeReporting` extension is required for exporting into DICOM Segmentation Object.
-  - `SlicerRT` extension is required for exporting into legacy DICOM RT Structure Set. RT Structure Sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
+- DICOM Segmentation Object (`DICOMSegmentation` export type) is recommended for storing segmentations in DICOM. However, if segmentations will be used for radiation therapy then it may be necessary to export to DICOM RT Structure Set. RT Structure Set export type becomes available if `SlicerRT` extension is installed. In general, RT Structure Sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
 - If the segmented image was not loaded from the DICOM database (for example, if the image was loaded from a NRRD or NIFTI file) then a DICOM image needs to be created in the database and the segmentation must be updated to reference this image (this is necessary because a DICOM requires a segmentation to be associated with a DICOM image) by following these steps:
   - [export the source volume to DICOM](dicom.md#export-data-from-the-scene-to-dicom-database) (agree to create patient and study when asked)
   - load the exported volume from the DICOM database

@@ -53,7 +53,7 @@ Since DICOM files are often located in several folders, they can cross-reference
 
 #### DICOM import
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [supported data formats section](../data_loading_and_saving.md#supported-data-formats).
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, segmentations, parametric maps, and some structured reports, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). SlicerHeart extension is needed for importing certain ultrasound images.* See complete list in [supported data formats section](../data_loading_and_saving.md#supported-data-formats).
 2. Go to DICOM module
 3. Select folders that contain DICOM files
     - Option A: Drag-and-drop the folder that contains DICOM files to the Slicer application window.
@@ -88,9 +88,8 @@ By right clicking on a Patient, Study, or Series, you can delete the entry from 
 
 Data in the scene can be exported to DICOM format, to be stored in DICOM database or exported to DICOM files:
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, but additional extensions may be needed for other information objects.
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM export plugin for exporting images, DICOM segmentation objects, structured reports, and parametric maps, but additional extensions may be needed for other information objects.
     - `SlicerRT` extension is needed for importing/exporting radiation therapy information objects: RT structure set, RT dose, RT image, RT plan.
-    - `Quantitative reporting` extension is needed for importing/exporting DICOM segmentation objects, structured reports, and parametric maps.
     - See complete list in [Supported data formats page](../data_loading_and_saving.md#supported-data-formats).
 2. Go to Data module or DICOM module.
 3. Right-click on a data node in the data tree that will be converted to DICOM format.
@@ -411,8 +410,8 @@ See examples and other developer information in [Developer guide](../../develope
 ## Related extensions and modules
 
 - [Add data](../data_loading_and_saving) dialog can be used to load some DICOM images directly, with bypassing the DICOM database. This may be faster in some cases, but it is not recommended, as it only supports certain kind of images and consistency and correctness of the data is not verified.
-- [Quantitative Reporting](https://github.com/QIICR/QuantitativeReporting#summary) extension reads and writes DICOM Segmentation Objects (label maps), structured reports, and parametric maps.
 - [SlicerRT](https://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and analyzing them.
+- [SlicerHeart](https://github.com/slicerheart/slicerheart#slicerheart-extension-for-3d-slicer) extension reads certain Philips, GE, Eigen Artemis ultrasound images.
 - [LongitudinalPETCT](https://github.com/QIICR/LongitudinalPETCT#longitudinalpetct) extension reads all PET/CT studies for a selected patient and provides tools for tracking metabolic activity detected by PET tracers.
 - [DICOM Patcher](dicompatcher.md) module can be used before importing to fix common DICOM non-compliance errors.
 

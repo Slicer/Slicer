@@ -322,11 +322,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             for file in loadable.files:
                 if slicer.dicomDatabase.fileValueExists(file, self.tags["pixelData"]):
                     newFiles.append(file)
-                if slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.66.4":
-                    excludedLoadable = True
-                    if "DICOMSegmentationPlugin" not in slicer.modules.dicomPlugins:
-                        logging.warning("Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects")
-                elif slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
+                if slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
                     excludedLoadable = True
                     if "DicomRtImportExportPlugin" not in slicer.modules.dicomPlugins:
                         logging.warning("Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects")
