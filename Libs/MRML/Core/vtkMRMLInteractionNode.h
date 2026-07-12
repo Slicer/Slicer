@@ -45,14 +45,13 @@ public:
   virtual void NormalizeAllMouseModes();
 
   /// mouse modes
-  /// note: any new modes should be powers of 2 to allow
-  /// bit field operations
   enum
   {
     Place = 1,
     ViewTransform = 2,
     Select = 4,
     AdjustWindowLevel,
+    Scroll,
     User = 1000
   }; /// events
   enum

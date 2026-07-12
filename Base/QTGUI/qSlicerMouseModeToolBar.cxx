@@ -53,6 +53,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
 {
   this->AdjustViewAction = nullptr;
   this->AdjustWindowLevelAction = nullptr;
+  this->ScrollAction = nullptr;
   this->AdjustWindowLevelAdjustModeAction = nullptr;
   this->AdjustWindowLevelRegionModeAction = nullptr;
   this->AdjustWindowLevelCenteredRegionModeAction = nullptr;
@@ -138,6 +139,20 @@ void qSlicerMouseModeToolBarPrivate::init()
   QObject::connect(this->AdjustWindowLevelAction, SIGNAL(toggled(bool)), q, SLOT(interactionModeActionTriggered(bool)));
   q->addAction(this->AdjustWindowLevelAction);
   this->InteractionModesActionGroup->addAction(this->AdjustWindowLevelAction);
+
+  // Scroll mode
+
+  this->ScrollAction = new QAction(this);
+  this->ScrollAction->setObjectName("ScrollAction");
+  this->ScrollAction->setData(vtkMRMLInteractionNode::Scroll);
+  this->ScrollAction->setToolTip(qSlicerMouseModeToolBar::tr("Scroll through slices by click-and-drag in a slice view."));
+  this->ScrollAction->setIcon(QIcon(":/Icons/MouseScrollMode.png"));
+  this->ScrollAction->setText(qSlicerMouseModeToolBar::tr("Scroll"));
+  this->ScrollAction->setCheckable(true);
+
+  QObject::connect(this->ScrollAction, SIGNAL(toggled(bool)), q, SLOT(interactionModeActionTriggered(bool)));
+  q->addAction(this->ScrollAction);
+  this->InteractionModesActionGroup->addAction(this->ScrollAction);
 
   // Place mode
   this->ToolBarAction = new QAction(this);
