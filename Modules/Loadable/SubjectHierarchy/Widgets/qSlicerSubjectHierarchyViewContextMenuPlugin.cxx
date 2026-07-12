@@ -78,6 +78,7 @@ public:
   QAction* InteractionModeViewTransformAction = nullptr;
   QAction* InteractionModeAdjustWindowLevelAction = nullptr;
   QAction* InteractionModePlaceAction = nullptr;
+  QAction* InteractionModeScrollAction = nullptr;
 
   QAction* MaximizeViewAction = nullptr;
   QAction* FitSliceViewAction = nullptr;
@@ -133,17 +134,24 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->InteractionModePlaceAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction, qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
 
+  this->InteractionModeScrollAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Scroll"), q);
+  this->InteractionModeScrollAction->setObjectName("MouseModeScrollAction");
+  this->InteractionModeScrollAction->setCheckable(true);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeScrollAction, qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 3);
+
   QActionGroup* interactionModeActions = new QActionGroup(q);
   interactionModeActions->setExclusive(true);
 
   interactionModeActions->addAction(this->InteractionModeViewTransformAction);
   interactionModeActions->addAction(this->InteractionModeAdjustWindowLevelAction);
   interactionModeActions->addAction(this->InteractionModePlaceAction);
+  interactionModeActions->addAction(this->InteractionModeScrollAction);
 
   this->InteractionModeMapper = new ctkSignalMapper(q);
   this->InteractionModeMapper->setMapping(this->InteractionModeViewTransformAction, vtkMRMLInteractionNode::ViewTransform);
   this->InteractionModeMapper->setMapping(this->InteractionModeAdjustWindowLevelAction, vtkMRMLInteractionNode::AdjustWindowLevel);
   this->InteractionModeMapper->setMapping(this->InteractionModePlaceAction, vtkMRMLInteractionNode::Place);
+  this->InteractionModeMapper->setMapping(this->InteractionModeScrollAction, vtkMRMLInteractionNode::Scroll);
   QObject::connect(interactionModeActions, SIGNAL(triggered(QAction*)), this->InteractionModeMapper, SLOT(map(QAction*)));
   QObject::connect(this->InteractionModeMapper, &QSignalMapper::mappedInt, q, &qSlicerSubjectHierarchyViewContextMenuPlugin::setInteractionMode);
 
@@ -270,10 +278,10 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
 {
   Q_D(const qSlicerSubjectHierarchyViewContextMenuPlugin);
   QList<QAction*> actions;
-  actions << d->InteractionModeViewTransformAction << d->InteractionModeAdjustWindowLevelAction << d->InteractionModePlaceAction << d->MaximizeViewAction << d->FitSliceViewAction
-          << d->RefocusAllCamerasAction << d->CenterThreeDViewAction << d->RefocusCameraAction << d->CopyImageAction << d->ToggleTiltLockAction
-          << d->ConfigureSliceViewAnnotationsAction << d->IntersectingSlicesVisibilityAction << d->IntersectingSlicesInteractiveAction << d->EnableSlabReconstructionAction
-          << d->SlabReconstructionInteractiveAction;
+  actions << d->InteractionModeViewTransformAction << d->InteractionModeAdjustWindowLevelAction << d->InteractionModePlaceAction << d->InteractionModeScrollAction
+          << d->MaximizeViewAction << d->FitSliceViewAction << d->RefocusAllCamerasAction << d->CenterThreeDViewAction << d->RefocusCameraAction << d->CopyImageAction
+          << d->ToggleTiltLockAction << d->ConfigureSliceViewAnnotationsAction << d->IntersectingSlicesVisibilityAction << d->IntersectingSlicesInteractiveAction
+          << d->EnableSlabReconstructionAction << d->SlabReconstructionInteractiveAction;
   return actions;
 }
 
@@ -318,6 +326,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->InteractionModeViewTransformAction->setVisible(true);
   d->InteractionModeAdjustWindowLevelAction->setVisible(true);
   d->InteractionModePlaceAction->setVisible(true);
+  d->InteractionModeScrollAction->setVisible(true);
 
   int interactionMode = interactionNode->GetCurrentInteractionMode();
 
@@ -332,6 +341,10 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   wasBlocked = d->InteractionModePlaceAction->blockSignals(true);
   d->InteractionModePlaceAction->setChecked(interactionMode == vtkMRMLInteractionNode::Place);
   d->InteractionModePlaceAction->blockSignals(wasBlocked);
+
+  wasBlocked = d->InteractionModeScrollAction->blockSignals(true);
+  d->InteractionModeScrollAction->setChecked(interactionMode == vtkMRMLInteractionNode::Scroll);
+  d->InteractionModeScrollAction->blockSignals(wasBlocked);
 
   // Update view/restore view action
   bool isMaximized = false;
