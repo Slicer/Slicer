@@ -86,6 +86,7 @@ public:
     WidgetStateTranslateSlice,                  ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
     WidgetStateRotateIntersectingSlices,        ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
     WidgetStateZoomSlice,                       ///< Zoom slice (using right-button or mouse wheel)
+    WidgetStateScroll,                          ///< Scroll (browse) slices using left-click-and-drag (only in Scroll mouse mode)
     WidgetStateTouchGesture,                    ///< Pinch/zoom/pan using touch gestures
 
     // Interactions with slice intersection handles
@@ -122,6 +123,8 @@ public:
     WidgetEventDecrementSlice,
     WidgetEventZoomInSlice,
     WidgetEventZoomOutSlice,
+    WidgetEventScrollStart,
+    WidgetEventScrollEnd,
     WidgetEventToggleSliceVisibility,
     WidgetEventToggleAllSlicesVisibility, // currently does not work, only toggles current slice
     WidgetEventResetFieldOfView,
@@ -216,6 +219,10 @@ protected:
 
   bool ProcessZoomSlice(vtkMRMLInteractionEventData* eventData);
 
+  // Scroll (browse) slices by click-and-drag in vertical direction (only in Scroll mouse mode)
+  bool ProcessScrollStart(vtkMRMLInteractionEventData* eventData);
+  void ProcessScroll(vtkMRMLInteractionEventData* eventData);
+
   bool ProcessTouchGestureStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchGestureEnd(vtkMRMLInteractionEventData* eventData);
   bool ProcessTouchRotate(vtkMRMLInteractionEventData* eventData);
@@ -300,6 +307,10 @@ protected:
   void IncrementSlice();
   void DecrementSlice();
   void MoveSlice(double delta);
+
+  // Scroll (browse slices by click-and-drag)
+  double ScrollStartSliceOffset;
+  double ScrollSliceOffsetRange[2];
 
   ///
   /// Change the displayed volume in the selected layer by moving
