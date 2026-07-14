@@ -17,7 +17,18 @@
  * own matching copy and stop participating in interposition. Every other VTK
  * symbol keeps its default (global) binding. This mirrors the symbol-control
  * approach already used by Libs/krb5-gssapi-stub/gssapi_krb5.ver.
+ *
+ * The version node is *named* (rather than an anonymous "{ local: ... };"
+ * block) on purpose: this script is applied to every VTK library, including
+ * bundled third-party libraries such as vtktiff that ship their own named
+ * version scripts (libtiff.map: LIBTIFF_4.0..4.5). GNU ld refuses to combine
+ * an anonymous version tag with named ones ("anonymous version tag cannot be
+ * combined with other version tags"), which breaks the vtktiff link on a
+ * clean build. See https://github.com/Slicer/Slicer/issues/9252. A named node
+ * with only a "local:" section hides the matched symbols exactly as the
+ * anonymous form did, while coexisting with other named version scripts.
  */
+SLICER_VTK_REGEX_HIDE
 {
   local:
     _ZNSt8__detail*;     /* std::__detail::  _Scanner / _Compiler / _Executor   */
