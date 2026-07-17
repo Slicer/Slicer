@@ -246,7 +246,7 @@ int vtkITKLevelTracingImageFilter::RequestData(vtkInformation* vtkNotUsed(reques
   newPts->Allocate(estimatedSize, estimatedSize / 2);
 
   newPolys = vtkCellArray::New();
-  newPolys->Allocate(newPolys->EstimateSize(estimatedSize, 2));
+  newPolys->AllocateEstimate(estimatedSize, 2);
 
 ////////// These types are not defined in itk::NumericTraits ////////////
 #ifdef vtkTemplateMacroCase_ui64

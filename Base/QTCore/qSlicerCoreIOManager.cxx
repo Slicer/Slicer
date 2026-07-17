@@ -620,7 +620,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   Q_D(qSlicerCoreIOManager);
 
   Q_ASSERT(parameters.contains("fileName"));
-  if (parameters["fileName"].type() == QVariant::StringList)
+  if (parameters["fileName"].userType() == QMetaType::QStringList)
   {
     bool res = true;
     QStringList fileNames = parameters["fileName"].toStringList();

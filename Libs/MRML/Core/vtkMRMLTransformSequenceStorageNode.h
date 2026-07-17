@@ -69,7 +69,7 @@ public:
   /// actual file content. It reads the header and checks if the intent code
   /// is set to the value that indicates that it is a grid transform sequence
   /// stored as a volume.
-  virtual int SupportedFileType(const char* fileName);
+  int SupportedFileType(const char* fileName) override;
 
 protected:
   vtkMRMLTransformSequenceStorageNode();

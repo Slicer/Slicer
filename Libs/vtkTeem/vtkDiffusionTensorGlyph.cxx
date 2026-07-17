@@ -285,28 +285,32 @@ int vtkDiffusionTensorGlyph::RequestData(vtkInformation* vtkNotUsed(request), vt
   if ((sourceCells = source->GetVerts())->GetNumberOfCells() > 0)
   {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs * numInputPts * sourceCells->GetSize());
+    cells->AllocateExact(numDirs * numInputPts * sourceCells->GetNumberOfCells(), //
+                         numDirs * numInputPts * sourceCells->GetNumberOfConnectivityIds());
     output->SetVerts(cells);
     cells->Delete();
   }
   if ((sourceCells = this->GetSource()->GetLines())->GetNumberOfCells() > 0)
   {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs * numInputPts * sourceCells->GetSize());
+    cells->AllocateExact(numDirs * numInputPts * sourceCells->GetNumberOfCells(), //
+                         numDirs * numInputPts * sourceCells->GetNumberOfConnectivityIds());
     output->SetLines(cells);
     cells->Delete();
   }
   if ((sourceCells = this->GetSource()->GetPolys())->GetNumberOfCells() > 0)
   {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs * numInputPts * sourceCells->GetSize());
+    cells->AllocateExact(numDirs * numInputPts * sourceCells->GetNumberOfCells(), //
+                         numDirs * numInputPts * sourceCells->GetNumberOfConnectivityIds());
     output->SetPolys(cells);
     cells->Delete();
   }
   if ((sourceCells = this->GetSource()->GetStrips())->GetNumberOfCells() > 0)
   {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs * numInputPts * sourceCells->GetSize());
+    cells->AllocateExact(numDirs * numInputPts * sourceCells->GetNumberOfCells(), //
+                         numDirs * numInputPts * sourceCells->GetNumberOfConnectivityIds());
     output->SetStrips(cells);
     cells->Delete();
   }
