@@ -802,7 +802,21 @@ bool qMRMLLayoutManager::isEnabled() const
 void qMRMLLayoutManager::setEnabled(bool enable)
 {
   Q_D(qMRMLLayoutManager);
+  if (d->Enabled == enable)
+  {
+    return;
+  }
   d->Enabled = enable;
+  if (enable)
+  {
+    // Apply layout node changes that were ignored while the layout manager
+    // was disabled. Without this, the viewport remains empty when no further
+    // layout node modification arrives after enabling: at application
+    // startup the layout is applied while the layout manager is disabled and
+    // the main window enables it from its first show event, so whether the
+    // views appeared depended on the ordering of these events.
+    d->onLayoutNodeModifiedEvent(d->MRMLLayoutNode);
+  }
 }
 
 // --------------------------------------------------------------------------
