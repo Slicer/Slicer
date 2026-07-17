@@ -170,6 +170,41 @@ For more details, see the generated Slicer API documentation.
 # through the vtkMacroKitPythonWrap (from vtkAddon) and the generated "vtk*PythonInitImpl.cxx"
 # files do not include the names of the dependent VTK modules in the list used with
 # "vtkPythonUtil::ImportModule".
+#
+# The ``vtk`` module itself is a lazily-loading shim (see
+# GenerateLazyVtkModule.py), so the VTK modules that provide base classes of
+# the wrapped MRML and Slicer classes are imported explicitly: importing them
+# registers their classes with vtkPythonUtil so that the wrapped subclasses
+# resolve their bases. The remaining hundred-plus VTK modules load on demand.
+
+import vtkmodules.vtkCommonCore  # noqa: F401
+import vtkmodules.vtkCommonColor  # noqa: F401
+import vtkmodules.vtkCommonDataModel  # noqa: F401
+import vtkmodules.vtkCommonExecutionModel  # noqa: F401
+import vtkmodules.vtkCommonMath  # noqa: F401
+import vtkmodules.vtkCommonMisc  # noqa: F401
+import vtkmodules.vtkCommonTransforms  # noqa: F401
+import vtkmodules.vtkChartsCore  # noqa: F401
+import vtkmodules.vtkFiltersCore  # noqa: F401
+import vtkmodules.vtkFiltersGeneral  # noqa: F401
+import vtkmodules.vtkFiltersModeling  # noqa: F401
+import vtkmodules.vtkFiltersSources  # noqa: F401
+import vtkmodules.vtkImagingCore  # noqa: F401
+import vtkmodules.vtkInteractionStyle  # noqa: F401
+import vtkmodules.vtkInteractionWidgets  # noqa: F401
+import vtkmodules.vtkIOCore  # noqa: F401
+import vtkmodules.vtkIOImage  # noqa: F401
+import vtkmodules.vtkIOXML  # noqa: F401
+import vtkmodules.vtkIOXMLParser  # noqa: F401
+import vtkmodules.vtkRenderingAnnotation  # noqa: F401
+import vtkmodules.vtkRenderingContext2D  # noqa: F401
+import vtkmodules.vtkRenderingCore  # noqa: F401
+import vtkmodules.vtkRenderingFreeType  # noqa: F401
+import vtkmodules.vtkRenderingOpenGL2  # noqa: F401
+import vtkmodules.vtkRenderingUI  # noqa: F401
+import vtkmodules.vtkRenderingVolume  # noqa: F401
+import vtkmodules.vtkRenderingVolumeOpenGL2  # noqa: F401
+import vtkmodules.vtkViewsCore  # noqa: F401
 
 import vtk  # noqa: F401
 
@@ -207,11 +242,11 @@ for kit in available_kits:
 # of numpy or scipy at application startup on Windows 11 due to output redirection
 # (only needed for embedded Python, not for standalone).
 # See details in https://github.com/Slicer/Slicer/issues/5945
-# While the workaround is only needed for Windows 11, it is performed on
-# all operating systems to minimize differences of the startup process
-# between different platforms.
+# The workaround is only needed on Windows: on other platforms these imports
+# cost a noticeable fraction of the application startup time and the packages
+# load on first use instead.
 
-if not standalone_python:
+if not standalone_python and os.name == "nt":
     try:
         import numpy  # noqa: F401
         import scipy  # noqa: F401
