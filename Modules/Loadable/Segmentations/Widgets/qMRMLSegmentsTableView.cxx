@@ -657,6 +657,18 @@ void qMRMLSegmentsTableView::onSegmentsTableDoubleClicked(const QModelIndex& mod
     return;
   }
 
+  if (modelIndex.column() == d->Model->opacityColumn())
+  {
+    // Opacity is edited with the item delegate's editor. The DoubleClicked edit trigger is disabled
+    // (double-click on the name and color columns opens the terminology selector instead),
+    // so the editor must be opened explicitly here.
+    if (!this->readOnly())
+    {
+      d->SegmentsTable->edit(modelIndex);
+    }
+    return;
+  }
+
   vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
   if (modelIndex.column() == d->Model->colorColumn() || modelIndex.column() == d->Model->nameColumn())
   {
