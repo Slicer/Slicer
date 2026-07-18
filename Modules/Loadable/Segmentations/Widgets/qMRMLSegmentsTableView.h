@@ -231,7 +231,10 @@ protected slots:
   /// Handles clicks on the show status buttons
   void onShowStatusButtonClicked();
 
-  /// Handles clicks on a table cell (name + color change / terminology change)
+  /// Opens the editor for the segment property in the given cell
+  /// (terminology / color / name / opacity).
+  /// Called when a table cell is double-clicked. Also called when the color button is
+  /// clicked: the color cell is covered by the button, so double-click cannot reach it.
   void onSegmentsTableDoubleClicked(const QModelIndex& modelIndex);
 
   /// Handle MRML scene event
