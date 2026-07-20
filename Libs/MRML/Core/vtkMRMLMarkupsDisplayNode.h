@@ -489,6 +489,12 @@ public:
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
   vtkBooleanMacro(HandlesInteractive, bool);
+  /// If true, interaction handles remain interactive even when the markup node is locked.
+  /// Default is false. Set to true for markups where the interaction handles are essential
+  /// for defining the markup geometry and should remain usable when the node is locked (e.g., ROI, plane).
+  vtkGetMacro(InteractionAllowedWhileLocked, bool);
+  vtkSetMacro(InteractionAllowedWhileLocked, bool);
+  vtkBooleanMacro(InteractionAllowedWhileLocked, bool);
   vtkGetMacro(TranslationHandleVisibility, bool);
   vtkSetMacro(TranslationHandleVisibility, bool);
   vtkBooleanMacro(TranslationHandleVisibility, bool);
@@ -611,6 +617,7 @@ protected:
   double ActiveColor[3];
 
   bool HandlesInteractive;
+  bool InteractionAllowedWhileLocked;
   bool TranslationHandleVisibility;
   bool RotationHandleVisibility;
   bool ScaleHandleVisibility;
