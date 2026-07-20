@@ -3376,7 +3376,11 @@ def messageBox(text, parent=None, **kwargs):
     # Paraview's Edit / Find data dialog, MeshMixer's File/Preferences dialog).
     # By calling deleteLater, the messagebox is permanently deleted when the current call is completed.
     mbox.deleteLater()
-    return mbox.exec_()
+
+    # The message box waits for user input, therefore the normal cursor is displayed
+    # even if the caller has set a wait cursor.
+    with _temporaryNormalCursor():
+        return mbox.exec_()
 
 
 def createProgressDialog(parent=None, value=0, maximum=100, labelText="", windowTitle="Processing...", **kwargs):
@@ -3411,6 +3415,35 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
 
 
 from contextlib import contextmanager
+
+
+@contextmanager
+def _temporaryNormalCursor():
+    """Temporarily remove all override cursors (such as the wait cursor set by
+    :func:`tryWithErrorDisplay`) and restore them when the context manager exits.
+
+    It is useful for displaying the normal cursor while the application waits for user input,
+    for example in a modal dialog that is displayed while a long operation is in progress.
+    """
+    import logging, qt
+
+    # Cursor shapes are stored instead of the QCursor objects returned by overrideCursor(),
+    # because those objects are invalidated by restoreOverrideCursor().
+    # The number of iterations is limited to make sure the application never hangs here,
+    # even if the override cursor stack cannot be emptied for some unexpected reason.
+    maximumOverrideCursorCount = 50
+    overrideCursorShapes = []
+    while qt.QApplication.overrideCursor() and len(overrideCursorShapes) < maximumOverrideCursorCount:
+        overrideCursorShapes.append(qt.QApplication.overrideCursor().shape())
+        qt.QApplication.restoreOverrideCursor()
+    if qt.QApplication.overrideCursor():
+        logging.warning(f"Failed to restore the normal mouse cursor after {maximumOverrideCursorCount} attempts.")
+
+    try:
+        yield
+    finally:
+        for shape in reversed(overrideCursorShapes):
+            qt.QApplication.setOverrideCursor(qt.QCursor(shape))
 
 
 @contextmanager
