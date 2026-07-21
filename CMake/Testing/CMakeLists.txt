@@ -21,3 +21,17 @@ add_cmakescript_test(
 add_cmakescript_test(
   slicer_setting_variable_message_test
   CMake/UseSlicerMacros.cmake)
+
+if(UNIX)
+  add_test(
+    NAME cmake_slicer_extension_cpack_bundle_fixup_path_test
+    COMMAND ${CMAKE_COMMAND}
+      "-DSlicer_SOURCE_DIR=${Slicer_SOURCE_DIR}"
+      "-DTEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/SlicerExtensionCPackBundleFixupPathTest"
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/SlicerExtensionCPackBundleFixupPathTest.cmake"
+    )
+  set_tests_properties(cmake_slicer_extension_cpack_bundle_fixup_path_test PROPERTIES
+    LABELS CMake
+    PASS_REGULAR_EXPRESSION "SUCCESS"
+    )
+endif()
