@@ -11,12 +11,16 @@
 #   * Linux : extracts the tarball into ~/.local/opt, links a launcher into
 #             ~/.local/bin, adds a desktop menu entry, and prints — but never
 #             runs — the command that installs Slicer's runtime libraries.
+#             Set SLICER_INSTALL_DEPS to have it run that command for you.
 #   * macOS : mounts the .dmg and copies Slicer.app into ~/Applications.
 #
-# This never asks for root. Everything lands under $HOME: on Linux the system
-# libraries Slicer needs are left for you to install (or not) afterwards; on
-# macOS the app goes to ~/Applications, which LaunchServices indexes just like
-# /Applications, rather than to the root-owned system directory.
+# By default this never asks for root. Everything lands under $HOME: on Linux the
+# system libraries Slicer needs are left for you to install (or not) afterwards;
+# on macOS the app goes to ~/Applications, which LaunchServices indexes just like
+# /Applications, rather than to the root-owned system directory. The one opt-in
+# exception is SLICER_INSTALL_DEPS (Linux only): it runs the package-manager
+# command that installs those system libraries, using sudo when not already root
+# — meant for building Docker images and similar automation.
 #
 # When an installation already sits where this script would write, you are asked
 # whether to abort, replace it, install into another directory so both copies can
@@ -31,6 +35,18 @@
 #                        (default: ~/.local/opt on Linux, ~/Applications on macOS)
 #   SLICER_IF_EXISTING   what to do when an installation is already there:
 #                        prompt (default) | abort | reinstall | uninstall
+#   SLICER_NONINTERACTIVE  set (to any value) to never prompt, for automations
+#                        and CI. If the target version is already installed it is
+#                        reinstalled, unless SLICER_IF_EXISTING is set to abort or
+#                        uninstall. Every other override still applies — in
+#                        particular SLICER_VERSION to pin the version to install.
+#   SLICER_INSTALL_DEPS  set (to any value, Linux only) to actually run the
+#                        package-manager command that installs Slicer's runtime
+#                        system libraries, instead of only printing it. Uses sudo
+#                        when not already root. For building Docker images and
+#                        other automation; pair it with SLICER_NONINTERACTIVE.
+#   SLICER_QUIET         set to silence progress messages, the logo and the
+#                        download bar; warnings, errors and prompts still show
 #   NO_COLOR             set to disable colored output
 #
 # Docs: https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html
@@ -43,6 +59,9 @@ set -eu
 SLICER_RELEASE_TYPE="${SLICER_RELEASE_TYPE:-stable}"
 SLICER_VERSION="${SLICER_VERSION:-}"
 SLICER_IF_EXISTING="${SLICER_IF_EXISTING:-prompt}"
+SLICER_NONINTERACTIVE="${SLICER_NONINTERACTIVE:-}"
+SLICER_INSTALL_DEPS="${SLICER_INSTALL_DEPS:-}"
+SLICER_QUIET="${SLICER_QUIET:-}"
 BASE_URL="https://download.slicer.org/download"
 PACKAGES_API="https://slicer-packages.kitware.com/api/v1"
 
@@ -70,16 +89,16 @@ setup_colors() {
   fi
 }
 
-log()  { printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
 warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
 err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
-# Print the colored 3D Slicer logo. Skipped when stdout is not a terminal
-# or when NO_COLOR is set, so piped/redirected output stays clean.
+# Print the colored 3D Slicer logo. Skipped when stdout is not a terminal, when
+# NO_COLOR is set, or in quiet mode, so piped/redirected output stays clean.
 print_logo() {
-  [ -t 1 ] && [ -z "${NO_COLOR:-}" ] || return 0
+  [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && [ -z "$SLICER_QUIET" ] || return 0
   printf '%s%s%s%s%s%s\n' \
     '[38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m ' \
     '[38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;1m [38;2;1;1;1m [38;2;1;1;1m [38;2;0;0;0m [38;2;0;0;0m [38;2;0;0;0m ' \
@@ -371,20 +390,21 @@ require_tools() {
 }
 
 # Download a URL to a file over enforced HTTPS/TLS 1.2, with retries.
-# The live progress bar is shown only when stderr is an interactive terminal.
+# The live progress bar is shown only when stderr is an interactive terminal and
+# SLICER_QUIET is unset.
 # When output is piped, redirected, or logged, the terminal never collapses the
 # bar's carriage returns, so each update would append instead of overwrite and
 # flood the console with '#' characters (burying real error messages). In that
 # case we stay quiet but keep error reporting via --show-error / no -q suppression.
 download() {
   if have curl; then
-    if [ -t 2 ]; then progress='--progress-bar'; else progress='--silent --show-error'; fi
+    if [ -t 2 ] && [ -z "$SLICER_QUIET" ]; then progress='--progress-bar'; else progress='--silent --show-error'; fi
     # shellcheck disable=SC2086
     curl --fail --location --proto '=https' --tlsv1.2 \
          --retry 3 --retry-delay 2 --retry-connrefused \
          $progress --output "$2" "$1"
   elif have wget; then
-    if [ -t 2 ]; then progress='--show-progress'; else progress=''; fi
+    if [ -t 2 ] && [ -z "$SLICER_QUIET" ]; then progress='--show-progress'; else progress=''; fi
     # shellcheck disable=SC2086
     wget --https-only --secure-protocol=TLSv1_2 --tries=3 --timeout=30 \
          $progress -qO "$2" "$1"
@@ -598,6 +618,11 @@ resolve_existing_install() {
     *) err "SLICER_IF_EXISTING must be 'prompt', 'abort', 'reinstall' or 'uninstall' (got '$SLICER_IF_EXISTING')." ;;
   esac
 
+  if [ -n "$SLICER_NONINTERACTIVE" ]; then
+    log "$label is already installed at $occupied; reinstalling (non-interactive mode)."
+    return 0
+  fi
+
   if ! tty_available; then
     warn "$label is already installed at $occupied, and there is no terminal to ask"
     warn "what to do about it. Replacing it. Set SLICER_IF_EXISTING=abort to skip."
@@ -629,19 +654,50 @@ resolve_existing_install() {
 # ---------------------------------------------------------------------------- #
 # Linux
 # ---------------------------------------------------------------------------- #
-# Slicer links against a handful of system libraries that we deliberately do NOT
-# install. Doing so needs root, and asking a `curl | sh` script for sudo is a far
-# bigger ask than the install itself — the whole point is that this script only
-# ever writes under $HOME. So print the command for the detected package manager
-# and let the user decide whether to run it.
-print_deps_hint() {
+# Run one package-manager command line during an auto dependency install,
+# echoing it first so the (Docker) build log records exactly what ran. $1 is a
+# command line we assembled ourselves from fixed tokens, so the deliberate word
+# splitting is safe. Any failure is fatal — checked explicitly with err() rather
+# than left to `set -e`, whose handling of a function called from an `&&` list is
+# too shell-dependent to trust: a failed dependency install must fail the whole
+# install, so a Docker build stops instead of baking a broken image that silently
+# lacks the libraries.
+run_deps_cmd() {
+  log "Running: $1"
+  # shellcheck disable=SC2086
+  $1 || err "Dependency installation failed (command: $1)."
+}
+
+# Slicer links against a handful of system libraries that, by default, we
+# deliberately do NOT install. Doing so needs root, and asking a `curl | sh`
+# script for sudo is a far bigger ask than the install itself — the whole point
+# is that this script only ever writes under $HOME. So print the command for the
+# detected package manager and let the user decide whether to run it.
+#
+# Setting SLICER_INSTALL_DEPS opts into running that command instead of printing
+# it, using sudo when not already root: the mode for building Docker images and
+# other automation where root is available and installing system packages is the
+# whole point.
+handle_linux_deps() {
+  auto="$SLICER_INSTALL_DEPS"
+
+  # Quiet mode suppresses the printed hint: its prose goes through log(), but the
+  # install command is a bare printf, so a half-shown hint would be worse. It
+  # never suppresses an actual auto-install — that still has to happen.
+  [ -n "$auto" ] || [ -z "$SLICER_QUIET" ] || return 0
+
   if [ "$(id -u)" -eq 0 ]; then sudo_prefix=''; else sudo_prefix='sudo '; fi
 
   if have apt-get; then
+    # A fresh container image ships with empty package lists, which would both
+    # fail the install and mislead the libasound2t64 probe below into choosing
+    # the wrong ALSA package. When auto-installing, refresh them first; in hint
+    # mode we only read local lists (apt-cache), which is side-effect free.
+    [ -n "$auto" ] && run_deps_cmd "${sudo_prefix}apt-get update"
+
     # Common Debian/Ubuntu runtime libraries required by Slicer.
     pkgs="libglu1-mesa libpulse-mainloop-glib0 libnss3 qt5dxcb-plugin libsm6"
     # ALSA lib was renamed during the 64-bit time_t transition (Ubuntu 24.04+).
-    # apt-cache reads local package lists only, so this needs no privileges.
     if apt-cache show libasound2t64 >/dev/null 2>&1; then
       pkgs="$pkgs libasound2t64"
     else
@@ -656,10 +712,22 @@ print_deps_hint() {
   elif have pacman; then
     pkgs="glu nss alsa-lib libxrender libxcomposite libxdamage libxrandr"
     pkgs="$pkgs libxcursor libxi libxtst ftgl"
-    cmd="${sudo_prefix}pacman -S --needed $pkgs"
+    # --noconfirm only when auto-installing, so an unattended build never blocks
+    # on a prompt; the printed hint keeps the interactive default for humans.
+    if [ -n "$auto" ]; then confirm='--noconfirm '; else confirm=''; fi
+    cmd="${sudo_prefix}pacman -S --needed ${confirm}$pkgs"
   else
+    if [ -n "$auto" ]; then
+      err "SLICER_INSTALL_DEPS is set but no supported package manager (apt-get, dnf, pacman) was found; install Slicer's runtime libraries manually."
+    fi
     warn "Unrecognized package manager. If Slicer fails to start, install its"
     warn "runtime libraries manually (see the Slicer docs)."
+    return 0
+  fi
+
+  if [ -n "$auto" ]; then
+    run_deps_cmd "$cmd"
+    log "${C_GREEN}Slicer's runtime system libraries are installed.${C_RESET}"
     return 0
   fi
 
@@ -931,9 +999,10 @@ main() {
 
   log "${C_GREEN}3D Slicer installation complete.${C_RESET}"
 
-  # Printed last so the one thing that may still need the user's attention —
-  # and their sudo password — is the last thing they read.
-  if [ "$OS" = Linux ]; then print_deps_hint; fi
+  # Left for last so the one thing that may still need the user's attention —
+  # and their sudo password — is the last thing they read (or, with
+  # SLICER_INSTALL_DEPS, the last thing that runs).
+  if [ "$OS" = Linux ]; then handle_linux_deps; fi
 }
 
 main "$@"
