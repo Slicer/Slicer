@@ -105,7 +105,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         rotation.RotateX(15.0)
         rotation.RotateZ(78)
 
-        applyTransform = vtk.vtkTransformPolyDataFilter()
+        applyTransform = vtk.vtkTransformFilter()
         applyTransform.SetTransform(rotation)
         applyTransform.SetInputConnection(cubeSource.GetOutputPort())
         applyTransform.Update()
@@ -151,7 +151,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         rotation.RotateX(15.0)
         rotation.RotateZ(78)
 
-        applyTransform = vtk.vtkTransformPolyDataFilter()
+        applyTransform = vtk.vtkTransformFilter()
         applyTransform.SetTransform(rotation)
         applyTransform.SetInputConnection(cubeSource.GetOutputPort())
         applyTransform.Update()

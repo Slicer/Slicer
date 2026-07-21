@@ -29,7 +29,6 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkCollection.h>
-#include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
 #include <vtkLinearTransform.h>
@@ -172,15 +171,10 @@ bool vtkMRMLTransformNode::AreTransformsEqual(vtkAbstractTransform* transform1, 
   {
     return false;
   }
-  vtkCollectionSimpleIterator it1;
-  transformList1->InitTraversal(it1);
-  vtkCollectionSimpleIterator it2;
-  transformList2->InitTraversal(it2);
-  vtkObject* transformComponent1 = nullptr;
-  vtkObject* transformComponent2 = nullptr;
-  while ((transformComponent1 = transformList1->GetNextItemAsObject(it1)) != nullptr //
-         && (transformComponent2 = transformList2->GetNextItemAsObject(it2)) != nullptr)
+  for (int i = 0; i < transformList1->GetNumberOfItems(); ++i)
   {
+    vtkObject* transformComponent1 = transformList1->GetItemAsObject(i);
+    vtkObject* transformComponent2 = transformList2->GetItemAsObject(i);
     if (transformComponent1 != transformComponent2)
     {
       return false;
@@ -214,11 +208,13 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     FlattenGeneralTransform(sourceTransformList.GetPointer(), src);
 
     // Copy the concatenated transforms
-    vtkCollectionSimpleIterator it;
-    vtkAbstractTransform* concatenatedTransform = nullptr;
-    dstGeneral->PostMultiply();
-    for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sourceTransformList->GetNumberOfItems(); ++i)
     {
+      auto* concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetItemAsObject(i));
+      if (!concatenatedTransform)
+      {
+        continue;
+      }
       vtkAbstractTransform* concatenatedTransformCopy = concatenatedTransform->MakeTransform();
       DeepCopyTransform(concatenatedTransformCopy, concatenatedTransform);
       dstGeneral->Concatenate(concatenatedTransformCopy);
@@ -357,10 +353,13 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "TransformToParent: \n";
     vtkNew<vtkCollection> sourceTransformList;
     FlattenGeneralTransform(sourceTransformList.GetPointer(), this->TransformToParent);
-    vtkCollectionSimpleIterator it;
-    vtkAbstractTransform* concatenatedTransform = nullptr;
-    for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sourceTransformList->GetNumberOfItems(); ++i)
     {
+      auto* concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetItemAsObject(i));
+      if (!concatenatedTransform)
+      {
+        continue;
+      }
       os << indent.GetNextIndent() << "Transform: " << concatenatedTransform->GetClassName() << "\n";
       concatenatedTransform->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
     }
@@ -372,10 +371,13 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "TransformFromParent: \n";
     vtkNew<vtkCollection> sourceTransformList;
     FlattenGeneralTransform(sourceTransformList.GetPointer(), this->TransformFromParent);
-    vtkCollectionSimpleIterator it;
-    vtkAbstractTransform* concatenatedTransform = nullptr;
-    for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sourceTransformList->GetNumberOfItems(); ++i)
     {
+      auto* concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetItemAsObject(i));
+      if (!concatenatedTransform)
+      {
+        continue;
+      }
       os << indent.GetNextIndent() << "Transform: " << concatenatedTransform->GetClassName() << "\n";
       concatenatedTransform->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
     }
@@ -1512,10 +1514,13 @@ int vtkMRMLTransformNode::IsLinear()
   {
     vtkNew<vtkCollection> transformList;
     FlattenGeneralTransform(transformList, compositeTransform);
-    vtkCollectionSimpleIterator it;
-    vtkAbstractTransform* transformComponent = nullptr;
-    for (transformList->InitTraversal(it); (transformComponent = vtkAbstractTransform::SafeDownCast(transformList->GetNextItemAsObject(it)));)
+    for (int i = 0; i < transformList->GetNumberOfItems(); ++i)
     {
+      auto* transformComponent = vtkAbstractTransform::SafeDownCast(transformList->GetItemAsObject(i));
+      if (!transformComponent)
+      {
+        continue;
+      }
       if (!transformComponent->IsA("vtkLinearTransform"))
       {
         // found a non-linear component

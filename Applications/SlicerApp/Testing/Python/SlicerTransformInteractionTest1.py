@@ -321,7 +321,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         rotation = vtk.vtkTransform()
         rotation.RotateY(45.0)
 
-        applyTransform = vtk.vtkTransformPolyDataFilter()
+        applyTransform = vtk.vtkTransformFilter()
         applyTransform.SetTransform(rotation)
         applyTransform.SetInputConnection(movedCubeSource.GetOutputPort())
         applyTransform.Update()
