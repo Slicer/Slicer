@@ -1288,7 +1288,6 @@ public:
 
   vtkMRMLSliceIntersectionInteractionRepresentation* External;
 
-  vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
   vtkSmartPointer<vtkMRMLSliceDisplayNode> SliceDisplayNode;
 
   std::deque<SliceIntersectionInteractionDisplayPipeline*> SliceIntersectionInteractionDisplayPipelines;
@@ -1333,7 +1332,7 @@ vtkMRMLSliceIntersectionInteractionRepresentation::vtkMRMLSliceIntersectionInter
 //----------------------------------------------------------------------
 vtkMRMLSliceIntersectionInteractionRepresentation::~vtkMRMLSliceIntersectionInteractionRepresentation()
 {
-  this->SetSliceNode(nullptr);
+  this->SetViewNode(nullptr);
   this->SetMRMLApplicationLogic(nullptr);
   delete this->Internal;
 }
@@ -1394,7 +1393,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModifiedCallbac
   }
 
   // One of the intersecting slices are modified, update all slice intersections
-  self->SliceNodeModified(self->Internal->SliceNode);
+  self->SliceNodeModified(self->GetSliceNode());
 }
 
 //----------------------------------------------------------------------
@@ -1404,7 +1403,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModified(vtkMRM
   {
     return;
   }
-  if (sliceNode == this->Internal->SliceNode)
+  if (sliceNode == this->GetSliceNode())
   {
     // update all slice intersection
     for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
@@ -1448,14 +1447,14 @@ SliceIntersectionInteractionDisplayPipeline* vtkMRMLSliceIntersectionInteraction
 //----------------------------------------------------------------------
 void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionDisplay(SliceIntersectionInteractionDisplayPipeline* pipeline)
 {
-  if (!pipeline || !this->Internal->SliceNode || pipeline->SliceLogic == nullptr)
+  if (!pipeline || !this->GetSliceNode() || pipeline->SliceLogic == nullptr)
   {
     return;
   }
   vtkMRMLSliceNode* intersectingSliceNode = pipeline->SliceLogic->GetSliceNode();
-  if (!pipeline->SliceLogic || !this->GetVisibility()                                       //
-      || !intersectingSliceNode                                                             //
-      || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup() //
+  if (!pipeline->SliceLogic || !this->GetVisibility()                                //
+      || !intersectingSliceNode                                                      //
+      || this->GetSliceNode()->GetViewGroup() != intersectingSliceNode->GetViewGroup() //
       || !intersectingSliceNode->IsMappedInLayout())
   {
     pipeline->SetIntersectionsVisibility(false);
@@ -1507,7 +1506,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
   // We know that we need the slice intersection points, find them
   // Get slice node transforms
-  vtkMatrix4x4* xyToRAS = this->Internal->SliceNode->GetXYToRAS();
+  vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
   vtkNew<vtkMatrix4x4> rasToXY;
   vtkMatrix4x4::Invert(xyToRAS, rasToXY);
 
@@ -2185,7 +2184,7 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetS
   {
     return this->Internal->SliceDisplayNode;
   }
-  vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode(this->Internal->SliceNode);
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode(this->GetSliceNode());
   this->SetSliceDisplayNode(sliceDisplayNode);
   return sliceDisplayNode;
 }
@@ -2207,22 +2206,23 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetS
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::SetSliceNode(vtkMRMLSliceNode* sliceNode)
+void vtkMRMLSliceIntersectionInteractionRepresentation::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  if (sliceNode == this->Internal->SliceNode)
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
+  if (sliceNode == this->GetSliceNode())
   {
     // no change
     return;
   }
-  if (this->Internal->SliceNode)
+  if (this->GetSliceNode())
   {
-    this->Internal->SliceNode->RemoveObserver(this->Internal->SliceNodeModifiedCommand);
+    this->GetSliceNode()->RemoveObserver(this->Internal->SliceNodeModifiedCommand);
   }
   if (sliceNode)
   {
     sliceNode->AddObserver(vtkCommand::ModifiedEvent, this->Internal->SliceNodeModifiedCommand.GetPointer());
   }
-  this->Internal->SliceNode = sliceNode;
+  this->Superclass::SetViewNode(viewNode);
 
   this->SetSliceDisplayNode(nullptr);
   vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode(sliceNode);
@@ -2280,7 +2280,7 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::DistanceFromSliceInterse
       double point2_XY_h[4] = { point2_XY[0], point2_XY[1], point2_XY[2], 1 };
 
       // Now convert to RAS coordinates
-      vtkMatrix4x4* XYtoRAS = this->Internal->SliceNode->GetXYToRAS();
+      vtkMatrix4x4* XYtoRAS = this->GetSliceNode()->GetXYToRAS();
       double point1_RAS[4] = { 0, 0, 0, 1 };
       double point2_RAS[4] = { 0, 0, 0, 1 };
       XYtoRAS->MultiplyPoint(point1_XY_h, point1_RAS);
@@ -2298,7 +2298,7 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::DistanceFromSliceInterse
 //----------------------------------------------------------------------
 vtkMRMLSliceNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceNode()
 {
-  return this->Internal->SliceNode;
+  return vtkMRMLSliceNode::SafeDownCast(this->GetViewNode());
 }
 
 //----------------------------------------------------------------------
@@ -2308,7 +2308,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogi
   {
     return;
   }
-  if (sliceLogic->GetSliceNode() == this->Internal->SliceNode)
+  if (sliceLogic->GetSliceNode() == this->GetSliceNode())
   {
     // it is the slice itself, not an intersecting slice
     return;
@@ -2324,7 +2324,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogi
   pipeline->AddActors(this->Renderer);
   this->Internal->SliceIntersectionInteractionDisplayPipelines.push_back(pipeline);
   this->UpdateSliceIntersectionDisplay(pipeline);
-  this->SliceNodeModified(this->Internal->SliceNode);
+  this->SliceNodeModified(this->GetSliceNode());
 }
 
 //----------------------------------------------------------------------
@@ -2398,7 +2398,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
 
   size_t numberOfIntersections = this->Internal->SliceIntersectionInteractionDisplayPipelines.size();
   int numberOfFoundIntersectionPoints = 0;
-  if (!this->Internal->SliceNode)
+  if (!this->GetSliceNode())
   {
     return;
   }
@@ -2478,7 +2478,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
   {
     this->SliceIntersectionPointFound = false;
     // No slice intersections, use slice centerpoint
-    int* sliceDimension = this->Internal->SliceNode->GetDimensions();
+    int* sliceDimension = this->GetSliceNode()->GetDimensions();
     this->SliceIntersectionPoint[0] = sliceDimension[0] / 2.0;
     this->SliceIntersectionPoint[1] = sliceDimension[1] / 2.0;
     this->SliceIntersectionPoint[2] = 0.0;

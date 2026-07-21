@@ -49,6 +49,14 @@ int vtkMRMLInteractionNode::GetInteractionModeByString(const char* modeString)
   {
     return (vtkMRMLInteractionNode::ViewTransform);
   }
+  else if (!strcmp(modeString, "AdjustWindowLevel"))
+  {
+    return (vtkMRMLInteractionNode::AdjustWindowLevel);
+  }
+  else if (!strcmp(modeString, "Scroll"))
+  {
+    return (vtkMRMLInteractionNode::Scroll);
+  }
   //  else if (!strcmp (modeString, "SelectRegion" ))
   //    {
   //    return ( vtkMRMLInteractionNode::SelectRegion);
@@ -270,6 +278,14 @@ const char* vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
   else if (mode == this->ViewTransform)
   {
     return "ViewTransform";
+  }
+  else if (mode == this->AdjustWindowLevel)
+  {
+    return "AdjustWindowLevel";
+  }
+  else if (mode == this->Scroll)
+  {
+    return "Scroll";
   }
   //  else if (mode == this->SelectRegion)
   //    {

@@ -19,6 +19,7 @@
         <file alias="MousePlaceMode.png">Icons/MousePlaceMode.png</file>
         <file alias="MouseViewTransformMode.png">Icons/MouseViewTransformMode.png</file>
         <file alias="MouseWindowLevelMode.png">Icons/MouseWindowLevelMode.png</file>
+        <file alias="MouseScrollMode.png">Icons/MouseScrollMode.png</file>
         <file alias="ExtensionIncompatible.svg">Icons/ExtensionIncompatible.svg</file>
         <file alias="TreeClose.png">Icons/TreeClose.png</file>
         <file alias="TreeOpen.png">Icons/TreeOpen.png</file>
