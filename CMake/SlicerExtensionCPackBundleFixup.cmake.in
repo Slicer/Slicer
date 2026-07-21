@@ -1,5 +1,6 @@
 
-include(@Slicer_CMAKE_DIR@/BundleUtilitiesWithRPath.cmake)
+include("@Slicer_CMAKE_DIR@/BundleUtilitiesWithRPath.cmake")
+include("@Slicer_CMAKE_DIR@/SlicerExtensionCPackBundleFixupPath.cmake")
 #include(BundleUtilities)
 
 #
@@ -95,8 +96,12 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   # Libraries that are not part of the Slicer build tree and not part of the extension
   # build tree are considered as third-party libraries.
-  if(NOT item MATCHES "@Slicer_SUPERBUILD_DIR@"
-      AND NOT item MATCHES "${extension_build_dir}"
+  slicer_extension_cpack_is_path_in_directory(
+    "${item}" "@Slicer_SUPERBUILD_DIR@" item_in_slicer_build_dir)
+  slicer_extension_cpack_is_path_in_directory(
+    "${item}" "${extension_build_dir}" item_in_extension_build_dir)
+  if(NOT item_in_slicer_build_dir
+      AND NOT item_in_extension_build_dir
       AND item MATCHES "\\.(so|dylib)$"
       )
     set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_LIB_DIR@")
@@ -248,22 +253,11 @@ function(fixup_extension ext libs dirs)
 
       set(key_skip 0)
 
-      # Check if the item belong to an extension package itself built within a
-      # "Slicer" build tree. This may be done in custom application (e.g SlicerSALT)
-      # where bundling a specific extension (through -DSlicer_EXTENSION_SOURCE_DIRS=...)
-      # is not possible and instead the extension is packaged first and its content
-      # is then copied into the custom application package.
-      set(in_extension_build_dir_within_slicer_build_dir 0)
-      string(FIND "${extension_build_dir}" "@Slicer_SUPERBUILD_DIR@" pos)
-      if(${pos} EQUAL 0)
-        string(FIND "${${key}_ITEM}" "${extension_build_dir}" pos)
-        if(${pos} EQUAL 0)
-          set(in_extension_build_dir_within_slicer_build_dir 1)
-        endif()
-      endif()
-
-      string(FIND "${${key}_ITEM}" "@Slicer_SUPERBUILD_DIR@" pos)
-      if(${pos} EQUAL 0 AND NOT in_extension_build_dir_within_slicer_build_dir)
+      # Skip libraries owned by Slicer. Extensions built inside the Slicer tree
+      # retain ownership of files in their own build directory.
+      slicer_extension_cpack_item_is_slicer_owned(
+        "${${key}_ITEM}" "${extension_build_dir}" "@Slicer_SUPERBUILD_DIR@" item_is_slicer_owned)
+      if(item_is_slicer_owned)
         message(STATUS "${i}/${n}: skipping '${${key}_ITEM}'")
         set(key_skip 1)
       endif()
