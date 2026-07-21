@@ -948,6 +948,45 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::AddScaleEdgeIntersection(i
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerMarkupsInteractionWidgetRepresentation::CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+                                                                  int& foundComponentType,
+                                                                  int& foundComponentIndex,
+                                                                  double& closestDistance2)
+{
+  foundComponentType = InteractionNone;
+  foundComponentIndex = -1;
+  closestDistance2 = VTK_DOUBLE_MAX;
+
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
+  if (!markupsNode || !displayNode)
+  {
+    return;
+  }
+
+  if (!markupsNode->GetLocked())
+  {
+    Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+    return;
+  }
+
+  // Node is locked. For markups where interaction is allowed while locked (ROI, plane),
+  // only scale handles remain interactive — translation and rotation are blocked.
+  if (!displayNode->GetInteractionAllowedWhileLocked())
+  {
+    return;
+  }
+
+  Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType != InteractionScaleHandle)
+  {
+    foundComponentType = InteractionNone;
+    foundComponentIndex = -1;
+    closestDistance2 = VTK_DOUBLE_MAX;
+  }
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetApplyScaleToPosition(int type, int index)
 {
   if (type != InteractionScaleHandle)

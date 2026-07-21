@@ -87,6 +87,8 @@ public:
 
   bool IsDisplayable() override;
 
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+
   void CreateScaleHandles() override;
 
   void GetInteractionHandleAxisLocal(int type, int index, double axis_Local[3]) override;
