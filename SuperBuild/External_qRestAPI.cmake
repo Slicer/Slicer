@@ -40,7 +40,10 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "88c02c5d90169dfe065fa068969e59ada314d3cb"
+    # CMake infrastructure modernization: removes the legacy
+    # UseqRestAPI.cmake / qRestAPI_USE_FILE and exports an imported target,
+    # which is why Base/QTCore no longer includes qRestAPI_USE_FILE.
+    "cc96cad3dfcdf489dfeb642f2a0d703f38e4a96d"
     QUIET
     )
 
