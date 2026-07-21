@@ -206,13 +206,13 @@ if(APPLE)
   set(EXTENSION_SUPERBUILD_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR})
   get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_DIR}/.. ABSOLUTE)
 
-  # If any, resolve synthetic firmlink  (e.g from "/D/P/A" to "/Users/svc-dashboard/D/P/A")
+  # Resolve a synthetic firmlink, if present (e.g., from "/D/P/A" to
+  # "/Users/svc-dashboard/D/P/A").
   #
-  # Since the output of "otool -L" reports paths with synthetic firmlinks resolved
-  # (see GetPrerequisitesWithRPath), we are using REAL_PATH below to also resolve
-  # Slicer_SUPERBUILD_DIR and ensure that the test in "SlicerExtensionCPackBundleFixup.cmake.in"
-  # checking if "${key}_ITEM" is a library built in Slicer itself work as expected.
-  file(REAL_PATH ${Slicer_SUPERBUILD_DIR} Slicer_SUPERBUILD_DIR)
+  # Canonicalize the Slicer root. The generated extension bundle-fixup script
+  # also canonicalizes each candidate because otool may use either the logical
+  # or physical spelling of a path containing a synthetic firmlink.
+  file(REAL_PATH "${Slicer_SUPERBUILD_DIR}" Slicer_SUPERBUILD_DIR)
 
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_CANDIDATES_PATTERNS
