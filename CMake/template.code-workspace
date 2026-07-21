@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "@Slicer_SOURCE_DIR@"
+    },
+    {
+      "path": "@Slicer_BINARY_DIR@"
+    },
+    @VS_CODE_WORKSPACE_Slicer_EXTENSION_SOURCE_DIRS_CONFIG@
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "@PYTHON_EXECUTABLE@",
+  },
+}
