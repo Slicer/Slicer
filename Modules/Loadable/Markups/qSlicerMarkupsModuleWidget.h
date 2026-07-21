@@ -191,6 +191,18 @@ public slots:
   void onRightClickActiveMarkupTableWidget(QPoint pos);
   /// Add the coordinates of the currently selected markups as strings to the given menu, then add a separator
   void addSelectedCoordinatesToMenu(QMenu* menu);
+  /// Open a color picker and apply the chosen color to all currently selected control points.
+  void onSetColorOfHighlightedControlPointsTriggered();
+  /// Clear the per-point color override on all currently selected control points.
+  void onClearColorOfHighlightedControlPointsTriggered();
+  /// Open a color picker pre-filled from the first row, then apply the chosen color to every row in \a rows.
+  void pickAndApplyPerPointColor(const QList<int>& rows);
+
+protected:
+  /// Return the unique sorted control-point row indices currently selected in the table.
+  QList<int> highlightedControlPointRowIndices() const;
+
+public slots:
   /// Jump slices action slot
   void onJumpSlicesActionTriggered();
   /// Refocus cameras action slot

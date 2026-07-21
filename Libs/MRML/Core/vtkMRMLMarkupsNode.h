@@ -593,6 +593,50 @@ public:
   void SetNthControlPointDescription(int n, std::string description);
   ///@}
 
+  ///@{
+  /// Per-control-point color override.
+  ///
+  /// Stored as PointData arrays on the control point dataset
+  /// (\sa GetControlPointDataSet):
+  ///  - `Color` (vtkUnsignedCharArray, 4 components, RGBA in 0-255)
+  ///  - `ColorOverridden` (vtkUnsignedCharArray, 1 component, 0 or 1)
+  /// The arrays are kept in sync with `NumberOfControlPoints` automatically
+  /// across Add/Insert/Remove/Swap/RemoveAll. The `Color` array name is
+  /// reserved for this convenience API; user-added per-point arrays should
+  /// use other names.
+  ///
+  /// \sa vtkMRMLMarkupsDisplayNode::UseControlPointColors for the toggle
+  /// that activates per-point color rendering and the precedence rules.
+  void SetNthControlPointColor(int n, double r, double g, double b, double a = 1.0);
+  void SetNthControlPointColor(int n, const double rgba[4]);
+  /// Returns true if the control point has a per-point color override; rgba is filled in.
+  /// If no override, rgba is set to (0, 0, 0, 0) and the method returns false.
+  bool GetNthControlPointColor(int n, double rgba[4]);
+  bool IsNthControlPointColorOverridden(int n);
+  /// Clear the per-point color override on the Nth control point so the
+  /// display-node fallback colors apply again.
+  void ClearNthControlPointColor(int n);
+  /// Clear all per-point color overrides on this node so all control points
+  /// fall back to the display node's Color/SelectedColor/ActiveColor.
+  void ClearAllControlPointColors();
+
+  /// Direct access to the per-control-point Color (4-component RGBA bytes)
+  /// and ColorOverridden (1-component bool flag) arrays. Returns nullptr
+  /// when the array does not yet exist on the dataset (i.e. no override has
+  /// ever been set on this node). Per-frame readers can hoist these out of
+  /// inner loops to skip repeated SafeDownCast lookups.
+  vtkUnsignedCharArray* GetControlPointColorArray();
+  vtkUnsignedCharArray* GetControlPointColorOverriddenArray();
+  ///@}
+
+  /// Get the control point dataset: a vtkPolyData mirroring control points
+  /// (one point per control point, in node-local coordinates) whose
+  /// PointData container holds per-control-point arrays such as `Color` and
+  /// `ColorOverridden`. Additional named arrays can be attached for
+  /// measurement-based per-point coloring. Points and PointData arrays are
+  /// kept in sync with `NumberOfControlPoints` by this node.
+  vtkPolyData* GetControlPointDataSet();
+
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
   bool CanApplyNonLinearTransforms() const override;
@@ -971,6 +1015,26 @@ protected:
 
   std::string GenerateControlPointLabel(int controlPointIndex);
 
+  /// Refresh control point dataset points to match the current control points
+  /// (positions in node-local coordinates). Does not touch PointData arrays.
+  void UpdateControlPointDataSetPoints();
+
+  /// Resize all PointData arrays on the control point dataset to match
+  /// `NumberOfControlPoints`. Newly-grown entries are zero-initialised.
+  /// Empty arrays (size 0) are left alone; they participate in resizing
+  /// only once they have any tuples written.
+  void SyncControlPointDataSetArrays();
+
+  /// Insert a default-valued tuple at \a insertIndex into every non-empty
+  /// PointData array on the control point dataset.
+  void InsertControlPointDataSetTupleAt(int insertIndex);
+
+  /// Remove the tuple at \a removeIndex from every non-empty PointData array.
+  void RemoveControlPointDataSetTupleAt(int removeIndex);
+
+  /// Swap two tuples in every non-empty PointData array on the control point dataset.
+  void SwapControlPointDataSetTuples(int m1, int m2);
+
   virtual void UpdateCurvePolyFromControlPoints();
 
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
@@ -1016,6 +1080,13 @@ protected:
   /// Stores control point positions in a polydata (in local coordinate system).
   /// Line cells connect all points into a curve.
   vtkSmartPointer<vtkPolyData> CurveInputPoly;
+
+  /// Polydata mirror of the control points: one point per control point in
+  /// node-local coordinates, with PointData arrays holding per-control-point
+  /// attributes (e.g. `Color`, `ColorOverridden`). Kept in sync with
+  /// `NumberOfControlPoints` on every Add/Insert/Remove/Swap operation.
+  /// \sa GetControlPointDataSet
+  vtkSmartPointer<vtkPolyData> ControlPointDataSet;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
   vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;
