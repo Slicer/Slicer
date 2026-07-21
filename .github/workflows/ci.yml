@@ -59,6 +59,22 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.superbuild-changes.outputs.all_changed_files }}
 
+      - name: "Retrieve SHA associated with 'nightly-main' branch"
+        id: retrieve-nightly-main-sha
+        run: |
+          sha=$(git rev-parse origin/nightly-main)
+          echo "sha [$sha]"
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+
+      - name: "Retrieve metadata associated with 'slicer/slicer-base:latest' Docker image"
+        id: retrieve-docker-slicer-base-metadata
+        run: |
+          docker pull slicer/slicer-base:latest
+          slicer_version=$(docker inspect --format json slicer/slicer-base:latest | \
+            jq '.[0].Config.Env[] | select(startswith("SLICER_VERSION=")) | split("=")[1]')
+          echo "slicer_version [$slicer_version]"
+          echo "slicer_version=$slicer_version" >> $GITHUB_OUTPUT
+
       # Check prerequisites for the build
       - name: "Check Prerequisites"
         id: check-prereqisities
@@ -66,13 +82,19 @@ jobs:
           if [[ $SUPERBUILD_CHANGED == "true" ]]; then
             echo "::warning ::Skipping Slicer build due to changes in SuperBuild files relative to 'nightly-main' branch."
           fi
+          if [[ $DOCKER_IMAGE_UPDATED == "false" ]]; then
+            echo "::warning ::Skipping Slicer build because latest 'slicer/slicer-base' docker image is not yet published."
+          fi
         env:
           SUPERBUILD_CHANGED: ${{ steps.superbuild-changes.outputs.any_changed }}
+          DOCKER_IMAGE_UPDATED: ${{ startsWith(steps.retrieve-nightly-main-sha.outputs.sha, steps.retrieve-docker-slicer-base-metadata.outputs.slicer_version) }}
 
       # Build Slicer if relevant paths were changed and no SuperBuild changes were detected
       - name: "Build Slicer"
         id: slicer-build
-        if: ${{ steps.changes.outputs.paths-to-include == 'true' && steps.superbuild-changes.outputs.any_changed == 'false' }}
+        if:
+          ${{ steps.changes.outputs.paths-to-include == 'true' && steps.superbuild-changes.outputs.any_changed == 'false'
+          && startsWith(steps.retrieve-nightly-main-sha.outputs.sha, steps.retrieve-docker-slicer-base-metadata.outputs.slicer_version) }}
         uses: ./.github/actions/slicer-build
 
       # Upload the Slicer package artifact if the build was successful
