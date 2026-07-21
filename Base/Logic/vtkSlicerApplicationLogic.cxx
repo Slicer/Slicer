@@ -16,6 +16,7 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkDataIOManagerLogic.h>
+#include <vtkMRMLNode.h>
 #include <vtkMRMLRemoteIOLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
@@ -28,7 +29,10 @@
 #include <vtkPersonInformation.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkEventBroker.h>
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkObjectFactory.h>
 #include <vtkThreads.h> // For VTK_USE_PTHREADS, VTK_USE_WIN32_THREADS
 
@@ -62,6 +66,9 @@ class ReadDataQueue : public std::queue<DataRequest*>
 class WriteDataQueue : public std::queue<DataRequest*>
 {
 };
+class ProcessedTaskQueue : public std::queue<DataRequest*>
+{
+};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
@@ -82,6 +89,7 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 
   this->InternalReadDataQueue = new ReadDataQueue;
   this->InternalWriteDataQueue = new WriteDataQueue;
+  this->InternalProcessedBackgroundQueue = new ProcessedTaskQueue;
 
   this->UserInformation = vtkPersonInformation::New();
 }
@@ -105,6 +113,7 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
   delete this->InternalWriteDataQueue;
+  delete this->InternalProcessedBackgroundQueue;
 
   this->UserInformation->Delete();
 }
@@ -290,6 +299,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
   }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::NetworkingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
 {
   if (!appLogic)
@@ -390,7 +400,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject* obj)
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, const char* filename, int displayData, int deleteFile)
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, const char* filename, int displayData, int deleteFile, bool backgroundProcess)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -405,7 +415,32 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, con
   this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalReadDataQueue).push(new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
+  if (backgroundProcess)
+  {
+    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(refNode);
+    if (!node)
+    {
+      this->ReadDataQueueLock.unlock();
+      vtkWarningWithObjectMacro(this, "RequestReadFile: Failed to find node with ID: " << refNode);
+      return 0;
+    }
+
+    vtkNew<vtkSlicerTask> task;
+    task->SetTypeToProcessing();
+    ReadDataBackgroundRequestFile* readDataRequestFile = new ReadDataBackgroundRequestFile(refNode, node->GetClassName(), filename, displayData, deleteFile, uid);
+    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)&vtkSlicerApplicationLogic::ExecuteDataBackgroundRequest, readDataRequestFile);
+    if (!this->ScheduleTask(task.GetPointer()))
+    {
+      delete readDataRequestFile;
+      vtkWarningWithObjectMacro(this, "RequestReadFile: Failed to schedule ReadDataRequestFile task.");
+      this->ReadDataQueueLock.unlock();
+      return 0;
+    }
+  }
+  else
+  {
+    (*this->InternalReadDataQueue).push(new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
+  }
   this->ReadDataQueueLock.unlock();
   return uid;
 }
@@ -474,7 +509,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestAddNodeReference(const std::strin
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char* refNode, const char* filename)
+vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char* refNode, const char* filename, bool backgroundProcess)
 {
   // only request to write a file if the WriteData queue is up
   this->WriteDataQueueActiveLock.lock();
@@ -489,7 +524,53 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char* refNode, co
   this->WriteDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalWriteDataQueue).push(new WriteDataRequestFile(refNode, filename, uid));
+
+  if (backgroundProcess)
+  {
+    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(refNode);
+    if (!node)
+    {
+      this->WriteDataQueueLock.unlock();
+      vtkWarningWithObjectMacro(this, "RequestWriteData: Failed to find node with ID: " << refNode);
+      return 0;
+    }
+
+    // WriteDataBackgroundRequestFile takes ownership of this pointer
+    vtkMRMLNode* nodeCopy = node->CreateNodeInstance();
+    if (!nodeCopy)
+    {
+      this->WriteDataQueueLock.unlock();
+      vtkWarningWithObjectMacro(this, "RequestWriteData: Failed to create copy node.");
+      return 0;
+    }
+    // WriteDataBackgroundRequestFile takes ownership of this pointer
+    vtkMRMLScene* miniScene = vtkMRMLScene::New();
+    nodeCopy->SetScene(miniScene);
+    nodeCopy->SetID(node->GetID());
+
+    int oldMode = nodeCopy->GetDisableModifiedEvent();
+    nodeCopy->DisableModifiedEventOn();
+    nodeCopy->CopyContent(node, true);
+    nodeCopy->SetDisableModifiedEvent(oldMode);
+
+    vtkNew<vtkSlicerTask> task;
+    task->SetTypeToProcessing();
+    WriteDataBackgroundRequestFile* writeDataRequestFile = new WriteDataBackgroundRequestFile(nodeCopy, miniScene, filename, uid);
+    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)&vtkSlicerApplicationLogic::ExecuteDataBackgroundRequest, writeDataRequestFile);
+
+    if (!this->ScheduleTask(task.GetPointer()))
+    {
+      delete writeDataRequestFile;
+      vtkWarningWithObjectMacro(this, "RequestWriteData: Failed to schedule WriteDataBackgroundRequestFile task.");
+      this->WriteDataQueueLock.unlock();
+      return 0;
+    }
+  }
+  else
+  {
+    (*this->InternalWriteDataQueue).push(new WriteDataRequestFile(refNode, filename, uid));
+  }
+
   this->WriteDataQueueLock.unlock();
   return uid;
 }
@@ -599,7 +680,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
   this->ReadDataQueueLock.unlock();
 
   vtkMTimeType uid = 0;
-  if (req)
+  if (req && !dynamic_cast<ReadDataBackgroundRequestFile*>(req))
   {
     uid = req->GetUID();
     req->Execute(this);
@@ -638,21 +719,107 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
   }
   this->WriteDataQueueLock.unlock();
 
-  if (req)
+  vtkMTimeType uid = 0;
+  if (req && !dynamic_cast<WriteDataBackgroundRequestFile*>(req))
   {
-    vtkMTimeType uid = req->GetUID();
+    uid = req->GetUID();
     req->Execute(this);
     delete req;
+  }
 
-    // schedule the next timer sooner in case there is stuff in the queue
-    // otherwise for a while later
-    int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0 : 200;
-    this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
-    if (uid)
+  // schedule the next timer sooner in case there is stuff in the queue
+  // otherwise for a while later
+  int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0 : 200;
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
+  if (uid)
+  {
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent, reinterpret_cast<void*>(uid));
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::ExecuteDataBackgroundRequest(void* clientData)
+{
+  DataBackgroundRequestFile* request = static_cast<DataBackgroundRequestFile*>(clientData);
+  if (!request)
+  {
+    return;
+  }
+
+  request->Execute(this);
+
+  {
+    std::lock_guard<std::mutex> lock(this->processedBackgroundQueueMutex);
+    this->InternalProcessedBackgroundQueue->push(request); // Push the request into the queue
+  }
+
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedBackgroundEvent);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::ProcessBackgroundQueue()
+{
+  // Check if there are any processed requests in the queue
+  this->processedBackgroundQueueMutex.lock();
+  while (!this->InternalProcessedBackgroundQueue->empty())
+  {
+    DataBackgroundRequestFile* request = static_cast<DataBackgroundRequestFile*>(this->InternalProcessedBackgroundQueue->front());
+    this->InternalProcessedBackgroundQueue->pop();
+    this->processedBackgroundQueueMutex.unlock();
+    this->ProcessProcessedRequest(request);
+    this->processedBackgroundQueueMutex.lock();
+  }
+  this->processedBackgroundQueueMutex.unlock();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::ProcessProcessedRequest(DataBackgroundRequestFile* request)
+{
+  if (!request)
+  {
+    return;
+  }
+
+  if (ReadDataBackgroundRequestFile* readRequest = dynamic_cast<ReadDataBackgroundRequestFile*>(request))
+  {
+    vtkMRMLNode* node = readRequest->GetNode();
+    if (node)
     {
-      this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent, reinterpret_cast<void*>(uid));
+      vtkMRMLNode* targetNode = this->GetMRMLScene()->GetNodeByID(readRequest->GetRefNodeID());
+      if (targetNode)
+      {
+        targetNode->CopyContent(node, false);
+
+        if (readRequest->GetDisplayData())
+        {
+          std::string targetNodeID = targetNode->GetID();
+          if (vtkMRMLLabelMapVolumeNode::SafeDownCast(targetNode))
+          {
+            this->GetSelectionNode()->SetActiveLabelVolumeID(targetNodeID.c_str());
+            this->PropagateVolumeSelection();
+          }
+          else if (vtkMRMLScalarVolumeNode* scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(targetNode))
+          {
+            this->GetSelectionNode()->SetActiveVolumeID(targetNodeID.c_str());
+            if (vtkMRMLDisplayNode* displayNode = scalarVolumeNode->GetDisplayNode())
+            {
+              displayNode->Modified();
+            }
+            this->PropagateVolumeSelection();
+          }
+          else if (vtkMRMLTableNode::SafeDownCast(targetNode))
+          {
+            this->GetSelectionNode()->SetActiveTableID(targetNodeID.c_str());
+            this->PropagateTableSelection();
+          }
+        }
+      }
     }
   }
+
+  vtkMTimeType uid = request->GetUID();
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent, (void*)&uid);
+  delete request;
 }
 
 //----------------------------------------------------------------------------
