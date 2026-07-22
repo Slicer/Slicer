@@ -751,10 +751,9 @@ def _pip_install_with_dialog(
     import qt
     import slicer
 
-    # Create the progress dialog
-    dialog = _PipProgressDialog(requester=requester, parent=parent)
-    dialog.show()
-    slicer.app.processEvents()  # Ensure dialog is displayed
+    # Acquire the shared progress dialog. It is reused across back-to-back installs so
+    # the window does not flash between them.
+    dialog = _PipProgressDialog.acquire(requester=requester, parent=parent)
 
     completed = threading.Event()
     result = {"returnCode": None, "log": ""}
@@ -779,15 +778,19 @@ def _pip_install_with_dialog(
         slicer.app.processEvents()
         qt.QThread.msleep(10)  # Reduce CPU usage
 
-    dialog.close()
-
     if result["returnCode"] != 0:
+        # On failure, hide immediately so the error dialog is not shown over a lingering
+        # progress dialog.
+        dialog.hideNow()
         slicer.util.errorDisplay(
             _("Package installation failed."),
             windowTitle=_("{requester} - Installation Failed").format(requester=requester) if requester else _("Installation Failed"),
             detailedText=result["log"],
         )
         raise CalledProcessError(result["returnCode"], "pip install")
+
+    # Keep the dialog visible briefly so a following install can reuse it (no flash).
+    dialog.release()
 
 
 def _pip_install_with_statusbar(
@@ -906,18 +909,17 @@ def _pip_install_with_skips_dialog(
     parent: qt.QWidget | None = None,
 ) -> list[str]:
     """Recursive skip-packages install with modal progress dialog."""
-    import slicer
-
-    dialog = _PipProgressDialog(requester=requester, parent=parent)
-    dialog.show()
-    slicer.app.processEvents()
+    # Acquire the shared progress dialog (reused across back-to-back installs so the
+    # window does not flash between them).
+    dialog = _PipProgressDialog.acquire(requester=requester, parent=parent)
 
     try:
         skipped = _pip_install_with_skips(
             requirements, skip_packages, constraints, log_fn=dialog.appendLog,
         )
     finally:
-        dialog.close()
+        # Keep the dialog visible briefly so a following install can reuse it (no flash).
+        dialog.release()
 
     return skipped
 
@@ -1187,19 +1189,66 @@ class _PipProgressDialog:
     Internal class used by :func:`pip_install` when show_progress=True and blocking=True.
     """
 
+    # Collapsed state of the details section, remembered for the application session
+    # so that the user's choice is preserved between dialogs.
+    _detailsCollapsed = True
+
+    # A single dialog instance is kept alive for the whole application session and
+    # reused for every install. Reusing a still-visible dialog -- instead of destroying
+    # and recreating one per install -- avoids the window flashing between back-to-back
+    # installs, keeps its position/size/scroll, and makes the log read as one stream.
+    _sharedInstance = None
+    # Single-shot timer that hides the shared dialog a short while after an install
+    # finishes. A new install arriving before it fires cancels it and reuses the still-
+    # visible dialog, so nothing flashes. If it does fire, the log is cleared so the
+    # next install starts fresh.
+    _hideTimer = None
+    # How long the dialog lingers, visible, after an install finishes (seconds).
+    # It has just be long enough to avoid frequent flickering, but not too long to keep
+    # the application GUI locked for unnecessarily long time.
+    _hideDelaySeconds = 0.5
+
+    # How close (in scrollbar units) to the bottom still counts as "at the bottom".
+    _scrollBottomTolerance = 4
+
+    # Default (compact) dialog size used when the details section is collapsed.
+    _defaultWidth = 500
+    _defaultHeight = 120
+
+    @classmethod
+    def acquire(cls, requester: str | None = None, parent: qt.QWidget | None = None) -> _PipProgressDialog:
+        """Return a visible progress dialog ready for a new install.
+
+        Reuses the shared dialog if it is still on screen -- avoiding a flash between
+        back-to-back installs -- otherwise creates it (or re-shows the hidden one).
+        """
+        # Cancel any pending hide so a quickly following install reuses this dialog.
+        if cls._hideTimer is not None:
+            cls._hideTimer.stop()
+
+        inst = cls._sharedInstance
+        if inst is None:
+            inst = cls(parent=parent)
+            cls._sharedInstance = inst
+
+        inst._beginInstall(requester)
+        return inst
+
     def __init__(self, requester: str | None = None, parent: qt.QWidget | None = None) -> None:
         import ctk
         import qt
         import slicer
 
-        self._dialog = qt.QDialog(parent or slicer.util.mainWindow())
+        # Parent the shared dialog to the main window rather than the caller-supplied
+        # `parent`. A single instance is cached in _sharedInstance and reused across installs,
+        # so a transient parent could be destroyed while the cached instance lives on -- taking
+        # this QDialog with it and leaving acquire() to return a dialog whose C++ object is
+        # gone. The main window lives for the whole session, matching the shared lifetime.
+        # (`parent` is used only as a fallback when there is no main window, e.g. headless,
+        # where the dialog path is not actually taken.)
+        self._dialog = qt.QDialog(slicer.util.mainWindow() or parent)
         self._dialog.setModal(True)
-        if requester:
-            self._dialog.setWindowTitle(
-                _("{requester} - Installing Python Packages").format(requester=requester),
-            )
-        else:
-            self._dialog.setWindowTitle(_("Installing Python Packages"))
+        self._dialog.setWindowTitle(_("Installing Python Packages"))
         # Prevent closing via X button
         self._dialog.setWindowFlags(self._dialog.windowFlags() & ~qt.Qt.WindowCloseButtonHint)
 
@@ -1221,7 +1270,8 @@ class _PipProgressDialog:
         # Collapsible details section
         self.detailsButton = ctk.ctkCollapsibleButton()
         self.detailsButton.text = _("Details")
-        self.detailsButton.collapsed = True
+        self.detailsButton.collapsed = _PipProgressDialog._detailsCollapsed
+        self.detailsButton.connect("contentsCollapsed(bool)", self._onDetailsCollapsed)
         detailsLayout = qt.QVBoxLayout(self.detailsButton)
 
         self.logText = qt.QPlainTextEdit()
@@ -1237,26 +1287,99 @@ class _PipProgressDialog:
         layout.addWidget(self.detailsButton)
 
         # Set reasonable default size
-        self._dialog.resize(500, 120)
+        self._dialog.resize(_PipProgressDialog._defaultWidth, _PipProgressDialog._defaultHeight)
 
-        # Store log lines for retrieval
+        # Log lines accumulated for the current (possibly multi-install) session.
         self._logLines = []
 
-    def show(self) -> None:
-        """Show the dialog."""
-        self._dialog.show()
+    def _beginInstall(self, requester: str | None) -> None:
+        """Prepare the (possibly already visible) dialog for a new install."""
+        if requester:
+            self._dialog.setWindowTitle(
+                _("{requester} - Installing Python Packages").format(requester=requester),
+            )
+        else:
+            self._dialog.setWindowTitle(_("Installing Python Packages"))
+        self.statusLabel.setText(_("Installing packages..."))
 
-    def close(self) -> None:
-        """Close the dialog."""
-        self._dialog.close()
+        if self._dialog.isVisible():
+            # Continuing right after a previous install: keep the log and separate this
+            # install's output with a divider.
+            if self._logLines:
+                self.appendLog("-" * 40)
+        else:
+            # Dialog was hidden (first install, or the previous burst went idle): start
+            # with a clean log.
+            self._clearLog()
+        self.show()
+
+    def _onDetailsCollapsed(self, collapsed: bool) -> None:
+        """Remember the details section state for subsequent dialogs."""
+        _PipProgressDialog._detailsCollapsed = collapsed
+        if collapsed:
+            # The expanded log no longer needs the vertical space. Recompute the layout
+            # now that the log is hidden -- activate() updates the dialog's minimum size --
+            # then shrink back to the compact default height (keeping the current width).
+            # Without activate() the resize would be clamped to the stale, taller minimum.
+            self._dialog.layout().activate()
+            self._dialog.resize(self._dialog.width, _PipProgressDialog._defaultHeight)
+
+    def show(self) -> None:
+        """Show the dialog if it is not already visible, then let it paint."""
+        import slicer
+        if not self._dialog.isVisible():
+            self._dialog.show()
+        slicer.app.processEvents()
+
+    def release(self) -> None:
+        """Finish the current install, hiding the dialog only after a short delay.
+
+        The delayed hide lets a quickly following install reuse the still-visible
+        dialog without the window flashing. The dialog is intentionally NOT hidden
+        here and no events are processed, so the screen is not redrawn in the gap --
+        if the next install starts first, the old frame stays up until it is replaced.
+        """
+        import qt
+        cls = _PipProgressDialog
+        if cls._hideTimer is None:
+            cls._hideTimer = qt.QTimer()
+            cls._hideTimer.setSingleShot(True)
+            cls._hideTimer.connect("timeout()", cls._onHideTimeout)
+        cls._hideTimer.start(int(cls._hideDelaySeconds * 1000))
+
+    def hideNow(self) -> None:
+        """Hide the dialog immediately (e.g. after a failure) and clear the log."""
+        cls = _PipProgressDialog
+        if cls._hideTimer is not None:
+            cls._hideTimer.stop()
+        self._dialog.hide()
+        self._clearLog()
+
+    @classmethod
+    def _onHideTimeout(cls) -> None:
+        inst = cls._sharedInstance
+        if inst is not None:
+            inst._dialog.hide()
+            inst._clearLog()
+
+    def _clearLog(self) -> None:
+        """Reset the log display to empty."""
+        self._logLines = []
+        self.logText.setPlainText("")
 
     def appendLog(self, line: str) -> None:
         """Append a line to the log display."""
         self._logLines.append(line)
-        self.logText.appendPlainText(line)
-        # Auto-scroll to bottom
         scrollBar = self.logText.verticalScrollBar()
-        scrollBar.setValue(scrollBar.maximum)
+        # Keep following the newest line only while the user is at the bottom; if they
+        # scrolled up to read, preserve their position instead of yanking them down.
+        atBottom = scrollBar.value >= scrollBar.maximum - _PipProgressDialog._scrollBottomTolerance
+        previousValue = scrollBar.value
+        self.logText.appendPlainText(line)
+        if atBottom:
+            scrollBar.setValue(scrollBar.maximum)
+        else:
+            scrollBar.setValue(previousValue)
 
     def getFullLog(self) -> str:
         """Return the complete log as a string."""
