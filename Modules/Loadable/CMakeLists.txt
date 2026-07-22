@@ -40,3 +40,24 @@ foreach(module ${qtmodules})
     add_subdirectory(${module})
   endif()
 endforeach()
+
+# With the current cmake macros, the Python wrapping hierarchy of a module can
+# only depend on the hierarchy target of another module if that target already
+# exists when the module is configured (see vtkWrapHierarchy.cmake in
+# vtkAddon). For modules that depend on a module configured later in the list
+# above, the dependency is silently dropped and parallel builds can fail with
+# "vtkWrapHierarchy: couldn't open file ...Hierarchy.txt". Restore the known
+# forward dependencies here, where all hierarchy targets exist.
+# Note that this code may change if we use vtk_module_build() / vtk_module_wrap_python()
+# to compute hierarchy dependencies from declared module metadata (vtk.module files),
+# which will be independent of configure order
+foreach(_hierarchy_dependency IN ITEMS
+    "vtkSlicerTransformsModuleLogicHierarchy;vtkSlicerMarkupsModuleMRMLHierarchy"
+    "vtkSlicerSegmentationsModuleLogicHierarchy;vtkSlicerMarkupsModuleMRMLHierarchy"
+    )
+  list(GET _hierarchy_dependency 0 _hierarchy_target)
+  list(GET _hierarchy_dependency 1 _hierarchy_dependee)
+  if(TARGET ${_hierarchy_target} AND TARGET ${_hierarchy_dependee})
+    add_dependencies(${_hierarchy_target} ${_hierarchy_dependee})
+  endif()
+endforeach()
