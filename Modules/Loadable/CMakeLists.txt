@@ -48,8 +48,8 @@ endforeach()
 # above, the dependency is silently dropped and parallel builds can fail with
 # "vtkWrapHierarchy: couldn't open file ...Hierarchy.txt". Restore the known
 # forward dependencies here, where all hierarchy targets exist.
-# Note that this code may change if we use vtk_module_build() / vtk_module_wrap_python() 
-# to compute hierarchy dependencies from declared module metadata (vtk.module files), 
+# Note that this code may change if we use vtk_module_build() / vtk_module_wrap_python()
+# to compute hierarchy dependencies from declared module metadata (vtk.module files),
 # which will be independent of configure order
 foreach(_hierarchy_dependency IN ITEMS
     "vtkSlicerTransformsModuleLogicHierarchy;vtkSlicerMarkupsModuleMRMLHierarchy"
