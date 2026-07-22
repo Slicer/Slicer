@@ -22,6 +22,9 @@
 #include <QProcess>
 #include <QStandardPaths>
 
+// STD includes
+#include <memory>
+
 // Slicer includes
 #include "qSlicerCLIExecutableModuleFactory.h"
 #include "qSlicerCLIModule.h"
@@ -69,9 +72,9 @@ QString qSlicerCLIExecutableModuleFactoryItem::xmlModuleDescriptionFilePath()
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 {
-  // Using a scoped pointer ensures the memory will be cleaned if instantiator
-  // fails before returning the module. See QScopedPointer::take()
-  QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
+  // Using a smart pointer ensures the memory will be cleaned if instantiator
+  // fails before returning the module. See std::unique_ptr::release()
+  std::unique_ptr<qSlicerCLIModule> module(new qSlicerCLIModule());
   module->setModuleType("CommandLineModule");
   module->setEntryPoint(this->path());
 
@@ -126,9 +129,9 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
   module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
 
-  this->CLIModule = module.data();
+  this->CLIModule = module.get();
 
-  return module.take();
+  return module.release();
 }
 
 //-----------------------------------------------------------------------------

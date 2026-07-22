@@ -21,6 +21,9 @@
 // Qt includes
 #include <QFileInfo>
 
+// STD includes
+#include <memory>
+
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -206,30 +209,30 @@ void qSlicerScriptedLoadableModule::setup()
 void qSlicerScriptedLoadableModule::registerFileDialog()
 {
   Q_D(qSlicerScriptedLoadableModule);
-  QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
+  std::unique_ptr<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
   bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return;
   }
-  qSlicerApplication::application()->ioManager()->registerDialog(fileDialog.take());
+  qSlicerApplication::application()->ioManager()->registerDialog(fileDialog.release());
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModule::registerIO()
 {
   Q_D(qSlicerScriptedLoadableModule);
-  QScopedPointer<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
+  std::unique_ptr<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
   bool ret = fileWriter->setPythonSource(d->PythonSourceFilePath);
   if (ret)
   {
-    qSlicerApplication::application()->ioManager()->registerIO(fileWriter.take());
+    qSlicerApplication::application()->ioManager()->registerIO(fileWriter.release());
   }
-  QScopedPointer<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
+  std::unique_ptr<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
   ret = fileReader->setPythonSource(d->PythonSourceFilePath);
   if (ret)
   {
-    qSlicerApplication::application()->ioManager()->registerIO(fileReader.take());
+    qSlicerApplication::application()->ioManager()->registerIO(fileReader.release());
   }
 }
 
@@ -243,14 +246,14 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
     return nullptr;
   }
 
-  QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
+  std::unique_ptr<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
   bool ret = widget->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return nullptr;
   }
 
-  return widget.take();
+  return widget.release();
 }
 
 //-----------------------------------------------------------------------------
