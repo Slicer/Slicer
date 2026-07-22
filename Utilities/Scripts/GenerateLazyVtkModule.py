@@ -31,7 +31,8 @@ import sys
 def module_order():
     """Return the vtkmodules submodule names in the order used by
     vtkmodules.all, so that attribute collisions resolve to the same module
-    as with eager star-imports (the last import wins)."""
+    as with eager star-imports (the last import wins).
+    """
     import vtkmodules.all
     source = open(vtkmodules.all.__file__).read()
     return re.findall(r"^from \.(\w+) import \*", source, re.MULTILINE)
@@ -104,7 +105,7 @@ def main(argv):
     if failed:
         print("note: skipped unimportable modules: %s" % ", ".join(failed))
 
-    entries = ",\n    ".join('"%s": "%s"' % (attribute, index[attribute])
+    entries = ",\n    ".join(f'"{attribute}": "{index[attribute]}"'
                              for attribute in sorted(index))
     # On a fresh build this rule may run before anything else has created
     # the destination directory.
