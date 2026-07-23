@@ -606,7 +606,25 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   }
   else
   {
-    close = ctkMessageBox::confirmExit("MainWindow/DontConfirmExit", q);
+    // If the user previously ticked "Don't show this message again", skip the
+    // confirmation dialog entirely instead of letting ctkMessageBox auto-accept
+    // it. ctkMessageBox suppresses a dialog by briefly realizing it off-screen
+    // and clicking the accept button on the next event-loop turn; when that
+    // happens synchronously from closeEvent (as opposed to the deferred
+    // singleShot(exec()) path used by disclaimer()), the off-screen suppression
+    // loses the race with the window server on macOS/Qt6 and the dialog flashes
+    // on screen. Reading the setting directly avoids constructing the dialog.
+    static const QString dontConfirmExitKey = "MainWindow/DontConfirmExit";
+    QSettings settings;
+    bool confirmationDisabled = settings.value(dontConfirmExitKey, static_cast<int>(QMessageBox::InvalidRole)).toInt() != QMessageBox::InvalidRole;
+    if (confirmationDisabled)
+    {
+      close = true;
+    }
+    else
+    {
+      close = ctkMessageBox::confirmExit(dontConfirmExitKey, q);
+    }
   }
   return close;
 }
