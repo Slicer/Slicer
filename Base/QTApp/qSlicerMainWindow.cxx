@@ -570,22 +570,35 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
                                               qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"),
                                               QMessageBox::NoButton,
                                               q);
-    QAbstractButton* saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
-    QAbstractButton* exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
-    messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
+    // Give each button a distinct role. Previously "Save" and
+    // "Exit (discard modifications)" were both added with ActionRole; because
+    // the dispatch below relies on clickedButton() pointer identity and no
+    // default/escape button was set, the shared role let the native button
+    // layout (observed on macOS with Qt6) return the wrong button, so clicking
+    // "Exit" was handled as "Save" and re-opened the Save Data dialog instead
+    // of quitting.
+    QAbstractButton* saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::AcceptRole);
+    QAbstractButton* exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::DestructiveRole);
+    QPushButton* cancelButton = messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
+
+    // Make the non-destructive "Cancel exit" the default/escape action so that
+    // no button is silently activated by the platform's button layout.
+    messageBox->setDefaultButton(cancelButton);
+    messageBox->setEscapeButton(cancelButton);
 
     if (!details.isEmpty())
     {
       messageBox->setDetailedText(details);
     }
     messageBox->exec();
-    if (messageBox->clickedButton() == saveButton)
+    QAbstractButton* clickedButton = messageBox->clickedButton();
+    if (clickedButton == saveButton)
     {
-      // \todo Check if the save data dialog was "applied" and close the
-      // app in that case
-      this->FileSaveSceneAction->trigger();
+      // Save the scene, then exit only if the user actually completed the save
+      // (the save data dialog returns false if it was cancelled).
+      close = qSlicerApplication::application()->ioManager()->openSaveDataDialog();
     }
-    else if (messageBox->clickedButton() == exitButton)
+    else if (clickedButton == exitButton)
     {
       close = true;
     }
@@ -593,7 +606,25 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   }
   else
   {
-    close = ctkMessageBox::confirmExit("MainWindow/DontConfirmExit", q);
+    // If the user previously ticked "Don't show this message again", skip the
+    // confirmation dialog entirely instead of letting ctkMessageBox auto-accept
+    // it. ctkMessageBox suppresses a dialog by briefly realizing it off-screen
+    // and clicking the accept button on the next event-loop turn; when that
+    // happens synchronously from closeEvent (as opposed to the deferred
+    // singleShot(exec()) path used by disclaimer()), the off-screen suppression
+    // loses the race with the window server on macOS/Qt6 and the dialog flashes
+    // on screen. Reading the setting directly avoids constructing the dialog.
+    static const QString dontConfirmExitKey = "MainWindow/DontConfirmExit";
+    QSettings settings;
+    bool confirmationDisabled = settings.value(dontConfirmExitKey, static_cast<int>(QMessageBox::InvalidRole)).toInt() != QMessageBox::InvalidRole;
+    if (confirmationDisabled)
+    {
+      close = true;
+    }
+    else
+    {
+      close = ctkMessageBox::confirmExit(dontConfirmExitKey, q);
+    }
   }
   return close;
 }
