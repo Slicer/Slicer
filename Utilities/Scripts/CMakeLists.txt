@@ -98,6 +98,22 @@ if(UNIX AND NOT APPLE)
   endif()
 endif()
 
+if(APPLE AND Slicer_USE_PYTHONQT)
+  # Pre-warms the macOS first-load security scan (syspolicyd/XProtect) for newly
+  # built or installed libraries, showing a progress splash. Invoked by the
+  # application bundle bootstrap (see CMake/SlicerAppBootstrap.c.in). Placed in
+  # the build tree bin so a local build behaves the same as an installed one.
+  configure_file(
+    SlicerPrewarm.py
+    ${Slicer_BINARY_DIR}/bin/SlicerPrewarm.py
+    COPYONLY
+    )
+  install(PROGRAMS ${Slicer_BINARY_DIR}/bin/SlicerPrewarm.py
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    COMPONENT Runtime
+    )
+endif()
+
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
   # Determine name of Python interpreter
   #

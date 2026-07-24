@@ -500,6 +500,41 @@ macro(slicerMacroBuildApplication)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${Slicer_MAIN_PROJECT_VERSION_MAJOR}.${Slicer_MAIN_PROJECT_VERSION_MINOR}.${Slicer_MAIN_PROJECT_VERSION_PATCH}"
         )
     endif()
+
+    # Application bundle bootstrap: the bundle executable (CFBundleExecutable)
+    # is replaced by a small bootstrap program that pre-warms the operating
+    # system first-load caches for newly built or installed libraries (showing
+    # a native splash screen with progress) and then executes the real
+    # application binary, renamed to "${SLICERAPP_APPLICATION_NAME}App-real"
+    # to match the convention used on the other platforms. The bootstrap is a
+    # compiled program (not a script) so that the DYLD_* environment variables
+    # set by the application launcher survive: system shells are restricted
+    # binaries and dyld strips these variables from their environment.
+    # See CMake/SlicerAppBootstrap.c.in and Utilities/Scripts/SlicerPrewarm.py.
+    if(Slicer_USE_PYTHONQT)
+      set(_bootstrap_source "${CMAKE_CURRENT_BINARY_DIR}/${SLICERAPP_APPLICATION_NAME}Bootstrap.c")
+      configure_file(
+        ${Slicer_CMAKE_DIR}/SlicerAppBootstrap.c.in
+        ${_bootstrap_source}
+        @ONLY
+        )
+      add_executable(${slicerapp_target}Bootstrap ${_bootstrap_source})
+      set_target_properties(${slicerapp_target}Bootstrap PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Bootstrap"
+        OUTPUT_NAME ${SLICERAPP_APPLICATION_NAME}
+        )
+      add_dependencies(${slicerapp_target} ${slicerapp_target}Bootstrap)
+      add_custom_command(TARGET ${slicerapp_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E rename
+          "$<TARGET_FILE:${slicerapp_target}>"
+          "$<TARGET_FILE_DIR:${slicerapp_target}>/${SLICERAPP_APPLICATION_NAME}App-real"
+        COMMAND ${CMAKE_COMMAND} -E copy
+          "$<TARGET_FILE:${slicerapp_target}Bootstrap>"
+          "$<TARGET_FILE:${slicerapp_target}>"
+        COMMENT "Installing ${SLICERAPP_APPLICATION_NAME} bundle bootstrap"
+        VERBATIM
+        )
+    endif()
   endif()
 
   get_target_property(_slicerapp_output_dir ${slicerapp_target} RUNTIME_OUTPUT_DIRECTORY)
