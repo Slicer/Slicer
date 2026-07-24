@@ -1,0 +1,191 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware Inc.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
+
+/* @SLICERAPP_APPLICATION_NAME@ macOS application bundle bootstrap.
+ *
+ * macOS scans every newly built or newly downloaded library the first time it
+ * is loaded (a syspolicyd / XProtect security evaluation) and caches the
+ * verdict per file. Slicer loads ~900 libraries, so the first launch of a new
+ * build or a freshly downloaded copy can spend a couple of minutes on this
+ * before the first window appears, with no feedback. This program runs as the
+ * bundle executable (CFBundleExecutable) before the application binary: it
+ * pre-triggers that evaluation up front while a native splash screen shows
+ * progress (see SlicerPrewarm.py), then replaces itself with the real
+ * application binary so the process keeps the identity expected by Finder and
+ * the Dock. The evaluation is serialized by the system, so this does not make
+ * the launch faster -- it makes the unavoidable wait visible and explained
+ * (and, via a stamp file, limited to when it is actually needed).
+ *
+ * This must be a compiled program rather than a shell script: system shells
+ * are restricted binaries, so dyld would strip the DYLD_* environment
+ * variables set by the application launcher in a build tree.
+ *
+ * Set SLICER_DISABLE_STARTUP_PREWARM=1 to skip the prewarm.
+ */
+
+#include <limits.h>
+#include <mach-o/dyld.h>
+#include <spawn.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+extern char** environ;
+
+static int fileExists(const char* path)
+{
+  return access(path, F_OK) == 0;
+}
+
+static int executableExists(const char* path)
+{
+  return access(path, X_OK) == 0;
+}
+
+int main(int argc, char* argv[])
+{
+  /* The splash is shown by default; some arguments imply that no splash is
+   * wanted, and informational arguments should print without any delay. */
+  int showSplash = 1;
+  int runPrewarm = 1;
+  for (int index = 1; index < argc; ++index)
+  {
+    if (strcmp(argv[index], "--no-splash") == 0 || strcmp(argv[index], "--testing") == 0)
+    {
+      showSplash = 0;
+    }
+    else if (strcmp(argv[index], "--version") == 0 || strcmp(argv[index], "--help") == 0)
+    {
+      runPrewarm = 0;
+    }
+  }
+
+  /* Directory containing this executable (<bundle>/Contents/MacOS) */
+  char executablePath[PATH_MAX];
+  uint32_t size = sizeof(executablePath);
+  if (_NSGetExecutablePath(executablePath, &size) != 0)
+  {
+    fprintf(stderr, "bootstrap: executable path too long\n");
+    return 127;
+  }
+  char resolvedPath[PATH_MAX];
+  if (realpath(executablePath, resolvedPath) == NULL)
+  {
+    strncpy(resolvedPath, executablePath, sizeof(resolvedPath) - 1);
+    resolvedPath[sizeof(resolvedPath) - 1] = '\0';
+  }
+  char directory[PATH_MAX];
+  strncpy(directory, resolvedPath, sizeof(directory) - 1);
+  directory[sizeof(directory) - 1] = '\0';
+  char* lastSlash = strrchr(directory, '/');
+  if (lastSlash != NULL)
+  {
+    *lastSlash = '\0';
+  }
+
+  if (runPrewarm && getenv("SLICER_DISABLE_STARTUP_PREWARM") == NULL)
+  {
+    /* Locate the home directory containing bin/SlicerPrewarm.py:
+     * - installed bundle: <bundle>/Contents (bin next to MacOS)
+     * - build tree: <build> (this executable is at
+     *   <build>/bin/<app>.app/Contents/MacOS, four levels below <build>) */
+    const char* homeSuffixes[] = { "/..", "/../../../.." };
+    char home[PATH_MAX] = "";
+    char script[PATH_MAX] = "";
+    for (size_t index = 0; index < sizeof(homeSuffixes) / sizeof(homeSuffixes[0]); ++index)
+    {
+      char candidate[PATH_MAX];
+      snprintf(candidate, sizeof(candidate), "%s%s", directory, homeSuffixes[index]);
+      snprintf(script, sizeof(script), "%s/bin/SlicerPrewarm.py", candidate);
+      if (fileExists(script))
+      {
+        strncpy(home, candidate, sizeof(home) - 1);
+        home[sizeof(home) - 1] = '\0';
+        break;
+      }
+    }
+
+    char python[PATH_MAX] = "";
+    if (home[0] != '\0')
+    {
+      snprintf(python, sizeof(python), "%s/bin/PythonSlicer", home);
+      if (!executableExists(python))
+      {
+        /* In a build tree PythonSlicer is in the python-install directory
+         * referenced by PYTHONHOME (set by the application launcher). */
+        const char* pythonHome = getenv("PYTHONHOME");
+        if (pythonHome != NULL)
+        {
+          snprintf(python, sizeof(python), "%s/bin/PythonSlicer", pythonHome);
+        }
+      }
+    }
+
+    if (home[0] != '\0' && executableExists(python))
+    {
+      char stamp[PATH_MAX];
+      char binDirectory[PATH_MAX];
+      char libDirectory[PATH_MAX];
+      /* The prewarm stamp records which libraries have already been warmed so
+       * later launches can skip them. It must live somewhere writable: an
+       * installed bundle is read-only (a mounted disk image, or /Applications
+       * without admin rights), so writing it inside the bundle would fail on
+       * every launch. Use the per-user cache directory instead. */
+      const char* homeEnv = getenv("HOME");
+      if (homeEnv != NULL && homeEnv[0] != '\0')
+      {
+        char cacheDirectory[PATH_MAX];
+        snprintf(cacheDirectory, sizeof(cacheDirectory),
+                 "%s/Library/Caches/@SLICERAPP_APPLICATION_NAME@", homeEnv);
+        mkdir(cacheDirectory, 0755); /* parents exist on macOS; ignore EEXIST */
+        snprintf(stamp, sizeof(stamp), "%s/prewarm-stamp", cacheDirectory);
+      }
+      else
+      {
+        snprintf(stamp, sizeof(stamp), "/tmp/@SLICERAPP_APPLICATION_NAME@-prewarm-stamp");
+      }
+      snprintf(binDirectory, sizeof(binDirectory), "%s/bin", home);
+      snprintf(libDirectory, sizeof(libDirectory), "%s/lib", home);
+      char* spawnArguments[] = { python,          script,       showSplash ? (char*)"--gui" : (char*)"--quiet",
+                                 (char*)"--stamp", stamp,       (char*)"--scan",
+                                 binDirectory,    (char*)"--scan", libDirectory,
+                                 NULL };
+      pid_t pid = 0;
+      if (posix_spawn(&pid, python, NULL, NULL, spawnArguments, environ) == 0)
+      {
+        int status = 0;
+        (void)waitpid(pid, &status, 0);
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 75)
+        {
+          /* The user chose to quit from the preparation splash screen. */
+          return 0;
+        }
+      }
+      /* Prewarm failures never block the application launch. */
+    }
+  }
+
+  char application[PATH_MAX];
+  snprintf(application, sizeof(application), "%s/@SLICERAPP_APPLICATION_NAME@App-real", directory);
+  argv[0] = application;
+  execv(application, argv);
+  perror("bootstrap: failed to execute application");
+  return 127;
+}
