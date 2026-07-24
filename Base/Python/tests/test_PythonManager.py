@@ -18,9 +18,10 @@ class PythonManagerTests(unittest.TestCase):
             "test with a ' single quote",
             'test with a " double quote',
             "test with both single ' and double \" quotes",
-            "test backslash \\ and 'single' and \"double\" quotes"
-            "'test string in single quotes'"
-            '"test string in double quotes"']
+            "test backslash \\ and 'single' and \"double\" quotes",
+            "'test string in single quotes'",
+            '"test string in double quotes"',
+        ]
 
         for test_string in test_strings:
             test_string_literal = slicer.app.pythonManager().toPythonStringLiteral(test_string)

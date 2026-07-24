@@ -84,6 +84,7 @@ extend-ignore = [
   "PLR0913", # Too many arguments in function definition
   "PLR0911", # Too many return statements
   "PLR0915", # Too many statements
+  "PLR0917", # Too many positional arguments
   "PLR1711", # Useless `return` statement at end of function
   "PLR1714", # Consider merging multiple comparisons
   "PLR1722", # Use `sys.exit()` instead of `exit`
