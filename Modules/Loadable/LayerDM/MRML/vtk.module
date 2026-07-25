@@ -1,0 +1,9 @@
+NAME
+  SlicerLayerDM::MRML
+LIBRARY_NAME
+  vtkSlicerLayerDMModuleMRML
+DEPENDS
+  Slicer::BaseLogic
+  Slicer::MRMLCore
+DESCRIPTION
+  "vtkSlicerLayerDMModuleMRML"
