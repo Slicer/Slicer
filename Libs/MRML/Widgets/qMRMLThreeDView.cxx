@@ -102,7 +102,7 @@ void qMRMLThreeDViewPrivate::init()
   // LeftButtonPressEvent in VTK without matching release events, causing the
   // interactor style to remain in ROTATE state permanently.
   // See https://github.com/Slicer/Slicer/issues/9068
-#if defined(Q_OS_MACOS) && (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)) && (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 5, 0))
+#if defined(Q_OS_MACOS) && (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   if (q->VTKWidget() != nullptr)
   {
     q->VTKWidget()->setEnableTouchEventProcessing(false);

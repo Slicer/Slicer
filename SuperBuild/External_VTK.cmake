@@ -164,10 +164,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   set(_git_tag)
-  if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.4")
-    set(_git_tag "454bb391dff78c6ff463298a5143ab5b4f0aa083") # slicer-v9.4.2-2025-03-26-13acb1a5d
-    set(vtk_dist_info_version "9.4.2")
-  elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.5")
+  if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.5")
     set(_git_tag "08210fbecda09bea2544dbb80777d634e1bfea25") # slicer-v9.5.2-2025-09-16-7c0494a68
     set(vtk_dist_info_version "9.5.2")
   elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.6")
@@ -280,15 +277,9 @@ Version: @vtk_dist_info_version@
         ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      if(${vtk_dist_info_version} VERSION_GREATER_EQUAL 9.4)
-        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-          ${VTK_DIR}/lib/site-packages # Location for VTK 9.4+
-          )
-      else()
-        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-          ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages # Location for VTK 9.3 or older
-          )
-      endif()
+      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+        ${VTK_DIR}/lib/site-packages
+        )
     endif()
 
   mark_as_superbuild(
@@ -328,15 +319,9 @@ Version: @vtk_dist_info_version@
         <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      if(${vtk_dist_info_version} VERSION_GREATER_EQUAL 9.4)
-        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../lib/site-packages # Location for VTK 9.4+
-          )
-      else()
-        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-          <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages # Location for VTK 9.3 or older
-          )
-      endif()
+      set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+        <APPLAUNCHER_SETTINGS_DIR>/../lib/site-packages
+        )
     endif()
     mark_as_superbuild(
       VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
