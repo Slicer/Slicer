@@ -368,14 +368,14 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkTeemNRRDWriter::WriteData()
+bool vtkTeemNRRDWriter::WriteNRRDData()
 {
   this->WriteErrorOff();
   if (this->GetFileName() == nullptr)
   {
     vtkErrorMacro("FileName has not been set. Cannot save file");
     this->WriteErrorOn();
-    return;
+    return false;
   }
 
   Nrrd* nrrd = (Nrrd*)this->MakeNRRD();
@@ -383,7 +383,7 @@ void vtkTeemNRRDWriter::WriteData()
   {
     vtkErrorMacro("Failed to initialize NRRD image writing for " << this->GetFileName());
     this->WriteErrorOn();
-    return;
+    return false;
   }
 
   NrrdIoState* nio = nrrdIoStateNew();
@@ -419,6 +419,7 @@ void vtkTeemNRRDWriter::WriteData()
   // Free the nrrd struct but don't touch nrrd->data
   nrrd = nrrdNix(nrrd);
   nio = nrrdIoStateNix(nio);
+  return !this->GetWriteError();
 }
 
 void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
