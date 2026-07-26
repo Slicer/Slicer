@@ -10,6 +10,8 @@
 
 #include "vtkTeemExport.h"
 
+#include <vtkVersion.h>
+
 class vtkImageData;
 class AttributeMapType;
 class AxisInfoMapType;
@@ -117,7 +119,14 @@ protected:
 
   ///
   /// Write method. It is called by vtkWriter::Write();
-  void WriteData() override;
+  /// Performs the actual writing of the file and returns true on success.
+  bool WriteNRRDData();
+
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
+  bool WriteDataAndReturn() override { return this->WriteNRRDData(); }
+#else
+  void WriteData() override { this->WriteNRRDData(); }
+#endif
 
   ///
   /// Flag to set to on when a write error occurred
