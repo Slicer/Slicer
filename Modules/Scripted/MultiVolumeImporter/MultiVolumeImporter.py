@@ -3,11 +3,6 @@ import sys, re, os
 from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
-try:
-  NUMPY_AVAILABLE = True
-  import vtk.util.numpy_support
-except:
-  NUMPY_AVAILABLE = False
 from MultiVolumeImporterLib.Helper import Helper
 
 #
@@ -48,7 +43,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     ScriptedLoadableModuleWidget.setup(self)
     # Instantiate and connect widgets ...
 
-    if not NUMPY_AVAILABLE:
+    import importlib.util
+    if importlib.util.find_spec("numpy") is None:
       label = qt.QLabel('The module is not available due to missing Numpy package.')
       self.layout.addWidget(label)
       label = qt.QLabel('You can seek help by contacting 3D Slicer user list: slicer-users@bwh.harvard.edu')
@@ -148,6 +144,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     l.sort( key=alphanum_key )
 
   def onImportButtonClicked(self):
+    import vtk.util.numpy_support
+
     # check if the output container exists
     mvNode = self.__mvSelector.currentNode()
     if mvNode == None:

@@ -1,7 +1,6 @@
 import os
 import re
 import vtk, qt, ctk, slicer
-import vtk.util.numpy_support
 import DICOMLib
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
@@ -585,6 +584,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     """Load the selection as a MultiVolume, if multivolume attribute is
     present
     """
+    import vtk.util.numpy_support
 
     mvNode = ''
     try:
