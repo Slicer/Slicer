@@ -1,484 +1,174 @@
 
-include(@CMAKE_SOURCE_DIR@/CMake/BundleUtilitiesWithRPath.cmake)
-#include(BundleUtilities)
-
-#-----------------------------------------------------------------------------
-set(PYTHON_STDLIB_SUBDIR "@PYTHON_STDLIB_SUBDIR@")
-set(PYTHON_SITE_PACKAGES_SUBDIR "@PYTHON_SITE_PACKAGES_SUBDIR@")
-
-#-----------------------------------------------------------------------------
-# gp_log_message - Convenient function allowing to both display and log a message.
-# Log file: $ENV{DESTDIR}/../complete-bundles-log.txt
-#-----------------------------------------------------------------------------
-function(gp_log_message text)
-  message(${text})
-  file(APPEND "@Slicer_BINARY_DIR@/complete-bundles-log.txt" "${text}
-")
-endfunction()
-
-#-----------------------------------------------------------------------------
-# gp_clear_log - Clear the log file
-#-----------------------------------------------------------------------------
-function(gp_clear_log)
-  file(WRITE "@Slicer_BINARY_DIR@/complete-bundles-log.txt" "")
-  gp_log_message("Log file: @Slicer_BINARY_DIR@/complete-bundles-log.txt")
-endfunction()
-
-#-----------------------------------------------------------------------------
-# gp_item_default_embedded_path_override item default_embedded_path_var
-#-----------------------------------------------------------------------------
-# Return the path that others should refer to the item by when the item
-# is embedded inside a bundle.
+# macOS bundle fixup.
 #
-# This is a project-specific override of BundleUtilities.cmake's
-# gp_item_default_embedded_path
+# Historically this step drove CMake's BundleUtilities fixup_bundle(), which
+# walks the dependency graph one binary at a time, shelling out to otool
+# repeatedly and copying/rewriting serially -- the dominant cost of
+# "make package" on a bundle the size of Slicer. It is replaced here by
+# SlicerBundleCloseDeps.py, which walks the graph once (a single otool -l per
+# binary) and applies the independent install-name rewrites in parallel,
+# producing the same self-contained bundle far faster. The only inputs it needs
+# from the build are the library search directories used to resolve @rpath and
+# bare install names; those are gathered below exactly as before.
+
+set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/@Slicer_MAIN_PROJECT_APPLICATION_NAME@.app")
+
+set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
+set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
+foreach(path Slicer_BUILD_DIR Slicer_SUPERBUILD_DIR)
+  if(NOT EXISTS ${${path}})
+    message(FATAL_ERROR "${path} variable is defined but corresponds to nonexistent directory: ${${path}}")
+  endif()
+endforeach()
+
+#-----------------------------------------------------------------------------
+# Library search directories.
 #
-function(gp_item_default_embedded_path_override item default_embedded_path_var)
-
-  # By default, embed items as set by gp_item_default_embedded_path:
-  set(path "${${default_embedded_path_var}}")
-
-  if(item MATCHES "Contents/bin/[^/]+")
-    set(path "@fixup_path@/bin")
+# @rpath and bare install names (for example DCMTK's "libopenjp2.7.dylib") are
+# resolved against the referring binary's own run-paths first and then these
+# directories. Absolute install names (Homebrew and superbuild libraries) are
+# resolved directly and need no entry here.
+#-----------------------------------------------------------------------------
+set(search_paths)
+macro(_append_search_dir dir)
+  if(EXISTS "${dir}")
+    list(APPEND search_paths "${dir}")
   endif()
-
-  if(item MATCHES "[^/]+\\.framework/")
-    set(path "@fixup_path@/Frameworks")
-  endif()
-
-  if(item MATCHES "\\.(dylib|so)$")
-    set(path "@fixup_path@/@Slicer_LIB_DIR@")
-  endif()
-
-  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
-  if(Slicer_USE_PYTHONQT)
-    # Python library
-    if(item MATCHES "libpython[^/]+\\.dylib$")
-      set(path "@fixup_path@/lib/Python/lib")
-    endif()
-    # Python extensions
-    if(item MATCHES "lib-dynload/[^/]+\\.so$")
-      set(path "@fixup_path@/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload")
-    endif()
-    # VTK python modules
-    if(item MATCHES "vtkmodules/[^/]+\\.so$")
-      set(path "@fixup_path@/bin/Python/vtkmodules")
-    endif()
-  endif()
-
-  set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
-  if(Slicer_USE_SimpleITK)
-    if (item MATCHES  "site-packages/(SimpleITK.*)/_SimpleITK[^/]*\\.(so|dylib)$" )
-      # CMAKE_MATCH_1 is the over complicated egg path
-      set(python_sys_site_path "@fixup_path@/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}")
-      set(path "${python_sys_site_path}/${CMAKE_MATCH_1}/")
-    endif()
-  endif()
-
-  if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
-    set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
-  endif()
-
-  foreach(qt_plugin_dir designer iconengines styles audio imageformats sqldrivers platforms printsupport)
-    if(item MATCHES "@Slicer_QtPlugins_DIR@/${qt_plugin_dir}/[^/]+\\.(so|dylib)$")
-      set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/${qt_plugin_dir}")
-    endif()
-  endforeach()
-
-  if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+") # Matches library and executable
-    set(path "@fixup_path@/@Slicer_CLIMODULES_LIB_DIR@")
-  endif()
-
-  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
-  if(Slicer_BUILD_QTLOADABLEMODULES)
-    if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
-      set(path "@fixup_path@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
-    endif()
-  endif()
-
-  set(extension_fixup_embedded_path_overrides "@EXTENSION_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES@")
-  foreach(pair IN LISTS extension_fixup_embedded_path_overrides)
-    string(REPLACE "|" ";" split_pair "${pair}")
-    list(LENGTH split_pair split_len)
-    if(NOT split_len EQUAL 2)
-      message(WARNING "Invalid override pair '${pair}', expected format <regex>|<relative_path>")
-      continue()
-    endif()
-    list(GET split_pair 0 regex)
-    list(GET split_pair 1 relative_path)
-
-    set(path "@fixup_path@/${relative_path}")
-  endforeach()
-
-  math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
-  set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
-  gp_log_message("${lib_current} - fixing item ${item} with ${path}")
-
-  set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
-endfunction()
-
-macro(_fixup_paths_append list var)
-  if(NOT EXISTS "${var}")
-    message(FATAL_ERROR "Path append to list [${list}] failed - Path [${var}:${${var}}] does NOT exist !")
-  endif()
-
-  list(APPEND ${list} ${var})
 endmacro()
 
-#-----------------------------------------------------------------------------
-# Fixup the .app bundles in the install tree:
-#-----------------------------------------------------------------------------
-function(fixup_bundle_with_plugins app)
-  set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
-  set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
+foreach(dir "@VTK_LIBRARY_DIRS@")
+  _append_search_dir("${dir}")
+endforeach()
+_append_search_dir("@ITK_DIR@/lib")
+foreach(dir "@Teem_LIBRARY_DIRS@")
+  _append_search_dir("${dir}")
+endforeach()
+foreach(dir "@CTK_LIBRARY_DIRS@")
+  _append_search_dir("${dir}")
+endforeach()
+if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
+  foreach(dir "@JsonCpp_LIBRARY_DIRS@")
+    _append_search_dir("${dir}")
+  endforeach()
+endif()
+foreach(dir "@SlicerExecutionModel_LIBRARY_DIRS@")
+  _append_search_dir("${dir}")
+endforeach()
+set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  _append_search_dir("@LibArchive_DIR@/lib")
+endif()
+set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+if(Slicer_USE_PYTHONQT)
+  _append_search_dir("@PYTHON_LIBRARY_PATH@")
+endif()
+set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
+set(Slicer_USE_DCMTK_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_DCMTK_WITH_OPENSSL)
+  _append_search_dir("@OPENSSL_EXPORT_LIBRARY_DIR@")
+endif()
+set(Slicer_BUILD_DICOM_SUPPORT "@Slicer_BUILD_DICOM_SUPPORT@")
+if(Slicer_BUILD_DICOM_SUPPORT)
+  _append_search_dir("@DCMTK_DIR@/lib/")
+endif()
+set(Slicer_USE_SYSTEM_OpenJPEG "@Slicer_USE_SYSTEM_OpenJPEG@")
+if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_OpenJPEG)
+  _append_search_dir("@OpenJPEG_INSTALL_DIR@/lib/")
+endif()
 
-  set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
-  set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@")
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_LIB_DIR@")
+set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
+if(Slicer_BUILD_QTLOADABLEMODULES)
+  _append_search_dir("${Slicer_BUILD_DIR}/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+endif()
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_CLIMODULES_LIB_DIR@")
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/designer")
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/iconengines")
+_append_search_dir("${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/styles")
 
-  # Sanity checks
-  foreach(path Slicer_BUILD_DIR Slicer_SUPERBUILD_DIR)
-    if(NOT EXISTS ${${path}})
-      message(FATAL_ERROR "${path} variable is defined but corresponds to nonexistent directory: ${${path}}")
+if(Slicer_ADDITIONAL_PROJECTS)
+  foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
+    find_package(${additional_project})
+    if(${additional_project}_FOUND)
+      include(${${additional_project}_USE_FILE})
+      foreach(dir "${${additional_project}_LIBRARY_DIRS}")
+        _append_search_dir("${dir}")
+      endforeach()
     endif()
   endforeach()
+endif()
 
-  set(candidates_pattern
-    "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.dylib"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/designer/*Plugins.so"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/designer/*.dylib"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/iconengines/*Plugin.so"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/styles/*Plugins.so"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/audio/*${suffix}"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/sqldrivers/*${suffix}"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/platforms/*${suffix}"
-    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/printsupport/*${suffix}"
-    )
+set(extension_libs_path "@EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES@")
+foreach(dir ${extension_libs_path})
+  _append_search_dir("${dir}")
+endforeach()
 
-  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
-
-  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
-  if(Slicer_BUILD_QTLOADABLEMODULES)
-    list(APPEND candidates_pattern
-      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/libq*Module${suffix}"
-      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
-      )
-    if(Slicer_USE_PYTHONQT)
-      list(APPEND candidates_pattern
-        "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
-        )
-    endif()
-  endif()
-
-  if(Slicer_USE_PYTHONQT)
-    list(APPEND candidates_pattern
-      "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
-      "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
-      # Since both core python and numpy module have no dependency beside of
-      # system library, there is no need to fix them.
-      # "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/*.so"
-      #"${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/*.so"
-      )
-  endif()
-
-  if(Slicer_USE_PYTHONQT)
-    list(APPEND candidates_pattern
-      "${app_dir}/Contents/bin/Python/vtkmodules/*.so"
-      )
-  endif()
-
-  set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
-  if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
-    list(APPEND candidates_pattern
-      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_hashlib*.so"
-      "${app_dir}/Contents/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload/_ssl*.so"
-      )
-  endif()
-
-  set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
-  if(Slicer_USE_SimpleITK)
-    list(APPEND candidates_pattern
-      "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/SimpleITK*/_SimpleITK*.so"
-      )
-  endif()
-
-  set(libs "")
-  file(GLOB_RECURSE candidates ${candidates_pattern})
-  foreach(lib ${candidates})
-    if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
-      set(libs ${libs} "${lib}")
-    endif()
-  endforeach()
-
-  set(extension_candidates_patterns "@EXTENSION_FIXUP_BUNDLE_CANDIDATES_PATTERNS@")
-  if(extension_candidates_patterns)
-    list(APPEND candidates_pattern ${extension_candidates_patterns})
-  endif()
-
-  list(REMOVE_DUPLICATES libs)
-
-  # Additional libs may be found in:
-  set(libs_path )
-  foreach(dir "@VTK_LIBRARY_DIRS@")
-    _fixup_paths_append(libs_path ${dir})
-  endforeach()
-  _fixup_paths_append(libs_path "@ITK_DIR@/lib")
-  foreach(dir "@Teem_LIBRARY_DIRS@")
-    _fixup_paths_append(libs_path ${dir})
-  endforeach()
-  foreach(dir "@CTK_LIBRARY_DIRS@")
-    _fixup_paths_append(libs_path ${dir})
-  endforeach()
-  if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
-    foreach(dir "@JsonCpp_LIBRARY_DIRS@")
-      _fixup_paths_append(libs_path ${dir})
-    endforeach()
-  endif()
-  foreach(dir "@SlicerExecutionModel_LIBRARY_DIRS@")
-    _fixup_paths_append(libs_path ${dir})
-  endforeach()
-  set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
-  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-    _fixup_paths_append(libs_path "@LibArchive_DIR@/lib")
-  endif()
-  if(Slicer_USE_PYTHONQT)
-    _fixup_paths_append(libs_path "@PYTHON_LIBRARY_PATH@")
-  endif()
-  set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
-  set(Slicer_USE_DCMTK_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
-  if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_DCMTK_WITH_OPENSSL)
-    _fixup_paths_append(libs_path "@OPENSSL_EXPORT_LIBRARY_DIR@")
-  endif()
-  set(Slicer_BUILD_DICOM_SUPPORT "@Slicer_BUILD_DICOM_SUPPORT@")
-  if(Slicer_BUILD_DICOM_SUPPORT)
-    _fixup_paths_append(libs_path "@DCMTK_DIR@/lib/")
-  endif()
-  set(Slicer_USE_SYSTEM_OpenJPEG "@Slicer_USE_SYSTEM_OpenJPEG@")
-  if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_OpenJPEG)
-    _fixup_paths_append(libs_path "@OpenJPEG_INSTALL_DIR@/lib/")
-  endif()
-
-  list(APPEND libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@")
-  list(APPEND libs_path "${Slicer_BUILD_DIR}/@Slicer_LIB_DIR@")
-  if(Slicer_BUILD_QTLOADABLEMODULES)
-    _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
-  endif()
-  _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_CLIMODULES_LIB_DIR@")
-  _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/designer")
-  _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/iconengines")
-  _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/styles")
-  #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/audio")
-  #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/imageformats")
-  #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/sqldrivers")
-  #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/platforms")
-  if (Slicer_ADDITIONAL_PROJECTS)
-    foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
-      find_package(${additional_project})
-      if (${additional_project}_FOUND)
-        include(${${additional_project}_USE_FILE})
-        foreach(dir "${${additional_project}_LIBRARY_DIRS}")
-          _fixup_paths_append(libs_path ${dir})
-        endforeach()
+# On macOS a binary Qt distribution keeps each framework's binary inside a
+# versioned subdirectory, and its transitive dependencies (brotli, freetype,
+# ...) next to the Qt libraries use bare "@rpath/<library>" install names. Add
+# the Qt library directory and every framework's Versions/* directory so those
+# resolve.
+set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
+if(NOT Slicer_USE_SYSTEM_QT)
+  set(_qt_libs_dir "@qt_root_dir@")
+  _append_search_dir("${_qt_libs_dir}")
+  file(GLOB _qt_fw_dirs "${_qt_libs_dir}/Qt*.framework")
+  foreach(_fw_dir ${_qt_fw_dirs})
+    file(GLOB _ver_subdirs "${_fw_dir}/Versions/*/")
+    foreach(_ver_dir ${_ver_subdirs})
+      if(IS_DIRECTORY "${_ver_dir}")
+        list(APPEND search_paths "${_ver_dir}")
       endif()
     endforeach()
-  endif()
-
-  set(extension_libs_path "@EXTENSION_BUNDLE_FIXUP_LIBRARY_DIRECTORIES@")
-  if(extension_libs_path)
-    list(APPEND libs_path ${extension_libs_path})
-  endif()
-
-  # On macOS with Qt6, framework binaries live inside versioned subdirectories
-  # (e.g. QtCore.framework/Versions/A/QtCore). BundleUtilities resolves @rpath
-  # references by stripping the @rpath prefix and searching for the bare filename
-  # via find_file(). That search only succeeds when the containing directory is
-  # listed in libs_path, so add every Qt framework Versions/* dir here.
-  set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
-  if(APPLE AND NOT Slicer_USE_SYSTEM_QT)
-    set(_qt_libs_dir "@qt_root_dir@")
-    file(GLOB _qt_fw_dirs "${_qt_libs_dir}/Qt*.framework")
-    foreach(_fw_dir ${_qt_fw_dirs})
-      file(GLOB _ver_subdirs "${_fw_dir}/Versions/*/")
-      foreach(_ver_dir ${_ver_subdirs})
-        if(IS_DIRECTORY "${_ver_dir}")
-          list(APPEND libs_path "${_ver_dir}")
-        endif()
-      endforeach()
-    endforeach()
-    unset(_qt_libs_dir)
-    unset(_qt_fw_dirs)
-    unset(_ver_subdirs)
-    unset(_fw_dir)
-    unset(_ver_dir)
-  endif()
-
-  list(REMOVE_DUPLICATES libs_path)
-
-  gp_clear_log()
-
-  gp_log_message("Calling fixup_bundle with")
-  gp_log_message("app=${app_dir}")
-  gp_log_message("<Slicer_SUPERBUILD_DIR>=${Slicer_SUPERBUILD_DIR}")
-  gp_log_message("libs=")
-  foreach(lib ${libs})
-    file(RELATIVE_PATH relative_lib ${Slicer_SUPERBUILD_DIR} ${lib})
-    if(NOT "${relative_lib}" STREQUAL "${lib}")
-      set(lib "<Slicer_SUPERBUILD_DIR>/${relative_lib}")
-    endif()
-    gp_log_message("  ${lib}")
   endforeach()
-  gp_log_message("libs_path=")
-  foreach(path ${libs_path})
-    file(RELATIVE_PATH relative_path ${Slicer_SUPERBUILD_DIR} ${path})
-    if(NOT "${relative_path}" STREQUAL "${path}")
-      set(path "<Slicer_SUPERBUILD_DIR>/${relative_path}")
-    endif()
-    gp_log_message("  ${path}")
-  endforeach()
+endif()
 
-  # Keep track of libs count and current lib being fixed
-  set(ENV{FIXUP_LIB_CURRENT} 0)
+list(REMOVE_DUPLICATES search_paths)
 
-  set(inner_re "1|a|bat|bmp|c|cc|cfg|cmake|conf|css|ctypes|cxx|dat|def|doc|dylib|egg-info|enc")
-  set(inner_re "${inner_re}|eps|example|f|f90|fits|gif|gz|h|hxx|i|icns|ico|in|ini|itk|log|md5")
-  set(inner_re "${inner_re}|mhd|mrml|mrml_remote|msg|nhdr|nib|nrrd|pkl|plist|png|ps|py|pyc|pyf")
-  set(inner_re "${inner_re}|pyw|pyx|raw|sample|so|supp|tcl|txt|ui|xml|exe|mexw32|mexw64")
-  set(GP_IS_FILE_EXECUTABLE_EXCLUDE_REGEX "\\.(${inner_re})$")
+set(search_path_args)
+foreach(dir ${search_paths})
+  list(APPEND search_path_args --search-path "${dir}")
+endforeach()
 
-  fixup_bundle(
-    "${app_dir}"
-    "${libs}"
-    "${libs_path}"
-    )
+#-----------------------------------------------------------------------------
+# Embed the dependency closure and rewrite it to @rpath.
+#-----------------------------------------------------------------------------
+message(STATUS "Closing macOS bundle dependencies")
+execute_process(
+  COMMAND python3 "@CMAKE_SOURCE_DIR@/Utilities/Scripts/SlicerBundleCloseDeps.py"
+          --app "${app_dir}" ${search_path_args}
+  RESULT_VARIABLE _closedeps_result
+  )
+if(NOT _closedeps_result EQUAL 0)
+  message(FATAL_ERROR "Closing macOS bundle dependencies failed")
+endif()
 
-  set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
-  if(NOT Slicer_USE_SYSTEM_QT)
-    set(qt_root_dir "@qt_root_dir@")
-
-    # Since BundleUtilities function do not copy the "Helpers" directory found
-    # in frameworks. The following will explicitly copy and fixup
-    # QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app
-    set(Slicer_BUILD_WEBENGINE_SUPPORT "@Slicer_BUILD_WEBENGINE_SUPPORT@")
-    set(qtwebenginecore_app_subdir "Helpers/QtWebEngineProcess.app")
-    set(qtwebenginecore_src_dir "${qt_root_dir}/QtWebEngineCore.framework/${qtwebenginecore_app_subdir}")
-    set(qtwebenginecore_dest_dir "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/${qtwebenginecore_app_subdir}")
-    if(Slicer_BUILD_WEBENGINE_SUPPORT AND EXISTS ${qtwebenginecore_src_dir})
-      file(COPY "${qtwebenginecore_src_dir}/Contents" DESTINATION "${qtwebenginecore_dest_dir}/" USE_SOURCE_PERMISSIONS)
-      set(qtwebengineprocess_executable "${qtwebenginecore_dest_dir}/Contents/MacOS/QtWebEngineProcess")
-      # Collect list of Qt framework dependencies
-      set(prereqs )
-      get_prerequisites(${qtwebengineprocess_executable} "prereqs" 1 0 "" "")
-      # Generate list of "-change" arguments
-      set(changes "")
-      foreach(item ${prereqs})
-        gp_item_default_embedded_path_override("${item}" path)
-        get_filename_component(item_name "${item}" NAME)
-        # Examples of values:
-        #  item          : /Volumes/Dashboards/Support/qt-everywhere-build-5.10.0/lib/QtNetwork.framework/Versions/5/QtNetwork
-        #  item_name     : QtNetwork
-        #  path          : @rpath/Frameworks
-        #  embedded_item : @rpath/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
-        string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
-        set(changes ${changes} "-change" "${item}" "${embedded_item}")
-      endforeach()
-      # Update executable
-      execute_process(COMMAND install_name_tool
-        -add_rpath "@loader_path/../../../../../../../../"
-        ${changes} "${qtwebengineprocess_executable}"
-        )
-      # Create relative symlinks in <package_root>/Contents/Frameworks/QtWebEngineCore.framework
-      #  from Versions/Current/Helpers
-      #    to Helpers
-      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "Versions/Current/Helpers"
-        "Helpers"
-        WORKING_DIRECTORY "${app_dir}/Contents/Frameworks/QtWebEngineCore.framework"
-        )
-    endif()
-
-   # Since BundleUtilities module does not know how to install .app directory within
-   # an existing app, the following explicitly install the designer application as well
-   # as the QtDesignerComponents.framework.
-   set(Slicer_BUILD_QT_DESIGNER_PLUGINS "@Slicer_BUILD_QT_DESIGNER_PLUGINS@")
-   set(designer_app_subdir "Designer.app")
-   set(designer_src_dir "${qt_root_dir}/../bin/${designer_app_subdir}")
-   set(designer_dest_dir "${app_dir}/Contents/bin/${designer_app_subdir}")
-   if(Slicer_BUILD_QT_DESIGNER_PLUGINS AND EXISTS ${designer_src_dir})
-     # Designer
-     file(COPY "${designer_src_dir}/Contents" DESTINATION "${designer_dest_dir}/" USE_SOURCE_PERMISSIONS)
-     set(designer_executable "${designer_dest_dir}/Contents/MacOS/Designer")
-     # Collect list of Qt framework dependencies
-     set(prereqs )
-     get_prerequisites(${designer_executable} "prereqs" 1 0 "" "")
-     # Generate list of "-change" arguments
-     set(changes "")
-     foreach(item ${prereqs})
-       gp_item_default_embedded_path_override("${item}" path)
-       get_filename_component(item_name "${item}" NAME)
-       # Examples of values:
-       #  item          : /Volumes/Dashboards/Support/qt-everywhere-build-5.10.0/lib/QtNetwork.framework/Versions/5/QtNetwork
-       #  item_name     : QtNetwork
-       #  path          : @rpath/Frameworks
-       #  embedded_item : @rpath/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
-       string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
-       set(changes ${changes} "-change" "${item}" "${embedded_item}")
-     endforeach()
-     # Update executable
-     # Remove the Qt-install-tree rpath if present (Qt5 has it; Qt6 may not,
-     # so ignore the error rather than using "-rpath old new" which requires old to exist).
-     execute_process(COMMAND install_name_tool
-       -delete_rpath "@executable_path/../Frameworks"
-       "${designer_executable}"
-       RESULT_VARIABLE _rpath_delete_result
-       OUTPUT_QUIET ERROR_QUIET
-       )
-     # Add the bundle-relative rpath and apply all LC_LOAD_DYLIB changes.
-     execute_process(COMMAND install_name_tool
-       -add_rpath "@loader_path/../../../../"
-       ${changes} "${designer_executable}"
-       )
-     # Generate qt.conf file to override plugin paths and ensure plugins provided
-     # by Slicer package are loaded
-     file(WRITE "${designer_dest_dir}/Contents/Resources/qt.conf" "[Paths]
-Plugins=../../../@Slicer_QtPlugins_DIR@
-")
-
-     # QtDesignerComponents.framework
-     # Dynamically resolve the versioned binary path (e.g. Versions/A for Qt6, Versions/5 for Qt5)
-     # to avoid hardcoding the framework version string.
-     file(GLOB _qtdc_candidates
-       "${qt_root_dir}/QtDesignerComponents.framework/Versions/*/QtDesignerComponents")
-     list(FILTER _qtdc_candidates EXCLUDE REGEX "/Versions/Current/")
-     if(_qtdc_candidates)
-       list(GET _qtdc_candidates 0 resolved_item)
-       string(REGEX REPLACE ".*/Versions/([^/]+)/QtDesignerComponents$" "\\1"
-         _qtdc_version "${resolved_item}")
-       set(resolved_embedded_item "${app_dir}/Contents/Frameworks/QtDesignerComponents.framework/Versions/${_qtdc_version}/QtDesignerComponents")
-       copy_resolved_framework_into_bundle("${resolved_item}" "${resolved_embedded_item}")
-       # Collect list of Qt framework dependencies
-       set(prereqs )
-       get_prerequisites(${resolved_embedded_item} "prereqs" 1 0 "" "")
-       # Generate list of "-change" arguments
-       set(changes "")
-       foreach(item ${prereqs})
-         gp_item_default_embedded_path_override("${item}" path)
-         get_filename_component(item_name "${item}" NAME)
-         string(REGEX REPLACE "^.*(${item_name}.framework/.*/?${item_name}).*$" "${path}/\\1" embedded_item "${item}")
-         set(changes ${changes} "-change" "${item}" "${embedded_item}")
-       endforeach()
-       # Update executable
-       execute_process(COMMAND install_name_tool
-         ${changes} -id "@rpath/Frameworks/QtDesignerComponents.framework/Versions/${_qtdc_version}/QtDesignerComponents"
-         "${resolved_embedded_item}"
-         )
-     endif()
-   endif()
-  endif()
-
-endfunction()
-
-set(app_name "@Slicer_MAIN_PROJECT_APPLICATION_NAME@.app")
-fixup_bundle_with_plugins(${app_name})
+#-----------------------------------------------------------------------------
+# Re-sign the bundle.
+#
+# install_name_tool invalidates the ad-hoc code signature of every Mach-O file
+# it modifies. On Apple Silicon the kernel refuses to map pages of a binary
+# whose signature does not match, killing the process at load time with
+# EXC_BAD_ACCESS ("Code Signature Invalid"), so the whole bundle must be
+# re-signed once all install_name_tool operations are complete.
+#
+# "codesign --deep" is unreliable on a bundle of this size and nesting depth
+# (the CFBundleExecutable is a small bootstrap, so the real application binary
+# and every module/plugin/framework is nested code): it can leave individual
+# binaries with an invalid signature that then fault at load. Sign inside-out
+# instead -- every Mach-O on its own, deepest first, and the .app last.
+#-----------------------------------------------------------------------------
+message(STATUS "Re-signing application bundle after fixup")
+execute_process(
+  COMMAND python3 "@CMAKE_SOURCE_DIR@/Utilities/Scripts/SlicerSignBundleMacOS.py"
+          --app "${app_dir}"
+  RESULT_VARIABLE _codesign_result
+  ERROR_VARIABLE _codesign_error
+  )
+if(NOT _codesign_result EQUAL 0)
+  message(WARNING "Re-signing the application bundle failed:\n${_codesign_error}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Rename the bundle to use the full application name (e.g. "3D Slicer 5.10.0")
@@ -494,6 +184,7 @@ fixup_bundle_with_plugins(${app_name})
 # "5.13.0-2026-07-04"). Finder elides long unbroken names in the middle, which
 # would hide the version number, so the separator before the date is replaced
 # with a space ("5.13.0 2026-07-04") to give Finder a place to wrap the name.
+set(app_name "@Slicer_MAIN_PROJECT_APPLICATION_NAME@.app")
 set(installed_app_version "@Slicer_MAIN_PROJECT_VERSION_FULL@")
 string(REGEX REPLACE "^([^-]+)-(.*)$" "\\1 \\2" installed_app_version "${installed_app_version}")
 set(installed_app_name "@Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME@ ${installed_app_version}.app")
