@@ -47,6 +47,7 @@ if(BUILD_TESTING)
     qSlicerModulePanelTest1.cxx
     qSlicerMouseModeToolBarTest1.cxx
     qSlicerSaveDataDialogCustomFileWriterTest.cxx
+    qSlicerSaveDataDialogSaveOutcomeTest.cxx
     qSlicerWidgetTest1.cxx
     qSlicerWidgetTest2.cxx
     )
@@ -95,6 +96,7 @@ if(BUILD_TESTING)
   simple_test( qSlicerModulePanelTest1 )
   simple_test( qSlicerMouseModeToolBarTest1 )
   simple_test( qSlicerSaveDataDialogCustomFileWriterTest )
+  simple_test( qSlicerSaveDataDialogSaveOutcomeTest )
   simple_test( qSlicerWidgetTest1 )
   simple_test( qSlicerWidgetTest2 DATA{${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData/fixed.nrrd} )
 
