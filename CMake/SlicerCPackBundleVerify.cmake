@@ -97,10 +97,20 @@ endif()
 # it. Globbing avoids having to reconstruct the exact (date-dependent) bundle and
 # package names.
 # -----------------------------------------------------------------------------
-file(GLOB app_candidates
-  "${Slicer_INSTALL_DIR}/*.app"
-  "${Slicer_INSTALL_DIR}/*/*.app"
-  )
+file(GLOB app_candidates "${Slicer_INSTALL_DIR}/*.app")
+if(NOT app_candidates)
+  file(GLOB _staged_app_candidates "${Slicer_INSTALL_DIR}/*/*.app")
+  foreach(_candidate IN LISTS _staged_app_candidates)
+    get_filename_component(_candidate_parent "${_candidate}" DIRECTORY)
+    if(NOT IS_SYMLINK "${_candidate}"
+        AND NOT IS_SYMLINK "${_candidate_parent}")
+      list(APPEND app_candidates "${_candidate}")
+    endif()
+  endforeach()
+  unset(_staged_app_candidates)
+  unset(_candidate)
+  unset(_candidate_parent)
+endif()
 list(REMOVE_DUPLICATES app_candidates)
 
 list(LENGTH app_candidates app_count)
