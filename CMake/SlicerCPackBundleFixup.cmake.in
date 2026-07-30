@@ -79,7 +79,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
   endif()
 
-  foreach(qt_plugin_dir designer iconengines styles audio imageformats sqldrivers platforms printsupport)
+  foreach(qt_plugin_dir designer iconengines styles audio imageformats sqldrivers platforms printsupport tls)
     if(item MATCHES "@Slicer_QtPlugins_DIR@/${qt_plugin_dir}/[^/]+\\.(so|dylib)$")
       set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/${qt_plugin_dir}")
     endif()
@@ -153,6 +153,7 @@ function(fixup_bundle_with_plugins app)
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/sqldrivers/*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/platforms/*${suffix}"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/printsupport/*${suffix}"
+    "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/tls/*${suffix}"
     )
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
@@ -243,9 +244,13 @@ function(fixup_bundle_with_plugins app)
   endif()
   if(Slicer_USE_PYTHONQT)
     _fixup_paths_append(libs_path "@PYTHON_LIBRARY_PATH@")
+    get_filename_component(_pythonqt_library_dir
+      "@PYTHONQT_LIBRARY_RELEASE@" DIRECTORY)
+    _fixup_paths_append(libs_path "${_pythonqt_library_dir}")
+    unset(_pythonqt_library_dir)
   endif()
   set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
-  set(Slicer_USE_DCMTK_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
+  set(Slicer_USE_DCMTK_WITH_OPENSSL "@Slicer_USE_DCMTK_WITH_OPENSSL@")
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_DCMTK_WITH_OPENSSL)
     _fixup_paths_append(libs_path "@OPENSSL_EXPORT_LIBRARY_DIR@")
   endif()
@@ -289,10 +294,9 @@ function(fixup_bundle_with_plugins app)
   endif()
 
   # On macOS with Qt6, framework binaries live inside versioned subdirectories
-  # (e.g. QtCore.framework/Versions/A/QtCore). BundleUtilities resolves @rpath
-  # references by stripping the @rpath prefix and searching for the bare filename
-  # via find_file(). That search only succeeds when the containing directory is
-  # listed in libs_path, so add every Qt framework Versions/* dir here.
+  # (e.g. QtCore.framework/Versions/A/QtCore). Add those directories for
+  # basename lookups and the Qt library root for full @rpath-relative framework
+  # paths and non-framework dependencies.
   set(Slicer_USE_SYSTEM_QT "@Slicer_USE_SYSTEM_QT@")
   if(APPLE AND NOT Slicer_USE_SYSTEM_QT)
     set(_qt_libs_dir "@qt_root_dir@")
@@ -305,6 +309,7 @@ function(fixup_bundle_with_plugins app)
         endif()
       endforeach()
     endforeach()
+    list(APPEND libs_path "${_qt_libs_dir}")
     unset(_qt_libs_dir)
     unset(_qt_fw_dirs)
     unset(_ver_subdirs)

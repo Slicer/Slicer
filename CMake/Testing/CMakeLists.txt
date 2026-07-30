@@ -38,6 +38,18 @@ endif()
 
 if(APPLE)
   add_test(
+    NAME cmake_slicer_get_prerequisites_rpath_test
+    COMMAND ${CMAKE_COMMAND}
+      "-DSlicer_SOURCE_DIR=${Slicer_SOURCE_DIR}"
+      "-DTEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/SlicerGetPrerequisitesRPathTest"
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/SlicerGetPrerequisitesRPathTest.cmake"
+    )
+  set_tests_properties(cmake_slicer_get_prerequisites_rpath_test PROPERTIES
+    LABELS CMake
+    PASS_REGULAR_EXPRESSION "SUCCESS"
+    )
+
+  add_test(
     NAME cmake_slicer_qt_install_symlink_test
     COMMAND ${CMAKE_COMMAND}
       "-DSlicer_SOURCE_DIR=${Slicer_SOURCE_DIR}"
