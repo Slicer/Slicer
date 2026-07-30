@@ -13,6 +13,13 @@ if(UNIX)
   set(CPACK_GENERATOR "TGZ")
   if(APPLE)
     set(CPACK_GENERATOR "DragNDrop")
+    # Use the LZFSE-compressed disk image format (ULFO) instead of the CPack
+    # default (UDZO, zlib). LZFSE compresses the application bundle several
+    # times faster and produces a slightly smaller image. ULFO images require
+    # macOS 10.11 or later to mount, well below the minimum supported version.
+    if(NOT DEFINED CPACK_DMG_FORMAT)
+      set(CPACK_DMG_FORMAT "ULFO")
+    endif()
   endif()
 elseif(WIN32)
   set(CPACK_GENERATOR "NSIS")

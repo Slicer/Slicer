@@ -37,11 +37,21 @@ if(NOT "${QT_PLUGINS_DIR}" STREQUAL "")
     endforeach()
 
     foreach(qpi ${qt_plugins})
-      install(PROGRAMS ${qpi}
+      get_filename_component(qpi_libname ${qpi} NAME)
+      # Some Qt deployments (notably Homebrew) expose the plugins directory as a
+      # tree of symlinks pointing into the versioned install location (e.g.
+      # ".../share/qt/plugins/platforms/libqcocoa.dylib" -> "../../../../Cellar/...").
+      # install(PROGRAMS) copies such a symlink verbatim, so the installed plugin
+      # is a relative link that dangles as soon as the bundle is moved off the
+      # build machine, and the application then aborts at startup because the Qt
+      # platform plugin ("cocoa") cannot be loaded. Resolve to the real file so an
+      # actual binary is installed and can be fixed up and embedded in the bundle.
+      get_filename_component(qpi_realpath "${qpi}" REALPATH)
+      install(PROGRAMS ${qpi_realpath}
         DESTINATION ${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}
+        RENAME ${qpi_libname}
         COMPONENT RuntimePlugins
         )
-      get_filename_component(qpi_libname ${qpi} NAME)
       slicerStripInstalledLibrary(
         FILES "${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}/${qpi_libname}"
         COMPONENT Runtime

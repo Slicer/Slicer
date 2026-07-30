@@ -42,6 +42,7 @@
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
+#include "vtkSlicerConfigure.h"        // For Slicer_QtPlugins_DIR
 #include "vtkSlicerVersionConfigure.h" // For Slicer_MAIN_PROJECT_VERSION_FULL
 
 #ifdef Slicer_USE_PYTHONQT
@@ -51,6 +52,7 @@
 #include <vtkSystemInformation.h>
 
 // CTK includes
+#include <ctkAppLauncherEnvironment.h>
 #include <ctkMessageBox.h>
 #include <ctkProxyStyle.h>
 #ifdef Slicer_USE_PYTHONQT
@@ -193,6 +195,29 @@ void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkPr
   vtkLogger::SetStderrVerbosity(vtkLogger::VERBOSITY_OFF);
   itk::itkFactoryRegistration();
   qMRMLWidget::preInitializeApplication();
+
+#ifdef Q_OS_MACOS
+  // An installed macOS application bundle has no separate launcher process to
+  // set up the environment (unlike Linux and Windows, and unlike the build
+  // tree where the CTK application launcher is used). The Qt platform plugin
+  // ("cocoa") is loaded by the QApplication base class constructor, before
+  // qSlicerCoreApplication is able to apply the launcher settings, so
+  // QT_PLUGIN_PATH must already point at the Qt plugins bundled in the
+  // application. Without it the application aborts at startup with
+  // "Could not find the Qt platform plugin cocoa".
+  // This is only needed when running without a launcher (currentLevel() == 0):
+  // when a launcher is used, it has already set QT_PLUGIN_PATH.
+  if (argv0 && ctkAppLauncherEnvironment::currentLevel() == 0 && !qEnvironmentVariableIsSet("QT_PLUGIN_PATH"))
+  {
+    std::string executableDir = vtksys::SystemTools::GetFilenamePath(vtksys::SystemTools::CollapseFullPath(argv0));
+    // <bundle>/Contents/MacOS -> <bundle>/Contents/<Slicer_QtPlugins_DIR>
+    std::string pluginPath = vtksys::SystemTools::CollapseFullPath(executableDir + "/../" + Slicer_QtPlugins_DIR);
+    if (vtksys::SystemTools::FileIsDirectory(pluginPath))
+    {
+      qputenv("QT_PLUGIN_PATH", QByteArray::fromStdString(pluginPath));
+    }
+  }
+#endif
 
   // Allow a custom application name so that the settings
   // can be distinct for differently named applications
