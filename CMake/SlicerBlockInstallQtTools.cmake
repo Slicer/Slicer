@@ -54,9 +54,11 @@ foreach(tool IN LISTS Slicer_INSTALLED_QT_TOOLS)
   if(NOT EXISTS "${tool_executable}")
     message(FATAL_ERROR "Qt tool ${tool} not found: ${tool_executable}")
   endif()
-  install(PROGRAMS ${tool_executable}
+  get_filename_component(tool_executable_realpath "${tool_executable}" REALPATH)
+  install(PROGRAMS "${tool_executable_realpath}"
     DESTINATION ${Slicer_INSTALL_BIN_DIR}
     COMPONENT Runtime
+    RENAME "${tool}${CMAKE_EXECUTABLE_SUFFIX}"
     )
   slicerStripInstalledLibrary(
     FILES "${Slicer_INSTALL_BIN_DIR}/${tool}"

@@ -37,11 +37,13 @@ if(NOT "${QT_PLUGINS_DIR}" STREQUAL "")
     endforeach()
 
     foreach(qpi ${qt_plugins})
-      install(PROGRAMS ${qpi}
+      get_filename_component(qpi_libname "${qpi}" NAME)
+      get_filename_component(qpi_realpath "${qpi}" REALPATH)
+      install(PROGRAMS "${qpi_realpath}"
         DESTINATION ${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}
         COMPONENT RuntimePlugins
+        RENAME "${qpi_libname}"
         )
-      get_filename_component(qpi_libname ${qpi} NAME)
       slicerStripInstalledLibrary(
         FILES "${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}/${qpi_libname}"
         COMPONENT Runtime
