@@ -136,6 +136,10 @@ application installation:
   --install /Applications
 ```
 
+Add `--install-name Slicer-arm64.app` to install alongside an existing copy.
+The script refuses to replace an application while one of its bundled
+executables is running.
+
 By default the script uses ad-hoc signing, which is appropriate for local use
 but is not a substitute for Developer ID signing and Apple notarization. Pass a
 Developer ID identity using `--sign-identity` when preparing a distributable
