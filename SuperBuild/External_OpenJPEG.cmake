@@ -60,6 +60,22 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       # Install directories
       -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      # Give the installed library an absolute install name (LC_ID_DYLIB), for
+      # consistency with the rest of the SuperBuild -- this is not a fix for a
+      # functional bug. Slicer forces CMAKE_MACOSX_RPATH off for all external
+      # projects (see UseSlicer.cmake.in), and OpenJPEG, unlike ITK, VTK and
+      # DCMTK, sets no install-name directory of its own, so libopenjp2 is the
+      # one SuperBuild library installed with a bare install name
+      # ("libopenjp2.7.dylib"). Consumers that link it (DCMTK's dcmjp2kcs
+      # JPEG 2000 codec and ITK's GDCM) record that bare name. In normal use it
+      # still resolves: the Slicer launcher adds the OpenJPEG lib dir to the
+      # library path, and the macOS bundle fixup (CPack BundleUtilities or
+      # Slicer's packager) rewrites the dependency when packaging. So this is a
+      # robustness/consistency change, not a crash fix -- an absolute install
+      # name makes the recorded dependency self-describing and relocatable
+      # without relying on the launcher environment or on the packager having to
+      # resolve a bare name.
+      -DCMAKE_INSTALL_NAME_DIR:STRING=<INSTALL_DIR>/lib
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
