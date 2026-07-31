@@ -166,45 +166,19 @@ For more details, see the generated Slicer API documentation.
 #   object = slicer.vtkMRMLScene()
 #   assert isinstance(object, vtk.vtkObject)
 #
-# This is needed because the wrapping of the MRML or Slicer VTK-based C++ classes is done
-# through the vtkMacroKitPythonWrap (from vtkAddon) and the generated "vtk*PythonInitImpl.cxx"
-# files do not include the names of the dependent VTK modules in the list used with
-# "vtkPythonUtil::ImportModule".
+# The ``vtk`` module is a lazily-loading shim (see GenerateLazyVtkModule.py)
+# that imports each vtkmodules submodule only when one of its attributes is
+# first accessed, instead of eagerly star-importing all ~125 modules.
 #
-# The ``vtk`` module itself is a lazily-loading shim (see
-# GenerateLazyVtkModule.py), so the VTK modules that provide base classes of
-# the wrapped MRML and Slicer classes are imported explicitly: importing them
-# registers their classes with vtkPythonUtil so that the wrapped subclasses
-# resolve their bases. The remaining hundred-plus VTK modules load on demand.
-
-import vtkmodules.vtkCommonCore  # noqa: F401
-import vtkmodules.vtkCommonColor  # noqa: F401
-import vtkmodules.vtkCommonDataModel  # noqa: F401
-import vtkmodules.vtkCommonExecutionModel  # noqa: F401
-import vtkmodules.vtkCommonMath  # noqa: F401
-import vtkmodules.vtkCommonMisc  # noqa: F401
-import vtkmodules.vtkCommonTransforms  # noqa: F401
-import vtkmodules.vtkChartsCore  # noqa: F401
-import vtkmodules.vtkFiltersCore  # noqa: F401
-import vtkmodules.vtkFiltersGeneral  # noqa: F401
-import vtkmodules.vtkFiltersModeling  # noqa: F401
-import vtkmodules.vtkFiltersSources  # noqa: F401
-import vtkmodules.vtkImagingCore  # noqa: F401
-import vtkmodules.vtkInteractionStyle  # noqa: F401
-import vtkmodules.vtkInteractionWidgets  # noqa: F401
-import vtkmodules.vtkIOCore  # noqa: F401
-import vtkmodules.vtkIOImage  # noqa: F401
-import vtkmodules.vtkIOXML  # noqa: F401
-import vtkmodules.vtkIOXMLParser  # noqa: F401
-import vtkmodules.vtkRenderingAnnotation  # noqa: F401
-import vtkmodules.vtkRenderingContext2D  # noqa: F401
-import vtkmodules.vtkRenderingCore  # noqa: F401
-import vtkmodules.vtkRenderingFreeType  # noqa: F401
-import vtkmodules.vtkRenderingOpenGL2  # noqa: F401
-import vtkmodules.vtkRenderingUI  # noqa: F401
-import vtkmodules.vtkRenderingVolume  # noqa: F401
-import vtkmodules.vtkRenderingVolumeOpenGL2  # noqa: F401
-import vtkmodules.vtkViewsCore  # noqa: F401
+# The base classes of the wrapped MRML and Slicer classes no longer need to be
+# imported explicitly here. Each wrapped module's generated init imports exactly
+# the VTK modules that provide its direct base classes: vtkMacroKitPythonWrap
+# (from vtkAddon) records those as the "DEPENDS" of "vtk*Init.data", pruned from
+# the full link line to the base-class providers by SlicerPrunePythonModuleDepends.
+# vtkPythonUtil::ImportModule therefore registers each base before its wrapped
+# subclass is built, so the subclasses resolve their bases as the kits load
+# (verified: isinstance(slicer.vtkMRMLScene(), vtk.vtkObject) is True). Only the
+# handful of base-class modules load at startup; the rest load on demand.
 
 import vtk  # noqa: F401
 
