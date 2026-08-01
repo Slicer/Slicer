@@ -24,6 +24,7 @@
 // Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractModuleFactoryManager.h"
+#include "qSlicerUtils.h"
 #include "qSlicerAbstractCoreModule.h"
 
 // STD includes
@@ -55,6 +56,7 @@ public:
   QStringList SearchPaths;
   QStringList ExplicitModules;
   QStringList ModulesToIgnore;
+  bool IgnoreTestingModules{ false };
   QMap<QString, QFileInfo> IgnoredModules;
   QMap<qSlicerModuleFactory*, int> Factories;
   QMap<QString, qSlicerModuleFactory*> RegisteredModules;
@@ -234,6 +236,20 @@ QStringList qSlicerAbstractModuleFactoryManager::modulesToIgnore() const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAbstractModuleFactoryManager::setIgnoreTestingModules(bool ignore)
+{
+  Q_D(qSlicerAbstractModuleFactoryManager);
+  d->IgnoreTestingModules = ignore;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerAbstractModuleFactoryManager::ignoreTestingModules() const
+{
+  Q_D(const qSlicerAbstractModuleFactoryManager);
+  return d->IgnoreTestingModules;
+}
+
+//-----------------------------------------------------------------------------
 QStringList qSlicerAbstractModuleFactoryManager::ignoredModuleNames() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
@@ -335,6 +351,16 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     if (d->Verbose)
     {
       qDebug() << " file: " << file.absoluteFilePath() << " is in ignore list";
+    }
+    d->IgnoredModules[moduleName] = file;
+    emit moduleIgnored(moduleName);
+    return;
+  }
+  if (d->IgnoreTestingModules && qSlicerUtils::isTestingModuleName(moduleName))
+  {
+    if (d->Verbose)
+    {
+      qDebug() << " file: " << file.absoluteFilePath() << " is a testing module";
     }
     d->IgnoredModules[moduleName] = file;
     emit moduleIgnored(moduleName);

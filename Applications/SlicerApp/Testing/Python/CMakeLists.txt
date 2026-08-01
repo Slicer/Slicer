@@ -479,59 +479,59 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT DICOMReaders.py)
   slicer_add_python_unittest(SCRIPT DICOMPluginTests.py)
   slicer_add_python_unittest(SCRIPT KneeAtlasTest.py)
-  slicer_add_python_unittest(SCRIPT sceneImport2428.py)
+  slicer_add_python_unittest(SCRIPT sceneImport2428Test.py)
   slicer_add_python_unittest(SCRIPT SlicerDisplayNodeSequenceTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreLoopTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBSaveRestoreCheckPathsTest.py)
-  slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
+  slicer_add_python_unittest(SCRIPT Slicer4MinuteTest.py)
   slicer_add_python_unittest(SCRIPT SlicerBoundsTest.py)
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
-    slicer_add_python_unittest(SCRIPT WebEngine.py)
+    slicer_add_python_unittest(SCRIPT WebEngineTest.py)
   endif()
-  slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
-  slicer_add_python_unittest(SCRIPT ScenePerformance.py)
-  slicer_add_python_unittest(SCRIPT SlicerRestoreSceneViewCrashIssue3445.py)
-  slicer_add_python_unittest(SCRIPT RSNAVisTutorial.py)
-  slicer_add_python_unittest(SCRIPT RSNAQuantTutorial.py)
+  slicer_add_python_unittest(SCRIPT SliceLinkLogicTest.py)
+  slicer_add_python_unittest(SCRIPT ScenePerformanceTest.py)
+  slicer_add_python_unittest(SCRIPT SlicerRestoreSceneViewCrashIssue3445Test.py)
+  slicer_add_python_unittest(SCRIPT RSNAVisTutorialTest.py)
+  slicer_add_python_unittest(SCRIPT RSNAQuantTutorialTest.py)
   slicer_add_python_unittest(SCRIPT SlicerOrientationSelectorTest.py)
   # Currently needs to be updated for new widget. PR-7562: https://github.com/Slicer/Slicer/pull/7562
-  #slicer_add_python_unittest(SCRIPT SlicerTransformInteractionTest1.py)
+  #slicer_add_python_unittest(SCRIPT SlicerTransformInteractionTest.py)
   slicer_add_python_unittest(SCRIPT UtilTest.py)
-  slicer_add_python_unittest(SCRIPT ViewControllersSliceInterpolationBug1926.py)
-  slicer_add_python_unittest(SCRIPT RSNA2012ProstateDemo.py)
-  slicer_add_python_unittest(SCRIPT JRC2013Vis.py)
-  slicer_add_python_unittest(SCRIPT FiducialLayoutSwitchBug1914.py)
-  slicer_add_python_unittest(SCRIPT ShaderProperties.py)
+  slicer_add_python_unittest(SCRIPT ViewControllersSliceInterpolationBug1926Test.py)
+  slicer_add_python_unittest(SCRIPT RSNA2012ProstateDemoTest.py)
+  slicer_add_python_unittest(SCRIPT JRC2013VisTest.py)
+  slicer_add_python_unittest(SCRIPT FiducialLayoutSwitchBug1914Test.py)
+  slicer_add_python_unittest(SCRIPT ShaderPropertiesTest.py)
   slicer_add_python_unittest(SCRIPT SlicerScriptedFileReaderWriterTest.py)
-  slicer_add_python_unittest(SCRIPT CurvedPlanarReformation.py)
+  slicer_add_python_unittest(SCRIPT CurvedPlanarReformationTest.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
     AtlasTests.py
-    sceneImport2428.py
+    sceneImport2428Test.py
     SlicerDisplayNodeSequenceTest.py
     SlicerMRBMultipleSaveRestoreLoopTest.py
     SlicerMRBMultipleSaveRestoreTest.py
     SlicerMRBSaveRestoreCheckPathsTest.py
-    Slicer4Minute.py
+    Slicer4MinuteTest.py
     SlicerBoundsTest.py
-    WebEngine.py
-    SliceLinkLogic.py
-    ScenePerformance.py
-    RSNAVisTutorial.py
-    RSNAQuantTutorial.py
+    WebEngineTest.py
+    SliceLinkLogicTest.py
+    ScenePerformanceTest.py
+    RSNAVisTutorialTest.py
+    RSNAQuantTutorialTest.py
     SlicerOrientationSelectorTest.py
     # Currently needs to be updated for new widget. PR-7562: https://github.com/Slicer/Slicer/pull/7562
-    #SlicerTransformInteractionTest1.py
-    ViewControllersSliceInterpolationBug1926.py
-    RSNA2012ProstateDemo.py
-    JRC2013Vis.py
-    FiducialLayoutSwitchBug1914.py
-    ShaderProperties.py
+    #SlicerTransformInteractionTest.py
+    ViewControllersSliceInterpolationBug1926Test.py
+    RSNA2012ProstateDemoTest.py
+    JRC2013VisTest.py
+    FiducialLayoutSwitchBug1914Test.py
+    ShaderPropertiesTest.py
     UtilTest.py
     SlicerScriptedFileReaderWriterTest.py
-    CurvedPlanarReformation.py
+    CurvedPlanarReformationTest.py
     )
 
   slicer_add_python_unittest(SCRIPT CLIEventTest.py SLICER_ARGS --no-main-window)
@@ -539,15 +539,15 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
 
   if(Slicer_BUILD_BRAINSTOOLS)
-    slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139.py)
+    slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139Test.py)
 
     list(APPEND KIT_PYTHON_SCRIPTS
-      BRAINSFitRigidRegistrationCrashIssue4139.py
+      BRAINSFitRigidRegistrationCrashIssue4139Test.py
       )
   endif()
 
   set(KIT_PYTHON_RESOURCES
-    Resources/UI/ScenePerformance.ui
+    Resources/UI/ScenePerformanceTest.ui
     Resources/UI/UtilTest.ui
     )
 

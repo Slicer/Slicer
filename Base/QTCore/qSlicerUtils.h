@@ -57,8 +57,17 @@ public:
 
   /// Return \a true is the module is for testing purposes.
   /// These modules are for testing and for troubleshooting and normally should not be displayed
-  /// to end users.
+  /// to end users. Convenience overload of isTestingModuleName() that takes the name from
+  /// \a module.
   static bool isTestingModule(qSlicerAbstractCoreModule* module);
+
+  /// Return \a true if the module name follows the convention for a module that only
+  /// exists to be exercised by a test, which is a name ending in "Test" or "Tests".
+  ///
+  /// The name is used instead of the module category because it is known before the module
+  /// is instantiated. That is what makes it useful: instantiating a scripted module imports
+  /// it, and the import is the expensive part.
+  static bool isTestingModuleName(const QString& moduleName);
 
   /// Look for target file in build intermediate directory.
   /// On Windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel

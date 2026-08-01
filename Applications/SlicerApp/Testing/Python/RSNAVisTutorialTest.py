@@ -7,18 +7,18 @@ from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
 #
-# RSNAVisTutorial
+# RSNAVisTutorialTest
 #
 
 
-class RSNAVisTutorial(ScriptedLoadableModule):
+class RSNAVisTutorialTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "RSNAVisTutorial"  # TODO make this more human readable by adding spaces
+        parent.title = "RSNAVisTutorialTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
@@ -31,11 +31,11 @@ class RSNAVisTutorial(ScriptedLoadableModule):
 
 
 #
-# qRSNAVisTutorialWidget
+# RSNAVisTutorialTestWidget
 #
 
 
-class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
+class RSNAVisTutorialTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -94,7 +94,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAVisTutorialTest()
+        tester = RSNAVisTutorialTestTest()
         tester.setUp()
         tester.test_Part1DICOM(enableScreenshotsFlag, screenshotScaleFactor)
 
@@ -102,7 +102,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAVisTutorialTest()
+        tester = RSNAVisTutorialTestTest()
         tester.setUp()
         tester.test_Part2Head(enableScreenshotsFlag, screenshotScaleFactor)
 
@@ -110,7 +110,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAVisTutorialTest()
+        tester = RSNAVisTutorialTestTest()
         tester.setUp()
         tester.test_Part3Liver(enableScreenshotsFlag, screenshotScaleFactor)
 
@@ -118,17 +118,17 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAVisTutorialTest()
+        tester = RSNAVisTutorialTestTest()
         tester.setUp()
         tester.test_Part4Lung(enableScreenshotsFlag, screenshotScaleFactor)
 
-    def onReload(self, moduleName="RSNAVisTutorial"):
+    def onReload(self, moduleName="RSNAVisTutorialTest"):
         """Generic reload method for any scripted module.
         ModuleWizard will substitute correct default moduleName.
         """
         globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
-    def onReloadAndTest(self, moduleName="RSNAVisTutorial"):
+    def onReloadAndTest(self, moduleName="RSNAVisTutorialTest"):
         self.onReload()
         evalString = f'globals()["{moduleName}"].{moduleName}Test()'
         tester = eval(evalString)
@@ -136,11 +136,11 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
 
 
 #
-# RSNAVisTutorialLogic
+# RSNAVisTutorialTestLogic
 #
 
 
-class RSNAVisTutorialLogic(ScriptedLoadableModuleLogic):
+class RSNAVisTutorialTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -153,7 +153,7 @@ class RSNAVisTutorialLogic(ScriptedLoadableModuleLogic):
     pass
 
 
-class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
+class RSNAVisTutorialTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:

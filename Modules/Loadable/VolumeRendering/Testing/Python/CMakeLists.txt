@@ -1,14 +1,14 @@
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
 
   # add tests
-  slicer_add_python_unittest(SCRIPT VolumeRenderingSceneClose.py)
+  slicer_add_python_unittest(SCRIPT VolumeRenderingSceneCloseTest.py)
   slicer_add_python_unittest(SCRIPT VolumeRenderingThreeDOnlyLayout.py)
   set_tests_properties(
     py_VolumeRenderingThreeDOnlyLayout
     PROPERTIES FAIL_REGULAR_EXPRESSION "OpenGL errors detected"
     )
   set(KIT_PYTHON_SCRIPTS
-    VolumeRenderingSceneClose.py
+    VolumeRenderingSceneCloseTest.py
      )
   ctkMacroCompilePythonScript(
     TARGET_NAME ApplicationSelfTests

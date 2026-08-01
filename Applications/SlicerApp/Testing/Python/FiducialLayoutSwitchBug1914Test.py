@@ -8,14 +8,14 @@ from slicer.ScriptedLoadableModule import *
 
 
 #
-# FiducialLayoutSwitchBug1914
+# FiducialLayoutSwitchBug1914Test
 #
 
 
-class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
+class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "FiducialLayoutSwitchBug1914"
+        parent.title = "FiducialLayoutSwitchBug1914Test"
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Nicole Aucoin (BWH)"]
@@ -28,21 +28,21 @@ class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
 
 
 #
-# qFiducialLayoutSwitchBug1914Widget
+# FiducialLayoutSwitchBug1914TestWidget
 #
 
 
-class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
+class FiducialLayoutSwitchBug1914TestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
 
 #
-# FiducialLayoutSwitchBug1914Logic
+# FiducialLayoutSwitchBug1914TestLogic
 #
 
 
-class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
+class FiducialLayoutSwitchBug1914TestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -65,7 +65,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
         return None
 
 
-class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
+class FiducialLayoutSwitchBug1914TestTest(ScriptedLoadableModuleTest):
     """This is the test case for your scripted module."""
 
     def setUp(self):
@@ -86,7 +86,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
         enableScreenshots = 0
         screenshotScaleFactor = 1
 
-        logic = FiducialLayoutSwitchBug1914Logic()
+        logic = FiducialLayoutSwitchBug1914TestLogic()
         logging.info("ctest, please don't truncate my output: CTEST_FULL_OUTPUT")
 
         self.delayDisplay("Running the algorithm")
@@ -126,7 +126,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
             handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
             startingSeedDisplayCoords = handleRep.GetDisplayPosition()
             print("Starting seed display coords = %d, %d, %d" % (startingSeedDisplayCoords[0], startingSeedDisplayCoords[1], startingSeedDisplayCoords[2]))
-        self.takeScreenshot("FiducialLayoutSwitchBug1914-StartingPosition", "Point starting position", slicer.qMRMLScreenShotDialog.Red)
+        self.takeScreenshot("FiducialLayoutSwitchBug1914Test-StartingPosition", "Point starting position", slicer.qMRMLScreenShotDialog.Red)
 
         # Switch to red slice only
         lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
@@ -147,10 +147,12 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
             handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
             endingSeedDisplayCoords = handleRep.GetDisplayPosition()
             print("Ending seed display coords = %d, %d, %d" % (endingSeedDisplayCoords[0], endingSeedDisplayCoords[1], endingSeedDisplayCoords[2]))
-        self.takeScreenshot("FiducialLayoutSwitchBug1914-EndingPosition", "Point ending position", slicer.qMRMLScreenShotDialog.Red)
+        self.takeScreenshot("FiducialLayoutSwitchBug1914Test-EndingPosition", "Point ending position", slicer.qMRMLScreenShotDialog.Red)
 
         # Compare to original seed widget location
-        diff = math.pow((startingSeedDisplayCoords[0] - endingSeedDisplayCoords[0]), 2) + math.pow((startingSeedDisplayCoords[1] - endingSeedDisplayCoords[1]), 2) + math.pow((startingSeedDisplayCoords[2] - endingSeedDisplayCoords[2]), 2)
+        diff = (math.pow((startingSeedDisplayCoords[0] - endingSeedDisplayCoords[0]), 2)
+                + math.pow((startingSeedDisplayCoords[1] - endingSeedDisplayCoords[1]), 2)
+                + math.pow((startingSeedDisplayCoords[2] - endingSeedDisplayCoords[2]), 2))
         if diff != 0.0:
             diff = math.sqrt(diff)
         self.delayDisplay("Difference between starting and ending seed display coordinates = %g" % diff)
@@ -173,9 +175,9 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
 
         if enableScreenshots == 1:
             # compare the screen snapshots
-            startView = slicer.mrmlScene.GetFirstNodeByName("FiducialLayoutSwitchBug1914-StartingPosition")
+            startView = slicer.mrmlScene.GetFirstNodeByName("FiducialLayoutSwitchBug1914Test-StartingPosition")
             startShot = startView.GetScreenShot()
-            endView = slicer.mrmlScene.GetFirstNodeByName("FiducialLayoutSwitchBug1914-EndingPosition")
+            endView = slicer.mrmlScene.GetFirstNodeByName("FiducialLayoutSwitchBug1914Test-EndingPosition")
             endShot = endView.GetScreenShot()
             imageMath = vtk.vtkImageMathematics()
             imageMath.SetOperationToSubtract()
@@ -185,7 +187,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
             shotDiff = imageMath.GetOutput()
             # save it as a scene view
             annotationLogic = slicer.modules.annotations.logic()
-            annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending point positions",
+            annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914Test-Diff", "Difference between starting and ending point positions",
                                            slicer.qMRMLScreenShotDialog.Red, screenshotScaleFactor, shotDiff)
             # calculate the image difference
             imageStats = vtk.vtkImageHistogramStatistics()

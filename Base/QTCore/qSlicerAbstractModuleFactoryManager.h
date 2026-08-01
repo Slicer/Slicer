@@ -151,6 +151,20 @@ public:
   /// \sa addModuleToIgnore(const QString& moduleName)
   inline void removeModuleToIgnore(const QString& moduleName);
 
+  /// Set or get whether modules that only exist to be exercised by a test are skipped.
+  ///
+  /// When enabled, a module whose name identifies it as a test (see
+  /// qSlicerUtils::isTestingModuleName()) is never registered, and therefore never
+  /// instantiated. This is deliberately decided from the name: the category that
+  /// qSlicerUtils::isTestingModule() reads is only known once the module has been
+  /// instantiated, and for a scripted module that already means importing it, which is
+  /// the cost worth avoiding.
+  ///
+  /// Disabled by default, so that nothing changes for an application that does not ask
+  /// for it.
+  void setIgnoreTestingModules(bool ignore);
+  bool ignoreTestingModules() const;
+
   /// After the modules are registered, ignoredModules contains the list
   /// of all the modules that were ignored.
   QStringList ignoredModuleNames() const;

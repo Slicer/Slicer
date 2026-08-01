@@ -10,14 +10,14 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# JRC2013Vis
+# JRC2013VisTest
 #
 
 
-class JRC2013Vis(ScriptedLoadableModule):
+class JRC2013VisTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "JRC2013Vis"  # TODO make this more human readable by adding spaces
+        parent.title = "JRC2013VisTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Nicholas Herlambang (AZE R&D)"]  # replace with "Firstname Lastname (Org)"
@@ -30,11 +30,11 @@ class JRC2013Vis(ScriptedLoadableModule):
 
 
 #
-# qJRC2013VisWidget
+# JRC2013VisTestWidget
 #
 
 
-class JRC2013VisWidget(ScriptedLoadableModuleWidget):
+class JRC2013VisTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
         # Instantiate and connect widgets ...
@@ -65,22 +65,22 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
         self.layout.addStretch(1)
 
     def onPart1DICOM(self):
-        tester = JRC2013VisTest()
+        tester = JRC2013VisTestTest()
         tester.setUp()
         tester.test_Part1DICOM()
 
     def onPart2Head(self):
-        tester = JRC2013VisTest()
+        tester = JRC2013VisTestTest()
         tester.setUp()
         tester.test_Part2Head()
 
     def onPart3Liver(self):
-        tester = JRC2013VisTest()
+        tester = JRC2013VisTestTest()
         tester.setUp()
         tester.test_Part3Liver()
 
     def onPart4Lung(self):
-        tester = JRC2013VisTest()
+        tester = JRC2013VisTestTest()
         tester.setUp()
         tester.test_Part4Lung()
 
@@ -140,11 +140,11 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
 
 #
-# JRC2013VisLogic
+# JRC2013VisTestLogic
 #
 
 
-class JRC2013VisLogic(ScriptedLoadableModuleLogic):
+class JRC2013VisTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -155,7 +155,7 @@ class JRC2013VisLogic(ScriptedLoadableModuleLogic):
     pass
 
 
-class JRC2013VisTest(ScriptedLoadableModuleTest):
+class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     """This is the test case for your scripted module."""
 
     def setUp(self):
@@ -329,7 +329,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Finished with download and loading\n")
 
         try:
-            logic = JRC2013VisLogic()
+            logic = JRC2013VisTestLogic()
             mainWindow = slicer.util.mainWindow()
             layoutManager = slicer.app.layoutManager()
             threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -403,7 +403,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Finished with download and loading\n")
 
         try:
-            logic = JRC2013VisLogic()
+            logic = JRC2013VisTestLogic()
             mainWindow = slicer.util.mainWindow()
             layoutManager = slicer.app.layoutManager()
             threeDView = layoutManager.threeDWidget(0).threeDView()

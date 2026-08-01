@@ -6,18 +6,18 @@ from slicer.ScriptedLoadableModule import *
 
 
 #
-# VolumeRenderingSceneClose
+# VolumeRenderingSceneCloseTest
 #
 
 
-class VolumeRenderingSceneClose(ScriptedLoadableModule):
+class VolumeRenderingSceneCloseTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "VolumeRenderingSceneClose"
+        parent.title = "VolumeRenderingSceneCloseTest"
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Nicole Aucoin (BWH)"]
@@ -31,11 +31,11 @@ class VolumeRenderingSceneClose(ScriptedLoadableModule):
 
 
 #
-# qVolumeRenderingSceneCloseWidget
+# VolumeRenderingSceneCloseTestWidget
 #
 
 
-class VolumeRenderingSceneCloseWidget(ScriptedLoadableModuleWidget):
+class VolumeRenderingSceneCloseTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -72,17 +72,17 @@ class VolumeRenderingSceneCloseWidget(ScriptedLoadableModuleWidget):
         pass
 
     def onApplyButton(self):
-        logic = VolumeRenderingSceneCloseLogic()
+        logic = VolumeRenderingSceneCloseTestLogic()
         print("Run the algorithm")
         logic.run()
 
 
 #
-# VolumeRenderingSceneCloseLogic
+# VolumeRenderingSceneCloseTestLogic
 #
 
 
-class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
+class VolumeRenderingSceneCloseTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -127,7 +127,7 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
         return True
 
 
-class VolumeRenderingSceneCloseTest(ScriptedLoadableModuleTest):
+class VolumeRenderingSceneCloseTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -146,7 +146,7 @@ class VolumeRenderingSceneCloseTest(ScriptedLoadableModuleTest):
     def test_VolumeRenderingSceneClose1(self):
         self.delayDisplay("Starting the test")
 
-        logic = VolumeRenderingSceneCloseLogic()
+        logic = VolumeRenderingSceneCloseTestLogic()
         logic.run()
 
         self.delayDisplay("Test passed!")

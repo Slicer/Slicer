@@ -101,17 +101,17 @@ bool qSlicerUtils::isLoadableModule(const QString& filePath)
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerUtils::isTestingModuleName(const QString& moduleName)
+{
+  // Both the singular and the plural are in use ("AddManyMarkupsFiducialTest",
+  // "AtlasTests"), as are the "SelfTest" variants, which these suffixes already cover.
+  return moduleName.endsWith("Test") || moduleName.endsWith("Tests");
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
 {
-  const QStringList& categories = module->categories();
-  for (const QString& category : categories)
-  {
-    if (category.split('.').takeFirst() != "Testing")
-    {
-      return false;
-    }
-  }
-  return true;
+  return qSlicerUtils::isTestingModuleName(module->name());
 }
 
 //------------------------------------------------------------------------------

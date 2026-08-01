@@ -6,18 +6,18 @@ from slicer.ScriptedLoadableModule import *
 
 
 #
-# WebEngine
+# WebEngineTest
 #
 
 
-class WebEngine(ScriptedLoadableModule):
+class WebEngineTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "WebEngine"
+        parent.title = "WebEngineTest"
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Steve Pieper (Isomics)"]
@@ -30,11 +30,11 @@ class WebEngine(ScriptedLoadableModule):
 
 
 #
-# qWebEngineWidget
+# WebEngineTestWidget
 #
 
 
-class WebEngineWidget(ScriptedLoadableModuleWidget):
+class WebEngineTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -108,7 +108,7 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
         self.webWidgets = []
 
 
-class WebEngineTest(ScriptedLoadableModuleTest):
+class WebEngineTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:

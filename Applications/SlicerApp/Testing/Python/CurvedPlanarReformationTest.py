@@ -4,14 +4,14 @@ from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
 #
-# CurvedPlanarReformation
+# CurvedPlanarReformationTest
 #
 
 
-class CurvedPlanarReformation(ScriptedLoadableModule):
+class CurvedPlanarReformationTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "CurvedPlanarReformation"
+        self.parent.title = "CurvedPlanarReformationTest"
         self.parent.categories = ["Testing.TestCases"]
         self.parent.dependencies = []
         self.parent.contributors = ["Lee Newberg (Kitware)", "Andras Lasso (PerkLab)"]
@@ -26,11 +26,11 @@ SlicerSandbox extension.
 
 
 #
-# CurvedPlanarReformationWidget
+# CurvedPlanarReformationTestWidget
 #
 
 
-class CurvedPlanarReformationWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+class CurvedPlanarReformationTestWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def __init__(self, parent=None) -> None:
         """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.__init__(self, parent)
@@ -41,20 +41,20 @@ class CurvedPlanarReformationWidget(ScriptedLoadableModuleWidget, VTKObservation
 
 
 #
-# CurvedPlanarReformationLogic
+# CurvedPlanarReformationTestLogic
 #
 
 
-class CurvedPlanarReformationLogic(ScriptedLoadableModuleLogic):
+class CurvedPlanarReformationTestLogic(ScriptedLoadableModuleLogic):
     pass
 
 
 #
-# CurvedPlanarReformationTest
+# CurvedPlanarReformationTestTest
 #
 
 
-class CurvedPlanarReformationTest(ScriptedLoadableModuleTest):
+class CurvedPlanarReformationTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:

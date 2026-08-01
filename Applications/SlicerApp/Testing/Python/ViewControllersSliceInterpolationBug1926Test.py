@@ -6,11 +6,11 @@ from slicer.ScriptedLoadableModule import *
 
 
 #
-# ViewControllersSliceInterpolationBug1926
+# ViewControllersSliceInterpolationBug1926Test
 #
 
 
-class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
+class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -35,11 +35,11 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
 
 
 #
-# qViewControllersSliceInterpolationBug1926Widget
+# ViewControllersSliceInterpolationBug1926TestWidget
 #
 
 
-class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidget):
+class ViewControllersSliceInterpolationBug1926TestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -72,7 +72,7 @@ class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidge
         print("Hello World !")
 
 
-class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
+class ViewControllersSliceInterpolationBug1926TestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:

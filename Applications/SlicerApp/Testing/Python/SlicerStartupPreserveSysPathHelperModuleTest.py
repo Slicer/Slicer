@@ -10,7 +10,7 @@ sys.path.append(currentDir)
 
 from SlicerStartupPreserveSysPathTestHelperPackage import *
 
-class SlicerStartupPreserveSysPathTestHelperModule(ScriptedLoadableModule):
+class SlicerStartupPreserveSysPathHelperModuleTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "SlicerStartupPreserveSysPathTest"
@@ -22,4 +22,4 @@ class SlicerStartupPreserveSysPathTestHelperModule(ScriptedLoadableModule):
         if os.path.isfile(self.testOutputFileName):
             os.remove(self.testOutputFileName)
 
-        print("SlicerStartupPreserveSysPathTestHelperModule initialized")
+        print("SlicerStartupPreserveSysPathHelperModuleTest initialized")
