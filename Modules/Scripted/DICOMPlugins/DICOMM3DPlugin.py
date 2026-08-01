@@ -3,7 +3,6 @@ import io
 import shutil
 import vtkSegmentationCorePython as vtkSegmentationCore
 import logging
-import pydicom
 
 import slicer
 from DICOMLib import DICOMLoadable, DICOMPlugin
@@ -54,6 +53,10 @@ class DICOMM3DPluginClass(DICOMPlugin):
 
   def getFrameOfReferenceUID(self, candidateFile):
     """Returns the frame of referenceUID for the given loadable"""
+    # Import here rather than at module level: this package is slow to import
+    # and is only needed when this function is actually called.
+    import pydicom
+
     dcm = pydicom.dcmread(candidateFile)
     if hasattr(dcm, "FrameOfReferenceUID"):
       return dcm.FrameOfReferenceUID
@@ -61,6 +64,10 @@ class DICOMM3DPluginClass(DICOMPlugin):
       return "Unnamed FrameOfReferenceUID"
 
   def getEncapsulatedDocumentAttributes(self, candidateFile):
+    # Import here rather than at module level: this package is slow to import
+    # and is only needed when this function is actually called.
+    import pydicom
+
     dcm = pydicom.dcmread(candidateFile)
     encapsulatedDocument = b""
     encapsulatedDocumentLength = 0

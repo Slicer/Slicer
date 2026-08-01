@@ -81,6 +81,7 @@ __all__ = [
     "itkImageFromVolume",
     "itkImageFromVolumeModified",
     "launchConsoleProcess",
+    "LazyImport",
     "loadAnnotationFiducial",
     "loadAnnotationROI",
     "loadAnnotationRuler",
@@ -171,6 +172,116 @@ __all__ = [
     "vtkMatrixFromArray",
     "warningDisplay",
 ]
+
+
+class LazyImport:
+    """Resolve a module (``"pkg.mod"``) or a module attribute (``"pkg.mod:name"``) on
+    first attribute access, so a heavy import (numpy, pydicom, ...) can be kept out of
+    the application startup path while existing ``name.attr`` usages keep working.
+
+    Example::
+
+        numpy = slicer.util.LazyImport("numpy")   # numpy is not imported yet
+        ...
+        numpy.array([1, 2, 3])                      # numpy is imported here, on first use
+    """
+
+    def __init__(self, target):
+        import threading
+
+        # Import target specification string: either a module name ("pkg.mod")
+        # or a module attribute in "pkg.mod:name" form (e.g. "pydicom.sr.codedict:codes").
+        self._target = target
+
+        # Stores the imported module (or module attribute) once the first access has
+        # triggered the import.
+        self._resolved = None
+
+        # Lock so that concurrent first accesses (e.g. from a worker thread and
+        # the main thread during startup) resolve the target exactly once.
+        # Python's import machinery serializes the import itself, but without
+        # this lock two threads could both run the resolution code, performing
+        # a redundant importlib.import_module call and writing the metadata
+        # attributes twice. RLock (not Lock) so that a re-entrant access from
+        # the same thread during the import cannot deadlock.
+        self._lock = threading.RLock()
+
+    def _resolve(self):
+        """Import the target if it has not been imported yet and return it.
+
+        Thread-safe: uses double-checked locking so the import runs exactly once,
+        while the common already-resolved path stays lock-free.
+        """
+        resolved = self.__dict__["_resolved"]
+        if resolved is not None:
+            return resolved
+
+        with self.__dict__["_lock"]:
+
+            # Another thread may have completed the import while this thread was waiting,
+            # so re-check if the target still has not been resolved.
+            resolved = self.__dict__["_resolved"]
+            if resolved is not None:
+                return resolved
+
+            # Not resolved yet and we own the lock, import it now.
+            import importlib
+            module, _, attr = self.__dict__["_target"].partition(":")
+            resolved = importlib.import_module(module)
+            if attr:
+                resolved = getattr(resolved, attr)
+
+            # Copy metadata attributes onto this instance so that code
+            # introspecting the "module" (help(), inspect, ...) sees the
+            # real target's metadata. In particular ``__doc__`` would
+            # otherwise be found on the LazyImport class itself and
+            # never forwarded by ``__getattr__``. Done before setting
+            # ``_resolved`` so that once resolution is observable the
+            # metadata is guaranteed to be in place.
+            for metadataAttribute in ("__name__", "__qualname__", "__doc__", "__package__",
+                                        "__file__", "__spec__", "__loader__", "__path__", "__all__"):
+                if hasattr(resolved, metadataAttribute):
+                    self.__dict__[metadataAttribute] = getattr(resolved, metadataAttribute)
+
+            self._resolved = resolved
+
+        return resolved
+
+    def __getattr__(self, name):
+        # Forward attribute access to the target, importing it on first use.
+        # This is the main entry point of the lazy import: __getattr__ is only
+        # invoked when normal attribute lookup fails, so usages like
+        # ``numpy.array(...)`` transparently trigger the import and then behave
+        # as if the real module was imported.
+        return getattr(self._resolve(), name)
+
+    def __call__(self, *args, **kwargs):
+        # Make the wrapper callable so that a "pkg.mod:name" target that
+        # resolves to a function or class (e.g. LazyImport("math:sqrt")) can be
+        # called directly, importing the target on first call.
+        return self._resolve()(*args, **kwargs)
+
+    def __dir__(self):
+        # List the target's attributes (not this wrapper's) so that
+        # introspection and tab-completion in the Python console work as if
+        # the real module was imported. Note that this triggers the import:
+        # a completion list for an unresolved target would be useless anyway.
+        return dir(self._resolve())
+
+    def __repr__(self):
+        # Identify this object as a lazy import wrapper and show its resolution
+        # state, which makes it clear in debuggers and interactive sessions
+        # that the module may not have been imported yet. Deliberately does NOT
+        # trigger the import: merely displaying the object (e.g. when listing
+        # variables in a debugger) must not have side effects.
+
+        resolved = self.__dict__["_resolved"]
+        if resolved is None:
+            return f"<LazyImport '{self._target}' (not imported yet)>"
+
+        # `!r` prints `repr(resolved)` rather than `str(resolved)`, so the target
+        # is shown unambiguously (e.g. quoted strings, full module/class info).
+        return f"<LazyImport '{self._target}' resolved to {resolved!r}>"
 
 
 EXIT_SUCCESS = 0

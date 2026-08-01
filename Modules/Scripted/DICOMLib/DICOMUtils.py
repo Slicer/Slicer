@@ -1,6 +1,11 @@
+# `requests` is imported lazily (inside the functions that use it) to keep its
+# heavy transitive dependencies (charset_normalizer/chardet/urllib3) out of the
+# application startup path. `from __future__ import annotations` keeps the type
+# annotations that reference it from forcing an import.
+from __future__ import annotations
+
 import logging
 import os
-import requests
 
 import ctk
 import qt
@@ -917,6 +922,11 @@ GLOBAL_DICOMWEB_PASSWORD_KEY = "GLOBAL_DICOMWEB_PASSWORD_KEY"
 # ------------------------------------------------------------------------------
 def getGlobalDICOMAuth() -> requests.auth.HTTPBasicAuth | None:
     """Get the global authentication settings for DICOM networking, if initialized."""
+
+    # Import here rather than at module level: this package is slow to import
+    # and is only needed when this function is actually called.
+    import requests
+
     user = slicer.util.settingsValue(GLOBAL_DICOMWEB_USER_KEY, "")
     pwd = slicer.util.settingsValue(GLOBAL_DICOMWEB_PASSWORD_KEY, "")
     return requests.auth.HTTPBasicAuth(user, pwd) if user or pwd else None

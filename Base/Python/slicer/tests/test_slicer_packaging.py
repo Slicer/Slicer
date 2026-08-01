@@ -713,11 +713,18 @@ class FindUpdatedImportedPackagesTest(unittest.TestCase):
 
     def test_version_changed_and_imported(self):
         """Test that changed AND imported packages are flagged."""
-        before = {"numpy": "1.24.0"}
-        after = {"numpy": "1.26.0"}
+        # The distribution list is mocked below, but sys.modules is not: the tested
+        # function looks up the import name there, so a real package must be imported.
+        # certifi is used because it is always installed (as a requests dependency)
+        # and importing it is cheap (it only provides the path of a CA bundle file).
+        # Heavy packages, such as numpy, cannot be used, as they are not imported
+        # during application startup anymore, but only when they are first used.
+        import certifi  # noqa: F401
 
-        # numpy is already imported in sys.modules in Slicer
-        mock_pkg_dists = {"numpy": ["numpy"]}
+        before = {"certifi": "2025.1.31"}
+        after = {"certifi": "2026.5.20"}
+
+        mock_pkg_dists = {"certifi": ["certifi"]}
         with unittest.mock.patch(
             "importlib.metadata.packages_distributions",
             return_value=mock_pkg_dists,
@@ -725,7 +732,7 @@ class FindUpdatedImportedPackagesTest(unittest.TestCase):
             result = slicer.packaging._find_updated_imported_packages(before, after)
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], ("numpy", "1.24.0", "1.26.0"))
+        self.assertEqual(result[0], ("certifi", "2025.1.31", "2026.5.20"))
 
     def test_newly_installed_not_flagged(self):
         """Test that packages absent before install are not flagged."""
@@ -742,11 +749,13 @@ class FindUpdatedImportedPackagesTest(unittest.TestCase):
         It won't be in before_versions (uninstalled) but its modules are still
         in sys.modules from the earlier import.
         """
-        before = {}  # Package was uninstalled before pip_ensure ran
-        after = {"numpy": "1.26.0"}  # Now reinstalled
+        # See test_version_changed_and_imported for why certifi is imported here.
+        import certifi  # noqa: F401
 
-        # numpy is already in sys.modules in Slicer
-        mock_pkg_dists = {"numpy": ["numpy"]}
+        before = {}  # Package was uninstalled before pip_ensure ran
+        after = {"certifi": "2026.5.20"}  # Now reinstalled
+
+        mock_pkg_dists = {"certifi": ["certifi"]}
         with unittest.mock.patch(
             "importlib.metadata.packages_distributions",
             return_value=mock_pkg_dists,
@@ -754,7 +763,7 @@ class FindUpdatedImportedPackagesTest(unittest.TestCase):
             result = slicer.packaging._find_updated_imported_packages(before, after)
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], ("numpy", None, "1.26.0"))
+        self.assertEqual(result[0], ("certifi", None, "2026.5.20"))
 
 
 class PipEnsureRestartPromptTest(unittest.TestCase):

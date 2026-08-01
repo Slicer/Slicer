@@ -2,6 +2,7 @@ import SampleData
 import numpy as np
 import slicer
 import vtk
+import vtk.util.numpy_support
 
 from slicer import vtkSlicerSegmentEditorLogic, vtkSlicerSegmentationsModuleLogic
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest

@@ -2,7 +2,6 @@ import logging
 import shutil
 from datetime import datetime
 
-import pydicom
 import slicer
 
 #########################################################
@@ -123,6 +122,11 @@ class DICOMPlugin:
         """Populate loadable.referencedInstanceUIDs and loadable.referencedSeriesUID
         by reading referenced series/image sequences from the first DICOM file.
         """
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom
+
         dcm = pydicom.dcmread(loadable.files[0])
         loadable.referencedInstanceUIDs = []
         self._addReferencedSeries(loadable, dcm)
@@ -130,6 +134,11 @@ class DICOMPlugin:
         loadable.referencedInstanceUIDs = list(set(loadable.referencedInstanceUIDs))
 
     def _addReferencedSeries(self, loadable, dcm):
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom
+
         if hasattr(dcm, "ReferencedSeriesSequence"):
             if hasattr(dcm.ReferencedSeriesSequence[0], "SeriesInstanceUID"):
                 for f in slicer.dicomDatabase.filesForSeries(dcm.ReferencedSeriesSequence[0].SeriesInstanceUID):

@@ -27,14 +27,6 @@ def haveGit():
     return _haveGit
 
 
-try:
-    from charset_normalizer import detect
-
-    _haveCharDet = True
-
-except ImportError:
-    _haveCharDet = False
-
 __all__ = [
     "warn",
     "die",
@@ -250,7 +242,14 @@ def detectEncoding(data):
     input.
     """
 
-    if _haveCharDet:
+    # Import here rather than at module level: this package is slow to import
+    # and is only needed when this function is actually called.
+    try:
+        from charset_normalizer import detect
+    except ImportError:
+        detect = None
+
+    if detect is not None:
         result = detect(data)
         return result["encoding"], result["confidence"]
 

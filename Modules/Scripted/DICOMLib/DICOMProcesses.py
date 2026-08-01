@@ -1,16 +1,20 @@
+# Deferred imports for startup performance: `requests` (with its heavy transitive
+# dependencies charset_normalizer/chardet/urllib3) and `dicomweb_client` are only
+# needed for DICOMweb networking, not at application startup. They are imported
+# lazily inside the functions that use them. `from __future__ import annotations`
+# keeps the type annotations that reference them from forcing an import.
+from __future__ import annotations
+
 import logging
 import os
-import requests
 import subprocess
 import time
 
 from collections.abc import Callable
-from requests.auth import HTTPBasicAuth
 
 import ctk
 import qt
 
-import dicomweb_client
 import slicer
 
 from DICOMLib.DICOMUtils import getGlobalDICOMAuth
@@ -759,6 +763,11 @@ class DICOMSender:
         # Retrieve the token from the viewer URL and use the Kheops API URL
         # to connect to the server.
         token = destinationURL.path().replace("/view/", "")
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        from requests.auth import HTTPBasicAuth
+
         return (
             qt.QUrl("https://demo.kheops.online/api"),
             HTTPBasicAuth("token", token),

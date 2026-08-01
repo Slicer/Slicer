@@ -1,9 +1,6 @@
 import logging
 
-import numpy
-import pydicom as dicom
 import vtk
-import vtk.util.numpy_support
 
 import slicer
 from slicer.i18n import tr as _
@@ -54,6 +51,10 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         corresponding to ways of interpreting the
         files parameter.
         """
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom as dicom
 
         detailedLogging = self.isDetailedLogging()
 
@@ -124,6 +125,11 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return loadables
 
     def getMetadata(self, filePath):
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom as dicom
+
         try:
             ds = dicom.dcmread(filePath, stop_before_pixels=True)
         except Exception as e:
@@ -235,8 +241,14 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         if trackRadius != 0.0:
             raise ValueError(f"Curvature Radius (Track) is {trackRadius}. Currently, only volume with zero radius can be imported.")
 
-        # Create a sampling grid for the transform
+        # Import here rather than at module level: these packages are slow to import
+        # and are only needed when this function is actually called.
+        # Note that "import vtk.util.numpy_support" makes `vtk` a local name in this
+        # function, shadowing the module-level import; no `vtk.` usage occurs before it.
         import numpy as np
+        import vtk.util.numpy_support
+
+        # Create a sampling grid for the transform
 
         spacing = np.array(volumeNode.GetSpacing())
         averageSpacing = (spacing[0] + spacing[1] + spacing[2]) / 3.0
@@ -252,8 +264,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
         # create a grid transform with one vector at the corner of each slice
         # the transform is in the same space and orientation as the volume node
-        import vtk
-
         gridImage = vtk.vtkImageData()
         gridImage.SetOrigin(*volumeNode.GetOrigin())
         gridImage.SetDimensions(samplingPoints_shape[:3])
@@ -285,8 +295,8 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         volumeNode.GetIJKToRASMatrix(ijkToRas)
         spacing = volumeNode.GetSpacing()
         center_IJK = [(extent[0] + extent[1]) / 2.0, extent[2], (extent[4] + extent[5]) / 2.0]
-        sourcePoints_RAS = numpy.zeros(shape=samplingPoints_shape)
-        targetPoints_RAS = numpy.zeros(shape=samplingPoints_shape)
+        sourcePoints_RAS = np.zeros(shape=samplingPoints_shape)
+        targetPoints_RAS = np.zeros(shape=samplingPoints_shape)
         for k in range(samplingPoints_shape[2]):
             for j in range(samplingPoints_shape[1]):
                 for i in range(samplingPoints_shape[0]):

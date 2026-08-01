@@ -6,16 +6,19 @@ Docs/user_guide/modules/webserver.md
 
 import json
 import logging
-import numpy
 import os
 import time
 import urllib
 
 import qt
-import vtk.util.numpy_support
+import vtk
 
 import slicer
 from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+# Import heavy Python packages lazily to make application startup faster
+from slicer.util import LazyImport
+numpy = LazyImport("numpy")
 
 logger = logging.getLogger(__name__)
 
@@ -1139,7 +1142,13 @@ space origin: %%origin%%
         writer.SetCompressionLevel(0)
         writer.Write()
         result = writer.GetResult()
-        pngArray = vtk.util.numpy_support.vtk_to_numpy(result)
+        # Import here rather than at module level: numpy is slow to import
+        # and is only needed when this function is actually called.
+        # Import the function itself, as "import vtk.util.numpy_support" would make
+        # `vtk` a local name in this function and shadow the module-level import.
+        from vtk.util.numpy_support import vtk_to_numpy
+
+        pngArray = vtk_to_numpy(result)
         pngData = pngArray.tobytes()
 
         return pngData

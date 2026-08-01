@@ -2,10 +2,8 @@ import json
 import logging
 
 import ctk
-import numpy as np
 import qt
 import vtk
-import vtk.util.numpy_support
 
 import slicer
 from slicer.i18n import tr as _
@@ -16,6 +14,10 @@ from slicer.ScriptedLoadableModule import (
 )
 from slicer.util import VTKObservationMixin
 
+
+# Import heavy Python packages lazily to make application startup faster
+from slicer.util import LazyImport
+np = LazyImport("numpy")
 
 #
 # Endoscopy

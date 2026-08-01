@@ -6,22 +6,18 @@ import vtk
 import datetime
 from collections import Counter
 
-import numpy as np
-import highdicom as hd
-import pydicom
-from pydicom.sr.codedict import codes
-
 import slicer
 from DICOMLib import DICOMLoadable, DICOMPlugin
 
 
-class DICOMTID1500PluginClass(DICOMPlugin):
+# Import heavy Python packages lazily to make application startup faster
+from slicer.util import LazyImport
+pydicom = LazyImport("pydicom")
+hd = LazyImport("highdicom")
+codes = LazyImport("pydicom.sr.codedict:codes")
+np = LazyImport("numpy")
 
-  UID_EnhancedSRStorage = pydicom.uid.EnhancedSRStorage
-  UID_ComprehensiveSRStorage = pydicom.uid.ComprehensiveSRStorage
-  UID_Comprehensive3DSRStorage = pydicom.uid.Comprehensive3DSRStorage
-  UID_SegmentationStorage = pydicom.uid.SegmentationStorage
-  UID_RealWorldValueMappingStorage = pydicom.uid.RealWorldValueMappingStorage
+class DICOMTID1500PluginClass(DICOMPlugin):
 
   def __init__(self):
     super().__init__()
@@ -100,9 +96,9 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
     try:
       isDicomTID1500 = self.getDICOMValue(dataset, "Modality") == "SR" and \
-                       (self.getDICOMValue(dataset, "SOPClassUID") == self.UID_EnhancedSRStorage or
-                        self.getDICOMValue(dataset, "SOPClassUID") == self.UID_ComprehensiveSRStorage or
-                        self.getDICOMValue(dataset, "SOPClassUID") == self.UID_Comprehensive3DSRStorage) and \
+                       self.getDICOMValue(dataset, "SOPClassUID") in (pydicom.uid.EnhancedSRStorage,
+                                                                      pydicom.uid.ComprehensiveSRStorage,
+                                                                      pydicom.uid.Comprehensive3DSRStorage) and \
                        self.getDICOMValue(dataset, "ContentTemplateSequence")[0].TemplateIdentifier == "1500"
     except (AttributeError, IndexError):
       isDicomTID1500 = False
@@ -199,11 +195,11 @@ class DICOMTID1500PluginClass(DICOMPlugin):
           for refSeriesSequence in dataset.CurrentRequestedProcedureEvidenceSequence:
             for referencedSeriesSequence in refSeriesSequence.ReferencedSeriesSequence:
               for refSOPSequence in referencedSeriesSequence.ReferencedSOPSequence:
-                if refSOPSequence.ReferencedSOPClassUID == self.UID_SegmentationStorage:
+                if refSOPSequence.ReferencedSOPClassUID == pydicom.uid.SegmentationStorage:
                   logging.debug("Found referenced segmentation")
                   loadable.ReferencedSegmentationInstanceUIDs[uid].append(referencedSeriesSequence.SeriesInstanceUID)
 
-                elif refSOPSequence.ReferencedSOPClassUID == self.UID_RealWorldValueMappingStorage: # handle SUV mapping
+                elif refSOPSequence.ReferencedSOPClassUID == pydicom.uid.RealWorldValueMappingStorage: # handle SUV mapping
                   logging.debug("Found referenced RWVM")
                   loadable.ReferencedRWVMSeriesInstanceUIDs.append(referencedSeriesSequence.SeriesInstanceUID)
                 else:
