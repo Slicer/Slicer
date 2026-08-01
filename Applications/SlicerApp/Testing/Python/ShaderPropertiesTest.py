@@ -9,11 +9,11 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# ShaderProperties
+# ShaderPropertiesTest
 #
 
 
-class ShaderProperties(ScriptedLoadableModule):
+class ShaderPropertiesTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         parent.title = "Shader Properties"
@@ -29,38 +29,38 @@ class ShaderProperties(ScriptedLoadableModule):
 
 
 #
-# ShaderPropertiesWidget
+# ShaderPropertiesTestWidget
 #
-class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
+class ShaderPropertiesTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
-        moduleName = "ShaderProperties"
+        moduleName = "ShaderPropertiesTest"
 
         self.sphereTestButton = qt.QPushButton()
         self.sphereTestButton.text = "Sphere test"
         self.layout.addWidget(self.sphereTestButton)
-        self.sphereTestButton.connect("clicked()", lambda: ShaderPropertiesTest().testSphereCut())
+        self.sphereTestButton.connect("clicked()", lambda: ShaderPropertiesTestTest().testSphereCut())
 
         self.wedgeTestButton = qt.QPushButton()
         self.wedgeTestButton.text = "Wedge test"
         self.layout.addWidget(self.wedgeTestButton)
-        self.wedgeTestButton.connect("clicked()", lambda: ShaderPropertiesTest().testWedgeCut())
+        self.wedgeTestButton.connect("clicked()", lambda: ShaderPropertiesTestTest().testWedgeCut())
 
         # Add vertical spacer
         self.layout.addStretch(1)
 
     def runTests(self):
-        tester = ShaderPropertiesTest()
+        tester = ShaderPropertiesTestTest()
         tester.testAll()
 
 
 #
-# ShaderPropertiesTest
+# ShaderPropertiesTestTest
 #
 
 
-class ShaderPropertiesTest(ScriptedLoadableModuleTest):
+class ShaderPropertiesTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         self.delayDisplay("Setup")
         layoutManager = slicer.app.layoutManager()

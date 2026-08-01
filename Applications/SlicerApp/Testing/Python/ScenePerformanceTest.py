@@ -8,11 +8,11 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# ScenePerformance
+# ScenePerformanceTest
 #
 
 
-class ScenePerformance(ScriptedLoadableModule):
+class ScenePerformanceTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         parent.title = "Scene Performance"
@@ -28,15 +28,15 @@ class ScenePerformance(ScriptedLoadableModule):
 
 
 #
-# ScenePerformanceWidget
+# ScenePerformanceTestWidget
 #
-class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
+class ScenePerformanceTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
-        moduleName = "ScenePerformance"
+        moduleName = "ScenePerformanceTest"
         scriptedModulesPath = os.path.dirname(slicer.util.modulePath(moduleName))
-        path = os.path.join(scriptedModulesPath, "Resources", "UI", "ScenePerformance.ui")
+        path = os.path.join(scriptedModulesPath, "Resources", "UI", "ScenePerformanceTest.ui")
         widget = slicer.util.loadUI(path)
         self.layout = self.parent.layout()
         self.layout.addWidget(widget)
@@ -66,18 +66,18 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
         self.updateActionProperties()
 
     def runTests(self):
-        tester = ScenePerformanceTest()
+        tester = ScenePerformanceTestTest()
         tester.testAll()
 
     def timeAction(self):
-        tester = ScenePerformanceTest()
+        tester = ScenePerformanceTestTest()
         tester.setUp()
         tester.setRepeat(self.RepeatSpinBox.value)
         if self.ActionComboBox.currentIndex == 0:  # Add Data
             if self.URLLineEdit.text == "":
                 file = self.ActionPathLineEdit.currentPath
             else:
-                logic = ScenePerformanceLogic()
+                logic = ScenePerformanceTestLogic()
                 file = logic.downloadFile(self.URLLineEdit.text, self.URLFileNameLineEdit.text)
             results = tester.addData(file)
             self.ResultsTextEdit.append(results)
@@ -113,9 +113,9 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
 
 
 #
-# ScenePerformanceLogic
+# ScenePerformanceTestLogic
 #
-class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
+class ScenePerformanceTestLogic(ScriptedLoadableModuleLogic):
     def downloadFile(self, downloadURL, downloadFileName, downloadFileChecksum=None):
         import SampleData
         return SampleData.downloadFromURL(
@@ -132,7 +132,7 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
         return self.Timer.elapsed()
 
 
-class ScenePerformanceTest(ScriptedLoadableModuleTest):
+class ScenePerformanceTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         self.Repeat = 1
         self.delayDisplay("Setup")
@@ -183,13 +183,13 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
         return message
 
     def addURLData(self, url, file, checksum):
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         file = logic.downloadFile(url, file, checksum)
         self.addData(file)
 
     def addData(self, file):
         self.delayDisplay("Starting the AddData test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()
@@ -203,7 +203,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
     def closeScene(self):
         self.delayDisplay("Starting the Close Scene test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()
@@ -216,7 +216,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
     def restoreSceneView(self, sceneViewIndex):
         self.delayDisplay("Starting the Restore Scene test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()
@@ -229,7 +229,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
     def setLayout(self, layoutIndex):
         self.delayDisplay("Starting the layout test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()
@@ -247,7 +247,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
     def addNode(self, node):
         self.delayDisplay("Starting the add node test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             newNode = node.CreateNodeInstance()
@@ -267,7 +267,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
 
     def modifyNode(self, node):
         self.delayDisplay("Starting the modify node test")
-        logic = ScenePerformanceLogic()
+        logic = ScenePerformanceTestLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()

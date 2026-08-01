@@ -9,11 +9,11 @@ from slicer.ScriptedLoadableModule import *
 
 
 #
-# SlicerTransformInteractionTest1
+# SlicerTransformInteractionTest
 #
 
 
-class SlicerTransformInteractionTest1(ScriptedLoadableModule):
+class SlicerTransformInteractionTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -31,21 +31,21 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
 
 
 #
-# SlicerTransformInteractionTest1Widget
+# SlicerTransformInteractionTestWidget
 #
 
 
-class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
+class SlicerTransformInteractionTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
 
 #
-# SlicerTransformInteractionTest1Logic
+# SlicerTransformInteractionTestLogic
 #
 
 
-class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
+class SlicerTransformInteractionTestLogic(ScriptedLoadableModuleLogic):
     def addTransform(self):
         """Create and add a transform node with a display node to the
         mrmlScene.
@@ -67,7 +67,7 @@ class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
         return None
 
 
-class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
+class SlicerTransformInteractionTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
@@ -92,10 +92,10 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     def test_3D_interactionDefaults(self):
         """Test that the interaction widget exists in the 3D view."""
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
 
         # self.delayDisplay("Starting test_3D_interactionDefaults")
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
         _tNode, tdNode = logic.addTransform()
         self.assertFalse(tdNode.GetEditorVisibility())
         self.assertFalse(tdNode.GetEditorSliceIntersectionVisibility())
@@ -129,14 +129,14 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     def test_3D_interactionVolume(self):
         """Test that the interaction widget interacts correctly in the 3D view."""
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
 
         import SampleData
 
         volume = SampleData.downloadSample("CTAAbdomenPanoramix")
 
         # self.delayDisplay("Starting test_3D_interactionVolume")
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
         tNode, tdNode = logic.addTransform()
         self.assertFalse(tdNode.GetEditorVisibility())
         self.assertFalse(tdNode.GetEditorSliceIntersectionVisibility())
@@ -330,7 +330,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         movedCubeNode.SetPolyDataConnection(applyTransform.GetOutputPort())
 
         # Get the widget
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
         tNode, tdNode = logic.addTransform()
         slicer.app.layoutManager().layout = slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView
         manager = logic.getModel3DDisplayableManager()
@@ -422,7 +422,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         markupNode.AddControlPoint([1000.0, 1000.0, 200.0])
         markupNode.AddControlPoint([-1500.0, -200.0, -100.0])
 
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
         parentNode, _parendDisplayNode = logic.addTransform()
 
         leafNode, tdNode = logic.addTransform()
@@ -500,7 +500,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     def test_3D_interactionSerialization(self):
         """Test that the serialization the interaction properties."""
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
 
         # self.delayDisplay("Starting test_3D_interactionSerialization")
         # Setup
@@ -540,7 +540,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
     def test_3D_boundsUpdateROI(self):
         """Test that the bounds update with an ROI."""
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
 
         # self.delayDisplay("Starting test_3D_boundsUpdateROI")
         # Setup
@@ -548,7 +548,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         roiNode.SetXYZ(100, 300, -0.689)
         roiNode.SetRadiusXYZ(700, 8, 45)
 
-        logic = SlicerTransformInteractionTest1Logic()
+        logic = SlicerTransformInteractionTestLogic()
         tNode, tdNode = logic.addTransform()
 
         slicer.app.layoutManager().layout = slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView

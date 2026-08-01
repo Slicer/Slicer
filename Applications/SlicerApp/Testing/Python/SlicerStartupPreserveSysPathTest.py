@@ -37,7 +37,7 @@ ensures `sys.path` modifications performed during module discovery remain
 in effect after startup completes.
 
 This test was based on `SlicerStartupCompletedTest.py` and it relies on
-`SlicerStartupPreserveSysPathTestHelperModule.py` and the `SlicerStartupPreserveSysPathTestHelperPackage`
+`SlicerStartupPreserveSysPathHelperModuleTest.py` and the `SlicerStartupPreserveSysPathTestHelperPackage`
 Python package.
 
 It uses an output file for communication because on Windows,
@@ -65,8 +65,8 @@ if __name__ == "__main__":
         # (2) removes the output file if it already exists (the startup script recreates it)
         currentDirPath = os.path.dirname(__file__).replace("\\", "/")
         from shutil import copyfile, copytree
-        copyfile(currentDirPath + "/SlicerStartupPreserveSysPathTestHelperModule.py",
-                 temporaryModuleDirPath + "/SlicerStartupPreserveSysPathTestHelperModule.py")
+        copyfile(currentDirPath + "/SlicerStartupPreserveSysPathHelperModuleTest.py",
+                 temporaryModuleDirPath + "/SlicerStartupPreserveSysPathHelperModuleTest.py")
         copytree(currentDirPath + "/SlicerStartupPreserveSysPathTestHelperPackage",
                  temporaryModuleDirPath + "/SlicerStartupPreserveSysPathTestHelperPackage")
 

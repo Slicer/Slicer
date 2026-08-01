@@ -49,8 +49,8 @@ if __name__ == "__main__":
         # Copy helper module that creates a file when startup completed event is received
         currentDirPath = os.path.dirname(__file__).replace("\\", "/")
         from shutil import copyfile
-        copyfile(currentDirPath + "/SlicerStartupCompletedTestHelperModule.py",
-                 temporaryModuleDirPath + "/SlicerStartupCompletedTestHelperModule.py")
+        copyfile(currentDirPath + "/SlicerStartupCompletedHelperModuleTest.py",
+                 temporaryModuleDirPath + "/SlicerStartupCompletedHelperModuleTest.py")
 
         slicer_executable = os.path.expanduser(sys.argv[1])
         common_args = [

@@ -7,18 +7,18 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# Slicer4Minute
+# Slicer4MinuteTest
 #
 
 
-class Slicer4Minute(ScriptedLoadableModule):
+class Slicer4MinuteTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "Slicer4Minute"  # TODO make this more human readable by adding spaces
+        parent.title = "Slicer4MinuteTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
@@ -31,11 +31,11 @@ class Slicer4Minute(ScriptedLoadableModule):
 
 
 #
-# qSlicer4MinuteWidget
+# Slicer4MinuteTestWidget
 #
 
 
-class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
+class Slicer4MinuteTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -69,11 +69,11 @@ class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
 
 
 #
-# Slicer4MinuteLogic
+# Slicer4MinuteTestLogic
 #
 
 
-class Slicer4MinuteLogic(ScriptedLoadableModuleLogic):
+class Slicer4MinuteTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -97,7 +97,7 @@ class Slicer4MinuteLogic(ScriptedLoadableModuleLogic):
         return True
 
 
-class Slicer4MinuteTest(ScriptedLoadableModuleTest):
+class Slicer4MinuteTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -120,7 +120,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         """
         self.delayDisplay("Starting the test")
 
-        logic = Slicer4MinuteLogic()
+        logic = Slicer4MinuteTestLogic()
 
         #
         # first, get some data

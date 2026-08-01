@@ -4,7 +4,7 @@ import os
 from slicer.ScriptedLoadableModule import *
 
 
-class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
+class SlicerStartupCompletedHelperModuleTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "SlicerStartupCompletedTest"
@@ -18,7 +18,7 @@ class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
 
         slicer.app.connect("startupCompleted()", self.onStartupCompleted)
 
-        print("SlicerStartupCompletedTestHelperModule initialized")
+        print("SlicerStartupCompletedHelperModuleTest initialized")
 
     def onStartupCompleted(self):
         print("StartupCompleted emitted")
@@ -26,6 +26,6 @@ class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
         import os
 
         fd = os.open(self.testOutputFileName, os.O_RDWR | os.O_CREAT)
-        os.write(fd, "SlicerStartupCompletedTestHelperModule.py generated this file")
+        os.write(fd, "SlicerStartupCompletedHelperModuleTest.py generated this file")
         os.write(fd, "when slicer.app emitted startupCompleted() signal\n")
         os.close(fd)

@@ -98,7 +98,7 @@ QIcon qSlicerTemplateKeyModule::icon() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTemplateKeyModule::categories() const
 {
-  return QStringList() << "Testing.TestCases";
+  return QStringList() << "Examples";
 }
 
 //-----------------------------------------------------------------------------

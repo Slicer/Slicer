@@ -136,6 +136,17 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     return;
   }
 
+  // Modules that only exist to be exercised by a test are of no use to an end user, and
+  // several of them are scripted, so registering them means importing Python modules
+  // that will never be used. Skip them unless developer mode is on, matching the
+  // existing behavior of the module menu and the module list, which already hide them.
+  //
+  // Testing mode is excluded as well, because that is how the automated tests launch the
+  // application and they do need their own modules.
+  const bool developerModeEnabled = app->userSettings()->value("Developer/DeveloperMode", false).toBool();
+  const bool testingEnabled = app->testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+  moduleFactoryManager->setIgnoreTestingModules(!developerModeEnabled && !testingEnabled);
+
   if (!options->disableLoadableModules())
   {
     moduleFactoryManager->registerFactory(new qSlicerLoadableModuleFactory);

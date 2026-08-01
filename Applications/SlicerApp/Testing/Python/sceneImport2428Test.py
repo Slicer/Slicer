@@ -6,11 +6,11 @@ import slicer
 from slicer.ScriptedLoadableModule import *
 
 #
-# sceneImport2428
+# sceneImport2428Test
 #
 
 
-class sceneImport2428(ScriptedLoadableModule):
+class sceneImport2428Test(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -31,11 +31,11 @@ class sceneImport2428(ScriptedLoadableModule):
 
 
 #
-# qsceneImport2428Widget
+# sceneImport2428TestWidget
 #
 
 
-class sceneImport2428Widget(ScriptedLoadableModuleWidget):
+class sceneImport2428TestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -68,7 +68,7 @@ class sceneImport2428Widget(ScriptedLoadableModuleWidget):
         print("Hello World !")
 
 
-class sceneImport2428Test(ScriptedLoadableModuleTest):
+class sceneImport2428TestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -209,7 +209,8 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
             for dn in range(modelNode.GetNumberOfDisplayNodes()):
                 displayNode = modelNode.GetNthDisplayNode(dn)
                 if modelNode.GetPolyData() != displayNode.GetInputPolyData():
-                    self.delayDisplay("Model %d does not match its display node %d! (name: %s, ids: %s and %s)" % (n, dn, modelNode.GetName(), modelNode.GetID(), displayNode.GetID()))
+                    self.delayDisplay("Model %d does not match its display node %d! (name: %s, ids: %s and %s)"
+                                      % (n, dn, modelNode.GetName(), modelNode.GetID(), displayNode.GetID()))
                     success = False
             for sn in range(modelNode.GetNumberOfStorageNodes()):
                 storageNode = modelNode.GetNthStorageNode(sn)

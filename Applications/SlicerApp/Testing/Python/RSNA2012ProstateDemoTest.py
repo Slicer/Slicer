@@ -4,18 +4,18 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# RSNA2012ProstateDemo
+# RSNA2012ProstateDemoTest
 #
 
 
-class RSNA2012ProstateDemo(ScriptedLoadableModule):
+class RSNA2012ProstateDemoTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "RSNA2012ProstateDemo"  # TODO make this more human readable by adding spaces
+        parent.title = "RSNA2012ProstateDemoTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
@@ -28,11 +28,11 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
 
 
 #
-# qRSNA2012ProstateDemoWidget
+# RSNA2012ProstateDemoTestWidget
 #
 
 
-class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
+class RSNA2012ProstateDemoTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -48,7 +48,7 @@ class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
         pass
 
 
-class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
+class RSNA2012ProstateDemoTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -65,7 +65,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     def test_RSNA2012ProstateDemo(self):
         """Replicate one of the crashes in issue 2512"""
 
-        print("Running RSNA2012ProstateDemo Test case:")
+        print("Running RSNA2012ProstateDemo test case:")
 
         import SampleData
 

@@ -1,30 +1,28 @@
-import logging
-
 import slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 
 #
-# BRAINSFitRigidRegistrationCrashIssue4139
+# SlicerRestoreSceneViewCrashIssue3445Test
 #
 
 
-class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
+class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "BRAINSFit Rigid Registration vtkITKTransformConverter crash (Issue 4139)"
+        self.parent.title = "SceneView restore crash (Issue 3445)"
         self.parent.categories = ["Testing.TestCases"]
         self.parent.dependencies = []
         self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"]  # replace with "Firstname Lastname (Organization)"
         self.parent.helpText = """This test has been added to check that
-    Slicer does not crash in vtkITKTransformConverter after completing BRAINSFit rigid registration.
+    Slicer does not crash while restoring scene view associated with BrainAtlas2012.mrb.
 
-    Problem has been documented in issue #4139. Commit r24901 fixes the problem
-    by updating vtkITKTransformConverter class.
+    Problem has been documented in issue #3445.
     """
         self.parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
@@ -33,11 +31,11 @@ class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
 
 
 #
-# BRAINSFitRigidRegistrationCrashIssue4139Widget
+# SlicerRestoreSceneViewCrashIssue3445TestWidget
 #
 
 
-class BRAINSFitRigidRegistrationCrashIssue4139Widget(ScriptedLoadableModuleWidget):
+class SlicerRestoreSceneViewCrashIssue3445TestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -47,11 +45,11 @@ class BRAINSFitRigidRegistrationCrashIssue4139Widget(ScriptedLoadableModuleWidge
 
 
 #
-# BRAINSFitRigidRegistrationCrashIssue4139Logic
+# SlicerRestoreSceneViewCrashIssue3445TestLogic
 #
 
 
-class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic):
+class SlicerRestoreSceneViewCrashIssue3445TestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -61,21 +59,10 @@ class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic)
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
-    def hasImageData(self, volumeNode):
-        """This is an example logic method that
-        returns true if the passed in volume
-        node has valid image data
-        """
-        if not volumeNode:
-            logging.debug("hasImageData failed: no volume node")
-            return False
-        if volumeNode.GetImageData() is None:
-            logging.debug("hasImageData failed: no image data in volume node")
-            return False
-        return True
+    pass
 
 
-class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
+class SlicerRestoreSceneViewCrashIssue3445TestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -89,9 +76,9 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
     def runTest(self):
         """Run as few or as many tests as needed here."""
         self.setUp()
-        self.test_BRAINSFitRigidRegistrationCrashIssue4139()
+        self.test_SlicerRestoreSceneViewCrashIssue3445()
 
-    def test_BRAINSFitRigidRegistrationCrashIssue4139(self):
+    def test_SlicerRestoreSceneViewCrashIssue3445(self):
         """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
@@ -103,35 +90,38 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
         your test should break so they know that the feature is needed.
         """
 
+        logic = SlicerRestoreSceneViewCrashIssue3445TestLogic()
+
         self.delayDisplay("Starting the test")
 
-        logic = BRAINSFitRigidRegistrationCrashIssue4139Logic()
-
+        #
+        # first, get some data
+        #
         import SampleData
 
-        fixed = SampleData.downloadSample("MRBrainTumor1")
-        self.assertIsNotNone(logic.hasImageData(fixed))
+        filePath = SampleData.downloadFromURL(
+            fileNames="BrainAtlas2012.mrb",
+            loadFiles=False,
+            uris=TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
+            checksums="SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1")[0]
 
-        moving = SampleData.downloadSample("MRBrainTumor2")
-        self.assertIsNotNone(logic.hasImageData(moving))
+        self.delayDisplay("Finished with download")
 
-        self.delayDisplay("Finished with download and loading")
+        ioManager = slicer.app.ioManager()
 
-        outputTransform = slicer.vtkMRMLLinearTransformNode()
-        slicer.mrmlScene.AddNode(outputTransform)
+        ioManager.loadFile(filePath)
 
-        outputVolume = slicer.vtkMRMLScalarVolumeNode()
-        slicer.mrmlScene.AddNode(outputVolume)
+        slicer.mrmlScene.Clear(0)
+        slicer.util.selectModule("Data")
+        slicer.util.selectModule("Models")
 
-        parameters = {
-            "fixedVolume": fixed,
-            "movingVolume": moving,
-            "linearTransform": outputTransform,
-            "outputVolume": outputVolume,
-            "useRigid": True,
-        }
-        cmdLineNode = slicer.cli.runSync(slicer.modules.brainsfit, parameters=parameters)
-        self.assertIsNotNone(cmdLineNode)
+        ioManager.loadFile(filePath)
+        slicer.mrmlScene.Clear(0)
+
+        ioManager.loadFile(filePath)
+        ioManager.loadFile(filePath)
+
+        slicer.modules.sceneviews.logic().RestoreSceneView(0)
 
         # If test reach this point without crashing it is a success
 

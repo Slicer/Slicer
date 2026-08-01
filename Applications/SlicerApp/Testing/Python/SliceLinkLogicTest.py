@@ -7,18 +7,18 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# SliceLinkLogic
+# SliceLinkLogicTest
 #
 
 
-class SliceLinkLogic(ScriptedLoadableModule):
+class SliceLinkLogicTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "SliceLinkLogic"  # TODO make this more human readable by adding spaces
+        parent.title = "SliceLinkLogicTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Jim Miller (GE)"]  # replace with "Firstname Lastname (Org)"
@@ -31,11 +31,11 @@ class SliceLinkLogic(ScriptedLoadableModule):
 
 
 #
-# qSliceLinkLogicWidget
+# SliceLinkLogicTestWidget
 #
 
 
-class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
+class SliceLinkLogicTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -69,11 +69,11 @@ class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
 
 
 #
-# SliceLinkLogicLogic
+# SliceLinkLogicTestLogic
 #
 
 
-class SliceLinkLogicLogic(ScriptedLoadableModuleLogic):
+class SliceLinkLogicTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -97,7 +97,7 @@ class SliceLinkLogicLogic(ScriptedLoadableModuleLogic):
         return True
 
 
-class SliceLinkLogicTest(ScriptedLoadableModuleTest):
+class SliceLinkLogicTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -141,7 +141,7 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         print("")
 
         volumeNode = slicer.util.getNode(pattern="FA")
-        logic = SliceLinkLogicLogic()
+        logic = SliceLinkLogicTestLogic()
         self.assertIsNotNone(logic.hasImageData(volumeNode))
 
         eps = 0.02  # on high-DPI screens FOV difference can be up to 1.25%, so set the tolerance to 2%

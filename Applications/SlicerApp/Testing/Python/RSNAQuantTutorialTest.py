@@ -7,18 +7,18 @@ from slicer.util import TESTING_DATA_URL
 
 
 #
-# RSNAQuantTutorial
+# RSNAQuantTutorialTest
 #
 
 
-class RSNAQuantTutorial(ScriptedLoadableModule):
+class RSNAQuantTutorialTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "RSNAQuantTutorial"  # TODO make this more human readable by adding spaces
+        parent.title = "RSNAQuantTutorialTest"  # TODO make this more human readable by adding spaces
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Steve Pieper (Isomics)"]  # replace with "Firstname Lastname (Org)"
@@ -31,11 +31,11 @@ class RSNAQuantTutorial(ScriptedLoadableModule):
 
 
 #
-# qRSNAQuantTutorialWidget
+# RSNAQuantTutorialTestWidget
 #
 
 
-class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
+class RSNAQuantTutorialTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -94,7 +94,7 @@ class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAQuantTutorialTest()
+        tester = RSNAQuantTutorialTestTest()
         tester.setUp()
         tester.test_Part1Ruler(enableScreenshotsFlag, screenshotScaleFactor)
 
@@ -102,7 +102,7 @@ class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAQuantTutorialTest()
+        tester = RSNAQuantTutorialTestTest()
         tester.setUp()
         tester.test_Part2ChangeTracker(enableScreenshotsFlag, screenshotScaleFactor)
 
@@ -110,17 +110,17 @@ class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
         enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
         screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
 
-        tester = RSNAQuantTutorialTest()
+        tester = RSNAQuantTutorialTestTest()
         tester.setUp()
         tester.test_Part3PETCT(enableScreenshotsFlag, screenshotScaleFactor)
 
 
 #
-# RSNAQuantTutorialLogic
+# RSNAQuantTutorialTestLogic
 #
 
 
-class RSNAQuantTutorialLogic(ScriptedLoadableModuleLogic):
+class RSNAQuantTutorialTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -131,7 +131,7 @@ class RSNAQuantTutorialLogic(ScriptedLoadableModuleLogic):
     pass
 
 
-class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
+class RSNAQuantTutorialTestTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
