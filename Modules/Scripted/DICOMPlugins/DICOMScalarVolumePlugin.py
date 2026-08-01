@@ -2,13 +2,17 @@ import logging
 from functools import cmp_to_key
 
 import ctk
-import numpy
 import qt
 import vtk
 import vtkITK
 from slicer.i18n import tr as _
 
 import slicer
+
+
+# Import heavy Python packages lazily to make application startup faster
+from slicer.util import LazyImport
+numpy = LazyImport("numpy")
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable

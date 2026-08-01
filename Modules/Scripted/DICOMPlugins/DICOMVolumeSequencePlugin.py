@@ -1,6 +1,5 @@
 import logging
 
-import pydicom
 import qt
 
 import slicer
@@ -150,6 +149,10 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         return datetime.datetime(year, month, day, hour, minute, second, microsecond)
 
     def export(self, exportables):
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom
+
         for exportable in exportables:
             # Get volume node to export
             shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)

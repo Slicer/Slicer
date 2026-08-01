@@ -1,6 +1,5 @@
 import logging
 
-import pydicom as dicom
 import vtk
 
 import slicer
@@ -60,6 +59,10 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         corresponding to ways of interpreting the
         files parameter.
         """
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom as dicom
 
         self.detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
 
@@ -287,6 +290,11 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         slicer.modules.sequences.showSequenceBrowser(outputSequenceBrowserNode)
 
     def addSequenceFromImageData(self, imageData, tempFrameVolume, filePath, name, singleFileInLoadable, spacingMmPerPixel):
+
+        # Import here rather than at module level: this package is slow to import
+        # and is only needed when this function is actually called.
+        import pydicom as dicom
+
         # Rotate 180deg, otherwise the image would appear upside down
         ijkToRas = vtk.vtkMatrix4x4()
         ijkToRas.SetElement(0, 0, -1.0)

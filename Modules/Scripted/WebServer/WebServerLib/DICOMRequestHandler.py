@@ -1,9 +1,12 @@
 import logging
-import pydicom
 import urllib
 
 import slicer
 from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+# Import heavy Python packages lazily to make application startup faster
+from slicer.util import LazyImport
+pydicom = LazyImport("pydicom")
 
 logger = logging.getLogger(__name__)
 
