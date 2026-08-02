@@ -813,6 +813,57 @@ void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key
   }
 }
 
+namespace
+{
+//-----------------------------------------------------------------------------
+/// Directory that holds the application's executables (Slicer_BIN_DIR), given the
+/// directory the running executable is in.
+///
+/// This is the only place that knows how one is reached from the other, so that
+/// qSlicerCoreApplicationPrivate and callers that have no application yet
+/// (qSlicerCoreApplication::applicationHomeDirectoryFromExecutablePath()) cannot disagree
+/// about it.
+///
+/// \param intDir if not null, receives the build configuration subdirectory that was
+/// stripped: empty in an install tree, and the configuration name (such as "Release") in
+/// a build tree of a multi-configuration generator.
+QString binDirectoryFromExecutableDirectory(const QString& executableDirectory, QString* intDir)
+{
+#ifndef Q_OS_MAC
+  QString strippedIntDir;
+  const QString binDirectory = qSlicerUtils::pathWithoutIntDir(executableDirectory, Slicer_BIN_DIR, strippedIntDir);
+  if (intDir)
+  {
+    *intDir = strippedIntDir;
+  }
+  return binDirectory;
+#else
+  // There are two cases to consider, the application could be started from:
+  //   1) Install tree
+  //        Application location: /path/to/Foo.app/Contents/MacOSX/myapp
+  //        Binary directory:     /path/to/Foo.app/Contents/bin
+  //   2) Build tree
+  //        Application location: /path/to/build-dir/bin/Foo.app/Contents/MacOSX/myapp
+  //        Binary directory:     /path/to/build-dir/bin
+  //
+  // A bundle has no build configuration subdirectory to strip, so intDir stays empty.
+  if (intDir)
+  {
+    *intDir = QString();
+  }
+  QDir binAsDir(executableDirectory);
+  binAsDir.cdUp(); // Move from /path/to/Foo.app/Contents/MacOSX to /path/to/Foo.app/Contents
+  if (!binAsDir.cd(Slicer_BIN_DIR))
+  {
+    binAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app/Contents to /path/to/build-dir/bin/Foo.app
+    binAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app          to /path/to/build-dir/bin
+    binAsDir.cd(Slicer_BIN_DIR);
+  }
+  return binAsDir.path();
+#endif
+}
+} // namespace
+
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 {
@@ -825,27 +876,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     q->showConsoleMessage(QString("Cannot find Slicer executable %1").arg(q->applicationDirPath()));
     return slicerBin;
   }
-#ifndef Q_OS_MAC
-  slicerBin = qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
-#else
-  // There are two cases to consider, the application could be started from:
-  //   1) Install tree
-  //        Application location: /path/to/Foo.app/Contents/MacOSX/myapp
-  //        Binary directory:     /path/to/Foo.app/Contents/bin
-  //   2) Build tree
-  //        Application location: /path/to/build-dir/bin/Foo.app/Contents/MacOSX/myapp
-  //        Binary directory:     /path/to/build-dir/bin
-  //
-  QDir slicerBinAsDir(q->applicationDirPath());
-  slicerBinAsDir.cdUp(); // Move from /path/to/Foo.app/Contents/MacOSX to /path/to/Foo.app/Contents
-  if (!slicerBinAsDir.cd(Slicer_BIN_DIR))
-  {
-    slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app/Contents to /path/to/build-dir/bin/Foo.app
-    slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app          to /path/to/build-dir/bin
-    slicerBinAsDir.cd(Slicer_BIN_DIR);
-  }
-  slicerBin = slicerBinAsDir.path();
-#endif
+  slicerBin = binDirectoryFromExecutableDirectory(q->applicationDirPath(), &this->IntDir);
   Q_ASSERT(qSlicerUtils::pathEndsWith(slicerBin, Slicer_BIN_DIR));
   return slicerBin;
 }
@@ -1684,17 +1715,74 @@ QString qSlicerCoreApplication::slicerUserSettingsFilePath() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::applicationNameFromExecutablePath(const QString& executablePath)
+{
+  // A custom application is named after its executable, so that differently named
+  // applications keep their settings apart. The launcher runs an executable named after
+  // the application with "App-real" appended (see SlicerMacroBuildApplication), which is
+  // an implementation detail of how the application is started and not part of its name.
+  QString applicationName = QFileInfo(executablePath).completeBaseName();
+  applicationName.remove(QString("App-real"));
+  return applicationName;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::applicationHomeDirectoryFromExecutablePath(const QString& executablePath, QString* intDir)
+{
+  if (executablePath.isEmpty())
+  {
+    // Without a starting point, QFileInfo would resolve against the current working
+    // directory and quietly produce an unrelated path.
+    return QString();
+  }
+  QDir homeDirectory(binDirectoryFromExecutableDirectory(QFileInfo(executablePath).absolutePath(), intDir));
+  if (!homeDirectory.cdUp())
+  {
+    return QString();
+  }
+  return homeDirectory.canonicalPath();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::revisionUserSettingsDirectory(const QString& slicerHome, const QString& applicationName)
+{
+  // The directory Qt derives the settings location from: the organization name where
+  // there is one and the domain otherwise, the other way round on macOS. This is what
+  // ctkAppLauncherSettings::organizationDir() answers, but it reads QCoreApplication,
+  // which does not exist yet when this is called from the startup file prefetching. The
+  // compile-time values are the ones the application sets those to, so falling back to
+  // them gives the same answer earlier rather than an empty string.
+  QString organizationName = QCoreApplication::organizationName();
+  QString organizationDomain = QCoreApplication::organizationDomain();
+  if (organizationName.isEmpty() && organizationDomain.isEmpty())
+  {
+    organizationName = Slicer_ORGANIZATION_NAME;
+    organizationDomain = Slicer_ORGANIZATION_DOMAIN;
+  }
+#ifdef Q_OS_DARWIN
+  const QString organizationDir = organizationDomain.isEmpty() ? organizationName : organizationDomain;
+#else
+  const QString organizationDir = organizationName.isEmpty() ? organizationDomain : organizationName;
+#endif
+
+#ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+  Q_UNUSED(applicationName);
+  return QDir(slicerHome).filePath(organizationDir);
+#else
+  Q_UNUSED(slicerHome);
+  // Where QSettings itself would put the user settings of this application, asked of Qt
+  // rather than assembled here, and given the organization and application explicitly
+  // because there may be no QCoreApplication yet to take them from.
+  return QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, organizationDir, applicationName).fileName()).absolutePath();
+#endif
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath() const
 {
-#ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
   this->userSettings(); // ensure applicationName is initialized
-  QString filePath = QString("%1/%2").arg(this->slicerHome()).arg(ctkAppLauncherSettings().organizationDir());
-  QString prefix = this->applicationName();
-#else
-  QFileInfo fileInfo = QFileInfo(this->userSettings()->fileName());
-  QString filePath = fileInfo.path();
-  QString prefix = fileInfo.completeBaseName();
-#endif
+  const QString filePath = qSlicerCoreApplication::revisionUserSettingsDirectory(this->slicerHome(), this->applicationName());
+  const QString prefix = this->applicationName();
 
   QString suffix = "-" + this->revision();
   bool useTmp = this->coreCommandOptions()->settingsDisabled();

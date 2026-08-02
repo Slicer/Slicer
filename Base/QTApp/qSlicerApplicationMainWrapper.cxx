@@ -21,6 +21,9 @@
 // Slicer includes
 #include "qSlicerApplicationHelper.h"
 #include "vtkSlicerConfigure.h"
+#ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+# include "qSlicerStartupFilePrefetcher.h"
+#endif
 
 #if defined(_WIN32) && !defined(Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
@@ -30,6 +33,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 {
   // This must be the first call for accurate application startup time measurements.
   qSlicerApplicationHelper::recordProcessEntryPointTime();
+# ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+  // Every library mapped from here on is one the next run can anticipate, so this comes
+  // before any other work.
+  qSlicerStartupFilePrefetcher::start();
+# endif
   Q_UNUSED(hInstance);
   Q_UNUSED(hPrevInstance);
   Q_UNUSED(nShowCmd);
@@ -56,6 +64,11 @@ int main(int argc, char* argv[])
 {
   // This must be the first call for accurate application startup time measurements.
   qSlicerApplicationHelper::recordProcessEntryPointTime();
+# ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+  // Every library mapped from here on is one the next run can anticipate, so this comes
+  // before any other work.
+  qSlicerStartupFilePrefetcher::start();
+# endif
   return SlicerAppMain(argc, argv);
 }
 #endif

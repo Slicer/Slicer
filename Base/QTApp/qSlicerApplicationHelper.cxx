@@ -65,7 +65,6 @@
 #include <itkFactoryRegistration.h>
 
 // VTK includes
-#include <vtksys/SystemTools.hxx>
 #include <vtkNew.h>
 #include <vtkLogger.h>
 
@@ -200,9 +199,7 @@ void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkPr
   QString applicationName("Slicer");
   if (argv0)
   {
-    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
-    applicationName = QString::fromLocal8Bit(name.c_str());
-    applicationName.remove(QString("App-real"));
+    applicationName = qSlicerCoreApplication::applicationNameFromExecutablePath(QString::fromLocal8Bit(argv0));
   }
   QCoreApplication::setApplicationName(applicationName);
 

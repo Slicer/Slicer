@@ -45,6 +45,9 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
+#ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+# include "qSlicerStartupFilePrefetcher.h"
+#endif
 
 // STD includes
 #include <algorithm>
@@ -240,6 +243,9 @@ void reportStartupTiming(const StartupPhaseTimings& timings)
   // The phases cover the whole startup, so the last one ended when the startup did.
   const double totalMs = timings.Phases.isEmpty() ? 0.0 : timings.Phases.constLast().TimeElapsedSinceProcessCreationMs;
   lines << QString("  Total, from the creation of the process: %1 ms").arg(totalMs, 0, 'f', 0);
+#ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+  lines << qSlicerStartupFilePrefetcher::reportLines();
+#endif
   qInfo().noquote() << lines.join("\n");
 }
 
@@ -514,6 +520,11 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
   // Startup is over: the window is up and the event loop is about to take over.
+#ifdef Slicer_BUILD_STARTUP_FILE_PREFETCH
+  // Records the libraries this startup needed and stops the clock on the prefetch, so it
+  // has to run whether or not a report was asked for, and before the report is collected.
+  qSlicerStartupFilePrefetcher::finish();
+#endif
   reportStartupTiming(startupPhaseTimings);
 
   // qSlicerApplicationHelper::showMRMLEventLoggerWidget();
