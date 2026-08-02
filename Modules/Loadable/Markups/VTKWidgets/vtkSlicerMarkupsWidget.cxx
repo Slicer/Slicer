@@ -691,9 +691,21 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetStopPlace(vtkMRMLInteractionEventData*
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerMarkupsWidget::UpdateInteractionAccuratePicker(vtkMRMLInteractionEventData* eventData)
+{
+  vtkSlicerMarkupsWidgetRepresentation3D* rep3d = vtkSlicerMarkupsWidgetRepresentation3D::SafeDownCast(this->WidgetRep);
+  if (rep3d)
+  {
+    rep3d->SetInteractionAccuratePicker(eventData ? eventData->GetAccuratePicker() : nullptr);
+  }
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+
+  this->UpdateInteractionAccuratePicker(eventData);
 
   if (this->ApplicationLogic)
   {
