@@ -301,6 +301,57 @@ public:
   /// \sa revisionUserSettings()
   QString slicerRevisionUserSettingsFilePath() const;
 
+  /// Name that an application started from the given executable keys its settings on:
+  /// the file name without its extension, and without the "App-real" suffix that the
+  /// executable behind the launcher carries. Empty if \a executablePath is empty.
+  /// Static, so that it can be called before a qSlicerCoreApplication exists.
+  ///
+  /// This is the only place the name is derived from a path:
+  /// qSlicerApplicationHelper::preInitializeApplication() calls it to set the name on
+  /// QCoreApplication, and code running before that call (such as the startup file
+  /// prefetching, which runs at the process entry point) calls it to get the same name.
+  ///
+  /// \param executablePath path of the running executable.
+  ///
+  /// \sa revisionUserSettingsDirectory()
+  static QString applicationNameFromExecutablePath(const QString& executablePath);
+
+  /// Directory that an application started from the given executable was installed or
+  /// built into, which is what slicerHome() returns once there is an application: the
+  /// executable's directory without the build configuration subdirectory, if any, and
+  /// then without the binary subdirectory (Slicer_BIN_DIR). Empty if \a executablePath is
+  /// empty or the directories do not have that shape.
+  /// Static, so that it can be called before a qSlicerCoreApplication exists.
+  ///
+  /// The environment is not consulted, so this is the location of this executable and not
+  /// wherever SLICER_HOME happens to point. A caller that wants the environment to win,
+  /// as the application itself does, has to check it before calling this.
+  ///
+  /// \param executablePath path of the running executable.
+  /// \param intDir if not null, receives the build configuration subdirectory that was
+  /// stripped: empty in an install tree, and the configuration name (such as "Release")
+  /// in a build tree of a multi-configuration generator.
+  ///
+  /// \sa slicerHome()
+  static QString applicationHomeDirectoryFromExecutablePath(const QString& executablePath, QString* intDir = nullptr);
+
+  /// Directory that holds the revision-specific settings file (such as Slicer-12345.ini)
+  /// and any other configuration files, extensions, etc. specific to this revision.
+  /// Static, so that it can be called before a qSlicerCoreApplication exists.
+  ///
+  /// The location depends on the Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR build configuration option:
+  /// - enabled (this is the default, and it makes the installation self-contained): location is
+  ///   a subdirectory of \a slicerHome named after the organization. \a applicationName is unused.
+  /// - disabled (this is needed if the application is installed in a read-only directory): location is
+  ///   the directory in the user profile where QSettings keeps the settings file of \a applicationName.
+  ///   \a slicerHome is unused.
+  ///
+  /// \param slicerHome directory the application was installed or built into.
+  /// \param applicationName name the application gives QSettings.
+  ///
+  /// \sa slicerRevisionUserSettingsFilePath()
+  static QString revisionUserSettingsDirectory(const QString& slicerHome, const QString& applicationName);
+
   /// Get slicer default extensions path
   QString defaultExtensionsInstallPath() const;
 

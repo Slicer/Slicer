@@ -292,6 +292,14 @@ mark_as_superbuild(Slicer_BUILD_USAGE_LOGGING_SUPPORT)
 option(Slicer_BUILD_WEBENGINE_SUPPORT "Build Slicer with Qt WebEngine support" ON)
 mark_as_superbuild(Slicer_BUILD_WEBENGINE_SUPPORT)
 
+# Built on all platforms, but only enabled by default on Windows, where the loader
+# serializes the on-access virus scan of every shared library it maps. Elsewhere it can be
+# turned on for a run with the SLICER_STARTUP_FILE_PREFETCH environment variable.
+# See Base/QTApp/qSlicerStartupFilePrefetcher.h.
+option(Slicer_BUILD_STARTUP_FILE_PREFETCH "Build Slicer with startup library prefetching" ON)
+mark_as_advanced(Slicer_BUILD_STARTUP_FILE_PREFETCH)
+mark_as_superbuild(Slicer_BUILD_STARTUP_FILE_PREFETCH)
+
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer Qt Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
 mark_as_superbuild(Slicer_BUILD_QTLOADABLEMODULES)

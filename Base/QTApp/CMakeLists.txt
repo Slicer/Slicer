@@ -28,6 +28,16 @@ set(KIT_SRCS
   qSlicerMainWindow.h
   )
 
+if(Slicer_BUILD_STARTUP_FILE_PREFETCH)
+  list(APPEND KIT_SRCS
+    qSlicerStartupFilePrefetcher.cxx
+    qSlicerStartupFilePrefetcher.h
+    )
+  # dl_iterate_phdr(), used to ask the loader what is mapped, is part of libc since
+  # glibc 2.34 and of libdl before that. CMAKE_DL_LIBS is empty where it is not needed.
+  list(APPEND KIT_extra_target_libraries ${CMAKE_DL_LIBS})
+endif()
+
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerAboutDialog.ui
@@ -40,6 +50,7 @@ set(KIT_target_libraries
   # ${QT_LIBRARIES} # Not needed: All dependencies are transitively satisfied by other targets
   qSlicerModulesCore
   qSlicerBaseQTCLI
+  ${KIT_extra_target_libraries}
   )
 
 # Resources

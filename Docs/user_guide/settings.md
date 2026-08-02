@@ -148,13 +148,16 @@ If the application takes a long time to start up then the `--report-startup-timi
 - how much time was spent before the application's entry point was reached, which is the time the operating system needed to load the application's own libraries,
 - how much time each startup phase took (initializing the application, registering, instantiating and loading modules, initializing the user interface, and showing the main window),
 - the slowest 15 modules, each with the time it took to instantiate and to load it,
-- the total time measured from the creation of the process.
+- the total time measured from the creation of the process,
+- what the startup file prefetcher did, if it is available in the build (see below).
 
 For example:
 
     Slicer.exe --report-startup-timing
 
 The option can be combined with `--exit-after-startup`, which quits the application as soon as the startup is complete, and with `--disable-modules` or `--disable-scripted-loadable-modules`, to see how much of the startup time a group of modules is responsible for.
+
+The application libraries can be read into the file system cache on background threads while the application starts up, so that the work the operating system does when a library is first touched overlaps with the startup instead of delaying it. On Windows that work is on-access virus scanning, which is slow enough that this prefetching is enabled by default there. On Linux and macOS there is no such scanning and only the file cache is gained, which is worth a lot on a cold cache, a network file system or a spinning disk and nothing on a warm one, so prefetching is disabled by default and can be turned on with the `SLICER_STARTUP_FILE_PREFETCH` environment variable described below. Startup timing reports include how many libraries were prefetched and how many of the libraries this startup needed were predicted by the previous run, which tells if the prefetching could help at all.
 
 Testing modules are not loaded unless [developer mode](#developer-mode) is enabled, which also shortens the startup time.
 
@@ -170,6 +173,13 @@ The following environment variables can be set before the application is started
   and `compatibility` (compatibility profile). Default value is `compatibility` on Windows systems.
 - `SLICER_BACKGROUND_THREAD_PRIORITY`: Set priority for background processing tasks. On Linux, it may affect the
   entire process priority. An integer value is expected, default = `20` on Linux and macOS, and `-1` on Windows.
+- `SLICER_STARTUP_FILE_PREFETCH`: If it is set to `1` then the application libraries are read into the file system cache
+  while the application starts up, and if it is set to `0` then they are not. If the variable is left unset (or set to any
+  other value) then prefetching is enabled on Windows, where parallel file prefetching significantly improve startup time, and
+  disabled on Linux and macOS, where only the file cache is gained and whether that helps depends on the computer.
+  It has an effect only in builds configured with `Slicer_BUILD_STARTUP_FILE_PREFETCH` enabled.
+- `SLICER_STARTUP_FILE_PREFETCH_THREADS`: Number of threads used for prefetching the application libraries at startup.
+  A positive integer value is expected, by default the number of CPU cores is used, limited to the range of `2` to `8`.
 - `SLICERRC`: Custom application startup file path. Contains a full path to a Python script. By default it is `~/.slicerrc.py` (where ~ is the user profile a.k.a user home folder).
 - `SLICER_EXTENSIONS_MANAGER_SERVER_URL`: URL of the extensions manager backend with the `/api` path. Default value is retrieved from the settings using the key `Extensions/ServerUrl`.
 - `SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL`: URL of the extension manager frontend displaying the web page. Default value is retrieved from the settings using the key `Extensions/FrontendServerUrl`.

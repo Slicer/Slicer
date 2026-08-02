@@ -81,7 +81,8 @@ def parse_report(output):
         if phaseMatch:
             if phaseMatch.group(1) == TOTAL_NAME:
                 totalMs = int(phaseMatch.group(2))
-                # The total is the last line of the report.
+                # The total closes the timing report; anything after it (such as the
+                # startup library prefetching report) is not parsed here.
                 break
             phaseDurationsMs[phaseMatch.group(1)] = int(phaseMatch.group(2))
             continue
