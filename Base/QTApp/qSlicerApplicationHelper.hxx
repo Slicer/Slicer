@@ -25,6 +25,8 @@
 #include <qSlicerApplication.h>
 
 // Qt includes
+#include <QElapsedTimer>
+#include <QMap>
 #include <QMouseEvent>
 #include <QSettings>
 #include <QSplashScreen>
@@ -45,6 +47,7 @@
 #include "qSlicerModuleManager.h"
 
 // STD includes
+#include <algorithm>
 #include <iostream>
 
 // Minimal class definition so that Qt lupdate can parse qSlicerApplicationHelper::
@@ -138,6 +141,108 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
   splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
 }
 
+//----------------------------------------------------------------------------
+/// Structure to store startup timings of a module.
+/// Bringing a module up takes two steps: instantiating it (i.e., constructing it)
+/// and loading it (a module reads its settings, creates its logic, registers node types, etc.).
+struct ModuleTiming
+{
+  QString Name;
+  double InstantiatedMs = 0.0;
+  double LoadedMs = 0.0;
+  double totalMs() const { return this->InstantiatedMs + this->LoadedMs; }
+};
+
+//----------------------------------------------------------------------------
+/// A phase of the startup that has just finished, named, with the time elapsed from the
+/// creation of the process to the moment it finished.
+///
+/// Kept as a timestamp rather than as the duration of the phase, because consecutive
+/// timestamps subtract to give the duration of the phase between them, and the last one
+/// is the total startup time.
+struct StartupPhase
+{
+  QString Name;
+  double TimeElapsedSinceProcessCreationMs = 0.0;
+};
+
+//----------------------------------------------------------------------------
+/// How long each phase of the startup took.
+///
+/// Measured whether or not anyone asked for the report, because collecting it costs
+/// almost nothing, and a timing that is only collected when requested is one that cannot
+/// be added to a log after the fact.
+struct StartupPhaseTimings
+{
+  /// The phases of the startup, in the order they finished. One list rather than a field
+  /// per phase, so that adding, removing or reordering a phase is a change at the place
+  /// where the phase happens and nowhere else. The last entry is the end of the startup.
+  QList<StartupPhase> Phases;
+
+  /// The same time as the module instantiating and loading phases, broken down by module,
+  /// so that a slow phase can be traced to whichever module made it slow. Registration is
+  /// not among them: the factory reports that a module has been registered but not that
+  /// it is about to be, so there is nothing to measure between.
+  QList<ModuleTiming> ModuleTimings;
+};
+
+//----------------------------------------------------------------------------
+/// Writes to the application log how the startup went, if --report-startup-timing
+/// asked for it.
+///
+/// Called explicitly at the end of postInitializeApplication(), not from
+/// qSlicerApplication::startupCompleted(), which any number of modules also connect to:
+/// as one slot among many it would run wherever its connection happened to fall in the
+/// order, and whatever the slots after it did would be missing from the report.
+///
+/// The report goes to the log rather than to the standard output because a windowed
+/// build on Windows has no console to write to. It is written as a single entry so that
+/// nothing logged from another thread can land in the middle of it.
+void reportStartupTiming(const StartupPhaseTimings& timings)
+{
+  if (!qSlicerApplication::application()->commandOptions()->reportStartupTiming())
+  {
+    return;
+  }
+
+  QStringList lines;
+  lines << "Startup timing report";
+  // Each phase is stored as a timestamp, so a phase lasted whatever separates it from
+  // the phase before it.
+  double phaseStartMs = 0.0;
+  for (const StartupPhase& phase : timings.Phases)
+  {
+    lines << QString("  %1: %2 ms") //
+               .arg(phase.Name)
+               .arg(phase.TimeElapsedSinceProcessCreationMs - phaseStartMs, 0, 'f', 0);
+    phaseStartMs = phase.TimeElapsedSinceProcessCreationMs;
+  }
+  // Slowest first, because the question this answers is which module to look at, and only
+  // as far as the slowest few: past those the list becomes every module in the build, in
+  // an order that no longer says anything about where the startup went.
+  QList<ModuleTiming> modules = timings.ModuleTimings;
+  std::sort(modules.begin(), modules.end(), [](const ModuleTiming& a, const ModuleTiming& b) { return a.totalMs() > b.totalMs(); });
+  const int reportedModuleCount = qMin(modules.count(), 15);
+  lines << QString("  Modules, slowest first, as instantiate + load (%1 of %2):") //
+             .arg(reportedModuleCount)
+             .arg(modules.count());
+  for (int moduleIndex = 0; moduleIndex < reportedModuleCount; ++moduleIndex)
+  {
+    const ModuleTiming& module = modules.at(moduleIndex);
+    // One decimal, so that modules costing a fraction of a millisecond are not all
+    // reported as zero.
+    lines << QString("    %1: %2 ms (%3 ms + %4 ms)") //
+               .arg(module.Name)
+               .arg(module.totalMs(), 0, 'f', 1)
+               .arg(module.InstantiatedMs, 0, 'f', 1)
+               .arg(module.LoadedMs, 0, 'f', 1);
+  }
+  // The phases cover the whole startup, so the last one ended when the startup did.
+  const double totalMs = timings.Phases.isEmpty() ? 0.0 : timings.Phases.constLast().TimeElapsedSinceProcessCreationMs;
+  lines << QString("  Total, from the creation of the process: %1 ms").arg(totalMs, 0, 'f', 0);
+  qInfo().noquote() << lines.join("\n");
+}
+
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
@@ -152,7 +257,8 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
 # ifdef Slicer_USE_QtTesting
   (void)setEnableQtTesting; // Fix -Wunused-function warning
 # endif
-  (void)splashMessage; // Fix -Wunused-function warning
+  (void)reportStartupTiming; // Fix -Wunused-function warning
+  (void)splashMessage;       // Fix -Wunused-function warning
 #endif
 
   if (app.style())
@@ -237,23 +343,64 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     moduleFactoryManager->addModuleToIgnore(moduleToIgnore);
   }
 
+  StartupPhaseTimings startupPhaseTimings;
+
+  // Note that a phase of the startup has just finished. The entry point timer is already
+  // running, so there is nothing to start or restart: recording a phase is one call at
+  // the place where the phase ends, and the report works out the durations.
+  auto recordStartupPhaseCompletedTime = [&startupPhaseTimings](const QString& name)
+  { startupPhaseTimings.Phases.push_back({ name, Self::TimeElapsedBeforeProcessEntryPointMs + Self::TimeElapsedAfterProcessEntryPointTimer.elapsed() }); };
+
+  // What the loader did before the entry point, recorded as the first phase so that the
+  // phases account for the whole startup from the creation of the process.
+  startupPhaseTimings.Phases.push_back({ "Before the process entry point, loading the application's own libraries", Self::TimeElapsedBeforeProcessEntryPointMs });
+
+  // Everything up to here was the application getting itself ready to have modules:
+  // building qSlicerApplication, reading the settings, starting Python.
+  recordStartupPhaseCompletedTime("Initializing the application");
+
   // Register and instantiate modules
   splashMessage(splashScreen, qSlicerApplication::tr("Registering modules..."));
   moduleFactoryManager->registerModules();
+  recordStartupPhaseCompletedTime("Registering modules");
   if (app.commandOptions()->verboseModuleDiscovery())
   {
     qDebug() << "Number of registered modules:" << moduleFactoryManager->registeredModuleNames().count();
   }
 
   splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
-  // Show the name of each module that is being instantiated to make it easier to see if a module
-  // inappropriately performs some lengthy operations during instantiation.
-  QMetaObject::Connection moduleAboutToBeInstantiatedConnection =
+
+  // Time each module separately. instantiateModules() below brackets every construction
+  // with these two signals (instantiateModule() on its own emits only the second, but
+  // these connections do not outlive the call below). Showing the name of each module on
+  // the splash screen also makes it easier to see if a module inappropriately performs
+  // some lengthy operations during instantiation.
+  QMap<QString, ModuleTiming> moduleTimings;
+  QElapsedTimer moduleTimer;
+  moduleTimer.start();
+  QMetaObject::Connection moduleAboutToBeInstantiatedConnection = //
     QObject::connect(moduleFactoryManager,
                      &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
-                     [&splashScreen](QString moduleName) { splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName)); });
+                     [&splashScreen, &moduleTimer](QString moduleName)
+                     {
+                       splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName));
+                       // Last, so that updating the splash screen is not charged to the module.
+                       moduleTimer.restart();
+                     });
+  QMetaObject::Connection moduleInstantiatedConnection = //
+    QObject::connect(moduleFactoryManager,
+                     &qSlicerAbstractModuleFactoryManager::moduleInstantiated,
+                     [&moduleTimer, &moduleTimings](QString moduleName)
+                     {
+                       ModuleTiming& timing = moduleTimings[moduleName];
+                       timing.Name = moduleName;
+                       timing.InstantiatedMs = moduleTimer.nsecsElapsed() / 1e6;
+                     });
+
   moduleFactoryManager->instantiateModules();
   QObject::disconnect(moduleAboutToBeInstantiatedConnection);
+  QObject::disconnect(moduleInstantiatedConnection);
+  recordStartupPhaseCompletedTime("Instantiating modules");
 
   if (splashScreen)
   {
@@ -302,17 +449,44 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
 #endif
   }
 
-  // Load all available modules
+  recordStartupPhaseCompletedTime("Initializing the user interface");
+
+  // Load all available modules.
+  //
+  // Loading a module first loads its not-yet-loaded dependencies, inside the same call,
+  // and a module that is already loaded is skipped. Bracketing loadModule() with a timer
+  // would therefore charge a dependency's load to whichever module happened to pull it in
+  // first, and report the dependency itself as instantaneous. Instead, listen to
+  // moduleLoaded(), which the factory emits at the end of every load, nested ones
+  // included: a dependency's own emission closes its interval before its dependee's, so
+  // each module is charged only its own time.
+  double moduleLoadStartedMs = 0.0;
+  QMetaObject::Connection moduleLoadedConnection = //
+    QObject::connect(moduleFactoryManager,
+                     &qSlicerModuleFactoryManager::moduleLoaded,
+                     [&moduleTimer, &moduleTimings, &moduleLoadStartedMs](QString moduleName)
+                     {
+                       const double nowMs = moduleTimer.nsecsElapsed() / 1e6;
+                       moduleTimings[moduleName].LoadedMs = nowMs - moduleLoadStartedMs;
+                       moduleLoadStartedMs = nowMs;
+                     });
   for (const QString& name : moduleFactoryManager->instantiatedModuleNames())
   {
     Q_ASSERT(!name.isNull());
     splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));
+    // Taken after the splash message, so that updating the splash screen is not charged
+    // to the module.
+    moduleLoadStartedMs = moduleTimer.nsecsElapsed() / 1e6;
     moduleFactoryManager->loadModule(name);
   }
+  QObject::disconnect(moduleLoadedConnection);
   if (app.commandOptions()->verboseModuleDiscovery())
   {
     qDebug() << "Number of loaded modules:" << moduleManager->modulesNames().count();
   }
+
+  recordStartupPhaseCompletedTime("Loading modules");
+  startupPhaseTimings.ModuleTimings = moduleTimings.values();
 
   splashMessage(splashScreen, QString());
 
@@ -334,9 +508,13 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     window->setHomeModuleCurrent();
     window->show();
   }
+  recordStartupPhaseCompletedTime("Showing the main window");
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
+
+  // Startup is over: the window is up and the event loop is about to take over.
+  reportStartupTiming(startupPhaseTimings);
 
   // qSlicerApplicationHelper::showMRMLEventLoggerWidget();
   return EXIT_SUCCESS;

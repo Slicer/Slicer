@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Slicer includes
+#include "qSlicerApplicationHelper.h"
 #include "vtkSlicerConfigure.h"
 
 #if defined(_WIN32) && !defined(Slicer_BUILD_WIN32_CONSOLE)
@@ -27,6 +28,8 @@
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+  // This must be the first call for accurate application startup time measurements.
+  qSlicerApplicationHelper::recordProcessEntryPointTime();
   Q_UNUSED(hInstance);
   Q_UNUSED(hPrevInstance);
   Q_UNUSED(nShowCmd);
@@ -51,6 +54,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 #else
 int main(int argc, char* argv[])
 {
+  // This must be the first call for accurate application startup time measurements.
+  qSlicerApplicationHelper::recordProcessEntryPointTime();
   return SlicerAppMain(argc, argv);
 }
 #endif
