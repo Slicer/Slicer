@@ -148,6 +148,13 @@ protected:
   // depth of this reference position is used.
   bool ConvertDisplayPositionToWorld(const int displayPos[2], double worldPos[3], double worldOrientationMatrix[9], double* refWorldPos = nullptr);
 
+  /// Give the 3D representation the view's shared accurate picker (from the
+  /// interaction event data) for the duration of this event, so all widgets in
+  /// the view reuse one picker and one set of cell locators. Must be called at
+  /// the start of every ProcessInteractionEvent() override that can lead to a
+  /// pick (AccuratePick / ConvertDisplayPositionToWorld).
+  void UpdateInteractionAccuratePicker(vtkMRMLInteractionEventData* eventData);
+
   /// Index of the control point that is currently being previewed (follows the mouse pointer).
   /// If <0 it means that there is currently no point being previewed.
   int PreviewPointIndex;

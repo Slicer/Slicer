@@ -23,6 +23,8 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include "vtkMRMLAccuratePicker.h"
+
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkCellPicker.h>
@@ -43,7 +45,11 @@ vtkStandardNewMacro(vtkMRMLThreeDViewInteractorStyle);
 vtkMRMLThreeDViewInteractorStyle::vtkMRMLThreeDViewInteractorStyle()
 {
   this->CameraNode = nullptr;
-  this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
+  // vtkMRMLAccuratePicker keeps picking fast when large surfaces (for example
+  // segmentation closed surfaces) are shown, by indexing them with cell
+  // locators. This picker is shared with every widget in the view through
+  // vtkMRMLInteractionEventData::GetAccuratePicker().
+  this->AccuratePicker = vtkSmartPointer<vtkMRMLAccuratePicker>::New();
   this->AccuratePicker->SetTolerance(.005);
   this->QuickPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
   this->QuickVolumePicker = vtkSmartPointer<vtkVolumePicker>::New();

@@ -30,6 +30,8 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 
+#include <vtkWeakPointer.h>
+
 #include <map>
 #include <memory>
 
@@ -80,6 +82,13 @@ public:
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
   bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3] = nullptr);
+
+  /// Set the accurate picker shared by the view (owned by the interactor style
+  /// and obtained from the interaction event data). When set, AccuratePick()
+  /// uses it instead of this representation's own picker, so all widgets in the
+  /// view reuse one picker and one set of cell locators. The widget sets this
+  /// for the duration of each interaction event.
+  void SetInteractionAccuratePicker(vtkCellPicker* picker);
 
   /// Return true if the control point is actually visible
   /// (displayed and not occluded by other objects in the view).
@@ -175,7 +184,11 @@ protected:
   void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper, vtkMapper* occludedMapper);
   using vtkMRMLAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffsets;
 
-  vtkSmartPointer<vtkCellPicker> AccuratePicker;
+  /// The view's shared accurate picker (a vtkMRMLAccuratePicker owned by the
+  /// interactor style), set by the widget for the duration of each interaction
+  /// event (see SetInteractionAccuratePicker) and used by AccuratePick(). Held
+  /// weakly so it never keeps the interactor style's picker alive.
+  vtkWeakPointer<vtkCellPicker> InteractionAccuratePicker;
 
   double TextActorPositionWorld[3];
   bool TextActorOccluded;

@@ -11,6 +11,7 @@ set(KIT_TEST_SRCS
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
   vtkMRMLSliceViewDisplayableManagerFactoryTest.cxx
+  vtkMRMLAccuratePickerTest.cxx
   )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}

@@ -107,6 +107,8 @@ set(KIT_SRCS
   vtkMRMLSliceViewInteractorStyle.cxx
   vtkMRMLThreeDViewInteractorStyle.cxx
 
+  vtkMRMLAccuratePicker.cxx
+
   # Widgets
   vtkMRMLAbstractWidget.cxx
   vtkMRMLAbstractWidgetRepresentation.cxx

@@ -110,6 +110,12 @@ bool vtkSlicerPlaneWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventDat
 bool vtkSlicerPlaneWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+
+  // Plane-specific events (for example placing the plane normal) are handled
+  // below without calling the base ProcessInteractionEvent, so give the
+  // representation the shared accurate picker here too.
+  this->UpdateInteractionAccuratePicker(eventData);
+
   this->ApplicationLogic->PauseRender();
 
   bool processedEvent = false;
