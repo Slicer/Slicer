@@ -37,6 +37,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
   Q_PROPERTY(bool showPythonConsole READ showPythonConsole CONSTANT)
   Q_PROPERTY(bool enableQtTesting READ enableQtTesting CONSTANT)
   Q_PROPERTY(bool exitAfterStartup READ exitAfterStartup CONSTANT)
+  Q_PROPERTY(bool reportStartupTiming READ reportStartupTiming CONSTANT)
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions();
@@ -56,6 +57,10 @@ public:
   bool enableQtTesting() const;
 
   bool exitAfterStartup() const;
+
+  /// Whether to write to the application log, once startup is complete, how long the
+  /// startup took and where the time went.
+  bool reportStartupTiming() const;
 
 protected:
   void addArguments() override;

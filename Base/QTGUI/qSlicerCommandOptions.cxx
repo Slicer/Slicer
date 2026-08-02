@@ -89,6 +89,12 @@ bool qSlicerCommandOptions::exitAfterStartup() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::reportStartupTiming() const
+{
+  return this->parsedArgs().value("report-startup-timing").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
@@ -161,4 +167,14 @@ void qSlicerCommandOptions::addArguments()
                     QVariant::Bool,
 #endif
                     "Exit after startup is complete. Useful for measuring startup time");
+
+  this->addArgument("report-startup-timing",
+                    "",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                    QMetaType::Bool,
+#else
+                    QVariant::Bool,
+#endif
+                    "Write to the application log, once startup is complete, how long the startup took and where the time went."
+                    " Useful for diagnosing slow startup");
 }

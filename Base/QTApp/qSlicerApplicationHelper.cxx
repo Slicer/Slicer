@@ -79,6 +79,25 @@
 # include <Windows.h> //for SHELLEXECUTEINFO
 #endif
 
+#ifdef __APPLE__
+# include <sys/sysctl.h> // for sysctl, which reports the creation time of the process
+# include <sys/time.h>   // for gettimeofday
+# include <unistd.h>     // for getpid
+#endif
+
+#ifdef __linux__
+# include <cstdio>   // for fopen, to read /proc/self/stat
+# include <cstring>  // for strrchr
+# include <ctime>    // for clock_gettime
+# include <unistd.h> // for sysconf
+#endif
+
+//----------------------------------------------------------------------------
+double qSlicerApplicationHelper::TimeElapsedBeforeProcessEntryPointMs = 0.0;
+
+//----------------------------------------------------------------------------
+QElapsedTimer qSlicerApplicationHelper::TimeElapsedAfterProcessEntryPointTimer;
+
 //----------------------------------------------------------------------------
 qSlicerApplicationHelper::qSlicerApplicationHelper(QObject* parent)
   : Superclass(parent)
@@ -89,8 +108,84 @@ qSlicerApplicationHelper::qSlicerApplicationHelper(QObject* parent)
 qSlicerApplicationHelper::~qSlicerApplicationHelper() = default;
 
 //----------------------------------------------------------------------------
+void qSlicerApplicationHelper::recordProcessEntryPointTime()
+{
+  // How much the loader spent before this point can only be had from the operating
+  // system, because no clock of ours was running yet. Where it will not say,
+  // TimeElapsedBeforeProcessEntryPointMs is left at 0 and the startup is reported as if
+  // it began at the entry point.
+#if defined(_WIN32)
+  FILETIME creationTime, exitTime, kernelTime, userTime;
+  if (GetProcessTimes(GetCurrentProcess(), &creationTime, &exitTime, &kernelTime, &userTime))
+  {
+    FILETIME nowTime;
+    GetSystemTimeAsFileTime(&nowTime);
+    ULARGE_INTEGER creation, now;
+    creation.LowPart = creationTime.dwLowDateTime;
+    creation.HighPart = creationTime.dwHighDateTime;
+    now.LowPart = nowTime.dwLowDateTime;
+    now.HighPart = nowTime.dwHighDateTime;
+    // FILETIME is expressed in 100-nanosecond units.
+    Self::TimeElapsedBeforeProcessEntryPointMs = static_cast<double>(now.QuadPart - creation.QuadPart) / 10000.0;
+  }
+#elif defined(__APPLE__)
+  // The kernel reports the creation time of the process as a wall-clock timestamp in
+  // kinfo_proc.
+  struct kinfo_proc processInfo;
+  size_t processInfoSize = sizeof(processInfo);
+  int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
+  timeval nowTime;
+  if (sysctl(mib, 4, &processInfo, &processInfoSize, nullptr, 0) == 0 //
+      && gettimeofday(&nowTime, nullptr) == 0)
+  {
+    const timeval& creationTime = processInfo.kp_proc.p_starttime;
+    Self::TimeElapsedBeforeProcessEntryPointMs = (nowTime.tv_sec - creationTime.tv_sec) * 1000.0 //
+                                                 + (nowTime.tv_usec - creationTime.tv_usec) / 1000.0;
+  }
+#elif defined(__linux__)
+  // The kernel reports the creation time of the process in field 22 of /proc/self/stat,
+  // in clock ticks since boot; CLOCK_BOOTTIME is the matching clock for "now". Both ends
+  // being boot-relative, this is immune to wall clock adjustments.
+  if (FILE* statFile = fopen("/proc/self/stat", "r"))
+  {
+    char stat[2048] = { 0 };
+    size_t statLength = fread(stat, 1, sizeof(stat) - 1, statFile);
+    fclose(statFile);
+    // Parsing starts after the last ')', which closes field 2, the executable name: that
+    // name may itself contain spaces and parentheses, but the fields after it cannot.
+    // Field 22 is then the 20th field, and %*s skips a field whatever its format.
+    const char* afterExecutableName = statLength > 0 ? strrchr(stat, ')') : nullptr;
+    long long creationTimeTicks = 0;
+    long ticksPerSecond = sysconf(_SC_CLK_TCK);
+    struct timespec nowTime;
+    if (afterExecutableName //
+        && sscanf(afterExecutableName + 1,
+                  " %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lld",
+                  &creationTimeTicks)
+             == 1
+        && creationTimeTicks > 0 && ticksPerSecond > 0 //
+        && clock_gettime(CLOCK_BOOTTIME, &nowTime) == 0)
+    {
+      Self::TimeElapsedBeforeProcessEntryPointMs = (nowTime.tv_sec * 1000.0 + nowTime.tv_nsec / 1e6) //
+                                                   - creationTimeTicks * 1000.0 / ticksPerSecond;
+    }
+  }
+#endif
+
+  Self::TimeElapsedAfterProcessEntryPointTimer.start();
+}
+
+//----------------------------------------------------------------------------
 void qSlicerApplicationHelper::preInitializeApplication(const char* argv0, ctkProxyStyle* style)
 {
+  // Fall back to starting the clock here if recordProcessEntryPointTime() was not called
+  // (a custom application that provides its own main() instead of including
+  // qSlicerApplicationMainWrapper.cxx), without restarting a clock that is already running.
+  if (!Self::TimeElapsedAfterProcessEntryPointTimer.isValid())
+  {
+    Self::TimeElapsedAfterProcessEntryPointTimer.start();
+  }
+
 #if defined(Q_OS_MACOS) && (QT_VERSION < QT_VERSION_CHECK(5, 15, 10))
   // See https://github.com/Slicer/Slicer/issues/7261
   QLoggingCategory::setFilterRules("qt.qpa.fonts=false");

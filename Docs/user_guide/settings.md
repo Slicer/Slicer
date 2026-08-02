@@ -83,6 +83,7 @@ The overall theme of Slicer is controlled by the selected Style:
 
 Enable the following features:
 
+* Testing modules are loaded: modules whose name ends with `Test` or `Tests` are only loaded at application startup if developer mode is enabled. Skipping them shortens the application startup time, in particular for scripted testing modules, which would need to be imported just to be registered. Testing modules are always loaded if the application is started in testing mode, as automated tests rely on them.
 * [Module selection toolbar](user_interface.md#toolbar): Modules associated with the _Testing_ category are visible by default.
 * [WebServer module](modules/webserver.md): Javascript logging is enabled by default.
 * [Module panel](user_interface.md#module-panel): `Reload & Test` module panel section is displayed for scripted modules. It includes controls for reloading, testing and editing scripted modules as well as restarting the application.
@@ -140,6 +141,22 @@ The file is searched at multiple location and the first one that is found is use
 - User profile folder (`~/.slicerrc.py`)
 
 You can find the path to the startup script in Slicer by opening in the menu: Edit / Application Settings. ''Application startup script'' path is shown in the ''General'' section (or running `getSlicerRCFileName()` command in Slicer Python console).
+
+### Startup performance optimization
+
+If the application takes a long time to start up then the `--report-startup-timing` command-line option can be used to find out where that time is spent. Once the startup is complete, a report is written to the application log (it can be displayed by opening in the menu: View / Error Log), containing:
+- how much time was spent before the application's entry point was reached, which is the time the operating system needed to load the application's own libraries,
+- how much time each startup phase took (initializing the application, registering, instantiating and loading modules, initializing the user interface, and showing the main window),
+- the slowest 15 modules, each with the time it took to instantiate and to load it,
+- the total time measured from the creation of the process.
+
+For example:
+
+    Slicer.exe --report-startup-timing
+
+The option can be combined with `--exit-after-startup`, which quits the application as soon as the startup is complete, and with `--disable-modules` or `--disable-scripted-loadable-modules`, to see how much of the startup time a group of modules is responsible for.
+
+Testing modules are not loaded unless [developer mode](#developer-mode) is enabled, which also shortens the startup time.
 
 ### Runtime environment variables
 

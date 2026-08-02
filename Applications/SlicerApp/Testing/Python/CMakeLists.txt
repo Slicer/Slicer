@@ -460,6 +460,17 @@ add_test(
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
+# Check that "--report-startup-timing" writes the startup timing report. The report is
+# read back from the application log rather than from the standard streams, so the test
+# does not need console IO support and runs whether the launcher and the application are
+# console or GUI executables.
+add_test(
+  NAME py_report_startup_timing
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerReportStartupTimingTest.py
+    ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
 # Check that stand-alone Python interpreter, without PythonQt support, can `import slicer` safely (#945)
 add_test(
   NAME py_standalonepython_import_slicer
