@@ -235,9 +235,6 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
 
   this->ControlPointSize = 10; // will be set from the markup's GlyphScale
 
-  this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
-  this->AccuratePicker->SetTolerance(.005);
-
   // Using the minimum value of -66000 creates a lot of rendering artifacts on the occluded objects, as all of the
   // pixels in the occluded object will have the same depth buffer value (0.0).
   // Using a default value of -25000 strikes a balance between rendering the occluded objects on top of other objects,
@@ -1187,20 +1184,36 @@ void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer* ren)
   }
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::SetInteractionAccuratePicker(vtkCellPicker* picker)
+{
+  this->InteractionAccuratePicker = picker;
+}
+
+//----------------------------------------------------------------------
 bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3] /*=nullptr*/)
 {
-  bool success = this->AccuratePicker->Pick(x, y, 0, this->Renderer);
+  // Pick with the accurate picker shared by the view (a vtkMRMLAccuratePicker,
+  // which indexes large surfaces so a pick does not scan every cell of, for
+  // example, a segmentation closed surface). The widget sets it from the
+  // interaction event data before each interaction event, which is the only
+  // time AccuratePick() is called.
+  vtkCellPicker* accuratePicker = this->InteractionAccuratePicker;
+  if (!accuratePicker)
+  {
+    return false;
+  }
+  bool success = accuratePicker->Pick(x, y, 0, this->Renderer);
   if (pickNormal)
   {
-    this->AccuratePicker->GetPickNormal(pickNormal);
+    accuratePicker->GetPickNormal(pickNormal);
   }
   if (!success)
   {
     return false;
   }
 
-  vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
+  vtkPoints* pickPositions = accuratePicker->GetPickedPositions();
   vtkIdType numberOfPickedPositions = pickPositions->GetNumberOfPoints();
   if (numberOfPickedPositions < 1)
   {
