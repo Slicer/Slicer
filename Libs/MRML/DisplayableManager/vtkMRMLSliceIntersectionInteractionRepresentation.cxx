@@ -2398,7 +2398,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
 
   size_t numberOfIntersections = this->Internal->SliceIntersectionInteractionDisplayPipelines.size();
   int numberOfFoundIntersectionPoints = 0;
-  if (!this->Internal->SliceNode)
+  if (!this->Internal->SliceNode || numberOfIntersections == 0)
   {
     return;
   }
