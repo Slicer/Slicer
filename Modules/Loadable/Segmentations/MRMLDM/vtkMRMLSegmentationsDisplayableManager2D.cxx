@@ -859,6 +859,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->PolyDataOutlineActor->GetProperty()->SetColor(color);
       pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(outlineOpacity);
       pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(genericDisplayNode->GetSliceIntersectionThickness());
+      // Representation may be point-based (e.g. RT planar contours), so set point size as well from the same setting.
+      pipeline->PolyDataOutlineActor->GetProperty()->SetPointSize(genericDisplayNode->GetSliceIntersectionThickness());
       pipeline->PolyDataOutlineActor->SetPosition(0, 0);
       pipeline->PolyDataFillActor->SetVisibility(segmentFillVisible);
       pipeline->PolyDataFillActor->GetProperty()->SetColor(color[0], color[1], color[2]);
