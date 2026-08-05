@@ -63,7 +63,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   //@}
 
-  void SetSliceNode(vtkMRMLSliceNode* sliceNode);
+  /// Sets the view node. Accepts only vtkMRMLSliceNode; use GetSliceNode() to retrieve it.
+  void SetViewNode(vtkMRMLAbstractViewNode* viewNode) override;
   vtkMRMLSliceNode* GetSliceNode();
 
   void AddIntersectingSliceLogic(vtkMRMLSliceLogic* sliceLogic);

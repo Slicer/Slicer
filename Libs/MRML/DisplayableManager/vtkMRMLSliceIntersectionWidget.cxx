@@ -97,6 +97,10 @@ vtkMRMLSliceIntersectionWidget::vtkMRMLSliceIntersectionWidget()
   this->VolumeScalarRange[0] = 0;
   this->VolumeScalarRange[1] = 0;
 
+  this->ScrollStartSliceOffset = 0.0;
+  this->ScrollSliceOffsetRange[0] = 0.0;
+  this->ScrollSliceOffsetRange[1] = 0.0;
+
   this->LastForegroundOpacity = 0.;
   this->LastLabelOpacity = 0.;
   this->StartActionSegmentationDisplayNode = nullptr;
@@ -178,6 +182,9 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
     this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "b", WidgetEventDecrementSlice);
     this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventIncrementSlice);
     this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventDecrementSlice);
+    // Scroll through slices by click-and-drag (only handled when the Scroll mouse mode is active, see CanProcessInteractionEvent)
+    this->SetEventTranslationClickAndDrag(
+      WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetStateScroll, WidgetEventScrollStart, WidgetEventScrollEnd);
   }
   if (this->GetActionEnabled(ActionShowSlice))
   {
@@ -310,7 +317,6 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     vtkNew<vtkMRMLSliceIntersectionInteractionRepresentation> newRepInteraction;
     newRepInteraction->SetMRMLApplicationLogic(mrmlAppLogic);
     newRepInteraction->SetRenderer(this->GetRenderer());
-    newRepInteraction->SetSliceNode(this->SliceNode);
     this->WidgetRep = newRepInteraction;
   }
   else
@@ -318,9 +324,9 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     vtkNew<vtkMRMLSliceIntersectionRepresentation2D> newRep;
     newRep->SetMRMLApplicationLogic(mrmlAppLogic);
     newRep->SetRenderer(this->GetRenderer());
-    newRep->SetSliceNode(this->SliceNode);
     this->WidgetRep = newRep;
   }
+  this->WidgetRep->SetViewNode(this->SliceNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -359,6 +365,13 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     // If this event is not recognized then give a chance to process it as a click event.
     return this->CanProcessButtonClickEvent(eventData, distance2);
   }
+  if (widgetEvent == WidgetEventScrollStart && this->WidgetState != WidgetStateScroll //
+      && (!this->GetInteractionNode() || this->GetInteractionNode()->GetCurrentInteractionMode() != vtkMRMLInteractionNode::Scroll))
+  {
+    // Plain left-click-and-drag is only used for scrolling through slices when the Scroll mouse mode is active.
+    // In other mouse modes, treat it like any other unrecognized event so it can still be processed as a click event.
+    return this->CanProcessButtonClickEvent(eventData, distance2);
+  }
   if (!this->GetRepresentation())
   {
     return false;
@@ -372,6 +385,7 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
       || this->WidgetState == WidgetStateBlend                                  //
       || this->WidgetState == WidgetStateTranslateSlice                         //
       || this->WidgetState == WidgetStateZoomSlice                              //
+      || this->WidgetState == WidgetStateScroll                                 //
       || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle      //
       || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle         //
       || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle //
@@ -496,6 +510,11 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
     case WidgetEventZoomSliceEnd:
+      processedEvent = this->ProcessEndMouseDrag(eventData);
+      this->SliceLogic->EndSliceNodeInteraction();
+      break;
+    case WidgetEventScrollStart: processedEvent = this->ProcessScrollStart(eventData); break;
+    case WidgetEventScrollEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       this->SliceLogic->EndSliceNodeInteraction();
       break;
@@ -628,6 +647,7 @@ void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventDat
   if (this->WidgetState == WidgetStateTranslate                                 //
       || this->WidgetState == WidgetStateTranslateSlice                         //
       || this->WidgetState == WidgetStateZoomSlice                              //
+      || this->WidgetState == WidgetStateScroll                                 //
       || this->WidgetState == WidgetStateBlend                                  //
       || this->WidgetState == WidgetStateRotateIntersectingSlices               //
       || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle      //
@@ -673,6 +693,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
     case WidgetStateBlend: this->ProcessBlend(eventData); break;
     case WidgetStateTranslateSlice: this->ProcessTranslateSlice(eventData); break;
     case WidgetStateZoomSlice: this->ProcessZoomSlice(eventData); break;
+    case WidgetStateScroll: this->ProcessScroll(eventData); break;
     case WidgetStateIdle: // if moving over an intersection in idle mode then this will change the widget state to WidgetStateOn...
     case WidgetStateOnWidget:
     case WidgetStateOnTranslateIntersectingSlicesHandle:
@@ -1042,15 +1063,9 @@ void vtkMRMLSliceIntersectionWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
   }
 
   // Update representation
-  vtkMRMLSliceIntersectionRepresentation2D* rep = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast(this->WidgetRep);
-  if (rep)
+  if (this->WidgetRep)
   {
-    rep->SetSliceNode(sliceNode);
-  }
-  vtkMRMLSliceIntersectionInteractionRepresentation* repInteraction = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
-  if (repInteraction)
-  {
-    repInteraction->SetSliceNode(sliceNode);
+    this->WidgetRep->SetViewNode(sliceNode);
   }
 }
 
@@ -1303,6 +1318,59 @@ void vtkMRMLSliceIntersectionWidget::MoveSlice(double delta)
     this->SliceLogic->SetSliceOffset(newOffset);
     this->SliceLogic->EndSliceNodeInteraction();
   }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessScrollStart(vtkMRMLInteractionEventData* eventData)
+{
+  double resolution = 1.0; // unused
+  if (!this->SliceLogic->GetSliceOffsetRangeResolution(this->ScrollSliceOffsetRange, resolution))
+  {
+    // No volume is available to determine the slice offset range, use a wide default range.
+    this->ScrollSliceOffsetRange[0] = -1000.0;
+    this->ScrollSliceOffsetRange[1] = 1000.0;
+  }
+  this->ScrollStartSliceOffset = this->SliceLogic->GetSliceOffset();
+
+  this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
+  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
+
+  this->SetWidgetState(WidgetStateScroll);
+  return this->ProcessStartMouseDrag(eventData);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceIntersectionWidget::ProcessScroll(vtkMRMLInteractionEventData* eventData)
+{
+  if (!this->GetRenderer() || !this->GetRenderer()->GetRenderWindow())
+  {
+    return;
+  }
+
+  const int* eventPosition = eventData->GetDisplayPosition();
+
+  double rangeLow = this->ScrollSliceOffsetRange[0];
+  double rangeHigh = this->ScrollSliceOffsetRange[1];
+
+  const int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
+  if (!windowSize || windowSize[1] <= 0)
+  {
+    return;
+  }
+
+  // The total height of the view corresponds to the total range of the slice offset slider.
+  double offsetPerPixel = (rangeHigh - rangeLow) / windowSize[1];
+  double newOffset = this->ScrollStartSliceOffset + offsetPerPixel * (eventPosition[1] - this->StartEventPosition[1]);
+  if (newOffset < rangeLow)
+  {
+    newOffset = rangeLow;
+  }
+  if (newOffset > rangeHigh)
+  {
+    newOffset = rangeHigh;
+  }
+
+  this->SliceLogic->SetSliceOffset(newOffset);
 }
 
 //----------------------------------------------------------------------------
