@@ -715,7 +715,7 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
   this->SliceIntersectionPoint[0] = 0.0;
   this->SliceIntersectionPoint[1] = 0.0;
   this->SliceIntersectionPoint[2] = 0.0;
-  if (!this->Internal->SliceNode)
+  if (!this->Internal->SliceNode || numberOfIntersections == 0)
   {
     return this->SliceIntersectionPoint;
   }
