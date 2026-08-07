@@ -22,6 +22,10 @@ add_cmakescript_test(
   slicer_setting_variable_message_test
   CMake/UseSlicerMacros.cmake)
 
+add_cmakescript_test(
+  slicer_block_ctk_app_launcher_settings_test
+  CMake/Testing/SlicerBlockCTKAppLauncherSettingsTest.cmake)
+
 if(UNIX)
   add_test(
     NAME cmake_slicer_extension_cpack_bundle_fixup_path_test

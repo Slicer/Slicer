@@ -239,6 +239,14 @@ set(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_QTLOADABLEMODULES_LIB_DIR}
   )
 
+if(APPLE)
+  # SlicerBundleCloseDeps.py embeds external dylibs in Contents/lib. Add that
+  # directory for libraries loaded dynamically at runtime, such as OpenSSL.
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+    <APPLAUNCHER_SETTINGS_DIR>/../lib
+    )
+endif()
+
 # The following lines allow Slicer to load a CLI module extension that depends
 # on libraries (i.e a logic class) provided by a loadable module extension.
 list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ../${Slicer_QTLOADABLEMODULES_LIB_DIR})
