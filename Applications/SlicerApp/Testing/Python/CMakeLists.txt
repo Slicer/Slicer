@@ -154,6 +154,15 @@ add_test(
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionDisableSettingsTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
+# This test launches several Slicer processes with '--disable-settings' and relies
+# on '--keep-temporary-settings' preserving values across those runs. The temporary
+# settings files have process-global names (e.g. "Slicer-tmp.ini"), so another test
+# starting Slicer with '--disable-settings' in parallel clears them at startup and
+# intermittently wipes the value between this test's write and read. Run it serially
+# so no other test can touch the shared temporary settings while it is running.
+set_tests_properties(py_nomainwindow_SlicerOptionDisableSettingsTest PROPERTIES
+  RUN_SERIAL TRUE
+  )
 
 add_test(
   NAME py_nomainwindow_SlicerOptionIgnoreSlicerRCTest
