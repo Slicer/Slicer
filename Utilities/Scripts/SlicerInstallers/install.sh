@@ -9,18 +9,26 @@
 #   * Downloads the latest STABLE Slicer package from the official server.
 #   * Verifies the download against the publisher's SHA-512 checksum.
 #   * Linux : extracts the tarball into ~/.local/opt, links a launcher into
-#             ~/.local/bin, adds a desktop menu entry, and prints — but never
-#             runs — the command that installs Slicer's runtime libraries.
-#             Set SLICER_INSTALL_DEPS to have it run that command for you.
+#             ~/.local/bin, and adds a desktop menu entry.
 #   * macOS : mounts the .dmg and copies Slicer.app into ~/Applications.
 #
-# By default this never asks for root. Everything lands under $HOME: on Linux the
-# system libraries Slicer needs are left for you to install (or not) afterwards;
-# on macOS the app goes to ~/Applications, which LaunchServices indexes just like
-# /Applications, rather than to the root-owned system directory. The one opt-in
-# exception is SLICER_INSTALL_DEPS (Linux only): it runs the package-manager
-# command that installs those system libraries, using sudo when not already root
-# — meant for building Docker images and similar automation.
+# Installing Slicer is all this script does. The two things that are not that —
+# installing Slicer's Linux runtime libraries, and installing an interface
+# language — are separate scripts that live inside the installation and are run
+# afterwards, by you, when you want them:
+#
+#   <install>/bin/slicer-deps       the system libraries Slicer needs (Linux)
+#   <install>/bin/slicer-language   list or install interface languages
+#
+# Slicer packages built after those scripts were added upstream ship them
+# themselves; for every other package this installer writes its own copies, so
+# they are there either way. A package that already has them is left alone.
+#
+# This never asks for root. Everything lands under $HOME: on Linux the system
+# libraries Slicer needs are left for you to install (or not) afterwards, with
+# slicer-deps; on macOS the app goes to ~/Applications, which LaunchServices
+# indexes just like /Applications, rather than to the root-owned system
+# directory.
 #
 # When an installation already sits where this script would write, you are asked
 # whether to abort, replace it, install into another directory so both copies can
@@ -31,20 +39,23 @@
 # Environment overrides:
 #   SLICER_RELEASE_TYPE  stable (default) | preview | any
 #   SLICER_VERSION       pin an exact version, e.g. 5.12.0 (default: latest)
+#   SLICER_REVISION      pin one exact build by its Kitware revision, e.g. 34627.
+#                        A revision is unambiguous across channels, so
+#                        SLICER_RELEASE_TYPE is ignored; cannot be combined
+#                        with SLICER_VERSION
 #   SLICER_INSTALL_DIR   where to install Slicer; must be writable without root
 #                        (default: ~/.local/opt on Linux, ~/Applications on macOS)
 #   SLICER_IF_EXISTING   what to do when an installation is already there:
 #                        prompt (default) | abort | reinstall | uninstall
 #   SLICER_NONINTERACTIVE  set (to any value) to never prompt, for automations
-#                        and CI. If the target version is already installed it is
-#                        reinstalled, unless SLICER_IF_EXISTING is set to abort or
-#                        uninstall. Every other override still applies — in
+#                        and CI. If the target version is already installed the
+#                        script exits 0 without downloading anything, so repeated
+#                        runs converge instead of re-fetching the package; set
+#                        SLICER_IF_EXISTING=reinstall to replace it anyway. On
+#                        macOS an installed *different* version is still
+#                        replaced, since every version installs as the same
+#                        Slicer.app. Every other override still applies — in
 #                        particular SLICER_VERSION to pin the version to install.
-#   SLICER_INSTALL_DEPS  set (to any value, Linux only) to actually run the
-#                        package-manager command that installs Slicer's runtime
-#                        system libraries, instead of only printing it. Uses sudo
-#                        when not already root. For building Docker images and
-#                        other automation; pair it with SLICER_NONINTERACTIVE.
 #   SLICER_QUIET         set to silence progress messages, the logo and the
 #                        download bar; warnings, errors and prompts still show
 #   NO_COLOR             set to disable colored output
@@ -58,9 +69,9 @@ set -eu
 
 SLICER_RELEASE_TYPE="${SLICER_RELEASE_TYPE:-stable}"
 SLICER_VERSION="${SLICER_VERSION:-}"
+SLICER_REVISION="${SLICER_REVISION:-}"
 SLICER_IF_EXISTING="${SLICER_IF_EXISTING:-prompt}"
 SLICER_NONINTERACTIVE="${SLICER_NONINTERACTIVE:-}"
-SLICER_INSTALL_DEPS="${SLICER_INSTALL_DEPS:-}"
 SLICER_QUIET="${SLICER_QUIET:-}"
 BASE_URL="https://download.slicer.org/download"
 PACKAGES_API="https://slicer-packages.kitware.com/api/v1"
@@ -70,6 +81,10 @@ C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
 
 # Set by download_verified() to the path of the verified package to install.
 DL_PKG=''
+
+# Set by install_linux()/install_macos() to the directory the optional helper
+# scripts live in inside the installation, so main() can point the user at them.
+TOOLS_DIR=''
 
 # Set by resolve_package(): what the server says about the package to install.
 # Everything but PKG_URL is empty when the metadata endpoint is unreachable.
@@ -448,15 +463,28 @@ json_field() {
 # build is already installed without downloading half a gigabyte to find out.
 resolve_package() {
   os="$1"
-  # The download server speaks release/nightly/any; map our user-facing names.
-  case "$SLICER_RELEASE_TYPE" in
-    stable)  stability=release ;;
-    preview) stability=nightly ;;
-    any)     stability=any ;;
-    *) err "SLICER_RELEASE_TYPE must be 'stable', 'preview' or 'any' (got '$SLICER_RELEASE_TYPE')." ;;
-  esac
-  PKG_URL="$BASE_URL?os=$os&stability=$stability"
-  [ -n "$SLICER_VERSION" ] && PKG_URL="$PKG_URL&version=$SLICER_VERSION"
+  if [ -n "$SLICER_REVISION" ]; then
+    # A revision names one exact build, so it cannot be combined with a version
+    # pin (the server rejects that with a 400), and it makes the channel
+    # irrelevant: sending a stability filter alongside it would 404 a pinned
+    # preview build, so the URL carries the revision alone.
+    [ -z "$SLICER_VERSION" ] || err "SLICER_VERSION and SLICER_REVISION cannot both be set; pick one way to pin the build."
+    case "$SLICER_REVISION" in
+      *[!0-9]*|'') err "SLICER_REVISION must be a number, e.g. 34627 (got '$SLICER_REVISION')." ;;
+    esac
+    [ "$SLICER_RELEASE_TYPE" = stable ] || warn "SLICER_REVISION pins one exact build; SLICER_RELEASE_TYPE='$SLICER_RELEASE_TYPE' is ignored."
+    PKG_URL="$BASE_URL?os=$os&revision=$SLICER_REVISION"
+  else
+    # The download server speaks release/nightly/any; map our user-facing names.
+    case "$SLICER_RELEASE_TYPE" in
+      stable)  stability=release ;;
+      preview) stability=nightly ;;
+      any)     stability=any ;;
+      *) err "SLICER_RELEASE_TYPE must be 'stable', 'preview' or 'any' (got '$SLICER_RELEASE_TYPE')." ;;
+    esac
+    PKG_URL="$BASE_URL?os=$os&stability=$stability"
+    [ -n "$SLICER_VERSION" ] && PKG_URL="$PKG_URL&version=$SLICER_VERSION"
+  fi
 
   PKG_ITEM_ID=$(resolve_item_id "$PKG_URL")
   PKG_SHA='' PKG_VERSION='' PKG_ARCH=''
@@ -466,6 +494,15 @@ resolve_package() {
   PKG_SHA=$(json_field "$meta" sha512)
   PKG_VERSION=$(json_field "$meta" version)
   PKG_ARCH=$(json_field "$meta" arch)
+
+  # The one guarantee a revision pin makes is which build you get; hold the
+  # server to it whenever the metadata is available to check.
+  if [ -n "$SLICER_REVISION" ]; then
+    pkg_rev=$(json_field "$meta" revision)
+    if [ -n "$pkg_rev" ] && [ "$pkg_rev" != "$SLICER_REVISION" ]; then
+      err "The server resolved revision $pkg_rev instead of the requested $SLICER_REVISION."
+    fi
+  fi
 
   # A digest we can't recognize is worse than no digest at all: it would fail
   # every comparison and abort an otherwise sound download.
@@ -572,6 +609,9 @@ ask() {
 prompt_install_dir() {
   while true; do
     ask 'Install directory: ' || { printf '\n' > /dev/tty; err "No directory given."; }
+    # The quoted ~ below is a case pattern matching what the user literally
+    # typed, not an attempt to expand it; $HOME does the expanding on the right.
+    # shellcheck disable=SC2088
     case "$ANSWER" in
       '')    printf '  Please enter a path.\n' > /dev/tty; continue ;;
       '~')   ANSWER="$HOME" ;;
@@ -601,6 +641,11 @@ resolve_existing_install() {
   label="$1"; occupied="$2"
   replace_desc="${3:-Reinstall — replace it with a freshly downloaded copy}"
   uninstall_fn="${4:-}"
+  # $3 is empty exactly when the existing copy is the very version being
+  # installed: Linux resolves per-version directories, and macOS passes its own
+  # replacement text only when the versions differ.
+  same_version=''
+  [ -z "${3:-}" ] && same_version=1
 
   case "$SLICER_IF_EXISTING" in
     abort)
@@ -618,8 +663,18 @@ resolve_existing_install() {
     *) err "SLICER_IF_EXISTING must be 'prompt', 'abort', 'reinstall' or 'uninstall' (got '$SLICER_IF_EXISTING')." ;;
   esac
 
+  # With no way to ask — non-interactive mode, or no terminal — the target
+  # version being already installed is the converged state, so repeated
+  # automated runs must succeed without re-downloading the package. A different
+  # version (macOS only) is still replaced below: that is an upgrade.
+  if [ -n "$same_version" ] && { [ -n "$SLICER_NONINTERACTIVE" ] || ! tty_available; }; then
+    log "$label is already installed at $occupied; nothing to do."
+    log "Set SLICER_IF_EXISTING=reinstall to reinstall it."
+    exit 0
+  fi
+
   if [ -n "$SLICER_NONINTERACTIVE" ]; then
-    log "$label is already installed at $occupied; reinstalling (non-interactive mode)."
+    log "$label is already installed at $occupied; replacing it (non-interactive mode)."
     return 0
   fi
 
@@ -652,77 +707,584 @@ resolve_existing_install() {
 }
 
 # ---------------------------------------------------------------------------- #
-# Linux
+# helper scripts inside the installation
 # ---------------------------------------------------------------------------- #
-# Run one package-manager command line during an auto dependency install,
-# echoing it first so the (Docker) build log records exactly what ran. $1 is a
-# command line we assembled ourselves from fixed tokens, so the deliberate word
-# splitting is safe. Any failure is fatal — checked explicitly with err() rather
-# than left to `set -e`, whose handling of a function called from an `&&` list is
-# too shell-dependent to trust: a failed dependency install must fail the whole
-# install, so a Docker build stops instead of baking a broken image that silently
-# lacks the libraries.
+# Everything this installer does NOT do — installing Slicer's Linux runtime
+# libraries, installing an interface language — lives in these scripts instead,
+# inside the installation, run by the user afterwards. The canonical copies are
+# the files under inner/ in this repository; the block below is rendered from
+# them by tools/sync-embedded.sh and CI fails if the two drift, so never edit it
+# by hand. They have to be embedded rather than read from the repo because this
+# script is fetched and piped to sh, with no repo alongside it.
+# --- BEGIN generated inner scripts (tools/sync-embedded.sh) --- #
+# Generated from inner/ — edit those files, then run tools/sync-embedded.sh.
+write_inner_slicer_language() {
+  cat > "$1" <<'SLICER_INNER_SCRIPT_EOF'
+#!/bin/sh
+# List or install 3D Slicer's interface languages (Linux and macOS).
+#
+# Usage:
+#   slicer-language list          print every language Slicer has translations
+#                                 for, with how complete each translation is
+#   slicer-language <code>        install that language and switch Slicer to it,
+#                                 e.g. fr-FR, es-419, pt-BR, zh-Hans
+#
+# Options:
+#   --slicer <path>  the Slicer launcher to use, when this script cannot find
+#                    the one it ships next to
+#   -h, --help       show this help
+#
+# Environment:
+#   SLICER_QUIET     silence progress messages; warnings and errors still show
+#   NO_COLOR         disable colored output
+#
+# Installing a language installs the SlicerLanguagePacks extension
+# (https://github.com/Slicer/SlicerLanguagePacks) along with that language's
+# translation files. Slicer itself has to run for this: only the application can
+# talk to the extensions server, compile translations and write its own
+# settings. It is launched twice, without splash or main window: once to install
+# the extension (skipped when a previous run already did, so repeated runs
+# converge), and once more — so the freshly installed extension's LanguageTools
+# module is loaded — to run that module's own logic: download the .ts
+# translation files, compile them to .qm with Slicer's bundled lrelease and
+# install them into the application's translation folder. The second run then
+# verifies the .qm file for the requested locale exists and actually loads (by
+# installing it as a QTranslator into the running Slicer, exactly what the
+# application does at startup), and only after that writes the same 'language'
+# and 'Internationalization/Enabled' settings the extension's own LanguageTools
+# module writes.
+#
+# Needs network access, Slicer's runtime libraries (see slicer-deps on Linux)
+# and, on Linux, a display — headless machines can provide one with xvfb-run.
+set -eu
+
+SLICER_QUIET="${SLICER_QUIET:-}"
+
+# Where Slicer's translations live. The SlicerLanguagePacks extension queries
+# this very endpoint for its own language list, so what it reports is exactly
+# what can be installed.
+WEBLATE_STATS_URL='https://hosted.weblate.org/api/components/3d-slicer/3d-slicer/statistics/?format=json&page_size=1000'
+
+# Initialized empty so `set -u` is satisfied before setup_colors() runs.
+C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_BLUE=$(printf '\033[1;34m'); C_YELLOW=$(printf '\033[1;33m')
+    C_RED=$(printf '\033[1;31m'); C_GREEN=$(printf '\033[1;32m')
+    C_RESET=$(printf '\033[0m')
+  fi
+}
+
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: slicer-language list
+       slicer-language <language-code> [--slicer <path>]
+
+List or install 3D Slicer's interface languages.
+
+  list             print the available language codes and how complete each
+                   translation is
+  <language-code>  install that language's translation files and switch
+                   Slicer's interface to it, e.g. fr-FR, es-419, pt-BR
+
+Options:
+  --slicer <path>  the Slicer launcher to use, when this script cannot find the
+                   one it ships next to
+  -h, --help       show this help
+USAGE
+}
+
+# Fetch a URL to stdout (for JSON metadata), over enforced HTTPS/TLS 1.2.
+fetch() {
+  if have curl; then
+    curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$1"
+  elif have wget; then
+    wget --https-only --secure-protocol=TLSv1_2 -qO- "$1"
+  else
+    err "This needs 'curl' or 'wget'."
+  fi
+}
+
+# Extract the string value of a JSON field from the metadata blob $1 ($2 = key).
+# Prints nothing when the key is absent.
+json_field() {
+  printf '%s' "$1" \
+    | grep -oE "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" \
+    | head -n1 \
+    | sed 's/^[^:]*:[[:space:]]*"//; s/"$//'
+}
+
+# ---------------------------------------------------------------------------- #
+# locating the Slicer this script ships inside
+# ---------------------------------------------------------------------------- #
+# The directory this script actually lives in, following symlinks: it is
+# installed into Slicer's own bin directory, so everything else is relative to
+# it and nothing has to be passed in.
+self_dir() {
+  self="$0"
+  hops=0
+  while [ -L "$self" ] && [ "$hops" -lt 32 ]; do
+    link="$(readlink -- "$self")"
+    case "$link" in
+      /*) self="$link" ;;
+      *)  self="$(dirname -- "$self")/$link" ;;
+    esac
+    hops=$((hops + 1))
+  done
+  CDPATH='' cd -- "$(dirname -- "$self")" && pwd -P
+}
+
+# The Slicer launcher belonging to the installation this script sits in.
+#   Linux : <appdir>/bin/slicer-language           -> <appdir>/Slicer
+#   macOS : …/Slicer.app/Contents/bin/slicer-language -> …/Contents/MacOS/Slicer
+find_slicer() {
+  root="$(CDPATH='' cd -- "$(self_dir)/.." && pwd -P)" || return 1
+  for candidate in "$root/Slicer" "$root/MacOS/Slicer"; do
+    if [ -f "$candidate" ] && [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------- #
+# list
+# ---------------------------------------------------------------------------- #
+# Print every language Slicer has translations for, with how complete each
+# translation is. Weblate spells locales with underscores (pt_BR) but the
+# extension and Qt use dashes (pt-BR), so codes are printed in the form this
+# script accepts.
+list_languages() {
+  log "Querying the list of 3D Slicer translations…"
+  blob=$(fetch "$WEBLATE_STATS_URL") && [ -n "$blob" ] \
+    || err "Could not query the translation server; browse https://hosted.weblate.org/projects/3d-slicer/ instead."
+
+  printf '\n  %-12s %-40s %s\n' 'CODE' 'LANGUAGE' 'TRANSLATED'
+  # One result object per language; splitting on '{' isolates each (none of the
+  # fields nest). English is the source language, not a translation — skip it.
+  printf '%s' "$blob" | tr '{' '\n' | while IFS= read -r chunk; do
+    code=$(json_field "$chunk" code)
+    [ -n "$code" ] && [ "$code" != en ] || continue
+    name=$(json_field "$chunk" name)
+    pct=$(printf '%s' "$chunk" \
+      | grep -oE '"translated_percent"[[:space:]]*:[[:space:]]*[0-9.]+' \
+      | head -n1 | sed 's/.*:[[:space:]]*//')
+    printf '%s|%s|%s\n' "${pct:-0}" "$(printf '%s' "$code" | tr '_' '-')" "$name"
+  done | sort -t'|' -rn | while IFS='|' read -r pct code name; do
+    printf '  %-12s %-40s %9s%%\n' "$code" "$name" "$pct"
+  done
+
+  printf '\n'
+  log "Run 'slicer-language <code>' with one of the codes above to install it."
+}
+
+# ---------------------------------------------------------------------------- #
+# install
+# ---------------------------------------------------------------------------- #
+configure_language() {
+  lang="$1"; exe="$2"
+
+  # Slicer is a GUI application even with no window shown, so on Linux it still
+  # needs a display; on headless machines fall back to a virtual one.
+  runner=''
+  if [ "$(uname -s)" = Linux ] && [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+    if have xvfb-run; then
+      runner='xvfb-run -a'
+    else
+      err "Installing a language needs a display to launch Slicer once; run this in a desktop session, or install xvfb and re-run."
+    fi
+  fi
+
+  TMP="$(mktemp -d)"
+  trap 'rm -rf "$TMP"' EXIT INT TERM
+
+  ext_pyfile="$TMP/install-language-packs.py"
+  cat > "$ext_pyfile" <<'EOF'
+import sys
+import slicer
+
+# The repository is SlicerLanguagePacks, but the extensions catalog knows the
+# extension by its base name, LanguagePacks.
+name = 'LanguagePacks'
+ok = False
+try:
+    em = slicer.app.extensionsManagerModel()
+    em.interactive = False  # never pop up dialogs
+    if em.isExtensionInstalled(name):
+        ok = True
+    else:
+        try:
+            ok = em.downloadAndInstallExtensionByName(name, True, True)
+        except TypeError:
+            # Older Slicer without the (installDependencies, waitForInstallation) overload.
+            ok = em.downloadAndInstallExtensionByName(name)
+except Exception as exc:
+    print('Failed to install %s: %s' % (name, exc), file=sys.stderr)
+slicer.util.exit(0 if ok else 1)
+EOF
+
+  # $lang was validated in main(), so interpolating it into the script cannot
+  # break out of the quoted string.
+  lang_pyfile="$TMP/set-language.py"
+  cat > "$lang_pyfile" <<EOF
+import glob
+import os
+import re
+import sys
+
+import qt
+import slicer
+
+lang = '$lang'
+
+
+def series():
+    # Translations are maintained per Slicer series ("5.8", …), so ask the
+    # running application which one this is rather than guessing from a path.
+    try:
+        return '%s.%s' % (slicer.app.majorVersion, slicer.app.minorVersion)
+    except Exception:
+        pass
+    try:
+        match = re.match(r'(\d+\.\d+)', slicer.app.applicationVersion)
+        if match:
+            return match.group(1)
+    except Exception:
+        pass
+    return ''
+
+
+def main():
+    # The previous launch installed the extension; this fresh launch loaded its
+    # LanguageTools module, whose logic does the actual work.
+    try:
+        import LanguageTools
+    except ImportError:
+        print('SlicerLanguagePacks is installed but its LanguageTools module did not load.', file=sys.stderr)
+        return 1
+
+    locale = qt.QLocale(lang)
+    if locale.name() == 'C':
+        print("Qt does not recognize '%s' as a language code; run 'slicer-language list' to see the available codes." % lang, file=sys.stderr)
+        return 1
+
+    try:
+        logic = LanguageTools.LanguageToolsLogic()
+        if not logic.lreleasePath:
+            print('This Slicer does not bundle the lrelease tool needed to compile translations; install a more recent Slicer.', file=sys.stderr)
+            return 1
+        # The main branch tracks the preview release, so it is the fallback when
+        # this series has no translations of its own yet.
+        for branch in [b for b in (series(), 'main') if b]:
+            logic.slicerVersion = branch
+            try:
+                logic.downloadTsFilesFromGithub('https://github.com/Slicer/SlicerLanguageTranslations')
+                break
+            except Exception:
+                logic.removeTemporaryFolder()
+        else:
+            print('Could not download the translation files from https://github.com/Slicer/SlicerLanguageTranslations.', file=sys.stderr)
+            return 1
+        logic.normalizeTsFiles()
+        logic.convertTsFilesToQmFiles()
+        logic.installQmFiles()
+        try:
+            logic.installFontFiles()  # fonts for Chinese and other non-Latin scripts
+        except Exception:
+            pass
+        logic.removeTemporaryFolder()
+    except Exception as exc:
+        print('Installing the translation files failed: %s' % exc, file=sys.stderr)
+        return 1
+
+    # installQmFiles() put one file per component here, named after the locale
+    # Qt normalizes the code to. Slicer_<locale>.qm is the one that has to be
+    # there: it holds the application's own strings, and is the file Slicer
+    # loads at startup.
+    folder = slicer.app.translationFolders()[0]
+    if not os.path.isfile(os.path.join(folder, 'Slicer_%s.qm' % locale.name())):
+        # A .ts file whose language Qt cannot place is normalized to the 'C'
+        # locale, so those files are not a language anyone can ask for.
+        codes = sorted({os.path.basename(f)[len('Slicer_'):-len('.qm')].replace('_', '-')
+                        for f in glob.glob(os.path.join(folder, 'Slicer_*.qm'))} - {'C'})
+        print("No translation exists for '%s'. Available: %s" % (lang, ', '.join(codes)), file=sys.stderr)
+        return 1
+
+    # Prove Slicer can load it, by installing it into this very process the
+    # same way the application does at startup.
+    translator = qt.QTranslator()
+    if not translator.load(locale, 'Slicer', '_', folder) or not slicer.app.installTranslator(translator):
+        print("The '%s' translation files in %s exist but Qt could not load them." % (lang, folder), file=sys.stderr)
+        return 1
+
+    # Only now that the translation is present and loadable, switch Slicer to it.
+    settings = slicer.app.userSettings()
+    settings.setValue('Internationalization/Enabled', True)
+    settings.setValue('language', lang)
+    count = len(glob.glob(os.path.join(folder, '*_%s.qm' % locale.name())))
+    print('Installed and verified %d translation files for %s in %s.' % (count, lang, folder))
+    return 0
+
+
+slicer.util.exit(main())
+EOF
+
+  # Assembled in pieces to keep the source lines short.
+  ext_error="Could not install SlicerLanguagePacks. If Slicer failed to start"
+  ext_error="$ext_error for lack of system libraries, install them first (run"
+  ext_error="$ext_error slicer-deps); otherwise launch Slicer and use its"
+  ext_error="$ext_error Extensions Manager."
+
+  # Slicer's own startup chatter goes to stdout; drop it and keep stderr, where
+  # both Slicer and the scripts above report actual problems.
+  log "Installing the SlicerLanguagePacks extension…"
+  # shellcheck disable=SC2086
+  $runner "$exe" --no-splash --no-main-window --python-script "$ext_pyfile" >/dev/null \
+    || err "$ext_error"
+
+  log "Downloading the '$lang' translation and switching Slicer to it…"
+  # shellcheck disable=SC2086
+  $runner "$exe" --no-splash --no-main-window --python-script "$lang_pyfile" >/dev/null \
+    || err "Could not install or verify the '$lang' translation (details above). Launch Slicer and use the extension's LanguageTools module instead."
+
+  log "${C_GREEN}Slicer will start in '$lang' (translation installed and verified).${C_RESET}"
+}
+
+# ---------------------------------------------------------------------------- #
+# main
+# ---------------------------------------------------------------------------- #
+main() {
+  command_arg=''
+  exe_override=''
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -h|--help) usage; exit 0 ;;
+      --slicer)
+        [ $# -ge 2 ] || err "--slicer needs a path."
+        exe_override="$2"; shift ;;
+      --slicer=*) exe_override="${1#--slicer=}" ;;
+      --) shift; break ;;
+      -*) err "Unknown option: $1 (try --help)." ;;
+      *)
+        [ -z "$command_arg" ] || err "Only one language code may be given (try --help)."
+        command_arg="$1" ;;
+    esac
+    shift
+  done
+
+  # Anything after a literal "--" is the language code, so a code that starts
+  # with a dash can still be spelled out.
+  if [ -z "$command_arg" ] && [ $# -gt 0 ]; then command_arg="$1"; fi
+
+  setup_colors
+
+  [ -n "$command_arg" ] || { usage >&2; exit 2; }
+
+  if [ "$command_arg" = list ]; then
+    list_languages
+    exit 0
+  fi
+
+  # The value lands inside a quoted Python string, so only these characters may
+  # pass.
+  case "$command_arg" in
+    *[!A-Za-z0-9_-]*)
+      err "Expected a language code like fr-FR, es-419 or pt-BR (got '$command_arg'), or 'list' to see the available codes." ;;
+  esac
+
+  if [ -n "$exe_override" ]; then
+    exe="$exe_override"
+  else
+    exe="$(find_slicer || true)"
+  fi
+  [ -n "$exe" ] && [ -x "$exe" ] \
+    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+
+  configure_language "$command_arg" "$exe"
+}
+
+main "$@"
+SLICER_INNER_SCRIPT_EOF
+}
+write_inner_slicer_deps() {
+  cat > "$1" <<'SLICER_INNER_SCRIPT_EOF'
+#!/bin/sh
+# Install the system libraries 3D Slicer needs on Linux.
+#
+# Slicer bundles Qt, Python, VTK and the rest of its own dependencies, but it
+# still links against a handful of libraries that come from the distribution.
+# Most desktops already have them; minimal images and servers do not, and there
+# the symptom is Slicer failing to start with no obvious explanation.
+#
+# Usage:
+#   slicer-deps                  print the command for this machine's package manager
+#   slicer-deps --install        run that command (uses sudo when not already root)
+#   slicer-deps --install --yes  never prompt: sudo runs with -n and fails fast
+#                                with a clear error rather than hanging on a
+#                                password prompt no one can answer
+#
+# Options:
+#   -i, --install   actually install, instead of only printing the command
+#   -y, --yes       assume yes; implied by a non-empty SLICER_NONINTERACTIVE
+#   -h, --help      show this help
+#
+# Environment:
+#   SLICER_NONINTERACTIVE  same as --yes
+#   SLICER_QUIET           silence progress messages; the command, warnings and
+#                          errors are still printed
+#   NO_COLOR               disable colored output
+#
+# This script ships inside the Slicer installation. Installing system packages
+# needs root, which is exactly why it is a separate, explicit step rather than
+# part of installing Slicer itself: the installer only ever writes under $HOME.
+set -eu
+
+SLICER_QUIET="${SLICER_QUIET:-}"
+
+# Initialized empty so `set -u` is satisfied before setup_colors() runs.
+C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_BLUE=$(printf '\033[1;34m'); C_YELLOW=$(printf '\033[1;33m')
+    C_RED=$(printf '\033[1;31m'); C_GREEN=$(printf '\033[1;32m')
+    C_RESET=$(printf '\033[0m')
+  fi
+}
+
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: slicer-deps [--install] [--yes]
+
+Install the system libraries 3D Slicer needs on Linux.
+
+With no options the command for this machine's package manager is printed and
+nothing is changed. --install runs it, using sudo when not already root.
+
+Options:
+  -i, --install   actually install, instead of only printing the command
+  -y, --yes       assume yes; sudo runs with -n and fails fast instead of
+                  waiting for a password (implied by SLICER_NONINTERACTIVE)
+  -h, --help      show this help
+USAGE
+}
+
+# Run one package-manager command line, echoing it first so the (Docker) build
+# log records exactly what ran. $1 is a command line we assembled ourselves from
+# fixed tokens, so the deliberate word splitting is safe. Any failure is fatal —
+# checked explicitly with err() rather than left to `set -e`, whose handling of a
+# function called from an `&&` list is too shell-dependent to trust: a failed
+# dependency install must fail the whole run, so a Docker build stops instead of
+# baking a broken image that silently lacks the libraries.
 run_deps_cmd() {
   log "Running: $1"
   # shellcheck disable=SC2086
   $1 || err "Dependency installation failed (command: $1)."
 }
 
-# Slicer links against a handful of system libraries that, by default, we
-# deliberately do NOT install. Doing so needs root, and asking a `curl | sh`
-# script for sudo is a far bigger ask than the install itself — the whole point
-# is that this script only ever writes under $HOME. So print the command for the
-# detected package manager and let the user decide whether to run it.
-#
-# Setting SLICER_INSTALL_DEPS opts into running that command instead of printing
-# it, using sudo when not already root: the mode for building Docker images and
-# other automation where root is available and installing system packages is the
-# whole point.
-handle_linux_deps() {
-  auto="$SLICER_INSTALL_DEPS"
+# The packages Slicer needs from the distribution, one variable per package
+# manager. The canonical lists are the plain-text files under deps/ in the
+# slicer-installer repository; this block is rendered from them by
+# tools/sync-embedded.sh and CI fails if the two drift, so never edit it by hand.
+# --- BEGIN generated dependency lists (tools/sync-embedded.sh) --- #
+# Generated from deps/*.txt — edit those files, then run tools/sync-embedded.sh.
+DEPS_APT='libglu1-mesa libpulse-mainloop-glib0 libnss3 qt5dxcb-plugin libsm6 libasound2t64|libasound2'
+DEPS_DNF='mesa-libGLU mesa-libGL libnsl libXrender pulseaudio-libs-glib2 nss libXcomposite libXdamage libXrandr ftgl libXcursor libXi libXtst alsa-lib qt5-qtx11extras'
+DEPS_PACMAN='glu nss alsa-lib libxrender libxcomposite libxdamage libxrandr libxcursor libxi libxtst ftgl'
+# --- END generated dependency lists --- #
 
-  # Quiet mode suppresses the printed hint: its prose goes through log(), but the
-  # install command is a bare printf, so a half-shown hint would be worse. It
-  # never suppresses an actual auto-install — that still has to happen.
-  [ -n "$auto" ] || [ -z "$SLICER_QUIET" ] || return 0
+main() {
+  auto=''
+  assume_yes="${SLICER_NONINTERACTIVE:-}"
 
-  if [ "$(id -u)" -eq 0 ]; then sudo_prefix=''; else sudo_prefix='sudo '; fi
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -i|--install) auto=1 ;;
+      -y|--yes)     assume_yes=1 ;;
+      -h|--help)    usage; exit 0 ;;
+      --)           shift; break ;;
+      -*)           err "Unknown option: $1 (try --help)." ;;
+      *)            err "Unexpected argument: $1 (try --help)." ;;
+    esac
+    shift
+  done
+
+  setup_colors
+
+  [ "$(uname -s)" = Linux ] \
+    || err "slicer-deps applies to Linux only; on macOS and Windows Slicer bundles everything it needs."
+
+  if [ "$(id -u)" -eq 0 ]; then
+    sudo_prefix=''
+  elif [ -n "$auto" ] && [ -n "$assume_yes" ]; then
+    # A sudo password prompt would hang forever in CI, where nothing can type
+    # the password. -n makes sudo fail immediately instead; probe it up front
+    # so the failure names the real problem rather than surfacing as a sudo
+    # error in the middle of the dependency install.
+    if ! have sudo || ! sudo -n true 2>/dev/null; then
+      err "Installing dependencies needs root, and --yes forbids a sudo password prompt; run as root or configure passwordless sudo."
+    fi
+    sudo_prefix='sudo -n '
+  else
+    sudo_prefix='sudo '
+  fi
 
   if have apt-get; then
     # A fresh container image ships with empty package lists, which would both
     # fail the install and mislead the libasound2t64 probe below into choosing
-    # the wrong ALSA package. When auto-installing, refresh them first; in hint
-    # mode we only read local lists (apt-cache), which is side-effect free.
+    # the wrong ALSA package. When installing, refresh them first; when only
+    # printing we read local lists (apt-cache), which is side-effect free.
     [ -n "$auto" ] && run_deps_cmd "${sudo_prefix}apt-get update"
 
-    # Common Debian/Ubuntu runtime libraries required by Slicer.
-    pkgs="libglu1-mesa libpulse-mainloop-glib0 libnss3 qt5dxcb-plugin libsm6"
-    # ALSA lib was renamed during the 64-bit time_t transition (Ubuntu 24.04+).
-    if apt-cache show libasound2t64 >/dev/null 2>&1; then
-      pkgs="$pkgs libasound2t64"
-    else
-      pkgs="$pkgs libasound2"
-    fi
-    cmd="${sudo_prefix}apt-get install -y $pkgs"
+    # An "a|b" entry in deps/apt.txt names the same library under two package
+    # names — libasound2 was renamed during the 64-bit time_t transition
+    # (Ubuntu 24.04+) — so ask this apt which of the two it knows and keep that
+    # one. Every other entry is passed through unchanged.
+    pkgs=''
+    for pkg in $DEPS_APT; do
+      case "$pkg" in
+        *'|'*)
+          alt_first="${pkg%%|*}"
+          alt_second="${pkg#*|}"
+          if apt-cache show "$alt_first" >/dev/null 2>&1; then
+            pkg="$alt_first"
+          else
+            pkg="$alt_second"
+          fi
+          ;;
+      esac
+      pkgs="$pkgs $pkg"
+    done
+    cmd="${sudo_prefix}apt-get install -y${pkgs}"
   elif have dnf; then
-    pkgs="mesa-libGLU mesa-libGL libnsl libXrender pulseaudio-libs-glib2 nss"
-    pkgs="$pkgs libXcomposite libXdamage libXrandr ftgl libXcursor libXi libXtst"
-    pkgs="$pkgs alsa-lib qt5-qtx11extras"
-    cmd="${sudo_prefix}dnf install -y $pkgs"
+    cmd="${sudo_prefix}dnf install -y $DEPS_DNF"
   elif have pacman; then
-    pkgs="glu nss alsa-lib libxrender libxcomposite libxdamage libxrandr"
-    pkgs="$pkgs libxcursor libxi libxtst ftgl"
-    # --noconfirm only when auto-installing, so an unattended build never blocks
-    # on a prompt; the printed hint keeps the interactive default for humans.
-    if [ -n "$auto" ]; then confirm='--noconfirm '; else confirm=''; fi
-    cmd="${sudo_prefix}pacman -S --needed ${confirm}$pkgs"
+    # --noconfirm only when installing unattended, so a build never blocks on a
+    # prompt; the printed command keeps the interactive default for humans.
+    if [ -n "$auto" ] && [ -n "$assume_yes" ]; then confirm='--noconfirm '; else confirm=''; fi
+    cmd="${sudo_prefix}pacman -S --needed ${confirm}$DEPS_PACMAN"
   else
     if [ -n "$auto" ]; then
-      err "SLICER_INSTALL_DEPS is set but no supported package manager (apt-get, dnf, pacman) was found; install Slicer's runtime libraries manually."
+      err "No supported package manager (apt-get, dnf, pacman) was found; install Slicer's runtime libraries manually."
     fi
     warn "Unrecognized package manager. If Slicer fails to start, install its"
     warn "runtime libraries manually (see the Slicer docs)."
-    return 0
+    exit 0
   fi
 
   if [ -n "$auto" ]; then
@@ -731,17 +1293,51 @@ handle_linux_deps() {
     return 0
   fi
 
-  printf '\n'
   log "Slicer needs a few system libraries. Most desktops already have them; if"
   log "Slicer fails to start, install them with:"
-  printf '\n    %s%s%s\n' "$C_GREEN" "$cmd" "$C_RESET"
+  printf '\n    %s%s%s\n\n' "$C_GREEN" "$cmd" "$C_RESET"
+  log "Or re-run this script as: slicer-deps --install"
 
   if have pacman; then
-    printf '\n'
     log "Arch Linux: a prebuilt AUR package (3dslicer-bin) is available as an alternative."
   fi
 }
 
+main "$@"
+SLICER_INNER_SCRIPT_EOF
+}
+# --- END generated inner scripts --- #
+
+# Write the helper scripts into $1 (Slicer's own bin directory inside the
+# installation), skipping any the package already ships: Slicer packages built
+# after these scripts were added upstream carry their own — possibly newer —
+# copies, and those must win. Best-effort throughout; a read-only or otherwise
+# awkward installation directory is not a reason to fail an install that has
+# already succeeded.
+install_inner_tools() {
+  TOOLS_DIR="$1"
+  mkdir -p "$TOOLS_DIR" 2>/dev/null || { TOOLS_DIR=''; return 0; }
+
+  written=''
+  for name in slicer-language slicer-deps; do
+    # slicer-deps installs distribution packages; there is no such thing on macOS.
+    [ "$name" != slicer-deps ] || [ "$(uname -s)" = Linux ] || continue
+    [ ! -e "$TOOLS_DIR/$name" ] || continue
+
+    case "$name" in
+      slicer-language) write_inner_slicer_language "$TOOLS_DIR/$name" || continue ;;
+      slicer-deps)     write_inner_slicer_deps     "$TOOLS_DIR/$name" || continue ;;
+    esac
+    chmod +x "$TOOLS_DIR/$name" 2>/dev/null || true
+    written="$written $name"
+  done
+
+  [ -z "$written" ] || log "Helper scripts installed:$written"
+}
+
+# ---------------------------------------------------------------------------- #
+# Linux
+# ---------------------------------------------------------------------------- #
 # Remove the Linux installation at $1 (a Slicer-<version>-linux-<arch> directory):
 # the directory itself, the launcher and "current version" symlinks that point
 # into it, and the desktop entry when it still launches this copy. Anything that
@@ -861,6 +1457,7 @@ install_linux() {
   ln -sfn "$appdir" "$DEST/Slicer"            # stable "current version" link
 
   install_desktop_entry "$appdir"
+  install_inner_tools "$appdir/bin"
 
   log "Installed to: $appdir"
   log "Launcher    : $BINDIR/Slicer"
@@ -971,6 +1568,8 @@ install_macos() {
 
   log "Installed to: $dest"
 
+  install_inner_tools "$dest/Contents/bin"
+
   # A copy in /Applications shadows this one: `open -a Slicer` resolves through
   # LaunchServices by bundle id, and may well pick the other install.
   sys_app="/Applications/$appname"
@@ -999,10 +1598,17 @@ main() {
 
   log "${C_GREEN}3D Slicer installation complete.${C_RESET}"
 
-  # Left for last so the one thing that may still need the user's attention —
-  # and their sudo password — is the last thing they read (or, with
-  # SLICER_INSTALL_DEPS, the last thing that runs).
-  if [ "$OS" = Linux ]; then handle_linux_deps; fi
+  # Left for last, because the missing-system-libraries case is the one thing
+  # that can still leave the user with a Slicer that does not start, and the
+  # pointer to its fix should be the last thing they read.
+  [ -n "$TOOLS_DIR" ] || return 0
+  printf '\n'
+  log "Optional tools in $TOOLS_DIR:"
+  if [ "$OS" = Linux ]; then
+    log "  ${C_GREEN}slicer-deps${C_RESET}       run this if Slicer fails to start: it installs the"
+    log "                    system libraries Slicer needs from your distribution"
+  fi
+  log "  ${C_GREEN}slicer-language${C_RESET}   list or install Slicer's interface languages"
 }
 
 main "$@"
