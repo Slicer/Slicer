@@ -281,12 +281,23 @@ def close_deps(app, search_dirs, lib_subdir):
         loads, rpaths, install_id = scan(current)
         binary_dir = os.path.dirname(current)
 
-        # An install id that still points outside the bundle (an absolute
-        # build/Homebrew path, or a copied library keeping its original id)
-        # would leak that path; reset it to @rpath relative to Contents.
-        if install_id and install_id.startswith("/") and not is_system(install_id) \
-                and not inside_bundle(install_id):
-            id_resets[current] = "@rpath/" + os.path.relpath(current, contents)
+        # A library's install id must name where it now lives in the bundle, as
+        # @rpath relative to Contents. Two reasons: an id left pointing outside
+        # the bundle (an absolute build/Homebrew path) would leak that path, and
+        # an id that no longer matches the library's location (for example a bare
+        # "libopenjp2.7.dylib" after the library is relocated into the versioned
+        # lib dir) does not match the install name dependents reference it by,
+        # so dyld can load a second, separate copy instead of coalescing onto the
+        # already-loaded one. Reset the id whenever it differs from the location.
+        # Frameworks keep their own @rpath/<Name>.framework/... convention and are
+        # only corrected when the id leaked an absolute path.
+        if install_id is not None and not is_system(install_id):
+            desired_id = "@rpath/" + os.path.relpath(current, contents)
+            if framework_relative(current) is None:
+                if install_id != desired_id:
+                    id_resets[current] = desired_id
+            elif install_id.startswith("/") and not inside_bundle(install_id):
+                id_resets[current] = desired_id
 
         for ref in loads:
             if is_system(ref):
