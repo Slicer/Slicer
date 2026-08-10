@@ -137,7 +137,7 @@ endforeach()
 message(STATUS "Closing macOS bundle dependencies")
 execute_process(
   COMMAND python3 "@CMAKE_SOURCE_DIR@/Utilities/Scripts/SlicerBundleCloseDeps.py"
-          --app "${app_dir}" ${search_path_args}
+          --app "${app_dir}" --lib-subdir "@Slicer_LIB_DIR@" ${search_path_args}
   RESULT_VARIABLE _closedeps_result
   )
 if(NOT _closedeps_result EQUAL 0)

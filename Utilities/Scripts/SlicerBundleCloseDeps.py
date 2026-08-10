@@ -15,9 +15,12 @@ locations under ``/usr/lib`` and ``/System`` -- is either:
 
   - redirected to a library of the same name already embedded in the bundle
     (avoiding a duplicate copy), or
-  - copied into the bundle (a plain dylib into ``Contents/lib``; a framework,
-    whole, into ``Contents/Frameworks``) and the reference rewritten to
-    ``@rpath/...``.
+  - copied into the bundle (an ordinary dylib into the versioned Slicer lib
+    directory given by ``--lib-subdir``, the Python runtime into
+    ``Contents/lib/Python/lib``, a framework whole into ``Contents/Frameworks``)
+    and the reference rewritten to ``@rpath/...``. The embedded location matches
+    the standard install-tree layout so an embedded library keeps the install
+    name compiled extensions were built against.
 
 The walk follows copied libraries' own dependencies, and every Mach-O *inside* a
 copied framework (for example ``QtWebEngineCore.framework``'s bundled
@@ -191,11 +194,16 @@ def resolve(ref, binary_dir, rpaths, search_dirs, exe_dir):
     return None
 
 
-def close_deps(app, search_dirs):
+def close_deps(app, search_dirs, lib_subdir):
     contents = os.path.join(app, "Contents")
     exe_dir = os.path.join(contents, "MacOS")
     frameworks_dir = os.path.join(contents, "Frameworks")
-    lib_dir = os.path.join(contents, "lib")
+    # Embedded ordinary dylibs go in the versioned Slicer lib dir (lib_subdir,
+    # e.g. lib/Slicer-5.13); the Python runtime keeps its own lib/Python/lib
+    # location. This mirrors the historical BundleUtilities layout that compiled
+    # extensions are built against -- see embed() for why the location matters.
+    lib_dir = os.path.join(contents, lib_subdir)
+    python_lib_dir = os.path.join(contents, "lib", "Python", "lib")
     contents_real = os.path.realpath(contents)
 
     def inside_bundle(path):
@@ -242,8 +250,21 @@ def close_deps(app, search_dirs):
                         worklist.append(macho)
             target = os.path.join(dest_fw, os.sep.join(inner.split(os.sep)[1:]))
         else:
-            os.makedirs(lib_dir, exist_ok=True)
-            target = os.path.join(lib_dir, os.path.basename(source))
+            base = os.path.basename(source)
+            # The embedded location determines the @rpath install name set for
+            # this library below (@rpath/<path relative to Contents>), and dyld
+            # binds an extension's dependency to an already-loaded core library
+            # only when that install name matches exactly. Compiled extensions
+            # are built against the standard install tree, where libraries live
+            # in the versioned lib dir (and the Python runtime in lib/Python/lib),
+            # so embedded libraries must land there too -- flattening them into a
+            # bare lib/ renames them and breaks every compiled extension.
+            if base.startswith("libpython") and base.endswith(".dylib"):
+                dest_dir = python_lib_dir
+            else:
+                dest_dir = lib_dir
+            os.makedirs(dest_dir, exist_ok=True)
+            target = os.path.join(dest_dir, base)
             if not os.path.exists(target):
                 shutil.copy2(source, target)
                 os.chmod(target, 0o755)
@@ -371,12 +392,17 @@ def main(argv):
                         help="Directory to resolve @rpath dependencies against "
                              "(repeatable). The referring binary's own run-paths "
                              "are always searched first.")
+    parser.add_argument("--lib-subdir", default="lib", metavar="DIR",
+                        help="Contents-relative directory for embedded ordinary "
+                             "dylibs, i.e. the versioned Slicer lib dir such as "
+                             "lib/Slicer-5.13. Must match the install-tree layout "
+                             "compiled extensions are built against.")
     options = parser.parse_args(argv)
     if not os.path.isdir(options.app):
         print("SlicerBundleCloseDeps: no such bundle: %s" % options.app, file=sys.stderr)
         return 1
     search_dirs = [d for d in options.search_path if d and os.path.isdir(d)]
-    if not close_deps(options.app, search_dirs):
+    if not close_deps(options.app, search_dirs, options.lib_subdir):
         return 1
     fix_executable_rpaths(options.app)
     strip_external_rpaths(options.app)
