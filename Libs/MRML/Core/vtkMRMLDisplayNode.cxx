@@ -85,6 +85,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ScalarRangeFlag = vtkMRMLDisplayNode::UseDataScalarRange;
   this->FolderDisplayOverrideAllowed = true;
   this->ShowMode = vtkMRMLDisplayNode::ShowDefault;
+  this->ShowInAllViewsByDefault = true;
 
   // Arrays
   this->ScalarRange[0] = 0;
@@ -172,6 +173,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStringMacro(activeScalarName, ActiveScalarName);
   vtkMRMLWriteXMLStringMacro(activeAttributeLocation, ActiveAttributeLocationAsString);
   vtkMRMLWriteXMLStdStringVectorMacro(viewNodeRef, ViewNodeIDs, std::vector);
+  vtkMRMLWriteXMLBooleanMacro(showInAllViewsByDefault, ShowInAllViewsByDefault);
   vtkMRMLWriteXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
   if (this->GetShowMode() != vtkMRMLDisplayNode::ShowDefault)
   {
@@ -256,6 +258,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       this->AddViewNodeID(nodeId.c_str());
     }
   }
+  vtkMRMLReadXMLBooleanMacro(showInAllViewsByDefault, ShowInAllViewsByDefault);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -307,6 +310,7 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/
   this->SetActiveScalarName(node->ActiveScalarName);
   this->SetFolderDisplayOverrideAllowed(node->FolderDisplayOverrideAllowed);
   this->SetShowMode(node->ShowMode);
+  this->SetShowInAllViewsByDefault(node->ShowInAllViewsByDefault);
 }
 
 //----------------------------------------------------------------------------
@@ -354,6 +358,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintStdStringVectorMacro(ViewNodeIDs, std::vector);
   vtkMRMLPrintBooleanMacro(FolderDisplayOverrideAllowed);
   vtkMRMLPrintEnumMacro(ShowMode);
+  vtkMRMLPrintBooleanMacro(ShowInAllViewsByDefault);
   vtkMRMLPrintEndMacro();
 }
 
@@ -660,7 +665,7 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID) const
 //-------------------------------------------------------
 bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID) const
 {
-  return this->GetNumberOfViewNodeIDs() == 0 || this->IsViewNodeIDPresent(viewNodeID);
+  return this->GetVisibleInAllViews() ? true : this->IsViewNodeIDPresent(viewNodeID);
 }
 
 //-------------------------------------------------------
@@ -708,6 +713,12 @@ void vtkMRMLDisplayNode::SetViewNodeIDs(const std::vector<std::string>& viewNode
   {
     this->Modified();
   }
+}
+
+//-------------------------------------------------------
+bool vtkMRMLDisplayNode::GetVisibleInAllViews() const
+{
+  return this->ViewNodeIDs.empty() ? this->ShowInAllViewsByDefault : false;
 }
 
 //-------------------------------------------------------

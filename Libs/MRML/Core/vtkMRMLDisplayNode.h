@@ -612,6 +612,30 @@ public:
   /// \sa GetViewNodeIDs(), AddViewNodeID()
   void SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs);
 
+  /// When ViewNodeIDs list is empty then this flag specifies if the
+  /// displayable node shall appear in all the views
+  /// (when ShowInAllViewsByDefault is set to true, which is the default)
+  /// or in none of them (when ShowInAllViewsByDefault is set to false).
+  /// \sa ShowInAllViewsByDefault, GetShowInAllViewsByDefault(),
+  /// ShowInAllViewsByDefaultOn(), ShowInAllViewsByDefaultOff()
+  vtkSetMacro(ShowInAllViewsByDefault, bool);
+  /// Get show in all views by default.
+  /// \sa ShowInAllViewsByDefault, SetShowInAllViewsByDefault(),
+  /// ShowInAllViewsByDefaultOn(), ShowInAllViewsByDefaultOff()
+  vtkGetMacro(ShowInAllViewsByDefault, bool);
+  /// Set show in all views by default.
+  /// \sa ShowInAllViewsByDefault, SetShowInAllViewsByDefault(),
+  /// GetShowInAllViewsByDefault(),
+  vtkBooleanMacro(ShowInAllViewsByDefault, bool);
+
+  /// Return true if the display node is visible in all views.
+  /// This is true when the ViewNodeIDs list is empty and
+  /// ShowInAllViewsByDefault is true. This convenience method does not
+  /// evaluate per-view visibility overrides or subject hierarchy folder
+  /// visibility settings.
+  /// \sa ViewNodeIDs, ShowInAllViewsByDefault, IsDisplayableInView()
+  bool GetVisibleInAllViews() const;
+
   /// Converts attribute location (point or cell data) to string
   static const char* GetAttributeLocationAsString(int id);
   /// Gets attribute location (point or cell data) from string
@@ -860,8 +884,7 @@ protected:
   double SelectedColor[3];
 
   /// List of view node ID's for which the display node should be visible into.
-  /// If the list is empty, it means the display node should be visible in all
-  /// the view nodes.
+
   /// The displayable managers are responsible for reading this property.
   /// Visible in all views (empty) by default.
   /// \sa AddViewNodeID(), RemoveViewNodeID(), RemoveAllViewNodeIDs(),
@@ -869,6 +892,13 @@ protected:
   /// IsDisplayableInView(),
   /// vtkMRMLAbstractDisplayableManager
   std::vector<std::string> ViewNodeIDs;
+
+  /// A flag that changes the interpretation of ViewNodeIDs.
+  /// If true (default), an empty ViewNodeIDs list means the display node
+  /// is visible in all views.
+  /// If false, an empty ViewNodeIDs list means the display node is not
+  /// visible in any view.
+  bool ShowInAllViewsByDefault;
 
   /// A flag to determine which scalar range will be used when mapping
   /// scalars to colors.
