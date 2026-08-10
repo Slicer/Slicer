@@ -168,7 +168,11 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
   }
   int wasModifying = d->MRMLDisplayNode->StartModify();
 
-  if (this->allChecked() || this->noneChecked())
+  if (this->allChecked() && d->MRMLDisplayNode->GetShowInAllViewsByDefault())
+  {
+    d->MRMLDisplayNode->RemoveAllViewNodeIDs();
+  }
+  else if (this->noneChecked())
   {
     d->MRMLDisplayNode->RemoveAllViewNodeIDs();
   }
