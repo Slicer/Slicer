@@ -189,6 +189,33 @@ def format_remaining(remaining):
     return "About %d minute%s left" % (minutes, "" if minutes == 1 else "s")
 
 
+def running_under_rosetta():
+    """True when this is an x86_64 process translated by Rosetta on Apple Silicon.
+
+    Detected via the ``sysctl.proc_translated`` flag (1 => translated). Any
+    failure is treated as "not translated" so callers simply omit the Rosetta
+    note. This is the case where the first launch pays an extra, one-time cost:
+    the security scan this script warms is followed by Rosetta translating each
+    Intel library the first time its code actually runs, which the warm-up
+    (which never executes code) does not cover.
+    """
+    import ctypes
+    try:
+        libc = ctypes.CDLL("/usr/lib/libSystem.dylib")
+        libc.sysctlbyname.restype = ctypes.c_int
+        libc.sysctlbyname.argtypes = [ctypes.c_char_p, ctypes.c_void_p,
+                                      ctypes.POINTER(ctypes.c_size_t),
+                                      ctypes.c_void_p, ctypes.c_size_t]
+        value = ctypes.c_int(0)
+        size = ctypes.c_size_t(ctypes.sizeof(value))
+        if libc.sysctlbyname(b"sysctl.proc_translated", ctypes.byref(value),
+                             ctypes.byref(size), None, 0) != 0:
+            return False  # flag absent => not translated
+        return value.value == 1
+    except Exception:
+        return False
+
+
 class MacSplash:
     """Native macOS progress window drawn through the Objective-C runtime via
     ctypes: no GUI toolkit dependencies, only system frameworks (always
@@ -266,8 +293,13 @@ class MacSplash:
             self._label(content,
                         "macOS is checking this build's components for the first time.",
                         NSRect(text_left, 126, text_width, 18), size=12.0, secondary=True)
-            self._label(content,
-                        "This happens once after an install or update; later launches are fast.",
+            # Under Rosetta the first launch also pays a one-time translation cost
+            # after this scan, so set that expectation instead of implying the bar
+            # is the whole wait.
+            second_line = ("Under Rosetta the first launch is slower; later launches are fast."
+                           if running_under_rosetta()
+                           else "This happens once after an install or update; later launches are fast.")
+            self._label(content, second_line,
                         NSRect(text_left, 108, text_width, 18), size=12.0, secondary=True)
 
             bar = self.send(self.send(self.cls("NSProgressIndicator"), "alloc"), "init")
@@ -450,6 +482,9 @@ def main(argv):
         return 0
     if not options["quiet"]:
         print("Pre-warming %d libraries..." % total, flush=True)
+        if running_under_rosetta():
+            print("Running under Rosetta; the first launch also needs extra one-time "
+                  "time to translate Intel libraries for Apple Silicon.", flush=True)
 
     if options["stamp"]:
         # Stamp first so libraries created while the prewarm runs are picked
