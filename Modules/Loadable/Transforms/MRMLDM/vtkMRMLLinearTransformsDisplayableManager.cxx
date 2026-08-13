@@ -169,6 +169,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UpdatePipelineFromD
     if (widget->GetNeedToRender())
     {
       this->External->RequestRender();
+      widget->NeedToRenderOff();
     }
   }
 }
@@ -360,6 +361,7 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
       if (interactionWidget.second->GetNeedToRender())
       {
         this->RequestRender();
+        interactionWidget.second->NeedToRenderOff();
       }
     }
   }
@@ -370,6 +372,10 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
     for (auto interactionWidget : this->Internal->InteractionWidgets)
     {
       interactionWidget.second->UpdateFromMRML(this->Internal->GetAbstractViewNode(), event, callData);
+      if (interactionWidget.second->GetNeedToRender())
+      {
+        interactionWidget.second->NeedToRenderOff();
+      }
     }
   }
   else
