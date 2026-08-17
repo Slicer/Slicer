@@ -150,13 +150,22 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 
 ### Models
 
-Surface or volumetric meshes.
+Surface or volumetric meshes. Where a format description below states that the coordinate system can be specified in the file header, the convention described in [Specifying the coordinate system in model files](#specifying-the-coordinate-system-in-model-files) is used.
 
-- [**VTK Polygonal Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtp): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned as point scalar data of `unsigned char` type and 3 or 4 components). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
+- [**VTK Polygonal Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtp):
+  - Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
+  - Full color (RGB or RGBA) meshes can be read and written (color must be assigned as point scalar data of `unsigned char` type and 3 or 4 components).
+  - Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - [**VTK Unstructured Grid Data**](https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf) (.vtk, .vtu): Volumetric mesh. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
 - **STereoLithography** (.stl): Format most commonly used for 3D printing. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
-- **Wavefront OBJ** (.obj): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additional values after coordinates](https://web.archive.org/web/20220508010504/www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
-- **Stanford Triangle Format** (.ply): Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header. Full color (RGB or RGBA) meshes can be read and written (color must be assigned to vertex data in `uchar` type properties named `red`, `green`, `blue`, and optional `alpha`). Texture image can be applied using "Texture model" module (in SlicerIGT extension).
+- **Wavefront OBJ** (.obj):
+  - Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
+  - Some applications (for example, Materialise Mimics and 3-matic) write the length unit of the vertex coordinates into the file header as a comment, such as `vertex coordinates are measured in units, where 1 unit = 1000.000000 mm`; if this comment is found then the vertex coordinates are automatically scaled to millimeters when the file is loaded (only `mm` unit is supported).
+  - Texture image can be applied using "Texture model" module (in SlicerIGT extension). The non-standard [technique of saving vertex color as additional values after coordinates](https://web.archive.org/web/20220508010504/www.paulbourke.net/dataformats/obj/colour.html) is not supported - if vertex coloring is needed then convert to PLY, VTK, or VTP format using another software.
+- **Stanford Triangle Format** (.ply):
+  - Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in header.
+  - Full color (RGB or RGBA) meshes can be read and written (color must be assigned to vertex data in `uchar` type properties named `red`, `green`, `blue`, and optional `alpha`).
+  - Texture image can be applied using "Texture model" module (in SlicerIGT extension).
 - **BYU** (.byu, .g; reading only): Coordinate system: LPS.
 - **UCD** (.ucd; reading only): Coordinate system: LPS.
 - **ITK meta** (.meta; reading only): Coordinate system: LPS.
@@ -164,6 +173,18 @@ Surface or volumetric meshes.
   - **Freesurfer surfaces** (.orig, .inflated, .sphere, .white, .smoothwm, .pial; reading only)
 - [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart):
   - **CARTO surface model** (.vtk; writing only): special .vtk polydata file format variant, which contains patient name and ID to allow import into CARTO cardiac electrophysiology mapping systems
+
+#### Specifying the coordinate system in model files
+
+Most mesh file formats have no standard way of storing the anatomical coordinate system, therefore Slicer uses the following convention: the coordinate system is specified by a `SPACE=RAS` or `SPACE=LPS` string (following the NRRD `space` field naming convention) stored in the file header:
+
+- **VTK legacy files** (.vtk): in the header comment (second line of the file), for example: `3D Slicer output. SPACE=RAS`
+- **VTK XML files** (.vtp, .vtu): in a string array named `SPACE` in the field data of the mesh, containing a single value: `RAS` or `LPS`
+- **STL** (.stl): in the file header (the 80-byte header of binary STL files, or the text after `solid` in ASCII STL files), for example: `3D Slicer output. SPACE=RAS`.
+- **Wavefront OBJ** (.obj): in a comment line, for example: `# 3D Slicer output. SPACE=RAS`
+- **Stanford PLY** (.ply): in a comment line in the file header, for example: `comment SPACE=RAS`
+
+When reading a file, Slicer searches the header text for the `SPACE=RAS` or `SPACE=LPS` string (it may appear anywhere within the header comment, surrounding text is ignored); if neither is found then the coordinates are assumed to be in the LPS coordinate system. When writing a file, Slicer always adds the coordinate system specification to the file header. By default, models are written using the LPS coordinate system; this can be changed in the "Coordinate system" option in the Save dialog.
 
 ### Segmentations
 

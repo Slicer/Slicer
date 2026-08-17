@@ -62,6 +62,9 @@
 #include <itkSpatialObjectReader.h>
 #include <itkSpatialObjectWriter.h>
 
+// STD includes
+#include <sstream>
+
 typedef itk::DefaultDynamicMeshTraits<double, 3, 3, double> MeshTrait;
 typedef itk::Mesh<double, 3, MeshTrait> floatMesh;
 
@@ -324,6 +327,31 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetComment());
+      // The file header comment may specify the length unit of the vertex coordinates.
+      // Apply scaling to convert the coordinates to millimeters.
+      double coordinateUnitScale = 1.0;
+      std::string coordinateUnit;
+      if (vtkMRMLModelStorageNode::GetCoordinateUnitScaleFromFileHeader(reader->GetComment(), coordinateUnitScale, coordinateUnit))
+      {
+        if (vtksys::SystemTools::LowerCase(coordinateUnit) != "mm")
+        {
+          vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                             "vtkMRMLModelStorageNode::ReadDataInternal",
+                                             "Model file '" << fullName << "' specifies vertex coordinate unit as '" << coordinateUnit
+                                                            << "'. Only 'mm' is supported, therefore coordinate values are loaded without unit conversion.");
+        }
+        else if (coordinateUnitScale <= 0.0)
+        {
+          vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                             "vtkMRMLModelStorageNode::ReadDataInternal",
+                                             "Model file '" << fullName << "' specifies invalid vertex coordinate unit scale '" << coordinateUnitScale
+                                                            << "'. Coordinate values are loaded without unit conversion.");
+        }
+        else if (coordinateUnitScale != 1.0 && meshFromFile)
+        {
+          vtkMRMLModelStorageNode::ScalePointSet(meshFromFile, meshFromFile, coordinateUnitScale, coordinateUnitScale, coordinateUnitScale);
+        }
+      }
     }
     else if (extension == std::string(".meta")) // model in meta format
     {
@@ -861,19 +889,25 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh)
 {
+  vtkMRMLModelStorageNode::ScalePointSet(inputMesh, outputMesh, -1.0, -1.0, 1.0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelStorageNode::ScalePointSet(vtkPointSet* inputMesh, vtkPointSet* outputMesh, double scaleX, double scaleY, double scaleZ)
+{
   if (!inputMesh || !outputMesh)
   {
-    vtkGenericWarningMacro("vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS: invalid input or output mesh");
+    vtkGenericWarningMacro("vtkMRMLModelStorageNode::ScalePointSet: invalid input or output mesh");
     return;
   }
-  vtkNew<vtkTransform> transformRasLps;
-  transformRasLps->Scale(-1, -1, 1);
+  vtkNew<vtkTransform> scaleTransform;
+  scaleTransform->Scale(scaleX, scaleY, scaleZ);
   // vtkTransformPolyDataFilter preserves texture coordinates, while vtkTransformFilter removes them,
   // therefore we must use vtkTransformPolyDataFilter for surface meshes.
   if (inputMesh->IsA("vtkPolyData"))
   {
     vtkNew<vtkTransformPolyDataFilter> transformFilter;
-    transformFilter->SetTransform(transformRasLps);
+    transformFilter->SetTransform(scaleTransform);
     transformFilter->SetInputData(inputMesh);
     transformFilter->Update();
     outputMesh->ShallowCopy(transformFilter->GetOutput());
@@ -881,12 +915,36 @@ void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vt
   else
   {
     vtkNew<vtkTransformFilter> transformFilter;
-    transformFilter->SetTransform(transformRasLps);
+    transformFilter->SetTransform(scaleTransform);
     transformFilter->SetInputData(inputMesh);
     transformFilter->TransformAllInputVectorsOn();
     transformFilter->Update();
     outputMesh->ShallowCopy(transformFilter->GetOutput());
   }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLModelStorageNode::GetCoordinateUnitScaleFromFileHeader(const char* header, double& scale, std::string& unit)
+{
+  if (!header)
+  {
+    return false;
+  }
+  std::string headerStr = header;
+  // Materialise Mimics and 3-matic write the length unit of the vertex coordinates into the OBJ file header as a comment,
+  // such as "vertex coordinates are measured in units, where 1 unit = 1000.000000 mm". Use this information to read the file
+  // with correct scale.
+  const std::string key = "vertex coordinates are measured in units, where 1 unit =";
+  size_t keyPosition = vtksys::SystemTools::LowerCase(headerStr).find(key);
+  if (keyPosition == std::string::npos)
+  {
+    return false;
+  }
+  std::istringstream valueStream(headerStr.substr(keyPosition + key.size()));
+  scale = 0.0;
+  unit.clear();
+  valueStream >> scale >> unit;
+  return true;
 }
 
 //----------------------------------------------------------------------------
