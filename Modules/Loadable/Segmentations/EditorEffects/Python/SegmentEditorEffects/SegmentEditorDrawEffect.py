@@ -52,6 +52,16 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     def setupOptionsFrame(self):
         pass
 
+    def reassertCursor(self, viewWidget):
+        # Markup widgets set the view's cursor directly on hover, independently of this effect.
+        # Since this tool remains the active one throughout (hovering or clicking on an object
+        # does not switch tools), the cursor should not show their icon instead. Doing so
+        # misleadingly suggests that interacting with that object is possible, so we force here
+        # this effect's own cursor.
+        cursor = self.scriptedEffect.createCursor(viewWidget)
+        viewWidget.sliceView().setViewCursor(cursor)
+        viewWidget.sliceView().setDefaultViewCursor(cursor)
+
     def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
         abortEvent = False
 
@@ -62,6 +72,9 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
         pipeline = self.pipelineForWidget(viewWidget)
         if pipeline is None:
             return abortEvent
+
+        if pipeline.actionState != "drawing":
+            self.reassertCursor(viewWidget)
 
         anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
 
