@@ -23,6 +23,26 @@ class vtkPointSet;
 /// \brief MRML node for model storage on disk.
 ///
 /// Storage nodes has methods to read/write vtkPolyData to/from disk.
+///
+/// Coordinate system conversion (RAS/LPS): Slicer stores mesh point coordinates internally in the
+/// RAS coordinate system, while most model files use LPS. A model file may specify its coordinate
+/// system by a "SPACE=RAS" or "SPACE=LPS" specification, stored in the file header comment
+/// (STL, OBJ, PLY, legacy VTK) or in a "SPACE" field data array (VTP, VTU). When a file is read,
+/// this specification (if found) overrides the CoordinateSystem property of the node, and if the
+/// file is in LPS then the mesh is converted to RAS by flipping the sign of the first two
+/// coordinate axes. If no coordinate system specification is found in the file then the current
+/// value of the CoordinateSystem property is used (LPS by default; RAS when importing legacy scenes,
+/// which were saved before the coordinate system was written into model files). When a file is
+/// written, the mesh is converted from RAS to the coordinate system chosen in the CoordinateSystem
+/// property and the "SPACE=..." specification is written into the file header.
+///
+/// Automatic unit scaling: some applications (for example, Materialise Mimics and 3-matic) write
+/// the length unit of the vertex coordinates into the OBJ file header as a comment, such as
+/// "vertex coordinates are measured in units, where 1 unit = 1000.000000 mm". When an OBJ file
+/// containing this specification is read, the point coordinates are automatically multiplied by the
+/// specified scale to convert them to millimeters (the length unit used internally in Slicer).
+/// Only "mm" unit is supported; if any other unit or a non-positive scale is specified then a
+/// warning is logged and the coordinates are loaded without unit conversion.
 class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
 {
 public:
@@ -55,6 +75,10 @@ public:
   /// between RAS and LPS coordinate system.
   static void ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh);
 
+  /// Helper function that scales point coordinates of a mesh (polydata, unstructured grid, or even just a point cloud)
+  /// by the given scale factors along the x, y, z axes.
+  static void ScalePointSet(vtkPointSet* inputMesh, vtkPointSet* outputMesh, double scaleX, double scaleY, double scaleZ);
+
 protected:
   vtkMRMLModelStorageNode();
   ~vtkMRMLModelStorageNode() override;
@@ -79,6 +103,8 @@ protected:
   static int GetCoordinateSystemFromFileHeader(const char* header);
 
   static int GetCoordinateSystemFromFieldData(vtkPointSet* mesh);
+
+  static bool GetCoordinateUnitScaleFromFileHeader(const char* header, double& scale, std::string& unit);
 
   int CoordinateSystem;
 };

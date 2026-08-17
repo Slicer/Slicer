@@ -25,10 +25,12 @@ Program:   3D Slicer
 #include <array>
 
 // STD includes
+#include <fstream>
 #include <iostream>
 
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided = false);
+int TestReadOBJWithCoordinateUnitComment(vtkMRMLScene* scene, const char* comment, double expectedScale);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
@@ -60,6 +62,11 @@ int vtkMRMLModelStorageNodeTest1(int argc, char* argv[])
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer(), coordinateSystem));
   }
+
+  // Test that vertex coordinate unit specified in OBJ file header comment
+  // (written by Materialise Mimics and 3-matic) is used for scaling the coordinates to millimeters.
+  CHECK_EXIT_SUCCESS(TestReadOBJWithCoordinateUnitComment(scene, "# vertex coordinates are measured in units, where 1 unit = 1.000000 mm", 1.0));
+  CHECK_EXIT_SUCCESS(TestReadOBJWithCoordinateUnitComment(scene, "# vertex coordinates are measured in units, where 1 unit = 1000.000000 mm", 1000.0));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
@@ -137,5 +144,53 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* m
   CHECK_BOOL(storageNode->ReadData(modelNode.GetPointer()), true);
   CHECK_INT(storageNode->GetCoordinateSystem(), coordinateSystem);
 
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+int TestReadOBJWithCoordinateUnitComment(vtkMRMLScene* scene, const char* comment, double expectedScale)
+{
+  std::cout << "Testing .obj with header comment: " << comment << std::endl;
+
+  const double originalPoints[3][3] = { { 0.001, 0.002, 0.003 }, { 0.004, 0.005, 0.006 }, { 0.007, 0.008, 0.009 } };
+
+  std::string fileName = std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLModelNodeTest1UnitComment.obj");
+  std::ofstream outputFile(fileName.c_str());
+  CHECK_BOOL(outputFile.is_open(), true);
+  outputFile << comment << "\n";
+  // Specify RAS coordinate system in the file header so that the loaded point coordinates
+  // are not flipped by RAS/LPS conversion.
+  outputFile << "# SPACE=RAS\n";
+  for (int pointIndex = 0; pointIndex < 3; pointIndex++)
+  {
+    outputFile << "v " << originalPoints[pointIndex][0] << " " << originalPoints[pointIndex][1] << " " << originalPoints[pointIndex][2] << "\n";
+  }
+  outputFile << "f 1 2 3\n";
+  outputFile.close();
+
+  // Add model node with storage node
+  vtkNew<vtkMRMLModelNode> modelNode;
+  CHECK_NOT_NULL(scene->AddNode(modelNode));
+  modelNode->AddDefaultStorageNode();
+  vtkMRMLModelStorageNode* storageNode = vtkMRMLModelStorageNode::SafeDownCast(modelNode->GetStorageNode());
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetFileName(fileName.c_str());
+
+  // Test reading
+  CHECK_BOOL(storageNode->ReadData(modelNode), true);
+  vtkPointSet* mesh = modelNode->GetMesh();
+  CHECK_NOT_NULL(mesh);
+  CHECK_INT(mesh->GetNumberOfPoints(), 3);
+  for (int pointIndex = 0; pointIndex < 3; pointIndex++)
+  {
+    double coordinate[3] = { 0.0, 0.0, 0.0 };
+    mesh->GetPoint(pointIndex, coordinate);
+    for (int componentIndex = 0; componentIndex < 3; componentIndex++)
+    {
+      CHECK_DOUBLE_TOLERANCE(coordinate[componentIndex], originalPoints[pointIndex][componentIndex] * expectedScale, 1e-4);
+    }
+  }
+
+  scene->RemoveNode(modelNode);
   return EXIT_SUCCESS;
 }
