@@ -133,6 +133,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->ActiveColor[2] = 0.0;
 
   this->HandlesInteractive = false;
+  this->InteractionAllowedWhileLocked = false;
   this->TranslationHandleVisibility = true;
   this->RotationHandleVisibility = true;
   this->ScaleHandleVisibility = false;
@@ -197,6 +198,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(lineDirectionFirstToLastControlPoint, LineDirectionFirstToLastControlPoint);
   vtkMRMLWriteXMLBooleanMacro(lineSliceIntersectionPointVisibility, LineSliceIntersectionPointVisibility);
   vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLWriteXMLBooleanMacro(interactionAllowedWhileLocked, InteractionAllowedWhileLocked);
   vtkMRMLWriteXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
@@ -254,6 +256,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(lineDirectionFirstToLastControlPoint, LineDirectionFirstToLastControlPoint);
   vtkMRMLReadXMLBooleanMacro(lineSliceIntersectionPointVisibility, LineSliceIntersectionPointVisibility);
   vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLReadXMLBooleanMacro(interactionAllowedWhileLocked, InteractionAllowedWhileLocked);
   vtkMRMLReadXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
@@ -343,6 +346,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   vtkMRMLCopyBooleanMacro(LineDirectionFirstToLastControlPoint);
   vtkMRMLCopyBooleanMacro(LineSliceIntersectionPointVisibility);
   vtkMRMLCopyBooleanMacro(HandlesInteractive);
+  vtkMRMLCopyBooleanMacro(InteractionAllowedWhileLocked);
   vtkMRMLCopyBooleanMacro(TranslationHandleVisibility);
   vtkMRMLCopyBooleanMacro(RotationHandleVisibility);
   vtkMRMLCopyBooleanMacro(ScaleHandleVisibility);
@@ -549,6 +553,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(LineDirectionFirstToLastControlPoint);
   vtkMRMLPrintBooleanMacro(LineSliceIntersectionPointVisibility);
   vtkMRMLPrintBooleanMacro(HandlesInteractive);
+  vtkMRMLPrintBooleanMacro(InteractionAllowedWhileLocked);
   vtkMRMLPrintBooleanMacro(TranslationHandleVisibility);
   vtkMRMLPrintBooleanMacro(RotationHandleVisibility);
   vtkMRMLPrintBooleanMacro(ScaleHandleVisibility);
