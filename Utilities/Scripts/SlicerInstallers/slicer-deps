@@ -1,0 +1,187 @@
+#!/bin/sh
+# Install the system libraries 3D Slicer needs on Linux.
+#
+# Slicer bundles Qt, Python, VTK and the rest of its own dependencies, but it
+# still links against a handful of libraries that come from the distribution.
+# Most desktops already have them; minimal images and servers do not, and there
+# the symptom is Slicer failing to start with no obvious explanation.
+#
+# Usage:
+#   slicer-deps                  print the command for this machine's package manager
+#   slicer-deps --install        run that command (uses sudo when not already root)
+#   slicer-deps --install --yes  never prompt: sudo runs with -n and fails fast
+#                                with a clear error rather than hanging on a
+#                                password prompt no one can answer
+#
+# Options:
+#   -i, --install   actually install, instead of only printing the command
+#   -y, --yes       assume yes; implied by a non-empty SLICER_NONINTERACTIVE
+#   -h, --help      show this help
+#
+# Environment:
+#   SLICER_NONINTERACTIVE  same as --yes
+#   SLICER_QUIET           silence progress messages; the command, warnings and
+#                          errors are still printed
+#   NO_COLOR               disable colored output
+#
+# This script ships inside the Slicer installation. Installing system packages
+# needs root, which is exactly why it is a separate, explicit step rather than
+# part of installing Slicer itself: the installer only ever writes under $HOME.
+set -eu
+
+SLICER_QUIET="${SLICER_QUIET:-}"
+
+# Initialized empty so `set -u` is satisfied before setup_colors() runs.
+C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_BLUE=$(printf '\033[1;34m'); C_YELLOW=$(printf '\033[1;33m')
+    C_RED=$(printf '\033[1;31m'); C_GREEN=$(printf '\033[1;32m')
+    C_RESET=$(printf '\033[0m')
+  fi
+}
+
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: slicer-deps [--install] [--yes]
+
+Install the system libraries 3D Slicer needs on Linux.
+
+With no options the command for this machine's package manager is printed and
+nothing is changed. --install runs it, using sudo when not already root.
+
+Options:
+  -i, --install   actually install, instead of only printing the command
+  -y, --yes       assume yes; sudo runs with -n and fails fast instead of
+                  waiting for a password (implied by SLICER_NONINTERACTIVE)
+  -h, --help      show this help
+USAGE
+}
+
+# Run one package-manager command line, echoing it first so the (Docker) build
+# log records exactly what ran. $1 is a command line we assembled ourselves from
+# fixed tokens, so the deliberate word splitting is safe. Any failure is fatal —
+# checked explicitly with err() rather than left to `set -e`, whose handling of a
+# function called from an `&&` list is too shell-dependent to trust: a failed
+# dependency install must fail the whole run, so a Docker build stops instead of
+# baking a broken image that silently lacks the libraries.
+run_deps_cmd() {
+  log "Running: $1"
+  # shellcheck disable=SC2086
+  $1 || err "Dependency installation failed (command: $1)."
+}
+
+# The packages Slicer needs from the distribution, one variable per package
+# manager. The canonical lists are the plain-text files under deps/ in the
+# slicer-installer repository; this block is rendered from them by
+# tools/sync-embedded.sh and CI fails if the two drift, so never edit it by hand.
+# --- BEGIN generated dependency lists (tools/sync-embedded.sh) --- #
+# Generated from deps/*.txt — edit those files, then run tools/sync-embedded.sh.
+DEPS_APT='libglu1-mesa libpulse-mainloop-glib0 libnss3 qt5dxcb-plugin libsm6 libasound2t64|libasound2'
+DEPS_DNF='mesa-libGLU mesa-libGL libnsl libXrender pulseaudio-libs-glib2 nss libXcomposite libXdamage libXrandr ftgl libXcursor libXi libXtst alsa-lib qt5-qtx11extras'
+DEPS_PACMAN='glu nss alsa-lib libxrender libxcomposite libxdamage libxrandr libxcursor libxi libxtst ftgl'
+# --- END generated dependency lists --- #
+
+main() {
+  auto=''
+  assume_yes="${SLICER_NONINTERACTIVE:-}"
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -i|--install) auto=1 ;;
+      -y|--yes)     assume_yes=1 ;;
+      -h|--help)    usage; exit 0 ;;
+      --)           shift; break ;;
+      -*)           err "Unknown option: $1 (try --help)." ;;
+      *)            err "Unexpected argument: $1 (try --help)." ;;
+    esac
+    shift
+  done
+
+  setup_colors
+
+  [ "$(uname -s)" = Linux ] \
+    || err "slicer-deps applies to Linux only; on macOS and Windows Slicer bundles everything it needs."
+
+  if [ "$(id -u)" -eq 0 ]; then
+    sudo_prefix=''
+  elif [ -n "$auto" ] && [ -n "$assume_yes" ]; then
+    # A sudo password prompt would hang forever in CI, where nothing can type
+    # the password. -n makes sudo fail immediately instead; probe it up front
+    # so the failure names the real problem rather than surfacing as a sudo
+    # error in the middle of the dependency install.
+    if ! have sudo || ! sudo -n true 2>/dev/null; then
+      err "Installing dependencies needs root, and --yes forbids a sudo password prompt; run as root or configure passwordless sudo."
+    fi
+    sudo_prefix='sudo -n '
+  else
+    sudo_prefix='sudo '
+  fi
+
+  if have apt-get; then
+    # A fresh container image ships with empty package lists, which would both
+    # fail the install and mislead the libasound2t64 probe below into choosing
+    # the wrong ALSA package. When installing, refresh them first; when only
+    # printing we read local lists (apt-cache), which is side-effect free.
+    [ -n "$auto" ] && run_deps_cmd "${sudo_prefix}apt-get update"
+
+    # An "a|b" entry in deps/apt.txt names the same library under two package
+    # names — libasound2 was renamed during the 64-bit time_t transition
+    # (Ubuntu 24.04+) — so ask this apt which of the two it knows and keep that
+    # one. Every other entry is passed through unchanged.
+    pkgs=''
+    for pkg in $DEPS_APT; do
+      case "$pkg" in
+        *'|'*)
+          alt_first="${pkg%%|*}"
+          alt_second="${pkg#*|}"
+          if apt-cache show "$alt_first" >/dev/null 2>&1; then
+            pkg="$alt_first"
+          else
+            pkg="$alt_second"
+          fi
+          ;;
+      esac
+      pkgs="$pkgs $pkg"
+    done
+    cmd="${sudo_prefix}apt-get install -y${pkgs}"
+  elif have dnf; then
+    cmd="${sudo_prefix}dnf install -y $DEPS_DNF"
+  elif have pacman; then
+    # --noconfirm only when installing unattended, so a build never blocks on a
+    # prompt; the printed command keeps the interactive default for humans.
+    if [ -n "$auto" ] && [ -n "$assume_yes" ]; then confirm='--noconfirm '; else confirm=''; fi
+    cmd="${sudo_prefix}pacman -S --needed ${confirm}$DEPS_PACMAN"
+  else
+    if [ -n "$auto" ]; then
+      err "No supported package manager (apt-get, dnf, pacman) was found; install Slicer's runtime libraries manually."
+    fi
+    warn "Unrecognized package manager. If Slicer fails to start, install its"
+    warn "runtime libraries manually (see the Slicer docs)."
+    exit 0
+  fi
+
+  if [ -n "$auto" ]; then
+    run_deps_cmd "$cmd"
+    log "${C_GREEN}Slicer's runtime system libraries are installed.${C_RESET}"
+    return 0
+  fi
+
+  log "Slicer needs a few system libraries. Most desktops already have them; if"
+  log "Slicer fails to start, install them with:"
+  printf '\n    %s%s%s\n\n' "$C_GREEN" "$cmd" "$C_RESET"
+  log "Or re-run this script as: slicer-deps --install"
+
+  if have pacman; then
+    log "Arch Linux: a prebuilt AUR package (3dslicer-bin) is available as an alternative."
+  fi
+}
+
+main "$@"
