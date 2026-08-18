@@ -51,29 +51,26 @@
 
 // VTK includes
 #include <vtkActor.h>
-#include <vtkActor2D.h>
-#include <vtkAppendPolyData.h>
-#include <vtkArrayCalculator.h>
-#include <vtkGlyph3D.h>
-#include <vtkLookupTable.h>
+#include <vtkFloatArray.h>
+#include <vtkGlyph3DMapper.h>
+#include <vtkIntArray.h>
 #include <vtkPlane.h>
 #include <vtkPointPlacer.h>
-#include <vtkPointSetToLabelHierarchy.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkPolyDataMapper2D.h>
 #include <vtkProperty.h>
-#include <vtkProperty2D.h>
 #include <vtkSmartPointer.h>
-#include <vtkSphereSource.h>
-#include <vtkTextActor.h>
-#include <vtkTextProperty.h>
-#include <vtkTensorGlyph.h>
 #include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
+#include <vtkUnsignedCharArray.h>
+#include <vtkWeakPointer.h>
+
+// STD includes
+#include <map>
+#include <memory>
+#include <vector>
 
 class vtkMRMLInteractionEventData;
 class vtkMRMLDisplayNode;
 class vtkMRMLDisplayableNode;
+struct SharedHandleRenderer;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
@@ -86,6 +83,11 @@ public:
 
   /// Update the representation from display node
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
+
+  /// Set the renderer that the representation is displayed in.
+  /// Unregisters the representation from the renderer that it was previously displayed in, so that its
+  /// interaction handles are no longer rendered there.
+  void SetRenderer(vtkRenderer* renderer) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -105,7 +107,11 @@ public:
 
   virtual vtkPointPlacer* GetPointPlacer();
 
-  /// Returns the actor for the interaction widget.
+  /// Returns the per-representation actor for the interaction widget.
+  /// In slice views this is the actor that renders the handles.
+  /// In 3D views the handles are drawn by a shared per-renderer actor and only
+  /// this actor's visibility is honored; property, mapper, or transform changes
+  /// on the returned actor have no effect on the rendered handles.
   vtkProp* GetInteractionActor();
 
   /// Returns true if the representation is displayable in the current view.
@@ -119,8 +125,6 @@ public:
 
   /// Update the interaction pipeline
   virtual void UpdateInteractionPipeline();
-
-  virtual void UpdateHandlePolyData();
 
   /// Get the axis for the handle specified by the index in local coordinates
   virtual void GetInteractionHandleAxisLocal(int type, int index, double axis[3]);
@@ -144,7 +148,11 @@ public:
     GlyphArrow,
     GlyphCircle,
     GlyphRing,
-    GlyphCrosshair
+    GlyphCrosshair,
+    GlyphArrowOutline,
+    GlyphCircleOutline,
+    GlyphRingOutline,
+    GlyphCrosshairOutline
   };
 
   virtual int GetActiveComponentType() = 0;
@@ -212,24 +220,24 @@ protected:
     vtkSmartPointer<vtkPolyData> RingOutlinePolyData;
     vtkSmartPointer<vtkPolyData> CrosshairOutlinePolyData;
 
-    std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleGlyphPolyDataMap;
-    std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleOutlineGlyphPolyDataMap;
-
     vtkSmartPointer<vtkPolyData> RotationHandlePoints;
     vtkSmartPointer<vtkPolyData> TranslationHandlePoints;
     vtkSmartPointer<vtkPolyData> ScaleHandlePoints;
 
-    vtkSmartPointer<vtkAppendPolyData> Append;
-    vtkSmartPointer<vtkTransformPolyDataFilter> HandleToWorldTransformFilter;
     vtkSmartPointer<vtkTransform> HandleToWorldTransform;
-    vtkSmartPointer<vtkLookupTable> ColorTable;
 
-    vtkSmartPointer<vtkPolyDataMapper> Mapper3D;
-    vtkSmartPointer<vtkProperty> Property3D;
-    vtkSmartPointer<vtkActor> Actor3D;
+    vtkSmartPointer<vtkPolyData> InstancePolyData;
+    vtkSmartPointer<vtkFloatArray> GlyphOrientationArray;
+    vtkSmartPointer<vtkFloatArray> GlyphScaleArray;
+    vtkSmartPointer<vtkIntArray> GlyphSourceIndexArray;
+    vtkSmartPointer<vtkUnsignedCharArray> ColorArray;
+
+    vtkSmartPointer<vtkGlyph3DMapper> Mapper;
+    vtkSmartPointer<vtkProperty> Property;
+    vtkSmartPointer<vtkActor> Actor;
 
     vtkSmartPointer<vtkTransform> WorldToSliceTransform;
-    vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
+    vtkSmartPointer<vtkTransform> ActorTransform;
   };
 
   struct HandleInfo
@@ -278,20 +286,19 @@ protected:
   virtual void CreateRotationHandles();
   virtual void CreateTranslationHandles();
   virtual void CreateScaleHandles();
-  virtual void UpdateHandleColors();
-  virtual int UpdateHandleColors(int type, int startIndex);
+  virtual void UpdateInstanceArrays();
+  virtual void UpdateActorTransform();
   virtual vtkPolyData* GetHandlePolydata(int type);
 
-  virtual void UpdateHandleOrientation();
-  virtual void UpdateTranslationHandleOrientation();
-  virtual void UpdateScaleHandleOrientation();
-  virtual void UpdateRotationHandleOrientation();
+  /// Cache camera state (direction, position, view up) for use by per-handle computations.
+  virtual void UpdateCameraState();
 
   /// Set the scale of the interaction handles in world coordinates
   virtual void SetWidgetScale(double scale);
 
   /// Get the vector from the interaction handle to the camera in world coordinates.
   /// In slice views and in 3D with parallel projection this is the same as the camera view direction.
+  /// Uses cached camera state from UpdateCameraState().
   virtual void GetHandleToCameraVectorWorld(double handlePosition_World[3], double normal_World[3]);
 
   /// Orthogonalize the transform axes. The Z-axis will not be changed.
@@ -339,12 +346,76 @@ protected:
 
   double WidgetScale{ 1.0 };
 
+  bool CachedParallelProjection{ true };
+  double CachedCameraPosition[3]{ 0.0, 0.0, 0.0 };
+  double CachedCameraDirection[3]{ 0.0, 0.0, 1.0 };
+  double CachedViewUp_World[3]{ 0.0, 1.0, 0.0 };
+
+  /// State that the handle instance arrays were last built for. Rebuilding the arrays is relatively
+  /// expensive, so it is only done when this state changes.
+  /// The camera state is compared by value rather than by MTime, because the camera is modified on
+  /// every render by clipping range updates, which do not affect the appearance of the handles.
+  /// Clipping range is intentionally excluded: the clamp in UpdateViewScaleFactor only changes the
+  /// result when the handle is behind/inside the near plane (not visible), and the camera pose change
+  /// that causes that already reopens the gate.
+  struct RenderState
+  {
+    vtkMTimeType RepresentationMTime{ 0 };
+    vtkMTimeType SliceXYToRASMTime{ 0 };
+    double CameraPosition[3]{ 0.0, 0.0, 0.0 };
+    double CameraDirectionOfProjection[3]{ 0.0, 0.0, 0.0 };
+    double CameraViewUp[3]{ 0.0, 0.0, 0.0 };
+    double CameraParallelScale{ 0.0 };
+    double CameraViewAngle{ 0.0 };
+    bool CameraParallelProjection{ false };
+    int RendererSize[2]{ 0, 0 };
+    int ScreenSize[2]{ 0, 0 };
+    int ActiveComponentType{ -1 };
+    int ActiveComponentIndex{ -1 };
+
+    bool operator==(const RenderState& other) const;
+    bool operator!=(const RenderState& other) const { return !(*this == other); }
+  };
+
+  /// Get the state that the handle instance arrays would be built for if they were rebuilt now.
+  RenderState GetCurrentRenderState();
+
+  /// Rebuild the handle instance arrays if the state that they were built for has changed.
+  /// Returns true if the arrays have been rebuilt.
+  bool UpdatePipelineIfNeeded();
+
+  RenderState LastRenderState;
+  bool HasVisibleHandles{ false };
+
   bool Interacting{ false };
 
   vtkSmartPointer<vtkPointPlacer> PointPlacer;
 
   virtual void SetupInteractionPipeline();
   InteractionPipeline* Pipeline;
+
+  ///@{
+  /// Shared handle renderer: in 3D views, all interaction handle instances are rendered by a single
+  /// shared actor per vtkRenderer (one instanced draw per glyph source instead of one actor per
+  /// handle). The map is keyed by renderer pointer; entries are created on first use and removed
+  /// when the last representation unregisters or when the renderer fires DeleteEvent.
+  static std::map<vtkRenderer*, std::unique_ptr<SharedHandleRenderer>> SharedHandleRenderers;
+  static SharedHandleRenderer* GetSharedHandleRenderer(vtkRenderer* renderer, bool create = false);
+  static void OnSharedRendererStartEvent(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  static void OnSharedRendererDelete(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  void RegisterWithSharedHandleRenderer();
+  void UnregisterFromSharedHandleRenderer();
+  bool IsSharedRenderingRepresentation(SharedHandleRenderer* shared) const;
+  static void ConfigureHandleInstancePipeline(vtkSmartPointer<vtkPolyData>& instancePolyData,
+                                              vtkSmartPointer<vtkFloatArray>& orientationArray,
+                                              vtkSmartPointer<vtkFloatArray>& scaleArray,
+                                              vtkSmartPointer<vtkIntArray>& sourceIndexArray,
+                                              vtkSmartPointer<vtkUnsignedCharArray>& colorArray,
+                                              vtkSmartPointer<vtkGlyph3DMapper>& mapper,
+                                              vtkSmartPointer<vtkProperty>& property,
+                                              vtkSmartPointer<vtkActor>& actor);
+  static unsigned char ColorComponentToUChar(double c);
+  ///@}
 
 private:
   vtkMRMLInteractionWidgetRepresentation(const vtkMRMLInteractionWidgetRepresentation&) = delete;

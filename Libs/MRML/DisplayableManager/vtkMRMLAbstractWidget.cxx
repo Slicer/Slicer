@@ -373,10 +373,15 @@ void vtkMRMLAbstractWidget::SetRenderer(vtkRenderer* renderer)
 
   this->Renderer = renderer;
 
-  if (this->WidgetRep != nullptr && this->Renderer != nullptr)
+  if (this->WidgetRep != nullptr)
   {
+    // Always forward the renderer to the representation so that it can update its internal state
+    // (e.g. unregister from a shared handle renderer when the renderer is set to nullptr).
     this->WidgetRep->SetRenderer(this->Renderer);
-    this->Renderer->AddViewProp(this->WidgetRep);
+    if (this->Renderer != nullptr)
+    {
+      this->Renderer->AddViewProp(this->WidgetRep);
+    }
   }
 }
 
