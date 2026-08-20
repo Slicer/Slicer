@@ -1,0 +1,19 @@
+---
+title: LayerDM class collaboration
+config:
+  class:
+      hideEmptyMembersBox: true
+---
+
+classDiagram
+    direction TB
+    PipelineFactory "1" --o "*" PipelineCreatorI: Delegates creation
+    PipelineManager --o "1" PipelineFactory: Delegates creation
+    LayerDisplayableManager --> PipelineFactory: Singleton usage
+    LayerDisplayableManager --o "1" PipelineManager: Uses
+    LayerDisplayableManager --o "1" CameraSynchronizer: Uses
+    LayerDisplayableManager --o "1" LayerManager: Uses
+    AbstractDisplayableManager <|-- LayerDisplayableManager: Inherits
+    PipelineCreatorI --> PipelineI: Creates
+    PipelineManager "1" --o "*" PipelineI: Uses
+    PipelineManager "1" --o "1" NodeReferenceObserver: Uses
