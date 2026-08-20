@@ -48,7 +48,7 @@ public:
   const char* GetNodeTagName() override { return "SliceDisplay"; }
 
   //@{
-  /// Toggles visibility of intersections of other slices in the slice viewer
+  /// Toggles visibility of intersections with other slices in their slice viewers
   bool GetIntersectingSlicesVisibility() { return this->GetVisibility2D(); };
 
   void SetIntersectingSlicesVisibility(bool visible) { this->SetVisibility2D(visible); };
