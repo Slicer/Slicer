@@ -39,8 +39,10 @@ include(${ITK_USE_FILE})
 # qRestAPI
 #
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+  # Include directories are provided through the imported qRestAPI target
+  # (added to KIT_target_libraries below); the legacy qRestAPI_USE_FILE was
+  # removed in the qRestAPI CMake infrastructure refactor.
   find_package(qRestAPI REQUIRED)
-  include(${qRestAPI_USE_FILE})
 endif()
 
 #
