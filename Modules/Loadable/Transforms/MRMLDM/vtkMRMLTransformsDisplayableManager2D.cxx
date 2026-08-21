@@ -47,7 +47,7 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransformFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
 
@@ -70,7 +70,7 @@ public:
   {
     vtkSmartPointer<vtkProp> Actor;
     vtkSmartPointer<vtkTransform> TransformToSlice;
-    vtkSmartPointer<vtkTransformPolyDataFilter> Transformer;
+    vtkSmartPointer<vtkTransformFilter> Transformer;
   };
 
   typedef std::map<vtkMRMLTransformDisplayNode*, const Pipeline*> PipelinesCacheType;
@@ -286,7 +286,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMRMLT
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
-  pipeline->Transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  pipeline->Transformer = vtkSmartPointer<vtkTransformFilter>::New();
 
   // Set up pipeline
   pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
@@ -351,7 +351,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeli
 
   if (polyData->GetNumberOfPoints() == 0)
   {
-    // Avoid vtkTransformPolyDataFilter logging "No input data" errors
+    // Avoid vtkTransformFilter logging "No input data" errors
     pipeline->Actor->SetVisibility(false);
     return;
   }
