@@ -355,18 +355,30 @@ int ExerciseBasicDisplayMRMLMethods(vtkMRMLDisplayNode* node)
   const char* yellow = "vtkMRMLSliceNodeYellow";
   const char* threeD = "vtkMRMLViewNode1";
   CHECK_INT(node->GetNumberOfViewNodeIDs(), 0);
+
+  CHECK_BOOL(node->GetVisibleInAllViews(), true);
   CHECK_BOOL(node->IsDisplayableInView(red), true);
   CHECK_BOOL(node->IsDisplayableInView(green), true);
   CHECK_BOOL(node->IsDisplayableInView(yellow), true);
   CHECK_BOOL(node->IsDisplayableInView(threeD), true);
 
+  node->ShowInAllViewsByDefaultOff();
+  CHECK_BOOL(node->GetVisibleInAllViews(), false);
+  CHECK_BOOL(node->IsDisplayableInView(red), false);
+  CHECK_BOOL(node->IsDisplayableInView(green), false);
+  CHECK_BOOL(node->IsDisplayableInView(yellow), false);
+  CHECK_BOOL(node->IsDisplayableInView(threeD), false);
+
+  node->ShowInAllViewsByDefaultOn();
   node->AddViewNodeID(green);
+  CHECK_BOOL(node->GetVisibleInAllViews(), false);
   CHECK_BOOL(node->IsDisplayableInView(red), false);
   CHECK_BOOL(node->IsDisplayableInView(green), true);
   CHECK_BOOL(node->IsDisplayableInView(yellow), false);
   CHECK_BOOL(node->IsDisplayableInView(threeD), false);
 
   node->SetDisplayableOnlyInView(red);
+  CHECK_BOOL(node->GetVisibleInAllViews(), false);
   CHECK_BOOL(node->IsDisplayableInView(red), true);
   CHECK_BOOL(node->IsDisplayableInView(green), false);
   CHECK_BOOL(node->IsDisplayableInView(yellow), false);

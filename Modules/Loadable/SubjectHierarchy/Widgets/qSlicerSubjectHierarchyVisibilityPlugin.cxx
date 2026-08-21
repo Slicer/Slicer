@@ -174,7 +174,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
     visible2DVisible = true;
     visible3D = visible3D && (displayNode->GetVisibility3D() > 0);
     visible3DVisible = true;
-    visibleInAllViews = visibleInAllViews && (displayNode->GetViewNodeIDs().empty());
+    visibleInAllViews = visibleInAllViews && (displayNode->GetVisibleInAllViews());
   }
 
   bool wasBlocked = d->ToggleVisibility2DAction->blockSignals(true);
