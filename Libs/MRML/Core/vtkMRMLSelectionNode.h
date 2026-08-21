@@ -155,7 +155,7 @@ public:
     ActivePlaceNodeClassNameChangedEvent,
     PlaceNodeClassNameListModifiedEvent,
     UnitModifiedEvent,
-    ActivePlaceNodePlacementValidEvent,
+    ActivePlaceNodePlacementValidEvent
   };
 
   /// Add a new valid placeNode class name to the list, with optional qt resource
