@@ -353,6 +353,22 @@
                                             "maximum": 1.0,
                                             "default": 1.0
                                         },
+                                        "normalVisibility": {
+                                            "$id": "#display/normalVisibility",
+                                            "type": "boolean",
+                                            "title": "Plane normal visibility",
+                                            "description": "Visibility of the plane normal arrow.",
+                                            "default": true
+                                        },
+                                        "normalOpacity": {
+                                            "$id": "#display/normalOpacity",
+                                            "type": "number",
+                                            "title": "Plane normal opacity",
+                                            "description": "Opacity of the plane normal arrow.",
+                                            "minimum": 0.0,
+                                            "maximum": 1.0,
+                                            "default": 1.0
+                                        },
                                         "color": {
                                             "$id": "#display/color",
                                             "type": "array",

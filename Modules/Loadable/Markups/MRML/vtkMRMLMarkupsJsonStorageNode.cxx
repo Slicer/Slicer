@@ -19,6 +19,7 @@
 #include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMessageCollection.h"
@@ -503,6 +504,20 @@ bool vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsDisplayNodeFromJsonValue(vtkMRM
   if (displayItem->HasMember("opacity"))
   {
     displayNode->SetOpacity(displayItem->GetDoubleProperty("opacity"));
+  }
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(displayNode);
+  if (planeDisplayNode)
+  {
+    // Plane normal arrow settings are stored with the rest of the markup
+    // display properties in .mrk.json files.
+    if (displayItem->HasMember("normalVisibility"))
+    {
+      planeDisplayNode->SetNormalVisibility(displayItem->GetBoolProperty("normalVisibility"));
+    }
+    if (displayItem->HasMember("normalOpacity"))
+    {
+      planeDisplayNode->SetNormalOpacity(displayItem->GetDoubleProperty("normalOpacity"));
+    }
   }
   double color[3] = { 0.5, 0.5, 0.5 };
   if (displayItem->GetVectorProperty("color", color))
@@ -1096,6 +1111,12 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* wr
 
   writer->WriteBoolProperty("visibility", markupsDisplayNode->GetVisibility());
   writer->WriteDoubleProperty("opacity", markupsDisplayNode->GetOpacity());
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(markupsDisplayNode);
+  if (planeDisplayNode)
+  {
+    writer->WriteBoolProperty("normalVisibility", planeDisplayNode->GetNormalVisibility());
+    writer->WriteDoubleProperty("normalOpacity", planeDisplayNode->GetNormalOpacity());
+  }
 
   writer->WriteVectorProperty("color", markupsDisplayNode->GetColor());
   writer->WriteVectorProperty("selectedColor", markupsDisplayNode->GetSelectedColor());

@@ -41,12 +41,20 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
 
+  void PrintSelf(ostream& os, vtkIndent indent) override;
+
   // Get node XML tag name (like Volume, Markups)
   const char* GetNodeTagName() override { return "MarkupsPlaneDisplay"; };
 
+  /// Read node attributes from XML file.
+  void ReadXMLAttributes(const char** atts) override;
+
+  /// Write this node's information to a MRML file in XML format.
+  void WriteXML(ostream& of, int indent) override;
+
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
-  vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsPlaneDisplayNode);
+  vtkMRMLCopyContentMacro(vtkMRMLMarkupsPlaneDisplayNode);
 
   enum
   {
