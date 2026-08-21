@@ -609,7 +609,7 @@ void vtkEventBroker::LogEvent(vtkObservation* observation)
     eventStringPointer = vtkCommand::GetStringFromEventId(observation->GetEvent());
     if (!strcmp(eventStringPointer, "NoEvent"))
     {
-      sprintf(eventString, "%ld", observation->GetEvent());
+      snprintf(eventString, sizeof(eventString), "%ld", observation->GetEvent());
       eventStringPointer = eventString;
     }
 
