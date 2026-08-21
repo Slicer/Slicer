@@ -131,7 +131,7 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="12" column="0" colspan="2">
+      <item row="13" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="TextDisplayGroupBox">
         <property name="title">
          <string>Text Display</string>
@@ -236,7 +236,7 @@
         </property>
        </widget>
       </item>
-      <item row="14" column="0" colspan="2">
+      <item row="15" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="TwoDDisplayGroupBox">
         <property name="title">
          <string>2D Display</string>
@@ -454,7 +454,7 @@
         </property>
        </widget>
       </item>
-      <item row="13" column="0" colspan="2">
+      <item row="14" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="ThreeDDisplayGroupBox">
         <property name="title">
          <string>3D Display</string>
@@ -534,6 +534,26 @@
         </property>
        </widget>
       </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="useControlPointColorsLabel">
+        <property name="text">
+         <string>Per-point colors:</string>
+        </property>
+        <property name="toolTip">
+         <string>Show each control point in its own color. Points without a color use the Selected/Unselected colors above.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QCheckBox" name="useControlPointColorsCheckBox">
+        <property name="toolTip">
+         <string>Show each control point in its own color. Points without a color use the Selected/Unselected colors above.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item row="8" column="1">
        <widget class="QCheckBox" name="PropertiesLabelVisibilityCheckBox">
         <property name="toolTip">
@@ -544,7 +564,7 @@
         </property>
        </widget>
       </item>
-      <item row="15" column="0" colspan="2">
+      <item row="16" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="LineDirectionMarkersCollapsibleGroupBox">
         <property name="title">
          <string>Direction Markers</string>

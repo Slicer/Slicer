@@ -210,6 +210,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLWriteXMLStdStringMacro(textProperty, TextPropertyAsString);
   vtkMRMLWriteXMLVectorMacro(activeColor, ActiveColor, double, 3);
+  vtkMRMLWriteXMLBooleanMacro(useControlPointColors, UseControlPointColors);
 
   vtkMRMLWriteXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
   vtkMRMLWriteXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
@@ -267,6 +268,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLReadXMLStdStringMacro(textProperty, TextPropertyFromString);
   vtkMRMLReadXMLVectorMacro(activeColor, ActiveColor, double, 3);
+  vtkMRMLReadXMLBooleanMacro(useControlPointColors, UseControlPointColors);
   vtkMRMLReadXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
   vtkMRMLReadXMLVectorMacro(scaleHandleAxes, ScaleHandleComponentVisibility, bool, 4);
   vtkMRMLReadXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
@@ -357,6 +359,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
   // The name is misleading, this ShallowCopy method actually creates a deep copy
   this->TextProperty->ShallowCopy(this->SafeDownCast(copySourceNode)->GetTextProperty());
   vtkMRMLCopyVectorMacro(ActiveColor, double, 3);
+  vtkMRMLCopyBooleanMacro(UseControlPointColors);
   vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility, bool, 4);
   vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility, bool, 4);
   vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility, bool, 4);
@@ -562,6 +565,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(OccludedOpacity);
   vtkMRMLPrintStdStringMacro(TextPropertyAsString);
   vtkMRMLPrintVectorMacro(ActiveColor, double, 3);
+  vtkMRMLPrintBooleanMacro(UseControlPointColors);
   vtkMRMLPrintVectorMacro(RotationHandleComponentVisibility, bool, 4);
   vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibility, bool, 4);
   vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibility, bool, 4);

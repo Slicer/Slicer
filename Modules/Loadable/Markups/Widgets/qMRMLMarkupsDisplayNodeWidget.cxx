@@ -91,6 +91,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelVisibility(bool)));
+  QObject::connect(this->useControlPointColorsCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseControlPointColors(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onTextScaleSliderWidgetChanged(double)));
 
@@ -330,6 +331,8 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
 
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
+  d->useControlPointColorsCheckBox->setChecked(markupsDisplayNode->GetUseControlPointColors());
+
   // text scale
   double textScale = markupsDisplayNode->GetTextScale();
   // make sure that the slider can accommodate this scale
@@ -475,6 +478,17 @@ void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelVisibility(bool visible)
     return;
   }
   d->MarkupsDisplayNode->SetPropertiesLabelVisibility(visible);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setUseControlPointColors(bool enabled)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetUseControlPointColors(enabled);
 }
 
 //------------------------------------------------------------------------------

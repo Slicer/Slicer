@@ -91,6 +91,8 @@ public slots:
   void setOccludedVisibility(bool visibility);
   void setOccludedOpacity(double OccludedOpacity);
 
+  void setUseControlPointColors(bool enabled);
+
   void setLineDirectionVisibility(bool visible);
   void onLineDirectionMarkerScaleChanged(double value);
   void onLineDirectionMarkerSpacingScaleChanged(double value);

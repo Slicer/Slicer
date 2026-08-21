@@ -45,6 +45,7 @@
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
+#include "vtkUnsignedCharArray.h"
 
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
@@ -59,6 +60,10 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
   this->Glypher = vtkSmartPointer<vtkGlyph2D>::New();
   this->Glypher->SetInputData(this->ControlPointsPolyData);
   this->Glypher->SetScaleFactor(1.0);
+  // Avoid scaling glyphs by an input scalar -- without this, the per-point
+  // RGBA color array would be interpreted as a scale factor and produce
+  // huge glyphs.
+  this->Glypher->SetScaleModeToDataScalingOff();
 
   // By default the Points are rendered as spheres
   this->Glypher->SetSourceConnection(this->GlyphSourceSphere->GetOutputPort());
@@ -307,6 +312,11 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
   }
 
   int numPoints = markupsNode->GetNumberOfControlPoints();
+  const bool folderOverrideActive = this->IsFolderDisplayOverrideActive();
+  // Source per-point color arrays are invariant across the pipeline loop.
+  const bool perPointColorsEnabled = this->MarkupsDisplayNode->GetUseControlPointColors() && !folderOverrideActive;
+  vtkUnsignedCharArray* srcColorArr = perPointColorsEnabled ? markupsNode->GetControlPointColorArray() : nullptr;
+  vtkUnsignedCharArray* srcFlagArr = perPointColorsEnabled ? markupsNode->GetControlPointColorOverriddenArray() : nullptr;
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
   {
@@ -319,6 +329,37 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->Reset();
     controlPoints->Labels->Reset();
     controlPoints->LabelsPriority->Reset();
+
+    // Per-point color array populated for Unselected and Selected pipelines
+    // (Active stays flat ActiveColor).
+    const bool applyPerPointColors = perPointColorsEnabled //
+                                     && (controlPointType == Unselected || controlPointType == Selected);
+    vtkUnsignedCharArray* perPointColorsArray = nullptr;
+    if (applyPerPointColors)
+    {
+      perPointColorsArray = vtkUnsignedCharArray::SafeDownCast(controlPoints->ControlPointsPolyData->GetPointData()->GetArray(PerPointColorArrayName));
+      if (!perPointColorsArray)
+      {
+        vtkNew<vtkUnsignedCharArray> newArr;
+        newArr->SetName(PerPointColorArrayName);
+        newArr->SetNumberOfComponents(4);
+        controlPoints->ControlPointsPolyData->GetPointData()->AddArray(newArr);
+        perPointColorsArray = newArr;
+      }
+      perPointColorsArray->SetNumberOfTuples(0);
+    }
+    else
+    {
+      controlPoints->ControlPointsPolyData->GetPointData()->RemoveArray(PerPointColorArrayName);
+    }
+    unsigned char fallbackBytes[4] = { 255, 255, 255, 255 };
+    if (applyPerPointColors)
+    {
+      double* widgetColor = this->GetWidgetColor(controlPointType);
+      fallbackBytes[0] = static_cast<unsigned char>(widgetColor[0] * 255.0 + 0.5);
+      fallbackBytes[1] = static_cast<unsigned char>(widgetColor[1] * 255.0 + 0.5);
+      fallbackBytes[2] = static_cast<unsigned char>(widgetColor[2] * 255.0 + 0.5);
+    }
 
     int startIndex = 0;
     int stopIndex = numPoints - 1;
@@ -416,11 +457,73 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
 
       controlPoints->Labels->InsertNextValue(markupsNode->GetNthControlPointLabel(pointIndex));
       controlPoints->LabelsPriority->InsertNextValue(std::to_string(pointIndex));
+
+      if (perPointColorsArray)
+      {
+        unsigned char rgba[4];
+        if (srcFlagArr && srcColorArr                            //
+            && pointIndex < srcFlagArr->GetNumberOfTuples()      //
+            && pointIndex < srcColorArr->GetNumberOfTuples()     //
+            && srcFlagArr->GetValue(pointIndex) != 0)
+        {
+          srcColorArr->GetTypedTuple(pointIndex, rgba);
+        }
+        else
+        {
+          rgba[0] = fallbackBytes[0];
+          rgba[1] = fallbackBytes[1];
+          rgba[2] = fallbackBytes[2];
+          rgba[3] = 255;
+        }
+        perPointColorsArray->InsertNextTypedTuple(rgba);
+      }
+    }
+
+    if (perPointColorsArray)
+    {
+      perPointColorsArray->Modified();
+      controlPoints->ControlPointsPolyData->GetPointData()->SetActiveScalars(PerPointColorArrayName);
+    }
+    else
+    {
+      controlPoints->ControlPointsPolyData->GetPointData()->SetActiveScalars(nullptr);
     }
 
     controlPoints->ControlPoints->Modified();
     controlPoints->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     controlPoints->ControlPointsPolyData->Modified();
+
+    // vtkGlyph2D does not propagate input point scalars to its output. Run
+    // the filter explicitly and replicate input scalars per output vertex.
+    if (perPointColorsArray && controlPoints->ControlPoints->GetNumberOfPoints() > 0)
+    {
+      controlPoints->Glypher->Update();
+      vtkPolyData* gout = controlPoints->Glypher->GetOutput();
+      vtkIdType numInput = controlPoints->ControlPoints->GetNumberOfPoints();
+      vtkIdType numOutput = gout->GetNumberOfPoints();
+      if (numInput > 0 && numOutput > 0 && numOutput % numInput == 0)
+      {
+        int verticesPerGlyph = static_cast<int>(numOutput / numInput);
+        vtkNew<vtkUnsignedCharArray> outRgba;
+        outRgba->SetName(PerPointColorArrayName);
+        outRgba->SetNumberOfComponents(4);
+        outRgba->SetNumberOfTuples(numOutput);
+        unsigned char tuple[4];
+        for (vtkIdType oi = 0; oi < numOutput; ++oi)
+        {
+          vtkIdType inputIdx = oi / verticesPerGlyph;
+          if (inputIdx >= numInput)
+          {
+            inputIdx = numInput - 1;
+          }
+          perPointColorsArray->GetTypedTuple(inputIdx, tuple);
+          outRgba->SetTypedTuple(oi, tuple);
+        }
+        gout->GetPointData()->RemoveArray(PerPointColorArrayName);
+        gout->GetPointData()->AddArray(outRgba);
+        gout->GetPointData()->SetActiveScalars(PerPointColorArrayName);
+      }
+    }
 
     controlPoints->LabelControlPoints->Modified();
     controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->Modified();
@@ -533,6 +636,8 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode*
     return;
   }
 
+  const bool useControlPointColors = this->MarkupsDisplayNode->GetUseControlPointColors() && !this->IsFolderDisplayOverrideActive();
+
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
   {
     double* color = this->GetWidgetColor(controlPointType);
@@ -541,6 +646,19 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode*
     ControlPointsPipeline2D* controlPoints = this->GetControlPointsPipeline(controlPointType);
     controlPoints->Property->SetColor(color);
     controlPoints->Property->SetOpacity(opacity);
+
+    const bool perPointForThisPipeline = useControlPointColors //
+                                         && (controlPointType == Unselected || controlPointType == Selected);
+    if (perPointForThisPipeline)
+    {
+      controlPoints->Mapper->SetScalarVisibility(true);
+      controlPoints->Mapper->SetScalarModeToUsePointData();
+      controlPoints->Mapper->SetColorModeToDirectScalars();
+    }
+    else
+    {
+      controlPoints->Mapper->SetScalarVisibility(false);
+    }
 
     controlPoints->TextProperty->ShallowCopy(this->MarkupsDisplayNode->GetTextProperty());
     if (this->GetApplicationLogic())

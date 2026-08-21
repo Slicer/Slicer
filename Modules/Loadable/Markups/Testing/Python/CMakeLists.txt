@@ -59,6 +59,10 @@ slicer_add_python_test(SCRIPT MarkupsMeasurementsTest.py
 slicer_add_python_test(SCRIPT MarkupsNodeNameTest.py
                        SLICER_ARGS --disable-cli-modules)
 
+# Test per-control-point color API and JSON round-trip
+slicer_add_python_test(SCRIPT MarkupsControlPointColorTest.py
+                       SLICER_ARGS --disable-cli-modules)
+
 # Test markups pluggable architecture
 slicerMacroBuildScriptedModule(
   NAME PluggableMarkupsSelfTest
