@@ -1233,6 +1233,17 @@ add_subdirectory(
   ${CMAKE_CURRENT_BINARY_DIR}/Applications
   )
 
+# ${PYTHON_EXECUTABLE} is a launcher that reads its PYTHONPATH and LibraryPaths
+# from ${Slicer_MAIN_PROJECT_APPLICATION_NAME}LauncherSettings.ini, which the
+# launcher configuration target writes only after the application links. State
+# the ordering so generators free to schedule it earlier do not run the vtk
+# module generator against an unwritten settings file.
+if(TARGET SlicerGenerateLazyVtkModule
+    AND TARGET ${Slicer_MAIN_PROJECT_APPLICATION_NAME}ConfigureLauncher)
+  add_dependencies(SlicerGenerateLazyVtkModule
+    ${Slicer_MAIN_PROJECT_APPLICATION_NAME}ConfigureLauncher)
+endif()
+
 #-----------------------------------------------------------------------------
 # Templates
 #-----------------------------------------------------------------------------
