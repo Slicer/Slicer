@@ -607,7 +607,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
   }
 
   volumeProp->SetInterpolationTypeToLinear();
-  volumeProp->ShadeOn();
+  volumeProp->ShadeOff();
   volumeProp->SetAmbient(0.30);
   volumeProp->SetDiffuse(0.60);
   volumeProp->SetSpecular(0.50);
