@@ -82,13 +82,25 @@ macro(SlicerMacroExtractRepositoryInfo)
   set(${wc_info_prefix}_WC_REVISION_NAME "NA")
   set(${wc_info_prefix}_WC_REVISION_HASH "NA")
 
-  if(NOT EXISTS ${MY_SOURCE_DIR}/.git)
+  find_package(Git QUIET)
+  set(is_git_checkout FALSE)
+  if(GIT_FOUND)
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
+      WORKING_DIRECTORY ${MY_SOURCE_DIR}
+      RESULT_VARIABLE GIT_result
+      OUTPUT_VARIABLE GIT_output
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(${GIT_result} EQUAL 0 AND "${GIT_output}" STREQUAL "true")
+      set(is_git_checkout TRUE)
+    endif()
+  endif()
+
+  if(NOT is_git_checkout)
 
     message(AUTHOR_WARNING "Skipping ${MY_VAR_PREFIX} repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT checkout")
 
   else()
-
-    find_package(Git REQUIRED)
 
     # Is <SOURCE_DIR> a git working copy ?
     execute_process(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
