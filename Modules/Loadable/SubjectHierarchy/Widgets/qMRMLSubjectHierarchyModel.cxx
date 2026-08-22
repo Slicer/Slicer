@@ -1027,9 +1027,22 @@ void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardIte
       int newIndex = this->subjectHierarchyItemIndex(shItemID);
       if ((newParentItem != nullptr) && (parentItem != newParentItem || newIndex != item->row()))
       {
+        // Save selection before reparenting: takeRow/insertRow is a remove+insert at the Qt
+        // model level, which causes QItemSelectionModel to clear selection for the moved row.
+        // Each connected view independently saves and restores its own selection.
+        // Drag-and-drop operations restore selection separately in dropMimeData, so skip here.
+        if (d->DraggedSubjectHierarchyItems.isEmpty())
+        {
+          emit requestSaveSelection();
+        }
         // Reparent items
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
         newParentItem->insertRow(newIndex, children);
+        // Restore selection (each connected view restores its own previously saved selection)
+        if (d->DraggedSubjectHierarchyItems.isEmpty())
+        {
+          emit requestRestoreSelection();
+        }
       }
     }
   }
@@ -1761,6 +1774,11 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
 
   std::vector<vtkIdType> childrenItemIDs;
   d->SubjectHierarchyNode->GetItemChildren(parentItemID, childrenItemIDs);
+
+  // Save selection before reordering: takeRow/insertRow clears selection for moved items.
+  // Each connected view independently saves and restores its own selection.
+  emit requestSaveSelection();
+
   for (int positionInShNode = 0; positionInShNode < childrenItemIDs.size(); ++positionInShNode)
   {
     vtkIdType childItemID = childrenItemIDs[positionInShNode];
@@ -1786,6 +1804,9 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
       newParentItem->insertRow(positionInShNode, children);
     }
   }
+
+  // Restore selection (each connected view restores its own previously saved selection)
+  emit requestRestoreSelection();
 }
 
 //------------------------------------------------------------------------------
