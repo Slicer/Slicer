@@ -376,7 +376,10 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
     }
   }
 
-  this->SetWindowLevelPresets(windowLevelPresets);
+  if (!windowLevelPresets.empty())
+  {
+    this->SetWindowLevelPresets(windowLevelPresets);
+  }
 
   this->EndModify(disabledModify);
 }
