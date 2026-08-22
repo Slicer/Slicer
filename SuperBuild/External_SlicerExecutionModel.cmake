@@ -110,6 +110,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       # Options
       -DBUILD_TESTING:BOOL=OFF
       -DSlicerExecutionModel_USE_UTF8:BOOL=ON
+      -DGENERATECLP_USE_MD5:BOOL=ON
       -DITK_DIR:PATH=${ITK_DIR}
       -DSlicerExecutionModel_USE_SERIALIZER:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
       -DSlicerExecutionModel_USE_JSONCPP:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
