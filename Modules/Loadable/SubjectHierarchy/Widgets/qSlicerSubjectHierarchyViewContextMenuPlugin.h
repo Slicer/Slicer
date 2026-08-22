@@ -63,6 +63,7 @@ protected slots:
   void configureSliceViewAnnotationsAction();
   void maximizeView();
   void fitSliceView();
+  void flipSliceViewHorizontal();
   void centerThreeDView();
   void refocusCamera();
   void refocusAllCameras();
