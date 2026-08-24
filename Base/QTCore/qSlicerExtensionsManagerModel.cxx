@@ -1552,6 +1552,7 @@ qSlicerExtensionDownloadTask* qSlicerExtensionsManagerModelPrivate::downloadExte
   if (extensionMetadata.count() == 0)
   {
     this->critical(qSlicerExtensionsManagerModel::tr("Failed to get metadata from server for extension: %1").arg(extensionName));
+    return nullptr;
   }
 
   QUrl downloadUrl(q->serverUrl());
@@ -1561,6 +1562,8 @@ qSlicerExtensionDownloadTask* qSlicerExtensionsManagerModelPrivate::downloadExte
     QString item_id = extensionMetadata["extension_id"].toString();
     if (item_id.isEmpty())
     {
+      this->critical(qSlicerExtensionsManagerModel::tr("Failed to retrieve %1 extension package: extension metadata is missing a valid extension_id") //
+                       .arg(extensionName));
       return nullptr;
     }
 
@@ -1570,32 +1573,64 @@ qSlicerExtensionDownloadTask* qSlicerExtensionsManagerModelPrivate::downloadExte
 
     this->debug(qSlicerExtensionsManagerModel::tr("Retrieving %1 extension files (extensionId: %2)").arg(extensionName).arg(item_id));
     qRestAPI getItemFilesApi;
-    getItemFilesApi.setServerUrl(q->serverUrl().toString() + QString("/api/v1/item/%1/files").arg(item_id));
+    QString itemFilesUrl = q->serverUrl().toString() + QString("/api/v1/item/%1/files").arg(item_id);
+    getItemFilesApi.setServerUrl(itemFilesUrl);
     const QUuid& queryUuid = getItemFilesApi.get("");
     QScopedPointer<qRestResult> restResult(getItemFilesApi.takeResult(queryUuid));
-    if (restResult)
+    if (!restResult)
     {
-      qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
-      QList<QVariantMap> results = restResult->results();
-      if (results.isEmpty())
+      //: %1 is extension name, %2 is the requested URL, %3 is the error reported by the network layer
+      this->critical(qSlicerExtensionsManagerModel::tr("Failed to retrieve %1 extension package: request to %2 failed (%3)")
+                       .arg(extensionName)
+                       .arg(itemFilesUrl)
+                       .arg(getItemFilesApi.errorString()));
+      return nullptr;
+    }
+
+    qGirderAPI::parseGirderAPIv1Response(restResult.data(), restResult->response());
+    QList<QVariantMap> results = restResult->results();
+    if (results.isEmpty())
+    {
+      // No file entry was found in the server response. The item may genuinely have no file attached
+      // (transient: the package is being uploaded/replaced right now; persistent: the build for this
+      // revision/os/arch was never uploaded or was removed), but the response may also have been
+      // unparsable, as parseGirderAPIv1Response cannot report a parsing failure.
+      //: %1 is extension name, %2 is the identifier of the item on the server
+      this->critical(                      //
+        qSlicerExtensionsManagerModel::tr( //
+          "Failed to retrieve %1 extension package: the server returned no file entry for item %2."
+          " If the package is currently being uploaded then checking for updates again in a few minutes may succeed.")
+          .arg(extensionName)
+          .arg(item_id));
+      return nullptr;
+    }
+    else if (results.count() == 1)
+    {
+      file_id = results.at(0).value("_id").toString();
+      archivename = results.at(0).value("name").toString();
+    }
+    else
+    {
+      // extension manager returned multiple files, this is not expected, do not use the results
+      QStringList fileNames;
+      for (const QVariantMap& result : results)
       {
-        // extension manager returned 0 file, this is not expected
-        return nullptr;
+        fileNames << result.value("name").toString();
       }
-      else if (results.count() == 1)
-      {
-        file_id = results.at(0).value("_id").toString();
-        archivename = results.at(0).value("name").toString();
-      }
-      else
-      {
-        // extension manager returned multiple files, this is not expected, do not use the results
-        return nullptr;
-      }
+      this->critical(qSlicerExtensionsManagerModel::tr("Failed to retrieve %1 extension package: item %2 has %3 files attached, expected exactly one (%4)")
+                       .arg(extensionName)
+                       .arg(item_id)
+                       .arg(results.count())
+                       .arg(fileNames.join(", ")));
+      return nullptr;
     }
 
     if (file_id.isEmpty() || archivename.isEmpty())
     {
+      //: %1 is extension name, %2 is the identifier of the item on the server
+      this->critical(qSlicerExtensionsManagerModel::tr("Failed to retrieve %1 extension package: file entry for item %2 is missing an id or name") //
+                       .arg(extensionName)
+                       .arg(item_id));
       return nullptr;
     }
 
