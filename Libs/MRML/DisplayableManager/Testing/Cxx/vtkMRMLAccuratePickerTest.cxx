@@ -32,10 +32,13 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkAppendFilter.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
 #include <vtkCellType.h>
+#include <vtkDataSetMapper.h>
 #include <vtkGenericCell.h>
+#include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkMatrix4x4.h>
@@ -54,6 +57,7 @@
 #include <vtkStaticCellLocator.h>
 #include <vtkTimerLog.h>
 #include <vtkTriangleFilter.h>
+#include <vtkUnstructuredGrid.h>
 
 // STD includes
 #include <algorithm>
@@ -244,31 +248,12 @@ int TestPickRayCastMapper()
 }
 
 //----------------------------------------------------------------------------
-int TestPickIsFast()
+/// Renders what the renderer holds, then times repeated picks at the middle of the view.
+/// Returns false if a pick misses or if the picks are too slow to have been indexed.
+bool PicksAreFastFor(vtkRenderer* renderer, const char* description, vtkIdType numberOfCells)
 {
-  // A large, pickable surface standing in for a segmentation closed surface.
-  vtkNew<vtkSphereSource> sphere;
-  sphere->SetThetaResolution(900);
-  sphere->SetPhiResolution(900);
-  sphere->Update();
-  const vtkIdType numberOfCells = sphere->GetOutput()->GetNumberOfCells();
-  std::cout << "Large surface: " << numberOfCells << " cells" << std::endl;
-
-  vtkNew<vtkPolyDataMapper> mapper;
-  // SetInputData (not a pipeline connection) so the mapper's input poly data is
-  // available for locator building without a render/update.
-  mapper->SetInputData(sphere->GetOutput());
-  vtkNew<vtkActor> actor;
-  actor->SetMapper(mapper);
-
-  vtkNew<vtkRenderer> renderer;
-  renderer->AddActor(actor);
-  vtkNew<vtkRenderWindow> renderWindow;
-  renderWindow->SetOffScreenRendering(1);
-  renderWindow->SetSize(300, 300);
-  renderWindow->AddRenderer(renderer);
   renderer->ResetCamera();
-  renderWindow->Render();
+  renderer->GetRenderWindow()->Render();
 
   vtkNew<vtkMRMLAccuratePicker> picker;
   picker->SetTolerance(0.005);
@@ -276,16 +261,16 @@ int TestPickIsFast()
   const int x = 150;
   const int y = 150;
 
-  // First pick: must hit the surface, and pays the one-time locator build.
+  // First pick: must hit the mesh, and pays the one-time locator build.
   if (!picker->Pick(x, y, 0, renderer))
   {
-    std::cerr << "Failed: pick did not hit the surface at the view center" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Failed: pick did not hit the " << description << " at the view center" << std::endl;
+    return false;
   }
   if (picker->GetActor() == nullptr)
   {
-    std::cerr << "Failed: pick did not report the surface actor" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Failed: pick did not report the actor of the " << description << std::endl;
+    return false;
   }
 
   // Repeated picks (as during a drag or hover) must be fast because the picker
@@ -300,7 +285,7 @@ int TestPickIsFast()
   }
   timer->StopTimer();
   const double millisecondsPerPick = timer->GetElapsedTime() / numberOfPicks * 1000.0;
-  std::cout << "vtkMRMLAccuratePicker over " << numberOfCells << " cells: " << millisecondsPerPick << " ms/pick" << std::endl;
+  std::cout << description << " (" << numberOfCells << " cells): " << millisecondsPerPick << " ms/pick" << std::endl;
 
   // Generous threshold: the accelerated pick is well under a millisecond, while
   // an un-indexed brute-force pick over this mesh is far above 30 ms on any
@@ -308,9 +293,69 @@ int TestPickIsFast()
   const double thresholdMillisecondsPerPick = 30.0;
   if (millisecondsPerPick > thresholdMillisecondsPerPick)
   {
-    std::cerr << "Failed: " << millisecondsPerPick << " ms/pick (threshold " << thresholdMillisecondsPerPick
-              << " ms). Large-surface picks are not locator-accelerated, so control-point dragging "
-              << "and hover read-out would be janky when a large surface is shown." << std::endl;
+    std::cerr << "Failed: " << description << " " << millisecondsPerPick << " ms/pick (threshold " << thresholdMillisecondsPerPick
+              << " ms). Picks over it are not locator-accelerated, so control-point dragging "
+              << "and hover read-out would be janky while it is shown." << std::endl;
+    return false;
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int TestPickIsFast()
+{
+  // A large, pickable surface standing in for a segmentation closed surface. It is drawn
+  // through a vtkPolyDataMapper, as poly data models are.
+  vtkNew<vtkSphereSource> sphere;
+  sphere->SetThetaResolution(900);
+  sphere->SetPhiResolution(900);
+  sphere->Update();
+
+  vtkNew<vtkPolyDataMapper> surfaceMapper;
+  // SetInputData (not a pipeline connection) so the mapper's input is available for locator
+  // building without a render/update.
+  surfaceMapper->SetInputData(sphere->GetOutput());
+  vtkNew<vtkActor> surfaceActor;
+  surfaceActor->SetMapper(surfaceMapper);
+
+  vtkNew<vtkRenderer> surfaceRenderer;
+  surfaceRenderer->AddActor(surfaceActor);
+  vtkNew<vtkRenderWindow> surfaceWindow;
+  surfaceWindow->SetOffScreenRendering(1);
+  surfaceWindow->SetSize(300, 300);
+  surfaceWindow->AddRenderer(surfaceRenderer);
+
+  if (!PicksAreFastFor(surfaceRenderer, "poly data surface", sphere->GetOutput()->GetNumberOfCells()))
+  {
+    return EXIT_FAILURE;
+  }
+
+  // A large volumetric mesh, as a CFD or FE result is. Slicer draws an unstructured grid
+  // model through a vtkDataSetMapper rather than a vtkPolyDataMapper, so a picker that only
+  // indexes vtkPolyDataMapper leaves this case on the unindexed linear scan - which is what
+  // this half of the test is here to catch.
+  vtkNew<vtkImageData> image;
+  image->SetDimensions(101, 101, 101);
+  image->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  vtkNew<vtkAppendFilter> toUnstructuredGrid;
+  toUnstructuredGrid->SetInputData(image);
+  toUnstructuredGrid->Update();
+  vtkUnstructuredGrid* grid = toUnstructuredGrid->GetOutput();
+
+  vtkNew<vtkDataSetMapper> gridMapper;
+  gridMapper->SetInputData(grid);
+  vtkNew<vtkActor> gridActor;
+  gridActor->SetMapper(gridMapper);
+
+  vtkNew<vtkRenderer> gridRenderer;
+  gridRenderer->AddActor(gridActor);
+  vtkNew<vtkRenderWindow> gridWindow;
+  gridWindow->SetOffScreenRendering(1);
+  gridWindow->SetSize(300, 300);
+  gridWindow->AddRenderer(gridRenderer);
+
+  if (!PicksAreFastFor(gridRenderer, "unstructured grid", grid->GetNumberOfCells()))
+  {
     return EXIT_FAILURE;
   }
 
