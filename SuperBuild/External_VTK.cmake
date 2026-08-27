@@ -219,6 +219,18 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       ${${proj}_DEPENDENCIES}
     )
 
+  # Catch a VTK clone without release tags before building it to avoid build errors later.
+  # See vtk-verify-version.cmake for details.
+  ExternalProject_Add_Step(${proj} verify_version
+    COMMAND ${CMAKE_COMMAND}
+      -DVTK_SOURCE_DIR:PATH=${EP_SOURCE_DIR}
+      -DVTK_BINARY_DIR:PATH=${EP_BINARY_DIR}
+      -P ${CMAKE_CURRENT_LIST_DIR}/vtk-verify-version.cmake
+    COMMENT "Verifying that VTK reports the version of its source code"
+    DEPENDEES configure
+    DEPENDERS build
+    )
+
   if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
     # Create the vtk-*.dist-info directory to prevent pip from re-installing
     # vtk package as a wheel when listed as dependency in Slicer extension.
@@ -330,6 +342,19 @@ Version: @vtk_dist_info_version@
   endif()
 
 else()
+  # Check an externally built VTK as well (see vtk-verify-version.cmake)
+  if(DEFINED VTK_SOURCE_DIR AND DEFINED VTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
+    execute_process(
+      COMMAND ${CMAKE_COMMAND}
+        -DVTK_SOURCE_DIR:PATH=${VTK_SOURCE_DIR}
+        -DVTK_BINARY_DIR:PATH=${VTK_DIR}
+        -P ${CMAKE_CURRENT_LIST_DIR}/vtk-verify-version.cmake
+      RESULT_VARIABLE _vtk_verify_version_result
+      )
+    if(NOT _vtk_verify_version_result EQUAL 0)
+      message(FATAL_ERROR "VTK in ${VTK_DIR} reports a different version than its source code (see the error above)")
+    endif()
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
