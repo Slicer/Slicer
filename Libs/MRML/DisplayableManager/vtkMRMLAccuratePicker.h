@@ -30,7 +30,6 @@
 
 class vtkAbstractCellLocator;
 class vtkDataSet;
-class vtkPolyData;
 class vtkRenderer;
 
 /// \brief A cell picker that stays fast when large surfaces are shown.
@@ -132,9 +131,9 @@ protected:
     vtkSmartPointer<vtkAbstractCellLocator> Locator;
     vtkMTimeType BuildMTime{ 0 };
   };
-  /// Locator of each indexed surface. Not named Locators, which would hide
+  /// Locator of each indexed mesh. Not named Locators, which would hide
   /// vtkCellPicker::Locators (the locators that the picker uses).
-  std::map<vtkPolyData*, CachedLocator> LocatorsBySurface;
+  std::map<vtkDataSet*, CachedLocator> LocatorsBySurface;
 
   vtkIdType MinimumCellCountToIndex{ 10000 };
 
