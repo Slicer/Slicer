@@ -74,7 +74,7 @@ bool vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(vtkMRMLDisplayableMan
   return factory->IsDisplayableManagerRegistered(dm->GetClassName());
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDisplayableManager::GetNodePipeline(vtkMRMLNode* node) const
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDisplayableManager::GetNodePipeline(vtkMRMLNode* node) const
 {
   return m_pipelineManager->GetNodePipeline(node);
 }

@@ -1,7 +1,7 @@
 #include "vtkMRMLLayerDMPipelineScriptedCreator.h"
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 #include "vtkMRMLLayerDMPythonUtil.h"
 
 // Slicer includes
@@ -18,7 +18,7 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
   : m_object(nullptr)
 {
   this->SetCallback(
-    [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) -> vtkSmartPointer<vtkMRMLLayerDMPipelineI>
+    [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) -> vtkSmartPointer<vtkMRMLLayerDMPipeline>
     {
       if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
       {
@@ -34,7 +34,7 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
         vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
         return nullptr;
       }
-      return vtkMRMLLayerDMPipelineI::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkMRMLLayerDMPipelineI"));
+      return vtkMRMLLayerDMPipeline::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkMRMLLayerDMPipeline"));
     });
 }
 

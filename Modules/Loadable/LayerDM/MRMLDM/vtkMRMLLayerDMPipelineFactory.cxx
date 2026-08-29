@@ -1,9 +1,9 @@
 #include "vtkMRMLLayerDMPipelineFactory.h"
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineCreatorI.h"
+#include "vtkMRMLLayerDMPipelineCreator.h"
 #include "vtkMRMLLayerDMPipelineCallbackCreator.h"
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
@@ -18,7 +18,7 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> vtkMRMLLayerDMPipelineFactory::Ge
   return instance;
 }
 
-void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator)
+void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
   if (this->ContainsPipelineCreator(creator))
   {
@@ -31,8 +31,8 @@ void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtk
   this->InvokeEvent(vtkCommand::ModifiedEvent);
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(
-  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
+vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(
+  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
   int priority)
 {
   auto creator = vtkSmartPointer<vtkMRMLLayerDMPipelineCallbackCreator>::New();
@@ -42,13 +42,13 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> vtkMRMLLayerDMPipelineFactory::A
   return creator;
 }
 
-void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator)
+void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
   this->m_obs->RemoveObserver(creator);
   size_t prevSize = this->m_pipelineCreators.size();
   this->m_pipelineCreators.erase(std::remove_if(this->m_pipelineCreators.begin(),
                                                 this->m_pipelineCreators.end(),
-                                                [creator](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& value) { return value == creator; }),
+                                                [creator](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& value) { return value == creator; }),
                                  this->m_pipelineCreators.end());
   if (this->m_pipelineCreators.size() != prevSize)
   {
@@ -56,12 +56,12 @@ void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<
   }
 }
 
-bool vtkMRMLLayerDMPipelineFactory::ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator) const
+bool vtkMRMLLayerDMPipelineFactory::ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator) const
 {
   return std::find(this->m_pipelineCreators.begin(), this->m_pipelineCreators.end(), creator) != this->m_pipelineCreators.end();
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineFactory::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineFactory::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
 {
   for (const auto& ctor : m_pipelineCreators)
   {
@@ -90,7 +90,7 @@ vtkMRMLNode* vtkMRMLLayerDMPipelineFactory::GetLastNode() const
   }
 }
 
-vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
+vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
 {
   {
     return this->m_lastPipeline;
@@ -110,7 +110,7 @@ void vtkMRMLLayerDMPipelineFactory::SortPipelineCreators()
 {
   std::sort(std::begin(m_pipelineCreators),
             std::end(m_pipelineCreators),
-            [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& b)
+            [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& b)
             {
               if (!a || !b)
               {

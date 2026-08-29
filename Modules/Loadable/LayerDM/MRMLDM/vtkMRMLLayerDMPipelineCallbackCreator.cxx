@@ -1,7 +1,7 @@
 #include "vtkMRMLLayerDMPipelineCallbackCreator.h"
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -9,12 +9,12 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineCallbackCreator);
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineCallbackCreator::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineCallbackCreator::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const
 {
   return this->m_callback(viewNode, node);
 }
 
-void vtkMRMLLayerDMPipelineCallbackCreator::SetCallback(const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& callback)
+void vtkMRMLLayerDMPipelineCallbackCreator::SetCallback(const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& callback)
 {
   this->m_callback = callback;
 }

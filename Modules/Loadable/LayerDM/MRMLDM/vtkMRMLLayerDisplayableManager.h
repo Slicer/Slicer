@@ -10,7 +10,7 @@
 
 class vtkImageData;
 class vtkMRMLDisplayableManagerFactory;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLLayerDMPipelineManager;
 class vtkRenderWindow;
 
@@ -44,7 +44,7 @@ public:
   /// Pipelines are completely managed by the displayable manager and any dependencies can be
   /// injected when creating the pipeline through the pipeline creator mechanism.
   /// Runtime access logic shouldn't be necessary outside the LayerDM layer.
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> GetNodePipeline(vtkMRMLNode* node) const;
 
   /// @{
   /// Utility function to get the content of the render window image as buffer

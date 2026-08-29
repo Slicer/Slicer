@@ -2,7 +2,7 @@
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -16,7 +16,7 @@
 #include <set>
 #include <vector>
 
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkRenderWindow;
 class vtkRenderer;
 class vtkCamera;
@@ -44,7 +44,7 @@ public:
   /// Adds the pipeline to the layers.
   /// May change an update of the layer ordering.
   /// Will trigger the SetRenderer call on the pipeline when it's added to its layer.
-  void AddPipeline(vtkMRMLLayerDMPipelineI* pipeline);
+  void AddPipeline(vtkMRMLLayerDMPipeline* pipeline);
 
   int GetNumberOfDistinctLayers() const;
   int GetNumberOfManagedLayers() const;
@@ -54,7 +54,7 @@ public:
 
   /// Removes the pipeline from the layers.
   /// May change the layer ordering if pipeline was the last one of its current renderer.
-  void RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline);
+  void RemovePipeline(vtkMRMLLayerDMPipeline* pipeline);
 
   /// Iterates over the renderers and resets their clipping range to visible bounds
   void ResetCameraClippingRange() const;
@@ -78,11 +78,11 @@ private:
   static std::array<double, 6> ComputeRenderersVisibleBounds(const std::set<vtkWeakPointer<vtkRenderer>>& renderers);
   bool ContainsLayerKey(const LayerKey& key);
   static std::uintptr_t GetCameraId(vtkCamera* camera);
-  vtkCamera* GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipelineI>>& pipelines) const;
+  vtkCamera* GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>& pipelines) const;
   int GetKeyIndex(const LayerKey& key) const;
   void RemoveAllLayers();
   void RemoveAllPipelineRenderers();
-  static void RemovePipelineRenderer(vtkMRMLLayerDMPipelineI* pipeline);
+  static void RemovePipelineRenderer(vtkMRMLLayerDMPipeline* pipeline);
   void RemoveOutdatedLayers();
   void RemoveOutdatedPipelines();
   void RemoveRenderer(const vtkSmartPointer<vtkRenderer>& renderer);
@@ -93,17 +93,17 @@ private:
   void UpdateRendererLayerOrdering() const;
   void UpdateRendererCamera();
 
-  bool AddPipelineLayers(vtkMRMLLayerDMPipelineI* pipeline);
-  void RemovePipelineLayers(vtkMRMLLayerDMPipelineI* pipeline);
+  bool AddPipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
+  void RemovePipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
 
   // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
-  std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipelineI>>> m_pipelineLayers;
+  std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>> m_pipelineLayers;
 
-  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipelineI::RenderGroupingModified events.
+  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events.
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
 
   // Placeholder empty pipeline with target layer = 0 and camera sync to layer 0 for default renderer
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> m_emptyPipeline;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> m_emptyPipeline;
 
   // Pointer to the current render window
   vtkWeakPointer<vtkRenderWindow> m_renderWindow;

@@ -31,11 +31,11 @@ The main classes of the library and their responsibilities are summarized below 
 
 | Class                                    | Description                                                                                  |
 |------------------------------------------|----------------------------------------------------------------------------------------------|
-| vtkMRMLLayerDMPipelineI                  | Interface for display pipelines. Handles interaction, rendering, camera, and observer logic. |
+| vtkMRMLLayerDMPipeline                  | Interface for display pipelines. Handles interaction, rendering, camera, and observer logic. |
 | vtkMRMLLayerDisplayableManager           | Main displayable manager. Initializes pipeline manager and delegates scene updates.          |
 | vtkMRMLLayerDMCameraSynchronizer         | Synchronizes default camera with renderer or slice node state.                               |
 | vtkMRMLLayerDMLayerManager               | Manages renderer layers based on pipeline layer/camera pairs.                                |
-| vtkMRMLLayerDMPipelineCreatorI           | Interface for pipeline creation. Supports custom instantiation logic.                        |
+| vtkMRMLLayerDMPipelineCreator           | Interface for pipeline creation. Supports custom instantiation logic.                        |
 | vtkMRMLLayerDMPipelineCallbackCreator    | Callback-based implementation of pipeline creator.                                           |
 | vtkMRMLLayerDMPipelineScriptedCreator    | Python lambda-based pipeline creator.                                                        |
 | vtkMRMLLayerDMPipelineFactory            | Singleton factory for pipeline instantiation and registration.                               |

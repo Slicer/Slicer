@@ -2,23 +2,23 @@
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkPython.h>
 
 class vtkSmartPyObject;
 
-/// \brief Python bridge for vtkMRMLLayerDMPipelineI.
+/// \brief Python bridge for vtkMRMLLayerDMPipeline.
 /// Delegates calls to the pipeline to its underlying python object.
 ///
-/// \sa vtkMRMLLayerDMPipelineI
+/// \sa vtkMRMLLayerDMPipeline
 /// \sa vtkMRMLLayerDMScriptedPipeline
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMScriptedPipelineBridge : public vtkMRMLLayerDMPipelineI
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMScriptedPipelineBridge : public vtkMRMLLayerDMPipeline
 {
 public:
   static vtkMRMLLayerDMScriptedPipelineBridge* New();
-  vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipelineI);
+  vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipeline);
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   vtkCamera* GetCustomCamera(unsigned int renderOrder) const override;
