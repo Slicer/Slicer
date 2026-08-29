@@ -17,7 +17,7 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMScriptedPipelineBridge);
 
-void vtkMRMLLayerDMScriptedPipelineBridge::UpdatePipeline()
+void vtkMRMLLayerDMScriptedPipelineBridge::UpdateFromMRML()
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {

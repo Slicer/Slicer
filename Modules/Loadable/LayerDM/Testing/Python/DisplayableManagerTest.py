@@ -126,18 +126,18 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
 
     def test_pipelines_update_display_is_called_at_init(self):
         slicer.mrmlScene.AddNode(self.node)
-        self.pipeline.mockUpdatePipeline.assert_called_once()
+        self.pipeline.mockUpdateFromMRML.assert_called_once()
 
-    def test_pipelines_update_display_is_called_at_reset(self):
+    def test_pipelines_update_from_mrml_is_called_at_update_display(self):
         slicer.mrmlScene.AddNode(self.node)
-        self.pipeline.mockUpdatePipeline.reset_mock()
+        self.pipeline.mockUpdateFromMRML.reset_mock()
 
-        self.pipeline.ResetDisplay()
-        self.pipeline.mockUpdatePipeline.assert_called_once()
+        self.pipeline.UpdateDisplay()
+        self.pipeline.mockUpdateFromMRML.assert_called_once()
 
     def test_pipeline_exceptions_are_propagated_to_python(self):
         _error_msg = "Something went wrong in Python"
-        self.pipeline.mockUpdatePipeline.side_effect = RuntimeError(_error_msg)
+        self.pipeline.mockUpdateFromMRML.side_effect = RuntimeError(_error_msg)
 
         with self.assertRaises(RuntimeError) as context:
             slicer.mrmlScene.AddNode(self.node)

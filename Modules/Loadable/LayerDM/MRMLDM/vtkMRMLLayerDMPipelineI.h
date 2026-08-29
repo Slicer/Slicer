@@ -22,7 +22,7 @@ class vtkRenderer;
 /// \brief Interface for the layered displayable manager pipelines.
 ///
 /// Contains empty implementation and default behavior for the different API calls.
-/// Implementation can be limited to \sa UpdatePipeline and reactivity on node changes for pure
+/// Implementation can be limited to \sa UpdateFromMRML and reactivity on node changes for pure
 /// display pipelines.
 ///
 /// Widget pipelines should also implement the \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent
@@ -135,12 +135,12 @@ public:
   /// \param viewNode: The instance of viewNode the pipeline is attached to
   virtual void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
-  /// Triggered on \sa ResetDisplay calls
+  /// Triggered on \sa UpdateDisplay calls
   /// default behavior: does nothing.
-  virtual void UpdatePipeline();
+  virtual void UpdateFromMRML();
 
-  /// If \param isBlocked is true, \sa UpdatePipeline is not called during \sa ResetDisplay.
-  bool BlockResetDisplay(bool isBlocked);
+  /// If \param isBlocked is true, \sa UpdateFromMRML is not called during \sa UpdateDisplay.
+  bool BlockUpdateDisplay(bool isBlocked);
 
   /// @{
   /// If \param isBlocked is true, blocks \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent to be called.
@@ -156,11 +156,11 @@ public:
   /// @}
 
   /// @{
-  /// If \param isFrozen is true, blocks all reactiveness from the pipeline (ResetDisplay, Interaction and Update).
+  /// If \param isFrozen is true, blocks all reactiveness from the pipeline (UpdateDisplay, Interaction and Update).
   /// Reactiveness cannot be toggled back on unless the pipeline is unfrozen first.
   /// Used to deactivate pipelines during removal.
   ///
-  /// \sa BlockResetDisplay \sa BlockInteractionProcessing \sa BlockUpdateObserver
+  /// \sa BlockUpdateDisplay \sa BlockInteractionProcessing \sa BlockUpdateObserver
   void SetFrozen(bool isFrozen);
   bool IsFrozen() const;
   /// @}
@@ -218,13 +218,13 @@ public:
   /// Request rendering and camera clipping reset.
   /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
   ///
-  /// \sa ResetDisplay
+  /// \sa UpdateDisplay
   void RequestRender() const;
 
-  /// Resets the pipeline display and request a new render \sa RequestRender.
-  /// Delegates actual work to \sa UpdatePipeline.
+  /// Updates the pipeline display and requests a new render \sa RequestRender.
+  /// Delegates actual work to \sa UpdateFromMRML.
   /// Called the first time after pipeline initialization.
-  void ResetDisplay();
+  void UpdateDisplay();
 
   /// Set the new renderers.
   /// Triggers \sa OnRendererAdded and \sa OnRendererRemoved.
@@ -252,7 +252,7 @@ private:
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
   vtkWeakPointer<vtkMRMLNode> m_displayNode;
   std::map<unsigned int, vtkWeakPointer<vtkRenderer>> m_renderersMap;
-  bool m_isResetDisplayBlocked;
+  bool m_isUpdateDisplayBlocked;
   bool m_isFrozen;
   bool m_isInteractionProcessingBlocked;
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;

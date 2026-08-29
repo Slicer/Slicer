@@ -38,7 +38,7 @@ public:
   void SetScene(vtkMRMLScene* scene) override;
   void SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager) override;
   void SetPythonObject(PyObject* object);
-  void UpdatePipeline() override;
+  void UpdateFromMRML() override;
   static PyObject* CastCallData(PyObject* object, int vtkType);
 
 protected:

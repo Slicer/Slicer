@@ -12,7 +12,7 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineI);
 
-void vtkMRMLLayerDMPipelineI::UpdatePipeline() {}
+void vtkMRMLLayerDMPipelineI::UpdateFromMRML() {}
 
 void vtkMRMLLayerDMPipelineI::OnRendererRemoved(vtkRenderer* renderer) {}
 
@@ -24,18 +24,18 @@ void vtkMRMLLayerDMPipelineI::SetDisplayNode(vtkMRMLNode* displayNode)
   this->m_displayNode = displayNode;
 }
 
-void vtkMRMLLayerDMPipelineI::ResetDisplay()
+void vtkMRMLLayerDMPipelineI::UpdateDisplay()
 {
-  if (this->m_isResetDisplayBlocked || !this->m_viewNode)
+  if (this->m_isUpdateDisplayBlocked || !this->m_viewNode)
   {
     return;
   }
 
-  // Make sure to avoid looping reset display during processing
-  this->BlockResetDisplay(true);
-  this->UpdatePipeline();
+  // Make sure to avoid looping display update during processing
+  this->BlockUpdateDisplay(true);
+  this->UpdateFromMRML();
   this->RequestRender();
-  this->BlockResetDisplay(false);
+  this->BlockUpdateDisplay(false);
 }
 
 void vtkMRMLLayerDMPipelineI::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
@@ -44,15 +44,15 @@ void vtkMRMLLayerDMPipelineI::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
   this->m_viewNode = viewNode;
 }
 
-bool vtkMRMLLayerDMPipelineI::BlockResetDisplay(bool isBlocked)
+bool vtkMRMLLayerDMPipelineI::BlockUpdateDisplay(bool isBlocked)
 {
   if (this->m_isFrozen)
   {
     return true;
   }
 
-  bool prev = this->m_isResetDisplayBlocked;
-  this->m_isResetDisplayBlocked = isBlocked;
+  bool prev = this->m_isUpdateDisplayBlocked;
+  this->m_isUpdateDisplayBlocked = isBlocked;
   return prev;
 }
 
@@ -208,7 +208,7 @@ void vtkMRMLLayerDMPipelineI::SetRenderers(const std::vector<vtkRenderer*>& rend
     this->m_renderersMap[renderOrders[i]] = renderers[i];
     this->OnRendererAdded(renderers[i]);
   }
-  this->ResetDisplay();
+  this->UpdateDisplay();
 }
 
 bool vtkMRMLLayerDMPipelineI::RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders)
@@ -286,7 +286,7 @@ void vtkMRMLLayerDMPipelineI::SetFrozen(bool isFrozen)
   // Unfreeze to update all before saving the frozen state.
   this->m_isFrozen = false;
   this->BlockInteractionProcessing(isFrozen);
-  this->BlockResetDisplay(isFrozen);
+  this->BlockUpdateDisplay(isFrozen);
   this->BlockUpdateObserver(isFrozen);
   this->m_isFrozen = isFrozen;
 }
@@ -349,7 +349,7 @@ vtkMRMLLayerDMPipelineI::vtkMRMLLayerDMPipelineI()
   : m_viewNode{ nullptr }
   , m_displayNode{ nullptr }
   , m_renderersMap{}
-  , m_isResetDisplayBlocked{ false }
+  , m_isUpdateDisplayBlocked{ false }
   , m_isFrozen{ false }
   , m_isInteractionProcessingBlocked{ false }
   , m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
