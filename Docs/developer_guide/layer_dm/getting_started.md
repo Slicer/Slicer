@@ -2,8 +2,8 @@
 
 To get started, developers need to implement the following classes / logic:
 
-* The Pipeline object responsible for adding actors and handling interaction events
-* The creation logic of the previous pipeline, often limited to checking the input view node and display node types
+* The [Pipeline object](#pipeline) responsible for adding actors and handling interaction events
+* The [creation logic of the pipeline](#registration-logic), often limited to checking the input view node and display node types
 
 ## Pipeline
 
@@ -17,7 +17,7 @@ Pipeline implementation can be split in two:
 
 For full examples, please check out the [examples section of the documentation](examples.md).
 
-## Displaying actors
+### Displaying actors
 
 Actors can be added / removed from the renderer through the `OnRendererAdded` and `OnRendererRemoved` methods:
 
@@ -52,7 +52,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         renderer.RemoveViewProp(self._myActor)
 ```
 
-## Refreshing the display
+### Updating actors
 
 By default, the display is refreshed when the pipeline is created. Afterwards, refreshing its display should be
 connected to the object events and the `UpdateDisplay` method should be called.
@@ -89,7 +89,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.UpdateDisplay()
 ```
 
-## Rendering on top of other actors
+### Rendering on top of other actors
 
 Pipelines can define their rendering order through the `GetRenderOrder` or `GetRenderOrders` method(s).
 
@@ -113,7 +113,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         return 42
 ```
 
-## Monitoring node changes
+### Monitoring node changes
 
 Most pipelines will react to node changes to update their display. The pipeline API automatically monitors the view node
 and the display node modified events (i.e., the node which triggered the pipeline's creation).
@@ -131,10 +131,25 @@ To observe other object events, the `UpdateObserver` can be used.
   Update observer with single event.
 * `void RemoveObserver(vtkObject* prevObj) const`: Remove all observed events.
 
-```{warning}
-UpdateObserver doesn't mutate the prevObj (for Python wrapping compatibility reasons). The object's value should be
-updated manually after this update call.
+````{warning}
+`UpdateObserver` cannot update the variable passed as `prevObj` to point to the newly observed object (passing
+pointers by reference is not supported by the VTK Python wrapping). After the call, the variable passed as `prevObj`
+should be updated manually to the new object, so that the next `UpdateObserver` call removes the observers from the
+correct object:
+
+```python
+self.UpdateObserver(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
+self._modelTransform = transformNode
 ```
+
+```cpp
+this->UpdateObserver(this->ModelTransform, transformNode, vtkMRMLTransformNode::TransformModifiedEvent);
+this->ModelTransform = transformNode;
+```
+
+If the variable is not updated, the next `UpdateObserver` call is passed a stale `prevObj`: the observers added on the
+current object are never removed, leading to leaked observers and duplicate `OnUpdate` callbacks.
+````
 
 The `SetDisplayNode` and `SetViewNode` should be overridden to observe other events aside for the default modified
 event.
@@ -195,14 +210,14 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         self._modelTransform = transformNode
 ```
 
-## Monitoring camera changes
+### Monitoring camera changes
 
 The main camera is observed by default and will trigger the `OnDefaultCameraModified` method call. This method has no
 implementation by default but can be used to update the display if needed.
 
 * `virtual void OnDefaultCameraModified(vtkCamera* camera)`: React to default camera changes.
 
-## Defining a custom camera
+### Defining a custom camera
 
 If another camera should be used and not the default camera, then the `GetCustomCamera` method can be used to return the
 camera instance the pipeline should be used.
@@ -211,7 +226,7 @@ camera instance the pipeline should be used.
 
 Pipelines sharing the same camera instance and the same render order will be set to the same renderer.~~~~
 
-## Processing interactions
+### Processing interactions
 
 Interaction processing is completely delegated to the pipelines thanks to the following methods:
 
@@ -354,7 +369,7 @@ void vtkMRMLCPRPipelineCreatorLogic::RegisterPipelines()
 }
 ```
 
-## Sharing logic objects between pipelines
+### Sharing logic objects between pipelines
 
 When pipelines are created, one pipeline instance is created per view as per the displayable manager architecture. If
 pipelines need to share common logic instances, this instance can easily be set at creation using the pipeline creator.
@@ -412,26 +427,53 @@ The easiest way to register a TL node is using the LayerDM logic class.
 The logic class can register singleton TL nodes which will not be saved by the scene to provide the default expected TL
 behavior.
 
+The TL node is attached to each display node as a node reference. The recommended pattern is to let the pipeline attach
+the shared TL node singleton to its display node at initialization, unless the display node already has one (so that a
+per-node customization is never overwritten):
+
 ```python
 import slicer
 from slicer import vtkSlicerLayerDMLogic
 
 
-def configureTLNode(node):
-    """Configuration logic"""
+def configureTLNode(tl_node):
+    """Define the default event translations of the TL node (see the available translation methods below)."""
+    tl_node.SetTranslation(
+        vtkMRMLAbstractWidget.WidgetStateAny,
+        vtkCommand.LeftButtonReleaseEvent,
+        vtkMRMLAbstractWidget.WidgetEventUser,
+    )
 
 
-# The following code creates an configures a default translation node
-tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-if tl_node is None:
-    tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-    configureTLNode(tl_node)
+class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
+    def SetDisplayNode(self, displayNode):
+        super().SetDisplayNode(displayNode)
+        self._createDefaultEventTranslation(displayNode)
 
-# After creation, the node can be attached to a given display node
-vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(node, tl_node)
+    @staticmethod
+    def _createDefaultEventTranslation(displayNode):
+        """Attach the shared TL node singleton to the display node, unless it already has a TL node attached."""
+        if displayNode is None or vtkSlicerLayerDMLogic.GetWidgetEventTranslationNode(displayNode) is not None:
+            return
 
-# The TL node can then be retrieved from the display node
-tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationNode(node)
+        # Get or lazily create and configure the TL node singleton shared by every pipeline instance
+        tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+        if tl_node is None:
+            tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+            configureTLNode(tl_node)
+
+        vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(displayNode, tl_node)
+```
+
+With this pattern, every display node automatically gets the shared TL node when its pipeline is created. To customize
+the interactions of one specific display node, attach a different TL node to it with `SetWidgetEventTranslationNode`
+before the pipeline is created (or at any time afterwards): the pipeline will leave the existing reference untouched.
+The TL node attached to a display node can be retrieved with `GetWidgetEventTranslationNode(displayNode)`.
+
+```{note}
+In C++, the `vtkSlicerLayerDMLogic::CreateDefaultEventTranslation(displayNode, singletonId, configureF)` helper
+performs the attach-if-missing and get-or-create steps above in a single call. It is not available in Python because
+its configure callback parameter (`std::function`) cannot be wrapped.
 ```
 
 The TL node provides the following event translation methods:
