@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 import slicer
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
-    vtkMRMLLayerDMPipelineI,
+    vtkMRMLLayerDMPipeline,
     vtkMRMLLayerDMPipelineScriptedCreator,
-    vtkMRMLLayerDMPipelineCreatorI,
+    vtkMRMLLayerDMPipelineCreator,
     vtkMRMLViewNode,
     vtkMRMLCameraNode,
 )
@@ -19,10 +19,10 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
         self.factory = vtkMRMLLayerDMPipelineFactory()
 
     def test_is_compatible_with_scripted_dm_creator(self):
-        instance = vtkMRMLLayerDMPipelineI()
+        instance = vtkMRMLLayerDMPipeline()
         creator = vtkMRMLLayerDMPipelineScriptedCreator()
         creator.SetPythonCallback(lambda *_: instance)
-        assert isinstance(creator, vtkMRMLLayerDMPipelineCreatorI)
+        assert isinstance(creator, vtkMRMLLayerDMPipelineCreator)
 
         self.factory.AddPipelineCreator(creator)
         assert self.factory.ContainsPipelineCreator(creator)
@@ -34,12 +34,12 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
         assert vtkMRMLLayerDMPipelineFactory.GetInstance() == vtkMRMLLayerDMPipelineFactory.GetInstance()
 
     def test_can_remove_creator_by_ref(self):
-        c1 = vtkMRMLLayerDMPipelineCreatorI()
+        c1 = vtkMRMLLayerDMPipelineCreator()
 
         self.factory.AddPipelineCreator(c1)
         assert self.factory.ContainsPipelineCreator(c1)
 
-        c2 = vtkMRMLLayerDMPipelineCreatorI()
+        c2 = vtkMRMLLayerDMPipelineCreator()
         assert not self.factory.ContainsPipelineCreator(c2)
         self.factory.AddPipelineCreator(c2)
         assert self.factory.ContainsPipelineCreator(c2)
@@ -48,7 +48,7 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
         assert not self.factory.ContainsPipelineCreator(c1)
 
     def test_invokes_modified_event_on_add_remove_creator(self):
-        creator = vtkMRMLLayerDMPipelineCreatorI()
+        creator = vtkMRMLLayerDMPipelineCreator()
         mock = MagicMock()
         self.factory.AddObserver(vtkCommand.ModifiedEvent, mock)
 
@@ -81,7 +81,7 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
             mock.assert_called_once_with(viewNode, node)
             mock.reset_mock()
 
-        instance = vtkMRMLLayerDMPipelineI()
+        instance = vtkMRMLLayerDMPipeline()
         mocks[0].return_value = instance
 
         assert self.factory.CreatePipeline(viewNode, node) == instance
@@ -95,7 +95,7 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
         mock = MagicMock()
         self.factory.AddObserver(self.factory.PipelineAboutToBeCreatedEvent, on_about_to_be_created)
 
-        instance = vtkMRMLLayerDMPipelineI()
+        instance = vtkMRMLLayerDMPipeline()
         creator = vtkMRMLLayerDMPipelineScriptedCreator()
         creator.SetPythonCallback(lambda *_: instance)
 
@@ -108,8 +108,8 @@ class PipelineFactoryTest(ScriptedLoadableModuleTest):
         mock.assert_called_once_with(viewNode, node, instance)
 
     def test_creators_handle_creation_by_priority(self):
-        i1 = vtkMRMLLayerDMPipelineI()
-        i2 = vtkMRMLLayerDMPipelineI()
+        i1 = vtkMRMLLayerDMPipeline()
+        i2 = vtkMRMLLayerDMPipeline()
 
         c1 = vtkMRMLLayerDMPipelineScriptedCreator()
         c1.SetPythonCallback(lambda *_: i1)

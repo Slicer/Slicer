@@ -1,7 +1,7 @@
 #pragma once
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -12,7 +12,7 @@ namespace layer_dm
 /// Supports variadic calls with triplets <TView, TNode, TPipeline, TNode2, TPipeline2 ...>
 /// \sa TryCreate
 template <typename TExpView, typename TExpNode, typename TPipeline, typename... Rest>
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> TryCreateForView(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
+vtkSmartPointer<vtkMRMLLayerDMPipeline> TryCreateForView(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
 {
   if (TExpView::SafeDownCast(viewNode) && TExpNode::SafeDownCast(node))
   {
@@ -32,7 +32,7 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineI> TryCreateForView(vtkMRMLAbstractViewNod
 /// Supports variadic calls with triplets <TView, TNode, TPipeline, TView2, TNode2, TPipeline2 ...>
 /// \sa TryCreateForView
 template <typename TExpView, typename TExpNode, typename TPipeline, typename... Rest>
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> TryCreate(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
+vtkSmartPointer<vtkMRMLLayerDMPipeline> TryCreate(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
 {
   if (auto pipeline = TryCreateForView<TExpView, TExpNode, TPipeline>(viewNode, node))
   {

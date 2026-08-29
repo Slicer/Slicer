@@ -2,10 +2,10 @@ set(classes
   vtkMRMLLayerDMCameraSynchronizer
   vtkMRMLLayerDMInteractionLogic
   vtkMRMLLayerDMLayerManager
+  vtkMRMLLayerDMPipeline
   vtkMRMLLayerDMPipelineCallbackCreator
-  vtkMRMLLayerDMPipelineCreatorI
+  vtkMRMLLayerDMPipelineCreator
   vtkMRMLLayerDMPipelineFactory
-  vtkMRMLLayerDMPipelineI
   vtkMRMLLayerDMPipelineManager
   vtkMRMLLayerDisplayableManager
   vtkMRMLLayerDMPipelineScriptedCreator

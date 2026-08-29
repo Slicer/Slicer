@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import slicer
 from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
-from slicer import vtkMRMLLayerDMLayerManager, vtkMRMLLayerDMPipelineI
+from slicer import vtkMRMLLayerDMLayerManager, vtkMRMLLayerDMPipeline
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkActor, vtkCamera, vtkPolyDataMapper, vtkRenderWindow, vtkRenderer, vtkSphereSource
 
@@ -297,7 +297,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
         assert p2.GetRenderer(10000).GetLayer() == 3
 
         p2._renderOrders = [0, 1, 2]
-        p2.InvokeEvent(vtkMRMLLayerDMPipelineI.RenderGroupingModified)
+        p2.InvokeEvent(vtkMRMLLayerDMPipeline.RenderGroupingModified)
 
         assert p1.GetRenderer(1000).GetLayer() == 4
         assert p2.GetRenderer(2).GetLayer() == 2

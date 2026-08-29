@@ -7,7 +7,7 @@ To get started, developers need to implement the following classes / logic:
 
 ## Pipeline
 
-Pipeline objects derive from the vtkMRMLLayerDMPipelineI base class in C++ and the vtkMRMLLayerDMScriptedPipeline in
+Pipeline objects derive from the vtkMRMLLayerDMPipeline base class in C++ and the vtkMRMLLayerDMScriptedPipeline in
 python.
 
 Pipeline implementation can be split in two:
@@ -332,7 +332,7 @@ Example of registration for one view type with multiple display node / display p
 
 void vtkMRMLCPRPipelineCreatorLogic::RegisterPipelines()
 {
-  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> creator{ nullptr };
+  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> creator{ nullptr };
 
   if (!creator)
   {
@@ -380,7 +380,7 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
 ```
 
 ```cpp
-  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> creator{ nullptr };
+  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> creator{ nullptr };
 
   if (!creator)
   {

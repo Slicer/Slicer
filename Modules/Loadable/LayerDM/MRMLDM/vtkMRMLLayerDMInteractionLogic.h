@@ -10,7 +10,7 @@
 // STL includes
 #include <vector>
 
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLInteractionEventData;
 class vtkMRMLAbstractViewNode;
 
@@ -29,14 +29,14 @@ public:
   static vtkMRMLLayerDMInteractionLogic* New();
   vtkTypeMacro(vtkMRMLLayerDMInteractionLogic, vtkObject);
 
-  void AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline);
+  void AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline);
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> GetCanProcessPipelines() const;
-  vtkMRMLLayerDMPipelineI* GetLastFocusedPipeline() const;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> GetCanProcessPipelines() const;
+  vtkMRMLLayerDMPipeline* GetLastFocusedPipeline() const;
   void LoseFocus(vtkMRMLInteractionEventData* eventData);
   void LoseFocus();
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData);
-  void RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline);
+  void RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline);
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
 protected:
@@ -48,8 +48,8 @@ private:
   std::tuple<double, int> PrioritizeCanProcessPipelines(vtkMRMLInteractionEventData* eventData);
   void LosePreviousFocusInCannotProcess(vtkMRMLInteractionEventData* eventData);
 
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> m_pipelines;
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> m_prevFocusedPipeline;
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> m_canProcess;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_pipelines;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> m_prevFocusedPipeline;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_canProcess;
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
 };

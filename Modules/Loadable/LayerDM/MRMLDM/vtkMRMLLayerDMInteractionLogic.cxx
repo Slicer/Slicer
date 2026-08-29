@@ -1,7 +1,7 @@
 #include "vtkMRMLLayerDMInteractionLogic.h"
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // Slicer includes
 #include "vtkMRMLAbstractWidget.h"
@@ -12,7 +12,7 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMInteractionLogic);
 
-vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline() const
+vtkMRMLLayerDMPipeline* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline() const
 {
   return this->m_prevFocusedPipeline;
 }
@@ -51,7 +51,7 @@ void vtkMRMLLayerDMInteractionLogic::SetViewNode(vtkMRMLAbstractViewNode* viewNo
   this->m_viewNode = viewNode;
 }
 
-std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> vtkMRMLLayerDMInteractionLogic::GetCanProcessPipelines() const
+std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> vtkMRMLLayerDMInteractionLogic::GetCanProcessPipelines() const
 {
   return this->m_canProcess;
 }
@@ -59,7 +59,7 @@ std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> vtkMRMLLayerDMInteractionL
 std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipelines(vtkMRMLInteractionEventData* eventData)
 {
   // For each pipeline, if pipeline can process, store its state value, layer and distance to interaction
-  std::map<vtkMRMLLayerDMPipelineI*, std::tuple<int, unsigned int, double>> priority;
+  std::map<vtkMRMLLayerDMPipeline*, std::tuple<int, unsigned int, double>> priority;
   double minDistance = std::numeric_limits<double>::max();
   int maxState = this->MinWidgetState();
   for (const auto& pipeline : m_pipelines)
@@ -82,7 +82,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
   // Sort can process by layer order and inverted square distance (larger layer number first and closest to interaction)
   std::sort(this->m_canProcess.begin(),
             this->m_canProcess.end(),
-            [&priority](const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& b) { return priority[a] > priority[b]; });
+            [&priority](const vtkSmartPointer<vtkMRMLLayerDMPipeline>& a, const vtkSmartPointer<vtkMRMLLayerDMPipeline>& b) { return priority[a] > priority[b]; });
 
   return std::make_tuple(minDistance, maxState);
 }
@@ -96,7 +96,7 @@ void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInt
   }
 }
 
-void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline)
+void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
   if (std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline) != this->m_pipelines.end())
   {
@@ -105,7 +105,7 @@ void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLa
   this->m_pipelines.emplace_back(pipeline);
 }
 
-void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline)
+void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
   if (this->m_prevFocusedPipeline == pipeline)
   {

@@ -12,7 +12,7 @@
 class vtkCamera;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLInteractionEventData;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLLayerDMPipelineManager;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -29,11 +29,11 @@ class vtkRenderer;
 /// methods.
 ///
 /// A python main class is available from \sa vtkMRMLLayerDMScriptedPipeline.py
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipelineI : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipeline : public vtkObject
 {
 public:
-  static vtkMRMLLayerDMPipelineI* New();
-  vtkTypeMacro(vtkMRMLLayerDMPipelineI, vtkObject);
+  static vtkMRMLLayerDMPipeline* New();
+  vtkTypeMacro(vtkMRMLLayerDMPipeline, vtkObject);
 
   enum Events
   {
@@ -171,7 +171,7 @@ public:
   /// Returns the pipeline associated with the input node.
   /// Delegates to \sa vtkMRMLLayerDMPipelineManager::GetNodePipeline.
   /// nullptr if not found or pipelineManager instance is nullptr.
-  vtkMRMLLayerDMPipelineI* GetNodePipeline(vtkMRMLNode* node) const;
+  vtkMRMLLayerDMPipeline* GetNodePipeline(vtkMRMLNode* node) const;
 
   /// Returns the instance of pipeline manager which created the pipeline.
   vtkMRMLLayerDMPipelineManager* GetPipelineManager() const;
@@ -239,8 +239,8 @@ public:
   void SetRenderer(vtkRenderer* renderer);
 
 protected:
-  vtkMRMLLayerDMPipelineI();
-  ~vtkMRMLLayerDMPipelineI() override = default;
+  vtkMRMLLayerDMPipeline();
+  ~vtkMRMLLayerDMPipeline() override = default;
 
   /// Observer update callback.
   /// Triggered when any object & events observed using UpdateObserver is triggered.

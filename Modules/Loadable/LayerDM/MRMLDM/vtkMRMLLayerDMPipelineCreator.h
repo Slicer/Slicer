@@ -2,7 +2,7 @@
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -14,13 +14,13 @@ class vtkMRMLNode;
 ///
 /// \sa vtkMRMLLayerDMPipelineCallbackCreator
 /// \sa vtkMRMLLayerDMPipelineFactory::AddPipelineCreator
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipelineCreatorI : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipelineCreator : public vtkObject
 {
 public:
-  static vtkMRMLLayerDMPipelineCreatorI* New();
-  vtkTypeMacro(vtkMRMLLayerDMPipelineCreatorI, vtkObject);
+  static vtkMRMLLayerDMPipelineCreator* New();
+  vtkTypeMacro(vtkMRMLLayerDMPipelineCreator, vtkObject);
 
-  virtual vtkSmartPointer<vtkMRMLLayerDMPipelineI> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const;
+  virtual vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const;
 
   /// @{
   /// \brief Get/Set the priority of creation of the pipeline creator.
@@ -29,8 +29,8 @@ public:
   vtkSetMacro(Priority, int);
   /// @}
 protected:
-  vtkMRMLLayerDMPipelineCreatorI() = default;
-  ~vtkMRMLLayerDMPipelineCreatorI() override = default;
+  vtkMRMLLayerDMPipelineCreator() = default;
+  ~vtkMRMLLayerDMPipelineCreator() override = default;
 
 private:
   int Priority = 0;

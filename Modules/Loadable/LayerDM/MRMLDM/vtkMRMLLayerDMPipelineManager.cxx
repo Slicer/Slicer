@@ -7,7 +7,7 @@
 #include "vtkMRMLLayerDMNodeReferenceObserver.h"
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 #include "vtkMRMLLayerDMPipelineFactory.h"
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // Slicer includes
 #include "vtkMRMLAbstractViewNode.h"
@@ -24,7 +24,7 @@ vtkStandardNewMacro(vtkMRMLLayerDMPipelineManager);
 /// Helper struct to block display updates and update display once when deleting
 struct UpdatePipelineDisplayOnceGuard
 {
-  explicit UpdatePipelineDisplayOnceGuard(vtkSmartPointer<vtkMRMLLayerDMPipelineI> pipeline)
+  explicit UpdatePipelineDisplayOnceGuard(vtkSmartPointer<vtkMRMLLayerDMPipeline> pipeline)
     : m_pipeline{ std::move(pipeline) }
   {
     if (m_pipeline)
@@ -42,7 +42,7 @@ struct UpdatePipelineDisplayOnceGuard
     }
   }
 
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> m_pipeline;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> m_pipeline;
   bool m_wasBlocked{};
 };
 
@@ -283,7 +283,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
   this->m_eventObs->UpdateObserver(nullptr, this->m_cameraSync);
 }
 
-void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline) const
+void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline) const
 {
   if (!pipeline)
   {
@@ -294,7 +294,7 @@ void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRML
   pipeline->SetViewNode(this->m_viewNode);
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineManager::GetNodePipeline(vtkMRMLNode* node) const
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineManager::GetNodePipeline(vtkMRMLNode* node) const
 {
   const auto found = this->m_pipelineMap.find(node);
   if (found == std::end(this->m_pipelineMap))
@@ -309,7 +309,7 @@ int vtkMRMLLayerDMPipelineManager::GetNumberOfPipelines() const
   return this->m_pipelineMap.size();
 }
 
-vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipeline) const
+vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipeline) const
 {
   if (iPipeline < 0 || iPipeline >= this->m_pipelineMap.size())
   {

@@ -2,7 +2,7 @@
 
 // Layer DM includes
 #include "vtkMRMLLayerDMObjectEventObserver.h"
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkBoundingBox.h>
@@ -14,7 +14,7 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMLayerManager);
 
-bool vtkMRMLLayerDMLayerManager::AddPipelineLayers(vtkMRMLLayerDMPipelineI* pipeline)
+bool vtkMRMLLayerDMLayerManager::AddPipelineLayers(vtkMRMLLayerDMPipeline* pipeline)
 {
   if (!pipeline)
   {
@@ -33,14 +33,14 @@ bool vtkMRMLLayerDMLayerManager::AddPipelineLayers(vtkMRMLLayerDMPipelineI* pipe
   return true;
 }
 
-void vtkMRMLLayerDMLayerManager::AddPipeline(vtkMRMLLayerDMPipelineI* pipeline)
+void vtkMRMLLayerDMLayerManager::AddPipeline(vtkMRMLLayerDMPipeline* pipeline)
 {
   if (!pipeline)
   {
     return;
   }
 
-  this->m_obs->UpdateObserver(nullptr, pipeline, vtkMRMLLayerDMPipelineI::RenderGroupingModified);
+  this->m_obs->UpdateObserver(nullptr, pipeline, vtkMRMLLayerDMPipeline::RenderGroupingModified);
   this->AddPipelineLayers(pipeline);
   this->UpdateLayers();
 }
@@ -60,7 +60,7 @@ int vtkMRMLLayerDMLayerManager::GetNumberOfRenderers() const
   return static_cast<int>(this->m_renderers.size());
 }
 
-void vtkMRMLLayerDMLayerManager::RemovePipelineLayers(vtkMRMLLayerDMPipelineI* pipeline)
+void vtkMRMLLayerDMLayerManager::RemovePipelineLayers(vtkMRMLLayerDMPipeline* pipeline)
 {
   for (auto& [key, pipelines] : m_pipelineLayers)
   {
@@ -68,7 +68,7 @@ void vtkMRMLLayerDMLayerManager::RemovePipelineLayers(vtkMRMLLayerDMPipelineI* p
   }
 }
 
-void vtkMRMLLayerDMLayerManager::RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline)
+void vtkMRMLLayerDMLayerManager::RemovePipeline(vtkMRMLLayerDMPipeline* pipeline)
 {
   if (!pipeline)
   {
@@ -120,13 +120,13 @@ void vtkMRMLLayerDMLayerManager::SetDefaultCamera(const vtkSmartPointer<vtkCamer
 }
 
 vtkMRMLLayerDMLayerManager::vtkMRMLLayerDMLayerManager()
-  : m_emptyPipeline(vtkSmartPointer<vtkMRMLLayerDMPipelineI>::New())
+  : m_emptyPipeline(vtkSmartPointer<vtkMRMLLayerDMPipeline>::New())
   , m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
 {
   this->m_obs->SetUpdateCallback(
     [this](vtkObject* obj)
     {
-      if (auto pipeline = vtkMRMLLayerDMPipelineI::SafeDownCast(obj))
+      if (auto pipeline = vtkMRMLLayerDMPipeline::SafeDownCast(obj))
       {
         this->RemovePipelineLayers(pipeline);
         this->AddPipelineLayers(pipeline);
@@ -208,7 +208,7 @@ std::uintptr_t vtkMRMLLayerDMLayerManager::GetCameraId(vtkCamera* camera)
   return reinterpret_cast<std::uintptr_t>(camera);
 }
 
-vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipelineI>>& pipelines) const
+vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>& pipelines) const
 {
   if (const auto cameraId = std::get<1>(key); cameraId == 0)
   {
@@ -262,7 +262,7 @@ void vtkMRMLLayerDMLayerManager::RemoveAllPipelineRenderers()
   }
 }
 
-void vtkMRMLLayerDMLayerManager::RemovePipelineRenderer(vtkMRMLLayerDMPipelineI* pipeline)
+void vtkMRMLLayerDMLayerManager::RemovePipelineRenderer(vtkMRMLLayerDMPipeline* pipeline)
 {
   if (pipeline)
   {
@@ -322,8 +322,8 @@ void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::se
 
 void vtkMRMLLayerDMLayerManager::SynchronizePipelineRenderers()
 {
-  std::map<vtkMRMLLayerDMPipelineI*, std::vector<vtkRenderer*>> pipelineRenderers;
-  std::map<vtkMRMLLayerDMPipelineI*, std::vector<unsigned int>> pipelineOrders;
+  std::map<vtkMRMLLayerDMPipeline*, std::vector<vtkRenderer*>> pipelineRenderers;
+  std::map<vtkMRMLLayerDMPipeline*, std::vector<unsigned int>> pipelineOrders;
 
   for (const auto& [key, pipelines] : m_pipelineLayers)
   {

@@ -4,7 +4,7 @@ from slicer import (
     vtkMRMLAbstractViewNode,
     vtkMRMLAbstractWidget,
     vtkMRMLInteractionEventData,
-    vtkMRMLLayerDMPipelineI,
+    vtkMRMLLayerDMPipeline,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMScriptedPipelineBridge,
     vtkMRMLNode,
@@ -178,7 +178,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
         :param displayNode: The new instance of display node for the pipeline
         """
-        vtkMRMLLayerDMPipelineI.SetDisplayNode(self, displayNode)
+        vtkMRMLLayerDMPipeline.SetDisplayNode(self, displayNode)
 
     def SetPipelineManager(self, pipelineManager: vtkMRMLLayerDMPipelineManager) -> None:
         """
@@ -189,14 +189,14 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         See also: self.GetNodePipeline(node)
         :param pipelineManager: The instance of pipeline manager managing the current pipeline
         """
-        vtkMRMLLayerDMPipelineI.SetPipelineManager(self, pipelineManager)
+        vtkMRMLLayerDMPipeline.SetPipelineManager(self, pipelineManager)
 
     def SetScene(self, scene: vtkMRMLScene) -> None:
         """
         Set the pipeline scene (initialization).
         default behavior: Stores the scene for access (no active observer).
         """
-        vtkMRMLLayerDMPipelineI.SetScene(self, scene)
+        vtkMRMLLayerDMPipeline.SetScene(self, scene)
 
     def SetViewNode(self, viewNode: vtkMRMLAbstractViewNode) -> None:
         """
@@ -204,7 +204,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         default behavior: Stored and view node is observed for vtkCommand::ModifiedEvent.
         :param viewNode: The instance of viewNode the pipeline is attached to
         """
-        vtkMRMLLayerDMPipelineI.SetViewNode(self, viewNode)
+        vtkMRMLLayerDMPipeline.SetViewNode(self, viewNode)
 
     def UpdateFromMRML(self) -> None:
         """

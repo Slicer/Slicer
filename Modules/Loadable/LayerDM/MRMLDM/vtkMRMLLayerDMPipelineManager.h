@@ -20,9 +20,9 @@ class vtkMRMLLayerDMInteractionLogic;
 class vtkMRMLLayerDMLayerManager;
 class vtkMRMLLayerDMNodeReferenceObserver;
 class vtkMRMLLayerDMObjectEventObserver;
-class vtkMRMLLayerDMPipelineCreatorI;
+class vtkMRMLLayerDMPipelineCreator;
 class vtkMRMLLayerDMPipelineFactory;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkRenderWindow;
@@ -62,7 +62,7 @@ public:
   int GetMouseCursor() const;
 
   /// Returns the pipeline associated with the input display node if any.
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> GetNodePipeline(vtkMRMLNode* node) const;
 
   /// Returns the number of pipelines currently managed by the pipeline manager
   int GetNumberOfPipelines() const;
@@ -70,7 +70,7 @@ public:
   /// Returns the list of currently managed display nodes of the pipeline manager.
   ///
   /// \sa GetNodePipeline
-  vtkMRMLLayerDMPipelineI* GetNthPipeline(int iPipeline) const;
+  vtkMRMLLayerDMPipeline* GetNthPipeline(int iPipeline) const;
 
   /// @{
   /// Makes the latest pipeline lose focus
@@ -138,7 +138,7 @@ private:
   void OnDefaultCameraModified();
 
   /// Update the input pipeline and reset its display.
-  void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline) const;
+  void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline) const;
 
   /// Remove pipelines with nodes not present in the scene anymore.
   void RemoveOutdatedPipelines();
@@ -158,7 +158,7 @@ private:
   vtkWeakPointer<vtkMRMLScene> m_scene;
   vtkWeakPointer<vtkRenderWindow> m_renderWindow;
 
-  std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipelineI>> m_pipelineMap;
+  std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_pipelineMap;
   std::function<void()> m_requestRender;
 
   bool m_isRequestRenderBlocked{ false };

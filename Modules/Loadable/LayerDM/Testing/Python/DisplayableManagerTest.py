@@ -1,7 +1,7 @@
 import slicer
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
-    vtkMRMLLayerDMPipelineI,
+    vtkMRMLLayerDMPipeline,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLLayerDisplayableManager,
@@ -109,7 +109,7 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         def onSetScene(scene: vtkMRMLScene):
             assert self.pipeline.GetScene() != scene
             self.pipeline.UpdateObserver(self.pipeline.GetScene(), scene, vtkMRMLScene.NodeAddedEvent)
-            vtkMRMLLayerDMPipelineI.SetScene(self.pipeline, scene)
+            vtkMRMLLayerDMPipeline.SetScene(self.pipeline, scene)
 
         # Add observer on the scene when its added
         self.pipeline.mockSetScene.side_effect = onSetScene
