@@ -509,19 +509,38 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   double* displayRange = firstDisplayNode->GetScalarRange();
 
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
+  double sliderRange[2] = { 0.0, 0.0 };
   if (resetSliderRange)
   {
-    d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]), std::max(dataMax, displayRange[1]));
+    sliderRange[0] = std::min(dataMin, displayRange[0]);
+    sliderRange[1] = std::max(dataMax, displayRange[1]);
   }
   else
   {
     double currentRange[2] = { 0.0 };
     d->DisplayedScalarRangeWidget->range(currentRange);
-    d->DisplayedScalarRangeWidget->setRange(std::min(currentRange[0], displayRange[0]), std::max(currentRange[1], displayRange[1]));
+    sliderRange[0] = std::min(currentRange[0], displayRange[0]);
+    sliderRange[1] = std::max(currentRange[1], displayRange[1]);
   }
+  d->DisplayedScalarRangeWidget->setRange(sliderRange[0], sliderRange[1]);
   d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
-  d->DisplayedScalarRangeWidget->setDecimals(decimals);
-  d->DisplayedScalarRangeWidget->setSingleStep(precision);
+  // If the data range is empty (missing or constant active scalar array) then the default
+  // 1.0 step may be larger than the slider range, and the range widget would reject it
+  // (logging a warning on every update). Compute a valid step from the slider range instead.
+  double displayedPrecision = precision;
+  int displayedDecimals = decimals;
+  double sliderRangeWidth = sliderRange[1] - sliderRange[0];
+  if (sliderRangeWidth > 0.0 && displayedPrecision > sliderRangeWidth)
+  {
+    displayedPrecision = ctk::closestPowerOfTen(sliderRangeWidth / 100.0);
+    if (displayedPrecision <= 0.0)
+    {
+      displayedPrecision = sliderRangeWidth;
+    }
+    displayedDecimals = std::max(decimals, static_cast<int>(ctk::significantDecimals(displayedPrecision)));
+  }
+  d->DisplayedScalarRangeWidget->setDecimals(displayedDecimals);
+  d->DisplayedScalarRangeWidget->setSingleStep(displayedPrecision);
   d->DisplayedScalarRangeWidget->setEnabled(firstDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
