@@ -1,6 +1,6 @@
-# Getting started
+# How to implement a displayable manager with Layer DM module
 
-To get started, developers need to implement the following classes / logic:
+To implement a displayable manager with the Layer DM module, developers need to implement the following classes / logic:
 
 * The [Pipeline object](#pipeline) responsible for adding actors and handling interaction events
 * The [creation logic of the pipeline](#registration-logic), often limited to checking the input view node and display node types
@@ -291,6 +291,123 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.GetDisplayNode().SetAttribute("IsSelected", str(0))
 ```
 
+### Defining custom interaction event translation across pipelines
+
+For complex interactions, it is recommended to use
+either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/blob/main/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
+or [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
+
+The vtkMRMLLayerDMWidgetEventTranslationNode are compatible with scene exchange and can be used as an easy way to define
+and customize interactions for given pipelines.
+
+The easiest way to register a TL node is using the LayerDM logic class.
+The logic class can register singleton TL nodes which will not be saved by the scene to provide the default expected TL
+behavior.
+
+The TL node is attached to each display node as a node reference. The recommended pattern is to let the pipeline attach
+the shared TL node singleton to its display node at initialization, unless the display node already has one (so that a
+per-node customization is never overwritten):
+
+```python
+import slicer
+from slicer import vtkSlicerLayerDMLogic
+
+
+def configureTLNode(tl_node):
+    """Define the default event translations of the TL node (see the available translation methods below)."""
+    tl_node.SetTranslation(
+        vtkMRMLAbstractWidget.WidgetStateAny,
+        vtkCommand.LeftButtonReleaseEvent,
+        vtkMRMLAbstractWidget.WidgetEventUser,
+    )
+
+
+class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
+    def SetDisplayNode(self, displayNode):
+        super().SetDisplayNode(displayNode)
+        self._createDefaultEventTranslation(displayNode)
+
+    @staticmethod
+    def _createDefaultEventTranslation(displayNode):
+        """Attach the shared TL node singleton to the display node, unless it already has a TL node attached."""
+        if displayNode is None or vtkSlicerLayerDMLogic.GetWidgetEventTranslationNode(displayNode) is not None:
+            return
+
+        # Get or lazily create and configure the TL node singleton shared by every pipeline instance
+        tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+        if tl_node is None:
+            tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+            configureTLNode(tl_node)
+
+        vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(displayNode, tl_node)
+```
+
+With this pattern, every display node automatically gets the shared TL node when its pipeline is created. To customize
+the interactions of one specific display node, attach a different TL node to it with `SetWidgetEventTranslationNode`
+before the pipeline is created (or at any time afterwards): the pipeline will leave the existing reference untouched.
+The TL node attached to a display node can be retrieved with `GetWidgetEventTranslationNode(displayNode)`.
+
+```{note}
+In C++, the `vtkSlicerLayerDMLogic::CreateDefaultEventTranslation(displayNode, singletonId, configureF)` helper
+performs the attach-if-missing and get-or-create steps above in a single call. It is not available in Python because
+its configure callback parameter (`std::function`) cannot be wrapped.
+```
+
+The TL node provides the following event translation methods:
+
+```python
+# Click event translation
+tl_node.SetTranslation(
+    vtkMRMLAbstractWidget.WidgetStateAny,
+    vtkCommand.LeftButtonReleaseEvent,
+    vtkMRMLAbstractWidget.WidgetEventUser,
+)
+
+# Click drag event translation
+tl_node.SetTranslationClickAndDrag(
+    vtkMRMLAbstractWidget.WidgetStateOnWidget,
+    vtkCommand.LeftButtonPressEvent,
+    dragging_state,
+    start_event,
+    end_event,
+)
+
+# Keyboard events
+tl_node.SetTranslationKeyboard(
+    vtkMRMLAbstractWidget.WidgetStateIdle,
+    "Delete",
+    vtkMRMLAbstractWidget.WidgetEventReset,
+)
+```
+
+In the pipeline, during the can process and process interaction methods, the TL node can be used to translate the
+incoming event data.
+
+```{note}
+The pipelines don't have builtin widget state. The widget should be managed internally by the pipeline if needed.
+State values should reuse the vtkMRMLAbstractWidget enum for compatibility with the other displayable managers.
+```
+
+```python
+class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
+    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
+        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventNone:
+            return False, sys.float_info.max
+
+        # Compute representative distance to event
+        return True, my_distance
+
+    def ProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> bool:
+        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventTranslateStart:
+            self.widgetState = vtkMRMLAbstractWidget.WidgetStateTranslate
+            return self.StartTranslate(eventData)
+
+        # ...
+        return True
+```
+
 ## Registration logic
 
 To register our pipeline, we need two objects:
@@ -412,121 +529,4 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
         return pipeline;
       });
   }
-```
-
-## Defining custom event translation across pipelines
-
-For complex interactions, it is recommended to use
-either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/blob/main/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
-or [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
-
-The vtkMRMLLayerDMWidgetEventTranslationNode are compatible with scene exchange and can be used as an easy way to define
-and customize interactions for given pipelines.
-
-The easiest way to register a TL node is using the LayerDM logic class.
-The logic class can register singleton TL nodes which will not be saved by the scene to provide the default expected TL
-behavior.
-
-The TL node is attached to each display node as a node reference. The recommended pattern is to let the pipeline attach
-the shared TL node singleton to its display node at initialization, unless the display node already has one (so that a
-per-node customization is never overwritten):
-
-```python
-import slicer
-from slicer import vtkSlicerLayerDMLogic
-
-
-def configureTLNode(tl_node):
-    """Define the default event translations of the TL node (see the available translation methods below)."""
-    tl_node.SetTranslation(
-        vtkMRMLAbstractWidget.WidgetStateAny,
-        vtkCommand.LeftButtonReleaseEvent,
-        vtkMRMLAbstractWidget.WidgetEventUser,
-    )
-
-
-class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
-    def SetDisplayNode(self, displayNode):
-        super().SetDisplayNode(displayNode)
-        self._createDefaultEventTranslation(displayNode)
-
-    @staticmethod
-    def _createDefaultEventTranslation(displayNode):
-        """Attach the shared TL node singleton to the display node, unless it already has a TL node attached."""
-        if displayNode is None or vtkSlicerLayerDMLogic.GetWidgetEventTranslationNode(displayNode) is not None:
-            return
-
-        # Get or lazily create and configure the TL node singleton shared by every pipeline instance
-        tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-        if tl_node is None:
-            tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-            configureTLNode(tl_node)
-
-        vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(displayNode, tl_node)
-```
-
-With this pattern, every display node automatically gets the shared TL node when its pipeline is created. To customize
-the interactions of one specific display node, attach a different TL node to it with `SetWidgetEventTranslationNode`
-before the pipeline is created (or at any time afterwards): the pipeline will leave the existing reference untouched.
-The TL node attached to a display node can be retrieved with `GetWidgetEventTranslationNode(displayNode)`.
-
-```{note}
-In C++, the `vtkSlicerLayerDMLogic::CreateDefaultEventTranslation(displayNode, singletonId, configureF)` helper
-performs the attach-if-missing and get-or-create steps above in a single call. It is not available in Python because
-its configure callback parameter (`std::function`) cannot be wrapped.
-```
-
-The TL node provides the following event translation methods:
-
-```python
-# Click event translation
-tl_node.SetTranslation(
-    vtkMRMLAbstractWidget.WidgetStateAny,
-    vtkCommand.LeftButtonReleaseEvent,
-    vtkMRMLAbstractWidget.WidgetEventUser,
-)
-
-# Click drag event translation
-tl_node.SetTranslationClickAndDrag(
-    vtkMRMLAbstractWidget.WidgetStateOnWidget,
-    vtkCommand.LeftButtonPressEvent,
-    dragging_state,
-    start_event,
-    end_event,
-)
-
-# Keyboard events
-tl_node.SetTranslationKeyboard(
-    vtkMRMLAbstractWidget.WidgetStateIdle,
-    "Delete",
-    vtkMRMLAbstractWidget.WidgetEventReset,
-)
-```
-
-In the pipeline, during the can process and process interaction methods, the TL node can be used to translate the
-incoming event data.
-
-```{note}
-The pipelines don't have builtin widget state. The widget should be managed internally by the pipeline if needed.
-State values should reuse the vtkMRMLAbstractWidget enum for compatibility with the other displayable managers.
-```
-
-```python
-class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
-    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
-        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
-        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventNone:
-            return False, sys.float_info.max
-
-        # Compute representative distance to event
-        return True, my_distance
-
-    def ProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> bool:
-        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
-        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventTranslateStart:
-            self.widgetState = vtkMRMLAbstractWidget.WidgetStateTranslate
-            return self.StartTranslate(eventData)
-
-        # ...
-        return True
 ```

@@ -20,21 +20,21 @@ behavior, and the module takes care of:
   * Automatic handling of scene import, scene close, and view creation / destruction
 * Rendering infrastructure
   * [Renderer layer creation / removal](module_architecture.md#render-layer-handling), with
-    [explicit render ordering](getting_started.md#rendering-on-top-of-other-actors) to display content on top of
+    [explicit render ordering](implement_displayable_manager.md#rendering-on-top-of-other-actors) to display content on top of
     (or below) other actors
-  * [Camera synchronization](getting_started.md#monitoring-camera-changes) between renderer layers and slice / 3D views
-  * [Render requests driven by observed object events](getting_started.md#refreshing-the-display)
-* [Interaction handling](getting_started.md#processing-interactions)
+  * [Camera synchronization](implement_displayable_manager.md#monitoring-camera-changes) between renderer layers and slice / 3D views
+  * [Render requests driven by observed object events](implement_displayable_manager.md#updating-actors)
+* [Interaction handling](implement_displayable_manager.md#processing-interactions)
   * Interaction events are delivered directly to the pipeline, with focus handling and priorities between competing
     widgets [already arbitrated](module_architecture.md#interaction-handling)
   * Mouse and keyboard events can be mapped to widget actions using
-    [event translation nodes](getting_started.md#defining-custom-event-translation-across-pipelines), without writing
+    [event translation nodes](implement_displayable_manager.md#defining-custom-interaction-event-translation-across-pipelines), without writing
     custom event parsing code
 * Pipeline registration and implementation
-  * A pipeline is [registered with a single callback](getting_started.md#registration-logic) that decides, from the
+  * A pipeline is [registered with a single callback](implement_displayable_manager.md#registration-logic) that decides, from the
     view node and display node types, whether the pipeline applies
-  * [Pipelines](getting_started.md#pipeline) can be written in C++ or entirely in Python
-  * Convenience methods for [observing node and object events](getting_started.md#monitoring-node-changes), and access
+  * [Pipelines](implement_displayable_manager.md#pipeline) can be written in C++ or entirely in Python
+  * Convenience methods for [observing node and object events](implement_displayable_manager.md#monitoring-node-changes), and access
     to sibling pipelines for coordinated behaviors
 
 ## When to use it
@@ -64,4 +64,5 @@ Simpler alternatives remain appropriate for simpler needs:
 * Implementing a classic displayable manager from scratch in C++ is rarely necessary for new code; it remains relevant
   mainly when modifying Slicer's existing core displayable managers.
 
-To get started with writing your first pipeline, continue to the [getting started section](getting_started.md).
+To get started with writing your first pipeline, continue to the
+[How to implement a displayable manager with Layer DM module](implement_displayable_manager.md) section.

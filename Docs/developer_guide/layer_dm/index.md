@@ -10,7 +10,7 @@ architecture and behavior in the [Displayable Managers Overview](../displayable_
 :maxdepth: 2
 
 introduction
-getting_started
+implement_displayable_manager
 module_architecture
 examples
 ```
