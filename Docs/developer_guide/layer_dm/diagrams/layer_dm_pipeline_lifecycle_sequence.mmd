@@ -19,7 +19,7 @@ sequenceDiagram
     PipelineCreator ->> Pipeline: Create
     Pipeline ->> PipelineMan: Pipeline instance
     PipelineMan ->> Pipeline: Set View node / display node / renderer
-    PipelineMan ->> Pipeline: Reset Display
+    PipelineMan ->> Pipeline: Update Display
     PipelineMan ->> LayerDM: Request Render
     Note over User, Pipeline: --- Remove sequence ---
     User ->> Scene: Remove display node

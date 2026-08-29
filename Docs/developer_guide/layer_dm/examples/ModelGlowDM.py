@@ -261,8 +261,8 @@ class ModelGlowDMPipeline(_Pipeline):
         default behavior: does nothing.
 
         Here, we add our actor to the input renderer.
-        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggered and in turn its
-        UpdatePipeline method will be triggered.
+        If the pipeline renderer has changed, the pipeline's UpdateDisplay method will be triggered and in turn its
+        UpdateFromMRML method will be triggered.
 
         Since we don't control the actual renderer used by the pipeline, this should be used systematically.
         See also: self.GetRenderer()
@@ -278,8 +278,8 @@ class ModelGlowDMPipeline(_Pipeline):
         default behavior: does nothing.
 
         Here, we add our actor to the input renderer.
-        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggered and in turn its
-        UpdatePipeline method will be triggered.
+        If the pipeline renderer has changed, the pipeline's UpdateDisplay method will be triggered and in turn its
+        UpdateFromMRML method will be triggered.
 
         Since we don't control the actual renderer used by the pipeline, this should be used systematically.
         See also: self.GetRenderer()
@@ -296,9 +296,9 @@ class ModelGlowDMPipeline(_Pipeline):
         """
         return GlowDMPassPipeline.GetGlowPassRenderOrder()
 
-    def UpdatePipeline(self):
+    def UpdateFromMRML(self):
         """
-        Triggered by self.ResetDisplay() calls:
+        Triggered by self.UpdateDisplay() calls:
             - Called automatically at pipeline creation / add to the render window
             - Called automatically when switching renderer
         Override to update the representation of the pipeline in the different views.
@@ -331,7 +331,7 @@ class ModelGlowDMPipeline(_Pipeline):
         if obj == self._modelNode:
             self._ObserveModelTransformNode()
 
-        self.ResetDisplay()
+        self.UpdateDisplay()
 
     def SetDisplayNode(self, node):
         """

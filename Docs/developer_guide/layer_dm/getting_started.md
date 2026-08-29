@@ -55,15 +55,15 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
 ## Refreshing the display
 
 By default, the display is refreshed when the pipeline is created. Afterwards, refreshing its display should be
-connected to the object events and the `ResetDisplay` method should be called.
+connected to the object events and the `UpdateDisplay` method should be called.
 
-Calling this method will call the `UpdatePipeline` method and will request a render from the widget.
+Calling this method will call the `UpdateFromMRML` method and will request a render from the widget.
 
 ```python
 class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
-    def UpdatePipeline(self):
+    def UpdateFromMRML(self):
         """
-        Triggered by self.ResetDisplay() calls:
+        Triggered by self.UpdateDisplay() calls:
             - Called automatically at pipeline creation / add to the render window
             - Called automatically when switching renderer
         Override to update the representation of the pipeline in the different views.
@@ -85,8 +85,8 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         :param callData: Optional observer call data. Use self.CastCallData(callData, vtkType) to convert to Python
         """
 
-        # Calling reset display will trigger the UpdatePipeline method call
-        self.ResetDisplay()
+        # Calling UpdateDisplay will trigger the UpdateFromMRML method call
+        self.UpdateDisplay()
 ```
 
 ## Rendering on top of other actors
@@ -142,8 +142,8 @@ event.
 * `virtual void SetViewNode(vtkMRMLAbstractViewNode* viewNode)`: Called at initialization.
 * `virtual void SetDisplayNode(vtkMRMLNode* displayNode)`: Called at initialization.
 
-During the `OnUpdate` call if the display should be update, then the `ResetDisplay` method should be called. This method
-will trigger the `UpdatePipeline` method which can be overridden to update display properties and will also trigger a
+During the `OnUpdate` call if the display should be update, then the `UpdateDisplay` method should be called. This method
+will trigger the `UpdateFromMRML` method which can be overridden to update display properties and will also trigger a
 request render.
 
 ```python
@@ -178,7 +178,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         if obj == self._modelNode:
             self._ObserveModelTransformNode()
 
-        self.ResetDisplay()
+        self.UpdateDisplay()
 
     def _ObserveModelTransformNode(self):
         """

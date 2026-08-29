@@ -130,7 +130,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         Triggered when the pipeline is displayed on a new renderer.
         default behavior: does nothing.
         See also: self.GetRenderer()
-        See also: self.ResetDisplay()
+        See also: self.UpdateDisplay()
         See also: self.RequestRender()
 
         :param renderer: Optional instance or renderer on which the pipeline is added
@@ -206,9 +206,9 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         vtkMRMLLayerDMPipelineI.SetViewNode(self, viewNode)
 
-    def UpdatePipeline(self) -> None:
+    def UpdateFromMRML(self) -> None:
         """
-        Triggered by self.ResetDisplay() calls
+        Triggered by self.UpdateDisplay() calls
         Override to update the representation of the pipeline in the different views.
 
         See also: self.RequestRender()

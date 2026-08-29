@@ -21,24 +21,24 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineManager);
 
-/// Helper struct to block reset display and reset display once when deleting
-struct ResetPipelineDisplayOnceGuard
+/// Helper struct to block display updates and update display once when deleting
+struct UpdatePipelineDisplayOnceGuard
 {
-  explicit ResetPipelineDisplayOnceGuard(vtkSmartPointer<vtkMRMLLayerDMPipelineI> pipeline)
+  explicit UpdatePipelineDisplayOnceGuard(vtkSmartPointer<vtkMRMLLayerDMPipelineI> pipeline)
     : m_pipeline{ std::move(pipeline) }
   {
     if (m_pipeline)
     {
-      m_wasBlocked = m_pipeline->BlockResetDisplay(true);
+      m_wasBlocked = m_pipeline->BlockUpdateDisplay(true);
     }
   }
 
-  ~ResetPipelineDisplayOnceGuard()
+  ~UpdatePipelineDisplayOnceGuard()
   {
     if (m_pipeline)
     {
-      m_pipeline->BlockResetDisplay(m_wasBlocked);
-      m_pipeline->ResetDisplay();
+      m_pipeline->BlockUpdateDisplay(m_wasBlocked);
+      m_pipeline->UpdateDisplay();
     }
   }
 
@@ -80,7 +80,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   }
 
   RequestRenderOnceGuard renderGuard{ *this };
-  ResetPipelineDisplayOnceGuard resetPipelineGuard{ pipeline };
+  UpdatePipelineDisplayOnceGuard updatePipelineGuard{ pipeline };
   pipeline->SetViewNode(this->m_viewNode);
   pipeline->SetPipelineManager(this);
   pipeline->SetScene(this->m_scene);
@@ -290,7 +290,7 @@ void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRML
     return;
   }
 
-  ResetPipelineDisplayOnceGuard resetPipelineGuard{ pipeline };
+  UpdatePipelineDisplayOnceGuard updatePipelineGuard{ pipeline };
   pipeline->SetViewNode(this->m_viewNode);
 }
 
