@@ -1,11 +1,9 @@
-# Displayable Manager architecture reminder(s)
+# Displayable Managers Overview
 
-The library is integrated in the displayable manager system. To properly understand its behavior and connection
-to the existing architecture, a summary of the displayable manager architecture and behavior is done in this section.
+Displayable managers are responsible for displaying MRML nodes in the 3D Slicer views and for handling user
+interactions with them. This section summarizes the displayable manager architecture and behavior.
 
-Developers already familiar with this system can skip to the next documentation section.
-
-Additional information can be found in the [MRML Overview section](../mrml_overview.md#the-displayable-manager).
+Additional information can be found in the [MRML Overview section](mrml_overview.md#the-displayable-manager).
 
 ## Main components
 

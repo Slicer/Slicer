@@ -297,6 +297,14 @@ Minimize the number of actors used for better rendering performance.
 
 The data node, display node, widget, and widget representation are all needed pieces for data actually showing up on the screen. The displayable manager is the glue that brings all the pieces together. It monitors the MRML scene, and when data and display nodes are added or removed, it creates or destroys the corresponding widgets and widget representations.
 
+More information about the displayable manager architecture and behavior is available in the [Displayable Managers Overview](displayable_managers_overview.md).
+
+:::{note}
+
+For most new custom rendering or interaction behavior, implementing a displayable manager from scratch (as described below) is not necessary: the [Layer Displayable Manager (LayerDM) module](layer_dm/index.md) provides a displayable manager that is automatically registered in all default slice and 3D views. Developers only implement a *pipeline* class per display behavior - in C++ or entirely in Python - and the module takes care of pipeline lifecycle, renderer layers, camera synchronization, and interaction event dispatch.
+
+:::
+
 Files:
 
 ```

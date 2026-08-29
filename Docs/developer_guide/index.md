@@ -5,6 +5,7 @@
 
 api
 mrml_overview
+displayable_managers_overview
 module_overview
 parameter_nodes/index
 modules/index
