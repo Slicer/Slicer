@@ -1,8 +1,8 @@
 
 
 #
-# In case the extension is build using a multi-configuration system, the build
-# type will be know at build. For that reason, a script allowing to configure
+# In case the extension is built using a multi-configuration system, the build
+# type will be known at build. For that reason, a script allowing to configure
 # the "additional launcher settings" at build time will be generated.
 #
 
@@ -136,20 +136,20 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # ENVVARS
   #-----------------------------------------------------------------------------
 
-  set(EXTENSION_LAUNCHER_SETTINGS_ENVVARS)
+  set(EXTENSION_ENVVARS_BUILD)
 
   # External projects - environment variables
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
     set(value ${${varname}})
     list(TRANSFORM value REPLACE "<CMAKE_CFG_INTDIR>" "\${CMAKE_CFG_INTDIR}")
-    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${value})
+    list(APPEND EXTENSION_ENVVARS_BUILD ${value})
   endforeach()
 
   # Extension dependencies - environment variables
   foreach(dep ${EXTENSION_DEPENDS})
     set(paths ${${dep}_ENVVARS_LAUNCHER_BUILD})
     list(TRANSFORM paths REPLACE "\\$\\(Configuration\\)" "\${CMAKE_CFG_INTDIR}")
-    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${paths})
+    list(APPEND EXTENSION_ENVVARS_BUILD ${paths})
   endforeach()
 
   #-----------------------------------------------------------------------------
