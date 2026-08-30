@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMCameraSynchronizer_h
+#define __vtkMRMLLayerDMCameraSynchronizer_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -73,3 +74,5 @@ private:
   std::unique_ptr<CameraSynchronizeStrategy> SynchronizeStrategy;
   bool IsBlocked{ false };
 };
+
+#endif

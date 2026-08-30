@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDisplayableManager_h
+#define __vtkMRMLLayerDisplayableManager_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -96,3 +97,5 @@ protected:
 private:
   vtkSmartPointer<vtkMRMLLayerDMPipelineManager> PipelineManager;
 };
+
+#endif

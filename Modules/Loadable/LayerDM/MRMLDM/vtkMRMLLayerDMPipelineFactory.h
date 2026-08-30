@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineFactory_h
+#define __vtkMRMLLayerDMPipelineFactory_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -112,3 +113,5 @@ private:
   vtkWeakPointer<vtkMRMLLayerDMPipeline> LastPipeline;
   vtkWeakPointer<vtkMRMLLayerDMPipelineCreator> LastCreator;
 };
+
+#endif

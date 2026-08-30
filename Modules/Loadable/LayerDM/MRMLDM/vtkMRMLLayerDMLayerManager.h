@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMLayerManager_h
+#define __vtkMRMLLayerDMLayerManager_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -134,3 +135,5 @@ private:
   // Camera to renderer map
   std::map<vtkWeakPointer<vtkCamera>, std::set<vtkWeakPointer<vtkRenderer>>> CameraRendererMap;
 };
+
+#endif

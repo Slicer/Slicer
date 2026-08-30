@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkSlicerLayerDMModuleLogicExport_h
+#define __vtkSlicerLayerDMModuleLogicExport_h
 
 #include "vtkSlicerLayerDMModuleLogicModule.h"
+
+#endif

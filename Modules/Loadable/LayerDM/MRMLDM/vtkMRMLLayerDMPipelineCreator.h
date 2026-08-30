@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineCreator_h
+#define __vtkMRMLLayerDMPipelineCreator_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -52,3 +53,5 @@ protected:
 private:
   int Priority = 0;
 };
+
+#endif

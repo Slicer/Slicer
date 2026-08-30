@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMInteractionLogic_h
+#define __vtkMRMLLayerDMInteractionLogic_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -70,3 +71,5 @@ private:
   std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> CanProcessPipelines;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
 };
+
+#endif

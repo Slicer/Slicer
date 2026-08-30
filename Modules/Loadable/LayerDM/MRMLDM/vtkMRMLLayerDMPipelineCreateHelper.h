@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineCreateHelper_h
+#define __vtkMRMLLayerDMPipelineCreateHelper_h
 
 // Layer DM includes
 #include "vtkMRMLLayerDMPipeline.h"
@@ -62,3 +63,5 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> TryCreate(vtkMRMLAbstractViewNode* viewN
   return nullptr;
 }
 }; // namespace layer_dm
+
+#endif

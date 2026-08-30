@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineManager_h
+#define __vtkMRMLLayerDMPipelineManager_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -189,3 +190,5 @@ private:
 
   bool IsRequestRenderBlocked{ false };
 };
+
+#endif

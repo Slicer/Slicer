@@ -3,8 +3,8 @@
 /// The vtkSlicerLayerDMModuleMRMLDisplayableManagerModule captures some system differences between Unix
 /// and Windows operating systems, and enables auto init for the VTK module.
 
-#ifndef __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
-#define __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
+#ifndef __vtkSlicerLayerDMModuleMRMLDisplayableManagerModule_h
+#define __vtkSlicerLayerDMModuleMRMLDisplayableManagerModule_h
 
 #if defined(_WIN32) && !defined(MRMLLayerDM_STATIC)
 # if defined(vtkSlicerLayerDMModuleMRMLDisplayableManager_EXPORTS)

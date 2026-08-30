@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineCallbackCreator_h
+#define __vtkMRMLLayerDMPipelineCallbackCreator_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -45,3 +46,5 @@ protected:
 private:
   std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)> Callback;
 };
+
+#endif

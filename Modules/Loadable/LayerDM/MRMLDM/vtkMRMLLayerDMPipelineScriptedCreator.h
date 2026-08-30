@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPipelineScriptedCreator_h
+#define __vtkMRMLLayerDMPipelineScriptedCreator_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -41,3 +42,5 @@ protected:
 private:
   PyObject* Object;
 };
+
+#endif
