@@ -29,7 +29,7 @@ vtkStandardNewMacro(vtkSlicerLayerDMLogic);
 //-----------------------------------------------------------------------------
 void vtkSlicerLayerDMLogic::RegisterNodes()
 {
-  RegisterNodeIfNeeded<vtkMRMLLayerDMWidgetEventTranslationNode>(GetMRMLScene());
+  RegisterNodeIfNeeded<vtkMRMLLayerDMWidgetEventTranslationNode>(this->GetMRMLScene());
 }
 
 //-----------------------------------------------------------------------------
