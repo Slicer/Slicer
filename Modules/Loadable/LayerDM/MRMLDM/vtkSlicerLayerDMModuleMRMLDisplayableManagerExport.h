@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
+/// Provides the Slicer conventional export header name for this library.
+/// The Slicer core build generates its own equivalent in the build tree; this file is what
+/// supplies the name in the standalone build, where only the module header is generated.
 #ifndef __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
 #define __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
 
