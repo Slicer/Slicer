@@ -11,7 +11,8 @@ Additional information can be found in the [MRML Overview section](mrml_overview
 
 * Layout manager: Responsible for creating the application Qt layout based on an XML description.
 * (Qt) views: Views are based on the CTK abstract view and populate the layout manager
-* Displayable manager group: DM groups are set to the views and handle
+* Displayable manager group: DM groups are attached to the views and dispatch the view events and MRML scene
+  updates to the displayable managers they own
 * Displayable managers: A collection of displayable managers living in the DM group
 * (VTK) Render Window: VTK handles the low-level rendering. Interactions / actor creation / etc. are dispatched
   from / to Slicer by the displayable manager system.

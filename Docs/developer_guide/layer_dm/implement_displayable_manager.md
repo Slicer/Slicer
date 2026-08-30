@@ -174,7 +174,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         self._myActor.SetMapper(self._myMapper)
 
         # The two attributes below are used to connect observers on the modelNode and the modelTransform ModifiedEvent
-        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simply observers
+        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
         # See also: UpdateObserver
         self._modelNode = None
@@ -223,8 +223,13 @@ If another camera should be used and not the default camera, then the `GetCustom
 camera instance the pipeline should be used.
 
 * `virtual vtkCamera* GetCustomCamera() const`: Return custom camera or nullptr for default behavior.
+* `virtual vtkCamera* GetCustomCamera(unsigned int renderOrder) const`: Return the custom camera for one render
+  order. The default implementation returns the camera of the overload above for every render order.
 
-Pipelines sharing the same camera instance and the same render order will be set to the same renderer.~~~~
+In Python, only the render order overload is exposed, so scripted pipelines override
+`GetCustomCamera(self, renderOrder)`.
+
+Pipelines sharing the same camera instance and the same render order will be set to the same renderer.
 
 ### Processing interactions
 
@@ -313,9 +318,9 @@ import slicer
 from slicer import vtkSlicerLayerDMLogic
 
 
-def configureTLNode(tl_node):
+def configureTLNode(tlNode):
     """Define the default event translations of the TL node (see the available translation methods below)."""
-    tl_node.SetTranslation(
+    tlNode.SetTranslation(
         vtkMRMLAbstractWidget.WidgetStateAny,
         vtkCommand.LeftButtonReleaseEvent,
         vtkMRMLAbstractWidget.WidgetEventUser,
@@ -334,12 +339,12 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
             return
 
         # Get or lazily create and configure the TL node singleton shared by every pipeline instance
-        tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-        if tl_node is None:
-            tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
-            configureTLNode(tl_node)
+        tlNode = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+        if tlNode is None:
+            tlNode = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+            configureTLNode(tlNode)
 
-        vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(displayNode, tl_node)
+        vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(displayNode, tlNode)
 ```
 
 With this pattern, every display node automatically gets the shared TL node when its pipeline is created. To customize
@@ -357,14 +362,14 @@ The TL node provides the following event translation methods:
 
 ```python
 # Click event translation
-tl_node.SetTranslation(
+tlNode.SetTranslation(
     vtkMRMLAbstractWidget.WidgetStateAny,
     vtkCommand.LeftButtonReleaseEvent,
     vtkMRMLAbstractWidget.WidgetEventUser,
 )
 
 # Click drag event translation
-tl_node.SetTranslationClickAndDrag(
+tlNode.SetTranslationClickAndDrag(
     vtkMRMLAbstractWidget.WidgetStateOnWidget,
     vtkCommand.LeftButtonPressEvent,
     dragging_state,
@@ -373,7 +378,7 @@ tl_node.SetTranslationClickAndDrag(
 )
 
 # Keyboard events
-tl_node.SetTranslationKeyboard(
+tlNode.SetTranslationKeyboard(
     vtkMRMLAbstractWidget.WidgetStateIdle,
     "Delete",
     vtkMRMLAbstractWidget.WidgetEventReset,
@@ -391,7 +396,7 @@ State values should reuse the vtkMRMLAbstractWidget enum for compatibility with 
 ```python
 class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
     def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
-        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        widgetEvent = self.tlNode.Translate(self.widgetState, eventData)
         if widgetEvent == vtkMRMLAbstractWidget.WidgetEventNone:
             return False, sys.float_info.max
 
@@ -399,7 +404,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         return True, my_distance
 
     def ProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> bool:
-        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        widgetEvent = self.tlNode.Translate(self.widgetState, eventData)
         if widgetEvent == vtkMRMLAbstractWidget.WidgetEventTranslateStart:
             self.widgetState = vtkMRMLAbstractWidget.WidgetStateTranslate
             return self.StartTranslate(eventData)
@@ -413,7 +418,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
 To register our pipeline, we need two objects:
 
 * The pipeline creator: Responsible for creating the pipeline depending on input view node / display node pair
-* The pipeline factory singleton: Used by de display manager and responsible for storing pipeline creator instances
+* The pipeline factory singleton: Used by the display manager and responsible for storing pipeline creator instances
 
 The pipeline creator `SetCallback` method can be used to define the callback which should be called when a new node is
 added to the scene.
@@ -434,9 +439,9 @@ def tryCreate(viewNode, node):
     return MyPipeline()
 
 
-pipeline_creator = vtkMRMLLayerDMPipelineScriptedCreator()
-pipeline_creator.SetPythonCallback(tryCreate)
-vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
+pipelineCreator = vtkMRMLLayerDMPipelineScriptedCreator()
+pipelineCreator.SetPythonCallback(tryCreate)
+vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipelineCreator)
 ```
 
 ```{note}
@@ -494,7 +499,7 @@ pipelines need to share common logic instances, this instance can easily be set 
 The code snippet below shows an example of such logic in Python / C++:
 
 ```python
-my_logic = MyLogic()
+myLogic = MyLogic()
 
 
 def tryCreate(viewNode, node):
@@ -502,13 +507,13 @@ def tryCreate(viewNode, node):
         return None
 
     pipeline = MyPipeline()
-    pipeline.SetLogic(my_logic)
+    pipeline.SetLogic(myLogic)
     return pipeline
 
 
-pipeline_creator = vtkMRMLLayerDMPipelineScriptedCreator()
-pipeline_creator.SetPythonCallback(tryCreate)
-vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
+pipelineCreator = vtkMRMLLayerDMPipelineScriptedCreator()
+pipelineCreator.SetPythonCallback(tryCreate)
+vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipelineCreator)
 ```
 
 ```cpp

@@ -321,7 +321,7 @@ class ModelGlowDMPipeline(_Pipeline):
         self._glowActor.GetProperty().LightingOff()
 
         # The two attributes below are used to connect observers on the modelNode and the modelTransform ModifiedEvent
-        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simply observers
+        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
         # See also: UpdateObserver
         self._modelNode = None
@@ -508,7 +508,9 @@ class ModelGlowDMPipeline(_Pipeline):
 
     def _UpdateActorVisibility(self):
         """Convenience method to update the actor based on the model's visibility and the selection."""
-        isSelected = bool(self.GetDisplayNode() and int(self.GetDisplayNode().GetAttribute("IsSelected")))
+        # GetAttribute returns None when the attribute has never been set.
+        selectedAttribute = self.GetDisplayNode().GetAttribute("IsSelected") if self.GetDisplayNode() else None
+        isSelected = bool(int(selectedAttribute)) if selectedAttribute else False
         self._glowActor.SetVisibility(self._IsModelVisible() and isSelected)
 
     @classmethod
@@ -536,7 +538,7 @@ class ModelGlowDMPipeline(_Pipeline):
     def RemoveGlowNode(cls, modelNode: vtkMRMLModelNode, scene: vtkMRMLScene):
         """
         Convenience static method to remove a glow node set on a given modelNode.
-        See also: autoCreateRemoveGlowNode
+        See also: CreateGlowNode
 
         Note: This logic can be simplified if we attach our pipeline to the model node directly.
             We would then iterate over node references to check if we have our pipeline node.
