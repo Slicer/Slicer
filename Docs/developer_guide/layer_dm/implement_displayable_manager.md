@@ -525,7 +525,7 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
           return nullptr;
         }
 
-        pipeline->SetLogic(this->m_myLogic);
+        pipeline->SetLogic(this->MyLogic);
         return pipeline;
       });
   }

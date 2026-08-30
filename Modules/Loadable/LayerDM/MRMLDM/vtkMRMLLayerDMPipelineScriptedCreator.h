@@ -22,5 +22,5 @@ protected:
   ~vtkMRMLLayerDMPipelineScriptedCreator() override;
 
 private:
-  PyObject* m_object;
+  PyObject* Object;
 };

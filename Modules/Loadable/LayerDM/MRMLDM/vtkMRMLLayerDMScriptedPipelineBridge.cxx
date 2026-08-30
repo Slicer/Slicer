@@ -33,13 +33,13 @@ PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CastCallData(PyObject* object, i
 }
 
 vtkMRMLLayerDMScriptedPipelineBridge::vtkMRMLLayerDMScriptedPipelineBridge()
-  : m_object{ nullptr }
+  : Object{ nullptr }
 {
 }
 
 vtkMRMLLayerDMScriptedPipelineBridge::~vtkMRMLLayerDMScriptedPipelineBridge()
 {
-  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->m_object);
+  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
 bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
@@ -298,7 +298,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipe
 
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPythonObject(PyObject* object)
 {
-  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->m_object, object);
+  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }
 
 void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)
@@ -314,11 +314,11 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned lon
 
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
-  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName);
+  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->Object, pyArgs, fName);
 
   if (!result)
   {
-    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object) + ":";
     vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
     return nullptr;
   }

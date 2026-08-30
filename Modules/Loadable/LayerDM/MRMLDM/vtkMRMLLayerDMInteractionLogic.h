@@ -48,8 +48,8 @@ private:
   std::tuple<double, int> PrioritizeCanProcessPipelines(vtkMRMLInteractionEventData* eventData);
   void LosePreviousFocusInCannotProcess(vtkMRMLInteractionEventData* eventData);
 
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_pipelines;
-  vtkSmartPointer<vtkMRMLLayerDMPipeline> m_prevFocusedPipeline;
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_canProcess;
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> Pipelines;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> LastFocusedPipeline;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> CanProcessPipelines;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
 };

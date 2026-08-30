@@ -50,9 +50,9 @@ private:
   /// Reset the internal strategy given current view node.
   void UpdateStrategy();
 
-  vtkSmartPointer<vtkCamera> m_defaultCamera;
-  vtkWeakPointer<vtkRenderer> m_renderer;
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  std::unique_ptr<CameraSynchronizeStrategy> m_syncStrategy;
-  bool m_isBlocked{ false };
+  vtkSmartPointer<vtkCamera> DefaultCamera;
+  vtkWeakPointer<vtkRenderer> Renderer;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  std::unique_ptr<CameraSynchronizeStrategy> SynchronizeStrategy;
+  bool IsBlocked{ false };
 };

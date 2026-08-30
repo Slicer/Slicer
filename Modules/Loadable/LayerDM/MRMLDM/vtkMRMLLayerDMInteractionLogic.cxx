@@ -14,13 +14,13 @@ vtkStandardNewMacro(vtkMRMLLayerDMInteractionLogic);
 
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline() const
 {
-  return this->m_prevFocusedPipeline;
+  return this->LastFocusedPipeline;
 }
 
 vtkMRMLLayerDMInteractionLogic::vtkMRMLLayerDMInteractionLogic()
-  : m_prevFocusedPipeline{ nullptr }
-  , m_canProcess{}
-  , m_viewNode{ nullptr }
+  : LastFocusedPipeline{ nullptr }
+  , CanProcessPipelines{}
+  , ViewNode{ nullptr }
 {
 }
 
@@ -31,10 +31,10 @@ int vtkMRMLLayerDMInteractionLogic::MinWidgetState()
 
 void vtkMRMLLayerDMInteractionLogic::LoseFocus(vtkMRMLInteractionEventData* eventData)
 {
-  if (this->m_prevFocusedPipeline)
+  if (this->LastFocusedPipeline)
   {
-    this->m_prevFocusedPipeline->LoseFocus(eventData);
-    this->m_prevFocusedPipeline = nullptr;
+    this->LastFocusedPipeline->LoseFocus(eventData);
+    this->LastFocusedPipeline = nullptr;
   }
 }
 
@@ -42,18 +42,18 @@ void vtkMRMLLayerDMInteractionLogic::LoseFocus()
 {
   vtkNew<vtkMRMLInteractionEventData> leaveEvent;
   leaveEvent->SetType(vtkCommand::LeaveEvent);
-  leaveEvent->SetViewNode(this->m_viewNode);
+  leaveEvent->SetViewNode(this->ViewNode);
   this->LoseFocus(leaveEvent);
 }
 
 void vtkMRMLLayerDMInteractionLogic::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  this->m_viewNode = viewNode;
+  this->ViewNode = viewNode;
 }
 
 std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> vtkMRMLLayerDMInteractionLogic::GetCanProcessPipelines() const
 {
-  return this->m_canProcess;
+  return this->CanProcessPipelines;
 }
 
 std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipelines(vtkMRMLInteractionEventData* eventData)
@@ -62,7 +62,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
   std::map<vtkMRMLLayerDMPipeline*, std::tuple<int, unsigned int, double>> priority;
   double minDistance = std::numeric_limits<double>::max();
   int maxState = this->MinWidgetState();
-  for (const auto& pipeline : m_pipelines)
+  for (const auto& pipeline : this->Pipelines)
   {
     if (pipeline->IsInteractionProcessingBlocked())
     {
@@ -72,7 +72,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
     double pipelineDistance = std::numeric_limits<double>::max();
     if (pipeline->CanProcessInteractionEvent(eventData, pipelineDistance))
     {
-      this->m_canProcess.emplace_back(pipeline);
+      this->CanProcessPipelines.emplace_back(pipeline);
       int widgetState = std::max(this->MinWidgetState(), pipeline->GetWidgetState());
       minDistance = std::min(minDistance, pipelineDistance);
       maxState = std::max(widgetState, maxState);
@@ -80,8 +80,8 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
     }
   }
   // Sort can process by layer order and inverted square distance (larger layer number first and closest to interaction)
-  std::sort(this->m_canProcess.begin(),
-            this->m_canProcess.end(),
+  std::sort(this->CanProcessPipelines.begin(),
+            this->CanProcessPipelines.end(),
             [&priority](const vtkSmartPointer<vtkMRMLLayerDMPipeline>& a, const vtkSmartPointer<vtkMRMLLayerDMPipeline>& b) { return priority[a] > priority[b]; });
 
   return std::make_tuple(minDistance, maxState);
@@ -90,7 +90,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
 void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInteractionEventData* eventData)
 {
   // Lose focus if previous focused pipeline cannot process current interaction
-  if (std::find(this->m_canProcess.begin(), this->m_canProcess.end(), this->m_prevFocusedPipeline) == this->m_canProcess.end())
+  if (std::find(this->CanProcessPipelines.begin(), this->CanProcessPipelines.end(), this->LastFocusedPipeline) == this->CanProcessPipelines.end())
   {
     this->LoseFocus(eventData);
   }
@@ -98,26 +98,26 @@ void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInt
 
 void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
-  if (std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline) != this->m_pipelines.end())
+  if (std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline) != this->Pipelines.end())
   {
     return;
   }
-  this->m_pipelines.emplace_back(pipeline);
+  this->Pipelines.emplace_back(pipeline);
 }
 
 void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
-  if (this->m_prevFocusedPipeline == pipeline)
+  if (this->LastFocusedPipeline == pipeline)
   {
     this->LoseFocus();
   }
-  this->m_pipelines.erase(std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline));
+  this->Pipelines.erase(std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline));
 }
 
 bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   // Clear previous interaction list
-  this->m_canProcess.clear();
+  this->CanProcessPipelines.clear();
 
   // On leave event lose focus and early return to avoid bad pipeline state
   if (eventData->GetType() == vtkCommand::LeaveEvent)
@@ -135,12 +135,12 @@ bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkMRMLInteracti
   // Return lowest double value if any pipeline can process and is not idle
   // Otherwise, return the min distance returned by the processes.
   distance2 = maxState > this->MinWidgetState() ? std::numeric_limits<double>::lowest() : minDistance;
-  return !this->m_canProcess.empty();
+  return !this->CanProcessPipelines.empty();
 }
 
 bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  for (const auto& pipeline : m_canProcess)
+  for (const auto& pipeline : this->CanProcessPipelines)
   {
     if (pipeline->IsInteractionProcessingBlocked())
     {
@@ -150,11 +150,11 @@ bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionE
     // If pipeline can process, store pipeline for further interaction events
     if (pipeline->ProcessInteractionEvent(eventData))
     {
-      if (pipeline != this->m_prevFocusedPipeline)
+      if (pipeline != this->LastFocusedPipeline)
       {
         this->LoseFocus(eventData);
       }
-      this->m_prevFocusedPipeline = pipeline;
+      this->LastFocusedPipeline = pipeline;
       return true;
     }
   }

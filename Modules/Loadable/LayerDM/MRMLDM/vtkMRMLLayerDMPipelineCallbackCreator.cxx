@@ -11,13 +11,13 @@ vtkStandardNewMacro(vtkMRMLLayerDMPipelineCallbackCreator);
 
 vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineCallbackCreator::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const
 {
-  return this->m_callback(viewNode, node);
+  return this->Callback(viewNode, node);
 }
 
 void vtkMRMLLayerDMPipelineCallbackCreator::SetCallback(const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& callback)
 {
-  this->m_callback = callback;
+  this->Callback = callback;
 }
 
 vtkMRMLLayerDMPipelineCallbackCreator::vtkMRMLLayerDMPipelineCallbackCreator()
-  : m_callback([](vtkMRMLAbstractViewNode*, vtkMRMLNode*) { return nullptr; }) {};
+  : Callback([](vtkMRMLAbstractViewNode*, vtkMRMLNode*) { return nullptr; }) {};

@@ -249,13 +249,13 @@ protected:
 private:
   bool RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders);
 
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  vtkWeakPointer<vtkMRMLNode> m_displayNode;
-  std::map<unsigned int, vtkWeakPointer<vtkRenderer>> m_renderersMap;
-  bool m_isUpdateDisplayBlocked;
-  bool m_isFrozen;
-  bool m_isInteractionProcessingBlocked;
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
-  vtkWeakPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
-  vtkWeakPointer<vtkMRMLScene> m_scene;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLNode> DisplayNode;
+  std::map<unsigned int, vtkWeakPointer<vtkRenderer>> RenderersMap;
+  bool IsUpdateDisplayBlocked;
+  bool Frozen;
+  bool InteractionProcessingBlocked;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+  vtkWeakPointer<vtkMRMLLayerDMPipelineManager> PipelineManager;
+  vtkWeakPointer<vtkMRMLScene> Scene;
 };

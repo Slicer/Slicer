@@ -15,7 +15,7 @@
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineScriptedCreator);
 
 vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
-  : m_object(nullptr)
+  : Object(nullptr)
 {
   this->SetCallback(
     [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) -> vtkSmartPointer<vtkMRMLLayerDMPipeline>
@@ -27,10 +27,10 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
 
       vtkPythonScopeGilEnsurer gilEnsurer;
       PyObject* result = vtkMRMLLayerDMPythonUtil::CallPythonObject(
-        this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(viewNode), vtkMRMLLayerDMPythonUtil::ToPyObject(node) }));
+        this->Object, vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(viewNode), vtkMRMLLayerDMPythonUtil::ToPyObject(node) }));
       if (!result)
       {
-        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object) + ":";
         vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
         return nullptr;
       }
@@ -40,10 +40,10 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
 
 vtkMRMLLayerDMPipelineScriptedCreator::~vtkMRMLLayerDMPipelineScriptedCreator()
 {
-  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->m_object);
+  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
 void vtkMRMLLayerDMPipelineScriptedCreator::SetPythonCallback(PyObject* object)
 {
-  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->m_object, object);
+  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }

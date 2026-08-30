@@ -44,28 +44,28 @@ vtkStandardNewMacro(vtkMRMLLayerDMNodeReferenceObserver);
 
 void vtkMRMLLayerDMNodeReferenceObserver::SetReferenceModifiedCallBack(const CallBackT& modifiedCallback)
 {
-  m_onRefModified = modifiedCallback;
+  this->ReferenceModifiedCallback = modifiedCallback;
 }
 
 void vtkMRMLLayerDMNodeReferenceObserver::SetScene(vtkMRMLScene* scene)
 {
-  if (m_scene == scene)
+  if (this->Scene == scene)
   {
     return;
   }
 
-  this->m_obs->UpdateObserver(m_scene, scene, { vtkMRMLScene::NodeAddedEvent, vtkMRMLScene::NodeRemovedEvent });
-  this->m_scene = scene;
+  this->Observer->UpdateObserver(this->Scene, scene, { vtkMRMLScene::NodeAddedEvent, vtkMRMLScene::NodeRemovedEvent });
+  this->Scene = scene;
   this->UpdateFromScene();
 }
 
 vtkMRMLLayerDMNodeReferenceObserver::vtkMRMLLayerDMNodeReferenceObserver()
-  : m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
+  : Observer(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
 {
-  m_obs->SetUpdateCallback(
+  this->Observer->SetUpdateCallback(
     [this](vtkObject* obj, unsigned long eventId, void* callData)
     {
-      if (obj == this->m_scene)
+      if (obj == this->Scene)
       {
         switch (eventId)
         {
@@ -141,7 +141,7 @@ inline std::tuple<std::vector<vtkSmartPointer<vtkMRMLNode>>, std::vector<vtkSmar
 
 void vtkMRMLLayerDMNodeReferenceObserver::UpdateFromScene()
 {
-  auto [nodesRemoved, nodesAdded] = GetNodesRemovedAddedFromScene(this->m_scene, this->m_nodes);
+  auto [nodesRemoved, nodesAdded] = GetNodesRemovedAddedFromScene(this->Scene, this->Nodes);
   for (const auto& node : nodesRemoved)
   {
     this->OnNodeRemoved(node);
@@ -170,18 +170,18 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnNodeRemoved(vtkMRMLNode* node)
   }
 
   // Remove any observer on the node
-  m_obs->RemoveObserver(node);
+  this->Observer->RemoveObserver(node);
 
   // Erase the node from the different maps to avoid any dangling pointers
-  m_nodes.erase(node);
-  eraseKeyInMap(m_refFrom, node);
-  eraseKeyInMap(m_refTo, node);
+  this->Nodes.erase(node);
+  eraseKeyInMap(this->NodeFromReferences, node);
+  eraseKeyInMap(this->NodeToReferences, node);
 }
 
 void vtkMRMLLayerDMNodeReferenceObserver::OnNodeAdded(vtkMRMLNode* node)
 {
-  m_nodes.insert(node);
-  m_obs->UpdateObserver(nullptr, node, { vtkMRMLNode::ReferenceAddedEvent, vtkMRMLNode::ReferenceModifiedEvent, vtkMRMLNode::ReferenceRemovedEvent });
+  this->Nodes.insert(node);
+  this->Observer->UpdateObserver(nullptr, node, { vtkMRMLNode::ReferenceAddedEvent, vtkMRMLNode::ReferenceModifiedEvent, vtkMRMLNode::ReferenceRemovedEvent });
   for (const auto& [toNode, role] : GetNodeReferencesFromScene(node))
   {
     this->OnReferenceAdded(node, toNode, role);
@@ -190,8 +190,8 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnNodeAdded(vtkMRMLNode* node)
 
 void vtkMRMLLayerDMNodeReferenceObserver::OnReferenceAdded(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role)
 {
-  m_refTo[fromNode].insert({ toNode, role });
-  m_refFrom[toNode].insert({ fromNode, role });
+  this->NodeToReferences[fromNode].insert({ toNode, role });
+  this->NodeFromReferences[toNode].insert({ fromNode, role });
   this->TriggerReferenceAdded(fromNode, toNode, role);
 }
 
@@ -210,8 +210,8 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnReferenceRemoved(vtkMRMLNode* fromNo
     }
   };
 
-  eraseRefInMap(m_refTo, fromNode, toNode);
-  eraseRefInMap(m_refFrom, toNode, fromNode);
+  eraseRefInMap(this->NodeToReferences, fromNode, toNode);
+  eraseRefInMap(this->NodeFromReferences, toNode, fromNode);
   this->TriggerReferenceRemoved(fromNode, toNode, role);
 }
 
@@ -235,7 +235,7 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnReferenceModified(vtkMRMLNode* fromN
 
 std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceObserver::GetNodeToReferences(vtkMRMLNode* node) const
 {
-  if (const auto it = m_refTo.find(node); it != m_refTo.end())
+  if (const auto it = this->NodeToReferences.find(node); it != this->NodeToReferences.end())
   {
     return it->second;
   }
@@ -244,7 +244,7 @@ std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceO
 
 std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceObserver::GetNodeFromReferences(vtkMRMLNode* node) const
 {
-  if (const auto it = m_refFrom.find(node); it != m_refFrom.end())
+  if (const auto it = this->NodeFromReferences.find(node); it != this->NodeFromReferences.end())
   {
     return it->second;
   }
@@ -253,17 +253,17 @@ std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceO
 
 int vtkMRMLLayerDMNodeReferenceObserver::GetReferenceToSize() const
 {
-  return static_cast<int>(m_refTo.size());
+  return static_cast<int>(this->NodeToReferences.size());
 }
 
 int vtkMRMLLayerDMNodeReferenceObserver::GetReferenceFromSize() const
 {
-  return static_cast<int>(m_refFrom.size());
+  return static_cast<int>(this->NodeFromReferences.size());
 }
 
 int vtkMRMLLayerDMNodeReferenceObserver::GetNumberOfNodes() const
 {
-  return static_cast<int>(m_nodes.size());
+  return static_cast<int>(this->Nodes.size());
 }
 
 std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceObserver::GetNodeReferencesFromScene(vtkMRMLNode* node)
@@ -288,12 +288,12 @@ std::set<vtkMRMLLayerDMNodeReferenceObserver::RefT> vtkMRMLLayerDMNodeReferenceO
 
 void vtkMRMLLayerDMNodeReferenceObserver::TriggerReferenceAdded(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role) const
 {
-  TriggerCallback(m_onRefModified, fromNode, toNode, role, ReferenceAddedEvent);
+  TriggerCallback(this->ReferenceModifiedCallback, fromNode, toNode, role, ReferenceAddedEvent);
 }
 
 void vtkMRMLLayerDMNodeReferenceObserver::TriggerReferenceRemoved(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role) const
 {
-  TriggerCallback(m_onRefModified, fromNode, toNode, role, ReferenceRemovedEvent);
+  TriggerCallback(this->ReferenceModifiedCallback, fromNode, toNode, role, ReferenceRemovedEvent);
 }
 
 void vtkMRMLLayerDMNodeReferenceObserver::TriggerCallback(const CallBackT& callback, vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role, int eventType)

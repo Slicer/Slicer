@@ -16,15 +16,15 @@ template <class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
 
 vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
-  : m_updateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
-  , m_isBlocked(false)
+  : UpdateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
+  , Blocked(false)
 {
-  this->m_updateCommand->SetClientData(this);
-  this->m_updateCommand->SetCallback(
+  this->UpdateCommand->SetClientData(this);
+  this->UpdateCommand->SetCallback(
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
       auto client = static_cast<vtkMRMLLayerDMObjectEventObserver*>(clientData);
-      if (client->m_isBlocked)
+      if (client->Blocked)
       {
         return;
       }
@@ -35,7 +35,7 @@ vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
         std::visit(Overloaded{ [&](const std::function<void(vtkObject * node)>& f) { f(caller); },
                                [&](const std::function<void(vtkObject * node, unsigned long eventId)>& f) { f(caller, eid); },
                                [&](const std::function<void(vtkObject * node, unsigned long eventId, void* callData)>& f) { f(caller, eid, callData); } },
-                   client->m_callback);
+                   client->Callback);
       }
       catch (const std::bad_function_call&)
       {
@@ -46,7 +46,7 @@ vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
 
 vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
 {
-  for (const auto& obs : m_obsMap)
+  for (const auto& obs : this->ObservedEventsMap)
   {
     if (obs.first)
     {
@@ -80,29 +80,29 @@ bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkOb
 
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
 {
-  this->m_callback = callback;
+  this->Callback = callback;
 }
 
 bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
 {
-  bool wasBlocked = this->m_isBlocked;
-  this->m_isBlocked = isBlocked;
+  bool wasBlocked = this->Blocked;
+  this->Blocked = isBlocked;
   return wasBlocked;
 }
 
 bool vtkMRMLLayerDMObjectEventObserver::IsBlocked() const
 {
-  return this->m_isBlocked;
+  return this->Blocked;
 }
 
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
 {
-  this->m_callback = callback;
+  this->Callback = callback;
 }
 
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback)
 {
-  this->m_callback = callback;
+  this->Callback = callback;
 }
 
 void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
@@ -112,47 +112,47 @@ void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned lo
     return;
   }
 
-  if (this->m_obsMap.find(node) == std::end(this->m_obsMap))
+  if (this->ObservedEventsMap.find(node) == std::end(this->ObservedEventsMap))
   {
-    this->m_obsMap[node] = std::set<unsigned long>{};
+    this->ObservedEventsMap[node] = std::set<unsigned long>{};
   }
 
-  if (this->m_obsMap[node].find(event) != std::end(this->m_obsMap[node]))
+  if (this->ObservedEventsMap[node].find(event) != std::end(this->ObservedEventsMap[node]))
   {
     return;
   }
 
-  this->m_obsMap[node].insert(node->AddObserver(event, this->m_updateCommand));
+  this->ObservedEventsMap[node].insert(node->AddObserver(event, this->UpdateCommand));
 }
 
 void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
 {
-  if (!node || this->m_obsMap.find(node) == std::end(this->m_obsMap))
+  if (!node || this->ObservedEventsMap.find(node) == std::end(this->ObservedEventsMap))
   {
     return;
   }
 
-  for (auto& event : m_obsMap[node])
+  for (auto& event : this->ObservedEventsMap[node])
   {
     node->RemoveObserver(event);
   }
 
-  this->m_obsMap.erase(node);
+  this->ObservedEventsMap.erase(node);
 }
 
 vtkMRMLLayerDMObjectEventObserver::UpdateGuard::UpdateGuard(vtkMRMLLayerDMObjectEventObserver* obs)
-  : m_obs(obs)
+  : Observer(obs)
 {
-  if (m_obs)
+  if (this->Observer)
   {
-    m_wasBlocked = m_obs->SetBlocked(true);
+    this->WasBlocked = this->Observer->SetBlocked(true);
   }
 }
 
 vtkMRMLLayerDMObjectEventObserver::UpdateGuard::~UpdateGuard()
 {
-  if (m_obs)
+  if (this->Observer)
   {
-    m_obs->SetBlocked(m_wasBlocked);
+    this->Observer->SetBlocked(this->WasBlocked);
   }
 }

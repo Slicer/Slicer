@@ -63,8 +63,8 @@ public:
     ~UpdateGuard();
 
   private:
-    vtkMRMLLayerDMObjectEventObserver* m_obs;
-    bool m_wasBlocked{};
+    vtkMRMLLayerDMObjectEventObserver* Observer;
+    bool WasBlocked{};
   };
 
 protected:
@@ -74,12 +74,12 @@ protected:
 private:
   void AddObserver(vtkObject* obj, unsigned long event);
 
-  vtkSmartPointer<vtkCallbackCommand> m_updateCommand{};
-  std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> m_obsMap{};
+  vtkSmartPointer<vtkCallbackCommand> UpdateCommand{};
+  std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> ObservedEventsMap{};
 
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
                std::function<void(vtkObject* node, unsigned long eventId, void* callData)>>
-    m_callback;
-  bool m_isBlocked;
+    Callback;
+  bool Blocked;
 };

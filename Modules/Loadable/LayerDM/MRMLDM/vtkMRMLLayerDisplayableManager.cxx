@@ -22,28 +22,28 @@
 vtkStandardNewMacro(vtkMRMLLayerDisplayableManager);
 
 vtkMRMLLayerDisplayableManager::vtkMRMLLayerDisplayableManager()
-  : m_pipelineManager(nullptr)
+  : PipelineManager(nullptr)
 {
 }
 
 bool vtkMRMLLayerDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return false;
   }
 
-  return this->m_pipelineManager->CanProcessInteractionEvent(eventData, distance2);
+  return this->PipelineManager->CanProcessInteractionEvent(eventData, distance2);
 }
 
 bool vtkMRMLLayerDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return false;
   }
 
-  return this->m_pipelineManager->ProcessInteractionEvent(eventData);
+  return this->PipelineManager->ProcessInteractionEvent(eventData);
 }
 
 void vtkMRMLLayerDisplayableManager::RegisterInDefaultViews()
@@ -76,85 +76,89 @@ bool vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(vtkMRMLDisplayableMan
 
 vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDisplayableManager::GetNodePipeline(vtkMRMLNode* node) const
 {
-  return m_pipelineManager->GetNodePipeline(node);
+  if (!this->PipelineManager)
+  {
+    return nullptr;
+  }
+  return this->PipelineManager->GetNodePipeline(node);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneStartBatchProcess()
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->BlockRequestRender(true);
+  this->PipelineManager->BlockRequestRender(true);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->BlockRequestRender(false);
-  this->m_pipelineManager->RequestRender();
+  this->PipelineManager->BlockRequestRender(false);
+  this->PipelineManager->RequestRender();
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->AddNode(node);
+  this->PipelineManager->AddNode(node);
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->RemoveNode(node);
+  this->PipelineManager->RemoveNode(node);
 }
 
 void vtkMRMLLayerDisplayableManager::UnobserveMRMLScene()
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->ClearDisplayableNodes();
+  this->PipelineManager->ClearDisplayableNodes();
 }
 
 void vtkMRMLLayerDisplayableManager::UpdateFromMRML()
 {
   this->SetUpdateFromMRMLRequested(false);
 
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
-  this->m_pipelineManager->SetScene(this->GetMRMLScene());
-  this->m_pipelineManager->UpdateFromScene();
+  this->PipelineManager->SetScene(this->GetMRMLScene());
+  this->PipelineManager->UpdateFromScene();
 }
 
 void vtkMRMLLayerDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   auto viewNode = vtkMRMLAbstractViewNode::SafeDownCast(caller);
-  if (!viewNode || !this->m_pipelineManager)
+  if (!viewNode || !this->PipelineManager)
   {
     return;
   }
 
-  this->m_pipelineManager->SetViewNode(viewNode);
+  this->PipelineManager->SetViewNode(viewNode);
 }
 
 int vtkMRMLLayerDisplayableManager::GetMouseCursor()
 {
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return vtkMRMLAbstractDisplayableManager::GetMouseCursor();
   }
-  return this->m_pipelineManager->GetMouseCursor();
+  return this->PipelineManager->GetMouseCursor();
 }
 
 void vtkMRMLLayerDisplayableManager::Create()
@@ -166,17 +170,17 @@ void vtkMRMLLayerDisplayableManager::Create()
     return;
   }
 
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
-    this->m_pipelineManager = vtkSmartPointer<vtkMRMLLayerDMPipelineManager>::New();
+    this->PipelineManager = vtkSmartPointer<vtkMRMLLayerDMPipelineManager>::New();
   }
 
-  this->m_pipelineManager->SetRenderWindow(renderer->GetRenderWindow());
-  this->m_pipelineManager->SetRenderer(renderer);
-  this->m_pipelineManager->SetFactory(vtkMRMLLayerDMPipelineFactory::GetInstance());
-  this->m_pipelineManager->SetScene(this->GetMRMLScene());
-  this->m_pipelineManager->SetViewNode(vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode()));
-  this->m_pipelineManager->SetRequestRender([this] { this->RequestRender(); });
+  this->PipelineManager->SetRenderWindow(renderer->GetRenderWindow());
+  this->PipelineManager->SetRenderer(renderer);
+  this->PipelineManager->SetFactory(vtkMRMLLayerDMPipelineFactory::GetInstance());
+  this->PipelineManager->SetScene(this->GetMRMLScene());
+  this->PipelineManager->SetViewNode(vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode()));
+  this->PipelineManager->SetRequestRender([this] { this->RequestRender(); });
 
   // Make sure the DM is up to date with the current scene state
   this->UpdateFromMRML();
@@ -185,21 +189,21 @@ void vtkMRMLLayerDisplayableManager::Create()
 void vtkMRMLLayerDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
 {
   Superclass::SetRenderer(newRenderer);
-  if (!this->m_pipelineManager)
+  if (!this->PipelineManager)
   {
     return;
   }
 
-  this->m_pipelineManager->SetRenderWindow(newRenderer ? newRenderer->GetRenderWindow() : nullptr);
-  this->m_pipelineManager->SetRenderer(newRenderer);
+  this->PipelineManager->SetRenderWindow(newRenderer ? newRenderer->GetRenderWindow() : nullptr);
+  this->PipelineManager->SetRenderer(newRenderer);
 }
 
 void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   Superclass ::SetHasFocus(hasFocus, eventData);
-  if (this->m_pipelineManager && !hasFocus)
+  if (this->PipelineManager && !hasFocus)
   {
-    this->m_pipelineManager->LoseFocus(eventData);
+    this->PipelineManager->LoseFocus(eventData);
   }
 }
 
