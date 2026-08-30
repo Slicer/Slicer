@@ -105,7 +105,10 @@ vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int re
   {
     if (result != Py_None)
     {
-      return vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+      // The camera is owned by the Python pipeline, the wrapper reference is not needed past this point.
+      vtkCamera* camera = vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+      Py_DECREF(result);
+      return camera;
     }
     Py_DECREF(result);
   }
