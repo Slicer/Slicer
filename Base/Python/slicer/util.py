@@ -1913,8 +1913,8 @@ def getNodesByClass(className, scene=None):
 
     if scene is None:
         scene = slicer.mrmlScene
-    nodes = slicer.mrmlScene.GetNodesByClass(className)
-    nodes.UnRegister(slicer.mrmlScene)
+    nodes = scene.GetNodesByClass(className)
+    nodes.UnRegister(scene)
     nodeList = []
     nodes.InitTraversal()
     node = nodes.GetNextItemAsObject()
