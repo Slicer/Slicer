@@ -435,7 +435,7 @@ def tryCreate(viewNode, node):
 
 
 pipeline_creator = vtkMRMLLayerDMPipelineScriptedCreator()
-pipeline_creator.SetPythonCallback(MyPipeline.TryCreate)
+pipeline_creator.SetPythonCallback(tryCreate)
 vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
 ```
 
@@ -517,15 +517,15 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
   if (!creator)
   {
     creator = vtkMRMLLayerDMPipelineFactory::GetInstance()->AddPipelineCreator(
-      [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* displayNode)
+      [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* displayNode) -> vtkSmartPointer<vtkMRMLLayerDMPipeline>
       {
-        auto pipeline = layer_dm::TryCreateForView<vtkMRMLViewNode, MyDisplayNode, MyPipelineNode>(viewNode, displayNode));
-        if(!pipeline)
+        auto pipeline = layer_dm::TryCreateForView<vtkMRMLViewNode, MyDisplayNode, MyPipelineNode>(viewNode, displayNode);
+        if (!pipeline)
         {
           return nullptr;
         }
 
-        pipeline->SetLogic(this->MyLogic);
+        MyPipelineNode::SafeDownCast(pipeline)->SetLogic(this->MyLogic);
         return pipeline;
       });
   }
