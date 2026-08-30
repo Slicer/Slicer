@@ -294,7 +294,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
 ### Defining custom interaction event translation across pipelines
 
 For complex interactions, it is recommended to use
-either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/blob/main/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
+either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/Slicer/Slicer/blob/main/Modules/Loadable/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
 or [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
 
 The vtkMRMLLayerDMWidgetEventTranslationNode are compatible with scene exchange and can be used as an easy way to define
