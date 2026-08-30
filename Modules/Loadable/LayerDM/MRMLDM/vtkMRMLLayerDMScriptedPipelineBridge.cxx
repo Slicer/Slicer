@@ -83,8 +83,11 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
     }
 
     Py_DECREF(result);
-    // Unpack error or unexpected return type
-    PyErr_SetString(PyExc_TypeError, "Expected a tuple[bool, float] return type");
+    // Unpack error or unexpected return type. There is no Python frame to raise into from here,
+    // and leaving an exception pending would make IsValidPythonContext fail for every subsequent
+    // call, silently disabling the pipeline. Report it and clear it instead.
+    PyErr_Clear();
+    vtkErrorMacro(<< "CanProcessInteractionEvent: expected a tuple[bool, float] return type from " << vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object));
   }
 
   return false;
@@ -284,7 +287,8 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLIntera
   vtkPythonScopeGilEnsurer gilEnsurer;
   if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, false))
   {
-    bool wasProcessed = result == Py_True;
+    // Accept any truthy return value, not just the True singleton.
+    const bool wasProcessed = PyObject_IsTrue(result) == 1;
     Py_DECREF(result);
     return wasProcessed;
   }
@@ -360,6 +364,9 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned lon
 //-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
+  // The result may be decremented here and the error path inspects Python objects, so hold the
+  // GIL for the whole method rather than relying on every caller to do it.
+  vtkPythonScopeGilEnsurer gilEnsurer;
   auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->Object, pyArgs, fName);
 
   if (!result)
