@@ -10,6 +10,8 @@ Usage:
     This example is implemented as a scripted module and can be added as such to Slicer.
 """
 
+import logging
+
 import qt
 import slicer
 from slicer.ScriptedLoadableModule import ScriptedLoadableModule, ScriptedLoadableModuleWidget
@@ -30,7 +32,6 @@ from vtk import (
     calldata_type,
     vtkColorTransferFunction,
     vtkGPUVolumeRayCastMapper,
-    vtkGeneralTransform,
     vtkMatrix4x4,
     vtkPiecewiseFunction,
     vtkRenderer,
@@ -126,27 +127,27 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         self._actor.SetMapper(self._mapper)
 
         # Arbitrary color / opacity functions
-        color_function = vtkColorTransferFunction()
-        color_function.AddRGBPoint(0, 0.0, 0.0, 0.0)
-        color_function.AddRGBPoint(3900, 1.0, 1.0, 1.0)
+        colorFunction = vtkColorTransferFunction()
+        colorFunction.AddRGBPoint(0, 0.0, 0.0, 0.0)
+        colorFunction.AddRGBPoint(3900, 1.0, 1.0, 1.0)
 
         # Create the opacity
-        opacity_function = vtkPiecewiseFunction()
-        opacity_function.AddPoint(1000, 0.0)
-        opacity_function.AddPoint(1900, 1.0)
-        opacity_function.AddPoint(3900, 1.0)
+        opacityFunction = vtkPiecewiseFunction()
+        opacityFunction.AddPoint(1000, 0.0)
+        opacityFunction.AddPoint(1900, 1.0)
+        opacityFunction.AddPoint(3900, 1.0)
 
         # Create the volume property and set functions
         self._volumeProperty = vtkVolumeProperty()
-        self._volumeProperty.SetScalarOpacity(opacity_function)
-        self._volumeProperty.SetColor(color_function)
+        self._volumeProperty.SetScalarOpacity(opacityFunction)
+        self._volumeProperty.SetColor(colorFunction)
         self._volumeProperty.SetInterpolationTypeToLinear()
         self._volumeProperty.ShadeOn()
 
         self._actor.SetProperty(self._volumeProperty)
 
         # The attributes below are used to connect observers on the volumeNode and the volumeTransform ModifiedEvent
-        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simply observers
+        # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
         # See also: UpdateObserver
         self._volumeNode = None
@@ -175,9 +176,9 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
 
     @classmethod
     def GetVisibility(cls, node):
-        if node is None:
-            return False
-        return bool(int(node.GetAttribute("IsVisible")))
+        # GetAttribute returns None when the attribute has never been set.
+        value = node.GetAttribute("IsVisible") if node is not None else None
+        return bool(int(value)) if value else False
 
     @classmethod
     def SetVRNodeVisible(cls, node, isVisible: bool):
@@ -292,9 +293,9 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
     def _UpdateMapperConnection(self):
         volumeNode: vtkMRMLVolumeNode = self._GetVolumeNode()
         transform = vtkTransform()
-        ijk_to_world_matrix = self._GetVolumeTransformMatrixToWorld()
-        if ijk_to_world_matrix:
-            transform.SetMatrix(ijk_to_world_matrix)
+        ijkToWorldMatrix = self._GetVolumeTransformMatrixToWorld()
+        if ijkToWorldMatrix:
+            transform.SetMatrix(ijkToWorldMatrix)
 
         self._actor.SetUserTransform(transform)
         self._mapper.SetInputConnection(volumeNode.GetImageDataConnection() if volumeNode else None)
@@ -302,43 +303,36 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
     def _GetVolumeTransformMatrixToWorld(self):
         """
         Converts a volume's IJK coordinates to World coordinates.
-        Returns True if successful, False otherwise.
+
+        :return: the IJK to World matrix, or None if there is no volume node.
         """
-        volume_node = self._GetVolumeNode()
-        if not volume_node:
+        volumeNode = self._GetVolumeNode()
+        if not volumeNode:
             return None
 
         # Check if we have a transform node
-        transform_node = volume_node.GetParentTransformNode()
+        transformNode = volumeNode.GetParentTransformNode()
 
-        ijk_to_world_matrix = vtkMatrix4x4()
-        if not transform_node:
-            volume_node.GetIJKToRASMatrix(ijk_to_world_matrix)
-            return ijk_to_world_matrix
+        ijkToWorldMatrix = vtkMatrix4x4()
+        if not transformNode:
+            volumeNode.GetIJKToRASMatrix(ijkToWorldMatrix)
+            return ijkToWorldMatrix
 
         # Check if the transform is linear
-        if not transform_node.IsTransformToWorldLinear():
+        if not transformNode.IsTransformToWorldLinear():
             return None
 
         # IJK to RAS (Local)
-        ijk_to_ras_matrix = vtkMatrix4x4()
-        volume_node.GetIJKToRASMatrix(ijk_to_ras_matrix)
+        ijkToRasMatrix = vtkMatrix4x4()
+        volumeNode.GetIJKToRASMatrix(ijkToRasMatrix)
 
         # Parent transforms (RAS to World)
-        node_to_world_matrix = vtkMatrix4x4()
-        transform_node.GetMatrixTransformToWorld(node_to_world_matrix)
+        nodeToWorldMatrix = vtkMatrix4x4()
+        transformNode.GetMatrixTransformToWorld(nodeToWorldMatrix)
 
-        # Multiply: output = node_to_world_matrix * ijk_to_ras_matrix
-        vtkMatrix4x4.Multiply4x4(node_to_world_matrix, ijk_to_ras_matrix, ijk_to_world_matrix)
-        return ijk_to_world_matrix
-
-    def _GetTransform(self):
-        transformNode = self._volumeNode.GetParentTransformNode() if self._volumeNode else None
-        if transformNode is None:
-            return None
-        transform = vtkGeneralTransform()
-        transformNode.GetTransformToWorld(transform)
-        return transform
+        # Multiply: output = nodeToWorldMatrix * ijkToRasMatrix
+        vtkMatrix4x4.Multiply4x4(nodeToWorldMatrix, ijkToRasMatrix, ijkToWorldMatrix)
+        return ijkToWorldMatrix
 
     def _UpdateActorVisibility(self):
         self._actor.SetVisibility(self._IsVolumeVisible() and self.GetVisibility(self.GetDisplayNode()))
@@ -350,7 +344,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         if node is not None:
             scene.RemoveNode(node)
         else:
-            print("No VR node for: ", volumeNode.GetID())
+            logging.warning(f"No VR node for: {volumeNode.GetID()}")
 
     @classmethod
     def GetVRNode(cls, volumeNode: vtkMRMLVolumeNode, scene: vtkMRMLScene):
@@ -436,10 +430,6 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         if cls.IsPipelineNode(node):
             return node.GetAttribute("VolumeNodeID")
         return ""
-
-    @classmethod
-    def _HasVRNode(cls, volumeNode):
-        return cls._GetVolumeNodeID(volumeNode) != ""
 
 
 class CustomVRSceneConnector(ScriptedPipelineSceneConnector):

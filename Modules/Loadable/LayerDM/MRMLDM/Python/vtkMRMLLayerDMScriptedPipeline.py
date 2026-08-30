@@ -53,7 +53,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
     def GetMouseCursor(self) -> int:
         """
         Custom mouse cursor from VTK mouse cursor enum.
-        This value is only used if the pipeline actually processes an event and is ignore otherwise.
+        This value is only used if the pipeline actually processes an event and is ignored otherwise.
         :return: 0 by default.
         """
         return 0
@@ -133,7 +133,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         See also: self.UpdateDisplay()
         See also: self.RequestRender()
 
-        :param renderer: Optional instance or renderer on which the pipeline is added
+        :param renderer: Optional instance of renderer on which the pipeline is added
         """
         pass
 
@@ -143,8 +143,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         default behavior: does nothing.
         See also: self.GetRenderer()
 
-        :param renderer: Optional instance or renderer from which the pipeline was removed
-        :return:
+        :param renderer: Optional instance of renderer from which the pipeline was removed
         """
         pass
 
@@ -171,7 +170,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
     def SetDisplayNode(self, displayNode: vtkMRMLNode) -> None:
         """
-        Set the display node for the pipeline has changed (initialization).
+        Called when the display node of the pipeline has changed (initialization).
         default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
         See also: self.UpdateObserver(prevObj, newObj, eventIds)
         See also: self.OnUpdate(obj, eventId, callData)
