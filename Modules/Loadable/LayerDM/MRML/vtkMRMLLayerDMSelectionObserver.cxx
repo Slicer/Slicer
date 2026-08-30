@@ -108,7 +108,8 @@ vtkMRMLSelectionNode* vtkMRMLLayerDMSelectionObserver::GetSelectionNode() const
 //-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::IsPlacing(vtkMRMLNode* node) const
 {
-  if (!node)
+  // A node which has not been added to a scene yet has no ID.
+  if (!node || !node->GetID())
   {
     return false;
   }
@@ -136,7 +137,7 @@ void vtkMRMLLayerDMSelectionObserver::StartPlace(vtkMRMLNode* node, bool isPersi
   }
 
   // Avoid triggering modified if the node is already in place mode
-  if (IsPlacing(node))
+  if (this->IsPlacing(node))
   {
     this->InteractionNode->SetPlaceModePersistence(isPersistent);
     return;

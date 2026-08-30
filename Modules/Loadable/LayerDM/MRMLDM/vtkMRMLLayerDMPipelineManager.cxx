@@ -121,6 +121,22 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::ClearDisplayableNodes()
 {
+  RequestRenderOnceGuard renderGuard{ *this };
+
+  // The interaction logic holds strong references to the pipelines and the layer manager holds
+  // their renderers, so clearing the maps alone would leave the pipelines alive, with their
+  // actors still displayed and still receiving interaction events.
+  for (const auto& [node, pipeline] : this->PipelineMap)
+  {
+    if (!pipeline)
+    {
+      continue;
+    }
+    pipeline->SetFrozen(true);
+    this->InteractionLogic->RemovePipeline(pipeline);
+    this->LayerManager->RemovePipeline(pipeline);
+  }
+
   this->PipelineMap.clear();
   this->PipelineCreatorMap.clear();
 }
@@ -347,13 +363,13 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineManager::GetNodePi
 //-----------------------------------------------------------------------------
 int vtkMRMLLayerDMPipelineManager::GetNumberOfPipelines() const
 {
-  return this->PipelineMap.size();
+  return static_cast<int>(this->PipelineMap.size());
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipeline) const
 {
-  if (iPipeline < 0 || iPipeline >= this->PipelineMap.size())
+  if (iPipeline < 0 || iPipeline >= this->GetNumberOfPipelines())
   {
     return nullptr;
   }
