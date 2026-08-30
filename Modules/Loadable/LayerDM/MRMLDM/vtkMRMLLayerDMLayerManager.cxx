@@ -281,19 +281,28 @@ void vtkMRMLLayerDMLayerManager::RemoveOutdatedLayers()
 void vtkMRMLLayerDMLayerManager::RemoveOutdatedPipelines()
 {
   // Remove pipelines which have been garbage collected
-  for (auto& [key, pipelines] : this->PipelineLayers)
+  for (auto layerIt = this->PipelineLayers.begin(); layerIt != this->PipelineLayers.end();)
   {
-    for (const auto& pipeline : pipelines)
+    auto& pipelines = layerIt->second;
+    for (auto pipelineIt = pipelines.begin(); pipelineIt != pipelines.end();)
     {
-      if (!pipeline)
+      if (!*pipelineIt)
       {
-        pipelines.erase(pipeline);
+        pipelineIt = pipelines.erase(pipelineIt);
+      }
+      else
+      {
+        ++pipelineIt;
       }
     }
 
     if (pipelines.empty())
     {
-      this->PipelineLayers.erase(key);
+      layerIt = this->PipelineLayers.erase(layerIt);
+    }
+    else
+    {
+      ++layerIt;
     }
   }
 }
