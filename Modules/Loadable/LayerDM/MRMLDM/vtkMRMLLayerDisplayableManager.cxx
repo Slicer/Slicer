@@ -36,10 +36,12 @@
 // STD includes
 #include <cstring>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDisplayableManager);
 
 vtkMRMLLayerDisplayableManager::vtkMRMLLayerDisplayableManager() = default;
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   if (!this->PipelineManager)
@@ -50,6 +52,7 @@ bool vtkMRMLLayerDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteracti
   return this->PipelineManager->CanProcessInteractionEvent(eventData, distance2);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (!this->PipelineManager)
@@ -60,12 +63,14 @@ bool vtkMRMLLayerDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionE
   return this->PipelineManager->ProcessInteractionEvent(eventData);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::RegisterInDefaultViews()
 {
   vtkMRMLLayerDisplayableManager::RegisterInFactory(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance());
   vtkMRMLLayerDisplayableManager::RegisterInFactory(vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance());
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::RegisterInFactory(vtkMRMLDisplayableManagerFactory* factory)
 {
   if (!factory || vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(factory))
@@ -77,6 +82,7 @@ void vtkMRMLLayerDisplayableManager::RegisterInFactory(vtkMRMLDisplayableManager
   factory->RegisterDisplayableManager(dm->GetClassName());
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(vtkMRMLDisplayableManagerFactory* factory)
 {
   if (!factory)
@@ -88,6 +94,7 @@ bool vtkMRMLLayerDisplayableManager::IsRegisteredInFactory(vtkMRMLDisplayableMan
   return factory->IsDisplayableManagerRegistered(dm->GetClassName());
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDisplayableManager::GetNodePipeline(vtkMRMLNode* node) const
 {
   if (!this->PipelineManager)
@@ -97,6 +104,7 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDisplayableManager::GetNodeP
   return this->PipelineManager->GetNodePipeline(node);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneStartBatchProcess()
 {
   if (!this->PipelineManager)
@@ -106,6 +114,7 @@ void vtkMRMLLayerDisplayableManager::OnMRMLSceneStartBatchProcess()
   this->PipelineManager->BlockRequestRender(true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
   if (!this->PipelineManager)
@@ -116,6 +125,7 @@ void vtkMRMLLayerDisplayableManager::OnMRMLSceneEndBatchProcess()
   this->PipelineManager->RequestRender();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (!this->PipelineManager)
@@ -125,6 +135,7 @@ void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
   this->PipelineManager->AddNode(node);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (!this->PipelineManager)
@@ -134,6 +145,7 @@ void vtkMRMLLayerDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   this->PipelineManager->RemoveNode(node);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::UnobserveMRMLScene()
 {
   if (!this->PipelineManager)
@@ -143,6 +155,7 @@ void vtkMRMLLayerDisplayableManager::UnobserveMRMLScene()
   this->PipelineManager->ClearDisplayableNodes();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::UpdateFromMRML()
 {
   this->SetUpdateFromMRMLRequested(false);
@@ -155,6 +168,7 @@ void vtkMRMLLayerDisplayableManager::UpdateFromMRML()
   this->PipelineManager->UpdateFromScene();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   auto viewNode = vtkMRMLAbstractViewNode::SafeDownCast(caller);
@@ -166,6 +180,7 @@ void vtkMRMLLayerDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObjec
   this->PipelineManager->SetViewNode(viewNode);
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDisplayableManager::GetMouseCursor()
 {
   if (!this->PipelineManager)
@@ -175,6 +190,7 @@ int vtkMRMLLayerDisplayableManager::GetMouseCursor()
   return this->PipelineManager->GetMouseCursor();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::Create()
 {
   vtkRenderer* renderer = this->GetRenderer();
@@ -200,6 +216,7 @@ void vtkMRMLLayerDisplayableManager::Create()
   this->UpdateFromMRML();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
 {
   Superclass::SetRenderer(newRenderer);
@@ -212,6 +229,7 @@ void vtkMRMLLayerDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
   this->PipelineManager->SetRenderer(newRenderer);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   Superclass ::SetHasFocus(hasFocus, eventData);
@@ -221,6 +239,7 @@ void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteracti
   }
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkImageData> vtkMRMLLayerDisplayableManager::RenderWindowBufferToImage(vtkRenderWindow* window)
 {
   auto imageData = vtkSmartPointer<vtkImageData>::New();
@@ -228,6 +247,7 @@ vtkSmartPointer<vtkImageData> vtkMRMLLayerDisplayableManager::RenderWindowBuffer
   return imageData;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDisplayableManager::RenderWindowBufferToImage(vtkRenderWindow* window, const vtkSmartPointer<vtkImageData>& imageData)
 {
   if (!window || !imageData)

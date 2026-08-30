@@ -37,8 +37,10 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineManager);
 
+//-----------------------------------------------------------------------------
 /// Helper struct to block display updates and update display once when deleting
 struct UpdatePipelineDisplayOnceGuard
 {
@@ -64,6 +66,7 @@ struct UpdatePipelineDisplayOnceGuard
   bool WasBlocked{};
 };
 
+//-----------------------------------------------------------------------------
 /// Helper struct to block rendering and request render once when deleting
 struct RequestRenderOnceGuard
 {
@@ -83,6 +86,7 @@ struct RequestRenderOnceGuard
   bool WasBlocked{};
 };
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNode)
 {
   // Early return if manager is not yet created
@@ -114,12 +118,14 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   return true;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::ClearDisplayableNodes()
 {
   this->PipelineMap.clear();
   this->PipelineCreatorMap.clear();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::AddNode(vtkMRMLNode* node)
 {
   if (auto pipeline = this->GetNodePipeline(node))
@@ -130,6 +136,7 @@ bool vtkMRMLLayerDMPipelineManager::AddNode(vtkMRMLNode* node)
   return this->CreatePipelineForNode(node);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::UpdateAllPipelines()
 {
   RequestRenderOnceGuard renderGuard{ *this };
@@ -139,6 +146,7 @@ void vtkMRMLLayerDMPipelineManager::UpdateAllPipelines()
   }
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
 {
   auto pipeline = this->GetNodePipeline(displayNode);
@@ -158,6 +166,7 @@ bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
   return true;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetRenderWindow(vtkRenderWindow* renderWindow)
 {
   // Observe window resize updates (bound to default camera changed update for representations which depend on the camera / display properties)
@@ -166,6 +175,7 @@ void vtkMRMLLayerDMPipelineManager::SetRenderWindow(vtkRenderWindow* renderWindo
   this->LayerManager->SetRenderWindow(renderWindow);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (this->ViewNode == viewNode)
@@ -179,6 +189,7 @@ void vtkMRMLLayerDMPipelineManager::SetViewNode(vtkMRMLAbstractViewNode* viewNod
   this->UpdateAllPipelines();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetFactory(const vtkSmartPointer<vtkMRMLLayerDMPipelineFactory>& factory)
 {
   if (this->Factory == factory)
@@ -191,37 +202,44 @@ void vtkMRMLLayerDMPipelineManager::SetFactory(const vtkSmartPointer<vtkMRMLLaye
   this->UpdateFromScene();
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMPipelineManager::GetMouseCursor() const
 {
   auto lastFocused = this->InteractionLogic->GetLastFocusedPipeline();
   return lastFocused ? lastFocused->GetMouseCursor() : VTK_CURSOR_DEFAULT;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) const
 {
   return this->InteractionLogic->CanProcessInteractionEvent(eventData, distance2);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::LoseFocus(vtkMRMLInteractionEventData* eventData) const
 {
   this->InteractionLogic->LoseFocus(eventData);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::LoseFocus() const
 {
   this->InteractionLogic->LoseFocus();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) const
 {
   return this->InteractionLogic->ProcessInteractionEvent(eventData);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::RemoveNode(vtkMRMLNode* node)
 {
   return this->RemovePipeline(node);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::ResetCameraClippingRange() const
 {
   // Block camera sync update triggers during clipping range refresh
@@ -230,6 +248,7 @@ void vtkMRMLLayerDMPipelineManager::ResetCameraClippingRange() const
   this->CameraSynchronizer->BlockModified(wasBlocked);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::RequestRender()
 {
   if (this->IsRequestRenderBlocked || !this->RenderWindow)
@@ -243,6 +262,7 @@ void vtkMRMLLayerDMPipelineManager::RequestRender()
   this->BlockRequestRender(false);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::OnDefaultCameraModified()
 {
   RequestRenderOnceGuard renderGuard{ *this };
@@ -252,6 +272,7 @@ void vtkMRMLLayerDMPipelineManager::OnDefaultCameraModified()
   }
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
   : LayerManager(vtkSmartPointer<vtkMRMLLayerDMLayerManager>::New())
   , CameraSynchronizer(vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer>::New())
@@ -300,6 +321,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
   this->EventObserver->UpdateObserver(nullptr, this->CameraSynchronizer);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline) const
 {
   if (!pipeline)
@@ -311,6 +333,7 @@ void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRML
   pipeline->SetViewNode(this->ViewNode);
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineManager::GetNodePipeline(vtkMRMLNode* node) const
 {
   const auto found = this->PipelineMap.find(node);
@@ -321,11 +344,13 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineManager::GetNodePi
   return found->second;
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMPipelineManager::GetNumberOfPipelines() const
 {
   return this->PipelineMap.size();
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipeline) const
 {
   if (iPipeline < 0 || iPipeline >= this->PipelineMap.size())
@@ -336,23 +361,27 @@ vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineManager::GetNthPipeline(int iPipel
   return std::next(this->PipelineMap.begin(), iPipeline)->second;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetRenderer(vtkRenderer* renderer) const
 {
   // Pass the renderer to the camera sync
   this->CameraSynchronizer->SetRenderer(renderer);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetRequestRender(const std::function<void()>& requestRender)
 {
   this->RequestRenderCallback = requestRender;
   this->UpdateAllPipelines();
 }
 
+//-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMPipelineManager::GetDefaultCamera() const
 {
   return this->DefaultCamera;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
 {
   if (!this->Scene)
@@ -375,6 +404,7 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
   }
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::IsPipelineCreatorOutdated(vtkMRMLNode* node) const
 {
   const auto found = this->PipelineCreatorMap.find(node);
@@ -385,6 +415,7 @@ bool vtkMRMLLayerDMPipelineManager::IsPipelineCreatorOutdated(vtkMRMLNode* node)
   return !found->second || !this->Factory || !this->Factory->ContainsPipelineCreator(found->second.GetPointer());
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::AddMissingPipelines()
 {
   if (!this->Scene)
@@ -402,6 +433,7 @@ void vtkMRMLLayerDMPipelineManager::AddMissingPipelines()
   }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::UpdateFromScene()
 {
   if (!this->Scene)
@@ -414,6 +446,7 @@ void vtkMRMLLayerDMPipelineManager::UpdateFromScene()
   this->AddMissingPipelines();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipelineManager::BlockRequestRender(bool isBlocked)
 {
   const auto wasBlocked = this->IsRequestRenderBlocked;
@@ -421,6 +454,7 @@ bool vtkMRMLLayerDMPipelineManager::BlockRequestRender(bool isBlocked)
   return wasBlocked;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineManager::SetScene(vtkMRMLScene* scene)
 {
   if (this->Scene == scene)

@@ -27,8 +27,10 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMInteractionLogic);
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline() const
 {
   return this->LastFocusedPipeline;
@@ -36,11 +38,13 @@ vtkMRMLLayerDMPipeline* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline()
 
 vtkMRMLLayerDMInteractionLogic::vtkMRMLLayerDMInteractionLogic() = default;
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMInteractionLogic::MinWidgetState()
 {
   return vtkMRMLAbstractWidget::WidgetStateOnWidget;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::LoseFocus(vtkMRMLInteractionEventData* eventData)
 {
   if (this->LastFocusedPipeline)
@@ -50,6 +54,7 @@ void vtkMRMLLayerDMInteractionLogic::LoseFocus(vtkMRMLInteractionEventData* even
   }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::LoseFocus()
 {
   vtkNew<vtkMRMLInteractionEventData> leaveEvent;
@@ -58,16 +63,19 @@ void vtkMRMLLayerDMInteractionLogic::LoseFocus()
   this->LoseFocus(leaveEvent);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   this->ViewNode = viewNode;
 }
 
+//-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkMRMLLayerDMPipeline>> vtkMRMLLayerDMInteractionLogic::GetCanProcessPipelines() const
 {
   return this->CanProcessPipelines;
 }
 
+//-----------------------------------------------------------------------------
 std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipelines(vtkMRMLInteractionEventData* eventData)
 {
   // For each pipeline, if pipeline can process, store its state value, layer and distance to interaction
@@ -99,6 +107,7 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
   return std::make_tuple(minDistance, maxState);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInteractionEventData* eventData)
 {
   // Lose focus if previous focused pipeline cannot process current interaction
@@ -108,6 +117,7 @@ void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInt
   }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
   if (std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline) != this->Pipelines.end())
@@ -117,6 +127,7 @@ void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLa
   this->Pipelines.emplace_back(pipeline);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline)
 {
   if (this->LastFocusedPipeline == pipeline)
@@ -126,6 +137,7 @@ void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRM
   this->Pipelines.erase(std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline));
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   // Clear previous interaction list
@@ -150,6 +162,7 @@ bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkMRMLInteracti
   return !this->CanProcessPipelines.empty();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   for (const auto& pipeline : this->CanProcessPipelines)
