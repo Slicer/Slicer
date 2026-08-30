@@ -97,23 +97,23 @@ private:
   void RemovePipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
 
   // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
-  std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>> m_pipelineLayers;
+  std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>> PipelineLayers;
 
   /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events.
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
 
   // Placeholder empty pipeline with target layer = 0 and camera sync to layer 0 for default renderer
-  vtkSmartPointer<vtkMRMLLayerDMPipeline> m_emptyPipeline;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> EmptyPipeline;
 
   // Pointer to the current render window
-  vtkWeakPointer<vtkRenderWindow> m_renderWindow;
+  vtkWeakPointer<vtkRenderWindow> RenderWindow;
 
   // Pointer to the default camera
-  vtkSmartPointer<vtkCamera> m_defaultCamera;
+  vtkSmartPointer<vtkCamera> DefaultCamera;
 
   // Renderers managed by the layer manager
-  std::vector<vtkSmartPointer<vtkRenderer>> m_renderers;
+  std::vector<vtkSmartPointer<vtkRenderer>> Renderers;
 
   // Camera to renderer map
-  std::map<vtkWeakPointer<vtkCamera>, std::set<vtkWeakPointer<vtkRenderer>>> m_cameraRendererMap;
+  std::map<vtkWeakPointer<vtkCamera>, std::set<vtkWeakPointer<vtkRenderer>>> CameraRendererMap;
 };

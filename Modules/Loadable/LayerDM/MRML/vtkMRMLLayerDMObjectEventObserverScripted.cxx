@@ -6,7 +6,7 @@
 vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserverScripted);
 
 vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScripted()
-  : m_object(nullptr)
+  : Object(nullptr)
 {
   this->SetUpdateCallback(
     [this](vtkObject* node, unsigned long eventId, void* callData) -> void
@@ -17,13 +17,13 @@ vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScri
       }
 
       vtkPythonScopeGilEnsurer gilEnsurer;
-      if (auto result = vtkMRMLLayerDMPythonUtil::CallPythonObject(this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData)))
+      if (auto result = vtkMRMLLayerDMPythonUtil::CallPythonObject(this->Object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData)))
       {
         Py_DECREF(result);
       }
       else
       {
-        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+        auto errorMsg = std::string(__func__) + ": Failed to call : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object) + ":";
         vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
       }
     });
@@ -31,12 +31,12 @@ vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScri
 
 vtkMRMLLayerDMObjectEventObserverScripted::~vtkMRMLLayerDMObjectEventObserverScripted()
 {
-  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->m_object);
+  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
 void vtkMRMLLayerDMObjectEventObserverScripted::SetPythonCallback(PyObject* object)
 {
-  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->m_object, object);
+  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }
 
 PyObject* vtkMRMLLayerDMObjectEventObserverScripted::CastCallData(PyObject* object, int vtkType)

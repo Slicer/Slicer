@@ -152,23 +152,23 @@ private:
   /// since been removed from the factory (or destroyed).
   bool IsPipelineCreatorOutdated(vtkMRMLNode* node) const;
 
-  vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> m_factory;
-  vtkSmartPointer<vtkMRMLLayerDMLayerManager> m_layerManager;
-  vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer> m_cameraSync;
-  vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> m_interactionLogic;
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_eventObs;
-  vtkSmartPointer<vtkCamera> m_defaultCamera;
-  vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver> m_nodeRefObs;
+  vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> Factory;
+  vtkSmartPointer<vtkMRMLLayerDMLayerManager> LayerManager;
+  vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer> CameraSynchronizer;
+  vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> InteractionLogic;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> EventObserver;
+  vtkSmartPointer<vtkCamera> DefaultCamera;
+  vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver> NodeReferenceObserver;
 
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  vtkWeakPointer<vtkMRMLScene> m_scene;
-  vtkWeakPointer<vtkRenderWindow> m_renderWindow;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLScene> Scene;
+  vtkWeakPointer<vtkRenderWindow> RenderWindow;
 
-  std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_pipelineMap;
+  std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipeline>> PipelineMap;
   /// Creator which created the pipeline of each node, used to detect pipelines whose creator
   /// was removed from the factory (\sa RemoveOutdatedPipelines).
-  std::map<vtkWeakPointer<vtkMRMLNode>, vtkWeakPointer<vtkMRMLLayerDMPipelineCreator>> m_pipelineCreatorMap;
-  std::function<void()> m_requestRender;
+  std::map<vtkWeakPointer<vtkMRMLNode>, vtkWeakPointer<vtkMRMLLayerDMPipelineCreator>> PipelineCreatorMap;
+  std::function<void()> RequestRenderCallback;
 
-  bool m_isRequestRenderBlocked{ false };
+  bool IsRequestRenderBlocked{ false };
 };

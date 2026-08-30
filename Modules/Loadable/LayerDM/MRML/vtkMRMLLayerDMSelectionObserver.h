@@ -69,8 +69,8 @@ protected:
   void operator=(const vtkMRMLLayerDMSelectionObserver&) = delete;
 
 private:
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
-  vtkWeakPointer<vtkMRMLScene> m_scene;
-  vtkWeakPointer<vtkMRMLInteractionNode> m_interactionNode;
-  vtkWeakPointer<vtkMRMLSelectionNode> m_selectionNode;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+  vtkWeakPointer<vtkMRMLScene> Scene;
+  vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
+  vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
 };

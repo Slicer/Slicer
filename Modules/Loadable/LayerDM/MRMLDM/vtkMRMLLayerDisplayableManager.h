@@ -77,5 +77,5 @@ protected:
   void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
 
 private:
-  vtkSmartPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
+  vtkSmartPointer<vtkMRMLLayerDMPipelineManager> PipelineManager;
 };

@@ -14,7 +14,7 @@ stateDiagram-v2
     UpdateCamera: Update layer camera
     SynchronizeRenderers: Update pipeline renderers
 
-    if_start --> RemoveAll : m_renderWindow == nullptr
+    if_start --> RemoveAll : RenderWindow == nullptr
     if_start --> RemoveOutdatedPipelines : else
 
     RemoveOutdatedPipelines --> RemoveOutdatedLayers

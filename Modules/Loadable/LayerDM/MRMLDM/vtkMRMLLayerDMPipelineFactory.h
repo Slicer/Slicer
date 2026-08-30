@@ -88,10 +88,10 @@ private:
   /// Updated when new creators are added / removed or when creators modified events are triggered.
   void SortPipelineCreators();
 
-  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>> m_pipelineCreators;
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_lastView;
-  vtkWeakPointer<vtkMRMLNode> m_lastNode;
-  vtkWeakPointer<vtkMRMLLayerDMPipeline> m_lastPipeline;
-  vtkWeakPointer<vtkMRMLLayerDMPipelineCreator> m_lastCreator;
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>> PipelineCreators;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> LastView;
+  vtkWeakPointer<vtkMRMLNode> LastNode;
+  vtkWeakPointer<vtkMRMLLayerDMPipeline> LastPipeline;
+  vtkWeakPointer<vtkMRMLLayerDMPipelineCreator> LastCreator;
 };

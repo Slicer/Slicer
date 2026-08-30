@@ -42,5 +42,5 @@ protected:
   ~vtkMRMLLayerDMObjectEventObserverScripted() override;
 
 private:
-  PyObject* m_object;
+  PyObject* Object;
 };

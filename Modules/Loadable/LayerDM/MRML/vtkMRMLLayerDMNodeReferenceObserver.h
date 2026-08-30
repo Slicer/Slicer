@@ -79,11 +79,11 @@ private:
   void TriggerReferenceRemoved(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role) const;
   static void TriggerCallback(const CallBackT& callback, vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role, int eventType);
 
-  vtkWeakPointer<vtkMRMLScene> m_scene{};
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs{};
-  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> m_refTo{};
-  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> m_refFrom{};
-  std::set<vtkSmartPointer<vtkMRMLNode>> m_nodes{};
+  vtkWeakPointer<vtkMRMLScene> Scene{};
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer{};
+  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeToReferences{};
+  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeFromReferences{};
+  std::set<vtkSmartPointer<vtkMRMLNode>> Nodes{};
 
-  CallBackT m_onRefModified{};
+  CallBackT ReferenceModifiedCallback{};
 };

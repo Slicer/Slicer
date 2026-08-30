@@ -26,5 +26,5 @@ protected:
   ~vtkMRMLLayerDMPipelineCallbackCreator() override = default;
 
 private:
-  std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)> m_callback;
+  std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)> Callback;
 };
