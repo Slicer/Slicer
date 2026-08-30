@@ -5,6 +5,11 @@ It goes over the following concepts:
     - Creates a unique display pipeline to set attach a VTK glow pass to a renderer
     - Creates one glow display pipeline per 3D view for each created model nodes in the scene
     - Register the pipeline creation mechanism
+    - Handles hover interaction: on mouse move, each pipeline reports whether the cursor is within its model's
+        bounding box and its distance to the model center. The closest matching pipeline gains focus and sets an
+        "IsSelected" attribute on its data node; losing focus (cursor moved to another model or left the window)
+        resets the attribute. The observed attribute change updates the glow actor visibility, so only the
+        hovered model glows.
 
 Usage:
     This example is implemented as a scripted module and can be added as such to Slicer.
