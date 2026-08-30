@@ -171,7 +171,9 @@ class GlowDMPassPipeline(_Pipeline):
         """
         Triggered when the pipeline is removed from its previous renderer.
 
-        When the renderer is removed, we remove our glow pass.
+        When the renderer is removed, we remove our glow pass and release the graphics resources it holds
+        (framebuffers, textures). Without the release, the GPU resources would leak when the pipeline is
+        deleted (for instance when it is recreated after a module reload).
         Since we don't control the actual renderer used by the pipeline, this should be used systematically.
         See also: self.GetRenderer()
         """
@@ -179,6 +181,8 @@ class GlowDMPassPipeline(_Pipeline):
         if renderer is None:
             return
         renderer.SetPass(None)
+        if renderer.GetRenderWindow():
+            self._glowPass.ReleaseGraphicsResources(renderer.GetRenderWindow())
 
     def GetRenderOrder(self) -> int:
         """
@@ -465,7 +469,7 @@ class ModelGlowDMPipeline(_Pipeline):
     def RemoveGlowNode(cls, modelNode: vtkMRMLModelNode, scene: vtkMRMLScene):
         """
         Convenience static method to remove a glow node set on a given modelNode.
-        See also: autoCreateGlowNode
+        See also: autoCreateRemoveGlowNode
 
         Note: This logic can be simplified if we attach our pipeline to the model node directly.
             We would then iterate over node references to check if we have our pipeline node.
@@ -540,13 +544,39 @@ class ModelGlowDMPipeline(_Pipeline):
         return ""
 
 
+# Currently registered pipeline creator and scene observer tags.
+# Kept at module level so that registration can be done once at application startup and undone later
+# (see registerPipeline / unregisterPipeline).
+_pipelineCreator = None
+_sceneObserverTags = []
+
+
 def registerPipeline():
     """
     For the pipeline registration, we will register the pipeline creation mechanism and auto create view nodes when
     a new model node is added to the scene.
+
+    Any previous registration is removed first, so this function can safely be called multiple times
+    (at application startup and from the module widget's setup).
     """
-    registerPipelineCreator()
-    autoCreateGlowNode()
+    global _pipelineCreator, _sceneObserverTags
+    unregisterPipeline()
+    _pipelineCreator = registerPipelineCreator()
+    _sceneObserverTags = autoCreateRemoveGlowNode()
+
+
+def unregisterPipeline():
+    """
+    Undoes the registration done by registerPipeline.
+    This is called from the module widget's cleanup to keep module reload and unload working correctly.
+    """
+    global _pipelineCreator, _sceneObserverTags
+    if _pipelineCreator is not None:
+        vtkMRMLLayerDMPipelineFactory.GetInstance().RemovePipelineCreator(_pipelineCreator)
+        _pipelineCreator = None
+    for tag in _sceneObserverTags:
+        slicer.mrmlScene.RemoveObserver(tag)
+    _sceneObserverTags = []
 
 
 def registerPipelineCreator():
@@ -581,9 +611,10 @@ def registerPipelineCreator():
     pipeline_creator = vtkMRMLLayerDMPipelineScriptedCreator()
     pipeline_creator.SetPythonCallback(tryCreate)
     vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
+    return pipeline_creator
 
 
-def autoCreateGlowNode():
+def autoCreateRemoveGlowNode():
     """
     This function is a convenience function to manage the data nodes in the scene.
 
@@ -604,8 +635,12 @@ def autoCreateGlowNode():
             ModelGlowDMPipeline.RemoveGlowNode(node, slicer.mrmlScene)
 
     GlowDMPassPipeline.EnsureGlowPass(slicer.mrmlScene)
-    slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeAddedEvent, onNodeAdded)
-    slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeRemovedEvent, onNodeRemoved)
+
+    sceneObserverTags = []
+    sceneObserverTags.append(slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeAddedEvent, onNodeAdded))
+    sceneObserverTags.append(slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeRemovedEvent, onNodeRemoved))
+
+    return sceneObserverTags
 
 
 class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
@@ -617,6 +652,10 @@ class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
             - A "create sphere" button to create a random sphere in the scene
             - A "Reset 3D views" button to reset the 3D view on the created spheres
         """
+        # Re-register the pipeline so that a module reload binds the reloaded pipeline classes.
+        # registerPipeline first removes any previous registration, so this is safe to call
+        # even though the pipeline was already registered at application startup.
+        registerPipeline()
         ScriptedLoadableModuleWidget.setup(self)
 
         widget = qt.QWidget()
@@ -632,6 +671,17 @@ class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
         layout.addStretch()
 
         self.layout.addWidget(widget)
+
+    def cleanup(self) -> None:
+        """
+        Called when the module is about to be unloaded and by slicer.util.reloadScriptedModule before the widget is
+        rebuilt (module Reload button).
+
+        Here, we unregister the pipeline creator from the factory singleton and remove the scene observers.
+        Without this, the previously registered creator and observers would keep running the pre-reload code.
+        """
+        unregisterPipeline()
+        ScriptedLoadableModuleWidget.cleanup(self)
 
     @classmethod
     def _onCreateSphereClicked(cls, *_):
