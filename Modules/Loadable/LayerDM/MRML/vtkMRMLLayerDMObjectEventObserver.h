@@ -46,6 +46,7 @@ public:
   struct UpdateGuard;
   static vtkMRMLLayerDMObjectEventObserver* New();
   vtkTypeMacro(vtkMRMLLayerDMObjectEventObserver, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// @{
   /// Remove previous monitored events from \param prevObj and observe events from the \param obj

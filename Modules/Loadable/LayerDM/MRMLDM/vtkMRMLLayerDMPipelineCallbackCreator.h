@@ -35,6 +35,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipe
 public:
   static vtkMRMLLayerDMPipelineCallbackCreator* New();
   vtkTypeMacro(vtkMRMLLayerDMPipelineCallbackCreator, vtkMRMLLayerDMPipelineCreator);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const override;
   void SetCallback(const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& callback);

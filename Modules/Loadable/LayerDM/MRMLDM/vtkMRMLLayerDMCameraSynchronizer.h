@@ -45,6 +45,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMCame
 public:
   static vtkMRMLLayerDMCameraSynchronizer* New();
   vtkTypeMacro(vtkMRMLLayerDMCameraSynchronizer, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the view node for which the camera will be synchronized.
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);

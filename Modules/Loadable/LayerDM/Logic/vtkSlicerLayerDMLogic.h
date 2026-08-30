@@ -34,6 +34,7 @@ class VTK_SLICER_LAYERDM_MODULE_LOGIC_EXPORT vtkSlicerLayerDMLogic : public vtkS
 public:
   static vtkSlicerLayerDMLogic* New();
   vtkTypeMacro(vtkSlicerLayerDMLogic, vtkSlicerModuleLogic);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSlicerLayerDMLogic(const vtkSlicerLayerDMLogic&) = delete;
   void operator=(const vtkSlicerLayerDMLogic&) = delete;

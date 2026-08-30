@@ -29,3 +29,10 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineCreator::CreatePip
 {
   return {};
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineCreator::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Priority: " << this->Priority << std::endl;
+}

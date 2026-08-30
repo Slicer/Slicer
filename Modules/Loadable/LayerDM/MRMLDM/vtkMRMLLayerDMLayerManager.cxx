@@ -480,3 +480,14 @@ void vtkMRMLLayerDMLayerManager::UpdateRendererCamera()
     iRenderer++;
   }
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMLayerManager::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Number of layers: " << this->PipelineLayers.size() << std::endl;
+  os << indent << "Number of renderers: " << this->Renderers.size() << std::endl;
+  os << indent << "Number of cameras: " << this->CameraRendererMap.size() << std::endl;
+  os << indent << "Render window: " << (this->RenderWindow ? "set" : "(none)") << std::endl;
+  os << indent << "Default camera: " << (this->DefaultCamera ? "set" : "(none)") << std::endl;
+}

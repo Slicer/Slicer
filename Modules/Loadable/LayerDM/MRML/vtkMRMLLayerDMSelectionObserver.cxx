@@ -197,3 +197,12 @@ bool vtkMRMLLayerDMSelectionObserver::GetPlaceModePersistence() const
   }
   return this->InteractionNode->GetPlaceModePersistence();
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMSelectionObserver::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Scene: " << (this->Scene ? "set" : "(none)") << std::endl;
+  os << indent << "Interaction node: " << (this->InteractionNode ? "set" : "(none)") << std::endl;
+  os << indent << "Selection node: " << (this->SelectionNode ? "set" : "(none)") << std::endl;
+}

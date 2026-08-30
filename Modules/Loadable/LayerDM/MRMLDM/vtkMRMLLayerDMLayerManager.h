@@ -58,6 +58,7 @@ public:
 
   static vtkMRMLLayerDMLayerManager* New();
   vtkTypeMacro(vtkMRMLLayerDMLayerManager, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Adds the pipeline to the layers.
   /// May change an update of the layer ordering.

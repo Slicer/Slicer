@@ -33,6 +33,7 @@ public:
   static vtkMRMLLayerDMPipelineScriptedCreator* New();
 
   vtkTypeMacro(vtkMRMLLayerDMPipelineScriptedCreator, vtkMRMLLayerDMPipelineCallbackCreator);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   void SetPythonCallback(PyObject* object);
 
 protected:

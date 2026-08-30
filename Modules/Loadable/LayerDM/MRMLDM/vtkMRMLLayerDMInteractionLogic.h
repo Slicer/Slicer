@@ -46,6 +46,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMInte
 public:
   static vtkMRMLLayerDMInteractionLogic* New();
   vtkTypeMacro(vtkMRMLLayerDMInteractionLogic, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline);
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);

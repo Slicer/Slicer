@@ -345,3 +345,14 @@ void vtkMRMLLayerDMNodeReferenceObserver::TriggerCallback(const CallBackT& callb
   }
   callback(fromNode, toNode, role, eventType);
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMNodeReferenceObserver::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Scene: " << (this->Scene ? "set" : "(none)") << std::endl;
+  os << indent << "Number of observed nodes: " << this->Nodes.size() << std::endl;
+  os << indent << "Number of nodes with outgoing references: " << this->NodeToReferences.size() << std::endl;
+  os << indent << "Number of nodes with incoming references: " << this->NodeFromReferences.size() << std::endl;
+  os << indent << "Reference modified callback: " << (this->ReferenceModifiedCallback ? "set" : "(none)") << std::endl;
+}

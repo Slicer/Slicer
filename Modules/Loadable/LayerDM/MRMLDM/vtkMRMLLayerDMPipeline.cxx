@@ -411,3 +411,17 @@ vtkMRMLLayerDMPipeline::vtkMRMLLayerDMPipeline()
 {
   this->Observer->SetUpdateCallback([this](vtkObject* obj, unsigned long eventId, void* callData) { this->OnUpdate(obj, eventId, callData); });
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipeline::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "View node: " << (this->ViewNode ? "set" : "(none)") << std::endl;
+  os << indent << "Display node: " << (this->DisplayNode ? "set" : "(none)") << std::endl;
+  os << indent << "Scene: " << (this->Scene ? "set" : "(none)") << std::endl;
+  os << indent << "Pipeline manager: " << (this->PipelineManager ? "set" : "(none)") << std::endl;
+  os << indent << "Number of renderers: " << this->RenderersMap.size() << std::endl;
+  os << indent << "Update display blocked: " << (this->IsUpdateDisplayBlocked ? "true" : "false") << std::endl;
+  os << indent << "Frozen: " << (this->Frozen ? "true" : "false") << std::endl;
+  os << indent << "Interaction processing blocked: " << (this->InteractionProcessingBlocked ? "true" : "false") << std::endl;
+}

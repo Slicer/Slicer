@@ -37,6 +37,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMScri
 public:
   static vtkMRMLLayerDMScriptedPipelineBridge* New();
   vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipeline);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   vtkCamera* GetCustomCamera(unsigned int renderOrder) const override;

@@ -112,3 +112,9 @@ std::string vtkSlicerLayerDMLogic::GetDisplayRole()
 {
   return DisplayRole;
 }
+
+//-----------------------------------------------------------------------------
+void vtkSlicerLayerDMLogic::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+}

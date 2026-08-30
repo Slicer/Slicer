@@ -153,3 +153,14 @@ void vtkMRMLLayerDMPipelineFactory::SortPipelineCreators()
               return a->GetPriority() > b->GetPriority();
             });
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineFactory::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Number of pipeline creators: " << this->PipelineCreators.size() << std::endl;
+  os << indent << "Last view node: " << (this->LastView ? "set" : "(none)") << std::endl;
+  os << indent << "Last node: " << (this->LastNode ? "set" : "(none)") << std::endl;
+  os << indent << "Last pipeline: " << (this->LastPipeline ? "set" : "(none)") << std::endl;
+  os << indent << "Last creator: " << (this->LastCreator ? "set" : "(none)") << std::endl;
+}

@@ -41,3 +41,10 @@ void vtkMRMLLayerDMPipelineCallbackCreator::SetCallback(const std::function<vtkS
 
 vtkMRMLLayerDMPipelineCallbackCreator::vtkMRMLLayerDMPipelineCallbackCreator()
   : Callback([](vtkMRMLAbstractViewNode*, vtkMRMLNode*) { return nullptr; }) {};
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineCallbackCreator::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Callback: " << (this->Callback ? "set" : "(none)") << std::endl;
+}
