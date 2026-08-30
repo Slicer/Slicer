@@ -70,6 +70,7 @@ vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineFactory::CreatePip
       this->m_lastView = viewNode;
       this->m_lastNode = node;
       this->m_lastPipeline = created;
+      this->m_lastCreator = ctor;
       this->InvokeEvent(PipelineAboutToBeCreatedEvent);
       return created;
     }
@@ -97,11 +98,17 @@ vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
   }
 }
 
+vtkMRMLLayerDMPipelineCreator* vtkMRMLLayerDMPipelineFactory::GetLastCreator() const
+{
+  return this->m_lastCreator;
+}
+
 vtkMRMLLayerDMPipelineFactory::vtkMRMLLayerDMPipelineFactory()
   : m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , m_lastView(nullptr)
   , m_lastNode(nullptr)
   , m_lastPipeline(nullptr)
+  , m_lastCreator(nullptr)
 {
   m_obs->SetUpdateCallback([this](vtkObject* node) { this->SortPipelineCreators(); });
 }

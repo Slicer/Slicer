@@ -140,11 +140,17 @@ private:
   /// Update the input pipeline and reset its display.
   void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline) const;
 
-  /// Remove pipelines with nodes not present in the scene anymore.
+  /// Remove pipelines with nodes not present in the scene anymore, as well as pipelines
+  /// whose creator has been removed from the factory (their nodes are then handled again
+  /// by \sa AddMissingPipelines and may be recreated by the remaining creators).
   void RemoveOutdatedPipelines();
 
   /// Add pipelines for nodes not currently handled by the pipeline manager.
   void AddMissingPipelines();
+
+  /// true if the pipeline associated with the input node was created by a creator which has
+  /// since been removed from the factory (or destroyed).
+  bool IsPipelineCreatorOutdated(vtkMRMLNode* node) const;
 
   vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> m_factory;
   vtkSmartPointer<vtkMRMLLayerDMLayerManager> m_layerManager;
@@ -159,6 +165,9 @@ private:
   vtkWeakPointer<vtkRenderWindow> m_renderWindow;
 
   std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipeline>> m_pipelineMap;
+  /// Creator which created the pipeline of each node, used to detect pipelines whose creator
+  /// was removed from the factory (\sa RemoveOutdatedPipelines).
+  std::map<vtkWeakPointer<vtkMRMLNode>, vtkWeakPointer<vtkMRMLLayerDMPipelineCreator>> m_pipelineCreatorMap;
   std::function<void()> m_requestRender;
 
   bool m_isRequestRenderBlocked{ false };

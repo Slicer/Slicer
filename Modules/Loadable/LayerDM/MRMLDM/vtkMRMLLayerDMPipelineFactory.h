@@ -53,6 +53,10 @@ public:
   /// \brief Remove the input creator from the list of creators.
   /// If the factory doesn't contain the creator, does nothing.
   /// Invokes vtkCommand::ModifiedEvent if the factory is modified.
+  ///
+  /// Pipeline managers observing the factory remove the pipelines created by the removed creator
+  /// and recreate them from the remaining creators when possible.
+  /// \sa vtkMRMLLayerDMPipelineManager::UpdateFromScene
   void RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator);
 
   /// true if the given creator is contained in the factory, false otherwise.
@@ -72,6 +76,7 @@ public:
   vtkMRMLAbstractViewNode* GetLastViewNode() const;
   vtkMRMLNode* GetLastNode() const;
   vtkMRMLLayerDMPipeline* GetLastPipeline() const;
+  vtkMRMLLayerDMPipelineCreator* GetLastCreator() const;
   /// @}
 
 protected:
@@ -88,4 +93,5 @@ private:
   vtkWeakPointer<vtkMRMLAbstractViewNode> m_lastView;
   vtkWeakPointer<vtkMRMLNode> m_lastNode;
   vtkWeakPointer<vtkMRMLLayerDMPipeline> m_lastPipeline;
+  vtkWeakPointer<vtkMRMLLayerDMPipelineCreator> m_lastCreator;
 };
