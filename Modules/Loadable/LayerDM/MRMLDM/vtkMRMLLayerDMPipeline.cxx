@@ -27,6 +27,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipeline);
 
 void vtkMRMLLayerDMPipeline::UpdateFromMRML() {}
@@ -35,12 +36,14 @@ void vtkMRMLLayerDMPipeline::OnRendererRemoved(vtkRenderer* renderer) {}
 
 void vtkMRMLLayerDMPipeline::OnRendererAdded(vtkRenderer* renderer) {}
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetDisplayNode(vtkMRMLNode* displayNode)
 {
   this->UpdateObserver(this->DisplayNode, displayNode);
   this->DisplayNode = displayNode;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::UpdateDisplay()
 {
   if (this->IsUpdateDisplayBlocked || !this->ViewNode)
@@ -55,12 +58,14 @@ void vtkMRMLLayerDMPipeline::UpdateDisplay()
   this->BlockUpdateDisplay(false);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   this->UpdateObserver(this->ViewNode, viewNode);
   this->ViewNode = viewNode;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::BlockUpdateDisplay(bool isBlocked)
 {
   if (this->Frozen)
@@ -73,6 +78,7 @@ bool vtkMRMLLayerDMPipeline::BlockUpdateDisplay(bool isBlocked)
   return prev;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::BlockInteractionProcessing(bool isBlocked)
 {
   if (this->Frozen)
@@ -85,26 +91,31 @@ bool vtkMRMLLayerDMPipeline::BlockInteractionProcessing(bool isBlocked)
   return prev;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::IsInteractionProcessingBlocked() const
 {
   return this->InteractionProcessingBlocked;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   return false;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   return false;
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMPipeline::GetMouseCursor() const
 {
   return 0;
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMPipeline::GetWidgetState() const
 {
   return vtkMRMLAbstractWidget::WidgetStateIdle;
@@ -114,31 +125,37 @@ void vtkMRMLLayerDMPipeline::LoseFocus(vtkMRMLInteractionEventData* eventData) {
 
 void vtkMRMLLayerDMPipeline::OnDefaultCameraModified(vtkCamera* camera) {}
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role)
 {
   this->OnUpdate(this->GetDisplayNode(), vtkMRMLNode::ReferenceAddedEvent, nullptr);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role)
 {
   this->OnUpdate(this->GetDisplayNode(), vtkMRMLNode::ReferenceRemovedEvent, nullptr);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event) const
 {
   return this->Observer->UpdateObserver(prevObj, obj, event);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const
 {
   return this->Observer->UpdateObserver(prevObj, obj, events);
 }
 
+//-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMPipeline::GetRenderOrder() const
 {
   return 0;
 }
 
+//-----------------------------------------------------------------------------
 std::vector<vtkRenderer*> vtkMRMLLayerDMPipeline::GetRenderers() const
 {
   std::vector<vtkRenderer*> renderers;
@@ -149,21 +166,25 @@ std::vector<vtkRenderer*> vtkMRMLLayerDMPipeline::GetRenderers() const
   return renderers;
 }
 
+//-----------------------------------------------------------------------------
 std::vector<unsigned int> vtkMRMLLayerDMPipeline::GetRenderOrders() const
 {
   return { this->GetRenderOrder() };
 }
 
+//-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMPipeline::GetCustomCamera() const
 {
   return nullptr;
 }
 
+//-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMPipeline::GetCustomCamera(unsigned int renderOrder) const
 {
   return GetCustomCamera();
 }
 
+//-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMPipeline::GetMaxRenderOrder() const
 {
   const auto renderOrders = GetRenderOrders();
@@ -174,6 +195,7 @@ unsigned int vtkMRMLLayerDMPipeline::GetMaxRenderOrder() const
   return *std::max_element(renderOrders.begin(), renderOrders.end());
 }
 
+//-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMPipeline::GetVtkRendererOrder(const vtkRenderer* renderer) const
 {
   if (!renderer)
@@ -191,6 +213,7 @@ unsigned int vtkMRMLLayerDMPipeline::GetVtkRendererOrder(const vtkRenderer* rend
   return 0;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders)
 {
   if (this->RenderersMatchPipelineRenderers(renderers, renderOrders))
@@ -228,6 +251,7 @@ void vtkMRMLLayerDMPipeline::SetRenderers(const std::vector<vtkRenderer*>& rende
   this->UpdateDisplay();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders)
 {
   if (renderers.size() != this->RenderersMap.size() || renderOrders.size() != this->RenderersMap.size())
@@ -248,16 +272,19 @@ bool vtkMRMLLayerDMPipeline::RenderersMatchPipelineRenderers(const std::vector<v
   return true;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetRenderer(vtkRenderer* renderer)
 {
   this->SetRenderers({ renderer }, { this->GetRenderOrder() });
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetScene(vtkMRMLScene* scene)
 {
   this->Scene = scene;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipeline::GetNodePipeline(vtkMRMLNode* node) const
 {
   if (!this->PipelineManager)
@@ -267,16 +294,19 @@ vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipeline::GetNodePipeline(vtkMRMLNode* nod
   return this->PipelineManager->GetNodePipeline(node);
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipelineManager* vtkMRMLLayerDMPipeline::GetPipelineManager() const
 {
   return this->PipelineManager;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* vtkMRMLLayerDMPipeline::GetViewNode() const
 {
   return this->ViewNode;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::BlockUpdateObserver(bool isBlocked) const
 {
   if (this->Frozen)
@@ -287,11 +317,13 @@ bool vtkMRMLLayerDMPipeline::BlockUpdateObserver(bool isBlocked) const
   return this->Observer->SetBlocked(isBlocked);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::IsUpdateObserverBlocked() const
 {
   return this->Observer->IsBlocked();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetFrozen(bool isFrozen)
 {
   if (this->Frozen == isFrozen)
@@ -308,16 +340,19 @@ void vtkMRMLLayerDMPipeline::SetFrozen(bool isFrozen)
   this->Frozen = isFrozen;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPipeline::IsFrozen() const
 {
   return this->Frozen;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLLayerDMPipeline::GetDisplayNode() const
 {
   return this->DisplayNode;
 }
 
+//-----------------------------------------------------------------------------
 vtkRenderer* vtkMRMLLayerDMPipeline::GetRenderer() const
 {
   if (this->RenderersMap.empty())
@@ -327,6 +362,7 @@ vtkRenderer* vtkMRMLLayerDMPipeline::GetRenderer() const
   return this->RenderersMap.begin()->second;
 }
 
+//-----------------------------------------------------------------------------
 vtkRenderer* vtkMRMLLayerDMPipeline::GetRenderer(unsigned int renderOrder) const
 {
   const auto it = this->RenderersMap.find(renderOrder);
@@ -337,6 +373,7 @@ vtkRenderer* vtkMRMLLayerDMPipeline::GetRenderer(unsigned int renderOrder) const
   return it->second;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLScene* vtkMRMLLayerDMPipeline::GetScene() const
 {
   return this->Scene;
@@ -344,11 +381,13 @@ vtkMRMLScene* vtkMRMLLayerDMPipeline::GetScene() const
 
 void vtkMRMLLayerDMPipeline::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) {}
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::RemoveObserver(vtkObject* prevObj) const
 {
   this->Observer->RemoveObserver(prevObj);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::RequestRender() const
 {
   if (this->PipelineManager)
@@ -357,11 +396,13 @@ void vtkMRMLLayerDMPipeline::RequestRender() const
   }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager)
 {
   this->PipelineManager = pipelineManager;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline::vtkMRMLLayerDMPipeline()
   : IsUpdateDisplayBlocked{ false }
   , Frozen{ false }

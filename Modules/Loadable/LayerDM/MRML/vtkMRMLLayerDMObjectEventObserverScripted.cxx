@@ -20,8 +20,10 @@
 #include "vtkMRMLLayerDMPythonUtil.h"
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserverScripted);
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScripted()
   : Object(nullptr)
 {
@@ -46,16 +48,19 @@ vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScri
     });
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserverScripted::~vtkMRMLLayerDMObjectEventObserverScripted()
 {
   vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserverScripted::SetPythonCallback(PyObject* object)
 {
   vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMObjectEventObserverScripted::CastCallData(PyObject* object, int vtkType)
 {
   return vtkMRMLLayerDMPythonUtil::CastCallData(object, vtkType);

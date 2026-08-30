@@ -28,8 +28,10 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMSelectionObserver);
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMSelectionObserver::vtkMRMLLayerDMSelectionObserver()
   : Observer{ vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New() }
 {
@@ -45,11 +47,13 @@ vtkMRMLLayerDMSelectionObserver::vtkMRMLLayerDMSelectionObserver()
 
 vtkMRMLLayerDMSelectionObserver::~vtkMRMLLayerDMSelectionObserver() = default;
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::SetScene(vtkMRMLScene* scene)
 {
   this->UpdateNodesFromScene(scene);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::UpdateNodesFromScene(vtkMRMLScene* scene)
 {
   bool didModify{};
@@ -61,6 +65,7 @@ void vtkMRMLLayerDMSelectionObserver::UpdateNodesFromScene(vtkMRMLScene* scene)
   }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::UpdateNodesFromApplicationLogic(vtkMRMLApplicationLogic* logic)
 {
   bool didModify{};
@@ -72,6 +77,7 @@ void vtkMRMLLayerDMSelectionObserver::UpdateNodesFromApplicationLogic(vtkMRMLApp
   }
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::SetInteractionNode(vtkMRMLInteractionNode* interactionNode)
 {
   const auto didModify = this->Observer->UpdateObserver(this->InteractionNode, interactionNode);
@@ -79,11 +85,13 @@ bool vtkMRMLLayerDMSelectionObserver::SetInteractionNode(vtkMRMLInteractionNode*
   return didModify;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLInteractionNode* vtkMRMLLayerDMSelectionObserver::GetInteractionNode() const
 {
   return this->InteractionNode;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::SetSelectionNode(vtkMRMLSelectionNode* selectionNode)
 {
   const auto didModify = this->Observer->UpdateObserver(this->SelectionNode, selectionNode);
@@ -91,11 +99,13 @@ bool vtkMRMLLayerDMSelectionObserver::SetSelectionNode(vtkMRMLSelectionNode* sel
   return didModify;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLLayerDMSelectionObserver::GetSelectionNode() const
 {
   return this->SelectionNode;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::IsPlacing(vtkMRMLNode* node) const
 {
   if (!node)
@@ -106,6 +116,7 @@ bool vtkMRMLLayerDMSelectionObserver::IsPlacing(vtkMRMLNode* node) const
   return this->IsPlacing() && (this->GetActivePlaceNodeID() == std::string(node->GetID()));
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::IsPlacing() const
 {
   if (!this->InteractionNode)
@@ -116,6 +127,7 @@ bool vtkMRMLLayerDMSelectionObserver::IsPlacing() const
   return this->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::StartPlace(vtkMRMLNode* node, bool isPersistent)
 {
   if (!node || !this->InteractionNode || !this->SelectionNode)
@@ -140,11 +152,13 @@ void vtkMRMLLayerDMSelectionObserver::StartPlace(vtkMRMLNode* node, bool isPersi
   this->Modified();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::StopPlace() const
 {
   this->SetInteractionMode(vtkMRMLInteractionNode::ViewTransform);
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMSelectionObserver::GetActivePlaceNodeID() const
 {
   if (!this->SelectionNode || !this->SelectionNode->GetActivePlaceNodeID())
@@ -154,6 +168,7 @@ std::string vtkMRMLLayerDMSelectionObserver::GetActivePlaceNodeID() const
   return this->SelectionNode->GetActivePlaceNodeID();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMSelectionObserver::SetInteractionMode(int interactionMode) const
 {
   if (!this->InteractionNode)
@@ -163,6 +178,7 @@ void vtkMRMLLayerDMSelectionObserver::SetInteractionMode(int interactionMode) co
   this->InteractionNode->SetCurrentInteractionMode(interactionMode);
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMSelectionObserver::GetCurrentInteractionMode() const
 {
   if (!this->InteractionNode)
@@ -172,6 +188,7 @@ int vtkMRMLLayerDMSelectionObserver::GetCurrentInteractionMode() const
   return this->InteractionNode->GetCurrentInteractionMode();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::GetPlaceModePersistence() const
 {
   if (!this->InteractionNode)

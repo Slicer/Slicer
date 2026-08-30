@@ -21,8 +21,10 @@
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserver);
 
+//-----------------------------------------------------------------------------
 template <class... Ts>
 struct Overloaded : Ts...
 {
@@ -32,6 +34,7 @@ struct Overloaded : Ts...
 template <class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
   : UpdateCommand(vtkSmartPointer<vtkCallbackCommand>::New())
   , Blocked(false)
@@ -61,6 +64,7 @@ vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
     });
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
 {
   for (const auto& obs : this->ObservedEventsMap)
@@ -75,11 +79,13 @@ vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
   }
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event)
 {
   return this->UpdateObserver(prevObj, obj, std::vector<unsigned long>{ event });
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
 {
   if (prevObj == obj)
@@ -95,11 +101,13 @@ bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkOb
   return true;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
 {
   this->Callback = callback;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
 {
   bool wasBlocked = this->Blocked;
@@ -107,21 +115,25 @@ bool vtkMRMLLayerDMObjectEventObserver::SetBlocked(bool isBlocked)
   return wasBlocked;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMObjectEventObserver::IsBlocked() const
 {
   return this->Blocked;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId)>& callback)
 {
   this->Callback = callback;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback)
 {
   this->Callback = callback;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
 {
   if (!node)
@@ -142,6 +154,7 @@ void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned lo
   this->ObservedEventsMap[node].insert(node->AddObserver(event, this->UpdateCommand));
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
 {
   if (!node || this->ObservedEventsMap.find(node) == std::end(this->ObservedEventsMap))
@@ -157,6 +170,7 @@ void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
   this->ObservedEventsMap.erase(node);
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserver::UpdateGuard::UpdateGuard(vtkMRMLLayerDMObjectEventObserver* obs)
   : Observer(obs)
 {
@@ -166,6 +180,7 @@ vtkMRMLLayerDMObjectEventObserver::UpdateGuard::UpdateGuard(vtkMRMLLayerDMObject
   }
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserver::UpdateGuard::~UpdateGuard()
 {
   if (this->Observer)

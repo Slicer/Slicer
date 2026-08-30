@@ -19,27 +19,32 @@
 
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPythonUtil);
 
 vtkMRMLLayerDMPythonUtil::vtkMRMLLayerDMPythonUtil() = default;
 
 vtkMRMLLayerDMPythonUtil::~vtkMRMLLayerDMPythonUtil() = default;
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(vtkObjectBase* obj)
 {
   return vtkPythonUtil::GetObjectFromPointer(obj);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(unsigned long value)
 {
   return PyLong_FromUnsignedLong(value);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(const std::string& value)
 {
   return PyUnicode_FromString(value.c_str());
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
 {
   if (ptr)
@@ -52,6 +57,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
   return Py_None;
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(const std::vector<PyObject*>& pyObjs)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -70,18 +76,21 @@ vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(const std::vector<PyObject*>
   return { pyTuple };
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(vtkObjectBase* obj)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
   return ToPyArgs({ ToPyObject(obj) });
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(vtkObject* obj, unsigned long eventId, void* callData)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
   return ToPyArgs({ ToPyObject(obj), ToPyObject(eventId), RawPtrToPython(callData) });
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -147,6 +156,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
   }
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName)
 {
   if (!IsValidPythonContext() || !object)
@@ -173,6 +183,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
   return CallPythonObject(method, pyArgs);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtkSmartPyObject& pyArgs)
 {
   if (!IsValidPythonContext() || !object)
@@ -192,6 +203,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtk
   return PyObject_CallObject(object, pyArgs);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::SetPythonObject(PyObject** destObject, PyObject* object)
 {
   if (!IsValidPythonContext())
@@ -210,6 +222,7 @@ void vtkMRMLLayerDMPythonUtil::SetPythonObject(PyObject** destObject, PyObject* 
   Py_XINCREF(*destObject);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::DeletePythonObject(PyObject** destObject)
 {
   if (!Py_IsInitialized())
@@ -222,6 +235,7 @@ void vtkMRMLLayerDMPythonUtil::DeletePythonObject(PyObject** destObject)
   *destObject = nullptr;
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
 {
   if (!Py_IsInitialized())
@@ -250,6 +264,7 @@ std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
   return objectString;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPythonUtil::IsValidPythonContext()
 {
   if (!Py_IsInitialized())
@@ -261,6 +276,7 @@ bool vtkMRMLLayerDMPythonUtil::IsValidPythonContext()
   return !PyErr_Occurred();
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
 {
   // Don't use IsValidPythonContext here as it checks if no error has occurred
@@ -300,6 +316,7 @@ std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
   return exceptionTraceback;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, const std::string& errorMsg)
 {
   // If the traceback is not empty, print the traceback using vtkErrorMacro

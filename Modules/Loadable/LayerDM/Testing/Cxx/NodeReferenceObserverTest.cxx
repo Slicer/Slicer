@@ -34,6 +34,7 @@
 
 namespace
 {
+//-----------------------------------------------------------------------------
 struct Spy
 {
 
@@ -59,6 +60,7 @@ struct Spy
   int callCount{};
 };
 
+//-----------------------------------------------------------------------------
 struct Test
 {
   Test(const vtkSmartPointer<vtkMRMLScene>& inScene = nullptr)
@@ -84,6 +86,7 @@ struct Test
 };
 } // namespace
 
+//-----------------------------------------------------------------------------
 class NodeReferenceObserverTester : public QObject
 {
   Q_OBJECT

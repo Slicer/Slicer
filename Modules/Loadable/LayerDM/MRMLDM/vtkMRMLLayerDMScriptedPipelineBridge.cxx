@@ -32,8 +32,10 @@
 #include <vtkPythonUtil.h>
 #include <vtkRenderer.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMScriptedPipelineBridge);
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::UpdateFromMRML()
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -44,21 +46,25 @@ void vtkMRMLLayerDMScriptedPipelineBridge::UpdateFromMRML()
   this->CallPythonMethod({}, __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CastCallData(PyObject* object, int vtkType)
 {
   return vtkMRMLLayerDMPythonUtil::CastCallData(object, vtkType);
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMScriptedPipelineBridge::vtkMRMLLayerDMScriptedPipelineBridge()
   : Object{ nullptr }
 {
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMScriptedPipelineBridge::~vtkMRMLLayerDMScriptedPipelineBridge()
 {
   vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -84,6 +90,7 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
   return false;
 }
 
+//-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int renderOrder) const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -105,6 +112,7 @@ vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int re
   return Superclass::GetCustomCamera(renderOrder);
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -120,6 +128,7 @@ int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
   return Superclass::GetMouseCursor();
 }
 
+//-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -135,6 +144,7 @@ unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
   return Superclass::GetRenderOrder();
 }
 
+//-----------------------------------------------------------------------------
 std::vector<unsigned int> vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrders() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -168,6 +178,7 @@ std::vector<unsigned int> vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrders(
   return Superclass::GetRenderOrders();
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -183,6 +194,7 @@ int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const
   return Superclass::GetWidgetState();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::LoseFocus(vtkMRMLInteractionEventData* eventData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -194,6 +206,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::LoseFocus(vtkMRMLInteractionEventData
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* camera)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -205,11 +218,13 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* ca
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(camera), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 inline vtkSmartPyObject ToPyArgs(vtkMRMLNode* fromNode, const std::string& s)
 {
   return vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(fromNode), vtkMRMLLayerDMPythonUtil::ToPyObject(s) });
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -220,6 +235,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeAdded(vtkMRML
   this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -230,6 +246,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeRemoved(vtkMR
   this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -241,6 +258,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererRemoved(vtkRenderer* renderer)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -252,6 +270,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererRemoved(vtkRenderer* render
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -269,6 +288,7 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLIntera
   return false;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetDisplayNode(vtkMRMLNode* displayNode)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -280,6 +300,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetDisplayNode(vtkMRMLNode* displayNo
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(displayNode), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -291,6 +312,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetViewNode(vtkMRMLAbstractViewNode* 
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(viewNode), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetScene(vtkMRMLScene* scene)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -302,6 +324,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetScene(vtkMRMLScene* scene)
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(scene), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -313,11 +336,13 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipe
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(pipelineManager), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPythonObject(PyObject* object)
 {
   vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -329,6 +354,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned lon
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(obj, eventId, callData), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
   auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->Object, pyArgs, fName);
@@ -348,6 +374,7 @@ PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartP
   return result;
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result) const
 {
   if (!result)

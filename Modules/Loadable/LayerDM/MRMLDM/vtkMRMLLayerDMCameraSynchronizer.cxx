@@ -33,6 +33,7 @@
 // STL includes
 #include <array>
 
+//-----------------------------------------------------------------------------
 /// \brief Abstract class for the camera strategies.
 /// Implements only the reset camera clipping range logic for the layer cameras.
 /// Other methods are expected to be implemented by deriving classes.
@@ -53,6 +54,7 @@ protected:
   std::function<void()> InvokeModifiedEvent;
 };
 
+//-----------------------------------------------------------------------------
 /// Default camera synchronization consists in updating the camera when the first renderer active camera is updated.
 class DefaultCameraSynchronizeStrategy : public CameraSynchronizeStrategy
 {
@@ -108,6 +110,7 @@ private:
   vtkWeakPointer<vtkCamera> ObservedCamera;
 };
 
+//-----------------------------------------------------------------------------
 /// Synchronizes the default camera to the current slice node view configuration.
 /// The Slice renderer 0 camera is not configured nor modified during camera changes.
 /// All of its actors are set to render in 2D.
@@ -183,8 +186,10 @@ private:
   vtkWeakPointer<vtkMRMLSliceNode> SliceNode;
 };
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMCameraSynchronizer);
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMCameraSynchronizer::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (this->ViewNode == viewNode)
@@ -196,6 +201,7 @@ void vtkMRMLLayerDMCameraSynchronizer::SetViewNode(vtkMRMLAbstractViewNode* view
   this->UpdateStrategy();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMCameraSynchronizer::SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera)
 {
   if (this->DefaultCamera == camera)
@@ -206,6 +212,7 @@ void vtkMRMLLayerDMCameraSynchronizer::SetDefaultCamera(const vtkSmartPointer<vt
   this->UpdateStrategy();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMCameraSynchronizer::SetRenderer(vtkRenderer* renderer)
 {
   if (this->Renderer == renderer)
@@ -220,6 +227,7 @@ vtkMRMLLayerDMCameraSynchronizer::vtkMRMLLayerDMCameraSynchronizer() = default;
 
 vtkMRMLLayerDMCameraSynchronizer::~vtkMRMLLayerDMCameraSynchronizer() = default;
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMCameraSynchronizer::UpdateStrategy()
 {
   if (!this->DefaultCamera || !this->Renderer)
@@ -248,6 +256,7 @@ void vtkMRMLLayerDMCameraSynchronizer::UpdateStrategy()
   this->SynchronizeStrategy->UpdateCamera();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMCameraSynchronizer::BlockModified(bool isBlocked)
 {
   bool wasBlocked = this->IsBlocked;

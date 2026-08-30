@@ -29,8 +29,10 @@
 #include <vtkObjectFactory.h>
 #include <vtkPythonUtil.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineScriptedCreator);
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
   : Object(nullptr)
 {
@@ -55,11 +57,13 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
     });
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipelineScriptedCreator::~vtkMRMLLayerDMPipelineScriptedCreator()
 {
   vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineScriptedCreator::SetPythonCallback(PyObject* object)
 {
   vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
