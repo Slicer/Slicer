@@ -117,8 +117,10 @@ vtkMRMLLayerDMNodeReferenceObserver::vtkMRMLLayerDMNodeReferenceObserver()
     });
 }
 
+namespace
+{
 //-----------------------------------------------------------------------------
-inline std::set<vtkSmartPointer<vtkMRMLNode>> GetSceneNodes(vtkMRMLScene* scene)
+std::set<vtkSmartPointer<vtkMRMLNode>> GetSceneNodes(vtkMRMLScene* scene)
 {
   if (!scene)
   {
@@ -138,7 +140,7 @@ inline std::set<vtkSmartPointer<vtkMRMLNode>> GetSceneNodes(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-inline std::tuple<std::vector<vtkSmartPointer<vtkMRMLNode>>, std::vector<vtkSmartPointer<vtkMRMLNode>>> GetNodesRemovedAddedFromScene(
+std::tuple<std::vector<vtkSmartPointer<vtkMRMLNode>>, std::vector<vtkSmartPointer<vtkMRMLNode>>> GetNodesRemovedAddedFromScene(
   vtkMRMLScene* scene,
   const std::set<vtkSmartPointer<vtkMRMLNode>>& currentNodes)
 {
@@ -163,6 +165,7 @@ inline std::tuple<std::vector<vtkSmartPointer<vtkMRMLNode>>, std::vector<vtkSmar
 
   return { nodesRemoved, nodesAdded };
 }
+} // namespace
 
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMNodeReferenceObserver::UpdateFromScene()
@@ -249,7 +252,7 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnReferenceRemoved(vtkMRMLNode* fromNo
 void vtkMRMLLayerDMNodeReferenceObserver::RemoveOutdatedReferences(vtkMRMLNode* fromNode)
 {
   auto sceneRefs = GetNodeReferencesFromScene(fromNode);
-  for (const auto& ref : GetNodeToReferences(fromNode))
+  for (const auto& ref : this->GetNodeToReferences(fromNode))
   {
     if (sceneRefs.find(ref) == sceneRefs.end())
     {

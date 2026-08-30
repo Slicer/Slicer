@@ -137,7 +137,7 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslationKeyboard(int widget
                                                                       int repeatCount,
                                                                       unsigned long keyEvent)
 {
-  this->SetTranslation(EventKey{ widgetState, keyEvent, modifier, EventKey::thresholdRepeatCount(repeatCount), keySym }, widgetEvent);
+  this->SetTranslation(EventKey{ widgetState, keyEvent, modifier, EventKey::ThresholdRepeatCount(repeatCount), keySym }, widgetEvent);
 }
 
 //-----------------------------------------------------------------------------
@@ -207,8 +207,8 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(int widgetStat
 
   if (eventId == vtkCommand::KeyPressEvent)
   {
-    key.repeatCount = EventKey::thresholdRepeatCount(eventData->GetKeyRepeatCount());
-    key.keySym = eventData->GetKeySym();
+    key.RepeatCount = EventKey::ThresholdRepeatCount(eventData->GetKeyRepeatCount());
+    key.KeySym = eventData->GetKeySym();
   }
 
   return this->Translate(key);
@@ -240,18 +240,18 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(EventKey key) 
   const auto noRelaxation = [](EventKey k) { return k; };
   const auto relaxModifier = [](EventKey k)
   {
-    k.modifier = (k.modifier == vtkEvent::AnyModifier) ? vtkEvent::NoModifier : k.modifier;
+    k.Modifier = (k.Modifier == vtkEvent::AnyModifier) ? vtkEvent::NoModifier : k.Modifier;
     return k;
   };
   const auto relaxState = [](EventKey k)
   {
-    k.widgetState = vtkMRMLAbstractWidget::WidgetStateAny;
+    k.WidgetState = vtkMRMLAbstractWidget::WidgetStateAny;
     return k;
   };
   const auto relaxClick = [](EventKey k)
   {
-    const auto clickEvent = GetClickEvent(k.eventId);
-    k.eventId = clickEvent != vtkMRMLAbstractWidget::WidgetEventNone ? clickEvent : k.eventId;
+    const auto clickEvent = GetClickEvent(k.EventId);
+    k.EventId = clickEvent != vtkMRMLAbstractWidget::WidgetEventNone ? clickEvent : k.EventId;
     return k;
   };
 
@@ -290,11 +290,11 @@ std::string vtkMRMLLayerDMWidgetEventTranslationNode::ToString(const std::pair<E
 {
   const auto& [key, widgetEvent] = eventPair;
   std::stringstream ss;
-  ss << "widgetState=" << key.widgetState << ",";
-  ss << "eventId=" << key.eventId << ",";
-  ss << "modifier=" << key.modifier << ",";
-  ss << "repeatCount=" << key.repeatCount << ",";
-  ss << "keySym=" << key.keySym << ",";
+  ss << "widgetState=" << key.WidgetState << ",";
+  ss << "eventId=" << key.EventId << ",";
+  ss << "modifier=" << key.Modifier << ",";
+  ss << "repeatCount=" << key.RepeatCount << ",";
+  ss << "keySym=" << key.KeySym << ",";
   ss << "widgetEvent=" << widgetEvent;
   return ss.str();
 }
@@ -385,11 +385,11 @@ std::pair<vtkMRMLLayerDMWidgetEventTranslationNode::EventKey, unsigned long> vtk
     trim(keyName);
     trim(val);
 
-    tryRead(keyName, "widgetState", [val, &key] { key.widgetState = std::stoi(val); });
-    tryRead(keyName, "eventId", [val, &key] { key.eventId = std::stoul(val); });
-    tryRead(keyName, "modifier", [val, &key] { key.modifier = std::stoi(val); });
-    tryRead(keyName, "repeatCount", [val, &key] { key.repeatCount = EventKey::thresholdRepeatCount(std::stoi(val)); });
-    tryRead(keyName, "keySym", [val, &key] { key.keySym = val; });
+    tryRead(keyName, "widgetState", [val, &key] { key.WidgetState = std::stoi(val); });
+    tryRead(keyName, "eventId", [val, &key] { key.EventId = std::stoul(val); });
+    tryRead(keyName, "modifier", [val, &key] { key.Modifier = std::stoi(val); });
+    tryRead(keyName, "repeatCount", [val, &key] { key.RepeatCount = EventKey::ThresholdRepeatCount(std::stoi(val)); });
+    tryRead(keyName, "keySym", [val, &key] { key.KeySym = val; });
     tryRead(keyName, "widgetEvent", [val, &widgetEvent] { widgetEvent = std::stoul(val); });
   }
   return { key, widgetEvent };

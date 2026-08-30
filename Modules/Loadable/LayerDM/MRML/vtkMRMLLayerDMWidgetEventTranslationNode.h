@@ -130,17 +130,20 @@ private:
   {
     bool operator==(const EventKey& other) const { return this->AsTuple() == other.AsTuple(); }
     bool operator<(const EventKey& other) const { return this->AsTuple() < other.AsTuple(); }
-    std::tuple<int, unsigned long, int, int, std::string> AsTuple() const { return std::make_tuple(widgetState, eventId, modifier, repeatCount, keySym); }
+    std::tuple<int, unsigned long, int, int, std::string> AsTuple() const
+    {
+      return std::make_tuple(this->WidgetState, this->EventId, this->Modifier, this->RepeatCount, this->KeySym);
+    }
 
     /// Slicer event data never generate repeat counts less than 1.
     /// Make sure the repeat count is always greater than one
-    static int thresholdRepeatCount(int repeatCount) { return std::max(1, repeatCount); }
+    static int ThresholdRepeatCount(int repeatCount) { return std::max(1, repeatCount); }
 
-    int widgetState{ vtkMRMLAbstractWidget::WidgetStateAny };
-    unsigned long eventId{ vtkCommand::NoEvent };
-    int modifier{ vtkEvent::NoModifier };
-    int repeatCount{ 1 };
-    std::string keySym;
+    int WidgetState{ vtkMRMLAbstractWidget::WidgetStateAny };
+    unsigned long EventId{ vtkCommand::NoEvent };
+    int Modifier{ vtkEvent::NoModifier };
+    int RepeatCount{ 1 };
+    std::string KeySym;
   };
 
   void SetTranslation(const EventKey& key, unsigned long widgetEvent);
