@@ -6,6 +6,7 @@
 #include "vtkMRMLLayerDMLayerManager.h"
 #include "vtkMRMLLayerDMNodeReferenceObserver.h"
 #include "vtkMRMLLayerDMObjectEventObserver.h"
+#include "vtkMRMLLayerDMPipelineCreator.h"
 #include "vtkMRMLLayerDMPipelineFactory.h"
 #include "vtkMRMLLayerDMPipeline.h"
 
@@ -88,6 +89,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   pipeline->SetDisplayNode(displayNode);
   pipeline->OnDefaultCameraModified(this->m_defaultCamera);
   this->m_pipelineMap[displayNode] = pipeline;
+  this->m_pipelineCreatorMap[displayNode] = this->m_factory->GetLastCreator();
   this->m_layerManager->AddPipeline(pipeline);
   this->m_interactionLogic->AddPipeline(pipeline);
   this->UpdatePipeline(pipeline);
@@ -98,6 +100,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
 void vtkMRMLLayerDMPipelineManager::ClearDisplayableNodes()
 {
   this->m_pipelineMap.clear();
+  this->m_pipelineCreatorMap.clear();
 }
 
 bool vtkMRMLLayerDMPipelineManager::AddNode(vtkMRMLNode* node)
@@ -133,6 +136,7 @@ bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
   this->m_interactionLogic->RemovePipeline(pipeline);
   this->m_layerManager->RemovePipeline(pipeline);
   this->m_pipelineMap.erase(displayNode);
+  this->m_pipelineCreatorMap.erase(displayNode);
   this->InvokeEvent(vtkCommand::ModifiedEvent);
   return true;
 }
@@ -346,7 +350,7 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
   std::vector<vtkWeakPointer<vtkMRMLNode>> outdatedPipelines;
   for (const auto& pipe : m_pipelineMap)
   {
-    if (!pipe.first || !this->m_scene->GetNodeByID(pipe.first->GetID()))
+    if (!pipe.first || !this->m_scene->GetNodeByID(pipe.first->GetID()) || this->IsPipelineCreatorOutdated(pipe.first))
     {
       outdatedPipelines.emplace_back(pipe.first);
     }
@@ -356,6 +360,16 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
   {
     this->RemovePipeline(pipe);
   }
+}
+
+bool vtkMRMLLayerDMPipelineManager::IsPipelineCreatorOutdated(vtkMRMLNode* node) const
+{
+  const auto found = this->m_pipelineCreatorMap.find(node);
+  if (found == std::end(this->m_pipelineCreatorMap))
+  {
+    return false;
+  }
+  return !found->second || !this->m_factory || !this->m_factory->ContainsPipelineCreator(found->second.GetPointer());
 }
 
 void vtkMRMLLayerDMPipelineManager::AddMissingPipelines()
