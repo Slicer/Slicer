@@ -94,7 +94,8 @@ private:
   void AddObserver(vtkObject* obj, unsigned long event);
 
   vtkSmartPointer<vtkCallbackCommand> UpdateCommand;
-  std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> ObservedEventsMap;
+  /// For each observed object, maps the observed event ID to the observer tag returned by AddObserver.
+  std::map<vtkWeakPointer<vtkObject>, std::map<unsigned long, unsigned long>> ObservedEventsMap;
 
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
