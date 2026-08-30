@@ -47,7 +47,11 @@ public:
   void operator=(const vtkMRMLLayerDMWidgetEventTranslationNode&) = delete;
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  void Copy(vtkMRMLNode* node) override;
+
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLLayerDMWidgetEventTranslationNode);
+
   void ReadXMLAttributes(const char** atts) override;
   void WriteXML(ostream& of, int indent) override;
 
