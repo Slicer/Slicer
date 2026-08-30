@@ -24,8 +24,6 @@ import slicer
 from slicer import (
     vtkMRMLAbstractViewNode,
     vtkMRMLInteractionEventData,
-    vtkMRMLLayerDMPipelineFactory,
-    vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLModelNode,
     vtkMRMLNode,
     vtkMRMLScene,
@@ -50,7 +48,7 @@ from vtk import (
     vtkTransformPolyDataFilter,
 )
 
-from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
+from LayerDMLib import ScriptedPipelineSceneConnector, vtkMRMLLayerDMScriptedPipeline
 
 
 class ModelGlowDM(ScriptedLoadableModule):
@@ -63,9 +61,78 @@ class ModelGlowDM(ScriptedLoadableModule):
         self.parent.helpText = ""
         self.parent.acknowledgementText = ""
 
-        # At startup connected, the pipeline registration is called
-        # This allows the pipeline registration to be done automatically at loading time
-        slicer.app.connect("startupCompleted()", registerPipeline)
+        # At startup completed, the pipelines are connected to the scene.
+        # This allows the pipeline registration to be done automatically at loading time,
+        # without requiring the module widget to be opened first.
+        slicer.app.connect("startupCompleted()", _sceneConnector.Connect)
+
+
+class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
+    """In this example, the module's widget will allow us to create random sphere model nodes in the scene."""
+
+    def setup(self) -> None:
+        """
+        In the setup method, we create a widget with only two buttons:
+            - A "create sphere" button to create a random sphere in the scene
+            - A "Reset 3D views" button to reset the 3D view on the created spheres
+        """
+        # Re-connect the pipeline so that a module reload binds the reloaded pipeline classes.
+        # Connect first removes any previous connection, so this is safe to call
+        # even though the pipeline was already connected at application startup.
+        _sceneConnector.Connect()
+        ScriptedLoadableModuleWidget.setup(self)
+
+        widget = qt.QWidget()
+        layout = qt.QVBoxLayout(widget)
+
+        createSphereButton = qt.QPushButton("Create sphere")
+        createSphereButton.clicked.connect(self._onCreateSphereClicked)
+        layout.addWidget(createSphereButton)
+
+        reset3DView = qt.QPushButton("Reset 3D views")
+        reset3DView.clicked.connect(slicer.util.resetThreeDViews)
+        layout.addWidget(reset3DView)
+        layout.addStretch()
+
+        self.layout.addWidget(widget)
+
+    def cleanup(self) -> None:
+        """
+        Called when the module is about to be unloaded and by slicer.util.reloadScriptedModule before the widget is
+        rebuilt (module Reload button).
+
+        Here, we disconnect the pipelines from the scene (unregister the pipeline creator from the factory
+        singleton and remove the scene observers). Without this, the previously registered creator and
+        observers would keep running the pre-reload code.
+        """
+        _sceneConnector.Disconnect()
+        ScriptedLoadableModuleWidget.cleanup(self)
+
+    @classmethod
+    def _onCreateSphereClicked(cls, *_):
+        """
+        Here we create the sphere models at random.
+
+        Note: Attaching the glow data to the model could be done in this type of methods if we wanted more control
+            on the creation logic.
+        """
+        # Create a sphere positioned at a random position
+        sphereSource = vtkSphereSource()
+        sphereSource.SetCenter(random.uniform(0, 10),
+                               random.uniform(0, 10),
+                               random.uniform(0, 10))
+        sphereSource.SetRadius(random.uniform(0.1, 1.0))
+        sphereSource.Update()
+
+        # Create the model node and set its polydata
+        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        modelNode.SetAndObservePolyData(sphereSource.GetOutput())
+        modelNode.CreateDefaultDisplayNodes()
+
+        # Set random color
+        displayNode = modelNode.GetDisplayNode()
+        modelNode.SetAndObserveDisplayNodeID(displayNode.GetID())
+        displayNode.SetColor(random.random(), random.random(), random.random())
 
 
 class _Pipeline(vtkMRMLLayerDMScriptedPipeline):
@@ -544,167 +611,54 @@ class ModelGlowDMPipeline(_Pipeline):
         return ""
 
 
-# Currently registered pipeline creator and scene observer tags.
-# Kept at module level so that registration can be done once at application startup and undone later
-# (see registerPipeline / unregisterPipeline).
-_pipelineCreator = None
-_sceneObserverTags = []
-
-
-def registerPipeline():
+class ModelGlowDMSceneConnector(ScriptedPipelineSceneConnector):
     """
-    For the pipeline registration, we will register the pipeline creation mechanism and auto create view nodes when
-    a new model node is added to the scene.
+    Connects this module's pipelines to the scene.
 
-    Any previous registration is removed first, so this function can safely be called multiple times
-    (at application startup and from the module widget's setup).
-    """
-    global _pipelineCreator, _sceneObserverTags
-    unregisterPipeline()
-    _pipelineCreator = registerPipelineCreator()
-    _sceneObserverTags = autoCreateRemoveGlowNode()
+    For pipelines to be created in our views, the pipeline factory needs to know about our pipeline classes.
+    When a node is added to the scene, the LayerDM orchestration queries the vtkMRMLLayerDMPipelineFactory
+    singleton to check if a pipeline can be created for the view node / node pair. The
+    ScriptedPipelineSceneConnector base class registers a creator which delegates to our pipeline classes'
+    TryCreatePipeline methods, and keeps track of what was connected so that the connection can be undone
+    (module unload) or replaced (module reload).
 
+    We also attach two scene observers to add our glow data node to model nodes when they are added and
+    garbage collect them on removal, and we create the glow pass data node so the glow pass pipeline is
+    created.
 
-def unregisterPipeline():
-    """
-    Undoes the registration done by registerPipeline.
-    This is called from the module widget's cleanup to keep module reload and unload working correctly.
-    """
-    global _pipelineCreator, _sceneObserverTags
-    if _pipelineCreator is not None:
-        vtkMRMLLayerDMPipelineFactory.GetInstance().RemovePipelineCreator(_pipelineCreator)
-        _pipelineCreator = None
-    for tag in _sceneObserverTags:
-        slicer.mrmlScene.RemoveObserver(tag)
-    _sceneObserverTags = []
-
-
-def registerPipelineCreator():
-    """
-    For pipelines to be created in our views, we need to use the pipeline factory to register pipeline creator
-    instances.
-
-    When a node is added to the scene, the LayerDM orchestration will query the vtkMRMLLayerDMPipelineFactory singleton
-    instance to check if a pipeline can be created.
-
-    The factory will receive two information: The view node on which it is attached and the newly created node.
-
-    To add a new creator to the factory, we use a vtkMRMLLayerDMPipelineScriptedCreator instance and set a callback
-    to our custom tryCreate function.
-
-    This function will iterate on the pipelines we want to create and create it when applicable.
-
-    Note: Scene lifecycle are managed by the LayerDM library. If the view is newly created, its pipeline manager will
-        iterate over all the nodes in the scene to check if pipelines need to be created.
-
+    Note: Scene lifecycle are managed by the LayerDM library. If the view is newly created, its pipeline
+        manager will iterate over all the nodes in the scene to check if pipelines need to be created.
         Similarly, when loading a scene, clearing a scene, the pipelines will be handled accordingly.
     """
 
-    def tryCreate(view_node, node):
-        pipelines = [GlowDMPassPipeline, ModelGlowDMPipeline]
-        for pipeline in pipelines:
-            ret = pipeline.TryCreatePipeline(view_node, node)
-            if ret is not None:
-                return ret
-        return None
+    def GetPipelines(self) -> list:
+        return [GlowDMPassPipeline, ModelGlowDMPipeline]
 
-    pipeline_creator = vtkMRMLLayerDMPipelineScriptedCreator()
-    pipeline_creator.SetPythonCallback(tryCreate)
-    vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
-    return pipeline_creator
+    def GetSceneObservers(self) -> list:
+        return [
+            (vtkMRMLScene.NodeAddedEvent, self.OnNodeAdded),
+            (vtkMRMLScene.NodeRemovedEvent, self.OnNodeRemoved),
+        ]
 
-
-def autoCreateRemoveGlowNode():
-    """
-    This function is a convenience function to manage the data nodes in the scene.
-
-    Here, we attach two observers to the scene for node added / removed.
-    We then check to add our glow pipeline to model nodes when they are added and garbage collect them on removal.
-
-    We also create our glow pass data node so that the glow pass pipeline is created.
-    """
+    def OnConnected(self) -> None:
+        """
+        Create our glow pass data node so that the glow pass pipeline is created.
+        Note: We use self.GetScene() instead of the slicer.mrmlScene singleton so that the connector can be
+        used with an explicit scene (for instance in trame-slicer where the singleton is not available).
+        """
+        GlowDMPassPipeline.EnsureGlowPass(self.GetScene())
 
     @calldata_type(VTK_OBJECT)
-    def onNodeAdded(_caller, _event, node):
+    def OnNodeAdded(self, _caller, _event, node):
+        """Attach a glow data node to model nodes when they are added to the scene."""
         if isinstance(node, vtkMRMLModelNode):
-            ModelGlowDMPipeline.CreateGlowNode(node, slicer.mrmlScene)
+            ModelGlowDMPipeline.CreateGlowNode(node, self.GetScene())
 
     @calldata_type(VTK_OBJECT)
-    def onNodeRemoved(_caller, _event, node):
+    def OnNodeRemoved(self, _caller, _event, node):
+        """Garbage collect the glow data node when its model node is removed from the scene."""
         if isinstance(node, vtkMRMLModelNode):
-            ModelGlowDMPipeline.RemoveGlowNode(node, slicer.mrmlScene)
-
-    GlowDMPassPipeline.EnsureGlowPass(slicer.mrmlScene)
-
-    sceneObserverTags = []
-    sceneObserverTags.append(slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeAddedEvent, onNodeAdded))
-    sceneObserverTags.append(slicer.mrmlScene.AddObserver(vtkMRMLScene.NodeRemovedEvent, onNodeRemoved))
-
-    return sceneObserverTags
+            ModelGlowDMPipeline.RemoveGlowNode(node, self.GetScene())
 
 
-class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
-    """In this example, the module's widget will allow us to create random sphere model nodes in the scene."""
-
-    def setup(self) -> None:
-        """
-        In the setup method, we create a widget with only two buttons:
-            - A "create sphere" button to create a random sphere in the scene
-            - A "Reset 3D views" button to reset the 3D view on the created spheres
-        """
-        # Re-register the pipeline so that a module reload binds the reloaded pipeline classes.
-        # registerPipeline first removes any previous registration, so this is safe to call
-        # even though the pipeline was already registered at application startup.
-        registerPipeline()
-        ScriptedLoadableModuleWidget.setup(self)
-
-        widget = qt.QWidget()
-        layout = qt.QVBoxLayout(widget)
-
-        createSphereButton = qt.QPushButton("Create sphere")
-        createSphereButton.clicked.connect(self._onCreateSphereClicked)
-        layout.addWidget(createSphereButton)
-
-        reset3DView = qt.QPushButton("Reset 3D views")
-        reset3DView.clicked.connect(slicer.util.resetThreeDViews)
-        layout.addWidget(reset3DView)
-        layout.addStretch()
-
-        self.layout.addWidget(widget)
-
-    def cleanup(self) -> None:
-        """
-        Called when the module is about to be unloaded and by slicer.util.reloadScriptedModule before the widget is
-        rebuilt (module Reload button).
-
-        Here, we unregister the pipeline creator from the factory singleton and remove the scene observers.
-        Without this, the previously registered creator and observers would keep running the pre-reload code.
-        """
-        unregisterPipeline()
-        ScriptedLoadableModuleWidget.cleanup(self)
-
-    @classmethod
-    def _onCreateSphereClicked(cls, *_):
-        """
-        Here we create the sphere models at random.
-
-        Note: Attaching the glow data to the model could be done in this type of methods if we wanted more control
-            on the creation logic.
-        """
-        # Create a sphere positioned at a random position
-        sphereSource = vtkSphereSource()
-        sphereSource.SetCenter(random.uniform(0, 10),
-                               random.uniform(0, 10),
-                               random.uniform(0, 10))
-        sphereSource.SetRadius(random.uniform(0.1, 1.0))
-        sphereSource.Update()
-
-        # Create the model node and set its polydata
-        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
-        modelNode.SetAndObservePolyData(sphereSource.GetOutput())
-        modelNode.CreateDefaultDisplayNodes()
-
-        # Set random color
-        displayNode = modelNode.GetDisplayNode()
-        modelNode.SetAndObserveDisplayNodeID(displayNode.GetID())
-        displayNode.SetColor(random.random(), random.random(), random.random())
+_sceneConnector = ModelGlowDMSceneConnector()
