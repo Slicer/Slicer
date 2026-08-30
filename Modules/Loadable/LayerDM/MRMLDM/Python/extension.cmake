@@ -1,5 +1,6 @@
 set(LayerDM_PYTHON_SCRIPTS
   __init__.py
+  ScriptedPipelineSceneConnector.py
   vtkMRMLLayerDMScriptedPipeline.py
 )
 
