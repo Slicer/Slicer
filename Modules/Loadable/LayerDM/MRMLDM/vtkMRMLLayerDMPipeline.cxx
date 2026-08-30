@@ -27,6 +27,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 
+// STD includes
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipeline);
 
@@ -181,13 +184,13 @@ vtkCamera* vtkMRMLLayerDMPipeline::GetCustomCamera() const
 //-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMPipeline::GetCustomCamera(unsigned int renderOrder) const
 {
-  return GetCustomCamera();
+  return this->GetCustomCamera();
 }
 
 //-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMPipeline::GetMaxRenderOrder() const
 {
-  const auto renderOrders = GetRenderOrders();
+  const auto renderOrders = this->GetRenderOrders();
   if (renderOrders.empty())
   {
     return 0;

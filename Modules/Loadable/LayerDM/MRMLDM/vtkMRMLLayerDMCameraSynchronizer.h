@@ -30,7 +30,6 @@
 
 class vtkCamera;
 class vtkRenderer;
-class CameraSynchronizeStrategy;
 class vtkMRMLAbstractViewNode;
 
 /// \brief Class responsible for synchronizing the camera of the different display layers.
@@ -46,6 +45,10 @@ public:
   static vtkMRMLLayerDMCameraSynchronizer* New();
   vtkTypeMacro(vtkMRMLLayerDMCameraSynchronizer, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  /// Strategy responsible for keeping the default camera synchronized with the view.
+  /// Defined, together with its concrete implementations, in the implementation file.
+  class CameraSynchronizeStrategy;
 
   /// Set the view node for which the camera will be synchronized.
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);

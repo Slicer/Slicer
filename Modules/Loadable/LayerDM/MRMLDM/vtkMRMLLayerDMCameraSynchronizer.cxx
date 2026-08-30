@@ -26,18 +26,20 @@
 
 // VTK includes
 #include <vtkCamera.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 
 // STL includes
 #include <array>
+#include <cmath>
 
 //-----------------------------------------------------------------------------
 /// \brief Abstract class for the camera strategies.
 /// Implements only the reset camera clipping range logic for the layer cameras.
 /// Other methods are expected to be implemented by deriving classes.
-class CameraSynchronizeStrategy
+class vtkMRMLLayerDMCameraSynchronizer::CameraSynchronizeStrategy
 {
 public:
   explicit CameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, std::function<void()> invokeModifiedEvent)
@@ -54,9 +56,11 @@ protected:
   std::function<void()> InvokeModifiedEvent;
 };
 
+namespace
+{
 //-----------------------------------------------------------------------------
 /// Default camera synchronization consists in updating the camera when the first renderer active camera is updated.
-class DefaultCameraSynchronizeStrategy : public CameraSynchronizeStrategy
+class DefaultCameraSynchronizeStrategy : public vtkMRMLLayerDMCameraSynchronizer::CameraSynchronizeStrategy
 {
 public:
   explicit DefaultCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkRenderer* renderer, std::function<void()> invokeModifiedEvent)
@@ -120,7 +124,7 @@ private:
 ///
 /// Clipping range is configured to show all actors attached to the default camera.
 /// If clipping is required, then it should be done inside the specific pipeline.
-class SliceViewCameraSynchronizeStrategy : public CameraSynchronizeStrategy
+class SliceViewCameraSynchronizeStrategy : public vtkMRMLLayerDMCameraSynchronizer::CameraSynchronizeStrategy
 {
 public:
   explicit SliceViewCameraSynchronizeStrategy(const vtkSmartPointer<vtkCamera>& camera, vtkMRMLSliceNode* sliceNode, std::function<void()> invokeModifiedEvent)
@@ -185,6 +189,7 @@ public:
 private:
   vtkWeakPointer<vtkMRMLSliceNode> SliceNode;
 };
+} // namespace
 
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMCameraSynchronizer);

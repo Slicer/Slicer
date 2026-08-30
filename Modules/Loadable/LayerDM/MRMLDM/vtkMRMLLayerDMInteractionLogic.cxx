@@ -27,6 +27,12 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <algorithm>
+#include <limits>
+#include <map>
+#include <tuple>
+
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMInteractionLogic);
 
@@ -134,7 +140,11 @@ void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRM
   {
     this->LoseFocus();
   }
-  this->Pipelines.erase(std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline));
+  const auto pipelineIt = std::find(this->Pipelines.begin(), this->Pipelines.end(), pipeline);
+  if (pipelineIt != this->Pipelines.end())
+  {
+    this->Pipelines.erase(pipelineIt);
+  }
 }
 
 //-----------------------------------------------------------------------------
