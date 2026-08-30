@@ -71,9 +71,9 @@ vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
   {
     if (obs.first)
     {
-      for (auto& event : obs.second)
+      for (const auto& [event, tag] : obs.second)
       {
-        obs.first->RemoveObserver(event);
+        obs.first->RemoveObserver(tag);
       }
     }
   }
@@ -141,17 +141,13 @@ void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned lo
     return;
   }
 
-  if (this->ObservedEventsMap.find(node) == std::end(this->ObservedEventsMap))
-  {
-    this->ObservedEventsMap[node] = std::set<unsigned long>{};
-  }
-
-  if (this->ObservedEventsMap[node].find(event) != std::end(this->ObservedEventsMap[node]))
+  auto& observedEvents = this->ObservedEventsMap[node];
+  if (observedEvents.find(event) != std::end(observedEvents))
   {
     return;
   }
 
-  this->ObservedEventsMap[node].insert(node->AddObserver(event, this->UpdateCommand));
+  observedEvents[event] = node->AddObserver(event, this->UpdateCommand);
 }
 
 //-----------------------------------------------------------------------------
@@ -162,9 +158,9 @@ void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
     return;
   }
 
-  for (auto& event : this->ObservedEventsMap[node])
+  for (const auto& [event, tag] : this->ObservedEventsMap[node])
   {
-    node->RemoveObserver(event);
+    node->RemoveObserver(tag);
   }
 
   this->ObservedEventsMap.erase(node);
