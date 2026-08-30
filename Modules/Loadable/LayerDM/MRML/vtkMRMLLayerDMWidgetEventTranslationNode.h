@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMWidgetEventTranslationNode_h
+#define __vtkMRMLLayerDMWidgetEventTranslationNode_h
 
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
 
@@ -153,3 +154,5 @@ private:
   std::set<unsigned long> BlockedEvents;
   bool IsBlocked{};
 };
+
+#endif

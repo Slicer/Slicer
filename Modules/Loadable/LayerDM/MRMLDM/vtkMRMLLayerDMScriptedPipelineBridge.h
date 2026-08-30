@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMScriptedPipelineBridge_h
+#define __vtkMRMLLayerDMScriptedPipelineBridge_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -70,3 +71,5 @@ private:
 
   PyObject* Object;
 };
+
+#endif

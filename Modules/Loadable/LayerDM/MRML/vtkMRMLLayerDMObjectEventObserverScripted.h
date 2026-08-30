@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMObjectEventObserverScripted_h
+#define __vtkMRMLLayerDMObjectEventObserverScripted_h
 
 // LayerDM includes
 #include "vtkMRMLLayerDMObjectEventObserver.h"
@@ -61,3 +62,5 @@ protected:
 private:
   PyObject* Object;
 };
+
+#endif

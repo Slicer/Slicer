@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkSlicerLayerDMLogic_h
+#define __vtkSlicerLayerDMLogic_h
 
 #include "vtkSlicerLayerDMModuleLogicExport.h"
 
@@ -284,3 +285,5 @@ T* vtkSlicerLayerDMLogic::SetNthReferenceNode(vtkMRMLNode* node, T* nodeRef, con
 {
   return ModifyNodeReference<T>(node, nodeRef, [=] { node->SetAndObserveNthNodeReferenceID(role, nthRef, nodeRef->GetID()); });
 }
+
+#endif

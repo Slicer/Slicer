@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMObjectEventObserver_h
+#define __vtkMRMLLayerDMObjectEventObserver_h
 
 // LayerDM includes
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
@@ -100,3 +101,5 @@ private:
     Callback;
   bool Blocked;
 };
+
+#endif

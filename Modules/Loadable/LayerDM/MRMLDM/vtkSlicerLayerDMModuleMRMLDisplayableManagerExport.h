@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
+#define __vtkSlicerLayerDMModuleMRMLDisplayableManagerExport_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerModule.h"
+
+#endif

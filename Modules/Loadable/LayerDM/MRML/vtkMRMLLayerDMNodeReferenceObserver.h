@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMNodeReferenceObserver_h
+#define __vtkMRMLLayerDMNodeReferenceObserver_h
 
 // LayerDM includes
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
@@ -104,3 +105,5 @@ private:
 
   CallBackT ReferenceModifiedCallback;
 };
+
+#endif

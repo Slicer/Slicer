@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMSelectionObserver_h
+#define __vtkMRMLLayerDMSelectionObserver_h
 
 // LayerDM includes
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
@@ -91,3 +92,5 @@ private:
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
 };
+
+#endif

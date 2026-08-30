@@ -15,7 +15,8 @@
 
 ==============================================================================*/
 
-#pragma once
+#ifndef __vtkMRMLLayerDMPythonUtil_h
+#define __vtkMRMLLayerDMPythonUtil_h
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
 
 // VTK includes
@@ -133,3 +134,5 @@ protected:
   vtkMRMLLayerDMPythonUtil();
   ~vtkMRMLLayerDMPythonUtil() override;
 };
+
+#endif
