@@ -86,9 +86,10 @@ public:
   /// Returns the number of pipelines currently managed by the pipeline manager
   int GetNumberOfPipelines() const;
 
-  /// Returns the list of currently managed display nodes of the pipeline manager.
+  /// Returns the nth pipeline managed by the pipeline manager, nullptr if the index is out of range.
   ///
   /// \sa GetNodePipeline
+  /// \sa GetNumberOfPipelines
   vtkMRMLLayerDMPipeline* GetNthPipeline(int iPipeline) const;
 
   /// @{
