@@ -12,6 +12,9 @@
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 
+// STD includes
+#include <algorithm>
+
 vtkStandardNewMacro(vtkMRMLLayerDMLayerManager);
 
 bool vtkMRMLLayerDMLayerManager::AddPipelineLayers(vtkMRMLLayerDMPipeline* pipeline)
@@ -242,7 +245,9 @@ int vtkMRMLLayerDMLayerManager::GetKeyIndex(const LayerKey& key) const
 
 void vtkMRMLLayerDMLayerManager::RemoveAllLayers()
 {
-  for (const auto& renderer : this->Renderers)
+  // Iterate over a copy as RemoveRenderer erases from this->Renderers
+  const auto renderers = this->Renderers;
+  for (const auto& renderer : renderers)
   {
     this->RemoveRenderer(renderer);
   }
@@ -314,7 +319,11 @@ void vtkMRMLLayerDMLayerManager::RemoveRenderer(const vtkSmartPointer<vtkRendere
     this->RenderWindow->RemoveRenderer(renderer);
   }
 
-  this->Renderers.erase(std::find(this->Renderers.begin(), this->Renderers.end(), renderer));
+  const auto rendererIt = std::find(this->Renderers.begin(), this->Renderers.end(), renderer);
+  if (rendererIt != this->Renderers.end())
+  {
+    this->Renderers.erase(rendererIt);
+  }
 }
 
 void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::set<vtkWeakPointer<vtkRenderer>>& renderers, const std::array<double, 6>& bounds)
