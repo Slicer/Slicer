@@ -18,6 +18,7 @@
 #include "vtkMRMLLayerDisplayableManager.h"
 
 // Layer DM includes
+#include "vtkMRMLLayerDMPipeline.h"
 #include "vtkMRMLLayerDMPipelineFactory.h"
 #include "vtkMRMLLayerDMPipelineManager.h"
 
