@@ -44,7 +44,7 @@ class CustomVR(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "Custom VR Pipeline Example"
-        self.parent.categories = ["qSlicerAbstractCoreModule", "Examples"]
+        self.parent.categories = ["Examples"]
         self.parent.dependencies = []
         self.parent.contributors = []
         self.parent.helpText = ""
