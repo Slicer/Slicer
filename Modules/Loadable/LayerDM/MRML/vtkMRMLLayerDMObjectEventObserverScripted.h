@@ -35,6 +35,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMObjectEventObserverScr
 public:
   static vtkMRMLLayerDMObjectEventObserverScripted* New();
   vtkTypeMacro(vtkMRMLLayerDMObjectEventObserverScripted, vtkMRMLLayerDMObjectEventObserver);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Sets the Python callable object to be invoked on events.
   ///

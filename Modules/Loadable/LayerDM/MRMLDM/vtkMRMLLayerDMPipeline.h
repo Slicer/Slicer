@@ -52,6 +52,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipe
 public:
   static vtkMRMLLayerDMPipeline* New();
   vtkTypeMacro(vtkMRMLLayerDMPipeline, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum Events
   {

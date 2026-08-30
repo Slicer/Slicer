@@ -469,3 +469,14 @@ void vtkMRMLLayerDMPipelineManager::SetScene(vtkMRMLScene* scene)
     pipeline->SetScene(scene);
   }
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineManager::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Number of pipelines: " << this->PipelineMap.size() << std::endl;
+  os << indent << "View node: " << (this->ViewNode ? "set" : "(none)") << std::endl;
+  os << indent << "Scene: " << (this->Scene ? "set" : "(none)") << std::endl;
+  os << indent << "Render window: " << (this->RenderWindow ? "set" : "(none)") << std::endl;
+  os << indent << "Request render blocked: " << (this->IsRequestRenderBlocked ? "true" : "false") << std::endl;
+}

@@ -40,6 +40,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMPythonUtil : public vt
 public:
   static vtkMRMLLayerDMPythonUtil* New();
   vtkTypeMacro(vtkMRMLLayerDMPythonUtil, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Convert a VTK object to a Python object
   /// \param obj VTK object base pointer to convert

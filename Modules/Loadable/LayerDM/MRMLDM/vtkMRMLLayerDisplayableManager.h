@@ -43,6 +43,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDispla
 public:
   static vtkMRMLLayerDisplayableManager* New();
   vtkTypeMacro(vtkMRMLLayerDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

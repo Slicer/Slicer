@@ -50,6 +50,8 @@ public:
   };
 
   static vtkMRMLLayerDMNodeReferenceObserver* New();
+  vtkTypeMacro(vtkMRMLLayerDMNodeReferenceObserver, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// @{
   /// Get references to / from node

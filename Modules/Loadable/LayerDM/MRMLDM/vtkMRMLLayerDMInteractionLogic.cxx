@@ -188,3 +188,13 @@ bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionE
   this->LoseFocus(eventData);
   return false;
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMInteractionLogic::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Number of pipelines: " << this->Pipelines.size() << std::endl;
+  os << indent << "Number of pipelines able to process the last event: " << this->CanProcessPipelines.size() << std::endl;
+  os << indent << "Last focused pipeline: " << (this->LastFocusedPipeline ? "set" : "(none)") << std::endl;
+  os << indent << "View node: " << (this->ViewNode ? "set" : "(none)") << std::endl;
+}

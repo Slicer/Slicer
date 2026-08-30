@@ -263,3 +263,14 @@ bool vtkMRMLLayerDMCameraSynchronizer::BlockModified(bool isBlocked)
   this->IsBlocked = isBlocked;
   return wasBlocked;
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMCameraSynchronizer::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Blocked: " << (this->IsBlocked ? "true" : "false") << std::endl;
+  os << indent << "Default camera: " << (this->DefaultCamera ? "set" : "(none)") << std::endl;
+  os << indent << "Renderer: " << (this->Renderer ? "set" : "(none)") << std::endl;
+  os << indent << "View node: " << (this->ViewNode ? "set" : "(none)") << std::endl;
+  os << indent << "Synchronize strategy: " << (this->SynchronizeStrategy ? "set" : "(none)") << std::endl;
+}

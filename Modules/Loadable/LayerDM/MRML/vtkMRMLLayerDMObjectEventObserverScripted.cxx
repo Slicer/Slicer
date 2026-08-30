@@ -65,3 +65,10 @@ PyObject* vtkMRMLLayerDMObjectEventObserverScripted::CastCallData(PyObject* obje
 {
   return vtkMRMLLayerDMPythonUtil::CastCallData(object, vtkType);
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMObjectEventObserverScripted::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Python object: " << (this->Object ? "set" : "(none)") << std::endl;
+}

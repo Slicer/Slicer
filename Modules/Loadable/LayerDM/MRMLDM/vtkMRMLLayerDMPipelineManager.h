@@ -55,6 +55,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipe
 public:
   static vtkMRMLLayerDMPipelineManager* New();
   vtkTypeMacro(vtkMRMLLayerDMPipelineManager, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Add a new node to the pipeline manager.
   /// If no pipeline exist for the input display node and the \sa vtkMRMLLayerDMPipelineFactory can create

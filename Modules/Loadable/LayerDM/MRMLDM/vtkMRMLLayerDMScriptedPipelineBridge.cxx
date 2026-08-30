@@ -385,3 +385,10 @@ int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result
   Py_DECREF(result);
   return value;
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMScriptedPipelineBridge::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Python object: " << (this->Object ? "set" : "(none)") << std::endl;
+}

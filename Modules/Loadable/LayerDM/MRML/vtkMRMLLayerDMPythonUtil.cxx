@@ -334,3 +334,9 @@ void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, cons
   errorString += traceback;
   vtkErrorWithObjectMacro(object, "" << traceback.c_str());
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPythonUtil::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+}

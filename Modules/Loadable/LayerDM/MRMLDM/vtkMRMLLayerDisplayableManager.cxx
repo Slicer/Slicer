@@ -279,3 +279,10 @@ void vtkMRMLLayerDisplayableManager::RenderWindowBufferToImage(vtkRenderWindow* 
   // Free the pixel buffer allocated by VTK
   delete[] pixels;
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Pipeline manager: " << (this->PipelineManager ? "set" : "(none)") << std::endl;
+}

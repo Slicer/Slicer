@@ -188,3 +188,11 @@ vtkMRMLLayerDMObjectEventObserver::UpdateGuard::~UpdateGuard()
     this->Observer->SetBlocked(this->WasBlocked);
   }
 }
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMObjectEventObserver::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Blocked: " << (this->Blocked ? "true" : "false") << std::endl;
+  os << indent << "Number of observed objects: " << this->ObservedEventsMap.size() << std::endl;
+}

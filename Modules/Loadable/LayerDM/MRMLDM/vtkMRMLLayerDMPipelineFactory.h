@@ -51,6 +51,7 @@ public:
 
   static vtkMRMLLayerDMPipelineFactory* New();
   vtkTypeMacro(vtkMRMLLayerDMPipelineFactory, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Singleton instance of the factory used by the displayable manager
   static vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> GetInstance();

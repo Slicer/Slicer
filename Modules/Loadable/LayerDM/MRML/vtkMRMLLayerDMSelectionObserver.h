@@ -42,6 +42,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMSelectionObserver : pu
 public:
   static vtkMRMLLayerDMSelectionObserver* New();
   vtkTypeMacro(vtkMRMLLayerDMSelectionObserver, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// @{
   /// \brief Updates selection and interaction nodes from the input scene
