@@ -1,5 +1,11 @@
 set(KIT ${MODULE_NAME})
 
+# NodeReferenceObserverTest builds its node references from Markups nodes.
+slicer_is_loadable_builtin_module_enabled("Markups" _build_markups_module)
+if(NOT _build_markups_module)
+  return()
+endif()
+
 list(APPEND QT_REQUIRED_COMPONENTS Core Test)
 if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6")
   find_package(Qt6 COMPONENTS ${QT_REQUIRED_COMPONENTS} QUIET)
