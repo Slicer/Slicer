@@ -105,10 +105,6 @@ vtkMRMLLayerDMPipelineCreator* vtkMRMLLayerDMPipelineFactory::GetLastCreator() c
 
 vtkMRMLLayerDMPipelineFactory::vtkMRMLLayerDMPipelineFactory()
   : Observer(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
-  , LastView(nullptr)
-  , LastNode(nullptr)
-  , LastPipeline(nullptr)
-  , LastCreator(nullptr)
 {
   this->Observer->SetUpdateCallback([this](vtkObject* node) { this->SortPipelineCreators(); });
 }

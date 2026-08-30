@@ -118,7 +118,7 @@ private:
     unsigned long eventId{ vtkCommand::NoEvent };
     int modifier{ vtkEvent::NoModifier };
     int repeatCount{ 1 };
-    std::string keySym{};
+    std::string keySym;
   };
 
   void SetTranslation(const EventKey& key, unsigned long widgetEvent);
@@ -132,7 +132,7 @@ private:
   static std::map<EventKey, unsigned long> EventMapFromString(const std::string& value);
   static std::pair<EventKey, unsigned long> EventPairFromString(const std::string& value);
 
-  std::map<EventKey, unsigned long> EventMap{};
-  std::set<unsigned long> BlockedEvents{};
+  std::map<EventKey, unsigned long> EventMap;
+  std::set<unsigned long> BlockedEvents;
   bool IsBlocked{};
 };

@@ -74,8 +74,8 @@ protected:
 private:
   void AddObserver(vtkObject* obj, unsigned long event);
 
-  vtkSmartPointer<vtkCallbackCommand> UpdateCommand{};
-  std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> ObservedEventsMap{};
+  vtkSmartPointer<vtkCallbackCommand> UpdateCommand;
+  std::map<vtkWeakPointer<vtkObject>, std::set<unsigned long>> ObservedEventsMap;
 
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
