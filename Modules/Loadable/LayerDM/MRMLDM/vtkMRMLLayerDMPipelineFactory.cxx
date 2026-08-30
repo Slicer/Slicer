@@ -27,6 +27,9 @@
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineFactory);
 
@@ -40,6 +43,12 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> vtkMRMLLayerDMPipelineFactory::Ge
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
+  if (!creator)
+  {
+    vtkErrorMacro("AddPipelineCreator: the pipeline creator is null.");
+    return;
+  }
+
   if (this->ContainsPipelineCreator(creator))
   {
     return;
@@ -112,17 +121,13 @@ vtkMRMLAbstractViewNode* vtkMRMLLayerDMPipelineFactory::GetLastViewNode() const
 //-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLLayerDMPipelineFactory::GetLastNode() const
 {
-  {
-    return this->LastNode;
-  }
+  return this->LastNode;
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
 {
-  {
-    return this->LastPipeline;
-  }
+  return this->LastPipeline;
 }
 
 //-----------------------------------------------------------------------------
@@ -145,9 +150,11 @@ void vtkMRMLLayerDMPipelineFactory::SortPipelineCreators()
             std::end(this->PipelineCreators),
             [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& b)
             {
+              // Order null creators last. Returning true for every pair involving a null would
+              // break the strict weak ordering std::sort requires.
               if (!a || !b)
               {
-                return true;
+                return a && !b;
               }
 
               return a->GetPriority() > b->GetPriority();
