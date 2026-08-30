@@ -165,6 +165,8 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
+
+  // PyObject_GetAttrString returns a new reference which needs to be released on every path.
   PyObject* method = PyObject_GetAttrString(object, fName.c_str());
   if (!method)
   {
@@ -177,10 +179,13 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
     // PyCallable_Check doesn't raise any errors. Raise called attribute isn't callable.
     const auto errorString = std::string("vtkMRMLLayerDMPythonUtil::") + __func__ + ": Attribute is not callable : '" + fName + "' of object : " + GetObjectStr(object);
     PyErr_SetString(PyExc_TypeError, errorString.c_str());
+    Py_DECREF(method);
     return nullptr;
   }
 
-  return CallPythonObject(method, pyArgs);
+  PyObject* result = CallPythonObject(method, pyArgs);
+  Py_DECREF(method);
+  return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -297,13 +302,26 @@ std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
   PyErr_Fetch(&type, &value, &traceback);
   PyErr_NormalizeException(&type, &value, &traceback);
 
+  // Exceptions raised from C++ have no traceback, and PyTuple_Pack cannot pack a null object.
+  // Every step below may also fail, in which case the traceback cannot be formatted at all.
   PyObject* tracebackModule = PyImport_ImportModule("traceback");
-  PyObject* formatExceptionFunc = PyObject_GetAttrString(tracebackModule, "format_exception");
-  PyObject* args = PyTuple_Pack(3, type, value, traceback);
-  PyObject* formattedList = PyObject_CallObject(formatExceptionFunc, args);
-  PyObject* emptyString = PyUnicode_FromString("");
-  PyObject* formatted = PyUnicode_Join(emptyString, formattedList);
-  std::string exceptionTraceback = PyUnicode_AsUTF8(formatted);
+  PyObject* formatExceptionFunc = tracebackModule ? PyObject_GetAttrString(tracebackModule, "format_exception") : nullptr;
+  PyObject* args = formatExceptionFunc ? PyTuple_Pack(3, type, value, traceback ? traceback : Py_None) : nullptr;
+  PyObject* formattedList = args ? PyObject_CallObject(formatExceptionFunc, args) : nullptr;
+  PyObject* emptyString = formattedList ? PyUnicode_FromString("") : nullptr;
+  PyObject* formatted = emptyString ? PyUnicode_Join(emptyString, formattedList) : nullptr;
+
+  std::string exceptionTraceback;
+  if (formatted)
+  {
+    if (const char* formattedStr = PyUnicode_AsUTF8(formatted))
+    {
+      exceptionTraceback = formattedStr;
+    }
+  }
+
+  // Discard any error raised while formatting so that the original error is the one restored.
+  PyErr_Clear();
 
   // Cleanup
   PyErr_Restore(type, value, traceback);
