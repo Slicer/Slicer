@@ -40,15 +40,18 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::PrintSelf(ostream& os, vtkIndent 
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMWidgetEventTranslationNode::Copy(vtkMRMLNode* node)
+void vtkMRMLLayerDMWidgetEventTranslationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  const auto other = vtkMRMLLayerDMWidgetEventTranslationNode::SafeDownCast(node);
-  if (!other)
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  const auto node = vtkMRMLLayerDMWidgetEventTranslationNode::SafeDownCast(anode);
+  if (!node)
   {
     return;
   }
-  this->EventMap = other->EventMap;
-  this->Modified();
+
+  this->EventMap = node->EventMap;
 }
 
 //-----------------------------------------------------------------------------
