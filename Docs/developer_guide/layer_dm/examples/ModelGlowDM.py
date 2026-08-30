@@ -289,7 +289,7 @@ class GlowDMPassPipeline(_Pipeline):
         The scene is passed in argument to avoid using the singleton slicer.mrmlScene which is not available in
         trame-slicer.
         """
-        return scene.GetNodeByID("RenderGlowPassPipeline") is not None
+        return scene.GetSingletonNode("RenderGlowPassPipeline", "vtkMRMLScriptedModuleNode") is not None
 
 
 class ModelGlowDMPipeline(_Pipeline):
