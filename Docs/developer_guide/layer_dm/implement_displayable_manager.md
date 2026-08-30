@@ -453,7 +453,7 @@ Example of registration for one type :
 creator = vtkMRMLLayerDMPipelineFactory::GetInstance()->AddPipelineCreator(
       [](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* displayNode)
       {
-        return layer_dm::TryCreateForView<vtkMRMLViewNode, MyDisplayNode, MyPipelineNode();
+        return layer_dm::TryCreateForView<vtkMRMLViewNode, MyDisplayNode, MyPipelineNode>(viewNode, displayNode);
       });
 ```
 
