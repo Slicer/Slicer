@@ -52,7 +52,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
     return PyCapsule_New(ptr, nullptr, nullptr);
   }
 
-  // Return borrowed reference to Py_None
+  // Return a new reference to Py_None, as the callers take ownership of the returned object
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -253,6 +253,9 @@ std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
     return "None";
   }
 
+  // This is a public static method which may be called without the GIL held.
+  vtkPythonScopeGilEnsurer gilEnsurer;
+
   // Save current errors to avoid changing the current python error stack if any
   PyObject *type, *value, *traceback;
   PyErr_Fetch(&type, &value, &traceback);
@@ -260,9 +263,15 @@ std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
   std::string objectString{ "INVALID_OBJECT_STR" };
   if (auto strObj = PyObject_Str(object))
   {
-    objectString = PyUnicode_AsUTF8(strObj);
+    if (const char* strValue = PyUnicode_AsUTF8(strObj))
+    {
+      objectString = strValue;
+    }
     Py_DECREF(strObj);
   }
+
+  // PyObject_Str or the conversion above may have raised; the fetched error is restored below.
+  PyErr_Clear();
 
   // Restore the python error stack
   PyErr_Restore(type, value, traceback);
@@ -350,7 +359,7 @@ void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, cons
     errorString += "\n";
   }
   errorString += traceback;
-  vtkErrorWithObjectMacro(object, "" << traceback.c_str());
+  vtkErrorWithObjectMacro(object, "" << errorString.c_str());
 }
 
 //-----------------------------------------------------------------------------
