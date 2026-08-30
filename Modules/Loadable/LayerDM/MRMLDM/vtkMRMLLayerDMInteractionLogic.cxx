@@ -17,12 +17,7 @@ vtkMRMLLayerDMPipeline* vtkMRMLLayerDMInteractionLogic::GetLastFocusedPipeline()
   return this->LastFocusedPipeline;
 }
 
-vtkMRMLLayerDMInteractionLogic::vtkMRMLLayerDMInteractionLogic()
-  : LastFocusedPipeline{ nullptr }
-  , CanProcessPipelines{}
-  , ViewNode{ nullptr }
-{
-}
+vtkMRMLLayerDMInteractionLogic::vtkMRMLLayerDMInteractionLogic() = default;
 
 int vtkMRMLLayerDMInteractionLogic::MinWidgetState()
 {

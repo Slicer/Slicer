@@ -21,10 +21,7 @@
 
 vtkStandardNewMacro(vtkMRMLLayerDisplayableManager);
 
-vtkMRMLLayerDisplayableManager::vtkMRMLLayerDisplayableManager()
-  : PipelineManager(nullptr)
-{
-}
+vtkMRMLLayerDisplayableManager::vtkMRMLLayerDisplayableManager() = default;
 
 bool vtkMRMLLayerDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {

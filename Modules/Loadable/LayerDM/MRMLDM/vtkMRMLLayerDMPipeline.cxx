@@ -346,14 +346,10 @@ void vtkMRMLLayerDMPipeline::SetPipelineManager(vtkMRMLLayerDMPipelineManager* p
 }
 
 vtkMRMLLayerDMPipeline::vtkMRMLLayerDMPipeline()
-  : ViewNode{ nullptr }
-  , DisplayNode{ nullptr }
-  , RenderersMap{}
-  , IsUpdateDisplayBlocked{ false }
+  : IsUpdateDisplayBlocked{ false }
   , Frozen{ false }
   , InteractionProcessingBlocked{ false }
   , Observer(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
-  , PipelineManager(nullptr)
 {
   this->Observer->SetUpdateCallback([this](vtkObject* obj, unsigned long eventId, void* callData) { this->OnUpdate(obj, eventId, callData); });
 }

@@ -236,16 +236,12 @@ void vtkMRMLLayerDMPipelineManager::OnDefaultCameraModified()
 }
 
 vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
-  : Factory{ nullptr }
-  , LayerManager(vtkSmartPointer<vtkMRMLLayerDMLayerManager>::New())
+  : LayerManager(vtkSmartPointer<vtkMRMLLayerDMLayerManager>::New())
   , CameraSynchronizer(vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer>::New())
   , InteractionLogic(vtkSmartPointer<vtkMRMLLayerDMInteractionLogic>::New())
   , EventObserver(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
   , DefaultCamera(vtkSmartPointer<vtkCamera>::New())
   , NodeReferenceObserver{ vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver>::New() }
-  , ViewNode{ nullptr }
-  , Scene{ nullptr }
-  , PipelineMap{}
   , RequestRenderCallback{ [] {} }
 {
   this->CameraSynchronizer->SetDefaultCamera(this->DefaultCamera);

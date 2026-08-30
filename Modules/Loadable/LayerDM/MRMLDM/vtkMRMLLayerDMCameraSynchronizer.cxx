@@ -199,13 +199,7 @@ void vtkMRMLLayerDMCameraSynchronizer::SetRenderer(vtkRenderer* renderer)
   this->UpdateStrategy();
 }
 
-vtkMRMLLayerDMCameraSynchronizer::vtkMRMLLayerDMCameraSynchronizer()
-  : DefaultCamera{ nullptr }
-  , Renderer{ nullptr }
-  , ViewNode{ nullptr }
-  , SynchronizeStrategy{ nullptr }
-{
-}
+vtkMRMLLayerDMCameraSynchronizer::vtkMRMLLayerDMCameraSynchronizer() = default;
 
 vtkMRMLLayerDMCameraSynchronizer::~vtkMRMLLayerDMCameraSynchronizer() = default;
 
