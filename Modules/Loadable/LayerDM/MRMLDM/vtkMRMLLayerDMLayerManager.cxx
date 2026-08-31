@@ -165,7 +165,26 @@ vtkMRMLLayerDMLayerManager::vtkMRMLLayerDMLayerManager()
         this->UpdateLayers();
       }
     });
+
+  // A pipeline destroyed without being removed first would otherwise be left in the layer sets, where its weak
+  // pointer would null itself in place and break their ordering.
+  this->Observer->SetDeleteCallback(
+    [this](vtkObject* obj)
+    {
+      if (auto pipeline = vtkMRMLLayerDMPipeline::SafeDownCast(obj))
+      {
+        this->RemovePipeline(pipeline);
+      }
+    });
   this->AddPipeline(this->EmptyPipeline);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLLayerDMLayerManager::~vtkMRMLLayerDMLayerManager()
+{
+  // Releasing the pipelines below destroys them, which would otherwise invoke the delete callback and
+  // re-enter this object while its members are being destroyed.
+  this->Observer->ClearCallbacks();
 }
 
 //-----------------------------------------------------------------------------
@@ -212,7 +231,7 @@ void vtkMRMLLayerDMLayerManager::AddMissingLayers()
 }
 
 //-----------------------------------------------------------------------------
-std::array<double, 6> vtkMRMLLayerDMLayerManager::ComputeRenderersVisibleBounds(const std::set<vtkWeakPointer<vtkRenderer>>& renderers)
+std::array<double, 6> vtkMRMLLayerDMLayerManager::ComputeRenderersVisibleBounds(const std::vector<vtkWeakPointer<vtkRenderer>>& renderers)
 {
   vtkBoundingBox bbox;
 
@@ -247,22 +266,19 @@ std::uintptr_t vtkMRMLLayerDMLayerManager::GetCameraId(vtkCamera* camera)
 }
 
 //-----------------------------------------------------------------------------
-vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>& pipelines) const
+vtkCamera* vtkMRMLLayerDMLayerManager::GetCameraForLayer(const LayerKey& key, const std::set<vtkMRMLLayerDMPipeline*>& pipelines) const
 {
   if (const auto cameraId = std::get<1>(key); cameraId == 0)
   {
     return this->DefaultCamera;
   }
 
-  for (const auto& pipeline : pipelines)
+  if (pipelines.empty())
   {
-    if (pipeline)
-    {
-      return pipeline->GetCustomCamera(std::get<0>(key));
-    }
+    return nullptr;
   }
 
-  return nullptr;
+  return (*pipelines.begin())->GetCustomCamera(std::get<0>(key));
 }
 
 //-----------------------------------------------------------------------------
@@ -327,23 +343,12 @@ void vtkMRMLLayerDMLayerManager::RemoveOutdatedLayers()
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMLayerManager::RemoveOutdatedPipelines()
 {
-  // Remove pipelines which have been garbage collected
+  // Remove the layers which no longer contain any pipeline. Destroyed pipelines are removed from their layers
+  // when they are destroyed, so only empty layers are left to clean up here.
+  // \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
   for (auto layerIt = this->PipelineLayers.begin(); layerIt != this->PipelineLayers.end();)
   {
-    auto& pipelines = layerIt->second;
-    for (auto pipelineIt = pipelines.begin(); pipelineIt != pipelines.end();)
-    {
-      if (!*pipelineIt)
-      {
-        pipelineIt = pipelines.erase(pipelineIt);
-      }
-      else
-      {
-        ++pipelineIt;
-      }
-    }
-
-    if (pipelines.empty())
+    if (layerIt->second.empty())
     {
       layerIt = this->PipelineLayers.erase(layerIt);
     }
@@ -370,7 +375,7 @@ void vtkMRMLLayerDMLayerManager::RemoveRenderer(const vtkSmartPointer<vtkRendere
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::set<vtkWeakPointer<vtkRenderer>>& renderers, const std::array<double, 6>& bounds)
+void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::vector<vtkWeakPointer<vtkRenderer>>& renderers, const std::array<double, 6>& bounds)
 {
   for (const auto& renderer : renderers)
   {
@@ -394,11 +399,8 @@ void vtkMRMLLayerDMLayerManager::SynchronizePipelineRenderers()
     auto order = std::get<0>(key);
     for (const auto& pipeline : pipelines)
     {
-      if (pipeline)
-      {
-        pipelineRenderers[pipeline.GetPointer()].push_back(renderer);
-        pipelineOrders[pipeline.GetPointer()].push_back(order);
-      }
+      pipelineRenderers[pipeline].push_back(renderer);
+      pipelineOrders[pipeline].push_back(order);
     }
   }
 
@@ -474,7 +476,7 @@ void vtkMRMLLayerDMLayerManager::UpdateRendererCamera()
     {
       auto camera = this->GetCameraForLayer(pair.first, pair.second);
       this->Renderers[iRenderer]->SetActiveCamera(camera);
-      this->CameraRendererMap[camera].emplace(this->Renderers[iRenderer]);
+      this->CameraRendererMap[GetCameraId(camera)].emplace_back(this->Renderers[iRenderer]);
     }
 
     iRenderer++;

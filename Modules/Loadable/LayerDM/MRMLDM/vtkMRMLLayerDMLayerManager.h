@@ -87,17 +87,17 @@ public:
 
 protected:
   vtkMRMLLayerDMLayerManager();
-  ~vtkMRMLLayerDMLayerManager() override = default;
+  ~vtkMRMLLayerDMLayerManager() override;
 
 private:
   vtkRenderer* GetRendererMatchingKey(const LayerKey& key);
   vtkRenderer* GetDefaultRenderer() const;
 
   void AddMissingLayers();
-  static std::array<double, 6> ComputeRenderersVisibleBounds(const std::set<vtkWeakPointer<vtkRenderer>>& renderers);
+  static std::array<double, 6> ComputeRenderersVisibleBounds(const std::vector<vtkWeakPointer<vtkRenderer>>& renderers);
   bool ContainsLayerKey(const LayerKey& key);
   static std::uintptr_t GetCameraId(vtkCamera* camera);
-  vtkCamera* GetCameraForLayer(const LayerKey& key, const std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>& pipelines) const;
+  vtkCamera* GetCameraForLayer(const LayerKey& key, const std::set<vtkMRMLLayerDMPipeline*>& pipelines) const;
   int GetKeyIndex(const LayerKey& key) const;
   void RemoveAllLayers();
   void RemoveAllPipelineRenderers();
@@ -105,7 +105,7 @@ private:
   void RemoveOutdatedLayers();
   void RemoveOutdatedPipelines();
   void RemoveRenderer(const vtkSmartPointer<vtkRenderer>& renderer);
-  static void ResetRenderersCameraClippingRange(const std::set<vtkWeakPointer<vtkRenderer>>& renderers, const std::array<double, 6>& bounds);
+  static void ResetRenderersCameraClippingRange(const std::vector<vtkWeakPointer<vtkRenderer>>& renderers, const std::array<double, 6>& bounds);
   void SynchronizePipelineRenderers();
   void UpdateRenderWindowNumberOfLayers() const;
   void UpdateLayers();
@@ -115,8 +115,16 @@ private:
   bool AddPipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
   void RemovePipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
 
-  // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
-  std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipeline>>> PipelineLayers;
+  /// Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
+  ///
+  /// The pipelines order the sets and are never dereferenced without being known to be alive: every pipeline
+  /// is observed for its destruction and removed from the sets during that event, so the sets only ever
+  /// contain live pipelines. A weak pointer must not be used as the element of an ordered container, as it
+  /// nulls itself in place when its object is destroyed, silently changing the value of a live set element and
+  /// breaking the ordering of the set.
+  ///
+  /// \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  std::map<LayerKey, std::set<vtkMRMLLayerDMPipeline*>> PipelineLayers;
 
   /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events.
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
@@ -134,7 +142,14 @@ private:
   std::vector<vtkSmartPointer<vtkRenderer>> Renderers;
 
   // Camera to renderer map
-  std::map<vtkWeakPointer<vtkCamera>, std::set<vtkWeakPointer<vtkRenderer>>> CameraRendererMap;
+  /// Renderers grouped by the camera they are synchronized on.
+  ///
+  /// Keyed by camera id rather than by the camera itself: the cameras returned by the pipelines are not
+  /// observed by this class, so a weak pointer key could null itself in place and break the ordering of the
+  /// map. The id is only used to group renderers and is never dereferenced.
+  ///
+  /// \sa GetCameraId
+  std::map<std::uintptr_t, std::vector<vtkWeakPointer<vtkRenderer>>> CameraRendererMap;
 };
 
 #endif
