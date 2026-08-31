@@ -279,6 +279,28 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         self.pipelineManager.UpdateFromScene()
         assert self.pipelineManager.GetNumberOfPipelines() == prevNumber - 3
 
+    def test_removes_pipeline_when_its_display_node_is_destroyed(self):
+        # The pipeline manager maps are keyed by the display node. A node destroyed without being removed from
+        # the scene first is forgotten immediately, without requiring a scene update, so that the maps never
+        # contain a destroyed node.
+        prevNumber = self.pipelineManager.GetNumberOfPipelines()
+
+        mock = MockPipeline()
+        self.nextMock = mock
+        node = vtkMRMLMarkupsFiducialNode()
+        assert self.pipelineManager.AddNode(node)
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber + 1
+
+        # Release every reference to the node. The mocks record the arguments they are called with, which would
+        # otherwise keep the node alive.
+        self.mockCreate.reset_mock()
+        self.mockModelCreate.reset_mock()
+        mock.mockSetDisplayNode.reset_mock()
+        self.nextMock = None
+        del node
+
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber
+
     def test_notifies_pipelines_when_references_are_added_or_removed(self):
         # Create a display markups node
         m1 = MockPipeline()
