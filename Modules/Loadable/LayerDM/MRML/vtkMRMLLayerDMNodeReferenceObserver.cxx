@@ -157,11 +157,14 @@ std::set<vtkSmartPointer<vtkMRMLNode>> GetSceneNodes(vtkMRMLScene* scene)
     return {};
   }
 
+  // Traverse the collection with an iterator: vtkCollection::GetItemAsObject walks the collection from its
+  // first item on every call, which makes an indexed scan quadratic in the number of nodes.
   std::set<vtkSmartPointer<vtkMRMLNode>> nodes;
-  for (int iNode = 0; iNode < scene->GetNumberOfNodes(); iNode++)
+  vtkObject* item = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (scene->GetNodes()->InitTraversal(it); (item = scene->GetNodes()->GetNextItemAsObject(it));)
   {
-    auto node = vtkMRMLNode::SafeDownCast(scene->GetNodes()->GetItemAsObject(iNode));
-    if (node)
+    if (auto node = vtkMRMLNode::SafeDownCast(item))
     {
       nodes.insert(node);
     }
