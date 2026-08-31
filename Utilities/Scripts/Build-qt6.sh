@@ -5,7 +5,7 @@
 # Usage:
 #   ./Build-qt6.sh [QT_VERSION] [ARCH] [MACOS_DEPLOYMENT_TARGET]
 #
-#   QT_VERSION defaults to 6.11.1 and must be 6.8 or newer.
+#   QT_VERSION defaults to 6.11.2 and must be 6.8 or newer.
 #   ARCH selects the macOS architecture to build for: arm64 (default) or
 #   x86_64.
 #   MACOS_DEPLOYMENT_TARGET is the minimum macOS version to target (default:
@@ -13,9 +13,9 @@
 #
 # Examples:
 #   ./Build-qt6.sh                       # build the default Qt version for arm64
-#   ./Build-qt6.sh 6.11.1                # build a specific Qt version for arm64
-#   ./Build-qt6.sh 6.11.1 x86_64         # build a specific Qt version for x86_64
-#   ./Build-qt6.sh 6.11.1 arm64 15.0     # target a different minimum macOS version
+#   ./Build-qt6.sh 6.11.2                # build a specific Qt version for arm64
+#   ./Build-qt6.sh 6.11.2 x86_64         # build a specific Qt version for x86_64
+#   ./Build-qt6.sh 6.11.2 arm64 15.0     # target a different minimum macOS version
 #   ./Build-qt6.sh --help                # show usage
 #
 # Run this script from the directory where Qt should be downloaded, built,
@@ -30,12 +30,12 @@ echo ""
 usage() {
   echo "Usage: $(basename "$0") [QT_VERSION] [ARCH] [MACOS_DEPLOYMENT_TARGET]"
   echo ""
-  echo "  QT_VERSION                Qt version to build from source (default: 6.11.1, must be 6.8 or newer)"
+  echo "  QT_VERSION                Qt version to build from source (default: 6.11.2, must be 6.8 or newer)"
   echo "  ARCH                      macOS architecture to build for: arm64 (default) or x86_64"
   echo "  MACOS_DEPLOYMENT_TARGET   Minimum macOS version to target (default: 14.0)"
   echo ""
   echo "Example:"
-  echo "  $(basename "$0") 6.11.1 arm64 14.0"
+  echo "  $(basename "$0") 6.11.2 arm64 14.0"
 }
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -44,7 +44,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 # Configuration
-QT_VERSION="${1:-6.11.1}"
+QT_VERSION="${1:-6.11.2}"
 ARCH="${2:-arm64}"
 
 MIN_QT_VERSION="6.8"
