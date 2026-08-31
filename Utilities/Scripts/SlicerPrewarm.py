@@ -34,13 +34,18 @@ CFBundleExecutable in both a build tree and an installed/packaged app, so a
 local build behaves the same as a downloaded one.
 
 Usage:
-  SlicerPrewarm.py [--scan DIR]... [--stamp FILE] [--gui] [--quiet] [LIB]...
+  SlicerPrewarm.py [--scan DIR]... [--stamp FILE] [--gui] [--quiet]
+                   [--display-name NAME] [LIB]...
 
   --scan DIR   directory to scan recursively for shared libraries
   --stamp FILE only process libraries newer than FILE, and touch FILE on
                completion (created if missing: first run processes everything)
   --gui        show a native progress splash
   --quiet      do not print per-library progress lines
+  --display-name NAME
+               application display name shown on the splash (supports
+               custom applications built on 3D Slicer); defaults to
+               "3D Slicer"
   --jobs N     accepted for backward compatibility; ignored (the security
                evaluation is serialized by the system, so the warm-up is
                sequential)
@@ -55,7 +60,7 @@ LIBRARY_EXTENSIONS = (".dylib", ".so")
 
 def parse_arguments(argv):
     options = {"scan": [], "stamp": None, "gui": False, "quiet": False,
-               "libraries": []}
+               "display_name": "3D Slicer", "libraries": []}
     index = 0
     while index < len(argv):
         argument = argv[index]
@@ -65,6 +70,9 @@ def parse_arguments(argv):
         elif argument == "--stamp":
             index += 1
             options["stamp"] = argv[index]
+        elif argument == "--display-name":
+            index += 1
+            options["display_name"] = argv[index]
         elif argument == "--jobs":
             index += 1  # accepted but ignored (see module docstring)
         elif argument == "--gui":
@@ -518,7 +526,7 @@ def main(argv):
             long_enough = (done >= 3 and predicted_total >= minimum_duration) \
                 or elapsed >= minimum_duration
             if long_enough and remaining >= 0.75:
-                splash[0] = create_splash("3D Slicer")
+                splash[0] = create_splash(options["display_name"])
         if splash[0]:
             splash[0].update(done, total, name, fraction, remaining)
             if os.environ.get("SLICER_PREWARM_DEBUG"):

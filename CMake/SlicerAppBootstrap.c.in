@@ -166,6 +166,7 @@ int main(int argc, char* argv[])
       char* spawnArguments[] = { python,          script,       showSplash ? (char*)"--gui" : (char*)"--quiet",
                                  (char*)"--stamp", stamp,       (char*)"--scan",
                                  binDirectory,    (char*)"--scan", libDirectory,
+                                 (char*)"--display-name", (char*)"@SLICERAPP_APPLICATION_DISPLAY_NAME@",
                                  NULL };
       pid_t pid = 0;
       if (posix_spawn(&pid, python, NULL, NULL, spawnArguments, environ) == 0)
