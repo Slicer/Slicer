@@ -32,10 +32,16 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCollection.h>
+
+// VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
+
+// STD includes
+#include <vector>
 
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineManager);
@@ -466,13 +472,24 @@ void vtkMRMLLayerDMPipelineManager::AddMissingPipelines()
     return;
   }
 
-  int nNodes = this->Scene->GetNumberOfNodes();
-  for (int iNode = 0; iNode < nNodes; iNode++)
+  // Traverse the collection with an iterator: vtkCollection::GetItemAsObject walks the collection from its
+  // first item on every call, which makes an indexed scan quadratic in the number of nodes.
+  // Collect the nodes first, as adding a pipeline invokes events and can run pipeline creator code, which may
+  // in turn modify the scene.
+  std::vector<vtkSmartPointer<vtkMRMLNode>> sceneNodes;
+  vtkObject* item = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (this->Scene->GetNodes()->InitTraversal(it); (item = this->Scene->GetNodes()->GetNextItemAsObject(it));)
   {
-    if (auto node = vtkMRMLNode::SafeDownCast(this->Scene->GetNodes()->GetItemAsObject(iNode)))
+    if (auto node = vtkMRMLNode::SafeDownCast(item))
     {
-      this->AddNode(node);
+      sceneNodes.emplace_back(node);
     }
+  }
+
+  for (const auto& node : sceneNodes)
+  {
+    this->AddNode(node);
   }
 }
 

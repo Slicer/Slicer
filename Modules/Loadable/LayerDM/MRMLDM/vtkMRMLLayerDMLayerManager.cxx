@@ -418,12 +418,15 @@ void vtkMRMLLayerDMLayerManager::UpdateRenderWindowNumberOfLayers() const
     return;
   }
 
-  // Synchronize the render window number of layers with its actual number of renderers
-  int numberOfRenderers = this->RenderWindow->GetRenderers()->GetNumberOfItems();
+  // Synchronize the render window number of layers with its actual number of renderers.
+  // Traverse the collection with an iterator: vtkCollection::GetItemAsObject walks the collection from its
+  // first item on every call.
   int iMax = 0;
-  for (int iRenderer = 0; iRenderer < numberOfRenderers; iRenderer++)
+  vtkObject* item = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (this->RenderWindow->GetRenderers()->InitTraversal(it); (item = this->RenderWindow->GetRenderers()->GetNextItemAsObject(it));)
   {
-    if (auto renderer = vtkRenderer::SafeDownCast(this->RenderWindow->GetRenderers()->GetItemAsObject(iRenderer)))
+    if (auto renderer = vtkRenderer::SafeDownCast(item))
     {
       iMax = std::max(iMax, renderer->GetLayer());
     }
