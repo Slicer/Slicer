@@ -115,6 +115,19 @@ vtkMRMLLayerDMNodeReferenceObserver::vtkMRMLLayerDMNodeReferenceObserver()
         }
       }
     });
+
+  // No delete callback is needed here: Nodes and the reference maps hold their nodes with owning pointers, so
+  // an observed node cannot be destroyed while it is tracked. Cleaning up from a delete callback would in fact
+  // be unsafe, as looking a node up in those containers builds a temporary owning pointer, which would
+  // resurrect and destroy the node a second time while it is being destroyed.
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLLayerDMNodeReferenceObserver::~vtkMRMLLayerDMNodeReferenceObserver()
+{
+  // Releasing the observed nodes below destroys them, which would otherwise invoke the delete callback and
+  // re-enter this object while its members are being destroyed.
+  this->Observer->ClearCallbacks();
 }
 
 namespace
