@@ -41,6 +41,15 @@ class vtkMRMLScene;
 class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMNodeReferenceObserver : public vtkObject
 {
 public:
+  /// Reference to a node with a given role.
+  ///
+  /// The node is held by a weak pointer, unlike the other LayerDM containers, because these sets can outlive
+  /// the node: OnNodeRemoved drops the owning key of the map holding the opposite direction of the reference
+  /// without notifying the nodes referencing it, so their sets keep the reference until they are updated.
+  /// Reading such an entry must therefore check the node before using it.
+  ///
+  /// \sa NodeToReferences
+  /// \sa NodeFromReferences
   using RefT = std::tuple<vtkWeakPointer<vtkMRMLNode>, std::string>;
 
   enum Event
@@ -80,7 +89,7 @@ public:
 
 protected:
   vtkMRMLLayerDMNodeReferenceObserver();
-  ~vtkMRMLLayerDMNodeReferenceObserver() override = default;
+  ~vtkMRMLLayerDMNodeReferenceObserver() override;
 
 private:
   vtkMRMLLayerDMNodeReferenceObserver(const vtkMRMLLayerDMNodeReferenceObserver&);
@@ -101,8 +110,18 @@ private:
 
   vtkWeakPointer<vtkMRMLScene> Scene;
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+
+  /// @{
+  /// References from and to each observed node.
+  ///
+  /// The keys own their node, which keeps every node referenced by a RefT of the opposite map alive.
+  ///
+  /// \sa RefT
+  /// \sa OnNodeRemoved
   std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeToReferences;
   std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeFromReferences;
+  /// @}
+
   std::set<vtkSmartPointer<vtkMRMLNode>> Nodes;
 
   CallBackT ReferenceModifiedCallback;
