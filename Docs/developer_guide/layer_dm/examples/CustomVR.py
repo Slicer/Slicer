@@ -54,7 +54,7 @@ class CustomVR(ScriptedLoadableModule):
         # At startup completed, the pipelines are connected to the scene.
         # This allows the pipeline registration to be done automatically at loading time,
         # without requiring the module widget to be opened first.
-        slicer.app.connect("startupCompleted()", _sceneConnector.Connect)
+        slicer.app.connect("startupCompleted()", _sceneConnector.connect)
 
 
 class CustomVRWidget(ScriptedLoadableModuleWidget):
@@ -62,9 +62,9 @@ class CustomVRWidget(ScriptedLoadableModuleWidget):
 
     def setup(self) -> None:
         # Re-connect the pipeline so that a module reload binds the reloaded pipeline class.
-        # Connect first removes any previous connection, so this is safe to call
+        # connect first removes any previous connection, so this is safe to call
         # even though the pipeline was already connected at application startup.
-        _sceneConnector.Connect()
+        _sceneConnector.connect()
         ScriptedLoadableModuleWidget.setup(self)
 
         widget = qt.QWidget()
@@ -108,7 +108,7 @@ class CustomVRWidget(ScriptedLoadableModuleWidget):
         and observer, and the previously registered creator would keep instantiating pipelines from the
         pre-reload class.
         """
-        _sceneConnector.Disconnect()
+        _sceneConnector.disconnect()
         ScriptedLoadableModuleWidget.cleanup(self)
 
 
@@ -441,21 +441,21 @@ class CustomVRSceneConnector(ScriptedPipelineSceneConnector):
     can be undone (module unload) or replaced (module reload).
     """
 
-    def GetPipelines(self) -> list:
+    def getPipelines(self) -> list:
         return [CustomVRPipeline]
 
-    def GetSceneObservers(self) -> list:
+    def getSceneObservers(self) -> list:
         return [(vtkMRMLScene.NodeRemovedEvent, self.OnNodeRemoved)]
 
     @calldata_type(VTK_OBJECT)
     def OnNodeRemoved(self, _caller, _event, node):
         """
         Garbage collect our VR data node when the associated volume node is removed from the scene.
-        Note: We use self.GetScene() instead of the slicer.mrmlScene singleton so that the connector can be
+        Note: We use self.getScene() instead of the slicer.mrmlScene singleton so that the connector can be
         used with an explicit scene (for instance in trame-slicer where the singleton is not available).
         """
         if isinstance(node, vtkMRMLVolumeNode):
-            CustomVRPipeline.RemoveVRNode(node, self.GetScene())
+            CustomVRPipeline.RemoveVRNode(node, self.getScene())
 
 
 _sceneConnector = CustomVRSceneConnector()
