@@ -47,6 +47,15 @@ vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
     [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
     {
       auto client = static_cast<vtkMRMLLayerDMObjectEventObserver*>(clientData);
+
+      // Lifetime bookkeeping is done even when the observer is blocked, otherwise the observed maps would
+      // keep entries for destroyed objects.
+      if (eid == vtkCommand::DeleteEvent)
+      {
+        client->OnObjectDeleted(caller);
+        return;
+      }
+
       if (client->Blocked)
       {
         return;
@@ -70,14 +79,13 @@ vtkMRMLLayerDMObjectEventObserver::vtkMRMLLayerDMObjectEventObserver()
 //-----------------------------------------------------------------------------
 vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
 {
-  for (const auto& obs : this->ObservedEventsMap)
+  // The map only contains live objects: an object is removed from it when it is destroyed.
+  // \sa OnObjectDeleted
+  for (const auto& [object, eventTags] : this->ObservedEventsMap)
   {
-    if (obs.first)
+    for (const auto& [event, tag] : eventTags)
     {
-      for (const auto& [event, tag] : obs.second)
-      {
-        obs.first->RemoveObserver(tag);
-      }
+      object->RemoveObserver(tag);
     }
   }
 }
@@ -145,12 +153,52 @@ void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned lo
   }
 
   auto& observedEvents = this->ObservedEventsMap[node];
+
+  // Always observe the object destruction, so that the object can be removed from the observed map, and from
+  // the containers of the observer's owner, while its address is still valid.
+  // \sa OnObjectDeleted
+  if (observedEvents.find(vtkCommand::DeleteEvent) == std::end(observedEvents))
+  {
+    observedEvents[vtkCommand::DeleteEvent] = node->AddObserver(vtkCommand::DeleteEvent, this->UpdateCommand);
+  }
+
   if (observedEvents.find(event) != std::end(observedEvents))
   {
     return;
   }
 
   observedEvents[event] = node->AddObserver(event, this->UpdateCommand);
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMObjectEventObserver::OnObjectDeleted(vtkObject* node)
+{
+  if (!node)
+  {
+    return;
+  }
+
+  // Forget the object first. The observers don't need to be removed from the object as they are removed by VTK
+  // right after this event is invoked.
+  this->ObservedEventsMap.erase(node);
+
+  if (this->DeleteCallback)
+  {
+    this->DeleteCallback(node);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback(const std::function<void(vtkObject* node)>& callback)
+{
+  this->DeleteCallback = callback;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMObjectEventObserver::ClearCallbacks()
+{
+  this->Callback = std::function<void(vtkObject * node)>{};
+  this->DeleteCallback = nullptr;
 }
 
 //-----------------------------------------------------------------------------

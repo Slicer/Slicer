@@ -69,6 +69,26 @@ public:
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback);
   /// @}
 
+  /// Set the callback triggered when one of the observed objects is about to be destroyed.
+  ///
+  /// Every observed object is also observed for vtkCommand::DeleteEvent, so that objects used as keys of
+  /// ordered containers can be removed from them while their address is still valid. VTK invokes the event
+  /// before clearing the weak pointers to the object, so the object passed to the callback is still valid and
+  /// can be used to look up and erase container entries.
+  ///
+  /// Unlike the update callback, this callback is invoked even when the observer is blocked: blocking is meant
+  /// to suppress display updates, not to skip lifetime bookkeeping.
+  ///
+  /// \sa SetBlocked
+  void SetDeleteCallback(const std::function<void(vtkObject* node)>& callback);
+
+  /// Forget the update and delete callbacks.
+  ///
+  /// Owners which capture themselves in their callbacks are expected to call this in their destructor:
+  /// releasing an observed object during the owner destruction would otherwise invoke the delete callback and
+  /// re-enter the owner while its members are being destroyed.
+  void ClearCallbacks();
+
   /// Set update callback blocked.
   /// @return previous blocked state.
   bool SetBlocked(bool isBlocked);
@@ -93,14 +113,28 @@ protected:
 private:
   void AddObserver(vtkObject* obj, unsigned long event);
 
+  /// Called when an observed object invokes vtkCommand::DeleteEvent.
+  /// Forgets the object, then forwards it to the delete callback if one is set.
+  void OnObjectDeleted(vtkObject* obj);
+
   vtkSmartPointer<vtkCallbackCommand> UpdateCommand;
+
   /// For each observed object, maps the observed event ID to the observer tag returned by AddObserver.
-  std::map<vtkWeakPointer<vtkObject>, std::map<unsigned long, unsigned long>> ObservedEventsMap;
+  ///
+  /// The object is used as a plain identity key and is never dereferenced without being known to be alive:
+  /// every observed object is also observed for vtkCommand::DeleteEvent and is removed from the map during
+  /// that event, so the map only ever contains live objects. A weak pointer must not be used as the key of an
+  /// ordered container, as it nulls itself in place when its object is destroyed, silently changing the key of
+  /// a live map node and breaking the ordering of the map.
+  ///
+  /// \sa OnObjectDeleted
+  std::map<vtkObject*, std::map<unsigned long, unsigned long>> ObservedEventsMap;
 
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
                std::function<void(vtkObject* node, unsigned long eventId, void* callData)>>
     Callback;
+  std::function<void(vtkObject* node)> DeleteCallback;
   bool Blocked;
 };
 
