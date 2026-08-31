@@ -64,7 +64,7 @@ class ModelGlowDM(ScriptedLoadableModule):
         # At startup completed, the pipelines are connected to the scene.
         # This allows the pipeline registration to be done automatically at loading time,
         # without requiring the module widget to be opened first.
-        slicer.app.connect("startupCompleted()", _sceneConnector.Connect)
+        slicer.app.connect("startupCompleted()", _sceneConnector.connect)
 
 
 class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
@@ -77,9 +77,9 @@ class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
             - A "Reset 3D views" button to reset the 3D view on the created spheres
         """
         # Re-connect the pipeline so that a module reload binds the reloaded pipeline classes.
-        # Connect first removes any previous connection, so this is safe to call
+        # connect first removes any previous connection, so this is safe to call
         # even though the pipeline was already connected at application startup.
-        _sceneConnector.Connect()
+        _sceneConnector.connect()
         ScriptedLoadableModuleWidget.setup(self)
 
         widget = qt.QWidget()
@@ -105,7 +105,7 @@ class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
         singleton and remove the scene observers). Without this, the previously registered creator and
         observers would keep running the pre-reload code.
         """
-        _sceneConnector.Disconnect()
+        _sceneConnector.disconnect()
         ScriptedLoadableModuleWidget.cleanup(self)
 
     @classmethod
@@ -299,8 +299,8 @@ class ModelGlowDMPipeline(_Pipeline):
 
     In this pipeline, we do three things:
         - Configure the rendering pipeline
-        - Connect the pipeline reactivity to the scene observers
-        - Connect the interaction events to make our model glow when the interaction is within the model's bounding box
+        - connect the pipeline reactivity to the scene observers
+        - connect the interaction events to make our model glow when the interaction is within the model's bounding box
 
     Creation of the pipeline will be handled by our _Pipeline.TryCreatePipeline base methods and connected to the
     factory in the registerPipeline method that we connected to the application load event.
@@ -633,34 +633,34 @@ class ModelGlowDMSceneConnector(ScriptedPipelineSceneConnector):
         Similarly, when loading a scene, clearing a scene, the pipelines will be handled accordingly.
     """
 
-    def GetPipelines(self) -> list:
+    def getPipelines(self) -> list:
         return [GlowDMPassPipeline, ModelGlowDMPipeline]
 
-    def GetSceneObservers(self) -> list:
+    def getSceneObservers(self) -> list:
         return [
             (vtkMRMLScene.NodeAddedEvent, self.OnNodeAdded),
             (vtkMRMLScene.NodeRemovedEvent, self.OnNodeRemoved),
         ]
 
-    def OnConnected(self) -> None:
+    def onConnected(self) -> None:
         """
         Create our glow pass data node so that the glow pass pipeline is created.
-        Note: We use self.GetScene() instead of the slicer.mrmlScene singleton so that the connector can be
+        Note: We use self.getScene() instead of the slicer.mrmlScene singleton so that the connector can be
         used with an explicit scene (for instance in trame-slicer where the singleton is not available).
         """
-        GlowDMPassPipeline.EnsureGlowPass(self.GetScene())
+        GlowDMPassPipeline.EnsureGlowPass(self.getScene())
 
     @calldata_type(VTK_OBJECT)
     def OnNodeAdded(self, _caller, _event, node):
         """Attach a glow data node to model nodes when they are added to the scene."""
         if isinstance(node, vtkMRMLModelNode):
-            ModelGlowDMPipeline.CreateGlowNode(node, self.GetScene())
+            ModelGlowDMPipeline.CreateGlowNode(node, self.getScene())
 
     @calldata_type(VTK_OBJECT)
     def OnNodeRemoved(self, _caller, _event, node):
         """Garbage collect the glow data node when its model node is removed from the scene."""
         if isinstance(node, vtkMRMLModelNode):
-            ModelGlowDMPipeline.RemoveGlowNode(node, self.GetScene())
+            ModelGlowDMPipeline.RemoveGlowNode(node, self.getScene())
 
 
 _sceneConnector = ModelGlowDMSceneConnector()
