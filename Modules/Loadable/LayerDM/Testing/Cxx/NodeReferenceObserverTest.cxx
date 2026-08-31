@@ -27,6 +27,9 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <algorithm>
+
 // CTK includes
 #include "vtkSlicerLayerDMLogic.h"
 
@@ -257,11 +260,12 @@ private slots:
     QVERIFY(test.obs->GetReferenceFromSize() <= nNodes);
 
     // Verify that the references from / to the created markups is consistent with the current display node
+    using RefT = vtkMRMLLayerDMNodeReferenceObserver::RefT;
     const auto refTo = test.obs->GetNodeToReferences(markups);
-    QVERIFY(refTo.find({ markups->GetDisplayNode(), "display" }) != refTo.end());
+    QVERIFY(std::find(refTo.begin(), refTo.end(), RefT{ markups->GetDisplayNode(), "display" }) != refTo.end());
 
     const auto refFrom = test.obs->GetNodeFromReferences(markups->GetDisplayNode());
-    QVERIFY(refFrom.find({ markups, "display" }) != refFrom.end());
+    QVERIFY(std::find(refFrom.begin(), refFrom.end(), RefT{ markups, "display" }) != refFrom.end());
 
     // Remove the markups and its display node from the scene
     scene->RemoveNode(markups->GetDisplayNode());

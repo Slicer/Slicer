@@ -30,6 +30,7 @@
 #include <functional>
 #include <map>
 #include <set>
+#include <vector>
 
 class vtkMRMLNode;
 class vtkMRMLLayerDMObjectEventObserver;
@@ -43,10 +44,12 @@ class VTK_SLICER_LAYERDM_MODULE_MRML_EXPORT vtkMRMLLayerDMNodeReferenceObserver 
 public:
   /// Reference to a node with a given role.
   ///
-  /// The node is held by a weak pointer, unlike the other LayerDM containers, because these sets can outlive
+  /// The node is held by a weak pointer, unlike the other LayerDM containers, because these lists can outlive
   /// the node: OnNodeRemoved drops the owning key of the map holding the opposite direction of the reference
-  /// without notifying the nodes referencing it, so their sets keep the reference until they are updated.
-  /// Reading such an entry must therefore check the node before using it.
+  /// without notifying the nodes referencing it, so their lists keep the reference until they are updated.
+  /// Reading such an entry must therefore check the node before using it. The lists are unordered for the same
+  /// reason: a weak pointer nulls itself in place, which would silently change the value of an element of an
+  /// ordered container and break its ordering.
   ///
   /// \sa NodeToReferences
   /// \sa NodeFromReferences
@@ -64,8 +67,8 @@ public:
 
   /// @{
   /// Get references to / from node
-  std::set<RefT> GetNodeToReferences(vtkMRMLNode* node) const;
-  std::set<RefT> GetNodeFromReferences(vtkMRMLNode* node) const;
+  std::vector<RefT> GetNodeToReferences(vtkMRMLNode* node) const;
+  std::vector<RefT> GetNodeFromReferences(vtkMRMLNode* node) const;
   /// @}
 
   /// @{
@@ -103,7 +106,7 @@ private:
   void RemoveOutdatedReferences(vtkMRMLNode* fromNode);
   void OnReferenceModified(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role);
 
-  static std::set<RefT> GetNodeReferencesFromScene(vtkMRMLNode* node);
+  static std::vector<RefT> GetNodeReferencesFromScene(vtkMRMLNode* node);
   void TriggerReferenceAdded(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role) const;
   void TriggerReferenceRemoved(vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role) const;
   static void TriggerCallback(const CallBackT& callback, vtkMRMLNode* fromNode, vtkMRMLNode* toNode, const std::string& role, int eventType);
@@ -118,8 +121,8 @@ private:
   ///
   /// \sa RefT
   /// \sa OnNodeRemoved
-  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeToReferences;
-  std::map<vtkSmartPointer<vtkMRMLNode>, std::set<RefT>> NodeFromReferences;
+  std::map<vtkSmartPointer<vtkMRMLNode>, std::vector<RefT>> NodeToReferences;
+  std::map<vtkSmartPointer<vtkMRMLNode>, std::vector<RefT>> NodeFromReferences;
   /// @}
 
   std::set<vtkSmartPointer<vtkMRMLNode>> Nodes;
