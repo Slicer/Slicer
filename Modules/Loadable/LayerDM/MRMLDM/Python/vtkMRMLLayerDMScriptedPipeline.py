@@ -150,7 +150,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
     def OnUpdate(self, obj: vtkObject, eventId: int, callData: Any | None) -> None:
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -172,7 +172,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         Called when the display node of the pipeline has changed (initialization).
         default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-        See also: self.UpdateObserver(prevObj, newObj, eventIds)
+        See also: self.UpdateObservation(prevObj, newObj, eventIds)
         See also: self.OnUpdate(obj, eventId, callData)
 
         :param displayNode: The new instance of display node for the pipeline

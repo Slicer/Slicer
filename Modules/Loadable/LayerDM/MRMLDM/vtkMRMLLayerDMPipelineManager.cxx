@@ -113,7 +113,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   this->PipelineCreatorMap[displayNode] = this->Factory->GetLastCreator();
   // Observe the node destruction so that the maps keyed by this node can be cleaned up while its address is
   // still valid. \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
-  this->EventObserver->UpdateObserver(nullptr, displayNode, vtkCommand::DeleteEvent);
+  this->EventObserver->UpdateObservation(nullptr, displayNode, vtkCommand::DeleteEvent);
   this->LayerManager->AddPipeline(pipeline);
   this->InteractionLogic->AddPipeline(pipeline);
   this->UpdatePipeline(pipeline);
@@ -138,7 +138,7 @@ void vtkMRMLLayerDMPipelineManager::ClearDisplayableNodes()
     pipeline->SetFrozen(true);
     this->InteractionLogic->RemovePipeline(pipeline);
     this->LayerManager->RemovePipeline(pipeline);
-    this->EventObserver->RemoveObserver(node);
+    this->EventObserver->RemoveObservations(node);
   }
 
   this->PipelineMap.clear();
@@ -180,7 +180,7 @@ bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
   // Let interaction logic process the removal first if the pipeline needs to lose focus.
   this->InteractionLogic->RemovePipeline(pipeline);
   this->LayerManager->RemovePipeline(pipeline);
-  this->EventObserver->RemoveObserver(displayNode);
+  this->EventObserver->RemoveObservations(displayNode);
   this->PipelineMap.erase(displayNode);
   this->PipelineCreatorMap.erase(displayNode);
   this->InvokeEvent(vtkCommand::ModifiedEvent);
@@ -191,7 +191,7 @@ bool vtkMRMLLayerDMPipelineManager::RemovePipeline(vtkMRMLNode* displayNode)
 void vtkMRMLLayerDMPipelineManager::SetRenderWindow(vtkRenderWindow* renderWindow)
 {
   // Observe window resize updates (bound to default camera changed update for representations which depend on the camera / display properties)
-  this->EventObserver->UpdateObserver(this->RenderWindow, renderWindow, vtkCommand::WindowResizeEvent);
+  this->EventObserver->UpdateObservation(this->RenderWindow, renderWindow, vtkCommand::WindowResizeEvent);
   this->RenderWindow = renderWindow;
   this->LayerManager->SetRenderWindow(renderWindow);
 }
@@ -218,7 +218,7 @@ void vtkMRMLLayerDMPipelineManager::SetFactory(const vtkSmartPointer<vtkMRMLLaye
     return;
   }
 
-  this->EventObserver->UpdateObserver(this->Factory, factory);
+  this->EventObserver->UpdateObservation(this->Factory, factory);
   this->Factory = factory;
   this->UpdateFromScene();
 }
@@ -351,7 +351,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
     });
 
   // Monitor camera updates
-  this->EventObserver->UpdateObserver(nullptr, this->CameraSynchronizer);
+  this->EventObserver->UpdateObservation(nullptr, this->CameraSynchronizer);
 }
 
 //-----------------------------------------------------------------------------

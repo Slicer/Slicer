@@ -149,7 +149,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         # The attributes below are used to connect observers on the volumeNode and the volumeTransform ModifiedEvent
         # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
-        # See also: UpdateObserver
+        # See also: UpdateObservation
         self._volumeNode = None
         self._volumeTransform = None
         self._imageData = None
@@ -265,7 +265,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -282,7 +282,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         """
         Set the display node for the pipeline has changed (initialization).
         default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-        See also: self.UpdateObserver(prevObj, newObj, eventIds)
+        See also: self.UpdateObservation(prevObj, newObj, eventIds)
         See also: self.OnUpdate(obj, eventId, callData)
 
         :param node: The new instance of display node for the pipeline
@@ -374,9 +374,9 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         """
         Convenience method to update the volume and the volume's transform node observers.
 
-        Here, we use the UpdateObserver method:
-            - UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) -> bool
-            - UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) -> bool
+        Here, we use the UpdateObservation method:
+            - UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) -> bool
+            - UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) -> bool
 
         This method should be used to add an observer on VTK object.
         By default, the object's modified event will be observed.
@@ -391,7 +391,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         if self._volumeNode == self._GetVolumeNode():
             return
 
-        self.UpdateObserver(self._volumeNode, self._GetVolumeNode())
+        self.UpdateObservation(self._volumeNode, self._GetVolumeNode())
         self._volumeNode = self._GetVolumeNode()
         self._ObserveVolumeTransformNode()
         self._ObserveVolumeImageData()
@@ -409,7 +409,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         if self._volumeTransform == transformNode:
             return
 
-        self.UpdateObserver(
+        self.UpdateObservation(
             self._volumeTransform,
             transformNode,
             vtkMRMLTransformNode.TransformModifiedEvent,
@@ -421,7 +421,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
         if self._imageData == imageData:
             return
 
-        self.UpdateObserver(self._imageData, imageData)
+        self.UpdateObservation(self._imageData, imageData)
         self._imageData = imageData
 
     @classmethod

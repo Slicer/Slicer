@@ -77,7 +77,7 @@ public:
         this->UpdateCamera();
       });
 
-    this->EventObserver->UpdateObserver(nullptr, this->Renderer, vtkCommand::ActiveCameraEvent);
+    this->EventObserver->UpdateObservation(nullptr, this->Renderer, vtkCommand::ActiveCameraEvent);
     this->ObserveActiveCamera();
   }
 
@@ -106,7 +106,7 @@ private:
       return;
     }
 
-    this->EventObserver->UpdateObserver(this->ObservedCamera, camera);
+    this->EventObserver->UpdateObservation(this->ObservedCamera, camera);
     this->ObservedCamera = camera;
   }
 
@@ -139,7 +139,7 @@ public:
           this->UpdateCamera();
         }
       });
-    this->EventObserver->UpdateObserver(nullptr, this->SliceNode);
+    this->EventObserver->UpdateObservation(nullptr, this->SliceNode);
   }
 
   void UpdateCamera() override

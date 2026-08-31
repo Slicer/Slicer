@@ -78,7 +78,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -123,31 +123,31 @@ modified, the event ID and call data.
 
 * `virtual void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)`: Callback when observed event triggers.
 
-To observe other object events, the `UpdateObserver` can be used.
+To observe other object events, the `UpdateObservation` can be used.
 
-* `bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const`: Update
+* `bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const`: Update
   observer with multiple events.
-* `bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const`:
+* `bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const`:
   Update observer with single event.
-* `void RemoveObserver(vtkObject* prevObj) const`: Remove all observed events.
+* `void RemoveObservations(vtkObject* prevObj) const`: Remove all observed events.
 
 ````{warning}
-`UpdateObserver` cannot update the variable passed as `prevObj` to point to the newly observed object (passing
+`UpdateObservation` cannot update the variable passed as `prevObj` to point to the newly observed object (passing
 pointers by reference is not supported by the VTK Python wrapping). After the call, the variable passed as `prevObj`
-should be updated manually to the new object, so that the next `UpdateObserver` call removes the observers from the
+should be updated manually to the new object, so that the next `UpdateObservation` call removes the observers from the
 correct object:
 
 ```python
-self.UpdateObserver(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
+self.UpdateObservation(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
 self._modelTransform = transformNode
 ```
 
 ```cpp
-this->UpdateObserver(this->ModelTransform, transformNode, vtkMRMLTransformNode::TransformModifiedEvent);
+this->UpdateObservation(this->ModelTransform, transformNode, vtkMRMLTransformNode::TransformModifiedEvent);
 this->ModelTransform = transformNode;
 ```
 
-If the variable is not updated, the next `UpdateObserver` call is passed a stale `prevObj`: the observers added on the
+If the variable is not updated, the next `UpdateObservation` call is passed a stale `prevObj`: the observers added on the
 current object are never removed, leading to leaked observers and duplicate `OnUpdate` callbacks.
 ````
 
@@ -176,14 +176,14 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         # The two attributes below are used to connect observers on the modelNode and the modelTransform ModifiedEvent
         # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
-        # See also: UpdateObserver
+        # See also: UpdateObservation
         self._modelNode = None
         self._modelTransform = None
 
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -206,7 +206,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         if self._modelTransform == transformNode:
             return
 
-        self.UpdateObserver(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
+        self.UpdateObservation(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
         self._modelTransform = transformNode
 ```
 

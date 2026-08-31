@@ -136,7 +136,7 @@ public:
 
   /// Set the display node for the pipeline has changed (initialization).
   /// default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-  /// \sa UpdateObserver
+  /// \sa UpdateObservation
   /// \sa OnUpdate
   virtual void SetDisplayNode(vtkMRMLNode* displayNode);
 
@@ -224,15 +224,15 @@ public:
   /// On event triggered, calls \sa OnUpdate
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
   /// @}
 
   /// Remove all observed events for the input object.
-  /// For updating the observer, use \sa UpdateObserver instead.
+  /// For updating the observer, use \sa UpdateObservation instead.
   ///
   /// \warning prevObj is not mutated by this call.
-  void RemoveObserver(vtkObject* prevObj) const;
+  void RemoveObservations(vtkObject* prevObj) const;
 
   /// Request rendering and camera clipping reset.
   /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
@@ -262,7 +262,7 @@ protected:
   ~vtkMRMLLayerDMPipeline() override = default;
 
   /// Observer update callback.
-  /// Triggered when any object & events observed using UpdateObserver is triggered.
+  /// Triggered when any object & events observed using UpdateObservation is triggered.
   virtual void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData);
 
 private:

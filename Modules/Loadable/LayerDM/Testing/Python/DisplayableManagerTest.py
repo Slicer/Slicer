@@ -108,7 +108,7 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
     def test_pipelines_can_add_observers_to_vtk_objects_and_events(self):
         def onSetScene(scene: vtkMRMLScene):
             assert self.pipeline.GetScene() != scene
-            self.pipeline.UpdateObserver(self.pipeline.GetScene(), scene, vtkMRMLScene.NodeAddedEvent)
+            self.pipeline.UpdateObservation(self.pipeline.GetScene(), scene, vtkMRMLScene.NodeAddedEvent)
             vtkMRMLLayerDMPipeline.SetScene(self.pipeline, scene)
 
         # Add observer on the scene when its added

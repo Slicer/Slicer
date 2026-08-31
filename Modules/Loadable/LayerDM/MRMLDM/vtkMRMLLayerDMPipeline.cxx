@@ -42,7 +42,7 @@ void vtkMRMLLayerDMPipeline::OnRendererAdded(vtkRenderer* renderer) {}
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetDisplayNode(vtkMRMLNode* displayNode)
 {
-  this->UpdateObserver(this->DisplayNode, displayNode);
+  this->UpdateObservation(this->DisplayNode, displayNode);
   this->DisplayNode = displayNode;
 }
 
@@ -64,7 +64,7 @@ void vtkMRMLLayerDMPipeline::UpdateDisplay()
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipeline::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  this->UpdateObserver(this->ViewNode, viewNode);
+  this->UpdateObservation(this->ViewNode, viewNode);
   this->ViewNode = viewNode;
 }
 
@@ -141,15 +141,15 @@ void vtkMRMLLayerDMPipeline::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNo
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLLayerDMPipeline::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event) const
+bool vtkMRMLLayerDMPipeline::UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event) const
 {
-  return this->Observer->UpdateObserver(prevObj, obj, event);
+  return this->Observer->UpdateObservation(prevObj, obj, event);
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLLayerDMPipeline::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const
+bool vtkMRMLLayerDMPipeline::UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const
 {
-  return this->Observer->UpdateObserver(prevObj, obj, events);
+  return this->Observer->UpdateObservation(prevObj, obj, events);
 }
 
 //-----------------------------------------------------------------------------
@@ -385,9 +385,9 @@ vtkMRMLScene* vtkMRMLLayerDMPipeline::GetScene() const
 void vtkMRMLLayerDMPipeline::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) {}
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMPipeline::RemoveObserver(vtkObject* prevObj) const
+void vtkMRMLLayerDMPipeline::RemoveObservations(vtkObject* prevObj) const
 {
-  this->Observer->RemoveObserver(prevObj);
+  this->Observer->RemoveObservations(prevObj);
 }
 
 //-----------------------------------------------------------------------------

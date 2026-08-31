@@ -54,13 +54,13 @@ public:
   /// On event triggered, calls the update set by \sa SetUpdateCallback.
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent);
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events);
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent);
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events);
   /// @}
 
   /// Remove observers attached to the input object.
-  /// Use \sa UpdateObserver to update the observed events for a new object (RemoveObserver is then called automatically).
-  void RemoveObserver(vtkObject* obj);
+  /// Use \sa UpdateObservation to update the observed events for a new object (RemoveObservations is then called automatically).
+  void RemoveObservations(vtkObject* obj);
 
   /// @{
   /// Set the callback triggered when one of the observed objects and event is invoked.
@@ -111,7 +111,7 @@ protected:
   ~vtkMRMLLayerDMObjectEventObserver() override;
 
 private:
-  void AddObserver(vtkObject* obj, unsigned long event);
+  void AddObservation(vtkObject* obj, unsigned long event);
 
   /// Called when an observed object invokes vtkCommand::DeleteEvent.
   /// Forgets the object, then forwards it to the delete callback if one is set.

@@ -54,7 +54,7 @@ void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtk
     return;
   }
 
-  this->Observer->UpdateObserver(nullptr, creator);
+  this->Observer->UpdateObservation(nullptr, creator);
   this->PipelineCreators.emplace_back(creator);
   this->SortPipelineCreators();
   this->InvokeEvent(vtkCommand::ModifiedEvent);
@@ -75,7 +75,7 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> vtkMRMLLayerDMPipelineFactory::Ad
 //-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
-  this->Observer->RemoveObserver(creator);
+  this->Observer->RemoveObservations(creator);
   size_t prevSize = this->PipelineCreators.size();
   this->PipelineCreators.erase(std::remove_if(this->PipelineCreators.begin(),
                                               this->PipelineCreators.end(),
