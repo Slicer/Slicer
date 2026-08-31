@@ -323,7 +323,7 @@ class ModelGlowDMPipeline(_Pipeline):
         # The two attributes below are used to connect observers on the modelNode and the modelTransform ModifiedEvent
         # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simplify observers
         # See also: OnUpdate
-        # See also: UpdateObserver
+        # See also: UpdateObservation
         self._modelNode = None
         self._modelTransform = None
 
@@ -393,7 +393,7 @@ class ModelGlowDMPipeline(_Pipeline):
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -413,7 +413,7 @@ class ModelGlowDMPipeline(_Pipeline):
         """
         Set the display node for the pipeline has changed (initialization).
         default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-        See also: self.UpdateObserver(prevObj, newObj, eventIds)
+        See also: self.UpdateObservation(prevObj, newObj, eventIds)
         See also: self.OnUpdate(obj, eventId, callData)
 
         :param node: The new instance of display node for the pipeline
@@ -568,9 +568,9 @@ class ModelGlowDMPipeline(_Pipeline):
         """
         Convenience method to update the model and the model's transform node observers.
 
-        Here, we use the UpdateObserver method:
-            - UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) -> bool
-            - UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) -> bool
+        Here, we use the UpdateObservation method:
+            - UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) -> bool
+            - UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) -> bool
 
         This method should be used to add an observer on VTK object.
         By default, the object's modified event will be observed.
@@ -585,7 +585,7 @@ class ModelGlowDMPipeline(_Pipeline):
         if self._modelNode == self._GetModelNode():
             return
 
-        self.UpdateObserver(self._modelNode, self._GetModelNode())
+        self.UpdateObservation(self._modelNode, self._GetModelNode())
         self._modelNode = self._GetModelNode()
         self._ObserveModelTransformNode()
 
@@ -602,7 +602,7 @@ class ModelGlowDMPipeline(_Pipeline):
         if self._modelTransform == transformNode:
             return
 
-        self.UpdateObserver(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
+        self.UpdateObservation(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
         self._modelTransform = transformNode
 
     @classmethod

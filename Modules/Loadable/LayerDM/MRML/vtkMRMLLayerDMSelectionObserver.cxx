@@ -80,7 +80,7 @@ void vtkMRMLLayerDMSelectionObserver::UpdateNodesFromApplicationLogic(vtkMRMLApp
 //-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::SetInteractionNode(vtkMRMLInteractionNode* interactionNode)
 {
-  const auto didModify = this->Observer->UpdateObserver(this->InteractionNode, interactionNode);
+  const auto didModify = this->Observer->UpdateObservation(this->InteractionNode, interactionNode);
   this->InteractionNode = interactionNode;
   return didModify;
 }
@@ -94,7 +94,7 @@ vtkMRMLInteractionNode* vtkMRMLLayerDMSelectionObserver::GetInteractionNode() co
 //-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMSelectionObserver::SetSelectionNode(vtkMRMLSelectionNode* selectionNode)
 {
-  const auto didModify = this->Observer->UpdateObserver(this->SelectionNode, selectionNode);
+  const auto didModify = this->Observer->UpdateObservation(this->SelectionNode, selectionNode);
   this->SelectionNode = selectionNode;
   return didModify;
 }

@@ -91,23 +91,23 @@ vtkMRMLLayerDMObjectEventObserver::~vtkMRMLLayerDMObjectEventObserver()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event)
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event)
 {
-  return this->UpdateObserver(prevObj, obj, std::vector<unsigned long>{ event });
+  return this->UpdateObservation(prevObj, obj, std::vector<unsigned long>{ event });
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events)
 {
   if (prevObj == obj)
   {
     return false;
   }
 
-  this->RemoveObserver(prevObj);
+  this->RemoveObservations(prevObj);
   for (const auto& event : events)
   {
-    this->AddObserver(obj, event);
+    this->AddObservation(obj, event);
   }
   return true;
 }
@@ -145,7 +145,7 @@ void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<vo
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMObjectEventObserver::AddObserver(vtkObject* node, unsigned long event)
+void vtkMRMLLayerDMObjectEventObserver::AddObservation(vtkObject* node, unsigned long event)
 {
   if (!node)
   {
@@ -202,7 +202,7 @@ void vtkMRMLLayerDMObjectEventObserver::ClearCallbacks()
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMObjectEventObserver::RemoveObserver(vtkObject* node)
+void vtkMRMLLayerDMObjectEventObserver::RemoveObservations(vtkObject* node)
 {
   if (!node || this->ObservedEventsMap.find(node) == std::end(this->ObservedEventsMap))
   {

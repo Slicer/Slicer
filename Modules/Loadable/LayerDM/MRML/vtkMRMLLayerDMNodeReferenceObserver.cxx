@@ -76,7 +76,7 @@ void vtkMRMLLayerDMNodeReferenceObserver::SetScene(vtkMRMLScene* scene)
     return;
   }
 
-  this->Observer->UpdateObserver(this->Scene, scene, { vtkMRMLScene::NodeAddedEvent, vtkMRMLScene::NodeRemovedEvent });
+  this->Observer->UpdateObservation(this->Scene, scene, { vtkMRMLScene::NodeAddedEvent, vtkMRMLScene::NodeRemovedEvent });
   this->Scene = scene;
   this->UpdateFromScene();
 }
@@ -213,7 +213,7 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnNodeRemoved(vtkMRMLNode* node)
   }
 
   // Remove any observer on the node
-  this->Observer->RemoveObserver(node);
+  this->Observer->RemoveObservations(node);
 
   // Erase the node from the different maps to avoid any dangling pointers
   this->Nodes.erase(node);
@@ -225,7 +225,7 @@ void vtkMRMLLayerDMNodeReferenceObserver::OnNodeRemoved(vtkMRMLNode* node)
 void vtkMRMLLayerDMNodeReferenceObserver::OnNodeAdded(vtkMRMLNode* node)
 {
   this->Nodes.insert(node);
-  this->Observer->UpdateObserver(nullptr, node, { vtkMRMLNode::ReferenceAddedEvent, vtkMRMLNode::ReferenceModifiedEvent, vtkMRMLNode::ReferenceRemovedEvent });
+  this->Observer->UpdateObservation(nullptr, node, { vtkMRMLNode::ReferenceAddedEvent, vtkMRMLNode::ReferenceModifiedEvent, vtkMRMLNode::ReferenceRemovedEvent });
   for (const auto& [toNode, role] : GetNodeReferencesFromScene(node))
   {
     this->OnReferenceAdded(node, toNode, role);

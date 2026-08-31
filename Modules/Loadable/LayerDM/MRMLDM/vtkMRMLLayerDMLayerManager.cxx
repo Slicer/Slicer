@@ -63,7 +63,7 @@ void vtkMRMLLayerDMLayerManager::AddPipeline(vtkMRMLLayerDMPipeline* pipeline)
     return;
   }
 
-  this->Observer->UpdateObserver(nullptr, pipeline, vtkMRMLLayerDMPipeline::RenderGroupingModified);
+  this->Observer->UpdateObservation(nullptr, pipeline, vtkMRMLLayerDMPipeline::RenderGroupingModified);
   this->AddPipelineLayers(pipeline);
   this->UpdateLayers();
 }
@@ -103,7 +103,7 @@ void vtkMRMLLayerDMLayerManager::RemovePipeline(vtkMRMLLayerDMPipeline* pipeline
     return;
   }
 
-  this->Observer->UpdateObserver(pipeline, nullptr);
+  this->Observer->UpdateObservation(pipeline, nullptr);
   this->RemovePipelineRenderer(pipeline);
   this->RemovePipelineLayers(pipeline);
   this->UpdateLayers();
