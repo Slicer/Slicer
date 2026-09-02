@@ -55,6 +55,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLCameraWidget.h>
+#include <vtkMatrix4x4.h>
+#include <vtkNew.h>
+#include <vtkTransform.h>
 
 // CTK includes
 #include "ctkSignalMapper.h"
@@ -81,6 +84,7 @@ public:
 
   QAction* MaximizeViewAction = nullptr;
   QAction* FitSliceViewAction = nullptr;
+  QAction* FlipSliceViewHorizontalAction = nullptr;
   QAction* RefocusAllCamerasAction = nullptr;
   QAction* CenterThreeDViewAction = nullptr;
   QAction* RefocusCameraAction = nullptr;
@@ -167,6 +171,12 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->FitSliceViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice view on the currently displayed volume."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FitSliceViewAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->FitSliceViewAction, SIGNAL(triggered()), q, SLOT(fitSliceView()));
+
+  this->FlipSliceViewHorizontalAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Flip horizontal"), q);
+  this->FlipSliceViewHorizontalAction->setObjectName("FlipSliceViewHorizontalAction");
+  this->FlipSliceViewHorizontalAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Mirror the slice view horizontally (view the slice from the opposite side)."));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FlipSliceViewHorizontalAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 6);
+  QObject::connect(this->FlipSliceViewHorizontalAction, SIGNAL(triggered()), q, SLOT(flipSliceViewHorizontal()));
 
   this->RefocusAllCamerasAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Refocus cameras on this point"), q);
   this->RefocusAllCamerasAction->setObjectName("RefocusAllCamerasAction");
@@ -271,7 +281,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
   Q_D(const qSlicerSubjectHierarchyViewContextMenuPlugin);
   QList<QAction*> actions;
   actions << d->InteractionModeViewTransformAction << d->InteractionModeAdjustWindowLevelAction << d->InteractionModePlaceAction << d->MaximizeViewAction << d->FitSliceViewAction
-          << d->RefocusAllCamerasAction << d->CenterThreeDViewAction << d->RefocusCameraAction << d->CopyImageAction << d->ToggleTiltLockAction
+          << d->FlipSliceViewHorizontalAction << d->RefocusAllCamerasAction << d->CenterThreeDViewAction << d->RefocusCameraAction << d->CopyImageAction << d->ToggleTiltLockAction
           << d->ConfigureSliceViewAnnotationsAction << d->IntersectingSlicesVisibilityAction << d->IntersectingSlicesInteractiveAction << d->EnableSlabReconstructionAction
           << d->SlabReconstructionInteractiveAction;
   return actions;
@@ -362,6 +372,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   bool isSliceViewNode = (sliceViewNode != nullptr);
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
   d->FitSliceViewAction->setVisible(isSliceViewNode);
+  d->FlipSliceViewHorizontalAction->setVisible(isSliceViewNode);
   d->RefocusAllCamerasAction->setVisible(isSliceViewNode);
   d->CenterThreeDViewAction->setVisible(!isSliceViewNode);
   d->RefocusCameraAction->setVisible(!isSliceViewNode);
@@ -537,6 +548,42 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()
     qWarning() << Q_FUNC_INFO << " failed: sliceWidget not found";
     return;
   }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::flipSliceViewHorizontal()
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(d->ViewNode);
+  if (!sliceNode)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: not a slice view";
+    return;
+  }
+
+  // Flip the view horizontally with a 180 degree rotation about the in-plane vertical (Y) axis.
+  // This negates the in-plane horizontal axis and the slice normal (column 0 and column 2 of
+  // SliceToRAS), mirroring the displayed image left-right while keeping the matrix right-handed
+  // (i.e. viewing the slice from the opposite side). Triggering it again restores the orientation.
+  //
+  // Pivot the mirror about the current field of view center rather than the slice origin, so the
+  // point the user is looking at stays put even when zoomed in and panned off the slice origin.
+  // The slice X coordinate at the view center equals XYZOrigin[0] (see vtkMRMLSliceNode::UpdateMatrices,
+  // where the -FieldOfView/2 and spacing terms cancel at the window center).
+  double xyzOrigin[3] = { 0.0, 0.0, 0.0 };
+  sliceNode->GetXYZOrigin(xyzOrigin);
+
+  vtkNew<vtkTransform> sliceToRASTransform;
+  sliceToRASTransform->SetMatrix(sliceNode->GetSliceToRAS());
+  sliceToRASTransform->Translate(xyzOrigin[0], 0.0, 0.0);
+  sliceToRASTransform->RotateY(180.0);
+  sliceToRASTransform->Translate(-xyzOrigin[0], 0.0, 0.0);
+
+  int wasModifying = sliceNode->StartModify();
+  sliceNode->GetSliceToRAS()->DeepCopy(sliceToRASTransform->GetMatrix());
+  sliceNode->UpdateMatrices();
+  sliceNode->EndModify(wasModifying);
 }
 
 //---------------------------------------------------------------------------

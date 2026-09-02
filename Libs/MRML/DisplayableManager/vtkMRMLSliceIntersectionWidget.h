@@ -84,6 +84,7 @@ public:
     WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
     WidgetStateBlend,                           ///< Fade between foreground/background volumes
     WidgetStateTranslateSlice,                  ///< Pan (translate in-plane) the current slice (using shift+left-click-and-drag or middle-click-and-drag)
+    WidgetStateRotateFieldOfView,               ///< Roll the current slice in-plane about the view center (ctrl+left-click-and-drag)
     WidgetStateRotateIntersectingSlices,        ///< Rotate all intersecting slices (ctrl+alt+left-click-and-drag)
     WidgetStateZoomSlice,                       ///< Zoom slice (using right-button or mouse wheel)
     WidgetStateTouchGesture,                    ///< Pinch/zoom/pan using touch gestures
@@ -131,6 +132,8 @@ public:
     WidgetEventShowPreviousForegroundVolume,
     WidgetEventRotateIntersectingSlicesStart, // rotate all intersecting slices (ctrl-alt-left-click-and-drag)
     WidgetEventRotateIntersectingSlicesEnd,
+    WidgetEventRotateFieldOfViewStart, // roll the current slice in-plane about the view center (ctrl-left-click-and-drag)
+    WidgetEventRotateFieldOfViewEnd,
     WidgetEventTranslateSliceStart,
     WidgetEventTranslateSliceEnd,
     WidgetEventZoomSliceStart,
@@ -207,6 +210,11 @@ protected:
 
   bool ProcessRotateIntersectingSlicesStart(vtkMRMLInteractionEventData* eventData);
   bool ProcessRotateIntersectingSlices(vtkMRMLInteractionEventData* eventData);
+
+  // Roll the current slice in-plane about the view center by click-and-drag
+  bool ProcessRotateFieldOfViewStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessRotateFieldOfView(vtkMRMLInteractionEventData* eventData);
+
   bool ProcessSetCrosshair(vtkMRMLInteractionEventData* eventData);
   bool ProcessSetCrosshairBackground(vtkMRMLInteractionEventData* eventData);
   double GetSliceRotationAngleRad(double eventPos[2]);
