@@ -377,8 +377,12 @@ void vtkMRMLClipNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 //----------------------------------------------------------------------------
 void vtkMRMLClipNode::UpdateImplicitFunction()
 {
-  vtkImplicitFunctionCollection* functions = this->ImplicitFunction->GetFunction();
-  functions->RemoveAllItems();
+  // Build the new list of functions separately, and replace the current list only if it differs.
+  // The clipping nodes update their implicit functions in place, so a change in their position
+  // is already seen through the modified time of the functions. Rebuilding the list here on every
+  // event would mark the implicit function modified even when nothing has changed, which would
+  // make all models that use this clip node re-clipped on the next render (can take seconds on a large mesh).
+  vtkNew<vtkImplicitFunctionCollection> functions;
 
   int numClipNodes = this->GetNumberOfClippingNodes();
   for (int n = 0; n < numClipNodes; n++)
@@ -396,7 +400,7 @@ void vtkMRMLClipNode::UpdateImplicitFunction()
     {
       invertableBoolean->InvertOn();
     }
-    this->ImplicitFunction->AddFunction(invertableBoolean);
+    functions->AddItem(invertableBoolean);
 
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(clippingNode);
     if (transformableNode && transformableNode->GetImplicitFunctionWorld())
@@ -428,7 +432,54 @@ void vtkMRMLClipNode::UpdateImplicitFunction()
     }
   }
 
+  if (vtkMRMLClipNode::AreImplicitFunctionCollectionsEqual(functions, this->ImplicitFunction->GetFunction()))
+  {
+    return;
+  }
+
+  this->ImplicitFunction->GetFunction()->RemoveAllItems();
+  vtkCollectionSimpleIterator it;
+  vtkImplicitFunction* function = nullptr;
+  for (functions->InitTraversal(it); (function = functions->GetNextImplicitFunction(it));)
+  {
+    this->ImplicitFunction->AddFunction(function);
+  }
+
   this->ImplicitFunction->Modified();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLClipNode::AreImplicitFunctionCollectionsEqual(vtkImplicitFunctionCollection* functions1, vtkImplicitFunctionCollection* functions2)
+{
+  if (functions1 == functions2)
+  {
+    return true;
+  }
+  if (!functions1 || !functions2 || functions1->GetNumberOfItems() != functions2->GetNumberOfItems())
+  {
+    return false;
+  }
+  for (int i = 0; i < functions1->GetNumberOfItems(); ++i)
+  {
+    vtkImplicitFunction* function1 = vtkImplicitFunction::SafeDownCast(functions1->GetItemAsObject(i));
+    vtkImplicitFunction* function2 = vtkImplicitFunction::SafeDownCast(functions2->GetItemAsObject(i));
+    if (function1 == function2)
+    {
+      continue;
+    }
+    // Invertable booleans are created by UpdateImplicitFunction, so they are compared by content
+    vtkImplicitInvertableBoolean* boolean1 = vtkImplicitInvertableBoolean::SafeDownCast(function1);
+    vtkImplicitInvertableBoolean* boolean2 = vtkImplicitInvertableBoolean::SafeDownCast(function2);
+    if (!boolean1 || !boolean2 || boolean1->GetInvert() != boolean2->GetInvert())
+    {
+      return false;
+    }
+    if (!vtkMRMLClipNode::AreImplicitFunctionCollectionsEqual(boolean1->GetFunction(), boolean2->GetFunction()))
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
 //----------------------------------------------------------------------------
