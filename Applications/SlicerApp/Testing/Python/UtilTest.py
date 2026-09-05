@@ -474,7 +474,6 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         # The array is the displacement grid of the transform from the parent. If the node stores
         # the transform to the parent, the transform from the parent is its inverse, computed on
         # demand, which uses (and shares) the same displacement grid.
-        import numpy as np
 
         def gridTransform(displacementZ):
             gridImage = vtk.vtkImageData()
