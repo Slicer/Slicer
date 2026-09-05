@@ -82,7 +82,7 @@ void vtkMRMLClipNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLEnumMacro(clipType, ClipType);
-  vtkMRMLReadXMLEnumMacro(clippingmethod, ClippingMethod);
+  vtkMRMLReadXMLEnumMacro(clippingMethod, ClippingMethod);
   vtkMRMLReadXMLEndMacro();
 }
 
