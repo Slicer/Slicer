@@ -2247,6 +2247,11 @@ def arrayFromModelPolyIds(modelNode):
 def arrayFromGridTransform(gridTransformNode):
     """Return voxel array from transform node as numpy array.
 
+    Note that the same coefficients are returned regardless of the transform node stores
+    the transform *from* the parent or *to* the parent.
+    ``gridTransformNode.GetTransformFromParent().GetInverseFlag()`` returns true if the grid
+    transform specifies transform *to* the parent.
+
     Vector values are not copied. Values in the transform node can be modified
     by changing values in the numpy array.
     After all modifications has been completed, call :py:meth:`arrayFromGridTransformModified`.
@@ -2256,6 +2261,9 @@ def arrayFromGridTransform(gridTransformNode):
       See :py:meth:`arrayFromVolume` for details.
     """
     transformGrid = gridTransformNode.GetTransformFromParent()
+    # Need to call Update() on the transform before accessing it,
+    # because it may need to be computed from its inverse
+    transformGrid.Update()
     displacementGrid = transformGrid.GetDisplacementGrid()
     nshape = tuple(reversed(displacementGrid.GetDimensions()))
     import vtk.util.numpy_support
@@ -2389,6 +2397,7 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld=False):
 def arrayFromGridTransformModified(gridTransformNode):
     """Indicate that modification of a numpy array returned by :py:meth:`arrayFromGridTransform` has been completed."""
     transformGrid = gridTransformNode.GetTransformFromParent()
+    transformGrid.Update()
     displacementGrid = transformGrid.GetDisplacementGrid()
     displacementGrid.GetPointData().GetScalars().Modified()
     displacementGrid.Modified()
