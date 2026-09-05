@@ -236,6 +236,11 @@ protected:
   /// Update the implicit function based on the clipping nodes.
   void UpdateImplicitFunction();
 
+  /// Returns true if the two collections contain the same functions.
+  /// Invertable boolean functions are compared by content (invert flag and contained functions),
+  /// all other functions are compared by pointer.
+  static bool AreImplicitFunctionCollectionsEqual(vtkImplicitFunctionCollection* functions1, vtkImplicitFunctionCollection* functions2);
+
   int GetSliceClipState(const char* nodeID);
   void SetSliceClipState(const char* nodeID, int state);
 
