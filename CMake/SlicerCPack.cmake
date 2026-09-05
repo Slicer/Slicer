@@ -466,7 +466,30 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   # Slicer does *NOT* require setting the windows path
   set(CPACK_NSIS_MODIFY_PATH OFF)
 
+  # An empty application name would make the registry paths generated below
+  # (file associations, GPU preference) refer to their parent key, and the
+  # uninstaller would then recursively delete unrelated registry entries.
+  # See https://github.com/Slicer/Slicer/issues/9383
+  if("${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "")
+    message(FATAL_ERROR "Slicer_MAIN_PROJECT_APPLICATION_NAME must not be empty when generating an NSIS package")
+  endif()
+  set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
   set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
+
+  # ProgID used to register file associations and the URL protocol.
+  # It is defined as an NSIS constant (instead of being expanded by CMake directly
+  # into the registry commands below) so that the NSIS compiler fails if the name
+  # is empty: an empty name would make the uninstaller delete the whole
+  # SOFTWARE\Classes registry key.
+  string(APPEND CPACK_NSIS_DEFINES "\n  ;ProgID used for file associations (must not be empty)")
+  string(APPEND CPACK_NSIS_DEFINES "\n  !define SLICER_FILE_ASSOCIATION_PROGID \\\"${APPLICATION_NAME}\\\"")
+  string(APPEND CPACK_NSIS_DEFINES "\n  !if \\\"\\\${SLICER_FILE_ASSOCIATION_PROGID}\\\" == \\\"\\\"")
+  string(APPEND CPACK_NSIS_DEFINES "\n    !error \\\"SLICER_FILE_ASSOCIATION_PROGID must not be empty: the uninstaller would delete the whole Classes registry key\\\"")
+  string(APPEND CPACK_NSIS_DEFINES "\n  !endif\n")
+  # Reference to the NSIS constant, escaped so that it is expanded by the NSIS
+  # compiler and not by CPack.
+  set(_file_association_progid "\\\${SLICER_FILE_ASSOCIATION_PROGID}")
+
   # Set application name used to create Start Menu shortcuts
   set(CPACK_NSIS_DISPLAY_NAME "${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME} ${CPACK_PACKAGE_VERSION}")
   slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${CPACK_NSIS_DISPLAY_NAME}")
@@ -521,21 +544,28 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   # -------------------------------------------------------------------------
   set(FILE_EXTENSIONS .mrml .xcat .mrb)
   if(FILE_EXTENSIONS)
+    # Register the ProgID (also used as URL protocol handler) and its open command
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+      "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\" \\\"\\\" \\\"${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME} supported file\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\" \\\"URL Protocol\\\" \\\"\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\\shell\\\\open\\\\command\\\" \
+\\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
+")
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\"
+")
+    # Associate each file extension with the ProgID
     foreach(ext ${FILE_EXTENSIONS})
       string(LENGTH "${ext}" len)
       math(EXPR len_m1 "${len} - 1")
       string(SUBSTRING "${ext}" 1 ${len_m1} ext_wo_dot)
       set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
         "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
-WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\" \\\"\\\" \\\"${APPLICATION_NAME} supported file\\\"
-WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\" \\\"URL Protocol\\\" \\\"\\\"
-WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\\shell\\\\open\\\\command\\\" \
-\\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
-WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\" \\\"${APPLICATION_NAME}\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\" \\\"${_file_association_progid}\\\"
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"Content Type\\\" \\\"application/x-${ext_wo_dot}\\\"
 ")
       set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\"
 DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
 ")
     endforeach()
