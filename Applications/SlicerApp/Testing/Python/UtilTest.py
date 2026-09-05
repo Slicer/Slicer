@@ -79,6 +79,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.test_arrayFromModelPoints()
         self.test_arrayFromVTKMatrix()
         self.test_arrayFromTransformMatrix()
+        self.test_arrayFromGridTransform()
         self.test_arrayFromMarkupsControlPoints()
         self.test_array()
 
@@ -467,6 +468,50 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         for r in range(4):
             for c in range(4):
                 self.assertEqual(narrayUpdated[r, c], transformMatrixUpdated.GetElement(r, c))
+
+    def test_arrayFromGridTransform(self):
+        # Test if the displacement field of a grid transform node can be accessed as a numpy array.
+        # The array is the displacement grid of the transform from the parent. If the node stores
+        # the transform to the parent, the transform from the parent is its inverse, computed on
+        # demand, which uses (and shares) the same displacement grid.
+        import numpy as np
+
+        def gridTransform(displacementZ):
+            gridImage = vtk.vtkImageData()
+            gridImage.SetDimensions(2, 2, 3)
+            gridImage.SetSpacing(10.0, 10.0, 5.0)
+            gridImage.AllocateScalars(vtk.VTK_DOUBLE, 3)
+            gridImage.GetPointData().GetScalars().Fill(0.0)
+            transform = slicer.vtkOrientedGridTransform()
+            transform.SetDisplacementGridData(gridImage)
+            return transform, gridImage
+
+        for storedDirection in ("from parent", "to parent"):
+            self.delayDisplay(f"Testing slicer.util.arrayFromGridTransform with the displacement grid stored {storedDirection}")
+            transform, gridImage = gridTransform(0.0)
+            transformNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLGridTransformNode")
+            if storedDirection == "from parent":
+                transformNode.SetAndObserveTransformFromParent(transform)
+            else:
+                transformNode.SetAndObserveTransformToParent(transform)
+
+            narray = slicer.util.arrayFromGridTransform(transformNode)
+            self.assertEqual(narray.shape, (3, 2, 2, 3))
+            self.assertEqual(narray.max(), 0.0)
+
+            # Writing into the array changes the stored displacement grid, and the node's transform.
+            narray[:, :, :, 2] = 7.0
+            slicer.util.arrayFromGridTransformModified(transformNode)
+            self.assertEqual(gridImage.GetScalarComponentAsDouble(1, 1, 2, 2), 7.0)
+            point = [3.0, 4.0, 5.0]
+            transformed = [0.0, 0.0, 0.0]
+            storedTransform = transformNode.GetTransformFromParent() if storedDirection == "from parent" else transformNode.GetTransformToParent()
+            storedTransform.TransformPoint(point, transformed)
+            self.assertAlmostEqual(transformed[2] - point[2], 7.0)
+            transformNode.GetTransformFromParent().TransformPoint(point, transformed)
+            self.assertAlmostEqual(transformed[2] - point[2], 7.0 if storedDirection == "from parent" else -7.0, places=3)
+
+        self.delayDisplay("Testing slicer.util.arrayFromGridTransform passed")
 
     def test_arrayFromMarkupsControlPoints(self):
         # Test if retrieving markups control coordinates as a numpy array works
