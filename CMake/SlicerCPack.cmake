@@ -540,6 +540,27 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 ")
 
   # -------------------------------------------------------------------------
+  # Uninstall guard
+  # -------------------------------------------------------------------------
+  # The uninstallers of 3D Slicer releases from 5.9.0-2025-09-18 up to 5.13.0-2026-09-04
+  # recursively delete the whole HKCU\Software\Classes registry key (see
+  # https://github.com/Slicer/Slicer/issues/9383). The installer adds a registry key that
+  # sorts before all other keys and cannot be deleted, which makes these uninstallers
+  # stop before they can do any damage. The key is intentionally not removed by the
+  # uninstaller, since it protects against uninstallers of other (older) installations.
+  # The script is extracted to the temporary plugins directory of the installer, which
+  # is deleted when the installer exits.
+  string(REPLACE "/" "\\\\" _uninstall_guard_script "${Slicer_SOURCE_DIR}/CMake/SlicerUninstallGuard.ps1")
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+    "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+DetailPrint \\\"Adding Slicer Uninstall Guard registry key\\\"
+InitPluginsDir
+File \\\"/oname=$PLUGINSDIR\\\\SlicerUninstallGuard.ps1\\\" \\\"${_uninstall_guard_script}\\\"
+nsExec::ExecToLog 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \\\"$PLUGINSDIR\\\\SlicerUninstallGuard.ps1\\\"'
+Pop $0
+")
+
+  # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
   set(FILE_EXTENSIONS .mrml .xcat .mrb)
