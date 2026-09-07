@@ -247,6 +247,13 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+# Objects returned by C++ methods must be wrapped as their actual class even if the VTK module
+# providing that class has not been imported yet (VTK modules are loaded lazily, see issue #9382).
+slicer_add_python_unittest(
+  SCRIPT SlicerLazyVtkModuleTest.py
+  SLICER_ARGS --disable-modules --ignore-slicerrc
+  )
+
 if(VTK_DEBUG_LEAKS AND Slicer_HAS_CONSOLE_IO_SUPPORT)
   set(testname MRMLCreateNodeByClassWithoutSetReferenceCount)
   slicer_add_python_test(

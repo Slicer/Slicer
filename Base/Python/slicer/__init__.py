@@ -168,7 +168,12 @@ For more details, see the generated Slicer API documentation.
 #
 # The ``vtk`` module is a lazily-loading shim (see GenerateLazyVtkModule.py)
 # that imports each vtkmodules submodule only when one of its attributes is
-# first accessed, instead of eagerly star-importing all ~125 modules.
+# first accessed, instead of eagerly star-importing all ~125 modules. The shim
+# also registers its attribute index with vtkmodules, so that when a C++ method
+# returns an object of a class that has not been imported yet (for example
+# vtkChartXY from vtkChartsCore), the wrapping imports the module providing that
+# class instead of returning the object as its nearest already-imported base
+# class.
 #
 # The base classes of the wrapped MRML and Slicer classes no longer need to be
 # imported explicitly here. Each wrapped module's generated init imports exactly
