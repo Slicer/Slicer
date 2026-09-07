@@ -1264,6 +1264,30 @@ void qSlicerSegmentEditorAbstractEffect::setShowEffectCursorInThreeDView(bool sh
   this->m_ShowEffectCursorInThreeDView = show;
 }
 
+//----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::captureMouseMoveEventsInSliceView()
+{
+  return m_CaptureMouseMoveEventsInSliceView;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCaptureMouseMoveEventsInSliceView(bool capture)
+{
+  this->m_CaptureMouseMoveEventsInSliceView = capture;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::captureMouseMoveEventsInThreeDView()
+{
+  return m_CaptureMouseMoveEventsInThreeDView;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCaptureMouseMoveEventsInThreeDView(bool capture)
+{
+  this->m_CaptureMouseMoveEventsInThreeDView = capture;
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::interactionNodeModified(vtkMRMLInteractionNode* interactionNode)
 {

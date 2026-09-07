@@ -1157,6 +1157,10 @@ qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* 
   this->m_Name = QString(/*no tr*/ "Scissors");
   this->m_Title = tr("Scissors");
   this->m_ShowEffectCursorInThreeDView = true;
+  // Mouse clicks and drags in views are used for cutting, so other objects in the views
+  // (e.g., markups control points) must not be highlighted and must not change the mouse cursor on hover.
+  this->m_CaptureMouseMoveEventsInSliceView = true;
+  this->m_CaptureMouseMoveEventsInThreeDView = true;
 }
 
 //----------------------------------------------------------------------------
