@@ -13,6 +13,11 @@ The generated file is placed on the Python path ahead of the eager shim.
 Compatibility notes, mirroring the eager shim:
 - ``__path__`` is aliased to the ``vtkmodules`` package so that submodule
   imports such as ``import vtk.util.numpy_support`` keep working.
+- The attribute index is also handed to ``vtkmodules.register_class_modules``,
+  so that when a C++ method returns an object whose class has not been
+  imported yet the wrapping imports the module that provides it (instead of
+  returning the object as its nearest already-imported base class, which
+  lacks the methods of the actual class).
 - The ``vtkmodules.util`` convenience re-exports (``calldata_type``,
   ``vtkImageScalarTypeNameMacro``, the ``vtkVariant`` helpers) stay eager.
 - ``from vtk import *`` resolves every attribute and therefore imports
@@ -89,6 +94,15 @@ def __getattr__(name):
 
 def __dir__():
     return sorted(set(list(globals()) + list(_ATTRIBUTE_MODULE)))
+
+
+# Tell VTK which module wraps each class. When a C++ method returns an object
+# whose class has not been imported yet, the wrapping imports the module that
+# provides it (see vtkPythonUtil::GetObjectFromPointer); without this, such an
+# object would be returned as its nearest already-imported base class, e.g. a
+# vtkChartXY as a vtkContextItem. Older vtkmodules packages lack the table.
+if hasattr(_vtkmodules, "register_class_modules"):
+    _vtkmodules.register_class_modules(_ATTRIBUTE_MODULE)
 '''
 
 
