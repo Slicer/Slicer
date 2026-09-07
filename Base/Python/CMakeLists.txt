@@ -71,7 +71,9 @@ ctkMacroCompilePythonScript(
 # VTK site-packages directory on the Python path, so "import vtk" resolves to
 # the generated module and each attribute access imports only the vtkmodules
 # submodule that provides it. This saves several hundred milliseconds at every
-# application startup. See Utilities/Scripts/GenerateLazyVtkModule.py.
+# application startup. The module is generated from vtk.py.in by
+# Utilities/Scripts/GenerateLazyVtkModule.py, which fills in the attribute index.
+set(_lazy_vtk_module_template ${CMAKE_CURRENT_SOURCE_DIR}/vtk.py.in)
 set(_lazy_vtk_module ${Slicer_BINARY_DIR}/bin/Python/vtk.py)
 # The VTK Python package location is passed explicitly: during a fresh
 # superbuild the launcher settings of ${PYTHON_EXECUTABLE} may not
@@ -85,8 +87,11 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${_lazy_vtk_pythonpath}"
     ${PYTHON_EXECUTABLE}
     ${Slicer_SOURCE_DIR}/Utilities/Scripts/GenerateLazyVtkModule.py
+    --template ${_lazy_vtk_module_template}
     --output ${_lazy_vtk_module}
-  DEPENDS ${Slicer_SOURCE_DIR}/Utilities/Scripts/GenerateLazyVtkModule.py
+  DEPENDS
+    ${Slicer_SOURCE_DIR}/Utilities/Scripts/GenerateLazyVtkModule.py
+    ${_lazy_vtk_module_template}
   COMMENT "Generating lazily-loading vtk module"
   VERBATIM
   )
