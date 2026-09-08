@@ -31,8 +31,10 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkLookupTable.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkVolumeProperty.h>
 
 // STD includes
 #include <iostream>
@@ -40,6 +42,7 @@
 //----------------------------------------------------------------------------
 int testDefaultRenderingMethod(const std::string& moduleShareDirectory);
 int testPresets(const std::string& moduleShareDirectory);
+int testLightingPreservedWhenSynchronized();
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
@@ -53,6 +56,7 @@ int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(testDefaultRenderingMethod(moduleShareDirectory));
   CHECK_EXIT_SUCCESS(testPresets(moduleShareDirectory));
+  CHECK_EXIT_SUCCESS(testLightingPreservedWhenSynchronized());
   return EXIT_SUCCESS;
 }
 
@@ -159,6 +163,50 @@ int testPresets(const std::string& moduleShareDirectory)
     CHECK_POINTER_DIFFERENT(addedIconNode, iconNode);
     CHECK_POINTER_DIFFERENT(addedIconNode->GetImageData(), iconImage);
   }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int testLightingPreservedWhenSynchronized()
+{
+  // Synchronizing the volume rendering transfer functions with the slice display
+  // (window/level, threshold, or labelmap colors) must not override the shading and
+  // lighting settings that the user has set on the volume property.
+  vtkNew<vtkSlicerVolumeRenderingLogic> logic;
+
+  const bool shade = false;
+  const double ambient = 0.12;
+  const double diffuse = 0.87;
+  const double specular = 0.23;
+  const double specularPower = 15.0;
+
+  vtkNew<vtkVolumeProperty> volumeProperty;
+  volumeProperty->SetShade(shade);
+  volumeProperty->SetAmbient(ambient);
+  volumeProperty->SetDiffuse(diffuse);
+  volumeProperty->SetSpecular(specular);
+  volumeProperty->SetSpecularPower(specularPower);
+
+  vtkNew<vtkLookupTable> lut;
+  lut->SetNumberOfTableValues(4);
+  lut->Build();
+
+  double scalarRange[2] = { 0.0, 100.0 };
+  double windowLevel[2] = { 50.0, 50.0 };
+  logic->SetWindowLevelToVolumeProp(scalarRange, windowLevel, lut, volumeProperty);
+  CHECK_BOOL(volumeProperty->GetShade() != 0, shade);
+  CHECK_DOUBLE(volumeProperty->GetAmbient(), ambient);
+  CHECK_DOUBLE(volumeProperty->GetDiffuse(), diffuse);
+  CHECK_DOUBLE(volumeProperty->GetSpecular(), specular);
+  CHECK_DOUBLE(volumeProperty->GetSpecularPower(), specularPower);
+
+  logic->SetLabelMapToVolumeProp(lut, volumeProperty);
+  CHECK_BOOL(volumeProperty->GetShade() != 0, shade);
+  CHECK_DOUBLE(volumeProperty->GetAmbient(), ambient);
+  CHECK_DOUBLE(volumeProperty->GetDiffuse(), diffuse);
+  CHECK_DOUBLE(volumeProperty->GetSpecular(), specular);
+  CHECK_DOUBLE(volumeProperty->GetSpecularPower(), specularPower);
 
   return EXIT_SUCCESS;
 }
