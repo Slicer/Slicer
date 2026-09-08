@@ -33,6 +33,7 @@
 
 class vtkMRMLJsonElement;
 class vtkMRMLJsonWriter;
+class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsNode;
 
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneJsonStorageNode : public vtkMRMLMarkupsJsonStorageNode
@@ -54,6 +55,9 @@ protected:
 
   bool WriteBasicProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode) override;
   bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject) override;
+  bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLJsonElement* displayItem) override;
+
+  bool WriteDisplayProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode) override;
 };
 
 #endif

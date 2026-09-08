@@ -66,9 +66,15 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   scene->AddNode(markupsNode);
 
-  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode;
-  scene->AddNode(dispNode);
-  markupsNode->SetAndObserveDisplayNodeID(dispNode->GetID());
+  markupsNode->CreateDefaultDisplayNodes();
+  vtkMRMLMarkupsDisplayNode* dispNode = markupsNode->GetMarkupsDisplayNode();
+  CHECK_NOT_NULL(dispNode);
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(dispNode);
+  if (planeDisplayNode)
+  {
+    planeDisplayNode->SetNormalVisibility(false);
+    planeDisplayNode->SetNormalOpacity(0.25);
+  }
 
   scene->AddNode(storageNode);
   markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -205,9 +211,9 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   }
 
   // now read it again with a display node defined
-  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode2;
-  scene->AddNode(dispNode2);
-  markupsNode2->SetAndObserveDisplayNodeID(dispNode2->GetID());
+  markupsNode2->CreateDefaultDisplayNodes();
+  vtkMRMLMarkupsDisplayNode* dispNode2 = markupsNode2->GetMarkupsDisplayNode();
+  CHECK_NOT_NULL(dispNode2);
   std::cout << "Added display node, re-reading from " << snode2->GetFileName() << std::endl;
   CHECK_BOOL(snode2->ReadData(markupsNode2), true);
 
@@ -345,6 +351,16 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
   vtkMRMLMarkupsNode* planeNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json").c_str());
   CHECK_NOT_NULL(planeNode);
   CHECK_STRING(planeNode->GetClassName(), "vtkMRMLMarkupsPlaneNode");
+
+  // Plane-specific display properties are only restored by the plane storage node
+  vtkNew<vtkMRMLMarkupsPlaneJsonStorageNode> planeStorageNodeJson;
+  scene->AddNode(planeStorageNodeJson);
+  vtkMRMLMarkupsNode* planeNode2 = planeStorageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json").c_str());
+  CHECK_NOT_NULL(planeNode2);
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode2->GetDisplayNode());
+  CHECK_NOT_NULL(planeDisplayNode);
+  CHECK_BOOL(planeDisplayNode->GetNormalVisibility(), false);
+  CHECK_DOUBLE(planeDisplayNode->GetNormalOpacity(), 0.25);
 
   vtkMRMLMarkupsNode* roiNode = storageNodeJson->AddNewMarkupsNodeFromFile(std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json").c_str());
   CHECK_NOT_NULL(roiNode);

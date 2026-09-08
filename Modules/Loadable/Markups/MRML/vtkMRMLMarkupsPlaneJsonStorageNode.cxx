@@ -22,6 +22,7 @@
 #include <vtkCodedEntry.h>
 #include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
+#include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 
 #include "vtkMRMLMessageCollection.h"
@@ -221,6 +222,55 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLM
     }
     planeNode->SetPlaneBounds(planeBounds);
   }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLJsonElement* displayItem)
+{
+  if (!vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsDisplayNodeFromJsonValue(displayNode, displayItem))
+  {
+    return false;
+  }
+
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(displayNode);
+  if (!planeDisplayNode)
+  {
+    // Plane-specific display properties can only be applied to a plane display node
+    return true;
+  }
+
+  MRMLNodeModifyBlocker blocker(planeDisplayNode);
+  if (displayItem->HasMember("normalVisibility"))
+  {
+    planeDisplayNode->SetNormalVisibility(displayItem->GetBoolProperty("normalVisibility"));
+  }
+  if (displayItem->HasMember("normalOpacity"))
+  {
+    planeDisplayNode->SetNormalOpacity(displayItem->GetDoubleProperty("normalOpacity"));
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
+{
+  if (!vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(writer, markupsDisplayNode))
+  {
+    return false;
+  }
+
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(markupsDisplayNode);
+  if (!planeDisplayNode)
+  {
+    // Plane-specific display properties are only available in a plane display node
+    return true;
+  }
+
+  writer->WriteBoolProperty("normalVisibility", planeDisplayNode->GetNormalVisibility());
+  writer->WriteDoubleProperty("normalOpacity", planeDisplayNode->GetNormalOpacity());
 
   return true;
 }

@@ -623,7 +623,7 @@ base_to_node_matrix[0:3, 1] = axis2
 base_to_node_matrix[0:3, 2] = normal
 
 data = {
-    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#",
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.4.json#",
     "markups": [
         {
             "type": "Plane",
