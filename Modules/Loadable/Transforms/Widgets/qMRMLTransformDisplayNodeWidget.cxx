@@ -72,7 +72,7 @@ qMRMLTransformDisplayNodeWidgetPrivate::qMRMLTransformDisplayNodeWidgetPrivate(q
 }
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidgetPrivate ::~qMRMLTransformDisplayNodeWidgetPrivate()
+qMRMLTransformDisplayNodeWidgetPrivate::~qMRMLTransformDisplayNodeWidgetPrivate()
 {
   this->ColorTransferFunction->Delete();
   this->ColorTransferFunction = nullptr;
@@ -219,7 +219,7 @@ qMRMLTransformDisplayNodeWidget::qMRMLTransformDisplayNodeWidget(QWidget* newPar
 }
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidget ::~qMRMLTransformDisplayNodeWidget() = default;
+qMRMLTransformDisplayNodeWidget::~qMRMLTransformDisplayNodeWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setMRMLTransformNode(vtkMRMLNode* transformNode)

@@ -737,7 +737,6 @@ public:
     StartRedoEvent = StateEvent | StartEvent | RedoState,
     EndRedoEvent = StateEvent | EndEvent | RedoState,
     ProgressRedoEvent = StateEvent | ProgressEvent | RedoState,
-
   };
 
   /// The version of the last loaded scene file.

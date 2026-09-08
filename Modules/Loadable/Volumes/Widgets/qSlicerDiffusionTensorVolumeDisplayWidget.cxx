@@ -56,7 +56,7 @@ qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::qSlicerDiffusionTensorVolumeDi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidgetPrivate ::~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate() = default;
+qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
@@ -97,7 +97,7 @@ qSlicerDiffusionTensorVolumeDisplayWidget::qSlicerDiffusionTensorVolumeDisplayWi
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidget ::~qSlicerDiffusionTensorVolumeDisplayWidget() = default;
+qSlicerDiffusionTensorVolumeDisplayWidget::~qSlicerDiffusionTensorVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode* qSlicerDiffusionTensorVolumeDisplayWidget::volumeNode() const

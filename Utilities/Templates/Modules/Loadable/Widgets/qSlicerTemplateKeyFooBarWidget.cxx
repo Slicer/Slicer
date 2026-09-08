@@ -60,4 +60,4 @@ qSlicerTemplateKeyFooBarWidget::qSlicerTemplateKeyFooBarWidget(QWidget* parentWi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyFooBarWidget ::~qSlicerTemplateKeyFooBarWidget() {}
+qSlicerTemplateKeyFooBarWidget::~qSlicerTemplateKeyFooBarWidget() {}

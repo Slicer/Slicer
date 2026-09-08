@@ -56,7 +56,7 @@ qSlicerDTISliceDisplayWidgetPrivate::qSlicerDTISliceDisplayWidgetPrivate(qSlicer
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDTISliceDisplayWidgetPrivate ::~qSlicerDTISliceDisplayWidgetPrivate() = default;
+qSlicerDTISliceDisplayWidgetPrivate::~qSlicerDTISliceDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidgetPrivate::init()
@@ -119,7 +119,7 @@ qSlicerDTISliceDisplayWidget::qSlicerDTISliceDisplayWidget(QWidget* parentWidget
 }
 
 // --------------------------------------------------------------------------
-qSlicerDTISliceDisplayWidget ::~qSlicerDTISliceDisplayWidget() = default;
+qSlicerDTISliceDisplayWidget::~qSlicerDTISliceDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerDTISliceDisplayWidget::displayPropertiesNode() const

@@ -80,7 +80,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidget::qMRMLMarkupsFiducialProjectionProp
 }
 
 //-----------------------------------------------------------------------------
-qMRMLMarkupsFiducialProjectionPropertyWidget ::~qMRMLMarkupsFiducialProjectionPropertyWidget() = default;
+qMRMLMarkupsFiducialProjectionPropertyWidget::~qMRMLMarkupsFiducialProjectionPropertyWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsFiducialProjectionPropertyWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)

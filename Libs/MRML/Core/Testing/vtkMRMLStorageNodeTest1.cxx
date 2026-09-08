@@ -32,7 +32,7 @@ enum TestReadReferenceType
   TransformNodeAsReference,
   ModelNodeAsReference
 };
-}
+} // namespace
 
 //---------------------------------------------------------------------------
 class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
