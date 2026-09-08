@@ -82,10 +82,12 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   #  - dcmqi-0.4.0-py3-none-macosx_13_0_x86_64.whl
   #  - dcmqi-0.4.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
   #  - dcmqi-0.4.0-py3-none-win_amd64.whl
+  #  - dcmqi-0.4.0.tar.gz
   dcmqi==0.4.0 --hash=sha256:2138fc78e79c28449348572eb7ff0483f98f6a71c821814ca3cf28e3357ad848 \
                --hash=sha256:60f6a9e4d4828c5399e932f44b500e4619becbe27dd4e4574cc94a802cbdcd00 \
                --hash=sha256:1721bf1308fa416b00d3f9895c99b2376524a9982a408f15cf281ceef159df5b \
-               --hash=sha256:c3cc2c32f196e96017e08b27550c4b05ac84fde411ef743f882eb8e00ab5709a
+               --hash=sha256:c3cc2c32f196e96017e08b27550c4b05ac84fde411ef743f882eb8e00ab5709a \
+               --hash=sha256:d93c819e79801ca8c2b481b95f3a0023e45c3a82d568321bd3eac9abd17fb4d9
   # [/dcmqi]
   # [highdicom]
   # Pure-Python package for creating/reading complex DICOM objects (SR, SEG, PM, etc.)
