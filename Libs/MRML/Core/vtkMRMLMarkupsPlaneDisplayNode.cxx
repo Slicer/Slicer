@@ -38,3 +38,51 @@ vtkMRMLMarkupsPlaneDisplayNode::vtkMRMLMarkupsPlaneDisplayNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsPlaneDisplayNode::~vtkMRMLMarkupsPlaneDisplayNode() = default;
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneDisplayNode::WriteXML(ostream& of, int nIndent)
+{
+  Superclass::WriteXML(of, nIndent);
+
+  // Store plane-normal arrow display settings with the display node so scene
+  // and MRB reloads preserve the Markups UI state.
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(normalVisibility, NormalVisibility);
+  vtkMRMLWriteXMLFloatMacro(normalOpacity, NormalOpacity);
+  vtkMRMLWriteXMLEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneDisplayNode::ReadXMLAttributes(const char** atts)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::ReadXMLAttributes(atts);
+
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(normalVisibility, NormalVisibility);
+  vtkMRMLReadXMLFloatMacro(normalOpacity, NormalOpacity);
+  vtkMRMLReadXMLEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(NormalVisibility);
+  vtkMRMLCopyFloatMacro(NormalOpacity);
+  vtkMRMLCopyEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os, indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintBooleanMacro(NormalVisibility);
+  vtkMRMLPrintFloatMacro(NormalOpacity);
+  vtkMRMLPrintEndMacro();
+}
