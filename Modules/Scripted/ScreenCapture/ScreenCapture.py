@@ -213,6 +213,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             _("String that defines file name, type, and numbering scheme. Default: image%05d.png."))
         self.fileNamePatternWidget.text = _("image_%05d.png")
 
+        self.singleFrameFileNameWidget = qt.QLineEdit()
+        self.singleFrameFileNameWidget.setToolTip(_("String that defines file name and type for single image capture mode."))
+        self.singleFrameFileNameWidget.text = _("SlicerCaptureSingleFrame.png")
+
         self.videoFileNameWidget = qt.QLineEdit()
         self.videoFileNameWidget.setToolTip(_("String that defines file name and type."))
         self.videoFileNameWidget.text = _("SlicerCapture.mp4")
@@ -223,6 +227,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
         hbox = qt.QHBoxLayout()
         hbox.addWidget(self.fileNamePatternWidget)
+        hbox.addWidget(self.singleFrameFileNameWidget)
         hbox.addWidget(self.videoFileNameWidget)
         hbox.addWidget(self.lightboxImageFileNameWidget)
         outputFormLayout.addRow(_("Output file name:"), hbox)
@@ -472,7 +477,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         outputType = self.outputTypeWidget.currentData
         forceSingleImage = False
         if self.animationModeWidget.currentData == "SINGLE_FRAME":
-            outputType = "IMAGE_SERIES"
+            outputType = "SINGLE_FRAME"
             forceSingleImage = True
 
         self.numberOfStepsLabel.setVisible(not forceSingleImage)
@@ -494,6 +499,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.videoFrameRateLabel.setVisible(outputType == "VIDEO")
         self.videoFrameRateSliderWidget.setVisible(outputType == "VIDEO")
         self.fileNamePatternWidget.setVisible(outputType == "IMAGE_SERIES")
+        self.singleFrameFileNameWidget.setVisible(outputType == "SINGLE_FRAME")
         self.videoFileNameWidget.setVisible(outputType == "VIDEO")
         self.lightboxImageFileNameWidget.setVisible(outputType == "LIGHTBOX_IMAGE")
 
@@ -714,7 +720,29 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         elif showViewControllers:
             logging.warning(_("View controllers are only available to be shown when capturing all views."))
         try:
-            if numberOfSteps < 2:
+            if self.animationModeWidget.currentData == "SINGLE_FRAME":
+                outputFileName = self.singleFrameFileNameWidget.text
+                if outputDir:
+                    outputFilePath = os.path.join(outputDir, outputFileName)
+                else:
+                    outputFilePath = None
+                view = None if captureAllViews else self.logic.viewFromNode(viewNode)
+                volumeNode = self.volumeNodeComboBox.currentNode()
+                self.logic.captureImageFromView(view, outputFilePath, transparentBackground, volumeNode=volumeNode)
+                if outputFilePath:
+                    self.logic.addLog(_("Wrote {outputFilePath}").format(outputFilePath=outputFilePath))
+                if volumeNode:
+                    self.logic.addLog(_("Wrote to volume node '{volumeName}'").format(volumeName=volumeNode.GetName()))
+
+            elif numberOfSteps < 2:
+                # User selected "image series" or "video" output on self.outputTypeWidget.currentData,
+                # but only one image on "Number of images" slider. If "video" was selected, raise an
+                # error, because video output does not make sense with a single frame.
+                if self.outputTypeWidget.currentData == "VIDEO":
+                    raise ValueError(_("Video output requires at least 2 frames to be captured."))
+                # If "image series" was selected, just capture a single image.
+                # use file name pattern and next available file name logic to determine output file name
+                # to avoid overwriting existing files
                 if imageFileNamePattern != self.snapshotFileNamePattern or outputDir != self.snapshotOutputDir:
                     self.snapshotIndex = 0
                 if outputDir:
@@ -722,12 +750,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
                 else:
                     filename = None
                 view = None if captureAllViews else self.logic.viewFromNode(viewNode)
-                volumeNode = None if numberOfSteps > 1 else self.volumeNodeComboBox.currentNode()
+                volumeNode = self.volumeNodeComboBox.currentNode()
                 self.logic.captureImageFromView(view, filename, transparentBackground, volumeNode=volumeNode)
                 if filename:
-                    self.logic.addLog(_("Write {filename}").format(filename=filename))
+                    self.logic.addLog(_("Wrote {outputFilePath}").format(outputFilePath=filename))
                 if volumeNode:
-                    self.logic.addLog(_("Write to volume node '{volumeName}'").format(volumeName=volumeNode.GetName()))
+                    self.logic.addLog(_("Wrote to volume node '{volumeName}'").format(volumeName=volumeNode.GetName()))
             elif self.animationModeWidget.currentData == "SLICE_SWEEP":
                 self.logic.captureSliceSweep(viewNode, self.sliceStartOffsetSliderWidget.value,
                                              self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern,
@@ -785,7 +813,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
                     self.logic.createLightboxImage(int(self.lightboxColumnCountSliderWidget.value),
                                                    outputDir, imageFileNamePattern, numberOfSteps, self.lightboxImageFileNameWidget.text)
             finally:
-                if not self.outputTypeWidget.currentData == "IMAGE_SERIES":
+                # Delete temporary image files if they were created (i.e. if video or lightbox output was
+                # requested). Single frame or image series output is not temporary.
+                if not self.outputTypeWidget.currentData == "IMAGE_SERIES" and not self.animationModeWidget.currentData == "SINGLE_FRAME":
                     self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
 
             self.addLog(_("Done."))
