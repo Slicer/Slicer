@@ -51,7 +51,7 @@ enum ColumnType
   TotalTimeColumn,
   CommentColumn
 };
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 class qMRMLEventBrokerWidgetPrivate

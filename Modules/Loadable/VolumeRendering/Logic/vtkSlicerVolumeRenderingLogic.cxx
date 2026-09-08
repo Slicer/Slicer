@@ -1075,7 +1075,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic ::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
 {
   if (roiNode == nullptr || roiNode->GetScene() == nullptr)
   {

@@ -173,7 +173,7 @@ public:
     ActionTranslateSliceIntersection = 4096,
     ActionRotateSliceIntersection = 8192,
     ActionAll = ActionTranslate | ActionZoom | ActionRotate | ActionBlend | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
-                | ActionSetCursorPosition | ActionSetCrosshairPosition | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
+      | ActionSetCursorPosition | ActionSetCrosshairPosition | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
   };
 
   /// Set exact list of actions to enable.

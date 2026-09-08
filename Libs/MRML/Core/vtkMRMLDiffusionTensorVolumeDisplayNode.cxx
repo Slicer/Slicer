@@ -73,7 +73,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeDisplayNode ::~vtkMRMLDiffusionTensorVolumeDisplayNode()
+vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
   this->DTIMathematics->Delete();
   this->DTIMathematicsAlpha->Delete();

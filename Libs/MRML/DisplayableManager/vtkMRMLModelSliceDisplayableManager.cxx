@@ -139,7 +139,7 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal::vtkInternal(vtkMRMLModelSliceD
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLModelSliceDisplayableManager::vtkInternal ::~vtkInternal()
+vtkMRMLModelSliceDisplayableManager::vtkInternal::~vtkInternal()
 {
   this->ClearDisplayableNodes();
 }

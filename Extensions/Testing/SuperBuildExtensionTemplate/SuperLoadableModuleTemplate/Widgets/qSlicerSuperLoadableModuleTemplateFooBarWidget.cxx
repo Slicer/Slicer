@@ -60,4 +60,4 @@ qSlicerSuperLoadableModuleTemplateFooBarWidget::qSlicerSuperLoadableModuleTempla
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateFooBarWidget ::~qSlicerSuperLoadableModuleTemplateFooBarWidget() {}
+qSlicerSuperLoadableModuleTemplateFooBarWidget::~qSlicerSuperLoadableModuleTemplateFooBarWidget() {}

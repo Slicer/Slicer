@@ -54,7 +54,7 @@ qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate::qSlicerDiffusionWeightedVolu
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate ::~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate() = default;
+qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate::~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate::init()
@@ -79,7 +79,7 @@ qSlicerDiffusionWeightedVolumeDisplayWidget::qSlicerDiffusionWeightedVolumeDispl
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidget ::~qSlicerDiffusionWeightedVolumeDisplayWidget() = default;
+qSlicerDiffusionWeightedVolumeDisplayWidget::~qSlicerDiffusionWeightedVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode* qSlicerDiffusionWeightedVolumeDisplayWidget::volumeNode() const

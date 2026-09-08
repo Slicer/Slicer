@@ -43,7 +43,7 @@ MRMLIDImageIO::MRMLIDImageIO()
 }
 
 //----------------------------------------------------------------------------
-MRMLIDImageIO ::~MRMLIDImageIO() = default;
+MRMLIDImageIO::~MRMLIDImageIO() = default;
 
 //----------------------------------------------------------------------------
 bool MRMLIDImageIO::IsAVolumeNode(const char* filename)

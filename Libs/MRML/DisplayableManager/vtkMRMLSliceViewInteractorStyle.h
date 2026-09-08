@@ -71,7 +71,7 @@ public:
     TranslateSliceIntersection = 4096,
     RotateSliceIntersection = 8192,
     AllActionsMask = Translate | Zoom | Rotate | Blend | AdjustWindowLevelBackground | AdjustWindowLevelForeground | BrowseSlice | ShowSlice | AdjustLightbox | SelectVolume
-                     | SetCursorPosition | SetCrosshairPosition | TranslateSliceIntersection | RotateSliceIntersection
+      | SetCursorPosition | SetCrosshairPosition | TranslateSliceIntersection | RotateSliceIntersection
   };
 
   /// Enable/disable the specified action (Translate, Zoom, Blend, etc.).
