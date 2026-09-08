@@ -171,17 +171,20 @@ public:
       if (pipeline->VolumeActorInformation->Has(vtkOpenGLRenderPass::RenderPasses()))
       {
         // Iterate on the OpenGL render passes to remove the SSAO pass if attached
+        bool removedSSAOPass = false;
         int numRenderPasses = pipeline->VolumeActorInformation->Length(vtkOpenGLRenderPass::RenderPasses());
         for (int i = 0; i < numRenderPasses; ++i)
         {
           if (vtkSSAOPass::SafeDownCast(pipeline->VolumeActorInformation->Get(vtkOpenGLRenderPass::RenderPasses(), i)))
           {
             pipeline->VolumeActorInformation->Remove(vtkOpenGLRenderPass::RenderPasses(), i);
+            removedSSAOPass = true;
           }
         }
 
-        // Cleanup OpenGL render passes if empty after removal of the SSAO pass to avoid crashes in the GPU mapper
-        if (pipeline->VolumeActorInformation->Length(vtkOpenGLRenderPass::RenderPasses()) == 0)
+        // Remove lists emptied by SSAO filtering to avoid crashes in the GPU mapper.
+        // An initially empty list may still be under construction in vtkInformationObjectBaseVectorKey::Append().
+        if (removedSSAOPass && pipeline->VolumeActorInformation->Length(vtkOpenGLRenderPass::RenderPasses()) == 0)
         {
           pipeline->VolumeActorInformation->Remove(vtkOpenGLRenderPass::RenderPasses());
         }
