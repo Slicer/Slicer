@@ -45,7 +45,7 @@ namespace
 // "main" in the name in the future, but for compatibility with Slicer < 5.1 the current value is preserved for now.
 // After sufficient time has passed and we are no longer concerned about forward compatibility with
 // Slicer < 5.1, the branch name may be changed to "main".
-const std::string MARKUPS_SCHEMA = "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#";
+const std::string MARKUPS_SCHEMA = "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.4.json#";
 // regex should be lower case
 const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX = ".*markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#*$";
 } // namespace
@@ -922,7 +922,9 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteMarkup(vtkMRMLJsonWriter* writer, vtkMR
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
   if (displayNode)
   {
+    writer->WriteObjectPropertyStart("display");
     success = this->WriteDisplayProperties(writer, displayNode) && success;
+    writer->WriteObjectPropertyEnd();
   }
   writer->WriteObjectEnd();
   return success;
@@ -1092,7 +1094,6 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* wr
     vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties failed: invalid display node");
     return false;
   }
-  writer->WriteObjectPropertyStart("display");
 
   writer->WriteBoolProperty("visibility", markupsDisplayNode->GetVisibility());
   writer->WriteDoubleProperty("opacity", markupsDisplayNode->GetOpacity());
@@ -1129,6 +1130,5 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* wr
 
   writer->WriteStringProperty("snapMode", markupsDisplayNode->GetSnapModeAsString(markupsDisplayNode->GetSnapMode()));
 
-  writer->WriteObjectPropertyEnd();
   return true;
 }

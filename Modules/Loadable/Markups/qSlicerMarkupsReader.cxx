@@ -110,7 +110,7 @@ double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName) cons
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
       {
         QTextStream in(&file);
-        // Markups json files contain a schema URL like .../Schema/markups-schema-v1.0.3.json
+        // Markups json files contain a schema URL like .../Schema/markups-schema-v1.0.4.json
         // around position 150, read a bit further to account for slight variations in the header.
         QString line = in.read(300);
         confidence = (line.contains("/markups-schema-v1.") ? 0.6 : 0.4);
