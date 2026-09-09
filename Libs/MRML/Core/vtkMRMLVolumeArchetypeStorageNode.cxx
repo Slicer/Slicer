@@ -560,7 +560,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // update the file list
-  std::string moveFromDir = this->UpdateFileList(refNode, 1);
+  std::string moveFromDir = this->UpdateFileList(refNode, true);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -601,63 +601,13 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     // the temp writing went okay, just move the files from there to where
     // they're supposed to go. It will fail if the temp dir is on a different
     // device, so fall back to a second write in that case.
-    std::string targetDir = vtksys::SystemTools::GetParentDirectory(fullName.c_str());
-    vtkDebugMacro("WriteData: moving files from temp dir " << moveFromDir << " to target dir " << targetDir);
-
-    vtksys::Directory dir;
-    dir.Load(moveFromDir.c_str());
-    vtkDebugMacro("WriteData: tempdir " << moveFromDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
-    size_t fileNum;
-    std::vector<std::string> targetPathComponents;
-    vtksys::SystemTools::SplitPath(targetDir.c_str(), targetPathComponents);
-    std::vector<std::string> sourcePathComponents;
-    vtksys::SystemTools::SplitPath(moveFromDir.c_str(), sourcePathComponents);
-    for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
+    std::string targetDir = vtksys::SystemTools::GetFilenamePath(fullName);
+    if (!this->MoveFilesWithLocking(moveFromDir, targetDir))
     {
-      const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
-      // skip the dirs
-      if (strcmp(thisFile, ".") && //
-          strcmp(thisFile, ".."))
-      {
-        targetPathComponents.emplace_back(thisFile);
-        sourcePathComponents.emplace_back(thisFile);
-        std::string targetFile = vtksys::SystemTools::JoinPath(targetPathComponents);
-        // does the target file already exist?
-        if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
-        {
-          // remove it
-          vtkInfoMacro("WriteData: removing old version of file " << targetFile);
-          if (!vtksys::SystemTools::RemoveFile(targetFile.c_str()))
-          {
-            vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
-                                             "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-                                             vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to remove old version of file: '%1'"), fullName.c_str()));
-          }
-        }
-        std::string sourceFile = vtksys::SystemTools::JoinPath(sourcePathComponents);
-        vtkDebugMacro("WriteData: moving file number " << fileNum << ", " << sourceFile << " to " << targetFile);
-        // thisFile needs a full path it's bare
-        int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
-        if (renameReturn != 0)
-        {
-          vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
-                                           "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-                                           vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Error renaming file to '%1', rename returned code %2"),
-                                                               targetFile.c_str(),
-                                                               std::to_string(renameReturn).c_str()));
-          // fall back to doing a second write
-          moveSucceeded = false;
-          break;
-        }
-        targetPathComponents.pop_back();
-        sourcePathComponents.pop_back();
-      }
-    }
-    // delete the temporary dir and all remaining contents
-    bool dirRemoved = vtksys::SystemTools::RemoveADirectory(moveFromDir.c_str()).IsSuccess();
-    if (!dirRemoved)
-    {
-      vtkWarningMacro("Failed to remove temporary write directory " << moveFromDir);
+      vtksys::SystemTools::RemoveADirectory(moveFromDir.c_str());
+      vtkErrorToMessageCollectionMacro(
+        this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal", vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to commit temporary files."));
+      return 0;
     }
   }
   else
@@ -814,58 +764,29 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   // clear out the old file list
   this->ResetFileNameList();
 
-  // make a new dir to write temporary stuff out to
-  //  std::vector<std::string> pathComponents;
-  // get the base dir of the destination
-  /*
-  // get the cache dir and make a subdir in it.
-  if (this->GetScene() &&                    //
-      this->GetScene()->GetCacheManager() && //
-      this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory())
-    {
-    vtksys::SystemTools::SplitPath(this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
-    }
-  else
-    {
-    vtkWarningMacro("UpdateFileList: Unable to get remote cache dir, using current dir for temp dir.");
-    }
-  */
-  // get the original directory
-  std::string originalDir = vtksys::SystemTools::GetParentDirectory(oldName.c_str());
-  std::vector<std::string> pathComponents;
-  vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
-  // add a temp dir to it
-  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(oldName);
-  // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
-  tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
-  pathComponents.push_back(tempSubDir);
-  std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir " << tempDir.c_str());
-  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
-  {
-    if (!vtksys::SystemTools::RemoveADirectory(tempDir.c_str()))
-    {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
-                                       "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-                                       vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to delete directory '%1'"), tempDir.c_str()));
-      return "";
-    }
-  }
-  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  std::string originalDir = vtksys::SystemTools::GetFilenamePath(oldName);
+  std::string tempDir;
+  std::string tempFilePath;
+  if (!this->GenerateTempFilePathForWrite(oldName, tempDir, tempFilePath))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to create directory '%1'"), tempDir.c_str()));
+                                     vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to create temporary file and directory for writing."));
     return "";
   }
-  // make a new name,
-  pathComponents.push_back(vtksys::SystemTools::GetFilenameName(oldName));
-  std::string tempName = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkDebugMacro("UpdateFileList: new archetype file name = " << tempName.c_str());
+  if (tempFilePath.empty())
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList", vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to create temporary file for writing."));
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return "";
+  }
+
+  vtkDebugMacro("UpdateFileList: new archetype file name = " << tempFilePath.c_str());
 
   // set up the writer and write
   vtkNew<vtkITKImageWriter> writer;
-  writer->SetFileName(tempName.c_str());
+  writer->SetFileName(tempFilePath.c_str());
   writer->SetInputData(volNode->GetImageData());
   writer->SetUseCompression(this->GetUseCompression());
   if (this->WriteFileFormat)
@@ -899,7 +820,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to write '%1'"), tempName.c_str()));
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to write '%1'"), tempFilePath.c_str()));
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
     return "";
   }
 
@@ -912,11 +834,13 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
                                      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to open directory '%1'"), tempDir.c_str()));
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
     return "";
   }
 
-  // take the archetype and temp dir off of the path
-  pathComponents.pop_back();
+  // take temp dir off of the path
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(tempDir.c_str(), pathComponents);
   pathComponents.pop_back();
   std::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
   std::string relativePath;
@@ -987,7 +911,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
 
   // make sure that the archetype is added first! AddFile when it gets to it
   // in the dir will not add a duplicate
-  std::string newArchetype = vtksys::SystemTools::GetFilenameName(tempName.c_str());
+  std::string newArchetype = vtksys::SystemTools::GetFilenameName(tempFilePath.c_str());
   vtkDebugMacro("Stripped archetype = " << newArchetype.c_str());
   relativePathComponents.push_back(newArchetype);
   std::string relativeArchetypeFile = vtksys::SystemTools::JoinPath(relativePathComponents);
@@ -1029,11 +953,12 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
                                                                    " Only these %4 file(s) have been written: %5."
                                                                    " Old name is '%6'."),
                                                          newArchetype.c_str(),
-                                                         tempName.c_str(),
+                                                         tempFilePath.c_str(),
                                                          tempDir.c_str(),
                                                          std::to_string(dir.GetNumberOfFiles() - 2).c_str(),
                                                          addedFiles.str().c_str(),
                                                          oldName.c_str()));
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
     return "";
   }
   // restore the old file name

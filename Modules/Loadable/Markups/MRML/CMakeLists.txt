@@ -19,7 +19,7 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}PlaneJsonStorageNode.cxx
   vtkMRML${MODULE_NAME}PlaneJsonStorageNode.h
   vtkMRML${MODULE_NAME}ROIJsonStorageNode.cxx
-  vtkMRML${MODULE_NAME}ROIJsonStorageNode.cxx
+  vtkMRML${MODULE_NAME}ROIJsonStorageNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
