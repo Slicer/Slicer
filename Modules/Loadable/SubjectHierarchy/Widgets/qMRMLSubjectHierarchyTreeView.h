@@ -407,6 +407,13 @@ protected slots:
   /// Called when batch processing ends. Restores selection, which is lost when the hierarchy is rebuilt
   virtual void onMRMLSceneEndBatchProcess(vtkObject* sceneObject);
 
+  /// Save current selection before a model operation (reparenting/reordering) that will clear
+  /// selection for moved rows. Connected to qMRMLSubjectHierarchyModel::requestSaveSelection.
+  virtual void saveSelectionBeforeModelUpdate();
+  /// Restore selection saved by saveSelectionBeforeModelUpdate.
+  /// Connected to qMRMLSubjectHierarchyModel::requestRestoreSelection.
+  virtual void restoreSelectionAfterModelUpdate();
+
   void onCustomContextMenu(const QPoint& point);
 
   virtual void addNode();
