@@ -19,6 +19,9 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     def __init__(self, scriptedEffect):
         scriptedEffect.name = "Level tracing"  # no tr (don't translate it because modules find effects by name)
         scriptedEffect.title = _("Level tracing")
+        # Mouse clicks in slice views are used for applying the traced outline, so other objects in the views
+        # (e.g., markups control points) must not be highlighted and must not change the mouse cursor on hover.
+        scriptedEffect.captureMouseMoveEventsInSliceView = True
         AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
         # Effect-specific members
@@ -106,7 +109,9 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
                         '<b><font color="red">'
                         + _("Slice view is not aligned with segmentation axis.<br>To use this effect, click the 'Slice views orientation' warning button.")
                         + "</font></b>")
-                abortEvent = True
+                # The event is not aborted (it is only previewed here), so that the view can update the cursor
+                # position (used by the Data Probe) and process click-and-drag interactions. Other objects in the
+                # view do not get focus on hover because captureMouseMoveEventsInSliceView is enabled.
                 self.lastXY = xy
         elif eventId == vtk.vtkCommand.EnterEvent:
             self.sliceRotatedErrorLabel.text = ""

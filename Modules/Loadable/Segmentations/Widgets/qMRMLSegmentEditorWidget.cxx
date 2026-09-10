@@ -30,6 +30,8 @@
 #include "vtkMRMLSegmentEditorNode.h"
 #include "qMRMLSegmentationGeometryDialog.h"
 #include "vtkSlicerSegmentEditorLogic.h"
+#include "vtkMRMLSegmentationsDisplayableManager2D.h"
+#include "vtkMRMLSegmentationsDisplayableManager3D.h"
 
 // vtkSegmentationCore Includes
 #include "vtkSegmentation.h"
@@ -155,6 +157,11 @@ public:
 
   bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode) const;
 
+  /// Enable capturing of mouse move events in slice and 3D views if the active effect requests it, disable it otherwise.
+  /// \sa qSlicerSegmentEditorAbstractEffect::captureMouseMoveEventsInSliceView
+  /// \sa qSlicerSegmentEditorAbstractEffect::captureMouseMoveEventsInThreeDView
+  void updateMouseMoveEventsCaptureInViews();
+
   QToolButton* toolButton(qSlicerSegmentEditorAbstractEffect* effect);
 
   QString sourceVolumeNodeID() const { return QString::fromStdString(SourceVolumeNode ? SourceVolumeNode->GetID() : ""); }
@@ -195,6 +202,10 @@ public:
 
   /// List of view node IDs where custom cursor is set
   QSet<QString> CustomCursorInViewNodeIDs;
+
+  /// IDs of view nodes in which this widget enabled capturing of mouse move events.
+  /// \sa updateMouseMoveEventsCaptureInViews
+  QSet<QString> MouseMoveEventsCapturedInViewNodeIDs;
 
   /// Indicates if views and layouts are observed
   /// (essentially, the widget is active).
@@ -459,6 +470,83 @@ void qMRMLSegmentEditorWidgetPrivate::selectFirstSegment() const
 bool qMRMLSegmentEditorWidgetPrivate::segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode) const
 {
   return this->Logic->IsSegmentationDisplayableInView(viewNode);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidgetPrivate::updateMouseMoveEventsCaptureInViews()
+{
+  qSlicerApplication* app = qSlicerApplication::application();
+  qSlicerLayoutManager* layoutManager = app ? app->layoutManager() : nullptr;
+  if (!layoutManager)
+  {
+    // application is closing
+    return;
+  }
+
+  // Capture mouse move events only while the active effect requests it and the mouse mode is view/transform.
+  // In other mouse modes (e.g., markups placement), objects in the views must receive all mouse move events.
+  bool captureAllowed = this->ViewsObserved && this->ActiveEffect //
+                        && (!this->InteractionNode || this->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform);
+  bool captureInSliceViews = captureAllowed && this->ActiveEffect->captureMouseMoveEventsInSliceView();
+  bool captureInThreeDViews = captureAllowed && this->ActiveEffect->captureMouseMoveEventsInThreeDView();
+
+  // Returns false if this widget did not enable capturing in the view, so it must not disable it either
+  // (capturing may have been enabled by another segment editor widget).
+  auto updateCapturedViewNodeIDs = [this](vtkMRMLAbstractViewNode* viewNode, bool capture) -> bool
+  {
+    QString viewNodeID = QString::fromStdString(viewNode->GetID());
+    if (capture)
+    {
+      this->MouseMoveEventsCapturedInViewNodeIDs.insert(viewNodeID);
+      return true;
+    }
+    if (!this->MouseMoveEventsCapturedInViewNodeIDs.contains(viewNodeID))
+    {
+      return false;
+    }
+    this->MouseMoveEventsCapturedInViewNodeIDs.remove(viewNodeID);
+    return true;
+  };
+
+  for (const QString& sliceViewName : layoutManager->sliceViewNames())
+  {
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    if (!sliceWidget || !sliceWidget->sliceView() || !sliceWidget->mrmlSliceNode())
+    {
+      continue;
+    }
+    bool capture = captureInSliceViews && this->segmentationDisplayableInView(sliceWidget->mrmlSliceNode());
+    if (!updateCapturedViewNodeIDs(sliceWidget->mrmlSliceNode(), capture))
+    {
+      continue;
+    }
+    vtkMRMLSegmentationsDisplayableManager2D* displayableManager =
+      vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D"));
+    if (displayableManager)
+    {
+      displayableManager->SetCaptureMouseMoveEvents(capture);
+    }
+  }
+
+  for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
+  {
+    qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
+    if (!threeDWidget || !threeDWidget->threeDView() || !threeDWidget->mrmlViewNode())
+    {
+      continue;
+    }
+    bool capture = captureInThreeDViews && this->segmentationDisplayableInView(threeDWidget->mrmlViewNode());
+    if (!updateCapturedViewNodeIDs(threeDWidget->mrmlViewNode(), capture))
+    {
+      continue;
+    }
+    vtkMRMLSegmentationsDisplayableManager3D* displayableManager =
+      vtkMRMLSegmentationsDisplayableManager3D::SafeDownCast(threeDWidget->threeDView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager3D"));
+    if (displayableManager)
+    {
+      displayableManager->SetCaptureMouseMoveEvents(capture);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1140,6 +1228,8 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
   // Set active effect
   d->LastActiveEffect = d->ActiveEffect;
   d->ActiveEffect = activeEffect;
+
+  d->updateMouseMoveEventsCaptureInViews();
 }
 
 //-----------------------------------------------------------------------------
@@ -1227,7 +1317,7 @@ void qMRMLSegmentEditorWidget::onMRMLSceneEndBatchProcessEvent()
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onInteractionNodeModified()
 {
-  Q_D(const qMRMLSegmentEditorWidget);
+  Q_D(qMRMLSegmentEditorWidget);
   if (!d->InteractionNode || !d->ActiveEffect)
   {
     return;
@@ -1235,6 +1325,9 @@ void qMRMLSegmentEditorWidget::onInteractionNodeModified()
   // Only notify the active effect about interaction node changes
   // (inactive effects should not interact with the user)
   d->ActiveEffect->interactionNodeModified(d->InteractionNode);
+
+  // Mouse move events are captured only in view/transform mouse mode
+  d->updateMouseMoveEventsCaptureInViews();
 }
 
 //------------------------------------------------------------------------------
@@ -1696,6 +1789,7 @@ void qMRMLSegmentEditorWidget::onLayoutChanged(int layoutIndex)
   {
     // Refresh view observations with the new layout
     this->setupViewObservations();
+    d->updateMouseMoveEventsCaptureInViews();
 
     if (d->AutoShowSourceVolumeNode)
     {
@@ -1980,6 +2074,9 @@ void qMRMLSegmentEditorWidget::removeViewObservations()
   }
   d->EventObservations.clear();
   d->ViewsObserved = false;
+
+  // Views are not observed anymore, so mouse move events must not be captured
+  d->updateMouseMoveEventsCaptureInViews();
 }
 
 //---------------------------------------------------------------------------
