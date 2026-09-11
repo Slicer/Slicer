@@ -18,6 +18,30 @@ Even if the Extensions Manager is not empty, the listed extensions are not expec
 
 If a developer builds the Slicer application then it is expected that the developer will also build all the extension he needs. Building all the extensions after Slicer build is completed [is a simple one-line command](../extensions.md#build-test-and-package). It is also possible to just [build selected extensions](../extensions.md#build-an-extension).
 
+## Build options
+
+The Slicer build can be turned on/off using CMake variables, for example to reduce build time when
+a feature is not needed. Some of the most commonly used ones:
+
+- `BUILD_TESTING`: build the test suite (ON/OFF).
+- `Slicer_BUILD_DICOM_SUPPORT`: build Slicer with DICOM support (ON/OFF).
+- `Slicer_BUILD_DIFFUSION_SUPPORT`: build Slicer with diffusion (DWI, DTI) support (ON/OFF).
+- `Slicer_BUILD_I18N_SUPPORT`: build Slicer with internationalization support (ON/OFF).
+- `Slicer_BUILD_WEBENGINE_SUPPORT`: build Slicer with Qt WebEngine support (ON/OFF).
+- `Slicer_BUILD_QTLOADABLEMODULES`: build Slicer Qt loadable modules (ON/OFF).
+- `Slicer_BUILD_QTSCRIPTEDMODULES`: build Slicer Python Qt modules. Requires `Slicer_USE_PYTHONQT` (ON/OFF).
+- `Slicer_USE_PYTHONQT`: integrate a Python-Qt interpreter into Slicer (ON/OFF).
+- `Slicer_USE_NUMPY` / `Slicer_USE_SCIPY`: build Slicer with NumPy / SciPy. Requires `Slicer_USE_PYTHONQT` (ON/OFF).
+- `Slicer_USE_SimpleITK`: build Slicer with SimpleITK support. Requires `Slicer_USE_PYTHONQT` (ON/OFF).
+- `Slicer_BUILD_EXTENSIONMANAGER_SUPPORT`: build the Slicer extensions manager (ON/OFF).
+- `Slicer_BUILD_APPLICATIONUPDATE_SUPPORT`: build Slicer with application update support (ON/OFF).
+- `Slicer_VTK_VERSION_MAJOR` / `Slicer_VTK_VERSION_MINOR`: VTK version to build against.
+- `Slicer_BUILD_DOCUMENTATION`: build documentation (Doxygen, Sphinx, ...) (ON/OFF).
+
+These and other options are declared, with their default values, in the top-level
+[CMakeLists.txt](https://github.com/Slicer/Slicer/blob/main/CMakeLists.txt), which remains the
+authoritative source for build options.
+
 ## Custom builds
 
 Customized editions of Slicer can be generated without changing Slicer source code, just by modifying CMake variables:
