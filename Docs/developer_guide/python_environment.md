@@ -1,6 +1,6 @@
 # Python Environment
 
-This page gives a simple overview of the Slicer Python environment: what it is and the two
+This page gives a simple overview of the Slicer Python environment: what it is and the
 main ways to access it. For detailed questions, see the [Python FAQ](python_faq.md) and the
 [Script Repository](script_repository.md).
 
@@ -9,7 +9,7 @@ as you create virtual environments using python or conda. It bundles its own Pyt
 and a set of preinstalled packages (such as VTK, ITK, NumPy, and Qt bindings) that are readily
 available to any script running in Slicer.
 
-There are two main ways to run Python code in this environment:
+There are several ways to run Python code in this environment:
 
 - **[Python Console](python_faq.md#what-is-the-python-console)** - the interactive Python
   shell built into the Slicer user interface. Use this to access the running application state,
@@ -19,3 +19,10 @@ There are two main ways to run Python code in this environment:
   standalone Python interpreter, provided in the `bin` directory of the Slicer installation,
   for using the Slicer Python environment outside of a running application (e.g. batch
   processing, IDE integration). It does not have access to a running application state.
+- **[`--python-script` command line argument](script_repository/gui.md#run-a-python-script-file-in-the-slicer-environment)** -
+  runs a Python script file in the Slicer environment when starting the application.
+- **[`slicerrc.py` startup file](../user_guide/settings.md#application-startup-file)** - a
+  script that is automatically executed each time Slicer starts, useful for customizing the
+  environment or running setup code.
+- **[Scripted modules](module_overview.md#scripted-modules)** - Python modules that integrate
+  into Slicer's user interface like any built-in module, for packaging reusable functionality.
