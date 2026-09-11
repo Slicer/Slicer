@@ -9,6 +9,7 @@ module_overview
 parameter_nodes/index
 modules/index
 extensions
+python_environment
 python_faq
 script_repository
 build_instructions/index
