@@ -214,7 +214,11 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
       QImage qimage;
       qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(), qimage);
       // vtkITK loads 3D images with y axis flipped (compared to loading 2D images), flip it back now
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+      QImage qimageFlipped(qimage.flipped(Qt::Vertical));
+#else
       QImage qimageFlipped(qimage.mirrored(false, true));
+#endif
       presetIcon.addPixmap(QPixmap::fromImage(qimageFlipped));
     }
     if (presetIcon.availableSizes().size() == 0)

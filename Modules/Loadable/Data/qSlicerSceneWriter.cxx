@@ -224,7 +224,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
     QString error;
     switch (numFiles)
     {
-      case -2: VTK_FALLTHROUGH;
+      case -2: [[fallthrough]];
       case -1: error = tr("fails to be created"); break;
       case 1: error = tr("contains 1 file or directory"); break;
       default: error = tr("contains %1 files or directories").arg(numFiles); break;

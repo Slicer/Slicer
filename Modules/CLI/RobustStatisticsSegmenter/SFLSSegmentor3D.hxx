@@ -1481,7 +1481,7 @@ void CSFLSSegmentor3D<TPixel>::writeZeroLayerToFile(const char* namePrefix)
   for (unsigned long i = 0; i < m_numIter; ++i)
   {
     char thisName[1000];
-    sprintf(thisName, "%s_%ld.layer", namePrefix, i);
+    snprintf(thisName, sizeof(thisName), "%s_%ld.layer", namePrefix, i);
     writeZeroLayerAtIterationToFile(i, thisName);
   }
 

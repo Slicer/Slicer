@@ -183,7 +183,7 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   // (that indicates to Delaunay2D that it is a polygon to be
   // filled in and not a hole).
   vtkNew<vtkIdList> cleanedCurvePointIds;
-  polys->GetCell(0, cleanedCurvePointIds);
+  polys->GetCellAtId(0, cleanedCurvePointIds);
   if (vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(pointsOnPlane, cleanedCurvePointIds))
   {
     vtkIdType numberOfCleanedCurvePointIds = cleanedCurvePointIds->GetNumberOfIds();

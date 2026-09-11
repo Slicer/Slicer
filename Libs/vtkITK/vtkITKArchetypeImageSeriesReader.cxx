@@ -903,8 +903,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotU
           {
             scalarType = VTK_INT;
           }
-          else if (max <= std::numeric_limits<int64_t>::max() //
-                   && min >= std::numeric_limits<int64_t>::min())
+          else if (max <= static_cast<double>(std::numeric_limits<int64_t>::max()) //
+                   && min >= static_cast<double>(std::numeric_limits<int64_t>::min()))
           {
             scalarType = VTK_LONG;
           }

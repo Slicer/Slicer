@@ -442,7 +442,7 @@ std::string vtkSlicerCLIModuleLogic::ConstructTemporarySceneFileName(vtkMRMLScen
   // pointer for uniqueness
   char tname[256];
 
-  sprintf(tname, "%p", scene);
+  snprintf(tname, sizeof(tname), "%p", scene);
 
   fname = tname;
 
@@ -563,7 +563,7 @@ std::string vtkSlicerCLIModuleLogic::ConstructTemporaryFileName(const std::strin
       // representation of the scene pointer and the MRML node ID.
       char* tname = new char[name.size() + 100];
 
-      sprintf(tname, "slicer:%p#%s", this->GetMRMLScene(), name.c_str());
+      snprintf(tname, name.size() + 100, "slicer:%p#%s", this->GetMRMLScene(), name.c_str());
 
       fname = tname;
 
@@ -1218,7 +1218,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
     commandLineAsString.emplace_back("--processinformationaddress");
 
     char tname[256];
-    sprintf(tname, "%p", node0->GetModuleDescription().GetProcessInformation());
+    snprintf(tname, sizeof(tname), "%p", node0->GetModuleDescription().GetProcessInformation());
 
     commandLineAsString.emplace_back(tname);
   }
