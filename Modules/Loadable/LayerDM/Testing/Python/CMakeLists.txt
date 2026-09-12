@@ -1,0 +1,44 @@
+#-----------------------------------------------------------------------------
+set(EXTENSION_TEST_PYTHON_SCRIPTS
+  CameraSynchronizerTest.py
+  DisplayableManagerTest.py
+  EventTranslationNodeTest.py
+  InteractionLogicTest.py
+  LayerManagerTest.py
+  LogicTest.py
+  PipelineFactoryTest.py
+)
+
+# These tests build their nodes from Markups nodes.
+slicer_is_loadable_builtin_module_enabled("Markups" _build_markups_module)
+if(_build_markups_module)
+  list(APPEND EXTENSION_TEST_PYTHON_SCRIPTS
+    ObjectEventObserverScriptedTest.py
+    PipelineManagerTest.py
+    SelectionTest.py
+  )
+endif()
+
+set(EXTENSION_TEST_PYTHON_RESOURCES
+)
+
+#-----------------------------------------------------------------------------
+if (CMAKE_CONFIGURATION_TYPES)
+  set(MODULE_BUILD_DIR "")
+  foreach (config ${CMAKE_CONFIGURATION_TYPES})
+    list(APPEND MODULE_BUILD_DIR "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/${config}")
+  endforeach ()
+else ()
+  set(MODULE_BUILD_DIR "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}")
+endif ()
+
+foreach (scriptName ${EXTENSION_TEST_PYTHON_SCRIPTS})
+  slicer_add_python_unittest(
+    SCRIPT ${scriptName}
+    SLICER_ARGS --disable-cli-modules
+    --additional-module-paths
+    ${MODULE_BUILD_DIR}
+    ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    TESTNAME_PREFIX LayerDM
+  )
+endforeach ()

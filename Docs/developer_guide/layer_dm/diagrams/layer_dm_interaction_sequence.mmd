@@ -1,0 +1,34 @@
+---
+title: Layer DM interaction sequence
+---
+
+sequenceDiagram
+    participant InteractorStyle as Interactor Style
+    participant LayerDM as Layer Displayable Manager
+    participant PipelineMan as Pipeline Manager
+    participant InteractionLogic as Interaction Logic
+    participant Pipeline
+
+    InteractorStyle ->> LayerDM: Can Process Interaction
+    LayerDM ->> PipelineMan : Can Process Interaction
+    PipelineMan ->> InteractionLogic : Can Process Interaction
+
+    loop For each pipeline
+        InteractionLogic ->> Pipeline : Can Process Interaction
+    end
+    InteractionLogic ->> InteractionLogic : Handle focus loss
+    InteractionLogic ->> InteractorStyle : Can process + min distance
+    InteractorStyle ->> LayerDM: Process Interaction
+    LayerDM ->> PipelineMan : Process Interaction
+    PipelineMan ->> InteractionLogic : Process Interaction
+
+    loop For each (sorted) pipeline that can process
+        InteractionLogic ->> Pipeline : Process Interaction
+        alt Did process
+            Note over InteractionLogic: Early stop on first success
+        else Did not process
+            Note over InteractionLogic: Continue
+        end
+    end
+    InteractionLogic ->> InteractionLogic : Handle focus loss
+    InteractionLogic ->> InteractorStyle : Did process
