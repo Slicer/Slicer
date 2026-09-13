@@ -21,13 +21,13 @@ Get all voxels of a 4D volume (3D volume sequence) as a numpy array called `voxe
 ```python
 sequenceNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceNode")
 
-# Preallocate a 4D numpy array that will hold the entire sequence
+# Preallocate a 4D numpy array (time, K, J, I) that will hold the entire sequence
 import numpy as np
 dims = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(0)).shape
-voxelArray = np.zeros([dims[0], dims[1], dims[2], sequenceNode.GetNumberOfDataNodes()])
+voxelArray = np.zeros([sequenceNode.GetNumberOfDataNodes(), dims[0], dims[1], dims[2]])
 # Fill in the 4D array from the sequence node
 for volumeIndex in range(sequenceNode.GetNumberOfDataNodes()):
-    voxelArray[:, :, :, volumeIndex] = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(volumeIndex))
+    voxelArray[volumeIndex, :, :, :] = slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(volumeIndex))
 ```
 
 ### Get index value
