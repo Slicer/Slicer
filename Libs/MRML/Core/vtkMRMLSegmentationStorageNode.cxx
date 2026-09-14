@@ -343,6 +343,25 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
   reader->SetFileName(path);
   try
   {
+    // Read only the header first to check if this is a segmentation file in the legacy 4D format
+    reader->UpdateOutputInformation();
+  }
+  catch (itk::ImageFileReaderException& error)
+  {
+    // Do not report error as the file might contain poly data in which case ReadPolyDataRepresentation will read it alright
+    vtkDebugMacro("ReadBinaryLabelmapRepresentation: Failed to load file " << path << " as segmentation. Exception:\n" << error);
+    return 0;
+  }
+  std::string legacyCommonExtent;
+  if (!itk::ExposeMetaData<std::string>(reader->GetOutput()->GetMetaDataDictionary(), GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT).c_str(), legacyCommonExtent))
+  {
+    // Not a legacy segmentation file. It may be a different kind of 4D image (for example, a time sequence),
+    // which must not be interpreted as segments.
+    vtkDebugMacro("ReadBinaryLabelmapRepresentation4DSpatial: File " << path << " is not a legacy segmentation file");
+    return 0;
+  }
+  try
+  {
     reader->Update();
   }
   catch (itk::ImageFileReaderException& error)

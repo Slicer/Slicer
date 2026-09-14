@@ -484,6 +484,82 @@ int TestNiftiVectorVolumeSequence(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+namespace
+{
+//---------------------------------------------------------------------------
+bool WriteNifti2VolumeSequenceFile(const std::string& fileName)
+{
+  // Write a minimal single-file 4D NIfTI-2 image (2x2x2 voxels, 3 frames, int16) in native byte order.
+  // NIfTI-2 header is defined in nifti2.h, which is not available in ITK, therefore offsets are specified here.
+  const vtkTypeInt32 nifti2HeaderSize = 540;
+  const vtkTypeInt64 nifti2ExtensionSize = 4;
+  const std::streamoff magicOffset = 4;
+  const std::streamoff datatypeOffset = 12;
+  const std::streamoff bitpixOffset = 14;
+  const std::streamoff dimOffset = 16;
+  const std::streamoff pixdimOffset = 104;
+  const std::streamoff voxOffsetOffset = 168;
+  const vtkTypeInt16 datatypeInt16 = NIFTI_TYPE_INT16;
+  const vtkTypeInt16 bitsPerVoxel = 16;
+  const vtkTypeInt64 dim[8] = { 4, 2, 2, 2, 3, 1, 1, 1 };
+  const double pixdim[8] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  const vtkTypeInt64 voxOffset = nifti2HeaderSize + nifti2ExtensionSize;
+  const vtkTypeInt64 numberOfVoxels = 2 * 2 * 2 * 3;
+
+  std::ofstream file(fileName, std::ios::binary);
+  const std::string zeros(static_cast<size_t>(voxOffset + numberOfVoxels * sizeof(vtkTypeInt16)), '\0');
+  file.write(zeros.data(), zeros.size());
+  file.seekp(0);
+  file.write(reinterpret_cast<const char*>(&nifti2HeaderSize), sizeof(nifti2HeaderSize));
+  file.seekp(magicOffset);
+  file.write("n+2\0\r\n\032\n", 8);
+  file.seekp(datatypeOffset);
+  file.write(reinterpret_cast<const char*>(&datatypeInt16), sizeof(datatypeInt16));
+  file.seekp(bitpixOffset);
+  file.write(reinterpret_cast<const char*>(&bitsPerVoxel), sizeof(bitsPerVoxel));
+  file.seekp(dimOffset);
+  file.write(reinterpret_cast<const char*>(dim), sizeof(dim));
+  file.seekp(pixdimOffset);
+  file.write(reinterpret_cast<const char*>(pixdim), sizeof(pixdim));
+  file.seekp(voxOffsetOffset);
+  file.write(reinterpret_cast<const char*>(&voxOffset), sizeof(voxOffset));
+  return file.good();
+}
+} // namespace
+
+//---------------------------------------------------------------------------
+int TestNifti2VolumeSequenceReadError(const std::string& tempDir)
+{
+  // ITK cannot read NIfTI-2 files. Check that the user gets a message that explains why reading failed.
+  std::cout << "TestNifti2VolumeSequenceReadError" << std::endl;
+
+  const std::string fileName = tempFilename(tempDir, "nifti2", "nii", true);
+  CHECK_BOOL(WriteNifti2VolumeSequenceFile(fileName), true);
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(sequenceNode);
+  vtkMRMLVolumeSequenceStorageNode* storageNode = vtkMRMLVolumeSequenceStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeSequenceStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetFileName(fileName.c_str());
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_BOOL(storageNode->ReadData(sequenceNode), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  const std::string messages = storageNode->GetUserMessages()->GetAllMessagesAsString();
+  std::cout << "User messages:\n" << messages << std::endl;
+  const size_t userMessagePosition = messages.find("NIfTI-2 file format is not supported");
+  CHECK_BOOL(userMessagePosition != std::string::npos, true);
+  // Source code location and object description are useful for developers, but they must be after the user-understandable message
+  const size_t sourceLocationPosition = messages.find("vtkITKImageSequenceReader.cxx, line");
+  CHECK_BOOL(sourceLocationPosition != std::string::npos && sourceLocationPosition > userMessagePosition, true);
+  const size_t objectDescriptionPosition = messages.find("vtkITKImageSequenceReader (");
+  CHECK_BOOL(objectDescriptionPosition != std::string::npos && objectDescriptionPosition > userMessagePosition, true);
+
+  return EXIT_SUCCESS;
+}
+
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeSequenceStorageNodeNiftiTest(int argc, char* argv[])
 {
@@ -500,6 +576,7 @@ int vtkMRMLVolumeSequenceStorageNodeNiftiTest(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestNiftiVolumeSequenceIndexUnits(tempDir));
   CHECK_EXIT_SUCCESS(TestNiftiVolumeSequenceWrite(tempDir));
   CHECK_EXIT_SUCCESS(TestNiftiVectorVolumeSequence(tempDir));
+  CHECK_EXIT_SUCCESS(TestNifti2VolumeSequenceReadError(tempDir));
 
   std::cout << "\nTest passed." << std::endl;
   return EXIT_SUCCESS;

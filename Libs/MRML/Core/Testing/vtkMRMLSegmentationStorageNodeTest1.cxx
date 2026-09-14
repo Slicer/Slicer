@@ -20,11 +20,22 @@ Care Ontario.
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationStorageNode.h"
 #include "vtkOrientedImageData.h"
 #include "vtkSegmentationConverterFactory.h"
+
+// vtkITK includes
+#include "vtkITKImageSequenceWriter.h"
+
+// VTK includes
+#include <vtkDataArray.h>
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
+#include <vtkPointData.h>
+#include <vtksys/SystemTools.hxx>
 
 // Converter rules
 #include "vtkClosedSurfaceToBinaryLabelmapConversionRule.h"
@@ -153,6 +164,46 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 
     // Clean up
     vtksys::SystemTools::RemoveFile(emptySegmentationFilename);
+  }
+
+  std::cout << "Testing reading of multi-frame NIfTI file as segmentation" << std::endl;
+  {
+    // A 4D (3D+t) NIfTI file cannot be read as a segmentation (only the first frame would be read, without orientation).
+    // Check that reading fails and the user gets a message that explains why.
+    const int numberOfFrames = 3;
+    std::string multiFrameFilename = std::string(tempDir) + "/MultiFrameSegmentation.nii";
+    vtkNew<vtkITKImageSequenceWriter> writer;
+    writer->SetFileName(multiFrameFilename.c_str());
+    writer->SetImageIOClassName("NiftiImageIO");
+    vtkNew<vtkMatrix4x4> rasToIjk;
+    writer->SetRasToIJKMatrix(rasToIjk);
+    for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+    {
+      vtkNew<vtkImageData> frameImage;
+      frameImage->SetDimensions(6, 5, 4);
+      frameImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+      frameImage->GetPointData()->GetScalars()->Fill(frameIndex + 1);
+      writer->AddInputData(frameImage);
+    }
+    writer->Write();
+    CHECK_INT(writer->GetErrorCode(), 0);
+
+    vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+    scene->AddNode(segmentationNode);
+    vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
+    scene->AddNode(segmentationStorageNode);
+    segmentationStorageNode->SetFileName(multiFrameFilename.c_str());
+    TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+    CHECK_INT(segmentationStorageNode->ReadData(segmentationNode), 0);
+    TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+    const std::string messages = segmentationStorageNode->GetUserMessages()->GetAllMessagesAsString();
+    std::cout << "User messages:\n" << messages << std::endl;
+    CHECK_BOOL(messages.find("Load the file as a sequence") != std::string::npos, true);
+    CHECK_INT(segmentationNode->GetSegmentation()->GetNumberOfSegments(), 0);
+
+    // Clean up
+    vtksys::SystemTools::RemoveFile(multiFrameFilename);
   }
 
   return EXIT_SUCCESS;

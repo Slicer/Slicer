@@ -93,7 +93,11 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Read first frame and check success
   vtkNew<vtkITKImageSequenceReader> reader;
   reader->SetFileName(fullName.c_str());
+  // Collect errors and warnings reported by the reader (for example, the reason why the file format
+  // is not supported) so that they can be displayed to the user.
+  this->GetUserMessages()->SetObservedObject(reader);
   reader->Update(); // This will read all the frames into the cache
+  this->GetUserMessages()->SetObservedObject(nullptr);
   if (reader->GetErrorCode() != vtkErrorCode::NoError)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeSequenceStorageNode::ReadDataInternal", "Error reading file.");

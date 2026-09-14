@@ -754,6 +754,10 @@ public:
   /// Currently, it can only get information from NRRD files (for all other formats it will return false).
   static bool IsListPixelComponentTypeInMetaDataDictionary(const itk::MetaDataDictionary& dictionary);
 
+  /// Returns true if the file is a NIfTI-2 file (compressed or uncompressed).
+  /// ITK can only read NIfTI-1 files, therefore this can be used for explaining why reading of a file failed.
+  static bool IsNifti2File(const char* fileName);
+
 protected:
   vtkITKArchetypeImageSeriesReader();
   ~vtkITKArchetypeImageSeriesReader() override;
@@ -763,6 +767,11 @@ protected:
 
   /// Get the image IO for the specified filename
   itk::ImageIOBase::Pointer GetImageIO(const char* filename);
+
+  /// Log error message about failure to read the specified file.
+  /// If the reason of the failure is known (for example, the file format is not supported)
+  /// then the message explains that, otherwise errorDetails is included in the message.
+  void ReportFileReadError(const std::string& fileName, const std::string& errorDetails);
 
   char* Archetype;
   int SingleFile;

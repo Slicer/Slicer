@@ -668,7 +668,15 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
       imageIO = itk::ImageIOFactory::CreateImageIO(this->GetFileName(), itk::IOFileModeEnum::ReadMode);
       if (imageIO.IsNull())
       {
-        vtkErrorMacro("Cannot read the image file: " << this->GetFileName());
+        if (vtkITKArchetypeImageSeriesReader::IsNifti2File(this->GetFileName()))
+        {
+          vtkErrorMacro("Cannot read file '" << this->GetFileName()
+                                             << "': NIfTI-2 file format is not supported. Convert the file to NIfTI-1 or NRRD format using another application.");
+        }
+        else
+        {
+          vtkErrorMacro("Cannot read the image file: " << this->GetFileName());
+        }
         this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
         return;
       }

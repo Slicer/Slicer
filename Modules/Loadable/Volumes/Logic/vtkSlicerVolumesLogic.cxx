@@ -35,6 +35,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
@@ -479,9 +480,13 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(vtkMRMLStorageNode* storageNod
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const char* filename, const char* volname, int loadingOptions, vtkStringArray* fileList)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const char* filename,
+                                                             const char* volname,
+                                                             int loadingOptions,
+                                                             vtkStringArray* fileList,
+                                                             vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
-  return this->AddArchetypeVolume(this->VolumeRegistry, filename, volname, loadingOptions, fileList);
+  return this->AddArchetypeVolume(this->VolumeRegistry, filename, volname, loadingOptions, fileList, userMessages);
 }
 
 //----------------------------------------------------------------------------
@@ -504,7 +509,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const NodeSetFactor
                                                              const char* filename,
                                                              const char* volname,
                                                              int loadingOptions,
-                                                             vtkStringArray* fileList)
+                                                             vtkStringArray* fileList,
+                                                             vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (this->GetMRMLScene() == nullptr)
   {
@@ -549,6 +555,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const NodeSetFactor
   // and link up everything for the test scene
   this->GetApplicationLogic()->SetMRMLSceneDataIO(testScene.GetPointer(), remoteIOLogic, dataIOManagerLogic);
 
+  // Messages that explain why storage nodes could not read the file
+  vtkNew<vtkMRMLMessageCollection> readErrorMessages;
+
   // Run through the factory list and test each factory until success
   for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin(); fit != volumeRegistry.end(); ++fit)
   {
@@ -581,6 +590,12 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const NodeSetFactor
         vtkDebugMacro(<< "File successfully read as " << nodeSet.Node->GetNodeTagName() << " [filename = " << filename << "]");
         break;
       }
+
+      // Messages of storage nodes that do not support this file type are not relevant for users
+      if (nodeSet.StorageNode->SupportedFileType(filename))
+      {
+        readErrorMessages->AddMessages(nodeSet.StorageNode->GetUserMessages());
+      }
     }
 
     //
@@ -599,6 +614,44 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(const NodeSetFactor
   if (volumeNode == nullptr)
   {
     errorSink->DisplayMessages();
+    if (userMessages)
+    {
+      // Reading as different volume types usually fails for the same reason (for example, unsupported file format),
+      // therefore each message is added only once.
+      // Messages captured from VTK objects end with developer details (source code location, object address),
+      // which are different for each reader instance, therefore these details are ignored when looking for duplicates.
+      auto messageTextWithoutDetails = [](std::string text)
+      {
+        if (!text.empty() && text.back() == ']')
+        {
+          const size_t detailsStart = text.rfind(" [");
+          if (detailsStart != std::string::npos)
+          {
+            text.erase(detailsStart);
+          }
+        }
+        return text;
+      };
+      for (int messageIndex = 0; messageIndex < readErrorMessages->GetNumberOfMessages(); ++messageIndex)
+      {
+        const unsigned long messageType = readErrorMessages->GetNthMessageType(messageIndex);
+        const std::string messageText = readErrorMessages->GetNthMessageText(messageIndex);
+        bool alreadyAdded = false;
+        for (int existingMessageIndex = 0; existingMessageIndex < userMessages->GetNumberOfMessages(); ++existingMessageIndex)
+        {
+          if (userMessages->GetNthMessageType(existingMessageIndex) == messageType
+              && messageTextWithoutDetails(userMessages->GetNthMessageText(existingMessageIndex)) == messageTextWithoutDetails(messageText))
+          {
+            alreadyAdded = true;
+            break;
+          }
+        }
+        if (!alreadyAdded)
+        {
+          userMessages->AddMessage(messageType, messageText);
+        }
+      }
+    }
   }
 
   bool modified = false;
