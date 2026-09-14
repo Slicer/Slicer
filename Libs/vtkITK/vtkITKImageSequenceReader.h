@@ -81,6 +81,10 @@ public:
                                                 std::vector<std::string>& attributeNames,
                                                 std::vector<std::vector<std::string>>& frameAttributeValues);
 
+  /// Returns true if the file is a NIfTI image that contains an image sequence
+  /// (4 dimensions: 3 spatial, 1 sequence). Only the file header is read.
+  static bool IsNiftiImageSequenceFile(const char* fileName);
+
   vtkGetMacro(SequenceAxisLabel, std::string);
   vtkGetMacro(SequenceAxisUnit, std::string);
 
@@ -124,6 +128,9 @@ protected:
 private:
   vtkITKImageSequenceReader(const vtkITKImageSequenceReader&) = delete;
   void operator=(const vtkITKImageSequenceReader&) = delete;
+
+  class vtkInternal;
+  vtkInternal* Internal{ nullptr };
 };
 
 #endif

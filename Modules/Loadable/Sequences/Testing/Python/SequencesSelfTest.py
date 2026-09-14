@@ -2,6 +2,7 @@ import os
 import shutil
 
 import slicer
+import vtk
 from slicer.ScriptedLoadableModule import *
 
 
@@ -70,6 +71,7 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         self.section_ReplaySavedSequence()
         self.section_SaveVolumeSequence("scalar")
         self.section_SaveVolumeSequence("label")
+        self.section_LoadNiftiVolumeSequence()
         self.delayDisplay("Test passed")
 
     # ------------------------------------------------------------------------------
@@ -221,3 +223,65 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
             self.assertEqual(volumeNode.GetClassName(), "vtkMRMLLabelMapVolumeNode")
 
         self.delayDisplay("Test passed for volume type " + volumeType)
+
+    # ------------------------------------------------------------------------------
+    def section_LoadNiftiVolumeSequence(self):
+        import numpy as np
+        import SimpleITK as sitk
+
+        self.delayDisplay("Test loading of 4D NIfTI file as volume sequence")
+        slicer.mrmlScene.Clear(0)
+
+        # Create 4D image from oriented 3D frames
+        numberOfFrames = 4
+        randomGenerator = np.random.default_rng(12345)
+        frames = []
+        for frameIndex in range(numberOfFrames):
+            frame = sitk.GetImageFromArray(randomGenerator.integers(low=0, high=1000, size=(6, 7, 8), dtype=np.int16))
+            frame.SetSpacing([0.8, 1.2, 2.5])
+            frame.SetOrigin([10.0, -20.0, 5.0])
+            frame.SetDirection([0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
+            frames.append(frame)
+        sequenceFilePath = os.path.join(self.sequencesSelfTestDir, "NiftiSequence.nii.gz")
+        sitk.WriteImage(sitk.JoinSeries(frames), sequenceFilePath)
+        frameFilePath = os.path.join(self.sequencesSelfTestDir, "NiftiFrame.nii.gz")
+        sitk.WriteImage(frames[2], frameFilePath)
+
+        # 4D NIfTI file is recognized as sequence, 3D NIfTI file is not
+        ioManager = slicer.app.coreIOManager()
+        self.assertEqual(ioManager.fileType(sequenceFilePath), "SequenceFile")
+        self.assertNotEqual(ioManager.fileType(frameFilePath), "SequenceFile")
+
+        sequenceNode = slicer.util.loadSequence(sequenceFilePath)
+        self.assertIsNotNone(sequenceNode)
+        self.assertEqual(sequenceNode.GetName(), "NiftiSequence")
+        self.assertEqual(sequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+        for frameIndex in range(numberOfFrames):
+            itemVolumeNode = sequenceNode.GetNthDataNode(frameIndex)
+            np.testing.assert_array_equal(slicer.util.arrayFromVolume(itemVolumeNode), sitk.GetArrayFromImage(frames[frameIndex]))
+
+        # Geometry of a sequence item is the same as the geometry of the 3D volume loaded from file
+        frameVolumeNode = slicer.util.loadVolume(frameFilePath)
+        itemVolumeNode = sequenceNode.GetNthDataNode(2)
+        np.testing.assert_array_equal(slicer.util.arrayFromVolume(itemVolumeNode), slicer.util.arrayFromVolume(frameVolumeNode))
+        frameIjkToRas = vtk.vtkMatrix4x4()
+        frameVolumeNode.GetIJKToRASMatrix(frameIjkToRas)
+        itemIjkToRas = vtk.vtkMatrix4x4()
+        itemVolumeNode.GetIJKToRASMatrix(itemIjkToRas)
+        np.testing.assert_allclose(slicer.util.arrayFromVTKMatrix(itemIjkToRas), slicer.util.arrayFromVTKMatrix(frameIjkToRas), atol=1e-4)
+
+        # Save as NIfTI file and load it again
+        self.assertIn("Volume Sequence (.nii.gz)", ioManager.fileWriterExtensions(sequenceNode))
+        savedFilePath = os.path.join(self.sequencesSelfTestDir, "NiftiSequenceSaved.nii")
+        self.assertTrue(slicer.util.saveNode(sequenceNode, savedFilePath))
+        savedSequenceNode = slicer.util.loadSequence(savedFilePath)
+        self.assertEqual(savedSequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+        self.assertEqual(savedSequenceNode.GetIndexName(), sequenceNode.GetIndexName())
+        self.assertEqual(savedSequenceNode.GetIndexUnit(), sequenceNode.GetIndexUnit())
+        for frameIndex in range(numberOfFrames):
+            self.assertEqual(savedSequenceNode.GetNthIndexValue(frameIndex), sequenceNode.GetNthIndexValue(frameIndex))
+            np.testing.assert_array_equal(
+                slicer.util.arrayFromVolume(savedSequenceNode.GetNthDataNode(frameIndex)),
+                slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(frameIndex)))
+
+        self.delayDisplay("Test passed for loading 4D NIfTI file")

@@ -504,13 +504,17 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
   }
 
-  // Write image
+  // Write image.
+  // Collect warning and error messages reported by the writer (for example, sequence properties
+  // that cannot be stored in the chosen file format). WriteData() reports failure if any error is reported.
+  this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+  this->GetUserMessages()->SetObservedObject(nullptr);
   int writeFlag = 1;
   if (writer->GetErrorCode())
   {
-    vtkDebugMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
-    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
+    vtkDebugMacro("ERROR writing file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write file."));
     writeFlag = 0;
   }
 
@@ -529,6 +533,8 @@ void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nhdr)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii.gz)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii)");
 }
 
 //----------------------------------------------------------------------------
@@ -540,6 +546,8 @@ void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nhdr)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nii.gz)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nii)");
 }
 
 //----------------------------------------------------------------------------

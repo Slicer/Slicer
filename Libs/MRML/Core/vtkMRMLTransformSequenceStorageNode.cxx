@@ -39,6 +39,7 @@
 #include "vtkITKImageSequenceWriter.h"
 
 // ITK includes
+#include <itkImageIOFactory.h>
 #include "itkMetaDataObject.h"
 #include "itkNrrdImageIO.h"
 
@@ -446,6 +447,17 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
+  const bool isNiftiFile = vtkITKImageWriter::IsNiftiFile(fullName.c_str(), nullptr);
+  if (isNiftiFile && !useTransformFromParent)
+  {
+    // NIfTI file cannot store the information that it is a modeling transform
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTransformSequenceStorageNode::WriteDataInternal",
+                                     "Cannot write modeling type (transform to parent) grid transform sequence to NIfTI file."
+                                       << " Either save the transform sequence in a NRRD file or invert the transforms before saving them into a NIfTI file.");
+    return 0;
+  }
+
   // Get the displacement field from the grid transform
   vtkImageData* firstDisplacementField = gridTransform->GetDisplacementGrid();
   if (firstDisplacementField == nullptr)
@@ -483,8 +495,12 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   // Set displacement field type metadata
   // "resampling" = TransformFromParent (ITK/ANTs style, used for resampling operations)
   // "modeling" = TransformToParent (used for modeling/forward transforms)
-  std::string displacementFieldType = useTransformFromParent ? "resampling" : "modeling";
-  writer->SetAttribute("displacement field type", displacementFieldType);
+  // NIfTI file can only store resampling type displacement fields, therefore the type is not stored there.
+  if (!isNiftiFile)
+  {
+    std::string displacementFieldType = useTransformFromParent ? "resampling" : "modeling";
+    writer->SetAttribute("displacement field type", displacementFieldType);
+  }
 
   // Set sequence axis label and unit
   const unsigned int sequenceAxisIndex = 3; // The fourth NRRD axis regardless the components, because the component axis does not count as real axis
@@ -595,13 +611,17 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     writer->AddInputData(frameDisplacementField);
   }
 
-  // Write the sequence
+  // Write the sequence.
+  // Collect warning and error messages reported by the writer (for example, sequence properties
+  // that cannot be stored in the chosen file format). WriteData() reports failure if any error is reported.
+  this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+  this->GetUserMessages()->SetObservedObject(nullptr);
   int writeFlag = 1;
   if (writer->GetErrorCode())
   {
-    vtkDebugMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
-    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
+    vtkDebugMacro("ERROR writing file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write file."));
     writeFlag = 0;
   }
 
@@ -620,6 +640,8 @@ void vtkMRMLTransformSequenceStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nhdr)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii.gz)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii)");
 }
 
 //----------------------------------------------------------------------------
@@ -631,6 +653,8 @@ void vtkMRMLTransformSequenceStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nhdr)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nii.gz)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nii)");
 }
 
 //----------------------------------------------------------------------------
@@ -647,18 +671,21 @@ int vtkMRMLTransformSequenceStorageNode::SupportedFileType(const char* fileName)
     return 0; // The file extension is not supported so surely not acceptable
   }
 
-  // It is a NRRD file.
+  // It is a NRRD or NIfTI file.
   // Use lower than default confidence value unless it turns out that this file contains a displacement field.
   // Parse the entire header instead of just peeking into the first couple of hundred bytes, because
   // index values can be many hundreds of characters long (and the intent code field is after the index values),
   // so it would be hard to determine a fixed length that surely contains the intent code.
-  using ImageIOType = itk::NrrdImageIO;
-  ImageIOType::Pointer nrrdIO = ImageIOType::New();
-  nrrdIO->SetFileName(fileName);
   try
   {
-    nrrdIO->ReadImageInformation();
-    const itk::MetaDataDictionary& metadata = nrrdIO->GetMetaDataDictionary();
+    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(fileName, itk::IOFileModeEnum::ReadMode);
+    if (imageIO.IsNull())
+    {
+      return 0;
+    }
+    imageIO->SetFileName(fileName);
+    imageIO->ReadImageInformation();
+    const itk::MetaDataDictionary& metadata = imageIO->GetMetaDataDictionary();
     std::string niftiIntentCode; // NIFTI intent code is also stored in NRRD files
     if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
     {

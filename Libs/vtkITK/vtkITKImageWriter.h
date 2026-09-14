@@ -91,6 +91,10 @@ public:
   /// Adds measurement frame matrix to the metadata.
   static void WriteMeasurementFrameMatrixToMetaDataDictionary(itk::MetaDataDictionary& dictionary, vtkMatrix4x4* measurementFrameMatrix);
 
+  /// Returns true if the image is written in NIfTI file format.
+  /// If imageIOClassName is specified then it determines the file format, otherwise the file name extension.
+  static bool IsNiftiFile(const char* fileName, const char* imageIOClassName);
+
 protected:
   vtkITKImageWriter();
   ~vtkITKImageWriter() override;

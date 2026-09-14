@@ -87,7 +87,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformableNodeOnNodeReferenceAddTest.cxx
   vtkMRMLTransformDisplayNodeTest1.cxx
   vtkMRMLTransformNodeTest1.cxx
-  vtkMRMLTransformSequenceStorageNodeTest1.cxx
+  vtkMRMLTransformSequenceStorageNodeNiftiTest.cxx
+  vtkMRMLTransformSequenceStorageNodeNrrdTest.cxx
   vtkMRMLSequenceNodeAttributesTest.cxx
   vtkMRMLTransformStorageNodeTest1.cxx
   vtkMRMLTransformStorageNodeTest2.cxx
@@ -98,7 +99,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVectorVolumeNodeTest1.cxx
   vtkMRMLViewNodeTest1.cxx
   vtkMRMLVolumeArchetypeStorageNodeTest1.cxx
-  vtkMRMLVolumeSequenceStorageNodeTest1.cxx
+  vtkMRMLVolumeSequenceStorageNodeNiftiTest.cxx
+  vtkMRMLVolumeSequenceStorageNodeNrrdTest.cxx
   vtkMRMLVolumeDisplayNodeTest1.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
   vtkMRMLVolumeNodeEventsTest.cxx
@@ -215,7 +217,7 @@ simple_test( vtkMRMLVectorVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVectorVolumeNodeTest1 )
 simple_test( vtkMRMLViewNodeTest1 )
 simple_test( vtkMRMLVolumeArchetypeStorageNodeTest1  ${TEMP})
-simple_test( vtkMRMLVolumeSequenceStorageNodeTest1
+simple_test( vtkMRMLVolumeSequenceStorageNodeNrrdTest
   ${TEMP}
   DATA{${INPUT}/Volumes-DomainList.seq.nrrd}
   DATA{${INPUT}/Volumes-ColorDomainList.seq.nrrd}
@@ -226,7 +228,10 @@ simple_test( vtkMRMLVolumeSequenceStorageNodeTest1
   DATA{${INPUT}/Transforms-VectorDomainList.seq.nrrd}
   DATA{${INPUT}/Volumes-ListDomainListColor-Unsupported.seq.nrrd}
 )
+simple_test( vtkMRMLVolumeSequenceStorageNodeNiftiTest ${TEMP})
 simple_test( vtkMRMLSequenceNodeAttributesTest ${TEMP})
+simple_test( vtkMRMLTransformSequenceStorageNodeNiftiTest ${TEMP})
+simple_test( vtkMRMLTransformSequenceStorageNodeNrrdTest ${TEMP})
 simple_test( vtkMRMLVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVolumeHeaderlessStorageNodeTest1 )
 simple_test( vtkMRMLVolumeNodeEventsTest )

@@ -343,6 +343,15 @@ void vtkITKImageWriter::Write()
       }
     }
   }
+  if ((voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA) //
+      && inputDataType != VTK_UNSIGNED_CHAR                                                                                             //
+      && vtkITKImageWriter::IsNiftiFile(this->FileName, this->ImageIOClassName))
+  {
+    // NIfTI file format can only store color images with unsigned char components (RGB24 and RGBA32 data types)
+    vtkWarningMacro(<< "NIfTI file format can only store color images with unsigned char components."
+                    << " The image is saved as a vector image, the color voxel type is not saved.");
+    voxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
+  }
   vtkSmartPointer<vtkMatrix4x4> measurementFrameMatrix = this->MeasurementFrameMatrix;
   if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatial || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
   {
@@ -753,6 +762,29 @@ void vtkITKImageWriter::ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* im
   {
     vtkGenericWarningMacro("Displacements are expected to be stored as double or float. Vector values will not be converted from LPS to RAS.");
   }
+}
+
+//----------------------------------------------------------------------------
+bool vtkITKImageWriter::IsNiftiFile(const char* fileName, const char* imageIOClassName)
+{
+  if (imageIOClassName)
+  {
+    return strcmp(imageIOClassName, "NiftiImageIO") == 0;
+  }
+  if (!fileName)
+  {
+    return false;
+  }
+  // ITK image IO is selected based on file extension
+  const std::string lowerCaseFileName = vtksys::SystemTools::LowerCase(fileName);
+  for (const char* extension : { ".nii", ".nii.gz", ".nia", ".hdr", ".img", ".img.gz" })
+  {
+    if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, extension))
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------
