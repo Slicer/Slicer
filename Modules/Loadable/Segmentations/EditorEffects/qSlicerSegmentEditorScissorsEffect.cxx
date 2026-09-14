@@ -597,10 +597,10 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         // unlimited
         break;
     }
+    double brushZEpsilon = 0.001; // small offset to make have main and additional brush planes very close but not coincident
     if (sliceCutMode != SliceCutModeSymmetric)
     {
       // Add half slice to make sure the current slice and the last slice are fully included
-      double brushZEpsilon = 0.0; // small offset to make have main and additional brush planes very close but not coincident
       if (segmentationBounds_SliceXY[4] < segmentationBounds_SliceXY[5])
       {
         segmentationBounds_SliceXY[4] -= 0.5;
@@ -613,38 +613,48 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
         segmentationBounds_SliceXY[5] -= 0.5;
         brushZEpsilon = -0.001;
       }
-      if (!this->operationInside())
+    }
+    if (!this->operationInside() && sliceCutMode != SliceCutModeUnlimited)
+    {
+      // Make sure the non-selected side of the plane is unaffected when working "outside".
+      // Positive and negative modes restrict the cut on a single side and therefore need one
+      // region, while symmetric mode restricts it on both sides and needs one for each.
+      bool excludeBelowCutRegion = (sliceCutMode == SliceCutModePositive || sliceCutMode == SliceCutModeSymmetric);
+      bool excludeAboveCutRegion = (sliceCutMode == SliceCutModeNegative || sliceCutMode == SliceCutModeSymmetric);
+
+      vtkNew<vtkAppendPolyData> additionalBrushRegionAppend;
+      if (excludeBelowCutRegion)
       {
-        // Make sure the non-selected side of the plane is unaffected
-        // when working "outside"
         vtkNew<vtkCubeSource> cube;
-        switch (sliceCutMode)
-        {
-          case SliceCutModePositive:
-            cube->SetBounds(segmentationBounds_SliceXY[0],
-                            segmentationBounds_SliceXY[1],
-                            segmentationBounds_SliceXY[2],
-                            segmentationBounds_SliceXY[3],
-                            originalSegmentationBounds_SliceXY[4],
-                            segmentationBounds_SliceXY[4] - brushZEpsilon);
-            break;
-          case SliceCutModeNegative:
-            cube->SetBounds(segmentationBounds_SliceXY[0],
-                            segmentationBounds_SliceXY[1],
-                            segmentationBounds_SliceXY[2],
-                            segmentationBounds_SliceXY[3],
-                            segmentationBounds_SliceXY[5] + brushZEpsilon,
-                            originalSegmentationBounds_SliceXY[5]);
-            break;
-        }
-        vtkNew<vtkTransformPolyDataFilter> transformToRasFilter;
-        vtkNew<vtkTransform> transformToRas;
-        transformToRas->SetMatrix(sliceNode->GetXYToRAS());
-        transformToRasFilter->SetTransform(transformToRas.GetPointer());
-        transformToRasFilter->SetInputConnection(cube->GetOutputPort());
-        transformToRasFilter->Update();
-        additionalBrushRegion = transformToRasFilter->GetOutput();
+        cube->SetBounds(segmentationBounds_SliceXY[0],
+                        segmentationBounds_SliceXY[1],
+                        segmentationBounds_SliceXY[2],
+                        segmentationBounds_SliceXY[3],
+                        originalSegmentationBounds_SliceXY[4],
+                        segmentationBounds_SliceXY[4] - brushZEpsilon);
+        cube->Update();
+        additionalBrushRegionAppend->AddInputData(cube->GetOutput());
       }
+      if (excludeAboveCutRegion)
+      {
+        vtkNew<vtkCubeSource> cube;
+        cube->SetBounds(segmentationBounds_SliceXY[0],
+                        segmentationBounds_SliceXY[1],
+                        segmentationBounds_SliceXY[2],
+                        segmentationBounds_SliceXY[3],
+                        segmentationBounds_SliceXY[5] + brushZEpsilon,
+                        originalSegmentationBounds_SliceXY[5]);
+        cube->Update();
+        additionalBrushRegionAppend->AddInputData(cube->GetOutput());
+      }
+
+      vtkNew<vtkTransformPolyDataFilter> transformToRasFilter;
+      vtkNew<vtkTransform> transformToRas;
+      transformToRas->SetMatrix(sliceNode->GetXYToRAS());
+      transformToRasFilter->SetTransform(transformToRas.GetPointer());
+      transformToRasFilter->SetInputConnection(additionalBrushRegionAppend->GetOutputPort());
+      transformToRasFilter->Update();
+      additionalBrushRegion = transformToRasFilter->GetOutput();
     }
 
     for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
