@@ -390,6 +390,9 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   bool readingWorked = true;
   std::string errorMessage = "";
+  // Collect errors and warnings reported by the reader (for example, the reason why the file format
+  // is not supported) so that they can be displayed to the user.
+  this->GetUserMessages()->SetObservedObject(reader);
   try
   {
     vtkDebugMacro("ReadDataInternal: right before reader update, reader num files = " << reader->GetNumberOfFileNames());
@@ -405,6 +408,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     readingWorked = false;
     errorMessage = std::string("ITK exception info: error in ") + e.GetLocation() + "\n" + e.GetDescription() + "\n";
   }
+  this->GetUserMessages()->SetObservedObject(nullptr);
   if (!readingWorked)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),

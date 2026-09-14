@@ -38,6 +38,7 @@
 #include "vtkSlicerVolumesModuleLogicExport.h"
 
 class vtkMRMLLabelMapVolumeNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
@@ -133,11 +134,12 @@ public:
   /// bit 3: calculate window level automatically
   /// bit 4: discard image orientation
   /// higher bits are reserved for future use
+  /// If userMessages is specified and the volume cannot be loaded then the reasons are added to userMessages.
   vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, const char* volname, int loadingOptions)
   {
     return (this->AddArchetypeVolume(filename, volname, loadingOptions, nullptr));
   }
-  vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, const char* volname, int loadingOptions, vtkStringArray* fileList);
+  vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, const char* volname, int loadingOptions, vtkStringArray* fileList, vtkMRMLMessageCollection* userMessages = nullptr);
   vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, const char* volname) { return this->AddArchetypeVolume(filename, volname, 0, nullptr); }
 
   /// Load a scalar volume function directly, bypassing checks of all factories done in AddArchetypeVolume.
@@ -301,7 +303,13 @@ protected:
 
   /// Convenience function allowing to try to load a volume using a given
   /// list of \a NodeSetFactoryRegistry
-  vtkMRMLVolumeNode* AddArchetypeVolume(const NodeSetFactoryRegistry& volumeRegistry, const char* filename, const char* volname, int loadingOptions, vtkStringArray* fileList);
+  /// If userMessages is specified and the volume cannot be loaded then the reasons are added to userMessages.
+  vtkMRMLVolumeNode* AddArchetypeVolume(const NodeSetFactoryRegistry& volumeRegistry,
+                                        const char* filename,
+                                        const char* volname,
+                                        int loadingOptions,
+                                        vtkStringArray* fileList,
+                                        vtkMRMLMessageCollection* userMessages = nullptr);
 
 protected:
   NodeSetFactoryRegistry VolumeRegistry;

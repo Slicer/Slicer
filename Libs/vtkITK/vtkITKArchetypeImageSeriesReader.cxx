@@ -37,9 +37,12 @@
 #include <itkMetaDataObject.h>
 #include <itkMetaImageIO.h>
 #include <itkTimeProbe.h>
+#include <itk_zlib.h>
 
 // STD includes
 #include <algorithm>
+#include <cstring> // for memcmp
+#include <sstream>
 #include <vector>
 
 #include "itkArchetypeSeriesFileNames.h"
@@ -321,6 +324,51 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
 }
 
 //----------------------------------------------------------------------------
+bool vtkITKArchetypeImageSeriesReader::IsNifti2File(const char* fileName)
+{
+  if (fileName == nullptr)
+  {
+    return false;
+  }
+  // gzread reads both compressed (.nii.gz) and uncompressed (.nii, .hdr) files
+  gzFile file = gzopen(fileName, "rb");
+  if (file == nullptr)
+  {
+    return false;
+  }
+  // NIfTI-2 header starts with sizeof_hdr (32-bit integer, value 540), followed by the 8-character magic string
+  unsigned char header[12] = { 0 };
+  const int bytesRead = gzread(file, header, sizeof(header));
+  gzclose(file);
+  if (bytesRead != static_cast<int>(sizeof(header)))
+  {
+    return false;
+  }
+  const unsigned char nifti2HeaderSizeLittleEndian[4] = { 0x1C, 0x02, 0x00, 0x00 };
+  const unsigned char nifti2HeaderSizeBigEndian[4] = { 0x00, 0x00, 0x02, 0x1C };
+  if (memcmp(header, nifti2HeaderSizeLittleEndian, 4) != 0 && memcmp(header, nifti2HeaderSizeBigEndian, 4) != 0)
+  {
+    return false;
+  }
+  // Magic string is "n+2" for single-file and "ni2" for header/image file pair, followed by a zero character
+  return memcmp(header + 4, "n+2", 4) == 0 || memcmp(header + 4, "ni2", 4) == 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkITKArchetypeImageSeriesReader::ReportFileReadError(const std::string& fileName, const std::string& errorDetails)
+{
+  if (vtkITKArchetypeImageSeriesReader::IsNifti2File(fileName.c_str()))
+  {
+    // ITK only reports that no ImageIO could be created, which does not help users to understand the problem
+    vtkErrorMacro("Cannot read file '" << fileName << "': NIfTI-2 file format is not supported. Convert the file to NIfTI-1 or NRRD format using another application.");
+  }
+  else
+  {
+    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileName << ". " << errorDetails);
+  }
+}
+
+//----------------------------------------------------------------------------
 // This method returns the largest data that can be generated.
 int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotUsed(request), vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -499,8 +547,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotU
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
+    this->ReportFileReadError(fileNameCollapsed, std::string("ITK exception info: error in ") + e.GetLocation() + ": " + e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
@@ -558,6 +605,31 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotU
   bool measurementFrameMatrixExplicitlySpecified = false;
 
   itk::ImageIOBase::Pointer imageIO = this->GetImageIO(this->Archetype);
+
+  // Images that have more than one sample along additional axes (for example, time sequences stored in NIfTI files)
+  // cannot be read into a 3D image: itk::ImageFileReader would read only the first frame and would ignore
+  // the image orientation stored in the file (it uses default directions if the file has more dimensions than the image).
+  if (imageIO.IsNotNull() && imageIO->GetNumberOfDimensions() > 3)
+  {
+    bool multipleFrames = false;
+    std::ostringstream imageSize;
+    for (unsigned int axis = 0; axis < imageIO->GetNumberOfDimensions(); ++axis)
+    {
+      imageSize << (axis > 0 ? " x " : "") << imageIO->GetDimensions(axis);
+      if (axis >= 3 && imageIO->GetDimensions(axis) > 1)
+      {
+        multipleFrames = true;
+      }
+    }
+    if (multipleFrames)
+    {
+      vtkErrorMacro("Cannot read file '" << fileNameCollapsed << "' as a 3D image, because it contains a " << imageIO->GetNumberOfDimensions()
+                                         << "D image (size: " << imageSize.str() << "). Load the file as a sequence.");
+      this->SetErrorCode(vtkErrorCode::FileFormatError);
+      return 0;
+    }
+  }
+
   try
   {
     if (this->FileNames.size() == 0)
@@ -665,8 +737,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotU
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
+    this->ReportFileReadError(fileNameCollapsed, std::string("ITK exception info: error in ") + e.GetLocation() + ": " + e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }
@@ -928,8 +999,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(vtkInformation* vtkNotU
   }
   catch (itk::ExceptionObject& e)
   {
-    vtkErrorMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
-                                                                                       << "ITK exception info: error in " << e.GetLocation() << ": " << e.GetDescription());
+    this->ReportFileReadError(fileNameCollapsed, std::string("ITK exception info: error in ") + e.GetLocation() + ": " + e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
   }

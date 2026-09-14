@@ -11,10 +11,15 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
+#include "vtkITKImageSequenceWriter.h"
+
+#include "vtkDataArray.h"
 #include "vtkImageData.h"
 #include "vtkMatrix3x3.h"
 #include "vtkMatrix4x4.h"
@@ -22,7 +27,11 @@
 #include "vtkPointData.h"
 #include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
+#include <cstdint>
+#include <cstring>
+#include <fstream>
 #include <iostream>
+#include <vector>
 
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
@@ -280,6 +289,124 @@ int TestNiftiNonUnsignedCharColorVolume(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+//---------------------------------------------------------------------------
+bool WriteNifti2File(const std::string& fileName)
+{
+  // Write a minimal single-file NIfTI-2 image (2x2x2 voxels, int16) in native byte order.
+  // NIfTI-2 header is defined in nifti2.h, which is not available in ITK, therefore offsets are specified here.
+  const int nifti2HeaderSize = 540;
+  const int nifti2ExtensionSize = 4;
+  const int magicOffset = 4;
+  const int datatypeOffset = 12;
+  const int bitpixOffset = 14;
+  const int dimOffset = 16;
+  const int pixdimOffset = 104;
+  const int voxOffsetOffset = 168;
+  const int16_t datatypeInt16 = 4; // NIFTI_TYPE_INT16
+  const int16_t bitsPerVoxel = 16;
+  const int64_t dim[8] = { 3, 2, 2, 2, 1, 1, 1, 1 };
+  const double pixdim[8] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  const int64_t voxOffset = nifti2HeaderSize + nifti2ExtensionSize;
+  const int numberOfVoxels = 8;
+
+  std::vector<char> buffer(voxOffset + numberOfVoxels * sizeof(int16_t), 0);
+  memcpy(&buffer[0], &nifti2HeaderSize, sizeof(int32_t));
+  memcpy(&buffer[magicOffset], "n+2\0\r\n\032\n", 8);
+  memcpy(&buffer[datatypeOffset], &datatypeInt16, sizeof(int16_t));
+  memcpy(&buffer[bitpixOffset], &bitsPerVoxel, sizeof(int16_t));
+  memcpy(&buffer[dimOffset], dim, sizeof(dim));
+  memcpy(&buffer[pixdimOffset], pixdim, sizeof(pixdim));
+  memcpy(&buffer[voxOffsetOffset], &voxOffset, sizeof(int64_t));
+
+  std::ofstream file(fileName, std::ios::binary);
+  file.write(buffer.data(), buffer.size());
+  return file.good();
+}
+
+//---------------------------------------------------------------------------
+int TestNifti2FileReadError(const std::string& tempDir)
+{
+  // ITK cannot read NIfTI-2 files. Check that the user gets a message that explains why reading failed.
+  std::cout << "TestNifti2FileReadError" << std::endl;
+
+  const std::string fileName = tempFilename(tempDir, "nifti2", "nii", true);
+  CHECK_BOOL(WriteNifti2File(fileName), true);
+
+  // Reading fails at different places in the reader, depending on whether single-file or file series reading is requested
+  for (bool singleFile : { true, false })
+  {
+    std::cout << "  Single file: " << singleFile << std::endl;
+    vtkNew<vtkMRMLScene> scene;
+    vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+    CHECK_NOT_NULL(volumeNode);
+    vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+    CHECK_NOT_NULL(storageNode);
+    storageNode->SetSingleFile(singleFile);
+    storageNode->SetFileName(fileName.c_str());
+
+    TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+    CHECK_BOOL(storageNode->ReadData(volumeNode), false);
+    TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+    const std::string messages = storageNode->GetUserMessages()->GetAllMessagesAsString();
+    std::cout << "User messages:\n" << messages << std::endl;
+    const size_t userMessagePosition = messages.find("NIfTI-2 file format is not supported");
+    CHECK_BOOL(userMessagePosition != std::string::npos, true);
+    // Source code location and object description are useful for developers, but they must be after the user-understandable message
+    const size_t sourceLocationPosition = messages.find("vtkITKArchetypeImageSeriesReader.cxx, line");
+    CHECK_BOOL(sourceLocationPosition != std::string::npos && sourceLocationPosition > userMessagePosition, true);
+    const size_t objectDescriptionPosition = messages.find("vtkITKArchetypeImageSeriesScalarReader (");
+    CHECK_BOOL(objectDescriptionPosition != std::string::npos && objectDescriptionPosition > userMessagePosition, true);
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+int TestMultiFrameNiftiVolumeReadError(const std::string& tempDir)
+{
+  // A 4D (3D+t) NIfTI file cannot be read as a 3D volume (only the first frame would be read, without orientation).
+  // Check that reading fails and the user gets a message that explains why.
+  std::cout << "TestMultiFrameNiftiVolumeReadError" << std::endl;
+
+  const int numberOfFrames = 3;
+  const std::string fileName = tempFilename(tempDir, "multiframe", "nii", true);
+  vtkNew<vtkITKImageSequenceWriter> writer;
+  writer->SetFileName(fileName.c_str());
+  writer->SetImageIOClassName("NiftiImageIO");
+  vtkNew<vtkMatrix4x4> rasToIjk;
+  writer->SetRasToIJKMatrix(rasToIjk);
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkNew<vtkImageData> frameImage;
+    frameImage->SetDimensions(6, 5, 4);
+    frameImage->AllocateScalars(VTK_SHORT, 1);
+    frameImage->GetPointData()->GetScalars()->Fill(frameIndex);
+    writer->AddInputData(frameImage);
+  }
+  writer->Write();
+  CHECK_INT(writer->GetErrorCode(), 0);
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+  CHECK_NOT_NULL(volumeNode);
+  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetSingleFile(true);
+  storageNode->SetFileName(fileName.c_str());
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_BOOL(storageNode->ReadData(volumeNode), false);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  const std::string messages = storageNode->GetUserMessages()->GetAllMessagesAsString();
+  std::cout << "User messages:\n" << messages << std::endl;
+  CHECK_BOOL(messages.find("Load the file as a sequence") != std::string::npos, true);
+  CHECK_BOOL(messages.find("6 x 5 x 4 x 3") != std::string::npos, true);
+
+  return EXIT_SUCCESS;
+}
+
 int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
@@ -297,6 +424,8 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha", true, false, false, false));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii", true, false, true, true));
   CHECK_EXIT_SUCCESS(TestNiftiNonUnsignedCharColorVolume(tempDir));
+  CHECK_EXIT_SUCCESS(TestNifti2FileReadError(tempDir));
+  CHECK_EXIT_SUCCESS(TestMultiFrameNiftiVolumeReadError(tempDir));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png", false, false, true, true));
 
   // Expect warning about TIFF file format not recommended

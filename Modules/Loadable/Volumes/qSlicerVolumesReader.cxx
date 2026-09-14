@@ -39,6 +39,7 @@
 // MRML includes
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -215,9 +216,10 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     }
   }
   Q_ASSERT(d->Logic);
+  this->userMessages()->ClearMessages();
   // Weak pointer is used because the node may be deleted if the scene is closed
   // right after reading.
-  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(fileName.toUtf8(), name.toUtf8(), options, fileList.GetPointer());
+  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(fileName.toUtf8(), name.toUtf8(), options, fileList.GetPointer(), this->userMessages());
   if (node)
   {
     QString colorNodeID = properties.value("colorNodeID", QString()).toString();
