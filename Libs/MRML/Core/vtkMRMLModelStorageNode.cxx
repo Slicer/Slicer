@@ -577,7 +577,6 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType))
   {
     vtkSmartPointer<vtkDataWriter> writer;
-    this->GetUserMessages()->SetObservedObject(writer);
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
     {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
@@ -592,6 +591,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       writer->SetFileVersion(42);
       writer->SetInputData(meshToWrite);
     }
+    this->GetUserMessages()->SetObservedObject(writer);
 
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII);
