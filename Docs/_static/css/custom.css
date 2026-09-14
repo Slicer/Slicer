@@ -86,3 +86,30 @@ a.icon-home img.logo {
 .rst-content dl dd {
     margin: 0px;
 }
+
+/* sphinx_rtd_theme gives every admonition the same fa-exclamation-circle glyph
+   and distinguishes the types by background color alone, so notes, tips and
+   warnings are hard to tell apart at a glance. Restore a per-type icon. */
+.rst-content .note > .admonition-title:before,
+.rst-content .seealso > .admonition-title:before {
+    content: "\f05a"; /* info-circle */
+}
+.rst-content .tip > .admonition-title:before,
+.rst-content .hint > .admonition-title:before {
+    content: "\f0eb"; /* lightbulb-o */
+}
+.rst-content .important > .admonition-title:before {
+    content: "\f06a"; /* exclamation-circle */
+}
+.rst-content .warning > .admonition-title:before,
+.rst-content .caution > .admonition-title:before,
+.rst-content .attention > .admonition-title:before {
+    content: "\f071"; /* exclamation-triangle */
+}
+.rst-content .danger > .admonition-title:before,
+.rst-content .error > .admonition-title:before {
+    content: "\f057"; /* times-circle */
+}
+.rst-content .admonition-todo > .admonition-title:before {
+    content: "\f046"; /* check-square-o */
+}
