@@ -227,7 +227,7 @@ std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMessageCollection::CallbackFunction(vtkObject* vtkNotUsed(caller), long unsigned int eventId, void* clientData, void* callData)
+void vtkMRMLMessageCollection::CallbackFunction(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
 {
   vtkMRMLMessageCollection* self = reinterpret_cast<vtkMRMLMessageCollection*>(clientData);
   if (!self || !callData)
@@ -235,8 +235,64 @@ void vtkMRMLMessageCollection::CallbackFunction(vtkObject* vtkNotUsed(caller), l
     return;
   }
   std::string msg = reinterpret_cast<char*>(callData);
+
+  // VTK error and warning macros prepend the source code location and the object description to the message
+  // (for example: "ERROR: In vtkSomeClass.cxx, line 123\nvtkSomeClass (0000020FC2A2CDC0): Some message").
+  // These details are useful for developers, but users should see the message text first, therefore
+  // the details are moved after the message text (for example: "Some message [vtkSomeClass.cxx, line 123, vtkSomeClass (0000020FC2A2CDC0)]").
+  // Details that will be appended to the end of the message (example: "vtkSomeClass.cxx, line 123, vtkSomeClass (0000020FC2A2CDC0)")
+  std::string details;
+
+  // Move the source code location from the first line of the message into details.
+  // Example: msg = "ERROR: In vtkSomeClass.cxx, line 123\nvtkSomeClass (0000020FC2A2CDC0): Some message"
+  //   -> details = "vtkSomeClass.cxx, line 123"
+  //   -> msg = "vtkSomeClass (0000020FC2A2CDC0): Some message"
+  const std::string sourceLocationPrefixes[] = { "ERROR: In ", "Warning: In " };
+  for (const std::string& sourceLocationPrefix : sourceLocationPrefixes)
+  {
+    // Check if msg starts with this prefix
+    if (msg.compare(0, sourceLocationPrefix.size(), sourceLocationPrefix) == 0)
+    {
+      // The source code location is the rest of the first line
+      size_t sourceLocationEnd = msg.find('\n');
+      if (sourceLocationEnd != std::string::npos)
+      {
+        // Store the source code location (without the prefix), then remove the entire first line from msg
+        details = msg.substr(sourceLocationPrefix.size(), sourceLocationEnd - sourceLocationPrefix.size());
+        msg.erase(0, sourceLocationEnd + 1);
+      }
+      break;
+    }
+  }
+
+  // Move the object description from the beginning of the message into details.
+  // Example: msg = "vtkSomeClass (0000020FC2A2CDC0): Some message"
+  //   -> details = "vtkSomeClass.cxx, line 123, vtkSomeClass (0000020FC2A2CDC0)"
+  //   -> msg = "Some message"
+  if (caller)
+  {
+    // objectDescription example: "vtkSomeClass (0000020FC2A2CDC0)"
+    const std::string objectDescription = caller->GetObjectDescription();
+    // objectDescriptionPrefix example: "vtkSomeClass (0000020FC2A2CDC0): "
+    const std::string objectDescriptionPrefix = objectDescription + ": ";
+    // Remove prefix: if msg starts with the object description then remove it and add it to details
+    if (msg.compare(0, objectDescriptionPrefix.size(), objectDescriptionPrefix) == 0)
+    {
+      msg.erase(0, objectDescriptionPrefix.size());
+      details += (details.empty() ? "" : ", ") + objectDescription;
+    }
+  }
+
+  // Remove trailing whitespace (VTK macros end the message with newline characters)
   const std::string chars = "\t\n\v\f\r ";
   msg.erase(msg.find_last_not_of(chars) + 1);
+
+  // Append details to the end of the message.
+  // Example: msg = "Some message [vtkSomeClass.cxx, line 123, vtkSomeClass (0000020FC2A2CDC0)]"
+  if (!details.empty())
+  {
+    msg += " [" + details + "]";
+  }
   self->AddMessage(eventId, msg);
 }
 

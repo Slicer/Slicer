@@ -131,6 +131,9 @@ public:
   /// Observe error and warnings reported by observedObject.
   /// For example, this can be used to capture errors from VTK classes
   /// and display them to the user.
+  /// The source code location and object description that VTK error and warning macros
+  /// prepend to the message are moved after the message text, so that users see the message text first.
+  /// For example: "Some message [vtkSomeClass.cxx, line 123, vtkSomeClass (0000020FC2A2CDC0)]".
   virtual void SetObservedObject(vtkObject* observedObject);
 
 protected:
