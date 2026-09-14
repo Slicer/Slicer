@@ -32,8 +32,8 @@
 // ITK includes
 #include "itkExtractImageFilter.h"
 #include "itkImageFileReader.h"
-#include "itkImageIOFactory.h"
 #include "itkImageToVTKImageFilter.h"
+#include "itkNiftiImageIO.h"
 #include "itkNrrdImageIO.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
@@ -61,9 +61,9 @@ public:
   /// Returns the index of the sequence axis, -1 in case of an error.
   int ReadNrrdImageInformation(itk::NrrdImageIO* imageIO);
 
-  /// Read header of a file format that stores the sequence frames along the 4th image axis (such as NIfTI).
+  /// Read NIfTI file header. The sequence frames are stored along the 4th image axis.
   /// Returns the index of the sequence axis, -1 in case of an error.
-  int ReadNonNrrdImageInformation(itk::ImageIOBase* imageIO);
+  int ReadNiftiImageInformation(itk::NiftiImageIO* imageIO);
 
   vtkITKImageSequenceReader* External;
 };
@@ -494,6 +494,13 @@ int vtkITKImageSequenceReader::vtkInternal::ReadNrrdImageInformation(itk::NrrdIm
       break;
     }
   }
+  if (listDim < 0 && imageIO->GetNumberOfDimensions() == 4)
+  {
+    // No list or vector kind axis, but the image has 4 dimensions (for example, all axes are "domain" kind).
+    // Such an image cannot be read as a 3D volume, therefore it is interpreted as a sequence
+    // with frames along the last axis (same as for file formats that do not store axis kinds, such as NIfTI).
+    listDim = 3;
+  }
   if (listDim < 0)
   {
     vtkErrorWithObjectMacro(this->External, "Could not find list kind axis in image file");
@@ -519,12 +526,12 @@ int vtkITKImageSequenceReader::vtkInternal::ReadNrrdImageInformation(itk::NrrdIm
 }
 
 //----------------------------------------------------------------------------
-int vtkITKImageSequenceReader::vtkInternal::ReadNonNrrdImageInformation(itk::ImageIOBase* imageIO)
+int vtkITKImageSequenceReader::vtkInternal::ReadNiftiImageInformation(itk::NiftiImageIO* imageIO)
 {
   imageIO->SetFileName(this->External->GetFileName());
   imageIO->ReadImageInformation(); // Read only the header information
 
-  // File formats without axis kind information (such as NIfTI) store the frames along the 4th image axis
+  // NIfTI files do not store axis kind information, the frames are stored along the 4th image axis
   if (imageIO->GetNumberOfDimensions() != 4)
   {
     vtkErrorWithObjectMacro(this->External,
@@ -603,7 +610,7 @@ int vtkITKImageSequenceReader::vtkInternal::ReadNonNrrdImageInformation(itk::Ima
 }
 
 //----------------------------------------------------------------------------
-bool vtkITKImageSequenceReader::IsNiftiImageSequenceFile(const char* fileName)
+bool vtkITKImageSequenceReader::IsImageSequenceFile(const char* fileName)
 {
   if (fileName == nullptr)
   {
@@ -611,8 +618,19 @@ bool vtkITKImageSequenceReader::IsNiftiImageSequenceFile(const char* fileName)
   }
   try
   {
-    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(fileName, itk::IOFileModeEnum::ReadMode);
-    if (imageIO.IsNull() || strcmp(imageIO->GetNameOfClass(), "NiftiImageIO") != 0)
+    // Only NRRD and NIfTI file formats are supported
+    itk::ImageIOBase::Pointer imageIO;
+    itk::NrrdImageIO::Pointer nrrdImageIO = itk::NrrdImageIO::New();
+    itk::NiftiImageIO::Pointer niftiImageIO = itk::NiftiImageIO::New();
+    if (nrrdImageIO->CanReadFile(fileName))
+    {
+      imageIO = nrrdImageIO;
+    }
+    else if (niftiImageIO->CanReadFile(fileName))
+    {
+      imageIO = niftiImageIO;
+    }
+    else
     {
       return false;
     }
@@ -664,9 +682,9 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
     }
     else
     {
-      // Other file formats, such as NIfTI
-      imageIO = itk::ImageIOFactory::CreateImageIO(this->GetFileName(), itk::IOFileModeEnum::ReadMode);
-      if (imageIO.IsNull())
+      // Only NRRD and NIfTI file formats are supported
+      itk::NiftiImageIO::Pointer niftiImageIO = itk::NiftiImageIO::New();
+      if (!niftiImageIO->CanReadFile(this->GetFileName()))
       {
         if (vtkITKArchetypeImageSeriesReader::IsNifti2File(this->GetFileName()))
         {
@@ -675,12 +693,13 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
         }
         else
         {
-          vtkErrorMacro("Cannot read the image file: " << this->GetFileName());
+          vtkErrorMacro("Cannot read the image file: " << this->GetFileName() << ". Only NRRD and NIfTI file formats are supported.");
         }
         this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
         return;
       }
-      listDim = this->Internal->ReadNonNrrdImageInformation(imageIO);
+      imageIO = niftiImageIO;
+      listDim = this->Internal->ReadNiftiImageInformation(niftiImageIO);
     }
     if (listDim < 0)
     {

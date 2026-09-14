@@ -44,14 +44,40 @@
 /// - axis 3 index type: numeric or text
 /// - axis 3 index values: space-separated list of index values (URL-encoded, to deal with special characters)
 ///
+/// By default, if the image is stored in the file using a left-handed IJK coordinate system then the
+/// volumes are converted to right-handed IJK coordinate system when reading (same as for scalar volumes).
+/// See ForceRightHandedIJKCoordinateSystem.
+///
 
 class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLVolumeSequenceStorageNode* New();
   vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode, vtkMRMLStorageNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
+
+  /// Read node attributes from XML file
+  void ReadXMLAttributes(const char** atts) override;
+
+  /// Write this node's information to a MRML file in XML format.
+  void WriteXML(ostream& of, int indent) override;
+
+  /// Copy the node's attributes to this object
+  void Copy(vtkMRMLNode* node) override;
+
+  //@{
+  /// Force right-handed IJK coordinate system when reading an image sequence from file.
+  /// If enabled and the file stored on disk uses left-handed IJK coordinate system,
+  /// then the reader will flip the K axis direction and update the image origin
+  /// to make the IJK coordinate system of the loaded volumes right-handed.
+  /// Enabled by default, as certain processing algorithms assume this right-handed IJK.
+  /// \sa vtkMRMLVolumeArchetypeStorageNode::SetForceRightHandedIJKCoordinateSystem
+  vtkSetMacro(ForceRightHandedIJKCoordinateSystem, bool);
+  vtkGetMacro(ForceRightHandedIJKCoordinateSystem, bool);
+  vtkBooleanMacro(ForceRightHandedIJKCoordinateSystem, bool);
+  //@}
 
   ///
   /// Get node XML tag name (like Storage, Model)
@@ -96,6 +122,8 @@ protected:
 
   /// Initialize all the supported write file types
   void InitializeSupportedWriteFileTypes() override;
+
+  bool ForceRightHandedIJKCoordinateSystem{ true };
 };
 
 #endif

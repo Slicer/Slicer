@@ -148,7 +148,14 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
 
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
   vtkNew<vtkMRMLSequenceStorageNode> sequenceStorageNode;
-  vtkNew<vtkMRMLVolumeSequenceStorageNode> volumeSequenceStorageNode;
+  // Volume sequence storage node is created by the scene, so that reading options can be set
+  // using the default node in the scene (for example, ForceRightHandedIJKCoordinateSystem), as for scalar volumes.
+  vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode> volumeSequenceStorageNode = vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::Take(
+    vtkMRMLVolumeSequenceStorageNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLVolumeSequenceStorageNode")));
+  if (!volumeSequenceStorageNode)
+  {
+    volumeSequenceStorageNode = vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New();
+  }
   vtkNew<vtkMRMLTransformSequenceStorageNode> transformSequenceStorageNode;
 
   // check for local or remote files
