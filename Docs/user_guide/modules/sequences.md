@@ -60,6 +60,23 @@ To allow segmenting each time point of the image, you need to create a segmentat
 - Click the green `+` button next to *(new sequence)*. This creates a new sequence that will store the segmentation for each timepoint.
 - Choose your segmentation node in the *Proxy node* column and in the last row of the table. This indicates that this sequence will store states of the chosen segmentation node.
 - Check the *Save changes* checkbox to allow modifying the sequence by editing the segmentation node.
+
+### Load and save volume sequences
+
+Volume sequences (for example, 4D CT or cine MRI) can be loaded from these file formats by drag-and-dropping the file to the application window (or using menu: `File` / `Add Data`):
+- **NRRD sequence** (.seq.nrrd, .seq.nhdr, .nrrd, .nhdr): recommended file format, it can store all properties of the sequence (index name, unit, and values; custom attributes; data node type).
+- **NIfTI** (.nii, .nii.gz): 4D image, frames are stored along the 4th image axis.
+  - Volume sequences can be saved in NIfTI format, but the file format cannot store all sequence properties: index name and unit are only stored for time (index values are saved as time in seconds), only evenly spaced numeric index values can be stored, and custom attributes are not saved. A warning is displayed if any of these properties are lost. Use NRRD sequence file format (.seq.nrrd) to preserve all properties. Only NIfTI-1 files are supported (NIfTI-2 files cannot be loaded).
+  - When a NIfTI file is loaded, the sequence index is set from the unit, spacing, and offset of the 4th image axis. For time units (`s`, `ms`, `us`): index name is `time`, index values are the time of each frame. For spectral units (`Hz`, `ppm`, `rad/s`): index name is `frequency` or `chemical shift`, index values are the axis values of each frame. For unknown unit: index name is `frame`, index values are the frame indices (0, 1, 2, ...).
+
+4D images in these file formats are loaded as volume sequences by default. They cannot be loaded as a single volume or segmentation (loading of these fails with an error message that explains that the file must be loaded as a sequence).
+
+:::{note}
+
+Similarly to scalar volumes, if the image is stored in the file using left-handed IJK coordinate system then the volumes are converted to right-handed IJK coordinate system when loaded (the voxel order is reversed along the K axis and the image origin is updated).
+
+:::
+
 ### Convert MultiVolume node to Sequence node
 
 If your data is in a *MultiVolume* node, you can convert it to a *Sequence* node by following these steps:

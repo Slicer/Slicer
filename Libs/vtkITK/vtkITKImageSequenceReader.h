@@ -81,9 +81,11 @@ public:
                                                 std::vector<std::string>& attributeNames,
                                                 std::vector<std::vector<std::string>>& frameAttributeValues);
 
-  /// Returns true if the file is a NIfTI image that contains an image sequence
-  /// (4 dimensions: 3 spatial, 1 sequence). Only the file header is read.
-  static bool IsNiftiImageSequenceFile(const char* fileName);
+  /// Returns true if the file is a NRRD or NIfTI file that contains an image with 4 dimensions (3 spatial, 1 sequence)
+  /// and multiple frames. Such images cannot be read as a 3D volume, but they can be read as an image sequence.
+  /// This is used for detecting sequences in NIfTI files (which do not specify axis kinds)
+  /// and NRRD files that do not have a "list" kind axis. Only the file header is read.
+  static bool IsImageSequenceFile(const char* fileName);
 
   vtkGetMacro(SequenceAxisLabel, std::string);
   vtkGetMacro(SequenceAxisUnit, std::string);

@@ -33,6 +33,12 @@ To avoid the need to always manually select `Segmentation`, save the `.nrrd` fil
 
 :::
 
+:::{note}
+
+4D label images (for example, segmentation of each time point of a cine MRI, stored in a single NIfTI file) cannot be loaded as a segmentation. They are loaded as a volume sequence by default (see [Sequences module documentation](sequences.md#load-and-save-volume-sequences)).
+
+:::
+
 Other image file formats can be loaded as labelmap volume and then converted to segmentation:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - Click `Show Options`

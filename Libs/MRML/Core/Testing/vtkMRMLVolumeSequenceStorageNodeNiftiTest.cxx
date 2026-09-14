@@ -18,6 +18,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
 
 // vtkITK includes
@@ -27,6 +28,7 @@
 #include <nifti1.h>
 
 #include <vtkCommand.h>
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -35,6 +37,7 @@
 #include <vtkTransform.h>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 namespace
 {
@@ -561,15 +564,177 @@ int TestNifti2VolumeSequenceReadError(const std::string& tempDir)
 }
 
 //---------------------------------------------------------------------------
+int TestLeftHandedVolumeSequence(const std::string& tempDir, const std::string& leftHandedSequenceFileName)
+{
+  // The test file (cardiac cine MRI) stores the image using left-handed IJK coordinate system.
+  // By default, the IJK coordinate system of volume sequences is made right-handed when reading,
+  // the same way as for scalar volumes.
+  std::cout << "TestLeftHandedVolumeSequence" << std::endl;
+
+  const int expectedNumberOfFrames = 15;
+  const int expectedDimensions[3] = { 128, 128, 16 };
+  // NRRD file format stores image geometry with double precision
+  const double nrrdGeometryTolerance = 1e-6;
+
+  vtkNew<vtkMRMLScene> scene;
+
+  // Read with default settings: normalization is enabled
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> normalizedStorageNode;
+  CHECK_BOOL(normalizedStorageNode->GetForceRightHandedIJKCoordinateSystem(), true);
+  scene->AddNode(normalizedStorageNode);
+  normalizedStorageNode->SetFileName(leftHandedSequenceFileName.c_str());
+  vtkNew<vtkMRMLSequenceNode> normalizedSequenceNode;
+  scene->AddNode(normalizedSequenceNode);
+  CHECK_BOOL(normalizedStorageNode->ReadData(normalizedSequenceNode), true);
+  CHECK_INT(normalizedSequenceNode->GetNumberOfDataNodes(), expectedNumberOfFrames);
+
+  // Read without normalization
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> originalStorageNode;
+  originalStorageNode->ForceRightHandedIJKCoordinateSystemOff();
+  scene->AddNode(originalStorageNode);
+  originalStorageNode->SetFileName(leftHandedSequenceFileName.c_str());
+  vtkNew<vtkMRMLSequenceNode> originalSequenceNode;
+  scene->AddNode(originalSequenceNode);
+  CHECK_BOOL(originalStorageNode->ReadData(originalSequenceNode), true);
+  CHECK_INT(originalSequenceNode->GetNumberOfDataNodes(), expectedNumberOfFrames);
+
+  const int lastSliceIndex = expectedDimensions[2] - 1;
+  const vtkIdType numberOfVoxelsInSlice = expectedDimensions[0] * expectedDimensions[1];
+  for (int frameIndex = 0; frameIndex < expectedNumberOfFrames; ++frameIndex)
+  {
+    vtkMRMLScalarVolumeNode* originalVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(originalSequenceNode->GetNthDataNode(frameIndex));
+    vtkMRMLScalarVolumeNode* normalizedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(normalizedSequenceNode->GetNthDataNode(frameIndex));
+    CHECK_NOT_NULL(originalVolumeNode);
+    CHECK_NOT_NULL(normalizedVolumeNode);
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      CHECK_INT(originalVolumeNode->GetImageData()->GetDimensions()[axis], expectedDimensions[axis]);
+      CHECK_INT(normalizedVolumeNode->GetImageData()->GetDimensions()[axis], expectedDimensions[axis]);
+    }
+
+    vtkNew<vtkMatrix4x4> originalIjkToRas;
+    originalVolumeNode->GetIJKToRASMatrix(originalIjkToRas);
+    vtkNew<vtkMatrix4x4> normalizedIjkToRas;
+    normalizedVolumeNode->GetIJKToRASMatrix(normalizedIjkToRas);
+    CHECK_BOOL(vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(originalIjkToRas), false);
+    CHECK_BOOL(vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(normalizedIjkToRas), true);
+
+    // Normalization flips the K axis: voxel (i, j, k) of the normalized volume is voxel (i, j, lastSliceIndex - k) of the original volume
+    for (int row = 0; row < 3; ++row)
+    {
+      CHECK_DOUBLE_TOLERANCE(normalizedIjkToRas->GetElement(row, 0), originalIjkToRas->GetElement(row, 0), nrrdGeometryTolerance);
+      CHECK_DOUBLE_TOLERANCE(normalizedIjkToRas->GetElement(row, 1), originalIjkToRas->GetElement(row, 1), nrrdGeometryTolerance);
+      CHECK_DOUBLE_TOLERANCE(normalizedIjkToRas->GetElement(row, 2), -originalIjkToRas->GetElement(row, 2), nrrdGeometryTolerance);
+      CHECK_DOUBLE_TOLERANCE(
+        normalizedIjkToRas->GetElement(row, 3), originalIjkToRas->GetElement(row, 3) + lastSliceIndex * originalIjkToRas->GetElement(row, 2), nrrdGeometryTolerance);
+    }
+    vtkDataArray* originalVoxels = originalVolumeNode->GetImageData()->GetPointData()->GetScalars();
+    vtkDataArray* normalizedVoxels = normalizedVolumeNode->GetImageData()->GetPointData()->GetScalars();
+    for (int k = 0; k < expectedDimensions[2]; ++k)
+    {
+      for (vtkIdType voxelIndexInSlice = 0; voxelIndexInSlice < numberOfVoxelsInSlice; ++voxelIndexInSlice)
+      {
+        CHECK_DOUBLE_TOLERANCE(normalizedVoxels->GetComponent(k * numberOfVoxelsInSlice + voxelIndexInSlice, 0),
+                               originalVoxels->GetComponent((lastSliceIndex - k) * numberOfVoxelsInSlice + voxelIndexInSlice, 0),
+                               VOXEL_VALUE_TOLERANCE);
+      }
+    }
+  }
+
+  // Normalization is the same as for scalar volumes:
+  // save a frame of the left-handed volume sequence as 3D volume and read it as scalar volume with default settings.
+  const int testedFrameIndex = 5;
+  const std::string frameFileName = tempFilename(tempDir, "lefthanded_frame", "nii", true);
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> frameStorageNode;
+  scene->AddNode(frameStorageNode);
+  frameStorageNode->SetSingleFile(true);
+  frameStorageNode->SetFileName(frameFileName.c_str());
+  CHECK_BOOL(frameStorageNode->WriteData(originalSequenceNode->GetNthDataNode(testedFrameIndex)), true);
+  vtkMRMLScalarVolumeNode* frameVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+  CHECK_NOT_NULL(frameVolumeNode);
+  CHECK_BOOL(frameStorageNode->GetForceRightHandedIJKCoordinateSystem(), true);
+  CHECK_BOOL(frameStorageNode->ReadData(frameVolumeNode), true);
+  vtkMRMLScalarVolumeNode* normalizedFrameVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(normalizedSequenceNode->GetNthDataNode(testedFrameIndex));
+  vtkNew<vtkMatrix4x4> frameIjkToRas;
+  frameVolumeNode->GetIJKToRASMatrix(frameIjkToRas);
+  vtkNew<vtkMatrix4x4> normalizedFrameIjkToRas;
+  normalizedFrameVolumeNode->GetIJKToRASMatrix(normalizedFrameIjkToRas);
+  for (int row = 0; row < 4; ++row)
+  {
+    for (int col = 0; col < 4; ++col)
+    {
+      CHECK_DOUBLE_TOLERANCE(frameIjkToRas->GetElement(row, col), normalizedFrameIjkToRas->GetElement(row, col), NIFTI_GEOMETRY_TOLERANCE);
+    }
+  }
+  vtkDataArray* frameVoxels = frameVolumeNode->GetImageData()->GetPointData()->GetScalars();
+  vtkDataArray* normalizedFrameVoxels = normalizedFrameVolumeNode->GetImageData()->GetPointData()->GetScalars();
+  CHECK_INT(frameVoxels->GetNumberOfTuples(), normalizedFrameVoxels->GetNumberOfTuples());
+  for (vtkIdType voxelIndex = 0; voxelIndex < frameVoxels->GetNumberOfTuples(); ++voxelIndex)
+  {
+    CHECK_DOUBLE_TOLERANCE(frameVoxels->GetComponent(voxelIndex, 0), normalizedFrameVoxels->GetComponent(voxelIndex, 0), VOXEL_VALUE_TOLERANCE);
+  }
+
+  // Volume sequence read from a left-handed NRRD file is normalized the same way
+  const std::string nrrdFileName = tempFilename(tempDir, "lefthanded", "seq.nrrd", true);
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> nrrdStorageNode;
+  scene->AddNode(nrrdStorageNode);
+  nrrdStorageNode->SetFileName(nrrdFileName.c_str());
+  CHECK_BOOL(nrrdStorageNode->WriteData(originalSequenceNode), true);
+  vtkNew<vtkMRMLSequenceNode> nrrdSequenceNode;
+  scene->AddNode(nrrdSequenceNode);
+  CHECK_BOOL(nrrdStorageNode->ReadData(nrrdSequenceNode), true);
+  CHECK_INT(nrrdSequenceNode->GetNumberOfDataNodes(), expectedNumberOfFrames);
+  for (int frameIndex = 0; frameIndex < expectedNumberOfFrames; ++frameIndex)
+  {
+    vtkMRMLScalarVolumeNode* nrrdVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(nrrdSequenceNode->GetNthDataNode(frameIndex));
+    vtkMRMLScalarVolumeNode* normalizedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(normalizedSequenceNode->GetNthDataNode(frameIndex));
+    CHECK_NOT_NULL(nrrdVolumeNode);
+    vtkNew<vtkMatrix4x4> nrrdIjkToRas;
+    nrrdVolumeNode->GetIJKToRASMatrix(nrrdIjkToRas);
+    vtkNew<vtkMatrix4x4> normalizedIjkToRas;
+    normalizedVolumeNode->GetIJKToRASMatrix(normalizedIjkToRas);
+    for (int row = 0; row < 4; ++row)
+    {
+      for (int col = 0; col < 4; ++col)
+      {
+        CHECK_DOUBLE_TOLERANCE(nrrdIjkToRas->GetElement(row, col), normalizedIjkToRas->GetElement(row, col), nrrdGeometryTolerance);
+      }
+    }
+    vtkDataArray* nrrdVoxels = nrrdVolumeNode->GetImageData()->GetPointData()->GetScalars();
+    vtkDataArray* normalizedVoxels = normalizedVolumeNode->GetImageData()->GetPointData()->GetScalars();
+    CHECK_INT(nrrdVoxels->GetNumberOfTuples(), normalizedVoxels->GetNumberOfTuples());
+    for (vtkIdType voxelIndex = 0; voxelIndex < nrrdVoxels->GetNumberOfTuples(); ++voxelIndex)
+    {
+      CHECK_DOUBLE_TOLERANCE(nrrdVoxels->GetComponent(voxelIndex, 0), normalizedVoxels->GetComponent(voxelIndex, 0), VOXEL_VALUE_TOLERANCE);
+    }
+  }
+
+  // Normalization setting is copied and stored in the scene
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> copiedStorageNode;
+  copiedStorageNode->Copy(originalStorageNode);
+  CHECK_BOOL(copiedStorageNode->GetForceRightHandedIJKCoordinateSystem(), false);
+  std::stringstream xmlStream;
+  originalStorageNode->WriteXML(xmlStream, 0);
+  CHECK_BOOL(xmlStream.str().find("forceRightHandedIJKCoordinateSystem=\"false\"") != std::string::npos, true);
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> xmlStorageNode;
+  const char* xmlAttributes[] = { "forceRightHandedIJKCoordinateSystem", "false", nullptr };
+  xmlStorageNode->ReadXMLAttributes(xmlAttributes);
+  CHECK_BOOL(xmlStorageNode->GetForceRightHandedIJKCoordinateSystem(), false);
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLVolumeSequenceStorageNodeNiftiTest(int argc, char* argv[])
 {
-  if (argc != 2)
+  if (argc != 3)
   {
-    std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " /path/to/temp /path/to/hfpef_cine_3dt.nii.gz" << std::endl;
     return EXIT_FAILURE;
   }
 
   const char* tempDir = argv[1];
+  const char* leftHandedSequenceFileName = argv[2];
 
   CHECK_EXIT_SUCCESS(TestNiftiVolumeSequenceStorage(tempDir, "nii"));
   CHECK_EXIT_SUCCESS(TestNiftiVolumeSequenceStorage(tempDir, "nii.gz"));
@@ -577,6 +742,7 @@ int vtkMRMLVolumeSequenceStorageNodeNiftiTest(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestNiftiVolumeSequenceWrite(tempDir));
   CHECK_EXIT_SUCCESS(TestNiftiVectorVolumeSequence(tempDir));
   CHECK_EXIT_SUCCESS(TestNifti2VolumeSequenceReadError(tempDir));
+  CHECK_EXIT_SUCCESS(TestLeftHandedVolumeSequence(tempDir, leftHandedSequenceFileName));
 
   std::cout << "\nTest passed." << std::endl;
   return EXIT_SUCCESS;

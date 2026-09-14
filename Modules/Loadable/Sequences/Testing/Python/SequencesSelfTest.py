@@ -72,6 +72,8 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         self.section_SaveVolumeSequence("scalar")
         self.section_SaveVolumeSequence("label")
         self.section_LoadNiftiVolumeSequence()
+        self.section_LoadLeftHandedVolumeSequence()
+        self.section_LoadMultiFrameImagesAsSequence()
         self.delayDisplay("Test passed")
 
     # ------------------------------------------------------------------------------
@@ -285,3 +287,159 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
                 slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(frameIndex)))
 
         self.delayDisplay("Test passed for loading 4D NIfTI file")
+
+    # ------------------------------------------------------------------------------
+    def section_LoadLeftHandedVolumeSequence(self):
+        import numpy as np
+        import SampleData
+        import SimpleITK as sitk
+
+        self.delayDisplay("Test loading of volume sequence stored with left-handed IJK coordinate system")
+        slicer.mrmlScene.Clear(0)
+
+        # Cardiac cine MRI, stored using left-handed IJK coordinate system
+        downloadedFilePaths = SampleData.downloadFromURL(
+            fileNames="hfpef_cine_3dt.nii.gz",
+            uris=slicer.util.TESTING_DATA_URL + "SHA256/d900b2df26380c498bac9bc329c48ecc1609a198219152dea8a71014fa9cc328",
+            checksums="SHA256:d900b2df26380c498bac9bc329c48ecc1609a198219152dea8a71014fa9cc328",
+            loadFiles=False)
+        self.assertEqual(len(downloadedFilePaths), 1, "Failed to download hfpef_cine_3dt.nii.gz")
+        sequenceFilePath = downloadedFilePaths[0]
+        numberOfFrames = 15
+        testedFrameIndex = 5
+
+        # Save a frame as a 3D volume, to compare loading of a volume sequence item with loading of a scalar volume
+        image = sitk.ReadImage(sequenceFilePath)
+        frameSize = list(image.GetSize())
+        frameSize[3] = 0
+        frameFilePath = os.path.join(self.sequencesSelfTestDir, "LeftHandedFrame.nii.gz")
+        sitk.WriteImage(sitk.Extract(image, frameSize, [0, 0, 0, testedFrameIndex]), frameFilePath)
+
+        def ijkToRasArray(volumeNode):
+            ijkToRas = vtk.vtkMatrix4x4()
+            volumeNode.GetIJKToRASMatrix(ijkToRas)
+            return slicer.util.arrayFromVTKMatrix(ijkToRas)
+
+        def isRightHanded(volumeNode):
+            ijkToRas = vtk.vtkMatrix4x4()
+            volumeNode.GetIJKToRASMatrix(ijkToRas)
+            return slicer.vtkMRMLVolumeNode.IsIJKCoordinateSystemRightHanded(ijkToRas)
+
+        # By default, the IJK coordinate system of the volumes is made right-handed, the same way as for scalar volumes
+        sequenceNode = slicer.util.loadSequence(sequenceFilePath)
+        self.assertTrue(sequenceNode.GetStorageNode().GetForceRightHandedIJKCoordinateSystem())
+        self.assertEqual(sequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+        for frameIndex in range(numberOfFrames):
+            self.assertTrue(isRightHanded(sequenceNode.GetNthDataNode(frameIndex)))
+        itemVolumeNode = sequenceNode.GetNthDataNode(testedFrameIndex)
+        frameVolumeNode = slicer.util.loadVolume(frameFilePath)
+        self.assertTrue(isRightHanded(frameVolumeNode))
+        normalizedVoxels = slicer.util.arrayFromVolume(itemVolumeNode).copy()
+        normalizedIjkToRas = ijkToRasArray(itemVolumeNode)
+        np.testing.assert_array_equal(normalizedVoxels, slicer.util.arrayFromVolume(frameVolumeNode))
+        np.testing.assert_allclose(normalizedIjkToRas, ijkToRasArray(frameVolumeNode), atol=1e-3)
+
+        # Normalization can be disabled the same way as for scalar volumes: by disabling it in the default storage node
+        slicer.mrmlScene.Clear(0)
+        leftHandedSequenceFilePath = os.path.join(self.sequencesSelfTestDir, "LeftHandedSequence.seq.nrrd")
+        originalDefaultStorageNodes = {}
+        for storageNodeClassName in ["vtkMRMLVolumeSequenceStorageNode", "vtkMRMLVolumeArchetypeStorageNode"]:
+            originalDefaultStorageNodes[storageNodeClassName] = slicer.mrmlScene.GetDefaultNodeByClass(storageNodeClassName)
+            defaultStorageNode = getattr(slicer, storageNodeClassName)()
+            if originalDefaultStorageNodes[storageNodeClassName]:
+                defaultStorageNode.Copy(originalDefaultStorageNodes[storageNodeClassName])
+            defaultStorageNode.SetForceRightHandedIJKCoordinateSystem(False)
+            slicer.mrmlScene.AddDefaultNode(defaultStorageNode)
+        try:
+            leftHandedSequenceNode = slicer.util.loadSequence(sequenceFilePath)
+            self.assertFalse(leftHandedSequenceNode.GetStorageNode().GetForceRightHandedIJKCoordinateSystem())
+            self.assertEqual(leftHandedSequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+            for frameIndex in range(numberOfFrames):
+                self.assertFalse(isRightHanded(leftHandedSequenceNode.GetNthDataNode(frameIndex)))
+            leftHandedItemVolumeNode = leftHandedSequenceNode.GetNthDataNode(testedFrameIndex)
+            leftHandedFrameVolumeNode = slicer.util.loadVolume(frameFilePath)
+            self.assertFalse(isRightHanded(leftHandedFrameVolumeNode))
+            np.testing.assert_array_equal(slicer.util.arrayFromVolume(leftHandedItemVolumeNode), slicer.util.arrayFromVolume(leftHandedFrameVolumeNode))
+            np.testing.assert_allclose(ijkToRasArray(leftHandedItemVolumeNode), ijkToRasArray(leftHandedFrameVolumeNode), atol=1e-3)
+            # Normalization flips the volume along the K axis (first axis of the voxel array)
+            np.testing.assert_array_equal(normalizedVoxels, np.flip(slicer.util.arrayFromVolume(leftHandedItemVolumeNode), axis=0))
+
+            # Save the left-handed volume sequence in NRRD file format
+            self.assertTrue(slicer.util.saveNode(leftHandedSequenceNode, leftHandedSequenceFilePath))
+        finally:
+            # Restore default storage nodes
+            for storageNodeClassName, originalDefaultStorageNode in originalDefaultStorageNodes.items():
+                slicer.mrmlScene.AddDefaultNode(originalDefaultStorageNode if originalDefaultStorageNode else getattr(slicer, storageNodeClassName)())
+
+        # Volume sequence loaded from left-handed NRRD file is normalized, too
+        slicer.mrmlScene.Clear(0)
+        nrrdSequenceNode = slicer.util.loadSequence(leftHandedSequenceFilePath)
+        self.assertEqual(nrrdSequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+        for frameIndex in range(numberOfFrames):
+            self.assertTrue(isRightHanded(nrrdSequenceNode.GetNthDataNode(frameIndex)))
+        nrrdItemVolumeNode = nrrdSequenceNode.GetNthDataNode(testedFrameIndex)
+        np.testing.assert_array_equal(slicer.util.arrayFromVolume(nrrdItemVolumeNode), normalizedVoxels)
+        np.testing.assert_allclose(ijkToRasArray(nrrdItemVolumeNode), normalizedIjkToRas, atol=1e-4)
+
+        # Same image, stored in NRRD file using left-handed IJK coordinate system
+        slicer.mrmlScene.Clear(0)
+        downloadedFilePaths = SampleData.downloadFromURL(
+            fileNames="hfpef_cine_3dt.seq.nrrd",
+            uris=slicer.util.TESTING_DATA_URL + "SHA256/d6be9561fb5cb6a311539d95f6e6baed4e0400fa1700d650c4220bef9ae9f434",
+            checksums="SHA256:d6be9561fb5cb6a311539d95f6e6baed4e0400fa1700d650c4220bef9ae9f434",
+            loadFiles=False)
+        self.assertEqual(len(downloadedFilePaths), 1, "Failed to download hfpef_cine_3dt.seq.nrrd")
+        downloadedNrrdFilePath = downloadedFilePaths[0]
+        downloadedNrrdSequenceNode = slicer.util.loadSequence(downloadedNrrdFilePath)
+        self.assertEqual(downloadedNrrdSequenceNode.GetNumberOfDataNodes(), numberOfFrames)
+        for frameIndex in range(numberOfFrames):
+            self.assertTrue(isRightHanded(downloadedNrrdSequenceNode.GetNthDataNode(frameIndex)))
+        downloadedNrrdItemVolumeNode = downloadedNrrdSequenceNode.GetNthDataNode(testedFrameIndex)
+        np.testing.assert_array_equal(slicer.util.arrayFromVolume(downloadedNrrdItemVolumeNode), normalizedVoxels)
+        # NIfTI file stores image geometry with float precision
+        np.testing.assert_allclose(ijkToRasArray(downloadedNrrdItemVolumeNode), normalizedIjkToRas, atol=1e-3)
+
+        self.delayDisplay("Test passed for loading volume sequence with left-handed IJK coordinate system")
+
+    # ------------------------------------------------------------------------------
+    def section_LoadMultiFrameImagesAsSequence(self):
+        import numpy as np
+        import SimpleITK as sitk
+
+        self.delayDisplay("Test that 4D images, which cannot be loaded as volumes, are loaded as sequences by default")
+        slicer.mrmlScene.Clear(0)
+        ioManager = slicer.app.coreIOManager()
+
+        numberOfFrames = 3
+        voxels = np.arange(numberOfFrames * 4 * 5 * 6, dtype=np.int16).reshape(numberOfFrames, 4, 5, 6)  # frame, K, J, I
+        frames = [sitk.GetImageFromArray(voxels[frameIndex]) for frameIndex in range(numberOfFrames)]
+
+        # 4D NRRD file without "list" axis (all axes are "domain" kind)
+        nrrdFilePath = os.path.join(self.sequencesSelfTestDir, "MultiFrameDomainAxes.nrrd")
+        with open(nrrdFilePath, "wb") as nrrdFile:
+            nrrdFile.write(b"NRRD0004\ntype: short\ndimension: 4\nsizes: 6 5 4 3\nkinds: domain domain domain domain\nendian: little\nencoding: raw\n\n")
+            nrrdFile.write(voxels.astype("<i2").tobytes())
+
+        # 4D NIfTI images (NIfTI files do not store axis kinds)
+        multiFrameFilePaths = [nrrdFilePath]
+        fileExtensions = [".nii", ".nii.gz"]
+        for fileExtension in fileExtensions:
+            filePath = os.path.join(self.sequencesSelfTestDir, "MultiFrame" + fileExtension)
+            sitk.WriteImage(sitk.JoinSeries(frames), filePath)
+            multiFrameFilePaths.append(filePath)
+
+        for filePath in multiFrameFilePaths:
+            self.assertEqual(ioManager.fileType(filePath), "SequenceFile", filePath)
+            sequenceNode = slicer.util.loadSequence(filePath)
+            self.assertIsNotNone(sequenceNode, filePath)
+            self.assertEqual(sequenceNode.GetNumberOfDataNodes(), numberOfFrames, filePath)
+            for frameIndex in range(numberOfFrames):
+                np.testing.assert_array_equal(slicer.util.arrayFromVolume(sequenceNode.GetNthDataNode(frameIndex)), voxels[frameIndex], err_msg=filePath)
+
+        # 3D images are not loaded as sequences by default
+        for fileExtension in fileExtensions:
+            filePath = os.path.join(self.sequencesSelfTestDir, "SingleFrame" + fileExtension)
+            sitk.WriteImage(frames[0], filePath)
+            self.assertNotEqual(ioManager.fileType(filePath), "SequenceFile", filePath)
+
+        self.delayDisplay("Test passed for loading 4D images as sequences")

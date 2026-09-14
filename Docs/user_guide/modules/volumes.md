@@ -21,7 +21,7 @@ Volume nodes have subtypes, based on what is stored in a voxel:
 |----------------------|-----------------------------------|----------------------------------|-------------------------------------|
 | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/volume_scalar.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/volume_label.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/volume_vector.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/volume_dti.png)  |
 
-Volumes module handles a 2D image as a single-slice 3D image. 4D volumes are represented as a sequence of 3D volumes, using Sequences extension.
+Volumes module handles a 2D image as a single-slice 3D image. 4D volumes are represented as a sequence of 3D volumes, using [Sequences](sequences.md) module. 4D image files (for example, 3D+t NIfTI files) are loaded as volume sequences by default, they cannot be loaded as a single volume.
 
 ## Use cases
 

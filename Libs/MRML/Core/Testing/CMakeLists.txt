@@ -227,8 +227,12 @@ simple_test( vtkMRMLVolumeSequenceStorageNodeNrrdTest
   DATA{${INPUT}/Volumes-DomainListColor-NonStandard.seq.nrrd}
   DATA{${INPUT}/Transforms-VectorDomainList.seq.nrrd}
   DATA{${INPUT}/Volumes-ListDomainListColor-Unsupported.seq.nrrd}
+  DATA{${INPUT}/hfpef_cine_3dt.seq.nrrd}
 )
-simple_test( vtkMRMLVolumeSequenceStorageNodeNiftiTest ${TEMP})
+simple_test( vtkMRMLVolumeSequenceStorageNodeNiftiTest
+  ${TEMP}
+  DATA{${INPUT}/hfpef_cine_3dt.nii.gz}
+)
 simple_test( vtkMRMLSequenceNodeAttributesTest ${TEMP})
 simple_test( vtkMRMLTransformSequenceStorageNodeNiftiTest ${TEMP})
 simple_test( vtkMRMLTransformSequenceStorageNodeNrrdTest ${TEMP})

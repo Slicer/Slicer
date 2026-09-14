@@ -103,13 +103,22 @@ QStringList qSlicerSequencesReader::extensions() const
 double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
-
-  // NIfTI files: inspect the header to check if the image contains multiple frames along the 4th axis.
-  // If it looks like a sequence then use confidence of 0.58 (same as for NRRD sequences, see explanation below),
-  // which is higher than the volume reader's confidence (0.54 for .nii, 0.57 for .nii.gz).
-  if (confidence > 0 && (fileName.endsWith(".nii", Qt::CaseInsensitive) || fileName.endsWith(".nii.gz", Qt::CaseInsensitive)))
+  if (confidence <= 0)
   {
-    return vtkITKImageSequenceReader::IsNiftiImageSequenceFile(fileName.toUtf8().constData()) ? 0.58 : 0.4;
+    return confidence;
+  }
+
+  // NIfTI files store frames along the 4th image axis and do not have a sequence-specific file extension:
+  // inspect the header to check if the image contains multiple frames.
+  // Such images cannot be loaded as volumes or segmentations, therefore they are loaded as sequences by default.
+  // If it looks like a sequence then use confidence of 0.58 (same as for NRRD sequences, see explanation below),
+  // which is higher than the confidence of volume and segmentation readers for NIfTI files (at most 0.57).
+  QString upperCaseFileName = fileName.toUpper();
+  const bool isNrrdFile = upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR");
+  const bool isSceneFile = upperCaseFileName.endsWith(".MRB");
+  if (!isNrrdFile && !isSceneFile)
+  {
+    return vtkITKImageSequenceReader::IsImageSequenceFile(fileName.toUtf8().constData()) ? 0.58 : 0.4;
   }
 
   // Confidence for .nrrd and .nhdr file is 0.55 (5 characters in the file extension matched),
@@ -121,8 +130,7 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
     // Not a composite file extension, inspect the content
     // Unzipping the mrb file to inspect if it looks like a sequence would be too time-consuming,
     // therefore we only check NRRD files for now.
-    QString upperCaseFileName = fileName.toUpper();
-    if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
+    if (isNrrdFile)
     {
       QFile file(fileName);
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -156,6 +164,12 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) co
               {
                 looksLikeSequence = true;
               }
+            }
+            if (!looksLikeSequence)
+            {
+              // 4D image without list axis (for example, all axes are "domain" kind) cannot be loaded
+              // as a volume or segmentation, but it can be loaded as a sequence.
+              looksLikeSequence = vtkITKImageSequenceReader::IsImageSequenceFile(fileName.toUtf8().constData());
             }
           }
           else if (ok && dimension == 5)

@@ -110,12 +110,13 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
     - Limited support for writing image volumes in DICOM format is provided by the Create DICOM Series module.
     - Support of writing DICOM Segmentation Objects is provided by the Reporting extension
 - [**NRRD**](https://www.itk.org/Wiki/MetaIO/Documentation) (.nrrd, .nhdr): General-purpose 2D/3D/4D file format. Coordinate system: as defined in the file header (usually LPS).
-  - **NRRD sequence** (.seq.nrrd): 4D volume
+  - **NRRD sequence** (.seq.nrrd, .nrrd, .nhdr): 4D volume, loaded as a volume sequence. Frames are stored along the axis of `list` kind. A 4D image without `list` axis (for example, all axes are `domain` kind) is also loaded as a volume sequence, with frames along the last axis. See [Sequences module documentation](modules/sequences.md#load-and-save-volume-sequences).
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - [**MetaImage**](https://www.itk.org/Wiki/MetaIO/Documentation) (.mha, .mhd): Coordinate system: LPS (AnatomicalOrientation in the file header is ignored).
 - [**VTK**](https://www.vtk.org/VTK/img/file-formats.pdf) (.vtk): Coordinate system: LPS. Important limitation: image axis directions cannot be stored in this file format.
 - [**Analyze**](https://web.archive.org/web/20220312005651/www.grahamwideman.com/gw/brain/analyze/formatdoc.htm) (.hdr, .img, .img.gz): Image orientation is specified ambiguously in this format, therefore its use is strongle discouraged. For brain imaging, use Nifti format instead.
-- [**Nifti**](https://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead).
+- [**Nifti**](https://nifti.nimh.nih.gov/nifti-1/) (.nii, .nii.gz): File format for brain MRI. Not well suited as a general-purpose 3D image file format (use NRRD format instead). Only NIfTI-1 files are supported (NIfTI-2 files cannot be loaded).
+  - **NIfTI sequence** (.nii, .nii.gz): 4D image (frames stored along the 4th image axis), loaded as a volume sequence. Sequence index is set from the unit, spacing, and offset of the 4th axis. Volume sequences can be saved in this format, but some sequence properties cannot be stored (use .seq.nrrd format to preserve all properties). See [Sequences module documentation](modules/sequences.md#load-and-save-volume-sequences).
   - To load an image file as segmentation (also known as label image, mask, region of interest) see [Segmentations module documentation](modules/segmentations.md#import-an-existing-segmentation-from-volume-file)
 - **Tagged image file format** (.tif, .tiff): can read/write single/series of frames
 - **PNG** (.png): can read single/series of frames, can write a single frame
@@ -207,6 +208,9 @@ When reading a file, Slicer searches the header text for the `SPACE=RAS` or `SPA
   - NRRD (.nrrd, .nhdr): Coordinate system: LPS. Metadata: `dimension: 4`, `sizes: 3 I J K`, `space directions: none (ix, iy, iz) (jx, jy, jz) (kx, ky, kz)`, `kinds: vector domain domain domain`
   - MetaImage (.mha, .mhd): Coordinate system: LPS. Metadata: `NDims = 3`, `DimSize = I J K`, `ElementNumberOfChannels = 3`
   - NIFTI (.nii, .nii.gz). Coordinate system: RAS. Metadata: Number of dimensions: 5. Dimensions: `[I, J, K, 1, 3]`. Intent code: `NIFTI_INTENT_DISPVECT (1006)`.
+- **Displacement field sequence**: For storing a sequence of grid transforms as a 4D vector image.
+  - NRRD sequence (.seq.nrrd, .nrrd, .nhdr): Coordinate system: LPS.
+  - NIFTI (.nii, .nii.gz): Coordinate system: RAS. Metadata: Number of dimensions: 5. Dimensions: `[I, J, K, N, 3]` (N is the number of frames). Intent code: `NIFTI_INTENT_DISPVECT (1006)`. Only transforms that are defined in "from parent" direction (resampling transforms) can be saved in this format.
 - [SlicerRT extension](https://www.slicerrt.org/)
   - **Pinnacle DVF** (.dvf)
 

@@ -63,6 +63,44 @@ vtkMRMLVolumeSequenceStorageNode::vtkMRMLVolumeSequenceStorageNode()
 vtkMRMLVolumeSequenceStorageNode::~vtkMRMLVolumeSequenceStorageNode() = default;
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeSequenceStorageNode::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os, indent);
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintBooleanMacro(ForceRightHandedIJKCoordinateSystem);
+  vtkMRMLPrintEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeSequenceStorageNode::ReadXMLAttributes(const char** atts)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::ReadXMLAttributes(atts);
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(forceRightHandedIJKCoordinateSystem, ForceRightHandedIJKCoordinateSystem);
+  vtkMRMLReadXMLEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeSequenceStorageNode::WriteXML(ostream& of, int nIndent)
+{
+  Superclass::WriteXML(of, nIndent);
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(forceRightHandedIJKCoordinateSystem, ForceRightHandedIJKCoordinateSystem);
+  vtkMRMLWriteXMLEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeSequenceStorageNode::Copy(vtkMRMLNode* anode)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::Copy(anode);
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(ForceRightHandedIJKCoordinateSystem);
+  vtkMRMLCopyEndMacro();
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLVolumeSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLSequenceNode");
@@ -214,6 +252,13 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
 
     frameVolume->SetVoxelVectorType(vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType()));
+
+    // If the volume uses left-handed IJK coordinate system, convert it to right-handed (the same way as for scalar volumes)
+    // to have support for every algorithm in 3D Slicer
+    if (this->ForceRightHandedIJKCoordinateSystem)
+    {
+      frameVolume->SetIJKCoordinateSystemToRightHanded();
+    }
 
     // Apply pre-parsed node attributes for this frame
     for (size_t attributeIndex = 0; attributeIndex < attributeNames.size(); ++attributeIndex)

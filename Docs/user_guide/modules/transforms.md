@@ -75,6 +75,8 @@ Drag-and-drop the transform file to the application window and make sure "Transf
 
 MetaImage (mha), NIFTI (nii) vector volumes can be loaded as displacement field (grid) transform. The volume and its vectors are expected to be stored in LPS coordinate system (during reading they are converted to RAS to match coordinate system conventions in Slicer).
 
+Sequences of displacement field (grid) transforms can be loaded from and saved to NRRD sequence (.seq.nrrd) and NIfTI (.nii, .nii.gz) files. See [supported transform file formats](../data_loading_and_saving.md#transforms) for details.
+
 A quick way to import a linear transform from another software or from text files is to copy the homogeneous transformation matrix values to the clipboard, and click "Paste" button in Edit section in Transforms module.
 
 ### Visualize transform
