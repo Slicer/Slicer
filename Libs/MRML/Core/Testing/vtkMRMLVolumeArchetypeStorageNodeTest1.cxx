@@ -232,6 +232,54 @@ int TestFlipsLeftHandedVolumes(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+//---------------------------------------------------------------------------
+int TestNiftiNonUnsignedCharColorVolume(const std::string& tempDir)
+{
+  // NIfTI file format can only store color images with unsigned char components.
+  // Other color images are saved as vector images, without the color voxel vector type.
+  std::cout << "TestNiftiNonUnsignedCharColorVolume" << std::endl;
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLVectorVolumeNode* vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(vectorVolumeNode);
+  vtkNew<vtkImageData> imageData;
+  imageData->SetDimensions(10, 20, 30);
+  imageData->AllocateScalars(VTK_FLOAT, 3);
+  vtkDataArray* scalars = imageData->GetPointData()->GetScalars();
+  for (int component = 0; component < 3; ++component)
+  {
+    scalars->FillComponent(component, 12.5 + component);
+  }
+  vectorVolumeNode->SetAndObserveImageData(imageData);
+  vectorVolumeNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeColorRGB);
+
+  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetSingleFile(true);
+  vectorVolumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  storageNode->SetFileName(tempFilename(tempDir, "float_rgb", "nii", true).c_str());
+
+  // Expect warning about color voxel vector type not saved
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), true);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
+  vtkMRMLVectorVolumeNode* readVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(readVolumeNode);
+  CHECK_BOOL(storageNode->ReadData(readVolumeNode), true);
+  CHECK_INT(readVolumeNode->GetVoxelVectorType(), vtkMRMLVolumeNode::VoxelVectorTypeUndefined);
+  vtkImageData* readImageData = readVolumeNode->GetImageData();
+  CHECK_NOT_NULL(readImageData);
+  CHECK_INT(readImageData->GetScalarType(), VTK_FLOAT);
+  CHECK_INT(readImageData->GetNumberOfScalarComponents(), 3);
+  for (int component = 0; component < 3; ++component)
+  {
+    CHECK_DOUBLE_TOLERANCE(readImageData->GetScalarComponentAsDouble(1, 2, 3, component), 12.5 + component, 1e-6);
+  }
+
+  return EXIT_SUCCESS;
+}
+
 int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
@@ -248,6 +296,7 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nrrd", true, true, true, true));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha", true, false, false, false));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii", true, false, true, true));
+  CHECK_EXIT_SUCCESS(TestNiftiNonUnsignedCharColorVolume(tempDir));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png", false, false, true, true));
 
   // Expect warning about TIFF file format not recommended

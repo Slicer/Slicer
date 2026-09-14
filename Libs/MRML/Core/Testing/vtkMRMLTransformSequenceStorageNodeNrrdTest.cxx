@@ -33,7 +33,7 @@ namespace
 {
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
-  std::string filename = tempDir + "/vtkMRMLTransformSequenceStorageNodeTest1_" + suffix + "." + fileExtension;
+  std::string filename = tempDir + "/vtkMRMLTransformSequenceStorageNodeNrrdTest_" + suffix + "." + fileExtension;
   // remove file if exists
   if (remove && vtksys::SystemTools::FileExists(filename.c_str(), true))
   {
@@ -206,7 +206,7 @@ int TestGridTransformSequenceStorage(const std::string tempDir, bool useTransfor
   return EXIT_SUCCESS;
 }
 
-int vtkMRMLTransformSequenceStorageNodeTest1(int argc, char* argv[])
+int vtkMRMLTransformSequenceStorageNodeNrrdTest(int argc, char* argv[])
 {
   if (argc != 2)
   {

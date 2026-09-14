@@ -41,6 +41,9 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
+// vtkITK includes
+#include "vtkITKImageSequenceReader.h"
+
 // VTK includes
 #include <vtkSmartPointer.h>
 
@@ -92,13 +95,22 @@ qSlicerIO::IOFileType qSlicerSequencesReader::fileType() const
 QStringList qSlicerSequencesReader::extensions() const
 {
   return QStringList() //
-         << tr("Sequence") + " (*.seq.mrb *.mrb)" << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)" << tr("Volume Sequence") + " (*.nrrd *.nhdr)";
+         << tr("Sequence") + " (*.seq.mrb *.mrb)" << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)" << tr("Volume Sequence") + " (*.nrrd *.nhdr)"
+         << tr("Volume Sequence") + " (*.nii *.nii.gz)";
 }
 
 //----------------------------------------------------------------------------
 double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
+
+  // NIfTI files: inspect the header to check if the image contains multiple frames along the 4th axis.
+  // If it looks like a sequence then use confidence of 0.58 (same as for NRRD sequences, see explanation below),
+  // which is higher than the volume reader's confidence (0.54 for .nii, 0.57 for .nii.gz).
+  if (confidence > 0 && (fileName.endsWith(".nii", Qt::CaseInsensitive) || fileName.endsWith(".nii.gz", Qt::CaseInsensitive)))
+  {
+    return vtkITKImageSequenceReader::IsNiftiImageSequenceFile(fileName.toUtf8().constData()) ? 0.58 : 0.4;
+  }
 
   // Confidence for .nrrd and .nhdr file is 0.55 (5 characters in the file extension matched),
   // for composite file extensions (.seq.nhdr) it would be 0.59.

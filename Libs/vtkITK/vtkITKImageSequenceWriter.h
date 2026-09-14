@@ -70,6 +70,16 @@ public:
   vtkSetStringMacro(IntentCode);
   vtkGetStringMacro(IntentCode);
 
+  /// Spacing along the sequence axis (4th image axis) that was used in the most recent Write().
+  /// For NIfTI file format it is computed from the index values and unit of axis 3 (stored in pixdim[4]),
+  /// for other file formats it is 1.0.
+  vtkGetMacro(SequenceAxisSpacing, double);
+
+  /// Origin of the sequence axis (4th image axis) that was used in the most recent Write().
+  /// For NIfTI file format it is computed from the index values and unit of axis 3 (stored in toffset),
+  /// for other file formats it is 0.0.
+  vtkGetMacro(SequenceAxisOrigin, double);
+
   /// Method to set an attribute that will be passed into the NRRD file on write
   void SetAttribute(const std::string& name, const std::string& value);
   /// Get the attributes map
@@ -94,6 +104,13 @@ protected:
   /// port so subclasses can specify what they can handle.
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
+  /// Returns true if the image is written in NIfTI file format.
+  bool IsNiftiFile();
+
+  /// Compute sequence axis spacing and origin from the index values and unit of axis 3
+  /// and report sequence properties that cannot be stored in NIfTI file format.
+  void UpdateNiftiSequenceAxis(int numberOfFrames);
+
 protected:
   char* FileName{ nullptr };
   vtkMatrix4x4* RasToIJKMatrix{ nullptr };
@@ -101,6 +118,8 @@ protected:
   char* ImageIOClassName{ nullptr };
   int VoxelVectorType{ vtkITKImageWriter::VoxelVectorTypeUndefined };
   char* IntentCode{ nullptr };
+  double SequenceAxisSpacing{ 1.0 };
+  double SequenceAxisOrigin{ 0.0 };
 
   AttributeMapType* Attributes;
   AxisInfoMapType* AxisLabels;

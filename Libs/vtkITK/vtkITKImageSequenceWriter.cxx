@@ -44,7 +44,10 @@
 #include <itkVTKImageImport.h>
 
 // STD includes
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #define NRRD_DIM_MAX 16
 
@@ -56,6 +59,68 @@ class AxisInfoMapType : public std::map<unsigned int, std::string>
 };
 
 vtkStandardNewMacro(vtkITKImageSequenceWriter);
+
+namespace
+{
+//----------------------------------------------------------------------------
+/// Get scale factor that converts a value in the specified unit to seconds.
+/// Returns 0 if the unit is not a recognized time unit.
+double GetTimeUnitToSecondsScale(const std::string& unit)
+{
+  if (unit == "s")
+  {
+    return 1.0;
+  }
+  if (unit == "ms")
+  {
+    return 1e-3;
+  }
+  if (unit == static_cast<const char*>(u8"\u00b5s") || unit == static_cast<const char*>(u8"\u03bcs") || unit == "us")
+  {
+    return 1e-6;
+  }
+  return 0.0;
+}
+
+//----------------------------------------------------------------------------
+/// Get offset and spacing from a space-separated list of index values.
+/// Returns false if the number of index values does not match the number of frames,
+/// or index values are not numbers, or not evenly spaced in increasing order.
+bool GetEvenlySpacedIndexValues(const std::string& indexValuesStr, int numberOfFrames, double& offset, double& spacing)
+{
+  std::vector<double> values;
+  std::istringstream indexValueList(indexValuesStr);
+  std::string valueStr;
+  while (indexValueList >> valueStr)
+  {
+    char* end = nullptr;
+    const double value = strtod(valueStr.c_str(), &end);
+    if (end == nullptr || *end != '\0')
+    {
+      return false;
+    }
+    values.push_back(value);
+  }
+  if (numberOfFrames < 1 || static_cast<int>(values.size()) != numberOfFrames)
+  {
+    return false;
+  }
+  offset = values[0];
+  spacing = (numberOfFrames > 1 ? values[1] - values[0] : 1.0);
+  if (spacing <= 0.0)
+  {
+    return false;
+  }
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    if (std::abs(values[frameIndex] - (offset + frameIndex * spacing)) > 1e-3 * spacing)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+} // namespace
 
 // helper function
 template <class TPixelType, int Dimension>
@@ -97,6 +162,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self,
     }
     outSpacing[i] = sqrt(outSpacing[i]);
   }
+  outSpacing[Dimension - 1] = self->GetSequenceAxisSpacing();
 
   // ITK image direction are in LPS space
   // convert from ijkToRas to ijkToLps
@@ -111,6 +177,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self,
   typename OutImageType::DirectionType outDirection;
   typename OutImageType::PointType outOrigin;
   outOrigin.Fill(0.0);
+  outOrigin[Dimension - 1] = self->GetSequenceAxisOrigin();
   outDirection.SetIdentity();
   for (int i = 0; i < Dimension - 1; i++)
   {
@@ -374,9 +441,99 @@ void vtkITKImageSequenceWriter::SetAxisUnit(unsigned int axis, const char* unit)
 }
 
 //------------------------------------------------------------------------------
+bool vtkITKImageSequenceWriter::IsNiftiFile()
+{
+  return vtkITKImageWriter::IsNiftiFile(this->FileName, this->ImageIOClassName);
+}
+
+//------------------------------------------------------------------------------
+void vtkITKImageSequenceWriter::UpdateNiftiSequenceAxis(int numberOfFrames)
+{
+  // NIfTI file format can only store evenly spaced time values along the 4th axis (ITK NIfTI writer always sets
+  // the time unit to seconds) and no custom metadata. Compute spacing and origin of the sequence axis from
+  // the index values and report sequence properties that cannot be stored.
+  const unsigned int sequenceAxisIndex = 3;
+  std::vector<std::string> lostProperties;
+
+  AttributeMapType::iterator indexValuesIt = this->Attributes->find("axis 3 index values");
+  if (indexValuesIt != this->Attributes->end())
+  {
+    const std::string indexName = (this->AxisLabels->count(sequenceAxisIndex) ? (*this->AxisLabels)[sequenceAxisIndex] : std::string());
+    const std::string indexUnit = (this->AxisUnits->count(sequenceAxisIndex) ? (*this->AxisUnits)[sequenceAxisIndex] : std::string());
+    double indexOffset = 0.0;
+    double indexSpacing = 1.0;
+    if (GetEvenlySpacedIndexValues(indexValuesIt->second, numberOfFrames, indexOffset, indexSpacing))
+    {
+      const double timeUnitToSecondsScale = GetTimeUnitToSecondsScale(indexUnit);
+      if (timeUnitToSecondsScale > 0.0)
+      {
+        this->SequenceAxisOrigin = indexOffset * timeUnitToSecondsScale;
+        this->SequenceAxisSpacing = indexSpacing * timeUnitToSecondsScale;
+      }
+      else
+      {
+        this->SequenceAxisOrigin = indexOffset;
+        this->SequenceAxisSpacing = indexSpacing;
+        std::ostringstream lostProperty;
+        if (indexUnit.empty())
+        {
+          lostProperty << "Index name ('" << indexName << "') is not saved, index values will be loaded as time in seconds.";
+        }
+        else
+        {
+          lostProperty << "Index name and unit ('" << indexName << "' [" << indexUnit << "]) are not saved, index values will be loaded as time in seconds.";
+        }
+        lostProperties.push_back(lostProperty.str());
+      }
+    }
+    else
+    {
+      lostProperties.emplace_back("Index values are not evenly spaced numbers, therefore they are not saved. Index values will be loaded as 0, 1, 2, ... seconds.");
+    }
+  }
+
+  bool attributesFound = false;
+  std::string dataNodeClassName;
+  for (const auto& attribute : *this->Attributes)
+  {
+    if (attribute.first == "DataNodeClassName")
+    {
+      // Data node class is not stored, but it is determined from the image when reading the file
+      dataNodeClassName = attribute.second;
+    }
+    else if (attribute.first != "axis 3 index type" && attribute.first != "axis 3 index values")
+    {
+      // Sequence node attribute or data node attribute (axis 3 item NNNN attributename)
+      attributesFound = true;
+    }
+  }
+  if (attributesFound)
+  {
+    lostProperties.emplace_back("Sequence and data node attributes are not saved.");
+  }
+  if (!dataNodeClassName.empty() && dataNodeClassName != "vtkMRMLScalarVolumeNode" && dataNodeClassName != "vtkMRMLVectorVolumeNode")
+  {
+    lostProperties.push_back("Data node type (" + dataNodeClassName + ") is not saved, data nodes will be loaded as scalar or vector volumes.");
+  }
+
+  if (!lostProperties.empty())
+  {
+    std::string message = "NIfTI file format cannot store all sequence properties. Use .seq.nrrd file format to save all properties.";
+    for (const std::string& lostProperty : lostProperties)
+    {
+      message += "\n" + lostProperty;
+    }
+    vtkWarningMacro(<< message);
+  }
+}
+
+//------------------------------------------------------------------------------
 // Writes all the data from the input.
 void vtkITKImageSequenceWriter::Write()
 {
+  this->SequenceAxisSpacing = 1.0;
+  this->SequenceAxisOrigin = 0.0;
+
   if (!this->FileName)
   {
     vtkErrorMacro(<< "vtkITKImageSequenceWriter: Please specify a FileName");
@@ -443,12 +600,38 @@ void vtkITKImageSequenceWriter::Write()
       6);
   }
 
+  if (this->IsNiftiFile())
+  {
+    this->UpdateNiftiSequenceAxis(inputImageCollection->GetNumberOfItems());
+  }
+
   int voxelVectorType = this->GetVoxelVectorType();
   if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatial || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
   {
     if (inputNumberOfScalarComponents != 3)
     {
       vtkWarningMacro(<< "vtkITKImageWriter: VoxelVectorType is set to Spatial or SpatialCovariant, but the input image does not have 3 scalar components.");
+      voxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
+    }
+  }
+  if (this->IsNiftiFile())
+  {
+    if ((voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA) //
+        && inputDataType != VTK_UNSIGNED_CHAR)
+    {
+      // NIfTI file format can only store color images with unsigned char components (RGB24 and RGBA32 data types)
+      vtkWarningMacro(<< "NIfTI file format can only store color images with unsigned char components."
+                      << " The image is saved as a vector image, the color voxel type is not saved.");
+      voxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
+    }
+    const bool isDisplacementField = (this->IntentCode && strcmp(this->IntentCode, "1006") == 0);
+    if ((voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatial && !isDisplacementField) //
+        || voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
+    {
+      // NIfTI file format can only store spatial vectors as displacement vectors (intent code 1006).
+      // Other spatial vectors are saved without coordinate system conversion (in RAS).
+      vtkWarningMacro(<< "NIfTI file format can only store spatial vectors as displacement vectors."
+                      << " The image is saved as a vector image, the spatial voxel type is not saved.");
       voxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
     }
   }
@@ -552,7 +735,7 @@ void vtkITKImageSequenceWriter::Write()
     }
     else if (inputNumberOfScalarComponents == 3)
     {
-      if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB)
+      if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB)
       {
         // RGB image
         switch (inputDataType)
@@ -620,7 +803,7 @@ void vtkITKImageSequenceWriter::Write()
           default: vtkErrorMacro(<< "Execute: Unknown output ScalarType " << inputDataType); return;
         }
       }
-      else if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
+      else if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
       {
         // Covariant spatial vector (such as gradient field)
         switch (inputDataType)
@@ -759,7 +942,7 @@ void vtkITKImageSequenceWriter::Write()
     }
     else if (inputNumberOfScalarComponents == 4)
     {
-      if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA)
+      if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA)
       {
         // RGBA image
         switch (inputDataType)

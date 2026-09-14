@@ -29,7 +29,7 @@ namespace
 {
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
-  std::string filename = tempDir + "/vtkMRMLVolumeSequenceStorageNodeTest1_" + suffix + "." + fileExtension;
+  std::string filename = tempDir + "/vtkMRMLVolumeSequenceStorageNodeNrrdTest_" + suffix + "." + fileExtension;
   // remove file if exists
   if (remove && vtksys::SystemTools::FileExists(filename.c_str(), true))
   {
@@ -125,7 +125,7 @@ int TestVolumeSequenceStorage(const std::string& inputFileName,
   return EXIT_SUCCESS;
 }
 
-int vtkMRMLVolumeSequenceStorageNodeTest1(int argc, char* argv[])
+int vtkMRMLVolumeSequenceStorageNodeNrrdTest(int argc, char* argv[])
 {
   if (argc != 10)
   {
