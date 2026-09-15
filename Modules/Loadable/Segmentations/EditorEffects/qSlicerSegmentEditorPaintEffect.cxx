@@ -98,6 +98,13 @@
 #include "vtkMRMLSliceLayerLogic.h"
 #include "vtkOrientedImageDataResample.h"
 
+namespace
+{
+/// Range offered by the brush diameter slider when the diameter is relative to the screen size.
+const double MINIMUM_RELATIVE_DIAMETER = 1.0;
+const double MAXIMUM_RELATIVE_DIAMETER = 25.0;
+} // namespace
+
 //-----------------------------------------------------------------------------
 /// Visualization objects and pipeline for each slice view for the paint brush
 class BrushPipeline
@@ -568,13 +575,18 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(vtkOrientedImageData* 
 void qSlicerSegmentEditorPaintEffectPrivate::scaleDiameter(double scaleFactor)
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
+  // The scaled diameter is clamped to the range the diameter slider offers. Without this, scaling
+  // (Shift + mouse wheel) would keep growing or shrinking the brush past the limits that the
+  // slider and its spin box enforce, and the brush would no longer match the displayed value.
   if (q->integerParameter("BrushDiameterIsRelative"))
   {
-    q->setCommonParameter("BrushRelativeDiameter", q->doubleParameter("BrushRelativeDiameter") * scaleFactor);
+    const double diameter = q->doubleParameter("BrushRelativeDiameter") * scaleFactor;
+    q->setCommonParameter("BrushRelativeDiameter", qBound(MINIMUM_RELATIVE_DIAMETER, diameter, MAXIMUM_RELATIVE_DIAMETER));
   }
   else
   {
-    q->setCommonParameter("BrushAbsoluteDiameter", q->doubleParameter("BrushAbsoluteDiameter") * scaleFactor);
+    const double diameter = q->doubleParameter("BrushAbsoluteDiameter") * scaleFactor;
+    q->setCommonParameter("BrushAbsoluteDiameter", qBound(q->doubleParameter("BrushMinimumAbsoluteDiameter"), diameter, q->doubleParameter("BrushMaximumAbsoluteDiameter")));
   }
 }
 
@@ -1511,7 +1523,7 @@ void qSlicerSegmentEditorPaintEffect::updateGUIFromMRML()
   d->BrushDiameterSliderWidget->blockSignals(true);
   if (brushDiameterIsRelative)
   {
-    d->BrushDiameterSliderWidget->setRange(1, 25);
+    d->BrushDiameterSliderWidget->setRange(MINIMUM_RELATIVE_DIAMETER, MAXIMUM_RELATIVE_DIAMETER);
     d->BrushDiameterSliderWidget->setValue(this->doubleParameter("BrushRelativeDiameter"));
     d->BrushDiameterSliderWidget->setSingleStep(1);
   }
