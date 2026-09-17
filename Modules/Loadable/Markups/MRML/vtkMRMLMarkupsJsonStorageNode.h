@@ -25,12 +25,12 @@
 
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
 class vtkMRMLJsonElement;
 class vtkMRMLJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
-class vtkMRMLMarkupsNode;
 
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonStorageNode : public vtkMRMLMarkupsStorageNode
 {
@@ -63,6 +63,47 @@ public:
   /// The types are ordered by the index in which they appear in the Json file.
   void GetMarkupsTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupsTypes);
 
+  /// Serialize this node's data into a JSON-formatted string representation.
+  /// \param refNode The node whose data will be serialized
+  /// \return A string containing the node data in JSON format
+  virtual std::string WriteDataToJSONString(vtkMRMLNode* refNode) override;
+
+  /// Parse a JSON-formatted string and populate this node's data from it.
+  ///
+  /// Accepts two JSON formats, selected automatically by the presence of either
+  /// \c "controlPoints" or \c "controlPointsUpdate" in the markup object:
+  ///
+  /// **Full replace** (produced by WriteDataToJSONString): contains \c "controlPoints" array.
+  /// All existing control points are removed and replaced.
+  ///
+  /// **Delta update**: contains \c "controlPointsUpdate" object with any combination of:
+  /// - \c "add"    – array of full control-point objects to append.
+  /// - \c "update" – array of full control-point objects (must include \c "id") whose
+  ///                 matching existing point is updated in-place.
+  /// - \c "remove" – array of ID strings; matching points are deleted.
+  ///
+  /// Example delta payload:
+  /// \code{.json}
+  /// {
+  ///   "MarkupsFiducial": { "markups": [{
+  ///     "type": "Fiducial",
+  ///     "coordinateSystem": "LPS",
+  ///     "controlPointsUpdate": {
+  ///       "add":    [{ "id": "new-1", "label": "P1", "position": [1,2,3] }],
+  ///       "update": [{ "id": "cp-42", "label": "moved", "position": [4,5,6] }],
+  ///       "remove": ["cp-id-1", "cp-id-2"]
+  ///     }
+  ///   }]}
+  /// }
+  /// \endcode
+  ///
+  /// \c "coordinateSystem" defaults to LPS when absent.
+  ///
+  /// \param refNode The node whose data will be populated from the JSON
+  /// \param json The JSON-formatted string containing the node data
+  /// \return True on successful parse and data update, false otherwise
+  virtual bool ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json) override;
+
 protected:
   vtkMRMLMarkupsJsonStorageNode();
   ~vtkMRMLMarkupsJsonStorageNode() override;
@@ -91,6 +132,8 @@ protected:
   virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLJsonElement* markupObject);
 
   virtual bool ReadControlPoints(vtkMRMLJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadDeltaControlPoints(vtkMRMLJsonElement* deltaObject, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadControlPointFromJsonItem(vtkMRMLJsonElement* cpItem, int coordinateSystem, vtkMRMLMarkupsNode::ControlPoint* cp);
   virtual bool ReadMeasurements(vtkMRMLJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
 
   virtual bool WriteMarkup(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);

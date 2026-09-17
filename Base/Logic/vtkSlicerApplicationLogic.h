@@ -45,6 +45,8 @@ class ReadDataQueue;
 class ReadDataRequest;
 class WriteDataQueue;
 class WriteDataRequest;
+class ProcessedTaskQueue;
+class DataBackgroundRequestFile;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkMRMLApplicationLogic
 {
@@ -78,7 +80,8 @@ public:
     /// has been processed.
     /// The UID of the request is passed as callData.
     /// \todo Add support for "modified" request.
-    RequestProcessedEvent
+    RequestProcessedEvent,
+    RequestProcessedBackgroundEvent
   };
 
   /// Schedule a task to run in the processing thread. Returns true if
@@ -105,7 +108,7 @@ public:
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestReadFile(const char* refNode, const char* filename, int displayData = false, int deleteFile = false);
+  vtkMTimeType RequestReadFile(const char* refNode, const char* filename, int displayData = false, int deleteFile = false, bool backgroundProcess = false);
 
   /// Request setting of parent transform.
   /// The request will executed on the main thread.
@@ -141,7 +144,7 @@ public:
   /// the request failed to be registered.  When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadData(), RequestReadScene()
-  vtkMTimeType RequestWriteData(const char* refNode, const char* filename);
+  vtkMTimeType RequestWriteData(const char* refNode, const char* filename, bool backgroundProcess = false);
 
   /// Request that a scene be read from a file. Mappings of node IDs in
   /// the file (sourceIDs) to node IDs in the main scene
@@ -173,6 +176,9 @@ public:
 
   /// Process a request to write data from a referenced node.
   void ProcessWriteData();
+
+  /// Update main thread from read and write processes run in the background thread.
+  void ProcessBackgroundQueue();
 
   /// These routings act as place holders so that test scripts can
   /// turn on and off tracing.  These are just hooks
@@ -275,6 +281,10 @@ protected:
   /// specifying background threads priority (default: 20).
   virtual void SetCurrentThreadPriorityToBackground();
 
+  /// Execute a data background request
+  void ExecuteDataBackgroundRequest(void* clientData);
+  void ProcessProcessedRequest(DataBackgroundRequestFile* request);
+
 private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);
@@ -299,6 +309,9 @@ private:
   ModifiedQueue* InternalModifiedQueue;
   ReadDataQueue* InternalReadDataQueue;
   WriteDataQueue* InternalWriteDataQueue;
+  ProcessedTaskQueue* InternalProcessedBackgroundQueue;
+
+  std::mutex processedBackgroundQueueMutex;
 
   vtkPersonInformation* UserInformation;
 
