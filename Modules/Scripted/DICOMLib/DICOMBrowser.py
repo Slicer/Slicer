@@ -286,6 +286,16 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.dicomBrowser.dicomTableManager().connect("seriesSelectionChanged(QStringList)", self.onSeriesSelected)
 
         #
+        # Database content removal
+        #
+        # A browser may be constructed without a database, in which case there is nothing to track.
+        database = self.dicomBrowser.database()
+        if database is not None:
+            database.connect("patientRemoved(QString,QString)", self.onDatabaseContentRemoved)
+            database.connect("studyRemoved(QString)", self.onDatabaseContentRemoved)
+            database.connect("seriesRemoved(QString)", self.onDatabaseContentRemoved)
+
+        #
         # Loadable table widget (advanced)
         # DICOM Plugins selection widget is moved to module panel
         #
@@ -441,6 +451,16 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.loadableTable.setLoadables([])
         self.fileLists = self.getFileListsForRole(seriesUIDList, "SeriesUIDList")
         self.updateButtonStates()
+
+    def onDatabaseContentRemoved(self, *unused):
+        """Discard loadables collected before the data was removed from the database.
+
+        Removing a patient/study/series does not change the series selection, so without this the
+        file lists collected while the data was still selected stay cached, and the Load button
+        (which keeps its enabled state for the same reason) would still load them.
+        """
+        self.loadablesByPlugin = {}
+        self.onSeriesSelected([])
 
     def getFileListsForRole(self, uidArgument, role):
         fileLists = []
