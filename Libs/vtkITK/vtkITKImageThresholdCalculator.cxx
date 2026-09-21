@@ -129,17 +129,10 @@ void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
 bool vtkITKImageThresholdCalculator::Update()
 {
   return this->UpdateImpl();
 }
-#else
-void vtkITKImageThresholdCalculator::Update()
-{
-  this->UpdateImpl();
-}
-#endif
 
 //----------------------------------------------------------------------------
 bool vtkITKImageThresholdCalculator::UpdateImpl()
