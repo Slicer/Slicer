@@ -152,11 +152,7 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     return false;
   }
 
-#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
   const double tolerance = 1.0e-3; // vtkLocator::Tolerance default; GetTolerance() removed in VTK 9.7
-#else
-  double tolerance = surfaceObbTree->GetTolerance();
-#endif
 
   double originalPoint[3] = { 0.0, 0.0, 0.0 };
   double rayDirection[3] = { 0.0, 0.0, 0.0 };

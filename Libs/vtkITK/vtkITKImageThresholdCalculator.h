@@ -80,11 +80,7 @@ public:
   /// to avoid hiding Update override.
   using vtkAlgorithm::Update;
   /// The main interface which triggers the writer to start.
-#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 7, 0)
   bool Update() override;
-#else
-  void Update() override;
-#endif
 
 protected:
   vtkITKImageThresholdCalculator();
