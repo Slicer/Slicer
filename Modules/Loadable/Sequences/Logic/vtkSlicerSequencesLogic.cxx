@@ -266,14 +266,17 @@ void vtkSlicerSequencesLogic::UpdateAllProxyNodes()
     double elapsedTimeSec = updateStartTimeSec - this->LastSequenceBrowserUpdateTimeSec[browserNode];
     // compute how many items we need to jump; if not enough time passed to jump at least to the next item
     // then we don't do anything (let the elapsed time cumulate)
-    int selectionIncrement = floor(elapsedTimeSec * browserNode->GetPlaybackRateFps() + 0.5); // floor with +0.5 is rounding
+    double playbackRateFps = browserNode->GetPlaybackRateFps();
+    int selectionIncrement = (int)floor(elapsedTimeSec * playbackRateFps);
     if (selectionIncrement > 0)
     {
-      this->LastSequenceBrowserUpdateTimeSec[browserNode] = updateStartTimeSec;
       if (!browserNode->GetPlaybackItemSkippingEnabled())
       {
         selectionIncrement = 1;
       }
+      // advance the reference time by exactly the consumed items, keeping the fractional
+      // remainder so that the long-term playback rate matches the requested rate
+      this->LastSequenceBrowserUpdateTimeSec[browserNode] += selectionIncrement / playbackRateFps;
       browserNode->SelectNextItem(selectionIncrement);
     }
   }
