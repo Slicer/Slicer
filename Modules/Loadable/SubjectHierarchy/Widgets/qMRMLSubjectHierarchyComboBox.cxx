@@ -67,7 +67,7 @@ public:
 qMRMLSubjectHierarchyComboBoxPrivate::qMRMLSubjectHierarchyComboBoxPrivate(qMRMLSubjectHierarchyComboBox& object)
   : q_ptr(&object)
   , MaximumNumberOfShownItems(20)
-  , AlignPopupVertically(true)
+  , AlignPopupVertically(false)
   , ShowCurrentItemParents(true)
   , TreeView(nullptr)
   , NoItemLabel(nullptr)
