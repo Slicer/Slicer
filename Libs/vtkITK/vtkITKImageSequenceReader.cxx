@@ -318,7 +318,6 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self,
   extractImageFilter->SetDirectionCollapseToSubmatrix();
 
   using VTKExporterFilterType = itk::ImageToVTKImageFilter<FrameImageType>;
-  typename VTKExporterFilterType::Pointer vtkExportFilter = VTKExporterFilterType::New();
 
   images.clear();
   for (unsigned int frameIndex = 0; frameIndex < self->GetNumberOfFrames(); frameIndex++)
@@ -331,7 +330,14 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self,
     typename FrameImageType::Pointer frameImage = extractImageFilter->GetOutput();
     typename FrameImageType::RegionType frameRegion = frameImage->GetLargestPossibleRegion();
 
-    // Convert extracted frame to VTK image
+    // Convert extracted frame to VTK image.
+    // A new exporter filter instance is created for each frame instead of reusing a single instance
+    // across iterations: with VTK 9.7, reusing the same itk::ImageToVTKImageFilter instance across
+    // multiple Update() calls (with the same reused ITK output object as input, just refilled with new
+    // data each time) results in only the first frame's scalar array being fully populated; subsequent
+    // frames come back with a degenerate (1-tuple) scalar array even though the reported extent/dimensions
+    // are correct.
+    typename VTKExporterFilterType::Pointer vtkExportFilter = VTKExporterFilterType::New();
     vtkExportFilter->SetInput(frameImage);
     vtkExportFilter->Update();
 
