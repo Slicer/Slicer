@@ -46,8 +46,8 @@ class vtkRenderer;
 /// locator only when its surface changes and dropping it when the surface is no
 /// longer shown. Picks then become indexed queries. Everything else behaves
 /// like vtkCellPicker (same tolerance, picked position, and normal), so it is a
-/// drop-in replacement. Picked positions on indexed surfaces are on the surface
-/// (see IntersectDataSetWithLine()).
+/// drop-in replacement. Picked positions are on the surface, whether or not the
+/// surface is indexed (see IntersectDataSetWithLine()).
 ///
 /// A single instance is meant to be shared per view: vtkMRMLThreeDViewInteractorStyle
 /// owns one and exposes it through vtkMRMLInteractionEventData::GetAccuratePicker(),
@@ -62,7 +62,8 @@ public:
 
   /// Minimum number of cells for a surface to be indexed with a locator.
   /// Smaller surfaces are already cheap to pick by brute force, and building a
-  /// locator for them would cost more than it saves. Defaults to 10000.
+  /// locator for them would cost more than it saves. Indexing changes how fast a
+  /// surface is picked, not the picked position. Defaults to 10000.
   vtkSetMacro(MinimumCellCountToIndex, vtkIdType);
   vtkGetMacro(MinimumCellCountToIndex, vtkIdType);
 
@@ -81,15 +82,18 @@ protected:
   /// when the surface changes) and drop locators for surfaces no longer shown.
   void UpdateLocators(vtkRenderer* renderer);
 
-  /// Pick the cell of an indexed surface that the ray hits.
+  /// Pick the cell that the ray hits.
   ///
-  /// With a locator, vtkCellPicker picks the first cell along the ray that is
-  /// within the pick tolerance, at the point where the ray crosses the plane of
-  /// that cell. Over a curved surface that is often a cell that the ray misses,
-  /// in front of the cell that it hits, so the picked position is in front of
-  /// the surface. Instead, search the locator for a cell that the ray hits first,
-  /// and use the pick tolerance only if the ray does not hit the surface (for
-  /// example, when it passes just outside the silhouette of the surface).
+  /// vtkCellPicker picks cells within the pick tolerance of the ray, at the
+  /// point where the ray crosses the plane of the cell. Over a curved surface,
+  /// that can be a cell that the ray misses, in front of the cell that it hits,
+  /// so the picked position is in front of the surface. With a locator,
+  /// vtkCellPicker picks the first such cell along the ray. Without a locator,
+  /// it prefers the cell that the ray passes through, but depending on the order
+  /// of the cells, it can keep a cell that the ray misses. Instead, search for a
+  /// cell that the ray hits first, and use the pick tolerance only if the ray
+  /// does not hit the surface (for example, when it passes just outside the
+  /// silhouette of the surface), with or without a locator.
   bool IntersectDataSetWithLine(vtkDataSet* dataSet,
                                 const double p1[3],
                                 const double p2[3],

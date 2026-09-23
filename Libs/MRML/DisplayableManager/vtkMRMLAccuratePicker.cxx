@@ -139,8 +139,11 @@ bool vtkMRMLAccuratePicker::IntersectDataSetWithLine(vtkDataSet* dataSet,
                                                      double xyz[3],
                                                      double minPCoords[3])
 {
+  // Vertices and lines cannot be hit without the pick tolerance, so there is no
+  // point in looking for a cell that the ray hits if there are only those.
   vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataSet);
-  if (polyData && this->LocatorsBySurface.find(polyData) != this->LocatorsBySurface.end())
+  const bool onlyVerticesOrLines = polyData && polyData->GetNumberOfPolys() == 0 && polyData->GetNumberOfStrips() == 0;
+  if (!onlyVerticesOrLines)
   {
     // Look for a cell that the ray hits. The tolerance is not zero so that a ray
     // that passes exactly through an edge or a vertex is not missed due to rounding.
