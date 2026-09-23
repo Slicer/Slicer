@@ -24,7 +24,7 @@
 // costs tens to hundreds of milliseconds and interaction becomes janky.
 // vtkMRMLAccuratePicker indexes large surfaces with cell locators; this test
 // checks that repeated picks over a large mesh stay fast, and that the picked
-// positions are on the surface.
+// positions are on the surface, whether or not the surface is indexed.
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAccuratePicker.h"
@@ -129,8 +129,10 @@ int TestPickIsFast()
 }
 
 //----------------------------------------------------------------------------
-int TestPickIsOnSurface()
+int TestPickIsOnSurface(bool indexSurface)
 {
+  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface:" << std::endl;
+
   // A large, bumpy surface that covers the whole view. It is seen at an oblique
   // angle, so that many rays graze the bumps.
   vtkNew<vtkPlaneSource> plane;
@@ -169,6 +171,11 @@ int TestPickIsOnSurface()
 
   vtkNew<vtkMRMLAccuratePicker> picker;
   picker->SetTolerance(0.005);
+  if (!indexSurface)
+  {
+    // Pick the surface as if it were too small to be indexed with a locator
+    picker->SetMinimumCellCountToIndex(VTK_ID_MAX);
+  }
 
   // Reference for measuring the distance between picked positions and the surface
   vtkNew<vtkStaticCellLocator> surfaceLocator;
@@ -228,7 +235,11 @@ int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   {
     return EXIT_FAILURE;
   }
-  if (TestPickIsOnSurface() != EXIT_SUCCESS)
+  if (TestPickIsOnSurface(true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(false) != EXIT_SUCCESS)
   {
     return EXIT_FAILURE;
   }
