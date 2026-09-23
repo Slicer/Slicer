@@ -44,7 +44,7 @@ void vtkMRMLAccuratePicker::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "MinimumCellCountToIndex: " << this->MinimumCellCountToIndex << "\n";
-  os << indent << "Cached locators: " << this->Locators.size() << "\n";
+  os << indent << "Cached locators: " << this->LocatorsBySurface.size() << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
   this->RemoveAllLocators();
   if (!renderer)
   {
-    this->Locators.clear();
+    this->LocatorsBySurface.clear();
     return;
   }
 
@@ -84,7 +84,7 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
     }
 
     shownSurfaces.insert(polyData);
-    CachedLocator& cached = this->Locators[polyData];
+    CachedLocator& cached = this->LocatorsBySurface[polyData];
     if (!cached.Locator)
     {
       vtkNew<vtkStaticCellLocator> locator;
@@ -104,11 +104,11 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
 
   // Release locators for surfaces that are no longer shown (a cached locator
   // holds a reference to its poly data).
-  for (auto it = this->Locators.begin(); it != this->Locators.end();)
+  for (auto it = this->LocatorsBySurface.begin(); it != this->LocatorsBySurface.end();)
   {
     if (shownSurfaces.find(it->first) == shownSurfaces.end())
     {
-      it = this->Locators.erase(it);
+      it = this->LocatorsBySurface.erase(it);
     }
     else
     {
@@ -140,7 +140,7 @@ bool vtkMRMLAccuratePicker::IntersectDataSetWithLine(vtkDataSet* dataSet,
                                                      double minPCoords[3])
 {
   vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataSet);
-  if (polyData && this->Locators.find(polyData) != this->Locators.end())
+  if (polyData && this->LocatorsBySurface.find(polyData) != this->LocatorsBySurface.end())
   {
     // Look for a cell that the ray hits. The tolerance is not zero so that a ray
     // that passes exactly through an edge or a vertex is not missed due to rounding.

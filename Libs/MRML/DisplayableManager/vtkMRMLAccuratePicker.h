@@ -109,7 +109,9 @@ protected:
     vtkSmartPointer<vtkAbstractCellLocator> Locator;
     vtkMTimeType BuildMTime{ 0 };
   };
-  std::map<vtkPolyData*, CachedLocator> Locators;
+  /// Locator of each indexed surface. Not named Locators, which would hide
+  /// vtkCellPicker::Locators (the locators that the picker uses).
+  std::map<vtkPolyData*, CachedLocator> LocatorsBySurface;
 
   vtkIdType MinimumCellCountToIndex{ 10000 };
 
