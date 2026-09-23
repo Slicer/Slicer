@@ -179,6 +179,17 @@ public:
       | ActionSetCursorPosition | ActionSetCrosshairPosition | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
   };
 
+  /// Two-finger touch gestures start to act on the slice view once they have gone beyond these
+  /// thresholds, so that a pinch is not also a slight rotation and translation of the slice.
+  /// Rotation threshold is in degrees, translation threshold in pixels, zoom threshold is the
+  /// fraction of the initial finger distance.
+  vtkSetMacro(TouchRotationThreshold, double);
+  vtkGetMacro(TouchRotationThreshold, double);
+  vtkSetMacro(TouchTranslationThreshold, double);
+  vtkGetMacro(TouchTranslationThreshold, double);
+  vtkSetMacro(TouchZoomThreshold, double);
+  vtkGetMacro(TouchZoomThreshold, double);
+
   /// Set exact list of actions to enable.
   void SetActionsEnabled(int actions);
 
