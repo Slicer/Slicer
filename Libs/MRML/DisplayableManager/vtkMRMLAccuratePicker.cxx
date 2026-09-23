@@ -123,3 +123,32 @@ int vtkMRMLAccuratePicker::Pick(double selectionX, double selectionY, double sel
   this->UpdateLocators(renderer);
   return this->Superclass::Pick(selectionX, selectionY, selectionZ, renderer);
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAccuratePicker::IntersectDataSetWithLine(vtkDataSet* dataSet,
+                                                     const double p1[3],
+                                                     const double p2[3],
+                                                     double t1,
+                                                     double t2,
+                                                     double tol,
+                                                     vtkAbstractCellLocator*& locator,
+                                                     vtkIdType& cellId,
+                                                     int& subId,
+                                                     double& tMin,
+                                                     double& pDistMin,
+                                                     double xyz[3],
+                                                     double minPCoords[3])
+{
+  vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataSet);
+  if (polyData && this->Locators.find(polyData) != this->Locators.end())
+  {
+    // Look for a cell that the ray hits. The tolerance is not zero so that a ray
+    // that passes exactly through an edge or a vertex is not missed due to rounding.
+    const double hitTolerance = tol * 1e-6;
+    if (this->Superclass::IntersectDataSetWithLine(dataSet, p1, p2, t1, t2, hitTolerance, locator, cellId, subId, tMin, pDistMin, xyz, minPCoords))
+    {
+      return true;
+    }
+  }
+  return this->Superclass::IntersectDataSetWithLine(dataSet, p1, p2, t1, t2, tol, locator, cellId, subId, tMin, pDistMin, xyz, minPCoords);
+}
