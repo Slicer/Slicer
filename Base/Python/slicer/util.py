@@ -2924,6 +2924,19 @@ def updateTableFromArray(tableNode, narrays, columnNames=None, setBoolAsUchar=Fa
                 vtype = vtk.VTK_BIT
         if vtype is None:
             vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
+            # get_vtk_array_type() maps numpy dtypes to VTK array types based on the
+            # dtype's platform-dependent single-character code (e.g. 'l' for C "long").
+            # On Windows, numpy maps its fixed-width int32/uint32 dtypes to the same
+            # character codes as the platform's 32-bit C "long"/"unsigned long", so
+            # int32/uint32 columns incorrectly end up mapped to VTK_LONG/VTK_UNSIGNED_LONG
+            # instead of VTK_INT/VTK_UNSIGNED_INT. Both pairs are 4-byte integers so this
+            # does not affect the stored data, but callers that check the exact column type
+            # (e.g. GetColumnType() == vtk.VTK_INT) would get unexpected results. Force the
+            # fixed-width numpy dtypes to their corresponding fixed-width VTK types.
+            if ncolumn.dtype == np.dtype(np.int32):
+                vtype = vtk.VTK_INT
+            elif ncolumn.dtype == np.dtype(np.uint32):
+                vtype = vtk.VTK_UNSIGNED_INT
         vcolumn = _vtkArrayFromNumpyArray(ncolumn.ravel(), deep=True, arrayType=vtype)
         if (columnNames is not None) and (columnIndex < len(columnNames)):
             vcolumn.SetName(columnNames[columnIndex])
