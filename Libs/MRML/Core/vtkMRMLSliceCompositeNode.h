@@ -266,7 +266,7 @@ protected:
 
   int Compositing{ Alpha };
 
-  bool ClipToBackgroundVolume{ true };
+  bool ClipToBackgroundVolume{ false };
 
   int LinkedControl{ 0 };
   int HotLinkedControl{ 0 };
