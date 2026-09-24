@@ -65,7 +65,8 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
       uid = self.getDICOMValue(dataset, "SOPInstanceUID")
       if uid == "":
-        return []
+        # Invalid instance, skip it
+        continue
 
       seriesDescription = self.getDICOMValue(dataset, "SeriesDescription", "Unknown")
 
@@ -1401,7 +1402,8 @@ class DICOMLongitudinalTID1500PluginClass(DICOMTID1500PluginClass):
 
       uid = self.getDICOMValue(dataset, "SOPInstanceUID")
       if uid == "":
-        return []
+        # Invalid instance, skip it
+        continue
 
       if self.isDICOMTID1500(dataset):
         otherSRDatasets, otherSRFiles = self.getRelatedSRs(dataset)

@@ -32,7 +32,8 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
       uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])
       if uid == "":
-        return []
+        # Invalid instance, skip it
+        continue
 
       desc = slicer.dicomDatabase.fileValue(cFile, self.tags["seriesDescription"])
       if desc == "":
