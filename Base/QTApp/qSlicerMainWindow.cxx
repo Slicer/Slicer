@@ -690,38 +690,42 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
     return true;
   }
 
-  ctkMessageBox* confirmCloseMsgBox = new ctkMessageBox(q);
-  confirmCloseMsgBox->setAttribute(Qt::WA_DeleteOnClose);
-  confirmCloseMsgBox->setWindowTitle(qSlicerMainWindow::tr("Save before closing scene?"));
-  confirmCloseMsgBox->setText(qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"));
+  // Allocated on the stack (not with WA_DeleteOnClose) so that clickedButton()
+  // can still be queried after exec() returns.
+  ctkMessageBox confirmCloseMsgBox(q);
+  confirmCloseMsgBox.setWindowTitle(qSlicerMainWindow::tr("Save before closing scene?"));
+  confirmCloseMsgBox.setText(qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"));
 
   // Use AcceptRole&RejectRole instead of Save&Discard because we would
   // like discard changes to be the default behavior.
-  confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
-  confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Save scene"), QMessageBox::RejectRole);
-  confirmCloseMsgBox->addButton(QMessageBox::Cancel);
+  QAbstractButton* discardButton = confirmCloseMsgBox.addButton(qSlicerMainWindow::tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
+  QAbstractButton* saveButton = confirmCloseMsgBox.addButton(qSlicerMainWindow::tr("Save scene"), QMessageBox::RejectRole);
+  confirmCloseMsgBox.addButton(QMessageBox::Cancel);
 
   if (!details.isEmpty())
   {
-    confirmCloseMsgBox->setDetailedText(details);
+    confirmCloseMsgBox.setDetailedText(details);
   }
 
-  confirmCloseMsgBox->setDontShowAgainVisible(true);
-  confirmCloseMsgBox->setDontShowAgainSettingsKey("MainWindow/DontConfirmSceneClose");
-  confirmCloseMsgBox->setIcon(QMessageBox::Question);
-  int resultCode = confirmCloseMsgBox->exec();
-  if (resultCode == QMessageBox::Cancel)
+  confirmCloseMsgBox.setDontShowAgainVisible(true);
+  confirmCloseMsgBox.setDontShowAgainSettingsKey("MainWindow/DontConfirmSceneClose");
+  confirmCloseMsgBox.setIcon(QMessageBox::Question);
+  confirmCloseMsgBox.exec();
+
+  // Identify the chosen button by clickedButton() instead of the exec() return
+  // value: for custom buttons exec() returns an opaque value, which in Qt6 no
+  // longer matches the button role, so "discard" was handled as "save".
+  QAbstractButton* clickedButton = confirmCloseMsgBox.clickedButton();
+  if (clickedButton == discardButton)
   {
-    return false;
+    return true;
   }
-  if (resultCode != QMessageBox::AcceptRole)
+  if (clickedButton == saveButton)
   {
-    if (!qSlicerApplication::application()->ioManager()->openSaveDataDialog())
-    {
-      return false;
-    }
+    return qSlicerApplication::application()->ioManager()->openSaveDataDialog();
   }
-  return true;
+  // Cancel or dialog closed
+  return false;
 }
 
 //-----------------------------------------------------------------------------
