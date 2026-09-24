@@ -240,7 +240,12 @@ class DICOMPlugin:
         Default implementation calls examineFiles() for each file group with caching.
         Subclasses may override either examineForImport() (bypasses caching) or
         examineFiles() (uses inherited caching).
+        Subclasses that override the legacy examine() method are examined by calling
+        their examine() method (examineFiles() may have a different meaning there).
         """
+        if type(self).examine is not DICOMPlugin.examine:
+            # Legacy plugin: returning empty list makes getLoadablesFromFileLists() call examine()
+            return []
         loadables = []
         for files in fileList:
             cachedLoadables = self.getCachedLoadables(files)
