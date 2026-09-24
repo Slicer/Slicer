@@ -30,6 +30,10 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
 
     for cFile in files:
 
+      # Check modality first, as it is the only value that needs to be retrieved for non-SEG files
+      if slicer.dicomDatabase.fileValue(cFile, self.tags["modality"]) != "SEG":
+        continue
+
       uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])
       if uid == "":
         # Invalid instance, skip it
@@ -39,21 +43,18 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
       if desc == "":
         desc = "Unknown"
 
-      isDicomSeg = (slicer.dicomDatabase.fileValue(cFile, self.tags["modality"]) == "SEG")
+      loadable = DICOMLoadable()
+      loadable.files = [cFile]
+      loadable.name = desc
+      loadable.tooltip = loadable.name + " - as a DICOM SEG object"
+      loadable.selected = True
+      loadable.confidence = 0.95
+      loadable.uid = uid
+      self.addReferences(loadable)
 
-      if isDicomSeg:
-        loadable = DICOMLoadable()
-        loadable.files = [cFile]
-        loadable.name = desc
-        loadable.tooltip = loadable.name + " - as a DICOM SEG object"
-        loadable.selected = True
-        loadable.confidence = 0.95
-        loadable.uid = uid
-        self.addReferences(loadable)
+      loadables.append(loadable)
 
-        loadables.append(loadable)
-
-        logging.debug("DICOM SEG modality found")
+      logging.debug("DICOM SEG modality found")
 
     return loadables
 
