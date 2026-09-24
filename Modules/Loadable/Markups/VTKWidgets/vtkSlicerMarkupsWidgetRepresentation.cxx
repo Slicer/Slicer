@@ -22,6 +22,7 @@
 #include "vtkArrowSource.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 #include "vtkCamera.h"
+#include "vtkCoordinate.h"
 #include "vtkDoubleArray.h"
 #include "vtkFloatArray.h"
 #include "vtkFocalPlanePointPlacer.h"
@@ -519,16 +520,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(vtkMRMLNode* v
 
   if (this->MarkupsNode)
   {
-    std::string labelText;
-    if (this->MarkupsNode->GetName())
-    {
-      labelText = this->MarkupsNode->GetName();
-    }
-    std::string properties = this->MarkupsNode->GetPropertiesLabelText();
-    if (!properties.empty())
-    {
-      labelText += ":" + properties;
-    }
+    std::string labelText = this->MarkupsNode->GetPropertiesLabelText();
     this->TextActor->SetInput(labelText.c_str());
   }
   else
@@ -794,4 +786,41 @@ int vtkSlicerMarkupsWidgetRepresentation::GetGlyphTypeSourceFromDisplay(int glyp
     case vtkMRMLMarkupsDisplayNode::HookedArrow2D: return vtkMarkupsGlyphSource2D::GlyphHookedArrow;
     default: return -1;
   }
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation::CanInteractWithPropertiesLabel(vtkMRMLInteractionEventData* interactionEventData,
+                                                                          int& foundComponentType,
+                                                                          int& foundComponentIndex,
+                                                                          double& closestDistance2)
+{
+  if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone || !interactionEventData || !interactionEventData->IsDisplayPositionValid() || !this->Renderer
+      || !this->IsDisplayable() || !this->TextActor->GetVisibility() || !this->MarkupsDisplayNode->GetPropertiesLabelVisibility() || !this->TextActor->GetInput()
+      || !this->TextActor->GetInput()[0] || this->TextActor->GetTextProperty()->GetOpacity() <= 0.0)
+  {
+    return;
+  }
+
+  double bounds[4] = { 0.0 };
+  this->TextActor->GetBoundingBox(this->Renderer, bounds);
+  int* origin = this->TextActor->GetPositionCoordinate()->GetComputedDisplayValue(this->Renderer);
+  const int* position = interactionEventData->GetDisplayPosition();
+  double x = position[0] - origin[0];
+  double y = position[1] - origin[1];
+  if (x >= bounds[0] && x <= bounds[1] && y >= bounds[2] && y <= bounds[3])
+  {
+    foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel;
+    foundComponentIndex = 0;
+    closestDistance2 = 0.0;
+  }
+}
+
+//----------------------------------------------------------------------
+vtkTextProperty* vtkSlicerMarkupsWidgetRepresentation::GetPropertiesLabelTextProperty(int controlPointType)
+{
+  if (this->MarkupsDisplayNode && this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
+  {
+    controlPointType = Active;
+  }
+  return this->ControlPoints[controlPointType]->TextProperty;
 }

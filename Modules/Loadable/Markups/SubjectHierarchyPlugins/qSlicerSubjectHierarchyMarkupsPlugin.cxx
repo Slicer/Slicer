@@ -579,6 +579,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   bool pointActionsDisabled = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle || //
                               componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle ||    //
                               componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle ||       //
+                              componentType == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel ||   //
                               componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane ||             //
                               componentType == vtkMRMLMarkupsROIDisplayNode::ComponentROI;
 

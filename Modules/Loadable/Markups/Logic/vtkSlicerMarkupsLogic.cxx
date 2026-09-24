@@ -208,7 +208,11 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned l
           sliceNode = vtkMRMLSliceNode::SafeDownCast(eventData->GetViewNode());
         }
       }
-      if (componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint)
+      if (componentType == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
+      {
+        this->SetActiveList(markupsDisplayNode->GetMarkupsNode());
+      }
+      else if (componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint)
       {
         // Jump current slice node to the plane of the control point (do not center)
         if (sliceNode)

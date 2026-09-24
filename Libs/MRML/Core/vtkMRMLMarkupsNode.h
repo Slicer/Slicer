@@ -716,7 +716,9 @@ public:
   virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();
 
   /// Get displayable string of the properties label (containing name, measurements, etc.) that
-  /// identifies the node and provides basic information.
+  /// identifies the node and provides basic information. The node name is included
+  /// unless the display node's PropertiesLabelIncludesNodeName is disabled.
+  /// Label visibility does not affect the returned text.
   virtual std::string GetPropertiesLabelText();
 
   /// Utility function to get unit node from scene

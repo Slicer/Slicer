@@ -60,6 +60,7 @@ public:
   {
     WidgetStateDefine = WidgetStateUser, // click in empty area will place a new point
     WidgetStateTranslateControlPoint,    // translating the active point by mouse move
+    WidgetStateOnPropertiesLabel,        // label supports clicks but does not edit control points
     WidgetStateMarkups_Last
   };
 

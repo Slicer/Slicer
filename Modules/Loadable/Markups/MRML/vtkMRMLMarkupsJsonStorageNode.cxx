@@ -521,6 +521,10 @@ bool vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsDisplayNodeFromJsonValue(vtkMRM
   {
     displayNode->SetPropertiesLabelVisibility(displayItem->GetBoolProperty("propertiesLabelVisibility"));
   }
+  if (displayItem->HasMember("propertiesLabelIncludesNodeName"))
+  {
+    displayNode->SetPropertiesLabelIncludesNodeName(displayItem->GetBoolProperty("propertiesLabelIncludesNodeName"));
+  }
   if (displayItem->HasMember("pointLabelsVisibility"))
   {
     displayNode->SetPointLabelsVisibility(displayItem->GetBoolProperty("pointLabelsVisibility"));
@@ -1103,6 +1107,7 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteDisplayProperties(vtkMRMLJsonWriter* wr
   writer->WriteVectorProperty("activeColor", markupsDisplayNode->GetActiveColor());
 
   writer->WriteBoolProperty("propertiesLabelVisibility", markupsDisplayNode->GetPropertiesLabelVisibility());
+  writer->WriteBoolProperty("propertiesLabelIncludesNodeName", markupsDisplayNode->GetPropertiesLabelIncludesNodeName());
   writer->WriteBoolProperty("pointLabelsVisibility", markupsDisplayNode->GetPointLabelsVisibility());
   writer->WriteDoubleProperty("textScale", markupsDisplayNode->GetTextScale());
   writer->WriteStringProperty("glyphType", markupsDisplayNode->GetGlyphTypeAsString(markupsDisplayNode->GetGlyphType()));

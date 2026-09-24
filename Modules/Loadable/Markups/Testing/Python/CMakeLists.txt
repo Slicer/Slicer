@@ -66,3 +66,7 @@ slicerMacroBuildScriptedModule(
   RESOURCES ${MARKUPS_PYTHON_RESOURCES}
   )
 slicer_add_python_unittest(SCRIPT PluggableMarkupsSelfTest.py)
+
+# Test properties label text, persistence, visibility, and interaction.
+slicer_add_python_test(SCRIPT MarkupsPropertiesLabelTest.py
+                       SLICER_ARGS --disable-cli-modules)

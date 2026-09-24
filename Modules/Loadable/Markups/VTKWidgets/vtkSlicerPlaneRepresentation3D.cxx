@@ -291,7 +291,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->PlaneOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
 
   // Properties label display
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
       && planeNode->GetIsPlaneValid())                         // including preview
   {

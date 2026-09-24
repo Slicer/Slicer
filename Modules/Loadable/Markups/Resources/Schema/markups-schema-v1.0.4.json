@@ -407,6 +407,13 @@
                                             "description": "Visibility of the label that shows basic properties.",
                                             "default": false
                                         },
+                                        "propertiesLabelIncludesNodeName": {
+                                            "$id": "#display/propertiesLabelIncludesNodeName",
+                                            "type": "boolean",
+                                            "title": "Include node name in properties label",
+                                            "description": "Include the node name before the measurements in the properties label.",
+                                            "default": true
+                                        },
                                         "pointLabelsVisibility": {
                                             "$id": "#display/pointLabelsVisibility",
                                             "type": "boolean",

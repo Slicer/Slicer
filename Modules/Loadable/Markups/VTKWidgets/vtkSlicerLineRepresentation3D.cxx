@@ -252,7 +252,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
       this->LineDirectionArrowPipeline->PointsPoly->Modified();
     }
   }
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
   this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode            //

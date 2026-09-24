@@ -142,7 +142,7 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
   }
 
   // Properties label display
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
       && roiNode->GetNumberOfDefinedControlPoints(true) > 0)   // including preview
   {

@@ -198,7 +198,7 @@ vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
   this->ControlPoints[Active]->TextProperty->SetColor(0.4, 1.0, 0.); // bright green
   reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[Active])->Property->SetColor(0.4, 1.0, 0.);
 
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(Unselected));
 
   this->PointsVisibilityOnSlice = vtkSmartPointer<vtkIntArray>::New();
   this->PointsVisibilityOnSlice->SetName("pointsVisibilityOnSlice");
@@ -305,6 +305,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
   {
     activeControlPointIndex = activeControlPointIndices[0];
   }
+  bool propertiesLabelActive = this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel;
 
   int numPoints = markupsNode->GetNumberOfControlPoints();
 
@@ -322,7 +323,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
 
     int startIndex = 0;
     int stopIndex = numPoints - 1;
-    if (controlPointType == Active)
+    if (controlPointType == Active && !propertiesLabelActive)
     {
       if (activeControlPointIndex >= 0 && activeControlPointIndex < numPoints &&        //
           markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) && //
@@ -380,6 +381,10 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
       }
       if (controlPointType < Active)
       {
+        if (propertiesLabelActive)
+        {
+          continue;
+        }
         bool thisNodeSelected = (markupsNode->GetNthControlPointSelected(pointIndex) != 0);
         if ((controlPointType == Selected) != thisNodeSelected)
         {
@@ -677,6 +682,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(vtkMRMLInteractionEvent
       foundComponentIndex = i;
     }
   }
+  this->CanInteractWithPropertiesLabel(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
 
 //----------------------------------------------------------------------
