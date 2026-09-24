@@ -125,6 +125,19 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadables += self.examineFilesIPPAcqTime(allfiles)
       loadables += self.examineFilesIPPInstanceNumber(allfiles)
 
+    # Different strategies may find alternative interpretations of the same files
+    # (e.g., frames identified by CardiacCycle or by AcquisitionTime).
+    # Slightly reduce the confidence of all but the most preferred interpretation
+    # (highest confidence, then strategy order) so that only that one is selected by default.
+    preferredLoadablesFileSets = []
+    for loadable in sorted(loadables, key=lambda loadable: -loadable.confidence):
+      loadableFiles = set(loadable.files)
+      if any(loadableFiles & preferredFiles for preferredFiles in preferredLoadablesFileSets):
+        loadable.confidence -= 0.05
+        loadable.selected = False
+      else:
+        preferredLoadablesFileSets.append(loadableFiles)
+
     # If Sequences module is available then duplicate all the loadables
     # for loading them as volume sequence.
     # A slightly higher confidence value is set for volume sequence loadables,
