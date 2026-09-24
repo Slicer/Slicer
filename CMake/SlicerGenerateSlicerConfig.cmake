@@ -150,6 +150,8 @@ if(Slicer_USE_QtTesting)
 endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT OR Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG qRestAPI)
+  # qRestAPI exports an imported target and no longer provides a use file
+  list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG qRestAPI)
 endif()
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG DCMTK)
