@@ -53,6 +53,7 @@ public:
   bool curveLineSizeIsAbsolute() const;
 
   bool propertiesLabelVisibility() const;
+  bool propertiesLabelIncludesNodeName() const;
   bool pointLabelsVisibility() const;
 
 signals:
@@ -79,6 +80,7 @@ public slots:
   void setCurveLineSizeIsAbsolute(bool absolute);
 
   void setPropertiesLabelVisibility(bool visible);
+  void setPropertiesLabelIncludesNodeName(bool includesNodeName);
   void setPointLabelsVisibility(bool visible);
 
   void setMaximumMarkupsScale(double maxScale);

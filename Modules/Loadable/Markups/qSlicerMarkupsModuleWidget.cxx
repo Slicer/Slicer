@@ -28,6 +28,7 @@
 #include <QMouseEvent>
 #include <QSettings>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QSignalMapper>
 #include <QStringList>
 #include <QTableWidgetItem>
@@ -2004,13 +2005,16 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
   {
     bool flag = item->data(Qt::UserRole) == QVariant(true) ? true : false;
     // update the icon
-    if (flag)
     {
-      item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerLock.png"));
-    }
-    else
-    {
-      item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerUnlock.png"));
+      QSignalBlocker blocker(d->activeMarkupTableWidget);
+      if (flag)
+      {
+        item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerLock.png"));
+      }
+      else
+      {
+        item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerUnlock.png"));
+      }
     }
     d->MarkupsNode->SetNthControlPointLocked(n, flag);
   }
@@ -2018,13 +2022,16 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
   {
     bool flag = item->data(Qt::UserRole) == QVariant(true) ? true : false;
     // update the eye icon
-    if (flag)
     {
-      item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerVisible.png"));
-    }
-    else
-    {
-      item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerInvisible.png"));
+      QSignalBlocker blocker(d->activeMarkupTableWidget);
+      if (flag)
+      {
+        item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerVisible.png"));
+      }
+      else
+      {
+        item->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerInvisible.png"));
+      }
     }
     d->MarkupsNode->SetNthControlPointVisibility(n, flag);
   }

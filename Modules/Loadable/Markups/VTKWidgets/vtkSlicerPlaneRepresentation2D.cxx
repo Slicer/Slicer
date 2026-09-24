@@ -240,7 +240,7 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->PlaneFillActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->PlaneOutlineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ArrowActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {

@@ -104,7 +104,6 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   vtkMRMLMarkupsAngleNode* markupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) != 3)
   {
-    this->TextActor->SetVisibility(false);
     return;
   }
 
@@ -163,7 +162,6 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   double vector3[3] = { vector1[0] + vector2[0], vector1[1] + vector2[1], vector1[2] + vector2[2] };
   vtkMath::Normalize(vector3);
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
   this->TextActorPositionWorld[0] = lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0];
   this->TextActorPositionWorld[1] = lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1];
   this->TextActorPositionWorld[2] = lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2];
@@ -208,17 +206,19 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
   this->LineActor->SetVisibility(numberOfDefinedControlPoints >= 2);
   this->ArcActor->SetVisibility(numberOfDefinedControlPoints == 3);
+  this->TextActor->SetVisibility(numberOfDefinedControlPoints == 3 && this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
   this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->LineActor->GetVisibility() && this->MarkupsDisplayNode->GetOccludedVisibility());
   this->ArcOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->ArcActor->GetVisibility() && this->MarkupsDisplayNode->GetOccludedVisibility());
 
   int controlPointType = Active;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
+  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine
+      && this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
   {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
   }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
   this->ArcOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
 }

@@ -544,6 +544,23 @@
         </property>
        </widget>
       </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="PropertiesLabelIncludesNodeNameLabel">
+        <property name="text">
+         <string>Include Node Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QCheckBox" name="PropertiesLabelIncludesNodeNameCheckBox">
+        <property name="toolTip">
+         <string>Include the markup node name in the properties label</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item row="15" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="LineDirectionMarkersCollapsibleGroupBox">
         <property name="title">

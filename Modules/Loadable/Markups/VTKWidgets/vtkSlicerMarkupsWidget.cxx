@@ -21,6 +21,7 @@
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
@@ -77,6 +78,15 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventReserved);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::RightButtonReleaseEvent, vtkEvent::NoModifier, WidgetEventReserved);
   this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
+
+  // Properties labels support selection and context menus without starting a drag.
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetEventReserved);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkCommand::LeftButtonReleaseEvent, vtkEvent::NoModifier, WidgetEventReserved);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventReserved);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkCommand::RightButtonReleaseEvent, vtkEvent::NoModifier, WidgetEventReserved);
+  this->SetEventTranslation(WidgetStateOnPropertiesLabel, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   // Update active component
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
@@ -163,7 +173,7 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     this->UpdatePreviewPoint(eventData, associatedNodeID, positionPreviewState);
   }
   else if (state == WidgetStateIdle //
-           || state == WidgetStateOnWidget)
+           || state == WidgetStateOnWidget || state == WidgetStateOnPropertiesLabel)
   {
     // update state
     int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -176,7 +186,7 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     }
     else
     {
-      this->SetWidgetState(WidgetStateOnWidget);
+      this->SetWidgetState(foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel ? WidgetStateOnPropertiesLabel : WidgetStateOnWidget);
     }
 
     this->GetMarkupsDisplayNode()->SetActiveComponent(foundComponentType, foundComponentIndex, eventData->GetInteractionContextName());
@@ -323,7 +333,7 @@ bool vtkSlicerMarkupsWidget::ProcessControlPointDelete(vtkMRMLInteractionEventDa
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
-  if (this->WidgetState != WidgetStateOnWidget)
+  if (this->WidgetState != WidgetStateOnWidget && this->WidgetState != WidgetStateOnPropertiesLabel)
   {
     return false;
   }
@@ -335,8 +345,19 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData
     return false;
   }
 
+  if (this->WidgetState == WidgetStateOnPropertiesLabel)
+  {
+    vtkMRMLSelectionNode* selectionNode = this->selectionNode();
+    if (!selectionNode)
+    {
+      return false;
+    }
+    selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
+    selectionNode->SetReferenceActivePlaceNodeID(markupsNode->GetID());
+    return true;
+  }
+
   int componentIndex = markupsDisplayNode->GetActiveComponentIndex();
-  ;
   int componentType = markupsDisplayNode->GetActiveComponentType();
 
   // Use first active control point for jumping //TODO: Have an 'even more active' point concept
@@ -581,7 +602,7 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
 {
-  if (this->WidgetState != WidgetStateOnWidget)
+  if (this->WidgetState != WidgetStateOnWidget && this->WidgetState != WidgetStateOnPropertiesLabel)
   {
     return false;
   }
@@ -715,6 +736,11 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
   bool processedEvent = false;
   switch (widgetEvent)
   {
+    case WidgetEventReserved:
+      // Capture label button presses, but let releases be processed as clicks below.
+      processedEvent = this->WidgetState == WidgetStateOnPropertiesLabel
+                       && (eventData->GetType() == vtkCommand::LeftButtonPressEvent || eventData->GetType() == vtkCommand::RightButtonPressEvent);
+      break;
     case WidgetEventControlPointPlace: processedEvent = this->PlacePoint(eventData); break;
     case WidgetEventStopPlace:
       // cancel point placement

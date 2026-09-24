@@ -3085,7 +3085,27 @@ int vtkMRMLMarkupsNode::GetPositionStatusFromString(const char* name)
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::GetPropertiesLabelText()
 {
-  return this->PropertiesLabelText;
+  std::string labelText;
+  vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
+  if ((!displayNode || displayNode->GetPropertiesLabelIncludesNodeName()) && this->GetName())
+  {
+    labelText = this->GetName();
+  }
+  if (!this->PropertiesLabelText.empty())
+  {
+    if (!labelText.empty())
+    {
+      labelText += ":" + this->PropertiesLabelText;
+    }
+    else
+    {
+      // The cached measurement text starts with a space (one measurement) or
+      // a newline (multiple measurements), separating it from the node name.
+      size_t separatorLength = (this->PropertiesLabelText[0] == ' ' || this->PropertiesLabelText[0] == '\n') ? 1 : 0;
+      labelText = this->PropertiesLabelText.substr(separatorLength);
+    }
+  }
+  return labelText;
 }
 
 //---------------------------------------------------------------------------

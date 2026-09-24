@@ -145,7 +145,7 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
 
   // Properties label display
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
       && this->AnyPointVisibilityOnSlice                       //
       && roiNode->GetNumberOfDefinedControlPoints(true) > 0)   // including preview

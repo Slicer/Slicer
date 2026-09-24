@@ -96,6 +96,7 @@ public:
     ComponentRotationHandle,
     ComponentTranslationHandle,
     ComponentScaleHandle,
+    ComponentPropertiesLabel,
     Component_Last
   };
   struct ComponentInfo
@@ -177,6 +178,13 @@ public:
   vtkSetMacro(PropertiesLabelVisibility, bool);
   vtkGetMacro(PropertiesLabelVisibility, bool);
   vtkBooleanMacro(PropertiesLabelVisibility, bool);
+  //@}
+
+  //@{
+  /// Include the node name in the properties label. Enabled by default.
+  vtkSetMacro(PropertiesLabelIncludesNodeName, bool);
+  vtkGetMacro(PropertiesLabelIncludesNodeName, bool);
+  vtkBooleanMacro(PropertiesLabelIncludesNodeName, bool);
   //@}
 
   //@{
@@ -564,6 +572,7 @@ protected:
   int SnapMode;
 
   bool PropertiesLabelVisibility;
+  bool PropertiesLabelIncludesNodeName;
   bool PointLabelsVisibility;
   bool FillVisibility;
   bool OutlineVisibility;

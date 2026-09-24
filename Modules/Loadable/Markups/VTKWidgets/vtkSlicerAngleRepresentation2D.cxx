@@ -267,7 +267,8 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   int controlPointType = Unselected;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine)
+  if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine
+      || this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
   {
     controlPointType = Active;
   }
@@ -283,7 +284,7 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {

@@ -161,7 +161,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
   }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(controlPointType));
 
   vtkColorTransferFunction* colorMap = nullptr;
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())

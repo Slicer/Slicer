@@ -224,7 +224,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor->PickableOff();
   reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor->DragableOff();
 
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(Unselected));
   this->TextActorPositionWorld[0] = 0.0;
   this->TextActorPositionWorld[1] = 0.0;
   this->TextActorPositionWorld[2] = 0.0;
@@ -286,6 +286,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
   int numPoints = markupsNode->GetNumberOfControlPoints();
   std::vector<int> activeControlPointIndices;
   this->MarkupsDisplayNode->GetActiveControlPoints(activeControlPointIndices);
+  bool propertiesLabelActive = this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel;
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
   {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
@@ -322,7 +323,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       {
         continue;
       }
-      bool isPointActive = std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
+      bool isPointActive = propertiesLabelActive                                                                                   //
+        || std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
       switch (controlPointType)
       {
         case Active:
@@ -536,6 +538,11 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(vtkMRMLInteractionEvent
     }
   }
 
+  if (!this->TextActorOccluded)
+  {
+    this->CanInteractWithPropertiesLabel(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  }
+
   /* This would probably faster for many points:
 
   this->BuildLocator();
@@ -668,7 +675,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode*
     }
   }
 
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+  this->TextActor->SetTextProperty(this->GetPropertiesLabelTextProperty(Unselected));
 
   /* TODO: implement this for better performance
   if (event ==)

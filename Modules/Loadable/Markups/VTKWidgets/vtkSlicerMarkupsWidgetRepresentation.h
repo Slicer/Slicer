@@ -129,6 +129,9 @@ public:
 
   virtual vtkPointPlacer* GetPointPlacer();
 
+  /// Get the properties label actor - for testing purposes.
+  vtkGetObjectMacro(TextActor, vtkTextActor);
+
   /// Get internal control points polydata - for testing purposes.
   /// controlPointType can be Unselected, Selected, Active, Project, ProjectBack.
   virtual vtkPolyData* GetControlPointsPolyData(int controlPointType);
@@ -150,6 +153,12 @@ public:
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
   ~vtkSlicerMarkupsWidgetRepresentation() override;
+
+  /// Test the visible properties label in display coordinates.
+  void CanInteractWithPropertiesLabel(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+
+  /// Use the active text style when hovering over the properties label.
+  vtkTextProperty* GetPropertiesLabelTextProperty(int controlPointType);
 
   // Convert glyph types from display node enums to 2D glyph source enums
   static int GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay);

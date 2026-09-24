@@ -91,6 +91,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelVisibility(bool)));
+  QObject::connect(this->PropertiesLabelIncludesNodeNameCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelIncludesNodeName(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onTextScaleSliderWidgetChanged(double)));
 
@@ -327,6 +328,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineDiameterSliderWidget->setMRMLScene(markupsDisplayNode->GetScene());
 
   d->PropertiesLabelVisibilityCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelVisibility());
+  d->PropertiesLabelIncludesNodeNameCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelIncludesNodeName());
 
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
@@ -478,6 +480,17 @@ void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelIncludesNodeName(bool includesNodeName)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetPropertiesLabelIncludesNodeName(includesNodeName);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::setPointLabelsVisibility(bool visible)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
@@ -493,6 +506,13 @@ bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelVisibility() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->PropertiesLabelVisibilityCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelIncludesNodeName() const
+{
+  Q_D(const qMRMLMarkupsDisplayNodeWidget);
+  return d->PropertiesLabelIncludesNodeNameCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------

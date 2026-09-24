@@ -88,6 +88,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->SliceProjectionOpacity = 0.6;
 
   this->PropertiesLabelVisibility = true;
+  this->PropertiesLabelIncludesNodeName = true;
   this->PointLabelsVisibility = false;
   this->FillVisibility = true;
   this->OutlineVisibility = true;
@@ -170,6 +171,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
+  vtkMRMLWriteXMLBooleanMacro(propertiesLabelIncludesNodeName, PropertiesLabelIncludesNodeName);
   vtkMRMLWriteXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
   vtkMRMLWriteXMLFloatMacro(textScale, TextScale);
   vtkMRMLWriteXMLFloatMacro(glyphScale, GlyphScale);
@@ -227,6 +229,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
 
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
+  vtkMRMLReadXMLBooleanMacro(propertiesLabelIncludesNodeName, PropertiesLabelIncludesNodeName);
   vtkMRMLReadXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
   vtkMRMLReadXMLFloatMacro(textScale, TextScale);
   vtkMRMLReadXMLFloatMacro(glyphScale, GlyphScale);
@@ -316,6 +319,7 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(PropertiesLabelVisibility);
+  vtkMRMLCopyBooleanMacro(PropertiesLabelIncludesNodeName);
   vtkMRMLCopyBooleanMacro(PointLabelsVisibility);
   vtkMRMLCopyFloatMacro(TextScale);
   vtkMRMLCopyFloatMacro(GlyphScale);
@@ -505,6 +509,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(PropertiesLabelVisibility);
+  vtkMRMLPrintBooleanMacro(PropertiesLabelIncludesNodeName);
   vtkMRMLPrintBooleanMacro(PointLabelsVisibility);
   vtkMRMLPrintFloatMacro(TextScale);
   vtkMRMLPrintFloatMacro(GlyphScale);
