@@ -27,17 +27,13 @@ Version:   $Revision: 1.6 $
 vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMultiVolumeStorageNode::vtkMRMLMultiVolumeStorageNode()
-{
-}
+vtkMRMLMultiVolumeStorageNode::vtkMRMLMultiVolumeStorageNode() {}
 
 //----------------------------------------------------------------------------
-vtkMRMLMultiVolumeStorageNode::~vtkMRMLMultiVolumeStorageNode()
-{
-}
+vtkMRMLMultiVolumeStorageNode::~vtkMRMLMultiVolumeStorageNode() {}
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMultiVolumeStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMultiVolumeStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMultiVolumeNode");
 }
@@ -46,43 +42,43 @@ bool vtkMRMLMultiVolumeStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!this->CanReadInReferenceNode(refNode))
-    {
+  {
     return 0;
-    }
+  }
 
   vtkMRMLMultiVolumeNode* volNode = dynamic_cast<vtkMRMLMultiVolumeNode*>(refNode);
   if (!volNode)
-    {
+  {
     vtkErrorMacro("ReadDataInternal: not a MultiVolume node.");
     return 0;
-    }
+  }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
-    {
+  {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
-    }
+  }
 
-  vtkSmartPointer<vtkTeemNRRDReader> reader =  vtkSmartPointer<vtkTeemNRRDReader>::New();
+  vtkSmartPointer<vtkTeemNRRDReader> reader = vtkSmartPointer<vtkTeemNRRDReader>::New();
   reader->SetFileName(fullName.c_str());
 
   // Check if this is a NRRD file that we can read
   if (!reader->CanReadFile(fullName.c_str()))
-    {
+  {
     vtkDebugMacro("vtkMRMLMultiVolumeStorageNode: This is not a nrrd file");
     return 0;
-    }
+  }
 
   // Set up reader
   if (this->CenterImage)
-    {
+  {
     reader->SetUseNativeOriginOff();
-    }
+  }
   else
-    {
+  {
     reader->SetUseNativeOriginOn();
-    }
+  }
 
   // Read the header to see if the NRRD file corresponds to the
   // MRML Node
@@ -93,19 +89,19 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   KeyVector keys = reader->GetHeaderKeysVector();
   KeyVector::iterator kit = std::find(keys.begin(), keys.end(), "MultiVolume.NumberOfFrames");
   if (kit == keys.end())
-    {
+  {
     // not a MultiVolume file
     return 0;
-    }
+  }
   else
-    {
+  {
     // verified as a MultiVolume file.  need to set the number of frames.
     vtkMRMLMultiVolumeNode* mvNode = dynamic_cast<vtkMRMLMultiVolumeNode*>(refNode);
     if (mvNode)
-      {
+    {
       mvNode->SetNumberOfFrames(atoi(reader->GetHeaderValue("MultiVolume.NumberOfFrames")));
-      }
     }
+  }
 
   //
   // Finally have verified that we have a MultiVolume nrrd file
@@ -113,9 +109,9 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // prepare volume node
   if (volNode->GetImageData())
-    {
-    volNode->SetAndObserveImageData (NULL);
-    }
+  {
+    volNode->SetAndObserveImageData(NULL);
+  }
 
   // Read the volume
   reader->Update();
@@ -125,24 +121,24 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   volNode->SetRASToIJKMatrix(mat);
 
   // parse non-specific key-value pairs
-  for ( kit = keys.begin(); kit != keys.end(); ++kit)
-    {
-    volNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));      }
-
+  for (kit = keys.begin(); kit != keys.end(); ++kit)
+  {
+    volNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));
+  }
 
   // configure the canonical vtk meta data
   vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
 #if (VTK_MAJOR_VERSION <= 5)
-  ici->SetInput (reader->GetOutput());
+  ici->SetInput(reader->GetOutput());
 #else
   ici->SetInputConnection(reader->GetOutputPort());
 #endif
-  ici->SetOutputSpacing( 1, 1, 1 );
-  ici->SetOutputOrigin( 0, 0, 0 );
+  ici->SetOutputSpacing(1, 1, 1);
+  ici->SetOutputOrigin(0, 0, 0);
   ici->Update();
 
   // assign the buffer
-  volNode->SetAndObserveImageData (ici->GetOutput());
+  volNode->SetAndObserveImageData(ici->GetOutput());
 
   //
   return 1;

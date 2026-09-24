@@ -37,38 +37,37 @@ class vtkMRMLMultiVolumeDisplayNode;
 /// \ingroup Slicer_QtModules_MultiVolumeNode
 class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode : public vtkMRMLScalarVolumeNode
 {
-  public:
-
-  static vtkMRMLMultiVolumeNode *New();
-  vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLScalarVolumeNode);
+public:
+  static vtkMRMLMultiVolumeNode* New();
+  vtkTypeMacro(vtkMRMLMultiVolumeNode, vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  virtual void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  virtual void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "MRMLMultiVolume";};
+  virtual const char* GetNodeTagName() override { return "MRMLMultiVolume"; };
 
   /// Update the stored reference to another node in the scene
-  //virtual void UpdateReferenceID(const char *oldID, const char *newID);
+  // virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  //virtual void UpdateReferences();
+  // virtual void UpdateReferences();
 
   // Description:
-  //virtual void UpdateScene(vtkMRMLScene *scene);
+  // virtual void UpdateScene(vtkMRMLScene *scene);
 
-  //virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
-  
+  // virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
+
   void SetLabelArray(vtkDoubleArray*);
   vtkDoubleArray* GetLabelArray();
 
@@ -77,7 +76,7 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
   virtual void CreateDefaultDisplayNodes() override;
-  
+
   vtkMRMLMultiVolumeDisplayNode* GetMultiVolumeDisplayNode();
 
   void SetNumberOfFrames(int val);
@@ -97,4 +96,3 @@ protected:
 };
 
 #endif
-

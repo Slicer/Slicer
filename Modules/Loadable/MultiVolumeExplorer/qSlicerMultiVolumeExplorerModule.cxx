@@ -38,7 +38,7 @@
 //-----------------------------------------------------------------------------
 #include <QtGlobal>
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
+# include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerMultiVolumeExplorerModule, qSlicerMultiVolumeExplorerModule);
 #endif
 
@@ -54,9 +54,7 @@ public:
 // qSlicerMultiVolumeExplorerModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerMultiVolumeExplorerModulePrivate::qSlicerMultiVolumeExplorerModulePrivate()
-{
-}
+qSlicerMultiVolumeExplorerModulePrivate::qSlicerMultiVolumeExplorerModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerMultiVolumeExplorerModule methods
@@ -69,26 +67,24 @@ qSlicerMultiVolumeExplorerModule::qSlicerMultiVolumeExplorerModule(QObject* _par
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMultiVolumeExplorerModule::~qSlicerMultiVolumeExplorerModule()
-{
-}
+qSlicerMultiVolumeExplorerModule::~qSlicerMultiVolumeExplorerModule() {}
 
 //-----------------------------------------------------------------------------
-QString qSlicerMultiVolumeExplorerModule::helpText()const
+QString qSlicerMultiVolumeExplorerModule::helpText() const
 {
   return "MultiVolumeExplorer module supports various operations related to examining multivolume nodes.";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMultiVolumeExplorerModule::acknowledgementText()const
+QString qSlicerMultiVolumeExplorerModule::acknowledgementText() const
 {
   return "Development of this module was supported in part by "
-      "the following grants: P41EB015898, P41RR019703, R01CA111288 "
-      "and U01CA151261.";
+         "the following grants: P41EB015898, P41RR019703, R01CA111288 "
+         "and U01CA151261.";
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerMultiVolumeExplorerModule::icon()const
+QIcon qSlicerMultiVolumeExplorerModule::icon() const
 {
   return QIcon(":/Icons/MultiVolumeExplorer.png");
 }
@@ -106,7 +102,7 @@ QStringList qSlicerMultiVolumeExplorerModule::dependencies() const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMultiVolumeExplorerModule::contributors()const
+QStringList qSlicerMultiVolumeExplorerModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andrey Fedorov (SPL, BWH)");
@@ -125,32 +121,28 @@ void qSlicerMultiVolumeExplorerModule::setup()
   // Register the IO module for loading MultiVolumes as a variant of nrrd files
   qSlicerAbstractCoreModule* volumes = qSlicerApplication::application()->moduleManager()->module("Volumes");
   if (volumes)
-    {
-    vtkSlicerVolumesLogic* volumesLogic 
-      = dynamic_cast<vtkSlicerVolumesLogic*>(volumes->logic());
-    vtkSlicerMultiVolumeExplorerLogic* logic
-      = dynamic_cast<vtkSlicerMultiVolumeExplorerLogic*>(this->logic());
+  {
+    vtkSlicerVolumesLogic* volumesLogic = dynamic_cast<vtkSlicerVolumesLogic*>(volumes->logic());
+    vtkSlicerMultiVolumeExplorerLogic* logic = dynamic_cast<vtkSlicerMultiVolumeExplorerLogic*>(this->logic());
     if (volumesLogic && logic)
-      {
-      logic->RegisterArchetypeVolumeNodeSetFactory( volumesLogic );
-      }
+    {
+      logic->RegisterArchetypeVolumeNodeSetFactory(volumesLogic);
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerMultiVolumeExplorerModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerMultiVolumeExplorerModule::createWidgetRepresentation()
 {
-  QString pythonPath = qSlicerUtils::pathWithoutIntDir(
-              QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
+  QString pythonPath = qSlicerUtils::pathWithoutIntDir(QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
   QString classNameToLoad = "qSlicerMultiVolumeExplorerModuleWidget";
-  bool ret = widget->setPythonSource(
-        pythonPath + "/Python/" + classNameToLoad + ".py", classNameToLoad);
+  bool ret = widget->setPythonSource(pythonPath + "/Python/" + classNameToLoad + ".py", classNameToLoad);
   if (!ret)
-    {
+  {
     return 0;
-    }
+  }
   return widget.take();
 }
 

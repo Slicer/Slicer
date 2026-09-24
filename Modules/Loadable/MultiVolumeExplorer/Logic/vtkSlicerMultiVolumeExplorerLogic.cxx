@@ -47,35 +47,30 @@
 
 // DCMTK includes
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-#include <dcmtk/dcmdata/dcmetinf.h>
-#include <dcmtk/dcmdata/dcfilefo.h>
-#include <dcmtk/dcmdata/dcuid.h>
-#include <dcmtk/dcmdata/dcdict.h>
-#include <dcmtk/dcmdata/cmdlnarg.h>
-#include <dcmtk/ofstd/ofconapp.h>
-#include <dcmtk/ofstd/ofstd.h>
-#include <dcmtk/ofstd/ofdatime.h>
-#include <dcmtk/dcmdata/dcuid.h>         /* for dcmtk version name */
-#include <dcmtk/dcmdata/dcdeftag.h>      /* for DCM_StudyInstanceUID */
+# include <dcmtk/dcmdata/dcmetinf.h>
+# include <dcmtk/dcmdata/dcfilefo.h>
+# include <dcmtk/dcmdata/dcuid.h>
+# include <dcmtk/dcmdata/dcdict.h>
+# include <dcmtk/dcmdata/cmdlnarg.h>
+# include <dcmtk/ofstd/ofconapp.h>
+# include <dcmtk/ofstd/ofstd.h>
+# include <dcmtk/ofstd/ofdatime.h>
+# include <dcmtk/dcmdata/dcuid.h>    /* for dcmtk version name */
+# include <dcmtk/dcmdata/dcdeftag.h> /* for DCM_StudyInstanceUID */
 #endif
 
 // STD includes
 #include <sys/types.h>
 #include <errno.h>
 
-
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerMultiVolumeExplorerLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerMultiVolumeExplorerLogic::vtkSlicerMultiVolumeExplorerLogic()
-{
-}
+vtkSlicerMultiVolumeExplorerLogic::vtkSlicerMultiVolumeExplorerLogic() {}
 
 //----------------------------------------------------------------------------
-vtkSlicerMultiVolumeExplorerLogic::~vtkSlicerMultiVolumeExplorerLogic()
-{
-}
+vtkSlicerMultiVolumeExplorerLogic::~vtkSlicerMultiVolumeExplorerLogic() {}
 
 //----------------------------------------------------------------------------
 void vtkSlicerMultiVolumeExplorerLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -100,18 +95,13 @@ void vtkSlicerMultiVolumeExplorerLogic::UpdateFromMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMultiVolumeExplorerLogic
-::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerMultiVolumeExplorerLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node)) {}
 
 //---------------------------------------------------------------------------
-void vtkSlicerMultiVolumeExplorerLogic
-::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerMultiVolumeExplorerLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node)) {}
 
-namespace {
+namespace
+{
 
 ArchetypeVolumeNodeSet MultiVolumeNodeSetFactory(std::string& volumeName, vtkMRMLScene* scene, int options)
 {
@@ -138,24 +128,24 @@ ArchetypeVolumeNodeSet MultiVolumeNodeSetFactory(std::string& volumeName, vtkMRM
   return nodeSet;
 }
 
-};
+}; // namespace
 
 //----------------------------------------------------------------------------
 void vtkSlicerMultiVolumeExplorerLogic::RegisterArchetypeVolumeNodeSetFactory(vtkSlicerVolumesLogic* volumesLogic)
 {
   if (volumesLogic)
-    {
+  {
     volumesLogic->PreRegisterArchetypeVolumeNodeSetFactory(MultiVolumeNodeSetFactory);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
 {
-  if(!this->GetMRMLScene())
-    {
+  if (!this->GetMRMLScene())
+  {
     return;
-    }
+  }
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeNode>().GetPointer());
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeDisplayNode>().GetPointer());
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeStorageNode>().GetPointer());
@@ -163,9 +153,7 @@ void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
 
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
 //----------------------------------------------------------------------------
-int vtkSlicerMultiVolumeExplorerLogic
-::ProcessDICOMSeries(std::string dir, std::string outputDir,
-                     std::string dcmTag, vtkDoubleArray* tagValues)
+int vtkSlicerMultiVolumeExplorerLogic::ProcessDICOMSeries(std::string dir, std::string outputDir, std::string dcmTag, vtkDoubleArray* tagValues)
 {
   // this function takes on input the location of a directory that stores a single
   //  DICOM series and a tag used to separate individual subvolumes from that series.
@@ -175,8 +163,8 @@ int vtkSlicerMultiVolumeExplorerLogic
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
   typedef short PixelValueType;
-  typedef itk::Image< PixelValueType, 3 > VolumeType;
-  typedef itk::ImageSeriesReader< VolumeType > ReaderType;
+  typedef itk::Image<PixelValueType, 3> VolumeType;
+  typedef itk::ImageSeriesReader<VolumeType> ReaderType;
 
   int i, j;
 
@@ -193,49 +181,47 @@ int vtkSlicerMultiVolumeExplorerLogic
   itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
   int nSeriesUIDs = seriesUIDs.size();
 
-  if(nSeriesUIDs != 1)
-    {
+  if (nSeriesUIDs != 1)
+  {
     std::cerr << "Only one series is allowed!" << std::endl;
     return -1;
-    }
+  }
 
-  const ReaderType::FileNamesContainer & filenames =
-      inputNames->GetFileNames(seriesUIDs[0]);
+  const ReaderType::FileNamesContainer& filenames = inputNames->GetFileNames(seriesUIDs[0]);
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetImageIO( gdcmIO );
-  reader->SetFileNames( filenames );
+  reader->SetImageIO(gdcmIO);
+  reader->SetFileNames(filenames);
 
   try
-    {
+  {
     std::cout << "Splitting series.... updating reader." << std::endl;
     reader->Update();
-    }
-  catch (itk::ExceptionObject &excp)
-    {
+  }
+  catch (itk::ExceptionObject& excp)
+  {
     std::cout << "Error encountered: exiting." << std::endl;
     std::cerr << "Exception thrown while reading the series" << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  ReaderType::DictionaryArrayRawPointer inputDict =
-      reader->GetMetaDataDictionaryArray();
+  ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
   int nSlices = inputDict->size();
 
   nSlices = filenames.size();
-  //std::string sortTag = "0018|1060"; // DCE GE: trigger time
+  // std::string sortTag = "0018|1060"; // DCE GE: trigger time
   std::string sortTag = dcmTag;
   std::string tagVal;
-  std::map<int,ReaderType::FileNamesContainer> tagVal2fileList;
+  std::map<int, ReaderType::FileNamesContainer> tagVal2fileList;
 
-  for(j = 0; j < nSlices; ++j)
-    {
-    //std::cout << "\n\n\n\n\n Processing slice " << j << std::endl;
+  for (j = 0; j < nSlices; ++j)
+  {
+    // std::cout << "\n\n\n\n\n Processing slice " << j << std::endl;
 
     itk::ExposeMetaData<std::string>(*(*inputDict)[j], sortTag, tagVal);
-    //std::cout << "Tag value found: " << tagVal << "(" << tagVal2fileList.size() << ")" << " ";
+    // std::cout << "Tag value found: " << tagVal << "(" << tagVal2fileList.size() << ")" << " ";
     tagVal2fileList[atoi(tagVal.c_str())].push_back(filenames[j]);
-    }
+  }
 
   // map items should be sorted by key
   tagValues->SetNumberOfComponents(1);
@@ -244,13 +230,12 @@ int vtkSlicerMultiVolumeExplorerLogic
 
   i = 0;
 
-  for(std::map<int,ReaderType::FileNamesContainer>::const_iterator
-    it=tagVal2fileList.begin(); it!=tagVal2fileList.end(); ++it,++i)
-    {
+  for (std::map<int, ReaderType::FileNamesContainer>::const_iterator it = tagVal2fileList.begin(); it != tagVal2fileList.end(); ++it, ++i)
+  {
 
     std::ostringstream tagValStr;
     double tagVal = (*it).first;
-    tagValStr  << tagVal;
+    tagValStr << tagVal;
 
     char fname[255];
     sprintf(fname, "%s/%08i.nrrd", outputDir.c_str(), i);
@@ -259,26 +244,23 @@ int vtkSlicerMultiVolumeExplorerLogic
     StoreVolumeNode((*it).second, seriesFileName);
 
     tagValues->SetComponent(i, 0, tagVal);
-    }
+  }
 
   return tagVal2fileList.size();
 }
 #endif
 
 //----------------------------------------------------------------------------
-void vtkSlicerMultiVolumeExplorerLogic
-::StoreVolumeNode(const std::vector<std::string>& filenames,
-                  const std::string& seriesFileName)
+void vtkSlicerMultiVolumeExplorerLogic::StoreVolumeNode(const std::vector<std::string>& filenames, const std::string& seriesFileName)
 {
-  vtkMRMLVolumeArchetypeStorageNode* sNode =
-    vtkMRMLVolumeArchetypeStorageNode::New();
-  vtkMRMLScalarVolumeNode *vNode =
-    vtkMRMLScalarVolumeNode::New();
+  vtkMRMLVolumeArchetypeStorageNode* sNode = vtkMRMLVolumeArchetypeStorageNode::New();
+  vtkMRMLScalarVolumeNode* vNode = vtkMRMLScalarVolumeNode::New();
   sNode->SetFileName(filenames[0].c_str());
   sNode->ResetFileNameList();
-  for(std::vector<std::string>::const_iterator
-    it=filenames.begin();it!=filenames.end();++it)
+  for (std::vector<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+  {
     sNode->AddFileName(it->c_str());
+  }
   sNode->SetSingleFile(0);
   sNode->ReadData(vNode);
 

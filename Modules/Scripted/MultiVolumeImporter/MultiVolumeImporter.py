@@ -1,4 +1,4 @@
-import sys, re, os
+import re, os
 
 from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
@@ -26,7 +26,7 @@ class MultiVolumeImporter(ScriptedLoadableModule):
     """
     parent.helpText += self.getDefaultModuleDocumentationLink()
     # MultiVolumeExplorer registers the MRML node type this module is using
-    parent.dependencies = ['MultiVolumeExplorer']
+    parent.dependencies = ["MultiVolumeExplorer"]
     parent.acknowledgementText = """
     Development of this module was supported in part by the following grants:
     P41EB015898, P41RR019703, R01CA111288 and U01CA151261.
@@ -45,9 +45,9 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
 
     import importlib.util
     if importlib.util.find_spec("numpy") is None:
-      label = qt.QLabel('The module is not available due to missing Numpy package.')
+      label = qt.QLabel("The module is not available due to missing Numpy package.")
       self.layout.addWidget(label)
-      label = qt.QLabel('You can seek help by contacting 3D Slicer user list: slicer-users@bwh.harvard.edu')
+      label = qt.QLabel("You can seek help by contacting 3D Slicer user list: slicer-users@bwh.harvard.edu")
       self.layout.addWidget(label)
 
       # Add vertical spacer
@@ -61,16 +61,16 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     dummyFormLayout = qt.QFormLayout(dummyCollapsibleButton)
 
     # add input directory selector
-    label = qt.QLabel('Input directory:')
+    label = qt.QLabel("Input directory:")
     self.__fDialog = ctk.ctkDirectoryButton()
-    self.__fDialog.caption = 'Input directory'
+    self.__fDialog.caption = "Input directory"
     dummyFormLayout.addRow(label, self.__fDialog)
 
-    label = qt.QLabel('Output node:')
+    label = qt.QLabel("Output node:")
     self.__mvSelector = slicer.qMRMLNodeComboBox()
-    self.__mvSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.__mvSelector.nodeTypes = ["vtkMRMLMultiVolumeNode"]
     self.__mvSelector.setMRMLScene(slicer.mrmlScene)
-    self.__mvSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
+    self.__mvSelector.connect("mrmlSceneChanged(vtkMRMLScene*)", self.onMRMLSceneChanged)
     self.__mvSelector.addEnabled = 1
     dummyFormLayout.addRow(label, self.__mvSelector)
 
@@ -82,37 +82,37 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     dummyFormLayout = qt.QFormLayout(dummyCollapsibleButton)
     self.__advancedFrame = dummyCollapsibleButton
 
-    label = qt.QLabel('Frame identifying DICOM tag (if known):')
+    label = qt.QLabel("Frame identifying DICOM tag (if known):")
     self.__dicomTag = qt.QLineEdit()
-    self.__dicomTag.text = 'NA'
+    self.__dicomTag.text = "NA"
     dummyFormLayout.addRow(label, self.__dicomTag)
 
-    label = qt.QLabel('Frame identifying units:')
+    label = qt.QLabel("Frame identifying units:")
     self.__veLabel = qt.QLineEdit()
-    self.__veLabel.text = 'na'
+    self.__veLabel.text = "na"
     dummyFormLayout.addRow(label, self.__veLabel)
 
-    label = qt.QLabel('Initial value:')
+    label = qt.QLabel("Initial value:")
     self.__veInitial = qt.QDoubleSpinBox()
     self.__veInitial.value = 0
     dummyFormLayout.addRow(label, self.__veInitial)
 
-    label = qt.QLabel('Step:')
+    label = qt.QLabel("Step:")
     self.__veStep = qt.QDoubleSpinBox()
     self.__veStep.value = 1
     dummyFormLayout.addRow(label, self.__veStep)
 
-    label = qt.QLabel('EchoTime:')
+    label = qt.QLabel("EchoTime:")
     self.__te = qt.QDoubleSpinBox()
     self.__te.value = 1
     dummyFormLayout.addRow(label, self.__te)
 
-    label = qt.QLabel('RepetitionTime:')
+    label = qt.QLabel("RepetitionTime:")
     self.__tr = qt.QDoubleSpinBox()
     self.__tr.value = 1
     dummyFormLayout.addRow(label, self.__tr)
 
-    label = qt.QLabel('FlipAngle:')
+    label = qt.QLabel("FlipAngle:")
     self.__fa = qt.QDoubleSpinBox()
     self.__fa.value = 1
     dummyFormLayout.addRow(label, self.__fa)
@@ -120,9 +120,9 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     importButton = qt.QPushButton("Import")
     importButton.toolTip = "Import the contents of the directory as a MultiVolume"
     self.layout.addWidget(importButton)
-    importButton.connect('clicked(bool)', self.onImportButtonClicked)
+    importButton.connect("clicked(bool)", self.onImportButtonClicked)
 
-    self.__status = qt.QLabel('Status: Idle')
+    self.__status = qt.QLabel("Status: Idle")
     self.layout.addWidget(self.__status)
 
     # Add vertical spacer
@@ -135,21 +135,21 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     self.__mvSelector.setMRMLScene(slicer.mrmlScene)
     return
 
-  def humanSort(self,l):
-    """ Sort the given list in the way that humans expect.
-        Conributed by Yanling Liu
+  def humanSort(self,items):
+    """Sort the given list in the way that humans expect.
+    Contributed by Yanling Liu
     """
     convert = lambda text: int(text) if text.isdigit() else text
-    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
-    l.sort( key=alphanum_key )
+    alphanum_key = lambda key: [ convert(c) for c in re.split("([0-9]+)", key) ]
+    items.sort( key=alphanum_key )
 
   def onImportButtonClicked(self):
     import vtk.util.numpy_support
 
     # check if the output container exists
     mvNode = self.__mvSelector.currentNode()
-    if mvNode == None:
-      self.__status.text = 'Status: Select output node!'
+    if mvNode is None:
+      self.__status.text = "Status: Select output node!"
       return
 
     # Series of frames alpha-ordered, all in the input directory
@@ -160,8 +160,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     frameList = []    # frames as MRMLScalarVolumeNode's
     frameFolder = ""
     volumeLabels = vtk.vtkDoubleArray()
-    frameLabelsAttr = ''
-    frameFileListAttr = ''
+    frameLabelsAttr = ""
+    frameFileListAttr = ""
     dicomTagNameAttr = self.__dicomTag.text
     dicomTagUnitsAttr = self.__veLabel.text
     teAttr = self.__te.text
@@ -174,15 +174,15 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     frame0 = None
     inputDir = self.__fDialog.directory
     for f in os.listdir(inputDir):
-      if not f.startswith('.'):
-        fileName = inputDir+'/'+f
+      if not f.startswith("."):
+        fileName = inputDir+"/"+f
         fileNames.append(fileName)
     self.humanSort(fileNames)
 
     # check for nifti file that may be 4D as special case
     niftiFiles = []
     for fileName in fileNames:
-      if fileName.lower().endswith('.nii.gz') or fileName.lower().endswith('.nii'):
+      if fileName.lower().endswith(".nii.gz") or fileName.lower().endswith(".nii"):
         niftiFiles.append(fileName)
     if len(niftiFiles) == 1:
      self.read4DNIfTI(mvNode, niftiFiles[0])
@@ -204,16 +204,16 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
         frames.append(f)
 
     nFrames = len(frames)
-    print('Successfully read '+str(nFrames)+' frames')
+    print("Successfully read "+str(nFrames)+" frames")
 
     if nFrames == 1:
-      print('Single frame dataset - not reading as multivolume!')
+      print("Single frame dataset - not reading as multivolume!")
       return
 
     # convert seconds data to milliseconds, which is expected by pkModeling.cxx line 81
-    if dicomTagUnitsAttr == 's':
+    if dicomTagUnitsAttr == "s":
       frameIdMultiplier = 1000.0
-      dicomTagUnitsAttr = 'ms'
+      dicomTagUnitsAttr = "ms"
     else:
       frameIdMultiplier = 1.0
 
@@ -222,7 +222,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     for i in range(nFrames):
       frameId = frameIdMultiplier*(self.__veInitial.value+self.__veStep.value*i)
       volumeLabels.SetComponent(i, 0, frameId)
-      frameLabelsAttr += str(frameId)+','
+      frameLabelsAttr += str(frameId)+","
     frameLabelsAttr = frameLabelsAttr[:-1]
 
     # allocate multivolume
@@ -233,8 +233,8 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     extent = frame0.GetImageData().GetExtent()
     numPixels = float(extent[1]+1)*(extent[3]+1)*(extent[5]+1)*nFrames
     scalarType = frame0.GetImageData().GetScalarType()
-    print('Will now try to allocate memory for '+str(numPixels)+' pixels of VTK scalar type '+str(scalarType))
-    print('Memory allocated successfully')
+    print("Will now try to allocate memory for "+str(numPixels)+" pixels of VTK scalar type "+str(scalarType))
+    print("Memory allocated successfully")
     mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
     mat = vtk.vtkMatrix4x4()
@@ -250,7 +250,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
       mvImageArray.T[frameId] = frameImageArray
 
-    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMultiVolumeDisplayNode")
     mvDisplayNode.SetScene(slicer.mrmlScene)
     slicer.mrmlScene.AddNode(mvDisplayNode)
     mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
@@ -263,20 +263,20 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     mvNode.SetLabelArray(volumeLabels)
     mvNode.SetLabelName(self.__veLabel.text)
 
-    mvNode.SetAttribute('MultiVolume.FrameLabels',frameLabelsAttr)
-    mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
-    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagName',dicomTagNameAttr)
-    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',dicomTagUnitsAttr)
+    mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsAttr)
+    mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(nFrames))
+    mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",dicomTagNameAttr)
+    mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits",dicomTagUnitsAttr)
 
-    if dicomTagNameAttr == 'TriggerTime' or dicomTagNameAttr == 'AcquisitionTime':
-      if teAttr != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',teAttr)
-      if trAttr != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',trAttr)
-      if faAttr != '':
-        mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',faAttr)
+    if dicomTagNameAttr == "TriggerTime" or dicomTagNameAttr == "AcquisitionTime":
+      if teAttr != "":
+        mvNode.SetAttribute("MultiVolume.DICOM.EchoTime",teAttr)
+      if trAttr != "":
+        mvNode.SetAttribute("MultiVolume.DICOM.RepetitionTime",trAttr)
+      if faAttr != "":
+        mvNode.SetAttribute("MultiVolume.DICOM.FlipAngle",faAttr)
 
-    mvNode.SetName(str(nFrames)+' frames MultiVolume')
+    mvNode.SetName(str(nFrames)+" frames MultiVolume")
     Helper.SetBgFgVolumes(mvNode.GetID(),None)
 
   def readFrame(self,file):
@@ -300,7 +300,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
 
   def read4DNIfTI(self, mvNode, fileName):
     """Try to read a 4D nifti file as a multivolume"""
-    print('trying to read %s' % fileName)
+    print("trying to read %s" % fileName)
 
     # use the vtk reader which seems to handle most nifti variants well
     reader = vtk.vtkNIFTIImageReader()
@@ -310,7 +310,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     header = reader.GetNIFTIHeader()
     qFormMatrix = reader.GetQFormMatrix()
     if not qFormMatrix:
-      print('Warning: %s does not have a QFormMatrix - using Identity')
+      print("Warning: %s does not have a QFormMatrix - using Identity")
       qFormMatrix = vtk.vtkMatrix4x4()
     spacing = reader.GetOutputDataObject(0).GetSpacing()
     timeSpacing = reader.GetTimeSpacing()
@@ -318,9 +318,9 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     if header.GetIntentCode() != header.IntentTimeSeries:
       intentName = header.GetIntentName()
       if not intentName:
-        intentName = 'Nothing'
-      print(f'Warning: {fileName} does not have TimeSeries intent, instead it has \"{intentName}\"')
-      print('Trying to read as TimeSeries anyway')
+        intentName = "Nothing"
+      print(f'Warning: {fileName} does not have TimeSeries intent, instead it has "{intentName}"')
+      print("Trying to read as TimeSeries anyway")
     units = header.GetXYZTUnits()
 
     # try to account for some of the unit options
@@ -340,15 +340,15 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     # but use the advanced info so user can specify offset and scale
     volumeLabels = vtk.vtkDoubleArray()
     volumeLabels.SetNumberOfTuples(nFrames)
-    frameLabelsAttr = ''
+    frameLabelsAttr = ""
     for i in range(nFrames):
       frameId = self.__veInitial.value + timeSpacing * self.__veStep.value * i
       volumeLabels.SetComponent(i, 0, frameId)
-      frameLabelsAttr += str(frameId)+','
+      frameLabelsAttr += str(frameId)+","
     frameLabelsAttr = frameLabelsAttr[:-1]
 
     # create the display node
-    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMultiVolumeDisplayNode")
     mvDisplayNode.SetScene(slicer.mrmlScene)
     slicer.mrmlScene.AddNode(mvDisplayNode)
     mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
@@ -378,10 +378,10 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     mvNode.SetLabelArray(volumeLabels)
     mvNode.SetLabelName(self.__veLabel.text)
 
-    mvNode.SetAttribute('MultiVolume.FrameLabels',frameLabelsAttr)
-    mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
-    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagName','')
-    mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits','')
+    mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsAttr)
+    mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(nFrames))
+    mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","")
+    mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits","")
 
-    mvNode.SetName(str(nFrames)+' frames NIfTI MultiVolume')
+    mvNode.SetName(str(nFrames)+" frames NIfTI MultiVolume")
     Helper.SetBgFgVolumes(mvNode.GetID(),None)

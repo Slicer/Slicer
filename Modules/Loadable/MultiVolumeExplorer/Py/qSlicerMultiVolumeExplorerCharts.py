@@ -1,5 +1,5 @@
-import math, string, logging
-from __main__ import vtk, ctk, slicer
+import math, logging
+from __main__ import vtk, slicer
 from qt import QSize
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
@@ -13,17 +13,17 @@ class MultiVolumeIntensityChartView:
 
   @staticmethod
   def getMultiVolumeLabels(volumeNode):
-    frameLabels = volumeNode.GetAttribute('MultiVolume.FrameLabels')
+    frameLabels = volumeNode.GetAttribute("MultiVolume.FrameLabels")
     nFrames = volumeNode.GetNumberOfFrames()
-    mvLabels = [0,]*nFrames
+    mvLabels = [0]*nFrames
     if frameLabels:
-      mvLabels = frameLabels.split(',')
+      mvLabels = frameLabels.split(",")
       if len(mvLabels) == nFrames:
-        for l in range(nFrames):
-          mvLabels[l] = float(mvLabels[l])
+        for frameIndex in range(nFrames):
+          mvLabels[frameIndex] = float(mvLabels[frameIndex])
     else:
-      for l in range(nFrames):
-        mvLabels[l] = float(l)
+      for frameIndex in range(nFrames):
+        mvLabels[frameIndex] = float(frameIndex)
     return mvLabels
 
   @staticmethod
@@ -31,7 +31,7 @@ class MultiVolumeIntensityChartView:
     ijk = []
     for element in ijkFloat:
       try:
-        index = int(round(element))
+        index = int(round(element))  # noqa: RUF046 (element may be a numpy float)
       except ValueError:
         index = 0
       ijk.append(index)
@@ -97,7 +97,7 @@ class MultiVolumeIntensityChartView:
 
   @bgMultiVolumeNode.setter
   def bgMultiVolumeNode(self, bgMultiVolumeNode):
-    logging.debug('MultiVolumeIntensityChartView: bgMultiVolumeNode changed')
+    logging.debug("MultiVolumeIntensityChartView: bgMultiVolumeNode changed")
     self.__bgMultiVolumeNode = bgMultiVolumeNode
 
     if not self.__bgMultiVolumeNode:
@@ -107,8 +107,8 @@ class MultiVolumeIntensityChartView:
       self.__chartView.minimumSize = QSize(200,240)
     nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
 
-    self.refreshArray(self.__bgxArray, nFrames, 'x')
-    self.refreshArray(self.__bgyArray, nFrames, '1st multivolume')
+    self.refreshArray(self.__bgxArray, nFrames, "x")
+    self.refreshArray(self.__bgyArray, nFrames, "1st multivolume")
 
     if self.__chartTableNode:
       slicer.mrmlScene.RemoveNode(self.__chartTableNode)
@@ -160,8 +160,8 @@ class MultiVolumeIntensityChartView:
 
     self.__bgxArray = vtk.vtkFloatArray()
     self.__bgyArray = vtk.vtkFloatArray()
-    self.__bgxArray.SetName('x')
-    self.__bgyArray.SetName('1st multivolume')
+    self.__bgxArray.SetName("x")
+    self.__bgyArray.SetName("1st multivolume")
     self.__chartTableNode = self.createNewVTKTableNode(self.__bgxArray, self.__bgyArray)
     self.__chartTable = self.__chartTableNode.GetTable()
     self.__fgChartTableNode = None
@@ -277,10 +277,10 @@ class MultiVolumeIntensityChartView:
         useFg = True
 
         fgxArray = vtk.vtkFloatArray()
-        self.refreshArray(fgxArray, nComponents, 'fg')
+        self.refreshArray(fgxArray, nComponents, "fg")
 
         fgyArray = vtk.vtkFloatArray()
-        self.refreshArray(fgyArray, nComponents, '2nd multivolume')
+        self.refreshArray(fgyArray, nComponents, "2nd multivolume")
 
         # will crash if there is no name
         fgChartTable.AddColumn(fgxArray)
@@ -312,8 +312,8 @@ class MultiVolumeIntensityChartView:
 
     self.__bgPlot = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", "1st multivolume")
     self.__bgPlot.SetAndObserveTableNodeID(self.__chartTableNode.GetID())
-    self.__bgPlot.SetXColumnName('x')
-    self.__bgPlot.SetYColumnName('1st multivolume')
+    self.__bgPlot.SetXColumnName("x")
+    self.__bgPlot.SetYColumnName("1st multivolume")
     self.__bgPlot.SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatter)
     if useFg:
       self.__bgPlot.SetLineStyle(slicer.vtkMRMLPlotSeriesNode.LineStyleNone)
@@ -325,8 +325,8 @@ class MultiVolumeIntensityChartView:
     if useFg:
       self.__fgPlot = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotSeriesNode", "2nd multivolume")
       self.__fgPlot.SetAndObserveTableNodeID(self.__fgChartTableNode.GetID())
-      self.__fgPlot.SetXColumnName('fg')
-      self.__fgPlot.SetYColumnName('2nd multivolume')
+      self.__fgPlot.SetXColumnName("fg")
+      self.__fgPlot.SetYColumnName("2nd multivolume")
       self.__fgPlot.SetPlotType(slicer.vtkMRMLPlotSeriesNode.PlotTypeScatter)
       self.__fgPlot.SetColor(1,0,0)
       self.__fgPlot.SetMarkerStyle(slicer.vtkMRMLPlotSeriesNode.MarkerStyleNone)
@@ -335,7 +335,7 @@ class MultiVolumeIntensityChartView:
 
   def xyToRAS(self, sliceLogic, xyPoint):
     sliceNode = sliceLogic.GetSliceNode()
-    rast = sliceNode.GetXYToRAS().MultiplyPoint(xyPoint + (0,1,))
+    rast = sliceNode.GetXYToRAS().MultiplyPoint(xyPoint + (0,1))
     return rast[:3]
 
   def computePercentageChangeWithRespectToBaseline(self, multiVolumeNode, chartTable, ijk):
@@ -367,18 +367,18 @@ class MultiVolumeIntensityChartView:
 
   def setAxesTitle(self):
     if self.__chartMode == self.PERCENTAGE_CHANGE_MODE and self.baselineAverageSignal != 0:
-      yTitle = 'change relative to baseline, %'
+      yTitle = "change relative to baseline, %"
     else:
-      yTitle = 'signal intensity'
+      yTitle = "signal intensity"
 
-    tag = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
-    units = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
-    xTitle = tag + ', ' + units
+    tag = str(self.__bgMultiVolumeNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagName"))
+    units = str(self.__bgMultiVolumeNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits"))
+    xTitle = tag + ", " + units
 
     if self.showXLogScale:
-      xTitle = 'log of ' + xTitle
+      xTitle = "log of " + xTitle
     if self.showYLogScale:
-      yTitle = 'log of ' + yTitle
+      yTitle = "log of " + yTitle
 
     self.setYAxisTitle(yTitle)
     self.setXAxisTitle(xTitle)
@@ -492,17 +492,17 @@ class LabeledImageChartView:
     return chartNode
 
   def setAxesLabels(self, chartNode):
-    tag = str(self.multiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
-    units = str(self.multiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
-    xTitle = tag + ', ' + units
-    chartNode.SetProperty('default', 'xAxisLabel', xTitle)
+    tag = str(self.multiVolumeNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagName"))
+    units = str(self.multiVolumeNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits"))
+    xTitle = tag + ", " + units
+    chartNode.SetProperty("default", "xAxisLabel", xTitle)
     if self.displayPercentageChange:
-      chartNode.SetProperty('default', 'yAxisLabel', 'change relative to baseline, %')
+      chartNode.SetProperty("default", "yAxisLabel", "change relative to baseline, %")
     else:
-      chartNode.SetProperty('default', 'yAxisLabel', 'mean signal intensity')
+      chartNode.SetProperty("default", "yAxisLabel", "mean signal intensity")
 
   def initiateChartViewNode(self, chartNode):
-    chartViewNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    chartViewNodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLChartViewNode")
     chartViewNodes.SetReferenceCount(chartViewNodes.GetReferenceCount() - 1)
     chartViewNodes.InitTraversal()
     chartViewNode = chartViewNodes.GetNextItemAsObject()

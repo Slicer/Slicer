@@ -6,7 +6,7 @@ class qSlicerMultiVolumeExplorerModuleHelper:
 
   @staticmethod
   def RGBtoHex(r, g, b):
-    return f'#{r:02X}{g:02X}{b:02X}'
+    return f"#{r:02X}{g:02X}{b:02X}"
 
   @staticmethod
   def extractFrame(scalarVolumeNode, multiVolumeNode, frameId):
@@ -35,7 +35,7 @@ class qSlicerMultiVolumeExplorerModuleHelper:
 
     displayNode = scalarVolumeNode.GetDisplayNode()
     if displayNode is None:
-      displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
+      displayNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLScalarVolumeDisplayNode")
       displayNode.SetReferenceCount(1)
       displayNode.SetScene(slicer.mrmlScene)
       slicer.mrmlScene.AddNode(displayNode)
@@ -60,9 +60,8 @@ class qSlicerMultiVolumeExplorerModuleHelper:
 
   @staticmethod
   def setupChartNodeViewLayout():
-    layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
+    layoutNodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLayoutNode")
     layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)
     layoutNodes.InitTraversal()
     layoutNode = layoutNodes.GetNextItemAsObject()
     layoutNode.SetViewArrangement(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalQuantitativeView)
-

@@ -1,4 +1,4 @@
-from __main__ import vtk, ctk, slicer
+from __main__ import ctk, slicer
 import logging
 import PythonQt
 from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, QSizePolicy, QDialog, QSize, QPoint
@@ -66,10 +66,10 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     if not parent:
       parent = self.layout
     self.bgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
-    self.bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.bgMultiVolumeSelector.nodeTypes = ["vtkMRMLMultiVolumeNode"]
     self.bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
     self.bgMultiVolumeSelector.addEnabled = 0
-    self._bgMultiVolumeSelectorLabel = QLabel('Input multivolume')
+    self._bgMultiVolumeSelectorLabel = QLabel("Input multivolume")
     inputFrameWidget = QWidget()
     self.inputFrameLayout = QFormLayout()
     inputFrameWidget.setLayout(self.inputFrameLayout)
@@ -80,9 +80,9 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     # TODO: initialize the slider based on the contents of the labels array
     self.frameSlider = ctk.ctkSliderWidget()
     self.frameSlider.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-    self.frameLabel = QLabel('Current frame number')
-    self.playButton = QPushButton('Play')
-    self.playButton.toolTip = 'Iterate over multivolume frames'
+    self.frameLabel = QLabel("Current frame number")
+    self.playButton = QPushButton("Play")
+    self.playButton.toolTip = "Iterate over multivolume frames"
     self.playButton.checkable = True
     frameControlHBox = QHBoxLayout()
     frameControlHBox.addWidget(self.frameLabel)
@@ -107,12 +107,12 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     parent.addWidget(self.plottingFrameWidget)
 
   def setupConnections(self):
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
-    self.bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
-    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
-    self.frameSlider.connect('valueChanged(double)', self.onSliderChanged)
-    self.timer.connect('timeout()', self.goToNext)
-    self.popupChartButton.connect('toggled(bool)', self.onDockChartViewToggled)
+    self.parent.connect("mrmlSceneChanged(vtkMRMLScene*)", self.onVCMRMLSceneChanged)
+    self.bgMultiVolumeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onBackgroundInputChanged)
+    self.playButton.connect("toggled(bool)", self.onPlayButtonToggled)
+    self.frameSlider.connect("valueChanged(double)", self.onSliderChanged)
+    self.timer.connect("timeout()", self.goToNext)
+    self.popupChartButton.connect("toggled(bool)", self.onDockChartViewToggled)
 
   def onDockChartViewToggled(self, checked):
     if checked:
@@ -137,9 +137,9 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     self.plottingFrameLayout.addWidget(self._multiVolumeIntensityChart.chartView)
     self.plottingFrameLayout.addWidget(self.popupChartButton)
     self.popupChartButton.setText("Undock chart")
-    self.popupChartButton.disconnect('toggled(bool)', self.onDockChartViewToggled)
+    self.popupChartButton.disconnect("toggled(bool)", self.onDockChartViewToggled)
     self.popupChartButton.checked = False
-    self.popupChartButton.connect('toggled(bool)', self.onDockChartViewToggled)
+    self.popupChartButton.connect("toggled(bool)", self.onDockChartViewToggled)
 
   def onSliderChanged(self, frameId):
     if self._bgMultiVolumeNode is None:
@@ -179,10 +179,10 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
       return
     if checked:
       self.timer.start()
-      self.playButton.text = 'Stop'
+      self.playButton.text = "Stop"
     else:
       self.timer.stop()
-      self.playButton.text = 'Play'
+      self.playButton.text = "Play"
 
   def processEvent(self, observee, event):
     # logging.debug("processing event %s" % event)
@@ -190,7 +190,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
       return
 
     # TODO: use a timer to delay calculation and compress events
-    if event == 'LeaveEvent':
+    if event == "LeaveEvent":
       # reset all the readouts
       # TODO: reset the label text
       return
@@ -212,16 +212,17 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     pass
 
   def refreshObservers(self):
-    """ When the layout changes, drop the observers from
+    """When the layout changes, drop the observers from
     all the old widgets and create new observers for the
-    newly created widgets"""
+    newly created widgets
+    """
     self.removeObservers()
     # get new slice nodes
     layoutManager = slicer.app.layoutManager()
-    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSliceNode")
     for nodeIndex in range(sliceNodeCount):
       # find the widget for each node in scene
-      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
+      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, "vtkMRMLSliceNode")
       sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
       if sliceWidget:
         # add observers and keep track of tags
@@ -271,21 +272,21 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.layout.addWidget(self.inputFrame)
 
     self.fgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
-    self.fgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.fgMultiVolumeSelector.nodeTypes = ["vtkMRMLMultiVolumeNode"]
     self.fgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
     self.fgMultiVolumeSelector.addEnabled = 0
     self.fgMultiVolumeSelector.noneEnabled = 1
     self.fgMultiVolumeSelector.toolTip = "Secondary multivolume will be used for the secondary \
       plot in interactive charting. As an example, this can be used to overlay the \
       curve obtained by fitting a model to the data"
-    self.inputFrameLayout.addRow(QLabel('Input secondary multivolume'), self.fgMultiVolumeSelector)
+    self.inputFrameLayout.addRow(QLabel("Input secondary multivolume"), self.fgMultiVolumeSelector)
 
   def setupFrameControlFrame(self):
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setupFrameControlFrame(self)
 
     self.frameCopySelector = slicer.qMRMLNodeComboBox()
     self.frameCopySelector.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-    self.frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.frameCopySelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.frameCopySelector.setMRMLScene(slicer.mrmlScene)
     self.frameCopySelector.addEnabled = 1
     self.frameCopySelector.enabled = 0
@@ -294,25 +295,25 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
                                                   "vtkMRMLDiffusionTensorVolumeNode",
                                                   "vtkMRMLVectorVolumeNode"]
     self.extractFrameCopy = False
-    self.extractFrameCheckBox = QCheckBox('Enable copying while sliding')
+    self.extractFrameCheckBox = QCheckBox("Enable copying while sliding")
     hbox = QHBoxLayout()
-    hbox.addWidget(QLabel('Current frame copy'))
+    hbox.addWidget(QLabel("Current frame copy"))
     hbox.addWidget(self.frameCopySelector)
     hbox.addWidget(self.extractFrameCheckBox)
     self.inputFrameLayout.addRow(hbox)
 
     self.currentFrameCopySelector = slicer.qMRMLNodeComboBox()
     self.currentFrameCopySelector.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-    self.currentFrameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.currentFrameCopySelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.currentFrameCopySelector.setMRMLScene(slicer.mrmlScene)
     self.currentFrameCopySelector.addEnabled = 0
     self.currentFrameCopySelector.enabled = 0
 
-    self.currentFrameCopyButton = QPushButton('Copy frame')
-    self.currentFrameCopyButton.toolTip = 'Copy currently selected frame'
+    self.currentFrameCopyButton = QPushButton("Copy frame")
+    self.currentFrameCopyButton.toolTip = "Copy currently selected frame"
 
     hbox2 = QHBoxLayout()
-    hbox2.addWidget(QLabel('Current frame click-to-copy'))
+    hbox2.addWidget(QLabel("Current frame click-to-copy"))
     hbox2.addWidget(self.currentFrameCopySelector)
     hbox2.addWidget(self.currentFrameCopyButton)
     self.inputFrameLayout.addRow(hbox2)
@@ -326,34 +327,34 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
 
     # label map for probing
     self.labelMapSelector = slicer.qMRMLNodeComboBox()
-    self.labelMapSelector.nodeTypes = ['vtkMRMLLabelMapVolumeNode']
-    self.labelMapSelector.toolTip = 'Label map to be probed'
+    self.labelMapSelector.nodeTypes = ["vtkMRMLLabelMapVolumeNode"]
+    self.labelMapSelector.toolTip = "Label map to be probed"
     self.labelMapSelector.setMRMLScene(slicer.mrmlScene)
     self.labelMapSelector.addEnabled = 0
-    self.chartButton = QPushButton('Chart')
+    self.chartButton = QPushButton("Chart")
     self.chartButton.setEnabled(False)
 
     hbox = QHBoxLayout()
-    hbox.addWidget(QLabel('Probed label volume'))
+    hbox.addWidget(QLabel("Probed label volume"))
     hbox.addWidget(self.labelMapSelector)
     hbox.addWidget(self.chartButton)
     plotSettingsFrameLayout.addRow(hbox)
 
-    self.iCharting = QCheckBox('Interactive charting')
+    self.iCharting = QCheckBox("Interactive charting")
     self.iCharting.setChecked(True)
     plotSettingsFrameLayout.addRow(self.iCharting)
 
     self.iChartingMode = QButtonGroup()
-    self.iChartingIntensity = QRadioButton('Signal intensity')
-    self.iChartingIntensityFixedAxes = QRadioButton('Fixed range intensity')
-    self.iChartingPercent = QRadioButton('Percentage change')
+    self.iChartingIntensity = QRadioButton("Signal intensity")
+    self.iChartingIntensityFixedAxes = QRadioButton("Fixed range intensity")
+    self.iChartingPercent = QRadioButton("Percentage change")
     self.iChartingIntensity.setChecked(1)
     self.iChartingMode.addButton(self.iChartingIntensity)
     self.iChartingMode.addButton(self.iChartingIntensityFixedAxes)
     self.iChartingMode.addButton(self.iChartingPercent)
 
     hbox = QHBoxLayout()
-    self.plottingModeGroupBox = QGroupBox('Plotting mode:')
+    self.plottingModeGroupBox = QGroupBox("Plotting mode:")
     plottingModeLayout = QVBoxLayout()
     self.plottingModeGroupBox.setLayout(plottingModeLayout)
     plottingModeLayout.addWidget(self.iChartingIntensity)
@@ -361,14 +362,14 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     plottingModeLayout.addWidget(self.iChartingPercent)
     hbox.addWidget(self.plottingModeGroupBox)
 
-    self.showLegendCheckBox = QCheckBox('Display legend')
+    self.showLegendCheckBox = QCheckBox("Display legend")
     self.showLegendCheckBox.setChecked(0)
-    self.xLogScaleCheckBox = QCheckBox('Use log scale for X axis')
+    self.xLogScaleCheckBox = QCheckBox("Use log scale for X axis")
     self.xLogScaleCheckBox.setChecked(0)
-    self.yLogScaleCheckBox = QCheckBox('Use log scale for Y axis')
+    self.yLogScaleCheckBox = QCheckBox("Use log scale for Y axis")
     self.yLogScaleCheckBox.setChecked(0)
 
-    self.plotGeneralSettingsGroupBox = QGroupBox('General Plot options:')
+    self.plotGeneralSettingsGroupBox = QGroupBox("General Plot options:")
     plotGeneralSettingsLayout = QVBoxLayout()
     self.plotGeneralSettingsGroupBox.setLayout(plotGeneralSettingsLayout)
     plotGeneralSettingsLayout.addWidget(self.showLegendCheckBox)
@@ -380,7 +381,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.nFramesBaselineCalculation = QSpinBox()
     self.nFramesBaselineCalculation.minimum = 1
     hbox = QHBoxLayout()
-    hbox.addWidget(QLabel('Frame count(baseline calculation):'))
+    hbox.addWidget(QLabel("Frame count(baseline calculation):"))
     hbox.addWidget(self.nFramesBaselineCalculation)
     plotSettingsFrameLayout.addRow(hbox)
 
@@ -411,17 +412,17 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
 
   def setupConnections(self):
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setupConnections(self)
-    self.labelMapSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelNodeChanged)
-    self.chartButton.connect('clicked()', self.onLabeledChartRequested)
-    self.xLogScaleCheckBox.connect('stateChanged(int)', self.onXLogScaleRequested)
-    self.yLogScaleCheckBox.connect('stateChanged(int)', self.onYLogScaleRequested)
+    self.labelMapSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onLabelNodeChanged)
+    self.chartButton.connect("clicked()", self.onLabeledChartRequested)
+    self.xLogScaleCheckBox.connect("stateChanged(int)", self.onXLogScaleRequested)
+    self.yLogScaleCheckBox.connect("stateChanged(int)", self.onYLogScaleRequested)
     self.nFramesBaselineCalculation.valueChanged.connect(self.onFrameCountBaselineCalculationChanged)
     self.iChartingMode.buttonClicked.connect(self.onChartingModeChanged)
-    self.showLegendCheckBox.connect('stateChanged(int)', self.onShowLegendChanged)
-    self.fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
-    self.extractFrameCheckBox.connect('stateChanged(int)', self.onExtractFrameChanged)
-    self.frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
-    self.currentFrameCopyButton.connect('clicked()', self.onCopyButtonClicked)
+    self.showLegendCheckBox.connect("stateChanged(int)", self.onShowLegendChanged)
+    self.fgMultiVolumeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onForegroundInputChanged)
+    self.extractFrameCheckBox.connect("stateChanged(int)", self.onExtractFrameChanged)
+    self.frameCopySelector.connect("mrmlSceneChanged(vtkMRMLScene*)", self.onVFMRMLSceneChanged)
+    self.currentFrameCopyButton.connect("clicked()", self.onCopyButtonClicked)
 
   def onFrameCountBaselineCalculationChanged(self, value):
     self._multiVolumeIntensityChart.nFramesForBaselineCalculation = value
@@ -469,10 +470,10 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
       self.nFramesBaselineCalculation.maximum = self._bgMultiVolumeNode.GetNumberOfFrames()
     self.onLabelNodeChanged()
 
-  '''
+  """
   If extract button is checked, will copy the current frame to the
   selected volume node on each event from frame slider
-  '''
+  """
   def onExtractFrameChanged(self, checked):
     if checked:
       self.extractFrameCopy = True
@@ -489,7 +490,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
       frameVolumeCopy = Helper.extractFrame(frameVolume, self._bgMultiVolumeNode, frameId)
       if not frameVolume:
         self.frameCopySelector.setCurrentNode(frameVolumeCopy)
-      frameName = '%s frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
+      frameName = "%s frame %d" % (self._bgMultiVolumeNode.GetName(), frameId)
       frameVolumeCopy.SetName(frameName)
 
   def onCopyButtonClicked(self):
@@ -498,7 +499,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
 
     frameId = int(self.frameSlider.value)
 
-    frameName = '%s copied frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
+    frameName = "%s copied frame %d" % (self._bgMultiVolumeNode.GetName(), frameId)
     nodeVolume = slicer.mrmlScene.GetNodesByName(frameName).GetNumberOfItems()
     if (nodeVolume == 0):
       frameVolume = self.currentFrameCopySelector.addNode()

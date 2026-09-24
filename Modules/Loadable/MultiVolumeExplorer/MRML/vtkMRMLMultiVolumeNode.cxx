@@ -42,9 +42,7 @@ vtkMRMLMultiVolumeNode::vtkMRMLMultiVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMultiVolumeNode::~vtkMRMLMultiVolumeNode()
-{
-}
+vtkMRMLMultiVolumeNode::~vtkMRMLMultiVolumeNode() {}
 
 //----------------------------------------------------------------------------
 vtkDoubleArray* vtkMRMLMultiVolumeNode::GetLabelArray()
@@ -68,16 +66,16 @@ void vtkMRMLMultiVolumeNode::SetLabelName(const std::string& name)
 void vtkMRMLMultiVolumeNode::SetLabelArray(vtkDoubleArray* arr)
 {
   if (!this->LabelArray)
-    {
+  {
     this->LabelArray = vtkSmartPointer<vtkDoubleArray>::New();
     this->LabelArray->Allocate(arr->GetNumberOfTuples());
     this->LabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
     this->LabelArray->SetNumberOfComponents(1);
-    }
-  for (int i=0; i<arr->GetNumberOfTuples(); ++i)
-    {
+  }
+  for (int i = 0; i < arr->GetNumberOfTuples(); ++i)
+  {
     this->LabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -88,40 +86,40 @@ void vtkMRMLMultiVolumeNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "LabelArray"))
-      {
+    {
       std::vector<double> labels;
       char* str = (char*)attValue;
       char* pch = strtok(str, " ");
-      while(pch)
-        {
+      while (pch)
+      {
         labels.push_back(atof(pch));
-        pch = strtok(NULL," ");
-        }
+        pch = strtok(NULL, " ");
+      }
       std::cout << "Number of elements found: " << labels.size() << std::endl;
       if (!this->LabelArray)
-        {
+      {
         this->LabelArray = vtkSmartPointer<vtkDoubleArray>::New();
-        }
+      }
       this->LabelArray->SetNumberOfTuples(labels.size());
       this->LabelArray->SetNumberOfComponents(1);
       for (unsigned int i = 0; i < labels.size(); ++i)
-        {
+      {
         std::cout << "Setting " << i << " to " << labels[i] << std::endl;
         this->LabelArray->SetComponent(i, 0, labels[i]);
-        }
-      continue;
       }
+      continue;
+    }
     if (!strcmp(attName, "LabelName"))
-      {
+    {
       this->LabelName = attValue;
       continue;
-      }
     }
-  this->WriteXML(std::cout,1);
+  }
+  this->WriteXML(std::cout, 1);
 }
 
 //----------------------------------------------------------------------------
@@ -131,63 +129,63 @@ void vtkMRMLMultiVolumeNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
   if (this->LabelArray)
-    {
+  {
     int nItems = this->LabelArray->GetNumberOfTuples();
     of << indent << " LabelArray=\"";
-    for (int i=0; i < nItems; ++i)
-      {
+    for (int i = 0; i < nItems; ++i)
+    {
       of << indent << this->LabelArray->GetComponent(i, 0) << indent;
-      }
-    of << indent << "\"";
     }
+    of << indent << "\"";
+  }
   of << indent << " LabelName=\"" << this->LabelName << "\"";
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode* anode)
 {
-  vtkMRMLMultiVolumeNode *multiVolumeNode = vtkMRMLMultiVolumeNode::SafeDownCast(anode);
+  vtkMRMLMultiVolumeNode* multiVolumeNode = vtkMRMLMultiVolumeNode::SafeDownCast(anode);
   if (!multiVolumeNode)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::Copy(anode);
 
   if (multiVolumeNode->LabelArray)
-    {
-    vtkDoubleArray *arr = multiVolumeNode->LabelArray;
+  {
+    vtkDoubleArray* arr = multiVolumeNode->LabelArray;
     if (arr)
-      {
+    {
       if (!this->LabelArray)
-        {
+      {
         this->LabelArray = vtkSmartPointer<vtkDoubleArray>::New();
-        }
+      }
       this->LabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
       this->LabelArray->SetNumberOfComponents(1);
       for (int i = 0; i < arr->GetNumberOfTuples(); ++i)
-        {
+      {
         this->LabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
-        }
       }
     }
+  }
   this->LabelName = multiVolumeNode->LabelName;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   if (this->LabelArray)
-    {
+  {
     os << "LabelArray: ";
     for (int i = 0; i < this->LabelArray->GetNumberOfTuples(); ++i)
-      {
+    {
       os << this->LabelArray->GetComponent(i, 0) << " ";
-      }
-    os << std::endl;
     }
+    os << std::endl;
+  }
   os << "LabelName: " << this->LabelName << std::endl;
 }
 
@@ -203,12 +201,11 @@ vtkMRMLStorageNode* vtkMRMLMultiVolumeNode::CreateDefaultStorageNode()
 
 void vtkMRMLMultiVolumeNode::CreateDefaultDisplayNodes()
 {
-  vtkMRMLMultiVolumeDisplayNode *displayNode = 
-    vtkMRMLMultiVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if(displayNode == NULL)
+  vtkMRMLMultiVolumeDisplayNode* displayNode = vtkMRMLMultiVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if (displayNode == NULL)
   {
     displayNode = vtkMRMLMultiVolumeDisplayNode::New();
-    if(this->GetScene())
+    if (this->GetScene())
     {
       displayNode->SetScene(this->GetScene());
       this->GetScene()->AddNode(displayNode);

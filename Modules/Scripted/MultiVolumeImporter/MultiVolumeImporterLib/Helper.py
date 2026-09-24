@@ -1,4 +1,4 @@
-from __main__ import vtk, slicer
+from __main__ import slicer
 
 class Helper:
 
@@ -11,4 +11,3 @@ class Helper:
     if fgID is not None:
       selectionNode.SetReferenceSecondaryVolumeID(fgID)
     appLogic.PropagateVolumeSelection()
-

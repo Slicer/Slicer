@@ -1,9 +1,7 @@
-import os
 import re
 import vtk, qt, ctk, slicer
 import DICOMLib
 from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
 import logging
 from slicer.util import settingsValue, toBool
 
@@ -15,67 +13,66 @@ from slicer.util import settingsValue, toBool
 #
 
 class MultiVolumeImporterPluginClass(DICOMPlugin):
-  """ MV specific interpretation code
-  """
+  """MV specific interpretation code"""
 
   def __init__(self,epsilon=0.01):
     super().__init__()
     self.loadType = "MultiVolume"
 
-    self.tags['seriesInstanceUID'] = "0020,000E"
-    self.tags['seriesDescription'] = "0008,103E"
-    self.tags['instanceUID'] = "0008,0018"
-    self.tags['position'] = "0020,0032"
-    self.tags['orientation'] = "0020,0037"
-    self.tags['studyDescription'] = "0008,1030"
-    self.tags['seriesNumber'] = "0020,0011"
-    self.tags['instanceNumber'] = "0020,0013"
-    self.tags['repetitionTime'] = "0018,0080"
-    self.tags['modality'] = "0008,0060"
+    self.tags["seriesInstanceUID"] = "0020,000E"
+    self.tags["seriesDescription"] = "0008,103E"
+    self.tags["instanceUID"] = "0008,0018"
+    self.tags["position"] = "0020,0032"
+    self.tags["orientation"] = "0020,0037"
+    self.tags["studyDescription"] = "0008,1030"
+    self.tags["seriesNumber"] = "0020,0011"
+    self.tags["instanceNumber"] = "0020,0013"
+    self.tags["repetitionTime"] = "0018,0080"
+    self.tags["modality"] = "0008,0060"
 
     # tags used to identify multivolumes
     self.multiVolumeTags = {}
-    self.multiVolumeTags['TriggerTime'] = "0018,1060"
-    self.multiVolumeTags['EchoTime'] = "0018,0081"
-    self.multiVolumeTags['FlipAngle'] = "0018,1314"
-    self.multiVolumeTags['RepetitionTime'] = "0018,0080"
-    self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
-    self.multiVolumeTags['SeriesTime'] = "0008,0031"
-    self.multiVolumeTags['ContentTime'] = "0008,0033"
+    self.multiVolumeTags["TriggerTime"] = "0018,1060"
+    self.multiVolumeTags["EchoTime"] = "0018,0081"
+    self.multiVolumeTags["FlipAngle"] = "0018,1314"
+    self.multiVolumeTags["RepetitionTime"] = "0018,0080"
+    self.multiVolumeTags["AcquisitionTime"] = "0008,0032"
+    self.multiVolumeTags["SeriesTime"] = "0008,0031"
+    self.multiVolumeTags["ContentTime"] = "0008,0033"
     # Siemens Somatom Cardiac CT 'ScanOptions' tag contains info on cardiac cycle
-    self.multiVolumeTags['CardiacCycle'] = "0018,0022"
+    self.multiVolumeTags["CardiacCycle"] = "0018,0022"
     # GE Revolution CT uses 'NominalPercentageOfCardiacPhase' tag to identify cardiac cycle
-    self.multiVolumeTags['NominalPercentageOfCardiacPhase'] = "0020,9241"
+    self.multiVolumeTags["NominalPercentageOfCardiacPhase"] = "0020,9241"
     # this one is GE-specific using the private tag
-    self.multiVolumeTags['Siemens.B-value'] = "0019,100c"
-    self.multiVolumeTags['GE.B-value'] = "0043,1039"
+    self.multiVolumeTags["Siemens.B-value"] = "0019,100c"
+    self.multiVolumeTags["GE.B-value"] = "0043,1039"
     # used on some GE systems, with 2D acquisitions
-    self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
+    self.multiVolumeTags["TemporalPositionIdentifier"] = "0020,0100"
     # Philips DWI
-    self.multiVolumeTags['Philips.B-value'] = "2001,1003"
-    self.multiVolumeTags['Standard.B-value'] = "0018,9087"
+    self.multiVolumeTags["Philips.B-value"] = "2001,1003"
+    self.multiVolumeTags["Standard.B-value"] = "0018,9087"
     # GE Revolution CT Kinematics protocol
-    self.multiVolumeTags['DeltaStartTime'] = "0043,101e"
+    self.multiVolumeTags["DeltaStartTime"] = "0043,101e"
 
     for tagName,tagVal in self.multiVolumeTags.items():
       self.tags[tagName] = tagVal
 
     self.multiVolumeTagsUnits = {}
-    self.multiVolumeTagsUnits['TriggerTime'] = "ms"
-    self.multiVolumeTagsUnits['EchoTime'] = "ms"
-    self.multiVolumeTagsUnits['FlipAngle'] = "degrees"
-    self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
-    self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
-    self.multiVolumeTagsUnits['SeriesTime'] = "ms"
-    self.multiVolumeTagsUnits['ContentTime'] = "ms"
-    self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
-    self.multiVolumeTagsUnits['Siemens.B-value'] = "sec/mm2"
-    self.multiVolumeTagsUnits['GE.B-value'] = "sec/mm2"
-    self.multiVolumeTagsUnits['Philips.B-value'] = "sec/mm2"
-    self.multiVolumeTagsUnits['Standard.B-value'] = "sec/mm2"
-    self.multiVolumeTagsUnits['CardiacCycle'] = "%"
-    self.multiVolumeTagsUnits['NominalPercentageOfCardiacPhase'] = "%"
-    self.multiVolumeTagsUnits['DeltaStartTime'] = "sec"
+    self.multiVolumeTagsUnits["TriggerTime"] = "ms"
+    self.multiVolumeTagsUnits["EchoTime"] = "ms"
+    self.multiVolumeTagsUnits["FlipAngle"] = "degrees"
+    self.multiVolumeTagsUnits["RepetitionTime"] = "ms"
+    self.multiVolumeTagsUnits["AcquisitionTime"] = "ms"
+    self.multiVolumeTagsUnits["SeriesTime"] = "ms"
+    self.multiVolumeTagsUnits["ContentTime"] = "ms"
+    self.multiVolumeTagsUnits["TemporalPositionIdentifier"] = "count"
+    self.multiVolumeTagsUnits["Siemens.B-value"] = "sec/mm2"
+    self.multiVolumeTagsUnits["GE.B-value"] = "sec/mm2"
+    self.multiVolumeTagsUnits["Philips.B-value"] = "sec/mm2"
+    self.multiVolumeTagsUnits["Standard.B-value"] = "sec/mm2"
+    self.multiVolumeTagsUnits["CardiacCycle"] = "%"
+    self.multiVolumeTagsUnits["NominalPercentageOfCardiacPhase"] = "%"
+    self.multiVolumeTagsUnits["DeltaStartTime"] = "sec"
     self.epsilon = epsilon
 
     self.detailedLogging = False
@@ -100,14 +97,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
   def examine(self,fileLists):
-    """ Returns a list of DICOMLoadable instances
+    """Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
 
     Top-level examine() calls various individual strategies implemented in examineFiles*().
     """
 
-    self.detailedLogging = settingsValue('DICOM/detailedLogging', False, converter=toBool)
+    self.detailedLogging = settingsValue("DICOM/detailedLogging", False, converter=toBool)
     timer = vtk.vtkTimerLog()
     timer.StartTimer()
 
@@ -133,14 +130,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # A slightly higher confidence value is set for volume sequence loadables,
     # therefore by default data will be loaded as volume sequence.
 
-    if hasattr(slicer.modules, 'sequences'):
+    if hasattr(slicer.modules, "sequences"):
 
       seqLoadables = []
       for loadable in loadables:
         seqLoadable = DICOMLib.DICOMLoadable()
         seqLoadable.files = loadable.files
-        seqLoadable.tooltip = loadable.tooltip.replace(' frames MultiVolume', ' frames Volume Sequence')
-        seqLoadable.name = loadable.name.replace(' frames MultiVolume', ' frames Volume Sequence')
+        seqLoadable.tooltip = loadable.tooltip.replace(" frames MultiVolume", " frames Volume Sequence")
+        seqLoadable.name = loadable.name.replace(" frames MultiVolume", " frames Volume Sequence")
         seqLoadable.multivolume = loadable.multivolume
         seqLoadable.selected = loadable.selected
 
@@ -173,28 +170,28 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     :param descriptionLevel: 'series' (default) or 'study'
     :return: name and tooltip text
     """
-    seriesNumber = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['seriesNumber'])
-    modality = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['modality'])
+    seriesNumber = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags["seriesNumber"])
+    modality = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags["modality"])
     if descriptionLevel=="study":
-      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['studyDescription'])
+      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags["studyDescription"])
     else:
-      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags['seriesDescription'])
+      description = slicer.dicomDatabase.fileValue(dicomFilePath, self.tags["seriesDescription"])
 
-    name = ''
+    name = ""
     if seriesNumber:
-      name = f'{seriesNumber}:'
+      name = f"{seriesNumber}:"
     if modality:
-      name = f'{name} {modality}'
+      name = f"{name} {modality}"
     if description:
-      name = f'{name} {description}'
+      name = f"{name} {description}"
 
-    name = f'{name} - {nFrames} frames MultiVolume by'
+    name = f"{name} - {nFrames} frames MultiVolume by"
 
     if longTagName is None:
       longTagName = tagName
 
-    tooltip = f'{name} {longTagName}'
-    name = f'{name} {tagName}'
+    tooltip = f"{name} {longTagName}"
+    name = f"{name} {tagName}"
 
     return name, tooltip
 
@@ -206,30 +203,30 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     """
 
     if self.detailedLogging:
-      logging.debug('MultiVolumeImporterPlugin: examineMultiseries')
+      logging.debug("MultiVolumeImporterPlugin: examineMultiseries")
 
     loadables = []
 
-    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle','CardiacCycle'])
+    mvNodes = self.initMultiVolumes(files,prescribedTags=["SeriesTime","AcquisitionTime","FlipAngle","CardiacCycle"])
 
     if self.detailedLogging:
-      logging.debug('MultiVolumeImporterPlugin: found {} multivolumes!'.format(len(mvNodes)))
+      logging.debug(f"MultiVolumeImporterPlugin: found {len(mvNodes)} multivolumes!")
 
     for mvNode in mvNodes:
-      tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
-      orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
+      tagName = mvNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagName")
+      orderedFiles = mvNode.GetAttribute("MultiVolume.FrameFileList").split(",")
 
-      if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
+      if not self.isFrameOriginConsistent(orderedFiles, mvNode):
         continue
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), tagName, descriptionLevel='study')
-      desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription'])
-      num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['seriesNumber'])
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), tagName, descriptionLevel="study")
+      desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags["studyDescription"])
+      num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags["seriesNumber"])
       loadable.selected = True
       loadable.multivolume = mvNode
-      if tagName == 'TemporalPositionIdentifier':
+      if tagName == "TemporalPositionIdentifier":
         loadable.confidence = 0.9
       else:
         loadable.confidence = 1.
@@ -241,7 +238,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for f in files:
       for tag in tags:
         value = slicer.dicomDatabase.fileValue(f,self.tags[tag])
-        if value == None or value == "":
+        if value is None or value == "":
           return True
     return False
 
@@ -256,27 +253,26 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     some GE platforms, and for loading some Philips 4D cardiac cine-MRI.
     """
 
-    if self.emptyTagValueFound(files,['instanceNumber','position','repetitionTime']):
+    if self.emptyTagValueFound(files,["instanceNumber","position","repetitionTime"]):
       return []
 
     loadables = []
     subseriesLists = {}
     orderedFiles = []
 
-    minTime = int(slicer.dicomDatabase.fileValue(files[0],self.tags['instanceNumber']))
+    minTime = int(slicer.dicomDatabase.fileValue(files[0],self.tags["instanceNumber"]))
     for file in files:
-      ipp = slicer.dicomDatabase.fileValue(file,self.tags['position'])
-      time = int(slicer.dicomDatabase.fileValue(file,self.tags['instanceNumber']))
-      if time<minTime:
-        minTime = time
+      ipp = slicer.dicomDatabase.fileValue(file,self.tags["position"])
+      time = int(slicer.dicomDatabase.fileValue(file,self.tags["instanceNumber"]))
+      minTime = min(minTime, time)
       if ipp not in subseriesLists:
         subseriesLists[ipp] = {}
       subseriesLists[ipp][time] = file
 
     nSlicesEqual = True
     allIPPs = list(subseriesLists.keys())
-    for ipp in subseriesLists.keys():
-      if len(subseriesLists[allIPPs[0]].keys()) != len(subseriesLists[ipp].keys()):
+    for subseriesList in subseriesLists.values():
+      if len(subseriesLists[allIPPs[0]].keys()) != len(subseriesList.keys()):
         nSlicesEqual = False
         break
 
@@ -294,18 +290,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameLabelsArray = vtk.vtkDoubleArray()
 
       ippPositionCnt = 0
-      for ipp in subseriesLists.keys():
-        timesSorted = sorted(subseriesLists[ipp].keys())
+      for subseriesList in subseriesLists.values():
+        timesSorted = sorted(subseriesList.keys())
         timeCnt = 0
         for time in timesSorted:
-          orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesLists[ipp][time]
+          orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesList[time]
           timeCnt = timeCnt+1
           if ippPositionCnt == 0:
-            frameLabelsStr = frameLabelsStr+str(time-minTime)+','
+            frameLabelsStr = frameLabelsStr+str(time-minTime)+","
             frameLabelsArray.InsertNextValue(time-minTime)
         ippPositionCnt = ippPositionCnt+1
 
-      scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+      scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
         if len(frameFileList) < 2:
@@ -313,34 +309,34 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           return []
         svs = scalarVolumePlugin.examine([frameFileList])
         if len(svs)==0:
-          print('Failed to parse one of the multivolume frames as scalar volume!')
+          print("Failed to parse one of the multivolume frames as scalar volume!")
           break
-        time = float(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags['repetitionTime']))*f
+        time = float(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags["repetitionTime"]))*f
         if f==0:
-            frameLabelsStr = '0,'
+            frameLabelsStr = "0,"
             frameLabelsArray.InsertNextValue(0)
         else:
-            frameLabelsStr = frameLabelsStr+str(time)+','
+            frameLabelsStr = frameLabelsStr+str(time)+","
             frameLabelsArray.InsertNextValue(time)
 
       for file in orderedFiles:
-        frameFileListStr = frameFileListStr+str(file)+','
+        frameFileListStr = frameFileListStr+str(file)+","
 
       frameLabelsStr = frameLabelsStr[:-1]
       frameFileListStr = frameFileListStr[:-1]
 
-      mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+      mvNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMultiVolumeNode")
       mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
       mvNode.SetScene(slicer.mrmlScene)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","Time")
       mvNode.SetAttribute("MultiVolume.ParseStrategy","TemporalPosition_via_InstanceNumber*RepetitionTime")
-      mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
-      mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',"ms")
+      mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(nFrames))
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits","ms")
       # keep the files in the order by the detected tag
       # files are not ordered within the individual frames -- this will be
       # done by ScalarVolumePlugin later
-      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
+      mvNode.SetAttribute("MultiVolume.FrameFileList", frameFileListStr)
 
       self.addAcquisitionAttributes(mvNode, frameFileList)
 
@@ -350,7 +346,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), 'InstanceNumber', 'ImagePositionPatient+InstanceNumber')
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(
+        loadable.files[0], mvNode.GetNumberOfFrames(), "InstanceNumber", "ImagePositionPatient+InstanceNumber")
       mvNode.SetName(loadable.name)
       loadable.selected = True
       loadable.multivolume = mvNode
@@ -376,22 +373,21 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     subseriesLists = {}
     orderedFiles = []
 
-    desc = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesDescription']) # SeriesDescription
+    desc = slicer.dicomDatabase.fileValue(files[0],self.tags["seriesDescription"]) # SeriesDescription
 
-    minTime = self.tm2ms(slicer.dicomDatabase.fileValue(files[0],self.tags['AcquisitionTime']))
+    minTime = self.tm2ms(slicer.dicomDatabase.fileValue(files[0],self.tags["AcquisitionTime"]))
     for file in files:
-      ipp = slicer.dicomDatabase.fileValue(file,self.tags['position'])
-      time = self.tm2ms(slicer.dicomDatabase.fileValue(file,self.tags['AcquisitionTime']))
-      if time<minTime:
-        minTime = time
+      ipp = slicer.dicomDatabase.fileValue(file,self.tags["position"])
+      time = self.tm2ms(slicer.dicomDatabase.fileValue(file,self.tags["AcquisitionTime"]))
+      minTime = min(minTime, time)
       if ipp not in subseriesLists:
         subseriesLists[ipp] = {}
       subseriesLists[ipp][time] = file
 
     nSlicesEqual = True
     allIPPs = list(subseriesLists.keys())
-    for ipp in subseriesLists.keys():
-      if len(subseriesLists[allIPPs[0]].keys()) != len(subseriesLists[ipp].keys()):
+    for subseriesList in subseriesLists.values():
+      if len(subseriesLists[allIPPs[0]].keys()) != len(subseriesList.keys()):
         nSlicesEqual = False
         break
 
@@ -409,52 +405,52 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameLabelsArray = vtk.vtkDoubleArray()
 
       ippPositionCnt = 0
-      for ipp in subseriesLists.keys():
-        timesSorted = sorted(subseriesLists[ipp].keys())
+      for subseriesList in subseriesLists.values():
+        timesSorted = sorted(subseriesList.keys())
         timeCnt = 0
         for time in timesSorted:
-          orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesLists[ipp][time]
+          orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesList[time]
           timeCnt = timeCnt+1
           if ippPositionCnt == 0:
-            frameLabelsStr = frameLabelsStr+str(time-minTime)+','
+            frameLabelsStr = frameLabelsStr+str(time-minTime)+","
             frameLabelsArray.InsertNextValue(time-minTime)
         ippPositionCnt = ippPositionCnt+1
 
-      scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+      scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
       firstFrameTime = 0
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
         svs = scalarVolumePlugin.examine([frameFileList])
         if len(svs)==0:
-          print('Failed to parse one of the multivolume frames as scalar volume!')
+          print("Failed to parse one of the multivolume frames as scalar volume!")
           break
-        time = self.tm2ms(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags['AcquisitionTime']))
+        time = self.tm2ms(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags["AcquisitionTime"]))
         if f==0:
-            frameLabelsStr = '0,'
+            frameLabelsStr = "0,"
             frameLabelsArray.InsertNextValue(0)
             firstFrameTime = time
         else:
-            frameLabelsStr = frameLabelsStr+str(time-firstFrameTime)+','
+            frameLabelsStr = frameLabelsStr+str(time-firstFrameTime)+","
             frameLabelsArray.InsertNextValue(time)
 
       for file in orderedFiles:
-        frameFileListStr = frameFileListStr+str(file)+','
+        frameFileListStr = frameFileListStr+str(file)+","
 
       frameLabelsStr = frameLabelsStr[:-1]
       frameFileListStr = frameFileListStr[:-1]
 
-      mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+      mvNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMultiVolumeNode")
       mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
       mvNode.SetScene(slicer.mrmlScene)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","AcquisitionTime")
       mvNode.SetAttribute("MultiVolume.ParseStrategy","AcquisitionTime+ImagePositionPatient")
-      mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
-      mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',"ms")
+      mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(nFrames))
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits","ms")
       # keep the files in the order by the detected tag
       # files are not ordered within the individual frames -- this will be
       # done by ScalarVolumePlugin later
-      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
+      mvNode.SetAttribute("MultiVolume.FrameFileList", frameFileListStr)
 
       self.addAcquisitionAttributes(mvNode, frameFileList)
 
@@ -464,7 +460,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name, loadable.tooltip = self.nameTooltipFromFile(loadable.files[0], mvNode.GetNumberOfFrames(), 'AcquisitionTime', 'ImagePositionPatient+AcquisitionTime')
+      loadable.name, loadable.tooltip = self.nameTooltipFromFile(
+        loadable.files[0], mvNode.GetNumberOfFrames(), "AcquisitionTime", "ImagePositionPatient+AcquisitionTime")
       mvNode.SetName(loadable.name)
       loadable.selected = True
       loadable.multivolume = mvNode
@@ -474,15 +471,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     return loadables
 
   def addAcquisitionAttributes(self,mvNode,frameFileList):
-    frameTag = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
+    frameTag = mvNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagName")
 
-    for tag in ['EchoTime','RepetitionTime','FlipAngle']:
+    for tag in ["EchoTime","RepetitionTime","FlipAngle"]:
       if tag != frameTag:
         tagValue = slicer.dicomDatabase.fileValue(frameFileList[0],self.tags[tag])
-        mvNode.SetAttribute('MultiVolume.DICOM.'+tag,tagValue)
+        mvNode.SetAttribute("MultiVolume.DICOM."+tag,tagValue)
 
   def examineFiles(self,files):
-
     """
     This is the main strategy that assumes all files (instances) belong
     to the same series, and all instances within the same frame have the same value for one of the attributes defined in self.multiVolumeTags
@@ -505,7 +501,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     subseriesLists = {}
 
     for file in files:
-      value = slicer.dicomDatabase.fileValue(file,self.tags['seriesInstanceUID']) # SeriesInstanceUID
+      value = slicer.dicomDatabase.fileValue(file,self.tags["seriesInstanceUID"]) # SeriesInstanceUID
       if value == "":
         value = "Unknown"
       if value not in subseriesLists:
@@ -515,18 +511,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # now iterate over all subseries file lists and try to parse the
     # multivolumes
 
-    for key in subseriesLists.keys():
+    for subseriesList in subseriesLists.values():
 
-      mvNodes = self.initMultiVolumes(subseriesLists[key])
+      mvNodes = self.initMultiVolumes(subseriesList)
 
       if self.detailedLogging:
-        logging.debug('MultiVolumeImporterPlugin: found '+str(len(mvNodes))+' multivolumes!')
+        logging.debug("MultiVolumeImporterPlugin: found "+str(len(mvNodes))+" multivolumes!")
 
       for mvNode in mvNodes:
-        tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
-        orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
+        tagName = mvNode.GetAttribute("MultiVolume.FrameIdentifyingDICOMTagName")
+        orderedFiles = mvNode.GetAttribute("MultiVolume.FrameFileList").split(",")
 
-        if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
+        if not self.isFrameOriginConsistent(orderedFiles, mvNode):
           continue
 
         loadable = DICOMLib.DICOMLoadable()
@@ -535,7 +531,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.SetName(loadable.name)
         loadable.selected = True
         loadable.multivolume = mvNode
-        if tagName == 'TemporalPositionIdentifier':
+        if tagName == "TemporalPositionIdentifier":
           loadable.confidence = 0.9
         else:
           loadable.confidence = 1.
@@ -554,7 +550,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     filesPerFrame = int(nFiles/nFrames)
     frameOrigins = []
 
-    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
     firstFrameOrigin = None
     for frameNumber in range(nFrames):
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
@@ -564,10 +560,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       if len(svs) == 0:
         return False
 
-      positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags['position'])
-      if positionTag == '':
+      positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags["position"])
+      if positionTag == "":
         return False
-      origin = [float(zz) for zz in positionTag.split('\\')]
+      origin = [float(zz) for zz in positionTag.split("\\")]
 
       if firstFrameOrigin is None:
         # this is the first frame, just record the origin
@@ -586,21 +582,21 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     """
     import vtk.util.numpy_support
 
-    mvNode = ''
+    mvNode = ""
     try:
       mvNode = loadable.multivolume
     except AttributeError:
       return None
 
-    nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
-    files = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
+    nFrames = int(mvNode.GetAttribute("MultiVolume.NumberOfFrames"))
+    files = mvNode.GetAttribute("MultiVolume.FrameFileList").split(",")
     nFiles = len(files)
     filesPerFrame = int(nFiles/nFrames)
     frames = []
 
     baseName = loadable.name
 
-    loadAsVolumeSequence = hasattr(loadable, 'loadAsVolumeSequence') and loadable.loadAsVolumeSequence
+    loadAsVolumeSequence = hasattr(loadable, "loadAsVolumeSequence") and loadable.loadAsVolumeSequence
     if loadAsVolumeSequence:
       volumeSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode",
         slicer.mrmlScene.GenerateUniqueName(baseName))
@@ -613,10 +609,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvImage = vtk.vtkImageData()
       mvImageArray = None
 
-    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
     instanceUIDs = ""
     for file in files:
-      uid = slicer.dicomDatabase.fileValue(file,self.tags['instanceUID'])
+      uid = slicer.dicomDatabase.fileValue(file,self.tags["instanceUID"])
       if uid == "":
         uid = "Unknown"
       instanceUIDs += uid+" "
@@ -656,7 +652,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           frame.HardenTransform()
           slicer.mrmlScene.RemoveNode(parentTransformNode)
 
-        if frame == None or frame.GetImageData() == None:
+        if frame is None or frame.GetImageData() is None:
           raise OSError(f"Volume frame {frameNumber} is invalid - {svLoadables[0].warning}")
         if loadAsVolumeSequence:
           # Load into volume sequence
@@ -713,7 +709,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # For user convenience, add a browser node and show the volume in the slice viewer.
 
         # Add browser node
-        sequenceBrowserNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSequenceBrowserNode',
+        sequenceBrowserNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode",
           slicer.mrmlScene.GenerateUniqueName(baseName + " browser"))
         sequenceBrowserNode.SetAndObserveMasterSequenceNodeID(volumeSequenceNode.GetID())
         # If save changes are allowed then proxy nodes are updated using shallow copy, which is much
@@ -721,7 +717,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # data in the sequence is low.
         sequenceBrowserNode.SetSaveChanges(volumeSequenceNode, True)
         # Show frame number in proxy volume node name
-        sequenceBrowserNode.SetOverwriteProxyName(volumeSequenceNode, True);
+        sequenceBrowserNode.SetOverwriteProxyName(volumeSequenceNode, True)
 
         # Automatically select the volume to display
         imageProxyVolumeNode = sequenceBrowserNode.GetProxyNode(volumeSequenceNode)
@@ -742,7 +738,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       else:
         # Finalize multi-volume import
 
-        mvDisplayNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+        mvDisplayNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMultiVolumeDisplayNode")
         mvDisplayNode.SetDefaultColorMap()
 
         mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
@@ -763,7 +759,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         appLogic.PropagateVolumeSelection()
 
         # file list is no longer needed - remove the attribute
-        mvNode.RemoveAttribute('MultiVolume.FrameFileList')
+        mvNode.RemoveAttribute("MultiVolume.FrameFileList")
 
     except Exception as e:
       logging.error(f"Failed to read a multivolume: {str(e)}")
@@ -782,12 +778,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       return 0
 
     try:
-      hhmmss = tm.split('.')[0]
+      hhmmss = tm.split(".")[0]
     except:
       hhmmss = tm
 
     try:
-      ssfrac = float('0.'+tm.split('.')[1])
+      ssfrac = float("0."+tm.split(".")[1])
     except:
       ssfrac = 0.
 
@@ -808,7 +804,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     tag2ValueFileList = {}
     multivolumes = []
 
-    if prescribedTags == None:
+    if prescribedTags is None:
       consideredTags = list(self.multiVolumeTags.keys())
     else:
       consideredTags = list(prescribedTags)
@@ -831,12 +827,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           tag2ValueFileList[frameTag] = tagValue2FileList
 
         tagValueStr = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
-        if tagValueStr == '':
+        if tagValueStr == "":
           # not found?
           tagsToIgnore.append(frameTag)
           continue
 
-        if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime' or frameTag == 'ContentTime':
+        if frameTag == "AcquisitionTime" or frameTag == "SeriesTime" or frameTag == "ContentTime":
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
         elif frameTag == "GE.B-value":
@@ -844,7 +840,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             # Parse this:
             # (0043,1039) IS [1000001250\8\0\0] #  16, 4 Unknown Tag & Data
             # GE Discovery w750
-            tagValue = float(int(tagValueStr.split('\\')[0]) % 100000)
+            tagValue = float(int(tagValueStr.split("\\")[0]) % 100000)
           except:
             continue
         elif frameTag == "CardiacCycle":
@@ -853,7 +849,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             #  TP0PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
             #  TP10PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
             #  TP30PC0965, PULSTART_P0020PC, PULSEND_P0080PC...
-            cardiacPhaseInfo = tagValueStr.split('\\')[0] # TP0PC0965
+            cardiacPhaseInfo = tagValueStr.split("\\")[0] # TP0PC0965
             matched = re.search(r"TP(\d+)PC(\d+)", cardiacPhaseInfo)
             tagValue = float(matched.groups()[0])
           except:
@@ -894,9 +890,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           slicesPerFrame[numberOfSlices] = [tagValue]
 
       if self.detailedLogging:
-        seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags['seriesNumber'])
-        seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags['seriesDescription'])
-        seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags['seriesInstanceUID'])
+        seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags["seriesNumber"])
+        seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags["seriesDescription"])
+        seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags["seriesInstanceUID"])
         msg = f"MultiVolumeImporterPlugin: series {seriesNumber}: {seriesDescription} ({seriesInstanceUid})"
         msg += f" is not accepted as multi-volume grouped by {frameTag} because "
 
@@ -905,8 +901,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # There are multiple different slicesPerFrame values, therefore it is rejected.
         if self.detailedLogging:
           msg +="number of slices varies across frames."
-          for numberOfSlices in slicesPerFrame:
-            msg += f"{numberOfSlices} slices are found for {frameTag}={slicesPerFrame[numberOfSlices]}."
+          for numberOfSlices, frameTagValues in slicesPerFrame.items():
+            msg += f"{numberOfSlices} slices are found for {frameTag}={frameTagValues}."
           logging.debug(msg)
         continue
 
@@ -917,8 +913,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         imageOrientations = set()  # must be the same for each slice
         frameFileList = tagValue2FileList[tagValue]
         for file in frameFileList:
-          imagePositions.add(slicer.dicomDatabase.fileValue(file, self.tags['position']))
-          imageOrientations.add(slicer.dicomDatabase.fileValue(file, self.tags['orientation']))
+          imagePositions.add(slicer.dicomDatabase.fileValue(file, self.tags["position"]))
+          imageOrientations.add(slicer.dicomDatabase.fileValue(file, self.tags["orientation"]))
         if len(imagePositions) != len(frameFileList):
           if self.detailedLogging:
             msg +=  "there are multiple frames at the same position within a frame."
@@ -947,29 +943,29 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       for tagValue in tagValues:
         frameFileList = tagValue2FileList[tagValue]
         for file in frameFileList:
-          frameFileListStr = frameFileListStr+file+','
+          frameFileListStr = frameFileListStr+file+","
 
         # if mv was parsed by series time, probably makes sense to start from 0
-        if frameTag == 'SeriesTime' or frameTag == 'AcquisitionTime' or frameTag == 'ContentTime':
+        if frameTag == "SeriesTime" or frameTag == "AcquisitionTime" or frameTag == "ContentTime":
           frameLabelsArray.InsertNextValue(tagValue-tagValue0)
-          frameLabelsStr = frameLabelsStr+str(tagValue-tagValue0)+','
+          frameLabelsStr = frameLabelsStr+str(tagValue-tagValue0)+","
         else:
           frameLabelsArray.InsertNextValue(tagValue)
-          frameLabelsStr = frameLabelsStr+str(tagValue)+','
+          frameLabelsStr = frameLabelsStr+str(tagValue)+","
 
       frameFileListStr = frameFileListStr[:-1]
       frameLabelsStr = frameLabelsStr[:-1]
 
-      mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+      mvNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLMultiVolumeNode")
       mvNode.UnRegister(None)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
-      mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
-      mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',self.multiVolumeTagsUnits[frameTag])
+      mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(len(tagValue2FileList)))
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagUnits",self.multiVolumeTagsUnits[frameTag])
       # keep the files in the order by the detected tag
       # files are not ordered within the individual frames -- this will be
       # done by ScalarVolumePlugin later
-      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
+      mvNode.SetAttribute("MultiVolume.FrameFileList", frameFileListStr)
 
       mvNode.SetNumberOfFrames(len(tagValue2FileList))
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
@@ -982,14 +978,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return multivolumes
 
-'''
+"""
 
 * need to decide if import plugin should handle all types of MV
 * separate functionality for parsing/detecting and loading?
 * C++ code for reading and parsing DICOM header?
 * once loadable is determined, need to pass the tag separating individual
 * volumes ? !
-'''
+"""
 
 #
 # MultiVolumeImporterPlugin
@@ -1000,6 +996,7 @@ class MultiVolumeImporterPlugin:
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM MultiVolume Import Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
@@ -1024,10 +1021,8 @@ class MultiVolumeImporterPlugin:
       slicer.modules.dicomPlugins
     except AttributeError:
       slicer.modules.dicomPlugins = {}
-    slicer.modules.dicomPlugins['MultiVolumeImporterPlugin'] = MultiVolumeImporterPluginClass
+    slicer.modules.dicomPlugins["MultiVolumeImporterPlugin"] = MultiVolumeImporterPluginClass
 
-#
-#
 
 class MultiVolumeImporterPluginWidget:
   def __init__(self, parent = None):

@@ -37,13 +37,12 @@ vtkMRMLMultiVolumeDisplayNode::vtkMRMLMultiVolumeDisplayNode()
   this->FrameComponent = 0;
   this->ExtractComponent = vtkImageExtractComponents::New();
 #if (VTK_MAJOR_VERSION <= 5)
-  this->Threshold->SetInput( this->ExtractComponent->GetOutput());
-  this->MapToWindowLevelColors->SetInput( this->ExtractComponent->GetOutput());
+  this->Threshold->SetInput(this->ExtractComponent->GetOutput());
+  this->MapToWindowLevelColors->SetInput(this->ExtractComponent->GetOutput());
 #else
   this->Threshold->SetInputConnection(this->ExtractComponent->GetOutputPort());
   this->MapToWindowLevelColors->SetInputConnection(this->ExtractComponent->GetOutputPort());
 #endif
-
 }
 
 //----------------------------------------------------------------------------
@@ -73,29 +72,29 @@ void vtkMRMLMultiVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
-    {
+  while (*atts != NULL)
+  {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FrameComponent")) 
-      {
+    if (!strcmp(attName, "FrameComponent"))
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->FrameComponent;
-      }
-    }  
+    }
+  }
   this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLMultiVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMultiVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLMultiVolumeDisplayNode *node = (vtkMRMLMultiVolumeDisplayNode *) anode;
+  vtkMRMLMultiVolumeDisplayNode* node = (vtkMRMLMultiVolumeDisplayNode*)anode;
 
   this->SetFrameComponent(node->FrameComponent);
 
@@ -105,23 +104,20 @@ void vtkMRMLMultiVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  Superclass::PrintSelf(os,indent);
+
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Frame Component:   " << this->FrameComponent << "\n";
-
 }
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLMultiVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkImageData *imageData)
+void vtkMRMLMultiVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData* imageData)
 {
   this->ExtractComponent->SetInput(imageData);
 }
 #else
-void vtkMRMLMultiVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+void vtkMRMLMultiVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->ExtractComponent->SetInputConnection(imageDataConnection);
 }
@@ -136,8 +132,7 @@ vtkImageData* vtkMRMLMultiVolumeDisplayNode::GetInputImageData()
 #else
 vtkAlgorithmOutput* vtkMRMLMultiVolumeDisplayNode::GetInputImageDataConnection()
 {
-  return this->ExtractComponent->GetNumberOfInputConnections(0) ?
-    this->ExtractComponent->GetInputConnection(0,0) : 0;
+  return this->ExtractComponent->GetNumberOfInputConnections(0) ? this->ExtractComponent->GetInputConnection(0, 0) : 0;
 }
 #endif
 

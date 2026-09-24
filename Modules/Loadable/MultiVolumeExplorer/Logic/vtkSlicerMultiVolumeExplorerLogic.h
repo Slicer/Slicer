@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerMultiVolumeExplorerLogic_h
 #define __vtkSlicerMultiVolumeExplorerLogic_h
 
@@ -43,20 +42,17 @@ class vtkMRMLMultiVolumeNode;
 class vtkSlicerVolumesLogic;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeExplorerLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeExplorerLogic : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerMultiVolumeExplorerLogic *New();
+  static vtkSlicerMultiVolumeExplorerLogic* New();
   vtkTypeMacro(vtkSlicerMultiVolumeExplorerLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Initialize listening to MRML events
   void InitializeEventListeners();
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-  int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
-                         std::string dcmTag, vtkDoubleArray*);
+  int ProcessDICOMSeries(std::string inputDir, std::string outputDir, std::string dcmTag, vtkDoubleArray*);
 #endif
 
   /// Register the factory that the MultiVolume needs to manage nrrd
@@ -73,13 +69,11 @@ protected:
   virtual void UpdateFromMRMLScene() override;
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  void StoreVolumeNode(const std::vector<std::string>& filenames,
-                       const std::string& seriesFileName);
+  void StoreVolumeNode(const std::vector<std::string>& filenames, const std::string& seriesFileName);
+
 private:
-
   vtkSlicerMultiVolumeExplorerLogic(const vtkSlicerMultiVolumeExplorerLogic&); // Not implemented
-  void operator=(const vtkSlicerMultiVolumeExplorerLogic&);               // Not implemented
-
+  void operator=(const vtkSlicerMultiVolumeExplorerLogic&);                    // Not implemented
 };
 
 #endif

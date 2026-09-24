@@ -26,17 +26,15 @@
 class qSlicerMultiVolumeExplorerModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_MULTIVOLUMEEXPLORER_EXPORT qSlicerMultiVolumeExplorerModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_MULTIVOLUMEEXPLORER_EXPORT qSlicerMultiVolumeExplorerModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerMultiVolumeExplorerModule(QObject *parent=0);
+  explicit qSlicerMultiVolumeExplorerModule(QObject* parent = 0);
   virtual ~qSlicerMultiVolumeExplorerModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
@@ -60,12 +58,11 @@ public:
   virtual QStringList contributors() const override;
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   virtual void setup() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic() override;
@@ -76,7 +73,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerMultiVolumeExplorerModule);
   Q_DISABLE_COPY(qSlicerMultiVolumeExplorerModule);
-
 };
 
 #endif
