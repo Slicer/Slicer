@@ -61,6 +61,10 @@ class DICOMTID1500PluginClass(DICOMPlugin):
     loadables = []
 
     for cFile in files:
+      # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
+      if slicer.dicomDatabase.fileValue(cFile, self.tags["Modality"]) != "SR":
+        continue
+
       dataset = pydicom.dcmread(cFile)
 
       uid = self.getDICOMValue(dataset, "SOPInstanceUID")
@@ -1398,6 +1402,10 @@ class DICOMLongitudinalTID1500PluginClass(DICOMTID1500PluginClass):
     loadables = []
 
     for cFile in files:
+      # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
+      if slicer.dicomDatabase.fileValue(cFile, self.tags["Modality"]) != "SR":
+        continue
+
       dataset = pydicom.dcmread(cFile)
 
       uid = self.getDICOMValue(dataset, "SOPInstanceUID")

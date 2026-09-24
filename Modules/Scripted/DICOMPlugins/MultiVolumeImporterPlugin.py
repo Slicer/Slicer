@@ -2,6 +2,7 @@ import re
 import vtk, qt, ctk, slicer
 import DICOMLib
 from DICOMLib import DICOMPlugin
+from DICOMLib import DICOMUtils
 import logging
 from slicer.util import settingsValue, toBool
 
@@ -314,17 +315,16 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             frameLabelsArray.InsertNextValue(time-minTime)
         ippPositionCnt = ippPositionCnt+1
 
-      scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
         if len(frameFileList) < 2:
           # multivolume importer does not deal with single-slice volumes (that is left to DICOMImageSequencePlugin)
           return []
-        svs = scalarVolumePlugin.examineForImport([frameFileList])
-        if len(svs)==0:
+        firstFrameFile = self.firstFileInSliceOrder(frameFileList)
+        if firstFrameFile is None:
           print("Failed to parse one of the multivolume frames as scalar volume!")
           break
-        time = float(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags["repetitionTime"]))*f
+        time = float(slicer.dicomDatabase.fileValue(firstFrameFile,self.tags["repetitionTime"]))*f
         if f==0:
             frameLabelsStr = "0,"
             frameLabelsArray.InsertNextValue(0)
@@ -429,15 +429,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             frameLabelsArray.InsertNextValue(time-minTime)
         ippPositionCnt = ippPositionCnt+1
 
-      scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
       firstFrameTime = 0
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
-        svs = scalarVolumePlugin.examineForImport([frameFileList])
-        if len(svs)==0:
+        firstFrameFile = self.firstFileInSliceOrder(frameFileList)
+        if firstFrameFile is None:
           print("Failed to parse one of the multivolume frames as scalar volume!")
           break
-        time = self.tm2ms(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags["AcquisitionTime"]))
+        time = self.tm2ms(slicer.dicomDatabase.fileValue(firstFrameFile,self.tags["AcquisitionTime"]))
         if f==0:
             frameLabelsStr = "0,"
             frameLabelsArray.InsertNextValue(0)
@@ -552,6 +551,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return loadables
 
+  def firstFileInSliceOrder(self, frameFileList):
+    """Return the first file of a frame in slice order (same order as used by the scalar volume plugin).
+
+    This is much faster than getting the sorted file list by examining the frame with the scalar volume plugin.
+    Returns None if there are no files.
+    """
+    if not frameFileList:
+      return None
+    sortedFiles, _distances, _warning = DICOMUtils.getSortedImageFiles(frameFileList)
+    return sortedFiles[0] if sortedFiles else None
+
   # return true is the origins for the individual frames are within
   # self.epsilon apart
   def isFrameOriginConsistent(self, files, mvNode):
@@ -563,17 +573,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     filesPerFrame = int(nFiles/nFrames)
     frameOrigins = []
 
-    scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
     firstFrameOrigin = None
     for frameNumber in range(nFrames):
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
 
-      # sv plugin will sort the filenames by geometric order
-      svs = scalarVolumePlugin.examineForImport([frameFileList])
-      if len(svs) == 0:
+      firstFrameFile = self.firstFileInSliceOrder(frameFileList)
+      if firstFrameFile is None:
         return False
 
-      positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags["position"])
+      positionTag = slicer.dicomDatabase.fileValue(firstFrameFile, self.tags["position"])
       if positionTag == "":
         return False
       origin = [float(zz) for zz in positionTag.split("\\")]

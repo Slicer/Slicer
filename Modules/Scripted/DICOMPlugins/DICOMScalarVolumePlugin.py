@@ -248,7 +248,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     subseriesValues[tag] = []
 
                 if tag in vectorTags:
-                    if value != "":
+                    if value in subseriesValues[tag]:
+                        # exact match (most common case), no need for numerical comparison
+                        pass
+                    elif value != "":
                         vector = self.tagValueToVector(value)
 
                         found = False
@@ -312,22 +315,29 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
         # also remove DICOM SEG, since it is not handled by ITK readers
         newLoadables = []
+        # The same file may be in several loadables, therefore store the pixel data presence for each file
+        # to avoid retrieving it multiple times from the database.
+        fileHasPixelData = {}
+        rtStructureSetFound = False
         for loadable in loadables:
             newFiles = []
             excludedLoadable = False
             for file in loadable.files:
-                if slicer.dicomDatabase.fileValueExists(file, self.tags["pixelData"]):
+                if file not in fileHasPixelData:
+                    fileHasPixelData[file] = slicer.dicomDatabase.fileValueExists(file, self.tags["pixelData"])
+                if fileHasPixelData[file]:
                     newFiles.append(file)
-                if slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
+                # RT structure set has no pixel data, so SOP class only needs to be checked for files without pixel data
+                elif slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
                     excludedLoadable = True
-                    if "DicomRtImportExportPlugin" not in slicer.modules.dicomPlugins:
-                        logging.warning("Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects")
-            if len(newFiles) > 0 and not excludedLoadable:
+                    rtStructureSetFound = True
+                    break
+            if excludedLoadable:
+                continue
+            if len(newFiles) > 0:
                 loadable.files = newFiles
                 loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(newFiles[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
-            elif excludedLoadable:
-                continue
             else:
                 # here all files in have no pixel data, so they might be
                 # secondary capture images which will read, so let's pass
@@ -337,6 +347,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(loadable.files[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
         loadables = newLoadables
+        if rtStructureSetFound and "DicomRtImportExportPlugin" not in slicer.modules.dicomPlugins:
+            logging.warning("Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects")
 
         #
         # now for each series and subseries, sort the images
