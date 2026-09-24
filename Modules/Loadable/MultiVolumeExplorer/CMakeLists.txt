@@ -1,9 +1,5 @@
-
-cmake_minimum_required(VERSION 3.13.0)
-
 #-----------------------------------------------------------------------------
 set(MODULE_NAME MultiVolumeExplorer)
-set(MODULE_TITLE ${MODULE_NAME})
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 

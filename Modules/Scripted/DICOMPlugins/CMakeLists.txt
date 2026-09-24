@@ -15,6 +15,11 @@ set(MODULE_PYTHON_SCRIPTS
   DICOMTID1500Plugin.py
   DICOMM3DPlugin.py
   )
+if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+  list(APPEND MODULE_PYTHON_SCRIPTS
+    MultiVolumeImporterPlugin.py
+    )
+endif()
 
 set(MODULE_PYTHON_RESOURCES
   )

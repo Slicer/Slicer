@@ -31,6 +31,11 @@ set(qtmodules
   VolumeRendering # Volume Rendering depends of Volumes
   CropVolume # CropVolume depends of Volumes
   )
+if(Slicer_BUILD_MULTIVOLUME_SUPPORT AND Slicer_USE_PYTHONQT)
+  list(APPEND qtmodules
+    MultiVolumeExplorer # MultiVolumeExplorer depends on Volumes
+    )
+endif()
 
 include(SlicerCheckModuleEnabled)
 

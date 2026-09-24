@@ -61,7 +61,7 @@ Before the module can be used, you should import the data into a MultiVolume nod
 
 Development of this module was initiated at the [2012 NA-MIC Project week in Salt Lake City, UT](https://www.na-mic.org/wiki/2012_Project_Week:4DImageSlicer4).
 
-This module is an Slicer module stored in a separate repository, but bundled in the Slicer installation package. The source code is available on Github at <https://github.com/fedorov/MultiVolumeExplorer>.
+The source code of this module is available in the Slicer repository at [Modules/Loadable/MultiVolumeExplorer](https://github.com/Slicer/Slicer/tree/main/Modules/Loadable/MultiVolumeExplorer). Development history prior to integration into Slicer core is preserved in the Slicer repository (it was previously developed at <https://github.com/fedorov/MultiVolumeExplorer>).
 
 ## Contributors
 

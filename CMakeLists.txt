@@ -298,6 +298,10 @@ set(VTK_DEBUG_LEAKS ${Slicer_USE_VTK_DEBUG_LEAKS})
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
 mark_as_superbuild(Slicer_BUILD_DICOM_SUPPORT)
 
+option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build Slicer with MultiVolume support (MultiVolumeExplorer and MultiVolumeImporter modules)" ON)
+mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+mark_as_superbuild(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+
 option(Slicer_BUILD_DIFFUSION_SUPPORT "Build Slicer with diffusion (DWI, DTI) support" ON)
 mark_as_superbuild(Slicer_BUILD_DIFFUSION_SUPPORT)
 

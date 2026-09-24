@@ -26,6 +26,11 @@ if(Slicer_USE_SCIPY)
     LineProfile
     )
 endif()
+if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+  list(APPEND modules
+    MultiVolumeImporter
+    )
+endif()
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND modules
     DICOM

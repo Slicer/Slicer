@@ -221,27 +221,6 @@ mark_as_superbuild(vtkAddon_WRAP_PYTHON:BOOL)
 # Include remote modules
 #------------------------------------------------------------------------------
 
-option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
-mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
-
-Slicer_Remote_Add(MultiVolumeExplorer
-  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeExplorer.git
-  GIT_TAG 543f5bc46444a83474b185f4aa9c9d2a916ed09b # 20250702
-  OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
-  OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
-  LABELS REMOTE_MODULE
-  )
-list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENCIES MultiVolumeExplorer)
-
-Slicer_Remote_Add(MultiVolumeImporter
-  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeImporter.git
-  GIT_TAG 144b2e466428f6d08689eec78977982cf01d54e0
-  OPTION_NAME Slicer_BUILD_MultiVolumeImporter
-  OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
-  LABELS REMOTE_MODULE
-  )
-list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENCIES MultiVolumeImporter)
-
 Slicer_Remote_Add(SimpleFilters
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/SimpleITK/SlicerSimpleFilters.git
   GIT_TAG a4f1ae93e8d0245c1bf5c89e9cd55af7152a8148
