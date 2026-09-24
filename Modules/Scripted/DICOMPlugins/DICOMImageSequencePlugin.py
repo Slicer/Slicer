@@ -43,17 +43,6 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
         self.detailedLogging = False
 
-    def examine(self, fileLists):
-        """Returns a list of DICOMLoadable instances
-        corresponding to ways of interpreting the
-        fileLists parameter.
-        """
-        loadables = []
-        for files in fileLists:
-            loadables += self.examineFiles(files)
-
-        return loadables
-
     def examineFiles(self, files):
         """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the

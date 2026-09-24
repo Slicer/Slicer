@@ -30,22 +30,6 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         self.tags["zipSize"] = "cadb,1008"
         self.tags["zipData"] = "cadb,1010"
 
-    def examineForImport(self, fileLists):
-        """Returns a list of DICOMLoadable instances
-        corresponding to ways of interpreting the
-        fileLists parameter.
-        """
-        loadables = []
-        for files in fileLists:
-            cachedLoadables = self.getCachedLoadables(files)
-            if cachedLoadables:
-                loadables += cachedLoadables
-            else:
-                loadablesForFiles = self.examineFiles(files)
-                loadables += loadablesForFiles
-                self.cacheLoadables(files, loadablesForFiles)
-        return loadables
-
     def examineFiles(self, files):
         """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the

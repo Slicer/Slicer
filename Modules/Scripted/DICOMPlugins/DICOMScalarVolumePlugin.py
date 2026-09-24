@@ -161,15 +161,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         corresponding to ways of interpreting the
         fileLists parameter (list of file lists).
         """
-        loadables = []
-        for files in fileLists:
-            cachedLoadables = self.getCachedLoadables(files)
-            if cachedLoadables:
-                loadables += cachedLoadables
-            else:
-                loadablesForFiles = self.examineFiles(files)
-                loadables += loadablesForFiles
-                self.cacheLoadables(files, loadablesForFiles)
+        loadables = super().examineForImport(fileLists)
 
         # sort the loadables by series number if possible
         loadables.sort(key=cmp_to_key(self.seriesSorter))

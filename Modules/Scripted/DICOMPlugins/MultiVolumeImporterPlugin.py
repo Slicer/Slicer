@@ -96,12 +96,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       "DICOM/PreferredMultiVolumeImportFormat", importFormatsComboBox,
       "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
-  def examine(self,fileLists):
+  def examineForImport(self,fileLists):
     """Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
 
-    Top-level examine() calls various individual strategies implemented in examineFiles*().
+    Top-level examineForImport() calls various individual strategies implemented in examineFiles*().
     """
 
     self.detailedLogging = settingsValue("DICOM/detailedLogging", False, converter=toBool)
@@ -111,7 +111,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     loadables = []
     allfiles = []
     for files in fileLists:
-      loadables += self.examineFiles(files)
+      loadables += self.examineFilesMultiVolumeTags(files)
       loadables += self.examineFilesIPPAcqTime(files)
       loadables += self.examineFilesIPPInstanceNumber(files)
       allfiles += files
@@ -197,7 +197,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
   def examineFilesMultiseries(self,files):
     """
-    This strategy is similar to examineFiles(), but
+    This strategy is similar to examineFilesMultiVolumeTags(), but
     does not separate the files by individual series before
     parsing multivolumes out.
     """
@@ -307,7 +307,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if len(frameFileList) < 2:
           # multivolume importer does not deal with single-slice volumes (that is left to DICOMImageSequencePlugin)
           return []
-        svs = scalarVolumePlugin.examine([frameFileList])
+        svs = scalarVolumePlugin.examineForImport([frameFileList])
         if len(svs)==0:
           print("Failed to parse one of the multivolume frames as scalar volume!")
           break
@@ -420,7 +420,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       firstFrameTime = 0
       for f in range(nFrames):
         frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
-        svs = scalarVolumePlugin.examine([frameFileList])
+        svs = scalarVolumePlugin.examineForImport([frameFileList])
         if len(svs)==0:
           print("Failed to parse one of the multivolume frames as scalar volume!")
           break
@@ -478,7 +478,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         tagValue = slicer.dicomDatabase.fileValue(frameFileList[0],self.tags[tag])
         mvNode.SetAttribute("MultiVolume.DICOM."+tag,tagValue)
 
-  def examineFiles(self,files):
+  def examineFilesMultiVolumeTags(self,files):
     """
     This is the main strategy that assumes all files (instances) belong
     to the same series, and all instances within the same frame have the same value for one of the attributes defined in self.multiVolumeTags
@@ -556,7 +556,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
 
       # sv plugin will sort the filenames by geometric order
-      svs = scalarVolumePlugin.examine([frameFileList])
+      svs = scalarVolumePlugin.examineForImport([frameFileList])
       if len(svs) == 0:
         return False
 
@@ -637,7 +637,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
         # sv plugin will sort the filenames by geometric order
-        svLoadables = scalarVolumePlugin.examine([frameFileList])
+        svLoadables = scalarVolumePlugin.examineForImport([frameFileList])
 
         if len(svLoadables) == 0:
           raise OSError(f"volume frame {frameNumber} is invalid")

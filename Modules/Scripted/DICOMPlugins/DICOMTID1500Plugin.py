@@ -208,7 +208,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
                   loadable.ReferencedOtherInstanceUIDs.append(refSOPSequence.ReferencedSOPInstanceUID)
 
         for segSeriesInstanceUID in loadable.ReferencedSegmentationInstanceUIDs[uid]:
-          segLoadables = segPlugin.examine([slicer.dicomDatabase.filesForSeries(segSeriesInstanceUID)])
+          segLoadables = segPlugin.examineForImport([slicer.dicomDatabase.filesForSeries(segSeriesInstanceUID)])
           for segLoadable in segLoadables:
             loadable.referencedInstanceUIDs += segLoadable.referencedInstanceUIDs
 
@@ -1083,7 +1083,7 @@ class DICOMTID1500PluginClass(DICOMPlugin):
         tables = []
 
         for segSeriesInstanceUID in loadable.ReferencedSegmentationInstanceUIDs[uid]:
-          segLoadables = segPlugin.examine([slicer.dicomDatabase.filesForSeries(segSeriesInstanceUID)])
+          segLoadables = segPlugin.examineForImport([slicer.dicomDatabase.filesForSeries(segSeriesInstanceUID)])
           for segLoadable in segLoadables:
             if hasattr(segLoadable, "referencedSegInstanceUIDs"):
               segLoadable.referencedSegInstanceUIDs = list(set(segLoadable.referencedSegInstanceUIDs) -
