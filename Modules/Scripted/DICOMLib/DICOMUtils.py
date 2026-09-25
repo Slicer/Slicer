@@ -652,6 +652,24 @@ class LoadDICOMFilesToDatabase:
 
 
 # ------------------------------------------------------------------------------
+def fileValues(filePaths: list[str], tag: str) -> list[str]:
+    """Get the value of a DICOM tag for multiple files from the DICOM database.
+
+    The result is the same as calling ``slicer.dicomDatabase.fileValue`` for each file,
+    but it is much faster for many files, as the database is queried in batches.
+
+    :param filePaths: Paths of the local DICOM files (or URLs).
+    :param tag: DICOM tag, such as "0020,0032".
+    :return: List of values, in the same order as the files (empty string if the value is not found).
+    """
+    db = slicer.dicomDatabase
+    if hasattr(db, "fileValues"):
+        return list(db.fileValues(list(filePaths), tag))
+    # Batch retrieval is not available in this version of CTK, retrieve values one by one
+    return [db.fileValue(filePath, tag) for filePath in filePaths]
+
+
+# ------------------------------------------------------------------------------
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
@@ -704,9 +722,9 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float = 0.01) -> tuple[li
     # For each file in series, calculate the distance along the scan axis, sort files by this
     sortList = []
     missingGeometry = False
-    for file in filePaths:
-        positionStr = slicer.dicomDatabase.fileValue(file, tags["position"])
-        orientationStr = slicer.dicomDatabase.fileValue(file, tags["orientation"])
+    positionStrs = fileValues(filePaths, tags["position"])
+    orientationStrs = fileValues(filePaths, tags["orientation"])
+    for file, positionStr, orientationStr in zip(filePaths, positionStrs, orientationStrs, strict=True):
         if not positionStr or positionStr == "" or not orientationStr or orientationStr == "":
             missingGeometry = True
             break

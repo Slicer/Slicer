@@ -238,10 +238,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         #
         subseriesFiles = {}
         subseriesValues = {}
-        for file in allFilesLoadable.files:
+        # Retrieving values of all files at once is much faster than retrieving them one by one
+        fileValuesForTag = {tag: DICOMUtils.fileValues(allFilesLoadable.files, self.tags[tag]) for tag in subseriesTags}
+        for fileIndex, file in enumerate(allFilesLoadable.files):
             # check for subseries values
             for tag in subseriesTags:
-                value = slicer.dicomDatabase.fileValue(file, self.tags[tag])
+                value = fileValuesForTag[tag][fileIndex]
                 value = value.replace(",", "_")  # remove commas so it can be used as an index
 
                 if tag not in subseriesValues:
