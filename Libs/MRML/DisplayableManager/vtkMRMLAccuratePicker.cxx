@@ -44,7 +44,7 @@ void vtkMRMLAccuratePicker::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "MinimumCellCountToIndex: " << this->MinimumCellCountToIndex << "\n";
-  os << indent << "Cached locators: " << this->Locators.size() << "\n";
+  os << indent << "Cached locators: " << this->LocatorsBySurface.size() << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
   this->RemoveAllLocators();
   if (!renderer)
   {
-    this->Locators.clear();
+    this->LocatorsBySurface.clear();
     return;
   }
 
@@ -84,7 +84,7 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
     }
 
     shownSurfaces.insert(polyData);
-    CachedLocator& cached = this->Locators[polyData];
+    CachedLocator& cached = this->LocatorsBySurface[polyData];
     if (!cached.Locator)
     {
       vtkNew<vtkStaticCellLocator> locator;
@@ -104,11 +104,11 @@ void vtkMRMLAccuratePicker::UpdateLocators(vtkRenderer* renderer)
 
   // Release locators for surfaces that are no longer shown (a cached locator
   // holds a reference to its poly data).
-  for (auto it = this->Locators.begin(); it != this->Locators.end();)
+  for (auto it = this->LocatorsBySurface.begin(); it != this->LocatorsBySurface.end();)
   {
     if (shownSurfaces.find(it->first) == shownSurfaces.end())
     {
-      it = this->Locators.erase(it);
+      it = this->LocatorsBySurface.erase(it);
     }
     else
     {
@@ -122,4 +122,36 @@ int vtkMRMLAccuratePicker::Pick(double selectionX, double selectionY, double sel
 {
   this->UpdateLocators(renderer);
   return this->Superclass::Pick(selectionX, selectionY, selectionZ, renderer);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLAccuratePicker::IntersectDataSetWithLine(vtkDataSet* dataSet,
+                                                     const double p1[3],
+                                                     const double p2[3],
+                                                     double t1,
+                                                     double t2,
+                                                     double tol,
+                                                     vtkAbstractCellLocator*& locator,
+                                                     vtkIdType& cellId,
+                                                     int& subId,
+                                                     double& tMin,
+                                                     double& pDistMin,
+                                                     double xyz[3],
+                                                     double minPCoords[3])
+{
+  // Vertices and lines cannot be hit without the pick tolerance, so there is no
+  // point in looking for a cell that the ray hits if there are only those.
+  vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataSet);
+  const bool onlyVerticesOrLines = polyData && polyData->GetNumberOfPolys() == 0 && polyData->GetNumberOfStrips() == 0;
+  if (!onlyVerticesOrLines)
+  {
+    // Look for a cell that the ray hits. The tolerance is not zero so that a ray
+    // that passes exactly through an edge or a vertex is not missed due to rounding.
+    const double hitTolerance = tol * 1e-6;
+    if (this->Superclass::IntersectDataSetWithLine(dataSet, p1, p2, t1, t2, hitTolerance, locator, cellId, subId, tMin, pDistMin, xyz, minPCoords))
+    {
+      return true;
+    }
+  }
+  return this->Superclass::IntersectDataSetWithLine(dataSet, p1, p2, t1, t2, tol, locator, cellId, subId, tMin, pDistMin, xyz, minPCoords);
 }
