@@ -2107,8 +2107,18 @@ std::string vtkMRMLMarkupsNode::FormatLabel(const std::string& format,
       spec += conversion;
       // Values that are not representable as integer (NaN, infinity, very large values) are formatted as 0
       long long integerNumber = (std::isfinite(*number) && std::abs(*number) < 9.0e18) ? static_cast<long long>(*number) : 0;
-      buffer.resize(std::snprintf(nullptr, 0, spec.c_str(), integerNumber) + 1);
-      std::snprintf(buffer.data(), buffer.size(), spec.c_str(), integerNumber);
+      if (conversion == 'd' || conversion == 'i')
+      {
+        buffer.resize(std::snprintf(nullptr, 0, spec.c_str(), integerNumber) + 1);
+        std::snprintf(buffer.data(), buffer.size(), spec.c_str(), integerNumber);
+      }
+      else
+      {
+        // u, o, x, X conversions require unsigned argument (negative values wrap around, as in printf)
+        unsigned long long unsignedNumber = static_cast<unsigned long long>(integerNumber);
+        buffer.resize(std::snprintf(nullptr, 0, spec.c_str(), unsignedNumber) + 1);
+        std::snprintf(buffer.data(), buffer.size(), spec.c_str(), unsignedNumber);
+      }
     }
     else
     {

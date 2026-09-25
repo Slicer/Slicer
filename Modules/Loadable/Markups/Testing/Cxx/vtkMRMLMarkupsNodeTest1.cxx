@@ -68,6 +68,11 @@ int TestFormatLabel()
   CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N", placeholders, &number, &numberPlaceholderFound), "Name");
   CHECK_BOOL(numberPlaceholderFound, false);
   CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%03d|%-3d|%+d|%i|%x", placeholders, &number), "007|7  |+7|7|7");
+  // Unsigned conversions
+  double hexNumber = 255.0;
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%u|%o|%x|%X|%04X", placeholders, &hexNumber), "255|377|ff|FF|00FF");
+  double negativeNumber = -1.0;
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%d|%x", placeholders, &negativeNumber), "-1|ffffffffffffffff");
   double fractionalNumber = 2.75;
   CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%d|%.1f|%g|%5.2f", placeholders, &fractionalNumber), "2|2.8|2.75| 2.75");
   // Number placeholder is detected and kept unchanged if no number is provided
