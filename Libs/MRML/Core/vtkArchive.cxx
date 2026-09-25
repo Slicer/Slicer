@@ -99,7 +99,7 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
   p = archive_entry_uname(entry);
   if ((p == nullptr) || (*p == '\0'))
   {
-    sprintf(tmp, "%lu ", (unsigned long)archive_entry_uid(entry));
+    snprintf(tmp, sizeof(tmp), "%lu ", (unsigned long)archive_entry_uid(entry));
     p = tmp;
   }
   w = strlen(p);
@@ -117,7 +117,7 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
   }
   else
   {
-    sprintf(tmp, "%lu", (unsigned long)archive_entry_gid(entry));
+    snprintf(tmp, sizeof(tmp), "%lu", (unsigned long)archive_entry_gid(entry));
     w = strlen(tmp);
     fprintf(out, "%s", tmp);
   }
@@ -130,7 +130,7 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
   if (archive_entry_filetype(entry) == AE_IFCHR //
       || archive_entry_filetype(entry) == AE_IFBLK)
   {
-    sprintf(tmp, "%lu,%lu", (unsigned long)archive_entry_rdevmajor(entry), (unsigned long)archive_entry_rdevminor(entry));
+    snprintf(tmp, sizeof(tmp), "%lu,%lu", (unsigned long)archive_entry_rdevmajor(entry), (unsigned long)archive_entry_rdevminor(entry));
   }
   else
   {
@@ -139,7 +139,7 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
      * the filesize here.  We need the format string and the
      * corresponding type for the cast.
      */
-    sprintf(tmp, BSDTAR_FILESIZE_PRINTF, (BSDTAR_FILESIZE_TYPE)archive_entry_size(entry));
+    snprintf(tmp, sizeof(tmp), BSDTAR_FILESIZE_PRINTF, (BSDTAR_FILESIZE_TYPE)archive_entry_size(entry));
   }
   if (w + strlen(tmp) >= gs_width)
   {

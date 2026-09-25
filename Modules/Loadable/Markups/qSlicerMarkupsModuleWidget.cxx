@@ -1325,7 +1325,7 @@ void qSlicerMarkupsModuleWidget::onPKeyActivated()
 
   // simulate a mouse press inside the widget
   QPoint widgetPos = widget->mapFromGlobal(pos);
-  QMouseEvent click(QEvent::MouseButtonRelease, widgetPos, Qt::LeftButton, Qt::MouseButtons(), Qt::KeyboardModifiers());
+  QMouseEvent click(QEvent::MouseButtonRelease, widgetPos, pos, Qt::LeftButton, Qt::MouseButtons(), Qt::KeyboardModifiers());
   click.setAccepted(true);
 
   // and send it to the widget

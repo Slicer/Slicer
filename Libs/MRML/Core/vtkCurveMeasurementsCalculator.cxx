@@ -193,7 +193,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   vtkCellArray* lines = polyData->GetLines();
   vtkNew<vtkIdList> linePoints;
 
-  lines->GetCell(0, linePoints);
+  lines->GetCellAtId(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)
@@ -388,7 +388,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   vtkCellArray* lines = polyData->GetLines();
   vtkNew<vtkIdList> linePoints;
 
-  lines->GetCell(0, linePoints);
+  lines->GetCellAtId(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
     (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)

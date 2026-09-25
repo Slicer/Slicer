@@ -29,6 +29,9 @@
 // SlicerExecutionModule
 #include <ModuleLogo.h>
 
+// STD includes
+#include <memory>
+
 //-----------------------------------------------------------------------------
 qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory)
   : TempDirectory(newTempDirectory)
@@ -81,9 +84,9 @@ QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath() cons
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
-  // Using a scoped pointer ensures the memory will be cleaned if instantiator
-  // fails before returning the module. See QScopedPointer::take()
-  QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
+  // Using a smart pointer ensures the memory will be cleaned if instantiator
+  // fails before returning the module. See std::unique_ptr::release()
+  std::unique_ptr<qSlicerCLIModule> module(new qSlicerCLIModule());
 
   QString xmlFilePath = this->xmlModuleDescriptionFilePath();
 
@@ -135,7 +138,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
   module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
 
-  return module.take();
+  return module.release();
 }
 
 //-----------------------------------------------------------------------------
@@ -173,7 +176,7 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
   char buffer[256];
   // The entry point address must be encoded the same way it is decoded. As it
   // is decoded using  sscanf, it must be encoded using sprintf
-  sprintf(buffer, "slicer:%p", moduleEntryPoint);
+  snprintf(buffer, sizeof(buffer), "slicer:%p", moduleEntryPoint);
   desc.SetTarget(std::string(buffer)); // EntryPoint
 
   ModuleLogo logo;

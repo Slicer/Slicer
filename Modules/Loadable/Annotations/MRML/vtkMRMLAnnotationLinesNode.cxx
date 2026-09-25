@@ -342,7 +342,6 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
     }
     cPts = nPts;
   }
-  lines->SetNumberOfCells(n - 1);
 
   for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)
   {
@@ -472,11 +471,6 @@ int vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtIdE
 
   if (cellLine->GetNumberOfCells() <= id)
   {
-    if (cellLine->GetNumberOfCells())
-    {
-      cellLine->SetTraversalLocation(cellLine->GetNumberOfCells() - 1);
-    }
-
     int addCells = id - cellLine->GetNumberOfCells();
     for (int i = 0; i < addCells; i++)
     {
@@ -486,8 +480,7 @@ int vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtIdE
   }
   else
   {
-    cellLine->InitTraversal();
-    cellLine->ReplaceCell(id, 2, lineIdList);
+    cellLine->ReplaceCellAtId(id, 2, lineIdList);
   }
 
   for (int j = NUM_CP_ATTRIBUTE_TYPES; j < NUM_LINE_ATTRIBUTE_TYPES; j++)

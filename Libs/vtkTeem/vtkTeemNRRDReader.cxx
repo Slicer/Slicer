@@ -783,25 +783,25 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(void* _nout, const void* _nin, do
 
   if (!(nout && nin))
   {
-    sprintf(err, "%s: got nullptr pointer", me);
+    snprintf(err, sizeof(err), "%s: got nullptr pointer", me);
     biffAdd(TEN, err);
     return 1;
   }
   if (tenTensorCheck(nin, nin->type, AIR_TRUE, AIR_TRUE))
   {
-    sprintf(err, "%s: ", me);
+    snprintf(err, sizeof(err), "%s: ", me);
     biffAdd(TEN, err);
     return 1;
   }
   if (nin->spaceDim != 3)
   {
-    sprintf(err, "%s: input this->nrrd needs 3-D (not %u-D) space dimension", me, nin->spaceDim);
+    snprintf(err, sizeof(err), "%s: input this->nrrd needs 3-D (not %u-D) space dimension", me, nin->spaceDim);
     biffAdd(TEN, err);
     return 1;
   }
   if (!ELL_3M_EXISTS(SD))
   {
-    sprintf(err, "%s: 3x3 space direction doesn't exist", me);
+    snprintf(err, sizeof(err), "%s: 3x3 space direction doesn't exist", me);
     biffAdd(TEN, err);
     return 1;
   }
@@ -814,7 +814,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(void* _nout, const void* _nin, do
   {
     if (nrrdCopy(nout, nin))
     {
-      sprintf(err, "%s: trouble with initial copy", me);
+      snprintf(err, sizeof(err), "%s: trouble with initial copy", me);
       biffAdd(TEN, err);
       return 1;
     }

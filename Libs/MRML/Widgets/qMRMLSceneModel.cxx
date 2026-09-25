@@ -414,7 +414,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
       continue;
     }
     QVariant uid = child->data(qMRMLSceneModel::UIDRole);
-    if (uid.type() == QVariant::String && //
+    if (uid.userType() == QMetaType::QString && //
         uid.toString() == "scene")
     {
       return child;

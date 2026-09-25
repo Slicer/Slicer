@@ -416,7 +416,11 @@ void qSlicerExtensionsManagerModelPrivate::saveExtensionsMetadataFromServerToCac
   QByteArray renderedJson = QJsonDocument(jsonExtensionsMetadata).toJson();
   QString metadataFilePath = q->extensionInstallPath("ExtensionsMetadataFromServer.json");
   QFile jsonFile(metadataFilePath);
-  jsonFile.open(QIODevice::WriteOnly);
+  if (!jsonFile.open(QIODevice::WriteOnly))
+  {
+    qWarning() << Q_FUNC_INFO << "failed to open file for writing:" << metadataFilePath;
+    return;
+  }
   jsonFile.write(renderedJson);
 }
 

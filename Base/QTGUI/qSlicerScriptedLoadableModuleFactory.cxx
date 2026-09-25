@@ -21,6 +21,9 @@
 // Qt includes
 #include <QSettings>
 
+// STD includes
+#include <memory>
+
 // For:
 //  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
@@ -67,9 +70,9 @@ bool ctkFactoryScriptedItem::load()
 //----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 {
-  // Using a scoped pointer ensures the memory will be cleaned if instantiator
-  // fails before returning the module. See QScopedPointer::take()
-  QScopedPointer<qSlicerScriptedLoadableModule> module(new qSlicerScriptedLoadableModule());
+  // Using a smart pointer ensures the memory will be cleaned if instantiator
+  // fails before returning the module. See std::unique_ptr::release()
+  std::unique_ptr<qSlicerScriptedLoadableModule> module(new qSlicerScriptedLoadableModule());
 
   module->setPath(this->path());
 
@@ -105,7 +108,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
     return nullptr;
   }
 
-  return module.take();
+  return module.release();
 }
 
 //-----------------------------------------------------------------------------

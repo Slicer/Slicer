@@ -58,13 +58,13 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
   QVariant editData = index.data(Qt::EditRole);
   QVariant decorationData = index.data(Qt::DecorationRole);
   if (editData.isNull() && //
-      decorationData.type() == QVariant::Color)
+      decorationData.userType() == QMetaType::QColor)
   {
     return true;
   }
-  else if (editData.isNull() &&                         //
-           decorationData.type() == QVariant::Pixmap && //
-           index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color)
+  else if (editData.isNull() &&                              //
+           decorationData.userType() == QMetaType::QPixmap && //
+           index.data(qMRMLItemDelegate::ColorRole).userType() == QMetaType::QColor)
   {
     return true;
   }
@@ -76,11 +76,11 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 {
   QVariant decorationData = index.data(Qt::DecorationRole);
   QVariant colorData = index.data(qMRMLItemDelegate::ColorRole);
-  if (decorationData.type() == QVariant::Color)
+  if (decorationData.userType() == QMetaType::QColor)
   {
     return Qt::DecorationRole;
   }
-  else if (colorData.type() == QVariant::Color)
+  else if (colorData.userType() == QMetaType::QColor)
   {
     return qMRMLItemDelegate::ColorRole;
   }
@@ -91,7 +91,7 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index) const
 {
   QVariant editData = index.data(Qt::EditRole);
-  if (editData.type() != QVariant::String)
+  if (editData.userType() != QMetaType::QString)
   {
     return false;
   }
