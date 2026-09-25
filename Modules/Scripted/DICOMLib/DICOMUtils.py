@@ -4,6 +4,7 @@
 # annotations that reference it from forcing an import.
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 
@@ -652,21 +653,63 @@ class LoadDICOMFilesToDatabase:
 
 
 # ------------------------------------------------------------------------------
-def fileValues(filePaths: list[str], tag: str) -> list[str]:
-    """Get the value of a DICOM tag for multiple files from the DICOM database.
+# Values retrieved by fileValues() while caching is enabled by fileValuesCaching().
+# Map from tag to a map from file path to value.
+_fileValuesCache = None
 
-    The result is the same as calling ``slicer.dicomDatabase.fileValue`` for each file,
-    but it is much faster for many files, as the database is queried in batches.
 
-    :param filePaths: Paths of the local DICOM files (or URLs).
-    :param tag: DICOM tag, such as "0020,0032".
-    :return: List of values, in the same order as the files (empty string if the value is not found).
+@contextlib.contextmanager
+def fileValuesCaching():
+    """Cache the values retrieved by :func:`fileValues` while in this context.
+
+    Plugins often retrieve the same values multiple times while examining or loading files
+    (e.g., multiple plugins check the SOP class UID of all files). Within this context, values
+    are only retrieved from the database once and they are shared by all plugins.
+
+    The cache is discarded when the context is exited, therefore changes made to the database
+    (for example, by another process) are taken into account in subsequent operations.
+    Nested contexts use the cache of the outermost context.
+
+    It can be used as a context manager or as a function decorator.
     """
+    global _fileValuesCache
+    if _fileValuesCache is not None:
+        # caching is already enabled by an enclosing context
+        yield
+        return
+    _fileValuesCache = {}
+    try:
+        yield
+    finally:
+        _fileValuesCache = None
+
+
+def _retrieveFileValues(filePaths: list[str], tag: str) -> list[str]:
     db = slicer.dicomDatabase
     if hasattr(db, "fileValues"):
         return list(db.fileValues(list(filePaths), tag))
     # Batch retrieval is not available in this version of CTK, retrieve values one by one
     return [db.fileValue(filePath, tag) for filePath in filePaths]
+
+
+def fileValues(filePaths: list[str], tag: str) -> list[str]:
+    """Get the value of a DICOM tag for multiple files from the DICOM database.
+
+    The result is the same as calling ``slicer.dicomDatabase.fileValue`` for each file,
+    but it is much faster for many files, as the database is queried in batches.
+    Values are cached while caching is enabled by :func:`fileValuesCaching`.
+
+    :param filePaths: Paths of the local DICOM files (or URLs).
+    :param tag: DICOM tag, such as "0020,0032".
+    :return: List of values, in the same order as the files (empty string if the value is not found).
+    """
+    if _fileValuesCache is None:
+        return _retrieveFileValues(filePaths, tag)
+    cachedValues = _fileValuesCache.setdefault(tag.upper(), {})
+    filePathsToRetrieve = [filePath for filePath in dict.fromkeys(filePaths) if filePath not in cachedValues]
+    if filePathsToRetrieve:
+        cachedValues.update(zip(filePathsToRetrieve, _retrieveFileValues(filePathsToRetrieve, tag), strict=True))
+    return [cachedValues[filePath] for filePath in filePaths]
 
 
 # ------------------------------------------------------------------------------
@@ -821,6 +864,7 @@ def getDefaultPluginClassNames():
 
 
 # ------------------------------------------------------------------------------
+@fileValuesCaching()
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
     """Take list of file lists, return loadables by plugin dictionary"""
     detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
@@ -865,6 +909,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
 
 
 # ------------------------------------------------------------------------------
+@fileValuesCaching()
 def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     """Load each DICOM loadable item.
     Returns loaded node IDs.
