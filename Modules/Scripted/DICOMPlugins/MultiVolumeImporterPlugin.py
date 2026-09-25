@@ -249,11 +249,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     return loadables
 
   def emptyTagValueFound(self,files,tags):
-    for f in files:
-      for tag in tags:
-        value = slicer.dicomDatabase.fileValue(f,self.tags[tag])
-        if value is None or value == "":
-          return True
+    for tag in tags:
+      if "" in DICOMUtils.fileValues(files, self.tags[tag]):
+        return True
     return False
 
   def examineFilesIPPInstanceNumber(self,files):
@@ -274,10 +272,11 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     subseriesLists = {}
     orderedFiles = []
 
-    minTime = int(slicer.dicomDatabase.fileValue(files[0],self.tags["instanceNumber"]))
-    for file in files:
-      ipp = slicer.dicomDatabase.fileValue(file,self.tags["position"])
-      time = int(slicer.dicomDatabase.fileValue(file,self.tags["instanceNumber"]))
+    positions = DICOMUtils.fileValues(files, self.tags["position"])
+    instanceNumbers = DICOMUtils.fileValues(files, self.tags["instanceNumber"])
+    minTime = int(instanceNumbers[0])
+    for file, ipp, instanceNumber in zip(files, positions, instanceNumbers, strict=True):
+      time = int(instanceNumber)
       minTime = min(minTime, time)
       if ipp not in subseriesLists:
         subseriesLists[ipp] = {}
@@ -388,10 +387,11 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     desc = slicer.dicomDatabase.fileValue(files[0],self.tags["seriesDescription"]) # SeriesDescription
 
-    minTime = self.tm2ms(slicer.dicomDatabase.fileValue(files[0],self.tags["AcquisitionTime"]))
-    for file in files:
-      ipp = slicer.dicomDatabase.fileValue(file,self.tags["position"])
-      time = self.tm2ms(slicer.dicomDatabase.fileValue(file,self.tags["AcquisitionTime"]))
+    positions = DICOMUtils.fileValues(files, self.tags["position"])
+    acquisitionTimes = DICOMUtils.fileValues(files, self.tags["AcquisitionTime"])
+    minTime = self.tm2ms(acquisitionTimes[0])
+    for file, ipp, acquisitionTime in zip(files, positions, acquisitionTimes, strict=True):
+      time = self.tm2ms(acquisitionTime)
       minTime = min(minTime, time)
       if ipp not in subseriesLists:
         subseriesLists[ipp] = {}
@@ -512,8 +512,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # of the series (code from DICOMScalarVolumePlugin)
     subseriesLists = {}
 
-    for file in files:
-      value = slicer.dicomDatabase.fileValue(file,self.tags["seriesInstanceUID"]) # SeriesInstanceUID
+    seriesInstanceUIDs = DICOMUtils.fileValues(files, self.tags["seriesInstanceUID"])
+    for file, value in zip(files, seriesInstanceUIDs, strict=True):
       if value == "":
         value = "Unknown"
       if value not in subseriesLists:
@@ -832,7 +832,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     # iterate over all files
     tagsToIgnore = []
-    for file in files:
+    # Retrieving values of all files at once is much faster than retrieving them one by one
+    fileValuesForTag = {frameTag: DICOMUtils.fileValues(files, self.tags[frameTag]) for frameTag in consideredTags}
+    for fileIndex, file in enumerate(files):
 
       # Remove tags that were not found in the previous iteration
       for frameTag in tagsToIgnore:
@@ -847,7 +849,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           tagValue2FileList = {}
           tag2ValueFileList[frameTag] = tagValue2FileList
 
-        tagValueStr = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
+        tagValueStr = fileValuesForTag[frameTag][fileIndex]
         if tagValueStr == "":
           # not found?
           tagsToIgnore.append(frameTag)
@@ -933,9 +935,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         imagePositions = set()  # must be different for each slice
         imageOrientations = set()  # must be the same for each slice
         frameFileList = tagValue2FileList[tagValue]
-        for file in frameFileList:
-          imagePositions.add(slicer.dicomDatabase.fileValue(file, self.tags["position"]))
-          imageOrientations.add(slicer.dicomDatabase.fileValue(file, self.tags["orientation"]))
+        imagePositions.update(DICOMUtils.fileValues(frameFileList, self.tags["position"]))
+        imageOrientations.update(DICOMUtils.fileValues(frameFileList, self.tags["orientation"]))
         if len(imagePositions) != len(frameFileList):
           if self.detailedLogging:
             msg +=  "there are multiple frames at the same position within a frame."

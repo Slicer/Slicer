@@ -7,6 +7,7 @@ from slicer.i18n import tr as _
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMUtils
 
 
 #
@@ -53,10 +54,15 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
         loadables = []
 
-        for filePath in files:
+        try:
+            sopClassUIDs = DICOMUtils.fileValues(files, self.tags["sopClassUID"])
+        except Exception:
+            # Values cannot be retrieved from the database (probably Slicer DICOM database is not initialized)
+            sopClassUIDs = None
+        for fileIndex, filePath in enumerate(files):
             # Quick check of SOP class UID without parsing the file...
             try:
-                sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags["sopClassUID"])
+                sopClassUID = sopClassUIDs[fileIndex]
                 if not (sopClassUID in supportedSOPClassUIDs):
                     # Unsupported class
                     continue

@@ -5,7 +5,7 @@ import vtkSegmentationCorePython as vtkSegmentationCore
 import logging
 
 import slicer
-from DICOMLib import DICOMLoadable, DICOMPlugin
+from DICOMLib import DICOMLoadable, DICOMPlugin, DICOMUtils
 
 
 #
@@ -26,9 +26,10 @@ class DICOMM3DPluginClass(DICOMPlugin):
     """
     loadables = []
 
-    for candidateFile in files:
-      #read modality type to flag M3D object.
-      isDicomM3D = (slicer.dicomDatabase.fileValue(candidateFile, self.tags["modality"]) == "M3D")
+    #read modality type to flag M3D object.
+    modalities = DICOMUtils.fileValues(files, self.tags["modality"])
+    for candidateFile, modality in zip(files, modalities, strict=True):
+      isDicomM3D = (modality == "M3D")
       if isDicomM3D:
         uid = slicer.dicomDatabase.fileValue(candidateFile, self.tags["instanceUID"])
         if uid == "":
