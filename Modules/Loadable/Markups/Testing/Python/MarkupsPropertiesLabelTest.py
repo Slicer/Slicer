@@ -167,6 +167,82 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
             rep.UpdateFromMRML(self.angle, slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent)
             self.assertTrue(rep.GetTextActor().GetVisibility())
 
+    def testWholeMarkupHighlight(self):
+        """Hovering the properties label highlights the whole markup, not just the label."""
+        from vtk.util.numpy_support import vtk_to_numpy
+
+        def countActiveColorPixels():
+            # Active color is bright green (0.4, 1.0, 0.0). Selected (pink) and unselected (cyan) colors are not counted.
+            self.window.Render()
+            grabber = vtk.vtkWindowToImageFilter()
+            grabber.SetInput(self.window)
+            grabber.Update()
+            rgb = vtk_to_numpy(grabber.GetOutput().GetPointData().GetScalars()).astype(int)
+            r, g, b = rgb[:, 0], rgb[:, 1], rgb[:, 2]
+            return int(((g > 40) & (g > 2 * r) & (g > 2 * b)).sum())
+
+        def createMarkup(className):
+            markup = slicer.mrmlScene.AddNewNodeByClass(className)
+            if className == "vtkMRMLMarkupsROINode":
+                markup.SetCenter(0, 0, 0)
+                markup.SetSize(30, 30, 30)
+            else:
+                if className == "vtkMRMLMarkupsPlaneNode":
+                    markup.SetPlaneType(slicer.vtkMRMLMarkupsPlaneNode.PlaneType3Points)
+                    points = [(0, 0, 0), (0, 30, 0), (0, 0, 30)]  # intersects the axial slice
+                else:
+                    points = [(-30, 0, 0), (0, 10, 0), (30, 0, 0)][: 2 if className == "vtkMRMLMarkupsLineNode" else 3]
+                for point in points:
+                    markup.AddControlPoint(vtk.vtkVector3d(*point))
+            # Only the markup itself (line, plane, ROI) is counted: control points are also displayed
+            # as active when the properties label is active, and the label uses the active color, too.
+            for index in range(markup.GetNumberOfControlPoints()):
+                markup.SetNthControlPointVisibility(index, False)
+            markup.GetDisplayNode().SetPropertiesLabelVisibility(False)
+            return markup
+
+        for className, repPrefix, markupComponent, views in [
+            # The 2D line representation is not rendered in this offscreen test setup
+            ("vtkMRMLMarkupsLineNode", "vtkSlicerLineRepresentation", slicer.vtkMRMLMarkupsDisplayNode.ComponentLine, ["3D"]),
+            ("vtkMRMLMarkupsCurveNode", "vtkSlicerCurveRepresentation", slicer.vtkMRMLMarkupsDisplayNode.ComponentLine, ["2D", "3D"]),
+            ("vtkMRMLMarkupsAngleNode", "vtkSlicerAngleRepresentation", slicer.vtkMRMLMarkupsDisplayNode.ComponentLine, ["2D", "3D"]),
+            ("vtkMRMLMarkupsPlaneNode", "vtkSlicerPlaneRepresentation", slicer.vtkMRMLMarkupsDisplayNode.ComponentPlane, ["2D", "3D"]),
+            ("vtkMRMLMarkupsROINode", "vtkSlicerROIRepresentation", slicer.vtkMRMLMarkupsROIDisplayNode.ComponentROI, ["2D", "3D"]),
+        ]:
+            markup = createMarkup(className)
+            display = markup.GetDisplayNode()
+            for viewType in views:
+                sliceView = viewType == "2D"
+                view = slicer.vtkMRMLSliceNode() if sliceView else slicer.vtkMRMLViewNode()
+                view.SetSingletonTag(f"PropertiesLabelHighlightTest{className}{viewType}")
+                view.SetLayoutName(f"PropertiesLabelHighlightTest{className}{viewType}")
+                self.viewScene.AddNode(view)
+                self.views.append(view)
+                display.AddViewNodeID(view.GetID())
+                if sliceView:
+                    view.SetDimensions(600, 600, 1)
+                    view.SetFieldOfView(200, 200, 1)
+                rep = getattr(slicer, repPrefix + viewType)()
+                rep.SetRenderer(self.renderer)
+                rep.SetViewNode(view)
+                rep.SetMarkupsDisplayNode(display)
+                self.representations.append(rep)
+                self.renderer.AddViewProp(rep)
+                try:
+                    counts = {}
+                    for name, component in [("none", display.ComponentNone), ("markup", markupComponent), ("label", display.ComponentPropertiesLabel)]:
+                        display.SetActiveComponent(component, 0)
+                        rep.UpdateFromMRML(markup, slicer.vtkMRMLDisplayableNode.DisplayModifiedEvent)
+                        counts[name] = countActiveColorPixels()
+                    message = f"{className} {viewType}: {counts}"
+                    self.assertEqual(counts["none"], 0, message)
+                    self.assertGreater(counts["markup"], 0, message)
+                    # Hovering the label highlights the markup the same way as hovering the markup itself
+                    self.assertEqual(counts["label"], counts["markup"], message)
+                finally:
+                    display.SetActiveComponent(display.ComponentNone, -1)
+                    self.renderer.RemoveViewProp(rep)
+
     def testPersistence(self):
         labelFormat = "%M (%N) 100%%"
         self.display.SetPropertiesLabelFormat(labelFormat)

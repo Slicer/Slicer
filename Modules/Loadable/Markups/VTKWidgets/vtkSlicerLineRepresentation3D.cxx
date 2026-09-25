@@ -238,7 +238,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
   int controlPointType = Active;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
+  if (!this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentLine))
   {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
   }

@@ -323,8 +323,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       {
         continue;
       }
-      bool isPointActive = propertiesLabelActive                                                                                   //
-        || std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
+      bool isPointActive = propertiesLabelActive //
+                           || std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
       switch (controlPointType)
       {
         case Active:

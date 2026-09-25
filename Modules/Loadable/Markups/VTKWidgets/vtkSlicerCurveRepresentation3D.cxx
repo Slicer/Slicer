@@ -196,7 +196,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
+  if (!this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentLine))
   {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
   }

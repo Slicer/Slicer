@@ -283,7 +283,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->UpdateRelativeCoincidentTopologyOffsets(this->PlaneMapper, this->PlaneOccludedMapper);
 
   int controlPointType = Active;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentPlane)
+  if (!this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentPlane))
   {
     controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
   }

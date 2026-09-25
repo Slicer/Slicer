@@ -824,3 +824,14 @@ vtkTextProperty* vtkSlicerMarkupsWidgetRepresentation::GetPropertiesLabelTextPro
   }
   return this->ControlPoints[controlPointType]->TextProperty;
 }
+
+//----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation::IsMarkupActive(int markupComponentType)
+{
+  if (!this->MarkupsDisplayNode)
+  {
+    return false;
+  }
+  int activeComponentType = this->MarkupsDisplayNode->GetActiveComponentType();
+  return activeComponentType == markupComponentType || activeComponentType == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel;
+}
