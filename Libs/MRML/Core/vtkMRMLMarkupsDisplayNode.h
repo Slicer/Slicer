@@ -181,11 +181,24 @@ public:
   //@}
 
   //@{
-  /// Include the node name in the properties label. Enabled by default.
-  vtkSetMacro(PropertiesLabelIncludesNodeName, bool);
-  vtkGetMacro(PropertiesLabelIncludesNodeName, bool);
-  vtkBooleanMacro(PropertiesLabelIncludesNodeName, bool);
+  /// Format of the properties label text.
+  /// Placeholders:
+  /// - %N: node name
+  /// - %S: short name of the markup type (for example, F for point list)
+  /// - %M: measurements (single measurement on the same line, multiple measurements in separate lines)
+  /// - %b: line break
+  /// - %%: percent character
+  /// Whitespace and colon characters are removed from the beginning and end of the label,
+  /// so that the separator is not shown if the node name or measurements are empty.
+  /// Empty lines and whitespace at the beginning and end of each line are removed as well.
+  /// Default: "%N:%M".
+  /// \sa vtkMRMLMarkupsNode::GetPropertiesLabelText, vtkMRMLMarkupsNode::FormatLabel
+  vtkSetMacro(PropertiesLabelFormat, std::string);
+  vtkGetMacro(PropertiesLabelFormat, std::string);
   //@}
+
+  /// Default format of the properties label text.
+  static std::string GetDefaultPropertiesLabelFormat() { return "%N:%M"; }
 
   //@{
   /**
@@ -572,7 +585,7 @@ protected:
   int SnapMode;
 
   bool PropertiesLabelVisibility;
-  bool PropertiesLabelIncludesNodeName;
+  std::string PropertiesLabelFormat;
   bool PointLabelsVisibility;
   bool FillVisibility;
   bool OutlineVisibility;

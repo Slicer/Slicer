@@ -53,7 +53,7 @@ public:
   bool curveLineSizeIsAbsolute() const;
 
   bool propertiesLabelVisibility() const;
-  bool propertiesLabelIncludesNodeName() const;
+  QString propertiesLabelFormat() const;
   bool pointLabelsVisibility() const;
 
 signals:
@@ -80,7 +80,7 @@ public slots:
   void setCurveLineSizeIsAbsolute(bool absolute);
 
   void setPropertiesLabelVisibility(bool visible);
-  void setPropertiesLabelIncludesNodeName(bool includesNodeName);
+  void setPropertiesLabelFormat(const QString& format);
   void setPointLabelsVisibility(bool visible);
 
   void setMaximumMarkupsScale(double maxScale);

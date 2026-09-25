@@ -91,7 +91,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
   QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelVisibility(bool)));
-  QObject::connect(this->PropertiesLabelIncludesNodeNameCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelIncludesNodeName(bool)));
+  QObject::connect(this->PropertiesLabelFormatLineEdit, SIGNAL(textEdited(QString)), q, SLOT(setPropertiesLabelFormat(QString)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onTextScaleSliderWidgetChanged(double)));
 
@@ -328,7 +328,12 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineDiameterSliderWidget->setMRMLScene(markupsDisplayNode->GetScene());
 
   d->PropertiesLabelVisibilityCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelVisibility());
-  d->PropertiesLabelIncludesNodeNameCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelIncludesNodeName());
+  QString propertiesLabelFormat = QString::fromStdString(markupsDisplayNode->GetPropertiesLabelFormat());
+  if (d->PropertiesLabelFormatLineEdit->text() != propertiesLabelFormat)
+  {
+    // only update if changed to not reset cursor position while editing
+    d->PropertiesLabelFormatLineEdit->setText(propertiesLabelFormat);
+  }
 
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
@@ -480,14 +485,14 @@ void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelIncludesNodeName(bool includesNodeName)
+void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelFormat(const QString& format)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
   if (!d->MarkupsDisplayNode.GetPointer())
   {
     return;
   }
-  d->MarkupsDisplayNode->SetPropertiesLabelIncludesNodeName(includesNodeName);
+  d->MarkupsDisplayNode->SetPropertiesLabelFormat(format.toStdString());
 }
 
 //------------------------------------------------------------------------------
@@ -509,10 +514,10 @@ bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelVisibility() const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelIncludesNodeName() const
+QString qMRMLMarkupsDisplayNodeWidget::propertiesLabelFormat() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
-  return d->PropertiesLabelIncludesNodeNameCheckBox->isChecked();
+  return d->PropertiesLabelFormatLineEdit->text();
 }
 
 //------------------------------------------------------------------------------

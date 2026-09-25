@@ -33,6 +33,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
+// STL includes
+#include <map>
+
 // VTK 9.3 does not have VTK_PROPEXCLUDE
 #ifndef VTK_PROPEXCLUDE
 # define VTK_PROPEXCLUDE
@@ -604,21 +607,44 @@ public:
 
   ///@{
   /// Get/Set the ControlPointLabelFormat string that defines the control point names.
-  /// In standard printf notation, with the addition of %N being replaced
-  /// by the list name.
-  /// %d will resolve to the highest not yet used list index integer.
-  /// Character strings will otherwise pass through
+  /// Placeholders (see FormatLabel):
+  /// - %N: node name
+  /// - %S: short name of the markup type (for example, F for point list)
+  /// - numeric placeholder in printf notation (%d, %03d, %.1f, ...): control point number
+  /// - %%: percent character
   /// Defaults to %N-%d which will yield control point names of Name-0, Name-1, Name-2.
   /// If format string is changed then LabelFormatModifiedEvent event is invoked.
   std::string GetControlPointLabelFormat();
   void SetControlPointLabelFormat(std::string format);
   ///@}
 
-  /// If the ControlPointLabelFormat contains the string %N, return a string
-  /// in which that has been replaced with the list name. If the list name is
-  /// nullptr, replace it with an empty string. If the ControlPointLabelFormat doesn't
-  /// contain %N, return ControlPointLabelFormat
+  /// Get a control point label generated from ControlPointLabelFormat,
+  /// using the specified number for the numeric placeholder.
+  std::string FormatControlPointLabel(double number);
+
+  /// Return ControlPointLabelFormat with all %N and %S placeholders replaced
+  /// by the node name and short name. Percent characters in the names are escaped
+  /// (as %%), therefore the result remains a valid printf format string.
+  /// \sa FormatControlPointLabel
   std::string ReplaceListNameInControlPointLabelFormat();
+
+  /// Replace placeholders in a label format string.
+  ///
+  /// - %% is replaced by a single percent character.
+  /// - %X is replaced by textPlaceholders[X], if X is found in textPlaceholders.
+  /// - Numeric placeholders in printf notation (flags, width, precision,
+  ///   and one of the d, i, u, o, x, X, e, E, f, F, g, G conversions, for example %d, %03d, %.1f)
+  ///   are replaced by the formatted number, if number is not nullptr.
+  /// - All other characters, including unrecognized placeholders, are kept unchanged.
+  ///
+  /// All occurrences of each placeholder are replaced. The format string is never passed
+  /// to printf directly, therefore any user-provided format string can be safely used.
+  /// If numberPlaceholderFound is not nullptr then it is set to true if the format contains
+  /// a numeric placeholder (even if number is nullptr).
+  static std::string FormatLabel(const std::string& format,
+                                 const std::map<char, std::string>& textPlaceholders,
+                                 const double* number = nullptr,
+                                 bool* numberPlaceholderFound = nullptr);
 
   /// Reimplemented to take into account the modified time of the markups
   /// Returns true if the node (default behavior) or the markups are modified
@@ -716,9 +742,10 @@ public:
   virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();
 
   /// Get displayable string of the properties label (containing name, measurements, etc.) that
-  /// identifies the node and provides basic information. The node name is included
-  /// unless the display node's PropertiesLabelIncludesNodeName is disabled.
+  /// identifies the node and provides basic information. The text is generated from
+  /// the display node's PropertiesLabelFormat (%N:%M if there is no display node).
   /// Label visibility does not affect the returned text.
+  /// \sa vtkMRMLMarkupsDisplayNode::SetPropertiesLabelFormat
   virtual std::string GetPropertiesLabelText();
 
   /// Utility function to get unit node from scene

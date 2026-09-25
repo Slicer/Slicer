@@ -407,12 +407,12 @@
                                             "description": "Visibility of the label that shows basic properties.",
                                             "default": false
                                         },
-                                        "propertiesLabelIncludesNodeName": {
-                                            "$id": "#display/propertiesLabelIncludesNodeName",
-                                            "type": "boolean",
-                                            "title": "Include node name in properties label",
-                                            "description": "Include the node name before the measurements in the properties label.",
-                                            "default": true
+                                        "propertiesLabelFormat": {
+                                            "$id": "#display/propertiesLabelFormat",
+                                            "type": "string",
+                                            "title": "Properties label format",
+                                            "description": "Format of the properties label text. %N is replaced by the node name, %S by the short name of the markup type, %M by the measurements, %b by a line break, and %% by a percent character.",
+                                            "default": "%N:%M"
                                         },
                                         "pointLabelsVisibility": {
                                             "$id": "#display/pointLabelsVisibility",
