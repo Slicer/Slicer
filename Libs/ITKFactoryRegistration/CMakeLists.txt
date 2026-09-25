@@ -35,6 +35,18 @@ if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
 endif()
 
+# Optionally skip IO modules that are not available in the ITK build (for example, WebAssembly builds
+# of ITK do not include IO modules that depend on HDF5 or DCMTK).
+if(ITKFactoryRegistration_SKIP_IO_MODULES)
+  find_package(ITK 4.6 REQUIRED)
+  foreach(_module IN LISTS ITK_IO_MODULES_USED)
+    if(NOT _module IN_LIST ITK_MODULES_ENABLED)
+      message(STATUS "ITKFactoryRegistration: skipping unavailable ITK IO module ${_module}")
+      list(REMOVE_ITEM ITK_IO_MODULES_USED ${_module})
+    endif()
+  endforeach()
+endif()
+
 set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKIOImageBase
   ITKIOTransformBase
