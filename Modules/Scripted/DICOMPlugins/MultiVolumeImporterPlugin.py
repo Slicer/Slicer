@@ -631,18 +631,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvImageArray = None
 
     scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
-    instanceUIDs = ""
-    for file in files:
-      uid = slicer.dicomDatabase.fileValue(file,self.tags["instanceUID"])
-      if uid == "":
-        uid = "Unknown"
-      instanceUIDs += uid+" "
-    instanceUIDs = instanceUIDs[:-1]
-    mvNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
+    instanceUIDs = [uid if uid else "Unknown" for uid in DICOMUtils.fileValues(files, self.tags["instanceUID"])]
+    mvNode.SetAttribute("DICOM.instanceUIDs", " ".join(instanceUIDs))
 
     progressbar = slicer.util.createProgressDialog(labelText="Loading "+baseName,
                                                    value=0, maximum=nFrames,
                                                    windowModality = qt.Qt.WindowModal)
+
+    # Reading image data is the most time-consuming part of loading, therefore
+    # image data of a batch of frames is read in parallel before the frames are loaded.
+    batchSize = scalarVolumePlugin.maximumNumberOfParallelReaders()
+    frameLoadables = {}
 
     try:
       # read each frame into scalar volume
@@ -653,17 +652,20 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if progressbar.wasCanceled:
           break
 
-        sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
-        sNode.ResetFileNameList()
+        if frameNumber not in frameLoadables:
+          for batchFrameNumber in range(frameNumber, min(frameNumber + batchSize, nFrames)):
+            frameFileList = files[batchFrameNumber*filesPerFrame:(batchFrameNumber+1)*filesPerFrame]
+            # sv plugin will sort the filenames by geometric order
+            svLoadables = scalarVolumePlugin.examineForImport([frameFileList])
+            if len(svLoadables) == 0:
+              raise OSError(f"volume frame {batchFrameNumber} is invalid")
+            # frame volume node is removed after its content is copied into the multivolume or volume sequence
+            svLoadables[0].temporary = True
+            frameLoadables[batchFrameNumber] = svLoadables[0]
+          scalarVolumePlugin.prepareReaders(list(frameLoadables.values()))
 
-        frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
-        # sv plugin will sort the filenames by geometric order
-        svLoadables = scalarVolumePlugin.examineForImport([frameFileList])
-
-        if len(svLoadables) == 0:
-          raise OSError(f"volume frame {frameNumber} is invalid")
-
-        frame = scalarVolumePlugin.load(svLoadables[0])
+        frameLoadable = frameLoadables.pop(frameNumber)
+        frame = scalarVolumePlugin.load(frameLoadable)
 
         # Harden the acquisition transform if there is any
         # (for example due to varying slice spacing)
@@ -674,7 +676,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           slicer.mrmlScene.RemoveNode(parentTransformNode)
 
         if frame is None or frame.GetImageData() is None:
-          raise OSError(f"Volume frame {frameNumber} is invalid - {svLoadables[0].warning}")
+          raise OSError(f"Volume frame {frameNumber} is invalid - {frameLoadable.warning}")
         if loadAsVolumeSequence:
           # Load into volume sequence
 

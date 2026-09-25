@@ -1,4 +1,6 @@
 import logging
+import os
+from concurrent.futures import ThreadPoolExecutor
 from functools import cmp_to_key
 
 import ctk
@@ -425,9 +427,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         volumesLogic = slicer.modules.volumes.logic()
         return volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList)
 
-    def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True):
-        """Explicitly use the named imageIO to perform the loading"""
-
+    def createSeriesReader(self, imageIOName, files, grayscale=True):
+        """Create a reader for the files, using the named imageIO. The reader is not updated."""
         if grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         else:
@@ -448,6 +449,46 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             reader.SetDICOMImageIOApproachToDCMTK()
         else:
             raise Exception("Invalid imageIOName of %s" % imageIOName)
+        return reader
+
+    @staticmethod
+    def maximumNumberOfParallelReaders():
+        """Maximum number of readers that prepareReaders() runs in parallel"""
+        return max(1, min(8, os.cpu_count() or 1))
+
+    def prepareReaders(self, loadables, readerApproach=None):
+        """Read image data of multiple loadables in parallel.
+
+        Reading of image data is the most time-consuming part of loading. The readers do not
+        use the MRML scene, therefore they can run in parallel. Subsequent calls of load()
+        use the image data that was read by this method.
+        """
+        imageIONameForApproach = {"GDCM with DCMTK fallback": "GDCM", "GDCM": "GDCM", "DCMTK": "DCMTK"}
+        imageIOName = imageIONameForApproach.get(readerApproach or self.preferredReaderApproach())
+        if not imageIOName:
+            # Reading with this approach is not supported in parallel
+            return
+        readers = [self.createSeriesReader(imageIOName, loadable.files, loadable.grayscale) for loadable in loadables]
+        numberOfThreads = min(len(readers), self.maximumNumberOfParallelReaders())
+        if numberOfThreads > 1:
+            with ThreadPoolExecutor(max_workers=numberOfThreads) as executor:
+                list(executor.map(lambda reader: reader.Update(), readers))
+        for loadable, reader in zip(loadables, readers, strict=True):
+            loadable.preparedSeriesReader = (imageIOName, reader)
+
+    @staticmethod
+    def preferredReaderApproach():
+        """Reader approach selected in application settings"""
+        readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
+        return DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
+
+    def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True, reader=None):
+        """Explicitly use the named imageIO to perform the loading.
+
+        If reader is specified (e.g., prepared by prepareReaders()) then it is used instead of creating a new reader.
+        """
+        if reader is None:
+            reader = self.createSeriesReader(imageIOName, files, grayscale)
         logging.info("Loading with imageIOName: %s" % imageIOName)
         reader.Update()
 
@@ -483,10 +524,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         attributes and display node with values extracted from the dicom instances
         """
         if volumeNode:
+            # If the loaded node is only used temporarily (e.g., it is a frame of a volume sequence)
+            # then there is no need to add it to the subject hierarchy or show it in views.
+            temporary = getattr(loadable, "temporary", False)
+
             #
             # create subject hierarchy items for the loaded series
             #
-            self.addSeriesInSubjectHierarchy(loadable, volumeNode)
+            if not temporary:
+                self.addSeriesInSubjectHierarchy(loadable, volumeNode)
 
             # File for each slice. Will be reversed if reading a left-handed volume.
             fileList = loadable.files
@@ -506,23 +552,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # add list of DICOM instance UIDs to the volume node
             # corresponding to the loaded files
             #
-            instanceUIDs = ""
-            for file in fileList:
-                uid = slicer.dicomDatabase.fileValue(file, self.tags["instanceUID"])
-                if uid == "":
-                    uid = "Unknown"
-                instanceUIDs += uid + " "
-            instanceUIDs = instanceUIDs[:-1]  # strip last space
-            volumeNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
+            instanceUIDs = [uid if uid else "Unknown" for uid in DICOMUtils.fileValues(fileList, self.tags["instanceUID"])]
+            volumeNode.SetAttribute("DICOM.instanceUIDs", " ".join(instanceUIDs))
 
             #
             # add list of DICOM instance numbers to the volume node
             # corresponding to the loaded files
             #
-            instanceNumbers = []
-            for file in fileList:
-                instanceNumber = slicer.dicomDatabase.fileValue(file, "0020,0013")  # Instance Number tag
-                instanceNumbers.append(instanceNumber if instanceNumber else "?")
+            instanceNumberValues = DICOMUtils.fileValues(fileList, "0020,0013")  # Instance Number tag
+            instanceNumbers = [instanceNumber if instanceNumber else "?" for instanceNumber in instanceNumberValues]
             volumeNode.SetAttribute("DICOM.instanceNumbers", " ".join(instanceNumbers))
 
             # Choose a file in the middle of the series as representative frame,
@@ -534,10 +572,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #
             # automatically select the volume to display
             #
-            appLogic = slicer.app.applicationLogic()
-            selNode = appLogic.GetSelectionNode()
-            selNode.SetActiveVolumeID(volumeNode.GetID())
-            appLogic.PropagateVolumeSelection()
+            if not temporary:
+                appLogic = slicer.app.applicationLogic()
+                selNode = appLogic.GetSelectionNode()
+                selNode.SetActiveVolumeID(volumeNode.GetID())
+                appLogic.PropagateVolumeSelection()
 
             #
             # apply window/level from DICOM if available (the first pair that is found)
@@ -610,17 +649,24 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         """Load the select as a scalar volume using desired approach"""
         # first, determine which reader approach the user prefers
         if not readerApproach:
-            readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
-            readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
+            readerApproach = self.preferredReaderApproach()
+        # use the reader prepared by prepareReaders() (and release the reference to it)
+        preparedImageIOName, preparedReader = getattr(loadable, "preparedSeriesReader", (None, None))
+        if hasattr(loadable, "preparedSeriesReader"):
+            del loadable.preparedSeriesReader
+
+        def preparedReaderFor(imageIOName):
+            return preparedReader if imageIOName == preparedImageIOName else None
+
         # second, try to load with the selected approach
         if readerApproach == "Archetype":
             volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
         elif readerApproach == "GDCM with DCMTK fallback":
-            volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale)
+            volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale, preparedReaderFor("GDCM"))
             if not volumeNode:
-                volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale)
+                volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale, preparedReaderFor("DCMTK"))
         else:
-            volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale)
+            volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale, preparedReaderFor(readerApproach))
         # third, transfer data from the dicom instances into the appropriate Slicer data containers
         self.setVolumeNodeProperties(volumeNode, loadable)
 
