@@ -158,6 +158,20 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()
 {
+#ifdef __EMSCRIPTEN__
+  // A web page has one thread, which draws: the tasks run in the thread that schedules them (see
+  // ScheduleTask) rather than in a thread of their own. The queues that carry results back to the
+  // application are still opened here, because that is what tells RequestModified, RequestReadFile
+  // and RequestWriteData that there is somewhere to put them - without it nothing a module
+  // produces is ever read in.
+  this->ReadDataQueueActiveLock.lock();
+  this->ReadDataQueueActive = true;
+  this->ReadDataQueueActiveLock.unlock();
+  this->WriteDataQueueActiveLock.lock();
+  this->WriteDataQueueActive = true;
+  this->WriteDataQueueActiveLock.unlock();
+  return;
+#else
   if (!this->ProcessingThread.joinable())
   {
     this->ProcessingThreadActiveLock.lock();
@@ -195,6 +209,7 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
     this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
   }
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -352,6 +367,13 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 //----------------------------------------------------------------------------
 int vtkSlicerApplicationLogic::ScheduleTask(vtkSlicerTask* task)
 {
+#ifdef __EMSCRIPTEN__
+  // There is no thread to put it in: run it now. The caller is told it was scheduled, which it was,
+  // in the only way a page can - by the time this returns, the task has been carried out.
+  task->Execute();
+  return true;
+#endif
+
   // only schedule a task if the processing task is up
   this->ProcessingThreadActiveLock.lock();
   int active = this->ProcessingThreadActive;
@@ -370,6 +392,18 @@ int vtkSlicerApplicationLogic::ScheduleTask(vtkSlicerTask* task)
 //----------------------------------------------------------------------------
 vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject* obj)
 {
+#ifdef __EMSCRIPTEN__
+  {
+    // The queue is there to carry a Modified from a working thread to the thread that draws. Here
+    // they are one thread, so the object is modified now: queueing it would leave it waiting for a
+    // drain that only the desktop application's timer does.
+    this->RequestTimeStamp.Modified();
+    vtkMTimeType modifiedNow = this->RequestTimeStamp.GetMTime();
+    obj->Modified();
+    return modifiedNow;
+  }
+#endif
+
   // only request a Modified if the Modified queue is up
   this->ModifiedQueueActiveLock.lock();
   int active = this->ModifiedQueueActive;
