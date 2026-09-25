@@ -158,3 +158,9 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
     NO_INSTALL_SUBDIR
     )
 endif()
+
+#-----------------------------------------------------------------------------
+# Scripts shipped inside the package for installing Slicer's system
+# dependencies and its interface languages.
+#-----------------------------------------------------------------------------
+add_subdirectory(SlicerInstallers)
