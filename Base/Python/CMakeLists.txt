@@ -4,6 +4,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/cli
   slicer/i18n
   slicer/logic
+  slicer/matplotlibbackend
   slicer/parameterNodeWrapper/__init__
   slicer/parameterNodeWrapper/default
   slicer/parameterNodeWrapper/guiCreation
