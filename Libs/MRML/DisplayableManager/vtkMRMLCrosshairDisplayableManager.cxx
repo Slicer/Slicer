@@ -258,13 +258,11 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkM
     return nullptr;
   }
 
-  vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> crosshairs;
   crosshairs.TakeReference(scene->GetNodesByClass("vtkMRMLCrosshairNode"));
-  for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
+  for (int i = 0; i < crosshairs->GetNumberOfItems(); ++i)
   {
-    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(crosshairs->GetItemAsObject(i));
     if (crosshairNode && crosshairNode->GetCrosshairName() == std::string("default"))
     {
       return crosshairNode;

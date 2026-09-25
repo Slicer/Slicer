@@ -1201,10 +1201,13 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::compositeNodeLogic(vtkMRML
   {
     return nullptr;
   }
-  vtkMRMLSliceLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (this->SliceLogics->InitTraversal(it); (logic = static_cast<vtkMRMLSliceLogic*>(this->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < this->SliceLogics->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceLogic* logic = static_cast<vtkMRMLSliceLogic*>(this->SliceLogics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetSliceCompositeNode() == node)
     {
       return logic;
@@ -1220,10 +1223,13 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSlic
   {
     return nullptr;
   }
-  vtkMRMLSliceLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (this->SliceLogics->InitTraversal(it); (logic = static_cast<vtkMRMLSliceLogic*>(this->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < this->SliceLogics->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceLogic* logic = static_cast<vtkMRMLSliceLogic*>(this->SliceLogics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetSliceNode() == node)
     {
       return logic;
@@ -2151,11 +2157,13 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     // When slice nodes are linked, only allow one slice node's reformat widget to be on at a time
     // If slice node's reformat widget was on, just turn all of them off
     // If slice node's reformat widget was off, turn it on and turn all the other ones off
@@ -2180,11 +2188,14 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       vtkMRMLSliceLogic* sliceLogic = applicationLogic->GetSliceLogic(node);
@@ -2220,10 +2231,13 @@ void qMRMLSliceControllerWidget::lockReformatWidgetToCamera(bool lock)
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode())
     {
       node->SetWidgetNormalLockedToCamera(lock);
@@ -2240,10 +2254,13 @@ void qMRMLSliceControllerWidget::setCompositing(int mode)
   {
     return;
   }
-  vtkMRMLSliceCompositeNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceCompositeNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceCompositeNode* node = static_cast<vtkMRMLSliceCompositeNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     // When slice nodes are linked, only allow one slice node's reformat widget to be on at a time
     // If slice node's reformat widget was on, just turn all of them off
     // If slice node's reformat widget was off, turn it on and turn all the other ones off
@@ -2287,10 +2304,13 @@ void qMRMLSliceControllerWidget::setClipToBackground(bool enabled)
   {
     return;
   }
-  vtkMRMLSliceCompositeNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceCompositeNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceCompositeNode* node = static_cast<vtkMRMLSliceCompositeNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     // When slice nodes are linked, only allow one slice node's reformat widget to be on at a time
     // If slice node's reformat widget was on, just turn all of them off
     // If slice node's reformat widget was off, turn it on and turn all the other ones off
@@ -2353,10 +2373,13 @@ void qMRMLSliceControllerWidget::setSliceFOV(double fov)
     d->SliceLogic->FitFOVToBackground(fov);
     return;
   }
-  vtkMRMLSliceLogic* sliceLogic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (d->SliceLogics->InitTraversal(it); (sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < d->SliceLogics->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceLogic* sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetItemAsObject(i));
+    if (!sliceLogic)
+    {
+      continue;
+    }
     if (sliceLogic == d->SliceLogic || this->isLinked())
     {
       sliceLogic->FitFOVToBackground(fov);
@@ -2548,10 +2571,13 @@ void qMRMLSliceControllerWidget::setForegroundInterpolation(bool linear)
     d->setForegroundInterpolation(d->SliceLogic, linear);
     return;
   }
-  vtkMRMLSliceLogic* sliceLogic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (d->SliceLogics->InitTraversal(it); (sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < d->SliceLogics->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceLogic* sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetItemAsObject(i));
+    if (!sliceLogic)
+    {
+      continue;
+    }
     if (sliceLogic == d->SliceLogic || this->isLinked())
     {
       d->setForegroundInterpolation(sliceLogic, linear);
@@ -2568,10 +2594,13 @@ void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool linear)
     d->setBackgroundInterpolation(d->SliceLogic, linear);
     return;
   }
-  vtkMRMLSliceLogic* sliceLogic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (d->SliceLogics->InitTraversal(it); (sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < d->SliceLogics->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceLogic* sliceLogic = static_cast<vtkMRMLSliceLogic*>(d->SliceLogics->GetItemAsObject(i));
+    if (!sliceLogic)
+    {
+      continue;
+    }
     if (sliceLogic == d->SliceLogic || this->isLinked())
     {
       d->setBackgroundInterpolation(sliceLogic, linear);
@@ -2588,10 +2617,13 @@ void qMRMLSliceControllerWidget::setOrientationMarkerType(int newOrientationMark
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       node->SetOrientationMarkerType(newOrientationMarkerType);
@@ -2608,10 +2640,13 @@ void qMRMLSliceControllerWidget::setOrientationMarkerSize(int newOrientationMark
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       node->SetOrientationMarkerSize(newOrientationMarkerSize);
@@ -2628,10 +2663,13 @@ void qMRMLSliceControllerWidget::setRulerType(int newRulerType)
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       node->SetRulerType(newRulerType);
@@ -2648,10 +2686,13 @@ void qMRMLSliceControllerWidget::setRulerColor(int newRulerColor)
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       node->SetRulerColor(newRulerColor);
@@ -2668,10 +2709,13 @@ void qMRMLSliceControllerWidget::setSlabReconstructionType(int newSlabReconstruc
   {
     return;
   }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLSliceNode* node = static_cast<vtkMRMLSliceNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (node == this->mrmlSliceNode() || this->isLinked())
     {
       node->SetSlabReconstructionType(newSlabReconstructionType);

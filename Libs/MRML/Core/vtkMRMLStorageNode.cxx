@@ -1427,12 +1427,10 @@ vtkMRMLStorableNode* vtkMRMLStorageNode::GetStorableNode()
       return this->LastFoundStorableNode;
     }
   }
-  vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
-    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
     if (storableNode && storableNode->HasStorageNodeID(this->GetID()))
     {
       this->LastFoundStorableNode = storableNode;
