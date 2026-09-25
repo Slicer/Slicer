@@ -41,8 +41,11 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkEventBroker.h>
+#include <vtkExtractCells.h>
 #include <vtkGeneralTransform.h>
+#include <vtkIdList.h>
 #include <vtkLookupTable.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -52,6 +55,7 @@
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkStaticCellLocator.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -84,10 +88,22 @@ public:
     vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
     vtkSmartPointer<vtkPlaneCutter> Cutter;
+    vtkSmartPointer<vtkStaticCellLocator> CellLocator;
+    vtkSmartPointer<vtkExtractCells> CellsNearPlane;
+    vtkSmartPointer<vtkDataSetSurfaceFilter> CellsNearPlaneSurface;
+    vtkSmartPointer<vtkIdList> CellIdsNearPlane;
+    // The mesh the locator was built from, and the mesh of the update before this one; the two
+    // together say whether the locator can be used or built (see UpdateCutterInput).
+    mutable vtkMTimeType CellLocatorMeshTime{ 0 };
+    mutable vtkMTimeType PreviousMeshTime{ 0 };
     vtkSmartPointer<vtkGeometryFilter> GeometryFilter;
     vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
     vtkSmartPointer<vtkProp> Actor;
   };
+
+  // Building a cell locator costs about as much as three cuts of the whole mesh and pays for
+  // itself after about four slice moves, so a mesh small enough to cut outright does not get one.
+  static const vtkIdType MinimumCellsForCellLocator = 10000;
 
   typedef std::map<vtkMRMLDisplayNode*, const Pipeline*> PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
@@ -107,6 +123,7 @@ public:
   void AddDisplayNode(vtkMRMLDisplayableNode*, vtkMRMLDisplayNode*);
   void UpdateDisplayNode(vtkMRMLDisplayNode* displayNode);
   void UpdateDisplayNodePipeline(vtkMRMLDisplayNode*, const Pipeline*);
+  void UpdateCutterInput(const Pipeline*);
   void RemoveDisplayNode(vtkMRMLDisplayNode* displayNode);
 
   // Observations
@@ -301,6 +318,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::AddDisplayNode(vtkMRMLDis
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
   pipeline->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
+  pipeline->CellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
+  pipeline->CellsNearPlane = vtkSmartPointer<vtkExtractCells>::New();
+  pipeline->CellsNearPlaneSurface = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+  pipeline->CellIdsNearPlane = vtkSmartPointer<vtkIdList>::New();
   pipeline->GeometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
   pipeline->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
@@ -316,6 +337,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::AddDisplayNode(vtkMRMLDis
   pipeline->Cutter->SetPlane(pipeline->Plane);
   pipeline->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
   pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+  pipeline->CellsNearPlane->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+  pipeline->CellsNearPlaneSurface->SetInputConnection(pipeline->CellsNearPlane->GetOutputPort());
   pipeline->GeometryFilter->SetInputConnection(pipeline->Cutter->GetOutputPort());
   // Projection is created from outer surface of volumetric meshes (for polydata surface
   // extraction is just shallow-copy)
@@ -352,6 +375,54 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::UpdateDisplayNode(vtkMRML
   {
     this->External->AddDisplayableNode(displayNode->GetDisplayableNode());
   }
+}
+
+//---------------------------------------------------------------------------
+// Give the cutter either the whole model or only the cells that the slice plane crosses.
+//
+// Cutting a model costs a pass over every one of its cells, while only the cells the plane crosses
+// can add anything to the intersection - a few hundred of them in a model of hundreds of
+// thousands. A cell locator finds those, and is built once and then used for every slice view the
+// model is shown in and every move of those slices, so that what a move costs follows the size of
+// the intersection rather than the size of the model.
+//
+// The locator is only built once the mesh has stayed as it was from one update to the next. While
+// a mesh keeps changing - a model warped by a transform that is being dragged, for one - building
+// the locator for every update would cost more than the cut it saves, so the whole model is cut
+// then, as it always was.
+void vtkMRMLModelSliceDisplayableManager::vtkInternal::UpdateCutterInput(const Pipeline* pipeline)
+{
+  pipeline->ModelWarper->Update();
+  vtkDataSet* mesh = vtkDataSet::SafeDownCast(pipeline->ModelWarper->GetOutputDataObject(0));
+  vtkMTimeType meshTime = (mesh ? mesh->GetMTime() : 0);
+  bool worthALocator = (mesh != nullptr && mesh->GetNumberOfCells() >= MinimumCellsForCellLocator);
+  bool meshIsAsItWas = (mesh != nullptr && meshTime == pipeline->PreviousMeshTime);
+  pipeline->PreviousMeshTime = meshTime;
+
+  if (worthALocator && meshIsAsItWas && pipeline->CellLocatorMeshTime != meshTime)
+  {
+    pipeline->CellLocator->SetDataSet(mesh);
+    pipeline->CellLocator->BuildLocator();
+    pipeline->CellLocatorMeshTime = meshTime;
+  }
+
+  if (!worthALocator || pipeline->CellLocatorMeshTime != meshTime)
+  {
+    pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+    return;
+  }
+
+  double origin[3] = { 0.0, 0.0, 0.0 };
+  double normal[3] = { 0.0, 0.0, 1.0 };
+  pipeline->Plane->GetOrigin(origin);
+  pipeline->Plane->GetNormal(normal);
+  vtkMath::Normalize(normal);
+  pipeline->CellIdsNearPlane->Reset();
+  pipeline->CellLocator->FindCellsAlongPlane(origin, normal, 0.0, pipeline->CellIdsNearPlane);
+  pipeline->CellsNearPlane->SetCellList(pipeline->CellIdsNearPlane);
+  // The cells come out as an unstructured grid, and are made a surface again before the cut, so
+  // that what the cutter produces is what it produces from the model itself.
+  pipeline->Cutter->SetInputConnection(pipeline->CellsNearPlaneSurface->GetOutputPort());
 }
 
 //---------------------------------------------------------------------------
@@ -463,7 +534,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::UpdateDisplayNodePipeline
     // show intersection in the slice view
     // include clipper in the pipeline
     pipeline->Transformer->SetInputConnection(pipeline->GeometryFilter->GetOutputPort());
-    pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
+    this->UpdateCutterInput(pipeline);
 
     // If there is no input or if the input has no points, the vtkTransformPolyDataFilter will display an error message
     // on every update: "No input data".
