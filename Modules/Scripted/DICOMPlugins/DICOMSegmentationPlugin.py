@@ -9,7 +9,7 @@ import vtk
 import vtkSegmentationCorePython as vtkSegmentationCore
 
 import slicer
-from DICOMLib import DICOMLoadable, DICOMPlugin
+from DICOMLib import DICOMLoadable, DICOMPlugin, DICOMUtils
 
 
 #
@@ -28,10 +28,11 @@ class DICOMSegmentationPluginClass(DICOMPlugin):
     """
     loadables = []
 
-    for cFile in files:
+    # Check modality first, as it is the only value that needs to be retrieved for non-SEG files
+    modalities = DICOMUtils.fileValues(files, self.tags["modality"])
+    for cFile, modality in zip(files, modalities, strict=True):
 
-      # Check modality first, as it is the only value that needs to be retrieved for non-SEG files
-      if slicer.dicomDatabase.fileValue(cFile, self.tags["modality"]) != "SEG":
+      if modality != "SEG":
         continue
 
       uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])

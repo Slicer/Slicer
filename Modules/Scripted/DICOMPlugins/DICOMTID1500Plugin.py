@@ -7,7 +7,7 @@ import datetime
 from collections import Counter
 
 import slicer
-from DICOMLib import DICOMLoadable, DICOMPlugin
+from DICOMLib import DICOMLoadable, DICOMPlugin, DICOMUtils
 
 
 # Import heavy Python packages lazily to make application startup faster
@@ -60,9 +60,10 @@ class DICOMTID1500PluginClass(DICOMPlugin):
 
     loadables = []
 
-    for cFile in files:
-      # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
-      if slicer.dicomDatabase.fileValue(cFile, self.tags["Modality"]) != "SR":
+    # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
+    modalities = DICOMUtils.fileValues(files, self.tags["Modality"])
+    for cFile, modality in zip(files, modalities, strict=True):
+      if modality != "SR":
         continue
 
       dataset = pydicom.dcmread(cFile)
@@ -1401,9 +1402,10 @@ class DICOMLongitudinalTID1500PluginClass(DICOMTID1500PluginClass):
   def examineFiles(self, files):
     loadables = []
 
-    for cFile in files:
-      # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
-      if slicer.dicomDatabase.fileValue(cFile, self.tags["Modality"]) != "SR":
+    # Parsing the file is slow, therefore only do it if the modality (retrieved from the database) is SR
+    modalities = DICOMUtils.fileValues(files, self.tags["Modality"])
+    for cFile, modality in zip(files, modalities, strict=True):
+      if modality != "SR":
         continue
 
       dataset = pydicom.dcmread(cFile)

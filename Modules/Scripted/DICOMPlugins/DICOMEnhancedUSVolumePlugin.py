@@ -4,6 +4,7 @@ import slicer
 
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMUtils
 from slicer.i18n import tr as _
 
 
@@ -50,9 +51,9 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
 
         loadables = []
 
-        for filePath in files:
-            # Quick check of SOP class UID without parsing the file...
-            sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags["sopClassUID"])
+        # Quick check of SOP class UID without parsing the file...
+        sopClassUIDs = DICOMUtils.fileValues(files, self.tags["sopClassUID"])
+        for filePath, sopClassUID in zip(files, sopClassUIDs, strict=True):
             if not (sopClassUID in supportedSOPClassUIDs):
                 # Unsupported class
                 continue
