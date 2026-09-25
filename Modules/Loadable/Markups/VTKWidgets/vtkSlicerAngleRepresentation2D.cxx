@@ -267,8 +267,7 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   int controlPointType = Unselected;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine
-      || this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
+  if (this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentLine))
   {
     controlPointType = Active;
   }

@@ -160,6 +160,12 @@ protected:
   /// Use the active text style when hovering over the properties label.
   vtkTextProperty* GetPropertiesLabelTextProperty(int controlPointType);
 
+  /// Return true if the whole markup must be displayed as active (highlighted).
+  /// This is the case when the active component is the component that represents the whole markup
+  /// (for example, ComponentLine for lines and curves, ComponentPlane for planes, ComponentROI for ROIs)
+  /// or the properties label.
+  bool IsMarkupActive(int markupComponentType);
+
   // Convert glyph types from display node enums to 2D glyph source enums
   static int GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay);
 

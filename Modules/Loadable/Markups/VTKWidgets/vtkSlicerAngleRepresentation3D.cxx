@@ -211,8 +211,7 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->ArcOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->ArcActor->GetVisibility() && this->MarkupsDisplayNode->GetOccludedVisibility());
 
   int controlPointType = Active;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine
-      && this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentPropertiesLabel)
+  if (!this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentLine))
   {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
   }

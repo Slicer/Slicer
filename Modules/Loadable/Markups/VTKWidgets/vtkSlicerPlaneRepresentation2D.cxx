@@ -220,7 +220,7 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   int controlPointType = Unselected;
-  if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentPlane)
+  if (this->IsMarkupActive(vtkMRMLMarkupsDisplayNode::ComponentPlane))
   {
     controlPointType = Active;
   }
