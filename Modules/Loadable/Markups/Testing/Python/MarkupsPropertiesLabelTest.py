@@ -286,10 +286,11 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         self.assertEqual(widget.GetWidgetState(), widget.WidgetStateOnWidget)
         event.SetType(vtk.vtkCommand.LeftButtonReleaseEvent)
         self.assertFalse(widget.ProcessInteractionEvent(event))
-        event.SetType(slicer.vtkMRMLInteractionEventData.LeftButtonClickEvent)
-        self.assertTrue(widget.ProcessInteractionEvent(event))
-        self.assertEqual(self.selectionNode.GetActivePlaceNodeID(), self.angle.GetID())
-        self.assertEqual(initialPoints, [tuple(self.angle.GetNthControlPointPositionVector(i)) for i in range(3)])
+        # Make another markup active to check that clicking the label does not change the active markup
+        otherMarkup = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+        self.selectionNode.SetReferenceActivePlaceNodeClassName(otherMarkup.GetClassName())
+        self.selectionNode.SetReferenceActivePlaceNodeID(otherMarkup.GetID())
+        activePlaceNodeID = otherMarkup.GetID()
         receivedEvents = []
 
         @vtk.calldata_type(vtk.VTK_OBJECT)
@@ -308,7 +309,10 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         closePopupsTimer.connect("timeout()", closePopups)
         closePopupsTimer.start()
         try:
-            for eventType, displayEvent in [(slicer.vtkMRMLInteractionEventData.RightButtonClickEvent, self.display.MenuEvent)]:
+            for eventType, displayEvent in [
+                (slicer.vtkMRMLInteractionEventData.LeftButtonClickEvent, self.display.JumpToPointEvent),
+                (slicer.vtkMRMLInteractionEventData.RightButtonClickEvent, self.display.MenuEvent),
+            ]:
                 observer = self.display.AddObserver(displayEvent, onEvent)
                 try:
                     event.SetType(eventType)
@@ -318,6 +322,9 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
                     self.display.RemoveObserver(observer)
         finally:
             closePopupsTimer.stop()
+        # Clicking the label does not modify the markup or change the active markup
+        self.assertEqual(initialPoints, [tuple(self.angle.GetNthControlPointPositionVector(i)) for i in range(3)])
+        self.assertEqual(self.selectionNode.GetActivePlaceNodeID(), activePlaceNodeID)
 
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(MarkupsPropertiesLabelTest)
