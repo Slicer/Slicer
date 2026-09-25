@@ -3,6 +3,7 @@ import os
 import tempfile
 import unittest
 
+import qt
 import vtk
 import slicer
 
@@ -81,27 +82,58 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         measurement = self.angle.GetMeasurement("angle")
         value = measurement.GetValueWithUnitsAsPrintableString()
         rep = self.representation()
-        self.assertTrue(self.display.GetPropertiesLabelIncludesNodeName())
+        self.assertEqual(self.display.GetPropertiesLabelFormat(), "%N:%M")
+        self.assertEqual(self.display.GetPropertiesLabelFormat(), slicer.vtkMRMLMarkupsDisplayNode.GetDefaultPropertiesLabelFormat())
         self.assertEqual(self.angle.GetPropertiesLabelText(), "Label test: " + value)
         self.assertEqual(rep.GetTextActor().GetInput(), self.angle.GetPropertiesLabelText())
-        self.display.SetPropertiesLabelIncludesNodeName(False)
+        self.display.SetPropertiesLabelFormat("%M")
         self.updateDisplay(rep)
         self.assertEqual(self.angle.GetPropertiesLabelText(), value)
         self.assertEqual(rep.GetTextActor().GetInput(), value)
         self.assertTrue(measurement.GetEnabled())
         self.angle.SetName("Renamed")
         self.assertEqual(self.angle.GetPropertiesLabelText(), value)
-        self.display.SetPropertiesLabelIncludesNodeName(True)
+        self.display.SetPropertiesLabelFormat("%N:%M")
         self.updateDisplay(rep)
         self.assertEqual(rep.GetTextActor().GetInput(), "Renamed: " + value)
+        # Separators around empty placeholders are removed
         self.angle.SetName("")
         self.assertEqual(self.angle.GetPropertiesLabelText(), value)
         measurement.SetEnabled(False)
         self.assertEqual(self.angle.GetPropertiesLabelText(), "")
         self.angle.SetName("Name only")
         self.assertEqual(self.angle.GetPropertiesLabelText(), "Name only")
-        self.display.SetPropertiesLabelIncludesNodeName(False)
+        self.display.SetPropertiesLabelFormat("%M")
         self.assertEqual(self.angle.GetPropertiesLabelText(), "")
+
+    def testFormat(self):
+        value = self.angle.GetMeasurement("angle").GetValueWithUnitsAsPrintableString()
+        rep = self.representation()
+        for labelFormat, expected in [
+            ("%M (%N)", f"{value} (Label test)"),
+            ("%S %N", "A Label test"),
+            ("%N %N", "Label test Label test"),
+            ("100%% %N", "100% Label test"),
+            # Unknown and numeric placeholders are shown as is
+            ("%N %s %d", "Label test %s %d"),
+            ("Fixed text", "Fixed text"),
+            ("", ""),
+            # Stray line breaks and whitespace around line breaks are removed
+            ("%N\n%M", f"Label test\n{value}"),
+            ("\n\n%N  \n\n  %M\n\n", f"Label test\n{value}"),
+            ("\r\n%M\r\n", value),
+            # %b inserts a line break
+            ("%N%b%M", f"Label test\n{value}"),
+            ("%b%N%b%b", "Label test"),
+        ]:
+            self.display.SetPropertiesLabelFormat(labelFormat)
+            self.updateDisplay(rep)
+            self.assertEqual(self.angle.GetPropertiesLabelText(), expected, labelFormat)
+            self.assertEqual(rep.GetTextActor().GetInput(), expected, labelFormat)
+        # Placeholder characters in the name are not interpreted
+        self.angle.SetName("50%M")
+        self.display.SetPropertiesLabelFormat("%N")
+        self.assertEqual(self.angle.GetPropertiesLabelText(), "50%M")
 
     def testMultipleMeasurements(self):
         extra = slicer.vtkMRMLStaticMeasurement()
@@ -113,8 +145,13 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         first = "angle: " + self.angle.GetMeasurement("angle").GetValueWithUnitsAsPrintableString()
         second = "extra: " + extra.GetValueWithUnitsAsPrintableString()
         self.assertEqual(self.angle.GetPropertiesLabelText(), "Label test:\n" + first + "\n" + second)
-        self.display.SetPropertiesLabelIncludesNodeName(False)
+        self.display.SetPropertiesLabelFormat("%M")
         self.assertEqual(self.angle.GetPropertiesLabelText(), first + "\n" + second)
+        # No empty line between the name and the measurements
+        self.display.SetPropertiesLabelFormat("%N\n%M")
+        self.assertEqual(self.angle.GetPropertiesLabelText(), "Label test\n" + first + "\n" + second)
+        self.display.SetPropertiesLabelFormat("%M%b%N")
+        self.assertEqual(self.angle.GetPropertiesLabelText(), first + "\n" + second + "\nLabel test")
 
     def testVisibility(self):
         for sliceView in (False, True):
@@ -131,24 +168,25 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
             self.assertTrue(rep.GetTextActor().GetVisibility())
 
     def testPersistence(self):
-        self.display.SetPropertiesLabelIncludesNodeName(False)
+        labelFormat = "%M (%N) 100%%"
+        self.display.SetPropertiesLabelFormat(labelFormat)
         copied = slicer.vtkMRMLMarkupsDisplayNode()
         copied.CopyContent(self.display)
-        self.assertFalse(copied.GetPropertiesLabelIncludesNodeName())
+        self.assertEqual(copied.GetPropertiesLabelFormat(), labelFormat)
         with tempfile.TemporaryDirectory() as directory:
             filename = os.path.join(directory, "angle.mkp.json")
             self.assertTrue(slicer.util.saveNode(self.angle, filename))
             with open(filename) as stream:
                 document = json.load(stream)
-            self.assertIs(document["markups"][0]["display"]["propertiesLabelIncludesNodeName"], False)
+            self.assertEqual(document["markups"][0]["display"]["propertiesLabelFormat"], labelFormat)
             loaded = slicer.util.loadMarkups(filename)
-            self.assertFalse(loaded.GetDisplayNode().GetPropertiesLabelIncludesNodeName())
-            # Older files omit the option and must retain the default name prefix.
-            del document["markups"][0]["display"]["propertiesLabelIncludesNodeName"]
+            self.assertEqual(loaded.GetDisplayNode().GetPropertiesLabelFormat(), labelFormat)
+            # Older files omit the option and must use the default format.
+            del document["markups"][0]["display"]["propertiesLabelFormat"]
             with open(filename, "w") as stream:
                 json.dump(document, stream)
             legacy = slicer.util.loadMarkups(filename)
-            self.assertTrue(legacy.GetDisplayNode().GetPropertiesLabelIncludesNodeName())
+            self.assertEqual(legacy.GetDisplayNode().GetPropertiesLabelFormat(), "%N:%M")
         scene = slicer.vtkMRMLScene()
         scene.AddNode(copied)
         scene.SetSaveToXMLString(True)
@@ -159,21 +197,28 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         restoredScene.Import()
         restored = restoredScene.GetFirstNodeByClass("vtkMRMLMarkupsDisplayNode")
         self.assertIsNotNone(restored)
-        self.assertFalse(restored.GetPropertiesLabelIncludesNodeName())
+        self.assertEqual(restored.GetPropertiesLabelFormat(), labelFormat)
 
     def testDisplayPanel(self):
         widget = slicer.qMRMLMarkupsDisplayNodeWidget()
         try:
             widget.setMRMLScene(slicer.mrmlScene)
             widget.setMRMLMarkupsDisplayNode(self.display)
-            checkbox = slicer.util.findChild(widget, "PropertiesLabelIncludesNodeNameCheckBox")
-            self.assertIsNotNone(checkbox)
-            self.assertTrue(checkbox.checked)
-            checkbox.setChecked(False)
-            self.assertFalse(self.display.GetPropertiesLabelIncludesNodeName())
+            lineEdit = slicer.util.findChild(widget, "PropertiesLabelFormatLineEdit")
+            self.assertEqual(lineEdit.text, "%N:%M")
+            # Editing the text updates the display node
+            # The field is in the Advanced section, which disables its content while collapsed
+            slicer.util.findChild(widget, "SliceDisplayCollapsibleGroupBox").collapsed = False
+            self.assertTrue(lineEdit.isEnabled())
+            lineEdit.selectAll()
+            # Simulate typing (programmatic setText would not emit textEdited)
+            keyEvent = qt.QKeyEvent(qt.QEvent.KeyPress, qt.Qt.Key_M, qt.Qt.NoModifier, "%M")
+            qt.QApplication.sendEvent(lineEdit, keyEvent)
+            self.assertEqual(self.display.GetPropertiesLabelFormat(), "%M")
             self.assertEqual(self.angle.GetPropertiesLabelText(), self.angle.GetMeasurement("angle").GetValueWithUnitsAsPrintableString())
-            checkbox.setChecked(True)
-            self.assertTrue(self.display.GetPropertiesLabelIncludesNodeName())
+            # Changing the display node updates the widget
+            self.display.SetPropertiesLabelFormat("%N")
+            self.assertEqual(lineEdit.text, "%N")
         finally:
             widget.deleteLater()
 
@@ -249,14 +294,28 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
         def onEvent(caller, eventName, eventData):
             receivedEvents.append((eventData.GetComponentType(), eventData.GetComponentIndex()))
 
-        for eventType, displayEvent in [(slicer.vtkMRMLInteractionEventData.RightButtonClickEvent, self.display.MenuEvent)]:
-            observer = self.display.AddObserver(displayEvent, onEvent)
-            try:
-                event.SetType(eventType)
-                self.assertTrue(widget.ProcessInteractionEvent(event))
-                self.assertEqual(receivedEvents[-1], (self.display.ComponentPropertiesLabel, 0))
-            finally:
-                self.display.RemoveObserver(observer)
+        # The menu event opens the application's view context menu, which blocks until closed.
+        # Close it automatically (the timer runs in the menu's event loop).
+        def closePopups():
+            popup = qt.QApplication.activePopupWidget()
+            if popup:
+                popup.close()
+
+        closePopupsTimer = qt.QTimer()
+        closePopupsTimer.setInterval(100)
+        closePopupsTimer.connect("timeout()", closePopups)
+        closePopupsTimer.start()
+        try:
+            for eventType, displayEvent in [(slicer.vtkMRMLInteractionEventData.RightButtonClickEvent, self.display.MenuEvent)]:
+                observer = self.display.AddObserver(displayEvent, onEvent)
+                try:
+                    event.SetType(eventType)
+                    self.assertTrue(widget.ProcessInteractionEvent(event))
+                    self.assertEqual(receivedEvents[-1], (self.display.ComponentPropertiesLabel, 0))
+                finally:
+                    self.display.RemoveObserver(observer)
+        finally:
+            closePopupsTimer.stop()
 
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(MarkupsPropertiesLabelTest)

@@ -33,8 +33,64 @@
 #include <sstream>
 #include <iostream>
 
+namespace
+{
+
+//----------------------------------------------------------------------------
+int TestFormatLabel()
+{
+  std::map<char, std::string> placeholders;
+  placeholders['N'] = "Name";
+  placeholders['M'] = "12.5 mm";
+  double number = 7.0;
+
+  // Text placeholders, all occurrences are replaced
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N:%M", placeholders), "Name:12.5 mm");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N %N %M %M", placeholders), "Name Name 12.5 mm 12.5 mm");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("", placeholders), "");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("no placeholder", placeholders), "no placeholder");
+
+  // Percent escaping, trailing percent, and unknown placeholders are kept
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("100%% %N", placeholders), "100% Name");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%%N", placeholders), "%N");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N%", placeholders), "Name%");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%Q %s %n %p", placeholders, &number), "%Q %s %n %p");
+
+  // Replacement text is not interpreted as format
+  std::map<char, std::string> percentPlaceholders;
+  percentPlaceholders['N'] = "50%d %s";
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N-%d", percentPlaceholders, &number), "50%d %s-7");
+
+  // Numeric placeholders
+  bool numberPlaceholderFound = false;
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N-%d", placeholders, &number, &numberPlaceholderFound), "Name-7");
+  CHECK_BOOL(numberPlaceholderFound, true);
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N", placeholders, &number, &numberPlaceholderFound), "Name");
+  CHECK_BOOL(numberPlaceholderFound, false);
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%03d|%-3d|%+d|%i|%x", placeholders, &number), "007|7  |+7|7|7");
+  double fractionalNumber = 2.75;
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%d|%.1f|%g|%5.2f", placeholders, &fractionalNumber), "2|2.8|2.75| 2.75");
+  // Number placeholder is detected and kept unchanged if no number is provided
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%N-%03d", placeholders, nullptr, &numberPlaceholderFound), "Name-%03d");
+  CHECK_BOOL(numberPlaceholderFound, true);
+  // Width or precision that is too large is not accepted
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%99999d", placeholders, &number), "%99999d");
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%.99999f", placeholders, &number), "%.99999f");
+  // Variable width and length modifiers are not accepted
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%*d %ld", placeholders, &number), "%*d %ld");
+  // Values that cannot be represented as integer
+  double largeNumber = 1e300;
+  CHECK_STD_STRING(vtkMRMLMarkupsNode::FormatLabel("%d", placeholders, &largeNumber), "0");
+
+  return EXIT_SUCCESS;
+}
+
+} // namespace
+
 int vtkMRMLMarkupsNodeTest1(int, char*[])
 {
+  CHECK_EXIT_SUCCESS(TestFormatLabel());
+
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
@@ -46,6 +102,19 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   node1->SetName("testingname");
   std::string formatTest = node1->ReplaceListNameInControlPointLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
+  CHECK_STD_STRING(node1->FormatControlPointLabel(3), "testingname-3");
+
+  // All occurrences are replaced, percent characters in the name are escaped, other placeholders are kept
+  node1->SetControlPointLabelFormat(std::string("%N_%S_%N_%%_%03d"));
+  node1->SetName("50%");
+  CHECK_STD_STRING(node1->ReplaceListNameInControlPointLabelFormat(), "50%%_F_50%%_%%_%03d");
+  CHECK_STD_STRING(node1->FormatControlPointLabel(3), "50%_F_50%_%_003");
+
+  // Format strings that would be unsafe to pass to printf
+  node1->SetControlPointLabelFormat(std::string("%N-%s-%d"));
+  CHECK_STD_STRING(node1->FormatControlPointLabel(5), "50%-%s-5");
+  node1->SetControlPointLabelFormat(std::string("%N-%d"));
+  node1->SetName("testingname");
 
   vtkNew<vtkMRMLStaticMeasurement> measurement1;
   measurement1->SetName("Diameter");

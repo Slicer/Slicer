@@ -54,8 +54,10 @@
 #include VTK_EIGEN(Dense)
 
 // STD includes
-#include <sstream>
 #include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
@@ -1938,11 +1940,16 @@ std::string vtkMRMLMarkupsNode::GenerateUniqueControlPointID()
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::GenerateControlPointLabel(int controlPointIndex)
 {
-  std::string formatString = this->ReplaceListNameInControlPointLabelFormat();
-  char buf[128];
-  buf[sizeof(buf) - 1] = 0; // make sure the string is zero-terminated
-  snprintf(buf, sizeof(buf) - 1, formatString.c_str(), controlPointIndex);
-  return std::string(buf);
+  return this->FormatControlPointLabel(controlPointIndex);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsNode::FormatControlPointLabel(double number)
+{
+  std::map<char, std::string> textPlaceholders;
+  textPlaceholders['N'] = this->GetName() ? this->GetName() : "";
+  textPlaceholders['S'] = this->GetDefaultNodeNamePrefix();
+  return vtkMRMLMarkupsNode::FormatLabel(this->ControlPointLabelFormat, textPlaceholders, &number);
 }
 
 //---------------------------------------------------------------------------
@@ -1967,32 +1974,152 @@ void vtkMRMLMarkupsNode::SetControlPointLabelFormat(std::string format)
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::ReplaceListNameInControlPointLabelFormat()
 {
-  std::string newFormatString = this->ControlPointLabelFormat;
-
-  // Long-name replacement
-  size_t replacePos = newFormatString.find("%N");
-  if (replacePos != std::string::npos)
+  // Escape percent characters in the names so that the result remains a valid printf format string
+  auto escapePercent = [](const std::string& text)
   {
-    // replace the special character with the list name, or an empty string if
-    // no list name is set
-    std::string name;
-    if (this->GetName() != nullptr)
+    std::string escaped;
+    for (char c : text)
     {
-      name = std::string(this->GetName());
+      escaped += c;
+      if (c == '%')
+      {
+        escaped += '%';
+      }
     }
-    newFormatString.replace(replacePos, 2, name);
-  }
+    return escaped;
+  };
+  const std::string name = escapePercent(this->GetName() ? this->GetName() : "");
+  const std::string shortName = escapePercent(this->GetDefaultNodeNamePrefix());
 
-  // Short-name replacement
-  replacePos = newFormatString.find("%S");
-  if (replacePos != std::string::npos)
+  const std::string& format = this->ControlPointLabelFormat;
+  std::string newFormatString;
+  for (size_t pos = 0; pos < format.size(); ++pos)
   {
-    // replace the special character with the list name, or an empty string if
-    // no list name is set
-    newFormatString.replace(replacePos, 2, this->GetDefaultNodeNamePrefix());
+    if (format[pos] != '%' || pos + 1 >= format.size())
+    {
+      newFormatString += format[pos];
+      continue;
+    }
+    // Keep all other placeholders (including %%) unchanged
+    ++pos;
+    switch (format[pos])
+    {
+      case 'N': newFormatString += name; break;
+      case 'S': newFormatString += shortName; break;
+      default: newFormatString += '%'; newFormatString += format[pos];
+    }
   }
-
   return newFormatString;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsNode::FormatLabel(const std::string& format,
+                                            const std::map<char, std::string>& textPlaceholders,
+                                            const double* number /*=nullptr*/,
+                                            bool* numberPlaceholderFound /*=nullptr*/)
+{
+  if (numberPlaceholderFound)
+  {
+    *numberPlaceholderFound = false;
+  }
+  // Limit the number of width and precision digits to prevent huge memory allocation
+  const size_t maxNumberOfDigits = 3;
+  const std::string flagCharacters = "-+ #0";
+  const std::string integerConversions = "diuoxX";
+  const std::string floatingPointConversions = "eEfFgG";
+
+  std::string result;
+  size_t pos = 0;
+  while (pos < format.size())
+  {
+    if (format[pos] != '%' || pos + 1 >= format.size())
+    {
+      result += format[pos];
+      ++pos;
+      continue;
+    }
+    const char placeholder = format[pos + 1];
+    if (placeholder == '%')
+    {
+      result += '%';
+      pos += 2;
+      continue;
+    }
+    auto textPlaceholderIt = textPlaceholders.find(placeholder);
+    if (textPlaceholderIt != textPlaceholders.end())
+    {
+      result += textPlaceholderIt->second;
+      pos += 2;
+      continue;
+    }
+
+    // Parse numeric placeholder: %[flags][width][.precision]conversion
+    size_t specEnd = pos + 1;
+    while (specEnd < format.size() && flagCharacters.find(format[specEnd]) != std::string::npos)
+    {
+      ++specEnd;
+    }
+    size_t digitsStart = specEnd;
+    while (specEnd < format.size() && isdigit(static_cast<unsigned char>(format[specEnd])))
+    {
+      ++specEnd;
+    }
+    bool validSpec = (specEnd - digitsStart <= maxNumberOfDigits);
+    if (validSpec && specEnd < format.size() && format[specEnd] == '.')
+    {
+      ++specEnd;
+      digitsStart = specEnd;
+      while (specEnd < format.size() && isdigit(static_cast<unsigned char>(format[specEnd])))
+      {
+        ++specEnd;
+      }
+      validSpec = (specEnd - digitsStart <= maxNumberOfDigits);
+    }
+    const char conversion = (specEnd < format.size() ? format[specEnd] : '\0');
+    const bool integerConversion = (conversion != '\0' && integerConversions.find(conversion) != std::string::npos);
+    const bool floatingPointConversion = (conversion != '\0' && floatingPointConversions.find(conversion) != std::string::npos);
+    if (!validSpec || (!integerConversion && !floatingPointConversion))
+    {
+      // Not a recognized placeholder, keep the percent character and continue after it
+      result += '%';
+      ++pos;
+      continue;
+    }
+
+    if (numberPlaceholderFound)
+    {
+      *numberPlaceholderFound = true;
+    }
+    if (!number)
+    {
+      // No number is provided, keep the placeholder unchanged
+      result += format.substr(pos, specEnd + 1 - pos);
+      pos = specEnd + 1;
+      continue;
+    }
+
+    // Only the validated specification is passed to printf, with an argument of matching type
+    std::string spec = format.substr(pos, specEnd - pos);
+    std::vector<char> buffer;
+    if (integerConversion)
+    {
+      spec += "ll";
+      spec += conversion;
+      // Values that are not representable as integer (NaN, infinity, very large values) are formatted as 0
+      long long integerNumber = (std::isfinite(*number) && std::abs(*number) < 9.0e18) ? static_cast<long long>(*number) : 0;
+      buffer.resize(std::snprintf(nullptr, 0, spec.c_str(), integerNumber) + 1);
+      std::snprintf(buffer.data(), buffer.size(), spec.c_str(), integerNumber);
+    }
+    else
+    {
+      spec += conversion;
+      buffer.resize(std::snprintf(nullptr, 0, spec.c_str(), *number) + 1);
+      std::snprintf(buffer.data(), buffer.size(), spec.c_str(), *number);
+    }
+    result += buffer.data();
+    pos = specEnd + 1;
+  }
+  return result;
 }
 
 //----------------------------------------------------------------------
@@ -3085,27 +3212,55 @@ int vtkMRMLMarkupsNode::GetPositionStatusFromString(const char* name)
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::GetPropertiesLabelText()
 {
-  std::string labelText;
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
-  if ((!displayNode || displayNode->GetPropertiesLabelIncludesNodeName()) && this->GetName())
+  std::string format = displayNode ? displayNode->GetPropertiesLabelFormat() : vtkMRMLMarkupsDisplayNode::GetDefaultPropertiesLabelFormat();
+
+  std::map<char, std::string> textPlaceholders;
+  textPlaceholders['N'] = this->GetName() ? this->GetName() : "";
+  textPlaceholders['S'] = this->GetDefaultNodeNamePrefix();
+  // The cached measurement text starts with a space (one measurement) or
+  // a newline (multiple measurements), separating it from the node name.
+  textPlaceholders['M'] = this->PropertiesLabelText;
+  textPlaceholders['b'] = "\n";
+  std::string formattedText = vtkMRMLMarkupsNode::FormatLabel(format, textPlaceholders);
+
+  // Remove stray line breaks: whitespace around line breaks and empty lines
+  // (for example, "%N\n%M" would otherwise contain an empty line or leading space
+  // due to the separator at the beginning of the measurement text)
+  std::string labelText;
+  for (char c : formattedText)
   {
-    labelText = this->GetName();
+    if (c == '\r')
+    {
+      continue;
+    }
+    if (c == '\n')
+    {
+      // remove whitespace at the end of the line (npos + 1 == 0 clears whitespace-only text)
+      labelText.erase(labelText.find_last_not_of(" \t") + 1);
+      if (!labelText.empty() && labelText.back() == '\n')
+      {
+        // skip empty line
+        continue;
+      }
+    }
+    else if ((c == ' ' || c == '\t') && !labelText.empty() && labelText.back() == '\n')
+    {
+      // skip whitespace at the beginning of a line
+      continue;
+    }
+    labelText += c;
   }
-  if (!this->PropertiesLabelText.empty())
+
+  // Remove separators around empty placeholders (for example, "%N:%M" when there are no measurements)
+  const char* separators = " \t\r\n:";
+  size_t first = labelText.find_first_not_of(separators);
+  if (first == std::string::npos)
   {
-    if (!labelText.empty())
-    {
-      labelText += ":" + this->PropertiesLabelText;
-    }
-    else
-    {
-      // The cached measurement text starts with a space (one measurement) or
-      // a newline (multiple measurements), separating it from the node name.
-      size_t separatorLength = (this->PropertiesLabelText[0] == ' ' || this->PropertiesLabelText[0] == '\n') ? 1 : 0;
-      labelText = this->PropertiesLabelText.substr(separatorLength);
-    }
+    return "";
   }
-  return labelText;
+  size_t last = labelText.find_last_not_of(separators);
+  return labelText.substr(first, last - first + 1);
 }
 
 //---------------------------------------------------------------------------

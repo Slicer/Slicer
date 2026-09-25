@@ -1897,27 +1897,18 @@ void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarku
   }
 
   int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
-  // get the format string with the list name replaced
-  std::string formatString = markupsNode->ReplaceListNameInControlPointLabelFormat();
   bool numberInFormat = false;
-  const int maxLineLength = 1024;
-  std::vector<char> buffVector(maxLineLength);
-  char* buff = &(buffVector[0]);
-  if (formatString.find("%d") != std::string::npos || //
-      formatString.find("%g") != std::string::npos || //
-      formatString.find("%f") != std::string::npos)
-  {
-    numberInFormat = true;
-  }
+  vtkMRMLMarkupsNode::FormatLabel(markupsNode->GetControlPointLabelFormat(), std::map<char, std::string>(), nullptr, &numberInFormat);
   for (int n = 0; n < numberOfControlPoints; ++n)
   {
-    std::string oldLabel = markupsNode->GetNthControlPointLabel(n);
-    std::string oldNumber;
+    // by default, number the control points by their index
+    double number = n;
     if (numberInFormat)
     {
       // extract any number from the old label
       // is there more than one number in the old label?
       // - find the start of the first number
+      std::string oldLabel = markupsNode->GetNthControlPointLabel(n);
       std::string numbers = std::string("0123456789.");
       size_t firstNumber = oldLabel.find_first_of(numbers);
       size_t secondNumber = std::string::npos;
@@ -1943,30 +1934,10 @@ void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarku
       }
       if (keepNumberStart != std::string::npos)
       {
-        oldNumber = oldLabel.substr(keepNumberStart, keepNumberEnd - keepNumberStart);
-        if (formatString.find("%d") != std::string::npos)
-        {
-          // integer
-          snprintf(buff, maxLineLength, formatString.c_str(), atoi(oldNumber.c_str()));
-        }
-        else
-        {
-          // float
-          snprintf(buff, maxLineLength, formatString.c_str(), atof(oldNumber.c_str()));
-        }
+        number = atof(oldLabel.substr(keepNumberStart, keepNumberEnd - keepNumberStart).c_str());
       }
-      else
-      {
-        // no number found, use n
-        snprintf(buff, maxLineLength, formatString.c_str(), n);
-      }
-      markupsNode->SetNthControlPointLabel(n, std::string(buff));
     }
-    else
-    {
-      // no number in the format, so just rename it
-      markupsNode->SetNthControlPointLabel(n, formatString);
-    }
+    markupsNode->SetNthControlPointLabel(n, markupsNode->FormatControlPointLabel(number));
   }
 }
 

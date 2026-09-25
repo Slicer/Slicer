@@ -545,19 +545,16 @@
        </widget>
       </item>
       <item row="9" column="0">
-       <widget class="QLabel" name="PropertiesLabelIncludesNodeNameLabel">
+       <widget class="QLabel" name="PropertiesLabelFormatLabel">
         <property name="text">
-         <string>Include Node Name:</string>
+         <string>Properties Label Format:</string>
         </property>
        </widget>
       </item>
       <item row="9" column="1">
-       <widget class="QCheckBox" name="PropertiesLabelIncludesNodeNameCheckBox">
+       <widget class="QLineEdit" name="PropertiesLabelFormatLineEdit">
         <property name="toolTip">
-         <string>Include the markup node name in the properties label</string>
-        </property>
-        <property name="text">
-         <string/>
+         <string>Format of the properties label. %N is replaced by the node name, %S by the short name of the markup type, %M by the measurements, %b by a line break, and %% by a percent character. Default: %N:%M</string>
         </property>
        </widget>
       </item>

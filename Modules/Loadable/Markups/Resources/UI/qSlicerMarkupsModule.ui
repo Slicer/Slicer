@@ -705,7 +705,7 @@
               <item row="2" column="1">
                <widget class="QLineEdit" name="nameFormatLineEdit">
                 <property name="toolTip">
-                 <string>Format for creating names of new control points, using sprintf format style. %N is replaced by the list name, %S is replaced by the markup's short name and %d by an integer.</string>
+                 <string>Format for creating names of new control points. %N is replaced by the list name, %S by the markup's short name, %d (or other numeric printf format, such as %03d) by the control point number, and %% by a percent character.</string>
                 </property>
                </widget>
               </item>
