@@ -35,6 +35,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <QTemporaryDir>
 #include <QTimer>
 
 // Slicer includes
@@ -177,12 +178,16 @@ void driveSaveButton(std::shared_ptr<int> attempts, const std::function<void()>&
 }
 
 //-----------------------------------------------------------------------------
-bool runSaveCase(qSlicerConfigurableFileWriter* writer, SaveOutcome outcome)
+bool runSaveCase(qSlicerConfigurableFileWriter* writer, SaveOutcome outcome, const QString& outputDirectory)
 {
   vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
   writer->Outcome = outcome;
 
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
+  // Save into an empty directory. Without this the dialog would propose a file in the
+  // default save directory (such as the user's Documents folder) and if a file already
+  // existed there then an overwrite confirmation popup would block the test.
+  storageNode->SetFileName(QString(outputDirectory + "/LinearTransform.h5").toUtf8().constData());
   scene->AddNode(storageNode);
   vtkNew<vtkMRMLLinearTransformNode> transformNode;
   scene->AddNode(transformNode);
@@ -236,10 +241,17 @@ int qSlicerSaveDataDialogSaveOutcomeTest(int argc, char* argv[])
     { Warning, false, "save with warning does not accept (exit cancelled)" },
   };
 
+  QTemporaryDir outputDirectory;
+  if (!outputDirectory.isValid())
+  {
+    std::cerr << "Failed to create temporary directory" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   bool allPassed = true;
   for (const TestCase& testCase : cases)
   {
-    const bool accepted = runSaveCase(writer, testCase.outcome);
+    const bool accepted = runSaveCase(writer, testCase.outcome, outputDirectory.path());
     const bool passed = (accepted == testCase.expectedAccepted);
     std::cout << (passed ? "PASSED: " : "FAILED: ") << testCase.name << " (accepted=" << (accepted ? "true" : "false")
               << ", expected=" << (testCase.expectedAccepted ? "true" : "false") << ")" << std::endl;
