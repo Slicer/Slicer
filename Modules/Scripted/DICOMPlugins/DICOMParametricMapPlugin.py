@@ -4,7 +4,7 @@ import os
 import subprocess
 
 import slicer
-from DICOMLib import DICOMLoadable, DICOMPlugin
+from DICOMLib import DICOMLoadable, DICOMPlugin, DICOMUtils
 
 
 #
@@ -24,34 +24,37 @@ class DICOMParametricMapPluginClass(DICOMPlugin):
     """
     loadables = []
 
-    for cFile in files:
+    # Check SOP class first, as it is the only value that needs to be retrieved for non-PM files
+    sopClassUIDs = DICOMUtils.fileValues(files, self.tags["sopClassUID"])
+    for cFile, sopClassUID in zip(files, sopClassUIDs, strict=True):
+
+      if sopClassUID != "1.2.840.10008.5.1.4.1.1.30":
+        continue
 
       uid = slicer.dicomDatabase.fileValue(cFile, self.tags["instanceUID"])
       if uid == "":
-        return []
+        # Invalid instance, skip it
+        continue
 
       desc = slicer.dicomDatabase.fileValue(cFile, self.tags["seriesDescription"])
       if desc == "":
         desc = "Unknown"
 
-      isDicomPM = (slicer.dicomDatabase.fileValue(cFile, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.30")
+      loadable = DICOMLoadable()
+      loadable.files = [cFile]
+      loadable.name = desc + " - as a DICOM Parametric Map object"
+      loadable.tooltip = loadable.name
+      loadable.selected = True
+      loadable.confidence = 0.95
+      loadable.uid = uid
+      self.addReferences(loadable)
+      refName = self.referencedSeriesName(loadable)
+      if refName != "":
+        loadable.name = refName + " " + desc + " - ParametricMap"
 
-      if isDicomPM:
-        loadable = DICOMLoadable()
-        loadable.files = [cFile]
-        loadable.name = desc + " - as a DICOM Parametric Map object"
-        loadable.tooltip = loadable.name
-        loadable.selected = True
-        loadable.confidence = 0.95
-        loadable.uid = uid
-        self.addReferences(loadable)
-        refName = self.referencedSeriesName(loadable)
-        if refName != "":
-          loadable.name = refName + " " + desc + " - ParametricMap"
+      loadables.append(loadable)
 
-        loadables.append(loadable)
-
-        logging.debug("DICOM Parametric Map found")
+      logging.debug("DICOM Parametric Map found")
 
     return loadables
 
