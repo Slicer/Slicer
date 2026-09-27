@@ -1182,18 +1182,21 @@ class SampleDataLogic:
                 self.logMessage(_("File already exists in cache - reusing it."))
         return filePath
 
-    def loadScene(self, uri, fileProperties={}):
+    def loadScene(self, uri, fileProperties=None):
         """Returns True is scene loading was successful, False if failed."""
         loadedNode = self.loadNode(uri, None, "SceneFile", fileProperties)
         success = loadedNode is not None
         return success
 
-    def loadNode(self, uri, name, fileType=None, fileProperties={}):
+    def loadNode(self, uri, name, fileType=None, fileProperties=None):
         """Returns the first loaded node (or the scene if the reader did not provide a specific node) on success.
         Returns None if failed.
         """
         self.logMessage("<b>" + _("Requesting load {name} from {uri} ...").format(name=name, uri=uri) + "</b>")
 
+        # Copy the properties to not modify the caller's dictionary
+        # (and to not keep properties, such as the node name, between calls)
+        fileProperties = dict(fileProperties) if fileProperties else {}
         fileProperties["fileName"] = uri
         if name:
             fileProperties["name"] = name
@@ -1255,6 +1258,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
             self.test_downloadFromSource_downloadMRBFile,
             self.test_downloadFromSource_downloadMRMLFile,
             self.test_downloadFromSource_loadNode,
+            self.test_loadNodeWithoutNameAfterLoadWithName,
             self.test_downloadFromSource_loadNodeFromMultipleFiles,
             self.test_downloadFromSource_loadNodes,
             self.test_downloadFromSource_loadNodesWithLoadFileFalse,
@@ -1390,6 +1394,22 @@ class SampleDataTest(ScriptedLoadableModuleTest):
             fileNames="MR-head.nrrd"))
         self.assertEqual(len(nodes), 1)
         self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MR-head"))
+
+    def test_loadNodeWithoutNameAfterLoadWithName(self):
+        # Node name specified in a previous call must not be used when no name is specified
+        imageData = vtk.vtkImageData()
+        imageData.SetDimensions(4, 4, 4)
+        imageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+        volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+        volumeNode.SetAndObserveImageData(imageData)
+        filePath = slicer.util.tempDirectory() + "/SampleDataLoadNodeTest.nrrd"
+        self.assertTrue(slicer.util.saveNode(volumeNode, filePath))
+
+        logic = SampleDataLogic()
+        namedNode = logic.loadNode(filePath, "MyNamedVolume")
+        self.assertEqual(namedNode.GetName(), "MyNamedVolume")
+        unnamedNode = logic.loadNode(filePath, None)
+        self.assertTrue(unnamedNode.GetName().startswith("SampleDataLoadNodeTest"))
 
     def test_downloadFromSource_loadNodeFromMultipleFiles(self):
         logic = SampleDataLogic()
