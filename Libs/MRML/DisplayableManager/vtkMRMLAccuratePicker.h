@@ -46,8 +46,10 @@ class vtkRenderer;
 /// locator only when its surface changes and dropping it when the surface is no
 /// longer shown. Picks then become indexed queries. Everything else behaves
 /// like vtkCellPicker (same tolerance, picked position, and normal), so it is a
-/// drop-in replacement. Picked positions are on the surface, whether or not the
-/// surface is indexed (see IntersectDataSetWithLine()).
+/// drop-in replacement. Picked positions are on the surface of the picked object,
+/// whether or not the surface is indexed, unless the ray misses the surface and
+/// it is picked within the pick tolerance, for example near its silhouette (see
+/// IntersectDataSetWithLine()).
 ///
 /// A single instance is meant to be shared per view: vtkMRMLThreeDViewInteractorStyle
 /// owns one and exposes it through vtkMRMLInteractionEventData::GetAccuratePicker(),
@@ -94,6 +96,11 @@ protected:
   /// cell that the ray hits first, and use the pick tolerance only if the ray
   /// does not hit the surface (for example, when it passes just outside the
   /// silhouette of the surface), with or without a locator.
+  ///
+  /// Vertices and lines can only be picked within the pick tolerance. If the data
+  /// set has them along with surface or volumetric cells, then both searches are
+  /// done, and a vertex or line is picked if it is in front of the cell that the
+  /// ray hits.
   bool IntersectDataSetWithLine(vtkDataSet* dataSet,
                                 const double p1[3],
                                 const double p2[3],

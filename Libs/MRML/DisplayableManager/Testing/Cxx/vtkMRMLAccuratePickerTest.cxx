@@ -32,10 +32,15 @@
 // VTK includes
 #include <vtkActor.h>
 #include <vtkCamera.h>
+#include <vtkCellArray.h>
+#include <vtkCellType.h>
 #include <vtkGenericCell.h>
+#include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkPlaneSource.h>
+#include <vtkPointData.h>
 #include <vtkPoints.h>
+#include <vtkPolygon.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
@@ -129,9 +134,9 @@ int TestPickIsFast()
 }
 
 //----------------------------------------------------------------------------
-int TestPickIsOnSurface(bool indexSurface)
+int TestPickIsOnSurface(bool indexSurface, bool withLine)
 {
-  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface:" << std::endl;
+  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface" << (withLine ? " with a line" : "") << ":" << std::endl;
 
   // A large, bumpy surface that covers the whole view. It is seen at an oblique
   // angle, so that many rays graze the bumps.
@@ -151,6 +156,8 @@ int TestPickIsOnSurface(bool indexSurface)
     points->SetPoint(pointIndex, point);
   }
   points->Modified();
+  // Normals of the flat plane, which are not the normals of the bumpy surface
+  surface->GetPointData()->SetNormals(nullptr);
 
   vtkNew<vtkPolyDataMapper> mapper;
   mapper->SetInputData(surface);
@@ -168,6 +175,17 @@ int TestPickIsOnSurface(bool indexSurface)
   renderer->GetActiveCamera()->Zoom(3.0);
   renderer->ResetCameraClippingRange();
   renderWindow->Render();
+
+  if (withLine)
+  {
+    // A line under the surface, which is not picked, but makes the surface be
+    // searched both for a cell that the ray hits and within the pick tolerance.
+    // It is added after setting up the view, which covers only the surface.
+    vtkNew<vtkCellArray> lines;
+    const vtkIdType line[2] = { points->InsertNextPoint(-0.3, 0.0, -0.2), points->InsertNextPoint(0.3, 0.0, -0.2) };
+    lines->InsertNextCell(2, line);
+    surface->SetLines(lines);
+  }
 
   vtkNew<vtkMRMLAccuratePicker> picker;
   picker->SetTolerance(0.005);
@@ -189,6 +207,7 @@ int TestPickIsOnSurface(bool indexSurface)
   const double maximumDistanceFromSurface = 1e-6;
   int numberOfPicks = 0;
   int numberOfPicksOffSurface = 0;
+  int numberOfPicksWithWrongNormal = 0;
   double largestDistanceFromSurface = 0.0;
   for (int x = 10; x < 300; x += 20)
   {
@@ -211,6 +230,15 @@ int TestPickIsOnSurface(bool indexSurface)
       {
         ++numberOfPicksOffSurface;
       }
+      // The picked normal must be the normal of the picked cell (it is computed
+      // from the cell that vtkCellPicker keeps when it uses a locator).
+      surface->GetCell(picker->GetCellId(), cell);
+      double cellNormal[3] = { 0.0, 0.0, 0.0 };
+      vtkPolygon::ComputeNormal(cell->GetPoints(), cellNormal);
+      if (std::abs(vtkMath::Dot(cellNormal, picker->GetPickNormal())) < 1.0 - 1e-6)
+      {
+        ++numberOfPicksWithWrongNormal;
+      }
     }
   }
   std::cout << "Picked positions off the surface: " << numberOfPicksOffSurface << " of " << numberOfPicks << " (largest distance " << largestDistanceFromSurface << ")"
@@ -221,6 +249,100 @@ int TestPickIsOnSurface(bool indexSurface)
               << " from the surface (largest distance " << largestDistanceFromSurface << "). Picked positions, such as the crosshair position set by "
               << "shift + mouse-move in 3D views, would be in front of the surface." << std::endl;
     return EXIT_FAILURE;
+  }
+  if (numberOfPicksWithWrongNormal > 0)
+  {
+    std::cerr << "Failed: " << numberOfPicksWithWrongNormal << " of " << numberOfPicks << " picked normals are not the normal of the picked cell." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestPickLinesAndVerticesInFrontOfSurface(bool indexSurface)
+{
+  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface with lines and vertices:" << std::endl;
+
+  // A surface that also has line and vertex cells, as a surface with a centerline
+  // in the same mesh has. Some are in front of the surface, some behind it.
+  vtkNew<vtkPlaneSource> plane;
+  plane->SetResolution(200, 200);
+  vtkNew<vtkTriangleFilter> triangulator;
+  triangulator->SetInputConnection(plane->GetOutputPort());
+  triangulator->Update();
+  vtkNew<vtkPolyData> mesh;
+  mesh->DeepCopy(triangulator->GetOutput());
+  vtkPoints* points = mesh->GetPoints();
+  vtkNew<vtkCellArray> lines;
+  const vtkIdType lineInFront[2] = { points->InsertNextPoint(-0.3, 0.2, 0.1), points->InsertNextPoint(0.3, 0.2, 0.1) };
+  lines->InsertNextCell(2, lineInFront);
+  const vtkIdType lineBehind[2] = { points->InsertNextPoint(-0.3, -0.2, -0.1), points->InsertNextPoint(0.3, -0.2, -0.1) };
+  lines->InsertNextCell(2, lineBehind);
+  mesh->SetLines(lines);
+  vtkNew<vtkCellArray> vertices;
+  const vtkIdType vertexInFront = points->InsertNextPoint(0.25, -0.05, 0.1);
+  vertices->InsertNextCell(1, &vertexInFront);
+  const vtkIdType vertexBehind = points->InsertNextPoint(-0.25, -0.05, -0.1);
+  vertices->InsertNextCell(1, &vertexBehind);
+  mesh->SetVerts(vertices);
+
+  vtkNew<vtkPolyDataMapper> mapper;
+  mapper->SetInputData(mesh);
+  vtkNew<vtkActor> actor;
+  actor->SetMapper(mapper);
+
+  vtkNew<vtkRenderer> renderer;
+  renderer->AddActor(actor);
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetOffScreenRendering(1);
+  renderWindow->SetSize(300, 300);
+  renderWindow->AddRenderer(renderer);
+  renderer->ResetCamera();
+  renderer->GetActiveCamera()->Elevation(-20.0);
+  renderer->ResetCameraClippingRange();
+  renderWindow->Render();
+
+  vtkNew<vtkMRMLAccuratePicker> picker;
+  picker->SetTolerance(0.005);
+  if (!indexSurface)
+  {
+    picker->SetMinimumCellCountToIndex(VTK_ID_MAX);
+  }
+
+  struct ExpectedPick
+  {
+    const char* Description;
+    double Position[3];
+    int CellType;
+  };
+  const ExpectedPick expectedPicks[] = {
+    { "line in front of the surface", { 0.0, 0.2, 0.1 }, VTK_LINE },
+    { "vertex in front of the surface", { 0.25, -0.05, 0.1 }, VTK_VERTEX },
+    { "line behind the surface", { 0.0, -0.2, -0.1 }, VTK_TRIANGLE },
+    { "vertex behind the surface", { -0.25, -0.05, -0.1 }, VTK_TRIANGLE },
+  };
+  for (const ExpectedPick& expected : expectedPicks)
+  {
+    renderer->SetWorldPoint(expected.Position[0], expected.Position[1], expected.Position[2], 1.0);
+    renderer->WorldToDisplay();
+    double displayPosition[3] = { 0.0, 0.0, 0.0 };
+    renderer->GetDisplayPoint(displayPosition);
+    // Pick a pixel away from the cell, as a user does: lines and vertices are
+    // picked within the pick tolerance, which is a few pixels here.
+    if (!picker->Pick(displayPosition[0] + 1.0, displayPosition[1] + 1.0, 0, renderer))
+    {
+      std::cerr << "Failed: pick at the " << expected.Description << " did not hit anything" << std::endl;
+      return EXIT_FAILURE;
+    }
+    const int pickedCellType = picker->GetDataSet()->GetCellType(picker->GetCellId());
+    std::cout << "Pick at the " << expected.Description << ": cell type " << pickedCellType << std::endl;
+    if (pickedCellType != expected.CellType)
+    {
+      std::cerr << "Failed: pick at the " << expected.Description << " picked a cell of type " << pickedCellType << ", expected " << expected.CellType
+                << ". What is in front must be picked, whether it is a surface, a line, or a vertex." << std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
   return EXIT_SUCCESS;
@@ -235,11 +357,27 @@ int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   {
     return EXIT_FAILURE;
   }
-  if (TestPickIsOnSurface(true) != EXIT_SUCCESS)
+  if (TestPickIsOnSurface(true, false) != EXIT_SUCCESS)
   {
     return EXIT_FAILURE;
   }
-  if (TestPickIsOnSurface(false) != EXIT_SUCCESS)
+  if (TestPickIsOnSurface(true, true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(false, false) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(false, true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickLinesAndVerticesInFrontOfSurface(true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickLinesAndVerticesInFrontOfSurface(false) != EXIT_SUCCESS)
   {
     return EXIT_FAILURE;
   }
