@@ -15,34 +15,52 @@
 
 ==============================================================================*/
 
-// This guards the interactive performance of accurate picking in 3D views.
-// vtkMRMLAccuratePicker is the picker shared per view (by
+// This guards the interactive performance and the accuracy of accurate picking
+// in 3D views. vtkMRMLAccuratePicker is the picker shared per view (by
 // vtkMRMLThreeDViewInteractorStyle) and used on every mouse move for markup
-// dragging and hover read-out. A plain vtkCellPicker tests every cell of every
-// pickable surface, so over a large mesh (for example a segmentation closed
-// surface with millions of cells) each pick costs tens to hundreds of
-// milliseconds and interaction becomes janky. vtkMRMLAccuratePicker indexes
-// large surfaces with cell locators; this test checks that repeated picks over
-// a large mesh stay fast.
+// dragging, hover read-out, and setting the crosshair position. A plain
+// vtkCellPicker tests every cell of every pickable surface, so over a large mesh
+// (for example a segmentation closed surface with millions of cells) each pick
+// costs tens to hundreds of milliseconds and interaction becomes janky.
+// vtkMRMLAccuratePicker indexes large surfaces with cell locators; this test
+// checks that repeated picks over a large mesh stay fast, and that the picked
+// positions are on the surface, whether or not the surface is indexed.
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAccuratePicker.h"
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkCamera.h>
+#include <vtkCellArray.h>
+#include <vtkCellType.h>
+#include <vtkGenericCell.h>
+#include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkPlaneSource.h>
+#include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkPolygon.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
+#include <vtkStaticCellLocator.h>
 #include <vtkTimerLog.h>
+#include <vtkTriangleFilter.h>
 
 // STD includes
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 
-int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+namespace
+{
+
+//----------------------------------------------------------------------------
+int TestPickIsFast()
 {
   // A large, pickable surface standing in for a segmentation closed surface.
   vtkNew<vtkSphereSource> sphere;
@@ -112,5 +130,256 @@ int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     return EXIT_FAILURE;
   }
 
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestPickIsOnSurface(bool indexSurface, bool withLine)
+{
+  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface" << (withLine ? " with a line" : "") << ":" << std::endl;
+
+  // A large, bumpy surface that covers the whole view. It is seen at an oblique
+  // angle, so that many rays graze the bumps.
+  vtkNew<vtkPlaneSource> plane;
+  plane->SetResolution(200, 200);
+  vtkNew<vtkTriangleFilter> triangulator;
+  triangulator->SetInputConnection(plane->GetOutputPort());
+  triangulator->Update();
+  vtkNew<vtkPolyData> surface;
+  surface->DeepCopy(triangulator->GetOutput());
+  vtkPoints* points = surface->GetPoints();
+  for (vtkIdType pointIndex = 0; pointIndex < points->GetNumberOfPoints(); ++pointIndex)
+  {
+    double point[3] = { 0.0, 0.0, 0.0 };
+    points->GetPoint(pointIndex, point);
+    point[2] = 0.03 * std::sin(40.0 * point[0]) * std::sin(40.0 * point[1]);
+    points->SetPoint(pointIndex, point);
+  }
+  points->Modified();
+  // Normals of the flat plane, which are not the normals of the bumpy surface
+  surface->GetPointData()->SetNormals(nullptr);
+
+  vtkNew<vtkPolyDataMapper> mapper;
+  mapper->SetInputData(surface);
+  vtkNew<vtkActor> actor;
+  actor->SetMapper(mapper);
+
+  vtkNew<vtkRenderer> renderer;
+  renderer->AddActor(actor);
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetOffScreenRendering(1);
+  renderWindow->SetSize(300, 300);
+  renderWindow->AddRenderer(renderer);
+  renderer->ResetCamera();
+  renderer->GetActiveCamera()->Elevation(-50.0);
+  renderer->GetActiveCamera()->Zoom(3.0);
+  renderer->ResetCameraClippingRange();
+  renderWindow->Render();
+
+  if (withLine)
+  {
+    // A line under the surface, which is not picked, but makes the surface be
+    // searched both for a cell that the ray hits and within the pick tolerance.
+    // It is added after setting up the view, which covers only the surface.
+    vtkNew<vtkCellArray> lines;
+    const vtkIdType line[2] = { points->InsertNextPoint(-0.3, 0.0, -0.2), points->InsertNextPoint(0.3, 0.0, -0.2) };
+    lines->InsertNextCell(2, line);
+    surface->SetLines(lines);
+  }
+
+  vtkNew<vtkMRMLAccuratePicker> picker;
+  picker->SetTolerance(0.005);
+  if (!indexSurface)
+  {
+    // Pick the surface as if it were too small to be indexed with a locator
+    picker->SetMinimumCellCountToIndex(VTK_ID_MAX);
+  }
+
+  // Reference for measuring the distance between picked positions and the surface
+  vtkNew<vtkStaticCellLocator> surfaceLocator;
+  surfaceLocator->SetDataSet(surface);
+  surfaceLocator->BuildLocator();
+  vtkNew<vtkGenericCell> cell;
+
+  // The surface is about 1 unit wide, and positions on the surface are within
+  // rounding error of it. With the pick tolerance used above, a position picked
+  // in front of the surface is off by about a thousandth of a unit.
+  const double maximumDistanceFromSurface = 1e-6;
+  int numberOfPicks = 0;
+  int numberOfPicksOffSurface = 0;
+  int numberOfPicksWithWrongNormal = 0;
+  double largestDistanceFromSurface = 0.0;
+  for (int x = 10; x < 300; x += 20)
+  {
+    for (int y = 10; y < 300; y += 20)
+    {
+      if (!picker->Pick(x, y, 0, renderer))
+      {
+        std::cerr << "Failed: pick at (" << x << ", " << y << ") did not hit the surface, which covers the whole view" << std::endl;
+        return EXIT_FAILURE;
+      }
+      ++numberOfPicks;
+      double closestPoint[3] = { 0.0, 0.0, 0.0 };
+      vtkIdType cellId = -1;
+      int subId = -1;
+      double distance2 = 0.0;
+      surfaceLocator->FindClosestPoint(picker->GetPickPosition(), closestPoint, cell, cellId, subId, distance2);
+      const double distance = std::sqrt(distance2);
+      largestDistanceFromSurface = std::max(largestDistanceFromSurface, distance);
+      if (distance > maximumDistanceFromSurface)
+      {
+        ++numberOfPicksOffSurface;
+      }
+      // The picked normal must be the normal of the picked cell (it is computed
+      // from the cell that vtkCellPicker keeps when it uses a locator).
+      surface->GetCell(picker->GetCellId(), cell);
+      double cellNormal[3] = { 0.0, 0.0, 0.0 };
+      vtkPolygon::ComputeNormal(cell->GetPoints(), cellNormal);
+      if (std::abs(vtkMath::Dot(cellNormal, picker->GetPickNormal())) < 1.0 - 1e-6)
+      {
+        ++numberOfPicksWithWrongNormal;
+      }
+    }
+  }
+  std::cout << "Picked positions off the surface: " << numberOfPicksOffSurface << " of " << numberOfPicks << " (largest distance " << largestDistanceFromSurface << ")"
+            << std::endl;
+  if (numberOfPicksOffSurface > 0)
+  {
+    std::cerr << "Failed: " << numberOfPicksOffSurface << " of " << numberOfPicks << " picked positions are farther than " << maximumDistanceFromSurface
+              << " from the surface (largest distance " << largestDistanceFromSurface << "). Picked positions, such as the crosshair position set by "
+              << "shift + mouse-move in 3D views, would be in front of the surface." << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (numberOfPicksWithWrongNormal > 0)
+  {
+    std::cerr << "Failed: " << numberOfPicksWithWrongNormal << " of " << numberOfPicks << " picked normals are not the normal of the picked cell." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestPickLinesAndVerticesInFrontOfSurface(bool indexSurface)
+{
+  std::cout << (indexSurface ? "Indexed" : "Not indexed") << " surface with lines and vertices:" << std::endl;
+
+  // A surface that also has line and vertex cells, as a surface with a centerline
+  // in the same mesh has. Some are in front of the surface, some behind it.
+  vtkNew<vtkPlaneSource> plane;
+  plane->SetResolution(200, 200);
+  vtkNew<vtkTriangleFilter> triangulator;
+  triangulator->SetInputConnection(plane->GetOutputPort());
+  triangulator->Update();
+  vtkNew<vtkPolyData> mesh;
+  mesh->DeepCopy(triangulator->GetOutput());
+  vtkPoints* points = mesh->GetPoints();
+  vtkNew<vtkCellArray> lines;
+  const vtkIdType lineInFront[2] = { points->InsertNextPoint(-0.3, 0.2, 0.1), points->InsertNextPoint(0.3, 0.2, 0.1) };
+  lines->InsertNextCell(2, lineInFront);
+  const vtkIdType lineBehind[2] = { points->InsertNextPoint(-0.3, -0.2, -0.1), points->InsertNextPoint(0.3, -0.2, -0.1) };
+  lines->InsertNextCell(2, lineBehind);
+  mesh->SetLines(lines);
+  vtkNew<vtkCellArray> vertices;
+  const vtkIdType vertexInFront = points->InsertNextPoint(0.25, -0.05, 0.1);
+  vertices->InsertNextCell(1, &vertexInFront);
+  const vtkIdType vertexBehind = points->InsertNextPoint(-0.25, -0.05, -0.1);
+  vertices->InsertNextCell(1, &vertexBehind);
+  mesh->SetVerts(vertices);
+
+  vtkNew<vtkPolyDataMapper> mapper;
+  mapper->SetInputData(mesh);
+  vtkNew<vtkActor> actor;
+  actor->SetMapper(mapper);
+
+  vtkNew<vtkRenderer> renderer;
+  renderer->AddActor(actor);
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetOffScreenRendering(1);
+  renderWindow->SetSize(300, 300);
+  renderWindow->AddRenderer(renderer);
+  renderer->ResetCamera();
+  renderer->GetActiveCamera()->Elevation(-20.0);
+  renderer->ResetCameraClippingRange();
+  renderWindow->Render();
+
+  vtkNew<vtkMRMLAccuratePicker> picker;
+  picker->SetTolerance(0.005);
+  if (!indexSurface)
+  {
+    picker->SetMinimumCellCountToIndex(VTK_ID_MAX);
+  }
+
+  struct ExpectedPick
+  {
+    const char* Description;
+    double Position[3];
+    int CellType;
+  };
+  const ExpectedPick expectedPicks[] = {
+    { "line in front of the surface", { 0.0, 0.2, 0.1 }, VTK_LINE },
+    { "vertex in front of the surface", { 0.25, -0.05, 0.1 }, VTK_VERTEX },
+    { "line behind the surface", { 0.0, -0.2, -0.1 }, VTK_TRIANGLE },
+    { "vertex behind the surface", { -0.25, -0.05, -0.1 }, VTK_TRIANGLE },
+  };
+  for (const ExpectedPick& expected : expectedPicks)
+  {
+    renderer->SetWorldPoint(expected.Position[0], expected.Position[1], expected.Position[2], 1.0);
+    renderer->WorldToDisplay();
+    double displayPosition[3] = { 0.0, 0.0, 0.0 };
+    renderer->GetDisplayPoint(displayPosition);
+    // Pick a pixel away from the cell, as a user does: lines and vertices are
+    // picked within the pick tolerance, which is a few pixels here.
+    if (!picker->Pick(displayPosition[0] + 1.0, displayPosition[1] + 1.0, 0, renderer))
+    {
+      std::cerr << "Failed: pick at the " << expected.Description << " did not hit anything" << std::endl;
+      return EXIT_FAILURE;
+    }
+    const int pickedCellType = picker->GetDataSet()->GetCellType(picker->GetCellId());
+    std::cout << "Pick at the " << expected.Description << ": cell type " << pickedCellType << std::endl;
+    if (pickedCellType != expected.CellType)
+    {
+      std::cerr << "Failed: pick at the " << expected.Description << " picked a cell of type " << pickedCellType << ", expected " << expected.CellType
+                << ". What is in front must be picked, whether it is a surface, a line, or a vertex." << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
+} // namespace
+
+//----------------------------------------------------------------------------
+int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+{
+  if (TestPickIsFast() != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(true, false) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(true, true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(false, false) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickIsOnSurface(false, true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickLinesAndVerticesInFrontOfSurface(true) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickLinesAndVerticesInFrontOfSurface(false) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
