@@ -1418,7 +1418,7 @@ def saveNode(node, filename, properties={}):
 
     properties["nodeID"] = node.GetID()
     properties["fileName"] = filename
-    if hasattr(properties, "fileType"):
+    if "fileType" in properties:
         filetype = properties["fileType"]
     else:
         filetype = app.coreIOManager().fileWriterFileType(node)
