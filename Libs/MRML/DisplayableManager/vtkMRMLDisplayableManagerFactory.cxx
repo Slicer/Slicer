@@ -31,6 +31,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <algorithm>
@@ -56,8 +57,10 @@ public:
   // .. and its associated convenient typedef
   typedef std::vector<std::string>::iterator DisplayableManagerClassNamesIt;
 
-  // The application logic (can be a vtkSlicerApplicationLogic
-  vtkSmartPointer<vtkMRMLApplicationLogic> ApplicationLogic;
+  // The application logic (can be a vtkSlicerApplicationLogic).
+  // Only a weak reference is kept: factories may be singletons that are deleted at process exit,
+  // and they must not keep the application logic alive until then.
+  vtkWeakPointer<vtkMRMLApplicationLogic> ApplicationLogic;
 };
 
 //----------------------------------------------------------------------------

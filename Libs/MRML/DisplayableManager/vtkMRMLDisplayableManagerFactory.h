@@ -80,6 +80,9 @@ public:
 
   /// Set the application logic. It will be passed to displayable
   /// managers and groups to be created.
+  /// The factory only keeps a weak reference to the application logic: the caller must keep it alive
+  /// while it is used by the factory. This allows deleting the application logic before the factory
+  /// (factories may be singletons that are only deleted at process exit).
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
   vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
 

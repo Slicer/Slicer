@@ -25,6 +25,7 @@
 #include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
@@ -35,6 +36,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <iostream>
@@ -307,6 +309,32 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   }
 
   group->Delete();
+
+  //----------------------------------------------------------------------------
+  // The factory must not keep the application logic alive (the factory is a singleton, which is only
+  // deleted at process exit, while the application logic must be deleted before that)
+  vtkWeakPointer<vtkMRMLApplicationLogic> deletedApplicationLogic;
+  {
+    vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+    deletedApplicationLogic = applicationLogic.GetPointer();
+    factory->SetMRMLApplicationLogic(applicationLogic);
+    if (factory->GetMRMLApplicationLogic() != applicationLogic.GetPointer())
+    {
+      std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetMRMLApplicationLogic()" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  if (deletedApplicationLogic)
+  {
+    std::cerr << "Line " << __LINE__ << " - Application logic is kept alive by the factory" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (factory->GetMRMLApplicationLogic() != nullptr)
+  {
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetMRMLApplicationLogic() after the application logic is deleted" << std::endl;
+    std::cerr << "\tExpected: nullptr" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
