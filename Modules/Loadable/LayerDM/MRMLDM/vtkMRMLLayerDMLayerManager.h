@@ -118,19 +118,11 @@ private:
   bool AddPipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
   void RemovePipelineLayers(vtkMRMLLayerDMPipeline* pipeline);
 
-  /// Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
-  ///
-  /// The pipelines order the sets and are never dereferenced without being known to be alive: every pipeline
-  /// is observed for its destruction and removed from the sets during that event, so the sets only ever
-  /// contain live pipelines. A weak pointer must not be used as the element of an ordered container, as it
-  /// nulls itself in place when its object is destroyed, silently changing the value of a live set element and
-  /// breaking the ordering of the set.
-  ///
-  /// \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
+  // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
   std::map<LayerKey, std::set<vtkMRMLLayerDMPipeline*>> PipelineLayers;
 
-  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events and pipeline
-  /// destruction.
+  // Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events and pipeline
+  // destruction.
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
 
   // Placeholder empty pipeline with target layer = 0 and camera sync to layer 0 for default renderer
@@ -145,14 +137,7 @@ private:
   // Renderers managed by the layer manager
   std::vector<vtkSmartPointer<vtkRenderer>> Renderers;
 
-  // Camera to renderer map
-  /// Renderers grouped by the camera they are synchronized on.
-  ///
-  /// Keyed by camera id rather than by the camera itself: the cameras returned by the pipelines are not
-  /// observed by this class, so a weak pointer key could null itself in place and break the ordering of the
-  /// map. The id is only used to group renderers and is never dereferenced.
-  ///
-  /// \sa GetCameraId
+  // Camera to renderer map grouped by the camera they are synchronized on.
   std::map<std::uintptr_t, std::vector<vtkWeakPointer<vtkRenderer>>> CameraRendererMap;
 };
 

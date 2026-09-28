@@ -75,22 +75,22 @@ public:
   /// \brief Remove the input creator from the list of creators.
   /// If the factory doesn't contain the creator, does nothing.
   /// Invokes vtkCommand::ModifiedEvent if the factory is modified.
-  ///
-  /// Pipeline managers observing the factory remove the pipelines created by the removed creator
-  /// and recreate them from the remaining creators when possible.
-  /// \sa vtkMRMLLayerDMPipelineManager::UpdateFromScene
   void RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator);
 
   /// true if the given creator is contained in the factory, false otherwise.
   bool ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator) const;
 
+  /// @{
   /// Tries to create a new pipeline given input viewNode and node by iterating on its creators.
   /// Returns nullptr if no creator was able to create a pipeline.
+  /// If creator is not nullptr, it is set to the creator that created the pipeline.
   /// Invokes PipelineAboutToBeCreatedEvent before returning the newly created pipeline instance.
   /// \sa GetLastViewNode
   /// \sa GetLastNode
   /// \sa GetLastPipeline
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node, vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>* creator);
   vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node);
+  /// @}
 
   /// @{
   /// Get the last pipeline created by the factory.
@@ -98,7 +98,6 @@ public:
   vtkMRMLAbstractViewNode* GetLastViewNode() const;
   vtkMRMLNode* GetLastNode() const;
   vtkMRMLLayerDMPipeline* GetLastPipeline() const;
-  vtkMRMLLayerDMPipelineCreator* GetLastCreator() const;
   /// @}
 
 protected:
@@ -115,7 +114,6 @@ private:
   vtkWeakPointer<vtkMRMLAbstractViewNode> LastView;
   vtkWeakPointer<vtkMRMLNode> LastNode;
   vtkWeakPointer<vtkMRMLLayerDMPipeline> LastPipeline;
-  vtkWeakPointer<vtkMRMLLayerDMPipelineCreator> LastCreator;
 };
 
 #endif

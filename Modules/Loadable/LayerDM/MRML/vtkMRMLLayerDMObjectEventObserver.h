@@ -107,25 +107,8 @@ private:
   void OnObjectDeleted(vtkObject* obj);
 
   vtkSmartPointer<vtkCallbackCommand> UpdateCommand;
-
-  /// For each observed object, maps the observed event ID to the observer tag returned by AddObserver.
-  ///
-  /// The object is used as a plain identity key and is never dereferenced without being known to be alive:
-  /// every observed object is also observed for vtkCommand::DeleteEvent and is removed from the map during
-  /// that event, so the map only ever contains live objects. A weak pointer must not be used as the key of an
-  /// ordered container, as it nulls itself in place when its object is destroyed, silently changing the key of
-  /// a live map node and breaking the ordering of the map.
-  ///
-  /// \sa OnObjectDeleted
   std::map<vtkObject*, std::map<unsigned long, unsigned long>> ObservedEventsMap;
-
-  /// Objects which explicitly observe vtkCommand::DeleteEvent and expect the event to reach the update callback.
-  ///
-  /// The destruction of every observed object is watched to keep \sa ObservedEventsMap valid, but the event is
-  /// only forwarded to the update callback for the objects listed here, so that clients which did not observe
-  /// deletion are not notified of it.
   std::set<vtkObject*> DeleteEventObservers;
-
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
                std::function<void(vtkObject* node, unsigned long eventId, void* callData)>>

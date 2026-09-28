@@ -86,9 +86,7 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
     }
 
     Py_DECREF(result);
-    // Unpack error or unexpected return type. There is no Python frame to raise into from here,
-    // and leaving an exception pending would make IsValidPythonContext fail for every subsequent
-    // call, silently disabling the pipeline. Report it and clear it instead.
+    // Clear errors and report unexpected Python error (avoid silently making the Python context invalid)
     PyErr_Clear();
     vtkErrorMacro(<< "CanProcessInteractionEvent: expected a tuple[bool, float] return type from " << vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object));
   }

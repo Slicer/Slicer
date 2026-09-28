@@ -187,20 +187,8 @@ private:
   vtkWeakPointer<vtkMRMLScene> Scene;
   vtkWeakPointer<vtkRenderWindow> RenderWindow;
 
-  /// @{
-  /// Pipeline and creator of each display node.
-  ///
-  /// The display node is used as a plain identity key. Each node is observed for its destruction and removed
-  /// from both maps during that event, so the maps only ever contain live nodes. A weak pointer must not be
-  /// used as the key of an ordered container, as it nulls itself in place when its node is destroyed, silently
-  /// changing the key of a live map node and breaking the ordering of the map.
-  ///
-  /// \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   std::map<vtkMRMLNode*, vtkSmartPointer<vtkMRMLLayerDMPipeline>> PipelineMap;
-  /// Creator which created the pipeline of each node, used to detect pipelines whose creator
-  /// was removed from the factory (\sa RemoveOutdatedPipelines).
   std::map<vtkMRMLNode*, vtkWeakPointer<vtkMRMLLayerDMPipelineCreator>> PipelineCreatorMap;
-  /// @}
   std::function<void()> RequestRenderCallback;
 
   bool IsRequestRenderBlocked{ false };

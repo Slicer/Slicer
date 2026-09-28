@@ -104,7 +104,8 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
     return false;
   }
 
-  auto pipeline = this->Factory->CreatePipeline(this->ViewNode, displayNode);
+  vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> creator;
+  auto pipeline = this->Factory->CreatePipeline(this->ViewNode, displayNode, &creator);
   if (!pipeline)
   {
     return false;
@@ -119,9 +120,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   pipeline->SetDisplayNode(displayNode);
   pipeline->OnDefaultCameraModified(this->DefaultCamera);
   this->PipelineMap[displayNode] = pipeline;
-  this->PipelineCreatorMap[displayNode] = this->Factory->GetLastCreator();
-  // Observe the node destruction so that the maps keyed by this node can be cleaned up while its address is
-  // still valid. \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
+  this->PipelineCreatorMap[displayNode] = creator;
   this->EventObserver->UpdateObservation(nullptr, displayNode, vtkCommand::DeleteEvent);
   this->LayerManager->AddPipeline(pipeline);
   this->InteractionLogic->AddPipeline(pipeline);
@@ -135,9 +134,6 @@ void vtkMRMLLayerDMPipelineManager::ClearDisplayableNodes()
 {
   RequestRenderOnceGuard renderGuard{ *this };
 
-  // The interaction logic holds strong references to the pipelines and the layer manager holds
-  // their renderers, so clearing the maps alone would leave the pipelines alive, with their
-  // actors still displayed and still receiving interaction events.
   for (const auto& [node, pipeline] : this->PipelineMap)
   {
     if (!pipeline)
@@ -434,8 +430,6 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
     return;
   }
 
-  // The map only contains live nodes, as a node is removed from it when it is destroyed, so the nodes can
-  // safely be dereferenced here. \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   std::vector<vtkMRMLNode*> outdatedPipelines;
   for (const auto& [node, pipeline] : this->PipelineMap)
   {
@@ -470,10 +464,7 @@ void vtkMRMLLayerDMPipelineManager::AddMissingPipelines()
     return;
   }
 
-  // Traverse the collection with an iterator: vtkCollection::GetItemAsObject walks the collection from its
-  // first item on every call, which makes an indexed scan quadratic in the number of nodes.
-  // Collect the nodes first, as adding a pipeline invokes events and can run pipeline creator code, which may
-  // in turn modify the scene.
+  // Use GetNextItemAsObject during iteration to avoid quadratic iteration of GetItemAsObject
   std::vector<vtkSmartPointer<vtkMRMLNode>> sceneNodes;
   vtkObject* item = nullptr;
   vtkCollectionSimpleIterator it;
