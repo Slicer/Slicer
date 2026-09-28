@@ -69,25 +69,8 @@ public:
   void SetUpdateCallback(const std::function<void(vtkObject* node, unsigned long eventId, void* callData)>& callback);
   /// @}
 
-  /// Set the callback triggered when one of the observed objects is about to be destroyed.
-  ///
-  /// Every observed object is also observed for vtkCommand::DeleteEvent, so that objects used as keys of
-  /// ordered containers can be removed from them while their address is still valid. VTK invokes the event
-  /// before clearing the weak pointers to the object, so the object passed to the callback is still valid and
-  /// can be used to look up and erase container entries.
-  ///
-  /// Unlike the update callback, this callback is invoked even when the observer is blocked: blocking is meant
-  /// to suppress display updates, not to skip lifetime bookkeeping.
-  ///
-  /// \sa SetBlocked
-  void SetDeleteCallback(const std::function<void(vtkObject* node)>& callback);
-
-  /// Forget the update and delete callbacks.
-  ///
-  /// Owners which capture themselves in their callbacks are expected to call this in their destructor:
-  /// releasing an observed object during the owner destruction would otherwise invoke the delete callback and
-  /// re-enter the owner while its members are being destroyed.
-  void ClearCallbacks();
+  /// Forget the update callback.
+  void ClearCallback();
 
   /// Set update callback blocked.
   /// @return previous blocked state.
@@ -113,8 +96,11 @@ protected:
 private:
   void AddObservation(vtkObject* obj, unsigned long event);
 
+  /// Dispatch an observed event to the update callback.
+  void InvokeCallback(vtkObject* obj, unsigned long eventId, void* callData);
+
   /// Called when an observed object invokes vtkCommand::DeleteEvent.
-  /// Forgets the object, then forwards it to the delete callback if one is set.
+  /// Forgets the object, then forwards the event to the update callback if the object was observed for it.
   void OnObjectDeleted(vtkObject* obj);
 
   vtkSmartPointer<vtkCallbackCommand> UpdateCommand;
@@ -130,11 +116,17 @@ private:
   /// \sa OnObjectDeleted
   std::map<vtkObject*, std::map<unsigned long, unsigned long>> ObservedEventsMap;
 
+  /// Objects which explicitly observe vtkCommand::DeleteEvent and expect the event to reach the update callback.
+  ///
+  /// The destruction of every observed object is watched to keep \sa ObservedEventsMap valid, but the event is
+  /// only forwarded to the update callback for the objects listed here, so that clients which did not observe
+  /// deletion are not notified of it.
+  std::set<vtkObject*> DeleteEventObservers;
+
   std::variant<std::function<void(vtkObject* node)>,
                std::function<void(vtkObject* node, unsigned long eventId)>,
                std::function<void(vtkObject* node, unsigned long eventId, void* callData)>>
     Callback;
-  std::function<void(vtkObject* node)> DeleteCallback;
   bool Blocked;
 };
 

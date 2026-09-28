@@ -24,6 +24,7 @@
 // VTK includes
 #include <vtkBoundingBox.h>
 #include <vtkCamera.h>
+#include <vtkCommand.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
@@ -63,7 +64,7 @@ void vtkMRMLLayerDMLayerManager::AddPipeline(vtkMRMLLayerDMPipeline* pipeline)
     return;
   }
 
-  this->Observer->UpdateObservation(nullptr, pipeline, vtkMRMLLayerDMPipeline::RenderGroupingModified);
+  this->Observer->UpdateObservation(nullptr, pipeline, { vtkMRMLLayerDMPipeline::RenderGroupingModified, vtkCommand::DeleteEvent });
   this->AddPipelineLayers(pipeline);
   this->UpdateLayers();
 }
@@ -156,25 +157,23 @@ vtkMRMLLayerDMLayerManager::vtkMRMLLayerDMLayerManager()
   , Observer(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
 {
   this->Observer->SetUpdateCallback(
-    [this](vtkObject* obj)
+    [this](vtkObject* obj, unsigned long eventId)
     {
-      if (auto pipeline = vtkMRMLLayerDMPipeline::SafeDownCast(obj))
+      auto pipeline = vtkMRMLLayerDMPipeline::SafeDownCast(obj);
+      if (!pipeline)
       {
-        this->RemovePipelineLayers(pipeline);
-        this->AddPipelineLayers(pipeline);
-        this->UpdateLayers();
+        return;
       }
-    });
 
-  // A pipeline destroyed without being removed first would otherwise be left in the layer sets, where its weak
-  // pointer would null itself in place and break their ordering.
-  this->Observer->SetDeleteCallback(
-    [this](vtkObject* obj)
-    {
-      if (auto pipeline = vtkMRMLLayerDMPipeline::SafeDownCast(obj))
+      if (eventId == vtkCommand::DeleteEvent)
       {
         this->RemovePipeline(pipeline);
+        return;
       }
+
+      this->RemovePipelineLayers(pipeline);
+      this->AddPipelineLayers(pipeline);
+      this->UpdateLayers();
     });
   this->AddPipeline(this->EmptyPipeline);
 }
@@ -182,9 +181,9 @@ vtkMRMLLayerDMLayerManager::vtkMRMLLayerDMLayerManager()
 //-----------------------------------------------------------------------------
 vtkMRMLLayerDMLayerManager::~vtkMRMLLayerDMLayerManager()
 {
-  // Releasing the pipelines below destroys them, which would otherwise invoke the delete callback and
-  // re-enter this object while its members are being destroyed.
-  this->Observer->ClearCallbacks();
+  // Releasing the pipelines below destroys them, which would otherwise re-enter this object through the
+  // deletion forwarded to the update callback while its members are being destroyed.
+  this->Observer->ClearCallback();
 }
 
 //-----------------------------------------------------------------------------
@@ -345,7 +344,7 @@ void vtkMRMLLayerDMLayerManager::RemoveOutdatedPipelines()
 {
   // Remove the layers which no longer contain any pipeline. Destroyed pipelines are removed from their layers
   // when they are destroyed, so only empty layers are left to clean up here.
-  // \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  // \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   for (auto layerIt = this->PipelineLayers.begin(); layerIt != this->PipelineLayers.end();)
   {
     if (layerIt->second.empty())

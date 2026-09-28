@@ -192,7 +192,7 @@ private:
   /// used as the key of an ordered container, as it nulls itself in place when its node is destroyed, silently
   /// changing the key of a live map node and breaking the ordering of the map.
   ///
-  /// \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  /// \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   std::map<vtkMRMLNode*, vtkSmartPointer<vtkMRMLLayerDMPipeline>> PipelineMap;
   /// Creator which created the pipeline of each node, used to detect pipelines whose creator
   /// was removed from the factory (\sa RemoveOutdatedPipelines).

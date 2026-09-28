@@ -123,10 +123,11 @@ private:
   /// nulls itself in place when its object is destroyed, silently changing the value of a live set element and
   /// breaking the ordering of the set.
   ///
-  /// \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  /// \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   std::map<LayerKey, std::set<vtkMRMLLayerDMPipeline*>> PipelineLayers;
 
-  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events.
+  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipeline::RenderGroupingModified events and pipeline
+  /// destruction.
   vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
 
   // Placeholder empty pipeline with target layer = 0 and camera sync to layer 0 for default renderer

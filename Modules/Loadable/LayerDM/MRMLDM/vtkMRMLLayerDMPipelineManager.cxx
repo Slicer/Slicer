@@ -118,7 +118,7 @@ bool vtkMRMLLayerDMPipelineManager::CreatePipelineForNode(vtkMRMLNode* displayNo
   this->PipelineMap[displayNode] = pipeline;
   this->PipelineCreatorMap[displayNode] = this->Factory->GetLastCreator();
   // Observe the node destruction so that the maps keyed by this node can be cleaned up while its address is
-  // still valid. \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  // still valid. \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   this->EventObserver->UpdateObservation(nullptr, displayNode, vtkCommand::DeleteEvent);
   this->LayerManager->AddPipeline(pipeline);
   this->InteractionLogic->AddPipeline(pipeline);
@@ -331,8 +331,17 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
     });
 
   this->EventObserver->SetUpdateCallback(
-    [this](vtkObject* obj)
+    [this](vtkObject* obj, unsigned long eventId)
     {
+      if (eventId == vtkCommand::DeleteEvent)
+      {
+        if (auto node = vtkMRMLNode::SafeDownCast(obj))
+        {
+          this->RemovePipeline(node);
+        }
+        return;
+      }
+
       if (obj == this->Factory)
       {
         this->UpdateFromScene();
@@ -344,18 +353,6 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
       }
     });
 
-  // A display node destroyed without being removed from the scene first would otherwise leave its pipeline
-  // running, and its address in the pipeline maps, where its weak pointer would null itself in place and break
-  // their ordering.
-  this->EventObserver->SetDeleteCallback(
-    [this](vtkObject* obj)
-    {
-      if (auto node = vtkMRMLNode::SafeDownCast(obj))
-      {
-        this->RemovePipeline(node);
-      }
-    });
-
   // Monitor camera updates
   this->EventObserver->UpdateObservation(nullptr, this->CameraSynchronizer);
 }
@@ -363,9 +360,7 @@ vtkMRMLLayerDMPipelineManager::vtkMRMLLayerDMPipelineManager()
 //-----------------------------------------------------------------------------
 vtkMRMLLayerDMPipelineManager::~vtkMRMLLayerDMPipelineManager()
 {
-  // Releasing the observed objects below destroys them, which would otherwise invoke the delete callback and
-  // re-enter this object while its members are being destroyed.
-  this->EventObserver->ClearCallbacks();
+  this->EventObserver->ClearCallback();
 }
 
 //-----------------------------------------------------------------------------
@@ -437,7 +432,7 @@ void vtkMRMLLayerDMPipelineManager::RemoveOutdatedPipelines()
   }
 
   // The map only contains live nodes, as a node is removed from it when it is destroyed, so the nodes can
-  // safely be dereferenced here. \sa vtkMRMLLayerDMObjectEventObserver::SetDeleteCallback
+  // safely be dereferenced here. \sa vtkMRMLLayerDMObjectEventObserver::UpdateObservation
   std::vector<vtkMRMLNode*> outdatedPipelines;
   for (const auto& [node, pipeline] : this->PipelineMap)
   {
