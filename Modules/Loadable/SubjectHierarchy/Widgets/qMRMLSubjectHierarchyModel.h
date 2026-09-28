@@ -61,6 +61,10 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// Control in which column data MRML node visibility are displayed (Qt::DecorationRole).
   /// A value of -1 (default) hides the column
   Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  /// Control in which column data MRML node lock state is displayed (Qt::DecorationRole).
+  /// Only item types that support locking (such as markups) show an icon in this column.
+  /// A value of -1 (default) hides the column
+  Q_PROPERTY(int lockColumn READ lockColumn WRITE setLockColumn)
   /// Control in which column data MRML node color is displayed.
   /// A value of -1 (default) hides the column
   Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
@@ -99,10 +103,15 @@ public:
     /// Boolean indicating whether all ancestor items have visibility turned on.
     /// When false, the item's own visibility icon is grayed out.
     ParentVisibilityRole,
+    /// Integer that contains the lock state of an item.
+    /// It is closely related to the item icon.
+    LockedRole,
     /// MRML node ID of the parent transform
     TransformIDRole,
     /// QIcon for the visibility button; stored here instead of DecorationRole so the delegate does not paint it
     VisibilityIconRole,
+    /// QIcon for the lock button; stored here instead of DecorationRole so the delegate does not paint it
+    LockIconRole,
     /// QColor of the item; stored here instead of DecorationRole so the delegate does not paint it
     ColorRole,
     /// Serialized terminology entry
@@ -126,6 +135,9 @@ public:
 
   int visibilityColumn() const;
   void setVisibilityColumn(int column);
+
+  int lockColumn() const;
+  void setLockColumn(int column);
 
   int colorColumn() const;
   void setColorColumn(int column);
