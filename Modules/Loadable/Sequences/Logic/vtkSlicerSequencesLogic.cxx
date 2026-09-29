@@ -592,27 +592,20 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
     // this update is due to updating from sequence nodes
     return;
   }
-  if (browserNode->GetPlaybackActive())
-  {
-    // don't accept node modifications while replaying
-    return;
-  }
   if (!browserNode)
   {
     vtkErrorMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes failed: invalid browser node");
+    return;
+  }
+  if (browserNode->GetPlaybackActive())
+  {
+    // don't accept node modifications while replaying
     return;
   }
   vtkMRMLSequenceNode* masterNode = browserNode->GetMasterSequenceNode();
   if (!masterNode)
   {
     vtkErrorMacro("Cannot record node modification: master sequence node is invalid");
-    return;
-  }
-
-  if (!proxyNode)
-  {
-    vtkDebugMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes: update if all proxy nodes is not implemented yet");
-    // TODO: update all proxy nodes if there is no info about which one was modified
     return;
   }
 
@@ -626,10 +619,9 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
     if (browserNode->GetRecordMasterOnly())
     {
       vtkMRMLNode* masterProxyNode = browserNode->GetProxyNode(masterNode);
-      if (masterProxyNode != nullptr && masterProxyNode->GetID() != nullptr //
-          && strcmp(proxyNode->GetID(), masterProxyNode->GetID()) == 0)
+      // A deferred event has no proxy identity, so it cannot establish that the master changed.
+      if (masterProxyNode != nullptr && proxyNode == masterProxyNode)
       {
-        // master proxy node is changed
         saveState = true;
       }
     }
@@ -645,32 +637,47 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
   }
   else
   {
-    // Update sequence item from proxy node
-    vtkMRMLSequenceNode* sequenceNode = browserNode->GetSequenceNode(proxyNode);
-    if (sequenceNode && browserNode->GetSelectedItemNumber() >= 0)
+    std::vector<vtkMRMLSequenceNode*> sequenceNodes;
+    if (proxyNode)
     {
-      if (browserNode->GetSaveChanges(sequenceNode))
+      vtkMRMLSequenceNode* sequenceNode = browserNode->GetSequenceNode(proxyNode);
+      if (sequenceNode)
       {
-        std::string indexValue = masterNode->GetNthIndexValue(browserNode->GetSelectedItemNumber());
-        // If missing item mode is MissingItemSetToDefault then it means that the current time point
-        // may not have a corresponding item in the sequence.
-        // In this case, updating the closest item is only necessary when there is an
-        // exact match; otherwise, it should be skipped with the proxy node
-        // modifications reverted.
-        bool itemMayNotBeInSequence = (browserNode->GetMissingItemMode(sequenceNode) == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault);
-        int closestItemNumber = sequenceNode->GetItemNumberFromIndexValue(indexValue, /* exactMatchRequired= */ itemMayNotBeInSequence);
-        if (closestItemNumber >= 0)
-        {
-          std::string closestIndexValue = sequenceNode->GetNthIndexValue(closestItemNumber);
-          sequenceNode->UpdateDataNodeAtValue(proxyNode, indexValue, true /* shallow copy*/);
-        }
-        else if (itemMayNotBeInSequence)
-        {
-          // This timepoint is not in the sequence, revert the modifications (reset the proxy node to default)
-          // to make it clear to the user that changes are not saved (even though "SaveChanges" was enabled).
-          vtkSmartPointer<vtkMRMLNode> emptyNode = vtkSmartPointer<vtkMRMLNode>::Take(proxyNode->CreateNodeInstance());
-          proxyNode->CopyContent(emptyNode);
-        }
+        sequenceNodes.push_back(sequenceNode);
+      }
+    }
+    else
+    {
+      // A batched browser event has no proxy node in its call data.
+      browserNode->GetSynchronizedSequenceNodes(sequenceNodes, true);
+    }
+
+    for (vtkMRMLSequenceNode* sequenceNode : sequenceNodes)
+    {
+      vtkMRMLNode* currentProxyNode = proxyNode ? proxyNode : browserNode->GetProxyNode(sequenceNode);
+      if (!currentProxyNode || browserNode->GetSelectedItemNumber() < 0 || !browserNode->GetSaveChanges(sequenceNode))
+      {
+        continue;
+      }
+      std::string indexValue = masterNode->GetNthIndexValue(browserNode->GetSelectedItemNumber());
+      // If missing item mode is MissingItemSetToDefault then it means that the current time point
+      // may not have a corresponding item in the sequence.
+      // In this case, updating the closest item is only necessary when there is an
+      // exact match; otherwise, it should be skipped with the proxy node
+      // modifications reverted.
+      bool itemMayNotBeInSequence = (browserNode->GetMissingItemMode(sequenceNode) == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault);
+      int closestItemNumber = sequenceNode->GetItemNumberFromIndexValue(indexValue, /* exactMatchRequired= */ itemMayNotBeInSequence);
+      if (closestItemNumber >= 0)
+      {
+        std::string closestIndexValue = sequenceNode->GetNthIndexValue(closestItemNumber);
+        sequenceNode->UpdateDataNodeAtValue(currentProxyNode, indexValue, true /* shallow copy*/);
+      }
+      else if (itemMayNotBeInSequence)
+      {
+        // This timepoint is not in the sequence, revert the modifications (reset the proxy node to default)
+        // to make it clear to the user that changes are not saved (even though "SaveChanges" was enabled).
+        vtkSmartPointer<vtkMRMLNode> emptyNode = vtkSmartPointer<vtkMRMLNode>::Take(currentProxyNode->CreateNodeInstance());
+        currentProxyNode->CopyContent(emptyNode);
       }
     }
   }

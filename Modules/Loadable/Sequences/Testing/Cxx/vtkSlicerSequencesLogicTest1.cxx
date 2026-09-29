@@ -129,6 +129,149 @@ int TestAddSequence()
   return EXIT_SUCCESS;
 }
 
+int TestBatchProxyNodeUpdates()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene);
+
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLTextNode* masterProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLTextNode* synchronizedProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLSequenceNode* masterSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, masterProxyNode, browserNode);
+  vtkMRMLSequenceNode* synchronizedSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, synchronizedProxyNode, browserNode);
+  CHECK_NOT_NULL(masterSequenceNode);
+  CHECK_NOT_NULL(synchronizedSequenceNode);
+
+  vtkNew<vtkMRMLTextNode> dataNode;
+  dataNode->SetText("Master 0");
+  masterSequenceNode->SetDataNodeAtValue(dataNode, "0");
+  dataNode->SetText("Master 1");
+  masterSequenceNode->SetDataNodeAtValue(dataNode, "1");
+  dataNode->SetText("Synchronized 0");
+  synchronizedSequenceNode->SetDataNodeAtValue(dataNode, "0");
+  dataNode->SetText("Synchronized 1");
+  synchronizedSequenceNode->SetDataNodeAtValue(dataNode, "1");
+  browserNode->SetSaveChanges(nullptr, true);
+  CHECK_BOOL(browserNode->SetSelectedItemByIndexValue("1"), true);
+
+  int wasModifying = browserNode->StartModify();
+  masterProxyNode->SetText("Master edited");
+  synchronizedProxyNode->SetText("Synchronized edited");
+  CHECK_BOOL(browserNode->GetCustomModifiedEventPending(vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent) > 0, true);
+  browserNode->EndModify(wasModifying);
+
+  vtkMRMLTextNode* masterItem = vtkMRMLTextNode::SafeDownCast(masterSequenceNode->GetDataNodeAtValue("1"));
+  vtkMRMLTextNode* synchronizedItem = vtkMRMLTextNode::SafeDownCast(synchronizedSequenceNode->GetDataNodeAtValue("1"));
+  CHECK_NOT_NULL(masterItem);
+  CHECK_NOT_NULL(synchronizedItem);
+  CHECK_STD_STRING(masterItem->GetText(), "Master edited");
+  CHECK_STD_STRING(synchronizedItem->GetText(), "Synchronized edited");
+  CHECK_STD_STRING(vtkMRMLTextNode::SafeDownCast(masterSequenceNode->GetDataNodeAtValue("0"))->GetText(), "Master 0");
+  CHECK_STD_STRING(vtkMRMLTextNode::SafeDownCast(synchronizedSequenceNode->GetDataNodeAtValue("0"))->GetText(), "Synchronized 0");
+
+  synchronizedProxyNode->SetText("Synchronized single");
+  CHECK_STD_STRING(synchronizedItem->GetText(), "Synchronized single");
+
+  browserNode->SetSaveChanges(synchronizedSequenceNode, false);
+  wasModifying = browserNode->StartModify();
+  masterProxyNode->SetText("Master saved");
+  synchronizedProxyNode->SetText("Synchronized unsaved");
+  browserNode->EndModify(wasModifying);
+  CHECK_STD_STRING(masterItem->GetText(), "Master saved");
+  CHECK_STD_STRING(synchronizedItem->GetText(), "Synchronized single");
+
+  return EXIT_SUCCESS;
+}
+
+int TestBatchProxyNodeRecording()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene);
+
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLTextNode* masterProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLTextNode* synchronizedProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLSequenceNode* masterSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, masterProxyNode, browserNode);
+  vtkMRMLSequenceNode* synchronizedSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, synchronizedProxyNode, browserNode);
+  CHECK_NOT_NULL(masterSequenceNode);
+  CHECK_NOT_NULL(synchronizedSequenceNode);
+
+  browserNode->SetRecording(masterSequenceNode, true);
+  browserNode->SetRecording(synchronizedSequenceNode, true);
+  browserNode->SetRecordMasterOnly(true);
+  browserNode->SetRecordingSamplingMode(vtkMRMLSequenceBrowserNode::SamplingAll);
+  browserNode->SetRecordingActive(true);
+
+  int wasModifying = browserNode->StartModify();
+  synchronizedProxyNode->SetText("Synchronized batched");
+  CHECK_BOOL(browserNode->GetCustomModifiedEventPending(vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent) > 0, true);
+  browserNode->EndModify(wasModifying);
+  CHECK_INT(masterSequenceNode->GetNumberOfDataNodes(), 0);
+  CHECK_INT(synchronizedSequenceNode->GetNumberOfDataNodes(), 0);
+
+  // Deferred events lose proxy identity, so even a master-only batch cannot trigger master-only recording.
+  wasModifying = browserNode->StartModify();
+  masterProxyNode->SetText("Master batched");
+  CHECK_BOOL(browserNode->GetCustomModifiedEventPending(vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent) > 0, true);
+  browserNode->EndModify(wasModifying);
+  CHECK_INT(masterSequenceNode->GetNumberOfDataNodes(), 0);
+  CHECK_INT(synchronizedSequenceNode->GetNumberOfDataNodes(), 0);
+
+  masterProxyNode->SetText("Master recorded");
+  CHECK_INT(masterSequenceNode->GetNumberOfDataNodes(), 1);
+  CHECK_INT(synchronizedSequenceNode->GetNumberOfDataNodes(), 1);
+  std::string recordedIndex = masterSequenceNode->GetNthIndexValue(0);
+  vtkMRMLTextNode* masterItem = vtkMRMLTextNode::SafeDownCast(masterSequenceNode->GetDataNodeAtValue(recordedIndex));
+  vtkMRMLTextNode* synchronizedItem = vtkMRMLTextNode::SafeDownCast(synchronizedSequenceNode->GetDataNodeAtValue(recordedIndex));
+  CHECK_NOT_NULL(masterItem);
+  CHECK_NOT_NULL(synchronizedItem);
+  CHECK_STD_STRING(masterItem->GetText(), "Master recorded");
+  CHECK_STD_STRING(synchronizedItem->GetText(), "Synchronized batched");
+
+  return EXIT_SUCCESS;
+}
+
+int TestBatchProxyNodeRecordingAll()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene);
+
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLTextNode* masterProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLTextNode* synchronizedProxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLSequenceNode* masterSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, masterProxyNode, browserNode);
+  vtkMRMLSequenceNode* synchronizedSequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, synchronizedProxyNode, browserNode);
+  CHECK_NOT_NULL(masterSequenceNode);
+  CHECK_NOT_NULL(synchronizedSequenceNode);
+
+  masterProxyNode->SetText("Master unchanged");
+  browserNode->SetRecording(masterSequenceNode, true);
+  browserNode->SetRecording(synchronizedSequenceNode, true);
+  browserNode->SetRecordMasterOnly(false);
+  browserNode->SetRecordingSamplingMode(vtkMRMLSequenceBrowserNode::SamplingAll);
+  browserNode->SetRecordingActive(true);
+
+  int wasModifying = browserNode->StartModify();
+  synchronizedProxyNode->SetText("Synchronized batched");
+  CHECK_BOOL(browserNode->GetCustomModifiedEventPending(vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent) > 0, true);
+  browserNode->EndModify(wasModifying);
+
+  CHECK_INT(masterSequenceNode->GetNumberOfDataNodes(), 1);
+  CHECK_INT(synchronizedSequenceNode->GetNumberOfDataNodes(), 1);
+  std::string recordedIndex = masterSequenceNode->GetNthIndexValue(0);
+  vtkMRMLTextNode* masterItem = vtkMRMLTextNode::SafeDownCast(masterSequenceNode->GetDataNodeAtValue(recordedIndex));
+  vtkMRMLTextNode* synchronizedItem = vtkMRMLTextNode::SafeDownCast(synchronizedSequenceNode->GetDataNodeAtValue(recordedIndex));
+  CHECK_NOT_NULL(masterItem);
+  CHECK_NOT_NULL(synchronizedItem);
+  CHECK_STD_STRING(masterItem->GetText(), "Master unchanged");
+  CHECK_STD_STRING(synchronizedItem->GetText(), "Synchronized batched");
+
+  return EXIT_SUCCESS;
+}
+
 int TestSparseSequence()
 {
   // Test sparse sequences, where not all sequences have items for all index values
@@ -276,6 +419,9 @@ int vtkSlicerSequencesLogicTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(TestLogicWithoutScene());
   CHECK_EXIT_SUCCESS(TestAddSequence());
+  CHECK_EXIT_SUCCESS(TestBatchProxyNodeUpdates());
+  CHECK_EXIT_SUCCESS(TestBatchProxyNodeRecording());
+  CHECK_EXIT_SUCCESS(TestBatchProxyNodeRecordingAll());
   CHECK_EXIT_SUCCESS(TestSparseSequence());
   return EXIT_SUCCESS;
 }
