@@ -54,6 +54,8 @@
 
 // STD includes
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 //----------------------------------------------------------------------------
 const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED = -1;
@@ -1173,18 +1175,45 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
     sliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing()[2];
   }
 
+  const double oversamplingFactor = sliceNode->GetSlabReconstructionOversamplingFactor();
+  vtkMatrix4x4* xyToRAS = sliceNode->GetXYToRAS();
+  double outputStepRAS[3] = { xyToRAS->GetElement(0, 2), xyToRAS->GetElement(1, 2), xyToRAS->GetElement(2, 2) };
+  double outputSliceSpacing = vtkMath::Norm(outputStepRAS) * std::abs(reslice->GetOutputSpacing()[2]);
+
+  double slabSampleSpacing = 0.0;
+  if (std::isfinite(sliceSpacing) && sliceSpacing > 0.0 //
+      && std::isfinite(outputSliceSpacing) && outputSliceSpacing > 0.0 //
+      && std::isfinite(oversamplingFactor) && oversamplingFactor > 0.0)
+  {
+    // VTK's streamed input extent assumes a sample spacing no larger than the output Z step.
+    slabSampleSpacing = std::min(sliceSpacing / oversamplingFactor, outputSliceSpacing);
+  }
+
   int slabNumberOfSlices = 1;
   if (sliceNode->GetSlabReconstructionEnabled() //
-      && sliceSpacing > 0                       //
-      && sliceNode->GetSlabReconstructionThickness() > sliceSpacing)
+      && slabSampleSpacing > 0                  //
+      && sliceNode->GetSlabReconstructionThickness() > slabSampleSpacing)
   {
-    slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
+    double requestedSlices = std::ceil(sliceNode->GetSlabReconstructionThickness() / slabSampleSpacing);
+    // Leave headroom for VTK's integer extent expansion.
+    constexpr int maximumSlabSlices = std::numeric_limits<int>::max() / 4;
+    slabNumberOfSlices = static_cast<int>(std::min(requestedSlices, static_cast<double>(maximumSlabSlices)));
   }
   reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
 
   reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
 
-  double slabSliceSpacingFraction = sliceSpacing / sliceNode->GetSlabReconstructionOversamplingFactor();
+  double slabSliceSpacingFraction = 1.0;
+  if (slabSampleSpacing > 0.0)
+  {
+    // VTK multiplies this fraction by the output Z step before reslicing.
+    slabSliceSpacingFraction = slabSampleSpacing / outputSliceSpacing;
+    if (slabNumberOfSlices > 1 && slabSliceSpacingFraction == 1.0)
+    {
+      // VTK's exact-unit-spacing fast path shifts slabs by half a sample.
+      slabSliceSpacingFraction = std::nextafter(1.0, 0.0);
+    }
+  }
   reslice->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
 }
 
