@@ -22,6 +22,7 @@ Developer ID for distribution/notarization.
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -47,14 +48,23 @@ def is_macho(path):
         return False
 
 
-def find_machos(root):
+def find_machos(root, protected=()):
+    """Return (paths, skipped): every Mach-O under root, split by whether its
+    basename matches one of the ``protected`` regexes -- e.g. a vendor library
+    that ships with its own valid signature and must not be re-signed.
+    """
     paths = []
+    skipped = []
     for directory, _dirs, files in os.walk(root):
         for name in files:
             path = os.path.join(directory, name)
-            if is_macho(path):
+            if not is_macho(path):
+                continue
+            if any(pattern.search(name) for pattern in protected):
+                skipped.append(path)
+            else:
                 paths.append(path)
-    return paths
+    return paths, skipped
 
 
 def sign(path, identity):
@@ -67,8 +77,8 @@ def sign(path, identity):
     return path, result.returncode, result.stderr.strip()
 
 
-def sign_bundle(app, identity):
-    machos = find_machos(app)
+def sign_bundle(app, identity, protected=()):
+    machos, skipped = find_machos(app, protected)
     # Deepest paths first so nested code is sealed before its container.
     machos.sort(key=lambda path: path.count(os.sep), reverse=True)
 
@@ -81,6 +91,10 @@ def sign_bundle(app, identity):
           % (len(machos), len(failures)))
     for path, error in failures[:20]:
         print(f"  failed: {path}: {error}")
+    if skipped:
+        print("SlicerSignBundleMacOS: left %d protected Mach-O file(s) unsigned:" % len(skipped))
+        for path in skipped:
+            print("  protected:", path)
 
     # Seal the application bundle itself last.
     result = subprocess.run(
@@ -100,12 +114,24 @@ def main(argv):
     parser.add_argument("--app", required=True, help="Path to the .app bundle")
     parser.add_argument("--identity", default="-",
                         help="codesign identity (default: '-', ad-hoc)")
+    parser.add_argument("--protect", action="append", default=[], metavar="REGEX",
+                        help="Regex (unanchored search against basename) of Mach-O files to "
+                             "leave unsigned -- e.g. a vendor library that ships "
+                             "with its own valid signature (repeatable).")
     options = parser.parse_args(argv)
     if not os.path.isdir(options.app):
         print("SlicerSignBundleMacOS: no such bundle: %s" % options.app,
               file=sys.stderr)
         return 1
-    return 0 if sign_bundle(options.app, options.identity) else 1
+    protected = []
+    for pattern in options.protect:
+        try:
+            protected.append(re.compile(pattern))
+        except re.error as error:
+            print("SlicerSignBundleMacOS: invalid --protect regex %r: %s" %
+                  (pattern, error), file=sys.stderr)
+            return 1
+    return 0 if sign_bundle(options.app, options.identity, protected) else 1
 
 
 if __name__ == "__main__":

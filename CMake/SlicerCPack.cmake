@@ -302,6 +302,18 @@ else()
   # Configure "fixup" script
   #------------------------------------------------------------------------------
   set(fixup_path @rpath)
+  string(CONCAT _protected_libraries_description
+    "Regex patterns (matched against Mach-O basename) of macOS bundle "
+    "libraries to leave untouched during bundle fixup and re-signing "
+    "e.g. vendor libraries shipped with their own valid signature. Their "
+    "dependencies are not resolved or embedded, and their load commands are "
+    "not rewritten. Patterns use an unanchored search against the basename; "
+    "use [.] rather than \\. for literal dots. Protected libraries must already "
+    "be correctly signed, including nested Mach-O code, when signing/notarizing.")
+
+  set(Slicer_CPACK_BUNDLE_FIXUP_PROTECTED_LIBRARIES ""
+    CACHE STRING "${_protected_libraries_description}")
+  mark_as_advanced(Slicer_CPACK_BUNDLE_FIXUP_PROTECTED_LIBRARIES)
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
     "${Slicer_SOURCE_DIR}/CMake/SlicerCPackBundleFixup.cmake.in"
