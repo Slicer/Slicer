@@ -88,6 +88,17 @@ class vtkFloatArray;
    };
 #endif
 
+//----------------------------------------------------------------------------
+/// Set and observe a vtkMRMLAbstractLogic's ModifiedEvent through the logic callback.
+/// The observer manager holds the reference to the object. The caller must
+/// clear the pointer before its observer manager is destroyed.
+#ifndef vtkSetAndObserveMRMLLogicMacro
+# define vtkSetAndObserveMRMLLogicMacro(logic, value)                                                \
+   {                                                                                                 \
+     this->GetMRMLLogicsObserverManager()->SetAndObserveObject(vtkObjectPointer(&(logic)), (value)); \
+   };
+#endif
+
 #ifndef vtkObserveMRMLNodeMacro
 # define vtkObserveMRMLNodeMacro(node)                           \
    {                                                             \
