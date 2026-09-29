@@ -21,6 +21,7 @@
 
 // MRML includes
 #include <vtkMRMLMarkupsCurveNode.h>
+#include <vtkMRMLNodeCleanup.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -121,27 +122,6 @@ bool vtkSlicerGeneralizedReformatLogic::ComputeStraighteningTransform(vtkMRMLTra
                                                                       double rotationDeg,
                                                                       vtkMRMLModelNode* reslicingPlanesModelNode)
 {
-  struct vtkMRMLNodeCleanup
-  {
-  public:
-    vtkMRMLNodeCleanup(vtkMRMLScene* scene, vtkMRMLNode* node)
-      : Scene(scene)
-      , Node(node)
-    {
-    }
-    ~vtkMRMLNodeCleanup()
-    {
-      if (this->Scene != nullptr)
-      {
-        this->Scene->RemoveNode(this->Node);
-      }
-    }
-
-  private:
-    vtkMRMLScene* Scene{ nullptr };
-    vtkMRMLNode* Node{ nullptr };
-  };
-
   if (transformToStraightenedNode == nullptr)
   {
     vtkErrorMacro("ComputeStraighteningTransform: transformToStraightenedNode is nullptr");
