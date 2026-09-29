@@ -1422,23 +1422,53 @@ class DICOMFileReader:
     def extensions(self):
         return ["DICOM (*.dcm)", "DICOM (*)"]
 
-    def canLoadFileConfidence(self, filePath):
+    # Confidence of loading DICOM files. It is higher than the default 0.5
+    # to import DICOM files using DICOM module by default.
+    dicomFileConfidence = 0.6
+
+    @staticmethod
+    def isDicomFile(filePath):
         import pydicom
 
-        if pydicom.misc.is_dicom(filePath):
+        try:
+            return pydicom.misc.is_dicom(filePath)
+        except OSError:
+            return False
+
+    def canLoadFileConfidence(self, filePath):
+        if DICOMFileReader.isDicomFile(filePath):
             # This is a DICOM file, so we return higher confidence than the default 0.5
             # to import DICOM files using DICOM module.
-            return 0.6
+            return DICOMFileReader.dicomFileConfidence
         else:
             return 0.0
 
+    def examineFileListConfidence(self, fileNames, properties):
+        """If multiple DICOM files are loaded (e.g., selected in the Add data dialog)
+        then they are imported together, using DICOM module.
+        """
+        dicomFiles = [fileName for fileName in fileNames if DICOMFileReader.isDicomFile(fileName)]
+        if len(dicomFiles) < 2:
+            return 0.0
+        for fileName in dicomFiles[1:]:
+            fileNames.remove(fileName)
+        properties["fileName"] = dicomFiles[0]
+        properties["fileNames"] = dicomFiles
+        return DICOMFileReader.dicomFileConfidence
+
     def load(self, properties):
-        filePath = properties["fileName"]
-        dicomFilesDirectory = os.path.dirname(os.path.abspath(filePath))
+        filePaths = properties.get("fileNames") or [properties["fileName"]]
+        # All files in the directory of the selected files are imported
+        dicomFilesDirectories = []
+        for filePath in filePaths:
+            dicomFilesDirectory = os.path.dirname(os.path.abspath(filePath))
+            if dicomFilesDirectory not in dicomFilesDirectories:
+                dicomFilesDirectories.append(dicomFilesDirectory)
 
         # instantiate a new DICOM browser (and create DICOM database if not created yet)
         slicer.util.selectModule("DICOM")
         browserWidget = slicer.modules.DICOMWidget.browserWidget
-        browserWidget.importDirectory(dicomFilesDirectory)
+        for dicomFilesDirectory in dicomFilesDirectories:
+            browserWidget.importDirectory(dicomFilesDirectory)
 
         return True

@@ -97,6 +97,12 @@ PyObject* vtkSlicerScriptedFileReaderBridge::PropertiesToDict(vtkMRMLIOPropertie
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerScriptedFileReaderBridge::UpdatePropertiesFromDict(vtkMRMLIOProperties* properties, PyObject* dict)
+{
+  utils::UpdatePropertiesFromPyDict(properties, dict);
+}
+
+//----------------------------------------------------------------------------
 bool vtkSlicerScriptedFileReaderBridge::CanLoadFile(const std::string& filePath)
 {
   if (!utils::IsValidPythonContext())
@@ -180,6 +186,90 @@ bool vtkSlicerScriptedFileReaderBridge::Load(vtkMRMLIOProperties* properties)
     return false;
   }
   return this->Superclass::Load(properties);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkSlicerScriptedFileReaderBridge::ExamineFileList(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties)
+{
+  if (!utils::IsValidPythonContext())
+  {
+    return this->Superclass::ExamineFileList(fileList, ioProperties);
+  }
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  vtkSmartPyObject pyFileList;
+  pyFileList.TakeReference(utils::ToPyObject(fileList));
+  Py_INCREF(pyFileList.GetPointer()); // the argument tuple steals a reference
+  bool callFailed = false;
+  if (PyObject* result = this->CallPythonMethod(utils::ToPyArgs({ pyFileList.GetPointer(), utils::ToPyObject(ioProperties) }), __func__, false, &callFailed))
+  {
+    std::string archetypeFile;
+    const bool valid = (result == Py_None || utils::ToString(result, archetypeFile));
+    Py_DECREF(result);
+    if (!valid)
+    {
+      vtkErrorMacro(<< __func__ << ": expected a str or None return value from the Python implementation");
+      return std::string();
+    }
+    std::vector<std::string> remainingFiles;
+    if (utils::ToStringList(pyFileList, remainingFiles))
+    {
+      fileList = remainingFiles;
+    }
+    else
+    {
+      vtkErrorMacro(<< __func__ << ": the file list must only contain strings");
+    }
+    return archetypeFile;
+  }
+  if (callFailed)
+  {
+    // The Python method raised an exception (the error is logged). No group of files is recognized.
+    return std::string();
+  }
+  return this->Superclass::ExamineFileList(fileList, ioProperties);
+}
+
+//----------------------------------------------------------------------------
+double vtkSlicerScriptedFileReaderBridge::ExamineFileListConfidence(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties)
+{
+  if (!utils::IsValidPythonContext())
+  {
+    return this->Superclass::ExamineFileListConfidence(fileList, ioProperties);
+  }
+
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  vtkSmartPyObject pyFileList;
+  pyFileList.TakeReference(utils::ToPyObject(fileList));
+  Py_INCREF(pyFileList.GetPointer()); // the argument tuple steals a reference
+  bool callFailed = false;
+  if (PyObject* result = this->CallPythonMethod(utils::ToPyArgs({ pyFileList.GetPointer(), utils::ToPyObject(ioProperties) }), __func__, false, &callFailed))
+  {
+    double confidence = 0.0;
+    const bool valid = utils::ToDouble(result, confidence);
+    Py_DECREF(result);
+    if (!valid)
+    {
+      vtkErrorMacro(<< __func__ << ": expected a float return value from the Python implementation");
+      return 0.0;
+    }
+    std::vector<std::string> remainingFiles;
+    if (utils::ToStringList(pyFileList, remainingFiles))
+    {
+      fileList = remainingFiles;
+    }
+    else
+    {
+      vtkErrorMacro(<< __func__ << ": the file list must only contain strings");
+    }
+    return confidence;
+  }
+  if (callFailed)
+  {
+    // The Python method raised an exception (the error is logged). No group of files is recognized.
+    return 0.0;
+  }
+  return this->Superclass::ExamineFileListConfidence(fileList, ioProperties);
 }
 
 //----------------------------------------------------------------------------

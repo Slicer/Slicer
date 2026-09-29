@@ -153,7 +153,8 @@ class LegacyScriptedFileReader(_LegacyScriptedFileIOMixin, vtkSlicerScriptedFile
 
     The legacy class is instantiated with a ``parent`` argument (a :class:`ScriptedFileIOParent` that refers to
     this reader) and implements ``description()``, ``fileType()``, ``extensions()``, ``load(properties)``, and
-    optionally ``canLoadFile(filePath)``, ``canLoadFileConfidence(filePath)``, ``getOptionsDescription(description)``.
+    optionally ``canLoadFile(filePath)``, ``canLoadFileConfidence(filePath)``, ``getOptionsDescription(description)``,
+    ``examineFileListConfidence(fileNames, properties)``, ``examineFileList(fileNames, properties)``.
     Properties are passed as dictionaries. Loaded nodes are reported by setting ``self.parent.loadedNodes``.
 
     .. deprecated:: Implement readers by subclassing :class:`vtkSlicerScriptedFileReader` instead.
@@ -202,6 +203,47 @@ class LegacyScriptedFileReader(_LegacyScriptedFileIOMixin, vtkSlicerScriptedFile
             # Keep node IDs that the legacy class may have added directly to the reader
             self.SetLoadedNodeIDs(nodeIDs)
         return success
+
+    def _examine(self, methodName, fileNames, properties, isValidResult):
+        """Call examineFileList or examineFileListConfidence of the legacy object, which modifies a list of file
+        names and a dictionary of properties in place. The file names and properties are updated if a group of files is recognized.
+        """
+        legacyFileNames = list(fileNames)
+        legacyProperties = vtkSlicerScriptedFileReader.PropertiesToDict(properties)
+        result = self._callLegacy(methodName, legacyFileNames, legacyProperties)
+        if not isValidResult(result):
+            return None
+        if _isStringList(legacyFileNames):
+            fileNames[:] = legacyFileNames
+        else:
+            self._logError("the file list must only contain strings")
+        vtkSlicerScriptedFileReader.UpdatePropertiesFromDict(properties, legacyProperties)
+        return result
+
+    def ExamineFileList(self, fileNames, properties):
+        if not self._hasLegacyMethod("examineFileList"):
+            return super().ExamineFileList(fileNames, properties)
+
+        def isValidResult(result):
+            if result is not None and not isinstance(result, (str, bytes)):
+                self._logError("method 'examineFileList' is expected to return a string or None")
+                return False
+            return bool(result)
+
+        return self._examine("examineFileList", fileNames, properties, isValidResult) or ""
+
+    def ExamineFileListConfidence(self, fileNames, properties):
+        if not self._hasLegacyMethod("examineFileListConfidence"):
+            return super().ExamineFileListConfidence(fileNames, properties)
+
+        def isValidResult(result):
+            if result is not None and not _isNumber(result):
+                self._logError("method 'examineFileListConfidence' is expected to return a number")
+                return False
+            return result is not None and float(result) > 0.0
+
+        result = self._examine("examineFileListConfidence", fileNames, properties, isValidResult)
+        return float(result) if result is not None else 0.0
 
     def GetOptionsDescription(self, description):
         if not self._hasLegacyMethod("getOptionsDescription"):

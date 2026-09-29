@@ -141,10 +141,12 @@ void qSlicerDataDialogPrivate::addFiles()
   qSlicerStandardFileDialog fileDialog;
   QStringList files = fileDialog.getOpenFileName();
 
+  QFileInfoList fileInfoList;
   for (const QString& file : files)
   {
-    this->addFile(QFileInfo(file));
+    fileInfoList << QFileInfo(file);
   }
+  this->addFileInfoList(fileInfoList);
   this->resetColumnWidths();
 }
 
@@ -155,35 +157,64 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
   QDir::Filters filters = QDir::AllDirs | QDir::Files | QDir::Readable | QDir::NoDotAndDotDot;
   QFileInfoList fileInfoList = directory.entryInfoList(filters);
 
-  //
-  // check to see if any readers recognize the directory contents
-  // and provide an archetype.
-  //
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  QString readerDescription;
-  qSlicerIO::IOProperties ioProperties;
-  QFileInfo archetypeEntry;
-  if (coreIOManager->examineFileInfoList(fileInfoList, archetypeEntry, readerDescription, ioProperties))
-  {
-    this->addFile(archetypeEntry, readerDescription, &ioProperties);
-  }
-
-  //
-  // now add any files and directories that weren't filtered
-  // out by the ioManager
-  //
+  QFileInfoList files;
   for (const QFileInfo& entry : fileInfoList)
   {
     if (entry.isFile())
     {
-      this->addFile(entry);
+      files << entry;
     }
     else if (entry.isDir() && recursive)
     {
       this->addDirectory(entry.absoluteFilePath());
     }
   }
+  this->addFileInfoList(files);
   this->resetColumnWidths();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::addFileInfoList(QFileInfoList fileInfoList)
+{
+  //
+  // Check to see if any readers recognize a group of files and provide an archetype.
+  // There may be multiple groups (for example, multiple image series in a directory).
+  //
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  while (fileInfoList.count() > 1)
+  {
+    QString readerDescription;
+    qSlicerIO::IOProperties ioProperties;
+    QFileInfo archetypeEntry;
+    const int numberOfFilesBefore = fileInfoList.count();
+    if (!coreIOManager->examineFileInfoList(fileInfoList, archetypeEntry, readerDescription, ioProperties))
+    {
+      break;
+    }
+    this->addFile(archetypeEntry, readerDescription, &ioProperties);
+    // The archetype is added, remove it from the list
+    QMutableListIterator<QFileInfo> fileInfoIterator(fileInfoList);
+    while (fileInfoIterator.hasNext())
+    {
+      if (fileInfoIterator.next().absoluteFilePath() == archetypeEntry.absoluteFilePath())
+      {
+        fileInfoIterator.remove();
+      }
+    }
+    if (fileInfoList.count() >= numberOfFilesBefore)
+    {
+      // no files were removed from the list, stop to avoid infinite loop
+      break;
+    }
+  }
+
+  //
+  // Add files that were not recognized as part of a group
+  //
+  for (const QFileInfo& entry : fileInfoList)
+  {
+    this->addFile(entry);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -235,6 +266,13 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   QTableWidgetItem* fileItem = new QTableWidgetItem(file.absoluteFilePath());
   fileItem->setFlags((fileItem->flags() | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
   fileItem->setCheckState(Qt::Checked);
+  if (!readerDescription.isEmpty() && ioProperties != nullptr)
+  {
+    // Properties that the reader set when it recognized a group of files (for example, the list of files
+    // in the group). They are used for loading if the file is loaded with the same reader.
+    fileItem->setData(GroupReaderDescriptionRole, readerDescription);
+    fileItem->setData(GroupPropertiesRole, *ioProperties);
+  }
   this->FileWidget->setItem(row, FileColumn, fileItem);
   // Description
   QComboBox* descriptionComboBox = new QComboBox(this->FileWidget);
@@ -348,6 +386,11 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles() const
     if (fileItem->checkState() != Qt::Checked)
     {
       continue;
+    }
+    if (descriptionComboBox->currentText() == fileItem->data(GroupReaderDescriptionRole).toString())
+    {
+      // Properties of the recognized group of files (options set by the user override them)
+      properties = fileItem->data(GroupPropertiesRole).toMap();
     }
     // TBD: fileType is not good enough to describe what reader to use
     properties["fileType"] = descriptionComboBox->itemData(descriptionComboBox->currentIndex()).toString();
@@ -578,6 +621,7 @@ void qSlicerDataDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerDataDialog);
   bool pathAdded = false;
+  QFileInfoList droppedFiles;
   for (const QUrl& url : event->mimeData()->urls())
   {
     if (!url.isValid() || url.isEmpty())
@@ -594,12 +638,13 @@ void qSlicerDataDialog::dropEvent(QDropEvent* event)
       d->addDirectory(QDir(localPath));
       pathAdded = true;
     }
-    else if (pathInfo.isFile()) // if it is a file we simply add the file
+    else if (pathInfo.isFile()) // files are added together, to allow recognizing groups of files
     {
-      d->addFile(pathInfo);
+      droppedFiles << pathInfo;
       pathAdded = true;
     }
   }
+  d->addFileInfoList(droppedFiles);
   if (pathAdded)
   {
     event->acceptProposedAction();
@@ -619,10 +664,12 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   {
     fileNames << readerProperties["fileNames"].toStringList();
   }
+  QFileInfoList fileInfoList;
   for (const QString& fileName : fileNames)
   {
-    d->addFile(QFileInfo(fileName));
+    fileInfoList << QFileInfo(fileName);
   }
+  d->addFileInfoList(fileInfoList);
   d->resetColumnWidths();
 
   bool success = false;

@@ -219,7 +219,12 @@ bool qSlicerVTKFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFil
   }
   vtkNew<vtkMRMLIOProperties> vtkProperties;
   qSlicerIO::toVTKProperties(ioProperties, vtkProperties);
-  std::string archetypeFile = reader->ExamineFileList(fileList, vtkProperties);
+  vtkProperties->RemoveProperty("fileName");
+  if (reader->ExamineFileListConfidence(fileList, vtkProperties) <= 0.0)
+  {
+    return false;
+  }
+  const std::string archetypeFile = vtkProperties->GetStringProperty("fileName");
   if (archetypeFile.empty())
   {
     return false;

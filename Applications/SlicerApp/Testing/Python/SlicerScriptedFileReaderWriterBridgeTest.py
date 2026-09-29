@@ -60,6 +60,17 @@ class SlicerScriptedFileReaderWriterBridgeTestFileReader(slicer.vtkSlicerScripte
         with open(filePath) as f:
             return 0.8 if f.readline().strip() == self.headerText else 0.1
 
+    def ExamineFileListConfidence(self, fileNames, properties):
+        self.calls.append(("ExamineFileListConfidence", type(fileNames).__name__, type(properties).__name__))
+        group = [fileName for fileName in fileNames if fileName.endswith(".btf") and "_part" in os.path.basename(fileName)]
+        if len(group) < 2:
+            return 0.0
+        for fileName in group[1:]:
+            fileNames.remove(fileName)
+        properties.SetStringProperty("fileName", group[0])
+        properties.SetStringListProperty("fileNames", group)
+        return 0.9
+
     def GetOptionsDescription(self, description):
         self.calls.append(("GetOptionsDescription", type(description).__name__))
         description.AddBoolOption("upperCase", "Upper case", "Convert the text to upper case", False)
@@ -236,12 +247,34 @@ class SlicerScriptedFileReaderWriterBridgeTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(fileIOManager.GetReaderForFile(filePath), reader)
         self.assertTrue(reader.CanLoadFile(filePath))
         self.assertFalse(reader.CanLoadFile(filePath + ".txt"))
+        self.assertEqual(reader.ExamineFileListConfidence([filePath], slicer.vtkMRMLIOProperties()), 0.0)
 
         # A reader that calls super() gets the C++ value (the test reader returns 0.8 for a valid header)
         testReader = SlicerScriptedFileReaderWriterBridgeTestFileReader()
         self.assertAlmostEqual(testReader.CanLoadFileConfidence(filePath), 0.8)
         fileIOManager.RegisterReader(testReader)
         self.assertEqual(fileIOManager.GetReaderForFile(filePath), testReader)
+
+    def test_ExamineFileList(self):
+        """The file list is modified in place by the Python method and the manager sees the changes."""
+        fileIOManager = self.standaloneManager()
+        reader = SlicerScriptedFileReaderWriterBridgeTestFileReader()
+        fileIOManager.RegisterReader(reader)
+        part1 = self.writeFile("group_part1.btf", "BRIDGE\nfirst ")
+        part2 = self.writeFile("group_part2.btf", "BRIDGE\nsecond")
+        other = self.writeFile("other.btf", "BRIDGE\nother")
+        fileList = [part2, other, part1]
+        properties = slicer.vtkMRMLIOProperties()
+        foundReader = fileIOManager.ExamineFileList(fileList, properties)
+        self.assertEqual(foundReader, reader)
+        self.assertEqual(sorted(fileList), sorted([part2, other]))
+        self.assertEqual(properties.GetStringProperty("fileName"), part2)
+        self.assertEqual(list(properties.GetStringListProperty("fileNames")), [part2, part1])
+        self.assertIn(("ExamineFileListConfidence", "list", "vtkMRMLIOProperties"), reader.calls)
+        # Load the group
+        loadedNodes = vtk.vtkCollection()
+        self.assertTrue(fileIOManager.LoadNodes("BridgeTestFile", properties, loadedNodes))
+        self.assertEqual(loadedNodes.GetItemAsObject(0).GetText(), "secondfirst ")
 
     def test_ErrorHandling(self):
         """Errors in Python methods are logged, the failing reader or writer does not claim files or nodes,
@@ -314,11 +347,15 @@ class SlicerScriptedFileReaderWriterBridgeTestTest(ScriptedLoadableModuleTest):
                 self.SetFileType("ConversionFile")
                 self.SetNameFilters(["Conversion (*.mft)"])
                 self.confidence = 0.0
+                self.archetypeFile = ""
                 self.receivedFilePaths = []
 
             def CanLoadFileConfidence(self, filePath):
                 self.receivedFilePaths.append(filePath)
                 return self.confidence
+
+            def ExamineFileList(self, fileNames, properties):
+                return self.archetypeFile
 
         reader = ConversionReader()
         # Unbound calls of the bridge methods call the C++ implementation, which calls the Python method
@@ -341,6 +378,29 @@ class SlicerScriptedFileReaderWriterBridgeTestTest(ScriptedLoadableModuleTest):
         bridge.CanLoadFileConfidence(reader, nonAsciiFilePath)
         self.assertEqual(reader.receivedFilePaths, [nonAsciiFilePath])
         self.assertIsInstance(reader.receivedFilePaths[0], str)
+
+        # A string that cannot be encoded as UTF-8 (contains a lone surrogate) is rejected without crash
+        reader.archetypeFile = "a\udcff.txt"
+        self.assertEqual(bridge.ExamineFileList(reader, ["a.txt"], slicer.vtkMRMLIOProperties()), "")
+        # No Python error is left pending (the next call works normally)
+        reader.archetypeFile = "a.txt"
+        self.assertEqual(bridge.ExamineFileList(reader, ["a.txt"], slicer.vtkMRMLIOProperties()), "a.txt")
+
+        # Strings that are not valid UTF-8 (such as file names on Linux) are passed to Python as bytes
+        # and they are accepted when Python returns them
+        class GroupingReader(slicer.vtkSlicerScriptedFileReader):
+            def ExamineFileListConfidence(self, fileNames, properties):
+                self.receivedFileNames = list(fileNames)
+                fileNames.remove(fileNames[1])
+                return 0.9
+
+        groupingReader = GroupingReader()
+        nonUtf8FileName = b"group\xff_part1.txt"
+        fileList = [nonUtf8FileName, "group_part2.txt"]
+        confidence = slicer.vtkSlicerScriptedFileReaderBridge.ExamineFileListConfidence(groupingReader, fileList, slicer.vtkMRMLIOProperties())
+        self.assertEqual(groupingReader.receivedFileNames, [nonUtf8FileName, "group_part2.txt"])
+        self.assertAlmostEqual(confidence, 0.9)
+        self.assertEqual(fileList, [nonUtf8FileName])
 
     def test_Lifetime(self):
         """The reader is deleted when it is no longer used, and the Python object is released."""

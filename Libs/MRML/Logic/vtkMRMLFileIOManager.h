@@ -133,6 +133,8 @@ public:
   /// files from the list and sets the ioProperties so that the corresponding
   /// loader will read these files. The "fileName" property is set to the archetype file.
   /// Returns the reader that recognized the files or nullptr if no pattern is recognized.
+  /// If multiple readers recognize a group of files then the one with the highest confidence
+  /// (see vtkMRMLFileReader::ExamineFileListConfidence) is used.
   /// The specific motivating use case is when the file list contains a set of related files,
   /// such as a list of image files that are recognized as a volume.
   /// In Python, fileList must be a list (it is modified in place).
