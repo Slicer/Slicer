@@ -35,5 +35,9 @@ slicerMacroBuildScriptedModule(
 
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
-#  add_subdirectory(Testing)
+  add_test(
+    NAME py_DICOMBrowserRemoval
+    COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Python/test_DICOMBrowserRemoval.py
+    )
 endif()

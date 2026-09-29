@@ -50,6 +50,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.pluginInstances = {}  # custom DICOM plugin instances can be added to override the default set
 
         self.fileLists = []
+        self._selectionRevision = 0
         self.extensionCheckPending = False
 
         self.settings = qt.QSettings()
@@ -79,6 +80,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         self.dicomBrowser.connect("directoryImported()", self.onDirectoryImported)
         self.dicomBrowser.connect("sendRequested(QStringList)", self.onSend)
+        self.dicomBrowser.database().connect("seriesRemoved(QString)", self.onSeriesRemoved)
 
         # Load when double-clicked on an item in the browser
         self.dicomBrowser.dicomTableManager().connect("patientsDoubleClicked(QModelIndex)", self.patientStudySeriesDoubleClicked)
@@ -438,9 +440,14 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.settings.setValue("DICOM/horizontalTables", int(horizontal))
 
     def onSeriesSelected(self, seriesUIDList):
+        self._selectionRevision += 1
         self.loadableTable.setLoadables([])
-        self.fileLists = self.getFileListsForRole(seriesUIDList, "SeriesUIDList")
+        self.loadablesByPlugin = {}
+        self.fileLists = [files for files in self.getFileListsForRole(seriesUIDList, "SeriesUIDList") if files]
         self.updateButtonStates()
+
+    def onSeriesRemoved(self, _seriesUID):
+        self.onSeriesSelected(self.dicomBrowser.dicomTableManager().currentSeriesSelection())
 
     def getFileListsForRole(self, uidArgument, role):
         fileLists = []
@@ -474,10 +481,19 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         of what to load
         """
 
-        (self.loadablesByPlugin, _loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
+        if not self.fileLists:
+            return False
+
+        selectionRevision = self._selectionRevision
+        loadablesByPlugin, _loadEnabled = self.getLoadablesFromFileLists(self.fileLists)
+        if selectionRevision != self._selectionRevision:
+            return False
+
+        self.loadablesByPlugin = loadablesByPlugin
         DICOMLib.selectHighestConfidenceLoadables(self.loadablesByPlugin)
         self.loadableTable.setLoadables(self.loadablesByPlugin)
         self.updateButtonStates()
+        return True
 
     def getLoadablesFromFileLists(self, fileLists):
         """Take list of file lists, return loadables by plugin dictionary"""
@@ -562,7 +578,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         (DICOMLoadable or qSlicerDICOMLoadable) instances that are selected
         """
         if self.advancedViewButton.checkState() == 0:
-            self.examineForLoading()
+            if not self.examineForLoading():
+                return
 
         self.loadableTable.updateSelectedFromCheckstate()
 
