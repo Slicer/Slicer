@@ -37,6 +37,7 @@
 #include "rapidjson/prettywriter.h" // for stringify JSON
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
+#include "rapidjson/stringbuffer.h"
 
 #include <deque>
 #include <memory>
@@ -86,6 +87,8 @@ public:
   virtual void Bool(bool) = 0;
   virtual void Int(int) = 0;
   virtual void Double(double) = 0;
+  virtual void Null() = 0;
+  virtual void Int64(int64_t) = 0;
 };
 
 // Derived class for FileWriter
@@ -116,6 +119,10 @@ public:
   void Int(int d) override { writer_->Int(d); }
 
   void Double(double d) override { writer_->Double(d); }
+
+  void Null() override { writer_->Null(); }
+
+  void Int64(int64_t d) override { writer_->Int64(d); }
 
 private:
   std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> writer_;
@@ -150,6 +157,10 @@ public:
 
   void Double(double d) override { writer_->Double(d); }
 
+  void Null() override { writer_->Null(); }
+
+  void Int64(int64_t d) override { writer_->Int64(d); }
+
 private:
   std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer_;
 };
@@ -168,11 +179,20 @@ public:
 
   void SetStringWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer) { this->Writer = std::make_unique<StringWriter>(std::move(writer)); }
 
+  /// Create the string buffer and the JSON writer that writes into it
+  void StartStringWriter()
+  {
+    this->StringBuffer = std::make_unique<rapidjson::StringBuffer>();
+    this->SetStringWriter(std::make_unique<rapidjson::PrettyWriter<rapidjson::StringBuffer>>(*this->StringBuffer));
+  }
+
   std::vector<char> WriteBuffer;
   FILE* WriteFileHandle{ 0 };
   std::unique_ptr<rapidjson::FileWriteStream> FileWriteStream;
   std::unique_ptr<rapidjson::StringBuffer> StringBuffer;
   std::unique_ptr<BaseWriter> Writer;
+  /// If true then the string output contains a wrapper object ({"<nodeTagName>": {...}})
+  bool StringWrapperObject{ true };
 
 protected:
   vtkMRMLJsonWriter* External;

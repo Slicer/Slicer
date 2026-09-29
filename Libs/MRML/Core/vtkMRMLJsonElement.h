@@ -21,6 +21,7 @@
 #include "vtkMRMLMessageCollection.h"
 #include "vtkSmartPointer.h"
 #include "vtkNew.h"
+#include "vtkVariant.h"
 
 #include <vector>
 
@@ -243,11 +244,19 @@ public:
   /// Returns true on success.
   bool WriteToFileEnd();
 
-  /// This method must be called before writing any properties to the output file.
+  /// Start writing a JSON document into a string.
+  /// Properties are written into an object that is wrapped in the top-level object: {"<nodeTagName>": {...}}.
+  /// This method must be called before writing any properties.
   /// Returns true on success.
   bool WriteToStringBegin(const char* nodeTagName);
 
-  /// This method must be called after writing all properties to the output file.
+  /// Start writing a JSON document into a string.
+  /// The top-level element is an object and properties are written directly into it (no wrapper object).
+  /// This method must be called before writing any properties.
+  /// Returns true on success.
+  bool WriteToStringBegin();
+
+  /// This method must be called after writing all properties into the string.
   /// Returns string representation of the JSON document.
   std::string WriteToStringEnd();
 
@@ -279,6 +288,13 @@ public:
   void WriteMatrix4x4Property(const std::string& propertyName, double v[16], bool flipRasLps);
   void WriteDoubleArrayProperty(const char* propertyName, vtkDoubleArray* doubleArray);
   /// @}
+
+  /// Write a vtkVariant value as a property: string, integer (64-bit), or floating-point number.
+  /// Invalid variants and non-finite numbers (NaN, infinity) are written as null.
+  void WriteVariantProperty(const std::string& propertyName, const vtkVariant& propertyValue);
+
+  /// Write null as a property value.
+  void WriteNullProperty(const std::string& propertyName);
 
   /// Utility function to convert string to lower case
   std::string toLower(const std::string& str);
