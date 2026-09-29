@@ -42,6 +42,9 @@
 #include "vtkCodedEntry.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
+// STD includes
+#include <cmath>
+
 vtkStandardNewMacro(vtkMRMLJsonElement);
 vtkStandardNewMacro(vtkMRMLJsonReader);
 vtkStandardNewMacro(vtkMRMLJsonWriter);
@@ -1024,23 +1027,30 @@ bool vtkMRMLJsonWriter::WriteToStringBegin(const char* nodeTagName)
   {
     return false;
   }
-
-  // Prepare JSON writer and output stream.
-  this->Internal->StringBuffer = std::make_unique<rapidjson::StringBuffer>();
-  auto stringWriter = std::make_unique<rapidjson::PrettyWriter<rapidjson::StringBuffer>>(*this->Internal->StringBuffer);
-  this->Internal->SetStringWriter(std::move(stringWriter));
-
+  this->Internal->StartStringWriter();
+  this->Internal->StringWrapperObject = true;
   this->Internal->Writer->StartObject();
   this->Internal->Writer->Key(nodeTagName);
   this->Internal->Writer->StartObject();
+  return true;
+}
 
+//----------------------------------------------------------------------------
+bool vtkMRMLJsonWriter::WriteToStringBegin()
+{
+  this->Internal->StartStringWriter();
+  this->Internal->StringWrapperObject = false;
+  this->Internal->Writer->StartObject();
   return true;
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLJsonWriter::WriteToStringEnd()
 {
-  this->Internal->Writer->EndObject();
+  if (this->Internal->StringWrapperObject)
+  {
+    this->Internal->Writer->EndObject();
+  }
   this->Internal->Writer->EndObject();
   std::string jsonString = this->Internal->StringBuffer->GetString();
   this->Internal->Writer.reset();
@@ -1113,6 +1123,48 @@ void vtkMRMLJsonWriter::WriteDoubleProperty(const std::string& propertyName, dou
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->Double(propertyValue);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLJsonWriter::WriteVariantProperty(const std::string& propertyName, const vtkVariant& propertyValue)
+{
+  this->Internal->Writer->Key(propertyName.c_str());
+  if (!propertyValue.IsValid())
+  {
+    this->Internal->Writer->Null();
+  }
+  else if (propertyValue.IsString())
+  {
+    this->Internal->Writer->String(propertyValue.ToString().c_str());
+  }
+  else if (propertyValue.IsFloat() || propertyValue.IsDouble())
+  {
+    const double value = propertyValue.ToDouble();
+    if (std::isfinite(value))
+    {
+      this->Internal->Writer->Double(value);
+    }
+    else
+    {
+      // JSON cannot represent NaN and infinity
+      this->Internal->Writer->Null();
+    }
+  }
+  else if (propertyValue.IsNumeric())
+  {
+    this->Internal->Writer->Int64(propertyValue.ToTypeInt64());
+  }
+  else
+  {
+    this->Internal->Writer->String(propertyValue.ToString().c_str());
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLJsonWriter::WriteNullProperty(const std::string& propertyName)
+{
+  this->Internal->Writer->Key(propertyName.c_str());
+  this->Internal->Writer->Null();
 }
 
 //----------------------------------------------------------------------------
