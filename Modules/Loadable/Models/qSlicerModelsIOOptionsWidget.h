@@ -21,29 +21,25 @@
 #ifndef __qSlicerModelsIOOptionsWidget_h
 #define __qSlicerModelsIOOptionsWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // Slicer includes
-#include "qSlicerIOOptionsWidget.h"
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerModelsModuleExport.h"
+#include "vtkSlicerModelsReader.h"
 
-class qSlicerModelsIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsIOOptionsWidget : public qSlicerIOOptionsWidget
+/// Options widget of vtkSlicerModelsReader.
+///
+/// \deprecated Options are described by vtkSlicerModelsReader (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsIOOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
 public:
-  typedef qSlicerIOOptionsWidget Superclass;
-  qSlicerModelsIOOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerModelsIOOptionsWidget() override;
-
-protected slots:
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerModelsIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerModelsIOOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerModelsIOOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerModelsReader>());
+  }
 };
 
 #endif

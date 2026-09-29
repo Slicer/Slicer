@@ -27,24 +27,17 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicer${MODULE_NAME}IOOptionsWidget.cxx
   qSlicer${MODULE_NAME}IOOptionsWidget.h
   qSlicer${MODULE_NAME}Module.cxx
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
   qSlicer${MODULE_NAME}ModuleWidget.h
-  qSlicer${MODULE_NAME}NodeWriter.cxx
-  qSlicer${MODULE_NAME}NodeWriter.h
-  qSlicer${MODULE_NAME}NodeWriterOptionsWidget.cxx
   qSlicer${MODULE_NAME}NodeWriterOptionsWidget.h
-  qSlicer${MODULE_NAME}Reader.cxx
-  qSlicer${MODULE_NAME}Reader.h
   qSlicer${MODULE_NAME}SettingsPanel.cxx
   qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicer${MODULE_NAME}IOOptionsWidget.ui
   Resources/UI/qSlicer${MODULE_NAME}Module.ui
   Resources/UI/qSlicer${MODULE_NAME}SettingsPanel.ui
   )

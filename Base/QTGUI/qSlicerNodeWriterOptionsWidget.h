@@ -25,6 +25,12 @@
 #include "qSlicerFileWriterOptionsWidget.h"
 class qSlicerNodeWriterOptionsWidgetPrivate;
 
+/// Options widget for writers that save nodes using storage nodes.
+///
+/// \deprecated Options of vtkMRMLNodeWriter are described by vtkMRMLNodeWriter::GetOptionsDescription()
+/// and displayed by qSlicerGenericIOOptionsWidget. This class is only kept for backward compatibility
+/// (for writers in extensions that still use or subclass this widget).
+
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriterOptionsWidget : public qSlicerFileWriterOptionsWidget
 {
   Q_OBJECT

@@ -28,8 +28,6 @@
 // QTGUI includes
 #include <qSlicerApplication.h>
 #include "qSlicerCoreApplication.h"
-#include <qSlicerIOManager.h>
-#include <qSlicerNodeWriter.h>
 #include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include <qSlicerPythonManager.h>
@@ -42,11 +40,8 @@
 #include "qSlicerSubjectHierarchyMarkupsPlugin.h"
 
 // Markups module includes
-#include "qSlicerAnnotationsReader.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
-#include "qSlicerMarkupsReader.h"
-#include "qSlicerMarkupsWriter.h"
 
 // Markups nodes includes
 #include "vtkMRMLMarkupsAngleNode.h"
@@ -246,12 +241,6 @@ void qSlicerMarkupsModule::setup()
   // Register displayable managers (same displayable manager handles both slice and 3D views)
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
-
-  // Register IO
-  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ioManager->registerIO(new qSlicerMarkupsReader(logic, this));
-  ioManager->registerIO(new qSlicerAnnotationsReader(logic, this));
-  ioManager->registerIO(new qSlicerMarkupsWriter(this));
 
   // Add toolbar
   d->addToolBar();

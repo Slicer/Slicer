@@ -21,30 +21,25 @@
 #ifndef __qSlicerSegmentationsIOOptionsWidget_h
 #define __qSlicerSegmentationsIOOptionsWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // Slicer includes
-#include "qSlicerIOOptionsWidget.h"
-
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerSegmentationsModuleExport.h"
+#include "vtkSlicerSegmentationsReader.h"
 
-class qSlicerSegmentationsIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsIOOptionsWidget : public qSlicerIOOptionsWidget
+/// Options widget of vtkSlicerSegmentationsReader.
+///
+/// \deprecated Options are described by vtkSlicerSegmentationsReader (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsIOOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerSegmentationsIOOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerSegmentationsIOOptionsWidget() override;
-
-protected slots:
-  /// Update IO plugin properties
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerSegmentationsIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerSegmentationsIOOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerSegmentationsIOOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerSegmentationsReader>());
+  }
 };
 
 #endif

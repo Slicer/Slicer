@@ -18,6 +18,9 @@
 
 // Volumes includes
 #include "vtkSlicerVolumesLogic.h"
+#include "vtkSlicerVolumesReader.h"
+#include <vtkMRMLNodeWriter.h>
+#include <vtkNew.h>
 
 // MRML logic includes
 #include "vtkMRMLI18N.h"
@@ -1737,4 +1740,15 @@ std::string vtkSlicerVolumesLogic::GetAppliedVolumeDisplayPresetId(vtkMRMLVolume
 
   // no matching preset was found
   return "";
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerVolumesLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  vtkNew<vtkSlicerVolumesReader> volumesReader;
+  volumesReader->SetVolumesLogic(this);
+  handlers.emplace_back(volumesReader);
+  handlers.emplace_back(vtkMRMLNodeWriter::CreateNodeWriter("Volumes", "VolumeFile", { "vtkMRMLVolumeNode" }, true));
+  return handlers;
 }

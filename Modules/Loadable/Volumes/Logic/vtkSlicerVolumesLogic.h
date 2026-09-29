@@ -284,6 +284,9 @@ public:
   /// If not found then the returned preset will have Valid member set to false.
   VolumeDisplayPreset GetVolumeDisplayPreset(const std::string& presetId);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerVolumesLogic();
   ~vtkSlicerVolumesLogic() override;

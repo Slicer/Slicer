@@ -181,10 +181,9 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
   d->AppLogic = newAppLogic;
   // here we don't want to create a logic if no logic exists yet. it's not setAppLogic
   // role to create logics.
-  vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
-  if (moduleLogic)
+  if (d->Logic)
   {
-    moduleLogic->SetMRMLApplicationLogic(newAppLogic);
+    d->Logic->SetMRMLApplicationLogic(newAppLogic);
   }
 }
 

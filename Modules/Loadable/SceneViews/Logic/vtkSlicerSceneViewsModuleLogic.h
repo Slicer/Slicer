@@ -202,6 +202,9 @@ public:
   void GetViewNodeClasses(std::vector<std::string>& viewNodeTypes);
   std::vector<std::string> GetViewNodeClasses();
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerSceneViewsModuleLogic();
 

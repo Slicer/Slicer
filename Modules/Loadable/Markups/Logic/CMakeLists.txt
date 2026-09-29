@@ -8,6 +8,12 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerMarkupsReader.cxx
+  vtkSlicerMarkupsReader.h
+  vtkSlicerAnnotationsReader.cxx
+  vtkSlicerAnnotationsReader.h
+  vtkSlicerMarkupsWriter.cxx
+  vtkSlicerMarkupsWriter.h
   vtkSlicer${MODULE_NAME}Logic.cxx
   vtkSlicer${MODULE_NAME}Logic.h
   )

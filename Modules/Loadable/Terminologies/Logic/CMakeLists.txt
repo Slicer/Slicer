@@ -10,6 +10,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerTerminologiesReader.cxx
+  vtkSlicerTerminologiesReader.h
   vtkSlicer${MODULE_NAME}ModuleLogic.cxx
   vtkSlicer${MODULE_NAME}ModuleLogic.h
   vtkSlicerTerminologyCategory.cxx

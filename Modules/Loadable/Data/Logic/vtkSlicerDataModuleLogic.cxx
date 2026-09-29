@@ -21,6 +21,10 @@
 
 // Data Logic includes
 #include "vtkSlicerDataModuleLogic.h"
+#include "vtkSlicerSceneReader.h"
+#include "vtkSlicerSceneWriter.h"
+#include <vtkMRMLSceneBundleReader.h>
+#include <vtkNew.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -151,4 +155,15 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   {
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   }
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerDataModuleLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  handlers.emplace_back(vtkNew<vtkSlicerSceneReader>());
+  handlers.emplace_back(vtkNew<vtkMRMLSceneBundleReader>());
+  vtkNew<vtkSlicerSceneWriter> sceneWriter;
+  handlers.emplace_back(sceneWriter);
+  return handlers;
 }

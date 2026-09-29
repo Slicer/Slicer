@@ -132,7 +132,7 @@ public:
              const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
              const QList<vtkMRMLStorableNode*>& nodesRecursive,
              vtkMRMLStorableNode* selectedNode,
-             const QHash<QString, QVariant>& nodeIdToSubjectHierarchyPath);
+             const QVariantMap& nodeIdToSubjectHierarchyPath);
 
   /// Remove any problem-causing characters from \a fileName, strip off any extension from the end of it if that extension
   /// is known to be associated with \a node, and then put \a extension back on
@@ -222,7 +222,7 @@ protected:
 
   // Mapping from node IDs to lists of subject hierarchy item names, where
   // each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
-  QHash<QString, QVariant> NodeIdToSubjectHierarchyPath;
+  QVariantMap NodeIdToSubjectHierarchyPath;
 
   // The storable node that was selected in the subject hierarchy to trigger this export, if there is one;
   // can be empty if there isn't. It is conveniently a list so that a uniform interface can be provided by nodeList().

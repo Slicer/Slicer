@@ -22,6 +22,7 @@ class QDropEvent;
 class QWidget;
 
 class qSlicerIOManagerPrivate;
+class qSlicerIOOptionsWidget;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
 {
@@ -48,15 +49,31 @@ public:
                               qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties(),
                               vtkCollection* loadedNodes = nullptr);
 
-  void addHistory(const QString& path);
-  const QStringList& history() const;
+  Q_INVOKABLE void addHistory(const QString& path);
+  Q_INVOKABLE QStringList history() const;
 
-  void setFavorites(const QList<QUrl>& urls);
-  const QList<QUrl>& favorites() const;
+  Q_INVOKABLE void setFavorites(const QList<QUrl>& urls);
+  Q_INVOKABLE QList<QUrl> favorites() const;
 
   /// Takes ownership. Any previously set dialog corresponding to the same
   /// fileType (only 1 dialog per filetype) is overridden.
-  void registerDialog(qSlicerFileDialog* dialog);
+  Q_INVOKABLE void registerDialog(qSlicerFileDialog* dialog);
+
+  /// Return the options widget of the reader that has the specified description (such as "Volume").
+  /// Returns nullptr if the reader does not have options.
+  /// If \a parent is specified then the widget is owned by the parent, otherwise the caller takes
+  /// ownership of the returned widget. In Python, the returned widget is deleted when it is no longer
+  /// referenced (unless it has a parent), see qSlicerBaseQTGUIPythonQtDecorators.
+  /// \sa qSlicerCoreIOManager::fileOptions()
+  qSlicerIOOptionsWidget* fileOptionsWidget(const QString& fileDescription, QWidget* parent = nullptr) const;
+
+  /// Return the options widget of the best file writer for the input VTK \a object.
+  /// Returns nullptr if the writer does not have options.
+  /// If \a parent is specified then the widget is owned by the parent, otherwise the caller takes
+  /// ownership of the returned widget. In Python, the returned widget is deleted when it is no longer
+  /// referenced (unless it has a parent), see qSlicerBaseQTGUIPythonQtDecorators.
+  /// \sa qSlicerCoreIOManager::fileWriterOptions()
+  qSlicerIOOptionsWidget* fileWriterOptionsWidget(vtkObject* object, const QString& extension = QString(), QWidget* parent = nullptr) const;
 
   /// Return True if a custom file dialog was registered.
   ///
@@ -76,7 +93,7 @@ public:
   /// If you have a list of nodes to load, it's best to use this function
   /// in order to have a unique progress dialog instead of multiple ones.
   /// It internally calls loadNodes() for each file.
-  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
+  Q_INVOKABLE bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
 
   /// Helper function to display result of loadNodes.
   /// If success is set false then an error popup is displayed.
@@ -122,8 +139,10 @@ protected slots:
   void execDelayedFileDialog();
 
 protected:
+  /// Create a qSlicerGenericIOOptionsWidget if the reader or writer describes its options.
+  qSlicerIOOptions* createGenericOptions(vtkMRMLFileIOHandler* ioHandler) const override;
+
   friend class qSlicerFileDialog;
-  using qSlicerCoreIOManager::readers;
 
 protected:
   QScopedPointer<qSlicerIOManagerPrivate> d_ptr;

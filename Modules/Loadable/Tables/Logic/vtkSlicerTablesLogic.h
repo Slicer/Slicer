@@ -59,6 +59,9 @@ public:
   /// Returns ID of the layout that is similar to current layout but also contains a table view
   static int GetLayoutWithTable(int currentLayout);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerTablesLogic();
   ~vtkSlicerTablesLogic() override;

@@ -20,8 +20,6 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
-#include "qSlicerCoreIOManager.h"
-#include "qSlicerNodeWriter.h"
 
 #include "vtkSlicerTransformLogic.h"
 #include "vtkMRMLSliceViewDisplayableManagerFactory.h"
@@ -30,7 +28,6 @@
 // Transforms includes
 #include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
-#include "qSlicerTransformsReader.h"
 
 // VTK includes
 #include "vtkSmartPointer.h"
@@ -126,9 +123,6 @@ void qSlicerTransformsModule::setup()
   {
     return;
   }
-  vtkSlicerTransformLogic* transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
-  app->coreIOManager()->registerIO(new qSlicerTransformsReader(transformLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Transforms", QString("TransformFile"), QStringList() << "vtkMRMLTransformNode", true, this));
 
   // Register displayable managers
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager2D");

@@ -8,6 +8,9 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 =========================================================================auto=*/
 
 #include "vtkSlicerTransformLogic.h"
+#include "vtkSlicerTransformsReader.h"
+#include <vtkMRMLNodeWriter.h>
+#include <vtkNew.h>
 
 #include "vtkTransformVisualizerGlyph3D.h"
 
@@ -1594,4 +1597,15 @@ void vtkSlicerTransformLogic::GetNodesBounds(const std::vector<vtkMRMLDisplayabl
     }
   }
   box.GetBounds(bounds);
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerTransformLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  vtkNew<vtkSlicerTransformsReader> transformsReader;
+  transformsReader->SetTransformLogic(this);
+  handlers.emplace_back(transformsReader);
+  handlers.emplace_back(vtkMRMLNodeWriter::CreateNodeWriter("Transforms", "TransformFile", { "vtkMRMLTransformNode" }, true));
+  return handlers;
 }

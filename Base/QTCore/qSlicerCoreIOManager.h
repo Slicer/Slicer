@@ -47,6 +47,14 @@ class vtkObject;
 class qSlicerCoreIOManagerPrivate;
 class qSlicerFileReader;
 class qSlicerFileWriter;
+class vtkMRMLFileIOHandler;
+class vtkMRMLFileIOManager;
+
+/// Qt interface of the file IO manager.
+///
+/// \deprecated All calls are forwarded to vtkMRMLFileIOManager (vtkMRMLApplicationLogic::GetFileIOManager()).
+/// This class is kept for backward compatibility.
+/// See https://slicer.readthedocs.io/en/latest/developer_guide/mrml_overview.html#qt-interface
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager : public QObject
 {
   Q_OBJECT;
@@ -56,6 +64,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager : public QObject
 public:
   qSlicerCoreIOManager(QObject* parent = nullptr);
   ~qSlicerCoreIOManager() override;
+
+  /// VTK-based file IO manager that performs all the tasks.
+  /// It is the file IO manager of the application logic (if the application logic is available).
+  Q_INVOKABLE vtkMRMLFileIOManager* fileIOManager() const;
 
   /// Return the most likely file type (SegmentationFile, TextFile, ...) for reading a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file) const;
@@ -72,10 +84,10 @@ public:
 
   /// Returns descriptions for a file type available across all readers.
   /// Usually there is only one reader for a file type.
-  QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType) const;
+  Q_INVOKABLE QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType) const;
 
   /// Return best file writer for this object
-  qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString()) const;
+  Q_INVOKABLE qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString()) const;
 
   /// Return the file type of the best file writer for the input VTK \a object.
   Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension = QString()) const;
@@ -90,9 +102,13 @@ public:
   Q_INVOKABLE QStringList allReadableFileExtensions() const;
 
   /// Return the file read options for the best reader associated with a \a file type
+  /// The caller takes ownership of the returned object.
+  /// \sa qSlicerIOManager::fileOptionsWidget() for accessing the options from Python
   qSlicerIOOptions* fileOptions(const QString& fileDescription) const;
 
   /// Return the file write options of the best file writer for the input VTK \a object.
+  /// The caller takes ownership of the returned object.
+  /// \sa qSlicerIOManager::fileWriterOptionsWidget() for accessing the options from Python
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension) const;
 
   /// Returns a full extension for this storable node that is recognised by Slicer IO.
@@ -154,13 +170,13 @@ public:
   /// Utility function that loads a bunch of files. The "fileType" attribute should
   /// in the parameter map for each node to load.
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
-  virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
+  Q_INVOKABLE virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load a list of node corresponding to \a fileType and return the first loaded node.
   /// This function is provided for convenience and is equivalent to call loadNodes
   /// with a vtkCollection parameter and retrieve the first element.
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
-  vtkMRMLNode* loadNodesAndGetFirst(qSlicerIO::IOFileType fileType, const qSlicerIO::IOProperties& parameters, vtkMRMLMessageCollection* userMessages = nullptr);
+  Q_INVOKABLE vtkMRMLNode* loadNodesAndGetFirst(qSlicerIO::IOFileType fileType, const qSlicerIO::IOProperties& parameters, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load/import a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
@@ -224,7 +240,7 @@ public:
 
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io
-  void registerIO(qSlicerIO* io);
+  Q_INVOKABLE void registerIO(qSlicerIO* io);
 
   /// @{
   /// Return the number of registered \a qSlicerIO associated with \a fileType.
@@ -271,7 +287,7 @@ public:
 public slots:
 
   /// Defines the file format that should be offered by default when the scene is saved.
-  /// Valid options are defined in qSlicerSceneWriter (for example, "MRML Scene (.mrml)"
+  /// Valid options are defined in vtkSlicerSceneWriter (for example, "MRML Scene (.mrml)"
   /// or "Medical Reality Bundle (.mrb)").
   void setDefaultSceneFileType(QString);
 
@@ -294,18 +310,26 @@ signals:
   /// \sa saveNodes()
   void fileSaved(const qSlicerIO::IOProperties& savedFileParameters);
 
-protected:
+public:
   /// Returns the list of registered readers
-  const QList<qSlicerFileReader*>& readers() const;
+  Q_INVOKABLE QList<qSlicerFileReader*> readers() const;
 
   /// Returns the list of registered writers
-  const QList<qSlicerFileWriter*>& writers() const;
+  Q_INVOKABLE QList<qSlicerFileWriter*> writers() const;
   /// Returns the list of registered writers for a given fileType
-  QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType& fileType) const;
+  Q_INVOKABLE QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType& fileType) const;
 
   /// Returns the list of registered readers or writers associated with \a fileType
-  QList<qSlicerFileReader*> readers(const qSlicerIO::IOFileType& fileType) const;
-  qSlicerFileReader* reader(const QString& ioDescription) const;
+  Q_INVOKABLE QList<qSlicerFileReader*> readers(const qSlicerIO::IOFileType& fileType) const;
+  /// Returns the reader that has the specified description (such as "Volume")
+  Q_INVOKABLE qSlicerFileReader* reader(const QString& ioDescription) const;
+
+protected:
+  /// Create an options widget for a reader or writer that describes its options
+  /// (see vtkMRMLFileIOHandler::GetOptionsDescription).
+  /// Used when the Qt-based reader or writer does not provide an options widget.
+  /// Returns nullptr in the core IO manager, as widgets are only available in the GUI application.
+  virtual qSlicerIOOptions* createGenericOptions(vtkMRMLFileIOHandler* ioHandler) const;
 
 protected:
   QScopedPointer<qSlicerCoreIOManagerPrivate> d_ptr;

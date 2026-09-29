@@ -95,6 +95,10 @@ public slots:
 
   void setToolBarActiveBrowserNode(vtkMRMLSequenceBrowserNode* browserNode);
 
+protected slots:
+  /// Called when the sequences reader requests showing the sequence browser (callData is the browser node)
+  void onShowSequenceBrowserRequested(vtkObject* caller, void* callData);
+
 protected:
   QScopedPointer<qSlicerSequencesModulePrivate> d_ptr;
 

@@ -20,6 +20,9 @@
 
 // Segmentations includes
 #include "vtkSlicerSegmentationsModuleLogic.h"
+#include "vtkSlicerSegmentationsNodeWriter.h"
+#include "vtkSlicerSegmentationsReader.h"
+#include <vtkNew.h>
 
 // SegmentationCore includes
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
@@ -3055,4 +3058,15 @@ bool vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeome
     }
   }
   return false;
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerSegmentationsModuleLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  handlers.emplace_back(vtkNew<vtkSlicerSegmentationsNodeWriter>());
+  vtkNew<vtkSlicerSegmentationsReader> segmentationsReader;
+  segmentationsReader->SetSegmentationsLogic(this);
+  handlers.emplace_back(segmentationsReader);
+  return handlers;
 }

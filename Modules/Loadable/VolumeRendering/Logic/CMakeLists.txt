@@ -10,6 +10,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerVolumeRenderingReader.cxx
+  vtkSlicerVolumeRenderingReader.h
+  vtkSlicerShaderPropertyReader.cxx
+  vtkSlicerShaderPropertyReader.h
   vtkSlicer${MODULE_NAME}Logic.cxx
   vtkSlicer${MODULE_NAME}Logic.h
   )

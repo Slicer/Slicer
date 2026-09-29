@@ -414,6 +414,9 @@ public:
   void GenerateUniqueColor(double color[3]);
   //@}
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;

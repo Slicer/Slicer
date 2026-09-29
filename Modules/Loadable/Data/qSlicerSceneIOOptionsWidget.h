@@ -22,30 +22,24 @@
 #define __qSlicerSceneIOOptionsWidget_h
 
 // Slicer includes
-#include "qSlicerIOOptionsWidget.h"
-
-// Cameras includes
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerDataModuleExport.h"
+#include "vtkSlicerSceneReader.h"
 
-class qSlicerSceneIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget : public qSlicerIOOptionsWidget
+/// Options widget of vtkSlicerSceneReader.
+///
+/// \deprecated Options are described by vtkSlicerSceneReader (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerSceneIOOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerSceneIOOptionsWidget() override;
-
-  // Update checkboxes in the widget based on
-  // "clear" and "copyCameras" Boolean properties.
-  void updateGUI(const qSlicerIO::IOProperties& ioProperties) override;
-
-protected slots:
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerSceneIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerSceneIOOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerSceneIOOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerSceneReader>());
+  }
 };
 
 #endif

@@ -86,6 +86,9 @@ public:
   /// nodes with display nodes
   void SetAllModelsVisibility(int flag);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerModelsLogic();
   ~vtkSlicerModelsLogic() override;

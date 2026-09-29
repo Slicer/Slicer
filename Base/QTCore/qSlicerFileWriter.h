@@ -27,6 +27,11 @@ class qSlicerFileWriterPrivate;
 
 class vtkObject;
 
+/// Base class of legacy Qt-based file writers.
+///
+/// \deprecated File writers are implemented as vtkMRMLFileWriter subclasses. This class is kept for backward
+/// compatibility and to provide Qt options widgets (see options()).
+/// See https://slicer.readthedocs.io/en/latest/developer_guide/mrml_overview.html#qt-interface
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter : public qSlicerIO
 {
   Q_OBJECT

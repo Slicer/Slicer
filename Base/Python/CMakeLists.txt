@@ -17,6 +17,10 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/parameterNodeWrapper/wrapper
   slicer/packaging
   slicer/ScriptedLoadableModule
+  slicer/ScriptedFileIO/__init__
+  slicer/ScriptedFileIO/Legacy
+  slicer/ScriptedFileIO/ReaderWriter
+  slicer/ScriptedFileIO/Registration
   slicer/testing
   slicer/util
   slicerqt

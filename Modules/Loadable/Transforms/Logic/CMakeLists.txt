@@ -9,6 +9,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerTransformsReader.cxx
+  vtkSlicerTransformsReader.h
   vtkSlicerTransformLogic.cxx
   vtkSlicerTransformLogic.h
   )

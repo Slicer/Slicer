@@ -85,6 +85,10 @@ protected slots:
   /// subject hierarchy node creation for each segment to allow per-segment actions in SH.
   void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
 
+  /// Called when an application setting is changed in the settings dialog.
+  /// Updates the default value of the reader option that is specified in the settings.
+  void onSettingChanged(const QString& key, const QVariant& value);
+
 protected:
   QScopedPointer<qSlicerSegmentationsModulePrivate> d_ptr;
 

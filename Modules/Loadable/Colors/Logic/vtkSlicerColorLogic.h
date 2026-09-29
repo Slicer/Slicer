@@ -82,6 +82,9 @@ public:
   /// any designated primary display node.
   static vtkMRMLColorLegendDisplayNode* GetColorLegendDisplayNode(vtkMRMLDisplayNode* displayNode);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerColorLogic();
   ~vtkSlicerColorLogic() override;

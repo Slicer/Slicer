@@ -19,6 +19,9 @@
 ==============================================================================*/
 
 #include "vtkSlicerTextsLogic.h"
+#include "vtkSlicerTextsReader.h"
+#include <vtkMRMLNodeWriter.h>
+#include <vtkNew.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -36,3 +39,13 @@ vtkSlicerTextsLogic::vtkSlicerTextsLogic() = default;
 
 //----------------------------------------------------------------------------
 vtkSlicerTextsLogic::~vtkSlicerTextsLogic() = default;
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerTextsLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  vtkNew<vtkSlicerTextsReader> textFileReader;
+  handlers.emplace_back(textFileReader);
+  handlers.emplace_back(vtkMRMLNodeWriter::CreateNodeWriter("TextFileImporter", textFileReader->GetFileType(), { "vtkMRMLTextNode" }, false));
+  return handlers;
+}

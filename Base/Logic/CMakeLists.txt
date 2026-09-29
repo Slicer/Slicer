@@ -114,6 +114,8 @@ set(SlicerBaseLogic_SRCS
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND SlicerBaseLogic_SRCS
+    vtkSlicerScriptedFileReaderBridge.cxx
+    vtkSlicerScriptedFileWriterBridge.cxx
     vtkSlicerScriptedLoadableModuleLogic.cxx
     )
 endif()
@@ -142,7 +144,7 @@ list(APPEND libs
 
 if(Slicer_USE_PYTHONQT)
   set(VTK_COMMON_PYTHON_LIBRARY
-    VTK::WrappingPythonCore # For vtkPythonUtil
+    VTK::WrappingPythonCore # For vtkPythonUtil and vtkPythonArgs
     )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY}

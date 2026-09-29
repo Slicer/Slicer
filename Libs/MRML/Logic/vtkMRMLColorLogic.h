@@ -11,7 +11,7 @@
 #define __vtkMRMLColorLogic_h
 
 // MRMLLogic includes
-#include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLModuleLogic.h"
 #include "vtkMRMLLogicExport.h"
 
 // MRML includes
@@ -31,12 +31,12 @@ class vtkMRMLColorTableNode;
 ///
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the colors.
-class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
+class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLModuleLogic
 {
 public:
   /// The Usual vtk class functions
   static vtkMRMLColorLogic* New();
-  vtkTypeMacro(vtkMRMLColorLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLColorLogic, vtkMRMLModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Add default color nodes.

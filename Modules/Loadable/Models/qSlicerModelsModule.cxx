@@ -21,14 +21,12 @@
 // Models includes
 #include "qSlicerModelsModule.h"
 #include "qSlicerModelsModuleWidget.h"
-#include "qSlicerModelsReader.h"
 
 // Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerModelsDialog.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerNodeWriter.h"
 
 // Slicer logic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -131,14 +129,10 @@ void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
   // Configure models logic
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
   {
-    // Register IOs
-    qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-    ioManager->registerIO(new qSlicerModelsReader(modelsLogic, this));
-    ioManager->registerDialog(new qSlicerModelsDialog(this));
-    ioManager->registerIO(new qSlicerNodeWriter("Models", QString("ModelFile"), QStringList() << "vtkMRMLModelNode", true, this));
+    // Register dialog
+    qSlicerApplication::application()->ioManager()->registerDialog(new qSlicerModelsDialog(this));
   }
 
   // Register Subject Hierarchy core plugins

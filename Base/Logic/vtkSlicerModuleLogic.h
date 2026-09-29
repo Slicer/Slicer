@@ -18,14 +18,14 @@
 #include "vtkSlicerApplicationLogic.h"
 
 // MRMLLogic includes
-#include <vtkMRMLAbstractLogic.h>
+#include <vtkMRMLModuleLogic.h>
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstractLogic
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLModuleLogic
 {
 public:
   /// The Usual vtk class functions
   static vtkSlicerModuleLogic* New();
-  vtkTypeMacro(vtkSlicerModuleLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkSlicerModuleLogic, vtkMRMLModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get access to overall application state

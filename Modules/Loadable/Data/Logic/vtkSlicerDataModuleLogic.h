@@ -44,6 +44,9 @@ public:
   vtkGetMacro(SceneChanged, bool);
   vtkBooleanMacro(SceneChanged, bool);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerDataModuleLogic();
   ~vtkSlicerDataModuleLogic() override;

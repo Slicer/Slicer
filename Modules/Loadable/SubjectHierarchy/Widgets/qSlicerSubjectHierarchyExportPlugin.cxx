@@ -204,12 +204,12 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
     return;
   }
 
-  QList<QString> childIdsToExportNonrecursive;
-  QList<QString> childIdsToExportRecursive;
+  QStringList childIdsToExportNonrecursive;
+  QStringList childIdsToExportRecursive;
 
   // This will map each node ID that the export dialog could need to a list of subject hierarchy item names
   // See the comment above the definition of getSubjectHierarchyPath for a description of the values in this map.
-  QHash<QString, QVariant> nodeIdToSubjectHierarchyPath;
+  QVariantMap nodeIdToSubjectHierarchyPath;
 
   std::vector<vtkIdType> childrenNonrecursive;
   std::vector<vtkIdType> childrenRecursive;

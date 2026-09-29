@@ -73,7 +73,8 @@ set(KIT_SRCS
   qSlicerMouseModeToolBar.cxx
   qSlicerMouseModeToolBar.h
   qSlicerMouseModeToolBar_p.h
-  qSlicerNodeWriter.cxx
+  qSlicerGenericIOOptionsWidget.cxx
+  qSlicerGenericIOOptionsWidget.h
   qSlicerNodeWriter.h
   qSlicerNodeWriterOptionsWidget.cxx
   qSlicerNodeWriterOptionsWidget.h
