@@ -55,6 +55,30 @@ class vtkSlicerScriptedFileReader(vtkSlicerScriptedFileReaderBridge):
         """
         return vtkMRMLFileReader.Load(self, properties)
 
+    def ExamineFileList(self, fileNames: list[str], properties: vtkMRMLIOProperties) -> str | None:
+        """Examine the list of files to see if there is a group of files that must be loaded together.
+
+        If there is, then remove the files of the group from ``fileNames`` (in place), except the archetype file,
+        set the properties that are needed for loading the group, and return the archetype file path.
+        This method is only used if ``ExamineFileListConfidence`` is not overridden.
+
+        :return: archetype file path, or empty string (or None) if no group of files is recognized (default).
+        """
+        return vtkMRMLFileReader.ExamineFileList(self, fileNames, properties)
+
+    def ExamineFileListConfidence(self, fileNames: list[str], properties: vtkMRMLIOProperties) -> float:
+        """Examine the list of files to see if there is a group of files that must be loaded together.
+
+        If there is, then remove the files of the group from ``fileNames`` (in place), except the archetype file,
+        set the properties that are needed for loading the group (including ``fileName``, which must be set to the
+        archetype file path), and return the confidence (between 0.0 and 1.0) that the reader can load the group.
+        If multiple readers recognize a group of files then the one with the highest confidence is used.
+
+        :return: confidence, 0.0 if no group of files is recognized. Default: uses ``ExamineFileList`` and
+          returns the confidence of loading the archetype file.
+        """
+        return vtkMRMLFileReader.ExamineFileListConfidence(self, fileNames, properties)
+
     def GetOptionsDescription(self, description: vtkMRMLIOOptionsDescription) -> None:
         """Describe the options of the reader (see ``vtkMRMLIOOptionsDescription``).
 

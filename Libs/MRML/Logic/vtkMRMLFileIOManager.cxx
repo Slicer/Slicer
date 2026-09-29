@@ -434,24 +434,54 @@ vtkMRMLFileReader* vtkMRMLFileIOManager::ExamineFileList(std::vector<std::string
     vtkErrorMacro("ExamineFileList failed: invalid properties");
     return nullptr;
   }
-  // Copy the list, as a reader may register or unregister handlers
+  // Each reader examines a copy of the file list and properties. The group of files that is recognized
+  // with the highest confidence is used (if the confidence is the same then the larger group is used,
+  // if the group size is the same then the reader that was registered first).
+  // Copy the list of readers, as a reader may register or unregister handlers.
   std::vector<vtkSmartPointer<vtkMRMLFileReader>> allReaders = this->Readers;
+  vtkSmartPointer<vtkMRMLFileReader> bestReader;
+  std::string bestArchetypeFile;
+  std::vector<std::string> bestFileList;
+  vtkNew<vtkMRMLIOProperties> bestProperties;
+  double bestConfidence = 0.0;
+  size_t bestNumberOfGroupedFiles = 0;
   for (const auto& reader : allReaders)
   {
-    // TODO: currently the first reader that accepts the list will be used, but nothing
-    // guarantees that the first reader is the most suitable choice (e.g., volume reader
-    // grabs all file sequences, while they may not be sequence of frames but sequence of models, etc.).
-    // There should be a mechanism (e.g., using confidence values or based on most specific extension)
-    // to decide which reader should be used.
-    // Multiple readers cannot be returned because they might not remove exactly the same set of files from the list.
-    std::string archetypeFile = reader->ExamineFileList(fileList, ioProperties);
-    if (!archetypeFile.empty())
+    std::vector<std::string> candidateFileList = fileList;
+    vtkNew<vtkMRMLIOProperties> candidateProperties;
+    candidateProperties->Copy(ioProperties);
+    candidateProperties->RemoveProperty("fileName");
+    const double confidence = reader->ExamineFileListConfidence(candidateFileList, candidateProperties);
+    const std::string archetypeFile = candidateProperties->GetStringProperty("fileName");
+    if (archetypeFile.empty())
     {
-      ioProperties->SetStringProperty("fileName", archetypeFile);
-      return reader;
+      continue;
     }
+    // number of files that were removed from the list (loaded with the archetype)
+    const size_t numberOfGroupedFiles = fileList.size() > candidateFileList.size() ? fileList.size() - candidateFileList.size() : 0;
+    if (confidence <= 0.0)
+    {
+      continue;
+    }
+    if (bestReader && (confidence < bestConfidence || (confidence == bestConfidence && numberOfGroupedFiles <= bestNumberOfGroupedFiles)))
+    {
+      continue;
+    }
+    bestReader = reader;
+    bestArchetypeFile = archetypeFile;
+    bestFileList = candidateFileList;
+    bestProperties->Copy(candidateProperties);
+    bestConfidence = confidence;
+    bestNumberOfGroupedFiles = numberOfGroupedFiles;
   }
-  return nullptr;
+  if (!bestReader)
+  {
+    return nullptr;
+  }
+  fileList = bestFileList;
+  ioProperties->Copy(bestProperties);
+  ioProperties->SetStringProperty("fileName", bestArchetypeFile);
+  return bestReader;
 }
 
 //----------------------------------------------------------------------------

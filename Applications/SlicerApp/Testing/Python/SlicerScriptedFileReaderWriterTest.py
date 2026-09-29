@@ -84,6 +84,24 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         description.AddIntOption("maxLines", _("Maximum lines"), _("Maximum number of lines to load."), 10, 1, 10000)
         description.SetOptionEnabled("maxLines", description.GetBoolOptionValue("limitLines"))
 
+    def examineFileList(self, fileNames, properties):
+        # Files named <name>_part<N>.mft are loaded together (the first one is the archetype)
+        seriesFiles = sorted([fileName for fileName in fileNames if "_part" in fileName and fileName.endswith(".mft")])
+        if len(seriesFiles) < 2:
+            return None
+        for fileName in seriesFiles[1:]:
+            fileNames.remove(fileName)
+        properties["fileNames"] = seriesFiles
+        properties["mySeries"] = True
+        return seriesFiles[0]
+
+    def examineFileListConfidence(self, fileNames, properties):
+        archetypeFile = self.examineFileList(fileNames, properties)
+        if not archetypeFile:
+            return 0.0
+        properties["fileName"] = archetypeFile
+        return 0.9
+
     # Properties of the last load() call (for testing)
     lastLoadProperties = None
 
@@ -390,6 +408,91 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         slicer.app.processEvents()
         self.assertEqual(destroyed, ["withParent"])
 
+    def createGroupTestFiles(self):
+        """Create files for testing grouping of files: two .mft files that are loaded together, a text file,
+        and a series of 30 PNG images that are loaded as a single volume.
+        """
+        import vtk
+
+        tempDir = slicer.util.tempDirectory()
+        # The .mft file names contain numbers, therefore the volume reader recognizes them as an image series,
+        # but the volume reader cannot load them (confidence is 0), so the scripted reader must be selected.
+        seriesFile1 = tempDir + "/grouptest_part1.mft"
+        seriesFile2 = tempDir + "/grouptest_part2.mft"
+        otherFile = tempDir + "/grouptest_other.txt"
+        for fileName in [seriesFile1, seriesFile2, otherFile]:
+            with open(fileName, "w") as f:
+                f.write("magic\n")
+        imageFiles = []
+        imageData = vtk.vtkImageData()
+        imageData.SetDimensions(8, 8, 1)
+        imageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+        writer = vtk.vtkPNGWriter()
+        writer.SetInputData(imageData)
+        for sliceIndex in range(30):
+            imageFile = tempDir + f"/grouptest_slice{sliceIndex:03d}.png"
+            writer.SetFileName(imageFile)
+            writer.Write()
+            imageFiles.append(imageFile)
+        return seriesFile1, seriesFile2, otherFile, imageFiles
+
+    def test_ExamineFileListAndParent(self):
+        self.delayDisplay("Testing examining file list by scripted reader")
+        fileIOManager = slicer.app.applicationLogic().GetFileIOManager()
+        reader = fileIOManager.GetReaderByDescription("My file type")
+        self.assertIsNotNone(reader)
+        seriesFile1, seriesFile2, otherFile, imageFiles = self.createGroupTestFiles()
+
+        # Scripted reader recognizes the .mft files (with higher confidence than the volume reader).
+        # The file list must be a Python list, because it is modified in place.
+        fileList = [seriesFile2, otherFile, seriesFile1]
+        properties = slicer.vtkMRMLIOProperties()
+        foundReader = fileIOManager.ExamineFileList(fileList, properties)
+        self.assertEqual(foundReader, reader)
+        self.assertEqual(sorted(fileList), sorted([seriesFile1, otherFile]))
+        self.assertEqual(properties.GetStringProperty("fileName"), seriesFile1)
+        self.assertEqual(list(properties.GetStringListProperty("fileNames")), [seriesFile1, seriesFile2])
+        self.assertTrue(properties.IsBoolProperty("mySeries"))
+        self.assertTrue(properties.GetBoolProperty("mySeries"))
+
+        # Volume reader recognizes the image series
+        fileList = list(imageFiles)
+        properties = slicer.vtkMRMLIOProperties()
+        foundReader = fileIOManager.ExamineFileList(fileList, properties)
+        self.assertEqual(foundReader.GetClassName(), "vtkSlicerVolumesReader")
+        self.assertEqual(len(fileList), 1)
+
+        # Confidence and legacy methods of the scripted reader
+        fileList = [seriesFile1, seriesFile2]
+        properties = slicer.vtkMRMLIOProperties()
+        self.assertAlmostEqual(reader.ExamineFileListConfidence(fileList, properties), 0.9)
+        self.assertEqual(properties.GetStringProperty("fileName"), seriesFile1)
+        fileList = [seriesFile1, seriesFile2]
+        properties = slicer.vtkMRMLIOProperties()
+        self.assertEqual(reader.ExamineFileList(fileList, properties), seriesFile1)
+        self.assertEqual(fileList, [seriesFile1])
+
+        # No group is found: list and properties are not changed
+        # (a file name without numbers is used, because the volume reader recognizes files with
+        # numbered names as an image series, using all the matching files in the directory)
+        fileList = [otherFile]
+        properties = slicer.vtkMRMLIOProperties()
+        self.assertIsNone(fileIOManager.ExamineFileList(fileList, properties))
+        self.assertEqual(fileList, [otherFile])
+        self.assertFalse(properties.HasProperty("fileName"))
+
+        # Methods of the file IO manager that return lists
+        self.assertIn("MyFileType", fileIOManager.GetFileTypesForFile(seriesFile1))
+        self.assertIn("My file type", fileIOManager.GetFileDescriptionsForFile(seriesFile1))
+        self.assertIn(reader, fileIOManager.GetReadersForFile(seriesFile1))
+        self.assertIn(reader, fileIOManager.GetReadersForFileType("MyFileType"))
+        self.assertEqual(fileIOManager.GetNameFiltersForFileType("MyFileType", False), ("My file type (*.mft)",))
+
+        self.delayDisplay("Testing methods that are available for the Python class via self.parent")
+        self.assertEqual(list(reader.supportedNameFilters(seriesFile1)), ["My file type (*.mft)"])
+        self.assertEqual(list(reader.supportedNameFilters(otherFile + ".txt")), [])
+        self.assertEqual(reader.userMessages(), reader.GetUserMessages())
+
     def test_ParentLifetime(self):
         import weakref
 
@@ -458,3 +561,84 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         self.assertFalse(hasattr(keptParent, "userMessages"))
         self.assertNotIsInstance(keptParent, vtk.vtkObject)
         self.assertIn("deleted", repr(keptParent))
+
+    def test_AddDataDialogGrouping(self):
+        import qt
+
+        self.delayDisplay("Testing grouping of files in Add data dialog")
+        seriesFile1, seriesFile2, otherFile, imageFiles = self.createGroupTestFiles()
+        allFiles = imageFiles + [seriesFile2, otherFile, seriesFile1]
+
+        dialogItems = []
+
+        def inspectDialog():
+            dialog = slicer.app.activeModalWidget()
+            if not dialog:
+                return
+            table = dialog.findChildren(qt.QTableWidget)[0]
+            for row in range(table.rowCount):
+                fileName = table.item(row, 0).text()
+                descriptionComboBox = table.cellWidget(row, 1)
+                dialogItems.append((fileName, descriptionComboBox.currentText))
+                # Only load the group of .mft files
+                if os.path.normpath(fileName) != os.path.normpath(seriesFile1):
+                    table.item(row, 0).setCheckState(qt.Qt.Unchecked)
+            dialog.accept()
+
+        SlicerScriptedFileReaderWriterTestFileReader.lastLoadProperties = None
+        qt.QTimer.singleShot(1000, inspectDialog)
+        slicer.app.ioManager().openDialog("NoFile", slicer.qSlicerFileDialog.Read, {"fileNames": allFiles})
+
+        logging.info(f"Items in Add data dialog: {dialogItems}")
+        # 30 image files are listed as one volume, 2 .mft files as one "My file type" item, and one text file
+        self.assertEqual(len(dialogItems), 3)
+        itemFileNames = [os.path.normpath(item[0]) for item in dialogItems]
+        self.assertIn(os.path.normpath(seriesFile1), itemFileNames)
+        self.assertIn(os.path.normpath(otherFile), itemFileNames)
+        itemDescriptions = {os.path.normpath(item[0]): item[1] for item in dialogItems}
+        self.assertEqual(itemDescriptions[os.path.normpath(seriesFile1)], "My file type")
+        self.assertEqual(itemDescriptions[os.path.normpath(imageFiles[0])], "Volume")
+
+        # Properties that the reader set when it recognized the group are used for loading
+        loadProperties = SlicerScriptedFileReaderWriterTestFileReader.lastLoadProperties
+        self.assertIsNotNone(loadProperties)
+        self.assertTrue(loadProperties.get("mySeries"))
+        self.assertEqual([os.path.normpath(f) for f in loadProperties.get("fileNames", [])], [os.path.normpath(seriesFile1), os.path.normpath(seriesFile2)])
+
+    def test_AddDataDialogDicomGrouping(self):
+        import qt
+
+        self.delayDisplay("Testing grouping of DICOM files in Add data dialog")
+        tempDir = slicer.util.tempDirectory()
+        # Minimal files that are recognized as DICOM (128-byte preamble followed by "DICM").
+        # File names are numbered, therefore the volume reader recognizes them as an image series, too,
+        # but DICOM import must be offered by default.
+        dicomFiles = []
+        for index in range(1, 6):
+            dicomFile = tempDir + f"/dicomgrouptest{index}.dcm"
+            with open(dicomFile, "wb") as f:
+                f.write(b"\0" * 128 + b"DICM")
+            dicomFiles.append(dicomFile)
+        otherFile = tempDir + "/dicomgrouptest_other.txt"
+        with open(otherFile, "w") as f:
+            f.write("text")
+
+        dialogItems = []
+
+        def inspectDialog():
+            dialog = slicer.app.activeModalWidget()
+            if not dialog:
+                return
+            table = dialog.findChildren(qt.QTableWidget)[0]
+            for row in range(table.rowCount):
+                dialogItems.append((os.path.normpath(table.item(row, 0).text()), table.cellWidget(row, 1).currentText))
+            dialog.reject()
+
+        qt.QTimer.singleShot(1000, inspectDialog)
+        slicer.app.ioManager().openDialog("NoFile", slicer.qSlicerFileDialog.Read, {"fileNames": dicomFiles + [otherFile]})
+
+        # DICOM files are listed as a single item, which is loaded using DICOM import
+        self.assertEqual(len(dialogItems), 2)
+        itemDescriptions = dict(dialogItems)
+        self.assertEqual(itemDescriptions[os.path.normpath(dicomFiles[0])], "DICOM import")
+        self.assertIn(os.path.normpath(otherFile), itemDescriptions)

@@ -70,7 +70,19 @@ public:
   /// If no pattern is recognized then the method returns an empty string.
   /// The specific motivating use case is when the file list contains a set of related files, such as a list of image
   /// files that are recognized as a volume.
+  /// This method is kept for backward compatibility, readers should override ExamineFileListConfidence() instead
+  /// (similarly to CanLoadFile() and CanLoadFileConfidence()).
   virtual std::string ExamineFileList(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties);
+
+  /// Examine the list of files to see if there is an entry that can serve as an archetype for loading multiple files.
+  /// If so, the reader removes the recognized files (except the archetype) from the list, sets the ioProperties
+  /// so that the reader will read these files (including the "fileName" property, which is set to the archetype file
+  /// path), and returns the confidence (between 0.0 and 1.0) that the reader can load the group of files.
+  /// If no pattern is recognized then the method returns 0.0.
+  /// If multiple readers recognize a group of files then the file IO manager uses the one with the highest confidence.
+  /// The default implementation calls ExamineFileList() and returns the confidence that the reader can load
+  /// the archetype file (CanLoadFileConfidence).
+  virtual double ExamineFileListConfidence(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties);
 
   /// The nodes the last Load added, by node ID.
   const std::vector<std::string>& GetLoadedNodeIDs() const;

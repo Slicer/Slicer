@@ -219,9 +219,19 @@ std::string vtkSlicerVolumesReader::ExamineFileList(std::vector<std::string>& fi
   for (size_t fileIndex = 0; fileIndex < fileList.size(); ++fileIndex)
   {
     const std::string archetypeFile = fileList[fileIndex];
-    itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
-    seriesNames->SetArchetype(archetypeFile);
-    std::vector<std::string> candidateFiles = seriesNames->GetFileNames();
+    std::vector<std::string> candidateFiles;
+    try
+    {
+      itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
+      seriesNames->SetArchetype(archetypeFile);
+      candidateFiles = seriesNames->GetFileNames();
+    }
+    catch (itk::ExceptionObject& exception)
+    {
+      // For example, the directory of the file cannot be read
+      vtkDebugMacro("ExamineFileList: cannot examine file " << archetypeFile << ": " << exception.GetDescription());
+      continue;
+    }
     if (candidateFiles.size() <= 1)
     {
       continue;

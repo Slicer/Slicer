@@ -98,6 +98,22 @@ std::string vtkMRMLFileReader::ExamineFileList(std::vector<std::string>& vtkNotU
 }
 
 //----------------------------------------------------------------------------
+double vtkMRMLFileReader::ExamineFileListConfidence(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties)
+{
+  if (!ioProperties)
+  {
+    return 0.0;
+  }
+  const std::string archetypeFile = this->ExamineFileList(fileList, ioProperties);
+  if (archetypeFile.empty())
+  {
+    return 0.0;
+  }
+  ioProperties->SetStringProperty("fileName", archetypeFile);
+  return this->CanLoadFileConfidence(archetypeFile);
+}
+
+//----------------------------------------------------------------------------
 const std::vector<std::string>& vtkMRMLFileReader::GetLoadedNodeIDs() const
 {
   return this->LoadedNodeIDs;

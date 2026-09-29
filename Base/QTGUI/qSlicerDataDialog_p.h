@@ -67,8 +67,16 @@ protected:
     TypeColumn = 1,
     OptionsColumn = 2
   };
+  enum ItemDataRole
+  {
+    GroupReaderDescriptionRole = Qt::UserRole,
+    GroupPropertiesRole
+  };
 
   void addDirectory(const QDir& directory);
+  /// Add files to the list. Groups of files that readers recognize as a single data set
+  /// (such as an image series) are added as a single item.
+  void addFileInfoList(QFileInfoList fileInfoList);
   // addFile doesn't resize the columns to contents (as it might be a bit too
   // time consuming if you do it for every file added).
   // If a readerDescription is specified then only that reader will be offered. If ioProperties is specified as well then

@@ -46,6 +46,7 @@
 #include <vtkVariantArray.h>
 
 // STD includes
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -481,6 +482,141 @@ inline PyObject* PropertiesToPyDict(vtkMRMLIOProperties* properties)
     Py_DECREF(value);
   }
   return dict;
+}
+
+//----------------------------------------------------------------------------
+/// Convert a Python scalar (bool, int, float, str, bytes) to vtkVariant.
+/// Boolean values are stored as vtkVariant of char type (see vtkVariant(bool)).
+/// Returns false if the value type is not supported.
+inline bool PyScalarToVariant(PyObject* object, vtkVariant& value)
+{
+  if (PyBool_Check(object))
+  {
+    value = vtkVariant(object == Py_True);
+    return true;
+  }
+  if (PyLong_Check(object))
+  {
+    long long longValue = PyLong_AsLongLong(object);
+    if (PyErr_Occurred())
+    {
+      PyErr_Clear();
+      return false;
+    }
+    if (longValue >= std::numeric_limits<int>::min() && longValue <= std::numeric_limits<int>::max())
+    {
+      value = vtkVariant(static_cast<int>(longValue));
+    }
+    else
+    {
+      value = vtkVariant(longValue);
+    }
+    return true;
+  }
+  if (PyFloat_Check(object))
+  {
+    value = vtkVariant(PyFloat_AsDouble(object));
+    return true;
+  }
+  std::string text;
+  if (ToString(object, text))
+  {
+    value = vtkVariant(text);
+    return true;
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+/// Add values of a Python dictionary to IO properties (properties are added or replaced).
+/// Supported value types: bool, int, float, str, bytes, list/tuple (of bool, int, float, str, bytes values),
+/// dict (converted to nested properties), VTK object. None values are ignored.
+/// Properties of other types are ignored and an error is logged.
+inline void UpdatePropertiesFromPyDict(vtkMRMLIOProperties* properties, PyObject* dict)
+{
+  if (!dict || !PyDict_Check(dict) || !properties)
+  {
+    return;
+  }
+  PyObject* key = nullptr;
+  PyObject* value = nullptr;
+  Py_ssize_t position = 0;
+  while (PyDict_Next(dict, &position, &key, &value)) // borrowed references
+  {
+    std::string name;
+    if (!ToString(key, name))
+    {
+      vtkGenericWarningMacro("Scripted file reader/writer: property is ignored, its name is not a string");
+      continue;
+    }
+    if (value == Py_None)
+    {
+      continue;
+    }
+    if (PyBool_Check(value))
+    {
+      properties->SetBoolProperty(name, value == Py_True);
+      continue;
+    }
+    if (PyDict_Check(value))
+    {
+      vtkNew<vtkMRMLIOProperties> nestedProperties;
+      UpdatePropertiesFromPyDict(nestedProperties, value);
+      properties->SetMapProperty(name, nestedProperties);
+      continue;
+    }
+    if (PyList_Check(value) || PyTuple_Check(value))
+    {
+      std::vector<std::string> strings;
+      if (ToStringList(value, strings))
+      {
+        properties->SetStringListProperty(name, strings);
+        continue;
+      }
+      vtkSmartPyObject sequence;
+      sequence.TakeReference(PySequence_Fast(value, "expected a sequence"));
+      if (!sequence)
+      {
+        PyErr_Clear();
+        continue;
+      }
+      vtkNew<vtkVariantArray> items;
+      bool valid = true;
+      for (Py_ssize_t i = 0; i < PySequence_Fast_GET_SIZE(sequence.GetPointer()); ++i)
+      {
+        vtkVariant item;
+        if (!PyScalarToVariant(PySequence_Fast_GET_ITEM(sequence.GetPointer(), i), item))
+        {
+          valid = false;
+          break;
+        }
+        items->InsertNextValue(item);
+      }
+      if (valid)
+      {
+        properties->SetListProperty(name, items);
+      }
+      else
+      {
+        vtkGenericWarningMacro("Scripted file reader/writer: property " << name << " is ignored, its list contains a value of unsupported type");
+      }
+      continue;
+    }
+    vtkVariant scalarValue;
+    if (PyScalarToVariant(value, scalarValue))
+    {
+      properties->SetProperty(name, scalarValue);
+      continue;
+    }
+    vtkObjectBase* vtkObjectValue = vtkPythonUtil::GetPointerFromObject(value, "vtkObject");
+    if (vtkObjectValue)
+    {
+      properties->SetObjectProperty(name, vtkObject::SafeDownCast(vtkObjectValue));
+      continue;
+    }
+    PyErr_Clear();
+    vtkGenericWarningMacro("Scripted file reader/writer: property " << name << " is ignored, its type is not supported: " << Py_TYPE(value)->tp_name);
+  }
 }
 
 //----------------------------------------------------------------------------

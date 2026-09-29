@@ -54,6 +54,10 @@ public:
   bool CanLoadFile(const std::string& filePath) override;
   double CanLoadFileConfidence(const std::string& filePath) override;
   bool Load(vtkMRMLIOProperties* properties) override;
+  /// The file list is passed to the Python method as a list, which the method must modify in place.
+  std::string ExamineFileList(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties) override;
+  /// The file list is passed to the Python method as a list, which the method must modify in place.
+  double ExamineFileListConfidence(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties) override;
   void GetOptionsDescription(vtkMRMLIOOptionsDescription* description) override;
 
   /// Weak reference to this object. It is cleared when the object starts to be deleted (before DeleteEvent
@@ -61,9 +65,12 @@ public:
   /// preventing the deletion of the object, even in DeleteEvent observers.
   vtkWeakReference* GetWeakReference();
 
-  /// Convert IO properties to a Python dictionary.
+  /// @{
+  /// Convert IO properties to a Python dictionary and update IO properties from a Python dictionary.
   /// Used by readers and writers that use dictionaries for properties (legacy scripted readers and writers).
   static PyObject* PropertiesToDict(vtkMRMLIOProperties* properties);
+  static void UpdatePropertiesFromDict(vtkMRMLIOProperties* properties, PyObject* dict);
+  /// @}
 
 protected:
   vtkSlicerScriptedFileReaderBridge();
