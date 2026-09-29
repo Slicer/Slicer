@@ -21,60 +21,116 @@
 #ifndef __qSlicerNodeWriter_h
 #define __qSlicerNodeWriter_h
 
-// QtCore includes
+// QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
-#include "qSlicerFileWriter.h"
-class qSlicerNodeWriterPrivate;
+#include "qSlicerNodeWriterOptionsWidget.h"
+#include "qSlicerVTKFileWriter.h"
+
+// Slicer includes
+#include <vtkMRMLIOProperties.h>
+#include <vtkMRMLNodeWriter.h>
+#include <vtkMRMLStorableNode.h>
+
+// VTK includes
+#include <vtkNew.h>
+
 class vtkMRMLNode;
 
 /// Utility class that is ready to use for most of the nodes.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriter : public qSlicerFileWriter
+///
+/// \deprecated All tasks are delegated to vtkMRMLNodeWriter.
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriter : public qSlicerVTKFileWriter
 {
   Q_OBJECT
   /// Some storage nodes don't support the compression option
   Q_PROPERTY(bool supportUseCompression READ supportUseCompression WRITE setSupportUseCompression);
 
 public:
-  typedef qSlicerFileWriter Superclass;
-  qSlicerNodeWriter(const QString& description, const qSlicerIO::IOFileType& fileType, const QStringList& nodeTags, bool useCompression, QObject* parent);
+  typedef qSlicerVTKFileWriter Superclass;
+  qSlicerNodeWriter(const QString& description, const qSlicerIO::IOFileType& fileType, const QStringList& nodeClassNames, bool supportUseCompression, QObject* parent)
+    : Superclass(nullptr, parent)
+  {
+    vtkNew<vtkMRMLNodeWriter> writer;
+    writer->SetDescription(description.toStdString());
+    writer->SetFileType(fileType.toStdString());
+    writer->SetSupportUseCompression(supportUseCompression);
+    // The writer is set in this constructor so that subclasses that may override methods are detected
+    this->setFileWriter(writer);
+    this->setNodeClassNames(nodeClassNames);
+  }
 
-  ~qSlicerNodeWriter() override;
+  /// VTK-based writer that performs all tasks
+  vtkMRMLNodeWriter* nodeWriter() const { return vtkMRMLNodeWriter::SafeDownCast(this->fileWriter()); }
 
-  void setSupportUseCompression(bool useCompression);
-  bool supportUseCompression() const;
+  void setSupportUseCompression(bool support) { this->nodeWriter()->SetSupportUseCompression(support); }
+  bool supportUseCompression() const { return this->nodeWriter()->GetSupportUseCompression(); }
 
-  QString description() const override;
-  IOFileType fileType() const override;
+  virtual vtkMRMLNode* getNodeByID(const char* id) const { return id ? this->nodeWriter()->GetNodeByID(id) : nullptr; }
 
-  /// Return true if this class can write the input object.
-  bool canWriteObject(vtkObject* object) const override;
+  /// Write the node identified by "nodeID" property into the "fileName" file.
+  /// The node is found using getNodeByID() and checked using canWriteObjectConfidence(), which may be
+  /// overridden in subclasses, then the VTK-based writer writes the node.
+  bool write(const qSlicerIO::IOProperties& properties) override
+  {
+    vtkMRMLNodeWriter* writer = this->nodeWriter();
+    if (!writer)
+    {
+      return false;
+    }
+    writer->ClearWrittenNodeIDs();
+    writer->SetScene(this->mrmlScene());
+    vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties.value("nodeID").toString().toUtf8().constData()));
+    if (!node || this->canWriteObjectConfidence(node) <= 0.0)
+    {
+      return false;
+    }
+    vtkNew<vtkMRMLIOProperties> vtkProperties;
+    qSlicerIO::toVTKProperties(properties, vtkProperties);
+    if (node->GetID() && writer->GetNodeByID(node->GetID()) == node && writer->CanWriteObjectConfidence(node) > 0.0)
+    {
+      // The VTK-based writer can write the node: use Write(), which may be overridden in vtkMRMLNodeWriter subclasses
+      return writer->Write(vtkProperties);
+    }
+    // This writer accepts a node that the VTK-based writer would not (getNodeByID() or canWriteObject() is overridden)
+    return writer->WriteNode(node, vtkProperties);
+  }
 
-  /// Return a list of the supported extensions for a particular object.
-  /// Please read QFileDialog::nameFilters for the allowed formats
-  /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  QStringList extensions(vtkObject* object) const override;
+  /// Options widget (for writers that call this method from their options() implementation).
+  qSlicerIOOptions* options() const override
+  {
+    qSlicerNodeWriterOptionsWidget* options = new qSlicerNodeWriterOptionsWidget;
+    options->setShowUseCompression(this->supportUseCompression());
+    return options;
+  }
 
-  /// Write the node referenced by "nodeID" into the "fileName" file.
-  /// Optionally, "useCompression" can be specified.
-  /// Return true on success, false otherwise.
-  /// Create a storage node if the storable node doesn't have any.
-  bool write(const qSlicerIO::IOProperties& properties) override;
-
-  virtual vtkMRMLNode* getNodeByID(const char* id) const;
-
-  /// Return a qSlicerNodeWriterOptionsWidget
-  qSlicerIOOptions* options() const override;
+  /// Constructor for subclasses. A default vtkMRMLNodeWriter is created,
+  /// which may be replaced by a vtkMRMLNodeWriter subclass by calling setFileWriter.
+  explicit qSlicerNodeWriter(QObject* parent)
+    : Superclass(nullptr, parent)
+  {
+    vtkNew<vtkMRMLNodeWriter> writer;
+    this->setFileWriter(writer);
+  }
 
 protected:
-  void setNodeClassNames(const QStringList& nodeClassNames);
-  QStringList nodeClassNames() const;
-
-protected:
-  QScopedPointer<qSlicerNodeWriterPrivate> d_ptr;
-
-private:
-  Q_DECLARE_PRIVATE(qSlicerNodeWriter);
-  Q_DISABLE_COPY(qSlicerNodeWriter);
+  void setNodeClassNames(const QStringList& nodeClassNames)
+  {
+    std::vector<std::string> classNames;
+    for (const QString& className : nodeClassNames)
+    {
+      classNames.push_back(className.toStdString());
+    }
+    this->nodeWriter()->SetNodeClassNames(classNames);
+  }
+  QStringList nodeClassNames() const
+  {
+    QStringList classNames;
+    for (const std::string& className : this->nodeWriter()->GetNodeClassNames())
+    {
+      classNames << QString::fromStdString(className);
+    }
+    return classNames;
+  }
 };
 
 #endif

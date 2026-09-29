@@ -100,10 +100,12 @@ set(KIT_SRCS
   qSlicerPersistentCookieJar.h
   qSlicerRelativePathMapper.cxx
   qSlicerRelativePathMapper.h
-  qSlicerSceneBundleReader.cxx
-  qSlicerSceneBundleReader.h
   qSlicerUtils.cxx
   qSlicerUtils.h
+  qSlicerVTKFileReader.cxx
+  qSlicerVTKFileReader.h
+  qSlicerVTKFileWriter.cxx
+  qSlicerVTKFileWriter.h
   )
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -124,10 +126,6 @@ endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_SRCS
-    qSlicerScriptedFileReader.cxx
-    qSlicerScriptedFileReader.h
-    qSlicerScriptedFileWriter.cxx
-    qSlicerScriptedFileWriter.h
     qSlicerScriptedUtils.cxx
     qSlicerScriptedUtils_p.h
     )
@@ -138,6 +136,8 @@ endif()
 set_source_files_properties(
   qSlicerFileReader.h
   qSlicerFileWriter.h
+  qSlicerVTKFileReader.h
+  qSlicerVTKFileWriter.h
   WRAP_EXCLUDE
   )
 

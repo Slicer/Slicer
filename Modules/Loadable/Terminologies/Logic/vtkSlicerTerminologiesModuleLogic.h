@@ -448,6 +448,9 @@ public:
   vtkGetStringMacro(UserContextsPath);
   vtkSetStringMacro(UserContextsPath);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerTerminologiesModuleLogic();
   ~vtkSlicerTerminologiesModuleLogic() override;

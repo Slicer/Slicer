@@ -20,13 +20,10 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
-#include "qSlicerCoreIOManager.h"
-#include <qSlicerNodeWriter.h>
 
 // Texts includes
 #include "qSlicerTextsModule.h"
 #include "qSlicerTextsModuleWidget.h"
-#include "qSlicerTextsReader.h"
 #include "vtkSlicerTextsLogic.h"
 
 // VTK includes
@@ -114,10 +111,6 @@ void qSlicerTextsModule::setup()
   {
     return;
   }
-
-  qSlicerTextsReader* textFileReader = new qSlicerTextsReader(this);
-  app->coreIOManager()->registerIO(textFileReader);
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter("TextFileImporter", textFileReader->fileType(), QStringList() << "vtkMRMLTextNode", false, this));
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyTextsPlugin());

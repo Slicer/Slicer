@@ -8,6 +8,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerSceneReader.cxx
+  vtkSlicerSceneReader.h
+  vtkSlicerSceneWriter.cxx
+  vtkSlicerSceneWriter.h
   vtkSlicer${MODULE_NAME}ModuleLogic.cxx
   vtkSlicer${MODULE_NAME}ModuleLogic.h
   )

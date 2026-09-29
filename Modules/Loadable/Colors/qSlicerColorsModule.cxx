@@ -29,13 +29,10 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
-#include "qSlicerCoreIOManager.h"
-#include "qSlicerNodeWriter.h"
 
 // Colors includes
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"
-#include "qSlicerColorsReader.h"
 
 // qMRML includes
 #include <qMRMLColorPickerWidget.h>
@@ -109,8 +106,6 @@ void qSlicerColorsModule::setup()
     this->appLogic()->SetColorLogic(colorLogic);
     colorLogic->SetMRMLApplicationLogic(this->appLogic());
   }
-  app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"), QStringList() << "vtkMRMLColorNode", true, this));
 
   QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(app->userSettings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList());
 #ifdef Q_OS_WIN32

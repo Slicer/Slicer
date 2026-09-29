@@ -100,6 +100,9 @@ public:
   /// use GetBrowserNodesForProxyNode instead.
   vtkMRMLSequenceBrowserNode* GetFirstBrowserNodeForProxyNode(vtkMRMLNode* proxyNode);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   vtkSlicerSequencesLogic();
   ~vtkSlicerSequencesLogic() override;

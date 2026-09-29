@@ -22,32 +22,24 @@
 #define __qSlicerAnnotationsIOOptionsWidget_h
 
 // Slicer includes
-#include "qSlicerIOOptionsWidget.h"
-
-// Markups includes
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerMarkupsModuleExport.h"
+#include "vtkSlicerAnnotationsReader.h"
 
-class qSlicerAnnotationsIOOptionsWidgetPrivate;
-class QButtonGroup;
-class qSlicerAnnotationsIOOptionsWidget : public qSlicerIOOptionsWidget
+/// Options widget of vtkSlicerAnnotationsReader.
+///
+/// \deprecated Options are described by vtkSlicerAnnotationsReader (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerAnnotationsIOOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerAnnotationsIOOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerAnnotationsIOOptionsWidget() override;
-
-  QButtonGroup* FileTypeButtonGroup;
-
-public slots:
-  void setFileName(const QString& fileName) override;
-  void setFileNames(const QStringList& fileNames) override;
-
-protected slots:
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerAnnotationsIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerAnnotationsIOOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerAnnotationsIOOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerAnnotationsReader>());
+  }
 };
 
 #endif

@@ -610,14 +610,18 @@ void qSlicerDataDialog::dropEvent(QDropEvent* event)
 bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
   Q_D(qSlicerDataDialog);
-  Q_ASSERT(!readerProperties.contains("fileName"));
+  QStringList fileNames;
+  if (readerProperties.contains("fileName"))
+  {
+    fileNames << readerProperties["fileName"].toString();
+  }
   if (readerProperties.contains("fileNames"))
   {
-    QStringList fileNames = readerProperties["fileNames"].toStringList();
-    for (const QString& fileName : fileNames)
-    {
-      d->addFile(QFileInfo(fileName));
-    }
+    fileNames << readerProperties["fileNames"].toStringList();
+  }
+  for (const QString& fileName : fileNames)
+  {
+    d->addFile(QFileInfo(fileName));
   }
   d->resetColumnWidths();
 
@@ -648,9 +652,13 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     return success;
   }
   QList<qSlicerIO::IOProperties> files = d->selectedFiles();
+  // File names were already added to the list, they must not override the file name of each row
+  qSlicerIO::IOProperties commonProperties = readerProperties;
+  commonProperties.remove("fileName");
+  commonProperties.remove("fileNames");
   for (int i = 0; i < files.count(); ++i)
   {
-    files[i].insert(readerProperties);
+    files[i].insert(commonProperties);
   }
   vtkNew<vtkMRMLMessageCollection> userMessages;
   success = qSlicerCoreApplication::application()->coreIOManager()->loadNodes(files, nullptr, userMessages);

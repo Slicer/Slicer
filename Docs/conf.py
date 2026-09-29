@@ -61,6 +61,9 @@ autodoc_mock_imports = [
     "ctk",
     "qt",
     "vtk",
+    # Wrapped C++ classes that Python classes in the slicer package are derived from
+    "MRMLLogicPython",
+    "SlicerBaseLogicPython",
 ]
 
 myst_enable_extensions = [

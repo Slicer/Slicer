@@ -29,17 +29,18 @@
 // SlicerLogic includes
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerTextsModuleLogicExport.h"
+#include <vtkSlicerModuleLogic.h>
 
-// MRMLLogic includes
-#include <vtkMRMLAbstractLogic.h>
-
-class VTK_SLICER_TEXTS_MODULE_LOGIC_EXPORT vtkSlicerTextsLogic : public vtkMRMLAbstractLogic
+class VTK_SLICER_TEXTS_MODULE_LOGIC_EXPORT vtkSlicerTextsLogic : public vtkSlicerModuleLogic
 {
 public:
   /// The Usual vtk class functions
   static vtkSlicerTextsLogic* New();
-  vtkTypeMacro(vtkSlicerTextsLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkSlicerTextsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override { Superclass::PrintSelf(os, indent); }
+
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
 
 protected:
   vtkSlicerTextsLogic();

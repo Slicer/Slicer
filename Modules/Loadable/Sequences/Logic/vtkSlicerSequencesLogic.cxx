@@ -19,6 +19,9 @@
 
 // Sequence Logic includes
 #include "vtkSlicerSequencesLogic.h"
+#include "vtkSlicerSequencesReader.h"
+#include <vtkMRMLNodeWriter.h>
+#include <vtkNew.h>
 
 // MRMLSequence includes
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
@@ -953,4 +956,16 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForProxy
     }
   }
   return nullptr;
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerSequencesLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  handlers.emplace_back(vtkMRMLNodeWriter::CreateNodeWriter("Sequences", "SequenceFile", { "vtkMRMLSequenceNode" }, true));
+  vtkNew<vtkSlicerSequencesReader> sequencesReader;
+  sequencesReader->SetSequencesLogic(this);
+  handlers.emplace_back(sequencesReader);
+  handlers.emplace_back(vtkMRMLNodeWriter::CreateNodeWriter("Sequences", "VolumeSequenceFile", { "vtkMRMLSequenceNode" }, true));
+  return handlers;
 }

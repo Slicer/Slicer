@@ -21,29 +21,25 @@
 #ifndef __qSlicerSegmentationsNodeWriterOptionsWidget_h
 #define __qSlicerSegmentationsNodeWriterOptionsWidget_h
 
-/// QtCore includes
+// Slicer includes
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerSegmentationsModuleExport.h"
-#include "qSlicerNodeWriterOptionsWidget.h"
+#include "vtkSlicerSegmentationsNodeWriter.h"
 
-class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriterOptionsWidget : public qSlicerNodeWriterOptionsWidget
+/// Options widget of vtkSlicerSegmentationsNodeWriter.
+///
+/// \deprecated Options are described by vtkSlicerSegmentationsNodeWriter (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriterOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
-
 public:
-  typedef qSlicerNodeWriterOptionsWidget Superclass;
-  explicit qSlicerSegmentationsNodeWriterOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerSegmentationsNodeWriterOptionsWidget() override;
-
-public slots:
-  void setObject(vtkObject* object) override;
-
-protected slots:
-  virtual void setCropToMinimumExtent(bool crop);
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerSegmentationsNodeWriterOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerSegmentationsNodeWriterOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerSegmentationsNodeWriter>());
+  }
 };
 
 #endif

@@ -704,6 +704,13 @@ public slots:
   /// \sa setRenderPaused
   virtual void resumeRender() {};
 
+  /// Reset the field of view (focal point and camera) of all 3D views.
+  /// Called when vtkMRMLApplicationLogic::ResetThreeDViewsRequestEvent is invoked
+  /// (for example, after the first model is loaded).
+  /// Implemented in qSlicerApplication
+  /// \sa qSlicerApplication::resetThreeDViews()
+  virtual void resetThreeDViews() {};
+
   /// Load files into the application.
   /// \param userMessages if specified then loading errors are returned via this object.
   /// \return Returns true on success.

@@ -18,17 +18,14 @@
 
 ==============================================================================*/
 
-/// Qt includes
-#include <QFileInfo>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-# include <QRegularExpression>
-#endif
+/// QtCore includes
+#include "qSlicerFileReader.h"
 
 // CTK includes
 #include <ctkUtils.h>
 
-/// QtCore includes
-#include "qSlicerFileReader.h"
+// Slicer includes
+#include <vtkMRMLFileIOHandler.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerFileReaderPrivate
@@ -56,8 +53,7 @@ QStringList qSlicerFileReader::extensions() const
 //----------------------------------------------------------------------------
 bool qSlicerFileReader::canLoadFile(const QString& fileName) const
 {
-  QStringList res = this->supportedNameFilters(fileName);
-  return res.count() > 0;
+  return this->supportedNameFilters(fileName).count() > 0;
 }
 
 //----------------------------------------------------------------------------
@@ -68,56 +64,22 @@ double qSlicerFileReader::canLoadFileConfidence(const QString& fileName) const
     return 0.0;
   }
   int longestExtensionMatch = 0;
-  QStringList res = this->supportedNameFilters(fileName, &longestExtensionMatch);
+  this->supportedNameFilters(fileName, &longestExtensionMatch);
   // If longer extension is matched then the confidence that this is a good reader is
   // slightly higher. For example, for "somefile.seg.nrrd", a reader that is specifically
   // for ".seg.nrrd" files get slightly higher confidence than readers that of generic ".nrrd" files.
-  double confidence = 0.5 + 0.01 * longestExtensionMatch;
-  return confidence;
+  return 0.5 + 0.01 * longestExtensionMatch;
 }
 
 //----------------------------------------------------------------------------
 QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */) const
 {
-  if (longestExtensionMatchPtr)
-  {
-    (*longestExtensionMatchPtr) = 0;
-  }
+  std::vector<std::string> nameFilters;
+  ctk::qListToSTLVector(this->extensions(), nameFilters);
+  std::vector<std::string> matchingNameFiltersVector =
+    vtkMRMLFileIOHandler::GetMatchingNameFilters(fileName.toStdString(), nameFilters, /*requireReadableFile=*/true, longestExtensionMatchPtr);
   QStringList matchingNameFilters;
-  QFileInfo file(fileName);
-  if (!file.isFile() ||            //
-      !file.isReadable() ||        //
-      file.suffix().contains('~')) // temporary file
-  {
-    return matchingNameFilters;
-  }
-  for (const QString& nameFilter : this->extensions())
-  {
-    for (QString extension : ctk::nameFilterToExtensions(nameFilter))
-    {
-      // QRegularExpression::wildcardToRegularExpression could be used from Qt 5.12, but its behavior
-      // slightly changes across Qt5 versions, so stick to QRegExp for Qt5 to keep things simple.
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-      QRegularExpression regExp = QRegularExpression::fromWildcard(extension, Qt::CaseInsensitive);
-      Q_ASSERT(regExp.isValid());
-      if (regExp.match(file.fileName()).hasMatch())
-#else
-      QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
-      Q_ASSERT(regExp.isValid());
-      if (regExp.exactMatch(file.absoluteFilePath()))
-#endif
-      {
-        extension.remove('*'); // wildcard does not count, that's not a specific match
-        int matchedExtensionLength = extension.size();
-        if (longestExtensionMatchPtr && (*longestExtensionMatchPtr) < matchedExtensionLength)
-        {
-          (*longestExtensionMatchPtr) = matchedExtensionLength;
-        }
-        matchingNameFilters << nameFilter;
-      }
-    }
-  }
-  matchingNameFilters.removeDuplicates();
+  ctk::stlVectorToQList(matchingNameFiltersVector, matchingNameFilters);
   return matchingNameFilters;
 }
 
@@ -150,5 +112,5 @@ bool qSlicerFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileIn
   Q_UNUSED(fileInfoList);
   Q_UNUSED(archetypeFileInfo);
   Q_UNUSED(ioProperties);
-  return (false);
+  return false;
 }

@@ -9,6 +9,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerTextsReader.cxx
+  vtkSlicerTextsReader.h
   vtkSlicerTextsLogic.cxx
   vtkSlicerTextsLogic.h
   )

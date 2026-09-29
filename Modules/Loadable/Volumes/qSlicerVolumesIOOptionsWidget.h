@@ -21,44 +21,25 @@
 #ifndef __qSlicerVolumesIOOptionsWidget_h
 #define __qSlicerVolumesIOOptionsWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // Slicer includes
-#include "qSlicerIOOptionsWidget.h"
-
-// Volumes includes
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerVolumesModuleExport.h"
+#include "vtkSlicerVolumesReader.h"
 
-class qSlicerVolumesIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget : public qSlicerIOOptionsWidget
+/// Options widget of vtkSlicerVolumesReader.
+///
+/// \deprecated Options are described by vtkSlicerVolumesReader (see vtkMRMLFileIOHandler::GetOptionsDescription)
+/// and displayed by qSlicerGenericIOOptionsWidget.
+class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget : public qSlicerGenericIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerVolumesIOOptionsWidget(QWidget* parent = nullptr);
-  ~qSlicerVolumesIOOptionsWidget() override;
-
-  /// Allows custom handling of image sets as volumes
-  /// \sa qSlicerVolumesReader
-  /// \sa qSlicerDataDialog::addDirectory
-  void updateGUI(const qSlicerIO::IOProperties& ioProperties) override;
-
-public slots:
-  void setFileName(const QString& fileName) override;
-  void setFileNames(const QStringList& fileNames) override;
-
-protected slots:
-  /// Update the name, labelmap, center, singleFile, discardOrientation,
-  /// colorNodeID properties
-  void updateProperties();
-  /// Update the color node selection to the default label map
-  /// or volume color node depending on the label map checkbox state.
-  void updateColorSelector();
-
-private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerVolumesIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerVolumesIOOptionsWidget);
+  typedef qSlicerGenericIOOptionsWidget Superclass;
+  explicit qSlicerVolumesIOOptionsWidget(QWidget* parent = nullptr)
+    : Superclass(parent)
+  {
+    this->setIOHandler(qSlicerGenericIOOptionsWidget::findOrCreateIOHandler<vtkSlicerVolumesReader>());
+  }
 };
 
 #endif

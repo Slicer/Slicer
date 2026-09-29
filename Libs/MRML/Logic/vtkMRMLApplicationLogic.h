@@ -28,6 +28,7 @@
 #include "vtkMRMLSliceCompositeNode.h"
 
 class vtkMRMLColorLogic;
+class vtkMRMLFileIOManager;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
@@ -80,6 +81,11 @@ public:
   /// By default, a vtkMRMLColorLogic is instantiated.
   void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
   vtkMRMLColorLogic* GetColorLogic() const;
+
+  /// Manager of file readers and writers of the application.
+  /// Readers and writers created by module logics are registered in it
+  /// (see vtkMRMLModuleLogic::CreateFileIOHandlers()) and it is used for loading and saving data.
+  vtkMRMLFileIOManager* GetFileIOManager() const;
 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
   /// Perform the default behavior related to selecting a volume
@@ -143,6 +149,10 @@ public:
   /// Propagate selected table in the SelectionNode to table view nodes.
   void PropagateTableSelection();
 
+  /// Request resetting the field of view (focal point and camera) of all 3D views.
+  /// Invokes ResetThreeDViewsRequestEvent, which is handled by the application.
+  void RequestResetThreeDViews();
+
   /// Propagate selected PlotChart in the SelectionNode to Plot view nodes.
   void PropagatePlotChartSelection();
 
@@ -166,7 +176,7 @@ public:
   static std::string PercentEncode(std::string s);
 
   /// Save the scene into a self contained directory, sdbDir
-  /// Called by the qSlicerSceneWriter, which can be accessed via
+  /// Called by the vtkSlicerSceneWriter, which can be accessed via
   /// \sa qSlicerCoreIOManager::saveScene
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
@@ -205,6 +215,9 @@ public:
     ResumeRenderEvent,
     EditNodeEvent,
     ShowViewContextMenuEvent,
+    /// Request resetting the field of view of all 3D views (for example, after the first model is loaded).
+    /// The event is handled by the application (it resets the camera of all 3D views).
+    ResetThreeDViewsRequestEvent,
   };
   /// Structure passed as calldata pointer in the RequestEvent invoked event.
   struct InvokeRequest
@@ -254,6 +267,9 @@ public:
   /// \param moduleLogic pointer to logic to be associated to the module. If this
   /// parameter is nullptr, then the module logic will be removed from the application
   /// logic.
+  /// If the module logic is a vtkMRMLModuleLogic then the file readers and writers that it creates are registered
+  /// in the file IO manager (see vtkMRMLModuleLogic::CreateFileIOHandlers()) and they are unregistered
+  /// when the module logic is removed, replaced, or deleted.
   void SetModuleLogic(const char* moduleName, vtkMRMLAbstractLogic* moduleLogic);
 
   /// Gets a constant pointer to module logic associated with a given module

@@ -22,6 +22,8 @@
 
 // Terminologies includes
 #include "vtkSlicerTerminologiesModuleLogic.h"
+#include "vtkSlicerTerminologiesReader.h"
+#include <vtkNew.h>
 
 #include "vtkSlicerTerminologyEntry.h"
 #include "vtkSlicerTerminologyCategory.h"
@@ -3468,4 +3470,14 @@ vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLo
   vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType is deprecated."
                          " Use GetCodeIdentifierFromCodedEntry instead.");
   return vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(type);
+}
+
+//----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> vtkSlicerTerminologiesModuleLogic::CreateFileIOHandlers()
+{
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> handlers;
+  vtkNew<vtkSlicerTerminologiesReader> terminologiesReader;
+  terminologiesReader->SetTerminologiesLogic(this);
+  handlers.emplace_back(terminologiesReader);
+  return handlers;
 }

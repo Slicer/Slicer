@@ -19,13 +19,17 @@
 ==============================================================================*/
 // Qt includes
 #include <QDebug>
+#include <QImage>
 #include <QStringList>
+#include <QUrl>
 
 // Qt Core includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
+#include "qSlicerFileReader.h"
 
 // MRML includes
+#include <vtkMRMLIOProperties.h>
 #include <vtkMRMLMessageCollection.h>
 #include "vtkMRMLTextNode.h"
 #include "vtkMRMLScene.h"
@@ -36,6 +40,100 @@
 // STD includes
 #include <iostream>
 
+namespace
+{
+/// Legacy Qt-based reader (without Q_OBJECT macro)
+class qSlicerSharedTestFileReader : public qSlicerFileReader
+{
+public:
+  qSlicerSharedTestFileReader(QObject* parent = nullptr)
+    : qSlicerFileReader(parent)
+  {
+  }
+  QString description() const override { return "Shared test reader"; }
+  IOFileType fileType() const override { return "SharedTestFile"; }
+  QStringList extensions() const override { return QStringList() << "Shared test (*.sharedtest)"; }
+  bool load(const IOProperties& vtkNotUsed(properties)) override { return true; }
+};
+} // namespace
+
+//-----------------------------------------------------------------------------
+int TestSharedQtReaders()
+{
+  // All IO manager instances share the application logic's file IO manager.
+  // The original Qt-based reader must be returned by all instances (not a generic wrapper).
+  qSlicerCoreIOManager otherManager;
+  {
+    qSlicerCoreIOManager registeringManager;
+    qSlicerSharedTestFileReader* reader = new qSlicerSharedTestFileReader;
+    registeringManager.registerIO(reader);
+    CHECK_POINTER(registeringManager.reader("Shared test reader"), reader);
+    CHECK_POINTER(otherManager.reader("Shared test reader"), reader);
+  }
+  // The reader is deleted with the manager that registered it
+  CHECK_NULL(otherManager.reader("Shared test reader"));
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int TestPropertiesConversion()
+{
+  // Conversion of IO properties between Qt and VTK must preserve values and types
+  QImage image(4, 3, QImage::Format_RGBA8888);
+  image.fill(Qt::red);
+  QVariantMap nestedMap;
+  nestedMap["path"] = QStringList() << "a" << "b";
+  nestedMap["count"] = 3;
+  QVariantHash nestedHash;
+  nestedHash["value"] = 2.5;
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = QString("/data/Head.nrrd");
+  properties["labelmap"] = true;
+  properties["count"] = 7;
+  properties["large"] = qlonglong(5000000000LL);
+  properties["spacing"] = 0.5;
+  properties["fileNames"] = QStringList() << "a.png" << "b.png";
+  properties["list"] = QVariantList() << QString("text") << 12 << 2.5 << true;
+  properties["map"] = nestedMap;
+  properties["hash"] = nestedHash;
+  properties["screenShot"] = image;
+  properties["unsupported"] = QUrl("http://slicer.org"); // unsupported type, an error is logged
+
+  vtkNew<vtkMRMLIOProperties> vtkProperties;
+  qSlicerIO::toVTKProperties(properties, vtkProperties);
+  CHECK_BOOL(vtkProperties->HasProperty("unsupported"), false);
+  CHECK_BOOL(vtkProperties->IsListProperty("list"), true);
+  CHECK_BOOL(vtkProperties->IsMapProperty("map"), true);
+  CHECK_BOOL(vtkProperties->IsMapProperty("hash"), true);
+
+  qSlicerIO::IOProperties result = qSlicerIO::fromVTKProperties(vtkProperties);
+  CHECK_BOOL(result["fileName"].toString() == "/data/Head.nrrd", true);
+  CHECK_INT(result["labelmap"].userType(), QMetaType::Bool);
+  CHECK_BOOL(result["labelmap"].toBool(), true);
+  CHECK_INT(result["count"].toInt(), 7);
+  CHECK_BOOL(result["large"].toLongLong() == 5000000000LL, true);
+  CHECK_DOUBLE(result["spacing"].toDouble(), 0.5);
+  CHECK_INT(result["fileNames"].userType(), QMetaType::QStringList);
+  CHECK_INT(result["fileNames"].toStringList().size(), 2);
+  CHECK_INT(result["list"].userType(), QMetaType::QVariantList);
+  QVariantList list = result["list"].toList();
+  CHECK_INT(list.size(), 4);
+  CHECK_INT(list[0].userType(), QMetaType::QString);
+  CHECK_INT(list[1].toInt(), 12);
+  CHECK_DOUBLE(list[2].toDouble(), 2.5);
+  CHECK_INT(list[3].userType(), QMetaType::Bool);
+  CHECK_INT(result["map"].userType(), QMetaType::QVariantMap);
+  QVariantMap resultMap = result["map"].toMap();
+  CHECK_INT(resultMap["path"].toStringList().size(), 2);
+  CHECK_INT(resultMap["count"].toInt(), 3);
+  CHECK_DOUBLE(result["hash"].toMap()["value"].toDouble(), 2.5);
+  CHECK_INT(result["screenShot"].userType(), QMetaType::QImage);
+  CHECK_INT(result["screenShot"].value<QImage>().width(), 4);
+  CHECK_BOOL(result.contains("unsupported"), false);
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
 int TestLongNodeNameSaving(const char* temporaryDirectory)
 {
   vtkNew<vtkMRMLScene> scene;
@@ -94,6 +192,9 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
   qSlicerCoreApplication app(argc, argv);
 
   qSlicerCoreIOManager manager;
+
+  CHECK_EXIT_SUCCESS(TestSharedQtReaders());
+  CHECK_EXIT_SUCCESS(TestPropertiesConversion());
 
   // get all the writable file extensions
   QStringList allWritableExtensions = manager.allWritableFileExtensions();

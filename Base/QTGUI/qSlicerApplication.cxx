@@ -1406,6 +1406,15 @@ void qSlicerApplication::resumeRender()
   this->setRenderPaused(false);
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerApplication::resetThreeDViews()
+{
+  if (this->layoutManager())
+  {
+    this->layoutManager()->resetThreeDViews();
+  }
+}
+
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 //-----------------------------------------------------------------------------
 ctkDICOMBrowser* qSlicerApplication::createDICOMBrowserForMainDatabase()

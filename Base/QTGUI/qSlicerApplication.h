@@ -226,6 +226,10 @@ public slots:
   /// \sa setRenderPaused
   void resumeRender() override;
 
+  /// Reset the field of view (focal point and camera) of all 3D views of the current layout manager.
+  /// \sa qSlicerLayoutManager::resetThreeDViews()
+  void resetThreeDViews() override;
+
   /// Override the qSlicerCoreApplication implementation to also show error messages in a popup window.
   bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages = nullptr) override;
 

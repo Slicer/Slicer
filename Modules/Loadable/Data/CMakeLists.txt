@@ -25,17 +25,11 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
   qSlicer${MODULE_NAME}ModuleWidget.h
-  qSlicerSceneIOOptionsWidget.cxx
   qSlicerSceneIOOptionsWidget.h
-  qSlicerSceneReader.cxx
-  qSlicerSceneReader.h
-  qSlicerSceneWriter.cxx
-  qSlicerSceneWriter.h
   )
 
 set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
-  Resources/UI/qSlicerSceneIOOptionsWidget.ui
   )
 
 set(MODULE_TARGET_LIBRARIES

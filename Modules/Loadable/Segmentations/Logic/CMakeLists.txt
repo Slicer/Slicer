@@ -11,6 +11,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkSlicerSegmentationsReader.cxx
+  vtkSlicerSegmentationsReader.h
+  vtkSlicerSegmentationsNodeWriter.cxx
+  vtkSlicerSegmentationsNodeWriter.h
   vtkSlicer${MODULE_NAME}ModuleLogic.cxx
   vtkSlicer${MODULE_NAME}ModuleLogic.h
   vtkSlicerSegmentEditorLogic.cxx

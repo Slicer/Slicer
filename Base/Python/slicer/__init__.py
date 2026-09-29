@@ -217,6 +217,13 @@ for kit in available_kits:
     del kit
 
 # -----------------------------------------------------------------------------
+# Python base classes of file readers and writers implemented in Python.
+# They are imported after the wrapped classes, as they are subclasses of wrapped classes
+# (vtkSlicerScriptedFileReaderBridge, vtkSlicerScriptedFileWriterBridge).
+
+from .ScriptedFileIO import vtkSlicerScriptedFileReader, vtkSlicerScriptedFileWriter  # noqa: F401
+
+# -----------------------------------------------------------------------------
 # Cleanup: Removing things the user shouldn't have to see.
 
 del _createModule

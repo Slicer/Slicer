@@ -31,9 +31,6 @@
 #include "qSlicerDataModuleWidget.h"
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerExportNodeDialog.h"
-#include "qSlicerSceneBundleReader.h"
-#include "qSlicerSceneReader.h"
-#include "qSlicerSceneWriter.h"
 
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -42,7 +39,6 @@
 #include "vtkSlicerDataModuleLogic.h"
 
 // Logic includes
-#include <vtkSlicerCamerasModuleLogic.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -78,7 +74,7 @@ QStringList qSlicerDataModule::categories() const
 QStringList qSlicerDataModule::dependencies() const
 {
   QStringList moduleDependencies;
-  // Cameras: Required in qSlicerSceneReader
+  // Cameras: Required for loading scenes
   moduleDependencies << /*no tr*/ "Cameras";
   return moduleDependencies;
 }
@@ -90,23 +86,7 @@ void qSlicerDataModule::setup()
 
   this->Superclass::setup();
 
-  vtkSlicerCamerasModuleLogic* camerasLogic = vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic(/*no tr*/ "Cameras"));
-  // NOTE: here we assume that camerasLogic with a nullptr value can be passed
-  // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
-  // immediately.
-  if (!camerasLogic)
-  {
-    qCritical() << Q_FUNC_INFO << ": Cameras module is not found";
-  }
-
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-
-  // Readers
-  ioManager->registerIO(new qSlicerSceneReader(camerasLogic, this));
-  ioManager->registerIO(new qSlicerSceneBundleReader(this));
-
-  // Writers
-  ioManager->registerIO(new qSlicerSceneWriter(this));
 
   // Dialogs
   ioManager->registerDialog(new qSlicerDataDialog(this));

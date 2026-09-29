@@ -31,6 +31,8 @@
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCommandOptions.h"
+#include "qSlicerIOManager.h"
+#include "qSlicerIOOptionsWidget.h"
 #include "qSlicerPythonManager.h"
 
 #include "qSlicerBaseQTGUIExport.h"
@@ -79,6 +81,27 @@ public slots:
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModule* module(qSlicerAbstractModuleWidget* _moduleWidget) { return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module()); }
+
+  //----------------------------------------------------------------------------
+  // qSlicerIOManager
+
+  // The returned options widgets are owned by Python (they are deleted when they are no longer
+  // referenced in Python), unless they have a parent (then the parent deletes them).
+
+  //----------------------------------------------------------------------------
+  PythonQtPassOwnershipToPython<qSlicerIOOptionsWidget*> fileOptionsWidget(qSlicerIOManager* ioManager, const QString& fileDescription, QWidget* parent = nullptr)
+  {
+    return ioManager->fileOptionsWidget(fileDescription, parent);
+  }
+
+  //----------------------------------------------------------------------------
+  PythonQtPassOwnershipToPython<qSlicerIOOptionsWidget*> fileWriterOptionsWidget(qSlicerIOManager* ioManager,
+                                                                                 vtkObject* object,
+                                                                                 const QString& extension = QString(),
+                                                                                 QWidget* parent = nullptr)
+  {
+    return ioManager->fileWriterOptionsWidget(object, extension, parent);
+  }
 };
 
 //-----------------------------------------------------------------------------

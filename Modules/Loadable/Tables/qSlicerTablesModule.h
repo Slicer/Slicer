@@ -23,6 +23,9 @@
 #ifndef __qSlicerTablesModule_h
 #define __qSlicerTablesModule_h
 
+// CTK includes
+#include <ctkVTKObject.h>
+
 // Slicer includes
 #include "qSlicerLoadableModule.h"
 
@@ -33,6 +36,7 @@ class qSlicerTablesModulePrivate;
 class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModule : public qSlicerLoadableModule
 {
   Q_OBJECT
+  QVTK_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
@@ -62,6 +66,11 @@ protected:
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;
+
+protected slots:
+  /// Ask the user for the password of a database that cannot be opened without a password.
+  /// callData is a pointer to the std::string where the password is returned.
+  void onPasswordRequested(vtkObject* caller, void* callData);
 
 protected:
   QScopedPointer<qSlicerTablesModulePrivate> d_ptr;

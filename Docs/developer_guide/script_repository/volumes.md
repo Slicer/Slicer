@@ -14,7 +14,7 @@ loadedVolumeNode = slicer.util.loadVolume("c:/Users/abc/Documents/SomeImage/file
 
 :::{note}
 
-The following options can be passed to load volumes programmatically when using `qSlicerVolumesReader`:
+The following options can be passed to load volumes programmatically when using `vtkSlicerVolumesReader`:
 - `name` (string): Node name to set for the loaded volume
 - `labelmap` (bool, default=false): Load the file as labelmap volume
 - `singleFile` (bool, default=false): Force loading this file only (otherwise the loader may look for similar files in the same folder to load multiple slices as a 3D volume)

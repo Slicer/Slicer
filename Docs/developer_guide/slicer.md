@@ -43,6 +43,14 @@
     :show-inheritance:
 ```
 
+## slicer.ScriptedFileIO
+
+```{eval-rst}
+.. automodule:: slicer.ScriptedFileIO
+    :members:
+    :show-inheritance:
+```
+
 % Commented out for now, because it breaks documentation building on Windows
 % (Sphinx returns with an error code and nothing is generated)
 %

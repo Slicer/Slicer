@@ -30,10 +30,18 @@
 #include "qSlicerScriptedLoadableModule.h"
 #include "qSlicerScriptedLoadableModuleWidget.h"
 #include "qSlicerScriptedFileDialog.h"
-#include "qSlicerScriptedFileReader.h"
-#include "qSlicerScriptedFileWriter.h"
 #include "qSlicerScriptedUtils_p.h"
 #include "vtkSlicerScriptedLoadableModuleLogic.h"
+
+// MRML includes
+#include <vtkSlicerApplicationLogic.h>
+#include <vtkMRMLFileIOHandler.h>
+#include <vtkMRMLFileIOManager.h>
+
+// VTK includes
+#include <vtkNew.h>
+#include <vtkPythonUtil.h>
+#include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModulePrivate
@@ -63,6 +71,14 @@ public:
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
   QString PythonSourceFilePath;
+
+  /// File IO manager where the scripted reader and writer of the module are registered
+  vtkWeakPointer<vtkMRMLFileIOManager> RegisteredFileIOManager;
+  /// Registered scripted reader and writer
+  std::vector<vtkWeakPointer<vtkMRMLFileIOHandler>> RegisteredFileIOHandlers;
+
+  /// Unregister the scripted reader and writer that were registered by registerIO()
+  void unregisterFileIOHandlers();
 };
 
 //-----------------------------------------------------------------------------
@@ -81,6 +97,20 @@ qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModulePrivate::unregisterFileIOHandlers()
+{
+  if (this->RegisteredFileIOManager)
+  {
+    for (vtkMRMLFileIOHandler* handler : this->RegisteredFileIOHandlers)
+    {
+      this->RegisteredFileIOManager->Unregister(handler); // deleted handlers (nullptr) are ignored
+    }
+  }
+  this->RegisteredFileIOHandlers.clear();
+  this->RegisteredFileIOManager = nullptr;
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModule methods
 
 //-----------------------------------------------------------------------------
@@ -93,7 +123,12 @@ qSlicerScriptedLoadableModule::qSlicerScriptedLoadableModule(QObject* _parentObj
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule() = default;
+qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule()
+{
+  Q_D(qSlicerScriptedLoadableModule);
+  // Unregister the scripted reader and writer while Python is still available
+  d->unregisterFileIOHandlers();
+}
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedLoadableModule::pythonSource() const
@@ -219,17 +254,54 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
 void qSlicerScriptedLoadableModule::registerIO()
 {
   Q_D(qSlicerScriptedLoadableModule);
-  QScopedPointer<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
-  bool ret = fileWriter->setPythonSource(d->PythonSourceFilePath);
-  if (ret)
+  vtkSlicerApplicationLogic* appLogic = this->appLogic();
+  vtkMRMLFileIOManager* fileIOManager = appLogic ? appLogic->GetFileIOManager() : nullptr;
+  if (!fileIOManager)
   {
-    qSlicerApplication::application()->ioManager()->registerIO(fileWriter.take());
+    return;
   }
-  QScopedPointer<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
-  ret = fileReader->setPythonSource(d->PythonSourceFilePath);
-  if (ret)
+  if (!Py_IsInitialized())
   {
-    qSlicerApplication::application()->ioManager()->registerIO(fileReader.take());
+    return;
+  }
+  // Readers and writers that were registered previously (if the module is set up again) are replaced
+  d->unregisterFileIOHandlers();
+  // Register <ModuleName>FileWriter and <ModuleName>FileReader Python classes (if they exist).
+  // The registered readers and writers are stored so that they can be unregistered when the module is deleted.
+  PythonQtObjectPtr scriptedFileIOModule;
+  scriptedFileIOModule.setNewRef(PyImport_ImportModule("slicer.ScriptedFileIO"));
+  PythonQtObjectPtr registerFunction;
+  if (scriptedFileIOModule)
+  {
+    registerFunction.setNewRef(PyObject_GetAttrString(scriptedFileIOModule, "registerScriptedFileIO"));
+  }
+  PythonQtObjectPtr result;
+  if (registerFunction)
+  {
+    PythonQtObjectPtr pyFileIOManager;
+    pyFileIOManager.setNewRef(vtkPythonUtil::GetObjectFromPointer(fileIOManager));
+    PythonQtObjectPtr pyModuleName;
+    pyModuleName.setNewRef(PyUnicode_FromString(this->name().toUtf8().constData()));
+    result.setNewRef(PyObject_CallFunctionObjArgs(registerFunction, pyModuleName.object(), pyFileIOManager.object(), nullptr));
+  }
+  d->RegisteredFileIOManager = fileIOManager;
+  if (!result || !PyList_Check(result.object()))
+  {
+    qCritical() << Q_FUNC_INFO << ": failed to register file readers and writers of module" << this->name();
+    PythonQt::self()->handleError();
+    return;
+  }
+  for (Py_ssize_t index = 0; index < PyList_Size(result.object()); ++index)
+  {
+    vtkMRMLFileIOHandler* handler = vtkMRMLFileIOHandler::SafeDownCast( //
+      vtkPythonUtil::GetPointerFromObject(PyList_GetItem(result.object(), index), "vtkMRMLFileIOHandler"));
+    if (!handler)
+    {
+      qCritical() << Q_FUNC_INFO << ": invalid file reader or writer returned for module" << this->name();
+      PythonQt::self()->handleError();
+      continue;
+    }
+    d->RegisteredFileIOHandlers.emplace_back(handler);
   }
 }
 

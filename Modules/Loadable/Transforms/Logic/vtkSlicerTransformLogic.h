@@ -23,9 +23,7 @@
 // SlicerLogic includes
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerTransformsModuleLogicExport.h"
-
-// MRMLLogic includes
-#include <vtkMRMLAbstractLogic.h>
+#include <vtkSlicerModuleLogic.h>
 
 // STD includes
 #include <vector>
@@ -50,12 +48,12 @@ class vtkPointSet;
 class vtkPolyData;
 class vtkUnstructuredGrid;
 
-class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstractLogic
+class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerModuleLogic
 {
 public:
   /// The Usual vtk class functions
   static vtkSlicerTransformLogic* New();
-  vtkTypeMacro(vtkSlicerTransformLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkSlicerTransformLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override { Superclass::PrintSelf(os, indent); }
 
   /// Apply the associated transform to the transformable node. Return true
@@ -169,6 +167,9 @@ public:
   /// Returns TRANSFORM_THINPLATESPLINE if the node contains a simple thin plate spline transform.
   /// Returns TRANSFORM_OTHER in all other cases.
   static TransformKind GetTransformKind(vtkMRMLTransformNode* transformNode);
+
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
 
 protected:
   vtkSlicerTransformLogic();

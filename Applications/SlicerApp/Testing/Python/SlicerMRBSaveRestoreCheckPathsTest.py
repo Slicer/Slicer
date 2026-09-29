@@ -53,7 +53,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
         self.uniqueDirectory = uniqueDirectory
         self.strict = strict
         # this flag will need to be updated if the code in
-        #  qSlicerSceneBundleReader::load
+        #  vtkMRMLSceneBundleReader::Load
         # is changed from the current behavior (delete expanded
         # files after loading the MRB into Slicer)
         self.mrbDeleteFilesAfterLoad = 1

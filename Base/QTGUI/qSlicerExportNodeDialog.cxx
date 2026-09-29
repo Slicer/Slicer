@@ -448,7 +448,7 @@ bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene,
                                            const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
                                            const QList<vtkMRMLStorableNode*>& nodesRecursive,
                                            vtkMRMLStorableNode* selectedNode,
-                                           const QHash<QString, QVariant>& nodeIdToSubjectHierarchyPath)
+                                           const QVariantMap& nodeIdToSubjectHierarchyPath)
 {
   this->MRMLScene = scene;
   this->NodesRecursive = nodesRecursive;
@@ -1247,15 +1247,15 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
     return false;
   }
 
-  QVariantList childIdsNonrecursive, childIdsRecursive;
+  QStringList childIdsNonrecursive, childIdsRecursive;
 
   if (properties.contains("childIdsNonrecursive"))
   {
-    childIdsNonrecursive = properties["childIdsNonrecursive"].toList();
+    childIdsNonrecursive = properties["childIdsNonrecursive"].toStringList();
   }
   if (properties.contains("childIdsRecursive"))
   {
-    childIdsRecursive = properties["childIdsRecursive"].toList();
+    childIdsRecursive = properties["childIdsRecursive"].toStringList();
   }
 
   // This will remain null if there is no "selectedNodeID", or it will become a pointer to the selected node
@@ -1277,9 +1277,8 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
       qCritical() << Q_FUNC_INFO << ": Received node ID " << selectedNodeID << ", but unable to get an associated storable node.";
     }
   }
-  for (const QVariant& childID : childIdsNonrecursive)
+  for (const QString& childIDString : childIdsNonrecursive)
   {
-    QString childIDString = childID.toString();
     vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));
     if (n)
     {
@@ -1290,9 +1289,8 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
       qCritical() << Q_FUNC_INFO << ": Received node ID " << childIDString << ", but unable to get an associated storable node.";
     }
   }
-  for (const QVariant& childID : childIdsRecursive)
+  for (const QString& childIDString : childIdsRecursive)
   {
-    QString childIDString = childID.toString();
     vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));
     if (n)
     {
@@ -1305,10 +1303,10 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   }
 
   // Get the hash map that attributes to each node a subject hierarchy path
-  QHash<QString, QVariant> nodeIdToSubjectHierarchyPath;
-  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString, QVariant>>())
+  QVariantMap nodeIdToSubjectHierarchyPath;
+  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QVariantMap>())
   {
-    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
+    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toMap();
   }
   else
   {

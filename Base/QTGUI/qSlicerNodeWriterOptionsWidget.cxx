@@ -103,7 +103,7 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
 void qSlicerNodeWriterOptionsWidget::setUseCompression(bool use)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
-  d->Properties["useCompression"] = (use ? 1 : 0);
+  d->Properties["useCompression"] = use;
   d->CompressionParameterSelector->setEnabled(d->UseCompressionCheckBox->isChecked());
 }
 

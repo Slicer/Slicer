@@ -536,6 +536,9 @@ public:
   /// \return True if the segmentation extent is outside of the reference volume, False otherwise.
   static bool IsSegmentationExentOutsideReferenceGeometry(vtkOrientedImageData* referenceGeometry, vtkOrientedImageData* segmentationGeometry);
 
+  /// Create file readers and writers of the module.
+  std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
+
 protected:
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 

@@ -31,6 +31,12 @@
 class qSlicerFileReaderOptions;
 class qSlicerFileReaderPrivate;
 
+/// Base class of legacy Qt-based file readers.
+///
+/// \deprecated File readers are implemented as vtkMRMLFileReader subclasses. This class is kept for backward
+/// compatibility and to provide Qt options widgets (see options()).
+/// See https://slicer.readthedocs.io/en/latest/developer_guide/mrml_overview.html#qt-interface
+
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader : public qSlicerIO
 {
   Q_OBJECT

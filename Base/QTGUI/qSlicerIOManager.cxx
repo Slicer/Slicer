@@ -17,6 +17,7 @@
 /// Slicer includes
 #include "qSlicerIOManager.h"
 #include "qSlicerDataDialog.h"
+#include "qSlicerGenericIOOptionsWidget.h"
 #include "qSlicerModelsDialog.h"
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerApplication.h"
@@ -26,12 +27,14 @@
 #include "qSlicerAbstractCoreModule.h"
 
 /// MRML includes
+#include <vtkMRMLIOOptionsDescription.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLMessageCollection.h>
 
 /// VTK includes
 #include <vtkCollection.h>
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerIOManagerPrivate
@@ -358,7 +361,7 @@ void qSlicerIOManager::addHistory(const QString& path)
 }
 
 //-----------------------------------------------------------------------------
-const QStringList& qSlicerIOManager::history() const
+QStringList qSlicerIOManager::history() const
 {
   Q_D(const qSlicerIOManager);
   return d->History;
@@ -377,7 +380,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 }
 
 //-----------------------------------------------------------------------------
-const QList<QUrl>& qSlicerIOManager::favorites() const
+QList<QUrl> qSlicerIOManager::favorites() const
 {
   Q_D(const qSlicerIOManager);
   return d->Favorites;
@@ -588,4 +591,57 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
   messageBox->setText(text);
   messageBox->exec();
   messageBox->deleteLater();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptionsWidget* qSlicerIOManager::fileOptionsWidget(const QString& fileDescription, QWidget* parent) const
+{
+  qSlicerIOOptions* options = this->fileOptions(fileDescription);
+  qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
+  if (!optionsWidget)
+  {
+    delete options;
+    return nullptr;
+  }
+  if (parent)
+  {
+    optionsWidget->setParent(parent);
+  }
+  return optionsWidget;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptionsWidget* qSlicerIOManager::fileWriterOptionsWidget(vtkObject* object, const QString& extension, QWidget* parent) const
+{
+  qSlicerIOOptions* options = this->fileWriterOptions(object, extension);
+  qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
+  if (!optionsWidget)
+  {
+    delete options;
+    return nullptr;
+  }
+  if (parent)
+  {
+    optionsWidget->setParent(parent);
+  }
+  return optionsWidget;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerIOManager::createGenericOptions(vtkMRMLFileIOHandler* ioHandler) const
+{
+  if (!ioHandler)
+  {
+    return nullptr;
+  }
+  vtkNew<vtkMRMLIOOptionsDescription> description;
+  ioHandler->FillOptionsDescription(nullptr, description);
+  if (description->GetNumberOfOptions() == 0)
+  {
+    return nullptr;
+  }
+  qSlicerGenericIOOptionsWidget* options = new qSlicerGenericIOOptionsWidget();
+  options->setMRMLScene(ioHandler->GetScene() ? ioHandler->GetScene() : qSlicerCoreApplication::application()->mrmlScene());
+  options->setIOHandler(ioHandler);
+  return options;
 }
