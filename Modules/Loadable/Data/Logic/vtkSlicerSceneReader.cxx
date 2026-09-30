@@ -25,15 +25,19 @@
 // MRML includes
 #include <vtkMRMLI18N.h>
 #include <vtkMRMLMessageCollection.h>
+#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkObjectFactory.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <set>
 #include <sstream>
 #include <tuple>
+#include <vector>
 
 namespace
 {
@@ -81,6 +85,16 @@ bool vtkSlicerSceneReader::Load(vtkMRMLIOProperties* properties)
   std::string file = properties->GetStringProperty("fileName");
   scene->SetURL(file.c_str());
   bool clear = properties->GetBoolProperty("clear", false);
+
+  // Nodes that are in the scene before loading. Weak pointers are used, because nodes may be deleted
+  // while loading (when the scene is cleared) and new nodes may then be created at the same address.
+  std::vector<vtkWeakPointer<vtkMRMLNode>> nodesBeforeLoading;
+  vtkCollection* nodes = scene->GetNodes();
+  for (int index = 0; index < nodes->GetNumberOfItems(); ++index)
+  {
+    nodesBeforeLoading.emplace_back(vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index)));
+  }
+
   bool success = false;
   if (clear)
   {
@@ -99,6 +113,26 @@ bool vtkSlicerSceneReader::Load(vtkMRMLIOProperties* properties)
       vtkWarningMacro("Load: copyCameras=false property is ignored, cameras are now always replaced in the scene");
     }
     success = scene->Import(this->GetUserMessages());
+  }
+
+  // Report the nodes that were added to the scene
+  std::set<vtkMRMLNode*> nodesStillPresentFromBeforeLoading;
+  for (const vtkWeakPointer<vtkMRMLNode>& node : nodesBeforeLoading)
+  {
+    if (node)
+    {
+      nodesStillPresentFromBeforeLoading.insert(node);
+    }
+  }
+  nodes = scene->GetNodes();
+  for (int index = 0; index < nodes->GetNumberOfItems(); ++index)
+  {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index));
+    if (!node || !node->GetID() || nodesStillPresentFromBeforeLoading.count(node))
+    {
+      continue;
+    }
+    this->AddLoadedNodeID(node->GetID());
   }
 
   // Display warning message if scene file was created with a different application or with a future application version
