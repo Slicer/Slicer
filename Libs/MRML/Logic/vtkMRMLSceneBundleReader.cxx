@@ -28,10 +28,12 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkObjectFactory.h>
+#include <vtkWeakPointer.h>
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <set>
+#include <vector>
 
 vtkStandardNewMacro(vtkMRMLSceneBundleReader);
 
@@ -60,17 +62,26 @@ bool vtkMRMLSceneBundleReader::Load(vtkMRMLIOProperties* properties)
   std::string file = vtksys::SystemTools::CollapseFullPath(properties->GetStringProperty("fileName"));
   bool clear = properties->GetBoolProperty("clear", false);
 
-  // Get all the nodes that have been around before loading
-  std::set<vtkMRMLNode*> nodesPresentBeforeLoading;
+  // Get all the nodes that have been around before loading. Weak pointers are used, because nodes may be deleted
+  // while loading (when the scene is cleared) and new nodes may then be created at the same address.
+  std::vector<vtkWeakPointer<vtkMRMLNode>> nodesBeforeLoading;
   vtkCollection* nodes = scene->GetNodes();
   for (int index = 0; index < nodes->GetNumberOfItems(); ++index)
   {
-    nodesPresentBeforeLoading.insert(vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index)));
+    nodesBeforeLoading.emplace_back(vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(index)));
   }
 
   bool success = scene->ReadFromMRB(file.c_str(), clear, this->GetUserMessages());
 
   // Get all the new nodes
+  std::set<vtkMRMLNode*> nodesPresentBeforeLoading;
+  for (const vtkWeakPointer<vtkMRMLNode>& node : nodesBeforeLoading)
+  {
+    if (node)
+    {
+      nodesPresentBeforeLoading.insert(node);
+    }
+  }
   nodes = scene->GetNodes();
   for (int index = 0; index < nodes->GetNumberOfItems(); ++index)
   {
