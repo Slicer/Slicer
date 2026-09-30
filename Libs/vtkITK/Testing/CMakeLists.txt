@@ -18,4 +18,5 @@ ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
   )
 
 slicer_add_python_unittest(SCRIPT vtkITKArchetypeDiffusionTensorReaderFile.py)
+slicer_add_python_unittest(SCRIPT vtkITKArchetypeDICOMSeriesFileList.py)
 slicer_add_python_unittest(SCRIPT vtkITKArchetypeScalarReaderFile.py)
