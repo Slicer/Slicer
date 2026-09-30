@@ -914,6 +914,12 @@ if(Slicer_SUPERBUILD)
   return()
 endif()
 
+# Hide libstdc++ regex internals so Slicer's calls cannot bind to Qt WebEngine's
+# incompatible implementation. Apply to libraries, modules, and executables.
+if(UNIX AND NOT APPLE)
+  add_link_options("LINKER:--version-script=${Slicer_CMAKE_DIR}/SlicerHideStdCxxRegexSymbols.ver")
+endif()
+
 foreach(dep QT ${Slicer_DEPENDENCIES})
   if(Slicer_USE_SYSTEM_${dep})
     message(STATUS "Using system ${dep}")
