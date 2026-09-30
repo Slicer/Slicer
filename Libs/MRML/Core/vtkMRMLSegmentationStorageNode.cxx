@@ -306,6 +306,18 @@ int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     segmentationNode->CreateDefaultDisplayNodes();
   }
 
+  // Set default display properties (such as generated colors of segments that were saved without a color)
+  // in all the display nodes now, as part of reading. If they were set later, when display properties are
+  // first needed, then the segmentation would appear to be modified since it was read.
+  for (int displayNodeIndex = 0; success && displayNodeIndex < segmentationNode->GetNumberOfDisplayNodes(); ++displayNodeIndex)
+  {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    if (displayNode)
+    {
+      displayNode->UpdateSegmentList(false);
+    }
+  }
+
   if (!success)
   {
     // Failed to read

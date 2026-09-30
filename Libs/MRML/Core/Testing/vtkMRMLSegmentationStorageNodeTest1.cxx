@@ -22,6 +22,7 @@ Care Ontario.
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationStorageNode.h"
 #include "vtkOrientedImageData.h"
@@ -204,6 +205,91 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 
     // Clean up
     vtksys::SystemTools::RemoveFile(multiFrameFilename);
+  }
+
+  std::cout << "Testing generated colors of segments that were saved without a color" << std::endl;
+  {
+    // Segments that are added without a display node keep the invalid color
+    vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+    scene->AddNode(segmentationNode);
+    std::string segmentId = segmentationNode->GetSegmentation()->AddEmptySegment();
+    double color[3] = { 0.0, 0.0, 0.0 };
+    segmentationNode->GetSegmentation()->GetSegment(segmentId)->GetColor(color);
+    CHECK_DOUBLE(color[0], vtkSegment::SEGMENT_COLOR_INVALID[0]);
+
+    vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
+    scene->AddNode(segmentationStorageNode);
+    std::string noColorFilename = std::string(tempDir) + "/NoColorSegmentation.seg.nrrd";
+    segmentationStorageNode->SetFileName(noColorFilename.c_str());
+    CHECK_INT(segmentationStorageNode->WriteData(segmentationNode), 1);
+
+    // The color is generated while reading, therefore the segmentation is not modified since read
+    vtkNew<vtkMRMLSegmentationNode> segmentationNodeFromFile;
+    scene->AddNode(segmentationNodeFromFile);
+    segmentationNodeFromFile->SetAndObserveStorageNodeID(segmentationStorageNode->GetID());
+    CHECK_INT(segmentationStorageNode->ReadData(segmentationNodeFromFile), 1);
+    CHECK_NOT_NULL(segmentationNodeFromFile->GetDisplayNode());
+    segmentationNodeFromFile->GetSegmentation()->GetSegment(segmentId)->GetColor(color);
+    CHECK_BOOL(color[0] != vtkSegment::SEGMENT_COLOR_INVALID[0]      //
+                 || color[1] != vtkSegment::SEGMENT_COLOR_INVALID[1] //
+                 || color[2] != vtkSegment::SEGMENT_COLOR_INVALID[2],
+               true);
+    CHECK_BOOL(segmentationNodeFromFile->GetModifiedSinceRead(), false);
+
+    // Getting display properties does not change the segmentation
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNodeFromFile->GetDisplayNode());
+    CHECK_NOT_NULL(displayNode);
+    CHECK_BOOL(displayNode->GetSegmentVisibility(segmentId), true);
+    CHECK_BOOL(segmentationNodeFromFile->GetModifiedSinceRead(), false);
+
+    // Clean up
+    vtksys::SystemTools::RemoveFile(noColorFilename);
+  }
+
+  std::cout << "Testing generated colors of segments with multiple display nodes" << std::endl;
+  {
+    vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+    scene->AddNode(segmentationNode);
+    std::string segmentId = segmentationNode->GetSegmentation()->AddEmptySegment();
+    vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
+    scene->AddNode(segmentationStorageNode);
+    std::string noColorFilename = std::string(tempDir) + "/NoColorSegmentationMultipleDisplayNodes.seg.nrrd";
+    segmentationStorageNode->SetFileName(noColorFilename.c_str());
+    CHECK_INT(segmentationStorageNode->WriteData(segmentationNode), 1);
+
+    vtkNew<vtkMRMLSegmentationNode> segmentationNodeFromFile;
+    scene->AddNode(segmentationNodeFromFile);
+    segmentationNodeFromFile->SetAndObserveStorageNodeID(segmentationStorageNode->GetID());
+    vtkNew<vtkMRMLSegmentationDisplayNode> displayNode1;
+    scene->AddNode(displayNode1);
+    segmentationNodeFromFile->AddAndObserveDisplayNodeID(displayNode1->GetID());
+    vtkNew<vtkMRMLSegmentationDisplayNode> displayNode2;
+    scene->AddNode(displayNode2);
+    segmentationNodeFromFile->AddAndObserveDisplayNodeID(displayNode2->GetID());
+
+    // The first display node already has display properties for the segment (as if they were read from a scene file),
+    // therefore it does not generate a color for it. The second display node generates the color.
+    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties hiddenSegmentProperties;
+    hiddenSegmentProperties.Visible = false;
+    displayNode1->SetSegmentDisplayProperties(segmentId, hiddenSegmentProperties);
+
+    CHECK_INT(segmentationStorageNode->ReadData(segmentationNodeFromFile), 1);
+    double color[3] = { 0.0, 0.0, 0.0 };
+    segmentationNodeFromFile->GetSegmentation()->GetSegment(segmentId)->GetColor(color);
+    CHECK_BOOL(color[0] != vtkSegment::SEGMENT_COLOR_INVALID[0]      //
+                 || color[1] != vtkSegment::SEGMENT_COLOR_INVALID[1] //
+                 || color[2] != vtkSegment::SEGMENT_COLOR_INVALID[2],
+               true);
+    CHECK_BOOL(segmentationNodeFromFile->GetModifiedSinceRead(), false);
+
+    // Getting display properties from any of the display nodes does not change the segmentation,
+    // and the display properties that were already set are kept.
+    CHECK_BOOL(displayNode1->GetSegmentVisibility(segmentId), false);
+    CHECK_BOOL(displayNode2->GetSegmentVisibility(segmentId), true);
+    CHECK_BOOL(segmentationNodeFromFile->GetModifiedSinceRead(), false);
+
+    // Clean up
+    vtksys::SystemTools::RemoveFile(noColorFilename);
   }
 
   return EXIT_SUCCESS;

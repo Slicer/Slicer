@@ -345,7 +345,8 @@ protected:
   vtkMRMLSegmentationDisplayNode(const vtkMRMLSegmentationDisplayNode&);
   void operator=(const vtkMRMLSegmentationDisplayNode&);
 
-  friend class vtkMRMLSegmentationNode; // Access to UpdateSegmentList();
+  friend class vtkMRMLSegmentationNode;        // Access to UpdateSegmentList();
+  friend class vtkMRMLSegmentationStorageNode; // Access to UpdateSegmentList();
 
 protected:
   /// Name of representation that is displayed in 2D views as outline or filled area
