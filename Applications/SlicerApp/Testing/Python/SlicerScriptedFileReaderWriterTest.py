@@ -532,7 +532,9 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
 
         # Loading reports loaded nodes via self.parent.loadedNodes
         fileIOManager = slicer.vtkMRMLFileIOManager()
-        fileIOManager.RegisterReader(reader)
+        # RegisterHandler() registers a reader or a writer (in Python, Register() would be vtkObjectBase.Register())
+        fileIOManager.RegisterHandler(reader)
+        self.assertEqual(reader.GetFileIOManager(), fileIOManager)
         properties = slicer.vtkMRMLIOProperties()
         properties.SetStringProperty("fileName", self.validFilename)
         self.assertTrue(reader.Load(properties))
@@ -547,7 +549,7 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         keptParent = instances[0]().parent
         readerReference = vtk.vtkWeakReference()
         readerReference.Set(reader)
-        fileIOManager.Unregister(reader)
+        fileIOManager.UnregisterHandler(reader)
         self.assertIsNotNone(readerReference.Get())
         del reader
         self.assertIsNone(readerReference.Get())

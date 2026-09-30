@@ -44,7 +44,7 @@ def registerScriptedFileIO(moduleName, fileIOManager):
     :param moduleName: name of the scripted module (and its Python module).
     :param fileIOManager: ``vtkMRMLFileIOManager`` where the writer and reader are registered.
     :return: list of registered writers and readers. The caller is responsible for unregistering them
-      by calling ``fileIOManager.Unregister(handler)``.
+      by calling ``fileIOManager.UnregisterHandler(handler)``.
     """
     module = sys.modules.get(moduleName)
     if module is None or fileIOManager is None:
