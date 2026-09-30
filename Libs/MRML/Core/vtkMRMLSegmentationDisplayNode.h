@@ -164,6 +164,18 @@ public:
   /// Clear segment display properties
   void ClearSegmentDisplayProperties();
 
+  //@{
+  /// Update the list of segment display properties: add default properties (and generate a color
+  /// if the segment has none) for segments that have no properties yet, and remove properties of
+  /// segments that are no longer in the segmentation. Does nothing if the segmentation has not changed.
+  /// The segmentation node calls it when a display node or a segment is added, or a segment is removed.
+  /// \param removeUnusedDisplayProperties Remove properties of segments that are not in the segmentation.
+  ///   False when segments are added, to keep properties read from a scene file before the segments.
+  ///   Default: the RemoveUnusedDisplayProperties setting.
+  void UpdateSegmentList();
+  void UpdateSegmentList(bool removeUnusedDisplayProperties);
+  //@}
+
   /// Determine and set automatic opacities for segments using topological hierarchies.
   /// Stores value in opacity component of \sa SegmentDisplayProperties.
   /// \return Success flag
@@ -331,21 +343,11 @@ protected:
   /// Convenience function for getting all segment IDs.
   void GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
 
-  //@{
-  /// Update list of segment display properties.
-  /// Remove entries for missing segments (if removeUnusedDisplayProperties is enabled)
-  /// and add missing entries for existing segments.
-  void UpdateSegmentList();
-  void UpdateSegmentList(bool removeUnusedDisplayProperties);
-  //@}
-
 protected:
   vtkMRMLSegmentationDisplayNode();
   ~vtkMRMLSegmentationDisplayNode() override;
   vtkMRMLSegmentationDisplayNode(const vtkMRMLSegmentationDisplayNode&);
   void operator=(const vtkMRMLSegmentationDisplayNode&);
-
-  friend class vtkMRMLSegmentationNode; // Access to UpdateSegmentList();
 
 protected:
   /// Name of representation that is displayed in 2D views as outline or filled area

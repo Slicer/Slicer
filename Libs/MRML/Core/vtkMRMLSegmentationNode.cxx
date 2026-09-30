@@ -297,25 +297,31 @@ void vtkMRMLSegmentationNode::OnSourceRepresentationModified()
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentAdded(const char* vtkNotUsed(segmentId))
 {
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (displayNode)
+  for (int displayNodeIndex = 0; displayNodeIndex < this->GetNumberOfDisplayNodes(); ++displayNodeIndex)
   {
-    // Make sure the properties of the new segment are as expected even before the first update is triggered (e.g. by slice controller widget).
-    // removeUnusedDisplayProperties is set to false to prevent removing of display properties of segments
-    // that are not added to the segmentation node yet (this occurs during scene loading).
-    displayNode->UpdateSegmentList(false);
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetNthDisplayNode(displayNodeIndex));
+    if (displayNode)
+    {
+      // Make sure the properties of the new segment are as expected even before the first update is triggered (e.g. by slice controller widget).
+      // removeUnusedDisplayProperties is set to false to prevent removing of display properties of segments
+      // that are not added to the segmentation node yet (this occurs during scene loading).
+      displayNode->UpdateSegmentList(false);
+    }
   }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* vtkNotUsed(segmentId))
 {
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (displayNode)
+  for (int displayNodeIndex = 0; displayNodeIndex < this->GetNumberOfDisplayNodes(); ++displayNodeIndex)
   {
-    // Make sure the segment is removed from the display properties as well, so that when a new segment is added
-    // in its place it is properly populated (it will have the same segment ID, so it would simply claim it)
-    displayNode->UpdateSegmentList();
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetNthDisplayNode(displayNodeIndex));
+    if (displayNode)
+    {
+      // Make sure the segment is removed from the display properties as well, so that when a new segment is added
+      // in its place it is properly populated (it will have the same segment ID, so it would simply claim it)
+      displayNode->UpdateSegmentList();
+    }
   }
 }
 
@@ -1191,6 +1197,17 @@ void vtkMRMLSegmentationNode::OnNodeReferenceAdded(vtkMRMLNodeReference* referen
   {
     this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
   }
+  else if (std::string(reference->GetReferenceRole()) == this->GetDisplayNodeReferenceRole())
+  {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(reference->GetReferencedNode());
+    if (displayNode)
+    {
+      // Make sure the display properties of the segments are as expected as soon as the display node is added.
+      // removeUnusedDisplayProperties is set to false to prevent removing of display properties of segments
+      // that are not added to the segmentation node yet (this occurs during scene loading).
+      displayNode->UpdateSegmentList(false);
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1200,6 +1217,17 @@ void vtkMRMLSegmentationNode::OnNodeReferenceModified(vtkMRMLNodeReference* refe
   if (std::string(reference->GetReferenceRole()) == this->GetReferenceImageGeometryReferenceRole())
   {
     this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
+  }
+  else if (std::string(reference->GetReferenceRole()) == this->GetDisplayNodeReferenceRole())
+  {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(reference->GetReferencedNode());
+    if (displayNode)
+    {
+      // Make sure the display properties of the segments are as expected as soon as the display node is added.
+      // removeUnusedDisplayProperties is set to false to prevent removing of display properties of segments
+      // that are not added to the segmentation node yet (this occurs during scene loading).
+      displayNode->UpdateSegmentList(false);
+    }
   }
 }
 
