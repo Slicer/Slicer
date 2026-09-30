@@ -1704,7 +1704,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype()
         kth_orientation = this->IndexImageOrientationPatient[k];
         kth_position = this->IndexImagePositionPatient[k];
       }
-      if (kth_orientation > 0 && kth_position > 0)
+      if (kth_orientation >= 0 && kth_position >= 0)
       {
         if (!originSet)
         {
