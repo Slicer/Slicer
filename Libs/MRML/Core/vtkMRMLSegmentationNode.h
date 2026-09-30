@@ -360,10 +360,10 @@ protected:
   static const char* GetLabelmapConversionColorTableNodeReferenceRole() { return "labelmapConversionColorTableNode"; };
   static const char* GetLabelmapConversionColorTableNodeReferenceMRMLAttributeName() { return "labelmapConversionColorTableNodeRef"; };
 
-  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
+  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent and to update the segment list of a display node that is added
   void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
-  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
+  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent and to update the segment list of a display node that is added
   void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
