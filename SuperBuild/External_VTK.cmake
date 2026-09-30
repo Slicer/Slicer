@@ -150,7 +150,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   # symbol-control approach used in Libs/krb5-gssapi-stub. ELF/Linux only:
   # macOS uses two-level namespaces and Windows is unaffected.
   if(UNIX AND NOT APPLE)
-    set(_vtk_regex_version_script "${CMAKE_CURRENT_LIST_DIR}/vtk-hide-stdcxx-regex.ver")
+    set(_vtk_regex_version_script "${Slicer_CMAKE_DIR}/SlicerHideStdCxxRegexSymbols.ver")
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
       "-DCMAKE_SHARED_LINKER_FLAGS:STRING=-Wl,--version-script=${_vtk_regex_version_script}"
       "-DCMAKE_MODULE_LINKER_FLAGS:STRING=-Wl,--version-script=${_vtk_regex_version_script}"
