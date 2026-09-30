@@ -33,6 +33,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <sstream>
+
 vtkStandardNewMacro(vtkSlicerTransformsReader);
 
 //----------------------------------------------------------------------------
@@ -85,6 +88,13 @@ double vtkSlicerTransformsReader::CanLoadFileConfidence(const std::string& fileP
   {
     return confidence;
   }
+  if (EndsWithNoCase(filePath, ".txt"))
+  {
+    // Many kinds of text files have .txt extension. Use higher confidence than the default (which is
+    // the same as for text file readers) if the file looks like an ITK transform file and lower
+    // confidence if it does not.
+    return vtkSlicerTransformsReader::IsITKTextTransformFile(filePath) ? 0.6 : 0.3;
+  }
   // Set higher confidence for NIFTI or NRRD files containing displacement field.
   // In CanLoadFileConfidence we often just peek into the text header, but since NIFTI
   // does not use a text header, we must parse.
@@ -129,4 +139,35 @@ double vtkSlicerTransformsReader::CanLoadFileConfidence(const std::string& fileP
     // this does not look like a valid NIFTI file.
   }
   return confidence;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerTransformsReader::IsITKTextTransformFile(const std::string& filePath)
+{
+  // ITK text transform files start with a "#Insight Transform File" comment (which is optional)
+  // and specify the transform type in a "Transform:" line after optional comment lines.
+  std::istringstream header(ReadFileHeader(filePath, 4096));
+  std::string line;
+  while (std::getline(header, line))
+  {
+    size_t start = line.find_first_not_of(" \t\r");
+    if (start == std::string::npos)
+    {
+      // empty line
+      continue;
+    }
+    line = line.substr(start);
+    if (line.compare(0, 23, "#Insight Transform File") == 0)
+    {
+      return true;
+    }
+    if (line[0] == '#')
+    {
+      // comment
+      continue;
+    }
+    // The first line that is not a comment must specify the transform type
+    return line.compare(0, 10, "Transform:") == 0;
+  }
+  return false;
 }

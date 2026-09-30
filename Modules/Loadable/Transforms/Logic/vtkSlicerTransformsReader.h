@@ -38,8 +38,13 @@ public:
   void SetTransformLogic(vtkSlicerTransformLogic* logic);
   vtkSlicerTransformLogic* GetTransformLogic();
 
-  /// Higher confidence for NIFTI or NRRD files containing displacement field.
+  /// Returns higher confidence than the default for NIFTI and NRRD files that contain a displacement field,
+  /// and for .txt files that look like ITK transform files. Returns lower than default confidence for
+  /// NIFTI and NRRD files that do not contain a displacement field and for other .txt files.
   double CanLoadFileConfidence(const std::string& filePath) override;
+
+  /// Returns true if the file looks like an ITK text transform file (it only inspects the beginning of the file).
+  static bool IsITKTextTransformFile(const std::string& filePath);
 
   bool Load(vtkMRMLIOProperties* properties) override;
 
