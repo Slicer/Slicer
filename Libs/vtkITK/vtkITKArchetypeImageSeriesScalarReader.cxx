@@ -30,10 +30,6 @@
 // ITK includes
 #include <itkOrientImageFilter.h>
 #include <itkImageSeriesReader.h>
-#ifdef VTKITK_BUILD_DICOM_SUPPORT
-# include <itkDCMTKImageIO.h>
-# include <itkGDCMImageIO.h>
-#endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
@@ -88,16 +84,8 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(vtkInformation* vtkNotUs
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
 # define vtkITKExecuteDataDeclareDICOMImageIO                                                                                \
    typedef itk::ImageIOBase ImageIOType;                                                                                     \
-   ImageIOType::Pointer imageIO;                                                                                             \
-   if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::GDCM)                                                 \
-   {                                                                                                                         \
-     imageIO = itk::GDCMImageIO::New();                                                                                      \
-   }                                                                                                                         \
-   else if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::DCMTK)                                           \
-   {                                                                                                                         \
-     imageIO = itk::DCMTKImageIO::New();                                                                                     \
-   }                                                                                                                         \
-   else                                                                                                                      \
+   ImageIOType::Pointer imageIO = vtkITKArchetypeImageSeriesReader::CreateDICOMImageIO(this->DICOMImageIOApproach);          \
+   if (!imageIO)                                                                                                             \
    {                                                                                                                         \
      vtkErrorMacro(<< "vtkITKExecuteDataFromSeries: Unsupported DICOMImageIOApproach: " << this->GetDICOMImageIOApproach()); \
      this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);                                                            \
