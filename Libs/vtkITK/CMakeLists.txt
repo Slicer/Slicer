@@ -14,6 +14,13 @@ endif()
 if(NOT DEFINED VTKITK_BUILD_DICOM_SUPPORT)
   option(VTKITK_BUILD_DICOM_SUPPORT "Build with DICOM support" ON)
 endif()
+# DICOM files are read using GDCM. DCMTK can be used as well, if it is available in ITK (ITKIODCMTK module).
+if(NOT DEFINED VTKITK_BUILD_DCMTK_SUPPORT)
+  option(VTKITK_BUILD_DCMTK_SUPPORT "Build with support for reading DICOM files using DCMTK" ${VTKITK_BUILD_DICOM_SUPPORT})
+endif()
+if(VTKITK_BUILD_DCMTK_SUPPORT AND NOT VTKITK_BUILD_DICOM_SUPPORT)
+  message(FATAL_ERROR "VTKITK_BUILD_DCMTK_SUPPORT requires VTKITK_BUILD_DICOM_SUPPORT")
+endif()
 
 # --------------------------------------------------------------------------
 # Dependencies

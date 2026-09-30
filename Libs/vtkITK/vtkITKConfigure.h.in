@@ -4,3 +4,4 @@
  */
 
 #cmakedefine VTKITK_BUILD_DICOM_SUPPORT
+#cmakedefine VTKITK_BUILD_DCMTK_SUPPORT

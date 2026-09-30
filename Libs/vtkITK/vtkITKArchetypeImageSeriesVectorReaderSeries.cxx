@@ -25,7 +25,6 @@
 #include <itkImageSeriesReader.h>
 #include <itkOrientImageFilter.h>
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-# include <itkDCMTKImageIO.h>
 # include <itkGDCMImageIO.h>
 
 // GDCM includes
@@ -76,16 +75,8 @@ void vtkITKExecuteDataFromSeriesVector(vtkITKArchetypeImageSeriesVectorReaderSer
   reader->GetOutput()->SetVectorLength(3);
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
   typedef itk::ImageIOBase ImageIOType;
-  ImageIOType::Pointer imageIO;
-  if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::GDCM)
-  {
-    imageIO = itk::GDCMImageIO::New();
-  }
-  else if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
-  {
-    imageIO = itk::DCMTKImageIO::New();
-  }
-  else
+  ImageIOType::Pointer imageIO = vtkITKArchetypeImageSeriesReader::CreateDICOMImageIO(self->GetDICOMImageIOApproach());
+  if (!imageIO)
 #endif
   {
     vtkErrorWithObjectMacro(self, << "vtkITKArchetypeImageSeriesVectorReaderSeries: Unsupported DICOMImageIOApproach: " << self->GetDICOMImageIOApproach());

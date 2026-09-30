@@ -758,6 +758,11 @@ public:
   /// ITK can only read NIfTI-1 files, therefore this can be used for explaining why reading of a file failed.
   static bool IsNifti2File(const char* fileName);
 
+  /// Create an image IO for reading DICOM files using the specified approach (GDCM or DCMTK).
+  /// Returns nullptr if the approach is not supported (the application is built without DICOM support,
+  /// or DCMTK is requested but the application is built without DCMTK support).
+  static itk::ImageIOBase::Pointer CreateDICOMImageIO(int dicomImageIOApproach);
+
 protected:
   vtkITKArchetypeImageSeriesReader();
   ~vtkITKArchetypeImageSeriesReader() override;
