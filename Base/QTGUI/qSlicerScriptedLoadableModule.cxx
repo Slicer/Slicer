@@ -103,7 +103,7 @@ void qSlicerScriptedLoadableModulePrivate::unregisterFileIOHandlers()
   {
     for (vtkMRMLFileIOHandler* handler : this->RegisteredFileIOHandlers)
     {
-      this->RegisteredFileIOManager->Unregister(handler); // deleted handlers (nullptr) are ignored
+      this->RegisteredFileIOManager->UnregisterHandler(handler); // deleted handlers (nullptr) are ignored
     }
   }
   this->RegisteredFileIOHandlers.clear();

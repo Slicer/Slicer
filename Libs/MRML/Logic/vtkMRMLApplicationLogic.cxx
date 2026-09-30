@@ -172,7 +172,7 @@ void vtkMRMLApplicationLogic::vtkInternal::RegisterModuleFileIOHandlers(const st
     {
       continue;
     }
-    this->FileIOManager->Register(handler);
+    this->FileIOManager->RegisterHandler(handler);
     registeredHandlers.emplace_back(handler);
   }
   this->ModuleLogicDeletedObserverTags[moduleName] = moduleLogic->AddObserver(vtkCommand::DeleteEvent, this->ModuleLogicDeletedCallback);
@@ -198,7 +198,7 @@ void vtkMRMLApplicationLogic::vtkInternal::UnregisterModuleFileIOHandlers(const 
   {
     for (vtkMRMLFileIOHandler* handler : handlersIt->second)
     {
-      this->FileIOManager->Unregister(handler); // deleted handlers (nullptr) are ignored
+      this->FileIOManager->UnregisterHandler(handler); // deleted handlers (nullptr) are ignored
     }
     this->ModuleFileIOHandlers.erase(handlersIt);
   }

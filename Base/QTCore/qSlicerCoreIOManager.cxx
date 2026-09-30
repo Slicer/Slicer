@@ -364,8 +364,8 @@ vtkMRMLFileIOManager* qSlicerCoreIOManagerPrivate::fileIOManager()
     // Move readers and writers that were registered in the standalone manager
     for (const vtkSmartPointer<vtkMRMLFileIOHandler>& handler : this->RegisteredHandlers)
     {
-      previousFileIOManager->Unregister(handler);
-      this->FileIOManager->Register(handler);
+      previousFileIOManager->UnregisterHandler(handler);
+      this->FileIOManager->RegisterHandler(handler);
     }
   }
   return this->FileIOManager;
@@ -481,7 +481,7 @@ qSlicerCoreIOManager::~qSlicerCoreIOManager()
     QList<vtkSmartPointer<vtkMRMLFileIOHandler>> registeredHandlers = d->RegisteredHandlers;
     for (const auto& handler : registeredHandlers)
     {
-      d->FileIOManager->Unregister(handler);
+      d->FileIOManager->UnregisterHandler(handler);
     }
   }
 }
@@ -904,7 +904,7 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
 
   d->QtIOs[handler] = io;
   d->RegisteredHandlers << handler;
-  this->fileIOManager()->Register(handler);
+  this->fileIOManager()->RegisterHandler(handler);
 
   // If the reader or writer is deleted then remove it from the VTK-based manager
   // (the manager that is used at the time the reader or writer is deleted, as the standalone manager
@@ -917,7 +917,7 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
                      Q_D(qSlicerCoreIOManager);
                      if (d->FileIOManager)
                      {
-                       d->FileIOManager->Unregister(handler);
+                       d->FileIOManager->UnregisterHandler(handler);
                      }
                    });
 }

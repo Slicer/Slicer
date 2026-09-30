@@ -277,11 +277,11 @@ int vtkMRMLFileIOManagerTest1(int argc, char* argv[])
   CHECK_INT(static_cast<int>(manager->GetReadersForFileType("VolumeFile").size()), 1);
 
   // Unregistering removes the reader
-  manager->Unregister(sureReader);
+  manager->UnregisterHandler(sureReader);
   CHECK_INT(manager->GetNumberOfReaders(), 1);
   CHECK_NULL(sureReader->GetFileIOManager());
 
-  // Register() adds a reader or a writer, depending on the type of the handler
+  // RegisterHandler() adds a reader or a writer, depending on the type of the handler
   vtkSmartPointer<vtkMRMLNodeWriter> nodeWriter = vtkMRMLNodeWriter::CreateNodeWriter("Texts", "TextFile", { "vtkMRMLTextNode" }, false);
   CHECK_STD_STRING(nodeWriter->GetDescription(), "Texts");
   CHECK_STD_STRING(nodeWriter->GetFileType(), "TextFile");
@@ -289,18 +289,18 @@ int vtkMRMLFileIOManagerTest1(int argc, char* argv[])
   CHECK_INT(static_cast<int>(nodeWriter->GetNodeClassNames().size()), 1);
   CHECK_NULL(nodeWriter->GetFileIOManager()); // not registered
   const int numberOfWritersBeforeRegister = manager->GetNumberOfWriters();
-  manager->Register(nodeWriter);
+  manager->RegisterHandler(nodeWriter);
   CHECK_INT(manager->GetNumberOfWriters(), numberOfWritersBeforeRegister + 1);
   CHECK_POINTER(nodeWriter->GetFileIOManager(), manager.GetPointer());
-  manager->Register(sureReader);
+  manager->RegisterHandler(sureReader);
   CHECK_INT(manager->GetNumberOfReaders(), 2);
-  manager->Unregister(nodeWriter);
-  manager->Unregister(sureReader);
+  manager->UnregisterHandler(nodeWriter);
+  manager->UnregisterHandler(sureReader);
   CHECK_INT(manager->GetNumberOfWriters(), numberOfWritersBeforeRegister);
   CHECK_INT(manager->GetNumberOfReaders(), 1);
   CHECK_POINTER(manager->GetNthReader(0), extensionReader.GetPointer());
   CHECK_NULL(sureReader->GetFileIOManager());
-  manager->Unregister(extensionReader);
+  manager->UnregisterHandler(extensionReader);
   CHECK_INT(manager->GetNumberOfReaders(), 0);
 
   // Loading

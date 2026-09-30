@@ -420,7 +420,7 @@ class SlicerScriptedFileReaderWriterBridgeTestTest(ScriptedLoadableModuleTest):
 
         # Unregistering deletes the reader and releases its Python attributes immediately
         # (the temporary Python object that is passed to Unregister is released after the call)
-        fileIOManager.Unregister(readerReference.Get())
+        fileIOManager.UnregisterHandler(readerReference.Get())
         self.assertIsNone(readerReference.Get())
         self.assertIsNone(payloadReference())
 
@@ -432,7 +432,7 @@ class SlicerScriptedFileReaderWriterBridgeTestTest(ScriptedLoadableModuleTest):
         del writer
         gc.collect()
         self.assertIsNotNone(writerReference.Get())
-        fileIOManager.Unregister(writerReference.Get())
+        fileIOManager.UnregisterHandler(writerReference.Get())
         self.assertIsNone(writerReference.Get())
 
         # Reader deleted from C++ while no Python object refers to it: VTK releases the Python attributes

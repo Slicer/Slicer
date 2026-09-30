@@ -202,7 +202,7 @@ vtkMRMLNodeWriter* vtkMRMLFileIOManager::RegisterNodeWriter(const std::string& d
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFileIOManager::Register(vtkMRMLFileIOHandler* handler)
+void vtkMRMLFileIOManager::RegisterHandler(vtkMRMLFileIOHandler* handler)
 {
   if (vtkMRMLFileReader* reader = vtkMRMLFileReader::SafeDownCast(handler))
   {
@@ -219,7 +219,7 @@ void vtkMRMLFileIOManager::Register(vtkMRMLFileIOHandler* handler)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFileIOManager::Unregister(vtkMRMLFileIOHandler* handler)
+void vtkMRMLFileIOManager::UnregisterHandler(vtkMRMLFileIOHandler* handler)
 {
   if (!handler)
   {
