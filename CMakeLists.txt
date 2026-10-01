@@ -917,7 +917,15 @@ endif()
 # Hide libstdc++ regex internals so Slicer's calls cannot bind to Qt WebEngine's
 # incompatible implementation. Apply to libraries, modules, and executables.
 if(UNIX AND NOT APPLE)
-  add_link_options("LINKER:--version-script=${Slicer_CMAKE_DIR}/SlicerHideStdCxxRegexSymbols.ver")
+  set(_slicer_regex_link_option "LINKER:--version-script=${Slicer_CMAKE_DIR}/SlicerHideStdCxxRegexSymbols.ver")
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    # CTK's PythonQt wrappers already hide all non-init symbols with an anonymous
+    # version script, which cannot be combined with the named regex script.
+    add_link_options("$<$<BOOL:$<FILTER:$<TARGET_PROPERTY:NAME>,EXCLUDE,PythonQt$>>:${_slicer_regex_link_option}>")
+  else()
+    add_link_options("${_slicer_regex_link_option}")
+  endif()
+  unset(_slicer_regex_link_option)
 endif()
 
 foreach(dep QT ${Slicer_DEPENDENCIES})
