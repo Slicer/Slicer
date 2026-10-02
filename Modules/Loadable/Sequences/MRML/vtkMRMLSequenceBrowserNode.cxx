@@ -33,7 +33,6 @@
 #include <vtkIntArray.h>
 #include <vtkCommand.h>
 #include <vtkCollection.h>
-#include <vtkCollectionIterator.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtksys/RegularExpression.hxx>

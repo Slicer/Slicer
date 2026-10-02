@@ -33,7 +33,6 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
-#include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageBlend.h>
@@ -524,11 +523,10 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   //
   bool foundDefault = false;
   vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> crosshairs = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode"));
-  for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
+  for (int i = 0; i < crosshairs->GetNumberOfItems(); ++i)
   {
-    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(crosshairs->GetItemAsObject(i));
     if (crosshairNode && crosshairNode->GetCrosshairName() == std::string("default"))
     {
       foundDefault = true;
@@ -1855,13 +1853,10 @@ void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection* volumeNodes, int width,
   vtkBoundingBox volumeBounds_RAS;
   double sliceSpacingZ = 0.;
 
-  vtkSmartPointer<vtkCollectionIterator> iterator = vtkSmartPointer<vtkCollectionIterator>::New();
-  iterator->SetCollection(volumeNodes);
-
   bool firstVolumeFound = false;
-  for (iterator->InitTraversal(); !iterator->IsDoneWithTraversal(); iterator->GoToNextItem())
+  for (int i = 0; i < volumeNodes->GetNumberOfItems(); ++i)
   {
-    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(iterator->GetCurrentObject());
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeNodes->GetItemAsObject(i));
     if (!volumeNode || !volumeNode->GetImageData())
     {
       continue;
@@ -2603,9 +2598,13 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic::GetSliceCompositeNode(vtkMRMLScene
     return nullptr;
   }
   vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
-  for (scene->GetNodes()->InitTraversal(it); (node = (vtkMRMLNode*)scene->GetNodes()->GetNextItemAsObject(it));)
+  for (int i = 0; i < scene->GetNodes()->GetNumberOfItems(); ++i)
   {
+    node = vtkMRMLNode::SafeDownCast(scene->GetNodes()->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
     if (sliceCompositeNode &&                  //
         sliceCompositeNode->GetLayoutName() && //
@@ -2635,9 +2634,9 @@ vtkMRMLSliceNode* vtkMRMLSliceLogic::GetSliceNode(vtkMRMLScene* scene, const cha
     return nullptr;
   }
   vtkObject* itNode = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (scene->GetNodes()->InitTraversal(it); (itNode = scene->GetNodes()->GetNextItemAsObject(it));)
+  for (int i = 0; i < scene->GetNodes()->GetNumberOfItems(); ++i)
   {
+    itNode = scene->GetNodes()->GetItemAsObject(i);
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(itNode);
     if (!sliceNode)
     {

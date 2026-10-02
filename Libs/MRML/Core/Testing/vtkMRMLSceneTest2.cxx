@@ -345,12 +345,11 @@ int vtkMRMLSceneTest2(int argc, char* argv[])
   std::cout << collection->GetNumberOfItems() << std::endl;
 
   std::cout << "List of Node Names in this Scene" << std::endl;
-  vtkCollectionSimpleIterator it;
-  vtkMRMLNode* node = nullptr;
   vtkCollection* nodes = scene->GetNodes();
-  for (nodes->InitTraversal(it);
-    (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(i));
+    if (!node) { continue; }
     std::cout << " " << node->GetName() << std::endl;
   }
 #endif

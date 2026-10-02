@@ -837,10 +837,9 @@ void vtkMRMLTransformStorageNode::SetAndObserveTransformFromParentAutoInvert(vtk
   vtkNew<vtkCollection> sourceTransformList;
   vtkMRMLTransformNode::FlattenGeneralTransform(sourceTransformList.GetPointer(), transform);
   // Check if they are all inverse, if they are, then it indicates that this transform is computed from its inverse
-  vtkCollectionSimpleIterator it;
-  vtkWarpTransform* concatenatedTransform = nullptr;
-  for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkWarpTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sourceTransformList->GetNumberOfItems(); ++i)
   {
+    vtkWarpTransform* concatenatedTransform = vtkWarpTransform::SafeDownCast(sourceTransformList->GetItemAsObject(i));
     if (concatenatedTransform)
     {
       // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)

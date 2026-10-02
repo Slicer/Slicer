@@ -423,11 +423,9 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
 
   // show Controllers for Nodes not currently being managed
   // by this widget
-  vtkObject* v = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (visibleViews->InitTraversal(it); (v = visibleViews->GetNextItemAsObject(it));)
+  for (int i = 0; i < visibleViews->GetNumberOfItems(); ++i)
   {
-    vtkMRMLNode* vn = vtkMRMLNode::SafeDownCast(v);
+    vtkMRMLNode* vn = vtkMRMLNode::SafeDownCast(visibleViews->GetItemAsObject(i));
     if (vn)
     {
       // find the controller
