@@ -711,6 +711,29 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData)
+{
+  this->Superclass::ProcessMRMLSceneEvents(caller, event, callData);
+  // Displayable managers usually only request an update from MRML while the scene is processed in batch (e.g., loaded).
+  // When that is over, the update has to be done, otherwise it would wait until something else requests a render
+  // of the view (for example, moving the slice).
+  bool sceneChangeEnded = false;
+  switch (event)
+  {
+    case vtkMRMLScene::EndBatchProcessEvent:
+    case vtkMRMLScene::EndCloseEvent:
+    case vtkMRMLScene::EndImportEvent:
+    case vtkMRMLScene::EndRestoreEvent: sceneChangeEnded = true; break;
+    default: break;
+  }
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (sceneChangeEnded && this->Internal->UpdateFromMRMLRequested && scene && !scene->IsBatchProcessing())
+  {
+    this->RequestRender();
+  }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::AddMRMLDisplayableManagerEvent(int eventId)
 {
   for (int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetNumberOfValues(); ++i)

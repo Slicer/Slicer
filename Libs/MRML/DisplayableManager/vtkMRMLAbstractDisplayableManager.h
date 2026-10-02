@@ -153,6 +153,11 @@ protected:
   /// or OnMRMLSceneEndImport() if the new scene is valid
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
+  /// Process scene events as vtkMRMLAbstractLogic does. In addition, when batch processing, closing, importing, or
+  /// restoring the scene ends, an update that was requested by SetUpdateFromMRMLRequested() meanwhile is done
+  /// (by requesting a render), so that displayable managers do not need to request a render themselves.
+  void ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData) override;
+
   /// ProcessMRMLNodesEvents calls OnMRMLDisplayableNodeModifiedEvent when the
   /// displayable node (e.g. vtkMRMLSliceNode, vtkMRMLViewNode) is Modified.
   /// Could be overloaded in DisplayableManager subclass.
