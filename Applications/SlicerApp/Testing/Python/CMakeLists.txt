@@ -342,6 +342,12 @@ slicer_add_python_unittest(
   )
 
 slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_matplotlibbackend.py
+  SLICER_ARGS --no-main-window --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
+slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_packaging.py
   SLICER_ARGS --no-main-window --testing --disable-modules
   TESTNAME_PREFIX nomainwindow_
