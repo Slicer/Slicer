@@ -60,6 +60,7 @@ const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED = -1;
 const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME = -2;
 const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME = -3;
 const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
+const float SLICE_PLANE_DET_DEGENERACY_THRESHOLD = 1.e-12;
 
 //----------------------------------------------------------------------------
 struct SliceLayerInfo
@@ -627,11 +628,11 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
   {
     int* dims1 = nullptr;
     int dims[3];
-    vtkSmartPointer<vtkMatrix4x4> textureToRAS;
+    vtkSmartPointer<vtkMatrix4x4> textureToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
     // If the slice resolution mode is not set to match the 2D view, use UVW dimensions
     if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
-      textureToRAS = this->SliceNode->GetUVWToRAS();
+      textureToRAS->DeepCopy(this->SliceNode->GetUVWToRAS());
       dims1 = this->SliceNode->GetUVWDimensions();
       dims[0] = dims1[0] - 1;
       dims[1] = dims1[1] - 1;
@@ -647,7 +648,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       // Considering that the translation matrix is almost an identity matrix, the
       // computation easily and efficiently performed by elementary operations on
       // the matrix elements.
-      textureToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
       textureToRAS->DeepCopy(this->SliceNode->GetXYToRAS());
       textureToRAS->SetElement(0,
                                3,
@@ -669,6 +669,16 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     // of zero.
     dims[0] = std::max(1, dims[0]);
     dims[1] = std::max(1, dims[1]);
+
+    // Validate textureToRAS matrix to prevent degenerate plane coordinates
+    // Check if the matrix is non-singular by calculating its determinant
+    double determinant = textureToRAS->Determinant();
+    if (fabs(determinant) < SLICE_PLANE_DET_DEGENERACY_THRESHOLD)
+    {
+      vtkDebugMacro("Invalid textureToRAS matrix detected - determinant too small (" << determinant << "), would create degenerate plane coordinates");
+      // Reset to identity
+      textureToRAS->Identity();
+    }
 
     // set the plane corner point for use in a model
     double inPoint[4] = { 0, 0, 0, 1 };
