@@ -469,6 +469,17 @@ class UtilTestTest(ScriptedLoadableModuleTest):
             for c in range(4):
                 self.assertEqual(narrayUpdated[r, c], transformMatrixUpdated.GetElement(r, c))
 
+        self.delayDisplay("Test updateTransformMatrixFromArray with toWorld=True and a grandparent transform")
+        grandparentTransformNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTransformNode")
+        grandparentTransformMatrix = vtk.vtkMatrix4x4()
+        grandparentTransformMatrix.SetElement(0, 3, 100.0)
+        grandparentTransformMatrix.SetElement(2, 2, 2.0)
+        grandparentTransformNode.SetMatrixTransformToParent(grandparentTransformMatrix)
+        parentTransformNode.SetAndObserveTransformNodeID(grandparentTransformNode.GetID())
+        narrayUpdated = np.array([[2.0, 0, 0, 5], [0, 1.0, 0, 6], [0, 0, 4.0, 7], [0, 0, 0, 1]])
+        slicer.util.updateTransformMatrixFromArray(transformNode, narrayUpdated, toWorld=True)
+        np.testing.assert_allclose(slicer.util.arrayFromTransformMatrix(transformNode, toWorld=True), narrayUpdated)
+
     def test_arrayFromGridTransform(self):
         # Test if the displacement field of a grid transform node can be accessed as a numpy array.
         # The array is the displacement grid of the transform from the parent. If the node stores
