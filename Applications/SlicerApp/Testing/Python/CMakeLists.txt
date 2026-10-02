@@ -517,6 +517,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     slicer_add_python_unittest(SCRIPT WebEngineTest.py)
   endif()
   slicer_add_python_unittest(SCRIPT SliceLinkLogicTest.py)
+  slicer_add_python_unittest(SCRIPT SliceLogicThickSlabTest.py)
   slicer_add_python_unittest(SCRIPT ScenePerformanceTest.py)
   slicer_add_python_unittest(SCRIPT SlicerRestoreSceneViewCrashIssue3445Test.py)
   slicer_add_python_unittest(SCRIPT RSNAVisTutorialTest.py)
@@ -546,6 +547,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerBoundsTest.py
     WebEngineTest.py
     SliceLinkLogicTest.py
+    SliceLogicThickSlabTest.py
     ScenePerformanceTest.py
     RSNAVisTutorialTest.py
     RSNAQuantTutorialTest.py
