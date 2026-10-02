@@ -370,6 +370,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSliceNode(vtkMRML
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSliceNode()
 {
+  if (!this->SliceNode)
+  {
+    return;
+  }
   // Update the Slice node transform then update the DisplayNode pipelines to account for plane location
   this->SliceXYToRAS->DeepCopy(this->SliceNode->GetXYToRAS());
   PipelinesCacheType::iterator displayNodeIt;
@@ -1421,6 +1425,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::UpdateFromMRML()
     return;
   }
   this->Internal->ClearDisplayableNodes();
+  // Slice node changes are ignored during batch processing (e.g., while a scene is loaded),
+  // therefore get the current slice position before the pipelines are created.
+  this->Internal->UpdateSliceNode();
 
   vtkMRMLSegmentationNode* mNode = nullptr;
   std::vector<vtkMRMLNode*> mNodes;
