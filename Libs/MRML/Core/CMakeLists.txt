@@ -231,6 +231,7 @@ set(MRMLCore_SRCS
   vtkMRMLModelNode.cxx
   vtkMRMLModelStorageNode.cxx
   vtkMRMLNode.cxx
+  vtkMRMLNodeCleanup.h
   vtkMRMLPETProceduralColorNode.cxx
   vtkMRMLParser.cxx
   vtkMRMLPlotChartNode.cxx
@@ -321,6 +322,7 @@ endif()
 
 set_source_files_properties(
   vtkMRMLCoreTestingUtilities.cxx
+  vtkMRMLNodeCleanup.h
   WRAP_EXCLUDE
   )
 

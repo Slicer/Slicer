@@ -26,6 +26,7 @@
 
 // MRML includes
 #include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLNodeCleanup.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -46,29 +47,6 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
                                                      int interpolationType,
                                                      const ResamplingParameters& resamplingParameter)
 {
-  // A helper RAII class to ensure a vtkMRMLNode is removed from its scene
-  // when the enclosing scope is exited, regardless of how it is exited.
-  struct vtkMRMLNodeCleanup
-  {
-  public:
-    vtkMRMLNodeCleanup(vtkMRMLScene* scene, vtkMRMLNode* node)
-      : Scene(scene)
-      , Node(node)
-    {
-    }
-    ~vtkMRMLNodeCleanup()
-    {
-      if (this->Scene != nullptr)
-      {
-        this->Scene->RemoveNode(this->Node);
-      }
-    }
-
-  private:
-    vtkMRMLScene* Scene{ nullptr };
-    vtkMRMLNode* Node{ nullptr };
-  };
-
   vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
   if (appLogic == nullptr)
   {
