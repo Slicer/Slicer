@@ -23,6 +23,7 @@
 
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
+#include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
@@ -41,6 +42,7 @@
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkActor2D.h>
 #include <vtkCallbackCommand.h>
+#include <vtkCommand.h>
 #include <vtkCellArray.h>
 #include <vtkGeometryFilter.h>
 #include <vtkPlaneCutter.h>
@@ -48,6 +50,7 @@
 #include <vtkContourTriangulator.h>
 #include <vtkDataSetAttributes.h>
 #include <vtkDoubleArray.h>
+#include <vtkEvent.h>
 #include <vtkEventBroker.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageMapper.h>
@@ -1307,6 +1310,40 @@ void vtkMRMLSegmentationsDisplayableManager2D::PrintSelf(ostream& os, vtkIndent 
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "vtkMRMLSegmentationsDisplayableManager2D: " << this->GetClassName() << "\n";
+  os << indent << "CaptureMouseMoveEvents: " << (this->CaptureMouseMoveEvents ? "true" : "false") << "\n";
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager2D::IsCapturedMouseMoveEvent(vtkMRMLInteractionEventData* eventData)
+{
+  if (!this->CaptureMouseMoveEvents || !eventData || eventData->GetType() != vtkCommand::MouseMoveEvent)
+  {
+    return false;
+  }
+  // Mouse move events with modifier keys are not captured, so that modifier-key interactions
+  // with the view and with other objects (e.g., shift + mouse move to move the crosshair) remain available.
+  int modifiers = eventData->GetModifiers();
+  return (modifiers & (vtkEvent::ShiftModifier | vtkEvent::ControlModifier | vtkEvent::AltModifier)) == 0;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager2D::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
+{
+  if (!this->IsCapturedMouseMoveEvent(eventData))
+  {
+    return false;
+  }
+  // Claim the event with zero distance so that no other displayable manager gets the focus on hover.
+  // A displayable manager that already has the focus keeps it, so interactions in progress are not interrupted.
+  closestDistance2 = 0.0;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager2D::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  // There is nothing to do with the event, it is just consumed so that other displayable managers do not receive it.
+  return this->IsCapturedMouseMoveEvent(eventData);
 }
 
 //---------------------------------------------------------------------------
