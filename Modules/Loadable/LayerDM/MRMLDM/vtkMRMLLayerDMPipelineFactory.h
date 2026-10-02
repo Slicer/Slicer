@@ -1,0 +1,119 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMPipelineFactory_h
+#define __vtkMRMLLayerDMPipelineFactory_h
+
+#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
+
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkObject.h>
+#include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
+
+// STL includes
+#include <functional>
+#include <vector>
+
+class vtkMRMLAbstractViewNode;
+class vtkMRMLLayerDMObjectEventObserver;
+class vtkMRMLLayerDMPipelineCreator;
+class vtkMRMLLayerDMPipeline;
+class vtkMRMLNode;
+
+/// \brief Class responsible for creating new pipelines given input viewNode and Node pairs.
+///
+/// Delegates creation to its list of \sa vtkMRMLLayerDMPipelineCreator.
+/// Early returns when a first creator capable of handling the input is found.
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipelineFactory : public vtkObject
+{
+public:
+  enum Events
+  {
+    // Triggered when the factory creates a non-empty pipeline
+    PipelineAboutToBeCreatedEvent = vtkCommand::UserEvent + 1
+  };
+
+  static vtkMRMLLayerDMPipelineFactory* New();
+  vtkTypeMacro(vtkMRMLLayerDMPipelineFactory, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  /// \brief Singleton instance of the factory used by the displayable manager
+  static vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> GetInstance();
+
+  /// \brief Add the input creator to the list of creators.
+  /// If the factory already contains the creator, does nothing.
+  /// Invokes vtkCommand::ModifiedEvent if the factory is modified.
+  void AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator);
+
+  /// Convenience method to add creator callback
+  /// Delegates to \sa vtkMRMLLayerDMPipelineCallbackCreator and returns the creator instance.
+  ///
+  /// \param priority: Creator priority value (default=0) higher indicates priority on handling the creation call
+  vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> AddPipelineCreator(
+    const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
+    int priority = 0);
+
+  /// \brief Remove the input creator from the list of creators.
+  /// If the factory doesn't contain the creator, does nothing.
+  /// Invokes vtkCommand::ModifiedEvent if the factory is modified.
+  void RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator);
+
+  /// true if the given creator is contained in the factory, false otherwise.
+  bool ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator) const;
+
+  /// @{
+  /// Tries to create a new pipeline given input viewNode and node by iterating on its creators.
+  /// Returns nullptr if no creator was able to create a pipeline.
+  /// If creator is not nullptr, it is set to the creator that created the pipeline.
+  /// Invokes PipelineAboutToBeCreatedEvent before returning the newly created pipeline instance.
+  /// \sa GetLastViewNode
+  /// \sa GetLastNode
+  /// \sa GetLastPipeline
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node, vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>* creator);
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node);
+  /// @}
+
+  /// @{
+  /// Get the last pipeline created by the factory.
+  /// Values are valid when the PipelineAboutToBeCreatedEvent event is triggered.
+  vtkMRMLAbstractViewNode* GetLastViewNode() const;
+  vtkMRMLNode* GetLastNode() const;
+  vtkMRMLLayerDMPipeline* GetLastPipeline() const;
+  /// @}
+
+protected:
+  vtkMRMLLayerDMPipelineFactory();
+  ~vtkMRMLLayerDMPipelineFactory() override = default;
+
+private:
+  /// \brief Sort the pipeline creators by priority.
+  /// Updated when new creators are added / removed or when creators modified events are triggered.
+  void SortPipelineCreators();
+
+  std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>> PipelineCreators;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> LastView;
+  vtkWeakPointer<vtkMRMLNode> LastNode;
+  vtkWeakPointer<vtkMRMLLayerDMPipeline> LastPipeline;
+};
+
+#endif

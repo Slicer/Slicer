@@ -1,0 +1,5 @@
+if(DEFINED SKBUILD_PROJECT_NAME)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/wheel.cmake)
+else()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/extension.cmake)
+endif()

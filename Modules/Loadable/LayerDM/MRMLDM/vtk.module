@@ -1,0 +1,10 @@
+NAME
+  Slicer::LayerDMModuleMRMLDisplayableManager
+LIBRARY_NAME
+  vtkSlicerLayerDMModuleMRMLDisplayableManager
+IMPLEMENTABLE
+DEPENDS
+  Slicer::MRMLDisplayableManager
+  Slicer::LayerDMModuleMRML
+DESCRIPTION
+  "vtkSlicerLayerDMModuleMRMLDisplayableManager"

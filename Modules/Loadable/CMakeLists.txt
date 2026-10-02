@@ -22,6 +22,7 @@ set(qtmodules
   Sequences
   SceneViews # Scene views depends on Sequences
   Markups # Markups depends on SceneViews (for testing) and Annotations
+  LayerDM # LayerDM depends on Markups (for testing)
   SlicerWelcome
   Tables
   Texts
