@@ -44,6 +44,8 @@ public:
 
   vtkMRMLClipNode* mrmlClipNode() const;
 
+  /// Clip type of the clip node (vtkMRMLClipNode::ClipUnion or ClipIntersection).
+  /// The widget does not show it, it is shown next to the widget by the widget that contains it.
   int clipType() const;
   void setClipType(int);
 
@@ -66,8 +68,6 @@ protected slots:
   void updateClippingNodeFrame();
   // Update clipping node references from widget.
   void updateClippingNodeFromWidget();
-
-  void updateNodeClipType();
 
 protected:
   // Returns true if the frame widget needs to be updated to reflect the node references.

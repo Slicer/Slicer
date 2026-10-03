@@ -58,7 +58,6 @@ public slots:
 
   void onClippingConfigurationButtonClicked();
   void onDisplayNodeChanged();
-  void onClipModelsNodeChanged(vtkMRMLNode*);
   void onClipSelectedModelToggled(bool);
   void onClippingCapVisibilityToggled(bool);
   void onClippingCapOpacityChanged(double);
