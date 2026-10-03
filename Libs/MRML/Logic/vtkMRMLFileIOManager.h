@@ -79,8 +79,6 @@ public:
   void RegisterReader(vtkMRMLFileReader* reader);
   void RegisterWriter(vtkMRMLFileWriter* writer);
   /// Add a reader or a writer (calls RegisterReader() or RegisterWriter(), depending on the type of the handler).
-  /// It is not named Register(), because that would hide vtkObjectBase::Register() in C++ and it would be
-  /// called instead of this method in Python (which would increment the reference count of the manager).
   void RegisterHandler(vtkMRMLFileIOHandler* handler);
   /// Convenience method for creating and registering a vtkMRMLNodeWriter,
   /// which writes nodes of the specified classes using their storage nodes.

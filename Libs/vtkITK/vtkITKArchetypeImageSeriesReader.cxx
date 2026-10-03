@@ -49,9 +49,11 @@
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-# include "itkDCMTKImageIO.h"
 # include "itkGDCMSeriesFileNames.h"
 # include "itkGDCMImageIO.h"
+#endif
+#ifdef VTKITK_BUILD_DCMTK_SUPPORT
+# include "itkDCMTKImageIO.h"
 #endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
@@ -182,6 +184,25 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::CreateDICOMImageIO(int dicomImageIOApproach)
+{
+#ifdef VTKITK_BUILD_DICOM_SUPPORT
+  if (dicomImageIOApproach == vtkITKArchetypeImageSeriesReader::GDCM)
+  {
+    return itk::GDCMImageIO::New().GetPointer();
+  }
+#endif
+#ifdef VTKITK_BUILD_DCMTK_SUPPORT
+  if (dicomImageIOApproach == vtkITKArchetypeImageSeriesReader::DCMTK)
+  {
+    return itk::DCMTKImageIO::New().GetPointer();
+  }
+#endif
+  (void)dicomImageIOApproach; // unused if built without DICOM support
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
 int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* filename)
 {
   if (!filename)
@@ -241,12 +262,10 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
   {
     // Some file types require special processing
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-    if (this->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
+    dicomIO = vtkITKArchetypeImageSeriesReader::CreateDICOMImageIO(this->GetDICOMImageIOApproach());
+    if (!dicomIO)
     {
-      dicomIO = itk::DCMTKImageIO::New();
-    }
-    else
-    {
+      vtkWarningMacro("DICOM image IO approach " << this->GetDICOMImageIOApproach() << " is not supported, GDCM is used instead");
       dicomIO = itk::GDCMImageIO::New();
     }
 
@@ -1685,7 +1704,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype()
         kth_orientation = this->IndexImageOrientationPatient[k];
         kth_position = this->IndexImagePositionPatient[k];
       }
-      if (kth_orientation > 0 && kth_position > 0)
+      if (kth_orientation >= 0 && kth_position >= 0)
       {
         if (!originSet)
         {

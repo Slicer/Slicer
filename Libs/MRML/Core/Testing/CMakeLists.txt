@@ -68,6 +68,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneTest2.cxx
   vtkMRMLSceneDefaultNodeTest.cxx
   vtkMRMLScriptedModuleNodeTest1.cxx
+  vtkMRMLSegmentationNodeTest1.cxx
   vtkMRMLSegmentationStorageNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
   vtkMRMLSliceCompositeNodeTest1.cxx
@@ -187,6 +188,7 @@ simple_test( vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest )
 simple_test( vtkMRMLSceneIDTest )
 simple_test( vtkMRMLSceneTest1 )
 simple_test( vtkMRMLSceneDefaultNodeTest )
+simple_test( vtkMRMLSegmentationNodeTest1 )
 simple_test( vtkMRMLSegmentationStorageNodeTest1
   DATA{${INPUT}/ITKSnapSegmentation.nii.gz}
   DATA{${INPUT}/OldSlicerSegmentation.seg.nrrd}

@@ -18,7 +18,9 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAbstractButton>
 #include <QButtonGroup>
+#include <QToolButton>
 
 // qMRML includes
 #include "qMRMLClipNodeDisplayWidget.h"
@@ -45,6 +47,8 @@ protected:
 public:
   qMRMLClipNodeDisplayWidgetPrivate(qMRMLClipNodeDisplayWidget& object);
   void init();
+  /// Use the clip node of the scene for the display node if it has none (create one if the scene has none)
+  void ensureClipNode();
 
   vtkWeakPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
   bool IsUpdatingWidgetFromMRML{ false };
@@ -68,6 +72,35 @@ void qMRMLClipNodeDisplayWidgetPrivate::init()
   QObject::connect(this->sliderWidget_ClippingCapOpacity, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->checkBox_ClippingOutline, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
   QObject::connect(this->checkBox_ClippingKeepWholeCells, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->ClipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(onClipNodeSelected(vtkMRMLNode*)));
+  QButtonGroup* clipTypeGroup = new QButtonGroup(q);
+  clipTypeGroup->addButton(this->UnionButton);
+  clipTypeGroup->addButton(this->IntersectionButton);
+  QObject::connect(this->UnionButton, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->IntersectionButton, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ClipNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ClipNodeWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLClipNodeDisplayWidgetPrivate::ensureClipNode()
+{
+  Q_Q(qMRMLClipNodeDisplayWidget);
+  vtkMRMLScene* scene = q->mrmlScene();
+  if (!this->MRMLDisplayNode || this->MRMLDisplayNode->GetClipNode() || !scene || !q->isVisible())
+  {
+    return;
+  }
+  // Usually there is only one clip node in the scene, used by all nodes
+  vtkMRMLNode* clipNode = scene->GetFirstNodeByClass("vtkMRMLClipNode");
+  if (!clipNode)
+  {
+    clipNode = scene->AddNewNodeByClass("vtkMRMLClipNode");
+  }
+  if (clipNode)
+  {
+    this->MRMLDisplayNode->SetAndObserveClipNodeID(clipNode->GetID());
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -101,7 +134,29 @@ void qMRMLClipNodeDisplayWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* clipNode
   Q_D(qMRMLClipNodeDisplayWidget);
   qvtkReconnect(d->MRMLDisplayNode, clipNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = clipNode;
+  d->ensureClipNode();
   this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeDisplayWidget::showEvent(QShowEvent* event)
+{
+  Q_D(qMRMLClipNodeDisplayWidget);
+  qMRMLWidget::showEvent(event);
+  // The section is opened: make sure that there is a clip node to edit
+  d->ensureClipNode();
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeDisplayWidget::onClipNodeSelected(vtkMRMLNode* node)
+{
+  Q_D(qMRMLClipNodeDisplayWidget);
+  if (!d->MRMLDisplayNode || d->IsUpdatingWidgetFromMRML)
+  {
+    return;
+  }
+  d->MRMLDisplayNode->SetAndObserveClipNodeID(node ? node->GetID() : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -145,6 +200,21 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
     outline = segmentationDisplayNode->GetClippingOutline();
   }
 
+  wasBlocking = d->ClipNodeSelector->blockSignals(true);
+  d->ClipNodeSelector->setCurrentNode(clipNode);
+  d->ClipNodeSelector->blockSignals(wasBlocking);
+  d->ClipNodeWidget->setMRMLClipNode(clipNode);
+  d->ClipNodeWidget->setEnabled(clipNode != nullptr);
+  d->label_ClippingType->setEnabled(clipNode != nullptr);
+  d->label_ClipBy->setEnabled(clipNode != nullptr);
+  for (QAbstractButton* button : { d->UnionButton, d->IntersectionButton })
+  {
+    wasBlocking = button->blockSignals(true);
+    button->setEnabled(clipNode != nullptr);
+    button->setChecked(clipNode && (button == d->UnionButton) == (clipNode->GetClipType() == vtkMRMLClipNode::ClipUnion));
+    button->blockSignals(wasBlocking);
+  }
+
   wasBlocking = d->checkBox_Clipping->blockSignals(true);
   d->checkBox_Clipping->setEnabled(clipNode != nullptr);
   d->checkBox_Clipping->setChecked(d->MRMLDisplayNode ? d->MRMLDisplayNode->GetClipping() : false);
@@ -154,24 +224,29 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
   d->checkBox_ClippingCapping->setEnabled(clipNode != nullptr);
   d->checkBox_ClippingCapping->setChecked(capping);
   d->checkBox_ClippingCapping->setVisible(surfaceWidgetsVisible);
+  d->label_ClippingCapping->setVisible(surfaceWidgetsVisible);
   d->checkBox_ClippingCapping->blockSignals(wasBlocking);
 
   wasBlocking = d->sliderWidget_ClippingCapOpacity->blockSignals(true);
   d->sliderWidget_ClippingCapOpacity->setEnabled(capping);
   d->sliderWidget_ClippingCapOpacity->setValue(capOpacity);
   d->sliderWidget_ClippingCapOpacity->setVisible(surfaceWidgetsVisible);
+  d->label_ClippingCapOpacity->setVisible(surfaceWidgetsVisible);
   d->sliderWidget_ClippingCapOpacity->blockSignals(wasBlocking);
 
   wasBlocking = d->checkBox_ClippingOutline->blockSignals(true);
   d->checkBox_ClippingOutline->setEnabled(clipNode != nullptr);
   d->checkBox_ClippingOutline->setChecked(outline);
   d->checkBox_ClippingOutline->setVisible(surfaceWidgetsVisible);
+  d->label_ClippingOutline->setVisible(surfaceWidgetsVisible);
   d->checkBox_ClippingOutline->blockSignals(wasBlocking);
 
+  // Keeping whole cells is only meaningful for models (segmentations may not be shown as meshes)
   wasBlocking = d->checkBox_ClippingKeepWholeCells->blockSignals(true);
   d->checkBox_ClippingKeepWholeCells->setEnabled(clipNode != nullptr);
   d->checkBox_ClippingKeepWholeCells->setChecked(clipNode ? clipNode->GetClippingMethod() == vtkMRMLClipNode::WholeCells : false);
-  d->checkBox_ClippingKeepWholeCells->setVisible(surfaceWidgetsVisible);
+  d->checkBox_ClippingKeepWholeCells->setVisible(modelDisplayNode != nullptr);
+  d->label->setVisible(modelDisplayNode != nullptr);
   d->checkBox_ClippingKeepWholeCells->blockSignals(wasBlocking);
 
   d->IsUpdatingWidgetFromMRML = oldUpdating;
@@ -215,5 +290,6 @@ void qMRMLClipNodeDisplayWidget::updateMRMLFromWidget()
   if (clipNode)
   {
     clipNode->SetClippingMethod(d->checkBox_ClippingKeepWholeCells->isChecked() ? vtkMRMLClipNode::WholeCells : vtkMRMLClipNode::Straight);
+    clipNode->SetClipType(d->UnionButton->isChecked() ? vtkMRMLClipNode::ClipUnion : vtkMRMLClipNode::ClipIntersection);
   }
 }

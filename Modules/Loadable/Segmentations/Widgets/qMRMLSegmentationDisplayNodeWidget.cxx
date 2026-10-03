@@ -152,8 +152,6 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
   QObject::connect(this->SliderWidget_OpacitySliceOutline_SelectedSegment, SIGNAL(valueChanged(double)), q, SLOT(onSegmentOpacitySliceOutlineChanged(double)));
   QObject::connect(this->SliderWidget_Opacity3D_SelectedSegment, SIGNAL(valueChanged(double)), q, SLOT(onSegmentOpacity3DChanged(double)));
 
-  QObject::connect(this->MRMLNodeComboBox_Clip, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(onClipNodeChanged(vtkMRMLNode*)));
-
   q->updateSelectedSegmentSection();
 }
 
@@ -377,12 +375,8 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
 
   // Set display node to display widgets
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->SegmentationDisplayNode);
-  wasBlocked = d->MRMLNodeComboBox_Clip->blockSignals(true);
-  d->MRMLNodeComboBox_Clip->setCurrentNode(d->SegmentationDisplayNode->GetClipNode());
-  d->MRMLNodeComboBox_Clip->blockSignals(wasBlocked);
 
   d->SlicerWidget_ClipNodeDisplayProperties->setMRMLDisplayNode(d->SegmentationDisplayNode);
-  d->SlicerWidget_ClipNodeProperties->setMRMLClipNode(d->SegmentationDisplayNode->GetClipNode());
 
   // Update material properties
   d->Property->SetInterpolation(d->SegmentationDisplayNode->GetInterpolation());
@@ -759,20 +753,6 @@ void qMRMLSegmentationDisplayNodeWidget::onCappingOpacityChanged(double value)
     return;
   }
   d->SegmentationDisplayNode->SetClippingCapOpacity(value);
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentationDisplayNodeWidget::onClipNodeChanged(vtkMRMLNode* node)
-{
-  Q_D(qMRMLSegmentationDisplayNodeWidget);
-
-  if (!d->SegmentationDisplayNode)
-  {
-    return;
-  }
-
-  vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(node);
-  d->SegmentationDisplayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
 }
 
 //-----------------------------------------------------------------------------

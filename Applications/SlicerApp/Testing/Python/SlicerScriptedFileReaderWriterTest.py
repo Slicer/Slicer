@@ -532,7 +532,6 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
 
         # Loading reports loaded nodes via self.parent.loadedNodes
         fileIOManager = slicer.vtkMRMLFileIOManager()
-        # RegisterHandler() registers a reader or a writer (in Python, Register() would be vtkObjectBase.Register())
         fileIOManager.RegisterHandler(reader)
         self.assertEqual(reader.GetFileIOManager(), fileIOManager)
         properties = slicer.vtkMRMLIOProperties()

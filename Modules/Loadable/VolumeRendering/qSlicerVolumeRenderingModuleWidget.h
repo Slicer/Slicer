@@ -96,6 +96,7 @@ protected slots:
   void onEffectiveRangeModified();
 
   void setClippingEnabled(bool state);
+  void setClipTypeUnion(bool unionType);
   void setSoftEdgeVoxels(double SoftEdgeVoxels);
 
   void setClippingBlankVoxelValueAuto(bool state);

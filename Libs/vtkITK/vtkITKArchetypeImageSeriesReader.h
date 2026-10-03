@@ -480,23 +480,17 @@ public:
 
   int ExistImagePositionPatient(float* ipp)
   {
-    float a = 0;
-    for (int n = 0; n < 3; n++)
-    {
-      a += ipp[n] * ipp[n];
-    }
-
+    // Positions are the same if they are closer than this distance (in mm)
+    const float tolerance = 1e-3;
     for (unsigned int k = 0; k < GetNumberOfImagePositionPatient(); k++)
     {
-      float b = 0;
-      float c = 0;
+      float squaredDistance = 0;
       for (int n = 0; n < 3; n++)
       {
-        b += this->ImagePositionPatient[k][n] * this->ImagePositionPatient[k][n];
-        c += this->ImagePositionPatient[k][n] * ipp[n];
+        const float difference = this->ImagePositionPatient[k][n] - ipp[n];
+        squaredDistance += difference * difference;
       }
-      c = fabs(c) / sqrt(a * b);
-      if (c > 0.99999)
+      if (squaredDistance < tolerance * tolerance)
       {
         return k;
       }
@@ -757,6 +751,11 @@ public:
   /// Returns true if the file is a NIfTI-2 file (compressed or uncompressed).
   /// ITK can only read NIfTI-1 files, therefore this can be used for explaining why reading of a file failed.
   static bool IsNifti2File(const char* fileName);
+
+  /// Create an image IO for reading DICOM files using the specified approach (GDCM or DCMTK).
+  /// Returns nullptr if the approach is not supported (the application is built without DICOM support,
+  /// or DCMTK is requested but the application is built without DCMTK support).
+  static itk::ImageIOBase::Pointer CreateDICOMImageIO(int dicomImageIOApproach);
 
 protected:
   vtkITKArchetypeImageSeriesReader();
