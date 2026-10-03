@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Two clipping planes seen edge-on, 70 degrees apart. The blue area is what the clipping keeps: intersection clips away the intersection of the clipped spaces. -->
+  <!-- The corners of the kept area are rounded in the path too: Qt 5 SVG does not support clipPath. -->
+  <defs>
+    <clipPath id="clip"><rect x="2" y="2" width="20" height="20" rx="4"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <path d="M12 12L2 13.763V6A4 4 0 0 1 6 2H18A4 4 0 0 1 22 6V18A4 4 0 0 1 18 22H10.237Z" fill="#378ADD" fill-opacity="0.75"/>
+    <path d="M22 10.237L2 13.763" stroke="#e76f51" stroke-width="1.5"/>
+    <path d="M13.763 2L10.237 22" stroke="#2a9d8f" stroke-width="1.5"/>
+  </g>
+  <rect x="2.5" y="2.5" width="19" height="19" rx="3.5" fill="none" stroke="#1d2330" stroke-width="1" opacity="0.35"/>
+</svg>

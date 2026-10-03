@@ -195,50 +195,7 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="ClipModelsNodeComboBoxLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Clip node:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="3">
-       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
-        <property name="nodeTypes">
-         <stringlist notr="true">
-          <string>vtkMRMLClipNode</string>
-         </stringlist>
-        </property>
-        <property name="showHidden">
-         <bool>true</bool>
-        </property>
-        <property name="noneEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="removeEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="renameEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="interactionNodeSingletonTag">
-         <string notr="true"/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="3">
+      <item row="0" column="0" colspan="3">
        <widget class="qMRMLClipNodeDisplayWidget" name="MRMLClipNodeDisplayWidget"/>
       </item>
      </layout>
@@ -282,11 +239,6 @@
    <class>ctkSearchBox</class>
    <extends>QLineEdit</extends>
    <header>ctkSearchBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLClipNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLClipNodeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLModelInfoWidget</class>
@@ -419,7 +371,7 @@
   <connection>
    <sender>qSlicerModelsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ClipModelsNodeComboBox</receiver>
+   <receiver>MRMLClipNodeDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -429,22 +381,6 @@
     <hint type="destinationlabel">
      <x>465</x>
      <y>740</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerModelsModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLClipNodeWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>205</x>
-     <y>397</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>205</x>
-     <y>786</y>
     </hint>
    </hints>
   </connection>

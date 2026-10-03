@@ -97,7 +97,6 @@ public slots:
   void onEnableClippingChanged(int);
   void onEnableCappingChanged(int);
   void onCappingOpacityChanged(double);
-  void onClipNodeChanged(vtkMRMLNode*);
   void onMaterialPropertiesChanged();
 
   /// Handles segment selection changes when connecting directly to a \sa qMRMLSegmentsTableView

@@ -34,6 +34,12 @@ class qMRMLClipNodeDisplayWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLDisplayNode;
 
+/// \brief Clipping settings of a display node: clipping on/off, the nodes that clip it and how (from its clip node),
+/// cap and outline of the clipped surface. The clip node is chosen next to the clipping check box.
+/// When clipping is enabled and the display node has no clip node, the clip node of the scene is selected
+/// (one is created if there is none).
+/// Widgets that contain it can add options that are specific to their display node type, see addRow().
+
 class QMRML_WIDGETS_EXPORT qMRMLClipNodeDisplayWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -44,6 +50,35 @@ public:
 
   vtkMRMLDisplayNode* mrmlDisplayNode() const;
 
+  /// Make sure that the display node has a clip node: if it has none, then use the first clip node
+  /// of the scene (usually there is only one, used by all nodes), or create one if the scene has none.
+  /// Returns the clip node of the display node (nullptr if the display node is not in a scene).
+  static vtkMRMLClipNode* ensureClipNode(vtkMRMLDisplayNode* displayNode);
+
+  /// Add a widget (for example, a status button) next to the clip node selector.
+  /// The widget gets the height of the clip node selector (a button is made square, with its icon fitting in it).
+  Q_INVOKABLE void addWidgetNextToClipNodeSelector(QWidget* widget);
+
+  //@{
+  /// Add a row directly below the row of the clip node selector (for example, details of the status
+  /// that a widget next to the selector shows). Rows are added in the order of the calls.
+  /// If label is nullptr then the field is only in the second column.
+  /// The added widgets are reparented to this widget.
+  Q_INVOKABLE void addRowBelowClipNodeSelector(const QString& labelText, QWidget* field);
+  Q_INVOKABLE void addRowBelowClipNodeSelector(QWidget* label, QWidget* field);
+  //@}
+
+  //@{
+  /// Add a row below the clipping options, for options that are specific to the type of the display node
+  /// (for example, soft edge of volume rendering).
+  /// If label is nullptr then the field is only in the second column.
+  /// The added widgets are reparented to this widget.
+  Q_INVOKABLE void addRow(const QString& labelText, QWidget* field);
+  Q_INVOKABLE void addRow(QWidget* label, QWidget* field);
+  /// Add a widget that spans both columns of the row
+  Q_INVOKABLE void addRow(QWidget* widget);
+  //@}
+
 public slots:
   /// Set the clip node to represent
   void setMRMLDisplayNode(vtkMRMLDisplayNode* node);
@@ -53,6 +88,8 @@ public slots:
 protected slots:
   void updateWidgetFromMRML();
   void updateMRMLFromWidget();
+  void onClippingToggled(bool enabled);
+  void onClipNodeSelected(vtkMRMLNode* node);
 
 protected:
   QScopedPointer<qMRMLClipNodeDisplayWidgetPrivate> d_ptr;

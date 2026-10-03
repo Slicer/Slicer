@@ -91,16 +91,17 @@
         <file>Icons/ViewYaw.png</file>
         <file>Icons/ViewZoomIn.png</file>
         <file>Icons/ViewZoomOut.png</file>
-        <file>Icons/ClippingUnion.png</file>
-        <file>Icons/ClippingIntersection.png</file>
+        <file>Icons/ClippingUnion.svg</file>
+        <file>Icons/ClippingIntersection.svg</file>
         <file>Icons/RedSpacePositive.png</file>
         <file>Icons/RedSpaceNegative.png</file>
         <file>Icons/YellowSpacePositive.png</file>
         <file>Icons/YellowSpaceNegative.png</file>
         <file>Icons/GreenSpacePositive.png</file>
         <file>Icons/GreenSpaceNegative.png</file>
-        <file>Icons/GreySpacePositive.png</file>
-        <file>Icons/GreySpaceNegative.png</file>
+        <file>Icons/ClipKeepPositive.svg</file>
+        <file>Icons/ClipKeepNegative.svg</file>
+        <file>Icons/ClipOff.svg</file>
         <file>Icons/column_add.png</file>
         <file>Icons/column_delete.png</file>
         <file>Icons/column_header_lock.png</file>

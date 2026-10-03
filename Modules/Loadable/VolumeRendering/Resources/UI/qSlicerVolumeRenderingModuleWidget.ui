@@ -310,150 +310,105 @@
         <property name="collapsed">
          <bool>true</bool>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="4" column="1" colspan="4">
-          <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Auto</string>
-           </property>
-          </widget>
+        <layout class="QVBoxLayout" name="ClippingLayout">
+         <item>
+          <widget class="qMRMLClipNodeDisplayWidget" name="ClipNodeDisplayWidget"/>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="ClippingSoftEdgeLabel">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Soft edge:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="ClippingLabel">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Clipping:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="ClipNodeLabel">
-           <property name="text">
-            <string>Clip node:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="ClippingBlankVoxelValueLabel">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Blank value:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" colspan="4">
-          <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" colspan="4">
-          <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
-           <property name="nodeTypes">
-            <stringlist notr="true">
-             <string>vtkMRMLClipNode</string>
-            </stringlist>
-           </property>
-           <property name="showHidden">
-            <bool>true</bool>
-           </property>
-           <property name="hideChildNodeTypes">
-            <stringlist notr="true"/>
-           </property>
-           <property name="noneEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="renameEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="interactionNodeSingletonTag">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="3">
-          <widget class="QCheckBox" name="ClippingCheckBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" colspan="4">
-          <widget class="qMRMLSliderWidget" name="ClippingBlankVoxelValueSlider">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="minimum">
-            <double>-1000.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>1000.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="5">
-          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
-         </item>
-         <item row="2" column="1" colspan="4">
-          <widget class="QLabel" name="ClippingInfoLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="4">
-          <widget class="QToolButton" name="ClippingExpandInfoButton">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
+         <item>
+          <widget class="QWidget" name="ClippingVolumeRenderingOptionsWidget">
+           <layout class="QFormLayout" name="ClippingVolumeRenderingOptionsLayout">
+            <item row="0" column="0" colspan="2">
+             <widget class="QToolButton" name="ClippingExpandInfoButton">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="ClippingInfoLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="ClippingSoftEdgeLabel">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Soft edge:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="pageStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="ClippingBlankVoxelValueLabel">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Blank value:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="qMRMLSliderWidget" name="ClippingBlankVoxelValueSlider">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimum">
+               <double>-1000.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="quantity">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -761,9 +716,9 @@
    <header>qMRMLCheckableNodeComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLClipNodeWidget</class>
+   <class>qMRMLClipNodeDisplayWidget</class>
    <extends>qMRMLWidget</extends>
-   <header>qMRMLClipNodeWidget.h</header>
+   <header>qMRMLClipNodeDisplayWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLDisplayNodeViewComboBox</class>
@@ -989,7 +944,7 @@
   <connection>
    <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ClipNodeSelector</receiver>
+   <receiver>ClipNodeDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -999,22 +954,6 @@
     <hint type="destinationlabel">
      <x>337</x>
      <y>287</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerVolumeRenderingModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLClipNodeWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>444</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>242</x>
-     <y>295</y>
     </hint>
    </hints>
   </connection>

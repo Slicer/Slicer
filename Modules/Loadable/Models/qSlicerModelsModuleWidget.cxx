@@ -127,8 +127,6 @@ void qSlicerModelsModuleWidget::setup()
 
   connect(d->InformationButton, SIGNAL(contentsCollapsed(bool)), this, SLOT(onInformationSectionCollapsed(bool)));
 
-  connect(d->ClipModelsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onClipModelsNodeChanged(vtkMRMLNode*)));
-
   connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)), this, SLOT(onClipSelectedModelToggled(bool)));
 
   connect(d->ModelDisplayWidget, SIGNAL(clippingConfigurationButtonClicked()), this, SLOT(onClippingConfigurationButtonClicked()));
@@ -326,7 +324,6 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
 {
   Q_D(qSlicerModelsModuleWidget);
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
-  vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
 
   d->ClippingButton->setEnabled(displayNode != nullptr);
 
@@ -335,16 +332,6 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
   wasBlocked = d->MRMLClipNodeDisplayWidget->blockSignals(true);
   d->MRMLClipNodeDisplayWidget->setMRMLDisplayNode(displayNode);
   d->MRMLClipNodeDisplayWidget->blockSignals(wasBlocked);
-
-  wasBlocked = d->ClipModelsNodeComboBox->blockSignals(true);
-  d->ClipModelsNodeComboBox->setEnabled(displayNode != nullptr);
-  d->ClipModelsNodeComboBox->setCurrentNode(clipNode);
-  d->ClipModelsNodeComboBox->blockSignals(wasBlocked);
-
-  wasBlocked = d->MRMLClipNodeWidget->blockSignals(true);
-  d->MRMLClipNodeWidget->setEnabled(clipNode != nullptr);
-  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
-  d->MRMLClipNodeWidget->blockSignals(wasBlocked);
 
   // Color legend
   vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
@@ -359,20 +346,6 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
 }
 
 //-----------------------------------------------------------
-void qSlicerModelsModuleWidget::onClipModelsNodeChanged(vtkMRMLNode* node)
-{
-  Q_D(qSlicerModelsModuleWidget);
-
-  vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(node);
-  vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
-  if (displayNode)
-  {
-    displayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
-  }
-  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
-}
-
-//-----------------------------------------------------------
 void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
 {
   Q_D(qSlicerModelsModuleWidget);
@@ -380,6 +353,11 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
   if (displayNode)
   {
     MRMLNodeModifyBlocker blocker(displayNode);
+    if (toggled && !displayNode->GetClipNode())
+    {
+      // Clipping requires a clip node: save the user from selecting or creating one
+      qMRMLClipNodeDisplayWidget::ensureClipNode(displayNode);
+    }
     displayNode->SetClipping(toggled);
   }
 }

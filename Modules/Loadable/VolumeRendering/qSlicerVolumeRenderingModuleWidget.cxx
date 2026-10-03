@@ -31,6 +31,9 @@
 #include "qSlicerVolumeRenderingPresetComboBox.h"
 #include "qSlicerGPUMemoryComboBox.h"
 
+// qMRML includes
+#include "qMRMLClipNodeDisplayWidget.h"
+
 // MRML includes
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
@@ -45,6 +48,7 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <initializer_list>
 #include <vector>
 
 // Qt includes
@@ -156,8 +160,25 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(toggled(bool)), q, SLOT(setFollowVolumeDisplayNode(bool)));
   QObject::connect(this->IgnoreVolumesThresholdCheckBox, SIGNAL(toggled(bool)), q, SLOT(setIgnoreVolumesThreshold(bool)));
 
-  QObject::connect(this->ClipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setMRMLClipNode(vtkMRMLNode*)));
-  QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClippingEnabled(bool)));
+  // The clipping options that are specific to volume rendering are shown in the shared clipping widget
+  // (they are only placed in a separate container in the .ui file)
+  for (QWidget* widget : std::initializer_list<QWidget*>{ this->ClippingExpandInfoButton,
+                                                          this->ClippingInfoLabel,
+                                                          this->ClippingSoftEdgeLabel,
+                                                          this->ClippingSoftEdgeSlider,
+                                                          this->ClippingBlankVoxelValueLabel,
+                                                          this->ClippingBlankVoxelValueAutoCheckBox,
+                                                          this->ClippingBlankVoxelValueSlider })
+  {
+    this->ClippingVolumeRenderingOptionsLayout->removeWidget(widget);
+  }
+  this->ClipNodeDisplayWidget->addWidgetNextToClipNodeSelector(this->ClippingExpandInfoButton);
+  this->ClipNodeDisplayWidget->addRowBelowClipNodeSelector(nullptr, this->ClippingInfoLabel);
+  this->ClipNodeDisplayWidget->addRow(this->ClippingSoftEdgeLabel, this->ClippingSoftEdgeSlider);
+  this->ClipNodeDisplayWidget->addRow(this->ClippingBlankVoxelValueLabel, this->ClippingBlankVoxelValueAutoCheckBox);
+  this->ClipNodeDisplayWidget->addRow(nullptr, this->ClippingBlankVoxelValueSlider);
+  this->ClippingVolumeRenderingOptionsWidget->setVisible(false);
+
   QObject::connect(this->ClippingSoftEdgeSlider, SIGNAL(valueChanged(double)), q, SLOT(setSoftEdgeVoxels(double)));
 
   QObject::connect(this->ClippingBlankVoxelValueAutoCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClippingBlankVoxelValueAuto(bool)));
@@ -466,22 +487,8 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked(displayNode ? displayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
 
+  d->ClipNodeDisplayWidget->setMRMLDisplayNode(displayNode);
   vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
-
-  wasBlocking = d->ClipNodeSelector->blockSignals(true);
-  d->ClipNodeSelector->setCurrentNode(clipNode);
-  d->ClipNodeSelector->blockSignals(wasBlocking);
-
-  wasBlocking = d->MRMLClipNodeWidget->blockSignals(true);
-  d->ClippingCheckBox->setEnabled(clipNode != nullptr);
-  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
-  d->MRMLClipNodeWidget->blockSignals(wasBlocking);
-
-  wasBlocking = d->ClippingCheckBox->blockSignals(true);
-  d->ClippingLabel->setEnabled(clipNode != nullptr);
-  d->ClippingCheckBox->setEnabled(clipNode != nullptr);
-  d->ClippingCheckBox->setChecked(displayNode ? displayNode->GetClipping() : false);
-  d->ClippingCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ClippingSoftEdgeSlider->blockSignals(true);
   d->ClippingSoftEdgeLabel->setEnabled(clipNode != nullptr);
@@ -502,7 +509,6 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 
   QString message;
   vtkNew<vtkMRMLMessageCollection> userMessages;
-  userMessages->AddSeparator();
   QIcon clippingInfoIcon = this->style()->standardIcon(QStyle::SP_MessageBoxInformation);
   if (displayNode)
   {
@@ -516,8 +522,9 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
     }
     else
     {
-      std::string messages = userMessages->GetAllMessagesAsString();
-      message = tr("Using slow clipping method.\n%1").arg(messages.c_str());
+      // The details are separated by a line, with no empty lines around it
+      QString details = QString::fromStdString(userMessages->GetAllMessagesAsString()).trimmed();
+      message = tr("Using slow clipping method.\n%1").arg(details.isEmpty() ? QString() : QString("--------\n") + details).trimmed();
       clippingInfoIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
     }
   }
@@ -1084,30 +1091,6 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
 
   // Update presets slider range
   d->PresetComboBox->updatePresetSliderRange();
-}
-
-//-----------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setMRMLClipNode(vtkMRMLNode* clipNode)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (!displayNode)
-  {
-    return;
-  }
-  displayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
-  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
-}
-
-//-----------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::setClippingEnabled(bool state)
-{
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (!displayNode)
-  {
-    return;
-  }
-  displayNode->SetClipping(state);
 }
 
 //-----------------------------------------------------------
