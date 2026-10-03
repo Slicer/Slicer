@@ -557,44 +557,7 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="3" column="0" colspan="3">
-       <widget class="qMRMLClipNodeWidget" name="SlicerWidget_ClipNodeProperties"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_ClipNode">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Clip node:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Clip">
-        <property name="nodeTypes">
-         <stringlist notr="true">
-          <string>vtkMRMLClipNode</string>
-         </stringlist>
-        </property>
-        <property name="showHidden">
-         <bool>true</bool>
-        </property>
-        <property name="hideChildNodeTypes">
-         <stringlist notr="true"/>
-        </property>
-        <property name="noneEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="interactionNodeSingletonTag">
-         <string notr="true"/>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="3">
+      <item row="0" column="0" colspan="3">
        <widget class="qMRMLClipNodeDisplayWidget" name="SlicerWidget_ClipNodeDisplayProperties"/>
       </item>
      </layout>
@@ -635,11 +598,6 @@
    <header>qMRMLClipNodeDisplayWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLClipNodeWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLClipNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLDisplayNodeViewComboBox</class>
    <extends>qMRMLCheckableNodeComboBox</extends>
    <header>qMRMLDisplayNodeViewComboBox.h</header>
@@ -662,22 +620,6 @@
   <connection>
    <sender>qMRMLSegmentationDisplayNodeWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLNodeComboBox_Clip</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>207</x>
-     <y>159</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>191</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qMRMLSegmentationDisplayNodeWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SlicerWidget_ClipNodeDisplayProperties</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
@@ -688,22 +630,6 @@
     <hint type="destinationlabel">
      <x>207</x>
      <y>325</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qMRMLSegmentationDisplayNodeWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>SlicerWidget_ClipNodeProperties</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>207</x>
-     <y>205</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>207</x>
-     <y>383</y>
     </hint>
    </hints>
   </connection>

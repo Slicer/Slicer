@@ -311,7 +311,95 @@
          <bool>true</bool>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="4" column="1" colspan="4">
+         <item row="2" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
+          <widget class="QLabel" name="ClipByLabel">
+           <property name="toolTip">
+            <string>Nodes that clip, and which of their sides is kept.</string>
+           </property>
+           <property name="text">
+            <string>Clip by:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="4">
+          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="ClippingTypeLabel">
+           <property name="toolTip">
+            <string>When more than one clipping node is used, this option controls if the union or the intersection of the spaces that they clip away is clipped away.</string>
+           </property>
+           <property name="text">
+            <string>Clipping type:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="4" alignment="Qt::AlignLeft">
+          <layout class="QHBoxLayout" name="ClippingClipTypeLayout">
+           <item>
+            <widget class="QToolButton" name="ClippingUnionButton">
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+             <property name="toolTip">
+              <string>Clip away the union of the spaces that the clipping nodes clip away: keep only what all of them keep.</string>
+             </property>
+             <property name="text">
+              <string>Union</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Icons/ClippingUnion.svg</normaloff>:/Icons/ClippingUnion.svg</iconset>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="ClippingIntersectionButton">
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+             <property name="toolTip">
+              <string>Clip away the intersection of the spaces that the clipping nodes clip away: keep what any of them keeps.</string>
+             </property>
+             <property name="text">
+              <string>Intersection</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/Icons/ClippingIntersection.svg</normaloff>:/Icons/ClippingIntersection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="5" column="1" colspan="4">
           <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
            <property name="enabled">
             <bool>false</bool>
@@ -321,7 +409,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="ClippingSoftEdgeLabel">
            <property name="enabled">
             <bool>false</bool>
@@ -331,24 +419,17 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="0" column="0">
           <widget class="QLabel" name="ClippingLabel">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Clipping:</string>
+            <string>Enable:</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="ClipNodeLabel">
-           <property name="text">
-            <string>Clip node:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="ClippingBlankVoxelValueLabel">
            <property name="enabled">
             <bool>false</bool>
@@ -358,7 +439,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1" colspan="4">
+         <item row="4" column="1" colspan="4">
           <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
            <property name="enabled">
             <bool>false</bool>
@@ -377,31 +458,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="4">
-          <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
-           <property name="nodeTypes">
-            <stringlist notr="true">
-             <string>vtkMRMLClipNode</string>
-            </stringlist>
-           </property>
-           <property name="showHidden">
-            <bool>true</bool>
-           </property>
-           <property name="hideChildNodeTypes">
-            <stringlist notr="true"/>
-           </property>
-           <property name="noneEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="renameEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="interactionNodeSingletonTag">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="3">
+         <item row="0" column="1" colspan="3">
           <widget class="QCheckBox" name="ClippingCheckBox">
            <property name="enabled">
             <bool>false</bool>
@@ -411,7 +468,7 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1" colspan="4">
+         <item row="6" column="1" colspan="4">
           <widget class="qMRMLSliderWidget" name="ClippingBlankVoxelValueSlider">
            <property name="enabled">
             <bool>false</bool>
@@ -427,10 +484,7 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="5">
-          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
-         </item>
-         <item row="2" column="1" colspan="4">
+         <item row="1" column="1" colspan="4">
           <widget class="QLabel" name="ClippingInfoLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
@@ -446,7 +500,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
+         <item row="0" column="4">
           <widget class="QToolButton" name="ClippingExpandInfoButton">
            <property name="text">
             <string/>
@@ -454,6 +508,49 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="5">
+          <widget class="ctkCollapsibleGroupBox" name="ClippingAdvancedCollapsibleGroupBox">
+           <property name="title">
+            <string>Advanced</string>
+           </property>
+           <property name="collapsed">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="clippingAdvancedFormLayout">
+            <item row="0" column="0">
+                <widget class="QLabel" name="ClipNodeLabel">
+                 <property name="text">
+                  <string>Clip node:</string>
+                 </property>
+                </widget>
+            </item>
+            <item row="0" column="1">
+                <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
+                 <property name="nodeTypes">
+                  <stringlist notr="true">
+                   <string>vtkMRMLClipNode</string>
+                  </stringlist>
+                 </property>
+                 <property name="showHidden">
+                  <bool>true</bool>
+                 </property>
+                 <property name="hideChildNodeTypes">
+                  <stringlist notr="true"/>
+                 </property>
+                 <property name="noneEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="renameEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="interactionNodeSingletonTag">
+                  <string/>
+                 </property>
+                </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>

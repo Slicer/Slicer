@@ -26,48 +26,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="2">
-    <widget class="QRadioButton" name="IntersectionRadioButton">
-     <property name="toolTip">
-      <string>Use the intersection of the positive and/or negative spaces defined by the slice planes to clip the model.</string>
-     </property>
-     <property name="text">
-      <string>Intersection</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/ClippingIntersection.png</normaloff>:/Icons/ClippingIntersection.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QRadioButton" name="UnionRadioButton">
-     <property name="toolTip">
-      <string>Use the union of the positive and/or negative spaces defined by the slice planes to clip the model.</string>
-     </property>
-     <property name="text">
-      <string>Union</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/ClippingUnion.png</normaloff>:/Icons/ClippingUnion.png</iconset>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
-    <widget class="QLabel" name="ClippingTypeLabel">
-     <property name="toolTip">
-      <string>When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. The parts of the model inside the selected space is kept, parts outside of the selection are clipped away.</string>
-     </property>
-     <property name="text">
-      <string>Clipping Type:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="3">
     <widget class="QFrame" name="ClipNodeFrame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>

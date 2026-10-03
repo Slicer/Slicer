@@ -48,6 +48,9 @@
 #include <vector>
 
 // Qt includes
+#include <QAbstractButton>
+#include <QButtonGroup>
+#include <QToolButton>
 #include <QDebug>
 #include <QSettings>
 
@@ -66,6 +69,9 @@ public:
   virtual void setupUi(qSlicerVolumeRenderingModuleWidget*);
   vtkMRMLVolumeRenderingDisplayNode* displayNodeForVolumeNode(vtkMRMLVolumeNode* volumeNode) const;
   vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode(vtkMRMLVolumeNode* volumeNode);
+  /// When the clipping section is open and the display node has no clip node, use the clip node of the scene
+  /// (create one if there is none)
+  void ensureClipNode();
 
   QMap<int, int> LastTechniques;
   double OldPresetPosition;
@@ -158,12 +164,18 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 
   QObject::connect(this->ClipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setMRMLClipNode(vtkMRMLNode*)));
   QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClippingEnabled(bool)));
+  QButtonGroup* clipTypeGroup = new QButtonGroup(q);
+  clipTypeGroup->addButton(this->ClippingUnionButton);
+  clipTypeGroup->addButton(this->ClippingIntersectionButton);
+  QObject::connect(this->ClippingUnionButton, SIGNAL(toggled(bool)), q, SLOT(setClipTypeUnion(bool)));
   QObject::connect(this->ClippingSoftEdgeSlider, SIGNAL(valueChanged(double)), q, SLOT(setSoftEdgeVoxels(double)));
 
   QObject::connect(this->ClippingBlankVoxelValueAutoCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClippingBlankVoxelValueAuto(bool)));
   QObject::connect(this->ClippingBlankVoxelValueSlider, SIGNAL(valueChanged(double)), q, SLOT(setClippingBlankVoxelValue(double)));
 
   QObject::connect(this->ClippingExpandInfoButton, SIGNAL(clicked()), q, SLOT(updateWidgetFromMRML()));
+  // Opening the clipping section makes sure that there is a clip node to edit
+  QObject::connect(this->CollapsibleGroupBox, SIGNAL(toggled(bool)), q, SLOT(updateWidgetFromMRML()));
   this->ClippingInfoLabel->setVisible(false);
 
   // Disable markups ROI widget by default
@@ -466,6 +478,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked(displayNode ? displayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
 
+  d->ensureClipNode();
   vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
 
   wasBlocking = d->ClipNodeSelector->blockSignals(true);
@@ -479,6 +492,15 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 
   wasBlocking = d->ClippingCheckBox->blockSignals(true);
   d->ClippingLabel->setEnabled(clipNode != nullptr);
+  d->ClippingTypeLabel->setEnabled(clipNode != nullptr);
+  d->ClipByLabel->setEnabled(clipNode != nullptr);
+  for (QAbstractButton* button : { d->ClippingUnionButton, d->ClippingIntersectionButton })
+  {
+    wasBlocking = button->blockSignals(true);
+    button->setEnabled(clipNode != nullptr);
+    button->setChecked(clipNode && (button == d->ClippingUnionButton) == (clipNode->GetClipType() == vtkMRMLClipNode::ClipUnion));
+    button->blockSignals(wasBlocking);
+  }
   d->ClippingCheckBox->setEnabled(clipNode != nullptr);
   d->ClippingCheckBox->setChecked(displayNode ? displayNode->GetClipping() : false);
   d->ClippingCheckBox->blockSignals(wasBlocking);
@@ -1087,6 +1109,28 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
 }
 
 //-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidgetPrivate::ensureClipNode()
+{
+  Q_Q(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = q->mrmlDisplayNode();
+  vtkMRMLScene* scene = q->mrmlScene();
+  if (this->CollapsibleGroupBox->collapsed() || !displayNode || displayNode->GetClipNode() || !scene)
+  {
+    return;
+  }
+  // Usually there is only one clip node in the scene, used by all nodes
+  vtkMRMLNode* clipNode = scene->GetFirstNodeByClass("vtkMRMLClipNode");
+  if (!clipNode)
+  {
+    clipNode = scene->AddNewNodeByClass("vtkMRMLClipNode");
+  }
+  if (clipNode)
+  {
+    displayNode->SetAndObserveClipNodeID(clipNode->GetID());
+  }
+}
+
+//-----------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setMRMLClipNode(vtkMRMLNode* clipNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
@@ -1097,6 +1141,18 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLClipNode(vtkMRMLNode* clipNode)
   }
   displayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
   d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setClipTypeUnion(bool unionType)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
+  if (!clipNode)
+  {
+    return;
+  }
+  clipNode->SetClipType(unionType ? vtkMRMLClipNode::ClipUnion : vtkMRMLClipNode::ClipIntersection);
 }
 
 //-----------------------------------------------------------

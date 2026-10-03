@@ -34,6 +34,10 @@ class qMRMLClipNodeDisplayWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLDisplayNode;
 
+/// \brief Clipping settings of a display node: clipping on/off, the nodes that clip it and how (from its clip node),
+/// cap and outline of the clipped surface. The clip node is chosen in the "Advanced" section; when the widget is shown
+/// for a display node that has no clip node, the clip node of the scene is used (one is created if there is none).
+
 class QMRML_WIDGETS_EXPORT qMRMLClipNodeDisplayWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -53,8 +57,11 @@ public slots:
 protected slots:
   void updateWidgetFromMRML();
   void updateMRMLFromWidget();
+  void onClipNodeSelected(vtkMRMLNode* node);
 
 protected:
+  void showEvent(QShowEvent* event) override;
+
   QScopedPointer<qMRMLClipNodeDisplayWidgetPrivate> d_ptr;
 
 private:
