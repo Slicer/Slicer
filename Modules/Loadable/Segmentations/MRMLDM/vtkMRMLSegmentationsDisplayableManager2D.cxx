@@ -1383,8 +1383,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
       if (displayNode)
       {
         this->Internal->UpdateDisplayNode(displayNode);
-        this->RequestRender();
       }
+      else
+      {
+        // The event does not tell which display node was modified if it was invoked after modification
+        // of the segmentation node ended (MRMLNodeModifyBlocker): update all display nodes
+        this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
+      }
+      this->RequestRender();
     }
     else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)      //
              || (event == vtkMRMLTransformableNode::TransformModifiedEvent) //
