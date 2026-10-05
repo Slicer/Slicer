@@ -206,6 +206,25 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
+# File associations
+#-----------------------------------------------------------------------------
+# File extensions that the installer associates with the application, so that
+# opening such a file starts the application with the file path as argument.
+# Only the Windows installer sets up file associations so far.
+#
+# This does not configure the URL scheme registered by the installer (for example
+# slicer://viewer?host=host.example.com;id=123123), which is always the application
+# name. If it is made configurable, a Slicer_FILE_ASSOCIATION_URL_SCHEMES variable
+# could be introduced for it.
+if(NOT DEFINED Slicer_FILE_ASSOCIATION_EXTENSIONS)
+  set(Slicer_FILE_ASSOCIATION_EXTENSIONS ".mrml;.xcat;.mrb" CACHE STRING
+    "File extensions that the installer associates with the application")
+  mark_as_advanced(Slicer_FILE_ASSOCIATION_EXTENSIONS)
+endif()
+mark_as_superbuild(Slicer_FILE_ASSOCIATION_EXTENSIONS:STRING)
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} file association extensions [${Slicer_FILE_ASSOCIATION_EXTENSIONS}]")
+
+#-----------------------------------------------------------------------------
 # Set Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
 #-----------------------------------------------------------------------------
 #
