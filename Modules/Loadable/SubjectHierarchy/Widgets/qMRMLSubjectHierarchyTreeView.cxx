@@ -179,6 +179,8 @@ public:
   void setupVisibilityButton(const QModelIndex& proxyIndex);
   void setupColorButton(const QModelIndex& proxyIndex);
   void setupAllButtons();
+  /// Request a setupAllButtons() call. Multiple requests are coalesced into a single deferred call.
+  void scheduleSetupAllButtons();
   void setupRowsRecursively(const QModelIndex& parent);
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
   void onColorButtonClicked(vtkIdType itemID, QPersistentModelIndex persistentIndex);
@@ -280,30 +282,16 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   // scene, many rowsInserted signals are emitted (potentially many levels deep), and recursively setting
   // up buttons for each inserted row's subtree individually would redo the same work many times over
   // (once per ancestor), causing severe slowdowns and excessive temporary widget/icon allocations.
-  QObject::connect(this->SortFilterModel,
-                   &QAbstractItemModel::rowsInserted,
-                   q,
-                   [this, q](const QModelIndex&, int, int)
-                   {
-                     if (this->ButtonSetupPending)
-                     {
-                       return;
-                     }
-                     this->ButtonSetupPending = true;
-                     QTimer::singleShot(0,
-                                        q,
-                                        [this]()
-                                        {
-                                          this->ButtonSetupPending = false;
-                                          this->setupAllButtons();
-                                        });
-                   });
+  QObject::connect(this->SortFilterModel, &QAbstractItemModel::rowsInserted, q, [this](const QModelIndex&, int, int) { this->scheduleSetupAllButtons(); });
   QObject::connect(this->SortFilterModel, &QAbstractItemModel::dataChanged, q, &qMRMLSubjectHierarchyTreeView::onSortFilterDataChanged);
 
   // Recreate all buttons after a model reset or filter invalidation.
   // Both operations rebuild the proxy model's internal mapping, which changes the
   // internalPointer() of every proxy index and orphans any QWidget stored via
   // setIndexWidget() (Qt stores them by QPersistentModelIndex keyed on that pointer).
+  // Recreation is coalesced (same as for row insertion), because many layout changes may occur
+  // in a row (e.g., reordering items while importing a scene) and each recreation replaces
+  // all the buttons, leaving the replaced ones in the view until they get deleted (deleteLater).
   QObject::connect(this->SortFilterModel, &QAbstractItemModel::modelReset, q, &qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged);
   QObject::connect(this->SortFilterModel, &QAbstractItemModel::layoutChanged, q, &qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged);
 
@@ -399,6 +387,24 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& p
 void qMRMLSubjectHierarchyTreeViewPrivate::setupAllButtons()
 {
   this->setupRowsRecursively(QModelIndex());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::scheduleSetupAllButtons()
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  if (this->ButtonSetupPending)
+  {
+    return;
+  }
+  this->ButtonSetupPending = true;
+  QTimer::singleShot(0,
+                     q,
+                     [this]()
+                     {
+                       this->ButtonSetupPending = false;
+                       this->setupAllButtons();
+                     });
 }
 
 //--------------------------------------------------------------------------
@@ -2697,7 +2703,7 @@ void qMRMLSubjectHierarchyTreeView::onSortFilterDataChanged(const QModelIndex& t
 void qMRMLSubjectHierarchyTreeView::onSortFilterModelChanged()
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->setupAllButtons();
+  d->scheduleSetupAllButtons();
 }
 
 //------------------------------------------------------------------------------
