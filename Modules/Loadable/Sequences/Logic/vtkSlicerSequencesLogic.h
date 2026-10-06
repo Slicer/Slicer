@@ -57,7 +57,9 @@ public:
   void UpdateAllProxyNodes();
 
   /// Updates the contents of all the proxy nodes (all the nodes copied from the master and synchronized sequences to the scene)
-  void UpdateProxyNodesFromSequences(vtkMRMLSequenceBrowserNode* browserNode);
+  /// \param sequenceNode If specified then only the proxy node of this synchronized sequence node is updated.
+  ///   Updating a single proxy node is much faster when the browser node has many synchronized sequences (e.g., scene views).
+  void UpdateProxyNodesFromSequences(vtkMRMLSequenceBrowserNode* browserNode, vtkMRMLSequenceNode* sequenceNode = nullptr);
 
   /// Updates the sequence from a changed proxy node (if saving of state changes is allowed)
   void UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrowserNode* browserNode, vtkMRMLNode* proxyNode);

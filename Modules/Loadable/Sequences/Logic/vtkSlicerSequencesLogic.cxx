@@ -293,7 +293,7 @@ void vtkSlicerSequencesLogic::UpdateAllProxyNodes()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrowserNode* browserNode)
+void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrowserNode* browserNode, vtkMRMLSequenceNode* sequenceNode /*=nullptr*/)
 {
 #ifdef ENABLE_PERFORMANCE_PROFILING
   vtkNew<vtkTimerLog> timer;
@@ -358,6 +358,11 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     if (synchronizedSequenceNode == nullptr)
     {
       vtkErrorMacro("Synchronized sequence node is invalid");
+      continue;
+    }
+    if (sequenceNode && synchronizedSequenceNode != sequenceNode)
+    {
+      // only the proxy node of the specified sequence node needs to be updated
       continue;
     }
     if (!browserNode->GetPlayback(synchronizedSequenceNode))
@@ -794,11 +799,20 @@ void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned
         !this->GetMRMLScene()->IsImporting() && //
         !this->GetMRMLScene()->IsRestoring())
     {
-      // One of the sequence nodes was modified, update the proxy nodes as needed
-      // We currently update all proxy nodes, but it would be more efficient to only update the proxy node of the modified sequence node.
-      // The modified sequence node is available as vtkMRMLSequenceNode::SafeDownCast((vtkObject*)callData), but it can be nullptr
-      // if modifications were done between Start/EndModify.
-      this->UpdateProxyNodesFromSequences(browserNode);
+      // One of the sequence nodes was modified, update the proxy nodes as needed.
+      // The modified sequence node is nullptr if modifications were done between Start/EndModify.
+      // If the master sequence node is modified then the selected index value may have changed, which affects all proxy nodes.
+      // Otherwise, only the proxy node of the modified sequence node is updated, which makes a big difference in performance
+      // when there are many synchronized sequences (e.g., a scene view browser node with hundreds of sequences).
+      vtkMRMLSequenceNode* modifiedSequenceNode = vtkMRMLSequenceNode::SafeDownCast((vtkObject*)callData);
+      if (modifiedSequenceNode && modifiedSequenceNode != browserNode->GetMasterSequenceNode())
+      {
+        this->UpdateProxyNodesFromSequences(browserNode, modifiedSequenceNode);
+      }
+      else
+      {
+        this->UpdateProxyNodesFromSequences(browserNode);
+      }
     }
   }
 }
