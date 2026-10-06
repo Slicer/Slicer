@@ -32,10 +32,12 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkCoreTestingMacros.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkQtTestingUtility.h"
 
 // qMRML includes
+#include "qMRMLTestingSetup.h"
 #include "qMRMLColorTableView.h"
 
 // MRML includes
@@ -68,7 +70,10 @@ int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
+  qMRMLTestingSetup testingSetup(argc, argv);
+  CHECK_BOOL(testingSetup.isValid(), true);
+
+  QString xmlDirectory = testingSetup.positionalArgument(0) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -101,7 +106,7 @@ int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char* argv[])
   etpWidget.addTestCase(&topLevel, xmlDirectory + "qMRMLColorTableViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (!testingSetup.interactive())
   {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
   }

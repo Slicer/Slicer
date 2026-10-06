@@ -31,10 +31,12 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkCoreTestingMacros.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkQtTestingUtility.h"
 
 // qMRML includes
+#include "qMRMLTestingSetup.h"
 #include "qMRMLSliceWidget.h"
 #include "qMRMLNodeObject.h"
 
@@ -74,7 +76,10 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  qMRMLTestingSetup testingSetup(argc, argv);
+  CHECK_BOOL(testingSetup.isValid(), true);
+
+  QString xmlDirectory = testingSetup.positionalArgument(0) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -91,7 +96,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   applicationLogic->SetMRMLScene(scene.GetPointer());
   colorLogic->SetMRMLScene(scene.GetPointer());
 
-  scene->SetURL(argv[2]);
+  scene->SetURL(testingSetup.positionalArgument(1).toUtf8().constData());
   scene->Connect();
 
   vtkMRMLSliceNode* redSliceNode = nullptr;
@@ -123,7 +128,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   etpWidget.addTestCase(&sliceWidget, xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (!testingSetup.interactive())
   {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
   }
