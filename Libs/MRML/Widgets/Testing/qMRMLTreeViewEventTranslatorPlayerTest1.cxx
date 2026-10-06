@@ -32,10 +32,12 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkCoreTestingMacros.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkQtTestingUtility.h"
 
 // qMRML includes
+#include "qMRMLTestingSetup.h"
 #include "qMRMLTreeView.h"
 #include <qMRMLSceneTransformModel.h>
 #include <qMRMLTreeViewEventPlayer.h>
@@ -84,7 +86,10 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  qMRMLTestingSetup testingSetup(argc, argv);
+  CHECK_BOOL(testingSetup.isValid(), true);
+
+  QString xmlDirectory = testingSetup.positionalArgument(0) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -100,7 +105,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene.GetPointer());
   widget.setMRMLScene(scene.GetPointer());
-  scene->SetURL(argv[2]);
+  scene->SetURL(testingSetup.positionalArgument(1).toUtf8().constData());
   scene->Import();
 
   etpWidget.addTestCase(&widget, xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
@@ -135,7 +140,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
 
   etpWidget.addTestCase(&widget2, xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest2.xml", &checkFinalWidgetState2);
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (!testingSetup.interactive())
   {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
   }

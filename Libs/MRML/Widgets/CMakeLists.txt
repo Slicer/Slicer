@@ -192,6 +192,8 @@ set(MRMLWidgets_SRCS
   qMRMLTableViewControllerWidget_p.h
   qMRMLTableWidget.cxx
   qMRMLTableWidget.h
+  qMRMLTestingSetup.cxx
+  qMRMLTestingSetup.h
   qMRMLThreeDView.cxx
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
@@ -278,6 +280,8 @@ if(Slicer_USE_QtTesting)
     qMRMLTreeViewEventTranslator.cpp
     qMRMLTreeViewEventTranslator.h
     )
+  # Allow setting QtTesting options (such as event playback delay) from the command-line arguments of tests
+  set_source_files_properties(qMRMLTestingSetup.cxx PROPERTIES COMPILE_DEFINITIONS MRML_WIDGETS_USE_QTTESTING)
 endif()
 
 source_group("Resources" FILES

@@ -31,10 +31,12 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkCoreTestingMacros.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkQtTestingUtility.h"
 
 // qMRML includes
+#include "qMRMLTestingSetup.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDViewControllerWidget.h"
 
@@ -70,7 +72,10 @@ int qMRMLThreeDWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  qMRMLTestingSetup testingSetup(argc, argv);
+  CHECK_BOOL(testingSetup.isValid(), true);
+
+  QString xmlDirectory = testingSetup.positionalArgument(0) + "/Libs/MRML/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -98,7 +103,7 @@ int qMRMLThreeDWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   etpWidget.addTestCase(&widget, xmlDirectory + "qMRMLThreeDWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (!testingSetup.interactive())
   {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
   }
