@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSignalBlocker>
 
 // qMRML includes
 #include "qMRMLColorModel_p.h"
@@ -344,16 +345,23 @@ void qMRMLColorModel::updateNode()
     return;
   }
 
-  this->setRowCount(d->MRMLColorNode->GetNumberOfColors() + (this->noneEnabled() ? 1 : 0));
+  const int numberOfColors = d->MRMLColorNode->GetNumberOfColors();
+  const int startIndex = (this->noneEnabled() ? 1 : 0);
+  this->setRowCount(numberOfColors + startIndex);
 
-  // Note: Adding a signal blocker or temporarily disconnecting signals could improve update performance
-  // (similarly to how it is done in qMRMLTableModel::updateModelFromMRML()).
-  for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
+  if (numberOfColors > 0)
   {
-    for (int j = 0; j < this->columnCount(); ++j)
+    // Update the items with signals blocked and then notify views with a single dataChanged signal.
+    // Emitting a signal for each modified item would make views recompute their layout (e.g., columns
+    // that are resized to contents) after each item update, which takes seconds for large color tables.
     {
-      this->updateRowForColor(color);
+      const QSignalBlocker blocker(this);
+      for (int color = 0; color < numberOfColors; ++color)
+      {
+        this->updateRowForColor(color);
+      }
     }
+    emit dataChanged(this->index(startIndex, 0), this->index(startIndex + numberOfColors - 1, this->columnCount() - 1));
   }
 
   d->IsUpdatingWidgetFromMRML = false;
