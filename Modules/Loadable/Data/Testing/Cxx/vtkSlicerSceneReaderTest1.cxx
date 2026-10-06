@@ -23,6 +23,7 @@
 #include <vtkMRMLIOProperties.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScriptedModuleNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -38,12 +39,18 @@
 namespace
 {
 //-----------------------------------------------------------------------------
+// Names of the loaded nodes, except the subject hierarchy node: the scene creates that when loading if
+// it has none (it is not in the test scene file, and clearing the scene removes it)
 std::vector<std::string> LoadedNodeNames(vtkSlicerSceneReader* reader, vtkMRMLScene* scene)
 {
   std::vector<std::string> names;
   for (const std::string& nodeID : reader->GetLoadedNodeIDs())
   {
     vtkMRMLNode* node = scene->GetNodeByID(nodeID);
+    if (vtkMRMLSubjectHierarchyNode::SafeDownCast(node))
+    {
+      continue;
+    }
     names.push_back(node && node->GetName() ? node->GetName() : "(missing)");
   }
   std::sort(names.begin(), names.end());
