@@ -50,10 +50,14 @@ function(_slicer_python_test_append_module_paths arguments_var)
   set(${arguments_var} ${${arguments_var}} PARENT_SCOPE)
 endfunction()
 
+# Python tests can run in parallel with other tests. Specify RUN_SERIAL if a test must not
+# run concurrently with any other test (for example, because it modifies shared application settings),
+# or list the shared resources that the test uses in RESOURCE_LOCK to prevent concurrent use of
+# those resources (for example, "DICOMDatabase" for tests that modify the DICOM database).
 macro(slicer_add_python_test)
-  set(options)
+  set(options RUN_SERIAL)
   set(oneValueArgs TESTNAME_PREFIX SCRIPT)
-  set(multiValueArgs SLICER_ARGS SCRIPT_ARGS)
+  set(multiValueArgs SLICER_ARGS SCRIPT_ARGS RESOURCE_LOCK)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   if(NOT IS_ABSOLUTE ${MY_SCRIPT})
@@ -69,13 +73,18 @@ macro(slicer_add_python_test)
     ${MY_SLICER_ARGS}
     --python-script ${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
-  set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
+  if(MY_RUN_SERIAL)
+    set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
+  endif()
+  if(MY_RESOURCE_LOCK)
+    set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RESOURCE_LOCK ${MY_RESOURCE_LOCK})
+  endif()
 endmacro()
 
 macro(slicer_add_python_unittest)
-  set(options)
+  set(options RUN_SERIAL)
   set(oneValueArgs TESTNAME_PREFIX SCRIPT)
-  set(multiValueArgs SLICER_ARGS)
+  set(multiValueArgs SLICER_ARGS RESOURCE_LOCK)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   get_filename_component(_script_source_dir ${MY_SCRIPT} PATH)
@@ -92,5 +101,10 @@ macro(slicer_add_python_unittest)
     ${MY_SLICER_ARGS}
     --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     )
-  set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
+  if(MY_RUN_SERIAL)
+    set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
+  endif()
+  if(MY_RESOURCE_LOCK)
+    set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RESOURCE_LOCK ${MY_RESOURCE_LOCK})
+  endif()
 endmacro()

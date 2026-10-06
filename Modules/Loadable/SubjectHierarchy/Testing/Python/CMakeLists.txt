@@ -18,7 +18,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     NAME SubjectHierarchyGenericSelfTest
     SCRIPTS SubjectHierarchyGenericSelfTest.py
     )
-  slicer_add_python_unittest(SCRIPT SubjectHierarchyGenericSelfTest.py)
+  slicer_add_python_unittest(SCRIPT SubjectHierarchyGenericSelfTest.py RESOURCE_LOCK DICOMDatabase)
 endif()
 
 #-----------------------------------------------------------------------------
