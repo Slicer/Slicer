@@ -25,6 +25,7 @@
 #include <QMimeData>
 #include <QApplication>
 #include <QMessageBox>
+#include <QSignalBlocker>
 #include <QTimer>
 #include <QUrl>
 
@@ -1761,9 +1762,11 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
 
   std::vector<vtkIdType> childrenItemIDs;
   d->SubjectHierarchyNode->GetItemChildren(parentItemID, childrenItemIDs);
-  for (int positionInShNode = 0; positionInShNode < childrenItemIDs.size(); ++positionInShNode)
+  QHash<vtkIdType, int> positionsInShNode;
+  for (int positionInShNode = 0; positionInShNode < static_cast<int>(childrenItemIDs.size()); ++positionInShNode)
   {
     vtkIdType childItemID = childrenItemIDs[positionInShNode];
+    positionsInShNode[childItemID] = positionInShNode;
 
     QStandardItem* childItem = this->itemFromSubjectHierarchyItem(childItemID);
     if (!childItem)
@@ -1778,12 +1781,77 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
       continue;
     }
 
-    int formerChildPosition = this->indexFromSubjectHierarchyItem(childItemID).row();
-    if (newParentItem != formerParentItem || positionInShNode != formerChildPosition)
+    if (newParentItem != formerParentItem)
     {
-      // Reparent/reorder item in model
-      QList<QStandardItem*> children = formerParentItem->takeRow(formerChildPosition);
-      newParentItem->insertRow(positionInShNode, children);
+      // Reparent item in model
+      QList<QStandardItem*> children = formerParentItem->takeRow(childItem->row());
+      newParentItem->insertRow(qMin(positionInShNode, newParentItem->rowCount()), children);
+    }
+  }
+
+  // Reorder the child items with a single sort operation. Moving rows one by one would make proxy models and views
+  // process each move separately, which can take seconds when there are many items (e.g., when importing a scene).
+  // Rows that do not correspond to a child item in the subject hierarchy (such as the "None" item) are kept on top.
+
+  // Compute the sorting key of each child row: its position in the subject hierarchy node,
+  // or a negative value (preserving the current order) for rows that are not in the subject hierarchy.
+  // Sorting is skipped if the rows are already in the requested order.
+  const int rowCount = newParentItem->rowCount();
+  QList<QPair<QStandardItem*, int>> childOrders;
+  bool reorderNeeded = false;
+  for (int row = 0; row < rowCount; ++row)
+  {
+    QStandardItem* childItem = newParentItem->child(row);
+    if (!childItem)
+    {
+      continue;
+    }
+    int childOrder = row - rowCount;
+    QVariant childItemID = childItem->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
+    if (childItemID.isValid())
+    {
+      QHash<vtkIdType, int>::const_iterator positionIt = positionsInShNode.constFind(childItemID.toLongLong());
+      if (positionIt != positionsInShNode.constEnd())
+      {
+        childOrder = positionIt.value();
+      }
+    }
+    if (!childOrders.isEmpty() && childOrder < childOrders.last().second)
+    {
+      reorderNeeded = true;
+    }
+    childOrders << qMakePair(childItem, childOrder);
+  }
+  if (!reorderNeeded)
+  {
+    return;
+  }
+  // Set up temporary sorting: store the sorting keys in the ChildOrderRole of the child items
+  // and make the model sort by this role. Signals are blocked, as the sorting keys are only used
+  // internally and views do not need to be notified about these temporary changes.
+  const int previousSortRole = this->sortRole();
+  {
+    const QSignalBlocker blocker(this);
+    for (const QPair<QStandardItem*, int>& childOrder : childOrders)
+    {
+      childOrder.first->setData(childOrder.second, qMRMLSubjectHierarchyModel::ChildOrderRole);
+    }
+    this->setSortRole(qMRMLSubjectHierarchyModel::ChildOrderRole);
+  }
+
+  // Sort the child rows. This emits a single layout change, which proxy models and views can process
+  // efficiently, and it keeps persistent model indexes (such as the RowCache) valid.
+  // Only the direct children have sorting keys set, and the sort is stable, therefore
+  // the order of grandchildren does not change (even though sortChildren is recursive).
+  newParentItem->sortChildren(0);
+
+  // Restore the previous sorting settings and remove the temporary sorting keys (again, without notifying views).
+  {
+    const QSignalBlocker blocker(this);
+    this->setSortRole(previousSortRole);
+    for (const QPair<QStandardItem*, int>& childOrder : childOrders)
+    {
+      childOrder.first->setData(QVariant(), qMRMLSubjectHierarchyModel::ChildOrderRole);
     }
   }
 }
