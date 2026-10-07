@@ -44,6 +44,7 @@ extensions = [
     "github_alerts",
     "sphinx_reredirects",  # Handle page redirects
     "sphinx_design",  # Tabs, cards, and other design components
+    "sphinxcontrib.mermaid",  # Mermaid UML graph rendering
 ]
 
 # Redirect renamed/moved pages for keeping external links working
@@ -246,6 +247,19 @@ html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",
 ]
+
+# -- Mermaid configuration ----------------------------------------------------
+mermaid_version = "12.0.0"
+
+# Force light theme to match RTD light background
+mermaid_light_theme = "redux-color"
+mermaid_dark_theme = "redux-color"
+
+# Mermaid initialization settings
+mermaid_init_config = {
+    "theme": "redux-color",
+    "look": "neo",
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
