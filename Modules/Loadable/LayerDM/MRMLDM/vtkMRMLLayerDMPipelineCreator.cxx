@@ -18,36 +18,24 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLLayerDMPipelineCallbackCreator.h"
-
-// Layer DM includes
-#include "vtkMRMLLayerDMPipeline.h"
+#include "vtkMRMLLayerDMPipelineCreator.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLLayerDMPipelineCallbackCreator);
+vtkStandardNewMacro(vtkMRMLLayerDMPipelineCreator);
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineCallbackCreator::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineCreator::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) const
 {
-  return this->Callback(viewNode, node);
+  return {};
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLLayerDMPipelineCallbackCreator::SetCallback(const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& callback)
-{
-  this->Callback = callback;
-}
-
-vtkMRMLLayerDMPipelineCallbackCreator::vtkMRMLLayerDMPipelineCallbackCreator()
-  : Callback([](vtkMRMLAbstractViewNode*, vtkMRMLNode*) { return nullptr; }) {};
-
-//-----------------------------------------------------------------------------
-void vtkMRMLLayerDMPipelineCallbackCreator::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLLayerDMPipelineCreator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  os << indent << "Callback: " << (this->Callback ? "set" : "(none)") << std::endl;
+  os << indent << "Priority: " << this->Priority << std::endl;
 }

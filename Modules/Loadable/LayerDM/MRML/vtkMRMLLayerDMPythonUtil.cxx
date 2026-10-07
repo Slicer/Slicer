@@ -1,28 +1,53 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
 #include "vtkMRMLLayerDMPythonUtil.h"
 
 #include <vtkObjectFactory.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPythonUtil);
 
 vtkMRMLLayerDMPythonUtil::vtkMRMLLayerDMPythonUtil() = default;
 
 vtkMRMLLayerDMPythonUtil::~vtkMRMLLayerDMPythonUtil() = default;
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(vtkObjectBase* obj)
 {
   return vtkPythonUtil::GetObjectFromPointer(obj);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(unsigned long value)
 {
   return PyLong_FromUnsignedLong(value);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::ToPyObject(const std::string& value)
 {
   return PyUnicode_FromString(value.c_str());
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
 {
   if (ptr)
@@ -30,11 +55,12 @@ PyObject* vtkMRMLLayerDMPythonUtil::RawPtrToPython(void* ptr)
     return PyCapsule_New(ptr, nullptr, nullptr);
   }
 
-  // Return borrowed reference to Py_None
+  // Return a new reference to Py_None, as the callers take ownership of the returned object
   Py_INCREF(Py_None);
   return Py_None;
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(const std::vector<PyObject*>& pyObjs)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -53,18 +79,21 @@ vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(const std::vector<PyObject*>
   return { pyTuple };
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(vtkObjectBase* obj)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
   return ToPyArgs({ ToPyObject(obj) });
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPyObject vtkMRMLLayerDMPythonUtil::ToPyArgs(vtkObject* obj, unsigned long eventId, void* callData)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
   return ToPyArgs({ ToPyObject(obj), ToPyObject(eventId), RawPtrToPython(callData) });
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
 {
   vtkPythonScopeGilEnsurer gilEnsurer;
@@ -130,6 +159,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::CastCallData(PyObject* object, int vtkType)
   }
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName)
 {
   if (!IsValidPythonContext() || !object)
@@ -138,6 +168,8 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
   }
 
   vtkPythonScopeGilEnsurer gilEnsurer;
+
+  // PyObject_GetAttrString returns a new reference which needs to be released on every path.
   PyObject* method = PyObject_GetAttrString(object, fName.c_str());
   if (!method)
   {
@@ -150,12 +182,16 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
     // PyCallable_Check doesn't raise any errors. Raise called attribute isn't callable.
     const auto errorString = std::string("vtkMRMLLayerDMPythonUtil::") + __func__ + ": Attribute is not callable : '" + fName + "' of object : " + GetObjectStr(object);
     PyErr_SetString(PyExc_TypeError, errorString.c_str());
+    Py_DECREF(method);
     return nullptr;
   }
 
-  return CallPythonObject(method, pyArgs);
+  PyObject* result = CallPythonObject(method, pyArgs);
+  Py_DECREF(method);
+  return result;
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtkSmartPyObject& pyArgs)
 {
   if (!IsValidPythonContext() || !object)
@@ -175,6 +211,7 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtk
   return PyObject_CallObject(object, pyArgs);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::SetPythonObject(PyObject** destObject, PyObject* object)
 {
   if (!IsValidPythonContext())
@@ -193,6 +230,7 @@ void vtkMRMLLayerDMPythonUtil::SetPythonObject(PyObject** destObject, PyObject* 
   Py_XINCREF(*destObject);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::DeletePythonObject(PyObject** destObject)
 {
   if (!Py_IsInitialized())
@@ -205,6 +243,7 @@ void vtkMRMLLayerDMPythonUtil::DeletePythonObject(PyObject** destObject)
   *destObject = nullptr;
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
 {
   if (!Py_IsInitialized())
@@ -217,6 +256,9 @@ std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
     return "None";
   }
 
+  // This is a public static method which may be called without the GIL held.
+  vtkPythonScopeGilEnsurer gilEnsurer;
+
   // Save current errors to avoid changing the current python error stack if any
   PyObject *type, *value, *traceback;
   PyErr_Fetch(&type, &value, &traceback);
@@ -224,15 +266,22 @@ std::string vtkMRMLLayerDMPythonUtil::GetObjectStr(PyObject* object)
   std::string objectString{ "INVALID_OBJECT_STR" };
   if (auto strObj = PyObject_Str(object))
   {
-    objectString = PyUnicode_AsUTF8(strObj);
+    if (const char* strValue = PyUnicode_AsUTF8(strObj))
+    {
+      objectString = strValue;
+    }
     Py_DECREF(strObj);
   }
+
+  // PyObject_Str or the conversion above may have raised; the fetched error is restored below.
+  PyErr_Clear();
 
   // Restore the python error stack
   PyErr_Restore(type, value, traceback);
   return objectString;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMPythonUtil::IsValidPythonContext()
 {
   if (!Py_IsInitialized())
@@ -244,6 +293,7 @@ bool vtkMRMLLayerDMPythonUtil::IsValidPythonContext()
   return !PyErr_Occurred();
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
 {
   // Don't use IsValidPythonContext here as it checks if no error has occurred
@@ -264,13 +314,26 @@ std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
   PyErr_Fetch(&type, &value, &traceback);
   PyErr_NormalizeException(&type, &value, &traceback);
 
+  // Exceptions raised from C++ have no traceback, and PyTuple_Pack cannot pack a null object.
+  // Every step below may also fail, in which case the traceback cannot be formatted at all.
   PyObject* tracebackModule = PyImport_ImportModule("traceback");
-  PyObject* formatExceptionFunc = PyObject_GetAttrString(tracebackModule, "format_exception");
-  PyObject* args = PyTuple_Pack(3, type, value, traceback);
-  PyObject* formattedList = PyObject_CallObject(formatExceptionFunc, args);
-  PyObject* emptyString = PyUnicode_FromString("");
-  PyObject* formatted = PyUnicode_Join(emptyString, formattedList);
-  std::string exceptionTraceback = PyUnicode_AsUTF8(formatted);
+  PyObject* formatExceptionFunc = tracebackModule ? PyObject_GetAttrString(tracebackModule, "format_exception") : nullptr;
+  PyObject* args = formatExceptionFunc ? PyTuple_Pack(3, type, value, traceback ? traceback : Py_None) : nullptr;
+  PyObject* formattedList = args ? PyObject_CallObject(formatExceptionFunc, args) : nullptr;
+  PyObject* emptyString = formattedList ? PyUnicode_FromString("") : nullptr;
+  PyObject* formatted = emptyString ? PyUnicode_Join(emptyString, formattedList) : nullptr;
+
+  std::string exceptionTraceback;
+  if (formatted)
+  {
+    if (const char* formattedStr = PyUnicode_AsUTF8(formatted))
+    {
+      exceptionTraceback = formattedStr;
+    }
+  }
+
+  // Discard any error raised while formatting so that the original error is the one restored.
+  PyErr_Clear();
 
   // Cleanup
   PyErr_Restore(type, value, traceback);
@@ -283,6 +346,7 @@ std::string vtkMRMLLayerDMPythonUtil::FormatExceptionTraceback()
   return exceptionTraceback;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, const std::string& errorMsg)
 {
   // If the traceback is not empty, print the traceback using vtkErrorMacro
@@ -298,5 +362,11 @@ void vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(const vtkObject* object, cons
     errorString += "\n";
   }
   errorString += traceback;
-  vtkErrorWithObjectMacro(object, "" << traceback.c_str());
+  vtkErrorWithObjectMacro(object, "" << errorString.c_str());
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPythonUtil::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
 }

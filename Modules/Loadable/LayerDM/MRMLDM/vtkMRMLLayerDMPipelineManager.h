@@ -1,4 +1,25 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMPipelineManager_h
+#define __vtkMRMLLayerDMPipelineManager_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -20,9 +41,9 @@ class vtkMRMLLayerDMInteractionLogic;
 class vtkMRMLLayerDMLayerManager;
 class vtkMRMLLayerDMNodeReferenceObserver;
 class vtkMRMLLayerDMObjectEventObserver;
-class vtkMRMLLayerDMPipelineCreatorI;
+class vtkMRMLLayerDMPipelineCreator;
 class vtkMRMLLayerDMPipelineFactory;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkRenderWindow;
@@ -37,6 +58,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipe
 public:
   static vtkMRMLLayerDMPipelineManager* New();
   vtkTypeMacro(vtkMRMLLayerDMPipelineManager, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Add a new node to the pipeline manager.
   /// If no pipeline exist for the input display node and the \sa vtkMRMLLayerDMPipelineFactory can create
@@ -62,15 +84,16 @@ public:
   int GetMouseCursor() const;
 
   /// Returns the pipeline associated with the input display node if any.
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> GetNodePipeline(vtkMRMLNode* node) const;
 
   /// Returns the number of pipelines currently managed by the pipeline manager
   int GetNumberOfPipelines() const;
 
-  /// Returns the list of currently managed display nodes of the pipeline manager.
+  /// Returns the nth pipeline managed by the pipeline manager, nullptr if the index is out of range.
   ///
   /// \sa GetNodePipeline
-  vtkMRMLLayerDMPipelineI* GetNthPipeline(int iPipeline) const;
+  /// \sa GetNumberOfPipelines
+  vtkMRMLLayerDMPipeline* GetNthPipeline(int iPipeline) const;
 
   /// @{
   /// Makes the latest pipeline lose focus
@@ -131,35 +154,44 @@ public:
 
 protected:
   vtkMRMLLayerDMPipelineManager();
-  ~vtkMRMLLayerDMPipelineManager() override = default;
+  ~vtkMRMLLayerDMPipelineManager() override;
 
 private:
   /// Notify pipelines that the default camera has changed.
   void OnDefaultCameraModified();
 
   /// Update the input pipeline and reset its display.
-  void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline) const;
+  void UpdatePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipeline>& pipeline) const;
 
-  /// Remove pipelines with nodes not present in the scene anymore.
+  /// Remove pipelines with nodes not present in the scene anymore, as well as pipelines
+  /// whose creator has been removed from the factory (their nodes are then handled again
+  /// by \sa AddMissingPipelines and may be recreated by the remaining creators).
   void RemoveOutdatedPipelines();
 
   /// Add pipelines for nodes not currently handled by the pipeline manager.
   void AddMissingPipelines();
 
-  vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> m_factory;
-  vtkSmartPointer<vtkMRMLLayerDMLayerManager> m_layerManager;
-  vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer> m_cameraSync;
-  vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> m_interactionLogic;
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_eventObs;
-  vtkSmartPointer<vtkCamera> m_defaultCamera;
-  vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver> m_nodeRefObs;
+  /// true if the pipeline associated with the input node was created by a creator which has
+  /// since been removed from the factory (or destroyed).
+  bool IsPipelineCreatorOutdated(vtkMRMLNode* node) const;
 
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  vtkWeakPointer<vtkMRMLScene> m_scene;
-  vtkWeakPointer<vtkRenderWindow> m_renderWindow;
+  vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> Factory;
+  vtkSmartPointer<vtkMRMLLayerDMLayerManager> LayerManager;
+  vtkSmartPointer<vtkMRMLLayerDMCameraSynchronizer> CameraSynchronizer;
+  vtkSmartPointer<vtkMRMLLayerDMInteractionLogic> InteractionLogic;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> EventObserver;
+  vtkSmartPointer<vtkCamera> DefaultCamera;
+  vtkSmartPointer<vtkMRMLLayerDMNodeReferenceObserver> NodeReferenceObserver;
 
-  std::map<vtkWeakPointer<vtkMRMLNode>, vtkSmartPointer<vtkMRMLLayerDMPipelineI>> m_pipelineMap;
-  std::function<void()> m_requestRender;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLScene> Scene;
+  vtkWeakPointer<vtkRenderWindow> RenderWindow;
 
-  bool m_isRequestRenderBlocked{ false };
+  std::map<vtkMRMLNode*, vtkSmartPointer<vtkMRMLLayerDMPipeline>> PipelineMap;
+  std::map<vtkMRMLNode*, vtkWeakPointer<vtkMRMLLayerDMPipelineCreator>> PipelineCreatorMap;
+  std::function<void()> RequestRenderCallback;
+
+  bool IsRequestRenderBlocked{ false };
 };
+
+#endif

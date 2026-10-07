@@ -1,3 +1,23 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
 // LayerDM includes
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 #include "vtkMRMLLayerDMNodeReferenceObserver.h"
@@ -10,6 +30,9 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <algorithm>
+
 // CTK includes
 #include "vtkSlicerLayerDMLogic.h"
 
@@ -17,6 +40,7 @@
 
 namespace
 {
+//-----------------------------------------------------------------------------
 struct Spy
 {
 
@@ -42,6 +66,7 @@ struct Spy
   int callCount{};
 };
 
+//-----------------------------------------------------------------------------
 struct Test
 {
   Test(const vtkSmartPointer<vtkMRMLScene>& inScene = nullptr)
@@ -67,6 +92,7 @@ struct Test
 };
 } // namespace
 
+//-----------------------------------------------------------------------------
 class NodeReferenceObserverTester : public QObject
 {
   Q_OBJECT
@@ -237,11 +263,12 @@ private slots:
     QVERIFY(test.obs->GetReferenceFromSize() <= nNodes);
 
     // Verify that the references from / to the created markups is consistent with the current display node
+    using RefT = vtkMRMLLayerDMNodeReferenceObserver::RefT;
     const auto refTo = test.obs->GetNodeToReferences(markups);
-    QVERIFY(refTo.find({ markups->GetDisplayNode(), "display" }) != refTo.end());
+    QVERIFY(std::find(refTo.begin(), refTo.end(), RefT{ markups->GetDisplayNode(), "display" }) != refTo.end());
 
     const auto refFrom = test.obs->GetNodeFromReferences(markups->GetDisplayNode());
-    QVERIFY(refFrom.find({ markups, "display" }) != refFrom.end());
+    QVERIFY(std::find(refFrom.begin(), refFrom.end(), RefT{ markups, "display" }) != refFrom.end());
 
     // Remove the markups and its display node from the scene
     scene->RemoveNode(markups->GetDisplayNode());

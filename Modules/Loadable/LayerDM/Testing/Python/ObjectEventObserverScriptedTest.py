@@ -21,14 +21,14 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
     def test_can_be_attached_to_vtk_object_modified_event(self):
         modelNode = vtkMRMLModelNode()
 
-        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
+        self.observer.UpdateObservation(None, modelNode, vtkCommand.ModifiedEvent)
         modelNode.Modified()
         self.mock.assert_called_once_with(modelNode, vtkCommand.ModifiedEvent, None)
 
     def test_can_be_attached_to_multiple_events(self):
         markups_node = vtkMRMLMarkupsFiducialNode()
 
-        self.observer.UpdateObserver(None, markups_node, [vtkCommand.ModifiedEvent, markups_node.PointModifiedEvent])
+        self.observer.UpdateObservation(None, markups_node, [vtkCommand.ModifiedEvent, markups_node.PointModifiedEvent])
         markups_node.InvokeEvent(markups_node.PointModifiedEvent)
         self.mock.assert_called_once_with(markups_node, markups_node.PointModifiedEvent, None)
 
@@ -40,21 +40,21 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
         m1 = vtkMRMLModelNode()
         m2 = vtkMRMLModelNode()
 
-        self.observer.UpdateObserver(None, m1, vtkCommand.ModifiedEvent)
-        self.observer.UpdateObserver(m1, m2, vtkCommand.ModifiedEvent)
+        self.observer.UpdateObservation(None, m1, vtkCommand.ModifiedEvent)
+        self.observer.UpdateObservation(m1, m2, vtkCommand.ModifiedEvent)
         m1.Modified()
         m2.Modified()
         self.mock.assert_called_once_with(m2, vtkCommand.ModifiedEvent, None)
 
     def test_can_remove_observer(self):
         modelNode = vtkMRMLModelNode()
-        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
-        self.observer.RemoveObserver(modelNode)
+        self.observer.UpdateObservation(None, modelNode, vtkCommand.ModifiedEvent)
+        self.observer.RemoveObservations(modelNode)
         modelNode.Modified()
         self.mock.assert_not_called()
 
     def test_can_cast_observed_call_data(self):
-        self.observer.UpdateObserver(None, slicer.mrmlScene, vtkMRMLScene.NodeAddedEvent)
+        self.observer.UpdateObservation(None, slicer.mrmlScene, vtkMRMLScene.NodeAddedEvent)
 
         modelNode = vtkMRMLModelNode()
         slicer.mrmlScene.AddNode(modelNode)
@@ -67,7 +67,7 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
 
     def test_update_can_be_blocked(self):
         modelNode = vtkMRMLModelNode()
-        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
+        self.observer.UpdateObservation(None, modelNode, vtkCommand.ModifiedEvent)
         wasBlocked = self.observer.SetBlocked(True)
         assert self.observer.IsBlocked()
         assert not wasBlocked
@@ -82,7 +82,7 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
 
     def test_update_exceptions_are_propagated_to_python(self):
         modelNode = vtkMRMLModelNode()
-        self.observer.UpdateObserver(None, modelNode, vtkCommand.ModifiedEvent)
+        self.observer.UpdateObservation(None, modelNode, vtkCommand.ModifiedEvent)
 
         _errorMsg = "Something happened in Python"
         self.mock.side_effect = RuntimeError(_errorMsg)

@@ -6,11 +6,18 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
   InteractionLogicTest.py
   LayerManagerTest.py
   LogicTest.py
-  ObjectEventObserverScriptedTest.py
   PipelineFactoryTest.py
-  PipelineManagerTest.py
-  SelectionTest.py
 )
+
+# These tests build their nodes from Markups nodes.
+slicer_is_loadable_builtin_module_enabled("Markups" _build_markups_module)
+if(_build_markups_module)
+  list(APPEND EXTENSION_TEST_PYTHON_SCRIPTS
+    ObjectEventObserverScriptedTest.py
+    PipelineManagerTest.py
+    SelectionTest.py
+  )
+endif()
 
 set(EXTENSION_TEST_PYTHON_RESOURCES
 )

@@ -1,3 +1,23 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
 #include "vtkMRMLLayerDMScriptedPipelineBridge.h"
 
 // Layer DM includes
@@ -15,9 +35,11 @@
 #include <vtkPythonUtil.h>
 #include <vtkRenderer.h>
 
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMScriptedPipelineBridge);
 
-void vtkMRMLLayerDMScriptedPipelineBridge::UpdatePipeline()
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMScriptedPipelineBridge::UpdateFromMRML()
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
   {
@@ -27,21 +49,25 @@ void vtkMRMLLayerDMScriptedPipelineBridge::UpdatePipeline()
   this->CallPythonMethod({}, __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CastCallData(PyObject* object, int vtkType)
 {
   return vtkMRMLLayerDMPythonUtil::CastCallData(object, vtkType);
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMScriptedPipelineBridge::vtkMRMLLayerDMScriptedPipelineBridge()
-  : m_object{ nullptr }
+  : Object{ nullptr }
 {
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLLayerDMScriptedPipelineBridge::~vtkMRMLLayerDMScriptedPipelineBridge()
 {
-  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->m_object);
+  vtkMRMLLayerDMPythonUtil::DeletePythonObject(&this->Object);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -60,13 +86,15 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::CanProcessInteractionEvent(vtkMRMLInt
     }
 
     Py_DECREF(result);
-    // Unpack error or unexpected return type
-    PyErr_SetString(PyExc_TypeError, "Expected a tuple[bool, float] return type");
+    // Clear errors and report unexpected Python error (avoid silently making the Python context invalid)
+    PyErr_Clear();
+    vtkErrorMacro(<< "CanProcessInteractionEvent: expected a tuple[bool, float] return type from " << vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object));
   }
 
   return false;
 }
 
+//-----------------------------------------------------------------------------
 vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int renderOrder) const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -81,13 +109,17 @@ vtkCamera* vtkMRMLLayerDMScriptedPipelineBridge::GetCustomCamera(unsigned int re
   {
     if (result != Py_None)
     {
-      return vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+      // The camera is owned by the Python pipeline, the wrapper reference is not needed past this point.
+      vtkCamera* camera = vtkCamera::SafeDownCast(vtkPythonUtil::GetPointerFromObject(result, "vtkCamera"));
+      Py_DECREF(result);
+      return camera;
     }
     Py_DECREF(result);
   }
   return Superclass::GetCustomCamera(renderOrder);
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -103,6 +135,7 @@ int vtkMRMLLayerDMScriptedPipelineBridge::GetMouseCursor() const
   return Superclass::GetMouseCursor();
 }
 
+//-----------------------------------------------------------------------------
 unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -118,6 +151,7 @@ unsigned int vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrder() const
   return Superclass::GetRenderOrder();
 }
 
+//-----------------------------------------------------------------------------
 std::vector<unsigned int> vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrders() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -151,6 +185,7 @@ std::vector<unsigned int> vtkMRMLLayerDMScriptedPipelineBridge::GetRenderOrders(
   return Superclass::GetRenderOrders();
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -166,6 +201,7 @@ int vtkMRMLLayerDMScriptedPipelineBridge::GetWidgetState() const
   return Superclass::GetWidgetState();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::LoseFocus(vtkMRMLInteractionEventData* eventData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -177,6 +213,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::LoseFocus(vtkMRMLInteractionEventData
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* camera)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -188,11 +225,13 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnDefaultCameraModified(vtkCamera* ca
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(camera), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 inline vtkSmartPyObject ToPyArgs(vtkMRMLNode* fromNode, const std::string& s)
 {
   return vtkMRMLLayerDMPythonUtil::ToPyArgs({ vtkMRMLLayerDMPythonUtil::ToPyObject(fromNode), vtkMRMLLayerDMPythonUtil::ToPyObject(s) });
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeAdded(vtkMRMLNode* fromNode, const std::string& role)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -203,6 +242,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeAdded(vtkMRML
   this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeRemoved(vtkMRMLNode* fromNode, const std::string& role)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -213,6 +253,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnReferenceToDisplayNodeRemoved(vtkMR
   this->CallPythonMethod(ToPyArgs(fromNode, role), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -224,6 +265,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererAdded(vtkRenderer* renderer
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererRemoved(vtkRenderer* renderer)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -235,6 +277,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnRendererRemoved(vtkRenderer* render
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(renderer), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -245,13 +288,15 @@ bool vtkMRMLLayerDMScriptedPipelineBridge::ProcessInteractionEvent(vtkMRMLIntera
   vtkPythonScopeGilEnsurer gilEnsurer;
   if (auto result = this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(eventData), __func__, false))
   {
-    bool wasProcessed = result == Py_True;
+    // Accept any truthy return value, not just the True singleton.
+    const bool wasProcessed = PyObject_IsTrue(result) == 1;
     Py_DECREF(result);
     return wasProcessed;
   }
   return false;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetDisplayNode(vtkMRMLNode* displayNode)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -263,6 +308,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetDisplayNode(vtkMRMLNode* displayNo
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(displayNode), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -274,6 +320,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetViewNode(vtkMRMLAbstractViewNode* 
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(viewNode), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetScene(vtkMRMLScene* scene)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -285,6 +332,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetScene(vtkMRMLScene* scene)
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(scene), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -296,11 +344,13 @@ void vtkMRMLLayerDMScriptedPipelineBridge::SetPipelineManager(vtkMRMLLayerDMPipe
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(pipelineManager), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::SetPythonObject(PyObject* object)
 {
-  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->m_object, object);
+  vtkMRMLLayerDMPythonUtil::SetPythonObject(&this->Object, object);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)
 {
   if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
@@ -312,13 +362,17 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned lon
   this->CallPythonMethod(vtkMRMLLayerDMPythonUtil::ToPyArgs(obj, eventId, callData), __func__, true);
 }
 
+//-----------------------------------------------------------------------------
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
-  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName);
+  // The result may be decremented here and the error path inspects Python objects, so hold the
+  // GIL for the whole method rather than relying on every caller to do it.
+  vtkPythonScopeGilEnsurer gilEnsurer;
+  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->Object, pyArgs, fName);
 
   if (!result)
   {
-    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
+    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->Object) + ":";
     vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
     return nullptr;
   }
@@ -331,6 +385,7 @@ PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartP
   return result;
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result) const
 {
   if (!result)
@@ -340,4 +395,11 @@ int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result
   auto value = PyLong_AsLong(result);
   Py_DECREF(result);
   return value;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMScriptedPipelineBridge::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Python object: " << (this->Object ? "set" : "(none)") << std::endl;
 }

@@ -1,3 +1,23 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
 #include "vtkMRMLLayerDMWidgetEventTranslationNode.h"
 
 // Slicer includes
@@ -10,8 +30,10 @@
 // STL includes
 #include <functional>
 
+//-----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLLayerDMWidgetEventTranslationNode);
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
@@ -20,17 +42,22 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::PrintSelf(ostream& os, vtkIndent 
   os << ToString(this->EventMap, &nextIndent, "\n");
 }
 
-void vtkMRMLLayerDMWidgetEventTranslationNode::Copy(vtkMRMLNode* node)
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMWidgetEventTranslationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
-  const auto other = vtkMRMLLayerDMWidgetEventTranslationNode::SafeDownCast(node);
-  if (!other)
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  const auto node = vtkMRMLLayerDMWidgetEventTranslationNode::SafeDownCast(anode);
+  if (!node)
   {
     return;
   }
-  this->EventMap = other->EventMap;
-  this->Modified();
+
+  this->EventMap = node->EventMap;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::ReadXMLAttributes(const char** atts)
 {
   MRMLNodeModifyBlocker blocker(this);
@@ -44,6 +71,7 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::ReadXMLAttributes(const char** at
   vtkMRMLReadXMLEndMacro();
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::WriteXML(ostream& of, int indent)
 {
   Superclass::WriteXML(of, indent);
@@ -52,16 +80,19 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::WriteXML(ostream& of, int indent)
   vtkMRMLWriteXMLEndMacro();
 }
 
+//-----------------------------------------------------------------------------
 const char* vtkMRMLLayerDMWidgetEventTranslationNode::GetNodeTagName()
 {
   return "WidgetEventTranslationNode";
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslation(int widgetState, unsigned long interactionEvent, unsigned long widgetEvent, int modifier)
 {
   this->SetTranslation(EventKey{ widgetState, interactionEvent, modifier }, widgetEvent);
 }
 
+//-----------------------------------------------------------------------------
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetEndInteractionEvent(unsigned long startInteractionEvent)
 {
   std::map<unsigned long, unsigned long> endInteractionMap{
@@ -74,6 +105,7 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetEndInteractionEvent(u
   return it == endInteractionMap.end() ? vtkMRMLAbstractWidget::WidgetEventNone : it->second;
 }
 
+//-----------------------------------------------------------------------------
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetClickEvent(unsigned long releaseEvent)
 {
   std::map<unsigned long, unsigned long> clickMap{
@@ -86,6 +118,7 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetClickEvent(unsigned l
   return it == clickMap.end() ? vtkMRMLAbstractWidget::WidgetEventNone : it->second;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslationClickAndDrag(int widgetState,
                                                                           unsigned long interactionEvent,
                                                                           int widgetStateDragging,
@@ -99,6 +132,7 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslationClickAndDrag(int wi
   this->SetTranslation(widgetStateDragging, endInteractionEvent, widgetEndEvent);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslationKeyboard(int widgetState,
                                                                       const std::string& keySym,
                                                                       unsigned long widgetEvent,
@@ -106,9 +140,10 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslationKeyboard(int widget
                                                                       int repeatCount,
                                                                       unsigned long keyEvent)
 {
-  this->SetTranslation(EventKey{ widgetState, keyEvent, modifier, EventKey::thresholdRepeatCount(repeatCount), keySym }, widgetEvent);
+  this->SetTranslation(EventKey{ widgetState, keyEvent, modifier, EventKey::ThresholdRepeatCount(repeatCount), keySym }, widgetEvent);
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMWidgetEventTranslationNode::RemoveTranslationEvent(unsigned long widgetEvent)
 {
   int erasedCount{};
@@ -132,12 +167,14 @@ int vtkMRMLLayerDMWidgetEventTranslationNode::RemoveTranslationEvent(unsigned lo
   return erasedCount;
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::SetTranslation(const EventKey& key, unsigned long widgetEvent)
 {
   this->EventMap[key] = widgetEvent;
   this->Modified();
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMWidgetEventTranslationNode::BlockTranslationEvent(unsigned long widgetEvent, bool isBlocked)
 {
   const auto wasBlocked = this->IsWidgetEventBlocked(widgetEvent);
@@ -152,6 +189,7 @@ bool vtkMRMLLayerDMWidgetEventTranslationNode::BlockTranslationEvent(unsigned lo
   return wasBlocked;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMWidgetEventTranslationNode::BlockAllTranslationEvents(bool isBlocked)
 {
   const auto wasBlocked = this->IsBlocked;
@@ -159,6 +197,7 @@ bool vtkMRMLLayerDMWidgetEventTranslationNode::BlockAllTranslationEvents(bool is
   return wasBlocked;
 }
 
+//-----------------------------------------------------------------------------
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(int widgetState, vtkMRMLInteractionEventData* eventData)
 {
   if (!eventData)
@@ -171,24 +210,27 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(int widgetStat
 
   if (eventId == vtkCommand::KeyPressEvent)
   {
-    key.repeatCount = EventKey::thresholdRepeatCount(eventData->GetKeyRepeatCount());
-    key.keySym = eventData->GetKeySym();
+    key.RepeatCount = EventKey::ThresholdRepeatCount(eventData->GetKeyRepeatCount());
+    key.KeySym = eventData->GetKeySym();
   }
 
   return this->Translate(key);
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMWidgetEventTranslationNode::Clear()
 {
   this->EventMap.clear();
   this->Modified();
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLLayerDMWidgetEventTranslationNode::GetNumberOfTranslations() const
 {
   return static_cast<int>(this->EventMap.size());
 }
 
+//-----------------------------------------------------------------------------
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(EventKey key) const
 {
   // Early return if the translation node is blocked
@@ -201,18 +243,18 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(EventKey key) 
   const auto noRelaxation = [](EventKey k) { return k; };
   const auto relaxModifier = [](EventKey k)
   {
-    k.modifier = (k.modifier == vtkEvent::AnyModifier) ? vtkEvent::NoModifier : k.modifier;
+    k.Modifier = (k.Modifier == vtkEvent::AnyModifier) ? vtkEvent::NoModifier : k.Modifier;
     return k;
   };
   const auto relaxState = [](EventKey k)
   {
-    k.widgetState = vtkMRMLAbstractWidget::WidgetStateAny;
+    k.WidgetState = vtkMRMLAbstractWidget::WidgetStateAny;
     return k;
   };
   const auto relaxClick = [](EventKey k)
   {
-    const auto clickEvent = GetClickEvent(k.eventId);
-    k.eventId = clickEvent != vtkMRMLAbstractWidget::WidgetEventNone ? clickEvent : k.eventId;
+    const auto clickEvent = GetClickEvent(k.EventId);
+    k.EventId = clickEvent != vtkMRMLAbstractWidget::WidgetEventNone ? clickEvent : k.EventId;
     return k;
   };
 
@@ -232,11 +274,13 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(EventKey key) 
   return vtkMRMLAbstractWidget::WidgetEventNone;
 }
 
+//-----------------------------------------------------------------------------
 bool vtkMRMLLayerDMWidgetEventTranslationNode::IsWidgetEventBlocked(unsigned long widgetEvent) const
 {
   return this->BlockedEvents.find(widgetEvent) != std::end(this->BlockedEvents);
 }
 
+//-----------------------------------------------------------------------------
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetWidgetEvent(const EventKey& key) const
 {
   const auto it = this->EventMap.find(key);
@@ -244,19 +288,21 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::GetWidgetEvent(const Eve
   return this->IsWidgetEventBlocked(widgetEvent) ? vtkMRMLAbstractWidget::WidgetEventNone : widgetEvent;
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMWidgetEventTranslationNode::ToString(const std::pair<EventKey, unsigned long>& eventPair)
 {
   const auto& [key, widgetEvent] = eventPair;
   std::stringstream ss;
-  ss << "widgetState=" << key.widgetState << ",";
-  ss << "eventId=" << key.eventId << ",";
-  ss << "modifier=" << key.modifier << ",";
-  ss << "repeatCount=" << key.repeatCount << ",";
-  ss << "keySym=" << key.keySym << ",";
+  ss << "widgetState=" << key.WidgetState << ",";
+  ss << "eventId=" << key.EventId << ",";
+  ss << "modifier=" << key.Modifier << ",";
+  ss << "repeatCount=" << key.RepeatCount << ",";
+  ss << "keySym=" << key.KeySym << ",";
   ss << "widgetEvent=" << widgetEvent;
   return ss.str();
 }
 
+//-----------------------------------------------------------------------------
 std::string vtkMRMLLayerDMWidgetEventTranslationNode::ToString(const std::map<EventKey, unsigned long>& eventMap, const vtkIndent* indent, const std::string& eol)
 {
   std::stringstream ss;
@@ -272,6 +318,7 @@ std::string vtkMRMLLayerDMWidgetEventTranslationNode::ToString(const std::map<Ev
   return ss.str();
 }
 
+//-----------------------------------------------------------------------------
 std::map<vtkMRMLLayerDMWidgetEventTranslationNode::EventKey, unsigned long> vtkMRMLLayerDMWidgetEventTranslationNode::EventMapFromString(const std::string& value)
 {
   std::stringstream ss(value);
@@ -287,6 +334,7 @@ std::map<vtkMRMLLayerDMWidgetEventTranslationNode::EventKey, unsigned long> vtkM
   return eventMap;
 }
 
+//-----------------------------------------------------------------------------
 std::pair<vtkMRMLLayerDMWidgetEventTranslationNode::EventKey, unsigned long> vtkMRMLLayerDMWidgetEventTranslationNode::EventPairFromString(const std::string& value)
 {
   // Helper function to trim the input string
@@ -340,11 +388,11 @@ std::pair<vtkMRMLLayerDMWidgetEventTranslationNode::EventKey, unsigned long> vtk
     trim(keyName);
     trim(val);
 
-    tryRead(keyName, "widgetState", [val, &key] { key.widgetState = std::stoi(val); });
-    tryRead(keyName, "eventId", [val, &key] { key.eventId = std::stoul(val); });
-    tryRead(keyName, "modifier", [val, &key] { key.modifier = std::stoi(val); });
-    tryRead(keyName, "repeatCount", [val, &key] { key.repeatCount = EventKey::thresholdRepeatCount(std::stoi(val)); });
-    tryRead(keyName, "keySym", [val, &key] { key.keySym = val; });
+    tryRead(keyName, "widgetState", [val, &key] { key.WidgetState = std::stoi(val); });
+    tryRead(keyName, "eventId", [val, &key] { key.EventId = std::stoul(val); });
+    tryRead(keyName, "modifier", [val, &key] { key.Modifier = std::stoi(val); });
+    tryRead(keyName, "repeatCount", [val, &key] { key.RepeatCount = EventKey::ThresholdRepeatCount(std::stoi(val)); });
+    tryRead(keyName, "keySym", [val, &key] { key.KeySym = val; });
     tryRead(keyName, "widgetEvent", [val, &widgetEvent] { widgetEvent = std::stoul(val); });
   }
   return { key, widgetEvent };

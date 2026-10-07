@@ -1,4 +1,25 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMWidgetEventTranslationNode_h
+#define __vtkMRMLLayerDMWidgetEventTranslationNode_h
 
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
 
@@ -29,7 +50,11 @@ public:
   void operator=(const vtkMRMLLayerDMWidgetEventTranslationNode&) = delete;
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  void Copy(vtkMRMLNode* node) override;
+
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLLayerDMWidgetEventTranslationNode);
+
   void ReadXMLAttributes(const char** atts) override;
   void WriteXML(ostream& of, int indent) override;
 
@@ -108,17 +133,20 @@ private:
   {
     bool operator==(const EventKey& other) const { return this->AsTuple() == other.AsTuple(); }
     bool operator<(const EventKey& other) const { return this->AsTuple() < other.AsTuple(); }
-    std::tuple<int, unsigned long, int, int, std::string> AsTuple() const { return std::make_tuple(widgetState, eventId, modifier, repeatCount, keySym); }
+    std::tuple<int, unsigned long, int, int, std::string> AsTuple() const
+    {
+      return std::make_tuple(this->WidgetState, this->EventId, this->Modifier, this->RepeatCount, this->KeySym);
+    }
 
     /// Slicer event data never generate repeat counts less than 1.
     /// Make sure the repeat count is always greater than one
-    static int thresholdRepeatCount(int repeatCount) { return std::max(1, repeatCount); }
+    static int ThresholdRepeatCount(int repeatCount) { return std::max(1, repeatCount); }
 
-    int widgetState{ vtkMRMLAbstractWidget::WidgetStateAny };
-    unsigned long eventId{ vtkCommand::NoEvent };
-    int modifier{ vtkEvent::NoModifier };
-    int repeatCount{ 1 };
-    std::string keySym{};
+    int WidgetState{ vtkMRMLAbstractWidget::WidgetStateAny };
+    unsigned long EventId{ vtkCommand::NoEvent };
+    int Modifier{ vtkEvent::NoModifier };
+    int RepeatCount{ 1 };
+    std::string KeySym;
   };
 
   void SetTranslation(const EventKey& key, unsigned long widgetEvent);
@@ -132,7 +160,9 @@ private:
   static std::map<EventKey, unsigned long> EventMapFromString(const std::string& value);
   static std::pair<EventKey, unsigned long> EventPairFromString(const std::string& value);
 
-  std::map<EventKey, unsigned long> EventMap{};
-  std::set<unsigned long> BlockedEvents{};
+  std::map<EventKey, unsigned long> EventMap;
+  std::set<unsigned long> BlockedEvents;
   bool IsBlocked{};
 };
+
+#endif

@@ -1,38 +1,71 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
 #include "vtkMRMLLayerDMPipelineFactory.h"
 
 // Layer DM includes
-#include "vtkMRMLLayerDMPipelineCreatorI.h"
+#include "vtkMRMLLayerDMPipelineCreator.h"
 #include "vtkMRMLLayerDMPipelineCallbackCreator.h"
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <algorithm>
+
+//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineFactory);
 
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> vtkMRMLLayerDMPipelineFactory::GetInstance()
 {
   static vtkSmartPointer<vtkMRMLLayerDMPipelineFactory> instance = vtkSmartPointer<vtkMRMLLayerDMPipelineFactory>::New();
   return instance;
 }
 
-void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator)
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
+  if (!creator)
+  {
+    vtkErrorMacro("AddPipelineCreator: the pipeline creator is null.");
+    return;
+  }
+
   if (this->ContainsPipelineCreator(creator))
   {
     return;
   }
 
-  this->m_obs->UpdateObserver(nullptr, creator);
-  this->m_pipelineCreators.emplace_back(creator);
+  this->Observer->UpdateObservation(nullptr, creator);
+  this->PipelineCreators.emplace_back(creator);
   this->SortPipelineCreators();
   this->InvokeEvent(vtkCommand::ModifiedEvent);
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(
-  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipelineI>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> vtkMRMLLayerDMPipelineFactory::AddPipelineCreator(
+  const std::function<vtkSmartPointer<vtkMRMLLayerDMPipeline>(vtkMRMLAbstractViewNode*, vtkMRMLNode*)>& creatorCallBack,
   int priority)
 {
   auto creator = vtkSmartPointer<vtkMRMLLayerDMPipelineCallbackCreator>::New();
@@ -42,34 +75,47 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> vtkMRMLLayerDMPipelineFactory::A
   return creator;
 }
 
-void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator)
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineFactory::RemovePipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator)
 {
-  this->m_obs->RemoveObserver(creator);
-  size_t prevSize = this->m_pipelineCreators.size();
-  this->m_pipelineCreators.erase(std::remove_if(this->m_pipelineCreators.begin(),
-                                                this->m_pipelineCreators.end(),
-                                                [creator](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& value) { return value == creator; }),
-                                 this->m_pipelineCreators.end());
-  if (this->m_pipelineCreators.size() != prevSize)
+  this->Observer->RemoveObservations(creator);
+  size_t prevSize = this->PipelineCreators.size();
+  this->PipelineCreators.erase(std::remove_if(this->PipelineCreators.begin(),
+                                              this->PipelineCreators.end(),
+                                              [creator](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& value) { return value == creator; }),
+                               this->PipelineCreators.end());
+  if (this->PipelineCreators.size() != prevSize)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent);
   }
 }
 
-bool vtkMRMLLayerDMPipelineFactory::ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& creator) const
+//-----------------------------------------------------------------------------
+bool vtkMRMLLayerDMPipelineFactory::ContainsPipelineCreator(const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& creator) const
 {
-  return std::find(this->m_pipelineCreators.begin(), this->m_pipelineCreators.end(), creator) != this->m_pipelineCreators.end();
+  return std::find(this->PipelineCreators.begin(), this->PipelineCreators.end(), creator) != this->PipelineCreators.end();
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineFactory::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineFactory::CreatePipeline(vtkMRMLAbstractViewNode* viewNode,
+                                                                                      vtkMRMLNode* node,
+                                                                                      vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>* creator)
 {
-  for (const auto& ctor : m_pipelineCreators)
+  if (creator)
+  {
+    *creator = nullptr;
+  }
+  for (const auto& ctor : this->PipelineCreators)
   {
     if (auto created = ctor->CreatePipeline(viewNode, node))
     {
-      this->m_lastView = viewNode;
-      this->m_lastNode = node;
-      this->m_lastPipeline = created;
+      this->LastView = viewNode;
+      this->LastNode = node;
+      this->LastPipeline = created;
+      if (creator)
+      {
+        *creator = ctor;
+      }
       this->InvokeEvent(PipelineAboutToBeCreatedEvent);
       return created;
     }
@@ -78,45 +124,59 @@ vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineFactory::CreatePi
   return {};
 }
 
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkMRMLLayerDMPipeline> vtkMRMLLayerDMPipelineFactory::CreatePipeline(vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node)
+{
+  return CreatePipeline(viewNode, node, nullptr);
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* vtkMRMLLayerDMPipelineFactory::GetLastViewNode() const
 {
-  return this->m_lastView;
+  return this->LastView;
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLLayerDMPipelineFactory::GetLastNode() const
 {
-  {
-    return this->m_lastNode;
-  }
+  return this->LastNode;
 }
 
-vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
+//-----------------------------------------------------------------------------
+vtkMRMLLayerDMPipeline* vtkMRMLLayerDMPipelineFactory::GetLastPipeline() const
 {
-  {
-    return this->m_lastPipeline;
-  }
+  return this->LastPipeline;
 }
 
 vtkMRMLLayerDMPipelineFactory::vtkMRMLLayerDMPipelineFactory()
-  : m_obs(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
-  , m_lastView(nullptr)
-  , m_lastNode(nullptr)
-  , m_lastPipeline(nullptr)
+  : Observer(vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver>::New())
 {
-  m_obs->SetUpdateCallback([this](vtkObject* node) { this->SortPipelineCreators(); });
+  this->Observer->SetUpdateCallback([this](vtkObject* node) { this->SortPipelineCreators(); });
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLLayerDMPipelineFactory::SortPipelineCreators()
 {
-  std::sort(std::begin(m_pipelineCreators),
-            std::end(m_pipelineCreators),
-            [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI>& b)
+  std::sort(std::begin(this->PipelineCreators),
+            std::end(this->PipelineCreators),
+            [](const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& a, const vtkSmartPointer<vtkMRMLLayerDMPipelineCreator>& b)
             {
+              // Order null creators last
               if (!a || !b)
               {
-                return true;
+                return a && !b;
               }
 
               return a->GetPriority() > b->GetPriority();
             });
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLLayerDMPipelineFactory::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Number of pipeline creators: " << this->PipelineCreators.size() << std::endl;
+  os << indent << "Last view node: " << (this->LastView ? "set" : "(none)") << std::endl;
+  os << indent << "Last node: " << (this->LastNode ? "set" : "(none)") << std::endl;
+  os << indent << "Last pipeline: " << (this->LastPipeline ? "set" : "(none)") << std::endl;
 }

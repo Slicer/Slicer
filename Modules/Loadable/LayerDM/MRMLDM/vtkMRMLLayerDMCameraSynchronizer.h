@@ -1,4 +1,25 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMCameraSynchronizer_h
+#define __vtkMRMLLayerDMCameraSynchronizer_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -12,7 +33,6 @@
 
 class vtkCamera;
 class vtkRenderer;
-class CameraSynchronizeStrategy;
 class vtkMRMLAbstractViewNode;
 
 /// \brief Class responsible for synchronizing the camera of the different display layers.
@@ -25,8 +45,11 @@ class vtkMRMLAbstractViewNode;
 class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMCameraSynchronizer : public vtkObject
 {
 public:
+  class CameraSynchronizeStrategy;
+
   static vtkMRMLLayerDMCameraSynchronizer* New();
   vtkTypeMacro(vtkMRMLLayerDMCameraSynchronizer, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the view node for which the camera will be synchronized.
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
@@ -50,9 +73,11 @@ private:
   /// Reset the internal strategy given current view node.
   void UpdateStrategy();
 
-  vtkSmartPointer<vtkCamera> m_defaultCamera;
-  vtkWeakPointer<vtkRenderer> m_renderer;
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  std::unique_ptr<CameraSynchronizeStrategy> m_syncStrategy;
-  bool m_isBlocked{ false };
+  vtkSmartPointer<vtkCamera> DefaultCamera;
+  vtkWeakPointer<vtkRenderer> Renderer;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  std::unique_ptr<CameraSynchronizeStrategy> SynchronizeStrategy;
+  bool IsBlocked{ false };
 };
+
+#endif

@@ -27,15 +27,15 @@ set(${KIT}_SRCS
   vtkMRMLLayerDMInteractionLogic.h
   vtkMRMLLayerDMLayerManager.cxx
   vtkMRMLLayerDMLayerManager.h
+  vtkMRMLLayerDMPipeline.cxx
+  vtkMRMLLayerDMPipeline.h
   vtkMRMLLayerDMPipelineCallbackCreator.cxx
   vtkMRMLLayerDMPipelineCallbackCreator.h
   vtkMRMLLayerDMPipelineCreateHelper.h
-  vtkMRMLLayerDMPipelineCreatorI.cxx
-  vtkMRMLLayerDMPipelineCreatorI.h
+  vtkMRMLLayerDMPipelineCreator.cxx
+  vtkMRMLLayerDMPipelineCreator.h
   vtkMRMLLayerDMPipelineFactory.cxx
   vtkMRMLLayerDMPipelineFactory.h
-  vtkMRMLLayerDMPipelineI.cxx
-  vtkMRMLLayerDMPipelineI.h
   vtkMRMLLayerDMPipelineManager.cxx
   vtkMRMLLayerDMPipelineManager.h
   vtkMRMLLayerDisplayableManager.h
