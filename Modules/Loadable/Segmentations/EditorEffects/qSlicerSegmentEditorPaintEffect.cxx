@@ -938,6 +938,10 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
   this->m_AlwaysErase = false;
   this->m_Erase = false;
   this->m_ShowEffectCursorInThreeDView = true;
+  // Mouse clicks and drags in views are used for painting, so other objects in the views
+  // (e.g., markups control points) must not be highlighted and must not change the mouse cursor on hover.
+  this->m_CaptureMouseMoveEventsInSliceView = true;
+  this->m_CaptureMouseMoveEventsInThreeDView = true;
 }
 
 //----------------------------------------------------------------------------

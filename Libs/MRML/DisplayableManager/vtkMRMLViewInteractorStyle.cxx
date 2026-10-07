@@ -358,7 +358,12 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     double distance2 = VTK_DOUBLE_MAX;
     if (displayableManager->CanProcessInteractionEvent(eventData, distance2))
     {
-      if (!canProcessEvent || (distance2 < closestDistance2))
+      // If multiple displayable managers report the same distance (typically 0.0, meaning that they
+      // claim the event unconditionally) then the one that already has the focus is preferred.
+      // This ensures that an interaction that is in progress (e.g., panning the view by click-and-drag)
+      // is not interrupted by a displayable manager that captures all events (e.g., hover events).
+      if (!canProcessEvent || (distance2 < closestDistance2) //
+          || (distance2 == closestDistance2 && displayableManager == this->FocusedDisplayableManager))
       {
         canProcessEvent = true;
         closestDisplayableManager = displayableManager;

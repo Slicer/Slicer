@@ -7,6 +7,7 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSegmentationsModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerSegmentationsModuleLogic_INCLUDE_DIRS}
+  ${vtkSlicerSegmentationsModuleMRMLDisplayableManager_INCLUDE_DIRS}
   ${qSlicerSegmentationsEditorEffects_INCLUDE_DIRS}
   ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
   )
@@ -58,6 +59,7 @@ set(${KIT}_TARGET_LIBRARIES
   qSlicerTerminologiesModuleWidgets
   vtkSlicerSegmentationsModuleMRML
   vtkSlicerSegmentationsModuleLogic
+  vtkSlicerSegmentationsModuleMRMLDisplayableManager
   )
 
 #-----------------------------------------------------------------------------
