@@ -3,6 +3,7 @@ set(KIT ${PROJECT_NAME})
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   qMRMLSubjectHierarchyModelTest.cxx
+  qMRMLSubjectHierarchyTreeViewTest.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -23,3 +24,4 @@ set_target_properties(${KIT}CxxTests PROPERTIES
 
 #-----------------------------------------------------------------------------
 simple_test( qMRMLSubjectHierarchyModelTest )
+simple_test( qMRMLSubjectHierarchyTreeViewTest )
