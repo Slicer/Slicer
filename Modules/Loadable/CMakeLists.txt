@@ -7,7 +7,6 @@ include(${Slicer_CMAKE_DIR}/SlicerMacroBuildLoadableModule.cmake)
 # when configuring module A).
 
 set(qtmodules
-  LayerDM
   Cameras
   Units
   Terminologies
@@ -23,6 +22,7 @@ set(qtmodules
   Sequences
   SceneViews # Scene views depends on Sequences
   Markups # Markups depends on SceneViews (for testing) and Annotations
+  LayerDM # LayerDM depends on Markups (for testing)
   SlicerWelcome
   Tables
   Texts

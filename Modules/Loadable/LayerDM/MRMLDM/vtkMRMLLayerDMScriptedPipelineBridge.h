@@ -1,24 +1,46 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMScriptedPipelineBridge_h
+#define __vtkMRMLLayerDMScriptedPipelineBridge_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkPython.h>
 
 class vtkSmartPyObject;
 
-/// \brief Python bridge for vtkMRMLLayerDMPipelineI.
+/// \brief Python bridge for vtkMRMLLayerDMPipeline.
 /// Delegates calls to the pipeline to its underlying python object.
 ///
-/// \sa vtkMRMLLayerDMPipelineI
+/// \sa vtkMRMLLayerDMPipeline
 /// \sa vtkMRMLLayerDMScriptedPipeline
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMScriptedPipelineBridge : public vtkMRMLLayerDMPipelineI
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMScriptedPipelineBridge : public vtkMRMLLayerDMPipeline
 {
 public:
   static vtkMRMLLayerDMScriptedPipelineBridge* New();
-  vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipelineI);
+  vtkTypeMacro(vtkMRMLLayerDMScriptedPipelineBridge, vtkMRMLLayerDMPipeline);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   vtkCamera* GetCustomCamera(unsigned int renderOrder) const override;
@@ -38,7 +60,7 @@ public:
   void SetScene(vtkMRMLScene* scene) override;
   void SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager) override;
   void SetPythonObject(PyObject* object);
-  void UpdatePipeline() override;
+  void UpdateFromMRML() override;
   static PyObject* CastCallData(PyObject* object, int vtkType);
 
 protected:
@@ -51,5 +73,7 @@ private:
   PyObject* CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const;
   int CastToIntAndDecrement(PyObject* result) const;
 
-  PyObject* m_object;
+  PyObject* Object;
 };
+
+#endif

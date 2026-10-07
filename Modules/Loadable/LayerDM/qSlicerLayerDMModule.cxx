@@ -2,7 +2,7 @@
 
   Program: 3D Slicer
 
-  Portions (c) Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright (c) Kitware SAS
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -12,6 +12,9 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
 
 ==============================================================================*/
 
@@ -82,7 +85,7 @@ void qSlicerLayerDMModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerLayerDMModule ::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerLayerDMModule::createWidgetRepresentation()
 {
   return nullptr;
 }

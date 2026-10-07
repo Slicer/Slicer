@@ -1,4 +1,25 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDMPipeline_h
+#define __vtkMRMLLayerDMPipeline_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -12,7 +33,7 @@
 class vtkCamera;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLInteractionEventData;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLLayerDMPipelineManager;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -22,18 +43,19 @@ class vtkRenderer;
 /// \brief Interface for the layered displayable manager pipelines.
 ///
 /// Contains empty implementation and default behavior for the different API calls.
-/// Implementation can be limited to \sa UpdatePipeline and reactivity on node changes for pure
+/// Implementation can be limited to \sa UpdateFromMRML and reactivity on node changes for pure
 /// display pipelines.
 ///
 /// Widget pipelines should also implement the \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent
 /// methods.
 ///
 /// A python main class is available from \sa vtkMRMLLayerDMScriptedPipeline.py
-class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipelineI : public vtkObject
+class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDMPipeline : public vtkObject
 {
 public:
-  static vtkMRMLLayerDMPipelineI* New();
-  vtkTypeMacro(vtkMRMLLayerDMPipelineI, vtkObject);
+  static vtkMRMLLayerDMPipeline* New();
+  vtkTypeMacro(vtkMRMLLayerDMPipeline, vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum Events
   {
@@ -117,7 +139,7 @@ public:
 
   /// Set the display node for the pipeline has changed (initialization).
   /// default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-  /// \sa UpdateObserver
+  /// \sa UpdateObservation
   /// \sa OnUpdate
   virtual void SetDisplayNode(vtkMRMLNode* displayNode);
 
@@ -135,12 +157,12 @@ public:
   /// \param viewNode: The instance of viewNode the pipeline is attached to
   virtual void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
-  /// Triggered on \sa ResetDisplay calls
+  /// Triggered on \sa UpdateDisplay calls
   /// default behavior: does nothing.
-  virtual void UpdatePipeline();
+  virtual void UpdateFromMRML();
 
-  /// If \param isBlocked is true, \sa UpdatePipeline is not called during \sa ResetDisplay.
-  bool BlockResetDisplay(bool isBlocked);
+  /// If \param isBlocked is true, \sa UpdateFromMRML is not called during \sa UpdateDisplay.
+  bool BlockUpdateDisplay(bool isBlocked);
 
   /// @{
   /// If \param isBlocked is true, blocks \sa CanProcessInteractionEvent and \sa ProcessInteractionEvent to be called.
@@ -156,11 +178,11 @@ public:
   /// @}
 
   /// @{
-  /// If \param isFrozen is true, blocks all reactiveness from the pipeline (ResetDisplay, Interaction and Update).
+  /// If \param isFrozen is true, blocks all reactiveness from the pipeline (UpdateDisplay, Interaction and Update).
   /// Reactiveness cannot be toggled back on unless the pipeline is unfrozen first.
   /// Used to deactivate pipelines during removal.
   ///
-  /// \sa BlockResetDisplay \sa BlockInteractionProcessing \sa BlockUpdateObserver
+  /// \sa BlockUpdateDisplay \sa BlockInteractionProcessing \sa BlockUpdateObserver
   void SetFrozen(bool isFrozen);
   bool IsFrozen() const;
   /// @}
@@ -171,7 +193,7 @@ public:
   /// Returns the pipeline associated with the input node.
   /// Delegates to \sa vtkMRMLLayerDMPipelineManager::GetNodePipeline.
   /// nullptr if not found or pipelineManager instance is nullptr.
-  vtkMRMLLayerDMPipelineI* GetNodePipeline(vtkMRMLNode* node) const;
+  vtkMRMLLayerDMPipeline* GetNodePipeline(vtkMRMLNode* node) const;
 
   /// Returns the instance of pipeline manager which created the pipeline.
   vtkMRMLLayerDMPipelineManager* GetPipelineManager() const;
@@ -205,26 +227,26 @@ public:
   /// On event triggered, calls \sa OnUpdate
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
+  bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
   /// @}
 
   /// Remove all observed events for the input object.
-  /// For updating the observer, use \sa UpdateObserver instead.
+  /// For updating the observer, use \sa UpdateObservation instead.
   ///
   /// \warning prevObj is not mutated by this call.
-  void RemoveObserver(vtkObject* prevObj) const;
+  void RemoveObservations(vtkObject* prevObj) const;
 
   /// Request rendering and camera clipping reset.
   /// Calls are delegated to \sa vtkMRMLLayerDMPipelineManager::RequestRender.
   ///
-  /// \sa ResetDisplay
+  /// \sa UpdateDisplay
   void RequestRender() const;
 
-  /// Resets the pipeline display and request a new render \sa RequestRender.
-  /// Delegates actual work to \sa UpdatePipeline.
+  /// Updates the pipeline display and requests a new render \sa RequestRender.
+  /// Delegates actual work to \sa UpdateFromMRML.
   /// Called the first time after pipeline initialization.
-  void ResetDisplay();
+  void UpdateDisplay();
 
   /// Set the new renderers.
   /// Triggers \sa OnRendererAdded and \sa OnRendererRemoved.
@@ -239,23 +261,25 @@ public:
   void SetRenderer(vtkRenderer* renderer);
 
 protected:
-  vtkMRMLLayerDMPipelineI();
-  ~vtkMRMLLayerDMPipelineI() override = default;
+  vtkMRMLLayerDMPipeline();
+  ~vtkMRMLLayerDMPipeline() override = default;
 
   /// Observer update callback.
-  /// Triggered when any object & events observed using UpdateObserver is triggered.
+  /// Triggered when any object & events observed using UpdateObservation is triggered.
   virtual void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData);
 
 private:
   bool RenderersMatchPipelineRenderers(const std::vector<vtkRenderer*>& renderers, const std::vector<unsigned int>& renderOrders);
 
-  vtkWeakPointer<vtkMRMLAbstractViewNode> m_viewNode;
-  vtkWeakPointer<vtkMRMLNode> m_displayNode;
-  std::map<unsigned int, vtkWeakPointer<vtkRenderer>> m_renderersMap;
-  bool m_isResetDisplayBlocked;
-  bool m_isFrozen;
-  bool m_isInteractionProcessingBlocked;
-  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
-  vtkWeakPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
-  vtkWeakPointer<vtkMRMLScene> m_scene;
+  vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
+  vtkWeakPointer<vtkMRMLNode> DisplayNode;
+  std::map<unsigned int, vtkWeakPointer<vtkRenderer>> RenderersMap;
+  bool IsUpdateDisplayBlocked;
+  bool Frozen;
+  bool InteractionProcessingBlocked;
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> Observer;
+  vtkWeakPointer<vtkMRMLLayerDMPipelineManager> PipelineManager;
+  vtkWeakPointer<vtkMRMLScene> Scene;
 };
+
+#endif

@@ -17,7 +17,7 @@ class SelectionTest(ScriptedLoadableModuleTest):
         self.selection_obs.SetScene(slicer.mrmlScene)
         self.mock = MagicMock(return_value=None)
         self._spy = vtkMRMLLayerDMObjectEventObserverScripted()
-        self._spy.UpdateObserver(None, self.selection_obs)
+        self._spy.UpdateObservation(None, self.selection_obs)
         self._spy.SetPythonCallback(self.mock)
 
     def test_has_access_to_singleton_nodes(self):

@@ -4,7 +4,7 @@ from slicer import (
     vtkMRMLAbstractViewNode,
     vtkMRMLAbstractWidget,
     vtkMRMLInteractionEventData,
-    vtkMRMLLayerDMPipelineI,
+    vtkMRMLLayerDMPipeline,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMScriptedPipelineBridge,
     vtkMRMLNode,
@@ -53,7 +53,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
     def GetMouseCursor(self) -> int:
         """
         Custom mouse cursor from VTK mouse cursor enum.
-        This value is only used if the pipeline actually processes an event and is ignore otherwise.
+        This value is only used if the pipeline actually processes an event and is ignored otherwise.
         :return: 0 by default.
         """
         return 0
@@ -130,10 +130,10 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         Triggered when the pipeline is displayed on a new renderer.
         default behavior: does nothing.
         See also: self.GetRenderer()
-        See also: self.ResetDisplay()
+        See also: self.UpdateDisplay()
         See also: self.RequestRender()
 
-        :param renderer: Optional instance or renderer on which the pipeline is added
+        :param renderer: Optional instance of renderer on which the pipeline is added
         """
         pass
 
@@ -143,15 +143,14 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         default behavior: does nothing.
         See also: self.GetRenderer()
 
-        :param renderer: Optional instance or renderer from which the pipeline was removed
-        :return:
+        :param renderer: Optional instance of renderer from which the pipeline was removed
         """
         pass
 
     def OnUpdate(self, obj: vtkObject, eventId: int, callData: Any | None) -> None:
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -171,14 +170,14 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
     def SetDisplayNode(self, displayNode: vtkMRMLNode) -> None:
         """
-        Set the display node for the pipeline has changed (initialization).
+        Called when the display node of the pipeline has changed (initialization).
         default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
-        See also: self.UpdateObserver(prevObj, newObj, eventIds)
+        See also: self.UpdateObservation(prevObj, newObj, eventIds)
         See also: self.OnUpdate(obj, eventId, callData)
 
         :param displayNode: The new instance of display node for the pipeline
         """
-        vtkMRMLLayerDMPipelineI.SetDisplayNode(self, displayNode)
+        vtkMRMLLayerDMPipeline.SetDisplayNode(self, displayNode)
 
     def SetPipelineManager(self, pipelineManager: vtkMRMLLayerDMPipelineManager) -> None:
         """
@@ -189,14 +188,14 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         See also: self.GetNodePipeline(node)
         :param pipelineManager: The instance of pipeline manager managing the current pipeline
         """
-        vtkMRMLLayerDMPipelineI.SetPipelineManager(self, pipelineManager)
+        vtkMRMLLayerDMPipeline.SetPipelineManager(self, pipelineManager)
 
     def SetScene(self, scene: vtkMRMLScene) -> None:
         """
         Set the pipeline scene (initialization).
         default behavior: Stores the scene for access (no active observer).
         """
-        vtkMRMLLayerDMPipelineI.SetScene(self, scene)
+        vtkMRMLLayerDMPipeline.SetScene(self, scene)
 
     def SetViewNode(self, viewNode: vtkMRMLAbstractViewNode) -> None:
         """
@@ -204,11 +203,11 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         default behavior: Stored and view node is observed for vtkCommand::ModifiedEvent.
         :param viewNode: The instance of viewNode the pipeline is attached to
         """
-        vtkMRMLLayerDMPipelineI.SetViewNode(self, viewNode)
+        vtkMRMLLayerDMPipeline.SetViewNode(self, viewNode)
 
-    def UpdatePipeline(self) -> None:
+    def UpdateFromMRML(self) -> None:
         """
-        Triggered by self.ResetDisplay() calls
+        Triggered by self.UpdateDisplay() calls
         Override to update the representation of the pipeline in the different views.
 
         See also: self.RequestRender()

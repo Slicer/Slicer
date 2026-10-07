@@ -50,7 +50,7 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.mockSetScene = MagicMock()
         self.mockSetPipelineManager = MagicMock()
         self.mockSetRenderers = MagicMock()
-        self.mockUpdatePipeline = MagicMock()
+        self.mockUpdateFromMRML = MagicMock()
 
     def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
         return self.mockCanProcess(eventData)
@@ -113,5 +113,5 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def SetRenderers(self, renderers: list[vtkRenderer]) -> None:
         self.mockSetRenderers(renderers)
 
-    def UpdatePipeline(self) -> None:
-        self.mockUpdatePipeline()
+    def UpdateFromMRML(self) -> None:
+        self.mockUpdateFromMRML()

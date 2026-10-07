@@ -1,4 +1,25 @@
-#pragma once
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware SAS
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Thibault Pelletier, Kitware SAS,
+  and was partially funded by ANR grants ANR-22-CE45-0034 and ANR-18-RHUS-005.
+
+==============================================================================*/
+
+#ifndef __vtkMRMLLayerDisplayableManager_h
+#define __vtkMRMLLayerDisplayableManager_h
 
 #include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
 
@@ -10,7 +31,7 @@
 
 class vtkImageData;
 class vtkMRMLDisplayableManagerFactory;
-class vtkMRMLLayerDMPipelineI;
+class vtkMRMLLayerDMPipeline;
 class vtkMRMLLayerDMPipelineManager;
 class vtkRenderWindow;
 
@@ -25,6 +46,7 @@ class VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLayerDispla
 public:
   static vtkMRMLLayerDisplayableManager* New();
   vtkTypeMacro(vtkMRMLLayerDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
@@ -44,7 +66,7 @@ public:
   /// Pipelines are completely managed by the displayable manager and any dependencies can be
   /// injected when creating the pipeline through the pipeline creator mechanism.
   /// Runtime access logic shouldn't be necessary outside the LayerDM layer.
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+  vtkSmartPointer<vtkMRMLLayerDMPipeline> GetNodePipeline(vtkMRMLNode* node) const;
 
   /// @{
   /// Utility function to get the content of the render window image as buffer
@@ -77,5 +99,7 @@ protected:
   void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
 
 private:
-  vtkSmartPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
+  vtkSmartPointer<vtkMRMLLayerDMPipelineManager> PipelineManager;
 };
+
+#endif
