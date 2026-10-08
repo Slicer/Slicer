@@ -419,6 +419,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   {
     d->comboBox_DisplayedRepresentation3D->addItem(reprIt->c_str());
   }
+  // Binary labelmap can be displayed as smooth surfaces computed on the GPU (experimental)
+  d->comboBox_DisplayedRepresentation3D->addItem(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
   // Unblock signals
   d->comboBox_DisplayedRepresentation3D->blockSignals(false);

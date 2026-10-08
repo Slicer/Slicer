@@ -20,6 +20,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLSegmentationsDisplayableManager3D.h"
+#include "vtkSegmentationLabelmapSurfaceMapper.h"
 
 // Segmentations includes
 #include "vtkMRMLSegmentationNode.h"
@@ -36,6 +37,12 @@
 // vtkAddon includes
 #include <vtkCapPolyData.h>
 
+// SegmentationCore includes
+#include <vtkBinaryLabelmapToClosedSurfaceConversionRule.h>
+#include <vtkOrientedImageData.h>
+#include <vtkOrientedImageDataResample.h>
+#include <vtkSegmentationConverter.h>
+
 // VTK includes
 #include <vtkAddonMathUtilities.h>
 #include <vtkCallbackCommand.h>
@@ -51,6 +58,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
+#include <vtkPlaneCollection.h>
 #include <vtkPlanes.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
@@ -61,6 +69,14 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkVariant.h>
+
+// STD includes
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <iterator>
+#include <set>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager3D);
@@ -130,6 +146,54 @@ public:
   typedef std::map<vtkMRMLSegmentationNode*, std::set<vtkMRMLSegmentationDisplayNode*>> SegmentationToDisplayCacheType;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
+  /// Display pipeline of segments of a binary labelmap layer, used when the 3D representation is binary labelmap.
+  /// The labelmap is rendered as smooth surfaces, computed on the GPU. Segments of a layer that have the same (snapped)
+  /// opacity are shown by one pipeline (translucent ones are composited front to back by the mapper, without the
+  /// surfaces where they touch each other), so that rendering stays fast when many segments are translucent.
+  struct LabelmapPipeline
+  {
+    LabelmapPipeline()
+    {
+      this->Mapper = vtkSmartPointer<vtkSegmentationLabelmapSurfaceMapper>::New();
+      this->Actor = vtkSmartPointer<vtkActor>::New();
+      this->Actor->SetMapper(this->Mapper);
+      this->ImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      this->Actor->SetUserMatrix(this->ImageToWorldMatrix);
+    }
+    vtkSmartPointer<vtkActor> Actor;
+    vtkSmartPointer<vtkSegmentationLabelmapSurfaceMapper> Mapper;
+    vtkSmartPointer<vtkMatrix4x4> ImageToWorldMatrix;
+    /// Pickable segments shown by the pipeline
+    std::map<int, std::string> PickableSegmentIDsByLabel;
+  };
+  /// Opacity of translucent segments is snapped to the closest of NumberOfOpacityLevels evenly spaced levels between
+  /// 0 and 1 (for example 0.25, 0.5, and 0.75 for 5 levels; 0 and 1 are not used, because the segment would be hidden
+  /// or opaque), so that the number of pipelines (each with its own distance field on the GPU) is limited to
+  /// NumberOfOpacityLevels - 2 per layer, and changing the opacity of a segment slightly does not move it to another
+  /// pipeline (which would compute the distance field again).
+  static constexpr int NumberOfOpacityLevels = 5;
+  /// Snapped opacity level of a translucent segment (1 .. NumberOfOpacityLevels - 2) and the corresponding opacity
+  static int TranslucentOpacityLevel(double opacity)
+  {
+    return std::clamp(static_cast<int>(std::lround(opacity * (NumberOfOpacityLevels - 1))), 1, NumberOfOpacityLevels - 2);
+  }
+  static double TranslucentOpacity(int level) { return static_cast<double>(level) / (NumberOfOpacityLevels - 1); }
+  /// first: shared labelmap of the layer, second: -1 for the opaque segments, otherwise the snapped opacity level of
+  /// the translucent segments (\sa TranslucentOpacityLevel)
+  typedef std::pair<vtkOrientedImageData*, int> LabelmapPipelineKey;
+  typedef std::map<LabelmapPipelineKey, LabelmapPipeline> LabelmapPipelineMapType;
+  std::map<vtkMRMLSegmentationDisplayNode*, LabelmapPipelineMapType> LabelmapPipelines;
+
+  /// Labelmap resampled into world coordinates, for segmentations under non-linear transforms
+  struct TransformedLabelmap
+  {
+    vtkSmartPointer<vtkOrientedImageData> Labelmap;
+    vtkMTimeType SourceLabelmapTime{ 0 };
+    vtkSmartPointer<vtkGeneralTransform> NodeToWorldTransform;
+  };
+  std::map<vtkMRMLSegmentationDisplayNode*, std::map<vtkOrientedImageData*, TransformedLabelmap>> TransformedLabelmaps;
+  vtkOrientedImageData* GetTransformedLabelmap(vtkMRMLSegmentationDisplayNode* displayNode, vtkOrientedImageData* labelmap, vtkGeneralTransform* nodeToWorld);
+
   // Segmentations
   void AddSegmentationNode(vtkMRMLSegmentationNode* displayableNode);
   void RemoveSegmentationNode(vtkMRMLSegmentationNode* displayableNode);
@@ -145,6 +209,12 @@ public:
   void UpdateAllDisplayNodesForSegment(vtkMRMLSegmentationNode* segmentationNode);
   void UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType& segmentPipelines);
   void UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType& segmentPipelines);
+  void UpdateLabelmapPipelines(vtkMRMLSegmentationDisplayNode* displayNode,
+                               bool visible,
+                               double hierarchyOpacity,
+                               vtkMRMLDisplayNode* genericDisplayNode,
+                               vtkMRMLDisplayNode* overrideHierarchyDisplayNode);
+  void RemoveLabelmapPipelines(vtkMRMLSegmentationDisplayNode* displayNode);
   void RemoveDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
 
   // Observations
@@ -162,6 +232,8 @@ public:
   void FindPickedDisplayNodeFromMesh(vtkPointSet* mesh);
   /// Find first picked node from prop3Ds in cell picker and set PickedNodeID in Internal
   void FindFirstPickedDisplayNodeFromPickerProp3Ds();
+  /// Find segment shown as binary labelmap at a position and set PickedNodeID in Internal
+  bool FindPickedDisplayNodeFromLabelmaps(const double ras[3]);
 
 public:
   /// Picker of segment prop in renderer
@@ -310,6 +382,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayableTra
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode)
 {
+  this->RemoveLabelmapPipelines(displayNode);
   PipelinesCacheType::iterator pipelinesIter = this->DisplayPipelines.find(displayNode);
   if (pipelinesIter == this->DisplayPipelines.end())
   {
@@ -504,14 +577,24 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
 
   // Determine which representation to show
   std::string shownRepresentationName = displayNode->GetDisplayRepresentationName3D();
-  if (shownRepresentationName.empty())
+  bool showLabelmap = (shownRepresentationName == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+  if (shownRepresentationName.empty() || showLabelmap)
   {
-    // Hide segmentation if there is no poly data representation to show
+    // Hide poly data if there is no poly data representation to show
     for (PipelineMapType::iterator pipelineIt = segmentPipelines.begin(); pipelineIt != segmentPipelines.end(); ++pipelineIt)
     {
       pipelineIt->second->Actor->SetVisibility(false);
       pipelineIt->second->CapActor->SetVisibility(false);
     }
+  }
+  if (showLabelmap)
+  {
+    this->UpdateLabelmapPipelines(displayNode, hierarchyVisibility && displayNodeVisible, hierarchyOpacity, genericDisplayNode, overrideHierarchyDisplayNode);
+    return;
+  }
+  this->RemoveLabelmapPipelines(displayNode);
+  if (shownRepresentationName.empty())
+  {
     return;
   }
 
@@ -778,6 +861,254 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     capMapper->SetLookupTable(lut);
     capMapper->SetScalarVisibility(true);
   }
+}
+
+//---------------------------------------------------------------------------
+vtkOrientedImageData* vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::GetTransformedLabelmap(vtkMRMLSegmentationDisplayNode* displayNode,
+                                                                                                    vtkOrientedImageData* labelmap,
+                                                                                                    vtkGeneralTransform* nodeToWorld)
+{
+  TransformedLabelmap& transformed = this->TransformedLabelmaps[displayNode][labelmap];
+  bool labelmapCurrent = transformed.Labelmap && transformed.SourceLabelmapTime == labelmap->GetMTime();
+  if (labelmapCurrent && vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld, transformed.NodeToWorldTransform))
+  {
+    return transformed.Labelmap;
+  }
+  // Resample the labelmap (on the CPU) into world coordinates
+  transformed.Labelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+  transformed.Labelmap->DeepCopy(labelmap);
+  vtkOrientedImageDataResample::TransformOrientedImage(transformed.Labelmap, nodeToWorld, false, true);
+  transformed.SourceLabelmapTime = labelmap->GetMTime();
+  transformed.NodeToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+  transformed.NodeToWorldTransform->DeepCopy(nodeToWorld);
+  return transformed.Labelmap;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipelines(vtkMRMLSegmentationDisplayNode* displayNode,
+                                                                                    bool visible,
+                                                                                    double hierarchyOpacity,
+                                                                                    vtkMRMLDisplayNode* genericDisplayNode,
+                                                                                    vtkMRMLDisplayNode* overrideHierarchyDisplayNode)
+{
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
+  vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : nullptr;
+  if (!segmentation)
+  {
+    this->RemoveLabelmapPipelines(displayNode);
+    return;
+  }
+
+  // Transform from the segmentation node to world. Labelmaps under non-linear transforms are resampled into world coordinates.
+  vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
+  vtkMRMLTransformNode* transformNode = segmentationNode->GetParentTransformNode();
+  vtkSmartPointer<vtkGeneralTransform> nonLinearNodeToWorld;
+  if (transformNode)
+  {
+    if (transformNode->IsTransformToWorldLinear())
+    {
+      transformNode->GetMatrixTransformToWorld(nodeToWorldMatrix);
+    }
+    else
+    {
+      nonLinearNodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
+      this->GetNodeTransformToWorld(segmentationNode, nonLinearNodeToWorld);
+    }
+  }
+
+  // Shown segments of each labelmap layer, grouped by opacity
+  const char* binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  std::map<LabelmapPipelineKey, std::vector<std::string>> shownSegmentIDsInPipelines;
+  std::map<LabelmapPipelineKey, double> pipelineOpacities;
+  double displayOpacity = hierarchyOpacity * displayNode->GetOpacity3D() * genericDisplayNode->GetOpacity();
+  if (visible && displayOpacity > 0.0)
+  {
+    std::vector<std::string> segmentIDs;
+    segmentation->GetSegmentIDs(segmentIDs);
+    for (const std::string& segmentID : segmentIDs)
+    {
+      vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+      displayNode->GetSegmentDisplayProperties(segmentID, properties);
+      double opacity = displayOpacity * properties.Opacity3D;
+      if (!properties.Visible || !properties.Visible3D || opacity <= 0.0)
+      {
+        continue;
+      }
+      vtkOrientedImageData* labelmap = vtkOrientedImageData::SafeDownCast(segmentation->GetSegmentRepresentation(segmentID, binaryLabelmapName));
+      if (!labelmap)
+      {
+        continue;
+      }
+      bool opaque = (opacity >= 1.0);
+      LabelmapPipelineKey key(labelmap, opaque ? -1 : TranslucentOpacityLevel(opacity));
+      shownSegmentIDsInPipelines[key].push_back(segmentID);
+      pipelineOpacities[key] = opaque ? 1.0 : TranslucentOpacity(key.second);
+    }
+  }
+
+  LabelmapPipelineMapType& pipelines = this->LabelmapPipelines[displayNode];
+
+  // Remove pipelines that have no shown segments
+  for (LabelmapPipelineMapType::iterator pipelineIt = pipelines.begin(); pipelineIt != pipelines.end();)
+  {
+    if (shownSegmentIDsInPipelines.find(pipelineIt->first) == shownSegmentIDsInPipelines.end())
+    {
+      this->External->GetRenderer()->RemoveActor(pipelineIt->second.Actor);
+      pipelineIt = pipelines.erase(pipelineIt);
+    }
+    else
+    {
+      ++pipelineIt;
+    }
+  }
+
+  // Resampled labelmaps that are not used anymore
+  std::map<vtkOrientedImageData*, TransformedLabelmap>& transformedLabelmaps = this->TransformedLabelmaps[displayNode];
+  for (auto transformedIt = transformedLabelmaps.begin(); transformedIt != transformedLabelmaps.end();)
+  {
+    bool used = false;
+    for (const auto& shownSegmentIDsInPipeline : shownSegmentIDsInPipelines)
+    {
+      used |= (nonLinearNodeToWorld && shownSegmentIDsInPipeline.first.first == transformedIt->first);
+    }
+    transformedIt = used ? std::next(transformedIt) : transformedLabelmaps.erase(transformedIt);
+  }
+
+  // Same smoothing as closed surface representation (negative value means smoothing is disabled)
+  std::string smoothingFactorString = segmentation->GetConversionParameter(vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName());
+  double smoothingFactor = smoothingFactorString.empty() ? 0.5 : std::clamp(vtkVariant(smoothingFactorString).ToDouble(), 0.0, 1.0);
+
+  // Clipping
+  vtkSmartPointer<vtkPlaneCollection> clippingPlanes;
+  vtkMRMLClipNode* clipNode = displayNode->GetClipNode();
+  if (displayNode->GetClipping() && clipNode)
+  {
+    clippingPlanes = vtkSmartPointer<vtkPlaneCollection>::New();
+    clipNode->GetClippingPlanes(clippingPlanes);
+    if (clippingPlanes->GetNumberOfItems() == 0)
+    {
+      clippingPlanes = nullptr;
+    }
+  }
+
+  for (const auto& shownSegmentIDsInPipeline : shownSegmentIDsInPipelines)
+  {
+    const LabelmapPipelineKey& key = shownSegmentIDsInPipeline.first;
+    LabelmapPipelineMapType::iterator pipelineIt = pipelines.find(key);
+    if (pipelineIt == pipelines.end())
+    {
+      pipelineIt = pipelines.insert(std::make_pair(key, LabelmapPipeline())).first;
+      this->External->GetRenderer()->AddActor(pipelineIt->second.Actor);
+    }
+    LabelmapPipeline& pipeline = pipelineIt->second;
+    vtkOrientedImageData* labelmap = key.first;
+    if (nonLinearNodeToWorld)
+    {
+      labelmap = this->GetTransformedLabelmap(displayNode, labelmap, nonLinearNodeToWorld);
+    }
+    pipeline.Mapper->SetLabelmap(labelmap);
+    pipeline.Mapper->RemoveAllLabelColors();
+    pipeline.PickableSegmentIDsByLabel.clear();
+    for (const std::string& segmentID : shownSegmentIDsInPipeline.second)
+    {
+      double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2] };
+      if (overrideHierarchyDisplayNode)
+      {
+        overrideHierarchyDisplayNode->GetColor(color);
+      }
+      else
+      {
+        displayNode->GetSegmentColor(segmentID, color);
+      }
+      int labelValue = segmentation->GetSegment(segmentID)->GetLabelValue();
+      pipeline.Mapper->SetLabelColor(labelValue, color[0], color[1], color[2]);
+      vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+      displayNode->GetSegmentDisplayProperties(segmentID, properties);
+      if (segmentationNode->GetSelectable() && properties.Pickable)
+      {
+        pipeline.PickableSegmentIDsByLabel[labelValue] = segmentID;
+      }
+    }
+
+    // Model coordinates of the mapper are IJK coordinates of the labelmap
+    vtkNew<vtkMatrix4x4> imageToNodeMatrix;
+    labelmap->GetImageToWorldMatrix(imageToNodeMatrix);
+    vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+    vtkMatrix4x4::Multiply4x4(nodeToWorldMatrix, imageToNodeMatrix, imageToWorldMatrix);
+    if (!vtkAddonMathUtilities::MatrixAreEqual(imageToWorldMatrix, pipeline.ImageToWorldMatrix))
+    {
+      pipeline.ImageToWorldMatrix->DeepCopy(imageToWorldMatrix);
+    }
+
+    pipeline.Mapper->SetSmoothingFactor(smoothingFactor);
+    pipeline.Mapper->SetClippingPlanes(clippingPlanes);
+    // ClipUnion clips away the union of the clipped spaces (keeps where all planes keep), ClipIntersection only their
+    // intersection (keeps where any plane keeps), as for models
+    pipeline.Mapper->SetKeepWhereAnyClippingPlaneKeeps(clipNode && clipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection);
+    pipeline.Mapper->SetCapClippedSurface(displayNode->GetClippingCapSurface());
+    pipeline.Mapper->SetCapOpacity(displayNode->GetClippingCapOpacity());
+    // Clipping outline as models show it: in the edge color of the display node
+    pipeline.Mapper->SetClippingOutline(displayNode->GetClippingOutline());
+    pipeline.Mapper->SetOutlineColor(displayNode->GetEdgeColor());
+    pipeline.Mapper->SetOutlineWidth(std::max(1.0, static_cast<double>(displayNode->GetLineWidth())));
+
+    vtkProperty* actorProperty = pipeline.Actor->GetProperty();
+    actorProperty->SetOpacity(pipelineOpacities[key]);
+    actorProperty->SetAmbient(genericDisplayNode->GetSelected() ? genericDisplayNode->GetSelectedAmbient() : genericDisplayNode->GetAmbient());
+    actorProperty->SetSpecular(genericDisplayNode->GetSelected() ? genericDisplayNode->GetSelectedSpecular() : genericDisplayNode->GetSpecular());
+    actorProperty->SetDiffuse(genericDisplayNode->GetDiffuse());
+    actorProperty->SetSpecularPower(genericDisplayNode->GetPower());
+    pipeline.Actor->SetVisibility(true);
+    // The mapper intersects pick rays with the labelmap (it is a vtkMRMLRayCastMapper, see vtkMRMLAccuratePicker),
+    // the segment at the picked position is found by FindPickedDisplayNodeFromLabelmaps
+    pipeline.Actor->SetPickable(!pipeline.PickableSegmentIDsByLabel.empty());
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveLabelmapPipelines(vtkMRMLSegmentationDisplayNode* displayNode)
+{
+  this->TransformedLabelmaps.erase(displayNode);
+  auto pipelinesIt = this->LabelmapPipelines.find(displayNode);
+  if (pipelinesIt == this->LabelmapPipelines.end())
+  {
+    return;
+  }
+  for (auto& pipeline : pipelinesIt->second)
+  {
+    this->External->GetRenderer()->RemoveActor(pipeline.second.Actor);
+  }
+  this->LabelmapPipelines.erase(pipelinesIt);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::FindPickedDisplayNodeFromLabelmaps(const double ras[3])
+{
+  for (auto& displayNodePipelines : this->LabelmapPipelines)
+  {
+    for (auto& keyPipeline : displayNodePipelines.second)
+    {
+      LabelmapPipeline& pipeline = keyPipeline.second;
+      if (!pipeline.Actor->GetVisibility() || pipeline.PickableSegmentIDsByLabel.empty())
+      {
+        continue;
+      }
+      vtkNew<vtkMatrix4x4> worldToImage;
+      vtkMatrix4x4::Invert(pipeline.ImageToWorldMatrix, worldToImage);
+      double rasPoint[4] = { ras[0], ras[1], ras[2], 1.0 };
+      double ijk[4] = { 0.0, 0.0, 0.0, 1.0 };
+      worldToImage->MultiplyPoint(rasPoint, ijk);
+      int label = pipeline.Mapper->GetShownLabelAtPosition(ijk);
+      auto segmentIt = pipeline.PickableSegmentIDsByLabel.find(label);
+      if (segmentIt != pipeline.PickableSegmentIDsByLabel.end())
+      {
+        this->PickedDisplayNodeID = displayNodePipelines.first->GetID();
+        this->PickedSegmentID = segmentIt->second;
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -1141,6 +1472,11 @@ int vtkMRMLSegmentationsDisplayableManager3D::Pick3D(double ras[3])
     // Note: Getting the mesh using GetDataSet is not a good solution as the dataset is the first
     //   one that is picked and it may be of different type (volume, model, etc.)
     this->Internal->FindFirstPickedDisplayNodeFromPickerProp3Ds();
+  }
+  if (this->Internal->PickedDisplayNodeID.empty())
+  {
+    // Segments shown as binary labelmap
+    this->Internal->FindPickedDisplayNodeFromLabelmaps(ras);
   }
 
   return 1;

@@ -39,6 +39,7 @@ class vtkPolyData;
 class vtkDataObject;
 class vtkGeneralTransform;
 
+class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSegmentationStorageNode;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLScalarVolumeNode;
@@ -447,6 +448,14 @@ public:
   /// Get/Set default closed surface smoothing enabled flag for new segmentation nodes.
   bool GetDefaultSurfaceSmoothingEnabled();
   void SetDefaultSurfaceSmoothingEnabled(bool enabled);
+
+  /// Get default segmentation display node. All new segmentation display nodes are initialized to the content of this node.
+  vtkMRMLSegmentationDisplayNode* GetDefaultSegmentationDisplayNode();
+
+  /// Get/Set the representation that new segmentations show in 3D views ("Closed surface" or "Binary labelmap").
+  /// Empty string means the default (closed surface).
+  std::string GetDefaultRepresentation3D();
+  void SetDefaultRepresentation3D(const std::string& representationName);
 
   /// Get node that is used for initializing each new Segment Editor node.
   vtkMRMLSegmentEditorNode* GetDefaultSegmentEditorNode();

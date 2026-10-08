@@ -24,6 +24,8 @@ SlicerConfigureDisplayableManagerObjectFactory(
 set(${KIT}_SRCS
   ${displayable_manager_instantiator_SRCS}
   ${displayable_manager_SRCS}
+  vtkSegmentationLabelmapSurfaceMapper.cxx
+  vtkSegmentationLabelmapSurfaceMapper.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

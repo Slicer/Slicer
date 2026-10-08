@@ -897,8 +897,9 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
       // Remember whether closed surface is present so that it can be re-converted later if necessary
       bool closedSurfacePresent = segmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
       bool binaryLabelmapPresent = segmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-      // Show closed surface in 3D if present
-      if (displayNode && closedSurfacePresent)
+      // Show closed surface in 3D if present, unless a representation is already chosen for 3D
+      const char* preferredRepresentation3D = displayNode ? displayNode->GetPreferredDisplayRepresentationName3D() : nullptr;
+      if (displayNode && closedSurfacePresent && (!preferredRepresentation3D || !preferredRepresentation3D[0]))
       {
         displayNode->SetPreferredDisplayRepresentationName3D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
       }
