@@ -81,6 +81,11 @@ public:
   /// Transform models's polydata
   static void TransformModel(vtkMRMLTransformNode* tnode, vtkMRMLModelNode* modelNode, int transformNormals, vtkMRMLModelNode* modelOut);
 
+  /// Name of the attribute that stores the ID of the legacy model hierarchy node in the folder display node
+  /// that replaced the model hierarchy display node when the scene was imported.
+  /// The same attribute name is used in vtkSlicerSceneViewsModuleLogic for converting legacy scene views.
+  static const char* GetModelHierarchyNodeIDAttributeName();
+
   /// Iterate through all models in the scene, find all their display nodes
   /// and set their visibility flag to flag. Does not touch model hierarchy
   /// nodes with display nodes

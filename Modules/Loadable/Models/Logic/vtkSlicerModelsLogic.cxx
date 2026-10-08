@@ -116,8 +116,18 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
         folderDisplayNode->SetName(mhNode->GetName()); // this name will appear for the user, so use the hierarchy node name
         folderDisplayNode->SetColor(mhDisplayNode->GetColor());
         folderDisplayNode->SetSelectedColor(mhDisplayNode->GetSelectedColor());
-        folderDisplayNode->SetOpacity(mhDisplayNode->GetOpacity());
         folderDisplayNode->SetFolderDisplayOverrideAllowed(mhDisplayNode->GetSelected());
+        // Display properties (including visibility and opacity) of a collapsed (not expanded) model hierarchy node
+        // were applied to all its children, while the display node of an expanded model hierarchy node had no effect.
+        bool applyDisplayPropertiesOnBranch = !mhNode->GetExpanded();
+        folderDisplayNode->SetApplyDisplayPropertiesOnBranch(applyDisplayPropertiesOnBranch);
+        folderDisplayNode->SetVisibility(applyDisplayPropertiesOnBranch ? mhDisplayNode->GetVisibility() : 1);
+        folderDisplayNode->SetOpacity(applyDisplayPropertiesOnBranch ? mhDisplayNode->GetOpacity() : 1.0);
+        // Store the model hierarchy node ID in the folder display node. It allows legacy scene views
+        // (that store the model hierarchy node and its display node) to find the folder display node
+        // that replaced the model hierarchy display node when the scene views are converted
+        // (see vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodeToSequenceBrowserNode).
+        folderDisplayNode->SetAttribute(vtkSlicerModelsLogic::GetModelHierarchyNodeIDAttributeName(), mhNode->GetID());
         scene->RemoveNode(mhDisplayNode);
       }
       else
@@ -218,6 +228,12 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
       }
     }
   }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerModelsLogic::GetModelHierarchyNodeIDAttributeName()
+{
+  return "ModelHierarchyNodeID";
 }
 
 //----------------------------------------------------------------------------
