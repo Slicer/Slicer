@@ -938,6 +938,13 @@ void vtkSlicerSegmentEditorLogic::ToggleSegmentationSurfaceRepresentation(bool i
     return;
   }
 
+  // Binary labelmap is shown in 3D: show or hide it, the representation is only changed by the user
+  if (displayNode->IsBinaryLabelmapPreferredDisplayRepresentation3D())
+  {
+    displayNode->SetVisibility3D(isSurfaceRepresentationOn);
+    return;
+  }
+
   MRMLNodeModifyBlocker segmentationNodeBlocker(segmentationNode);
   MRMLNodeModifyBlocker displayNodeBlocker(displayNode);
 

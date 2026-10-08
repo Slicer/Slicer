@@ -38,6 +38,7 @@
 #include <vtkSlicerTerminologiesModuleLogic.h>
 
 #include <vtkMRMLSegmentEditorNode.h>
+#include <vtkSegmentationConverter.h>
 
 // --------------------------------------------------------------------------
 // qSlicerSegmentationsSettingsPanelPrivate
@@ -124,12 +125,29 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Allow overlap"), QString(/*no tr*/ "OverwriteNone"));
   q->registerProperty("Segmentations/DefaultOverwriteMode", this->DefaultOverwriteModeComboBox, "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
+  // Default representation in 3D views. Binary labelmap is shown as smooth surfaces computed on the GPU (experimental).
+  this->DefaultRepresentation3DComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Default (closed surface)"), QString());
+  this->DefaultRepresentation3DComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Binary labelmap"),
+                                                 QString::fromStdString(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+  this->DefaultRepresentation3DComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Closed surface"),
+                                                 QString::fromStdString(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
+  q->registerProperty(/*no tr*/ "Segmentations/DefaultRepresentation3D",
+                      this->DefaultRepresentation3DComboBox,
+                      "currentUserDataAsString",
+                      SIGNAL(currentIndexChanged(int)),
+                      qSlicerSegmentationsSettingsPanel::tr("Representation of new segmentations in 3D views"),
+                      ctkSettingsPanel::OptionNone);
+
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)), q, SLOT(setAutoOpacities(bool)));
   QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDefaultSurfaceSmoothing(bool)));
   QObject::connect(this->UseTerminologyCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseTerminology(bool)));
   QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()), q, SLOT(onEditDefaultTerminologyEntry()));
   QObject::connect(this->DefaultOverwriteModeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode);
+  QObject::connect(this->DefaultRepresentation3DComboBox,
+                   QOverload<int>::of(&QComboBox::currentIndexChanged),
+                   q,
+                   [this, q]() { q->setDefaultRepresentation3D(this->DefaultRepresentation3DComboBox->currentData().toString()); });
 
   // Update default segmentation node from settings when startup completed.
   QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()), q, SLOT(updateDefaultSegmentationNodeFromWidget()));
@@ -252,6 +270,16 @@ void qSlicerSegmentationsSettingsPanel::updateDefaultSegmentationNodeFromWidget(
 {
   Q_D(qSlicerSegmentationsSettingsPanel);
   this->setDefaultSurfaceSmoothing(d->SurfaceSmoothingCheckBox->isChecked());
+  this->setDefaultRepresentation3D(d->DefaultRepresentation3DComboBox->currentData().toString());
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::setDefaultRepresentation3D(QString representationName)
+{
+  if (this->segmentationsLogic())
+  {
+    this->segmentationsLogic()->SetDefaultRepresentation3D(representationName.toStdString());
+  }
 }
 
 // --------------------------------------------------------------------------

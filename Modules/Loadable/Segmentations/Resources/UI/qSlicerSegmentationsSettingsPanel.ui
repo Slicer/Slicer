@@ -141,7 +141,24 @@ Note: This applies to segment tables in Segment Editor and Segmentations modules
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="6" column="0">
+    <widget class="QLabel" name="DefaultRepresentation3DLabel">
+     <property name="toolTip">
+      <string>Representation of new segmentations in 3D views. Binary labelmap: smooth surfaces computed on the GPU (experimental).</string>
+     </property>
+     <property name="text">
+      <string>Representation in 3D views:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="ctkComboBox" name="DefaultRepresentation3DComboBox">
+     <property name="toolTip">
+      <string>Representation of new segmentations in 3D views. Binary labelmap: smooth surfaces computed on the GPU (experimental).</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

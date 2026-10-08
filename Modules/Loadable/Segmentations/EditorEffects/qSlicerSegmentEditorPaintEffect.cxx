@@ -43,7 +43,6 @@
 #include <vtkBoundingBox.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
-#include <vtkCellPicker.h>
 #include <vtkCollection.h>
 #include <vtkCommand.h>
 #include <vtkGlyph2D.h>
@@ -79,6 +78,7 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLAccuratePicker.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
@@ -1004,7 +1004,9 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
     static bool useCellPicker = true;
     if (useCellPicker)
     {
-      vtkNew<vtkCellPicker> picker;
+      // vtkMRMLAccuratePicker also picks surfaces that have no polygonal geometry
+      // (segmentations shown as binary labelmap in 3D views)
+      vtkNew<vtkMRMLAccuratePicker> picker;
       picker->SetTolerance(.005);
       if (!picker->Pick(brushPositionInView[0], brushPositionInView[1], 0, renderer))
       {

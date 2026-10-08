@@ -62,6 +62,7 @@ protected slots:
   void setDefaultTerminologyEntry(QString);
   void updateDefaultSegmentationNodeFromWidget();
   void setDefaultOverwriteMode(QString);
+  void setDefaultRepresentation3D(QString);
   void updateDefaultOverwriteModeFromWidget();
 
 signals:

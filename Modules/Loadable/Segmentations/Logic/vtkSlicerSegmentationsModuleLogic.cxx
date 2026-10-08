@@ -2717,6 +2717,46 @@ void vtkSlicerSegmentationsModuleLogic::SetDefaultSurfaceSmoothingEnabled(bool e
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLSegmentationDisplayNode* vtkSlicerSegmentationsModuleLogic::GetDefaultSegmentationDisplayNode()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+  {
+    return nullptr;
+  }
+  vtkSmartPointer<vtkMRMLNode> defaultNode = scene->GetDefaultNodeByClass("vtkMRMLSegmentationDisplayNode");
+  if (!defaultNode)
+  {
+    defaultNode.TakeReference(scene->CreateNodeByClass("vtkMRMLSegmentationDisplayNode"));
+    scene->AddDefaultNode(defaultNode);
+  }
+  return vtkMRMLSegmentationDisplayNode::SafeDownCast(defaultNode.GetPointer());
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkSlicerSegmentationsModuleLogic::GetDefaultRepresentation3D()
+{
+  vtkMRMLSegmentationDisplayNode* defaultDisplayNode = this->GetDefaultSegmentationDisplayNode();
+  if (!defaultDisplayNode || !defaultDisplayNode->GetPreferredDisplayRepresentationName3D())
+  {
+    return "";
+  }
+  return defaultDisplayNode->GetPreferredDisplayRepresentationName3D();
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::SetDefaultRepresentation3D(const std::string& representationName)
+{
+  vtkMRMLSegmentationDisplayNode* defaultDisplayNode = this->GetDefaultSegmentationDisplayNode();
+  if (!defaultDisplayNode)
+  {
+    vtkErrorMacro("SetDefaultRepresentation3D failed: invalid default segmentation display node");
+    return;
+  }
+  defaultDisplayNode->SetPreferredDisplayRepresentationName3D(representationName.empty() ? nullptr : representationName.c_str());
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLSegmentEditorNode* vtkSlicerSegmentationsModuleLogic::GetDefaultSegmentEditorNode()
 {
   vtkMRMLScene* scene = this->GetMRMLScene();

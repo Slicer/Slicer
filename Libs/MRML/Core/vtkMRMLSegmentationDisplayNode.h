@@ -202,12 +202,18 @@ public:
   /// Collect representation names that are stored as poly data
   void GetPolyDataRepresentationNames(std::set<std::string>& representationNames);
 
-  /// Decide which poly data representation to use for 3D display.
+  /// Decide which representation to use for 3D display.
   /// If preferred representation exists \sa PreferredDisplayRepresentationName3D, then return that.
+  /// The preferred representation may be a poly data representation or binary labelmap
+  /// (binary labelmap is displayed as smooth surfaces computed on the GPU; experimental).
   /// Otherwise if source representation is a poly data then return source representation type.
   /// Otherwise return first poly data representation if any.
   /// Otherwise return empty string meaning there is no poly data representation to display.
   std::string GetDisplayRepresentationName3D();
+
+  /// Return true if binary labelmap is chosen as representation in 3D views
+  /// (shown as smooth surfaces computed on the GPU, without closed surface representation; experimental).
+  bool IsBinaryLabelmapPreferredDisplayRepresentation3D();
 
   /// Decide which representation to use for 2D display.
   /// If preferred representation exists \sa PreferredDisplayRepresentationName2D, then return that.

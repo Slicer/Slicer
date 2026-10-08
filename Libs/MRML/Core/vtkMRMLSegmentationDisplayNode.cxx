@@ -879,7 +879,8 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
     return false;
   }
 
-  // Get displayed 3D representation (always poly data)
+  // Get displayed 3D representation. It may be binary labelmap (shown as surfaces computed on the GPU),
+  // which is not poly data: then no segment poly data is collected below and the opacities cannot be computed.
   std::string displayedPolyDataRepresentationName = this->GetDisplayRepresentationName3D();
 
   // Make sure the segment display properties are updated
@@ -1039,11 +1040,14 @@ std::string vtkMRMLSegmentationDisplayNode::GetDisplayRepresentationName3D()
   // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
   vtkSegment* firstSegment = segmentation->GetNthSegment(0);
 
-  // If preferred representation is defined and exists then use that (double check it is poly data)
+  // If preferred representation is defined and exists then use that (double check it is poly data,
+  // or binary labelmap, which is rendered as smooth surfaces computed on the GPU)
   if (this->PreferredDisplayRepresentationName3D)
   {
     vtkDataObject* preferredRepresentation = firstSegment->GetRepresentation(this->PreferredDisplayRepresentationName3D);
-    if (vtkPolyData::SafeDownCast(preferredRepresentation))
+    const char* binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+    bool preferredBinaryLabelmap = (binaryLabelmapName == std::string(this->PreferredDisplayRepresentationName3D));
+    if (vtkPolyData::SafeDownCast(preferredRepresentation) || (preferredRepresentation && preferredBinaryLabelmap))
     {
       return std::string(this->PreferredDisplayRepresentationName3D);
     }
@@ -1070,6 +1074,13 @@ std::string vtkMRMLSegmentationDisplayNode::GetDisplayRepresentationName3D()
   // If no poly data representations are available, then return empty string
   // meaning there is no poly data representation to display
   return "";
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationDisplayNode::IsBinaryLabelmapPreferredDisplayRepresentation3D()
+{
+  return this->PreferredDisplayRepresentationName3D
+         && std::string(this->PreferredDisplayRepresentationName3D) == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
 }
 
 //---------------------------------------------------------------------------

@@ -25,7 +25,10 @@ class qMRMLSegmentationShow3DButtonPrivate;
 class vtkMRMLSegmentationNode;
 
 /// \brief Button that shows/hide segmentation in 3D
-/// It creates or removes closed surface representation.
+/// It creates or removes the representation that is shown in 3D views (closed surface or binary labelmap,
+/// chosen in the Representation submenu, \sa vtkMRMLSegmentationDisplayNode::SetPreferredDisplayRepresentationName3D).
+/// When the representation is switched, the other one is removed (unless it is the source representation),
+/// so that it is not kept up to date for nothing.
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationShow3DButton : public ctkMenuButton
 {
   Q_OBJECT
@@ -56,6 +59,7 @@ protected slots:
   void onEnableSurfaceNetsToggled(bool surfaceNetsEnabled);
   void onEnableSurfaceNetsSmoothingToggled(bool surfaceNetsSmoothingEnabled);
   void onSurfaceSmoothingFactorChanged(double newSmoothingFactor);
+  void onRepresentationActionTriggered(QAction* action);
   void updateWidgetFromMRML();
 
 protected:

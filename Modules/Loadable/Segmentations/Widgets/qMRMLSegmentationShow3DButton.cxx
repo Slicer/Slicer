@@ -25,6 +25,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QDebug>
 #include <QIcon>
@@ -52,10 +53,16 @@ public:
   /// This property holds whether smoothing internal to surface nets filter is used
   bool setInternalSmoothing(int internalSmoothing);
 
+  /// Representation shown in 3D views (closed surface or binary labelmap), the same as the
+  /// representation in 3D views of the display node
+  std::string representation3D();
+
   QAction* SurfaceSmoothingEnabledAction{ nullptr };
   QAction* SurfaceNetsEnableAction{ nullptr };
   QAction* SurfaceNetsSmoothingEnableAction{ nullptr };
   ctkSliderWidget* SurfaceSmoothingSlider{ nullptr };
+  QAction* ClosedSurfaceRepresentationAction{ nullptr };
+  QAction* BinaryLabelmapRepresentationAction{ nullptr };
   bool Locked{ false };
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
 };
@@ -122,10 +129,44 @@ void qMRMLSegmentationShow3DButtonPrivate::init()
   smoothingFactorAction->setDefaultWidget(this->SurfaceSmoothingSlider);
   surfaceSmoothingFactorMenu->addAction(smoothingFactorAction);
 
+  // Representation shown in 3D views (the same as in the segmentation display node widget)
+  QMenu* representationMenu = new QMenu(qMRMLSegmentationShow3DButton::tr("Representation"), show3DButtonMenu);
+  representationMenu->setObjectName("show3DRepresentationMenu");
+  QActionGroup* representationActions = new QActionGroup(representationMenu);
+  representationActions->setExclusive(true);
+  this->BinaryLabelmapRepresentationAction = new QAction(qMRMLSegmentationShow3DButton::tr("Binary labelmap"), representationMenu);
+  QString binaryLabelmapToolTip = qMRMLSegmentationShow3DButton::tr("Show the binary labelmap as smooth surfaces computed on the GPU (experimental).");
+  this->BinaryLabelmapRepresentationAction->setToolTip(binaryLabelmapToolTip);
+  this->BinaryLabelmapRepresentationAction->setData(QString::fromStdString(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+  this->ClosedSurfaceRepresentationAction = new QAction(qMRMLSegmentationShow3DButton::tr("Closed surface"), representationMenu);
+  QString closedSurfaceToolTip = qMRMLSegmentationShow3DButton::tr("Show the closed surface representation, created from the binary labelmap.");
+  this->ClosedSurfaceRepresentationAction->setToolTip(closedSurfaceToolTip);
+  this->ClosedSurfaceRepresentationAction->setData(QString::fromStdString(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
+  for (QAction* action : { this->BinaryLabelmapRepresentationAction, this->ClosedSurfaceRepresentationAction })
+  {
+    action->setCheckable(true);
+    representationActions->addAction(action);
+    representationMenu->addAction(action);
+  }
+  QObject::connect(representationActions, SIGNAL(triggered(QAction*)), q, SLOT(onRepresentationActionTriggered(QAction*)));
+
   show3DButtonMenu->addMenu(surfaceSmoothingFactorMenu);
+  show3DButtonMenu->addMenu(representationMenu);
   show3DButtonMenu->addMenu(experimentalMenu);
   q->setMenu(show3DButtonMenu);
   q->setEnabled(false);
+}
+
+//-----------------------------------------------------------------------------
+std::string qMRMLSegmentationShow3DButtonPrivate::representation3D()
+{
+  vtkMRMLSegmentationNode* segmentationNode = this->SegmentationNode;
+  vtkMRMLSegmentationDisplayNode* displayNode = segmentationNode ? vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode()) : nullptr;
+  if (displayNode && displayNode->IsBinaryLabelmapPreferredDisplayRepresentation3D())
+  {
+    return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  }
+  return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
 }
 
 //-----------------------------------------------------------------------------
@@ -146,9 +187,10 @@ bool qMRMLSegmentationShow3DButtonPrivate::setSurfaceSmoothingFactor(double smoo
   {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     this->SegmentationNode->GetSegmentation()->CreateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true);
-    this->SegmentationNode->Modified();
     QApplication::restoreOverrideCursor();
   }
+  // Binary labelmap shown in 3D uses the smoothing factor, too
+  this->SegmentationNode->Modified();
   return true;
 }
 
@@ -220,6 +262,7 @@ void qMRMLSegmentationShow3DButton::setSegmentationNode(vtkMRMLSegmentationNode*
   qvtkReconnect(d->SegmentationNode, node, vtkSegmentation::SegmentAdded, this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->SegmentationNode, node, vtkSegmentation::SegmentRemoved, this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->SegmentationNode, node, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SegmentationNode, node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
   d->SegmentationNode = segmentationNode;
@@ -241,11 +284,20 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
                      && d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() != //
                           vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
 
-    // Change button state based on whether it contains closed surface representation
-    bool closedSurfacePresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+    // Change button state based on whether it contains the representation shown in 3D views
+    // (and, for binary labelmap, whether it is visible in 3D)
+    std::string representation3D = d->representation3D();
+    bool representationPresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(representation3D);
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
+    if (representation3D == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
+    {
+      representationPresent = representationPresent && displayNode && displayNode->GetVisibility3D();
+    }
     bool wasBlocked = this->blockSignals(true);
-    this->setChecked(closedSurfacePresent);
+    this->setChecked(representationPresent);
     this->blockSignals(wasBlocked);
+    d->BinaryLabelmapRepresentationAction->setChecked(representation3D == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+    d->ClosedSurfaceRepresentationAction->setChecked(representation3D == vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   }
   else
   {
@@ -313,38 +365,86 @@ void qMRMLSegmentationShow3DButton::onToggled(bool on)
   {
     return;
   }
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
+  const std::string closedSurfaceName = vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
+  const std::string binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  std::string representation3D = d->representation3D();
 
   MRMLNodeModifyBlocker segmentationNodeBlocker(d->SegmentationNode);
 
   if (on)
   {
-    // Button is pressed, create closed surface representation and show it.
-    // Make sure closed surface representation exists
-    if (d->SegmentationNode->GetSegmentation()->CreateRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+    // Button is pressed: create the representation that is shown in 3D views (only that one) and show it
+    if (segmentation->CreateRepresentation(representation3D) && displayNode)
     {
-      vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
-      if (displayNode)
+      displayNode->SetPreferredDisplayRepresentationName3D(representation3D.c_str());
+      if (representation3D == binaryLabelmapName)
       {
-        // Set closed surface as displayed poly data representation
-        displayNode->SetPreferredDisplayRepresentationName3D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+        displayNode->SetVisibility3D(true);
       }
       // But keep binary labelmap for 2D
-      bool binaryLabelmapPresent = d->SegmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
-      if (binaryLabelmapPresent && displayNode)
+      if (segmentation->ContainsRepresentation(binaryLabelmapName))
       {
-        displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+        displayNode->SetPreferredDisplayRepresentationName2D(binaryLabelmapName.c_str());
       }
     }
   }
   else
   {
-    // Button is released, remove the closed surface representation
-    // (but only if it's not the source representation).
-    if (d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() != vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
+    // Button is released: remove the closed surface and binary labelmap representations
+    // (unless they are the source representation)
+    for (const std::string& name : { closedSurfaceName, binaryLabelmapName })
     {
-      d->SegmentationNode->GetSegmentation()->RemoveRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+      if (segmentation->GetSourceRepresentationName() != name)
+      {
+        segmentation->RemoveRepresentation(name);
+      }
+    }
+    // A source representation that is shown in 3D is hidden instead
+    if (displayNode && representation3D == binaryLabelmapName && segmentation->GetSourceRepresentationName() == binaryLabelmapName)
+    {
+      displayNode->SetVisibility3D(false);
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationShow3DButton::onRepresentationActionTriggered(QAction* action)
+{
+  Q_D(qMRMLSegmentationShow3DButton);
+  vtkMRMLSegmentationNode* segmentationNode = d->SegmentationNode;
+  vtkMRMLSegmentationDisplayNode* displayNode = segmentationNode ? vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode()) : nullptr;
+  if (!action || !displayNode)
+  {
+    return;
+  }
+  std::string representation3D = action->data().toString().toStdString();
+  bool shown = this->isChecked();
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  MRMLNodeModifyBlocker segmentationNodeBlocker(d->SegmentationNode);
+  displayNode->SetPreferredDisplayRepresentationName3D(representation3D.c_str());
+  if (shown)
+  {
+    // Shown in 3D: show the chosen representation
+    segmentation->CreateRepresentation(representation3D);
+    if (representation3D == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
+    {
+      displayNode->SetVisibility3D(true);
+    }
+  }
+  // Remove the representation that is not shown in 3D anymore (unless it is the source representation),
+  // so that it is not kept up to date for nothing (updating closed surface while editing is expensive)
+  const std::string closedSurfaceName = vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
+  const std::string binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  for (const std::string& name : { closedSurfaceName, binaryLabelmapName })
+  {
+    if (name != representation3D && name != segmentation->GetSourceRepresentationName())
+    {
+      segmentation->RemoveRepresentation(name);
+    }
+  }
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
