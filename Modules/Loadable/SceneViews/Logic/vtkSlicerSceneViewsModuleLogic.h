@@ -205,6 +205,16 @@ public:
   /// Create file readers and writers of the module.
   std::vector<vtkSmartPointer<vtkMRMLFileIOHandler>> CreateFileIOHandlers() override;
 
+  /// Return the data node for the specified proxy node in the Nth scene view index.
+  vtkMRMLNode* GetNthSceneViewDataNode(int index, vtkMRMLNode* proxyNode);
+
+  /// Convert all existing vtkMRMLSceneViewNode in the scene (legacy scene views, storing a snapshot of the scene)
+  /// to scene views stored in a sequence browser node. This is done automatically when a scene is imported.
+  void ConvertSceneViewNodesToSequenceBrowserNodes(vtkMRMLScene* scene);
+
+  /// Convert the specified vtkMRMLSceneViewNode to a scene view stored in the sequence browser node.
+  vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneView, vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
+
 protected:
   vtkSlicerSceneViewsModuleLogic();
 
@@ -222,9 +232,6 @@ protected:
   /// Returns the proxy node containing the scene view screenshot.
   vtkMRMLVolumeNode* GetSceneViewScreenshotProxyNode(vtkMRMLSequenceBrowserNode* sequenceBrowser = nullptr);
 
-  /// Return the data node for the specified proxy node in the Nth scene view index.
-  vtkMRMLNode* GetNthSceneViewDataNode(int index, vtkMRMLNode* proxyNode);
-
   /// Return the screenshot data node in the Nth scene view index.
   vtkMRMLVolumeNode* GetNthSceneViewScreenshotDataNode(int index);
 
@@ -238,12 +245,6 @@ protected:
   //@}
 
 protected:
-  /// Convert all existing vtkMRMLSceneViewNode in the scene to use Sequences.
-  void ConvertSceneViewNodesToSequenceBrowserNodes(vtkMRMLScene* scene);
-
-  /// Convert the specified vtkMRMLSceneViewNode to use sequences.
-  vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneView, vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
-
   /// Returns the sequence node for a given proxy node. Will create a new vtkMRMLSequenceNode if none exists.
   vtkMRMLSequenceNode* GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser, vtkMRMLNode* proxyNode);
 
