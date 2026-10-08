@@ -10,6 +10,8 @@
 #include <vtkMRMLSequenceNode.h>
 
 // MRML includes
+#include <vtkMRMLDisplayableHierarchyNode.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLSceneViewStorageNode.h>
@@ -18,13 +20,16 @@
 #include <vtkMRMLVectorVolumeNode.h>
 
 // VTK includes
+#include <vtkFloatArray.h>
 #include <vtkImageData.h>
+#include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
+#include <set>
 #include <sstream>
 
 const int MAXIMUM_NUMBER_OF_NODES_WITHOUT_BATCH_PROCESSING = 25;
@@ -52,17 +57,22 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene
   vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
 
   vtkNew<vtkIntArray> events;
+  vtkNew<vtkFloatArray> priorities;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  priorities->InsertNextValue(0.0);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+  priorities->InsertNextValue(0.0);
 
-  // Using default priority for this event. The priority must be lower than the value
-  // used in vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal to ensure that
-  // vtkSlicerMarkupsLogic::OnMRMLSceneEndImport() runs before vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndImport()
-  // to convert old annotation nodes before converting old scene view nodes.
+  // Legacy scene views must be converted after other logic classes converted legacy nodes in the scene:
+  // vtkSlicerMarkupsLogic::OnMRMLSceneEndImport() converts annotation nodes (priority 10.0) and
+  // vtkSlicerModelsLogic::OnMRMLSceneEndImport() converts model hierarchy nodes (default priority, 0.0),
+  // therefore a lower priority is used here (higher priority observers are invoked first).
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  priorities->InsertNextValue(-10.0);
 
   events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
+  priorities->InsertNextValue(0.0);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer(), priorities.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -197,22 +207,139 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
   wasDisabledModifiedEvents[sequenceBrowser] = sequenceBrowser->GetDisableModifiedEvent();
   sequenceBrowser->DisableModifiedEventOn();
 
+  // Save the same kind of nodes as in scene views created with this version of the application:
+  // display nodes (visibility, color, etc.) and view nodes (camera position, slice visibility in 3D views, layout, etc.)
+  std::vector<std::string> displayNodeClasses = this->GetDisplayNodeClasses();
+  std::vector<std::string> viewNodeClasses = this->GetViewNodeClasses();
+  auto isAnyOf = [](vtkMRMLNode* node, const std::vector<std::string>& classNames)
+  {
+    for (const std::string& className : classNames)
+    {
+      if (node->IsA(className.c_str()))
+      {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Legacy model hierarchy nodes are converted to subject hierarchy folders (in vtkSlicerModelsLogic::OnMRMLSceneEndImport,
+  // which runs before this method) and their display nodes are replaced by folder display nodes.
+  // The display properties of the model hierarchy nodes in the snapshot are stored in the corresponding folder display nodes.
+  std::map<std::string, vtkMRMLFolderDisplayNode*> folderDisplayNodeByModelHierarchyNodeID;
+  {
+    std::vector<vtkMRMLNode*> folderDisplayNodes;
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLFolderDisplayNode", folderDisplayNodes);
+    for (vtkMRMLNode* folderDisplayNode : folderDisplayNodes)
+    {
+      const char* modelHierarchyNodeID = folderDisplayNode->GetAttribute(vtkSlicerSceneViewsModuleLogic::GetModelHierarchyNodeIDAttributeName());
+      if (modelHierarchyNodeID && strlen(modelHierarchyNodeID) > 0)
+      {
+        folderDisplayNodeByModelHierarchyNodeID[modelHierarchyNodeID] = vtkMRMLFolderDisplayNode::SafeDownCast(folderDisplayNode);
+      }
+    }
+  }
   std::vector<vtkMRMLNode*> proxyNodes;
   std::map<vtkMRMLNode*, vtkMRMLNode*> proxyNodeToSnapshotMap;
+  std::set<vtkMRMLNode*> hierarchyDisplayNodes;                           // display nodes of hierarchy nodes in the snapshot
+  std::map<vtkMRMLNode*, bool> applyDisplayPropertiesOnBranchByProxyNode; // folder display node -> collapsed state of the hierarchy node
   for (vtkMRMLNode* snapshotNode : snapshotNodes)
   {
-    if (!snapshotNode->IsA("vtkMRMLDisplayNode"))
+    vtkMRMLDisplayableHierarchyNode* hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(snapshotNode);
+    if (!hierarchyNode)
+    {
+      continue;
+    }
+    vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
+    if (!hierarchyDisplayNode)
+    {
+      continue;
+    }
+    hierarchyDisplayNodes.insert(hierarchyDisplayNode);
+    if (!hierarchyNode->GetID())
+    {
+      continue;
+    }
+    auto folderDisplayNodeIt = folderDisplayNodeByModelHierarchyNodeID.find(hierarchyNode->GetID());
+    if (folderDisplayNodeIt == folderDisplayNodeByModelHierarchyNodeID.end() || !folderDisplayNodeIt->second)
+    {
+      continue;
+    }
+    vtkMRMLFolderDisplayNode* folderDisplayNode = folderDisplayNodeIt->second;
+    if (proxyNodeToSnapshotMap.find(folderDisplayNode) != proxyNodeToSnapshotMap.end())
+    {
+      continue;
+    }
+    proxyNodes.push_back(folderDisplayNode);
+    proxyNodeToSnapshotMap[folderDisplayNode] = hierarchyDisplayNode;
+    // Display properties of a collapsed (not expanded) model hierarchy node were applied to all its children
+    applyDisplayPropertiesOnBranchByProxyNode[folderDisplayNode] = !hierarchyNode->GetExpanded();
+  }
+
+  // Find the node in the scene that corresponds to each snapshot node.
+  // Node IDs in the snapshot scene have already been updated (in vtkMRMLSceneViewNode::UpdateScene)
+  // if node IDs were changed during import, therefore snapshot node IDs can be used directly.
+  // Singleton nodes are identified by their singleton tag, because a singleton node in the scene may
+  // have a different ID than the node in the snapshot (for example, when the camera node in the file
+  // was merged into the camera node that already existed in the scene).
+  for (vtkMRMLNode* snapshotNode : snapshotNodes)
+  {
+    bool isDisplayNode = isAnyOf(snapshotNode, displayNodeClasses);
+    bool isViewNode = isAnyOf(snapshotNode, viewNodeClasses);
+    if (!isDisplayNode && !isViewNode)
     {
       continue;
     }
 
-    vtkMRMLNode* proxyNode = this->GetMRMLScene()->GetNodeByID(snapshotNode->GetID());
+    vtkMRMLNode* proxyNode = nullptr;
+    const char* singletonTag = snapshotNode->GetSingletonTag();
+    if (singletonTag && strlen(singletonTag) > 0)
+    {
+      proxyNode = this->GetMRMLScene()->GetSingletonNode(singletonTag, snapshotNode->GetClassName());
+    }
+    if (!proxyNode && snapshotNode->GetID())
+    {
+      proxyNode = this->GetMRMLScene()->GetNodeByID(snapshotNode->GetID());
+    }
     if (!proxyNode)
     {
+      // Legacy scene files may store singleton nodes without singleton tag and with a different ID
+      // (for example, vtkMRMLClipModelsNodevtkMRMLClipModelsNode instead of vtkMRMLClipModelsNode).
+      // If the scene has a single node of this class and it is a singleton then it is the same node.
+      std::vector<vtkMRMLNode*> nodesOfClass;
+      this->GetMRMLScene()->GetNodesByClass(snapshotNode->GetClassName(), nodesOfClass);
+      if (nodesOfClass.size() == 1 && nodesOfClass[0]->GetSingletonTag())
+      {
+        proxyNode = nodesOfClass[0];
+      }
+    }
+    if (!proxyNode)
+    {
+      if (!snapshotNode->IsA("vtkMRMLDisplayNode") || hierarchyDisplayNodes.find(snapshotNode) != hierarchyDisplayNodes.end())
+      {
+        // Only display nodes are added to the scene if they do not exist yet. View, camera, layout, clip, etc. nodes
+        // that are not in the scene anymore (for example, legacy nodes that were converted to a different node type
+        // when the scene was imported) would just add clutter to the scene. Display nodes of legacy hierarchy nodes
+        // are not added either (they are replaced by folder display nodes, see above).
+        continue;
+      }
       proxyNode = snapshotNode->CreateNodeInstance();
       this->GetMRMLScene()->AddNode(proxyNode);
       proxyNode->Delete();
       proxyNode->Copy(snapshotNode);
+    }
+
+    auto existingSnapshotNodeIt = proxyNodeToSnapshotMap.find(proxyNode);
+    if (existingSnapshotNodeIt != proxyNodeToSnapshotMap.end())
+    {
+      // Multiple snapshot nodes correspond to the same node in the scene. This happens in legacy scene files
+      // that contain stale copies of singleton nodes (for example, several camera nodes with the same active tag).
+      // Keep the snapshot node that has the same ID as the node in the scene.
+      if (proxyNode->GetID() && snapshotNode->GetID() && strcmp(proxyNode->GetID(), snapshotNode->GetID()) == 0)
+      {
+        existingSnapshotNodeIt->second = snapshotNode;
+      }
+      continue;
     }
 
     proxyNodes.push_back(proxyNode);
@@ -251,6 +378,24 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
     }
     dataNode->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
     dataNode->CopyContent(snapshotNode);
+    auto applyDisplayPropertiesOnBranchIt = applyDisplayPropertiesOnBranchByProxyNode.find(proxyNode);
+    if (applyDisplayPropertiesOnBranchIt != applyDisplayPropertiesOnBranchByProxyNode.end())
+    {
+      // The snapshot node is a legacy model hierarchy display node, the data node is a folder display node
+      vtkMRMLFolderDisplayNode* folderDataNode = vtkMRMLFolderDisplayNode::SafeDownCast(dataNode);
+      if (folderDataNode)
+      {
+        bool applyDisplayPropertiesOnBranch = applyDisplayPropertiesOnBranchIt->second;
+        folderDataNode->SetApplyDisplayPropertiesOnBranch(applyDisplayPropertiesOnBranch);
+        if (!applyDisplayPropertiesOnBranch)
+        {
+          // The display node of an expanded legacy model hierarchy node had no effect on the children,
+          // but visibility and opacity of a folder display node are always applied to the branch.
+          folderDataNode->SetVisibility(1);
+          folderDataNode->SetOpacity(1.0);
+        }
+      }
+    }
     dataNode->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
   }
 
@@ -871,6 +1016,10 @@ bool vtkSlicerSceneViewsModuleLogic::RestoreSceneView(int sceneIndex)
     return false;
   }
 
+  // Restore all nodes in a single batch. Many nodes may be updated and modification of some nodes may be
+  // expensive to process one by one (for example, modification of a folder display node triggers update
+  // of all nodes in its branch, in a nested batch), therefore let observers process all the changes at once.
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
   if (sequenceBrowser->GetSelectedItemNumber() != sequenceBrowserIndex)
   {
     sequenceBrowser->SetSelectedItemNumber(sequenceBrowserIndex);
@@ -880,6 +1029,7 @@ bool vtkSlicerSceneViewsModuleLogic::RestoreSceneView(int sceneIndex)
     vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
     sequencesLogic->UpdateProxyNodesFromSequences(sequenceBrowser);
   }
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 
   return true;
 }
@@ -1024,6 +1174,13 @@ const char* vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName()
 const char* vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue()
 {
   return "SceneView";
+}
+
+//-----------------------------------------------------------------------------
+const char* vtkSlicerSceneViewsModuleLogic::GetModelHierarchyNodeIDAttributeName()
+{
+  // Must be the same as vtkSlicerModelsLogic::GetModelHierarchyNodeIDAttributeName()
+  return "ModelHierarchyNodeID";
 }
 
 //-----------------------------------------------------------------------------
