@@ -19,24 +19,29 @@
 ==============================================================================*/
 
 // .NAME vtkTopologicalHierarchy - Assigns hierarchy level values to the elements of a poly data collection
+// or to a list of bounding boxes
 // .SECTION Description
 
 #ifndef __vtkTopologicalHierarchy_h
 #define __vtkTopologicalHierarchy_h
 
 // VTK includes
+#include <vtkDoubleArray.h>
 #include <vtkPolyDataCollection.h>
 
 #include "vtkSegmentationCoreExport.h"
 
 class vtkIntArray;
 
-/// \brief Algorithm class for computing topological hierarchy of multiple poly data models.
+/// \brief Algorithm class for computing topological hierarchy of multiple poly data models or bounding boxes.
 ///   The levels of the models are determined according to the models they contain, an outer
 ///   model always having larger level value than the inner ones. To determine whether a model
 ///   contains another, their bounding boxes are considered. It is possible to constrain a gap
 ///   or allow the inner model to protrude the surface of the outer one. The size of this gap
 ///   or allowance is defined as a factor /sa ContainConstraintFactor of the outer model size.
+///   Only the bounding boxes are used, so the input can be given either as poly data models
+///   (\sa SetInputPolyDataCollection) or directly as bounding boxes (\sa SetInputBounds), for example
+///   computed from the voxels of each segment of a binary labelmap.
 ///   This algorithm can be used to automatically determine optimal opacities in complex scenes.
 class vtkSegmentationCore_EXPORT vtkTopologicalHierarchy : public vtkObject
 {
@@ -48,14 +53,20 @@ public:
   /// Get output topological hierarchy levels
   virtual vtkIntArray* GetOutputLevels();
 
-  /// Compute topological hierarchy levels for input poly data models using
-  /// their bounding boxes.
+  /// Compute topological hierarchy levels for the input bounding boxes (if set) or for the
+  /// input poly data models using their bounding boxes.
   /// This function has to be explicitly called!
   /// Output can be get using GetOutputLevels()
   virtual void Update();
 
-  /// Set input poly data collection
+  /// Set input poly data collection. Ignored if input bounds are set.
   vtkSetObjectMacro(InputPolyDataCollection, vtkPolyDataCollection);
+
+  /// Set input bounding boxes: an array of 6 components (xmin, xmax, ymin, ymax, zmin, zmax), one tuple per item.
+  /// If set, it is used instead of the input poly data collection. An item with empty bounds (min > max)
+  /// neither contains nor is contained by any other item, so it gets level 0.
+  vtkSetObjectMacro(InputBounds, vtkDoubleArray);
+  vtkGetObjectMacro(InputBounds, vtkDoubleArray);
 
   /// Set constraint factor (used when determining if a poly data contains another)
   vtkSetMacro(ContainConstraintFactor, double);
@@ -71,6 +82,10 @@ protected:
   /// /sa ContainConstraintFactor
   bool Contains(vtkPolyData* polyOut, vtkPolyData* polyIn);
 
+  /// Determines if the bounding box boundsOut contains boundsIn considering the constraint factor
+  /// /sa ContainConstraintFactor
+  bool Contains(const double boundsOut[6], const double boundsIn[6]);
+
   /// Determines if there are empty entries in the output level array
   bool OutputContainsEmptyLevels();
 
@@ -78,9 +93,12 @@ protected:
   /// Collection of poly data to determine the hierarchy for
   vtkPolyDataCollection* InputPolyDataCollection;
 
-  /// Array containing the topological hierarchy levels for the input poly data
+  /// Bounding boxes to determine the hierarchy for (used instead of the poly data collection if set)
+  vtkDoubleArray* InputBounds;
+
+  /// Array containing the topological hierarchy levels for the input items
   /// Update function needs to be called to compute the array
-  /// The level values correspond to the poly data with the same index in the input collection
+  /// The level values correspond to the item with the same index in the input bounds or poly data collection
   vtkIntArray* OutputLevels;
 
   /// Constraint factor used when determining if a poly data contains another

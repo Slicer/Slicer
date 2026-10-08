@@ -5,6 +5,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSegmentationTest2.cxx
   vtkSegmentationHistoryTest1.cxx
   vtkSegmentationConverterTest1.cxx
+  vtkTopologicalHierarchyTest1.cxx
   vtkClosedSurfaceToFractionalLabelMapConversionTest1.cxx
   )
 
@@ -16,4 +17,5 @@ simple_test( vtkSegmentationTest1 )
 simple_test( vtkSegmentationTest2 )
 simple_test( vtkSegmentationHistoryTest1 )
 simple_test( vtkSegmentationConverterTest1 )
+simple_test( vtkTopologicalHierarchyTest1 )
 simple_test( vtkClosedSurfaceToFractionalLabelMapConversionTest1 )
