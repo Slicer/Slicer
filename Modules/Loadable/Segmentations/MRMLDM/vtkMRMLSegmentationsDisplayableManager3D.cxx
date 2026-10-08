@@ -166,20 +166,14 @@ public:
     /// Pickable segments shown by the pipeline
     std::map<int, std::string> PickableSegmentIDsByLabel;
   };
-  /// Opacity of translucent segments is snapped to the closest of NumberOfOpacityLevels evenly spaced levels between
-  /// 0 and 1 (for example 0.25, 0.5, and 0.75 for 5 levels; 0 and 1 are not used, because the segment would be hidden
-  /// or opaque), so that the number of pipelines (each with its own distance field on the GPU) is limited to
-  /// NumberOfOpacityLevels - 2 per layer, and changing the opacity of a segment slightly does not move it to another
-  /// pipeline (which would compute the distance field again).
-  static constexpr int NumberOfOpacityLevels = 5;
-  /// Snapped opacity level of a translucent segment (1 .. NumberOfOpacityLevels - 2) and the corresponding opacity
-  static int TranslucentOpacityLevel(double opacity)
-  {
-    return std::clamp(static_cast<int>(std::lround(opacity * (NumberOfOpacityLevels - 1))), 1, NumberOfOpacityLevels - 2);
-  }
-  static double TranslucentOpacity(int level) { return static_cast<double>(level) / (NumberOfOpacityLevels - 1); }
+  /// Opacity of translucent segments is snapped to the closest of a few evenly spaced levels between 0 and 1
+  /// (\sa vtkMRMLSegmentationDisplayNode::SetNumberOfLabelmapSurfaceOpacityLevels; 0 and 1 are not used, because
+  /// the segment would be hidden or opaque), so that the number of pipelines (each with its own distance field on
+  /// the GPU) is limited per layer, and changing the opacity of a segment slightly does not move it to another
+  /// pipeline (which would compute the distance field again). The levels are defined by the display node, so that
+  /// automatic opacity computation can choose opacities that are rendered as distinct levels.
   /// first: shared labelmap of the layer, second: -1 for the opaque segments, otherwise the snapped opacity level of
-  /// the translucent segments (\sa TranslucentOpacityLevel)
+  /// the translucent segments (\sa vtkMRMLSegmentationDisplayNode::GetLabelmapSurfaceTranslucentOpacityLevel)
   typedef std::pair<vtkOrientedImageData*, int> LabelmapPipelineKey;
   typedef std::map<LabelmapPipelineKey, LabelmapPipeline> LabelmapPipelineMapType;
   std::map<vtkMRMLSegmentationDisplayNode*, LabelmapPipelineMapType> LabelmapPipelines;
@@ -940,9 +934,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
         continue;
       }
       bool opaque = (opacity >= 1.0);
-      LabelmapPipelineKey key(labelmap, opaque ? -1 : TranslucentOpacityLevel(opacity));
+      LabelmapPipelineKey key(labelmap, opaque ? -1 : displayNode->GetLabelmapSurfaceTranslucentOpacityLevel(opacity));
       shownSegmentIDsInPipelines[key].push_back(segmentID);
-      pipelineOpacities[key] = opaque ? 1.0 : TranslucentOpacity(key.second);
+      pipelineOpacities[key] = opaque ? 1.0 : displayNode->GetLabelmapSurfaceTranslucentOpacity(key.second);
     }
   }
 

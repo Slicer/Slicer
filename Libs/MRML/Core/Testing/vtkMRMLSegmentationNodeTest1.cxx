@@ -25,8 +25,11 @@
 // Segmentation core includes
 #include <vtkBinaryLabelmapToClosedSurfaceConversionRule.h>
 #include <vtkClosedSurfaceToBinaryLabelmapConversionRule.h>
+#include <vtkOrientedImageData.h>
+#include <vtkOrientedImageDataResample.h>
 #include <vtkSegment.h>
 #include <vtkSegmentation.h>
+#include <vtkSegmentationConverter.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -119,6 +122,129 @@ int TestSegmentDisplayPropertiesInAddedDisplayNode()
 
   return EXIT_SUCCESS;
 }
+
+//----------------------------------------------------------------------------
+// Fill a box of the labelmap (IJK extent, inclusive) with a label value
+void FillBox(vtkOrientedImageData* labelmap, const int extent[6], unsigned char label)
+{
+  for (int k = extent[4]; k <= extent[5]; ++k)
+  {
+    for (int j = extent[2]; j <= extent[3]; ++j)
+    {
+      for (int i = extent[0]; i <= extent[1]; ++i)
+      {
+        *static_cast<unsigned char*>(labelmap->GetScalarPointer(i, j, k)) = label;
+      }
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+int TestCalculateAutoOpacitiesForSegments()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+  scene->AddNode(segmentationNode);
+
+  // Shared labelmap with three nested segments (outer: 1, middle: 2, inner: 3) and a separate segment (4).
+  // The spacing is anisotropic and the image is shifted, to check that bounds are computed in world coordinates.
+  vtkNew<vtkOrientedImageData> labelmap;
+  labelmap->SetExtent(0, 59, 0, 39, 0, 29);
+  labelmap->SetSpacing(0.5, 1.0, 2.0);
+  labelmap->SetOrigin(-10.0, 20.0, 30.0);
+  labelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  vtkOrientedImageDataResample::FillImage(labelmap, 0);
+  const int outerBox[6] = { 2, 40, 2, 36, 1, 28 };
+  const int middleBox[6] = { 6, 30, 6, 30, 4, 24 };
+  const int innerBox[6] = { 10, 20, 10, 20, 8, 16 };
+  const int separateBox[6] = { 45, 58, 0, 10, 0, 5 };
+  FillBox(labelmap, outerBox, 1);
+  FillBox(labelmap, middleBox, 2);
+  FillBox(labelmap, innerBox, 3);
+  FillBox(labelmap, separateBox, 4);
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  const char* binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  segmentation->SetSourceRepresentationName(binaryLabelmapName);
+  const std::string segmentIds[4] = { "outer", "middle", "inner", "separate" };
+  for (int index = 0; index < 4; ++index)
+  {
+    vtkNew<vtkSegment> segment;
+    segment->SetName(segmentIds[index].c_str());
+    segment->SetLabelValue(index + 1);
+    segment->AddRepresentation(binaryLabelmapName, labelmap);
+    segmentation->AddSegment(segment, segmentIds[index]);
+  }
+
+  vtkNew<vtkMRMLSegmentationDisplayNode> displayNode;
+  scene->AddNode(displayNode);
+  segmentationNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  // Binary labelmap shown in 3D views: opacities are computed from the voxels of the segments,
+  // and translucent opacities are the levels that the labelmap surface rendering uses
+  displayNode->SetPreferredDisplayRepresentationName3D(binaryLabelmapName);
+  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
+  CHECK_BOOL(segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()), false);
+  vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+  // Two hierarchy levels (outer and middle contain other segments) are distributed among the translucent levels
+  displayNode->GetSegmentDisplayProperties("outer", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 1e-6);
+  displayNode->GetSegmentDisplayProperties("middle", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(3), 1e-6);
+  displayNode->GetSegmentDisplayProperties("inner", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+  displayNode->GetSegmentDisplayProperties("separate", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+
+  // Closed surface shown in 3D views: opacities are computed from the poly data of the segments
+  displayNode->SetPreferredDisplayRepresentationName3D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
+  CHECK_BOOL(segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()), true);
+  displayNode->GetSegmentDisplayProperties("outer", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0 / 3.0, 1e-6);
+  displayNode->GetSegmentDisplayProperties("middle", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 2.0 / 3.0, 1e-6);
+  displayNode->GetSegmentDisplayProperties("inner", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+  displayNode->GetSegmentDisplayProperties("separate", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+
+  // A segment without voxels takes no part in the hierarchy: it stays opaque and does not change the others
+  displayNode->SetPreferredDisplayRepresentationName3D(binaryLabelmapName);
+  segmentation->AddEmptySegment("empty");
+  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
+  displayNode->GetSegmentDisplayProperties("empty", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+  displayNode->GetSegmentDisplayProperties("outer", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 1e-6);
+
+  // Fewer opacity levels: with a single translucent level (0.5) both containing segments get that opacity
+  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(3);
+  CHECK_INT(displayNode->GetNumberOfLabelmapSurfaceOpacityLevels(), 3);
+  CHECK_INT(displayNode->GetLabelmapSurfaceTranslucentOpacityLevel(0.9), 1);
+  CHECK_DOUBLE_TOLERANCE(displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 0.5, 1e-6);
+  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
+  displayNode->GetSegmentDisplayProperties("outer", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.5, 1e-6);
+  displayNode->GetSegmentDisplayProperties("middle", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.5, 1e-6);
+  displayNode->GetSegmentDisplayProperties("inner", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
+
+  // More opacity levels: the hierarchy levels are rendered as distinct opacities again (0.3 and 0.7 of 11 levels)
+  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(11);
+  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
+  displayNode->GetSegmentDisplayProperties("outer", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.3, 1e-6);
+  displayNode->GetSegmentDisplayProperties("middle", properties);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.7, 1e-6);
+
+  // Invalid values are clamped to the minimum
+  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(1);
+  CHECK_INT(displayNode->GetNumberOfLabelmapSurfaceOpacityLevels(), 3);
+
+  return EXIT_SUCCESS;
+}
 } // namespace
 
 //----------------------------------------------------------------------------
@@ -130,5 +256,6 @@ int vtkMRMLSegmentationNodeTest1(int, char*[])
 
   CHECK_EXIT_SUCCESS(TestSegmentDisplayPropertiesInAllDisplayNodes());
   CHECK_EXIT_SUCCESS(TestSegmentDisplayPropertiesInAddedDisplayNode());
+  CHECK_EXIT_SUCCESS(TestCalculateAutoOpacitiesForSegments());
   return EXIT_SUCCESS;
 }

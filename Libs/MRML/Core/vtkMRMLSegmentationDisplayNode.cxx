@@ -32,11 +32,16 @@
 // SegmentationCore includes
 #include "vtkSegmentation.h"
 #include "vtkOrientedImageData.h"
+#include "vtkOrientedImageDataResample.h"
 #include "vtkTopologicalHierarchy.h"
 #include "vtkSegmentationConverterFactory.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
 #include <vtkLookupTable.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
@@ -45,6 +50,8 @@
 
 // STD includes
 #include <algorithm>
+#include <cmath>
+#include <map>
 #include <random>
 #include <sstream>
 #include <vector>
@@ -89,6 +96,7 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(Visibility2DFill, Visibility2DFill);
   vtkMRMLWriteXMLBooleanMacro(Visibility2DOutline, Visibility2DOutline);
   vtkMRMLWriteXMLFloatMacro(Opacity3D, Opacity3D);
+  vtkMRMLWriteXMLIntMacro(NumberOfLabelmapSurfaceOpacityLevels, NumberOfLabelmapSurfaceOpacityLevels);
   vtkMRMLWriteXMLFloatMacro(Opacity2DFill, Opacity2DFill);
   vtkMRMLWriteXMLFloatMacro(Opacity2DOutline, Opacity2DOutline);
   vtkMRMLWriteXMLBooleanMacro(RemoveUnusedDisplayProperties, RemoveUnusedDisplayProperties);
@@ -130,6 +138,7 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(Visibility2DFill, Visibility2DFill);
   vtkMRMLReadXMLBooleanMacro(Visibility2DOutline, Visibility2DOutline);
   vtkMRMLReadXMLFloatMacro(Opacity3D, Opacity3D);
+  vtkMRMLReadXMLIntMacro(NumberOfLabelmapSurfaceOpacityLevels, NumberOfLabelmapSurfaceOpacityLevels);
   vtkMRMLReadXMLFloatMacro(Opacity2DFill, Opacity2DFill);
   vtkMRMLReadXMLFloatMacro(Opacity2DOutline, Opacity2DOutline);
   vtkMRMLReadXMLBooleanMacro(RemoveUnusedDisplayProperties, RemoveUnusedDisplayProperties);
@@ -225,6 +234,7 @@ void vtkMRMLSegmentationDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   vtkMRMLCopyBooleanMacro(Visibility2DFill);
   vtkMRMLCopyBooleanMacro(Visibility2DOutline);
   vtkMRMLCopyFloatMacro(Opacity3D);
+  vtkMRMLCopyIntMacro(NumberOfLabelmapSurfaceOpacityLevels);
   vtkMRMLCopyFloatMacro(Opacity2DFill);
   vtkMRMLCopyFloatMacro(Opacity2DOutline);
   vtkMRMLCopyBooleanMacro(RemoveUnusedDisplayProperties);
@@ -256,6 +266,7 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(Visibility2DFill);
   vtkMRMLPrintBooleanMacro(Visibility2DOutline);
   vtkMRMLPrintFloatMacro(Opacity3D);
+  vtkMRMLPrintIntMacro(NumberOfLabelmapSurfaceOpacityLevels);
   vtkMRMLPrintFloatMacro(Opacity2DFill);
   vtkMRMLPrintFloatMacro(Opacity2DOutline);
   vtkMRMLPrintBooleanMacro(RemoveUnusedDisplayProperties);
@@ -862,6 +873,32 @@ void vtkMRMLSegmentationDisplayNode::ClearSegmentDisplayProperties()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::SetNumberOfLabelmapSurfaceOpacityLevels(int numberOfLevels)
+{
+  // At least one translucent level is needed besides the unused hidden (0) and opaque (1) levels
+  numberOfLevels = std::max(numberOfLevels, 3);
+  if (numberOfLevels == this->NumberOfLabelmapSurfaceOpacityLevels)
+  {
+    return;
+  }
+  this->NumberOfLabelmapSurfaceOpacityLevels = numberOfLevels;
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationDisplayNode::GetLabelmapSurfaceTranslucentOpacityLevel(double opacity)
+{
+  int numberOfLevels = this->NumberOfLabelmapSurfaceOpacityLevels;
+  return std::clamp(static_cast<int>(std::lround(opacity * (numberOfLevels - 1))), 1, numberOfLevels - 2);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLSegmentationDisplayNode::GetLabelmapSurfaceTranslucentOpacity(int level)
+{
+  return static_cast<double>(level) / (this->NumberOfLabelmapSurfaceOpacityLevels - 1);
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 {
   // Get segmentation node
@@ -872,75 +909,145 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
     return false;
   }
 
-  // Make sure the requested representation exists
+  // Get displayed 3D representation: poly data, or binary labelmap (shown as surfaces computed on the GPU).
+  // Only the bounding box of each segment is needed for the hierarchy, which can be computed from either.
+  // If nothing can be shown in 3D views yet then the preferred representation is created.
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-  if (!this->PreferredDisplayRepresentationName3D || !segmentation->CreateRepresentation(this->PreferredDisplayRepresentationName3D))
+  std::string displayedRepresentationName = this->GetDisplayRepresentationName3D();
+  if (displayedRepresentationName.empty())
   {
-    return false;
+    if (!this->PreferredDisplayRepresentationName3D || !segmentation->CreateRepresentation(this->PreferredDisplayRepresentationName3D))
+    {
+      return false;
+    }
+    displayedRepresentationName = this->GetDisplayRepresentationName3D();
+    if (displayedRepresentationName.empty())
+    {
+      return false;
+    }
   }
-
-  // Get displayed 3D representation. It may be binary labelmap (shown as surfaces computed on the GPU),
-  // which is not poly data: then no segment poly data is collected below and the opacities cannot be computed.
-  std::string displayedPolyDataRepresentationName = this->GetDisplayRepresentationName3D();
+  bool displayedBinaryLabelmap = (displayedRepresentationName == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
   // Make sure the segment display properties are updated
   this->UpdateSegmentList();
 
-  // Assemble segment polydatas into a collection that can be fed to topological hierarchy algorithm
-  vtkSmartPointer<vtkPolyDataCollection> segmentPolyDataCollection = vtkSmartPointer<vtkPolyDataCollection>::New();
-  for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin(); propIt != this->SegmentationDisplayProperties.end(); ++propIt)
+  // Bounding box of each segment (in the coordinate system of the segmentation), in the order of the display properties.
+  // Segments that have no representation get empty bounds and so they do not take part in the hierarchy.
+  vtkNew<vtkDoubleArray> segmentBounds;
+  segmentBounds->SetNumberOfComponents(6);
+  segmentBounds->SetNumberOfTuples(static_cast<vtkIdType>(this->SegmentationDisplayProperties.size()));
+  // Label values and extents of the labels in each shared labelmap, computed by one pass over the voxels per labelmap
+  struct LabelExtents
   {
-    // Get segment
-    vtkSegment* currentSegment = segmentation->GetSegment(propIt->first);
+    vtkSmartPointer<vtkIntArray> LabelValues = vtkSmartPointer<vtkIntArray>::New();
+    vtkSmartPointer<vtkIntArray> Extents = vtkSmartPointer<vtkIntArray>::New();
+  };
+  std::map<vtkOrientedImageData*, LabelExtents> labelExtentsPerLabelmap;
+  vtkIdType segmentIndex = 0;
+  for (const auto& segmentProperties : this->SegmentationDisplayProperties)
+  {
+    double bounds[6] = { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 }; // empty
+    vtkSegment* currentSegment = segmentation->GetSegment(segmentProperties.first);
     if (!currentSegment)
     {
       vtkErrorMacro("CalculateAutoOpacitiesForSegments: Mismatch in display properties and segments!");
-      continue;
     }
-
-    // Get poly data from segment
-    vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(currentSegment->GetRepresentation(displayedPolyDataRepresentationName.c_str()));
-    if (!currentPolyData)
+    else if (displayedBinaryLabelmap)
     {
-      continue;
+      vtkOrientedImageData* labelmap = vtkOrientedImageData::SafeDownCast(currentSegment->GetRepresentation(displayedRepresentationName));
+      if (labelmap)
+      {
+        auto labelExtentsIt = labelExtentsPerLabelmap.find(labelmap);
+        if (labelExtentsIt == labelExtentsPerLabelmap.end())
+        {
+          labelExtentsIt = labelExtentsPerLabelmap.emplace(labelmap, LabelExtents()).first;
+          vtkOrientedImageDataResample::CalculateEffectiveExtentPerLabel(labelmap, labelExtentsIt->second.LabelValues, labelExtentsIt->second.Extents);
+        }
+        vtkIdType labelIndex = labelExtentsIt->second.LabelValues->LookupValue(currentSegment->GetLabelValue());
+        if (labelIndex >= 0)
+        {
+          // Bounds of the voxels of the segment (voxel centers extended by half voxel) in the coordinate system of the segmentation
+          int extent[6] = { 0, -1, 0, -1, 0, -1 };
+          labelExtentsIt->second.Extents->GetTypedTuple(labelIndex, extent);
+          vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+          labelmap->GetImageToWorldMatrix(imageToWorldMatrix);
+          vtkBoundingBox boundingBox;
+          for (int corner = 0; corner < 8; ++corner)
+          {
+            double ijk[4] = { 0.0, 0.0, 0.0, 1.0 };
+            for (int axis = 0; axis < 3; ++axis)
+            {
+              bool maximum = (corner & (1 << axis)) != 0;
+              ijk[axis] = extent[axis * 2 + (maximum ? 1 : 0)] + (maximum ? 0.5 : -0.5);
+            }
+            double world[4] = { 0.0, 0.0, 0.0, 1.0 };
+            imageToWorldMatrix->MultiplyPoint(ijk, world);
+            boundingBox.AddPoint(world);
+          }
+          boundingBox.GetBounds(bounds);
+        }
+      }
     }
-
-    segmentPolyDataCollection->AddItem(currentPolyData);
+    else
+    {
+      vtkPolyData* polyData = vtkPolyData::SafeDownCast(currentSegment->GetRepresentation(displayedRepresentationName));
+      if (polyData && polyData->GetNumberOfPoints() > 0)
+      {
+        polyData->GetBounds(bounds);
+      }
+    }
+    segmentBounds->SetTuple(segmentIndex, bounds);
+    ++segmentIndex;
   }
 
   // Set opacities according to topological hierarchy levels
-  vtkSmartPointer<vtkTopologicalHierarchy> topologicalHierarchy = vtkSmartPointer<vtkTopologicalHierarchy>::New();
-  topologicalHierarchy->SetInputPolyDataCollection(segmentPolyDataCollection);
+  vtkNew<vtkTopologicalHierarchy> topologicalHierarchy;
+  topologicalHierarchy->SetInputBounds(segmentBounds);
   topologicalHierarchy->Update();
   vtkIntArray* levels = topologicalHierarchy->GetOutputLevels();
-
-  // Determine number of levels
-  int numberOfLevels = 0;
-  for (int i = 0; i < levels->GetNumberOfTuples(); ++i)
+  if (!levels || levels->GetNumberOfTuples() != segmentBounds->GetNumberOfTuples())
   {
-    if (levels->GetValue(i) > numberOfLevels)
-    {
-      numberOfLevels = levels->GetValue(i);
-    }
-  }
-  // Sanity check
-  if (static_cast<vtkIdType>(this->SegmentationDisplayProperties.size()) != levels->GetNumberOfTuples())
-  {
-    vtkErrorMacro("CalculateAutoOpacitiesForSegments: Number of poly data colors does not match number of segment display properties!");
+    vtkErrorMacro("CalculateAutoOpacitiesForSegments: Number of hierarchy levels does not match number of segment display properties!");
     return false;
   }
 
-  // Set opacities into lookup table
-  int idx = 0;
-  SegmentDisplayPropertiesMap::iterator propIt;
-  for (idx = 0, propIt = this->SegmentationDisplayProperties.begin(); idx < levels->GetNumberOfTuples(); ++idx, ++propIt)
+  // Determine number of levels
+  int numberOfLevels = 0;
+  for (vtkIdType i = 0; i < levels->GetNumberOfTuples(); ++i)
   {
-    int level = levels->GetValue(idx);
+    numberOfLevels = std::max(numberOfLevels, levels->GetValue(i));
+  }
+
+  // Translucent segments of a binary labelmap are rendered with a few distinct opacities only
+  // (\sa NumberOfLabelmapSurfaceOpacityLevels), so the hierarchy levels are distributed among those opacities.
+  int numberOfOpacityLevels = numberOfLevels;
+  if (displayedBinaryLabelmap)
+  {
+    numberOfOpacityLevels = std::min(numberOfLevels, this->NumberOfLabelmapSurfaceOpacityLevels - 2);
+  }
+
+  // Set opacities into the segment display properties
+  segmentIndex = 0;
+  for (auto& segmentProperties : this->SegmentationDisplayProperties)
+  {
+    int level = levels->GetValue(segmentIndex);
+    ++segmentIndex;
+    int opacityLevel = level;
+    if (numberOfOpacityLevels < numberOfLevels)
+    {
+      // Fewer opacities than hierarchy levels: outer segments share opacities
+      opacityLevel = static_cast<int>(std::ceil(static_cast<double>(level) * numberOfOpacityLevels / numberOfLevels));
+    }
 
     // The opacity level is set evenly distributed between 0 and 1 (excluding 0)
-    // according to the topological hierarchy level of the segment
-    double opacity = 1.0 - ((double)level) / (numberOfLevels + 1);
-    propIt->second.Opacity3D = opacity;
+    // according to the topological hierarchy level of the segment (innermost segments are opaque)
+    double opacity = 1.0 - static_cast<double>(opacityLevel) / (numberOfOpacityLevels + 1);
+    if (displayedBinaryLabelmap && opacity < 1.0)
+    {
+      // Store the opacity that is actually rendered
+      opacity = this->GetLabelmapSurfaceTranslucentOpacity(this->GetLabelmapSurfaceTranslucentOpacityLevel(opacity));
+    }
+    segmentProperties.second.Opacity3D = opacity;
   }
 
   this->Modified();
