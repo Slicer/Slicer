@@ -108,6 +108,7 @@ set(KIT_SRCS
   vtkMRMLThreeDViewInteractorStyle.cxx
 
   vtkMRMLAccuratePicker.cxx
+  vtkMRMLRayCastMapper.cxx
 
   # Widgets
   vtkMRMLAbstractWidget.cxx

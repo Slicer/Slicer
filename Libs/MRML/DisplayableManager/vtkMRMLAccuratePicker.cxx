@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 #include "vtkMRMLAccuratePicker.h"
+#include "vtkMRMLRayCastMapper.h"
 
 // VTK includes
 #include <vtkAbstractCellLocator.h>
@@ -127,6 +128,36 @@ int vtkMRMLAccuratePicker::Pick(double selectionX, double selectionY, double sel
 {
   this->UpdateLocators(renderer);
   return this->Superclass::Pick(selectionX, selectionY, selectionZ, renderer);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLAccuratePicker::IntersectActorWithLine(const double p1[3], const double p2[3], double t1, double t2, double tol, vtkProp3D* prop, vtkMapper* m)
+{
+  vtkMapper* mapper = m;
+  vtkMRMLRayCastMapper* rayCastMapper = vtkMRMLRayCastMapper::SafeDownCast(mapper);
+  if (!rayCastMapper)
+  {
+    return this->Superclass::IntersectActorWithLine(p1, p2, t1, t2, tol, prop, mapper);
+  }
+  double t = 0.0;
+  double position[3] = { 0.0, 0.0, 0.0 };
+  double normal[3] = { 0.0, 0.0, 1.0 };
+  if (!rayCastMapper->IntersectWithRay(p1, p2, t1, t2, t, position, normal) || t < t1 || t > t2)
+  {
+    return VTK_DOUBLE_MAX;
+  }
+  if (t < this->GlobalTMin)
+  {
+    // Same outputs as for cells, except there is no cell
+    this->Mapper = mapper;
+    this->DataSet = nullptr;
+    this->CellId = -1;
+    this->SubId = -1;
+    this->PointId = -1;
+    std::copy_n(position, 3, this->MapperPosition);
+    std::copy_n(normal, 3, this->MapperNormal);
+  }
+  return t;
 }
 
 //----------------------------------------------------------------------------
