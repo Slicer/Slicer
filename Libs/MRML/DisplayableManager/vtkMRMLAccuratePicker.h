@@ -84,6 +84,11 @@ protected:
   /// when the surface changes) and drop locators for surfaces no longer shown.
   void UpdateLocators(vtkRenderer* renderer);
 
+  /// Intersect the pick ray with an actor. If the mapper is a vtkMRMLRayCastMapper (it renders a surface without
+  /// geometry that could be intersected) then the mapper computes the intersection, otherwise the cells of the
+  /// mapper are intersected as in vtkCellPicker.
+  double IntersectActorWithLine(const double p1[3], const double p2[3], double t1, double t2, double tol, vtkProp3D* prop, vtkMapper* mapper) override;
+
   /// Pick the cell that the ray hits.
   ///
   /// vtkCellPicker picks cells within the pick tolerance of the ray, at the

@@ -28,6 +28,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAccuratePicker.h"
+#include "vtkMRMLRayCastMapper.h"
 
 // VTK includes
 #include <vtkActor.h>
@@ -37,6 +38,7 @@
 #include <vtkGenericCell.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPlaneSource.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
@@ -58,6 +60,145 @@
 
 namespace
 {
+
+//----------------------------------------------------------------------------
+// A mapper without pickable geometry: the ray is intersected with a plane at a chosen z (in model coordinates)
+// instead of the cells of the input. The input is only used for the bounds of the prop.
+class TestRayCastMapper : public vtkMRMLRayCastMapper
+{
+public:
+  static TestRayCastMapper* New();
+  vtkTypeMacro(TestRayCastMapper, vtkMRMLRayCastMapper);
+
+  void Render(vtkRenderer*, vtkActor*) override {}
+
+  bool IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, double& t, double position[3], double normal[3]) override
+  {
+    this->NumberOfCalls++;
+    if (!this->Intersects || p1[2] == p2[2])
+    {
+      return false;
+    }
+    t = (this->PlaneZ - p1[2]) / (p2[2] - p1[2]);
+    if (t < t1 || t > t2)
+    {
+      return false;
+    }
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      position[axis] = p1[axis] + t * (p2[axis] - p1[axis]);
+    }
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    return true;
+  }
+
+  bool Intersects{ true };
+  double PlaneZ{ 0.0 };
+  int NumberOfCalls{ 0 };
+
+protected:
+  TestRayCastMapper() = default;
+};
+vtkStandardNewMacro(TestRayCastMapper);
+
+//----------------------------------------------------------------------------
+int TestPickRayCastMapper()
+{
+  // A ray cast mapper (bounds of a sphere of radius 10 at the origin) in front of a mesh plane at z = -20,
+  // looked at from +z and picked at the center of the view
+  vtkNew<vtkSphereSource> sphere;
+  sphere->SetRadius(10.0);
+  sphere->Update();
+  vtkNew<TestRayCastMapper> rayCastMapper;
+  rayCastMapper->SetInputDataObject(sphere->GetOutput());
+  rayCastMapper->PlaneZ = 5.0; // inside the bounds, where the cells of the sphere would not be hit
+  vtkNew<vtkActor> rayCastActor;
+  rayCastActor->SetMapper(rayCastMapper);
+
+  vtkNew<vtkPlaneSource> plane;
+  plane->SetOrigin(-50.0, -50.0, -20.0);
+  plane->SetPoint1(50.0, -50.0, -20.0);
+  plane->SetPoint2(-50.0, 50.0, -20.0);
+  plane->Update();
+  vtkNew<vtkPolyDataMapper> planeMapper;
+  planeMapper->SetInputData(plane->GetOutput());
+  vtkNew<vtkActor> planeActor;
+  planeActor->SetMapper(planeMapper);
+
+  vtkNew<vtkRenderer> renderer;
+  renderer->AddActor(rayCastActor);
+  renderer->AddActor(planeActor);
+  vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetOffScreenRendering(1);
+  renderWindow->SetSize(200, 200);
+  renderWindow->AddRenderer(renderer);
+  vtkCamera* camera = renderer->GetActiveCamera();
+  camera->SetPosition(0.0, 0.0, 100.0);
+  camera->SetFocalPoint(0.0, 0.0, 0.0);
+  camera->SetViewUp(0.0, 1.0, 0.0);
+  renderer->ResetCameraClippingRange();
+
+  vtkNew<vtkMRMLAccuratePicker> picker;
+  picker->SetTolerance(0.005);
+
+  // The ray cast mapper is asked for the intersection and it is picked, in front of the plane
+  if (!picker->Pick(100, 100, 0, renderer))
+  {
+    std::cerr << "Failed: nothing was picked" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (rayCastMapper->NumberOfCalls == 0)
+  {
+    std::cerr << "Failed: the ray cast mapper was not asked to intersect the ray" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (picker->GetMapper() != rayCastMapper.GetPointer() || picker->GetActor() != rayCastActor.GetPointer())
+  {
+    std::cerr << "Failed: the ray cast mapper was not picked" << std::endl;
+    return EXIT_FAILURE;
+  }
+  double* mapperPosition = picker->GetMapperPosition();
+  double* pickPosition = picker->GetPickPosition();
+  double* pickNormal = picker->GetPickNormal();
+  if (std::fabs(mapperPosition[2] - rayCastMapper->PlaneZ) > 1e-6 || std::fabs(pickPosition[2] - rayCastMapper->PlaneZ) > 1e-6)
+  {
+    std::cerr << "Failed: picked position z = " << pickPosition[2] << ", expected " << rayCastMapper->PlaneZ << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (std::fabs(pickNormal[2] - 1.0) > 1e-6)
+  {
+    std::cerr << "Failed: pick normal is not the normal reported by the mapper" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (picker->GetCellId() != -1 || picker->GetDataSet() != nullptr)
+  {
+    std::cerr << "Failed: a cell was reported for a surface without cells" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // If the ray cast mapper reports no intersection then the plane behind it is picked
+  rayCastMapper->Intersects = false;
+  if (!picker->Pick(100, 100, 0, renderer))
+  {
+    std::cerr << "Failed: the plane behind the ray cast mapper was not picked" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (picker->GetActor() != planeActor.GetPointer() || picker->GetCellId() < 0)
+  {
+    std::cerr << "Failed: the plane was not picked by its cells" << std::endl;
+    return EXIT_FAILURE;
+  }
+  pickPosition = picker->GetPickPosition();
+  if (std::fabs(pickPosition[2] + 20.0) > 1e-3)
+  {
+    std::cerr << "Failed: picked position z = " << pickPosition[2] << ", expected -20" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
 
 //----------------------------------------------------------------------------
 int TestPickIsFast()
@@ -378,6 +519,10 @@ int vtkMRMLAccuratePickerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     return EXIT_FAILURE;
   }
   if (TestPickLinesAndVerticesInFrontOfSurface(false) != EXIT_SUCCESS)
+  {
+    return EXIT_FAILURE;
+  }
+  if (TestPickRayCastMapper() != EXIT_SUCCESS)
   {
     return EXIT_FAILURE;
   }
