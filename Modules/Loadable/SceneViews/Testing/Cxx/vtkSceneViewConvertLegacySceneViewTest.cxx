@@ -141,6 +141,9 @@ int testConvertLegacySceneView(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLog
   scene->Clear(1);
   populateScene(scene);
   addLegacySceneView(scene, "LegacySceneView1");
+  // Scene views that old versions created automatically on save are discarded
+  vtkMRMLSceneViewNode* automaticSceneView = addLegacySceneView(scene, "Slicer Data Bundle Scene View");
+  automaticSceneView->SetSceneViewDescription("Scene at MRML file save point");
   modifyScene(scene);
   addLegacySceneView(scene, "LegacySceneView2");
 

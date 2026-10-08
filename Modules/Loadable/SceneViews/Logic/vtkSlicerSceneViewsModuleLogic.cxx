@@ -130,13 +130,9 @@ void vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodesToSequenceBrowserNodes
     return;
   }
 
-  vtkMRMLSequenceBrowserNode* sequenceBrowser = this->AddNewSceneViewSequenceBrowserNode();
-
-  // We need to suppress (not just delay) sequence browser modified event to prevent restoring a scene view,
-  // this is why we do not use start/end modify.
-  bool wasDisableModified = sequenceBrowser->GetDisableModifiedEvent();
-  sequenceBrowser->DisableModifiedEventOn();
-
+  // Old versions of the application created a scene view automatically each time the scene was saved
+  // as a data bundle. These scene views are of no use, they are discarded.
+  std::vector<vtkMRMLSceneViewNode*> sceneViewsToConvert;
   for (vtkMRMLNode* node : nodes)
   {
     vtkMRMLSceneViewNode* sceneView = vtkMRMLSceneViewNode::SafeDownCast(node);
@@ -144,10 +140,54 @@ void vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodesToSequenceBrowserNodes
     {
       continue;
     }
+    if (vtkSlicerSceneViewsModuleLogic::IsAutomaticallyCreatedLegacySceneView(sceneView))
+    {
+      scene->RemoveNode(sceneView);
+      continue;
+    }
+    sceneViewsToConvert.push_back(sceneView);
+  }
+  if (sceneViewsToConvert.empty())
+  {
+    return;
+  }
+
+  // Convert all scene views in a single batch, so that observers (views, node lists, etc.) update once at the end
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+
+  vtkMRMLSequenceBrowserNode* sequenceBrowser = this->AddNewSceneViewSequenceBrowserNode();
+
+  // We need to suppress (not just delay) sequence browser modified event to prevent restoring a scene view,
+  // this is why we do not use start/end modify.
+  bool wasDisableModified = sequenceBrowser->GetDisableModifiedEvent();
+  sequenceBrowser->DisableModifiedEventOn();
+
+  for (vtkMRMLSceneViewNode* sceneView : sceneViewsToConvert)
+  {
     this->ConvertSceneViewNodeToSequenceBrowserNode(sceneView, sequenceBrowser);
   }
 
   sequenceBrowser->SetDisableModifiedEvent(wasDisableModified);
+
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSceneViewsModuleLogic::IsAutomaticallyCreatedLegacySceneView(vtkMRMLSceneViewNode* sceneViewNode)
+{
+  if (!sceneViewNode)
+  {
+    return false;
+  }
+  // Scene views created on save by old versions of the application were named "Slicer Data Bundle Scene View"
+  // (with a numeric suffix if the name was not unique) and described as "Scene at MRML file save point".
+  std::string description = sceneViewNode->GetSceneViewDescription();
+  if (description == "Scene at MRML file save point")
+  {
+    return true;
+  }
+  std::string name = (sceneViewNode->GetName() ? sceneViewNode->GetName() : "");
+  return name.rfind("Slicer Data Bundle Scene View", 0) == 0;
 }
 
 //-----------------------------------------------------------------------------

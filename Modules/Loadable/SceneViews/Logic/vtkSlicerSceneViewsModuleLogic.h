@@ -221,6 +221,10 @@ public:
   /// Convert the specified vtkMRMLSceneViewNode to a scene view stored in the sequence browser node.
   vtkMRMLSequenceBrowserNode* ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneView, vtkMRMLSequenceBrowserNode* sequenceBrowserNode);
 
+  /// Returns true if the legacy scene view node was created automatically by an old version of the application
+  /// when the scene was saved ("Slicer Data Bundle Scene View"). These scene views are discarded when the scene is imported.
+  static bool IsAutomaticallyCreatedLegacySceneView(vtkMRMLSceneViewNode* sceneViewNode);
+
 protected:
   vtkSlicerSceneViewsModuleLogic();
 
