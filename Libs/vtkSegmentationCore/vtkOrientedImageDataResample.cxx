@@ -31,6 +31,7 @@
 #include <vtkImageConstantPad.h>
 #include <vtkImageMask.h>
 #include <vtkImageReslice.h>
+#include <vtkIntArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -44,6 +45,8 @@
 
 // STD includes
 #include <algorithm>
+#include <array>
+#include <map>
 #include <vector>
 
 vtkStandardNewMacro(vtkOrientedImageDataResample);
@@ -677,6 +680,90 @@ void CalculateEffectiveExtentGeneric(vtkOrientedImageData* image, int effectiveE
       }
     }
   }
+}
+
+//----------------------------------------------------------------------------
+template <typename T>
+void CalculateEffectiveExtentPerLabelGeneric(vtkImageData* image, std::map<int, std::array<int, 6>>& labelExtents)
+{
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
+  image->GetExtent(extent);
+  T* voxel = static_cast<T*>(image->GetScalarPointer());
+  if (!voxel)
+  {
+    // no image data is allocated
+    return;
+  }
+  // Neighboring voxels usually have the same label, so the extent of the last label is reused
+  // instead of looking it up in the map for each voxel
+  T lastLabel = 0;
+  std::array<int, 6>* lastExtent = nullptr;
+  for (int k = extent[4]; k <= extent[5]; ++k)
+  {
+    for (int j = extent[2]; j <= extent[3]; ++j)
+    {
+      for (int i = extent[0]; i <= extent[1]; ++i, ++voxel)
+      {
+        if (*voxel <= 0)
+        {
+          continue;
+        }
+        if (!lastExtent || *voxel != lastLabel)
+        {
+          lastLabel = *voxel;
+          auto inserted = labelExtents.insert(std::make_pair(static_cast<int>(lastLabel), std::array<int, 6>{ i, i, j, j, k, k }));
+          lastExtent = &inserted.first->second;
+        }
+        std::array<int, 6>& labelExtent = *lastExtent;
+        labelExtent[0] = std::min(labelExtent[0], i);
+        labelExtent[1] = std::max(labelExtent[1], i);
+        labelExtent[2] = std::min(labelExtent[2], j);
+        labelExtent[3] = std::max(labelExtent[3], j);
+        // Voxels are visited in increasing k order, so the first voxel of a label set the minimum
+        labelExtent[5] = k;
+      }
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+bool vtkOrientedImageDataResample::CalculateEffectiveExtentPerLabel(vtkImageData* image, vtkIntArray* labelValues, vtkIntArray* labelExtents)
+{
+  if (!labelValues || !labelExtents)
+  {
+    vtkGenericWarningMacro("vtkOrientedImageDataResample::CalculateEffectiveExtentPerLabel: output arrays must be specified");
+    return false;
+  }
+  labelValues->Initialize();
+  labelValues->SetNumberOfComponents(1);
+  labelExtents->Initialize();
+  labelExtents->SetNumberOfComponents(6);
+  if (!image)
+  {
+    return false;
+  }
+  if (image->GetNumberOfScalarComponents() != 1)
+  {
+    vtkGenericWarningMacro("vtkOrientedImageDataResample::CalculateEffectiveExtentPerLabel: labelmap must have a single scalar component");
+    return false;
+  }
+  std::map<int, std::array<int, 6>> extentsByLabel;
+  switch (image->GetScalarType())
+  {
+    vtkTemplateMacro(CalculateEffectiveExtentPerLabelGeneric<VTK_TT>(image, extentsByLabel));
+    default: vtkGenericWarningMacro("vtkOrientedImageDataResample::CalculateEffectiveExtentPerLabel: Unknown ScalarType"); return false;
+  }
+  // std::map iterates in increasing label order
+  labelValues->SetNumberOfTuples(static_cast<vtkIdType>(extentsByLabel.size()));
+  labelExtents->SetNumberOfTuples(static_cast<vtkIdType>(extentsByLabel.size()));
+  vtkIdType index = 0;
+  for (const auto& labelExtent : extentsByLabel)
+  {
+    labelValues->SetValue(index, labelExtent.first);
+    labelExtents->SetTypedTuple(index, labelExtent.second.data());
+    ++index;
+  }
+  return true;
 }
 
 //----------------------------------------------------------------------------

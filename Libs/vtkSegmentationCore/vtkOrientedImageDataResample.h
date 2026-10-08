@@ -32,6 +32,7 @@
 #include <cmath> // for fabs
 
 class vtkImageData;
+class vtkIntArray;
 class vtkMatrix4x4;
 class vtkOrientedImageData;
 class vtkTransform;
@@ -131,6 +132,17 @@ public:
 public:
   /// Calculate effective extent of an image: the IJK extent where non-zero voxels are located
   static bool CalculateEffectiveExtent(vtkOrientedImageData* image, int effectiveExtent[6], double threshold = 0.0);
+
+  /// Calculate the effective extent of each label in a labelmap: the IJK extent where voxels with that label value are
+  /// located, for each positive label value found in the image, in a single pass over the voxels.
+  /// Use it instead of \sa CalculateEffectiveExtent for shared labelmaps, where each segment is one label value.
+  /// \param image Single-component labelmap, with any integer or floating-point scalar type (values are truncated to int)
+  /// \param labelValues Output: the label values found in the image (one component, in increasing order);
+  ///   labels that have no voxel are not included. Use vtkIntArray::LookupValue to find the index of a label.
+  /// \param labelExtents Output: extent of each label (six components: imin, imax, jmin, jmax, kmin, kmax),
+  ///   the tuple at each index belongs to the label value at the same index in labelValues
+  /// \return False if the image is invalid or its scalar type is not supported (the outputs are then empty)
+  static bool CalculateEffectiveExtentPerLabel(vtkImageData* image, vtkIntArray* labelValues, vtkIntArray* labelExtents);
 
   /// Set extent to [0,-1,0,-1,0,-1]
   static void InvalidateExtent(int extent[6]);
