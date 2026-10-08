@@ -297,6 +297,12 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
     {
       proxyNode = this->GetMRMLScene()->GetSingletonNode(singletonTag, snapshotNode->GetClassName());
     }
+    else if (snapshotNode->IsA("vtkMRMLLayoutNode"))
+    {
+      // Legacy scene files store the layout node without singleton tag. The scene has a single layout node
+      // (legacy layout nodes are merged into it by vtkMRMLLayoutLogic when the scene is imported).
+      proxyNode = this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode");
+    }
     if (!proxyNode && snapshotNode->GetID())
     {
       proxyNode = this->GetMRMLScene()->GetNodeByID(snapshotNode->GetID());
