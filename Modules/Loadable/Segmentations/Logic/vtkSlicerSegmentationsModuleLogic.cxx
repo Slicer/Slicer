@@ -305,23 +305,30 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
     return nullptr;
   }
 
-  // Show closed surface poly data if it exist. By default the preferred representation is shown,
-  // but we do not have a display node for the segmentation here. In its absence the source representation
-  // is shown if it's poly data, but closed surface model is specifically for 3D visualization)
-  if (segmentationNode->GetSegmentation()->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+  // If not loading segmentation from a scene (where display information is available),
+  // then calculate and set auto-opacity for the representation shown in 3D views for better visualization.
+  // Only when the shown representation is already in the file (closed surface, or binary labelmap if that is
+  // shown in 3D views), so that loading does not trigger a conversion.
+  if (autoOpacities)
   {
-    if (!segmentationNode->GetDisplayNode())
+    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+    bool containsClosedSurface = segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+    bool containsBinaryLabelmap = segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+    if (containsClosedSurface || containsBinaryLabelmap)
     {
-      segmentationNode->CreateDefaultDisplayNodes();
-    }
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
-    if (displayNode)
-    {
-      // If not loading segmentation from a scene (where display information is available),
-      // then calculate and set auto-opacity for the displayed poly data for better visualization
-      if (autoOpacities)
+      if (!segmentationNode->GetDisplayNode())
       {
-        displayNode->CalculateAutoOpacitiesForSegments();
+        segmentationNode->CreateDefaultDisplayNodes();
+      }
+      vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+      if (displayNode)
+      {
+        std::string displayedRepresentationName3D = displayNode->GetDisplayRepresentationName3D();
+        bool displayedRepresentationAvailable = (!displayedRepresentationName3D.empty() && segmentation->ContainsRepresentation(displayedRepresentationName3D));
+        if (displayedRepresentationAvailable)
+        {
+          displayNode->CalculateAutoOpacitiesForSegments();
+        }
       }
     }
   }

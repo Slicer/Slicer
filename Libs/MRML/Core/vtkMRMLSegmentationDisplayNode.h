@@ -177,9 +177,28 @@ public:
   //@}
 
   /// Determine and set automatic opacities for segments using topological hierarchies.
+  /// Segments that contain other segments (by bounding box) are made more transparent, so that
+  /// the inner segments are visible. The bounding boxes are taken from the representation
+  /// shown in 3D views: poly data, or binary labelmap (the voxels of each segment).
   /// Stores value in opacity component of \sa SegmentDisplayProperties.
   /// \return Success flag
   bool CalculateAutoOpacitiesForSegments();
+
+  //@{
+  /// Binary labelmap representation is shown in 3D views as surfaces computed on the GPU, where translucent segments
+  /// of a layer that have the same opacity share one rendering pipeline (one distance field on the GPU).
+  /// To limit the number of pipelines and to keep a segment in the same pipeline when its opacity is adjusted
+  /// slightly, the opacity of translucent segments is snapped to the closest of NumberOfLabelmapSurfaceOpacityLevels
+  /// evenly spaced levels between 0 and 1 (for example 0.25, 0.5, and 0.75 for 5 levels; 0 and 1 are not used,
+  /// because the segment would be hidden or opaque). More levels show the segment opacities more faithfully,
+  /// fewer levels use less GPU memory. Minimum is 3 (one translucent level), default is 5.
+  /// GetLabelmapSurfaceTranslucentOpacityLevel returns the snapped level (1 .. number of levels - 2) of a translucent
+  /// opacity, GetLabelmapSurfaceTranslucentOpacity returns the opacity of a level.
+  vtkGetMacro(NumberOfLabelmapSurfaceOpacityLevels, int);
+  void SetNumberOfLabelmapSurfaceOpacityLevels(int numberOfLevels);
+  int GetLabelmapSurfaceTranslucentOpacityLevel(double opacity);
+  double GetLabelmapSurfaceTranslucentOpacity(int level);
+  //@}
 
   /// Generate new color for an added segment. Uses \sa NumberOfGeneratedColors to get the color
   /// for the new segment from default label color table
@@ -388,6 +407,9 @@ protected:
 
   /// 3D opacity for the whole segmentation
   double Opacity3D{ 1.0 };
+  /// Number of opacity levels that translucent segments of a binary labelmap shown in 3D views are snapped to
+  /// \sa SetNumberOfLabelmapSurfaceOpacityLevels
+  int NumberOfLabelmapSurfaceOpacityLevels{ 5 };
   /// 2D fill opacity for the whole segmentation
   double Opacity2DFill{ 0.5 };
   /// 2D outline opacity for the whole segmentation

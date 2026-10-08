@@ -1223,7 +1223,8 @@ def loadSegmentation(filename, properties={}, returnNode=False):
 
         - name: this name will be used as node name for the loaded volume
         - autoOpacities: automatically make large segments semi-transparent to make segments inside more visible
-          (only used when loading segmentation from image file)
+          (only used when loading segmentation from image file, and only if the representation shown in 3D views,
+          closed surface or binary labelmap, is in the file)
         - colorNodeID: use a color node (that already in the scene) to display the image
           (only used when loading segmentation from image file)
     :param returnNode: Deprecated.
