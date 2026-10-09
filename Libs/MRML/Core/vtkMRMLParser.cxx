@@ -134,7 +134,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass(className.c_str());
   if (!node)
   {
-    vtkErrorMacro("Failed to CreateNodeByClass: " << className);
+    // The node type is not available in this version of the application (for example, the node type was removed,
+    // or it is provided by an extension that is not installed). It is not an error: the node is ignored,
+    // the rest of the scene can still be loaded.
+    vtkWarningMacro("Node type '" << tagName << "' (" << className << ") is not supported in this application, the node is ignored.");
     return;
   }
 
