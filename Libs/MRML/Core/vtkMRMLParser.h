@@ -44,10 +44,16 @@ protected:
   void StartElement(const char* name, const char** atts) override;
   void EndElement(const char* name) override;
 
+  /// Report progress of parsing to the scene (ProgressImportEvent) when the scene is being imported.
+  void ReportParsingProgress();
+
 private:
   vtkMRMLScene* MRMLScene{ nullptr };
   vtkCollection* NodeCollection{ nullptr };
   std::stack<vtkMRMLNode*> NodeStack;
+  /// Size of the parsed file or string in bytes (-1 if not computed yet)
+  long long TotalInputSize{ -1 };
+  int LastReportedProgress{ -1 };
 };
 
 #endif

@@ -26,6 +26,9 @@ Version:   $Revision: 1.8 $
 #include <vtkCollection.h>
 #include <vtkObjectFactory.h>
 
+// VTKsys includes
+#include <vtksys/SystemTools.hxx>
+
 // STD includes
 #include <sstream>
 
@@ -35,6 +38,7 @@ vtkStandardNewMacro(vtkMRMLParser);
 //------------------------------------------------------------------------------
 void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 {
+  this->ReportParsingProgress();
   if (!strcmp(tagName, "MRML"))
   {
     //--- BEGIN test of user tags
@@ -221,7 +225,40 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 }
 
 //-----------------------------------------------------------------------------
+void vtkMRMLParser::ReportParsingProgress()
+{
+  if (!this->MRMLScene || !this->MRMLScene->IsImporting())
+  {
+    return;
+  }
+  if (this->TotalInputSize < 0)
+  {
+    this->TotalInputSize = 0;
+    if (this->FileName && strlen(this->FileName) > 0)
+    {
+      this->TotalInputSize = static_cast<long long>(vtksys::SystemTools::FileLength(this->FileName));
+    }
+    else if (this->InputString)
+    {
+      // Input string length is -1 if the string is null-terminated
+      this->TotalInputSize = (this->InputStringLength >= 0 ? this->InputStringLength : static_cast<long long>(strlen(this->InputString)));
+    }
+  }
+  if (this->TotalInputSize <= 0)
+  {
+    return;
+  }
+  long long position = this->GetXMLByteIndex();
+  int progress = static_cast<int>(vtkMRMLScene::ImportProgressParsingComplete * position / this->TotalInputSize);
+  if (progress < 0 || progress > vtkMRMLScene::ImportProgressParsingComplete || progress == this->LastReportedProgress)
+  {
+    return;
+  }
+  this->LastReportedProgress = progress;
+  this->MRMLScene->ProgressState(vtkMRMLScene::ImportState, progress);
+}
 
+//----------------------------------------------------------------------------
 void vtkMRMLParser::EndElement(const char* name)
 {
   if (!strcmp(name, "MRML") || this->NodeStack.empty())

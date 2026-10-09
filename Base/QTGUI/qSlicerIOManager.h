@@ -136,6 +136,8 @@ public slots:
 
 protected slots:
   void updateProgressDialog();
+  /// Update the progress dialog from the scene import progress (vtkMRMLScene::ProgressImportEvent)
+  void onSceneImportProgress(vtkObject* scene, void* callData);
   void execDelayedFileDialog();
 
 protected:
