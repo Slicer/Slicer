@@ -63,6 +63,9 @@ public:
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode* node) override;
 
+  /// Set the scene and share its node factory with the internal sequence scene.
+  void SetScene(vtkMRMLScene* scene) override;
+
   /// Copy sequence index information (index name, unit, type, values, etc)
   /// Does not copy data nodes.
   virtual void CopySequenceIndex(vtkMRMLNode* node);
