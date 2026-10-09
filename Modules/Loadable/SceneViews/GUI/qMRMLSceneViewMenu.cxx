@@ -44,17 +44,45 @@ qMRMLSceneViewMenuPrivate::qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object)
 {
   connect(&this->RestoreActionMapper, &QSignalMapper::mappedInt, this, &qMRMLSceneViewMenuPrivate::restoreSceneView);
   connect(&this->DeleteActionMapper, &QSignalMapper::mappedInt, this, &qMRMLSceneViewMenuPrivate::deleteSceneView);
+}
 
-  this->SceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(qSlicerApplication::application()->applicationLogic()->GetModuleLogic("SceneViews"));
-  qvtkConnect(this->SceneViewsLogic, vtkSlicerSceneViewsModuleLogic::SceneViewsModifiedEvent, this, SLOT(resetMenu()));
+// --------------------------------------------------------------------------
+vtkSlicerSceneViewsModuleLogic* qMRMLSceneViewMenuPrivate::sceneViewsLogic()
+{
+  if (!this->SceneViewsLogic)
+  {
+    // The module logic is created after the module (and its toolbar, which contains this menu) is set up,
+    // therefore the logic is looked up when it is first needed, not when the menu is created.
+    qSlicerApplication* app = qSlicerApplication::application();
+    if (app && app->applicationLogic())
+    {
+      this->SceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(app->applicationLogic()->GetModuleLogic("SceneViews"));
+    }
+    if (this->SceneViewsLogic)
+    {
+      qvtkConnect(this->SceneViewsLogic, vtkSlicerSceneViewsModuleLogic::SceneViewsModifiedEvent, this, SLOT(resetMenu()));
+    }
+  }
+  return this->SceneViewsLogic;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSceneViewMenuPrivate::resetMenu()
 {
   Q_Q(qMRMLSceneViewMenu);
-  Q_ASSERT(this->MRMLScene);
-  if (!this->SceneViewsLogic)
+  if (!q->isVisible())
+  {
+    // The menu is rebuilt when it is about to be shown
+    return;
+  }
+  this->rebuildMenu();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSceneViewMenuPrivate::rebuildMenu()
+{
+  Q_Q(qMRMLSceneViewMenu);
+  if (!this->MRMLScene || !this->sceneViewsLogic())
   {
     return;
   }
@@ -89,7 +117,7 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject*
     return;
   }
 
-  if (!this->SceneViewsLogic->IsSceneViewNode(sequenceBrowserNode))
+  if (!this->sceneViewsLogic() || !this->SceneViewsLogic->IsSceneViewNode(sequenceBrowserNode))
   {
     return;
   }
@@ -197,6 +225,9 @@ qMRMLSceneViewMenu::qMRMLSceneViewMenu(QWidget* newParent)
 {
   Q_D(qMRMLSceneViewMenu);
   d->NoSceneViewText = tr("No scene views");
+  // Make sure the menu is up-to-date when it is shown (for example, if the toolbar that contains
+  // the menu was hidden while scene views were added)
+  QObject::connect(this, SIGNAL(aboutToShow()), d, SLOT(rebuildMenu()));
 }
 
 // --------------------------------------------------------------------------
