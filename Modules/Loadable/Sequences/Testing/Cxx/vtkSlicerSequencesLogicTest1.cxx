@@ -21,9 +21,11 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceBrowserNode.h"
+#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLTextNode.h"
 #include "vtkSlicerSequencesLogic.h"
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
@@ -272,10 +274,103 @@ int TestSparseSequence()
 }
 } // namespace
 
+namespace
+{
+void countEvent(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+{
+  (*reinterpret_cast<int*>(clientData))++;
+}
+} // namespace
+
+//----------------------------------------------------------------------------
+int TestProxyUpdateOnSequenceModification()
+{
+  // Proxy nodes are updated from the sequence when the content of the sequence changes.
+  // Modifications of the sequence node that do not change its content (name, attribute, storage node, etc.)
+  // must not update the proxy nodes, as that would overwrite changes that were made to the proxy nodes
+  // since the item was selected.
+
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene);
+
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLTextNode* proxyNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode"));
+  vtkMRMLSequenceNode* sequenceNode = sequencesLogic->AddSynchronizedNode(nullptr, proxyNode, browserNode);
+  CHECK_NOT_NULL(sequenceNode);
+
+  int contentModifiedEvents = 0;
+  vtkNew<vtkCallbackCommand> callback;
+  callback->SetCallback(countEvent);
+  callback->SetClientData(&contentModifiedEvents);
+  sequenceNode->AddObserver(vtkMRMLSequenceNode::SequenceContentModifiedEvent, callback);
+
+  vtkNew<vtkMRMLTextNode> itemNode;
+  itemNode->SetText("Zero");
+  sequenceNode->SetDataNodeAtValue(itemNode, "0");
+  itemNode->SetText("One");
+  sequenceNode->SetDataNodeAtValue(itemNode, "1");
+  CHECK_INT(contentModifiedEvents, 2);
+
+  CHECK_BOOL(browserNode->SetSelectedItemByIndexValue("1"), true);
+  CHECK_STD_STRING(proxyNode->GetText(), "One");
+
+  // Modify the proxy node (changes are not saved into the sequence)
+  proxyNode->SetText("Edited");
+  CHECK_STD_STRING(vtkMRMLTextNode::SafeDownCast(sequenceNode->GetDataNodeAtValue("1"))->GetText(), "One");
+
+  // Modifications that do not change the content of the sequence keep the proxy node unchanged
+  sequenceNode->SetName("Renamed");
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  sequenceNode->SetAttribute("TestAttribute", "1");
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  sequenceNode->Modified();
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  vtkMRMLStorageNode* storageNode = sequenceNode->CreateDefaultStorageNode();
+  CHECK_NOT_NULL(storageNode);
+  scene->AddNode(storageNode);
+  storageNode->Delete();
+  sequenceNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  scene->RemoveNode(storageNode);
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  sequenceNode->SetAndObserveStorageNodeID(nullptr);
+  CHECK_STD_STRING(proxyNode->GetText(), "Edited");
+  CHECK_INT(contentModifiedEvents, 2);
+
+  // Content changes update the proxy node
+  itemNode->SetText("OneUpdated");
+  sequenceNode->SetDataNodeAtValue(itemNode, "1");
+  CHECK_INT(contentModifiedEvents, 3);
+  CHECK_STD_STRING(proxyNode->GetText(), "OneUpdated");
+  proxyNode->SetText("Edited");
+  CHECK_BOOL(sequenceNode->UpdateIndexValue("0", "0.5"), true);
+  CHECK_INT(contentModifiedEvents, 4);
+  CHECK_STD_STRING(proxyNode->GetText(), "OneUpdated");
+  proxyNode->SetText("Edited");
+  sequenceNode->RemoveDataNodeAtValue("0.5");
+  CHECK_INT(contentModifiedEvents, 5);
+  CHECK_STD_STRING(proxyNode->GetText(), "OneUpdated");
+  proxyNode->SetText("Edited");
+  sequenceNode->SetIndexName("frame");
+  CHECK_INT(contentModifiedEvents, 6);
+  CHECK_STD_STRING(proxyNode->GetText(), "OneUpdated");
+
+  // A single event is invoked for a copy
+  vtkNew<vtkMRMLSequenceNode> otherSequenceNode;
+  otherSequenceNode->SetDataNodeAtValue(itemNode, "7");
+  sequenceNode->Copy(otherSequenceNode);
+  CHECK_INT(contentModifiedEvents, 7);
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
 int vtkSlicerSequencesLogicTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(TestLogicWithoutScene());
   CHECK_EXIT_SUCCESS(TestAddSequence());
   CHECK_EXIT_SUCCESS(TestSparseSequence());
+  CHECK_EXIT_SUCCESS(TestProxyUpdateOnSequenceModification());
   return EXIT_SUCCESS;
 }
