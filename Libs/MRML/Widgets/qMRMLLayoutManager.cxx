@@ -692,7 +692,13 @@ void qMRMLLayoutManagerPrivate::updateLayoutInternal()
     newLayout.setContent(QString(this->MRMLLayoutNode ? this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
   }
 
-  q->setLayout(newLayout);
+  // ctkLayoutManager::setLayout() compares document objects, not their content, therefore the layout would be
+  // rebuilt (all views removed and added again) each time the layout node is modified, even if the layout
+  // is the same (for example, when a scene view is restored). Rebuild the layout only if it has changed.
+  if (newLayout.toString() != q->ctkLayoutManager::layout().toString())
+  {
+    q->setLayout(newLayout);
+  }
   emit q->layoutChanged(layout);
 }
 

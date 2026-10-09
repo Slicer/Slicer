@@ -117,6 +117,9 @@ public:
 
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;
+  /// Render the view when it is shown: render requests are ignored while the view is hidden
+  /// (for example, while the layout is rebuilt), so the view content may be out of date.
+  void showEvent(QShowEvent* event) override;
 
   bool shadowsVisibility() const;
   double ambientShadowsSizeScale() const;
