@@ -21,6 +21,7 @@ class vtkCacheManager;
 class vtkDataIOManager;
 class vtkMRMLMessageCollection;
 class vtkMRMLNode;
+class vtkMRMLNodeFactory;
 class vtkMRMLSceneViewNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
@@ -130,6 +131,14 @@ public:
   ///
   /// \sa AddDefaultNode(), AddNewNodeByClass()
   vtkMRMLNode* CreateNodeByClass(const char* className);
+
+  /// Get the node factory, which stores the registered node classes.
+  /// A factory with the MRML core node classes is created on first use.
+  vtkMRMLNodeFactory* GetNodeFactory();
+
+  /// Set the node factory. Scenes that share a factory share all registered node classes.
+  /// Sharing is much faster than CopyRegisteredNodesToScene() (e.g., for internal scenes in sequence nodes).
+  void SetNodeFactory(vtkMRMLNodeFactory* factory);
 
   /// \brief Register a node class to the scene so that the scene can later
   /// create the same node type from a tag or a class name.
@@ -771,7 +780,8 @@ public:
   /// Return true if version is successfully parsed.
   static bool ParseVersion(const char* versionString, std::string& application, int& major, int& minor, int& patch, int& revision);
 
-  /// Copies all registered nodes into the parameter scene.
+  /// Register node classes of this scene in the parameter scene (tags already registered there are skipped).
+  /// Node classes registered later are not copied. Use SetNodeFactory() to share them instead.
   void CopyRegisteredNodesToScene(vtkMRMLScene* scene);
 
   /// Copies all singleton nodes into the parameter scene.
@@ -899,6 +909,7 @@ protected:
 
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
   static void SceneCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  static void NodeFactoryEventCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   std::string GenerateUniqueID(vtkMRMLNode* node);
   std::string GenerateUniqueID(const std::string& baseID);
@@ -1020,9 +1031,10 @@ protected:
   std::map<std::string, int> UniqueNames;
   std::set<std::string> ReservedIDs;
 
-  std::vector<vtkMRMLNode*> RegisteredNodeClasses;
-  std::vector<std::string> RegisteredNodeTags;
-  std::map<std::string, std::string> RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
+  /// Registry of node classes (created on first use if not set explicitly)
+  vtkSmartPointer<vtkMRMLNodeFactory> NodeFactory;
+  /// Forwards NodeClassRegisteredEvent of the node factory to the scene observers
+  vtkSmartPointer<vtkCallbackCommand> NodeFactoryCallback;
 
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map<std::string, std::string> ReferencedIDChanges;

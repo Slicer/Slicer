@@ -247,6 +247,14 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
     this->SequenceScene->Delete();
   }
   this->SequenceScene = vtkMRMLScene::New();
+  if (this->GetScene())
+  {
+    this->SequenceScene->SetNodeFactory(this->GetScene()->GetNodeFactory());
+  }
+  else if (snode->SequenceScene)
+  {
+    this->SequenceScene->SetNodeFactory(snode->SequenceScene->GetNodeFactory());
+  }
 
   // Get data node ID in the target scene from the data node ID in the source scene
   std::map<std::string, std::string> sourceToTargetDataNodeID;
@@ -682,8 +690,25 @@ vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene(bool autoCreate /*=true*/)
   if (!this->SequenceScene && autoCreate)
   {
     this->SequenceScene = vtkMRMLScene::New();
+    if (this->GetScene())
+    {
+      // Share the node classes of the scene that contains this node instead of creating prototypes
+      // of all node classes for this internal scene (which would be slow for many sequence nodes).
+      this->SequenceScene->SetNodeFactory(this->GetScene()->GetNodeFactory());
+    }
   }
   return this->SequenceScene;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLSequenceNode::SetScene(vtkMRMLScene* scene)
+{
+  this->Superclass::SetScene(scene);
+  if (scene && this->SequenceScene)
+  {
+    // The internal scene may have been created before this node was added to the scene
+    this->SequenceScene->SetNodeFactory(scene->GetNodeFactory());
+  }
 }
 
 //-----------------------------------------------------------------------------

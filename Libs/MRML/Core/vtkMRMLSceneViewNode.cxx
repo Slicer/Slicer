@@ -214,7 +214,8 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode* node)
     this->SnapshotScene = vtkMRMLScene::New();
     if (this->GetScene())
     {
-      this->GetScene()->CopyRegisteredNodesToScene(this->SnapshotScene);
+      // Share the node classes of the main scene instead of creating prototypes of all node classes
+      this->SnapshotScene->SetNodeFactory(this->GetScene()->GetNodeFactory());
     }
   }
   this->SnapshotScene->GetNodes()->vtkCollection::AddItem((vtkObject*)node);
@@ -874,8 +875,9 @@ void vtkMRMLSceneViewNode::SetSceneViewRootDir(const char* name)
 void vtkMRMLSceneViewNode::SetScene(vtkMRMLScene* scene)
 {
   Superclass::SetScene(scene);
-  if (this->GetScene())
+  if (this->GetScene() && this->SnapshotScene)
   {
-    this->GetScene()->CopyRegisteredNodesToScene(this->SnapshotScene);
+    // Share the node classes of the main scene instead of creating prototypes of all node classes
+    this->SnapshotScene->SetNodeFactory(this->GetScene()->GetNodeFactory());
   }
 }
