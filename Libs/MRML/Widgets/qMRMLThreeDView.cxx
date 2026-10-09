@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDropEvent>
+#include <QShowEvent>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -192,6 +193,12 @@ void qMRMLThreeDViewPrivate::onSceneEndProcessing()
   // qDebug() << "qMRMLThreeDViewPrivate::onSceneImportedEvent";
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(true);
+  if (this->MRMLScene && !this->MRMLScene->IsBatchProcessing())
+  {
+    // Render requests were ignored while rendering was disabled during batch processing,
+    // therefore render now to show the changes made in the batch.
+    q->scheduleRender();
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -573,6 +580,13 @@ void qMRMLThreeDView::dropEvent(QDropEvent* event)
     return;
   }
   shNode->ShowItemsInView(shItemIdList, this->mrmlViewNode());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::showEvent(QShowEvent* event)
+{
+  this->Superclass::showEvent(event);
+  this->scheduleRender();
 }
 
 //------------------------------------------------------------------------------
