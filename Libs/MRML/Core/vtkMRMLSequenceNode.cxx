@@ -46,7 +46,7 @@
       return;                                                  \
     }                                                          \
     this->name = arg;                                          \
-    this->StorableModifiedTime.Modified();                     \
+    this->SequenceContentModified();                           \
     this->Modified();                                          \
   }
 
@@ -61,6 +61,11 @@ vtkCxxSetVariableInDataAndStorageNodeMacro(NumericIndexValueTolerance, double);
 vtkMRMLSequenceNode::vtkMRMLSequenceNode()
 {
   this->TypeDisplayName = vtkMRMLTr("vtkMRMLSequenceNode", "Sequence");
+
+  // Content changes are reported by SequenceContentModifiedEvent (and not by the generic ModifiedEvent, which is
+  // invoked for changes that do not affect the content, too), see SequenceContentModifiedEvent.
+  this->ContentModifiedEvents->Initialize();
+  this->ContentModifiedEvents->InsertNextValue(vtkMRMLSequenceNode::SequenceContentModifiedEvent);
 
   this->SetIndexName("time");
   this->SetIndexUnit("s");
@@ -91,7 +96,7 @@ void vtkMRMLSequenceNode::RemoveAllDataNodes()
   this->SequenceScene->Delete();
   this->SequenceScene = nullptr;
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
 }
 
 //----------------------------------------------------------------------------
@@ -296,7 +301,7 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
     this->IndexEntries.push_back(seqItem);
   }
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
 
   this->EndModify(wasModified);
 }
@@ -329,8 +334,16 @@ void vtkMRMLSequenceNode::CopySequenceIndex(vtkMRMLNode* anode)
       this->IndexEntries.push_back(seqItem);
     }
     this->Modified();
+    this->SequenceContentModified();
   }
   this->EndModify(wasModified);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSequenceNode::SequenceContentModified()
+{
+  this->StorableModifiedTime.Modified();
+  this->InvokeCustomModifiedEvent(vtkMRMLSequenceNode::SequenceContentModifiedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -378,7 +391,7 @@ bool vtkMRMLSequenceNode::UpdateDataNodeAtValue(vtkMRMLNode* node, const std::st
   }
   nodeToBeUpdated->CopyContent(node, !shallowCopy);
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
   return true;
 }
 
@@ -448,7 +461,7 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
   }
 
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
   return newNode;
 }
 
@@ -474,7 +487,7 @@ void vtkMRMLSequenceNode::RemoveDataNodeAtValue(const std::string& indexValue)
   }
   this->IndexEntries.erase(this->IndexEntries.begin() + seqItemIndex);
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
 }
 
 //---------------------------------------------------------------------------
@@ -620,7 +633,7 @@ bool vtkMRMLSequenceNode::UpdateIndexValue(const std::string& oldIndexValue, con
     this->IndexEntries.insert(this->IndexEntries.begin() + insertPosition, movingEntry);
   }
   this->Modified();
-  this->StorableModifiedTime.Modified();
+  this->SequenceContentModified();
   return true;
 }
 
