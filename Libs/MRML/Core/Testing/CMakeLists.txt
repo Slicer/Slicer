@@ -44,6 +44,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLModelNodeTest1.cxx
   vtkMRMLModelStorageNodeTest1.cxx
   vtkMRMLNRRDStorageNodeTest1.cxx
+  vtkMRMLNodeFactoryTest1.cxx
   vtkMRMLNodeTest1.cxx
   vtkMRMLNonlinearTransformNodeTest1.cxx
   vtkMRMLPETProceduralColorNodeTest1.cxx
@@ -165,6 +166,7 @@ simple_test( vtkMRMLModelDisplayNodeTest1 )
 simple_test( vtkMRMLModelHierarchyNodeTest1 )
 simple_test( vtkMRMLModelNodeTest1 )
 simple_test( vtkMRMLModelStorageNodeTest1 ${TEMP})
+simple_test( vtkMRMLNodeFactoryTest1 )
 simple_test( vtkMRMLNodeTest1 )
 simple_test( vtkMRMLLinearTransformNodeEventsTest )
 simple_test( vtkMRMLNonlinearTransformNodeTest1 ${CMAKE_CURRENT_SOURCE_DIR}/NonLinearTransformScene.mrml)

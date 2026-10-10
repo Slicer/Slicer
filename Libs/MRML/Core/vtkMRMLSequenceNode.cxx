@@ -682,6 +682,12 @@ vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene(bool autoCreate /*=true*/)
   if (!this->SequenceScene && autoCreate)
   {
     this->SequenceScene = vtkMRMLScene::New();
+    if (this->GetScene())
+    {
+      // Share the node classes of the scene that contains this node instead of creating prototypes
+      // of all node classes for this internal scene (which would be slow for many sequence nodes).
+      this->GetScene()->CopyRegisteredNodesToScene(this->SequenceScene);
+    }
   }
   return this->SequenceScene;
 }

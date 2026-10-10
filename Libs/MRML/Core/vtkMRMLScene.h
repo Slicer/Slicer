@@ -21,6 +21,7 @@ class vtkCacheManager;
 class vtkDataIOManager;
 class vtkMRMLMessageCollection;
 class vtkMRMLNode;
+class vtkMRMLNodeFactory;
 class vtkMRMLSceneViewNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
@@ -130,6 +131,24 @@ public:
   ///
   /// \sa AddDefaultNode(), AddNewNodeByClass()
   vtkMRMLNode* CreateNodeByClass(const char* className);
+
+  /// \brief Get the factory that the scene uses for creating nodes by class name or XML tag.
+  ///
+  /// If no factory has been set then a factory with the MRML core node classes registered
+  /// is created on first use.
+  /// \sa SetNodeFactory()
+  vtkMRMLNodeFactory* GetNodeFactory();
+
+  /// \brief Set the factory that the scene uses for creating nodes by class name or XML tag.
+  ///
+  /// A factory can be shared between scenes: node classes registered in any of the scenes
+  /// become available in all the scenes that share the factory. Sharing the factory avoids
+  /// creating prototype instances of all node classes for each scene (for example, for the
+  /// internal scene of each sequence node).
+  /// Node classes that were registered in the scene before are not available anymore after
+  /// the factory is replaced (unless they are registered in the new factory, too).
+  /// \sa GetNodeFactory(), CopyRegisteredNodesToScene()
+  void SetNodeFactory(vtkMRMLNodeFactory* factory);
 
   /// \brief Register a node class to the scene so that the scene can later
   /// create the same node type from a tag or a class name.
@@ -760,7 +779,11 @@ public:
   /// Return true if version is successfully parsed.
   static bool ParseVersion(const char* versionString, std::string& application, int& major, int& minor, int& patch, int& revision);
 
-  /// Copies all registered nodes into the parameter scene.
+  /// \brief Make all node classes registered in this scene available in the parameter scene.
+  ///
+  /// If the parameter scene does not have a node factory yet then the node factory of this scene
+  /// is shared with it (see SetNodeFactory()). Otherwise the registered node classes are copied
+  /// into the node factory of the parameter scene.
   void CopyRegisteredNodesToScene(vtkMRMLScene* scene);
 
   /// Copies all singleton nodes into the parameter scene.
@@ -886,6 +909,7 @@ protected:
 
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
   static void SceneCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  static void NodeFactoryEventCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   std::string GenerateUniqueID(vtkMRMLNode* node);
   std::string GenerateUniqueID(const std::string& baseID);
@@ -994,9 +1018,10 @@ protected:
   std::map<std::string, int> UniqueNames;
   std::set<std::string> ReservedIDs;
 
-  std::vector<vtkMRMLNode*> RegisteredNodeClasses;
-  std::vector<std::string> RegisteredNodeTags;
-  std::map<std::string, std::string> RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
+  /// Registry of node classes (created on first use if not set explicitly)
+  vtkSmartPointer<vtkMRMLNodeFactory> NodeFactory;
+  /// Forwards NodeClassRegisteredEvent of the node factory to the scene observers
+  vtkCallbackCommand* NodeFactoryCallback;
 
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map<std::string, std::string> ReferencedIDChanges;
