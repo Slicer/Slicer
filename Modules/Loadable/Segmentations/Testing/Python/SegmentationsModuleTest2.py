@@ -43,6 +43,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.TestSection_MarginEffects()
         self.TestSection_MaskingSettings()
         self.TestSection_GrowFromSeedsEffect()
+        self.TestSection_DoubleParameterPrecision()
         logging.info("Test finished")
 
     # ------------------------------------------------------------------------------
@@ -566,3 +567,16 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         self.checkSegmentVoxelCount(0, 215)  # Segment 1
         self.checkSegmentVoxelCount(1, 785)  # Segment 2
+
+    # ------------------------------------------------------------------------------
+    def TestSection_DoubleParameterPrecision(self):
+        logging.info("Running test on storing effect parameters without loss of precision")
+
+        # Floating-point parameter values must be retrieved exactly as they were set.
+        # For example, a threshold set to the maximum of a floating-point volume must not be truncated,
+        # otherwise voxels with the maximum value are excluded from the threshold range.
+        for value in [33.31780242919922, -4.199450016021729, 123456.7, 1.0e-12, 0.1]:
+            self.thresholdEffect.setParameter("MaximumThreshold", value)
+            self.assertEqual(self.thresholdEffect.doubleParameter("MaximumThreshold"), value)
+            self.thresholdEffect.setCommonParameter("TestDoubleParameterPrecision", value)
+            self.assertEqual(self.thresholdEffect.doubleParameter("TestDoubleParameterPrecision"), value)
