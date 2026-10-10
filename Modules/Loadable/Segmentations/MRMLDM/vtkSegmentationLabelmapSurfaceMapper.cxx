@@ -2650,7 +2650,14 @@ void vtkSegmentationLabelmapSurfaceMapper::SetLabelColor(int labelValue, double 
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentationLabelmapSurfaceMapper::IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, double& t, double xyz[3], double n[3])
+bool vtkSegmentationLabelmapSurfaceMapper::IntersectWithRay(const double p1[3],
+                                                            const double p2[3],
+                                                            double t1,
+                                                            double t2,
+                                                            vtkMatrix4x4* toWorld,
+                                                            double& t,
+                                                            double xyz[3],
+                                                            double n[3])
 {
   vtkOrientedImageData* labelmap = this->Internal->Labelmap;
   if (!this->Internal->PrepareLabelmap() || !labelmap)
@@ -2690,6 +2697,12 @@ bool vtkSegmentationLabelmapSurfaceMapper::IntersectWithRay(const double p1[3], 
       point[i] = p1[i] + parameter * (p2[i] - p1[i]);
     }
   };
+  auto insideAt = [&](double parameter)
+  {
+    double point[3];
+    pointAt(parameter, point);
+    return insideFraction(point) >= 0.5;
+  };
 
   // Limit the ray to the region of the shown segments
   double tStart = t1;
@@ -2717,50 +2730,209 @@ bool vtkSegmentationLabelmapSurfaceMapper::IntersectWithRay(const double p1[3], 
     return false;
   }
 
-  // March in quarter voxel steps, then refine the crossing of the 0.5 level of the inside fraction
-  double rayLength = std::sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
-  double tStep = 0.25 / std::max(rayLength, 1e-12);
-  double point[3];
-  double previousT = tStart;
-  for (double currentT = tStart; currentT <= tEnd + tStep; currentT += tStep)
+  // Clipping planes in model (IJK) coordinates, n.x + d >= 0 is kept, as the shader has them; as functions of the
+  // parametric coordinate along the ray: value(t) = start + t * rate
+  struct RayPlane
   {
-    currentT = std::min(currentT, tEnd);
-    pointAt(currentT, point);
-    if (insideFraction(point) >= 0.5)
+    double Plane[4];
+    double Start;
+    double Rate;
+  };
+  std::vector<RayPlane> planes;
+  vtkPlaneCollection* clippingPlanes = this->GetClippingPlanes();
+  if (toWorld && clippingPlanes)
+  {
+    for (int i = 0; i < clippingPlanes->GetNumberOfItems(); ++i)
     {
-      double tOutside = previousT;
-      double tInside = currentT;
-      for (int iteration = 0; iteration < 10; ++iteration)
+      vtkPlane* plane = clippingPlanes->GetItem(i);
+      if (!plane)
       {
-        double tMiddle = 0.5 * (tOutside + tInside);
-        pointAt(tMiddle, point);
-        (insideFraction(point) >= 0.5 ? tInside : tOutside) = tMiddle;
+        continue;
       }
-      t = 0.5 * (tOutside + tInside);
-      pointAt(t, xyz);
-      // Normal: gradient of the inside fraction (pointing outwards)
-      for (int axis = 0; axis < 3; ++axis)
+      double normal[3];
+      double origin[3];
+      plane->GetNormal(normal);
+      plane->GetOrigin(origin);
+      double planeWC[4] = { normal[0], normal[1], normal[2], -vtkMath::Dot(normal, origin) };
+      // plane in model coordinates = transpose(MCWC) * plane in world coordinates
+      RayPlane rayPlane = {};
+      for (int column = 0; column < 4; ++column)
       {
-        double plus[3] = { xyz[0], xyz[1], xyz[2] };
-        double minus[3] = { xyz[0], xyz[1], xyz[2] };
-        plus[axis] += 0.5;
-        minus[axis] -= 0.5;
-        n[axis] = insideFraction(minus) - insideFraction(plus);
-      }
-      if (vtkMath::Normalize(n) == 0.0)
-      {
-        for (int axis = 0; axis < 3; ++axis)
+        for (int row = 0; row < 4; ++row)
         {
-          n[axis] = p1[axis] - p2[axis];
+          rayPlane.Plane[column] += toWorld->GetElement(row, column) * planeWC[row];
         }
-        vtkMath::Normalize(n);
       }
+      double valueAtP1 = vtkMath::Dot(rayPlane.Plane, p1) + rayPlane.Plane[3];
+      double valueAtP2 = vtkMath::Dot(rayPlane.Plane, p2) + rayPlane.Plane[3];
+      rayPlane.Start = valueAtP1;
+      rayPlane.Rate = valueAtP2 - valueAtP1;
+      planes.push_back(rayPlane);
+    }
+  }
+
+  // The parts of the ray that the clipping planes keep, front to back, each with the plane that it starts and ends on
+  // (-1 if it starts or ends where the ray does): as compositeKeptPart is called in the shader
+  struct KeptPart
+  {
+    double From;
+    double To;
+    int FromPlane;
+    int ToPlane;
+  };
+  std::vector<KeptPart> keptParts;
+  if (planes.empty())
+  {
+    keptParts.push_back({ tStart, tEnd, -1, -1 });
+  }
+  else if (!this->KeepWhereAnyClippingPlaneKeeps)
+  {
+    // The kept region is where all plane functions are positive: an interval along the ray
+    KeptPart part = { tStart, tEnd, -1, -1 };
+    for (int i = 0; i < static_cast<int>(planes.size()); ++i)
+    {
+      if (std::abs(planes[i].Rate) < 1e-12)
+      {
+        if (planes[i].Start < 0.0)
+        {
+          return false;
+        }
+        continue;
+      }
+      double tPlane = -planes[i].Start / planes[i].Rate;
+      if (planes[i].Rate > 0.0 && tPlane > part.From)
+      {
+        part.From = tPlane;
+        part.FromPlane = i;
+      }
+      else if (planes[i].Rate < 0.0 && tPlane < part.To)
+      {
+        part.To = tPlane;
+        part.ToPlane = i;
+      }
+    }
+    if (part.From < part.To)
+    {
+      keptParts.push_back(part);
+    }
+  }
+  else
+  {
+    // The kept region is where any plane function is positive: the ray is clipped only where all of them are negative,
+    // an interval along the ray, and kept before and after it
+    double clipFrom = -VTK_DOUBLE_MAX;
+    double clipTo = VTK_DOUBLE_MAX;
+    int clipFromPlane = -1;
+    int clipToPlane = -1;
+    bool clipped = true;
+    for (int i = 0; i < static_cast<int>(planes.size()); ++i)
+    {
+      if (std::abs(planes[i].Rate) < 1e-12)
+      {
+        clipped = clipped && planes[i].Start < 0.0;
+        continue;
+      }
+      double tPlane = -planes[i].Start / planes[i].Rate;
+      if (planes[i].Rate < 0.0 && tPlane > clipFrom)
+      {
+        // negative beyond tPlane
+        clipFrom = tPlane;
+        clipFromPlane = i;
+      }
+      else if (planes[i].Rate > 0.0 && tPlane < clipTo)
+      {
+        // negative before tPlane
+        clipTo = tPlane;
+        clipToPlane = i;
+      }
+    }
+    if (!clipped || clipFrom >= clipTo)
+    {
+      keptParts.push_back({ tStart, tEnd, -1, -1 });
+    }
+    else
+    {
+      if (tStart < std::min(clipFrom, tEnd))
+      {
+        keptParts.push_back({ tStart, std::min(clipFrom, tEnd), -1, clipFrom < tEnd ? clipFromPlane : -1 });
+      }
+      if (std::max(clipTo, tStart) < tEnd)
+      {
+        keptParts.push_back({ std::max(clipTo, tStart), tEnd, clipTo > tStart ? clipToPlane : -1, -1 });
+      }
+    }
+  }
+
+  // In each kept part, front to back, what is rendered first: the cap where it starts on a clipping plane inside a
+  // segment, else the first crossing of the surface of the segments (into or out of them), else the cap where it ends
+  bool capsShown = this->CapClippedSurface && this->CapOpacity > 0.0;
+  auto setCap = [&](double parameter, const RayPlane& plane)
+  {
+    t = parameter;
+    pointAt(t, xyz);
+    // Outwards from the kept region (the plane normal points into it)
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      n[axis] = -plane.Plane[axis];
+    }
+    vtkMath::Normalize(n);
+  };
+  double rayLength = std::sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+  // March in quarter voxel steps, then refine the crossing of the 0.5 level of the inside fraction
+  double tStep = 0.25 / std::max(rayLength, 1e-12);
+  for (const KeptPart& part : keptParts)
+  {
+    bool previousInside = insideAt(part.From);
+    if (previousInside && part.FromPlane >= 0 && capsShown)
+    {
+      setCap(part.From, planes[part.FromPlane]);
       return true;
     }
-    previousT = currentT;
-    if (currentT >= tEnd)
+    double previousT = part.From;
+    for (double currentT = std::min(part.From + tStep, part.To);; currentT = std::min(currentT + tStep, part.To))
     {
-      break;
+      bool currentInside = insideAt(currentT);
+      if (currentInside != previousInside)
+      {
+        double tBefore = previousT;
+        double tAfter = currentT;
+        for (int iteration = 0; iteration < 10; ++iteration)
+        {
+          double tMiddle = 0.5 * (tBefore + tAfter);
+          (insideAt(tMiddle) == previousInside ? tBefore : tAfter) = tMiddle;
+        }
+        t = 0.5 * (tBefore + tAfter);
+        pointAt(t, xyz);
+        // Normal: gradient of the inside fraction (pointing outwards)
+        for (int axis = 0; axis < 3; ++axis)
+        {
+          double plus[3] = { xyz[0], xyz[1], xyz[2] };
+          double minus[3] = { xyz[0], xyz[1], xyz[2] };
+          plus[axis] += 0.5;
+          minus[axis] -= 0.5;
+          n[axis] = insideFraction(minus) - insideFraction(plus);
+        }
+        if (vtkMath::Normalize(n) == 0.0)
+        {
+          for (int axis = 0; axis < 3; ++axis)
+          {
+            n[axis] = p1[axis] - p2[axis];
+          }
+          vtkMath::Normalize(n);
+        }
+        return true;
+      }
+      previousInside = currentInside;
+      previousT = currentT;
+      if (currentT >= part.To)
+      {
+        break;
+      }
+    }
+    if (previousInside && part.ToPlane >= 0 && capsShown)
+    {
+      setCap(part.To, planes[part.ToPlane]);
+      return true;
     }
   }
   return false;

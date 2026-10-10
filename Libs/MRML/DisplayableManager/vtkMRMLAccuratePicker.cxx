@@ -21,6 +21,7 @@
 // VTK includes
 #include <vtkAbstractCellLocator.h>
 #include <vtkActor.h>
+#include <vtkAssemblyPath.h>
 #include <vtkCellTypes.h>
 #include <vtkDataSet.h>
 #include <vtkMapper.h>
@@ -28,6 +29,7 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPropCollection.h>
+#include <vtkTransform.h>
 #include <vtkRenderer.h>
 #include <vtkStaticCellLocator.h>
 #include <vtkUnsignedCharArray.h>
@@ -131,6 +133,28 @@ int vtkMRMLAccuratePicker::Pick(double selectionX, double selectionY, double sel
 }
 
 //----------------------------------------------------------------------------
+double vtkMRMLAccuratePicker::IntersectWithLine(const double p1[3], const double p2[3], double tol, vtkAssemblyPath* path, vtkProp3D* p, vtkAbstractMapper3D* m)
+{
+  vtkMRMLRayCastMapper* rayCastMapper = vtkMRMLRayCastMapper::SafeDownCast(m);
+  if (!rayCastMapper)
+  {
+    return this->Superclass::IntersectWithLine(p1, p2, tol, path, p, m);
+  }
+  // As vtkCellPicker::IntersectWithLine, but the whole ray is intersected: the mapper applies its clipping planes
+  double tMin = this->IntersectActorWithLine(p1, p2, 0.0, 1.0, tol, p, rayCastMapper);
+  if (tMin < this->GlobalTMin)
+  {
+    this->GlobalTMin = tMin;
+    this->SetPath(path);
+    this->ClippingPlaneId = -1;
+    // The position comes from the data, so put it into world coordinates
+    this->Transform->TransformPoint(this->MapperPosition, this->PickPosition);
+    this->Transform->TransformNormal(this->MapperNormal, this->PickNormal);
+  }
+  return tMin;
+}
+
+//----------------------------------------------------------------------------
 double vtkMRMLAccuratePicker::IntersectActorWithLine(const double p1[3], const double p2[3], double t1, double t2, double tol, vtkProp3D* prop, vtkMapper* m)
 {
   vtkMapper* mapper = m;
@@ -142,7 +166,9 @@ double vtkMRMLAccuratePicker::IntersectActorWithLine(const double p1[3], const d
   double t = 0.0;
   double position[3] = { 0.0, 0.0, 0.0 };
   double normal[3] = { 0.0, 0.0, 1.0 };
-  if (!rayCastMapper->IntersectWithRay(p1, p2, t1, t2, t, position, normal) || t < t1 || t > t2)
+  // The ray is in the model coordinates of the prop, the matrix of the prop is the transform to world coordinates
+  // (vtkPicker::Pick sets it before intersecting the prop), which the mapper transforms its clipping planes with
+  if (!rayCastMapper->IntersectWithRay(p1, p2, t1, t2, this->Transform->GetMatrix(), t, position, normal) || t < t1 || t > t2)
   {
     return VTK_DOUBLE_MAX;
   }
