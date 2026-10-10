@@ -120,8 +120,12 @@ public:
   /// Intersect a ray (in IJK coordinates of the labelmap, between P1 + T1 * (P2 - P1) and P1 + T2 * (P2 - P1)) with
   /// the surface of the shown segments (computed from the labelmap on the CPU, the surface follows the boundary of
   /// voxels, not smoothed). Returns true if there is an intersection, and its parametric coordinate, position and normal.
+  /// The ray is clipped as the mapper clips what it renders, in all of its clipping modes (KeepWhereAnyClippingPlaneKeeps):
+  /// what the clipping planes clip away is not hit, and where they cut a segment the cap is hit if it is shown
+  /// (CapClippedSurface, with a CapOpacity above 0). toWorld is the matrix of the actor (IJK to world), which the
+  /// clipping planes are transformed with; if it is nullptr then the clipping planes are ignored.
   /// vtkMRMLAccuratePicker picks the surface with this.
-  bool IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, double& t, double position[3], double normal[3]) override;
+  bool IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, vtkMatrix4x4* toWorld, double& t, double xyz[3], double n[3]) override;
 
   /// Get the label of the shown segment that is at the specified position (in IJK coordinates of the labelmap),
   /// or the nearest one within the specified distance (in voxels). Returns 0 if there is no shown segment there.

@@ -38,7 +38,10 @@
 #include <vtkGenericCell.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlane.h>
+#include <vtkPlaneCollection.h>
 #include <vtkPlaneSource.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
@@ -72,9 +75,12 @@ public:
 
   void Render(vtkRenderer*, vtkActor*) override {}
 
-  bool IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, double& t, double position[3], double normal[3]) override
+  bool IntersectWithRay(const double p1[3], const double p2[3], double t1, double t2, vtkMatrix4x4* toWorld, double& t, double xyz[3], double n[3]) override
   {
     this->NumberOfCalls++;
+    this->LastT1 = t1;
+    this->LastT2 = t2;
+    this->LastModelToWorld = toWorld;
     if (!this->Intersects || p1[2] == p2[2])
     {
       return false;
@@ -86,17 +92,20 @@ public:
     }
     for (int axis = 0; axis < 3; ++axis)
     {
-      position[axis] = p1[axis] + t * (p2[axis] - p1[axis]);
+      xyz[axis] = p1[axis] + t * (p2[axis] - p1[axis]);
     }
-    normal[0] = 0.0;
-    normal[1] = 0.0;
-    normal[2] = 1.0;
+    n[0] = 0.0;
+    n[1] = 0.0;
+    n[2] = 1.0;
     return true;
   }
 
   bool Intersects{ true };
   double PlaneZ{ 0.0 };
   int NumberOfCalls{ 0 };
+  double LastT1{ -1.0 };
+  double LastT2{ -1.0 };
+  vtkMatrix4x4* LastModelToWorld{ nullptr };
 
 protected:
   TestRayCastMapper() = default;
@@ -177,6 +186,40 @@ int TestPickRayCastMapper()
     std::cerr << "Failed: a cell was reported for a surface without cells" << std::endl;
     return EXIT_FAILURE;
   }
+
+  // The mapper applies its clipping planes itself (in all of its clipping modes), so the ray is not clipped with them
+  // first: a plane that clips the whole ray as vtkCellPicker clips (keeping where all plane functions are positive)
+  // still leaves the mapper to decide, with the whole ray and the matrix of the prop to transform the planes with
+  vtkNew<vtkPlane> clippingPlane;
+  clippingPlane->SetOrigin(50.0, 0.0, 0.0);
+  clippingPlane->SetNormal(1.0, 0.0, 0.0);
+  vtkNew<vtkPlaneCollection> clippingPlanes;
+  clippingPlanes->AddItem(clippingPlane);
+  rayCastMapper->SetClippingPlanes(clippingPlanes);
+  rayCastMapper->NumberOfCalls = 0;
+  if (!picker->Pick(100, 100, 0, renderer) || picker->GetMapper() != rayCastMapper.GetPointer())
+  {
+    std::cerr << "Failed: the ray cast mapper was not picked when vtkCellPicker would clip the whole ray" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (rayCastMapper->NumberOfCalls == 0 || rayCastMapper->LastT1 != 0.0 || rayCastMapper->LastT2 != 1.0)
+  {
+    std::cerr << "Failed: the ray cast mapper was not asked to intersect the whole ray";
+    std::cerr << " (t1 = " << rayCastMapper->LastT1 << ", t2 = " << rayCastMapper->LastT2 << ")" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (!rayCastMapper->LastModelToWorld)
+  {
+    std::cerr << "Failed: the ray cast mapper was not given the matrix of the prop" << std::endl;
+    return EXIT_FAILURE;
+  }
+  pickPosition = picker->GetPickPosition();
+  if (std::fabs(pickPosition[2] - rayCastMapper->PlaneZ) > 1e-6 || picker->GetClippingPlaneId() != -1)
+  {
+    std::cerr << "Failed: picked position z = " << pickPosition[2] << ", expected " << rayCastMapper->PlaneZ << ", not on a clipping plane" << std::endl;
+    return EXIT_FAILURE;
+  }
+  rayCastMapper->SetClippingPlanes(nullptr);
 
   // If the ray cast mapper reports no intersection then the plane behind it is picked
   rayCastMapper->Intersects = false;
