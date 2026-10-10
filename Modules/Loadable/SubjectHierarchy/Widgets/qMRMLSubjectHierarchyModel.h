@@ -212,6 +212,9 @@ public slots:
   void onHardenTransformOnBranchOfCurrentItem();
 
 protected slots:
+  /// Called when the subject hierarchy node is modified. If the scene is batch processing then
+  /// it requests rebuilding the model when the batch processing ends.
+  virtual void onSubjectHierarchyNodeModified();
   virtual void onSubjectHierarchyItemAdded(vtkIdType itemID);
   virtual void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemRemoved(vtkIdType itemID);

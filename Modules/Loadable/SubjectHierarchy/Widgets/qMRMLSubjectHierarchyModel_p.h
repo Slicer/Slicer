@@ -51,6 +51,9 @@
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
 
+// STD includes
+#include <set>
+
 class QStandardItemModel;
 class vtkSlicerTerminologiesModuleLogic;
 class qSlicerSubjectHierarchyAbstractPlugin;
@@ -70,10 +73,25 @@ public:
   virtual ~qMRMLSubjectHierarchyModelPrivate();
   void init();
 
-  /// This method is called by qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy() to speed up
-  /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents
+  /// Insert the subject hierarchy item (and its parent if not yet in the model) at the given row under its parent.
+  /// By explicitly specifying the \a index, it skips item lookup within their parents
   /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType).
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, int index);
+
+  /// Create the model items (one for each column) of a subject hierarchy item.
+  /// The items are not inserted in the model.
+  QList<QStandardItem*> createItemRow(vtkIdType itemID);
+
+  /// Store the model index of all the subject hierarchy items in the subtree of \a parentItem in the RowCache.
+  void updateRowCacheRecursively(QStandardItem* parentItem);
+
+  /// Returns true if the scene is batch processing (or importing), or if the end of the batch processing
+  /// has not been processed yet by the model. In this state per-item updates are not applied to the model,
+  /// instead the whole model is rebuilt at the end of the batch processing.
+  /// Note that the scene is no longer in batch processing state while the EndImportEvent and EndBatchProcessEvent
+  /// observers are invoked, but observers that are invoked before the model (such as the subject hierarchy plugin
+  /// logic that resolves the imported items) may still add many items.
+  bool isBatchProcessing() const;
 
   /// Convenience function to get name for subject hierarchy item
   QString subjectHierarchyItemName(vtkIdType itemID);
@@ -113,6 +131,23 @@ public:
 
   bool NoneEnabled;
   QString NoneDisplay;
+
+  /// Set when the structure of the subject hierarchy is changed (item added, removed, reparented, reordered,
+  /// or the node is modified without item events) while the scene is batch processing (or importing).
+  /// Per-item updates are skipped in this state and the whole model is rebuilt when the
+  /// batch processing ends (and when the import ends).
+  bool RebuildPending;
+  /// Items that were modified while the scene was batch processing (or importing). The model items
+  /// of these subject hierarchy items are updated when the batch processing ends. Modifying the
+  /// existing items (instead of rebuilding the whole model) keeps the state of the views (scroll position,
+  /// selection, widgets in the cells) intact, for example when the visibility of a folder is changed
+  /// (which modifies all the items in the branch in a batch).
+  std::set<vtkIdType> PendingItemUpdates;
+  /// Set between the start and the end of the scene batch processing (see isBatchProcessing).
+  bool BatchProcessing;
+  /// Set while model items are created detached from the model (during rebuild), when
+  /// expand/collapse requests cannot be processed by the views yet.
+  bool SuppressExpandRequests;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;

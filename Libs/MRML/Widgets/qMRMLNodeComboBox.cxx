@@ -1219,7 +1219,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex& parent, int start, int
   Q_ASSERT(this->model());
   for (int i = start; i <= end; ++i)
   {
-    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
+    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(i, 0, parent));
     if (node)
     {
       emit nodeAdded(node);
@@ -1234,7 +1234,7 @@ void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex& parent, int
   Q_ASSERT(this->model());
   for (int i = start; i <= end; ++i)
   {
-    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
+    vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(i, 0, parent));
     if (node)
     {
       emit nodeAboutToBeRemoved(node);
