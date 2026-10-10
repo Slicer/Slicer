@@ -2386,7 +2386,7 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld=False):
         raise RuntimeError("Unsupported numpy array shape: " + str(narrayshape) + " expected (4,4)")
     if toWorld and transformNode.GetParentTransformNode():
         # thisToParent = worldToParent * thisToWorld = inv(parentToWorld) * toWorld
-        narrayParentToWorld = arrayFromTransformMatrix(transformNode.GetParentTransformNode())
+        narrayParentToWorld = arrayFromTransformMatrix(transformNode.GetParentTransformNode(), toWorld=True)
         thisToParent = np.dot(np.linalg.inv(narrayParentToWorld), narray)
         updateTransformMatrixFromArray(transformNode, thisToParent, toWorld=False)
     else:
