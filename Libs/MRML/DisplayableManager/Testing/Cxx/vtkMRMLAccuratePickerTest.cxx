@@ -219,7 +219,7 @@ int TestPickRayCastMapper()
     std::cerr << "Failed: picked position z = " << pickPosition[2] << ", expected " << rayCastMapper->PlaneZ << ", not on a clipping plane" << std::endl;
     return EXIT_FAILURE;
   }
-  rayCastMapper->SetClippingPlanes(nullptr);
+  rayCastMapper->RemoveAllClippingPlanes();
 
   // If the ray cast mapper reports no intersection then the plane behind it is picked
   rayCastMapper->Intersects = false;
