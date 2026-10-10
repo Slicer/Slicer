@@ -583,7 +583,15 @@ Pop $0
   # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
-  set(FILE_EXTENSIONS .mrml .xcat .mrb)
+  set(FILE_EXTENSIONS ${Slicer_FILE_ASSOCIATION_EXTENSIONS})
+  # Each extension names a key under SOFTWARE\Classes that the uninstaller deletes, so an
+  # entry that is not a plain extension could make it delete an unrelated key.
+  foreach(ext IN LISTS FILE_EXTENSIONS)
+    if(NOT ext MATCHES "^\\.[A-Za-z0-9][A-Za-z0-9_+-]*$")
+      message(FATAL_ERROR "Slicer_FILE_ASSOCIATION_EXTENSIONS contains \"${ext}\", which is not a file extension. "
+        "Each entry must be a period followed by letters, digits, '_', '+' or '-', for example .mrml")
+    endif()
+  endforeach()
   if(FILE_EXTENSIONS)
     # Register the ProgID (also used as URL protocol handler) and its open command
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
