@@ -10,6 +10,7 @@ set(KIT_TEST_SRCS
   qSlicerModelsModuleWidgetTest1.cxx
   qSlicerModelsModuleWidgetTestScene.cxx
   vtkSlicerModelsLogicAddFileTest.cxx
+  vtkSlicerModelsLogicImportModelHierarchyTest.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -32,4 +33,5 @@ set_target_properties(${KIT}CxxTests PROPERTIES
 simple_test( qSlicerModelsModuleWidgetTest1 ${MODEL_FILE} )
 simple_test( qSlicerModelsModuleWidgetTestScene ${MODEL_SCENE} )
 simple_test(vtkSlicerModelsLogicAddFileTest ${MODEL_FILE})
+simple_test(vtkSlicerModelsLogicImportModelHierarchyTest)
 simple_test( qSlicerModelsModuleWidgetTest )

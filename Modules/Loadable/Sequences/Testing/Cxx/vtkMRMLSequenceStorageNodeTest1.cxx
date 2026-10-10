@@ -21,6 +21,7 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkDataIOManager.h>
+#include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLLinearTransformSequenceStorageNode.h>
 #include <vtkMRMLModelNode.h>
@@ -79,6 +80,46 @@ int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* seque
   return EXIT_SUCCESS;
 }
 
+//---------------------------------------------------------------------------
+// Nodes that are singletons in the scene (for example, layout node) are stored as regular nodes in a sequence.
+// All items must be read back from file (they must not be merged into a single node).
+int TestWriteReadSingletonNodeSequence(const std::string& tempDir, vtkMRMLScene* scene)
+{
+  vtkNew<vtkMRMLSequenceNode> sequenceNode;
+  scene->AddNode(sequenceNode);
+  const int numberOfItems = 3;
+  for (int i = 0; i < numberOfItems; i++)
+  {
+    vtkNew<vtkMRMLLayoutNode> layoutNode;
+    layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView + i);
+    sequenceNode->SetDataNodeAtValue(layoutNode, std::to_string(i));
+  }
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), numberOfItems);
+  vtkMRMLStorageNode* storageNode = sequenceNode->CreateDefaultStorageNode();
+  CHECK_NOT_NULL(storageNode);
+  scene->AddNode(storageNode);
+  storageNode->Delete();
+  std::string fileName = tempDir + "/TestLayoutNodeSequence." + storageNode->GetDefaultWriteFileExtension();
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(sequenceNode), true);
+
+  vtkNew<vtkMRMLSequenceNode> readSequenceNode;
+  scene->AddNode(readSequenceNode);
+  vtkSmartPointer<vtkMRMLStorageNode> readStorageNode = //
+    vtkSmartPointer<vtkMRMLStorageNode>::Take(vtkMRMLStorageNode::SafeDownCast(storageNode->CreateNodeInstance()));
+  scene->AddNode(readStorageNode);
+  readStorageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(readStorageNode->ReadData(readSequenceNode), true);
+  CHECK_INT(readSequenceNode->GetNumberOfDataNodes(), numberOfItems);
+  for (int i = 0; i < numberOfItems; i++)
+  {
+    vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(readSequenceNode->GetNthDataNode(i));
+    CHECK_NOT_NULL(layoutNode);
+    CHECK_INT(layoutNode->GetViewArrangement(), vtkMRMLLayoutNode::SlicerLayoutConventionalView + i);
+  }
+  return EXIT_SUCCESS;
+}
+
 //-----------------------------------------------------------------------------
 int vtkMRMLSequenceStorageNodeTest1(int argc, char* argv[])
 {
@@ -110,6 +151,9 @@ int vtkMRMLSequenceStorageNodeTest1(int argc, char* argv[])
     vtkSmartPointer<vtkMRMLSequenceStorageNode> addedGenericStorageNode = vtkMRMLSequenceStorageNode::SafeDownCast(genericSequenceNode->GetStorageNode());
     CHECK_NOT_NULL(addedGenericStorageNode);
     CHECK_EXIT_SUCCESS(TestWriteReadSequence(tempDir, genericSequenceNode, addedGenericStorageNode, "TestGenericSequence"));
+  }
+  CHECK_EXIT_SUCCESS(TestWriteReadSingletonNodeSequence(tempDir, scene));
+  {
   }
 
   // Add volume node sequence

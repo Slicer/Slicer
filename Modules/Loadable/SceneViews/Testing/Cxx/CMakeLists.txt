@@ -2,6 +2,7 @@ set(KIT qSlicer${MODULE_NAME}Module)
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
+  vtkSceneViewConvertLegacySceneViewTest.cxx
   vtkSceneViewEventsTest.cxx
   vtkSceneViewImportSceneTest.cxx
   vtkSceneViewStoreSceneTest.cxx
@@ -22,6 +23,7 @@ slicerMacroConfigureModuleCxxTestDriver(
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 
 #-----------------------------------------------------------------------------
+simple_test(vtkSceneViewConvertLegacySceneViewTest)
 simple_test(vtkSceneViewEventsTest)
 simple_test(vtkSceneViewImportSceneTest ${TEMP})
 simple_test(vtkSceneViewStoreSceneTest)
