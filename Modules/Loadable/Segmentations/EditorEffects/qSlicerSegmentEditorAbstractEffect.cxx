@@ -40,6 +40,7 @@
 #include <QFrame>
 #include <QImage>
 #include <QLabel>
+#include <QLocale>
 #include <QMainWindow>
 #include <QPainter>
 #include <QPaintDevice>
@@ -854,7 +855,10 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name,
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, double value)
 {
-  this->setParameter(name, QString::number(value));
+  // Use the shortest representation that converts back to the exact same value.
+  // The default precision (6 significant digits) would truncate values, for example a threshold
+  // set to the maximum of a floating-point volume would exclude the voxels with the maximum value.
+  this->setParameter(name, QString::number(value, 'g', QLocale::FloatingPointShortest));
 }
 
 //-----------------------------------------------------------------------------
@@ -870,7 +874,8 @@ void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, doubl
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, double value)
 {
-  this->setCommonParameter(name, QString::number(value));
+  // Use the shortest representation that converts back to the exact same value
+  this->setCommonParameter(name, QString::number(value, 'g', QLocale::FloatingPointShortest));
 }
 
 //-----------------------------------------------------------------------------
