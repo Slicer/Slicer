@@ -61,6 +61,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneBatchProcessTest.cxx
   vtkMRMLSceneIDTest.cxx
   vtkMRMLSceneImportIDConflictTest.cxx
+  vtkMRMLSceneImportLegacyNodeTest.cxx
   vtkMRMLSceneImportIDModelHierarchyConflictTest.cxx
   vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest.cxx
   vtkMRMLSceneImportTest.cxx
@@ -183,6 +184,7 @@ simple_test( vtkMRMLScalarVolumeNodeTest2 )
 simple_test( vtkMRMLSceneAddSingletonTest )
 simple_test( vtkMRMLSceneBatchProcessTest )
 simple_test( vtkMRMLSceneImportIDConflictTest )
+simple_test( vtkMRMLSceneImportLegacyNodeTest )
 simple_test( vtkMRMLSceneImportIDModelHierarchyConflictTest )
 simple_test( vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest )
 simple_test( vtkMRMLSceneIDTest )

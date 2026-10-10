@@ -857,6 +857,10 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
     /// imported scene.
     /// Mark all the node IDs of the scene as reserved so the node ID
     /// generator doesn't choose them.
+    // Parsing (reported by vtkMRMLParser) is complete, nodes are added and updated now
+    this->ProgressState(vtkMRMLScene::ImportState, vtkMRMLScene::ImportProgressParsingComplete);
+    // Parsing (reported by vtkMRMLParser) is complete, nodes are added and updated now
+    this->ProgressState(vtkMRMLScene::ImportState, vtkMRMLScene::ImportProgressParsingComplete);
     vtkMRMLNode* node = nullptr;
     vtkCollectionSimpleIterator it;
     for (loadedNodes->InitTraversal(it); (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it));)
@@ -911,10 +915,21 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
     // Notify the imported nodes about that all nodes are created
     // (so the observers can be attached to referenced nodes, etc.)
     // by calling UpdateScene on each node
+    const int numberOfAddedNodes = addedNodes->GetNumberOfItems();
+    int updatedNodeIndex = 0;
+    int lastReportedProgress = -1;
     for (addedNodes->InitTraversal(it); (node = (vtkMRMLNode*)addedNodes->GetNextItemAsObject(it));)
     {
-      // double progress = n / (1. * nnodes);
-      // this->InvokeEvent(vtkCommand::ProgressEvent,(void*)&progress);
+      // Report progress (this is the slowest part of import, data files are read here)
+      const int remainingProgressRange = 100 - vtkMRMLScene::ImportProgressParsingComplete;
+      int progress = vtkMRMLScene::ImportProgressParsingComplete //
+                     + remainingProgressRange * updatedNodeIndex / (numberOfAddedNodes > 0 ? numberOfAddedNodes : 1);
+      updatedNodeIndex++;
+      if (progress != lastReportedProgress)
+      {
+        lastReportedProgress = progress;
+        this->ProgressState(vtkMRMLScene::ImportState, progress);
+      }
       vtkDebugMacro("Adding Node: " << (node->GetName() ? node->GetName() : "(undefined)"));
       if (node->GetAddToScene())
       {
@@ -935,6 +950,7 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
 
     this->Modified();
     this->RemoveUnusedNodeReferences();
+    this->ProgressState(vtkMRMLScene::ImportState, 100);
 #ifdef MRMLSCENE_VERBOSE
     updateSceneTimer->StopTimer();
 #endif

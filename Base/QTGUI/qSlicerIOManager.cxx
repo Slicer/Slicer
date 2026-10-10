@@ -103,11 +103,16 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   }
   this->ProgressDialog->setWindowModality(Qt::WindowModal);
   this->ProgressDialog->setMinimumDuration(1000);
+  // The dialog is closed explicitly when loading is completed (processing that follows the scene import must not close it)
+  this->ProgressDialog->setAutoClose(false);
+  this->ProgressDialog->setAutoReset(false);
   this->ProgressDialog->setValue(0);
 
   if (steps == 1)
   {
-    q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
+    vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+    q->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
+    q->qvtkConnect(scene, vtkMRMLScene::ProgressImportEvent, q, SLOT(onSceneImportProgress(vtkObject*, void*)));
   }
   return true;
 }
@@ -122,7 +127,9 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
   }
   this->ProgressDialog->setValue(this->ProgressDialog->maximum());
 
-  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
+  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  q->qvtkDisconnect(scene, vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
+  q->qvtkDisconnect(scene, vtkMRMLScene::ProgressImportEvent, q, SLOT(onSceneImportProgress(vtkObject*, void*)));
   delete this->ProgressDialog;
   this->ProgressDialog = nullptr;
 }
@@ -436,7 +443,9 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
   if (needStop)
   {
-    d->ProgressDialog->setValue(25);
+    // Scene import reports its progress (see onSceneImportProgress); for other files
+    // the progress is estimated from the number of nodes added to the scene (see updateProgressDialog).
+    d->ProgressDialog->setValue(1);
   }
 
   bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
@@ -488,11 +497,38 @@ void qSlicerIOManager::updateProgressDialog()
   {
     return;
   }
+  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  if (scene && scene->IsImporting())
+  {
+    // Progress of scene import is reported by the scene (see onSceneImportProgress)
+    return;
+  }
   int progress = d->ProgressDialog->value();
   d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1));
   // Give time to process graphic events including the progress dialog if needed
   // TBD: Not needed ?
   // qApp->processEvents();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::onSceneImportProgress(vtkObject* vtkNotUsed(scene), void* callData)
+{
+  Q_D(qSlicerIOManager);
+  if (!d->ProgressDialog)
+  {
+    return;
+  }
+  // Progress value (0-100) is passed as call data
+  int progress = static_cast<int>(reinterpret_cast<long long>(callData));
+  int value = d->ProgressDialog->minimum() + (d->ProgressDialog->maximum() - d->ProgressDialog->minimum()) * progress / 100;
+  // Keep the dialog open while the loaded scene is processed (observers of the end of import may take a while)
+  value = qMin(value, d->ProgressDialog->maximum() - 1);
+  if (progress >= 100)
+  {
+    d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Processing loaded scene..."));
+  }
+  // Note: QProgressDialog::setValue() processes events (for a modal dialog), which updates the dialog on screen
+  d->ProgressDialog->setValue(value);
 }
 
 //-----------------------------------------------------------------------------

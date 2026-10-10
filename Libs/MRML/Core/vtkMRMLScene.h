@@ -689,6 +689,12 @@ public:
   /// TODO: Report progress of the current state.
   void ProgressState(unsigned long state, int progress = 0);
 
+  /// Import progress (reported by ProgressImportEvent, progress value is passed as call data) is in the range of 0-100.
+  /// Progress of parsing the scene file is reported in the range of 0-ImportProgressParsingComplete,
+  /// progress of adding and updating the nodes (which includes reading of data files) is reported
+  /// in the range of ImportProgressParsingComplete-100.
+  static const int ImportProgressParsingComplete = 20;
+
   enum SceneEventType
   {
     NodeAboutToBeAddedEvent = 0x2000,
@@ -720,7 +726,7 @@ public:
 
     StartImportEvent = StateEvent | StartEvent | ImportState,
     EndImportEvent = StateEvent | EndEvent | ImportState,
-    ProgressImportEvent = StateEvent | EndEvent | ImportState,
+    ProgressImportEvent = StateEvent | ProgressEvent | ImportState,
 
     StartRestoreEvent = StateEvent | StartEvent | RestoreState,
     EndRestoreEvent = StateEvent | EndEvent | RestoreState,
