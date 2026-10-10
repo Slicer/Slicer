@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDropEvent>
+#include <QShowEvent>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -183,6 +184,12 @@ void qMRMLSliceViewPrivate::onSceneEndProcessing()
 {
   Q_Q(qMRMLSliceView);
   q->setRenderEnabled(true);
+  if (this->MRMLScene && !this->MRMLScene->IsBatchProcessing())
+  {
+    // Render requests were ignored while rendering was disabled during batch processing,
+    // therefore render now to show the changes made in the batch.
+    q->scheduleRender();
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -427,6 +434,13 @@ void qMRMLSliceView::dropEvent(QDropEvent* event)
     return;
   }
   shNode->ShowItemsInView(shItemIdList, this->mrmlSliceNode());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSliceView::showEvent(QShowEvent* event)
+{
+  this->Superclass::showEvent(event);
+  this->scheduleRender();
 }
 
 //---------------------------------------------------------------------------

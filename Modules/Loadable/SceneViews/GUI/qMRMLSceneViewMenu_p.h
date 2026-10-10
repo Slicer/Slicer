@@ -67,7 +67,12 @@ public:
 public slots:
   /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode
   /// associated with the current scene
+  /// Rebuild the menu if it is visible. The menu is rebuilt when it is about to be shown,
+  /// therefore it does not have to be kept up-to-date while it is hidden (rebuilding the menu
+  /// on each scene view modification would make loading of scenes with many scene views slow).
   void resetMenu();
+  /// Rebuild the menu from the scene views in the scene.
+  void rebuildMenu();
 
   void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject* mrmlNode);
 
@@ -80,6 +85,9 @@ public slots:
   void removeMenuItem(int index);
 
   bool hasNoSceneViewItem() const;
+
+  /// Get the scene views module logic (looked up when first needed, as it may not exist when the menu is created)
+  vtkSlicerSceneViewsModuleLogic* sceneViewsLogic();
 
   void restoreSceneView(int index);
   void deleteSceneView(int index);
