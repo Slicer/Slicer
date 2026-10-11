@@ -40,7 +40,6 @@
 #include <QFrame>
 #include <QImage>
 #include <QLabel>
-#include <QLocale>
 #include <QMainWindow>
 #include <QPainter>
 #include <QPaintDevice>
@@ -52,6 +51,7 @@
 #include "qMRMLSliceView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qMRMLUtils.h"
 #include "qSlicerApplication.h"
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLSliceLogic.h"
@@ -855,10 +855,7 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name,
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, double value)
 {
-  // Use the shortest representation that converts back to the exact same value.
-  // The default precision (6 significant digits) would truncate values, for example a threshold
-  // set to the maximum of a floating-point volume would exclude the voxels with the maximum value.
-  this->setParameter(name, QString::number(value, 'g', QLocale::FloatingPointShortest));
+  this->setParameter(name, qMRMLUtils::toExactString(value));
 }
 
 //-----------------------------------------------------------------------------
@@ -874,8 +871,7 @@ void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, doubl
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, double value)
 {
-  // Use the shortest representation that converts back to the exact same value
-  this->setCommonParameter(name, QString::number(value, 'g', QLocale::FloatingPointShortest));
+  this->setCommonParameter(name, qMRMLUtils::toExactString(value));
 }
 
 //-----------------------------------------------------------------------------
