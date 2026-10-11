@@ -2,6 +2,7 @@ import logging
 import os
 import unittest
 
+import numpy as np
 import vtk
 import vtkSegmentationCore
 
@@ -44,6 +45,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.TestSection_MaskingSettings()
         self.TestSection_GrowFromSeedsEffect()
         self.TestSection_DoubleParameterPrecision()
+        self.TestSection_ThresholdTolerance()
         logging.info("Test finished")
 
     # ------------------------------------------------------------------------------
@@ -580,3 +582,57 @@ class SegmentationsModuleTest2(unittest.TestCase):
             self.assertEqual(self.thresholdEffect.doubleParameter("MaximumThreshold"), value)
             self.thresholdEffect.setCommonParameter("TestDoubleParameterPrecision", value)
             self.assertEqual(self.thresholdEffect.doubleParameter("TestDoubleParameterPrecision"), value)
+
+    # ------------------------------------------------------------------------------
+    def TestSection_ThresholdTolerance(self):
+        logging.info("Running test on thresholding a floating-point volume with thresholds typed at the shown precision")
+
+        # A floating-point volume: the CT scaled so that voxel values have more digits than the thresholds are shown with
+        floatVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", "FloatVolume")
+        floatVolumeNode.CopyOrientation(self.sourceVolumeNode)
+        slicer.util.updateVolumeFromArray(floatVolumeNode, slicer.util.arrayFromVolume(self.sourceVolumeNode).astype(np.float32) / 3.0)
+        self.segmentEditorNode.SetAndObserveSourceVolumeNode(floatVolumeNode)
+        voxels = slicer.util.arrayFromVolume(floatVolumeNode)
+        decimals = self.thresholdEffect.self().thresholdDecimals(floatVolumeNode.GetImageData())
+        shownPrecision = 10.0**-decimals
+
+        self.segmentation.RemoveAllSegments()
+        segmentId = self.segmentation.AddEmptySegment("Segment_1")
+        self.segmentEditorNode.SetSelectedSegmentID(segmentId)
+        self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteAllSegments)
+
+        def thresholdedVoxels(minimumThreshold, maximumThreshold):
+            self.thresholdEffect.setParameter("MinimumThreshold", minimumThreshold)
+            self.thresholdEffect.setParameter("MaximumThreshold", maximumThreshold)
+            self.thresholdEffect.self().onApply()
+            return slicer.util.arrayFromSegmentBinaryLabelmap(self.segmentationNode, segmentId, floatVolumeNode) != 0
+
+        # A voxel value inside the range that is shown rounded down, and one that is shown rounded up
+        values = np.unique(voxels)[1:-1]
+        shownLower = values[np.round(values, decimals) < values][0]
+        shownHigher = values[np.round(values, decimals) > values][0]
+        scalarMin, scalarMax = float(voxels.min()), float(voxels.max())
+
+        # Typing a voxel value as it is shown as a threshold includes the voxels with that value
+        selected = thresholdedVoxels(scalarMin, round(float(shownLower), decimals))
+        self.assertTrue(selected[voxels == shownLower].all())
+        selected = thresholdedVoxels(round(float(shownHigher), decimals), scalarMax)
+        self.assertTrue(selected[voxels == shownHigher].all())
+        # Voxels farther than the shown precision from a threshold are still excluded
+        maximumThreshold = round(float(shownLower), decimals)
+        selected = thresholdedVoxels(scalarMin, maximumThreshold)
+        self.assertFalse(selected[voxels > maximumThreshold + shownPrecision].any())
+        self.assertTrue(selected[voxels <= maximumThreshold].all())
+
+        # An integer volume is thresholded exactly, as before
+        self.segmentEditorNode.SetAndObserveSourceVolumeNode(self.sourceVolumeNode)
+        intVoxels = slicer.util.arrayFromVolume(self.sourceVolumeNode)
+        intMax = int(intVoxels.max())
+        self.thresholdEffect.setParameter("MinimumThreshold", intMax)
+        self.thresholdEffect.setParameter("MaximumThreshold", intMax)
+        self.thresholdEffect.self().onApply()
+        selected = slicer.util.arrayFromSegmentBinaryLabelmap(self.segmentationNode, segmentId, self.sourceVolumeNode) != 0
+        self.assertTrue(selected[intVoxels == intMax].all())
+        self.assertFalse(selected[intVoxels < intMax].any())
+
+        slicer.mrmlScene.RemoveNode(floatVolumeNode)
