@@ -1797,11 +1797,9 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
     }
     return nodes;
   }
-  vtkCollectionSimpleIterator nodesIt;
   vtkMRMLNode* node;
   for (it = attributes.begin(); it != end; ++it)
   {
-    nodes->InitTraversal(nodesIt);
     std::string attributeName = it->first;
     std::string attributeValue = it->second;
     if (attributeName == "class")
@@ -1810,13 +1808,23 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
     }
     else if (attributeName == "singletontag")
     {
-      for (; (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
+      std::vector<vtkMRMLNode*> nodesToRemove;
+      for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
       {
+        node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(i));
+        if (!node)
+        {
+          continue;
+        }
         std::string singletonTag = node->GetSingletonTag() ? node->GetSingletonTag() : "";
         if (attributeValue != singletonTag)
         {
-          nodes->RemoveItem(node);
+          nodesToRemove.push_back(node);
         }
+      }
+      for (auto* n : nodesToRemove)
+      {
+        nodes->RemoveItem(n);
       }
       if (nodes->GetNumberOfItems() > 1)
       {
@@ -1835,15 +1843,25 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
       {
         continue;
       }
-      for (; (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
+      std::vector<vtkMRMLNode*> nodesToRemove;
+      for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
       {
+        node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(i));
+        if (!node)
+        {
+          continue;
+        }
         std::string viewType = node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
 
         if (attributeValue != viewType && // if there is no viewType, it's a main view.
             !(attributeValue == "main" && viewType != std::string()))
         {
-          nodes->RemoveItem(node);
+          nodesToRemove.push_back(node);
         }
+      }
+      for (auto* n : nodesToRemove)
+      {
+        nodes->RemoveItem(n);
       }
     }
     // Add here specific codes to retrieve views

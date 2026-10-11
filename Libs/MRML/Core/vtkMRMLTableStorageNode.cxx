@@ -32,6 +32,7 @@
 #include <vtkDelimitedTextReader.h>
 #include <vtkDelimitedTextWriter.h>
 #include <vtkErrorSink.h>
+#include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
@@ -794,7 +795,19 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkTable* table, 
           newColumnNameSS << columnName << COMPONENT_SEPERATOR << componentNames[componentIndex];
           newColumnName = newColumnNameSS.str();
         }
-        vtkSmartPointer<vtkDataArray> newColumn = vtkSmartPointer<vtkDataArray>::Take(oldDataArray->NewInstance());
+        vtkSmartPointer<vtkDataArray> newColumn;
+        if (vtkBitArray::SafeDownCast(oldDataArray))
+        {
+          // vtkDelimitedTextWriter (via vtkArrayDispatch) does not support vtkBitArray columns:
+          // values in bit array columns are silently dropped (not even a delimiter is written),
+          // which shifts all subsequent column values in the row. Convert to a regular array type
+          // that the writer supports.
+          newColumn = vtkSmartPointer<vtkIntArray>::New();
+        }
+        else
+        {
+          newColumn = vtkSmartPointer<vtkDataArray>::Take(oldDataArray->NewInstance());
+        }
         newColumn->SetNumberOfComponents(1);
         newColumn->SetNumberOfTuples(oldColumn->GetNumberOfTuples());
         newColumn->SetName(newColumnName.c_str());

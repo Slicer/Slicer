@@ -164,12 +164,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   set(_git_tag)
-  if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.5")
-    set(_git_tag "08210fbecda09bea2544dbb80777d634e1bfea25") # slicer-v9.5.2-2025-09-16-7c0494a68
-    set(vtk_dist_info_version "9.5.2")
-  elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.6")
-    set(_git_tag "470a7a557adaf5f1ea8031665134d18835356b85") # slicer-v9.6.2-2026-05-15-f49a1dbaf
-    set(vtk_dist_info_version "9.6.2")
+  if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.7")
+    set(_git_tag "15f4a0b4db4f387b7fc4e9832b52341d286f7e2b") # slicer-v9.7.0-2026-08-14-23f0a0956
+    set(vtk_dist_info_version "9.7.0")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR.Slicer_VTK_VERSION_MINOR: ${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}")
   endif()
@@ -198,7 +195,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       -DVTK_DEBUG_LEAKS:BOOL=${VTK_DEBUG_LEAKS}
-      -DVTK_LEGACY_REMOVE:BOOL=ON
       #-DVTK_USE_RPATH:BOOL=ON # Unused
       -DVTK_WRAP_PYTHON:BOOL=${VTK_WRAP_PYTHON}
       -DVTK_INSTALL_RUNTIME_DIR:PATH=${Slicer_INSTALL_BIN_DIR}

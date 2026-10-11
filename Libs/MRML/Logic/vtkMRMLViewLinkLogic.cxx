@@ -183,10 +183,9 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
   int sourceViewGroup = sourceViewNode->GetViewGroup();
 
   vtkSmartPointer<vtkCollection> nodes = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode"));
-  vtkMRMLCameraNode* cameraNode = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (cameraNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(nodes->GetItemAsObject(i));
     if (!cameraNode || cameraNode == sourceCameraNode)
     {
       continue;
@@ -364,13 +363,12 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
   }
 
   int requiredViewGroup = viewNode->GetViewGroup();
-  vtkMRMLViewNode* vNode = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLViewNode"));
 
-  for (nodes->InitTraversal(it); (vNode = vtkMRMLViewNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    vtkMRMLViewNode* vNode = vtkMRMLViewNode::SafeDownCast(nodes->GetItemAsObject(i));
     if (!vNode || vNode == viewNode || vNode->GetViewGroup() != requiredViewGroup)
     {
       continue;
