@@ -581,21 +581,36 @@ Pop $0
 ")
 
   # -------------------------------------------------------------------------
-  # File extensions
+  # URL protocol
   # -------------------------------------------------------------------------
-  set(FILE_EXTENSIONS .mrml .xcat .mrb)
-  if(FILE_EXTENSIONS)
-    # Register the ProgID (also used as URL protocol handler) and its open command
-    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-      "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+  # Register the ProgID and its open command. The ProgID is the URL protocol handler
+  # (for example, slicer://...) and the file extensions below are associated with it.
+  # It is registered even if no file extensions are associated, so that the URL
+  # protocol keeps working.
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+    "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\" \\\"\\\" \\\"${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME} supported file\\\"
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\" \\\"URL Protocol\\\" \\\"\\\"
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\\shell\\\\open\\\\command\\\" \
 \\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
 ")
-    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
 DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\"
 ")
+
+  # -------------------------------------------------------------------------
+  # File extensions
+  # -------------------------------------------------------------------------
+  # The entries are checked where the option is defined (SlicerApplicationOptions.cmake),
+  # so each one is a plain file extension.
+  set(FILE_EXTENSIONS ${Slicer_FILE_ASSOCIATION_EXTENSIONS})
+  if(FILE_EXTENSIONS)
+    # NSIS versions older than 3.06 delete a key that still has values even when
+    # /ifempty is specified, which would remove associations that other applications made.
+    string(APPEND CPACK_NSIS_DEFINES "\n  ;DeleteRegKey /ifempty must also check for values")
+    string(APPEND CPACK_NSIS_DEFINES "\n  !if \\\${NSIS_PACKEDVERSION} < 0x03006000")
+    string(APPEND CPACK_NSIS_DEFINES "\n    !error \\\"NSIS 3.06 or later is required to uninstall file associations safely\\\"")
+    string(APPEND CPACK_NSIS_DEFINES "\n  !endif\n")
     # Associate each file extension with the ProgID
     foreach(ext ${FILE_EXTENSIONS})
       string(LENGTH "${ext}" len)
@@ -606,8 +621,19 @@ DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${_file_association_progid}\\\"
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\" \\\"${_file_association_progid}\\\"
 WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"Content Type\\\" \\\"application/x-${ext_wo_dot}\\\"
 ")
+      # Another application may have associated the same extension since installation, so
+      # only remove the values that still hold what this installer wrote, and remove the
+      # key only if nothing else is left in it.
       set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
+Push $0
+ReadRegStr $0 SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\"
+StrCmp $0 \\\"${_file_association_progid}\\\" 0 +2
+DeleteRegValue SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\"
+ReadRegStr $0 SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"Content Type\\\"
+StrCmp $0 \\\"application/x-${ext_wo_dot}\\\" 0 +2
+DeleteRegValue SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"Content Type\\\"
+DeleteRegKey /ifempty SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
+Pop $0
 ")
     endforeach()
   endif()
