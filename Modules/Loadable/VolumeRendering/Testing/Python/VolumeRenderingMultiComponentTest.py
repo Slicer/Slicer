@@ -56,6 +56,34 @@ class VolumeRenderingMultiComponentTest(unittest.TestCase):
         presetComboBox.applyPreset(self.logic.GetPresetByName("MR-Default"))
         self.assertComponentTransferFunctionsMatchImage()
 
+    def testNoGeneratedAlphaChannelForIndependentComponents(self):
+        # An alpha channel is generated for 3-component (RGB) volumes. In independent components mode it must not be added,
+        # because it would be rendered as an additional, fully opaque component (the volume would appear as a solid block).
+        rgbVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode")
+        slicer.util.updateVolumeFromArray(rgbVolume, np.random.default_rng(0).integers(0, 256, (10, 12, 14, 3)).astype(np.uint8))
+        rgbVolume.CreateDefaultDisplayNodes()
+        displayNode = self.logic.CreateDefaultVolumeRenderingNodes(rgbVolume)
+        displayNode.SetVisibility(True)
+        volumeProperty = displayNode.GetVolumePropertyNode().GetVolumeProperty()
+
+        layoutManager = slicer.app.layoutManager()
+        layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView)
+        view = layoutManager.threeDWidget(0).threeDView()
+        displayableManager = view.displayableManagerByClassName("vtkMRMLVolumeRenderingDisplayableManager")
+
+        def renderedComponents():
+            mapper = displayableManager.GetVolumeMapper(rgbVolume)
+            mapper.GetInputAlgorithm().Update()
+            return mapper.GetInput().GetNumberOfScalarComponents()
+
+        volumeProperty.SetIndependentComponents(False)
+        slicer.app.processEvents()
+        self.assertEqual(renderedComponents(), 4)
+
+        volumeProperty.SetIndependentComponents(True)
+        slicer.app.processEvents()
+        self.assertEqual(renderedComponents(), 3)
+
     def testChartsExtentFollowsCurrentComponent(self):
         slicer.util.selectModule("VolumeRendering")
         moduleWidget = slicer.modules.volumerendering.widgetRepresentation()
