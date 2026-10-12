@@ -18,6 +18,7 @@ build_instructions/index
 debugging/index
 contributing
 style_guide
+rons_rules_for_tools
 advanced_topics
 authors
 ```
