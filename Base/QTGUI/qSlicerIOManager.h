@@ -82,17 +82,14 @@ public:
   /// \sa qSlicerScriptedFileDialog
   Q_INVOKABLE bool isDialogRegistered(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const;
 
-  /// Displays a progress dialog if it takes too long to load
-  /// There is no way to know in advance how long the loading will take, so the
-  /// progress dialog listens to the scene and increment the progress anytime
-  /// a node is added.
+  /// Load a file. Rendering is paused while loading.
+  /// A progress dialog is displayed if loading takes long (see startProgress()).
   Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType,
                              const qSlicerIO::IOProperties& parameters,
                              vtkCollection* loadedNodes = nullptr,
                              vtkMRMLMessageCollection* userMessages = nullptr) override;
-  /// If you have a list of nodes to load, it's best to use this function
-  /// in order to have a unique progress dialog instead of multiple ones.
-  /// It internally calls loadNodes() for each file.
+  /// Load a list of files. Rendering is paused while loading.
+  /// The files are loaded as a single operation, so a single progress dialog is displayed for the whole list.
   Q_INVOKABLE bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
 
   /// Helper function to display result of loadNodes.
@@ -135,12 +132,16 @@ public slots:
   inline bool openSaveDataDialog();
 
 protected slots:
-  void updateProgressDialog();
   void execDelayedFileDialog();
 
 protected:
   /// Create a qSlicerGenericIOOptionsWidget if the reader or writer describes its options.
   qSlicerIOOptions* createGenericOptions(vtkMRMLFileIOHandler* ioHandler) const override;
+
+  /// Show, update, and hide the progress dialog.
+  void startProgress(vtkMRMLOperationProgress* progress) override;
+  void updateProgress(vtkMRMLOperationProgress* progress) override;
+  void endProgress(vtkMRMLOperationProgress* progress) override;
 
   friend class qSlicerFileDialog;
 

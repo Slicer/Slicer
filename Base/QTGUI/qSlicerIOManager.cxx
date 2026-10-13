@@ -28,6 +28,7 @@
 
 /// MRML includes
 #include <vtkMRMLIOOptionsDescription.h>
+#include <vtkMRMLOperationProgress.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLMessageCollection.h>
@@ -49,9 +50,6 @@ public:
 
   vtkMRMLScene* currentScene() const;
 
-  /// Return true if a dialog is created, false if a dialog already existed
-  bool startProgressDialog(int steps = 1);
-  void stopProgressDialog();
   void readSettings();
   void writeSettings();
   QString createUniqueDialogName(qSlicerIO::IOFileType, qSlicerFileDialog::IOAction, const qSlicerIO::IOProperties&);
@@ -83,48 +81,6 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
 vtkMRMLScene* qSlicerIOManagerPrivate::currentScene() const
 {
   return qSlicerCoreApplication::application()->mrmlScene();
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
-{
-  Q_Q(qSlicerIOManager);
-  if (this->ProgressDialog)
-  {
-    return false;
-  }
-  int max = (steps != 1 ? steps : 100);
-  this->ProgressDialog = new QProgressDialog(qSlicerIOManager::tr("Loading file... "), qSlicerIOManager::tr("Cancel"), 0, max);
-  this->ProgressDialog->setWindowTitle(qSlicerIOManager::tr("Loading ..."));
-  if (steps == 1)
-  {
-    // We only support cancelling a load action if we can have control over it
-    this->ProgressDialog->setCancelButton(nullptr);
-  }
-  this->ProgressDialog->setWindowModality(Qt::WindowModal);
-  this->ProgressDialog->setMinimumDuration(1000);
-  this->ProgressDialog->setValue(0);
-
-  if (steps == 1)
-  {
-    q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
-  }
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerIOManagerPrivate::stopProgressDialog()
-{
-  Q_Q(qSlicerIOManager);
-  if (!this->ProgressDialog)
-  {
-    return;
-  }
-  this->ProgressDialog->setValue(this->ProgressDialog->maximum());
-
-  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
-  delete this->ProgressDialog;
-  this->ProgressDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -428,71 +384,97 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
                                  vtkCollection* loadedNodes,
                                  vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
-  Q_D(qSlicerIOManager);
   // speed up data loading by disabling re-rendering
   // (it can make a big difference if hundreds of nodes are loaded)
   SlicerRenderBlocker renderBlocker;
-  bool needStop = d->startProgressDialog(1);
-  d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
-  if (needStop)
-  {
-    d->ProgressDialog->setValue(25);
-  }
-
-  bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
-  if (needStop)
-  {
-    d->stopProgressDialog();
-  }
-  return res;
+  return this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
-  Q_D(qSlicerIOManager);
   // Speed up data loading by disabling re-rendering
   // (it can make a big difference if hundreds of nodes are loaded)
   SlicerRenderBlocker renderBlocker;
-  bool needStop = d->startProgressDialog(files.count());
-  bool success = true;
-  for (const qSlicerIO::IOProperties& fileProperties : files)
-  {
-    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()), fileProperties, loadedNodes, userMessages) && success;
-    if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
-    {
-      userMessages->AddSeparator();
-    }
-
-    this->updateProgressDialog();
-    if (d->ProgressDialog->wasCanceled())
-    {
-      success = false;
-      break;
-    }
-  }
-
-  if (needStop)
-  {
-    d->stopProgressDialog();
-  }
-  return success;
+  return this->qSlicerCoreIOManager::loadNodes(files, loadedNodes, userMessages);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerIOManager::updateProgressDialog()
+void qSlicerIOManager::startProgress(vtkMRMLOperationProgress* progress)
 {
   Q_D(qSlicerIOManager);
-  if (!d->ProgressDialog)
+  delete d->ProgressDialog;
+  QString title = progress ? QString::fromStdString(progress->GetTitle()) : QString();
+  const bool abortable = progress && progress->GetAbortable();
+  Qt::WindowFlags windowFlags = Qt::Dialog;
+  if (!abortable)
+  {
+    // The operation cannot be aborted, therefore the window close button is not offered (only a title bar is shown)
+    windowFlags |= Qt::CustomizeWindowHint | Qt::WindowTitleHint;
+  }
+  d->ProgressDialog = new QProgressDialog(title, qSlicerIOManager::tr("Cancel"), 0, 100, nullptr, windowFlags);
+  d->ProgressDialog->setWindowTitle(title);
+  if (!abortable)
+  {
+    d->ProgressDialog->setCancelButton(nullptr);
+  }
+  d->ProgressDialog->setWindowModality(Qt::WindowModal);
+  d->ProgressDialog->setMinimumDuration(1000);
+  d->ProgressDialog->setValue(0);
+  this->updateProgress(progress);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::updateProgress(vtkMRMLOperationProgress* progress)
+{
+  Q_D(qSlicerIOManager);
+  if (!d->ProgressDialog || !progress)
   {
     return;
   }
-  int progress = d->ProgressDialog->value();
-  d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1));
-  // Give time to process graphic events including the progress dialog if needed
-  // TBD: Not needed ?
-  // qApp->processEvents();
+  if (d->ProgressDialog->wasCanceled())
+  {
+    // Do not update the dialog after it is canceled (it would be shown again)
+    progress->AbortExecuteOn();
+    return;
+  }
+  QString text = QString::fromStdString(progress->GetProgressText());
+  if (!text.isEmpty() && progress->GetNumberOfFiles() > 1)
+  {
+    //: %1 is the index of the current file, %2 is the total number of files
+    text += " " + qSlicerIOManager::tr("(%1 of %2)").arg(progress->GetCurrentFileIndex() + 1).arg(progress->GetNumberOfFiles());
+  }
+  if (!text.isEmpty() && d->ProgressDialog->labelText() != text)
+  {
+    d->ProgressDialog->setLabelText(text);
+  }
+  if (progress->GetNumberOfFiles() == 0)
+  {
+    // Unknown amount of work: show busy indicator
+    d->ProgressDialog->setRange(0, 0);
+  }
+  else
+  {
+    // QProgressDialog only shows itself and processes events (displays changes and handles clicking the Cancel button)
+    // when its value changes. Use a range that is large enough so that the value changes at each progress update:
+    // progress of processing each file is reported in percent.
+    const int maximumValue = 100 * progress->GetNumberOfFiles();
+    d->ProgressDialog->setRange(0, maximumValue);
+    // The maximum is only set when processing is completed (setting it would close the dialog)
+    d->ProgressDialog->setValue(qBound(0, static_cast<int>(progress->GetProgress() * maximumValue), maximumValue - 1));
+  }
+  if (d->ProgressDialog->wasCanceled())
+  {
+    progress->AbortExecuteOn();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::endProgress(vtkMRMLOperationProgress* vtkNotUsed(progress))
+{
+  Q_D(qSlicerIOManager);
+  delete d->ProgressDialog;
+  d->ProgressDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------

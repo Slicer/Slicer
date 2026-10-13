@@ -40,6 +40,7 @@
 #include <vtkMRMLFileReader.h>
 #include <vtkMRMLFileWriter.h>
 #include <vtkMRMLIOProperties.h>
+#include <vtkMRMLOperationProgress.h>
 
 // MRML includes
 #include <vtkMRMLMessageCollection.h>
@@ -358,6 +359,9 @@ vtkMRMLFileIOManager* qSlicerCoreIOManagerPrivate::fileIOManager()
   this->FileIOManager->AddObserver(vtkMRMLFileIOManager::NewFileLoadedEvent, this->CallbackCommand);
   this->FileIOManager->AddObserver(vtkMRMLFileIOManager::FileSavedEvent, this->CallbackCommand);
   this->FileIOManager->AddObserver(vtkMRMLFileIOManager::HandlerUnregisteredEvent, this->CallbackCommand);
+  this->FileIOManager->AddObserver(vtkMRMLFileIOManager::OperationStartEvent, this->CallbackCommand);
+  this->FileIOManager->AddObserver(vtkMRMLFileIOManager::OperationProgressEvent, this->CallbackCommand);
+  this->FileIOManager->AddObserver(vtkMRMLFileIOManager::OperationEndEvent, this->CallbackCommand);
 
   if (previousFileIOManager)
   {
@@ -380,6 +384,10 @@ void qSlicerCoreIOManagerPrivate::onFileIOManagerEvent(vtkObject* vtkNotUsed(cal
   {
     case vtkMRMLFileIOManager::NewFileLoadedEvent: emit q->newFileLoaded(qSlicerIO::fromVTKProperties(reinterpret_cast<vtkMRMLIOProperties*>(callData))); break;
     case vtkMRMLFileIOManager::FileSavedEvent: emit q->fileSaved(qSlicerIO::fromVTKProperties(reinterpret_cast<vtkMRMLIOProperties*>(callData))); break;
+    // Loading progress (call data is a vtkMRMLOperationProgress object)
+    case vtkMRMLFileIOManager::OperationStartEvent: q->startProgress(vtkMRMLOperationProgress::SafeDownCast(reinterpret_cast<vtkObject*>(callData))); break;
+    case vtkMRMLFileIOManager::OperationProgressEvent: q->updateProgress(vtkMRMLOperationProgress::SafeDownCast(reinterpret_cast<vtkObject*>(callData))); break;
+    case vtkMRMLFileIOManager::OperationEndEvent: q->endProgress(vtkMRMLOperationProgress::SafeDownCast(reinterpret_cast<vtkObject*>(callData))); break;
     case vtkMRMLFileIOManager::HandlerUnregisteredEvent:
     {
       vtkMRMLFileIOHandler* handler = reinterpret_cast<vtkMRMLFileIOHandler*>(callData);
@@ -666,6 +674,15 @@ qSlicerIOOptions* qSlicerCoreIOManager::createGenericOptions(vtkMRMLFileIOHandle
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::startProgress(vtkMRMLOperationProgress* vtkNotUsed(progress)) {}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::updateProgress(vtkMRMLOperationProgress* vtkNotUsed(progress)) {}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::endProgress(vtkMRMLOperationProgress* vtkNotUsed(progress)) {}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode* node) const
 {
   return QString::fromStdString(this->fileIOManager()->GetCompleteSlicerWritableFileNameSuffix(node));
@@ -702,20 +719,15 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
-  // Load each file by calling loadNodes(fileType, ...), which may be overridden in subclasses
-  bool success = true;
+  // Load the files using the file IO manager, as a single loading operation (for progress reporting)
+  vtkNew<vtkCollection> propertiesList;
   for (const qSlicerIO::IOProperties& fileProperties : files)
   {
-    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()), fileProperties, loadedNodes, userMessages) //
-              && success;
-    // Add a separator between nodes
-    if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
-    {
-      userMessages->AddSeparator();
-    }
+    vtkNew<vtkMRMLIOProperties> properties;
+    qSlicerIO::toVTKProperties(fileProperties, properties);
+    propertiesList->AddItem(properties);
   }
-  return success;
+  return this->fileIOManager()->LoadNodesFromList(propertiesList, loadedNodes, userMessages);
 }
 
 //-----------------------------------------------------------------------------
