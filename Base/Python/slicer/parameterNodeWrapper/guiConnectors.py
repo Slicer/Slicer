@@ -10,7 +10,6 @@ import logging
 import pathlib
 import types
 import typing
-from itertools import pairwise
 
 import ctk
 import qt
@@ -810,12 +809,26 @@ class ctkColorPickerButtonToQColorConnector(GuiConnector):
 SlicerPackParameterNamePropertyName = "SlicerPackParameterName"
 
 
+# Note: Qt objects must be compared using == (not using "is"), because the same Qt object
+# may be represented by different Python objects.
+
+
 def _makeParentStack(child, root):
+    """Returns the widgets that have a pack parameter name from root (exclusive) to child (inclusive)."""
     prop = SlicerPackParameterNamePropertyName
     stack = [child]
-    while stack[0].parent() is not root:
-        stack.insert(0, stack[0].parent())
+    parent = child.parent()
+    while parent is not None and parent != root:
+        stack.insert(0, parent)
+        parent = parent.parent()
     return [s for s in stack if s.property(prop) is not None]
+
+
+def _isProperPrefix(shorterStack, longerStack):
+    """Returns True if longerStack starts with all the widgets of shorterStack and contains more widgets."""
+    if len(shorterStack) >= len(longerStack):
+        return False
+    return all(shorterWidget == longerWidget for shorterWidget, longerWidget in zip(shorterStack, longerStack, strict=False))
 
 
 def _extractCorrectWidgets(widget):
@@ -824,12 +837,8 @@ def _extractCorrectWidgets(widget):
                     if child.property(SlicerPackParameterNamePropertyName) is not None]
 
     # Remove stacks that are completely contained within other stacks.
-    # note: just doing `sorted(parentStacks, key=lambda x: id(x))` wasn't sorting it right
-    ids = [[id(w) for w in ww] for ww in parentStacks]
-    parentStacks, _ = zip(*sorted(zip(parentStacks, ids, strict=True), key=lambda w: w[1]), strict=True)
-
-    leafParentStacks = [i for i, j in pairwise(parentStacks) if not i == j[:len(i)]] \
-        + [parentStacks[-1]]
+    leafParentStacks = [stack for stack in parentStacks
+                        if not any(_isProperPrefix(stack, otherStack) for otherStack in parentStacks)]
     return leafParentStacks
 
 
