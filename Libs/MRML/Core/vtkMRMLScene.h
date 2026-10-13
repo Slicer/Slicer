@@ -673,6 +673,9 @@ public:
   ///
   /// StartState() internally pushes the state into a stack.
   ///
+  /// Following VTK conventions, the state start event is invoked without call data.
+  /// The anticipatedMaxProgress parameter is not used, it is only kept for backward compatibility.
+  ///
   /// \sa EndState, GetStates
   void StartState(unsigned long state, int anticipatedMaxProgress = 0);
 
@@ -686,8 +689,11 @@ public:
   /// EndState() internally pops the state out of the stack.
   void EndState(unsigned long state);
 
-  /// TODO: Report progress of the current state.
-  void ProgressState(unsigned long state, int progress = 0);
+  /// Report progress of the current state (for example, vtkMRMLScene::ProgressImportEvent is invoked if state is
+  /// \link vtkMRMLScene::ImportState ImportState \endlink). Progress value is in the range of 0.0-1.0
+  /// (values outside this range are clamped).
+  /// Following VTK conventions, a pointer to the progress value (double) is passed as call data.
+  void ProgressState(unsigned long state, double progress = 0.0);
 
   enum SceneEventType
   {
@@ -720,7 +726,10 @@ public:
 
     StartImportEvent = StateEvent | StartEvent | ImportState,
     EndImportEvent = StateEvent | EndEvent | ImportState,
-    ProgressImportEvent = StateEvent | EndEvent | ImportState,
+    /// Import progress. Call data is a pointer to the progress value (double) in the range of 0.0-1.0.
+    /// Progress is reported while nodes are added to the scene and while they are updated (which includes reading
+    /// their data). 1.0 is reported when all nodes are added and updated.
+    ProgressImportEvent = StateEvent | ProgressEvent | ImportState,
 
     StartRestoreEvent = StateEvent | StartEvent | RestoreState,
     EndRestoreEvent = StateEvent | EndEvent | RestoreState,
@@ -728,6 +737,8 @@ public:
 
     StartSaveEvent = StateEvent | StartEvent | SaveState,
     EndSaveEvent = StateEvent | EndEvent | SaveState,
+    /// Save progress (reported when the scene is saved into a data bundle). Call data is a pointer to
+    /// the progress value (double) in the range of 0.0-1.0.
     ProgressSaveEvent = StateEvent | ProgressEvent | SaveState,
 
     StartUndoEvent = StateEvent | StartEvent | UndoState,
@@ -817,6 +828,7 @@ public:
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns false if the save failed
+  /// Save progress is reported by ProgressSaveEvent.
   bool WriteToMRB(const char* filename, vtkImageData* thumbnail = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Read the scene from a MRML scene bundle (.mrb) file
@@ -836,6 +848,7 @@ public:
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns false if the save failed
+  /// Save progress is reported by ProgressSaveEvent.
   bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Utility function to write the scene thumbnail to a file in the scene's root folder.
@@ -939,6 +952,19 @@ protected:
   /// Returns true on success (written successfully or no need to write the node).
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
+  /// Update node references to changed node IDs (see UpdateNodeReferences()) and report import progress
+  /// (ProgressImportEvent) in the range of progressRangeStart-progressRangeEnd (0.0-1.0).
+  void UpdateNodeReferences(vtkCollection* checkNodes, double progressRangeStart, double progressRangeEnd, double& lastReportedProgress);
+
+  /// Implementation of WriteToMRB() and SaveSceneToSlicerDataBundleDirectory(), which must be called in SaveState.
+  /// Save progress is reported in the range of progressRangeStart-progressRangeEnd (0.0-1.0).
+  bool WriteToMRBInternal(const char* filename, vtkImageData* thumbnail, vtkMRMLMessageCollection* userMessages);
+  bool SaveSceneToSlicerDataBundleDirectoryInternal(const char* sdbDir,
+                                                    vtkImageData* screenShot,
+                                                    vtkMRMLMessageCollection* userMessages,
+                                                    double progressRangeStart,
+                                                    double progressRangeEnd);
+
   bool SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode,
                                                    std::string& dataDir,
                                                    std::map<vtkMRMLStorageNode*, std::vector<std::string>>& originalStorageNodeFileNames,
