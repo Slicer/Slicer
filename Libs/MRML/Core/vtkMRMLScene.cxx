@@ -121,6 +121,7 @@ Version:   $Revision: 1.18 $
 
 // STD includes
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <numeric>
 
@@ -129,6 +130,38 @@ Version:   $Revision: 1.18 $
 #ifdef MRMLSCENE_VERBOSE
 # include <vtkTimerLog.h>
 #endif
+
+//------------------------------------------------------------------------------
+namespace
+{
+// Progress of scene states (import, save) is reported with this resolution (to limit the number of progress events).
+constexpr double PROGRESS_REPORTING_RESOLUTION = 0.01; // 1%
+
+// The progress range of each phase of import is set based on typical time spent in that phase.
+// Parsing the scene file:
+constexpr double IMPORT_PROGRESS_PARSING_END = 0.05;
+// Adding the loaded nodes to the scene:
+constexpr double IMPORT_PROGRESS_ADDING_NODES_END = 0.20;
+// Updating node references (if node IDs conflicted with IDs of nodes that were already in the scene):
+constexpr double IMPORT_PROGRESS_UPDATING_REFERENCES_END = 0.30;
+// Updating the nodes (which includes reading their data files) takes the rest.
+
+//------------------------------------------------------------------------------
+// Report progress (0.0-1.0) of a scene state, rounded down to PROGRESS_REPORTING_RESOLUTION.
+// Progress is only reported if the rounded value is different from the last reported value.
+void ReportProgress(vtkMRMLScene* scene, unsigned long state, double progress, double& lastReportedProgress)
+{
+  // A small tolerance is added to avoid rounding down values (such as 0.3) because of numerical errors
+  double roundedProgress = std::floor(progress / PROGRESS_REPORTING_RESOLUTION + 1e-6) * PROGRESS_REPORTING_RESOLUTION;
+  roundedProgress = std::min(std::max(roundedProgress, 0.0), 1.0);
+  if (roundedProgress == lastReportedProgress)
+  {
+    return;
+  }
+  lastReportedProgress = roundedProgress;
+  scene->ProgressState(state, roundedProgress);
+}
+} // namespace
 
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager);
 vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager);
@@ -727,7 +760,7 @@ int vtkMRMLScene::GetStates() const
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::StartState(unsigned long state, int anticipatedMaxProgress)
+void vtkMRMLScene::StartState(unsigned long state, int vtkNotUsed(anticipatedMaxProgress))
 {
   bool wasBatchProcessing = this->IsBatchProcessing();
   bool wasInState = ((this->GetStates() & state) == state);
@@ -739,7 +772,7 @@ void vtkMRMLScene::StartState(unsigned long state, int anticipatedMaxProgress)
   if (state != vtkMRMLScene::BatchProcessState && //
       !wasInState)
   {
-    this->InvokeEvent(StateEvent | StartEvent | state, reinterpret_cast<void*>(anticipatedMaxProgress));
+    this->InvokeEvent(StateEvent | StartEvent | state);
   }
 }
 
@@ -773,15 +806,16 @@ void vtkMRMLScene::EndState(unsigned long state)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::ProgressState(unsigned long state, int progress)
+void vtkMRMLScene::ProgressState(unsigned long state, double progress)
 {
+  progress = std::min(std::max(progress, 0.0), 1.0);
   if (state & vtkMRMLScene::BatchProcessState)
   {
-    this->InvokeEvent(StateEvent | ProgressEvent | vtkMRMLScene::BatchProcessState, reinterpret_cast<void*>(progress));
+    this->InvokeEvent(StateEvent | ProgressEvent | vtkMRMLScene::BatchProcessState, &progress);
   }
   if (state != vtkMRMLScene::BatchProcessState)
   {
-    this->InvokeEvent(StateEvent | ProgressEvent | state, reinterpret_cast<void*>(progress));
+    this->InvokeEvent(StateEvent | ProgressEvent | state, &progress);
   }
 }
 
@@ -847,6 +881,8 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
   this->SetUndoOff();
   this->StartState(vtkMRMLScene::ImportState);
   this->ReferencedIDChanges.clear();
+  double lastReportedProgress = -1.0;
+  ReportProgress(this, vtkMRMLScene::ImportState, 0.0, lastReportedProgress);
 
   // read nodes into a temp scene
   vtkNew<vtkCollection> loadedNodes;
@@ -857,6 +893,8 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
     /// imported scene.
     /// Mark all the node IDs of the scene as reserved so the node ID
     /// generator doesn't choose them.
+    // Parsing is complete, nodes are added and updated now
+    ReportProgress(this, vtkMRMLScene::ImportState, IMPORT_PROGRESS_PARSING_END, lastReportedProgress);
     vtkMRMLNode* node = nullptr;
     vtkCollectionSimpleIterator it;
     for (loadedNodes->InitTraversal(it); (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it));)
@@ -870,9 +908,15 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
     // in case of singleton nodes the existing singleton node is kept
     // and only the contents is overwritten.
     vtkSmartPointer<vtkCollection> addedNodes = vtkSmartPointer<vtkCollection>::New();
+    const int numberOfLoadedNodes = loadedNodes->GetNumberOfItems();
+    int addedNodeIndex = 0;
     for (loadedNodes->InitTraversal(it); (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it));)
     {
       addedNodes->AddItem(this->AddNode(node));
+      addedNodeIndex++;
+      const double progressRange = IMPORT_PROGRESS_ADDING_NODES_END - IMPORT_PROGRESS_PARSING_END;
+      double progress = IMPORT_PROGRESS_PARSING_END + progressRange * addedNodeIndex / numberOfLoadedNodes;
+      ReportProgress(this, vtkMRMLScene::ImportState, progress, lastReportedProgress);
     }
 #ifdef MRMLSCENE_VERBOSE
     addNodesTimer->StopTimer();
@@ -892,7 +936,8 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
 
     // Update the node references to the changed node IDs
     // (that conflicted in the current scene and the imported scene)
-    this->UpdateNodeReferences(addedNodes);
+    this->UpdateNodeReferences(addedNodes, IMPORT_PROGRESS_ADDING_NODES_END, IMPORT_PROGRESS_UPDATING_REFERENCES_END, lastReportedProgress);
+    ReportProgress(this, vtkMRMLScene::ImportState, IMPORT_PROGRESS_UPDATING_REFERENCES_END, lastReportedProgress);
     this->RemoveReservedIDs();
 
     // This must run after node references are updated, but before nodes are loaded
@@ -911,10 +956,15 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
     // Notify the imported nodes about that all nodes are created
     // (so the observers can be attached to referenced nodes, etc.)
     // by calling UpdateScene on each node
+    const int numberOfAddedNodes = addedNodes->GetNumberOfItems();
+    int updatedNodeIndex = 0;
     for (addedNodes->InitTraversal(it); (node = (vtkMRMLNode*)addedNodes->GetNextItemAsObject(it));)
     {
-      // double progress = n / (1. * nnodes);
-      // this->InvokeEvent(vtkCommand::ProgressEvent,(void*)&progress);
+      // Report progress (this is the slowest part of import, data files are read here)
+      const double progressRange = 1.0 - IMPORT_PROGRESS_UPDATING_REFERENCES_END;
+      double progress = IMPORT_PROGRESS_UPDATING_REFERENCES_END + progressRange * updatedNodeIndex / numberOfAddedNodes;
+      updatedNodeIndex++;
+      ReportProgress(this, vtkMRMLScene::ImportState, progress, lastReportedProgress);
       vtkDebugMacro("Adding Node: " << (node->GetName() ? node->GetName() : "(undefined)"));
       if (node->GetAddToScene())
       {
@@ -935,6 +985,7 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput /*=nullptr*
 
     this->Modified();
     this->RemoveUnusedNodeReferences();
+    ReportProgress(this, vtkMRMLScene::ImportState, 1.0, lastReportedProgress);
 #ifdef MRMLSCENE_VERBOSE
     updateSceneTimer->StopTimer();
 #endif
@@ -3334,8 +3385,24 @@ const char* vtkMRMLScene::GetChangedID(const char* id)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes /*=nullptr*/)
 {
+  double lastReportedProgress = -1.0;
+  this->UpdateNodeReferences(checkNodes, -1.0, -1.0, lastReportedProgress);
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes, double progressRangeStart, double progressRangeEnd, double& lastReportedProgress)
+{
+  const bool reportProgress = (progressRangeStart >= 0.0 && progressRangeEnd > progressRangeStart);
+  const int numberOfChangedIDs = static_cast<int>(this->ReferencedIDChanges.size());
+  int changedIDIndex = 0;
   for (std::map<std::string, std::string>::const_iterator iterChanged = this->ReferencedIDChanges.begin(); iterChanged != this->ReferencedIDChanges.end(); iterChanged++)
   {
+    if (reportProgress)
+    {
+      double progress = progressRangeStart + (progressRangeEnd - progressRangeStart) * changedIDIndex / numberOfChangedIDs;
+      ReportProgress(this, vtkMRMLScene::ImportState, progress, lastReportedProgress);
+    }
+    changedIDIndex++;
     const std::string& oldID = iterChanged->first;
     const std::string& newID = iterChanged->second;
     NodeReferencesType::iterator referencedIdIt = this->NodeReferences.find(oldID);
@@ -3975,6 +4042,19 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
 //----------------------------------------------------------------------------
 bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail /*=nullptr*/, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
+  this->StartState(vtkMRMLScene::SaveState);
+  bool success = this->WriteToMRBInternal(filename, thumbnail, userMessages);
+  if (success)
+  {
+    this->ProgressState(vtkMRMLScene::SaveState, 1.0);
+  }
+  this->EndState(vtkMRMLScene::SaveState);
+  return success;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLScene::WriteToMRBInternal(const char* filename, vtkImageData* thumbnail, vtkMRMLMessageCollection* userMessages)
+{
   //
   // make a temp directory to save the scene into - this will
   // be a uniquely named directory that contains a directory
@@ -4029,7 +4109,9 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail /*=n
   // Now save the scene into the bundle directory and then make a zip (mrb) file
   // in the user's selected file location
   //
-  bool retval = this->SaveSceneToSlicerDataBundleDirectory(bundleDir.c_str(), thumbnail, userMessages);
+  // Saving the scene and the data files takes most of the time, the rest is for compressing the bundle
+  const double savingProgressEnd = 0.8;
+  bool retval = this->SaveSceneToSlicerDataBundleDirectoryInternal(bundleDir.c_str(), thumbnail, userMessages, 0.0, savingProgressEnd);
   if (!retval)
   {
     vtkErrorToMessageCollectionMacro(
@@ -4249,6 +4331,20 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
 //----------------------------------------------------------------------------
 bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot /*=nullptr*/, vtkMRMLMessageCollection* userMessagesInput /*=nullptr*/)
 {
+  this->StartState(vtkMRMLScene::SaveState);
+  // Completion (100%) is reported by SaveSceneToSlicerDataBundleDirectoryInternal at the end of the progress range
+  bool success = this->SaveSceneToSlicerDataBundleDirectoryInternal(sdbDir, screenShot, userMessagesInput, 0.0, 1.0);
+  this->EndState(vtkMRMLScene::SaveState);
+  return success;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectoryInternal(const char* sdbDir,
+                                                                vtkImageData* screenShot,
+                                                                vtkMRMLMessageCollection* userMessagesInput,
+                                                                double progressRangeStart,
+                                                                double progressRangeEnd)
+{
   // Overview:
   // - confirm the arguments are valid and create directories if needed
   // - save all current file storage paths in the scene
@@ -4370,6 +4466,21 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
   bool success = true;
   std::map<std::string, vtkMRMLNode*> storableNodes;
   int numNodes = this->GetNumberOfNodes();
+
+  // Progress is reported after each storable node is saved, writing the scene file is the last step
+  int numberOfStorableNodesToSave = 0;
+  for (int i = 0; i < numNodes; ++i)
+  {
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetNthNode(i));
+    if (storableNode && !storableNode->GetHideFromEditors())
+    {
+      numberOfStorableNodesToSave++;
+    }
+  }
+  int numberOfSavedStorableNodes = 0;
+  double lastReportedProgress = -1.0;
+  ReportProgress(this, vtkMRMLScene::SaveState, progressRangeStart, lastReportedProgress);
+
   for (int i = 0; i < numNodes; ++i)
   {
     vtkMRMLNode* mrmlNode = this->GetNthNode(i);
@@ -4415,12 +4526,17 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
         success = false;
       }
       storableNodes[std::string(storableNode->GetID())] = storableNode;
+      numberOfSavedStorableNodes++;
+      const double progressRange = progressRangeEnd - progressRangeStart;
+      double progress = progressRangeStart + progressRange * numberOfSavedStorableNodes / (numberOfStorableNodesToSave + 1);
+      ReportProgress(this, vtkMRMLScene::SaveState, progress, lastReportedProgress);
     }
   }
 
   // write the scene to disk, changes paths to relative
   vtkDebugMacro("calling commit on the scene, to url " << this->GetURL());
   this->Commit(nullptr, userMessages);
+  ReportProgress(this, vtkMRMLScene::SaveState, progressRangeEnd, lastReportedProgress);
 
   //
   // Now, restore the state of the scene

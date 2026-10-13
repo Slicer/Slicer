@@ -63,7 +63,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneImportIDConflictTest.cxx
   vtkMRMLSceneImportIDModelHierarchyConflictTest.cxx
   vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest.cxx
+  vtkMRMLSceneImportProgressTest.cxx
   vtkMRMLSceneImportTest.cxx
+  vtkMRMLSceneSaveProgressTest.cxx
   vtkMRMLSceneTest1.cxx
   vtkMRMLSceneTest2.cxx
   vtkMRMLSceneDefaultNodeTest.cxx
@@ -186,6 +188,8 @@ simple_test( vtkMRMLSceneImportIDConflictTest )
 simple_test( vtkMRMLSceneImportIDModelHierarchyConflictTest )
 simple_test( vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest )
 simple_test( vtkMRMLSceneIDTest )
+simple_test( vtkMRMLSceneImportProgressTest )
+simple_test( vtkMRMLSceneSaveProgressTest ${TEMP} )
 simple_test( vtkMRMLSceneTest1 )
 simple_test( vtkMRMLSceneDefaultNodeTest )
 simple_test( vtkMRMLSegmentationNodeTest1 )

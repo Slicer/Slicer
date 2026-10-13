@@ -135,7 +135,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   int progress = 0;
   if (useBatchMode)
   {
-    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState, toRemove);
+    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
   }
   std::vector<vtkWeakPointer<vtkMRMLNode>>::const_iterator nodeIterator;
   nodeIterator = nodesToRemove.begin();
@@ -146,7 +146,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
       this->GetMRMLScene()->RemoveNode(*nodeIterator);
       if (useBatchMode)
       {
-        this->GetMRMLScene()->ProgressState(vtkMRMLScene::BatchProcessState, ++progress);
+        this->GetMRMLScene()->ProgressState(vtkMRMLScene::BatchProcessState, static_cast<double>(++progress) / toRemove);
       }
     }
     ++nodeIterator;
