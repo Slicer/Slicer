@@ -36,6 +36,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest4.cxx
   vtkMRMLSliceLogicTest5.cxx
   vtkMRMLApplicationLogicTest1.cxx
+  vtkMRMLFileIOManagerProgressTest.cxx
   vtkMRMLFileIOManagerTest1.cxx
   EXTRA_INCLUDE ${EXTRA_INCLUDE}
   )
@@ -64,4 +65,5 @@ simple_file_test( vtkMRMLSliceLogicTest3 fixed.nrrd)
 simple_file_test( vtkMRMLSliceLogicTest4 fixed.nrrd)
 simple_file_test( vtkMRMLSliceLogicTest5 fixed.nrrd)
 simple_test( vtkMRMLApplicationLogicTest1 "${CMAKE_BINARY_DIR}/Testing/Temporary" )
+simple_test( vtkMRMLFileIOManagerProgressTest "${CMAKE_BINARY_DIR}/Testing/Temporary" )
 simple_test( vtkMRMLFileIOManagerTest1 "${CMAKE_BINARY_DIR}/Testing/Temporary" )

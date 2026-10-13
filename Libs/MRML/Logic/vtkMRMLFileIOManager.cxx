@@ -24,6 +24,7 @@
 #include "vtkMRMLFileWriter.h"
 #include "vtkMRMLIOProperties.h"
 #include "vtkMRMLNodeWriter.h"
+#include "vtkMRMLOperationProgress.h"
 
 // MRML includes
 #include <vtkDataFileFormatHelper.h>
@@ -38,6 +39,7 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
@@ -78,6 +80,16 @@ bool StartsWith(const std::string& text, const std::string& prefix)
 bool EndsWith(const std::string& text, const std::string& suffix)
 {
   return text.size() >= suffix.size() && text.compare(text.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+/// Title of loading and saving operations (for progress reporting)
+std::string GetLoadingTitle()
+{
+  return vtkMRMLTr("vtkMRMLFileIOManager", "Loading data");
+}
+std::string GetSavingTitle()
+{
+  return vtkMRMLTr("vtkMRMLFileIOManager", "Saving data");
 }
 } // namespace
 
@@ -869,7 +881,7 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
     vtkErrorMacro("LoadNodes failed: \"fileName\" property is required");
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLTr("qSlicerCoreIOManager", "File name is not specified."));
+      userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLTr("vtkMRMLFileIOManager", "File name is not specified."));
     }
     return false;
   }
@@ -882,26 +894,40 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
   if (properties->IsStringListProperty("fileName"))
   {
     // Load each file
-    bool res = true;
     std::vector<std::string> fileNames = properties->GetStringListProperty("fileName");
     std::vector<std::string> names = properties->GetStringListProperty("name");
-    size_t nameId = 0;
-    for (const std::string& fileName : fileNames)
+    const int numberOfFiles = static_cast<int>(fileNames.size());
+    ListProgress listProgress = this->StartListProgress(GetLoadingTitle(), numberOfFiles);
+    bool res = true;
+    for (int fileIndex = 0; fileIndex < numberOfFiles; ++fileIndex)
     {
+      this->StartListItemProgress(listProgress, fileIndex);
       vtkNew<vtkMRMLIOProperties> fileProperties;
       fileProperties->Copy(properties);
-      fileProperties->SetStringProperty("fileName", fileName);
+      fileProperties->SetStringProperty("fileName", fileNames[fileIndex]);
       if (!names.empty())
       {
-        fileProperties->SetStringProperty("name", nameId < names.size() ? names[nameId] : names.back());
-        ++nameId;
+        fileProperties->SetStringProperty("name", fileIndex < static_cast<int>(names.size()) ? names[fileIndex] : names.back());
       }
       res = this->LoadNodes(fileType, fileProperties, loadedNodes, userMessages) && res;
+      if (this->EndListItemProgress(listProgress, fileIndex))
+      {
+        // Aborted
+        res = false;
+        break;
+      }
     }
+    //: %1 is the number of loaded files, %2 is the number of files that were selected for loading
+    this->EndListProgress(listProgress, userMessages, vtkMRMLTr("vtkMRMLFileIOManager", "Loading was canceled after %1 of %2 files were loaded."));
     return res;
   }
 
   const std::string fileName = properties->GetStringProperty("fileName");
+
+  // The amount of work is unknown until progress of loading the file is reported
+  bool operationStarted = this->StartOperationProgress(GetLoadingTitle(), 0);
+  //: %1 is the filename
+  this->ReportFileProgress(-1.0, vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Loading file %1 ..."), fileName.c_str()));
 
   vtkNew<vtkMRMLIOProperties> loadedFileProperties;
   loadedFileProperties->Copy(properties);
@@ -913,7 +939,14 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
   bool success = false;
   int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
   //: %1 is the filename
-  const std::string userMessagePrefix = vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Loading %1"), fileName.c_str()) + " - ";
+  const std::string userMessagePrefix = vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Loading %1"), fileName.c_str()) + " - ";
+
+  // Readers that load a scene file import it into the scene: report the import progress as loading progress
+  // (unless it is already reported, because this file is loaded by a reader that is loading a file)
+  vtkNew<vtkCallbackCommand> sceneImportProgressCommand;
+  sceneImportProgressCommand->SetCallback(vtkMRMLFileIOManager::OnSceneProgress);
+  sceneImportProgressCommand->SetClientData(this);
+  const bool observeSceneImportProgress = !this->SceneProgressObserved;
 
   std::vector<std::string> nodeIDs;
   for (vtkMRMLFileReader* reader : readers)
@@ -927,7 +960,20 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
       continue;
     }
     reader->ClearLoadedNodeIDs();
+    // Keep a reference to the observed scene, so that the observer is removed from the same scene
+    vtkSmartPointer<vtkMRMLScene> observedScene = this->Scene.GetPointer();
+    unsigned long sceneImportProgressObserverTag = 0;
+    if (observeSceneImportProgress)
+    {
+      sceneImportProgressObserverTag = observedScene->AddObserver(vtkMRMLScene::ProgressImportEvent, sceneImportProgressCommand);
+      this->SceneProgressObserved = true;
+    }
     bool currentFileSuccess = reader->Load(properties);
+    if (observeSceneImportProgress)
+    {
+      observedScene->RemoveObserver(sceneImportProgressObserverTag);
+      this->SceneProgressObserved = false;
+    }
     if (userMessages)
     {
       userMessages->AddMessages(reader->GetUserMessages(), userMessagePrefix);
@@ -948,7 +994,7 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
   if (!success && userMessages != nullptr && userMessages->GetNumberOfMessages() == numberOfUserMessagesBefore)
   {
     // Make sure that at least one message is logged if reading failed.
-    userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "%1 load failed."), userMessagePrefix.c_str()));
+    userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "%1 load failed."), userMessagePrefix.c_str()));
   }
 
   loadedFileProperties->SetStringListProperty("nodeIDs", nodeIDs);
@@ -968,6 +1014,7 @@ bool vtkMRMLFileIOManager::LoadNodes(const std::string& fileType,
     }
   }
 
+  this->EndOperationProgress(operationStarted);
   return success;
 }
 
@@ -978,25 +1025,228 @@ bool vtkMRMLFileIOManager::LoadNodesFromList(vtkCollection* propertiesList, vtkC
   {
     return false;
   }
+  const int numberOfFiles = propertiesList->GetNumberOfItems();
+  ListProgress listProgress = this->StartListProgress(GetLoadingTitle(), numberOfFiles);
   bool success = true;
-  for (int i = 0; i < propertiesList->GetNumberOfItems(); ++i)
+  for (int fileIndex = 0; fileIndex < numberOfFiles; ++fileIndex)
   {
-    vtkMRMLIOProperties* fileProperties = vtkMRMLIOProperties::SafeDownCast(propertiesList->GetItemAsObject(i));
-    if (!fileProperties)
+    this->StartListItemProgress(listProgress, fileIndex);
+    vtkMRMLIOProperties* fileProperties = vtkMRMLIOProperties::SafeDownCast(propertiesList->GetItemAsObject(fileIndex));
+    if (fileProperties)
     {
-      vtkErrorMacro("LoadNodesFromList: item " << i << " is not a vtkMRMLIOProperties object");
-      success = false;
-      continue;
+      int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
+      success = this->LoadNodes(fileProperties->GetStringProperty("fileType"), fileProperties, loadedNodes, userMessages) && success;
+      // Add a separator between nodes
+      if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
+      {
+        userMessages->AddSeparator();
+      }
     }
-    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->LoadNodes(fileProperties->GetStringProperty("fileType"), fileProperties, loadedNodes, userMessages) && success;
-    // Add a separator between nodes
-    if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
+    else
     {
-      userMessages->AddSeparator();
+      vtkErrorMacro("LoadNodesFromList: item " << fileIndex << " is not a vtkMRMLIOProperties object");
+      success = false;
+    }
+    if (this->EndListItemProgress(listProgress, fileIndex))
+    {
+      // Aborted
+      success = false;
+      break;
     }
   }
+  //: %1 is the number of loaded files, %2 is the number of files that were selected for loading
+  this->EndListProgress(listProgress, userMessages, vtkMRMLTr("vtkMRMLFileIOManager", "Loading was canceled after %1 of %2 files were loaded."));
   return success;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLFileIOManager::ListProgress vtkMRMLFileIOManager::StartListProgress(const std::string& title, int numberOfFiles)
+{
+  ListProgress listProgress;
+  listProgress.OperationStarted = this->StartOperationProgress(title, numberOfFiles);
+  listProgress.NumberOfFiles = numberOfFiles;
+  listProgress.RangeMinimum = this->OperationProgress->GetProgressRangeMinimum();
+  listProgress.RangeMaximum = this->OperationProgress->GetProgressRangeMaximum();
+  return listProgress;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::StartListItemProgress(ListProgress& listProgress, int fileIndex)
+{
+  vtkMRMLOperationProgress* progress = this->OperationProgress;
+  const int numberOfFiles = listProgress.NumberOfFiles;
+  if (!progress || numberOfFiles <= 0)
+  {
+    return;
+  }
+  const double rangeSize = listProgress.RangeMaximum - listProgress.RangeMinimum;
+  progress->SetProgressRangeMinimum(listProgress.RangeMinimum + rangeSize * fileIndex / numberOfFiles);
+  progress->SetProgressRangeMaximum(listProgress.RangeMinimum + rangeSize * (fileIndex + 1) / numberOfFiles);
+  if (listProgress.OperationStarted)
+  {
+    // The list was started by the operation, therefore each file of the list is a file of the operation
+    progress->SetCurrentFileIndex(fileIndex);
+    progress->SetCurrentFileRangeMinimum(progress->GetProgressRangeMinimum());
+    progress->SetCurrentFileRangeMaximum(progress->GetProgressRangeMaximum());
+    // Progress of processing the file is unknown until it is reported
+    progress->SetCurrentFileProgress(-1.0);
+    if (fileIndex > 0)
+    {
+      // Notify observers about the start of the next file
+      // (the start of the first file is indicated by the start event)
+      this->InvokeProgressEvent();
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLFileIOManager::EndListItemProgress(ListProgress& listProgress, int fileIndex)
+{
+  vtkMRMLOperationProgress* progress = this->OperationProgress;
+  if (!progress)
+  {
+    return false;
+  }
+  this->ReportFileProgress(1.0);
+  listProgress.NumberOfProcessedFiles = fileIndex + 1;
+  // Abort requests are ignored if the operation is not abortable or if there are no more files to process
+  if (progress->GetAbortable() && progress->GetAbortExecute() && fileIndex + 1 < listProgress.NumberOfFiles)
+  {
+    listProgress.Aborted = true;
+  }
+  return listProgress.Aborted;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::EndListProgress(ListProgress& listProgress, vtkMRMLMessageCollection* userMessages, const std::string& abortedMessageFormat)
+{
+  if (this->OperationProgress)
+  {
+    this->OperationProgress->SetProgressRangeMinimum(listProgress.RangeMinimum);
+    this->OperationProgress->SetProgressRangeMaximum(listProgress.RangeMaximum);
+  }
+  if (listProgress.OperationStarted && listProgress.Aborted && userMessages)
+  {
+    const std::string numberOfProcessedFiles = std::to_string(listProgress.NumberOfProcessedFiles);
+    const std::string numberOfFiles = std::to_string(listProgress.NumberOfFiles);
+    userMessages->AddMessage(vtkCommand::WarningEvent, vtkMRMLI18N::Format(abortedMessageFormat, numberOfProcessedFiles.c_str(), numberOfFiles.c_str()));
+  }
+  this->EndOperationProgress(listProgress.OperationStarted, listProgress.Aborted);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLFileIOManager::StartOperationProgress(const std::string& title, int numberOfFiles)
+{
+  if (this->OperationProgress)
+  {
+    // This is part of a loading operation that is already in progress
+    return false;
+  }
+  this->OperationProgress = vtkSmartPointer<vtkMRMLOperationProgress>::New();
+  this->OperationProgress->SetTitle(title);
+  this->OperationProgress->SetNumberOfFiles(numberOfFiles);
+  // Loading can be aborted between files
+  this->OperationProgress->SetAbortable(numberOfFiles > 1);
+  // The first progress update is reported immediately
+  this->LastProgressEventTime = 0.0;
+  this->ProgressEventPending = false;
+  this->InvokeEvent(OperationStartEvent, this->OperationProgress);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::EndOperationProgress(bool operationStarted, bool aborted /*=false*/)
+{
+  if (!operationStarted)
+  {
+    return;
+  }
+  vtkSmartPointer<vtkMRMLOperationProgress> progress = this->OperationProgress;
+  if (!aborted && (progress->GetProgress() < 1.0 || progress->GetCurrentFileProgress() < 1.0))
+  {
+    progress->SetProgress(1.0);
+    progress->SetCurrentFileProgress(1.0);
+    this->ProgressEventPending = true;
+  }
+  // Report the latest state (regardless of the maximum update rate)
+  if (this->ProgressEventPending)
+  {
+    this->InvokeProgressEvent(true);
+  }
+  this->OperationProgress = nullptr;
+  this->InvokeEvent(OperationEndEvent, progress);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::InvokeProgressEvent(bool force /*=false*/)
+{
+  vtkSmartPointer<vtkMRMLOperationProgress> progress = this->OperationProgress;
+  if (!progress)
+  {
+    return;
+  }
+  const double now = vtkTimerLog::GetUniversalTime();
+  if (!force && this->MaximumProgressUpdatesPerSecond > 0.0 && now - this->LastProgressEventTime < 1.0 / this->MaximumProgressUpdatesPerSecond)
+  {
+    // Too frequent update, report it later
+    this->ProgressEventPending = true;
+    return;
+  }
+  this->LastProgressEventTime = now;
+  this->ProgressEventPending = false;
+  this->InvokeEvent(OperationProgressEvent, progress);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::ReportFileProgress(double fileProgress, const std::string& text /*=std::string()*/)
+{
+  vtkMRMLOperationProgress* progress = this->OperationProgress;
+  if (!progress)
+  {
+    return;
+  }
+  bool textChanged = !text.empty() && text != progress->GetProgressText();
+  bool progressChanged = false;
+  if (fileProgress >= 0.0)
+  {
+    // The reported progress never decreases
+    fileProgress = std::min(fileProgress, 1.0);
+    const double rangeMinimum = progress->GetProgressRangeMinimum();
+    double overallProgress = rangeMinimum + (progress->GetProgressRangeMaximum() - rangeMinimum) * fileProgress;
+    overallProgress = std::max(overallProgress, progress->GetProgress());
+    const double fileRangeMinimum = progress->GetCurrentFileRangeMinimum();
+    const double fileRange = progress->GetCurrentFileRangeMaximum() - fileRangeMinimum;
+    double fileProgress = (fileRange > 0.0) ? (overallProgress - fileRangeMinimum) / fileRange : 1.0;
+    fileProgress = std::min(std::max(fileProgress, 0.0), 1.0);
+    progressChanged = (overallProgress > progress->GetProgress() || fileProgress != progress->GetCurrentFileProgress());
+    progress->SetProgress(overallProgress);
+    progress->SetCurrentFileProgress(fileProgress);
+  }
+  if (textChanged)
+  {
+    progress->SetProgressText(text);
+  }
+  if (!progressChanged && !textChanged)
+  {
+    // Nothing to report
+    return;
+  }
+  // Processing of a new file is reported immediately (regardless of the maximum update rate),
+  // because processing of the file may take a long time without any progress reported.
+  this->InvokeProgressEvent(textChanged);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFileIOManager::OnSceneProgress(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+{
+  vtkMRMLFileIOManager* self = static_cast<vtkMRMLFileIOManager*>(clientData);
+  if (self->OperationProgress && self->OperationProgress->GetNumberOfFiles() == 0)
+  {
+    // Progress of loading the file is known now
+    self->OperationProgress->SetNumberOfFiles(1);
+  }
+  // Call data is a pointer to the progress value (double, 0.0-1.0)
+  self->ReportFileProgress(callData ? *static_cast<double*>(callData) : 0.0);
 }
 
 //----------------------------------------------------------------------------
@@ -1136,7 +1386,7 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
     if (userMessages)
     {
       userMessages->AddMessage(vtkCommand::ErrorEvent,
-                               vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "No writer found to write file %1 of type %2."), //
+                               vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "No writer found to write file %1 of type %2."), //
                                                    fileName.c_str(),
                                                    fileType.c_str()));
     }
@@ -1152,11 +1402,24 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
       vtkErrorMacro("SaveNodes error: Unable to create directory " << directory);
       if (userMessages)
       {
-        userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Unable to create directory '%1'"), directory.c_str()));
+        userMessages->AddMessage(vtkCommand::ErrorEvent, //
+                                 vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Unable to create directory '%1'"), directory.c_str()));
       }
       return false;
     }
   }
+
+  // The amount of work is unknown until progress of saving the file is reported
+  bool operationStarted = this->StartOperationProgress(GetSavingTitle(), 0);
+  //: %1 is the filename
+  this->ReportFileProgress(-1.0, vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Saving file %1 ..."), fileName.c_str()));
+
+  // Writers that save a scene as a data bundle report the save progress of the scene: report it as saving progress
+  // (unless it is already reported, because this file is saved by a writer that is saving a file)
+  vtkNew<vtkCallbackCommand> sceneSaveProgressCommand;
+  sceneSaveProgressCommand->SetCallback(vtkMRMLFileIOManager::OnSceneProgress);
+  sceneSaveProgressCommand->SetClientData(this);
+  const bool observeSceneSaveProgress = !this->SceneProgressObserved;
 
   std::vector<std::string> nodeIDs;
   bool writeSuccess = false;
@@ -1166,7 +1429,18 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
     writer->SetScene(scene);
     writer->GetUserMessages()->ClearMessages();
     writer->ClearWrittenNodeIDs();
+    unsigned long sceneSaveProgressObserverTag = 0;
+    if (observeSceneSaveProgress)
+    {
+      sceneSaveProgressObserverTag = scene->AddObserver(vtkMRMLScene::ProgressSaveEvent, sceneSaveProgressCommand);
+      this->SceneProgressObserved = true;
+    }
     bool currentWriterSuccess = writer->Write(properties);
+    if (observeSceneSaveProgress)
+    {
+      scene->RemoveObserver(sceneSaveProgressObserverTag);
+      this->SceneProgressObserved = false;
+    }
     if (userMessages)
     {
       userMessages->AddMessages(writer->GetUserMessages());
@@ -1186,6 +1460,7 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
     writeSuccess = true;
     break;
   }
+  this->EndOperationProgress(operationStarted);
 
   if (!writeSuccess)
   {
@@ -1194,7 +1469,7 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
     if (userMessages)
     {
       userMessages->AddMessage(vtkCommand::ErrorEvent,
-                               vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Saving failed with all writers found for file '%1' of type '%2'."), //
+                               vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Saving failed with all writers found for file '%1' of type '%2'."), //
                                                    fileName.c_str(),
                                                    fileType.c_str()));
     }
@@ -1208,7 +1483,7 @@ bool vtkMRMLFileIOManager::SaveNodes(const std::string& fileType,
     vtkErrorMacro("SaveNodes error: No nodes were saved in scene");
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLTr("qSlicerCoreIOManager", "No nodes were saved in the scene"));
+      userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLTr("vtkMRMLFileIOManager", "No nodes were saved in the scene"));
     }
     return false;
   }
@@ -1256,147 +1531,177 @@ bool vtkMRMLFileIOManager::ExportNodes(vtkCollection* propertiesList, bool harde
   this->Scene->CopySingletonNodesToScene(temporaryScene);
   temporaryScene->SetDataIOManager(this->Scene->GetDataIOManager());
 
+  const int numberOfNodes = propertiesList->GetNumberOfItems();
+  ListProgress listProgress = this->StartListProgress(GetSavingTitle(), numberOfNodes);
   bool success = true;
-  for (int propertiesIndex = 0; propertiesIndex < propertiesList->GetNumberOfItems(); ++propertiesIndex)
+  for (int propertiesIndex = 0; propertiesIndex < numberOfNodes; ++propertiesIndex)
   {
+    this->StartListItemProgress(listProgress, propertiesIndex);
     vtkMRMLIOProperties* properties = vtkMRMLIOProperties::SafeDownCast(propertiesList->GetItemAsObject(propertiesIndex));
-    if (!properties)
+    // If a node cannot be exported then the other nodes are still exported
+    if (properties)
+    {
+      success = this->ExportNode(properties, temporaryScene, hardenTransforms, userMessages) && success;
+    }
+    else
     {
       vtkErrorMacro("ExportNodes failed: item " << propertiesIndex << " is not a vtkMRMLIOProperties object");
-      return false;
-    }
-    // Validate parameters
-    for (const char* requiredKey : { "nodeID", "fileName", "fileFormat" })
-    {
-      if (!properties->HasProperty(requiredKey))
-      {
-        vtkErrorMacro("ExportNodes failed: " << requiredKey << " must be included as a string parameter.");
-        return false;
-      }
-    }
-    std::string nodeID = properties->GetStringProperty("nodeID");
-
-    // Copy over each node to be exported
-    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->Scene->GetNodeByID(nodeID));
-    if (!storableNode)
-    {
-      if (userMessages)
-      {
-        userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Unable to find a storable node with ID %1"), nodeID.c_str()));
-      }
-      success = false;
-      continue;
-    }
-    const char* nodeName = storableNode->GetName() ? storableNode->GetName() : "";
-    vtkMRMLStorableNode* temporaryStorableNode = vtkMRMLStorableNode::SafeDownCast(temporaryScene->AddNewNodeByClass(storableNode->GetClassName()));
-    if (!temporaryStorableNode)
-    {
-      vtkErrorMacro("ExportNodes error: Unable to add node to temporary scene");
-      if (userMessages)
-      {
-        userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Error encountered while exporting %1."), nodeName));
-      }
-      success = false;
-      continue;
-    }
-    // We will do a shallow copy, unless transform hardening was requested. Transform hardening
-    // can sometimes affect the underlying data of the transformable node, so it's worth doing
-    // a deep copy to be certain that the original node is not modified during export.
-    temporaryStorableNode->CopyContent(storableNode, /*deepCopy=*/hardenTransforms);
-
-    // If transform hardening was requested and node is transformable, then put transforms in the temporaryScene and apply hardening.
-    vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(storableNode);
-    if (hardenTransforms && nodeAsTransformable)
-    {
-      vtkMRMLTransformableNode* temporaryNodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(temporaryStorableNode);
-      if (!temporaryNodeAsTransformable)
-      {
-        vtkErrorMacro("ExportNodes failed: Node is transformable but its copy is not... this should never happen.");
-        return false;
-      }
-      vtkMRMLTransformNode* parentTransform = nodeAsTransformable->GetParentTransformNode();
-      if (parentTransform)
-      {
-        vtkNew<vtkGeneralTransform> generalTransform;
-        parentTransform->GetTransformFromWorld(generalTransform);
-        vtkMRMLTransformNode* compositeTransformNode = vtkMRMLTransformNode::SafeDownCast(temporaryScene->AddNewNodeByClass("vtkMRMLTransformNode"));
-        if (!compositeTransformNode)
-        {
-          vtkErrorMacro("ExportNodes: Unable to add a transform node to temporary scene");
-          if (userMessages)
-          {
-            userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Error encountered while exporting %1."), nodeName));
-          }
-          success = false;
-          continue;
-        }
-        compositeTransformNode->SetAndObserveTransformFromParent(generalTransform);
-        temporaryNodeAsTransformable->SetAndObserveTransformNodeID(compositeTransformNode->GetID());
-        temporaryNodeAsTransformable->HardenTransform();
-      }
-    }
-
-    // Copy parameters map; we will need to set the nodeID parameter to correspond to the node in the temporary scene
-    vtkNew<vtkMRMLIOProperties> temporarySceneProperties;
-    temporarySceneProperties->Copy(properties);
-    temporarySceneProperties->SetStringProperty("nodeID", temporaryStorableNode->GetID());
-
-    // Deduce "fileType" from "fileFormat" parameter; SaveNodes will want both
-    std::string fileType = this->GetFileWriterFileType(storableNode, properties->GetStringProperty("fileFormat"));
-    if (fileType.empty())
-    {
-      // Same file type name as used by the Qt-based IO manager (appears in error messages)
-      fileType = "NoFile";
-    }
-
-    // Add default storage node into the temporary scene. This is sometimes needed.
-    if (!temporaryStorableNode->AddDefaultStorageNode())
-    {
-      vtkErrorMacro("ExportNodes error: Unable to create default storage in temporary scene");
-      if (userMessages)
-      {
-        userMessages->AddMessage(vtkCommand::ErrorEvent,
-                                 vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Unable to create default storage node for %1 in temporary scene."), nodeName));
-      }
-      success = false;
-      continue;
-    }
-
-    // Some data files store display properties (for example: markups), therefore we need to copy the display node as well.
-    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(storableNode);
-    vtkMRMLDisplayableNode* temporaryDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(temporaryStorableNode);
-    if (displayableNode && temporaryDisplayableNode && displayableNode->GetDisplayNode())
-    {
-      vtkMRMLDisplayNode* temporaryDisplayNode = vtkMRMLDisplayNode::SafeDownCast(temporaryScene->AddNewNodeByClass(displayableNode->GetDisplayNode()->GetClassName()));
-      if (temporaryDisplayNode)
-      {
-        temporaryDisplayNode->CopyContent(displayableNode->GetDisplayNode(), false);
-        temporaryDisplayableNode->SetAndObserveDisplayNodeID(temporaryDisplayNode->GetID());
-      }
-      else if (userMessages)
-      {
-        userMessages->AddMessage(vtkCommand::WarningEvent,
-                                 vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Unable to save display properties for %1 in temporary scene."), nodeName));
-      }
-    }
-
-    // Finally, applying saving logic to the the temporary scene
-    if (!this->SaveNodes(fileType, temporarySceneProperties, userMessages, temporaryScene))
-    {
-      if (userMessages)
-      {
-        userMessages->AddMessage(vtkCommand::ErrorEvent, vtkMRMLI18N::Format(vtkMRMLTr("qSlicerCoreIOManager", "Error encountered while exporting %1."), nodeName));
-      }
       success = false;
     }
-
-    // Pick up any user messages that were saved to temporaryStorableNode's storage node
-    if (userMessages && temporaryStorableNode->GetStorageNode() && temporaryStorableNode->GetStorageNode()->GetUserMessages())
+    if (this->EndListItemProgress(listProgress, propertiesIndex))
     {
-      userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());
+      // Aborted
+      success = false;
+      break;
     }
   }
+  //: %1 is the number of exported nodes, %2 is the number of nodes that were selected for exporting
+  this->EndListProgress(listProgress, userMessages, vtkMRMLTr("vtkMRMLFileIOManager", "Exporting was canceled after %1 of %2 nodes were exported."));
   return success;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLFileIOManager::ExportNode(vtkMRMLIOProperties* properties, //
+                                      vtkMRMLScene* temporaryScene,
+                                      bool hardenTransforms,
+                                      vtkMRMLMessageCollection* userMessages)
+{
+  // Validate parameters
+  for (const char* requiredKey : { "nodeID", "fileName", "fileFormat" })
+  {
+    if (!properties->HasProperty(requiredKey))
+    {
+      vtkErrorMacro("ExportNodes failed: " << requiredKey << " must be included as a string parameter.");
+      return false;
+    }
+  }
+  std::string nodeID = properties->GetStringProperty("nodeID");
+
+  // Copy over each node to be exported
+  vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(this->Scene->GetNodeByID(nodeID));
+  if (!storableNode)
+  {
+    if (userMessages)
+    {
+      std::string message = vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Unable to find a storable node with ID %1"), nodeID.c_str());
+      userMessages->AddMessage(vtkCommand::ErrorEvent, message);
+    }
+    return false;
+  }
+  const char* nodeName = storableNode->GetName() ? storableNode->GetName() : "";
+  const std::string exportErrorMessage = vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Error encountered while exporting %1."), nodeName);
+  vtkMRMLStorableNode* temporaryStorableNode = vtkMRMLStorableNode::SafeDownCast(temporaryScene->AddNewNodeByClass(storableNode->GetClassName()));
+  if (!temporaryStorableNode)
+  {
+    vtkErrorMacro("ExportNodes error: Unable to add node to temporary scene");
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, exportErrorMessage);
+    }
+    return false;
+  }
+  // We will do a shallow copy, unless transform hardening was requested. Transform hardening
+  // can sometimes affect the underlying data of the transformable node, so it's worth doing
+  // a deep copy to be certain that the original node is not modified during export.
+  temporaryStorableNode->CopyContent(storableNode, /*deepCopy=*/hardenTransforms);
+
+  // If transform hardening was requested and node is transformable, then put transforms in the temporaryScene and apply hardening.
+  vtkMRMLTransformableNode* nodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(storableNode);
+  if (hardenTransforms && nodeAsTransformable)
+  {
+    vtkMRMLTransformableNode* temporaryNodeAsTransformable = vtkMRMLTransformableNode::SafeDownCast(temporaryStorableNode);
+    if (!temporaryNodeAsTransformable)
+    {
+      vtkErrorMacro("ExportNodes failed: Node is transformable but its copy is not... this should never happen.");
+      if (userMessages)
+      {
+        userMessages->AddMessage(vtkCommand::ErrorEvent, exportErrorMessage);
+      }
+      return false;
+    }
+    vtkMRMLTransformNode* parentTransform = nodeAsTransformable->GetParentTransformNode();
+    if (parentTransform)
+    {
+      vtkNew<vtkGeneralTransform> generalTransform;
+      parentTransform->GetTransformFromWorld(generalTransform);
+      vtkMRMLTransformNode* compositeTransformNode = vtkMRMLTransformNode::SafeDownCast(temporaryScene->AddNewNodeByClass("vtkMRMLTransformNode"));
+      if (!compositeTransformNode)
+      {
+        vtkErrorMacro("ExportNodes: Unable to add a transform node to temporary scene");
+        if (userMessages)
+        {
+          userMessages->AddMessage(vtkCommand::ErrorEvent, exportErrorMessage);
+        }
+        return false;
+      }
+      compositeTransformNode->SetAndObserveTransformFromParent(generalTransform);
+      temporaryNodeAsTransformable->SetAndObserveTransformNodeID(compositeTransformNode->GetID());
+      temporaryNodeAsTransformable->HardenTransform();
+    }
+  }
+
+  // Copy parameters map; we will need to set the nodeID parameter to correspond to the node in the temporary scene
+  vtkNew<vtkMRMLIOProperties> temporarySceneProperties;
+  temporarySceneProperties->Copy(properties);
+  temporarySceneProperties->SetStringProperty("nodeID", temporaryStorableNode->GetID());
+
+  // Deduce "fileType" from "fileFormat" parameter; SaveNodes will want both
+  std::string fileType = this->GetFileWriterFileType(storableNode, properties->GetStringProperty("fileFormat"));
+  if (fileType.empty())
+  {
+    // Same file type name as used by the Qt-based IO manager (appears in error messages)
+    fileType = "NoFile";
+  }
+
+  // Add default storage node into the temporary scene. This is sometimes needed.
+  if (!temporaryStorableNode->AddDefaultStorageNode())
+  {
+    vtkErrorMacro("ExportNodes error: Unable to create default storage in temporary scene");
+    if (userMessages)
+    {
+      std::string messageFormat = vtkMRMLTr("vtkMRMLFileIOManager", "Unable to create default storage node for %1 in temporary scene.");
+      std::string message = vtkMRMLI18N::Format(messageFormat, nodeName);
+      userMessages->AddMessage(vtkCommand::ErrorEvent, message);
+    }
+    return false;
+  }
+
+  // Some data files store display properties (for example: markups), therefore we need to copy the display node as well.
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(storableNode);
+  vtkMRMLDisplayableNode* temporaryDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(temporaryStorableNode);
+  if (displayableNode && temporaryDisplayableNode && displayableNode->GetDisplayNode())
+  {
+    const char* displayNodeClassName = displayableNode->GetDisplayNode()->GetClassName();
+    vtkMRMLDisplayNode* temporaryDisplayNode = vtkMRMLDisplayNode::SafeDownCast(temporaryScene->AddNewNodeByClass(displayNodeClassName));
+    if (temporaryDisplayNode)
+    {
+      temporaryDisplayNode->CopyContent(displayableNode->GetDisplayNode(), false);
+      temporaryDisplayableNode->SetAndObserveDisplayNodeID(temporaryDisplayNode->GetID());
+    }
+    else if (userMessages)
+    {
+      std::string message = vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLFileIOManager", "Unable to save display properties for %1 in temporary scene."), nodeName);
+      userMessages->AddMessage(vtkCommand::WarningEvent, message);
+    }
+  }
+
+  // Finally, applying saving logic to the the temporary scene
+  bool nodeSuccess = true;
+  if (!this->SaveNodes(fileType, temporarySceneProperties, userMessages, temporaryScene))
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, exportErrorMessage);
+    }
+    nodeSuccess = false;
+  }
+
+  // Pick up any user messages that were saved to temporaryStorableNode's storage node
+  if (userMessages && temporaryStorableNode->GetStorageNode() && temporaryStorableNode->GetStorageNode()->GetUserMessages())
+  {
+    userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());
+  }
+  return nodeSuccess;
 }
 
 //----------------------------------------------------------------------------

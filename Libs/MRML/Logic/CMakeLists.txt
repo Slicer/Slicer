@@ -62,6 +62,7 @@ set(MRMLLogic_SRCS
   vtkMRMLFileWriter.cxx
   vtkMRMLIOOptionsDescription.cxx
   vtkMRMLIOProperties.cxx
+  vtkMRMLOperationProgress.cxx
   vtkMRMLNodeWriter.cxx
   vtkMRMLSceneBundleReader.cxx
   vtkMRMLColorLogic.cxx

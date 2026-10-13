@@ -40,6 +40,7 @@ class vtkMRMLFileReader;
 class vtkMRMLFileWriter;
 class vtkMRMLIOProperties;
 class vtkMRMLNodeWriter;
+class vtkMRMLOperationProgress;
 
 /// Manages reading and writing of files: keeps the list of registered readers and writers, chooses the reader
 /// or writer to use for a file or a node, and loads and saves nodes using them.
@@ -53,15 +54,24 @@ public:
   vtkTypeMacro(vtkMRMLFileIOManager, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Events. Call data: the reader or writer (HandlerRegisteredEvent, HandlerUnregisteredEvent),
-  /// the vtkMRMLIOProperties of the loaded or saved file (NewFileLoadedEvent, FileSavedEvent;
-  /// for loaded files it contains "fileType" and the IDs of the loaded nodes in "nodeIDs").
   enum
   {
+    /// A reader or writer is registered. Call data: the reader or writer (vtkMRMLFileIOHandler).
     HandlerRegisteredEvent = 24100,
+    /// A reader or writer is unregistered. Call data: the reader or writer (vtkMRMLFileIOHandler).
     HandlerUnregisteredEvent,
+    /// A file is loaded. Call data: vtkMRMLIOProperties of the loaded file,
+    /// which contains "fileType" and the IDs of the loaded nodes in "nodeIDs".
     NewFileLoadedEvent,
+    /// A file is saved. Call data: vtkMRMLIOProperties of the saved file.
     FileSavedEvent,
+    /// Loading or saving of files is started. Call data: vtkMRMLOperationProgress.
+    OperationStartEvent,
+    /// Progress of loading or saving files changed. Call data: vtkMRMLOperationProgress.
+    /// The number of these events per second is limited by MaximumProgressUpdatesPerSecond (except when processing of a new file starts).
+    OperationProgressEvent,
+    /// Loading or saving of files is completed. Call data: vtkMRMLOperationProgress.
+    OperationEndEvent,
   };
 
   /// The scene the handlers read into and write from.
@@ -231,6 +241,9 @@ public:
   /// Nodes that are loaded are added to loadedNodes (if not nullptr).
   /// If a valid userMessages is passed then additional error or warning information is added to it.
   /// Returns false if loading fails.
+  ///
+  /// Progress is reported by OperationStartEvent, OperationProgressEvent, and OperationEndEvent.
+  /// A list of files is loaded as one operation, which can be aborted between files.
   virtual bool LoadNodes(const std::string& fileType, //
                          vtkMRMLIOProperties* properties,
                          vtkCollection* loadedNodes = nullptr,
@@ -238,6 +251,7 @@ public:
 
   /// Load a list of files. Each item in propertiesList is a vtkMRMLIOProperties object that
   /// specifies the "fileType" property in addition to the properties needed by the reader.
+  /// Loading progress is reported (see LoadNodes()).
   virtual bool LoadNodesFromList(vtkCollection* propertiesList, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load nodes and return the first loaded node.
@@ -254,6 +268,7 @@ public:
   /// Saving
 
   /// Save nodes (or scene) using the registered writers.
+  /// Progress is reported the same way as for loading (see LoadNodes()).
   /// Properties are typically: "fileName"; for nodes: "nodeID", "useCompression", "fileFormat".
   /// If a valid scene is passed then the writers use that scene instead of the scene of the manager.
   /// Returns true on success.
@@ -261,10 +276,13 @@ public:
 
   /// Export nodes using the registered writers. Unlike SaveNodes(), this function creates a temporary scene
   /// while saving, in order to avoid modifying storage nodes in the current scene.
+  /// Saving progress is reported (see SaveNodes()), each exported node counts as one file. Exporting of multiple nodes is abortable.
   /// Each item in propertiesList is a vtkMRMLIOProperties object that specifies a "nodeID" (ID of a node
   /// in the main scene), a "fileName" (an absolute file path), a "fileFormat" (e.g. "NRRD (.nrrd)"),
   /// and any other options that the associated writer may use.
   /// If hardenTransforms is true then transforms are temporarily hardened before export.
+  /// If a node cannot be exported then the remaining nodes are still exported.
+  /// Returns true if all nodes were exported successfully.
   bool ExportNodes(vtkCollection* propertiesList, bool hardenTransforms, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Export nodes, with the same properties for all nodes.
@@ -290,6 +308,12 @@ public:
   void InvokeNewFileLoadedEvent(vtkMRMLIOProperties* loadedFileProperties);
   /// Invoke FileSavedEvent. It may be used by writers that save files without the manager.
   void InvokeFileSavedEvent(vtkMRMLIOProperties* savedFileProperties);
+
+  /// Maximum number of progress events (OperationProgressEvent) per second while loading or saving files.
+  /// Progress changes that would exceed this rate are reported in the next progress event.
+  /// 0 means that every progress change is reported. Default: 3.
+  vtkGetMacro(MaximumProgressUpdatesPerSecond, double);
+  vtkSetMacro(MaximumProgressUpdatesPerSecond, double);
 
   /// Defines the file format that should be offered by default when the scene is saved.
   /// Valid options are defined by the scene writer (for example, "MRML Scene (.mrml)"
@@ -318,6 +342,75 @@ protected:
 
   std::string DefaultSceneFileType;
   int DefaultMaximumFileNameLength{ 1000 };
+
+  /// Start a loading or saving operation, if no operation is in progress (invokes OperationStartEvent).
+  /// numberOfFiles is 0 if a single file is processed (progress of processing a file is only known if it is reported).
+  /// Returns true if a new operation is started.
+  bool StartOperationProgress(const std::string& title, int numberOfFiles);
+  /// End the operation (invokes OperationEndEvent), if it was started by StartOperationProgress().
+  /// If the operation is not aborted then completion of the operation is reported.
+  void EndOperationProgress(bool operationStarted, bool aborted = false);
+  /// State of processing (loading or saving) a list of files.
+  struct ListProgress
+  {
+    /// True if processing of the list started an operation (it is not part of another operation)
+    bool OperationStarted{ false };
+    int NumberOfFiles{ 0 };
+    int NumberOfProcessedFiles{ 0 };
+    /// Part of the overall progress range that processing of the list covers
+    double RangeMinimum{ 0.0 };
+    double RangeMaximum{ 1.0 };
+    /// True if processing of the list was aborted (some files were not processed)
+    bool Aborted{ false };
+  };
+  /// Start processing a list of files (starts an operation if no operation is in progress).
+  /// Each file covers an equal part of the progress range of the list. If the operation is started by the list
+  /// then the files of the list are the files of the operation (see vtkMRMLOperationProgress::GetNumberOfFiles()).
+  ListProgress StartListProgress(const std::string& title, int numberOfFiles);
+  /// Report that processing of the file at fileIndex starts.
+  void StartListItemProgress(ListProgress& listProgress, int fileIndex);
+  /// Report that processing of the file at fileIndex is completed.
+  /// Returns true if processing of the list must be stopped, because the operation is aborted.
+  bool EndListItemProgress(ListProgress& listProgress, int fileIndex);
+  /// End processing of the list. If processing was aborted then a warning is added to userMessages
+  /// (abortedMessageFormat contains %1 for the number of processed files and %2 for the number of files).
+  void EndListProgress(ListProgress& listProgress, vtkMRMLMessageCollection* userMessages, const std::string& abortedMessageFormat);
+
+  /// Export a single node to a file. Used by ExportNodes() to export each node of the list.
+  ///
+  /// The node is copied into temporaryScene (with its display node and, if requested, with its parent transforms
+  /// hardened) and saved from there, so that the storage nodes of the main scene are not modified.
+  ///
+  /// \param properties Export options: "nodeID" (ID of the node in the main scene), "fileName", "fileFormat",
+  ///   and any other options that the writer uses.
+  /// \param temporaryScene Scene that ExportNodes() created for exporting. It is shared by all nodes of the list.
+  /// \param hardenTransforms If true, parent transforms of the node are applied to the exported data.
+  /// \param userMessages Errors and warnings to display to the user are added to this collection (may be nullptr).
+  /// \return True if the node was exported successfully. False if any error occurred, for example: the "nodeID",
+  ///   "fileName", or "fileFormat" property is missing, no storable node exists with the specified "nodeID",
+  ///   the node cannot be copied into the temporary scene, or the writer fails to write the file.
+  bool ExportNode(vtkMRMLIOProperties* properties, vtkMRMLScene* temporaryScene, bool hardenTransforms, vtkMRMLMessageCollection* userMessages);
+
+  /// Report progress of processing (loading or saving) the current file (0.0-1.0; negative value if only the text changes)
+  /// and optionally update the progress text.
+  void ReportFileProgress(double fileProgress, const std::string& text = std::string());
+  /// Forwards scene import or save progress (percent) as file progress.
+  static void OnSceneProgress(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
+  /// Invoke OperationProgressEvent with the current progress, unless the maximum update rate would be exceeded
+  /// (then the event is invoked later). If force is true then the event is invoked regardless of the update rate.
+  void InvokeProgressEvent(bool force = false);
+
+  double MaximumProgressUpdatesPerSecond{ 3.0 };
+  /// Time of the last invoked progress event (universal time in seconds)
+  double LastProgressEventTime{ 0.0 };
+  /// True if progress changed since the last progress event
+  bool ProgressEventPending{ false };
+
+  /// Progress of the loading or saving operation that is in progress (nullptr if no operation is in progress)
+  vtkSmartPointer<vtkMRMLOperationProgress> OperationProgress;
+  /// True while the scene is observed for reporting its import progress
+  bool SceneProgressObserved{ false };
 
 private:
   vtkMRMLFileIOManager(const vtkMRMLFileIOManager&) = delete;

@@ -19,6 +19,8 @@
 ==============================================================================*/
 // Qt includes
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QImage>
 #include <QStringList>
 #include <QUrl>
@@ -30,7 +32,9 @@
 
 // MRML includes
 #include <vtkMRMLIOProperties.h>
+#include <vtkMRMLFileIOManager.h>
 #include <vtkMRMLMessageCollection.h>
+#include <vtkMRMLOperationProgress.h>
 #include "vtkMRMLTextNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
@@ -55,6 +59,89 @@ public:
   QStringList extensions() const override { return QStringList() << "Shared test (*.sharedtest)"; }
   bool load(const IOProperties& vtkNotUsed(properties)) override { return true; }
 };
+
+/// Reader that imports a scene into the application scene (similarly to the scene reader)
+class qSlicerProgressTestFileReader : public qSlicerFileReader
+{
+public:
+  qSlicerProgressTestFileReader(QObject* parent = nullptr)
+    : qSlicerFileReader(parent)
+  {
+  }
+  QString description() const override { return "Progress test reader"; }
+  IOFileType fileType() const override { return "ProgressTestFile"; }
+  QStringList extensions() const override { return QStringList() << "Progress test (*.progresstest)"; }
+  bool load(const IOProperties& vtkNotUsed(properties)) override
+  {
+    ++this->NumberOfLoadedFiles;
+    std::string sceneXML = "<MRML version=\"Slicer4.4.0\">";
+    for (int i = 0; i < 50; i++)
+    {
+      sceneXML += " <Text name=\"Text" + std::to_string(i + 1) + "\"></Text>";
+    }
+    sceneXML += "</MRML>";
+    vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+    scene->SetLoadFromXMLString(1);
+    scene->SetSceneXMLString(sceneXML);
+    bool success = scene->Import() != 0;
+    scene->SetLoadFromXMLString(0);
+    return success;
+  }
+  int NumberOfLoadedFiles{ 0 };
+};
+
+/// IO manager that records progress reports
+class qSlicerProgressTestIOManager : public qSlicerCoreIOManager
+{
+public:
+  void startProgress(vtkMRMLOperationProgress* progress) override
+  {
+    this->StartedNumberOfFiles.append(progress->GetNumberOfFiles());
+    this->StartedAbortable.append(progress->GetAbortable());
+    this->ReportedProgress.clear();
+  }
+  void updateProgress(vtkMRMLOperationProgress* progress) override
+  {
+    this->ReportedProgress.append(progress->GetProgress());
+    this->LastMessage = QString::fromStdString(progress->GetProgressText());
+    if (this->AbortAtProgress >= 0.0 && progress->GetProgress() >= this->AbortAtProgress)
+    {
+      progress->AbortExecuteOn();
+    }
+  }
+  void endProgress(vtkMRMLOperationProgress* progress) override
+  {
+    ++this->NumberOfEndProgressCalls;
+    this->NumberOfFilesAtEnd = progress->GetNumberOfFiles();
+  }
+
+  QList<int> StartedNumberOfFiles;
+  QList<bool> StartedAbortable;
+  QList<double> ReportedProgress;
+  QString LastMessage;
+  int NumberOfEndProgressCalls{ 0 };
+  int NumberOfFilesAtEnd{ -1 };
+  /// If non-negative then loading is aborted when progress reaches this value
+  double AbortAtProgress{ -1.0 };
+};
+
+//-----------------------------------------------------------------------------
+// Progress values are valid and not decreasing, they start at 0.0 and end at the expected value
+int checkProgress(const QList<double>& progressValues, double expectedLastProgress)
+{
+  CHECK_BOOL(progressValues.size() >= 20, true);
+  for (int i = 0; i < progressValues.size(); i++)
+  {
+    CHECK_BOOL(progressValues[i] >= 0.0 && progressValues[i] <= 1.0, true);
+    if (i > 0)
+    {
+      CHECK_BOOL(progressValues[i] >= progressValues[i - 1], true);
+    }
+  }
+  CHECK_DOUBLE(progressValues.front(), 0.0);
+  CHECK_DOUBLE_TOLERANCE(progressValues.back(), expectedLastProgress, 1e-6);
+  return EXIT_SUCCESS;
+}
 } // namespace
 
 //-----------------------------------------------------------------------------
@@ -72,6 +159,77 @@ int TestSharedQtReaders()
   }
   // The reader is deleted with the manager that registered it
   CHECK_NULL(otherManager.reader("Shared test reader"));
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int TestLoadingProgress(const char* temporaryDirectory)
+{
+  QString fileName = QDir(temporaryDirectory).filePath("qSlicerCoreIOManagerTest1.progresstest");
+  {
+    QFile file(fileName);
+    CHECK_BOOL(file.open(QIODevice::WriteOnly), true);
+    file.write("test");
+  }
+
+  qSlicerProgressTestIOManager manager;
+  // Report all progress changes
+  manager.fileIOManager()->SetMaximumProgressUpdatesPerSecond(0.0);
+  qSlicerProgressTestFileReader* reader = new qSlicerProgressTestFileReader;
+  manager.registerIO(reader);
+
+  // Single file: the scene import progress is reported
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = fileName;
+  CHECK_BOOL(manager.loadNodes("ProgressTestFile", properties), true);
+  CHECK_INT(manager.StartedNumberOfFiles.size(), 1);
+  // Single file: the amount of work is unknown at start (0 files), it becomes known when scene import progress is reported
+  CHECK_INT(manager.StartedNumberOfFiles[0], 0);
+  CHECK_INT(manager.NumberOfFilesAtEnd, 1);
+  CHECK_BOOL(manager.StartedAbortable[0], false);
+  CHECK_INT(manager.NumberOfEndProgressCalls, 1);
+  CHECK_EXIT_SUCCESS(checkProgress(manager.ReportedProgress, 1.0));
+  CHECK_BOOL(manager.LastMessage.contains("qSlicerCoreIOManagerTest1.progresstest"), true);
+
+  // List of files: progress is started and ended once, each file covers an equal part of the progress range
+  properties["fileType"] = QString("ProgressTestFile");
+  QList<qSlicerIO::IOProperties> files;
+  files << properties << properties << properties << properties;
+  CHECK_BOOL(manager.loadNodes(files), true);
+  CHECK_INT(manager.StartedNumberOfFiles.size(), 2);
+  CHECK_INT(manager.StartedNumberOfFiles[1], 4);
+  CHECK_BOOL(manager.StartedAbortable[1], true);
+  CHECK_INT(manager.NumberOfEndProgressCalls, 2);
+  CHECK_EXIT_SUCCESS(checkProgress(manager.ReportedProgress, 1.0));
+  CHECK_INT(reader->NumberOfLoadedFiles, 5);
+  // Progress of each file is reported (not just the completion of files)
+  int numberOfValuesInFirstFile = 0;
+  for (double progress : manager.ReportedProgress)
+  {
+    if (progress > 0.0 && progress < 0.25)
+    {
+      numberOfValuesInFirstFile++;
+    }
+  }
+  CHECK_BOOL(numberOfValuesInFirstFile >= 10, true);
+
+  // Loading a list of files can be aborted (after a file is loaded)
+  manager.AbortAtProgress = 0.5;
+  CHECK_BOOL(manager.loadNodes(files), false);
+  CHECK_INT(reader->NumberOfLoadedFiles, 7);
+  CHECK_INT(manager.NumberOfEndProgressCalls, 3);
+
+  // Files that are not loaded using the manager do not report progress
+  manager.AbortAtProgress = -1.0;
+  manager.ReportedProgress.clear();
+  vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
+  scene->SetLoadFromXMLString(1);
+  scene->SetSceneXMLString("<MRML version=\"Slicer4.4.0\"><Text name=\"Other\"></Text></MRML>");
+  CHECK_BOOL(scene->Import() != 0, true);
+  scene->SetLoadFromXMLString(0);
+  CHECK_INT(manager.ReportedProgress.size(), 0);
+
+  QFile::remove(fileName);
   return EXIT_SUCCESS;
 }
 
@@ -269,6 +427,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
     temporaryDirectory = app.mrmlScene()->GetRootDirectory();
   }
   CHECK_EXIT_SUCCESS(TestLongNodeNameSaving(temporaryDirectory));
+  CHECK_EXIT_SUCCESS(TestLoadingProgress(temporaryDirectory));
 
   return EXIT_SUCCESS;
 }

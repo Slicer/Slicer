@@ -49,6 +49,7 @@ class qSlicerFileReader;
 class qSlicerFileWriter;
 class vtkMRMLFileIOHandler;
 class vtkMRMLFileIOManager;
+class vtkMRMLOperationProgress;
 
 /// Qt interface of the file IO manager.
 ///
@@ -160,6 +161,7 @@ public:
   /// More specific parameters could also be set. For example, the volume reader qSlicerVolumesIO
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  /// The method uses the file IO manager to load all the files as a single operation (it does not use loadFile).
   /// \note Make also sure the case of parameter name is respected
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType, saveNodes()
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
@@ -167,9 +169,10 @@ public:
                                      vtkCollection* loadedNodes = nullptr,
                                      vtkMRMLMessageCollection* userMessages = nullptr);
 
-  /// Utility function that loads a bunch of files. The "fileType" attribute should
+  /// Utility function that loads a bunch of files. The "fileType" attribute should be
   /// in the parameter map for each node to load.
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  /// The method uses the file IO manager to load all the files as a single operation (it does not use loadFile).
   Q_INVOKABLE virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load a list of node corresponding to \a fileType and return the first loaded node.
@@ -325,6 +328,15 @@ public:
   Q_INVOKABLE qSlicerFileReader* reader(const QString& ioDescription) const;
 
 protected:
+  /// The methods are called when the file IO manager reports progress.
+  /// First startProgress() is called then updateProgress() may be called multiple times,
+  /// and endProgress() is called when the requested operation is completed.
+  /// The default implementation does nothing, derived classes that want to report progress
+  /// should override these methods.
+  virtual void startProgress(vtkMRMLOperationProgress* progress);
+  virtual void updateProgress(vtkMRMLOperationProgress* progress);
+  virtual void endProgress(vtkMRMLOperationProgress* progress);
+
   /// Create an options widget for a reader or writer that describes its options
   /// (see vtkMRMLFileIOHandler::GetOptionsDescription).
   /// Used when the Qt-based reader or writer does not provide an options widget.
