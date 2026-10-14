@@ -311,6 +311,24 @@ bool qMRMLSubjectHierarchyModelPrivate::insertItemAddedInBatch(vtkIdType itemID)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::requestExpandedState(vtkIdType itemID, bool newRow)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (this->SuppressExpandRequests || !this->SubjectHierarchyNode)
+  {
+    return;
+  }
+  if (this->SubjectHierarchyNode->GetItemExpanded(itemID))
+  {
+    emit q->requestExpandItem(itemID);
+  }
+  else if (!newRow)
+  {
+    emit q->requestCollapseItem(itemID);
+  }
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModelPrivate::onItemEventWithoutItemID()
 {
   Q_Q(qMRMLSubjectHierarchyModel);
@@ -1068,18 +1086,11 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
   QStandardItem* sceneItem = this->subjectHierarchySceneItem();
   qMRMLItemModelUtils::insertRows(sceneItem, sceneItem->rowCount(), topLevelRows);
 
-  // Update expanded states in the views (expand/collapse requests emitted while creating the items could not be
-  // processed, as the items were not in the model yet)
+  // Update expanded states in the views (expand requests could not be processed while creating the items,
+  // as the items were not in the model yet)
   for (const vtkIdType itemID : allItemIDs)
   {
-    if (d->SubjectHierarchyNode->GetItemExpanded(itemID))
-    {
-      emit requestExpandItem(itemID);
-    }
-    else
-    {
-      emit requestCollapseItem(itemID);
-    }
+    d->requestExpandedState(itemID, true);
   }
 
   emit subjectHierarchyUpdated();
@@ -1146,17 +1157,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
   }
 
   // Update expanded state in the views
-  if (!d->SuppressExpandRequests)
-  {
-    if (d->SubjectHierarchyNode->GetItemExpanded(itemID))
-    {
-      emit requestExpandItem(itemID);
-    }
-    else
-    {
-      emit requestCollapseItem(itemID);
-    }
-  }
+  d->requestExpandedState(itemID, true);
 
   return items[0];
 }
@@ -1249,22 +1250,16 @@ void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardIte
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
         newParentItem->insertRow(newIndex, children);
         // Views lose the expanded state of the moved items (the model indexes are invalidated when the row
-        // is taken out of the model), therefore the expanded state is requested again for the whole branch
+        // is taken out of the model, so the moved rows are collapsed), therefore the expanded state is requested
+        // again for the whole branch
         if (!d->SuppressExpandRequests)
         {
-          std::vector<vtkIdType> branchItemIDs;
-          d->SubjectHierarchyNode->GetItemChildren(shItemID, branchItemIDs, true);
-          branchItemIDs.insert(branchItemIDs.begin(), shItemID);
-          for (const vtkIdType branchItemID : branchItemIDs)
+          d->requestExpandedState(shItemID, true);
+          std::vector<vtkIdType> childItemIDs;
+          d->SubjectHierarchyNode->GetItemChildren(shItemID, childItemIDs, true);
+          for (const vtkIdType childItemID : childItemIDs)
           {
-            if (d->SubjectHierarchyNode->GetItemExpanded(branchItemID))
-            {
-              emit requestExpandItem(branchItemID);
-            }
-            else
-            {
-              emit requestCollapseItem(branchItemID);
-            }
+            d->requestExpandedState(childItemID, true);
           }
         }
       }
@@ -1359,17 +1354,19 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       item->setIcon(d->UnknownIcon);
     }
 
-    // Set expanded state (in the name column so that it is only processed once for each item)
-    if (!d->SuppressExpandRequests)
+    // Set expanded state (in the name column so that it is only processed once for each item).
+    // The state is only requested if it has changed since the last request, because each request makes the views
+    // update their layout. The requested state is stored without notifying the views (it is internal data).
+    const bool expanded = d->SubjectHierarchyNode->GetItemExpanded(shItemID);
+    const QVariant requestedExpanded = item->data(ExpandedStateRequestedRole);
+    if (!requestedExpanded.isValid() || requestedExpanded.toBool() != expanded)
     {
-      if (d->SubjectHierarchyNode->GetItemExpanded(shItemID))
-      {
-        emit requestExpandItem(shItemID);
-      }
-      else
-      {
-        emit requestCollapseItem(shItemID);
-      }
+      const bool wasBlocked = this->blockSignals(true);
+      item->setData(expanded, ExpandedStateRequestedRole);
+      this->blockSignals(wasBlocked);
+      // If the row is being created (expand requests are suppressed) then the state is requested after
+      // the row is inserted in the model
+      d->requestExpandedState(shItemID, false);
     }
   }
   // Description column

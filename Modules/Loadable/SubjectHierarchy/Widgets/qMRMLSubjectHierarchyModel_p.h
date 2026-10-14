@@ -93,6 +93,12 @@ public:
   /// Returns true if the item was inserted.
   bool insertItemAddedInBatch(vtkIdType itemID);
 
+  /// Request the views to show the item expanded or collapsed, according to the expanded state of the
+  /// subject hierarchy item. If \a newRow is true then the row of the item has just been inserted in the model
+  /// (and so it is collapsed in the views), therefore only expand request is emitted.
+  /// Nothing is emitted if expand requests are suppressed.
+  void requestExpandedState(vtkIdType itemID, bool newRow);
+
   /// Called when an item event is received without item ID. This happens when item events are compressed
   /// while the subject hierarchy node is being modified (between StartModify and EndModify).
   /// The changed items are not known, therefore the model is rebuilt.

@@ -529,7 +529,6 @@ void qMRMLSubjectHierarchyModelTester::testExpandRequests()
   std::vector<vtkIdType> allItemIDs;
   shNode->GetItemChildren(shNode->GetSceneItemID(), allItemIDs, true);
   int expectedExpanded = 0;
-  int expectedCollapsed = 0;
   for (vtkIdType itemID : allItemIDs)
   {
     if (shNode->GetItemExpanded(itemID))
@@ -537,24 +536,50 @@ void qMRMLSubjectHierarchyModelTester::testExpandRequests()
       ++expectedExpanded;
       QVERIFY(expandedItems.contains(itemID));
     }
-    else
-    {
-      ++expectedCollapsed;
-      QVERIFY(collapsedItems.contains(itemID));
-    }
   }
-  // One request per item (not one per column or per rebuild pass)
+  QVERIFY(expectedExpanded > 0);
+  // One request per expanded item (not one per column or per rebuild pass).
+  // Collapse requests are not needed, as new rows are collapsed in the views.
   QCOMPARE(expandedItems.size(), expectedExpanded);
-  QCOMPARE(collapsedItems.size(), expectedCollapsed);
+  QCOMPARE(collapsedItems.size(), 0);
 
   // Rebuild (at the end of a batch) emits the requests again
   expandedItems.clear();
   collapsedItems.clear();
   scene->StartState(vtkMRMLScene::BatchProcessState);
-  shNode->CreateFolderItem(shNode->GetSceneItemID(), "BatchFolder");
+  vtkIdType batchFolderID = shNode->CreateFolderItem(shNode->GetSceneItemID(), "BatchFolder");
+  shNode->SetItemExpanded(batchFolderID, true);
   scene->EndState(vtkMRMLScene::BatchProcessState);
   QVERIFY(allRequestsValid);
-  QCOMPARE(expandedItems.size() + collapsedItems.size(), static_cast<int>(allItemIDs.size()) + 1);
+  QCOMPARE(expandedItems.size(), expectedExpanded + 1);
+  QCOMPARE(collapsedItems.size(), 0);
+
+  // Moving a branch requests the expanded state of all expanded items in the branch (they are collapsed in the views
+  // after the move), but no other items
+  expandedItems.clear();
+  collapsedItems.clear();
+  vtkIdType movedFolderID = shNode->GetItemByName("Folder1");
+  std::vector<vtkIdType> branchItemIDs;
+  shNode->GetItemChildren(movedFolderID, branchItemIDs, true);
+  branchItemIDs.push_back(movedFolderID);
+  shNode->SetItemParent(movedFolderID, batchFolderID);
+  QVERIFY(allRequestsValid);
+  QCOMPARE(collapsedItems.size(), 0);
+  for (vtkIdType itemID : branchItemIDs)
+  {
+    QCOMPARE(expandedItems.contains(itemID), shNode->GetItemExpanded(itemID));
+  }
+  for (vtkIdType itemID : expandedItems)
+  {
+    QVERIFY(std::find(branchItemIDs.begin(), branchItemIDs.end(), itemID) != branchItemIDs.end() || itemID == batchFolderID);
+  }
+
+  // Changing the expanded state of an item requests the new state
+  expandedItems.clear();
+  collapsedItems.clear();
+  shNode->SetItemExpanded(batchFolderID, false);
+  QCOMPARE(collapsedItems, QList<vtkIdType>() << batchFolderID);
+  QCOMPARE(expandedItems.size(), 0);
 }
 
 // ----------------------------------------------------------------------------

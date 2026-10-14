@@ -60,6 +60,7 @@ private slots:
   void testSelectItemAddedInBatch();
   void testEditsInLargeScene();
   void testItemsAddedWhileModifyingNode();
+  void testExpandedStateAfterMove();
 
 private:
   static void populateSubjectHierarchy(vtkMRMLScene* scene, int folderCount, int modelsPerFolder, const QString& namePrefix = "");
@@ -586,6 +587,73 @@ void qMRMLSubjectHierarchyTreeViewTester::testItemsAddedWhileModifyingNode()
   QCOMPARE(view.currentItem(), addedItemID);
   QHash<vtkIdType, QPointer<QWidget>> buttons;
   this->verifyButtons(view, shNode, buttons);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewTester::testExpandedStateAfterMove()
+{
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 3, 3);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+  // Nested folders with mixed expanded states in the branch that is moved
+  vtkIdType movedFolderID = shNode->GetItemByName("Folder1");
+  vtkIdType subFolderID = shNode->GetItemByName("SubFolder1");
+  vtkIdType nestedFolderID = shNode->CreateFolderItem(subFolderID, "NestedFolder");
+  vtkMRMLNode* modelNode = scene->AddNewNodeByClass("vtkMRMLModelNode", "NestedModel");
+  shNode->CreateItem(nestedFolderID, modelNode, "Default");
+
+  qMRMLSubjectHierarchyTreeView view;
+  view.setMRMLScene(scene);
+  view.show();
+  QTest::qWait(50);
+  shNode->SetItemExpanded(movedFolderID, true);
+  shNode->SetItemExpanded(subFolderID, false);
+  shNode->SetItemExpanded(nestedFolderID, true);
+
+  auto verifyExpandedStates = [&]()
+  {
+    for (vtkIdType itemID : allItems(shNode))
+    {
+      if (shNode->GetNumberOfItemChildren(itemID) == 0)
+      {
+        continue;
+      }
+      QModelIndex index = view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
+      QVERIFY(index.isValid());
+      QVERIFY2(view.isExpanded(index) == shNode->GetItemExpanded(itemID), qPrintable(QString("Wrong expanded state for item %1").arg(shNode->GetItemName(itemID).c_str())));
+    }
+  };
+  verifyExpandedStates();
+
+  // The expanded state of all the items in the moved branch is kept
+  shNode->SetItemParent(movedFolderID, shNode->GetItemByName("Folder0"));
+  QTest::qWait(50);
+  verifyExpandedStates();
+  QVERIFY(view.visualRect(view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(shNode->GetItemByName("Model1_0"))).isValid());
+  QVERIFY(!view.visualRect(view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(nestedFolderID)).isValid());
+
+  // Modifying items does not request expanding or collapsing items (each request makes the views update their layout)
+  int expandRequestCount = 0;
+  int collapseRequestCount = 0;
+  QObject::connect(view.model(), &qMRMLSubjectHierarchyModel::requestExpandItem, [&](vtkIdType) { ++expandRequestCount; });
+  QObject::connect(view.model(), &qMRMLSubjectHierarchyModel::requestCollapseItem, [&](vtkIdType) { ++collapseRequestCount; });
+  shNode->SetItemName(movedFolderID, "RenamedFolder");
+  shNode->SetItemName(shNode->GetItemByName("Model0_0"), "RenamedModel");
+  vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(shNode->GetItemByName("Model2_1")))->SetDisplayVisibility(0);
+  QCOMPARE(expandRequestCount, 0);
+  QCOMPARE(collapseRequestCount, 0);
+
+  // Changing the expanded state in the subject hierarchy updates the view
+  shNode->SetItemExpanded(subFolderID, true);
+  QCOMPARE(expandRequestCount, 1);
+  QTest::qWait(50);
+  verifyExpandedStates();
+  // Collapsing in the view updates the subject hierarchy
+  view.collapse(view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(movedFolderID));
+  QVERIFY(!shNode->GetItemExpanded(movedFolderID));
+  QTest::qWait(50);
+  verifyExpandedStates();
 }
 
 // ----------------------------------------------------------------------------
