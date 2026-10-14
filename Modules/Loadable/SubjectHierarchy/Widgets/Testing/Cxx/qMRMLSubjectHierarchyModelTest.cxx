@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QRandomGenerator>
 #include <QSignalSpy>
 #include <QStandardItem>
 
@@ -39,6 +40,17 @@
 #include <vtkSmartPointer.h>
 
 // ----------------------------------------------------------------------------
+namespace
+{
+// Gives access to the persistent indexes of the model
+class qMRMLSubjectHierarchyModelWithPersistentIndexList : public qMRMLSubjectHierarchyModel
+{
+public:
+  int persistentIndexCount() const { return this->persistentIndexList().size(); }
+};
+} // namespace
+
+// ----------------------------------------------------------------------------
 class qMRMLSubjectHierarchyModelTester : public QObject
 {
   Q_OBJECT
@@ -59,6 +71,7 @@ private slots:
   void testImportIntoPopulatedScene();
   void testItemsAddedByEndImportObserver();
   void testClearScene();
+  void testItemLookupAfterEdits();
 
 private:
   /// Create folders with model nodes (and a collapsed sub-folder with models in each folder)
@@ -684,6 +697,80 @@ void qMRMLSubjectHierarchyModelTester::testClearScene()
   this->populateSubjectHierarchy(scene, 2, 2, "AfterClearBatch");
   scene->EndState(vtkMRMLScene::BatchProcessState);
   this->verifyModelMatchesSubjectHierarchy(model, shNode);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelTester::testItemLookupAfterEdits()
+{
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 10, 10);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyModelWithPersistentIndexList model;
+  model.setMRMLScene(scene);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+  // The model does not use persistent indexes for looking up items: QStandardItemModel updates all the persistent
+  // indexes when a row is inserted or removed, which would make each insertion an O(N) operation.
+  QCOMPARE(model.persistentIndexCount(), 0);
+
+  // Add, reparent, reorder, and remove items (outside batch processing, so the changes are applied one by one)
+  // and make sure all the items can be found at the right place in the model
+  QRandomGenerator random(42);
+  std::vector<vtkIdType> folderIDs;
+  shNode->GetItemChildren(shNode->GetSceneItemID(), folderIDs, false);
+  QList<vtkIdType> removedItemIDs;
+  for (int operation = 0; operation < 200; ++operation)
+  {
+    vtkIdType folderID = folderIDs[random.bounded(static_cast<int>(folderIDs.size()))];
+    std::vector<vtkIdType> childIDs;
+    shNode->GetItemChildren(folderID, childIDs, false);
+    switch (operation % 4)
+    {
+      case 0:
+      {
+        vtkMRMLNode* modelNode = scene->AddNewNodeByClass("vtkMRMLModelNode", QString("NewModel%1").arg(operation).toStdString());
+        shNode->CreateItem(folderID, modelNode, "Default");
+        break;
+      }
+      case 1:
+        if (!childIDs.empty())
+        {
+          vtkIdType newParentID = folderIDs[random.bounded(static_cast<int>(folderIDs.size()))];
+          shNode->SetItemParent(childIDs[random.bounded(static_cast<int>(childIDs.size()))], newParentID);
+        }
+        break;
+      case 2:
+        if (childIDs.size() > 1)
+        {
+          QVERIFY(shNode->MoveItem(childIDs.back(), childIDs.front()));
+        }
+        break;
+      case 3:
+        if (!childIDs.empty())
+        {
+          vtkIdType removedItemID = childIDs[random.bounded(static_cast<int>(childIDs.size()))];
+          if (shNode->GetItemDataNode(removedItemID))
+          {
+            QVERIFY(shNode->RemoveItem(removedItemID, false, true));
+            removedItemIDs << removedItemID;
+          }
+        }
+        break;
+    }
+    if (operation % 20 == 0)
+    {
+      this->verifyModelMatchesSubjectHierarchy(model, shNode);
+    }
+  }
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+  QVERIFY(!removedItemIDs.isEmpty());
+  for (vtkIdType removedItemID : removedItemIDs)
+  {
+    QVERIFY(!model.indexFromSubjectHierarchyItem(removedItemID).isValid());
+    QVERIFY(model.indexes(removedItemID).isEmpty());
+  }
+  QCOMPARE(model.persistentIndexCount(), 0);
 }
 
 // ----------------------------------------------------------------------------

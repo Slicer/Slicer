@@ -36,6 +36,7 @@
 
 // Qt includes
 #include <QFlags>
+#include <QHash>
 #include <QMap>
 
 // SubjectHierarchy includes
@@ -82,8 +83,10 @@ public:
   /// The items are not inserted in the model.
   QList<QStandardItem*> createItemRow(vtkIdType itemID);
 
-  /// Store the model index of all the subject hierarchy items in the subtree of \a parentItem in the RowCache.
-  void updateRowCacheRecursively(QStandardItem* parentItem);
+  /// Add all the subject hierarchy items in the subtree of \a item (including \a item) to the RowCache.
+  void addToRowCacheRecursively(QStandardItem* item);
+  /// Remove all the subject hierarchy items in the subtree of \a item (including \a item) from the RowCache.
+  void removeFromRowCacheRecursively(QStandardItem* item);
 
   /// Insert an item that was added to the subject hierarchy during batch processing (and therefore is not
   /// in the model yet) along with its ancestors that are not in the model yet.
@@ -190,11 +193,14 @@ public:
   // unreachable when browsing the model
   QList<QList<QStandardItem*>> Orphans;
 
-  // Map from subject hierarchy item to row.
-  // It just stores the result of the latest lookup by \sa indexFromSubjectHierarchyItem,
-  // not guaranteed to contain up-to-date information, should be just used as a search hint.
-  // If the item cannot be found at the given index then we need to browse through all model items.
-  mutable QMap<vtkIdType, QPersistentModelIndex> RowCache;
+  // Map from subject hierarchy item ID to the model item (in the first column) of the subject hierarchy item.
+  // It is kept up-to-date from the rowsInserted and rowsAboutToBeRemoved signals of the model
+  // (QStandardItemModel emits these signals for all item insertions and removals, including
+  // moving items with takeRow/insertRow), therefore it only contains items that are in the model.
+  // An item pointer is used instead of a persistent model index, because inserting a row in a
+  // QStandardItemModel updates all the persistent indexes (which would make inserting an item
+  // in a model of N items an O(N) operation).
+  QHash<vtkIdType, QStandardItem*> RowCache;
 };
 
 #endif

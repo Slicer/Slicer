@@ -58,6 +58,7 @@ private slots:
   void testExpandCollapseItem();
   void testSelectionAcrossBatchAndImport();
   void testSelectItemAddedInBatch();
+  void testEditsInLargeScene();
 
 private:
   static void populateSubjectHierarchy(vtkMRMLScene* scene, int folderCount, int modelsPerFolder, const QString& namePrefix = "");
@@ -502,6 +503,53 @@ void qMRMLSubjectHierarchyTreeViewTester::testSelectItemAddedInBatch()
   this->verifyButtons(view, shNode, buttons);
 
   scene->RemoveObserver(selectCallback);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewTester::testEditsInLargeScene()
+{
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 20, 20);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyTreeView view;
+  view.setMRMLScene(scene);
+  view.show();
+  QTest::qWait(50);
+  QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
+
+  // Items added, moved, selected, and removed one by one in a large scene appear in the view right away
+  vtkIdType lastFolderID = shNode->GetItemByName("Folder19");
+  vtkIdType firstFolderID = shNode->GetItemByName("Folder0");
+  QList<vtkIdType> addedItemIDs;
+  for (int i = 0; i < 50; ++i)
+  {
+    vtkMRMLNode* modelNode = scene->AddNewNodeByClass("vtkMRMLModelNode", QString("AddedModel%1").arg(i).toStdString());
+    vtkIdType itemID = shNode->CreateItem(lastFolderID, modelNode, "Default");
+    addedItemIDs << itemID;
+    if (i % 2)
+    {
+      shNode->SetItemParent(itemID, firstFolderID);
+    }
+    view.setCurrentItem(itemID);
+    QCOMPARE(view.currentItem(), itemID);
+    QModelIndex index = view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
+    QVERIFY(index.isValid());
+    QCOMPARE(view.sortFilterProxyModel()->subjectHierarchyItemFromIndex(index.parent()), (i % 2) ? firstFolderID : lastFolderID);
+    QCOMPARE(view.sortFilterProxyModel()->data(index).toString(), QString("AddedModel%1").arg(i));
+    if (i % 5 == 4)
+    {
+      // Remove an earlier added item
+      vtkIdType removedItemID = addedItemIDs.takeFirst();
+      QVERIFY(shNode->RemoveItem(removedItemID, false, true));
+      QVERIFY(!view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(removedItemID).isValid());
+    }
+  }
+  QTest::qWait(50);
+  QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
+  QHash<vtkIdType, QPointer<QWidget>> buttons;
+  this->verifyButtons(view, shNode, buttons);
 }
 
 // ----------------------------------------------------------------------------
