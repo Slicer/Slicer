@@ -396,12 +396,21 @@ void qMRMLSubjectHierarchyModelTester::testModifiedEventInBatch()
   model.setMRMLScene(scene);
   QSignalSpy updatedSpy(&model, SIGNAL(subjectHierarchyUpdated()));
 
-  // Modification of the subject hierarchy node without item events (e.g., when the node content is copied)
-  // triggers a rebuild at the end of the batch processing
+  // The subject hierarchy node invokes ModifiedEvent after each item event, which must not trigger
+  // a rebuild (the changes are reported by the item events)
   scene->StartState(vtkMRMLScene::BatchProcessState);
   shNode->Modified();
-  QCOMPARE(updatedSpy.count(), 0);
+  shNode->SetItemName(shNode->GetItemByName("Model0_0"), "RenamedModel");
   scene->EndState(vtkMRMLScene::BatchProcessState);
+  QCOMPARE(updatedSpy.count(), 0);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  // Modification of the subject hierarchy node without item events (when the node content is replaced
+  // while restoring a scene view) triggers a rebuild at the end of the batch processing
+  scene->StartState(vtkMRMLScene::RestoreState);
+  shNode->Modified();
+  QCOMPARE(updatedSpy.count(), 0);
+  scene->EndState(vtkMRMLScene::RestoreState);
   QCOMPARE(updatedSpy.count(), 1);
   this->verifyModelMatchesSubjectHierarchy(model, shNode);
 

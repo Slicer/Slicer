@@ -1796,10 +1796,14 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyNodeModified()
 {
   Q_D(qMRMLSubjectHierarchyModel);
-  if (d->isBatchProcessing() && !(d->MRMLScene && d->MRMLScene->IsClosing()))
+  // The subject hierarchy node invokes ModifiedEvent after each item event, so changes that are reported
+  // by item events must not trigger a rebuild (that would make almost every batch processing end with a rebuild
+  // instead of updating only the modified items).
+  // The only change that is not reported by item events is replacing the content of the node when a scene view
+  // is restored (see vtkMRMLSubjectHierarchyNode::Copy). Restoring is always done in batch processing state,
+  // so the model is rebuilt when the batch processing ends.
+  if (d->MRMLScene && d->MRMLScene->IsRestoring() && !d->MRMLScene->IsClosing() && d->isBatchProcessing())
   {
-    // The subject hierarchy may have been changed without item events (e.g. by copying the node).
-    // The model is rebuilt when the batch processing ends.
     d->RebuildPending = true;
   }
 }
