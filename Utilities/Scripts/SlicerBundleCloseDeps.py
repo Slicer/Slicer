@@ -85,8 +85,12 @@ def scan(path):
     one ``otool`` invocation per binary instead of the three (``-L``/``-D``/``-l``)
     the equivalent separate queries would need.
     """
-    out = subprocess.run(["otool", "-l", path],
-                         capture_output=True, text=True, check=False).stdout
+    result = subprocess.run(["otool", "-l", path],
+                            capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise RuntimeError("otool inspection failed for %s (exit %d): %s"
+                           % (path, result.returncode, result.stderr.strip()))
+    out = result.stdout
     loads, rpaths, install_id = [], [], None
     command = None
     for line in out.splitlines():
