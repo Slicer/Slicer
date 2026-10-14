@@ -34,6 +34,8 @@ _MACHO_MAGIC = {
     b"\xfe\xed\xfa\xce",  # 32-bit BE
     b"\xca\xfe\xba\xbe",  # fat BE
     b"\xbe\xba\xfe\xca",  # fat LE
+    b"\xca\xfe\xba\xbf",  # fat64 BE
+    b"\xbf\xba\xfe\xca",  # fat64 LE
 }
 
 

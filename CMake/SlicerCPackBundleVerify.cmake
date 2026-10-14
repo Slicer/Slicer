@@ -145,8 +145,9 @@ function(_bv_is_macho f out)
     return()
   endif()
   file(READ "${f}" _magic LIMIT 4 HEX)
-  # feedface/feedfacf: 32/64-bit; cafebabe/bebafeca: fat; c[ef]faedfe: byte-swapped.
-  if(_magic MATCHES "^(feedface|feedfacf|cafebabe|bebafeca|cefaedfe|cffaedfe)")
+  # feedface/feedfacf: 32/64-bit; c[ef]faedfe: byte-swapped.
+  # cafebabe/bebafeca: fat; cafebabf/bfbafeca: fat64.
+  if(_magic MATCHES "^(feedface|feedfacf|cafebabe|bebafeca|cafebabf|bfbafeca|cefaedfe|cffaedfe)")
     set(${out} TRUE PARENT_SCOPE)
   else()
     set(${out} FALSE PARENT_SCOPE)
