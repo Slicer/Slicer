@@ -519,7 +519,12 @@ void qMRMLSubjectHierarchyTreeViewTester::testEditsInLargeScene()
   QTest::qWait(50);
   QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
 
+  // Rows have uniform height, so that the view does not compute the size of every row when the layout is updated
+  QVERIFY(view.uniformRowHeights());
+
   // Items added, moved, selected, and removed one by one in a large scene appear in the view right away
+  QElapsedTimer timer;
+  timer.start();
   vtkIdType lastFolderID = shNode->GetItemByName("Folder19");
   vtkIdType firstFolderID = shNode->GetItemByName("Folder0");
   QList<vtkIdType> addedItemIDs;
@@ -546,6 +551,8 @@ void qMRMLSubjectHierarchyTreeViewTester::testEditsInLargeScene()
       QVERIFY(!view.sortFilterProxyModel()->indexFromSubjectHierarchyItem(removedItemID).isValid());
     }
   }
+  qDebug() << "Interactive edits in a large scene took" << timer.elapsed() << "ms";
+  QVERIFY2(timer.elapsed() < 10000, qPrintable(QString("Interactive edits took %1 ms").arg(timer.elapsed())));
   QTest::qWait(50);
   QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
   QHash<vtkIdType, QPointer<QWidget>> buttons;

@@ -233,6 +233,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   // Set appropriate defaults
   q->setIndentation(8);
+  // All rows have the same height (one line of text with icons). Without this, the view computes
+  // the size hint of every row whenever the layout is updated (after each item insertion, move, or
+  // when scrolling to the selected item), which makes interactive editing slow in large scenes.
+  q->setUniformRowHeights(true);
   q->setDragDropMode(QAbstractItemView::InternalMove);
   q->setSelectionMode(QAbstractItemView::ExtendedSelection);
   q->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
