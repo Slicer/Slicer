@@ -43,8 +43,8 @@ def is_macho(path):
             return False
         with open(path, "rb") as handle:
             return handle.read(4) in _MACHO_MAGIC
-    except OSError:
-        return False
+    except OSError as error:
+        raise RuntimeError("Failed to read Mach-O header for %s: %s" % (path, error)) from error
 
 
 def find_machos(root):
