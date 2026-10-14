@@ -33,6 +33,9 @@
 // CTK includes
 #include <ctkUtils.h>
 
+// MRMLWidgets includes
+#include <qMRMLItemModelUtils.h>
+
 // qMRML includes
 #include "qMRMLSubjectHierarchyModel_p.h"
 
@@ -999,35 +1002,10 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
     d->SuppressExpandRequests = false;
   }
 
-  // Insert the top-level rows (with all their children) in the model in one step
-  if (!topLevelRows.isEmpty())
-  {
-    QStandardItem* sceneItem = this->subjectHierarchySceneItem();
-    const int firstRow = sceneItem->rowCount();
-    const int rowCount = topLevelRows.size();
-    const int columnCount = this->columnCount();
-    // Insert empty rows in one step (a single rowsInserted signal is emitted; proxy models do not accept the
-    // empty rows yet), then set the items of the rows. Signals are blocked while setting the items, because
-    // setChild emits layout and data change signals for each item, instead a single dataChanged signal is
-    // emitted at the end for all the new rows, which makes proxy models accept the rows in one step.
-    // Note: QStandardItem::insertRows(int, QList<QStandardItem*>) is not used because it does not set the
-    // model of the children of the inserted items (setChild does).
-    sceneItem->insertRows(firstRow, rowCount);
-    {
-      const QSignalBlocker blocker(this);
-      for (int row = 0; row < rowCount; ++row)
-      {
-        for (int column = 0; column < columnCount; ++column)
-        {
-          sceneItem->setChild(firstRow + row, column, topLevelRows[row][column]);
-        }
-        // The rows were empty when the rowsInserted signal was emitted, add the items to the cache now
-        d->addToRowCacheRecursively(topLevelRows[row][0]);
-      }
-    }
-    QModelIndex sceneIndex = sceneItem->index();
-    emit dataChanged(this->index(firstRow, 0, sceneIndex), this->index(firstRow + rowCount - 1, columnCount - 1, sceneIndex));
-  }
+  // Insert the top-level rows (with all their children) in the model in one step.
+  // The items are added to the RowCache from the rowsInserted signal.
+  QStandardItem* sceneItem = this->subjectHierarchySceneItem();
+  qMRMLItemModelUtils::insertRows(sceneItem, sceneItem->rowCount(), topLevelRows);
 
   // Update expanded states in the views (expand/collapse requests emitted while creating the items could not be
   // processed, as the items were not in the model yet)

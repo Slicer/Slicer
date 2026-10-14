@@ -21,6 +21,7 @@
 #include <QStandardItem>
 
 // CTK includes
+#include <ctkModelTester.h>
 #include <ctkTest.h>
 
 // Subject hierarchy includes
@@ -72,6 +73,7 @@ private slots:
   void testItemsAddedByEndImportObserver();
   void testClearScene();
   void testItemLookupAfterEdits();
+  void testRowsCompleteWhenInserted();
 
 private:
   /// Create folders with model nodes (and a collapsed sub-folder with models in each folder)
@@ -771,6 +773,143 @@ void qMRMLSubjectHierarchyModelTester::testItemLookupAfterEdits()
     QVERIFY(model.indexes(removedItemID).isEmpty());
   }
   QCOMPARE(model.persistentIndexCount(), 0);
+}
+
+// ----------------------------------------------------------------------------
+namespace
+{
+/// Model tester that collects the errors (instead of throwing an exception or just logging them)
+class qMRMLCollectingModelTester : public ctkModelTester
+{
+public:
+  qMRMLCollectingModelTester(QAbstractItemModel* model)
+    : ctkModelTester(model)
+  {
+    this->setThrowOnError(false);
+  }
+  mutable QStringList Errors;
+
+protected:
+  void test(bool result, const QString& errorString) const override
+  {
+    if (!result)
+    {
+      this->Errors << errorString;
+    }
+  }
+};
+
+/// Check that all the rows (and all their children) are complete: each row has an item in each column
+/// and the item can be found by its subject hierarchy item ID
+bool areItemRowsComplete(qMRMLSubjectHierarchyModel* model, vtkMRMLSubjectHierarchyNode* shNode, const QModelIndex& parent, int first, int last, QString& error)
+{
+  for (int row = first; row <= last; ++row)
+  {
+    QModelIndex index = model->index(row, 0, parent);
+    vtkIdType itemID = model->subjectHierarchyItemFromIndex(index);
+    if (!itemID || itemID == shNode->GetSceneItemID())
+    {
+      // None item or scene item
+      continue;
+    }
+    if (model->itemFromIndex(model->index(row, model->nameColumn(), parent))->text() != QString::fromStdString(shNode->GetItemName(itemID)))
+    {
+      error = QString("Wrong name for item %1").arg(itemID);
+      return false;
+    }
+    if (model->indexFromSubjectHierarchyItem(itemID) != index)
+    {
+      error = QString("Item %1 is not found").arg(itemID);
+      return false;
+    }
+    for (int column = 0; column < model->columnCount(); ++column)
+    {
+      if (!model->itemFromIndex(model->index(row, column, parent)))
+      {
+        error = QString("Missing item in column %1 of item %2").arg(column).arg(itemID);
+        return false;
+      }
+    }
+    if (model->rowCount(index) > 0 && !areItemRowsComplete(model, shNode, index, 0, model->rowCount(index) - 1, error))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+} // namespace
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelTester::testRowsCompleteWhenInserted()
+{
+  // Objects that use the model directly (without a proxy model) must be able to access all the
+  // items of the inserted rows (and their children) when they are notified about the row insertion.
+  // The notifications must be consistent (verified by ctkModelTester).
+  vtkNew<vtkMRMLScene> sourceScene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(sourceScene);
+  this->populateSubjectHierarchy(sourceScene, 3, 3, "Imported");
+  std::string xml = this->sceneToXML(sourceScene);
+
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 4, 3);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+  vtkNew<vtkCallbackCommand> resolveCallback;
+  resolveCallback->SetCallback(resolveSubjectHierarchyCallback);
+  scene->AddObserver(vtkMRMLScene::EndImportEvent, resolveCallback, 10.0);
+
+  qMRMLSubjectHierarchyModel model;
+  qMRMLCollectingModelTester modelTester(&model);
+  // Some columns (e.g., visibility) do not have display data, which is reported as an error by the data test
+  modelTester.setTestDataEnabled(false);
+  int rowsAboutToBeInsertedCount = 0;
+  int rowsInsertedCount = 0;
+  QString error;
+  QObject::connect(&model, &QAbstractItemModel::rowsAboutToBeInserted, [&](const QModelIndex&, int, int) { ++rowsAboutToBeInsertedCount; });
+  QObject::connect(&model,
+                   &QAbstractItemModel::rowsInserted,
+                   [&](const QModelIndex& parent, int first, int last)
+                   {
+                     ++rowsInsertedCount;
+                     if (error.isEmpty())
+                     {
+                       areItemRowsComplete(&model, shNode, parent, first, last, error);
+                     }
+                   });
+
+  // Rebuild when the scene is set
+  model.setMRMLScene(scene);
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  QVERIFY(rowsInsertedCount > 0);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  // Rebuild at the end of batch processing
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  this->populateSubjectHierarchy(scene, 2, 2, "Batch");
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  // Rebuild after import
+  scene->SetLoadFromXMLString(1);
+  scene->SetSceneXMLString(xml);
+  QVERIFY(scene->Import());
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  // Items added one by one
+  this->populateSubjectHierarchy(scene, 1, 2, "Added");
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  scene->RemoveObserver(resolveCallback);
 }
 
 // ----------------------------------------------------------------------------

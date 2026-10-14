@@ -17,14 +17,14 @@
 
 // Tests populating scene models (qMRMLSceneModel and subclasses) from a scene in bulk,
 // which happens when the scene is set, imported, or closed.
-// Note: ctkModelTester is not used in these tests, because it does not support dataChanged signals
-// that cover multiple rows (emitted when the rows are inserted in bulk).
 
 // Qt includes
 #include <QSignalSpy>
 #include <QStandardItem>
+#include <QTreeView>
 
 // CTK includes
+#include <ctkModelTester.h>
 #include <ctkTest.h>
 
 // qMRML includes
@@ -67,6 +67,9 @@ private slots:
   void testImport();
   void testParentAfterChild();
   void testRowsInsertedConsumer();
+  void testRowsCompleteWhenInserted();
+  void testRowsCompleteWhenInserted_data();
+  void testViewWithoutProxyModel();
   void testNodeModifiedAfterPopulate();
   void testClear();
   void testRemovedNodeNotFound();
@@ -510,6 +513,177 @@ void qMRMLSceneModelPopulateTester::testRowsInsertedConsumer()
   QVERIFY(allFound);
   QVERIFY(nodesFound > 0);
   this->verifyAllNodesPresent(model, scene);
+}
+
+// ----------------------------------------------------------------------------
+namespace
+{
+/// Model tester that collects the errors (instead of throwing an exception or just logging them)
+class qMRMLCollectingModelTester : public ctkModelTester
+{
+public:
+  qMRMLCollectingModelTester(QAbstractItemModel* model)
+    : ctkModelTester(model)
+  {
+    this->setThrowOnError(false);
+  }
+  mutable QStringList Errors;
+
+protected:
+  void test(bool result, const QString& errorString) const override
+  {
+    if (!result)
+    {
+      this->Errors << errorString;
+    }
+  }
+};
+
+/// Check that all the rows (and all their children) are complete: each row of a node has an item in each column
+bool areNodeRowsComplete(qMRMLSceneModel* model, const QModelIndex& parent, int first, int last, QString& error)
+{
+  for (int row = first; row <= last; ++row)
+  {
+    QModelIndex index = model->index(row, 0, parent);
+    vtkMRMLNode* node = model->mrmlNodeFromIndex(index);
+    if (!node)
+    {
+      // Extra item or category item
+      continue;
+    }
+    if (model->itemFromIndex(index)->text() != QString(node->GetName()))
+    {
+      error = QString("Wrong name for node %1").arg(node->GetID());
+      return false;
+    }
+    if (model->indexFromNode(node) != index)
+    {
+      error = QString("Node %1 is not found").arg(node->GetID());
+      return false;
+    }
+    for (int column = 0; column < model->columnCount(); ++column)
+    {
+      if (!model->itemFromIndex(model->index(row, column, parent)))
+      {
+        error = QString("Missing item in column %1 of node %2").arg(column).arg(node->GetID());
+        return false;
+      }
+    }
+    if (model->rowCount(index) > 0 && !areNodeRowsComplete(model, index, 0, model->rowCount(index) - 1, error))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+} // namespace
+
+// ----------------------------------------------------------------------------
+void qMRMLSceneModelPopulateTester::testRowsCompleteWhenInserted_data()
+{
+  QTest::addColumn<int>("modelType");
+  QTest::newRow("base") << static_cast<int>(Base);
+  QTest::newRow("transform") << static_cast<int>(Transform);
+  QTest::newRow("displayable") << static_cast<int>(Displayable);
+  QTest::newRow("hierarchy") << static_cast<int>(Hierarchy);
+  QTest::newRow("category") << static_cast<int>(Category);
+  QTest::newRow("colorTable") << static_cast<int>(ColorTable);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSceneModelPopulateTester::testRowsCompleteWhenInserted()
+{
+  // Objects that use the scene model directly (without a proxy model) must be able to access all the
+  // items of the inserted rows (and their children) when they are notified about the row insertion.
+  // The notifications must be consistent (verified by ctkModelTester).
+  QFETCH(int, modelType);
+  vtkNew<vtkMRMLScene> scene;
+  this->populateScene(scene, "", 20);
+  std::string xml = this->sceneToXML(scene);
+
+  qMRMLSceneModel* model = this->createModel(modelType, this);
+  qMRMLCollectingModelTester modelTester(model);
+  int rowsAboutToBeInsertedCount = 0;
+  int rowsInsertedCount = 0;
+  QString error;
+  QObject::connect(model, &QAbstractItemModel::rowsAboutToBeInserted, [&](const QModelIndex&, int, int) { ++rowsAboutToBeInsertedCount; });
+  QObject::connect(model,
+                   &QAbstractItemModel::rowsInserted,
+                   [&](const QModelIndex& parent, int first, int last)
+                   {
+                     ++rowsInsertedCount;
+                     if (error.isEmpty())
+                     {
+                       areNodeRowsComplete(model, parent, first, last, error);
+                     }
+                   });
+  QSignalSpy dataChangedSpy(model, SIGNAL(dataChanged(QModelIndex, QModelIndex)));
+
+  // Populate when the scene is set
+  model->setMRMLScene(scene);
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  QVERIFY(rowsInsertedCount > 0);
+  // Inserted rows are complete, no need to notify about data changes of the nodes
+  // (only the data of the scene item is updated)
+  for (const QList<QVariant>& arguments : dataChangedSpy)
+  {
+    QCOMPARE(arguments[0].toModelIndex(), model->mrmlSceneIndex());
+  }
+  this->verifyAllNodesPresent(*model, scene);
+
+  // Repopulate after import
+  scene->SetLoadFromXMLString(1);
+  scene->SetSceneXMLString(xml);
+  QVERIFY(scene->Import());
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  this->verifyAllNodesPresent(*model, scene);
+
+  // Nodes added one by one
+  this->populateScene(scene, "Added", 5);
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  this->verifyAllNodesPresent(*model, scene);
+
+  // Repopulate after the scene is closed
+  scene->Clear(0);
+  QVERIFY2(error.isEmpty(), qPrintable(error));
+  QVERIFY2(modelTester.Errors.isEmpty(), qPrintable(modelTester.Errors.join("\n")));
+  QCOMPARE(rowsAboutToBeInsertedCount, rowsInsertedCount);
+  this->verifyAllNodesPresent(*model, scene);
+
+  delete model;
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSceneModelPopulateTester::testViewWithoutProxyModel()
+{
+  // A tree view that displays the scene model directly (without a proxy model) shows all the nodes
+  vtkNew<vtkMRMLScene> scene;
+  this->populateScene(scene, "", 20);
+
+  qMRMLSceneHierarchyModel model;
+  QTreeView view;
+  view.setModel(&model);
+  view.show();
+  model.setMRMLScene(scene);
+  view.expandAll();
+  QTest::qWait(50);
+  int displayedNodeCount = 0;
+  vtkMRMLNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (scene->GetNodes()->InitTraversal(it); (node = (vtkMRMLNode*)scene->GetNodes()->GetNextItemAsObject(it));)
+  {
+    QModelIndex index = model.indexFromNode(node);
+    QVERIFY(index.isValid());
+    QVERIFY2(!view.visualRect(index).isEmpty(), qPrintable(QString("Node %1 is not displayed").arg(node->GetID())));
+    QCOMPARE(view.model()->data(index).toString(), QString(node->GetName()));
+    ++displayedNodeCount;
+  }
+  QCOMPARE(displayedNodeCount, scene->GetNumberOfNodes());
 }
 
 // ----------------------------------------------------------------------------
