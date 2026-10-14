@@ -174,6 +174,11 @@ function(_bv_parse binary out_rpaths out_deps out_weak)
   set(_deps "")
   set(_weak "")
   if(_rv EQUAL 0)
+    # otool may report a non-object file on stdout and still exit successfully.
+    if(_out MATCHES ": is not an object file(\n|$)")
+      message(FATAL_ERROR
+        "Failed to inspect '${binary}' with otool -l:\n${_out}")
+    endif()
     string(REPLACE "\n" ";" _lines "${_out}")
     set(_cur "")
     foreach(_ln IN LISTS _lines)
