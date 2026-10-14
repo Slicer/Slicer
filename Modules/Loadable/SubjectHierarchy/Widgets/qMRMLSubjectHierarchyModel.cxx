@@ -75,6 +75,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
   , RebuildPending(false)
   , InsertingItemAddedInBatch(false)
+  , RebuildSubjectHierarchyMTime(0)
   , BatchProcessing(false)
   , SuppressExpandRequests(false)
   , SubjectHierarchyNode(nullptr)
@@ -307,6 +308,65 @@ bool qMRMLSubjectHierarchyModelPrivate::insertItemAddedInBatch(vtkIdType itemID)
   QStandardItem* item = q->insertSubjectHierarchyItem(itemID);
   this->InsertingItemAddedInBatch = false;
   return item != nullptr;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::onItemEventWithoutItemID()
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (!this->SubjectHierarchyNode || (this->MRMLScene && this->MRMLScene->IsClosing()))
+  {
+    return;
+  }
+  if (this->isBatchProcessing())
+  {
+    this->RebuildPending = true;
+    return;
+  }
+  // Compressed events are invoked one after the other (one for each event type), the model is rebuilt only once
+  // (unless the subject hierarchy is changed in the meantime)
+  if (this->SubjectHierarchyNode->GetMTime() == this->RebuildSubjectHierarchyMTime)
+  {
+    return;
+  }
+  q->rebuildFromSubjectHierarchy();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModelPrivate::isOutOfSync() const
+{
+  if (!this->SubjectHierarchyNode)
+  {
+    return false;
+  }
+  // The RowCache contains exactly the items that are in the model (including the scene item)
+  if (!this->RowCache.contains(this->SubjectHierarchyNode->GetSceneItemID()))
+  {
+    return true;
+  }
+  return this->RowCache.size() != this->SubjectHierarchyNode->GetNumberOfItems() + 1;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::validateAfterBatchProcessing()
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (!this->MRMLScene || this->MRMLScene->IsClosing())
+  {
+    return;
+  }
+  if (!this->SubjectHierarchyNode || this->SubjectHierarchyNode->GetScene() != this->MRMLScene)
+  {
+    // The observed subject hierarchy node has been removed from the scene (or there was none),
+    // observe the one in the scene (this rebuilds the model)
+    q->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this->MRMLScene));
+    return;
+  }
+  if (!this->RebuildPending && this->isOutOfSync())
+  {
+    qWarning() << Q_FUNC_INFO << ": subject hierarchy model is out of sync, rebuild it";
+    this->RebuildPending = true;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -890,6 +950,7 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
   d->PendingItemUpdates.clear();
   d->ItemsAddedInBatch.clear();
   d->RowCache.clear();
+  d->RebuildSubjectHierarchyMTime = (d->SubjectHierarchyNode ? d->SubjectHierarchyNode->GetMTime() : 0);
 
   // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
@@ -1768,6 +1829,27 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
 
   switch (event)
   {
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent:
+      if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+        // Item events are compressed (and invoked without item ID) if they are invoked while the subject hierarchy
+        // node is being modified (between StartModify and EndModify)
+        sceneModel->d_func()->onItemEventWithoutItemID();
+        return;
+      }
+      break;
+    default: break;
+  }
+
+  switch (event)
+  {
     case vtkCommand::ModifiedEvent: sceneModel->onSubjectHierarchyNodeModified(); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent: sceneModel->onSubjectHierarchyItemAdded(itemID); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent: sceneModel->onSubjectHierarchyItemAboutToBeRemoved(itemID); break;
@@ -2091,6 +2173,7 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneImported(vtkMRMLScene* scene)
   Q_D(qMRMLSubjectHierarchyModel);
   // The model is rebuilt here (and not only when the batch processing ends, which always follows the end of
   // the import) so that other observers of the scene import can already use the updated model.
+  d->validateAfterBatchProcessing();
   if (d->RebuildPending)
   {
     this->rebuildFromSubjectHierarchy();
@@ -2127,6 +2210,7 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
   d->BatchProcessing = false;
   // Only rebuild if the structure of the subject hierarchy was changed during the batch processing
   // (the changes were not applied to the model one by one)
+  d->validateAfterBatchProcessing();
   if (d->RebuildPending)
   {
     this->rebuildFromSubjectHierarchy();

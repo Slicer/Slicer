@@ -2466,6 +2466,17 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject* ca
     vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
     itemID = *itemIdPtr;
   }
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    // Item events are compressed (and invoked without item ID) if they are invoked while the subject hierarchy
+    // node is being modified (between StartModify and EndModify). Any item may have been modified.
+    vtkIdType currentItemID = this->currentItem();
+    if (currentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID && currentItemID != shNode->GetSceneItemID())
+    {
+      emit currentItemModified(currentItemID);
+    }
+    return;
+  }
 
   // Forward `currentItemModified` if the modified item or one of
   // its children was selected, to adequately update other widgets

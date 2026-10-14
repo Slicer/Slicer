@@ -59,6 +59,7 @@ private slots:
   void testSelectionAcrossBatchAndImport();
   void testSelectItemAddedInBatch();
   void testEditsInLargeScene();
+  void testItemsAddedWhileModifyingNode();
 
 private:
   static void populateSubjectHierarchy(vtkMRMLScene* scene, int folderCount, int modelsPerFolder, const QString& namePrefix = "");
@@ -555,6 +556,34 @@ void qMRMLSubjectHierarchyTreeViewTester::testEditsInLargeScene()
   QVERIFY2(timer.elapsed() < 10000, qPrintable(QString("Interactive edits took %1 ms").arg(timer.elapsed())));
   QTest::qWait(50);
   QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
+  QHash<vtkIdType, QPointer<QWidget>> buttons;
+  this->verifyButtons(view, shNode, buttons);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewTester::testItemsAddedWhileModifyingNode()
+{
+  // Items added while the subject hierarchy node is being modified (item events are compressed and
+  // invoked without item ID when the modification ends) are displayed
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 2, 2);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyTreeView view;
+  view.setMRMLScene(scene);
+  view.show();
+  QTest::qWait(50);
+
+  int wasModifying = shNode->StartModify();
+  this->populateSubjectHierarchy(scene, 2, 2, "AddedWhileModifying");
+  shNode->EndModify(wasModifying);
+  QTest::qWait(50);
+  QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
+  vtkIdType addedItemID = shNode->GetItemByName("AddedWhileModifyingModel1_1");
+  QVERIFY(addedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  view.setCurrentItem(addedItemID);
+  QCOMPARE(view.currentItem(), addedItemID);
   QHash<vtkIdType, QPointer<QWidget>> buttons;
   this->verifyButtons(view, shNode, buttons);
 }

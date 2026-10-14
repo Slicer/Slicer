@@ -17,6 +17,7 @@
 
 // Qt includes
 #include <QRandomGenerator>
+#include <QRegularExpression>
 #include <QSignalSpy>
 #include <QStandardItem>
 
@@ -74,6 +75,8 @@ private slots:
   void testClearScene();
   void testItemLookupAfterEdits();
   void testRowsCompleteWhenInserted();
+  void testCompressedItemEvents();
+  void testOutOfSyncAfterBatch();
 
 private:
   /// Create folders with model nodes (and a collapsed sub-folder with models in each folder)
@@ -910,6 +913,80 @@ void qMRMLSubjectHierarchyModelTester::testRowsCompleteWhenInserted()
   this->verifyModelMatchesSubjectHierarchy(model, shNode);
 
   scene->RemoveObserver(resolveCallback);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelTester::testCompressedItemEvents()
+{
+  // Item events are compressed (and invoked without item ID) while the subject hierarchy node is being modified
+  // (between StartModify and EndModify), the model must still be updated
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 2, 2);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyModel model;
+  model.setMRMLScene(scene);
+  QSignalSpy updatedSpy(&model, SIGNAL(subjectHierarchyUpdated()));
+
+  // Outside batch processing: the model is rebuilt when the modification ends
+  {
+    int wasModifying = shNode->StartModify();
+    vtkIdType folderID = shNode->CreateFolderItem(shNode->GetSceneItemID(), "FolderAddedWhileModifying");
+    vtkMRMLNode* modelNode = scene->AddNewNodeByClass("vtkMRMLModelNode", "ModelAddedWhileModifying");
+    shNode->CreateItem(folderID, modelNode, "Default");
+    shNode->SetItemName(shNode->GetItemByName("Model0_0"), "RenamedWhileModifying");
+    shNode->SetItemParent(shNode->GetItemByName("Model1_1"), folderID);
+    QVERIFY(!model.indexFromSubjectHierarchyItem(folderID).isValid());
+    shNode->EndModify(wasModifying);
+    QVERIFY(model.indexFromSubjectHierarchyItem(folderID).isValid());
+  }
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+  // Multiple compressed events (one for each event type) do not rebuild the model multiple times
+  QVERIFY2(updatedSpy.count() >= 1 && updatedSpy.count() <= 2, qPrintable(QString("Model rebuilt %1 times").arg(updatedSpy.count())));
+
+  // During batch processing: the model is rebuilt when the batch processing ends
+  updatedSpy.clear();
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  {
+    int wasModifying = shNode->StartModify();
+    shNode->CreateFolderItem(shNode->GetSceneItemID(), "FolderAddedWhileModifyingInBatch");
+    shNode->EndModify(wasModifying);
+  }
+  QCOMPARE(updatedSpy.count(), 0);
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QCOMPARE(updatedSpy.count(), 1);
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelTester::testOutOfSyncAfterBatch()
+{
+  // If changes of the subject hierarchy are not reported to the model, then the model is rebuilt when
+  // the batch processing ends (safety net, it indicates an error)
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 2, 2);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyModel model;
+  model.setMRMLScene(scene);
+  QSignalSpy updatedSpy(&model, SIGNAL(subjectHierarchyUpdated()));
+
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  // Item events are not invoked (they are kept pending) while modified events are disabled
+  shNode->SetDisableModifiedEvent(1);
+  vtkIdType folderID = shNode->CreateFolderItem(shNode->GetSceneItemID(), "UnreportedFolder");
+  shNode->SetDisableModifiedEvent(0);
+  QTest::ignoreMessage(QtWarningMsg, QRegularExpression("out of sync"));
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QCOMPARE(updatedSpy.count(), 1);
+  QVERIFY(model.indexFromSubjectHierarchyItem(folderID).isValid());
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
+
+  // Invoke the pending events (the model is already up-to-date)
+  shNode->InvokePendingModifiedEvent();
+  this->verifyModelMatchesSubjectHierarchy(model, shNode);
 }
 
 // ----------------------------------------------------------------------------

@@ -93,6 +93,21 @@ public:
   /// Returns true if the item was inserted.
   bool insertItemAddedInBatch(vtkIdType itemID);
 
+  /// Called when an item event is received without item ID. This happens when item events are compressed
+  /// while the subject hierarchy node is being modified (between StartModify and EndModify).
+  /// The changed items are not known, therefore the model is rebuilt.
+  void onItemEventWithoutItemID();
+
+  /// Returns true if the model obviously does not match the subject hierarchy (some items are missing from the model,
+  /// or the model contains items that are not in the subject hierarchy anymore).
+  /// It is a quick check that does not compare the structure of the hierarchy.
+  bool isOutOfSync() const;
+
+  /// Make sure that the model is up-to-date at the end of an import or batch processing:
+  /// observe the subject hierarchy node of the scene (if the observed node is not in the scene anymore)
+  /// and request rebuild if the model is out of sync.
+  void validateAfterBatchProcessing();
+
   /// Returns true if the scene is batch processing (or importing), or if the end of the batch processing
   /// has not been processed yet by the model. In this state per-item updates are not applied to the model,
   /// instead the whole model is rebuilt at the end of the batch processing.
@@ -157,6 +172,9 @@ public:
   std::set<vtkIdType> ItemsAddedInBatch;
   /// Set while an item added during batch processing is inserted in the model, to prevent recursive on-demand insertion.
   bool InsertingItemAddedInBatch;
+  /// Modification time of the subject hierarchy node when the model was last rebuilt.
+  /// Used to prevent rebuilding the model multiple times if multiple compressed item events are received.
+  vtkMTimeType RebuildSubjectHierarchyMTime;
   /// Set between the start and the end of the scene batch processing (see isBatchProcessing).
   bool BatchProcessing;
   /// Set while model items are created detached from the model (during rebuild), when
