@@ -167,7 +167,7 @@ function(_bv_parse binary out_rpaths out_deps out_weak)
   execute_process(
     COMMAND "${OTOOL_EXECUTABLE}" -l "${binary}"
     OUTPUT_VARIABLE _out
-    ERROR_QUIET
+    ERROR_VARIABLE _err
     RESULT_VARIABLE _rv
     )
   set(_rpaths "")
@@ -194,6 +194,9 @@ function(_bv_parse binary out_rpaths out_deps out_weak)
         # LC_ID_DYLIB name (the library's own install name) is intentionally ignored.
       endif()
     endforeach()
+  else()
+    message(FATAL_ERROR
+      "Failed to inspect '${binary}' with otool -l (result: ${_rv}):\n${_err}")
   endif()
   set(${out_rpaths} "${_rpaths}" PARENT_SCOPE)
   set(${out_deps} "${_deps}" PARENT_SCOPE)
