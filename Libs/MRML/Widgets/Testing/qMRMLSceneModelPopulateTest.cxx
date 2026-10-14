@@ -70,6 +70,7 @@ private slots:
   void testRowsCompleteWhenInserted();
   void testRowsCompleteWhenInserted_data();
   void testViewWithoutProxyModel();
+  void testHierarchyOrder();
   void testNodeModifiedAfterPopulate();
   void testClear();
   void testRemovedNodeNotFound();
@@ -684,6 +685,78 @@ void qMRMLSceneModelPopulateTester::testViewWithoutProxyModel()
     ++displayedNodeCount;
   }
   QCOMPARE(displayedNodeCount, scene->GetNumberOfNodes());
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSceneModelPopulateTester::testHierarchyOrder()
+{
+  // Nodes in a hierarchy model are in the order of the hierarchy (see qMRMLSceneHierarchyModel::nodeIndex()),
+  // which may be different from the order of the nodes in the scene
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLModelHierarchyNode* parentHierarchy = vtkMRMLModelHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelHierarchyNode", "Parent"));
+  // Top-level hierarchy node, whose associated node is added to the scene later (not right after it)
+  vtkMRMLModelHierarchyNode* topLevelHierarchy = vtkMRMLModelHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelHierarchyNode", "TopLevelHierarchy"));
+  QList<vtkMRMLModelHierarchyNode*> childHierarchies;
+  QList<vtkMRMLNode*> childModels;
+  for (int i = 0; i < 5; ++i)
+  {
+    vtkMRMLModelHierarchyNode* childHierarchy =
+      vtkMRMLModelHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelHierarchyNode", QString("ChildHierarchy%1").arg(i).toStdString()));
+    childHierarchy->SetParentNodeID(parentHierarchy->GetID());
+    childHierarchies << childHierarchy;
+  }
+  for (int i = 0; i < 5; ++i)
+  {
+    vtkMRMLNode* childModel = scene->AddNewNodeByClass("vtkMRMLModelNode", QString("ChildModel%1").arg(i).toStdString());
+    childHierarchies[i]->SetAssociatedNodeID(childModel->GetID());
+    childModels << childModel;
+  }
+  vtkMRMLNode* topLevelModel = scene->AddNewNodeByClass("vtkMRMLModelNode", "TopLevelModel");
+  topLevelHierarchy->SetAssociatedNodeID(topLevelModel->GetID());
+  // Reverse the order of the children in the hierarchy
+  for (int i = 0; i < 5; ++i)
+  {
+    childHierarchies[i]->SetSortingValue(10.0 - i);
+  }
+  QCOMPARE(parentHierarchy->GetNthChildNode(0), childHierarchies[4]);
+
+  // Expected order of the nodes under the parent: each child hierarchy node followed by its associated model node
+  QList<vtkMRMLNode*> expectedChildren;
+  for (int i = 4; i >= 0; --i)
+  {
+    expectedChildren << childHierarchies[i] << childModels[i];
+  }
+
+  qMRMLSceneHierarchyModel model;
+  model.setMRMLScene(scene);
+  this->verifyAllNodesPresent(model, scene);
+  QStandardItem* parentItem = model.itemFromNode(parentHierarchy);
+  QCOMPARE(parentItem->rowCount(), expectedChildren.size());
+  for (int row = 0; row < expectedChildren.size(); ++row)
+  {
+    QCOMPARE(QString(model.mrmlNodeFromItem(parentItem->child(row))->GetName()), QString(expectedChildren[row]->GetName()));
+  }
+  // The associated node is right after its hierarchy node
+  QCOMPARE(model.indexFromNode(topLevelModel).row(), model.indexFromNode(topLevelHierarchy).row() + 1);
+
+  // The tree view displays the nodes in the same order
+  qMRMLTreeView view;
+  view.setSceneModel(new qMRMLSceneHierarchyModel(&view), "Hierarchy");
+  view.setShowHidden(true);
+  view.setMRMLScene(scene);
+  view.show();
+  view.expandAll();
+  QTest::qWait(50);
+  int previousTop = -1;
+  for (vtkMRMLNode* childNode : expectedChildren)
+  {
+    QModelIndex index = view.sortFilterProxyModel()->indexFromMRMLNode(childNode);
+    QVERIFY(index.isValid());
+    QRect rect = view.visualRect(index);
+    QVERIFY2(!rect.isEmpty(), qPrintable(QString("Node %1 is not displayed").arg(childNode->GetName())));
+    QVERIFY2(rect.top() > previousTop, qPrintable(QString("Node %1 is not displayed in hierarchy order").arg(childNode->GetName())));
+    previousTop = rect.top();
+  }
 }
 
 // ----------------------------------------------------------------------------

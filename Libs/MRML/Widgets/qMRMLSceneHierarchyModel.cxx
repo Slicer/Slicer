@@ -34,6 +34,7 @@
 #include <vtkNew.h>
 
 // STD includes
+#include <algorithm>
 #include <iostream>
 
 //------------------------------------------------------------------------------
@@ -50,6 +51,81 @@ void qMRMLSceneHierarchyModelPrivate::init() {}
 vtkMRMLHierarchyNode* qMRMLSceneHierarchyModelPrivate::CreateHierarchyNode() const
 {
   return vtkMRMLHierarchyNode::New();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModelPrivate::sortRows(QList<QList<QStandardItem*>>& rows) const
+{
+  Q_Q(const qMRMLSceneHierarchyModel);
+  if (rows.size() < 2)
+  {
+    return;
+  }
+  // The order is the same as in qMRMLSceneHierarchyModel::nodeIndex():
+  // - a hierarchy node that has a parent is at its position among the children of the parent (based on sorting value),
+  // - a node that has an associated hierarchy node is right after its hierarchy node,
+  // - other nodes are in scene order (the order the rows were created).
+  // nodeIndex() is not used for computing the order, because it iterates through the scene for each node
+  // that has no parent, which would make sorting an O(N^2) operation.
+  QHash<vtkMRMLNode*, int> rowOfNode;
+  for (int row = 0; row < rows.size(); ++row)
+  {
+    vtkMRMLNode* node = q->mrmlNodeFromItem(rows[row][0]);
+    if (node)
+    {
+      rowOfNode[node] = row;
+    }
+  }
+  QList<QPair<qint64, int>> sortKeys; // sorting key, current row
+  for (int row = 0; row < rows.size(); ++row)
+  {
+    vtkMRMLNode* node = q->mrmlNodeFromItem(rows[row][0]);
+    vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+    int position = row;
+    int offset = 0;
+    if (node && !hierarchyNode && this->MRMLScene)
+    {
+      vtkMRMLHierarchyNode* associatedHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->MRMLScene, node->GetID());
+      if (associatedHierarchyNode && rowOfNode.contains(associatedHierarchyNode))
+      {
+        hierarchyNode = associatedHierarchyNode;
+        position = rowOfNode[associatedHierarchyNode];
+        offset = 1;
+      }
+    }
+    if (hierarchyNode && hierarchyNode->GetParentNode())
+    {
+      position = hierarchyNode->GetIndexInParent();
+    }
+    sortKeys << qMakePair(2 * static_cast<qint64>(position) + offset, row);
+  }
+  std::stable_sort(sortKeys.begin(), sortKeys.end(), [](const QPair<qint64, int>& a, const QPair<qint64, int>& b) { return a.first < b.first; });
+  QList<QList<QStandardItem*>> sortedRows;
+  for (const QPair<qint64, int>& sortKey : sortKeys)
+  {
+    sortedRows << rows[sortKey.second];
+  }
+  rows = sortedRows;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModelPrivate::sortPopulatedRows(QList<QList<QStandardItem*>>& topLevelRows, const QList<QStandardItem*>& parentItems)
+{
+  this->sortRows(topLevelRows);
+  for (QStandardItem* parentItem : parentItems)
+  {
+    // The parent item is not in the model yet, therefore moving its rows does not emit any signals
+    QList<QList<QStandardItem*>> rows;
+    while (parentItem->rowCount() > 0)
+    {
+      rows << parentItem->takeRow(0);
+    }
+    this->sortRows(rows);
+    for (const QList<QStandardItem*>& row : rows)
+    {
+      parentItem->appendRow(row);
+    }
+  }
 }
 
 //----------------------------------------------------------------------------

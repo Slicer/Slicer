@@ -82,6 +82,13 @@ public:
   /// Create the model items (one for each column) of a node. The items are not inserted in the model.
   QList<QStandardItem*> createNodeItems(vtkMRMLNode* node);
 
+  /// Reorder the rows that qMRMLSceneModel::populateScene() created (in scene order) to match the order
+  /// of the nodes in this model (see qMRMLSceneModel::nodeIndex()). The rows are not in the model yet.
+  /// \a topLevelRows are the rows of the children of the scene item, \a parentItems are the items
+  /// (in the first column) that have child rows.
+  /// In the base model the nodes are in scene order, therefore this method does nothing.
+  virtual void sortPopulatedRows(QList<QList<QStandardItem*>>& topLevelRows, const QList<QStandardItem*>& parentItems);
+
   /// Add all the node items in the subtree of \a item (including \a item) to the RowCache.
   void addToRowCacheRecursively(QStandardItem* item);
   /// Remove all the node items in the subtree of \a item (including \a item) from the RowCache.

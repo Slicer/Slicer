@@ -299,6 +299,13 @@ QList<QStandardItem*> qMRMLSceneModelPrivate::createNodeItems(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::sortPopulatedRows(QList<QList<QStandardItem*>>& topLevelRows, const QList<QStandardItem*>& parentItems)
+{
+  Q_UNUSED(topLevelRows);
+  Q_UNUSED(parentItems);
+}
+
+//------------------------------------------------------------------------------
 namespace
 {
 vtkMRMLNode* nodeFromItemData(QStandardItem* item)
@@ -927,6 +934,17 @@ void qMRMLSceneModel::populateScene()
   {
     return;
   }
+
+  // Rows are created in scene order, but subclasses may order the nodes differently
+  QList<QStandardItem*> parentItems;
+  for (QStandardItem* item : createdItems)
+  {
+    if (item->rowCount() > 1)
+    {
+      parentItems << item;
+    }
+  }
+  d->sortPopulatedRows(topLevelRows, parentItems);
 
   // Insert the top-level rows (with all their children) in the model in one step, after the pre-items
   // and before the post-items. The items are added to the RowCache from the rowsInserted signal.
