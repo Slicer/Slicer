@@ -68,6 +68,10 @@ _NAME_RE = re.compile(r"^\s*name (.+) \(offset")
 _PATH_RE = re.compile(r"^\s*path (.+) \(offset")
 
 
+def _raise_walk_error(error):
+    raise RuntimeError("Failed to scan bundle directory %s: %s" % (error.filename, error)) from error
+
+
 def is_macho(path):
     try:
         if os.path.islink(path) or not os.path.isfile(path):
@@ -211,7 +215,7 @@ def close_deps(app, search_dirs, lib_subdir):
 
     def bundle_machos(root):
         found = []
-        for directory, _dirs, files in os.walk(root):
+        for directory, _dirs, files in os.walk(root, onerror=_raise_walk_error):
             for name in files:
                 path = os.path.join(directory, name)
                 if is_macho(path):
@@ -343,7 +347,7 @@ def fix_executable_rpaths(app):
     """
     contents = os.path.join(app, "Contents")
     fixed = 0
-    for directory, _dirs, files in os.walk(app):
+    for directory, _dirs, files in os.walk(app, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if not is_macho(path) or not is_executable_macho(path):
@@ -385,7 +389,7 @@ def strip_external_rpaths(app):
         return removed
 
     machos = []
-    for directory, _dirs, files in os.walk(app):
+    for directory, _dirs, files in os.walk(app, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if is_macho(path):

@@ -37,6 +37,10 @@ _MACHO_MAGIC = {
 }
 
 
+def _raise_walk_error(error):
+    raise RuntimeError("Failed to scan bundle directory %s: %s" % (error.filename, error)) from error
+
+
 def is_macho(path):
     try:
         if os.path.islink(path) or not os.path.isfile(path):
@@ -49,7 +53,7 @@ def is_macho(path):
 
 def find_machos(root):
     paths = []
-    for directory, _dirs, files in os.walk(root):
+    for directory, _dirs, files in os.walk(root, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if is_macho(path):
