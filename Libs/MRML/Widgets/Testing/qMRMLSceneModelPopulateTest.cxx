@@ -69,6 +69,7 @@ private slots:
   void testRowsInsertedConsumer();
   void testNodeModifiedAfterPopulate();
   void testClear();
+  void testRemovedNodeNotFound();
   void testNodeComboBox();
   void testTreeView();
 
@@ -556,6 +557,47 @@ void qMRMLSceneModelPopulateTester::testClear()
 
   this->populateScene(scene, "AfterClear", 5);
   QCOMPARE(model.rowCount(model.mrmlSceneIndex()), scene->GetNumberOfNodes() + 2);
+  this->verifyAllNodesPresent(model, scene);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLSceneModelPopulateTester::testRemovedNodeNotFound()
+{
+  // When a node is removed while the model is not updated (scene closing, or lazy update in batch processing)
+  // the node item stays in the model until it is repopulated, but the removed node must not be found anymore
+  // (a new node may be created at the same memory address, which would be mistaken for the removed node).
+  vtkNew<vtkMRMLScene> scene;
+  this->populateScene(scene, "", 5);
+
+  qMRMLSceneModel model;
+  model.setLazyUpdate(true);
+  model.setMRMLScene(scene);
+
+  vtkSmartPointer<vtkMRMLNode> removedNode = scene->GetFirstNodeByName("Model2");
+  QVERIFY(removedNode != nullptr);
+  QVERIFY(model.indexFromNode(removedNode).isValid());
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  scene->RemoveNode(removedNode);
+  QVERIFY(!model.indexFromNode(removedNode).isValid());
+  QVERIFY(model.itemFromNode(removedNode) == nullptr);
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QVERIFY(!model.indexFromNode(removedNode).isValid());
+  this->verifyAllNodesPresent(model, scene);
+
+  // A removed node that is added back is found again
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  vtkSmartPointer<vtkMRMLNode> removedInBatchNode = scene->GetFirstNodeByName("Model3");
+  scene->RemoveNode(removedInBatchNode);
+  scene->AddNode(removedInBatchNode);
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QVERIFY(model.indexFromNode(removedInBatchNode).isValid());
+  this->verifyAllNodesPresent(model, scene);
+
+  // Nodes removed while the scene is closing are not found
+  vtkSmartPointer<vtkMRMLNode> closedNode = scene->GetFirstNodeByName("Model1");
+  QVERIFY(model.indexFromNode(closedNode).isValid());
+  scene->Clear(0);
+  QVERIFY(!model.indexFromNode(closedNode).isValid());
   this->verifyAllNodesPresent(model, scene);
 }
 

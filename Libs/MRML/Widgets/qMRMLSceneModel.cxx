@@ -1335,6 +1335,10 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
 
   if (d->MRMLScene->IsClosing() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
   {
+    // The item of the node is not removed from the model now (the model is repopulated later), but the
+    // node must not be found anymore: a new node may be created at the same memory address after this
+    // node is deleted, and that node would be mistaken for the removed one.
+    d->RowCache.remove(node);
     return;
   }
 
