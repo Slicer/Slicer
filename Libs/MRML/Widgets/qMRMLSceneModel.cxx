@@ -135,15 +135,34 @@ QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID) const
   {
     return nodeIndexes;
   }
-  // Add the QModelIndexes from the other columns
-  const int row = nodeIndexes[0].row();
-  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
-  const int sceneColumnCount = q->columnCount(nodeParentIndex);
-  for (int j = 1; j < sceneColumnCount; ++j)
+  return this->allColumnIndexes(nodeIndexes[0]);
+}
+
+//------------------------------------------------------------------------------
+QModelIndexList qMRMLSceneModelPrivate::allColumnIndexes(const QModelIndex& index) const
+{
+  Q_Q(const qMRMLSceneModel);
+  QModelIndexList indexes;
+  if (!index.isValid())
   {
-    nodeIndexes << q->index(row, j, nodeParentIndex);
+    return indexes;
   }
-  return nodeIndexes;
+  const int row = index.row();
+  const QModelIndex parentIndex = index.parent();
+  const int columnCount = q->columnCount(parentIndex);
+  for (int column = 0; column < columnCount; ++column)
+  {
+    indexes << (column == index.column() ? index : q->index(row, column, parentIndex));
+  }
+  return indexes;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModelPrivate::isNodeItem(QStandardItem* item)
+{
+  return item                                                    //
+         && item->data(qMRMLSceneModel::PointerRole).isValid() //
+         && item->data(qMRMLSceneModel::UIDRole).toString() != "scene";
 }
 
 //------------------------------------------------------------------------------
@@ -308,18 +327,16 @@ void qMRMLSceneModelPrivate::sortPopulatedRows(QList<QList<QStandardItem*>>& top
 //------------------------------------------------------------------------------
 namespace
 {
-vtkMRMLNode* nodeFromItemData(QStandardItem* item)
+/// Get the node pointer stored in the item. The node is not looked up in the scene (as in
+/// qMRMLSceneModel::mrmlNodeFromItem), therefore the returned pointer may be invalid if the node has been deleted.
+/// It may be used only as a key in the RowCache.
+vtkMRMLNode* nodePointerFromItem(QStandardItem* item)
 {
-  if (!item)
+  if (!qMRMLSceneModelPrivate::isNodeItem(item))
   {
     return nullptr;
   }
-  QVariant nodePointer = item->data(qMRMLSceneModel::PointerRole);
-  if (!nodePointer.isValid() || item->data(qMRMLSceneModel::UIDRole).toString() == "scene")
-  {
-    return nullptr;
-  }
-  return reinterpret_cast<vtkMRMLNode*>(nodePointer.toLongLong());
+  return reinterpret_cast<vtkMRMLNode*>(item->data(qMRMLSceneModel::PointerRole).toLongLong());
 }
 } // namespace
 
@@ -330,7 +347,7 @@ void qMRMLSceneModelPrivate::addToRowCacheRecursively(QStandardItem* item)
   {
     return;
   }
-  vtkMRMLNode* node = nodeFromItemData(item);
+  vtkMRMLNode* node = nodePointerFromItem(item);
   if (node)
   {
     this->RowCache[node] = item;
@@ -349,7 +366,7 @@ void qMRMLSceneModelPrivate::removeFromRowCacheRecursively(QStandardItem* item)
   {
     return;
   }
-  vtkMRMLNode* node = nodeFromItemData(item);
+  vtkMRMLNode* node = nodePointerFromItem(item);
   if (node && this->RowCache.value(node, nullptr) == item)
   {
     this->RowCache.remove(node);
@@ -545,17 +562,13 @@ QModelIndex qMRMLSceneModel::mrmlSceneIndex() const
 vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem) const
 {
   Q_D(const qMRMLSceneModel);
-  // TODO: fasten by saving the pointer into the data
-  if (d->MRMLScene == nullptr || nodeItem == nullptr)
+  // The node is looked up by its ID (and not using the node pointer stored in the item), because
+  // the item may refer to a node that has been deleted
+  if (d->MRMLScene == nullptr || !qMRMLSceneModelPrivate::isNodeItem(nodeItem))
   {
     return nullptr;
   }
-  QVariant nodePointer = nodeItem->data(qMRMLSceneModel::PointerRole);
-  if (!nodePointer.isValid() || nodeItem->data(qMRMLSceneModel::UIDRole).toString() == "scene")
-  {
-    return nullptr;
-  }
-  return nodeItem ? d->MRMLScene->GetNodeByID(nodeItem->data(qMRMLSceneModel::UIDRole).toString().toUtf8()) : nullptr;
+  return d->MRMLScene->GetNodeByID(nodeItem->data(qMRMLSceneModel::UIDRole).toString().toUtf8());
 }
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column) const
@@ -608,22 +621,8 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node) const
 {
-  QModelIndexList nodeIndexes;
-  QModelIndex nodeIndex = this->indexFromNode(node);
-  if (!nodeIndex.isValid())
-  {
-    return nodeIndexes;
-  }
-  nodeIndexes << nodeIndex;
-  // Add the QModelIndexes from the other columns
-  const int row = nodeIndex.row();
-  QModelIndex nodeParentIndex = nodeIndex.parent();
-  const int sceneColumnCount = this->columnCount(nodeParentIndex);
-  for (int j = 1; j < sceneColumnCount; ++j)
-  {
-    nodeIndexes << this->index(row, j, nodeParentIndex);
-  }
-  return nodeIndexes;
+  Q_D(const qMRMLSceneModel);
+  return d->allColumnIndexes(this->indexFromNode(node));
 }
 
 //------------------------------------------------------------------------------

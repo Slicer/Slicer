@@ -66,6 +66,10 @@ public:
   void init();
 
   QModelIndexList indexes(const QString& nodeID) const;
+  /// Get the indexes of all the columns in the row of \a index (empty list if the index is invalid)
+  QModelIndexList allColumnIndexes(const QModelIndex& index) const;
+  /// Returns true if the item is the item of a node (not the scene item, an extra item, or a category item)
+  static bool isNodeItem(QStandardItem* item);
 
   QStringList extraItems(QStandardItem* parent, const QString& extraType) const;
   void insertExtraItem(int row, QStandardItem* parent, const QString& text, const QString& extraType, const Qt::ItemFlags& flags, const QString& extraItemData = "");
