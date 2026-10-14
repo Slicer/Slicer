@@ -322,8 +322,7 @@ def close_deps(app, search_dirs, lib_subdir):
             args += ["-change", old_ref, new_ref]
         if not args:
             return
-        subprocess.run(["install_name_tool"] + args + [path],
-                       capture_output=True, check=False)
+        subprocess.run(["install_name_tool"] + args + [path], check=True)
 
     targets = set(id_resets) | set(changes)
     with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
@@ -355,8 +354,7 @@ def fix_executable_rpaths(app):
             wanted = "@loader_path" if relative == "." else "@loader_path/" + relative
             if wanted.rstrip("/") in [entry.rstrip("/") for entry in rpaths]:
                 continue
-            subprocess.run(["install_name_tool", "-add_rpath", wanted, path],
-                           capture_output=True, check=False)
+            subprocess.run(["install_name_tool", "-add_rpath", wanted, path], check=True)
             fixed += 1
     print("SlicerBundleCloseDeps: added a bundle-relative run-path to %d executables" % fixed)
     return fixed
@@ -379,8 +377,7 @@ def strip_external_rpaths(app):
                 continue
             if os.path.realpath(entry).startswith(contents_real):
                 continue
-            subprocess.run(["install_name_tool", "-delete_rpath", entry, path],
-                           capture_output=True, check=False)
+            subprocess.run(["install_name_tool", "-delete_rpath", entry, path], check=True)
             removed += 1
         return removed
 
