@@ -527,5 +527,9 @@ if(_errors GREATER 0)
     "the application bundle is not self-contained. See the report above.")
 endif()
 
+if(_n_binaries EQUAL 0)
+  message(FATAL_ERROR "Bundle verification FAILED: no Mach-O binaries found in '${app_path}'.")
+endif()
+
 message(STATUS "Bundle verification PASSED: ${_n_binaries} Mach-O file(s) checked, "
   "all dependencies resolve inside the bundle.")
