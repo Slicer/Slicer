@@ -365,19 +365,23 @@ def fix_executable_rpaths(app):
 def strip_external_rpaths(app):
     """Remove run-paths that point outside the bundle (build-tree or Homebrew
     directories left over from linking). After the closure every dependency
-    resolves through a @loader_path-relative run-path, so these absolute entries
+    resolves through a bundle-relative run-path, so escaping entries
     are dead weight -- and a lingering Qt directory could load a second copy of a
     framework. Removing them also means the bundle names no build-machine path.
     """
     contents_real = os.path.realpath(os.path.join(app, "Contents"))
+    exe_dir = os.path.join(app, "Contents", "MacOS")
 
     def strip(path):
         _loads, rpaths, _id = scan(path)
         removed = 0
         for entry in rpaths:
-            if entry.startswith("@"):
+            expanded = entry
+            if entry.startswith(("@loader_path/", "@executable_path/")):
+                expanded = _expand_rpath_entry(entry, os.path.dirname(path), exe_dir)
+            if expanded.startswith("@"):
                 continue
-            if os.path.realpath(entry).startswith(contents_real):
+            if os.path.commonpath([os.path.realpath(expanded), contents_real]) == contents_real:
                 continue
             subprocess.run(["install_name_tool", "-delete_rpath", entry, path],
                            capture_output=True, check=False)
