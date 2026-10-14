@@ -85,6 +85,11 @@ public:
   /// Store the model index of all the subject hierarchy items in the subtree of \a parentItem in the RowCache.
   void updateRowCacheRecursively(QStandardItem* parentItem);
 
+  /// Insert an item that was added to the subject hierarchy during batch processing (and therefore is not
+  /// in the model yet) along with its ancestors that are not in the model yet.
+  /// Returns true if the item was inserted.
+  bool insertItemAddedInBatch(vtkIdType itemID);
+
   /// Returns true if the scene is batch processing (or importing), or if the end of the batch processing
   /// has not been processed yet by the model. In this state per-item updates are not applied to the model,
   /// instead the whole model is rebuilt at the end of the batch processing.
@@ -143,6 +148,12 @@ public:
   /// selection, widgets in the cells) intact, for example when the visibility of a folder is changed
   /// (which modifies all the items in the branch in a batch).
   std::set<vtkIdType> PendingItemUpdates;
+  /// Items that were added while the scene was batch processing (or importing) and so they are not
+  /// inserted in the model until the model is rebuilt. If such an item is looked up (e.g., by an observer that
+  /// selects a newly added node in a view) then the item is inserted in the model on demand.
+  std::set<vtkIdType> ItemsAddedInBatch;
+  /// Set while an item added during batch processing is inserted in the model, to prevent recursive on-demand insertion.
+  bool InsertingItemAddedInBatch;
   /// Set between the start and the end of the scene batch processing (see isBatchProcessing).
   bool BatchProcessing;
   /// Set while model items are created detached from the model (during rebuild), when

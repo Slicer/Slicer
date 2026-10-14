@@ -57,6 +57,7 @@ private slots:
   void testVisibilityButton();
   void testExpandCollapseItem();
   void testSelectionAcrossBatchAndImport();
+  void testSelectItemAddedInBatch();
 
 private:
   static void populateSubjectHierarchy(vtkMRMLScene* scene, int folderCount, int modelsPerFolder, const QString& namePrefix = "");
@@ -426,6 +427,81 @@ void qMRMLSubjectHierarchyTreeViewTester::testSelectionAcrossBatchAndImport()
   QCOMPARE(view.currentItem(), importedItemID);
   QHash<vtkIdType, QPointer<QWidget>> buttons;
   this->verifyButtons(view, shNode, buttons);
+}
+
+// ----------------------------------------------------------------------------
+namespace
+{
+struct SelectAddedNodeClientData
+{
+  qMRMLSubjectHierarchyTreeView* View{ nullptr };
+  vtkIdType FolderID{ vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID };
+  vtkIdType SelectedItemID{ vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID };
+};
+
+// Mimics a module that observes node added events (regardless of batch processing) and selects
+// the newly added node in a subject hierarchy tree view right away
+void selectAddedNodeCallback(vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(caller);
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(reinterpret_cast<vtkObject*>(callData));
+  SelectAddedNodeClientData* data = reinterpret_cast<SelectAddedNodeClientData*>(clientData);
+  if (!scene || !modelNode || !data || QString(modelNode->GetName()) != "SelectedModel")
+  {
+    return;
+  }
+  // In the application the subject hierarchy item is created by the subject hierarchy plugin logic
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+  data->SelectedItemID = shNode->CreateItem(data->FolderID, modelNode, "Default");
+  data->View->setCurrentNode(modelNode);
+}
+} // namespace
+
+// ----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewTester::testSelectItemAddedInBatch()
+{
+  vtkNew<vtkMRMLScene> scene;
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
+  this->populateSubjectHierarchy(scene, 2, 2);
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+
+  qMRMLSubjectHierarchyTreeView view;
+  view.setMRMLScene(scene);
+  view.show();
+  QTest::qWait(50);
+  view.setCurrentItem(shNode->GetItemByName("Model1_1"));
+
+  SelectAddedNodeClientData clientData;
+  clientData.View = &view;
+  vtkNew<vtkCallbackCommand> selectCallback;
+  selectCallback->SetCallback(selectAddedNodeCallback);
+  selectCallback->SetClientData(&clientData);
+  scene->AddObserver(vtkMRMLScene::NodeAddedEvent, selectCallback);
+
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+  this->populateSubjectHierarchy(scene, 2, 2, "Batch");
+  // A new folder and a node in it, selected by the node added observer
+  clientData.FolderID = shNode->CreateFolderItem(shNode->GetSceneItemID(), "NewFolder");
+  scene->AddNewNodeByClass("vtkMRMLModelNode", "SelectedModel");
+  QVERIFY(clientData.SelectedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  // The item is selected in the view right away (during batch processing).
+  // Note: currentItem() is not updated during batch processing (selection changes are reported when it ends).
+  QModelIndex currentIndex = view.selectionModel()->currentIndex();
+  QVERIFY(currentIndex.isValid());
+  QCOMPARE(view.sortFilterProxyModel()->subjectHierarchyItemFromIndex(currentIndex), clientData.SelectedItemID);
+  QVERIFY(view.selectionModel()->isRowSelected(currentIndex.row(), currentIndex.parent()));
+  this->populateSubjectHierarchy(scene, 1, 1, "BatchAfterSelection");
+  scene->EndState(vtkMRMLScene::BatchProcessState);
+  QTest::qWait(50);
+
+  // The selection is kept after the model is rebuilt at the end of the batch processing
+  QCOMPARE(view.currentItem(), clientData.SelectedItemID);
+  QCOMPARE(view.currentItems().size(), 1);
+  QCOMPARE(view.displayedItemCount(), static_cast<int>(allItems(shNode).size()));
+  QHash<vtkIdType, QPointer<QWidget>> buttons;
+  this->verifyButtons(view, shNode, buttons);
+
+  scene->RemoveObserver(selectCallback);
 }
 
 // ----------------------------------------------------------------------------

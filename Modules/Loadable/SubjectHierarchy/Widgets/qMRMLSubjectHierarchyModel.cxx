@@ -71,6 +71,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , NoneEnabled(false)
   , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
   , RebuildPending(false)
+  , InsertingItemAddedInBatch(false)
   , BatchProcessing(false)
   , SuppressExpandRequests(false)
   , SubjectHierarchyNode(nullptr)
@@ -243,6 +244,22 @@ void qMRMLSubjectHierarchyModelPrivate::updateRowCacheRecursively(QStandardItem*
     }
     this->updateRowCacheRecursively(childItem);
   }
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModelPrivate::insertItemAddedInBatch(vtkIdType itemID)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (this->InsertingItemAddedInBatch || !this->SubjectHierarchyNode || !q->subjectHierarchySceneItem()
+      || this->ItemsAddedInBatch.find(itemID) == this->ItemsAddedInBatch.end())
+  {
+    return false;
+  }
+  this->InsertingItemAddedInBatch = true;
+  // Ancestors that were added in the batch are inserted as well
+  QStandardItem* item = q->insertSubjectHierarchyItem(itemID);
+  this->InsertingItemAddedInBatch = false;
+  return item != nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -544,8 +561,19 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
   QMap<vtkIdType, QPersistentModelIndex>::iterator rowCacheIt = d->RowCache.find(itemID);
   if (rowCacheIt == d->RowCache.end())
   {
-    // Not found in cache, therefore it cannot be in the model
-    return itemIndex;
+    // Not found in cache, therefore it is not in the model.
+    // Items added during batch processing are only inserted in the model when the batch processing ends,
+    // but they may be needed earlier (e.g., an observer of node added events selects the new node in a view),
+    // therefore such items are inserted on demand.
+    if (!const_cast<qMRMLSubjectHierarchyModelPrivate*>(d)->insertItemAddedInBatch(itemID))
+    {
+      return itemIndex;
+    }
+    rowCacheIt = d->RowCache.find(itemID);
+    if (rowCacheIt == d->RowCache.end())
+    {
+      return itemIndex;
+    }
   }
   if (rowCacheIt.value().isValid())
   {
@@ -838,6 +866,7 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
 
   d->RebuildPending = false;
   d->PendingItemUpdates.clear();
+  d->ItemsAddedInBatch.clear();
   d->RowCache.clear();
 
   // Enabled so it can be interacted with
@@ -1783,7 +1812,9 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAdded(vtkIdType itemID)
   {
     // Many items may be added while the scene is batch processing (e.g. when a scene is imported).
     // Instead of inserting the items one by one, the whole model is rebuilt when the batch processing ends.
+    // The item is inserted earlier if it is looked up (see indexFromSubjectHierarchyItem).
     d->RebuildPending = true;
+    d->ItemsAddedInBatch.insert(itemID);
     return;
   }
   this->insertSubjectHierarchyItem(itemID);
@@ -1796,6 +1827,9 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAboutToBeRemoved(vtkIdTyp
   if (d->MRMLScene->IsClosing() || d->isBatchProcessing())
   {
     d->RebuildPending = true;
+    d->ItemsAddedInBatch.erase(itemID);
+    // The item is not removed from the model until it is rebuilt, but it must not be found anymore
+    d->RowCache.remove(itemID);
     return;
   }
 
@@ -1863,6 +1897,14 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemModified(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyModel);
+
+  if (d->isBatchProcessing())
+  {
+    // The model items are updated when the batch processing ends. The item is not looked up here,
+    // because that would insert items that were added during the batch processing one by one.
+    this->updateModelItems(itemID);
+    return;
+  }
 
   // Snapshot both the item's own visibility and its parent-hidden state before
   // the update so we can detect either kind of change afterwards.

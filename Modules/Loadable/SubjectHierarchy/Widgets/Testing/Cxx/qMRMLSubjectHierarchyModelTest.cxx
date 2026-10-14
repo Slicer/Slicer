@@ -278,10 +278,28 @@ void qMRMLSubjectHierarchyModelTester::testItemsAddedInBatch()
   vtkIdType newFolderID = shNode->GetItemByName("BatchFolder0");
   QVERIFY(newFolderID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
   // Items are not added to the model one by one during batch processing
-  QVERIFY(!model.indexFromSubjectHierarchyItem(newFolderID).isValid());
   QCOMPARE(model.rowCount(model.subjectHierarchySceneIndex()), rowCountBefore);
   QCOMPARE(rowsInsertedSpy.count(), 0);
   QCOMPARE(updatedSpy.count(), 0);
+  // ...but an item is inserted (along with its ancestors) when it is looked up
+  vtkIdType newModelID = shNode->GetItemByName("BatchModel1_2");
+  QVERIFY(newModelID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
+  QModelIndex newModelIndex = model.indexFromSubjectHierarchyItem(newModelID);
+  QVERIFY(newModelIndex.isValid());
+  QCOMPARE(model.subjectHierarchyItemFromIndex(newModelIndex), newModelID);
+  QCOMPARE(model.subjectHierarchyItemFromIndex(newModelIndex.parent()), shNode->GetItemByName("BatchFolder1"));
+  QCOMPARE(model.rowCount(model.subjectHierarchySceneIndex()), rowCountBefore + 1);
+  QCOMPARE(rowsInsertedSpy.count(), 2);
+  // Items that are not looked up are still not inserted
+  QCOMPARE(model.rowCount(model.indexFromSubjectHierarchyItem(shNode->GetItemByName("BatchFolder1"))), 1);
+  QVERIFY(!model.match(model.subjectHierarchySceneIndex(), qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole, newFolderID, 1, Qt::MatchExactly | Qt::MatchRecursive).size());
+  // Removed items are not inserted
+  vtkIdType removedModelID = shNode->GetItemByName("BatchModel2_0");
+  QVERIFY(shNode->RemoveItem(removedModelID, false, true));
+  QVERIFY(!model.indexFromSubjectHierarchyItem(removedModelID).isValid());
+  QVERIFY(model.indexFromSubjectHierarchyItem(newModelID).isValid());
+  QCOMPARE(updatedSpy.count(), 0);
+  rowsInsertedSpy.clear();
   // Nested batch processing does not trigger an update
   scene->StartState(vtkMRMLScene::BatchProcessState);
   scene->EndState(vtkMRMLScene::BatchProcessState);

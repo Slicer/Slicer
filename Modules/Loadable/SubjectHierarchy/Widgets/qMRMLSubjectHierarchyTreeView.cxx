@@ -113,6 +113,10 @@ public:
 
   void updateColors();
 
+  /// If the scene is batch processing then store the selection that is requested, because the
+  /// tree is rebuilt at the end of the batch processing (and the selection is lost)
+  void setSelectedItemsToRestore(const QList<vtkIdType>& items);
+
 public:
   qMRMLSubjectHierarchyModel* Model{ nullptr };
   qMRMLSortFilterSubjectHierarchyProxyModel* SortFilterModel{ nullptr };
@@ -800,6 +804,18 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateColors()
   }
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setSelectedItemsToRestore(const QList<vtkIdType>& items)
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  vtkMRMLScene* scene = q->mrmlScene();
+  if (!scene || !scene->IsBatchProcessing() || scene->IsClosing())
+  {
+    return;
+  }
+  this->SelectedItemsToRestore = items;
+}
+
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeViewPrivate::setVisibilityOfSelectedItems(VisibilityAction visibilityAction)
 {
@@ -991,7 +1007,7 @@ vtkMRMLNode* qMRMLSubjectHierarchyTreeView::currentNode() const
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
 {
-  Q_D(const qMRMLSubjectHierarchyTreeView);
+  Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SortFilterModel)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid data model";
@@ -1002,6 +1018,12 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
   // Call selectionModel()->setCurrentIndex rather than selectionModel()->select because select method does not set the current index.
   // It is only required if this method is called programmatically because mousePressEvent set the current index before selecting the item.
   this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+  QList<vtkIdType> items;
+  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    items << itemID;
+  }
+  d->setSelectedItemsToRestore(items);
 }
 
 //------------------------------------------------------------------------------
@@ -1072,6 +1094,8 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
       this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
   }
+
+  d->setSelectedItemsToRestore(items);
 }
 
 //------------------------------------------------------------------------------
