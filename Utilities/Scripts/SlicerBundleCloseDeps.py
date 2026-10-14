@@ -209,6 +209,10 @@ def close_deps(app, search_dirs, lib_subdir):
     def inside_bundle(path):
         return os.path.realpath(path).startswith(contents_real)
 
+    def require_inside_destination(path):
+        if os.path.commonpath([os.path.realpath(path), contents_real]) != contents_real:
+            raise RuntimeError("Embedding destination resolves outside Contents: " + path)
+
     def bundle_machos(root):
         found = []
         for directory, _dirs, files in os.walk(root):
@@ -240,6 +244,9 @@ def close_deps(app, search_dirs, lib_subdir):
         if framework is not None:
             src_fw, inner = framework
             dest_fw = os.path.join(frameworks_dir, os.path.basename(src_fw))
+            require_inside_destination(dest_fw)
+            target = os.path.join(dest_fw, os.sep.join(inner.split(os.sep)[1:]))
+            require_inside_destination(target)
             if not os.path.exists(dest_fw):
                 shutil.copytree(src_fw, dest_fw, symlinks=True)
                 # A framework carries its own nested code (its versioned binary,
@@ -248,7 +255,6 @@ def close_deps(app, search_dirs, lib_subdir):
                     embedded.setdefault(os.path.basename(macho), macho)
                     if macho not in seen:
                         worklist.append(macho)
-            target = os.path.join(dest_fw, os.sep.join(inner.split(os.sep)[1:]))
         else:
             base = os.path.basename(source)
             # The embedded location determines the @rpath install name set for
@@ -263,12 +269,15 @@ def close_deps(app, search_dirs, lib_subdir):
                 dest_dir = python_lib_dir
             else:
                 dest_dir = lib_dir
-            os.makedirs(dest_dir, exist_ok=True)
             target = os.path.join(dest_dir, base)
+            require_inside_destination(target)
+            os.makedirs(dest_dir, exist_ok=True)
             if not os.path.exists(target):
                 shutil.copy2(source, target)
                 os.chmod(target, 0o755)
                 worklist.append(target)
+        # A copied framework can introduce symlinks that were not present before copying.
+        require_inside_destination(target)
         embedded.setdefault(os.path.basename(target), target)
         copied.append(os.path.basename(target))
         return target
