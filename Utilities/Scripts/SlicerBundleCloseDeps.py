@@ -110,6 +110,9 @@ def scan(path):
 
 
 def is_system(ref):
+    # The Data volume contains user-installed libraries, not just OS content.
+    if ref.startswith("/System/Volumes/Data/"):
+        return False
     return ref.startswith("/usr/lib") or ref.startswith("/System/")
 
 

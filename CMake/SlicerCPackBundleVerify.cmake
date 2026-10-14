@@ -27,7 +27,7 @@
 #      which always starts at the main executable, so plugins that carry no rpath
 #      of their own still load correctly), and @loader_path / @executable_path are
 #      expanded relative to the binary / main executable. Absolute system
-#      libraries (/usr/lib, /System) are allowed.
+#      libraries (/usr/lib, /System except /System/Volumes/Data) are allowed.
 #
 #   WARNING (reported, but do not fail):
 #   3. Non-relocatable LC_RPATH entries, i.e. absolute paths that are not system
@@ -247,7 +247,9 @@ function(_bv_resolve dep loader_dir rpaths out_status)
       set(_resolved "${_cand}")
     endif()
   elseif(dep MATCHES "^/")
-    if(dep MATCHES "^(/usr/lib/|/System/)")
+    # The writable Data volume must follow normal dependency resolution.
+    if(dep MATCHES "^(/usr/lib/|/System/)"
+        AND NOT dep MATCHES "^/System/Volumes/Data/")
       set(${out_status} "SYSTEM" PARENT_SCOPE)
       return()
     elseif(dep MATCHES "^(/usr/local/|/opt/)")
