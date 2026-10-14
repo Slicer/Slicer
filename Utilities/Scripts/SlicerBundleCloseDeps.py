@@ -205,6 +205,10 @@ def close_deps(app, search_dirs, lib_subdir):
     lib_dir = os.path.join(contents, lib_subdir)
     python_lib_dir = os.path.join(contents, "lib", "Python", "lib")
     contents_real = os.path.realpath(contents)
+    if os.path.isabs(lib_subdir) or os.path.commonpath([os.path.realpath(lib_dir), contents_real]) != contents_real:
+        print("SlicerBundleCloseDeps: --lib-subdir must be relative and resolve within Contents: "
+              + lib_subdir, file=sys.stderr)
+        return False
 
     def inside_bundle(path):
         return os.path.realpath(path).startswith(contents_real)
