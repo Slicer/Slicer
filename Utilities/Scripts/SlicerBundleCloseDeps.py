@@ -110,7 +110,7 @@ def scan(path):
 
 
 def is_system(ref):
-    return ref.startswith("/usr/lib") or ref.startswith("/System/")
+    return ref.startswith("/usr/lib/") or ref.startswith("/System/")
 
 
 def framework_relative(path):
@@ -207,7 +207,7 @@ def close_deps(app, search_dirs, lib_subdir):
     contents_real = os.path.realpath(contents)
 
     def inside_bundle(path):
-        return os.path.realpath(path).startswith(contents_real)
+        return os.path.commonpath([os.path.realpath(path), contents_real]) == contents_real
 
     def bundle_machos(root):
         found = []
@@ -377,7 +377,7 @@ def strip_external_rpaths(app):
         for entry in rpaths:
             if entry.startswith("@"):
                 continue
-            if os.path.realpath(entry).startswith(contents_real):
+            if os.path.commonpath([os.path.realpath(entry), contents_real]) == contents_real:
                 continue
             subprocess.run(["install_name_tool", "-delete_rpath", entry, path],
                            capture_output=True, check=False)
