@@ -133,8 +133,12 @@ def is_executable_macho(path):
     """True for a Mach-O main executable (MH_EXECUTE) -- a binary that can be
     launched on its own and so must carry its own run-path for @rpath to resolve.
     """
-    out = subprocess.run(["file", "-b", path],
-                         capture_output=True, text=True, check=False).stdout
+    result = subprocess.run(["file", "-b", path],
+                            capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise RuntimeError("file inspection failed for %s (exit %d): %s"
+                           % (path, result.returncode, result.stderr.strip()))
+    out = result.stdout
     return "Mach-O" in out and "executable" in out
 
 
