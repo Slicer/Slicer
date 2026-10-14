@@ -87,9 +87,9 @@ def scan(path):
     """
     result = subprocess.run(["otool", "-l", path],
                             capture_output=True, text=True, check=False)
-    if result.returncode != 0:
+    if result.returncode != 0 or re.search(r": is not an object file(?:\n|$)", result.stdout):
         raise RuntimeError("otool inspection failed for %s (exit %d): %s"
-                           % (path, result.returncode, result.stderr.strip()))
+                           % (path, result.returncode, result.stderr.strip() or result.stdout.strip()))
     out = result.stdout
     loads, rpaths, install_id = [], [], None
     command = None
