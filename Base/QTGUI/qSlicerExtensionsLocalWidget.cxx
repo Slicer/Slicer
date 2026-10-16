@@ -1174,10 +1174,11 @@ void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
       {
         QString extensionName = link.mid(7); // remove leading "slicer:"
         url.setPath(url.path()
-                    + QString("/view/%1/%2/%3")                                //
+                    + QString("/view/%1/%2/%3/%4")                             //
                         .arg(extensionName)                                    //
                         .arg(this->extensionsManagerModel()->slicerRevision()) //
-                        .arg(this->extensionsManagerModel()->slicerOs()));
+                        .arg(this->extensionsManagerModel()->slicerOs())       //
+                        .arg(this->extensionsManagerModel()->slicerArch()));
       }
     }
     else

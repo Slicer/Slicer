@@ -3370,7 +3370,7 @@ QUrl qSlicerExtensionsManagerModel::extensionsListUrl() const
 
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
   {
-    url.setPath(url.path() + QString("/catalog/All/%1/%2").arg(d->SlicerRevision).arg(d->SlicerOs));
+    url.setPath(url.path() + QString("/catalog/All/%1/%2/%3").arg(d->SlicerRevision).arg(d->SlicerOs).arg(d->SlicerArch));
   }
   else
   {
