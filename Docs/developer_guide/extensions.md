@@ -355,7 +355,7 @@ Note: Parameters in URLS (such as `&foo=bar`) are not supported. URL shortener s
 
 ## Extensions server
 
-The official Slicer extensions server, the "Extensions Catalog" is available at <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision and platform in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win>.
+The official Slicer extensions server, the "Extensions Catalog" is available at <https://extensions.slicer.org/>. To get a list of extensions, specify the Slicer revision, operating system, and optionally the architecture in the URL, for example: <https://extensions.slicer.org/catalog/All/30117/win> or <https://extensions.slicer.org/catalog/All/35387/macosx/arm64>. If the architecture is not specified, `amd64` is used.
 
 The Extensions Catalog is implemented a web application ([source code](https://github.com/KitwareMedical/slicer-extensions-webapp)), which connects
 to a [Girder server](https://slicer-packages.kitware.com/#collection/5f4474d0e1d8c75dfc70547e/folder/5f4474d0e1d8c75dfc705482), a general-purpose
