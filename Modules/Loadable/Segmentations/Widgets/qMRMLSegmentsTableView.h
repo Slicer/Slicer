@@ -184,6 +184,14 @@ public slots:
   /// Erase the contents of the selected segments and set the status to "Not started"
   void clearSelectedSegments();
 
+  /// Move the specified segments so they are inserted before the specified displayed row.
+  /// If row equals the displayed segment count then the segments are moved to the end.
+  bool moveSegmentsToRow(QStringList segmentIDs, int row);
+
+  /// Move selected segments so they are inserted before the specified displayed row.
+  /// If row equals the displayed segment count then the selected segments are moved to the end.
+  bool moveSelectedSegmentsToRow(int row);
+
   /// Move selected segments up in the list
   void moveSelectedSegmentsUp();
   /// Move selected segments down in the list
