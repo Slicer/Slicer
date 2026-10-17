@@ -51,6 +51,7 @@
 #include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLProceduralColorNode.h>
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -220,6 +221,8 @@ vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
   this->LineDirectionMarkerCachedWorldPositions = vtkSmartPointer<vtkPoints>::New();
   this->LineDirectionMarkerCachedWorldTangents = vtkSmartPointer<vtkDoubleArray>::New();
   this->LineDirectionMarkerCachedWorldTangents->SetNumberOfComponents(3);
+
+  this->SliceControlPointsDisplayPositions = vtkSmartPointer<vtkPoints>::New();
 
   this->LineSliceIntersectionProperty = vtkSmartPointer<vtkProperty2D>::New();
   this->LineSliceIntersectionProperty->SetColor(1.0, 1.0, 1.0);
@@ -746,6 +749,8 @@ void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   Superclass::GetActors(pc);
   this->LineDirectionArrowPipeline->Actor->GetActors(pc);
+  this->LineSliceIntersectionEnteringPipeline->Actor->GetActors(pc);
+  this->LineSliceIntersectionExitingPipeline->Actor->GetActors(pc);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -753,8 +758,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection* pc)
     controlPoints->LabelsActor->GetActors(pc);
   }
   this->TextActor->GetActors(pc);
-  this->LineSliceIntersectionEnteringPipeline->Actor->GetActors(pc);
-  this->LineSliceIntersectionExitingPipeline->Actor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -781,6 +784,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport* viewport)
   {
     count += this->LineDirectionArrowPipeline->Actor->RenderOverlay(viewport);
   }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOverlay(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOverlay(viewport);
+  }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -797,14 +808,6 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport* viewport)
   {
     count += this->TextActor->RenderOverlay(viewport);
   }
-  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOverlay(viewport);
-  }
-  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOverlay(viewport);
-  }
   return count;
 }
 
@@ -815,6 +818,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(vtkViewport* vi
   if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
   {
     count += this->LineDirectionArrowPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOpaqueGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOpaqueGeometry(viewport);
   }
   if (this->TextActor->GetVisibility())
   {
@@ -832,14 +843,6 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(vtkViewport* vi
       count += controlPoints->LabelsActor->RenderOpaqueGeometry(viewport);
     }
   }
-  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderOpaqueGeometry(viewport);
-  }
-  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderOpaqueGeometry(viewport);
-  }
   return count;
 }
 
@@ -850,6 +853,14 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(v
   if (this->LineDirectionArrowPipeline->Actor->GetVisibility())
   {
     count += this->LineDirectionArrowPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
+  {
+    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
   }
   if (this->TextActor->GetVisibility())
   {
@@ -867,14 +878,6 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(v
       count += controlPoints->LabelsActor->RenderTranslucentPolygonalGeometry(viewport);
     }
   }
-  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionEnteringPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
-  }
-  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility())
-  {
-    count += this->LineSliceIntersectionExitingPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
-  }
   return count;
 }
 
@@ -886,6 +889,14 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation2D::HasTranslucentPolygonalGeome
     return true;
   }
   if (this->LineDirectionArrowPipeline->Actor->GetVisibility() && this->LineDirectionArrowPipeline->Actor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
+  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility() && this->LineSliceIntersectionEnteringPipeline->Actor->HasTranslucentPolygonalGeometry())
+  {
+    return true;
+  }
+  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility() && this->LineSliceIntersectionExitingPipeline->Actor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
@@ -904,14 +915,6 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation2D::HasTranslucentPolygonalGeome
     {
       return true;
     }
-  }
-  if (this->LineSliceIntersectionEnteringPipeline->Actor->GetVisibility() && this->LineSliceIntersectionEnteringPipeline->Actor->HasTranslucentPolygonalGeometry())
-  {
-    return true;
-  }
-  if (this->LineSliceIntersectionExitingPipeline->Actor->GetVisibility() && this->LineSliceIntersectionExitingPipeline->Actor->HasTranslucentPolygonalGeometry())
-  {
-    return true;
   }
   return false;
 }
@@ -1663,6 +1666,12 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateSliceIntersectionPointDisplay
     this->GetWorldToDisplayCoordinates(worldPos, displayPos);
     double dp[3] = { displayPos[0], displayPos[1], 0.0 };
 
+    // The control point already marks the crossing, do not hide it behind the intersection marker
+    if (this->IsOverlappingSliceControlPoint(dp, glyphSize))
+    {
+      continue;
+    }
+
     float sign = (pointIndex < this->LineSliceIntersectionApproachingSigns->GetNumberOfTuples()) ? this->LineSliceIntersectionApproachingSigns->GetValue(pointIndex) : 1.0f;
     // When direction markers are reversed, swap entering/exiting assignment
     if (!this->MarkupsDisplayNode->GetLineDirectionFirstToLastControlPoint())
@@ -1707,4 +1716,50 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateSliceIntersectionPointDisplay
 
   this->LineSliceIntersectionEnteringPipeline->Actor->SetVisibility(this->LineSliceIntersectionEnteringPipeline->DisplayPoints->GetNumberOfPoints() > 0);
   this->LineSliceIntersectionExitingPipeline->Actor->SetVisibility(this->LineSliceIntersectionExitingPipeline->DisplayPoints->GetNumberOfPoints() > 0);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdateSliceControlPointsDisplayPositions()
+{
+  this->SliceControlPointsDisplayPositions->Reset();
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+  {
+    this->SliceControlPointsDisplayPositions->Modified();
+    return;
+  }
+  int numberOfControlPoints = std::min(markupsNode->GetNumberOfControlPoints(), static_cast<int>(this->PointsVisibilityOnSlice->GetNumberOfValues()));
+  for (int controlPointIndex = 0; controlPointIndex < numberOfControlPoints; controlPointIndex++)
+  {
+    if (!this->PointsVisibilityOnSlice->GetValue(controlPointIndex)              //
+        || !markupsNode->GetNthControlPointPositionVisibility(controlPointIndex) //
+        || !markupsNode->GetNthControlPointVisibility(controlPointIndex))
+    {
+      continue;
+    }
+    double slicePos[3] = { 0.0, 0.0, 0.0 };
+    this->GetNthControlPointDisplayPosition(controlPointIndex, slicePos);
+    this->SliceControlPointsDisplayPositions->InsertNextPoint(slicePos);
+  }
+  this->SliceControlPointsDisplayPositions->Modified();
+}
+
+//----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation2D::IsOverlappingSliceControlPoint(const double displayPos[3], double glyphSize)
+{
+  // Glyphs overlap if the distance of their centers is smaller than the sum of their radii
+  double overlapDistance = 0.5 * (this->ControlPointSize + glyphSize);
+  double overlapDistance2 = overlapDistance * overlapDistance;
+  double pos[3] = { displayPos[0], displayPos[1], 0.0 };
+  for (vtkIdType pointIndex = 0; pointIndex < this->SliceControlPointsDisplayPositions->GetNumberOfPoints(); pointIndex++)
+  {
+    double controlPointPos[3] = { 0.0, 0.0, 0.0 };
+    this->SliceControlPointsDisplayPositions->GetPoint(pointIndex, controlPointPos);
+    controlPointPos[2] = 0.0;
+    if (vtkMath::Distance2BetweenPoints(pos, controlPointPos) < overlapDistance2)
+    {
+      return true;
+    }
+  }
+  return false;
 }
