@@ -1,0 +1,36 @@
+set(Slicer_ROOT_DIR_MAX_LENGTH 40)
+if(CMAKE_GENERATOR STREQUAL "Ninja" OR CMAKE_GENERATOR STREQUAL "Ninja Multi-Config")
+  # Measured from the longest object path in the Windows Ninja build (issue #9372).
+  set(Slicer_BUILD_DIR_MAX_LENGTH 13)
+  if(CMAKE_GENERATOR STREQUAL "Ninja Multi-Config")
+    if("${CMAKE_CONFIGURATION_TYPES}" STREQUAL "")
+      message(FATAL_ERROR "Ninja Multi-Config requires nonempty CMAKE_CONFIGURATION_TYPES.")
+    endif()
+    # Multi-Config inserts /<Config> in each object path.
+    set(_max_configuration_overhead 0)
+    foreach(_configuration IN LISTS CMAKE_CONFIGURATION_TYPES)
+      string(LENGTH "${_configuration}" _configuration_length)
+      math(EXPR _configuration_overhead "${_configuration_length} + 1")
+      if(_configuration_overhead GREATER _max_configuration_overhead)
+        set(_max_configuration_overhead "${_configuration_overhead}")
+        set(_longest_configuration "${_configuration}")
+      endif()
+    endforeach()
+    math(EXPR Slicer_BUILD_DIR_MAX_LENGTH "${Slicer_BUILD_DIR_MAX_LENGTH} - ${_max_configuration_overhead}")
+    # C:/ is the shortest absolute drive path, before any build directory name.
+    if(Slicer_BUILD_DIR_MAX_LENGTH LESS 3 AND NOT Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
+      message(FATAL_ERROR
+        "Ninja Multi-Config configuration '${_longest_configuration}' leaves no usable Windows "
+        "build directory under the object path limit (maximum ${Slicer_BUILD_DIR_MAX_LENGTH} "
+        "characters; C:/ alone needs 3). Shorten CMAKE_CONFIGURATION_TYPES or use Ninja.")
+    endif()
+  endif()
+else()
+  set(Slicer_BUILD_DIR_MAX_LENGTH 40)
+endif()
+if(NOT Slicer_SUPERBUILD)
+  string(LENGTH "/${Slicer_BINARY_INNER_SUBDIR}" _inner_subdir_length)
+  math(EXPR Slicer_ROOT_DIR_MAX_LENGTH "${Slicer_ROOT_DIR_MAX_LENGTH} + ${_inner_subdir_length}")
+  math(EXPR Slicer_BUILD_DIR_MAX_LENGTH "${Slicer_BUILD_DIR_MAX_LENGTH} + ${_inner_subdir_length}")
+endif()
+include(PreventDirWithTooManyChars)

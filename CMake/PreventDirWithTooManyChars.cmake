@@ -3,6 +3,7 @@
 # too many characters.
 #
 # The maximum path length should be specified setting the variable ${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH.
+# A separate binary directory limit may be set with ${PROJECT_NAME}_BUILD_DIR_MAX_LENGTH.
 # For example:
 #
 #   set(${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH 40)
@@ -13,7 +14,13 @@
 #
 function(AssureLengthForSourceOrBuildDir max_length)
 
-  function(_check_path_length path description)
+  if(ARGC GREATER 1)
+    set(binary_max_length "${ARGV1}")
+  else()
+    set(binary_max_length "${max_length}")
+  endif()
+
+  function(_check_path_length path description max_length)
     string(LENGTH "${path}" n)
     if(n GREATER ${max_length})
       string(SUBSTRING "${path}" 0 ${max_length} _expected_path)
@@ -33,8 +40,8 @@ function(AssureLengthForSourceOrBuildDir max_length)
     endif()
   endfunction()
 
-  _check_path_length("${CMAKE_CURRENT_SOURCE_DIR}" "source")
-  _check_path_length("${CMAKE_CURRENT_BINARY_DIR}" "binary")
+  _check_path_length("${CMAKE_CURRENT_SOURCE_DIR}" "source" "${max_length}")
+  _check_path_length("${CMAKE_CURRENT_BINARY_DIR}" "binary" "${binary_max_length}")
 
 endfunction()
 
@@ -45,5 +52,11 @@ if(NOT ${PROJECT_NAME}_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
   if("${${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH}" STREQUAL "")
     message(FATAL_ERROR "Variable ${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH should be set to an integer value > 0.")
   endif()
-  AssureLengthForSourceOrBuildDir(${${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH})
+  if(DEFINED ${PROJECT_NAME}_BUILD_DIR_MAX_LENGTH
+      AND "${${PROJECT_NAME}_BUILD_DIR_MAX_LENGTH}" STREQUAL "")
+    message(FATAL_ERROR "Variable ${PROJECT_NAME}_BUILD_DIR_MAX_LENGTH should be set to an integer value > 0.")
+  endif()
+  AssureLengthForSourceOrBuildDir(
+    ${${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH}
+    ${${PROJECT_NAME}_BUILD_DIR_MAX_LENGTH})
 endif()

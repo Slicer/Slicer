@@ -454,9 +454,6 @@ ExternalProject_Include_Dependencies(Slicer DEPENDS_VAR Slicer_DEPENDENCIES)
 #------------------------------------------------------------------------------
 
 set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-if(WIN32)
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
-endif()
 
 #------------------------------------------------------------------------------
 # Customizing SlicerApp metadata
