@@ -34,7 +34,13 @@ _MACHO_MAGIC = {
     b"\xfe\xed\xfa\xce",  # 32-bit BE
     b"\xca\xfe\xba\xbe",  # fat BE
     b"\xbe\xba\xfe\xca",  # fat LE
+    b"\xca\xfe\xba\xbf",  # fat64 BE
+    b"\xbf\xba\xfe\xca",  # fat64 LE
 }
+
+
+def _raise_walk_error(error):
+    raise RuntimeError("Failed to scan bundle directory %s: %s" % (error.filename, error)) from error
 
 
 def is_macho(path):
@@ -43,13 +49,13 @@ def is_macho(path):
             return False
         with open(path, "rb") as handle:
             return handle.read(4) in _MACHO_MAGIC
-    except OSError:
-        return False
+    except OSError as error:
+        raise RuntimeError("Failed to read Mach-O header for %s: %s" % (path, error)) from error
 
 
 def find_machos(root):
     paths = []
-    for directory, _dirs, files in os.walk(root):
+    for directory, _dirs, files in os.walk(root, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if is_macho(path):
