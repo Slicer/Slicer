@@ -913,8 +913,10 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTouchTranslate(vtkMRMLInteractionEve
   vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
 
   vtkMatrix4x4* xyToSlice = sliceNode->GetXYToSlice();
+  const double* lastTranslate = eventData->GetLastTranslation();
   const double* translate = eventData->GetTranslation();
-  double translation[2] = { xyToSlice->GetElement(0, 0) * translate[0], xyToSlice->GetElement(1, 1) * translate[1] };
+  double lastTranslation[2] = { xyToSlice->GetElement(0, 0) * lastTranslate[0], xyToSlice->GetElement(1, 1) * lastTranslate[1] };
+  double translation[2] = { xyToSlice->GetElement(0, 0) * translate[0], xyToSlice->GetElement(1, 1) * translate[1] };;
 
   this->TotalTouchTranslation += vtkMath::Norm2D(translate);
 
@@ -922,7 +924,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTouchTranslate(vtkMRMLInteractionEve
   {
     double sliceOrigin[3];
     sliceNode->GetXYZOrigin(sliceOrigin);
-    sliceNode->SetSliceOrigin(sliceOrigin[0] - translation[0], sliceOrigin[1] - translation[1], 0);
+    sliceNode->SetSliceOrigin(sliceOrigin[0] + lastTranslate[0] - translate[0], sliceOrigin[1] + lastTranslate[1] - translate[1], 0);
     this->TouchTranslationEnabled = true;
   }
 
