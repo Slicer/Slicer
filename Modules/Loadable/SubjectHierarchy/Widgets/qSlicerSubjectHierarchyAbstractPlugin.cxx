@@ -196,6 +196,20 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIconWithParentHidden(int 
 }
 
 //---------------------------------------------------------------------------
+QIcon qSlicerSubjectHierarchyAbstractPlugin::lockIcon(int locked)
+{
+  // The same icons are used for every item type that supports locking, so unlike the visibility
+  // icons these are provided here instead of being delegated to the individual plugins.
+  switch (locked)
+  {
+    case 0: return QIcon(":/Icons/Small/SlicerUnlock.png");
+    case 1: return QIcon(":/Icons/Small/SlicerLock.png");
+    // Locking is not applicable to the item, so there is no icon to set
+    default: return QIcon();
+  }
+}
+
+//---------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyAbstractPlugin::canEditProperties(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
@@ -381,6 +395,24 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID
   }
 
   return shNode->GetItemDisplayVisibility(itemID);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyAbstractPlugin::setDisplayLocked(vtkIdType itemID, int locked)
+{
+  Q_UNUSED(itemID);
+  Q_UNUSED(locked);
+
+  // Default implementation applies to item types for which locking is not applicable
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerSubjectHierarchyAbstractPlugin::getDisplayLocked(vtkIdType itemID) const
+{
+  Q_UNUSED(itemID);
+
+  // Default implementation applies to item types for which locking is not applicable
+  return -1;
 }
 
 //-----------------------------------------------------------------------------
