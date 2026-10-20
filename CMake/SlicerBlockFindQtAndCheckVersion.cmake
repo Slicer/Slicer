@@ -136,3 +136,32 @@ foreach(varname IN ITEMS QT_PLUGINS_DIR QT_BINARY_DIR QT_LIBRARY_DIR)
     message(FATAL_ERROR "Variable ${varname} is expected to be set to an existing path [${${varname}}]")
   endif()
 endforeach()
+
+# Check that qmake belongs to the same Qt installation as the Qt libraries.
+# Qt tool packages (e.g Qt6CoreTools providing Qt6::qmake) are looked up using
+# the default CMake search paths before the Qt installation itself. If another
+# Qt is installed in a system prefix (e.g Homebrew in "/opt/homebrew"), plugins
+# from that installation would be bundled with incompatible Qt libraries.
+# See https://github.com/Slicer/Slicer/issues/9484
+execute_process(
+    COMMAND ${QMAKE_EXECUTABLE} -query QT_INSTALL_PREFIX
+    OUTPUT_VARIABLE _qt_install_prefix
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE qmake_result
+)
+if(NOT qmake_result EQUAL 0)
+    message(FATAL_ERROR "Failed to get QT_INSTALL_PREFIX using qmake")
+endif()
+get_target_property(_qt_core_location Qt${_major}::Core LOCATION)
+file(REAL_PATH "${_qt_core_location}" _qt_core_location)
+file(REAL_PATH "${_qt_install_prefix}" _qt_install_prefix)
+cmake_path(IS_PREFIX _qt_install_prefix "${_qt_core_location}" NORMALIZE _qt_core_in_install_prefix)
+if(NOT _qt_core_in_install_prefix)
+  message(FATAL_ERROR
+    "Qt${_major}::qmake and Qt${_major}::Core come from different Qt installations:\n"
+    "  qmake: ${QMAKE_EXECUTABLE} (QT_INSTALL_PREFIX: ${_qt_install_prefix})\n"
+    "  Core: ${_qt_core_location}\n"
+    "Consider setting CMAKE_IGNORE_PREFIX_PATH to exclude the other Qt installation "
+    "(e.g -DCMAKE_IGNORE_PREFIX_PATH:PATH=/opt/homebrew) or setting CMAKE_PREFIX_PATH "
+    "to the Qt installation prefix.")
+endif()
