@@ -101,8 +101,31 @@ void vtkMRMLNRRDStorageNode::Copy(vtkMRMLNode* anode)
   vtkMRMLNRRDStorageNode* node = (vtkMRMLNRRDStorageNode*)anode;
 
   this->SetCenterImage(node->CenterImage);
+  this->SetReadOnlyDiffusionWeightedVolumes(node->ReadOnlyDiffusionWeightedVolumes);
 
   this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLNRRDStorageNode::HasDiffusionWeightedMetadata(vtkTeemNRRDReader* reader)
+{
+  if (!reader)
+  {
+    return false;
+  }
+  const char* modality = reader->GetHeaderValue("modality");
+  if (modality && !strcmp(modality, "DWMRI"))
+  {
+    return true;
+  }
+  for (const std::string& key : reader->GetHeaderKeysVector())
+  {
+    if (key.rfind("DWMRI_", 0) == 0)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +133,7 @@ void vtkMRMLNRRDStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkMRMLStorageNode::PrintSelf(os, indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
+  os << indent << "ReadOnlyDiffusionWeightedVolumes:   " << (this->ReadOnlyDiffusionWeightedVolumes ? "true" : "false") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -191,6 +215,13 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Read the header to see if the NRRD file corresponds to the
   // MRML Node
   reader->UpdateInformation();
+
+  if (this->ReadOnlyDiffusionWeightedVolumes && !vtkMRMLNRRDStorageNode::HasDiffusionWeightedMetadata(reader))
+  {
+    // Other volumes are read using vtkMRMLVolumeArchetypeStorageNode
+    vtkDebugMacro("ReadData: file is not read, because it does not contain diffusion weighted MRI metadata");
+    return 0;
+  }
 
   // Check type
   if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
