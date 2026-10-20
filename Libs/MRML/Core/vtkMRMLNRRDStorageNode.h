@@ -54,6 +54,20 @@ public:
   vtkSetMacro(CenterImage, int);
 
   ///
+  /// Only read files that contain diffusion weighted MRI (DWI) metadata (modality: DWMRI or DWMRI_... fields).
+  /// Disabled by default. It is enabled when the application looks for a reader for a new file and attempts
+  /// to read it as a vector volume, because vtkMRMLVolumeArchetypeStorageNode reads other vector volumes correctly
+  /// (including spatial vector, color, and list voxel types). It must remain disabled for reading scenes that
+  /// store vector volumes using this storage node.
+  vtkGetMacro(ReadOnlyDiffusionWeightedVolumes, bool);
+  vtkSetMacro(ReadOnlyDiffusionWeightedVolumes, bool);
+  vtkBooleanMacro(ReadOnlyDiffusionWeightedVolumes, bool);
+
+  ///
+  /// Returns true if the NRRD file header (read by the reader) contains diffusion weighted MRI metadata.
+  static bool HasDiffusionWeightedMetadata(vtkTeemNRRDReader* reader);
+
+  ///
   /// Access the nrrd header fields to create a diffusion gradient table
   int ParseDiffusionInformation(vtkTeemNRRDReader* reader, vtkDoubleArray* grad, vtkDoubleArray* bvalues);
 
@@ -96,6 +110,7 @@ protected:
   int GetGzipCompressionLevelFromCompressionParameter(std::string parameter);
 
   int CenterImage;
+  bool ReadOnlyDiffusionWeightedVolumes{ false };
 };
 
 #endif

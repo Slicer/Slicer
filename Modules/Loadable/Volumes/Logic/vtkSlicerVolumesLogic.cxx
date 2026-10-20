@@ -286,6 +286,10 @@ ArchetypeVolumeNodeSet NRRDVectorVolumeNodeSetFactory(std::string& volumeName, v
 
   vtkMRMLNRRDStorageNode* storageNode = vtkMRMLNRRDStorageNode::SafeDownCast(nodeSet.Scene->AddNewNodeByClass("vtkMRMLNRRDStorageNode"));
   storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
+  // Only diffusion weighted MRI files are read using the NRRD storage node (for example, if they cannot be read
+  // as DWI volume). Other vector volumes are read by ArchetypeVectorVolumeNodeSetFactory, as
+  // vtkMRMLVolumeArchetypeStorageNode supports spatial vector, color, and list voxel types.
+  storageNode->SetReadOnlyDiffusionWeightedVolumes(true);
   vectorNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   nodeSet.StorageNode = storageNode;
@@ -725,11 +729,15 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume(const char* filename, vtkMRMLVolu
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
   }
 
-  // Use NRRD writer if we are dealing with DWI, DTI or vector volumes
+  // Use NRRD writer if we are dealing with DWI volumes or vector volumes that have more than 4 components.
+  // Vector volumes with up to 4 components (spatial vectors, colors) are written using the archetype storage node,
+  // because it supports spatial vector and color voxel types (and they are read using that storage node, too).
+  // The archetype storage node cannot write volumes with more than 4 components.
+  bool moreThanFourComponents = (volumeNode->GetImageData() != nullptr && volumeNode->GetImageData()->GetNumberOfScalarComponents() > 4);
 
   if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") || //
                                                                //      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") || //
-      volumeNode->IsA("vtkMRMLVectorVolumeNode"))
+      (volumeNode->IsA("vtkMRMLVectorVolumeNode") && moreThanFourComponents))
   {
 
     if (storageNode1 == nullptr)
