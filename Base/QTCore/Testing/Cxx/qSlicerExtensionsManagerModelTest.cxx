@@ -88,6 +88,9 @@ private slots:
   void testServerUrl();
   void testServerUrl_data();
 
+  void testExtensionsListUrl();
+  void testExtensionsListUrl_data();
+
   void testServerKeysToIgnore();
   void testServerKeysToIgnore_data();
 
@@ -470,6 +473,43 @@ void qSlicerExtensionsManagerModelTester::testServerUrl_data()
   QTest::newRow("localhost") << "http://localhost/midas";
 
   QTest::newRow("windows-file") << QUrl::fromLocalFile("C:/path/to/foo").toString();
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testExtensionsListUrl()
+{
+  QFETCH(QString, frontendServerUrl);
+  QFETCH(QStringList, slicerRequirements);
+  QFETCH(QString, expectedExtensionsListUrl);
+
+  QSettings().setValue("Extensions/FrontendServerUrl", frontendServerUrl);
+  qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
+  model.setSlicerRequirements(slicerRequirements.at(0), slicerRequirements.at(1), slicerRequirements.at(2));
+
+  QCOMPARE(model.extensionsListUrl().toString(), expectedExtensionsListUrl);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testExtensionsListUrl_data()
+{
+  QTest::addColumn<QString>("frontendServerUrl");
+  QTest::addColumn<QStringList>("slicerRequirements");
+  QTest::addColumn<QString>("expectedExtensionsListUrl");
+
+  QTest::newRow("linux-amd64") << "https://extensions.slicer.org" << (QStringList() << "35387" << "linux" << "amd64")
+                               << "https://extensions.slicer.org/catalog/All/35387/linux/amd64";
+  QTest::newRow("macosx-amd64") << "https://extensions.slicer.org" << (QStringList() << "35387" << "macosx" << "amd64")
+                                << "https://extensions.slicer.org/catalog/All/35387/macosx/amd64";
+  QTest::newRow("macosx-arm64") << "https://extensions.slicer.org" << (QStringList() << "35387" << "macosx" << "arm64")
+                                << "https://extensions.slicer.org/catalog/All/35387/macosx/arm64";
+  QTest::newRow("win-amd64") << "https://extensions.slicer.org" << (QStringList() << "35387" << "win" << "amd64") << "https://extensions.slicer.org/catalog/All/35387/win/amd64";
+  // Trailing slash of the frontend server URL is removed
+  QTest::newRow("trailing-slash") << "https://extensions.slicer.org/" << (QStringList() << "35387" << "macosx" << "arm64")
+                                  << "https://extensions.slicer.org/catalog/All/35387/macosx/arm64";
+  // Before setSlicerRequirements() is called, revision, operating system and
+  // architecture are empty and the corresponding URL segments are left empty.
+  QTest::newRow("no-requirements") << "https://extensions.slicer.org" << (QStringList() << "" << "" << "") << "https://extensions.slicer.org/catalog/All///";
 }
 
 // ----------------------------------------------------------------------------

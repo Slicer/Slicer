@@ -131,13 +131,19 @@ foreach(dir ${search_paths})
   list(APPEND search_path_args --search-path "${dir}")
 endforeach()
 
+set(ignore_library_args)
+set(_ignore_library_regexes "@Slicer_CPACK_BUNDLE_FIXUP_IGNORE_LIBRARY_REGEXES@")
+foreach(regex IN LISTS _ignore_library_regexes)
+  list(APPEND ignore_library_args --ignore-library "${regex}")
+endforeach()
+
 #-----------------------------------------------------------------------------
 # Embed the dependency closure and rewrite it to @rpath.
 #-----------------------------------------------------------------------------
 message(STATUS "Closing macOS bundle dependencies")
 execute_process(
   COMMAND python3 "@CMAKE_SOURCE_DIR@/Utilities/Scripts/SlicerBundleCloseDeps.py"
-          --app "${app_dir}" --lib-subdir "@Slicer_LIB_DIR@" ${search_path_args}
+          --app "${app_dir}" --lib-subdir "@Slicer_LIB_DIR@" ${search_path_args} ${ignore_library_args}
   RESULT_VARIABLE _closedeps_result
   )
 if(NOT _closedeps_result EQUAL 0)
@@ -162,7 +168,7 @@ endif()
 message(STATUS "Re-signing application bundle after fixup")
 execute_process(
   COMMAND python3 "@CMAKE_SOURCE_DIR@/Utilities/Scripts/SlicerSignBundleMacOS.py"
-          --app "${app_dir}"
+          --app "${app_dir}" ${ignore_library_args}
   RESULT_VARIABLE _codesign_result
   ERROR_VARIABLE _codesign_error
   )
