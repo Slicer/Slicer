@@ -32,6 +32,10 @@ from DICOMLib import DICOMExportScalarVolume
 class DICOMScalarVolumePluginClass(DICOMPlugin):
     """ScalarVolume specific interpretation code"""
 
+    # Image IO names (GDCM, DCMTK) that have been already used for reading images in this process
+    # (see prepareReaders)
+    _imageIONamesUsedForReading = set()
+
     def __init__(self, spacingEpsilon=1e-2, orientationEpsilon=1e-6):
         """
         :param spacingEpsilon: Tolerance for numeric comparisons for spacing vectors. Defaults to 1.e-2.
@@ -471,8 +475,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         readers = [self.createSeriesReader(imageIOName, loadable.files, loadable.grayscale) for loadable in loadables]
         numberOfThreads = min(len(readers), self.maximumNumberOfParallelReaders())
         if numberOfThreads > 1:
+            parallelReaders = readers
+            if imageIOName not in DICOMScalarVolumePluginClass._imageIONamesUsedForReading:
+                # Some global state of the image readers (in ITK and GDCM/DCMTK) is initialized when an image is read
+                # the first time, which is not thread-safe: reading the first images in parallel may crash the
+                # application or make it hang. Therefore the first image is read before reading the others in parallel.
+                readers[0].Update()
+                DICOMScalarVolumePluginClass._imageIONamesUsedForReading.add(imageIOName)
+                parallelReaders = readers[1:]
             with ThreadPoolExecutor(max_workers=numberOfThreads) as executor:
-                list(executor.map(lambda reader: reader.Update(), readers))
+                list(executor.map(lambda reader: reader.Update(), parallelReaders))
         for loadable, reader in zip(loadables, readers, strict=True):
             loadable.preparedSeriesReader = (imageIOName, reader)
 
