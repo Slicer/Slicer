@@ -103,6 +103,41 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLScalarVolumeNode* node = vtkMRMLScalarVolumeNode::SafeDownCast(anode);
+  if (!node)
+  {
+    return;
+  }
+
+  // Coded entries are owned by the node, so they are always deep-copied
+  if (node->GetVoxelValueQuantity())
+  {
+    vtkNew<vtkCodedEntry> quantity;
+    quantity->Copy(node->GetVoxelValueQuantity());
+    this->SetVoxelValueQuantity(quantity);
+  }
+  else
+  {
+    this->SetVoxelValueQuantity(nullptr);
+  }
+  if (node->GetVoxelValueUnits())
+  {
+    vtkNew<vtkCodedEntry> units;
+    units->Copy(node->GetVoxelValueUnits());
+    this->SetVoxelValueUnits(units);
+  }
+  else
+  {
+    this->SetVoxelValueUnits(nullptr);
+  }
+}
+
 //-----------------------------------------------------------
 void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene* scene)
 {
