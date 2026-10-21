@@ -26,6 +26,9 @@ Version:   $Revision: 1.14 $
 #include <vtkNew.h>
 #include <vtkPointData.h>
 
+// STD includes
+#include <cstring>
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeNode);
 vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueQuantity, vtkCodedEntry);
@@ -136,6 +139,37 @@ void vtkMRMLScalarVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=t
   {
     this->SetVoxelValueUnits(nullptr);
   }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLScalarVolumeNode::GetVoxelValueQuantityLabel(vtkCodedEntry* quantity)
+{
+  if (!quantity)
+  {
+    return "";
+  }
+  if (quantity->GetCodeMeaning() && strlen(quantity->GetCodeMeaning()) > 0)
+  {
+    return quantity->GetCodeMeaning();
+  }
+  if (quantity->GetCodeValue())
+  {
+    return quantity->GetCodeValue();
+  }
+  return "";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeNode::SetVoxelValueQuantityFromLabel(const std::string& label)
+{
+  if (label.empty())
+  {
+    this->SetVoxelValueQuantity(nullptr);
+    return;
+  }
+  vtkNew<vtkCodedEntry> quantity;
+  quantity->SetValueSchemeMeaning(label, "", label);
+  this->SetVoxelValueQuantity(quantity);
 }
 
 //-----------------------------------------------------------

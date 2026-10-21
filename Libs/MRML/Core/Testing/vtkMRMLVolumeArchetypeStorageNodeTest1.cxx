@@ -11,6 +11,7 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkCodedEntry.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -146,6 +147,75 @@ int TestVoxelVectorType(const std::string& tempDir,
 
   return EXIT_SUCCESS;
 }
+
+namespace
+{
+
+int TestVoxelValueUnits(const std::string& tempDir)
+{
+  // The unit of the voxel values is stored in the standard "units" field of the pixel (component) axis
+  // of NRRD files and in VoxelValueUnits of the volume node.
+  std::cout << "TestVoxelValueUnits" << std::endl;
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLVectorVolumeNode* vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(vectorVolumeNode);
+  vtkNew<vtkImageData> imageData;
+  imageData->SetDimensions(10, 20, 30);
+  imageData->AllocateScalars(VTK_FLOAT, 3);
+  imageData->GetPointData()->GetScalars()->Fill(12.5);
+  vectorVolumeNode->SetAndObserveImageData(imageData);
+  vtkNew<vtkCodedEntry> units;
+  units->SetValueSchemeMeaning("mm/s", "UCUM", "millimeter per second");
+  vectorVolumeNode->SetVoxelValueUnits(units);
+  vectorVolumeNode->SetVoxelValueQuantityFromLabel("velocity");
+
+  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetSingleFile(true);
+  const std::string fileName = tempFilename(tempDir, "voxel_value_units", "nrrd", true);
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), true);
+
+  // The unit is in the standard NRRD "units" field, as the unit of the first (pixel) axis
+  std::ifstream file(fileName, std::ios::binary);
+  std::string header;
+  std::string line;
+  while (std::getline(file, line) && !line.empty() && line != "\r")
+  {
+    header += line + "\n";
+  }
+  std::cout << header << std::endl;
+  CHECK_BOOL(header.find("units: \"mm/s\"") != std::string::npos, true);
+  // The quantity is in the standard NRRD "labels" field, as the label of the first (pixel) axis
+  CHECK_BOOL(header.find("labels: \"velocity\"") != std::string::npos, true);
+
+  // Read
+  vtkMRMLVectorVolumeNode* readVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(readVolumeNode);
+  CHECK_BOOL(storageNode->ReadData(readVolumeNode), true);
+  CHECK_NOT_NULL(readVolumeNode->GetVoxelValueUnits());
+  CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+  CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodingSchemeDesignator(), "UCUM");
+  CHECK_NOT_NULL(readVolumeNode->GetVoxelValueQuantity());
+  CHECK_STRING(readVolumeNode->GetVoxelValueQuantity()->GetCodeMeaning(), "velocity");
+  std::string quantityLabel = vtkMRMLScalarVolumeNode::GetVoxelValueQuantityLabel(readVolumeNode->GetVoxelValueQuantity());
+  CHECK_STRING(quantityLabel.c_str(), "velocity");
+
+  // Reading a file that does not specify the unit leaves the units of the node unchanged
+  // (units may come from elsewhere, for example from the DICOM header or from the scene file)
+  vectorVolumeNode->SetVoxelValueUnits(nullptr);
+  const std::string fileNameWithoutUnits = tempFilename(tempDir, "voxel_value_units_none", "nrrd", true);
+  storageNode->SetFileName(fileNameWithoutUnits.c_str());
+  CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), true);
+  CHECK_BOOL(storageNode->ReadData(readVolumeNode), true);
+  CHECK_NOT_NULL(readVolumeNode->GetVoxelValueUnits());
+  CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+
+  return EXIT_SUCCESS;
+}
+
+} // namespace
 
 int TestFlipsLeftHandedVolumes(const std::string& tempDir)
 {
@@ -435,6 +505,7 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg", false, false, true, false));
   CHECK_EXIT_SUCCESS(TestFlipsLeftHandedVolumes(tempDir));
+  CHECK_EXIT_SUCCESS(TestVoxelValueUnits(tempDir));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;

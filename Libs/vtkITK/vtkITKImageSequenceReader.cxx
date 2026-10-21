@@ -447,6 +447,12 @@ int vtkITKImageSequenceReader::vtkInternal::ReadNrrdImageInformation(itk::NrrdIm
           itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
           this->External->AxisLabels[axi] = value;
         }
+        else if (!strcmp(keyField + strlen("labels"), "[pixel]"))
+        {
+          // Label of the pixel (component) axis: the quantity of the voxel values
+          itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+          this->External->VoxelValueLabel = value;
+        }
       }
       else if (!strncmp(keyField, "units", strlen("units")))
       {
@@ -454,6 +460,12 @@ int vtkITKImageSequenceReader::vtkInternal::ReadNrrdImageInformation(itk::NrrdIm
         {
           itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
           this->External->AxisUnits[axi] = value;
+        }
+        else if (!strcmp(keyField + strlen("units"), "[pixel]"))
+        {
+          // Units of the pixel (component) axis: the unit of the voxel values
+          itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+          this->External->VoxelValueUnit = value;
         }
       }
     }
@@ -652,6 +664,8 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
   this->HeaderKeyValueMap.clear();
   this->AxisLabels.clear();
   this->AxisUnits.clear();
+  this->VoxelValueUnit.clear();
+  this->VoxelValueLabel.clear();
   this->SequenceAxisLabel.clear();
   this->SequenceAxisUnit.clear();
 

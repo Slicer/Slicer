@@ -90,6 +90,14 @@ public:
   vtkGetMacro(SequenceAxisLabel, std::string);
   vtkGetMacro(SequenceAxisUnit, std::string);
 
+  /// Unit of the voxel values, read from the "units" field of the pixel (component) axis of NRRD files.
+  /// Empty if the file does not specify it (scalar images have no pixel axis, so they cannot store it).
+  vtkGetMacro(VoxelValueUnit, std::string);
+
+  /// Quantity of the voxel values (for example "velocity"), read from the "labels" field of the pixel (component) axis of NRRD files.
+  /// Empty if the file does not specify it (scalar images have no pixel axis, so they cannot store it).
+  vtkGetMacro(VoxelValueLabel, std::string);
+
   unsigned int GetNumberOfCachedImages();
   vtkImageData* GetCachedImage(unsigned int index);
   void ClearCachedImages();
@@ -124,6 +132,10 @@ protected:
   std::string SequenceAxisLabel;
   // Sequence axis unit read from the header.
   std::string SequenceAxisUnit;
+  // Unit of the voxel values read from the header (units of the pixel axis).
+  std::string VoxelValueUnit;
+  // Quantity of the voxel values read from the header (labels of the pixel axis).
+  std::string VoxelValueLabel;
 
   std::vector<vtkSmartPointer<vtkImageData>> CachedImages;
 

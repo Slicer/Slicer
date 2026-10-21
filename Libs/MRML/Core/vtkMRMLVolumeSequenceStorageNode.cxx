@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkCodedEntry.h"
 #include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -253,6 +254,23 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
     frameVolume->SetVoxelVectorType(vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType()));
 
+    // Unit of the voxel values (stored in the "units" field of the pixel axis in NRRD files).
+    // If the file does not specify it then the units of the node are left unchanged.
+    vtkMRMLScalarVolumeNode* scalarFrameVolume = vtkMRMLScalarVolumeNode::SafeDownCast(frameVolume);
+    if (scalarFrameVolume && !reader->GetVoxelValueUnit().empty())
+    {
+      // Unit strings in NRRD files are assumed to follow the UCUM standard, as everywhere else in Slicer
+      vtkNew<vtkCodedEntry> voxelValueUnits;
+      voxelValueUnits->SetValueSchemeMeaning(reader->GetVoxelValueUnit(), "UCUM", reader->GetVoxelValueUnit());
+      scalarFrameVolume->SetVoxelValueUnits(voxelValueUnits);
+    }
+    // Quantity of the voxel values (stored in the "labels" field of the pixel axis in NRRD files).
+    // If the file does not specify it then the quantity of the node is left unchanged.
+    if (scalarFrameVolume && !reader->GetVoxelValueLabel().empty())
+    {
+      scalarFrameVolume->SetVoxelValueQuantityFromLabel(reader->GetVoxelValueLabel());
+    }
+
     // If the volume uses left-handed IJK coordinate system, convert it to right-handed (the same way as for scalar volumes)
     // to have support for every algorithm in 3D Slicer
     if (this->ForceRightHandedIJKCoordinateSystem)
@@ -437,6 +455,21 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // Pass on voxel type to the writer (NRRD kind of first axis)
   writer->SetVoxelVectorType(vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeMRMLToVTKITK(frameVolumeVoxelVectorType));
+
+  // Pass on unit of the voxel values to the writer (NRRD units of first axis), taken from the first frame
+  if (numberOfFrameVolumes > 0)
+  {
+    vtkMRMLScalarVolumeNode* firstScalarFrameVolume = vtkMRMLScalarVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(0));
+    if (firstScalarFrameVolume && firstScalarFrameVolume->GetVoxelValueUnits() && firstScalarFrameVolume->GetVoxelValueUnits()->GetCodeValue())
+    {
+      writer->SetVoxelValueUnit(firstScalarFrameVolume->GetVoxelValueUnits()->GetCodeValue());
+    }
+    // Pass on quantity of the voxel values to the writer (NRRD labels of first axis), taken from the first frame
+    if (firstScalarFrameVolume)
+    {
+      writer->SetVoxelValueLabel(vtkMRMLScalarVolumeNode::GetVoxelValueQuantityLabel(firstScalarFrameVolume->GetVoxelValueQuantity()).c_str());
+    }
+  }
 
   // Pass down all MRML attributes to the file writer, including "DataNodeClassName", which is used to determine the type of the data node
   // when reading the sequence from file

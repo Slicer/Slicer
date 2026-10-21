@@ -11,6 +11,7 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkCodedEntry.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
@@ -129,6 +130,127 @@ int TestVolumeSequenceStorage(const std::string& inputFileName,
 
   return EXIT_SUCCESS;
 }
+
+namespace
+{
+
+//---------------------------------------------------------------------------
+std::string readNrrdHeader(const std::string& fileName)
+{
+  // The NRRD header is the text before the first empty line
+  std::ifstream file(fileName, std::ios::binary);
+  std::string header;
+  std::string line;
+  while (std::getline(file, line))
+  {
+    if (line.empty() || line == "\r")
+    {
+      break;
+    }
+    header += line + "\n";
+  }
+  return header;
+}
+
+//---------------------------------------------------------------------------
+int TestVoxelValueUnits(const std::string& tempDir)
+{
+  // The unit of the voxel values is stored in the standard "units" field of the pixel (component) axis
+  // of the NRRD file and in VoxelValueUnits of the volume nodes.
+  std::cout << "TestVoxelValueUnits" << std::endl;
+  const int numberOfFrames = 2;
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(sequenceNode);
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkNew<vtkMRMLVectorVolumeNode> volumeNode;
+    vtkNew<vtkImageData> imageData;
+    imageData->SetDimensions(4, 3, 2);
+    imageData->AllocateScalars(VTK_FLOAT, 3);
+    imageData->GetPointData()->GetScalars()->Fill(frameIndex + 0.5);
+    volumeNode->SetAndObserveImageData(imageData);
+    vtkNew<vtkCodedEntry> units;
+    units->SetValueSchemeMeaning("mm/s", "UCUM", "millimeter per second");
+    volumeNode->SetVoxelValueUnits(units);
+    volumeNode->SetVoxelValueQuantityFromLabel("velocity");
+    sequenceNode->SetDataNodeAtValue(volumeNode, std::to_string(frameIndex));
+  }
+
+  // Units are copied into the sequence items
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkMRMLScalarVolumeNode* itemVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(sequenceNode->GetNthDataNode(frameIndex));
+    CHECK_NOT_NULL(itemVolumeNode);
+    CHECK_NOT_NULL(itemVolumeNode->GetVoxelValueUnits());
+    CHECK_STRING(itemVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+  }
+
+  // Write
+  vtkMRMLVolumeSequenceStorageNode* storageNode = vtkMRMLVolumeSequenceStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeSequenceStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  std::string fileName = tempFilename(tempDir, "voxel_value_units", "seq.nrrd", true);
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(sequenceNode), true);
+
+  // The unit is in the standard NRRD "units" field, as the unit of the first (pixel) axis
+  std::string header = readNrrdHeader(fileName);
+  std::cout << header << std::endl;
+  CHECK_BOOL(header.find("kinds: vector domain domain domain list") != std::string::npos, true);
+  CHECK_BOOL(header.find("units: \"mm/s\"") != std::string::npos, true);
+  // The quantity is in the standard NRRD "labels" field, as the label of the first (pixel) axis
+  CHECK_BOOL(header.find("labels: \"velocity\"") != std::string::npos, true);
+
+  // Read
+  vtkMRMLSequenceNode* readSequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(readSequenceNode);
+  CHECK_BOOL(storageNode->ReadData(readSequenceNode), true);
+  CHECK_INT(readSequenceNode->GetNumberOfDataNodes(), numberOfFrames);
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkMRMLScalarVolumeNode* readVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(readSequenceNode->GetNthDataNode(frameIndex));
+    CHECK_NOT_NULL(readVolumeNode);
+    CHECK_NOT_NULL(readVolumeNode->GetVoxelValueUnits());
+    CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+    CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodingSchemeDesignator(), "UCUM");
+    CHECK_NOT_NULL(readVolumeNode->GetVoxelValueQuantity());
+    CHECK_STRING(readVolumeNode->GetVoxelValueQuantity()->GetCodeMeaning(), "velocity");
+  }
+
+  // A scalar volume sequence has no pixel axis, so the unit cannot be stored in the file:
+  // writing must still succeed, and the sequence is read back without units.
+  vtkMRMLSequenceNode* scalarSequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(scalarSequenceNode);
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+    vtkNew<vtkImageData> imageData;
+    imageData->SetDimensions(4, 3, 2);
+    imageData->AllocateScalars(VTK_SHORT, 1);
+    imageData->GetPointData()->GetScalars()->Fill(frameIndex);
+    volumeNode->SetAndObserveImageData(imageData);
+    vtkNew<vtkCodedEntry> units;
+    units->SetValueSchemeMeaning("[hnsf'U]", "UCUM", "Hounsfield unit");
+    volumeNode->SetVoxelValueUnits(units);
+    scalarSequenceNode->SetDataNodeAtValue(volumeNode, std::to_string(frameIndex));
+  }
+  std::string scalarFileName = tempFilename(tempDir, "voxel_value_units_scalar", "seq.nrrd", true);
+  storageNode->SetFileName(scalarFileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(scalarSequenceNode), true);
+  CHECK_BOOL(readNrrdHeader(scalarFileName).find("hnsf") == std::string::npos, true);
+  vtkMRMLSequenceNode* readScalarSequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(readScalarSequenceNode);
+  CHECK_BOOL(storageNode->ReadData(readScalarSequenceNode), true);
+  CHECK_INT(readScalarSequenceNode->GetNumberOfDataNodes(), numberOfFrames);
+  vtkMRMLScalarVolumeNode* readScalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(readScalarSequenceNode->GetNthDataNode(0));
+  CHECK_NOT_NULL(readScalarVolumeNode);
+  CHECK_NULL(readScalarVolumeNode->GetVoxelValueUnits());
+
+  return EXIT_SUCCESS;
+}
+
+} // namespace
 
 //---------------------------------------------------------------------------
 int TestLeftHandedNrrdVolumeSequence(const std::string& leftHandedSequenceFileName)
@@ -324,6 +446,9 @@ int vtkMRMLVolumeSequenceStorageNodeNrrdTest(int argc, char* argv[])
 
   // 4D image without list axis
   CHECK_EXIT_SUCCESS(TestNrrdVolumeSequenceWithoutListAxis(tempDir));
+
+  // Unit of the voxel values
+  CHECK_EXIT_SUCCESS(TestVoxelValueUnits(tempDir));
 
   std::cout << "-----------------------------------------------------" << std::endl;
 

@@ -46,6 +46,7 @@
 // STD includes
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 
@@ -294,6 +295,16 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self,
       }
     }
   }
+  if (self->GetVoxelValueUnit() && strlen(self->GetVoxelValueUnit()) > 0 && joinedImage->GetNumberOfComponentsPerPixel() > 1)
+  {
+    // Unit of the voxel values is stored in the "units" field of the pixel (component) axis
+    itk::EncapsulateMetaData<std::string>(dictionary, "NRRD_units[pixel]", std::string(self->GetVoxelValueUnit()));
+  }
+  if (self->GetVoxelValueLabel() && strlen(self->GetVoxelValueLabel()) > 0 && joinedImage->GetNumberOfComponentsPerPixel() > 1)
+  {
+    // Quantity of the voxel values is stored in the "labels" field of the pixel (component) axis
+    itk::EncapsulateMetaData<std::string>(dictionary, "NRRD_labels[pixel]", std::string(self->GetVoxelValueLabel()));
+  }
 
   if (measurementFrameMatrix != nullptr)
   {
@@ -370,6 +381,8 @@ vtkITKImageSequenceWriter::~vtkITKImageSequenceWriter()
   this->SetFileName(nullptr);
   this->SetImageIOClassName(nullptr);
   this->SetIntentCode(nullptr);
+  this->SetVoxelValueUnit(nullptr);
+  this->SetVoxelValueLabel(nullptr);
 
   delete this->Attributes;
   this->Attributes = nullptr;
