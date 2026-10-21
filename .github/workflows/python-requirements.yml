@@ -1,0 +1,36 @@
+name: CI (Python Requirements)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "SuperBuild/External_python*.cmake"
+      - "SuperBuild/Python/**"
+      - "CMake/Testing/SlicerPythonRequirementsTest.cmake"
+      - ".github/workflows/python-requirements.yml"
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "SuperBuild/External_python*.cmake"
+      - "SuperBuild/Python/**"
+      - "CMake/Testing/SlicerPythonRequirementsTest.cmake"
+      - ".github/workflows/python-requirements.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-requirements:
+    name: Python Requirements
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Test SuperBuild Python requirements
+        run: >-
+          cmake
+          -DSlicer_SOURCE_DIR="${{ github.workspace }}"
+          -DTEST_BINARY_DIR="${{ runner.temp }}/SlicerPythonRequirementsTest"
+          -P CMake/Testing/SlicerPythonRequirementsTest.cmake

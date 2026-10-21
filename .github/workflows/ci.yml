@@ -46,6 +46,7 @@ jobs:
         with:
           files: |
             SuperBuild/External_*
+            SuperBuild/Python/**
           base_sha: nightly-main
 
       # List any SuperBuild files that were changed
