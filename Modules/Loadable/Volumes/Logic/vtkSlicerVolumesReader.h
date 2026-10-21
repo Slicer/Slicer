@@ -55,6 +55,8 @@ public:
 
   /// Check each file to see if it's recognized as part of a series. If so,
   /// keep it as the archetype and remove all the others from the list.
+  /// Only 2D image files (.png, .tif, .tiff, .jpg, .jpeg) are grouped into a series,
+  /// all other files (for example, 3D volumes and markups) are loaded one by one.
   std::string ExamineFileList(std::vector<std::string>& fileList, vtkMRMLIOProperties* ioProperties) override;
 
 protected:
