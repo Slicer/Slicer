@@ -219,6 +219,14 @@ std::string vtkSlicerVolumesReader::ExamineFileList(std::vector<std::string>& fi
   for (size_t fileIndex = 0; fileIndex < fileList.size(); ++fileIndex)
   {
     const std::string archetypeFile = fileList[fileIndex];
+    // Only 2D image files are grouped into an image series. Other files that have numbers in their names
+    // (such as "plane_1.mrk.json" or 3D volumes "frame_1.nrrd") must be loaded one by one.
+    static const std::vector<std::string> imageSeriesExtensions = { ".png", ".tif", ".tiff", ".jpg", ".jpeg" };
+    const std::string extension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension(archetypeFile));
+    if (std::find(imageSeriesExtensions.begin(), imageSeriesExtensions.end(), extension) == imageSeriesExtensions.end())
+    {
+      continue;
+    }
     std::vector<std::string> candidateFiles;
     try
     {
