@@ -695,6 +695,15 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     try
     {
       writer->Write();
+      if (writer->GetErrorCode() != vtkErrorCode::NoError)
+      {
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                         "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to write volume with %1 components to file '%2'."),
+                                                             std::to_string(volNode->GetImageData()->GetNumberOfScalarComponents()).c_str(),
+                                                             fullName.c_str()));
+        result = 0;
+      }
     }
     catch (...)
     {
