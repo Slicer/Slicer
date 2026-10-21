@@ -935,7 +935,9 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     @vtk.calldata_type(vtk.VTK_OBJECT)
     def onNodeRemoved(caller, event, calldata):
         node = calldata
-        loadedNodeIDs.remove(node.GetID())
+        # Only nodes that were added during loading are in the list (storage and display nodes are not added)
+        if node.GetID() in loadedNodeIDs:
+            loadedNodeIDs.remove(node.GetID())
 
     sceneObserverTag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
     sceneObserverTag2 = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeRemovedEvent, onNodeRemoved)
