@@ -44,6 +44,12 @@ if(NOT Slicer_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_Add_Step(${proj} requirements
+    DEPENDEES build
+    DEPENDERS install
+    DEPENDS "${requirements_file}"
+    )
+
   #-----------------------------------------------------------------------------
   # Slicer Launcher setting specific to build tree
 
