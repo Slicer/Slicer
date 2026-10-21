@@ -372,6 +372,7 @@ include(ctkMacroCompilePythonScript)
 include(ctkFunctionAddExecutableUtf8)
 include(ctkMacroWrapPythonQt)
 include(SlicerMacroBuildScriptedModule)
+include(SlicerMacroBuildScriptedCLI)
 include(SlicerMacroExtractRepositoryInfo)
 
 # --------------------------------------------------------------------------
