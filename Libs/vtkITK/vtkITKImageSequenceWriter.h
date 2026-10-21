@@ -95,6 +95,16 @@ public:
   /// Get the axis units map
   AxisInfoMapType* GetAxisUnits() const { return this->AxisUnits; }
 
+  /// Unit of the voxel values (for example "mm/s"). It is written into the "units" field of the pixel
+  /// (component) axis of NRRD files, therefore it is only stored for images with multiple scalar components.
+  vtkSetStringMacro(VoxelValueUnit);
+  vtkGetStringMacro(VoxelValueUnit);
+
+  /// Quantity of the voxel values (for example "velocity"). It is written into the "labels" field of the pixel
+  /// (component) axis of NRRD files, therefore it is only stored for images with multiple scalar components.
+  vtkSetStringMacro(VoxelValueLabel);
+  vtkGetStringMacro(VoxelValueLabel);
+
 protected:
   vtkITKImageSequenceWriter();
   ~vtkITKImageSequenceWriter() override;
@@ -118,6 +128,8 @@ protected:
   char* ImageIOClassName{ nullptr };
   int VoxelVectorType{ vtkITKImageWriter::VoxelVectorTypeUndefined };
   char* IntentCode{ nullptr };
+  char* VoxelValueUnit{ nullptr };
+  char* VoxelValueLabel{ nullptr };
   double SequenceAxisSpacing{ 1.0 };
   double SequenceAxisOrigin{ 0.0 };
 

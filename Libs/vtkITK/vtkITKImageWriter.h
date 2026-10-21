@@ -85,6 +85,16 @@ public:
   vtkSetMacro(VoxelVectorType, int);
   vtkGetMacro(VoxelVectorType, int);
 
+  /// Unit of the voxel values (for example "mm/s"). It is written into the "units" field of the pixel
+  /// (component) axis of NRRD files, therefore it is only stored for images with multiple scalar components.
+  vtkSetStringMacro(VoxelValueUnit);
+  vtkGetStringMacro(VoxelValueUnit);
+
+  /// Quantity of the voxel values (for example "velocity"). It is written into the "labels" field of the pixel
+  /// (component) axis of NRRD files, therefore it is only stored for images with multiple scalar components.
+  vtkSetStringMacro(VoxelValueLabel);
+  vtkGetStringMacro(VoxelValueLabel);
+
   /// Convert voxel vector type between RAS and LPS measurement frame
   static void ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* imageData);
 
@@ -105,6 +115,8 @@ protected:
   int UseCompression;
   char* ImageIOClassName;
   int VoxelVectorType;
+  char* VoxelValueUnit;
+  char* VoxelValueLabel;
 
 private:
   vtkITKImageWriter(const vtkITKImageWriter&) = delete;

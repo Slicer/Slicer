@@ -28,6 +28,7 @@
 #include <vtkVersion.h>
 
 // STD includes
+#include <cstring>
 #include <iostream>
 
 // VTKsys includes
@@ -175,12 +176,22 @@ void ITKWriteVTKImage(vtkITKImageWriter* self,
     itkImporter->GetOutput()->SetOrigin(origin);
     itkImporter->GetOutput()->SetSpacing(mag);
 
+    itk::MetaDataDictionary& dictionary = itkImporter->GetOutput()->GetMetaDataDictionary();
     if (measurementFrameMatrix != nullptr)
     {
-      itk::MetaDataDictionary& dictionary = itkImporter->GetOutput()->GetMetaDataDictionary();
       vtkITKImageWriter::WriteMeasurementFrameMatrixToMetaDataDictionary(dictionary, measurementFrameMatrix);
-      itkImporter->GetOutput()->SetMetaDataDictionary(dictionary);
     }
+    if (self->GetVoxelValueUnit() && strlen(self->GetVoxelValueUnit()) > 0 && inputImage->GetNumberOfScalarComponents() > 1)
+    {
+      // Unit of the voxel values is stored in the "units" field of the pixel (component) axis of NRRD files
+      itk::EncapsulateMetaData<std::string>(dictionary, "NRRD_units[pixel]", std::string(self->GetVoxelValueUnit()));
+    }
+    if (self->GetVoxelValueLabel() && strlen(self->GetVoxelValueLabel()) > 0 && inputImage->GetNumberOfScalarComponents() > 1)
+    {
+      // Quantity of the voxel values is stored in the "labels" field of the pixel (component) axis of NRRD files
+      itk::EncapsulateMetaData<std::string>(dictionary, "NRRD_labels[pixel]", std::string(self->GetVoxelValueLabel()));
+    }
+    itkImporter->GetOutput()->SetMetaDataDictionary(dictionary);
 
     itkImageWriter->SetFileName(fileName);
     itkImageWriter->Update();
@@ -233,6 +244,8 @@ vtkITKImageWriter::vtkITKImageWriter()
   this->UseCompression = 0;
   this->ImageIOClassName = nullptr;
   this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
+  this->VoxelValueUnit = nullptr;
+  this->VoxelValueLabel = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -244,6 +257,9 @@ vtkITKImageWriter::~vtkITKImageWriter()
     delete[] this->FileName;
     this->FileName = nullptr;
   }
+
+  this->SetVoxelValueUnit(nullptr);
+  this->SetVoxelValueLabel(nullptr);
 
   if (this->ImageIOClassName)
   {
