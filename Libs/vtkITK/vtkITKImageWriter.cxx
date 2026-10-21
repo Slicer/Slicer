@@ -16,6 +16,7 @@
 #include "vtkITKImageWriter.h"
 
 // VTK includes
+#include <vtkErrorCode.h>
 #include <vtkFloatArray.h>
 #include <vtkImageExport.h>
 #include <vtkImageFlip.h>
@@ -304,6 +305,7 @@ void vtkITKImageWriter::Write()
     return;
   }
 
+  this->SetErrorCode(vtkErrorCode::NoError);
   this->UpdateInformation();
   if (this->GetOutputInformation(0))
   {
@@ -417,7 +419,10 @@ void vtkITKImageWriter::Write()
         ITKWriteVTKImage<unsigned char>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
       }
       break;
-      default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+      default:
+        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+        this->SetErrorCode(vtkErrorCode::FileFormatError);
+        return;
     }
   } // scalar
   else if (inputNumberOfScalarComponents == 2)
@@ -485,7 +490,10 @@ void vtkITKImageWriter::Write()
         ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
       }
       break;
-      default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+      default:
+        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+        this->SetErrorCode(vtkErrorCode::FileFormatError);
+        return;
     }
   } // 2 - component
   else if (inputNumberOfScalarComponents == 3)
@@ -525,7 +533,10 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
-        default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+          return;
       }
     }
     else if (voxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatialCovariant)
@@ -563,7 +574,10 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
         }
         break;
-        default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+          return;
       }
     }
     else
@@ -601,7 +615,10 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix, measurementFrameMatrix, voxelVectorType);
         }
         break;
-        default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+          return;
       }
     }
   } // vector
@@ -642,7 +659,10 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
-        default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+          return;
       }
     }
     else
@@ -680,13 +700,16 @@ void vtkITKImageWriter::Write()
           ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
-        default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+          return;
       }
     }
   } // 4-vector
-  else if (inputNumberOfScalarComponents == 9)
+  else if (inputNumberOfScalarComponents == 9 && vtkFloatArray::SafeDownCast(pointData->GetTensors()) && pointData->GetTensors()->GetNumberOfComponents() == 9)
   {
-    // Diffusion tensor image
+    // Diffusion tensor image (9-component images that store voxels in the scalars array are not tensor images)
     switch (inputDataType)
     {
       case VTK_FLOAT:
@@ -718,12 +741,16 @@ void vtkITKImageWriter::Write()
       }
         inputImage->GetPointData()->SetScalars(nullptr);
         break;
-      default: vtkErrorMacro(<< "Execute: Unknown output ScalarType"); return;
+      default:
+        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+        this->SetErrorCode(vtkErrorCode::FileFormatError);
+        return;
     }
   }
   else
   {
-    vtkErrorMacro(<< "Can only export 1 or 3 component images, current image has " << inputNumberOfScalarComponents << " components");
+    vtkErrorMacro(<< "Can only export images with 1, 2, 3, or 4 components or float diffusion tensor images, current image has " << inputNumberOfScalarComponents << " components");
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
     return;
   }
 }
