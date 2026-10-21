@@ -25,14 +25,11 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-  file(WRITE ${requirements_file} [===[
-  # [packaging]
-  packaging==26.2 --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e
-  # [/packaging]
-  # [wheel]
-  wheel==0.47.0 --hash=sha256:212281cab4dff978f6cedd499cd893e1f620791ca6ff7107cf270781e587eced
-  # [/wheel]
-  ]===])
+  configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/Python/python-wheel-requirements.txt"
+    "${requirements_file}"
+    COPYONLY
+    )
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
