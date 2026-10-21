@@ -49,8 +49,9 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy node content (excludes basic data, such as name and node references).
+  /// Voxel value quantity and units are copied, too.
   /// \sa vtkMRMLNode::CopyContent
-  vtkMRMLCopyContentDefaultMacro(vtkMRMLScalarVolumeNode);
+  vtkMRMLCopyContentMacro(vtkMRMLScalarVolumeNode);
 
   ///
   /// Get node XML tag name (like Volume, Model)
