@@ -20,6 +20,14 @@ if(UNIX)
     if(NOT DEFINED CPACK_DMG_FORMAT)
       set(CPACK_DMG_FORMAT "ULFO")
     endif()
+    # Retry detaching the temporary disk image. CPack does not retry, and the
+    # detach fails if another process (e.g Finder in a logged-in GUI session)
+    # is still accessing the newly attached volume.
+    # Quotes are not used since CPack does not escape them when writing the
+    # CPack configuration file, and directories with spaces are not supported.
+    if(NOT DEFINED CPACK_COMMAND_HDIUTIL)
+      set(CPACK_COMMAND_HDIUTIL "/bin/sh ${Slicer_CMAKE_DIR}/SlicerCPackHdiutil.sh")
+    endif()
   endif()
 elseif(WIN32)
   set(CPACK_GENERATOR "NSIS")
