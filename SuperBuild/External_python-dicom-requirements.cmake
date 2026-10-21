@@ -59,6 +59,12 @@ if(NOT Slicer_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  ExternalProject_Add_Step(${proj} requirements
+    DEPENDEES build
+    DEPENDERS install
+    DEPENDS "${requirements_file}"
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

@@ -41,6 +41,20 @@ function(ExternalProject_Add_Empty name)
   set(added_project TRUE PARENT_SCOPE)
 endfunction()
 
+function(ExternalProject_Add_Step name step)
+  if(Slicer_USE_SYSTEM_python OR NOT added_project)
+    message(FATAL_ERROR "Unexpected requirements step for ${name}")
+  endif()
+  cmake_parse_arguments(ep "" "" "DEPENDEES;DEPENDERS;DEPENDS" ${ARGN})
+  if(NOT name STREQUAL proj OR NOT step STREQUAL "requirements"
+      OR NOT ep_DEPENDEES STREQUAL "build"
+      OR NOT ep_DEPENDERS STREQUAL "install"
+      OR NOT ep_DEPENDS STREQUAL requirements_file)
+    message(FATAL_ERROR "Incorrect requirements step for ${name}")
+  endif()
+  set(added_requirements_step TRUE PARENT_SCOPE)
+endfunction()
+
 function(check_requirements manifest use_system)
   get_filename_component(project_name "${manifest}" NAME_WE)
   if(NOT EXISTS "${Slicer_SOURCE_DIR}/SuperBuild/External_${project_name}.cmake")
@@ -53,6 +67,7 @@ function(check_requirements manifest use_system)
   set(PYTHON_SITE_PACKAGES_SUBDIR "lib/python3.12/site-packages")
   set(added_project FALSE)
   set(found_system_package FALSE)
+  set(added_requirements_step FALSE)
   set(output "${CMAKE_BINARY_DIR}/${project_name}-requirements.txt")
   file(REMOVE "${output}")
 
@@ -66,6 +81,9 @@ function(check_requirements manifest use_system)
       message(FATAL_ERROR "System package behavior changed for ${project_name}")
     endif()
   else()
+    if(NOT added_requirements_step)
+      message(FATAL_ERROR "No requirements dependency step for ${project_name}")
+    endif()
     if(NOT EXISTS "${output}")
       message(FATAL_ERROR "No build requirements generated for ${project_name}")
     endif()
@@ -104,4 +122,59 @@ foreach(external_project IN LISTS external_projects)
   endif()
 endforeach()
 
-message(STATUS "SUCCESS: Bundled and system Python requirement wiring verified")
+# Use a real external project with a recording installer, never pip.
+set(fixture_source "${TEST_BINARY_DIR}/reinstall-source")
+set(fixture_build "${TEST_BINARY_DIR}/reinstall-build")
+file(MAKE_DIRECTORY "${fixture_source}/Python")
+configure_file(
+  "${Slicer_SOURCE_DIR}/SuperBuild/External_python-pip.cmake"
+  "${fixture_source}/External_python-pip.cmake" COPYONLY)
+set(fixture_manifest "${fixture_source}/Python/python-pip-requirements.txt")
+file(WRITE "${fixture_manifest}" "# Initial requirements\n")
+file(WRITE "${fixture_source}/record-install.cmake" [=[
+file(APPEND "${CMAKE_CURRENT_LIST_DIR}/installations.txt" "installed\n")
+]=])
+file(REMOVE "${fixture_source}/installations.txt")
+file(WRITE "${fixture_source}/CMakeLists.txt" [=[
+cmake_minimum_required(VERSION 3.28)
+project(PythonRequirementsReinstall NONE)
+include(ExternalProject)
+function(ExternalProject_Include_Dependencies)
+  set(${proj}_DEPENDENCIES "" PARENT_SCOPE)
+endfunction()
+function(mark_as_superbuild)
+endfunction()
+set(Slicer_USE_SYSTEM_python FALSE)
+set(PYTHON_EXECUTABLE
+  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/record-install.cmake" --)
+include("${CMAKE_CURRENT_SOURCE_DIR}/External_python-pip.cmake")
+]=])
+
+execute_process(
+  COMMAND "${CMAKE_COMMAND}" -S "${fixture_source}" -B "${fixture_build}"
+  COMMAND_ERROR_IS_FATAL ANY
+  )
+foreach(phase IN ITEMS initial unchanged edited unchanged_again)
+  if(phase STREQUAL "edited")
+    # Ensure the edit is newer than the previous install stamp on all filesystems.
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep 1 COMMAND_ERROR_IS_FATAL ANY)
+    file(APPEND "${fixture_manifest}" "# Updated requirements\n")
+  endif()
+  execute_process(
+    COMMAND "${CMAKE_COMMAND}" --build "${fixture_build}" --config Debug
+    COMMAND_ERROR_IS_FATAL ANY
+    )
+  file(STRINGS "${fixture_source}/installations.txt" installations)
+  list(LENGTH installations installation_count)
+  if(phase MATCHES "^(initial|unchanged)$")
+    set(expected_count 1)
+  else()
+    set(expected_count 2)
+  endif()
+  if(NOT installation_count EQUAL expected_count)
+    message(FATAL_ERROR
+      "Phase ${phase}: expected ${expected_count} installations, got ${installation_count}")
+  endif()
+endforeach()
+
+message(STATUS "SUCCESS: Python requirement wiring and incremental installation verified")
