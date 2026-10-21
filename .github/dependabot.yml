@@ -1,4 +1,4 @@
-# Set update schedule for GitHub Actions
+# Set update schedules for GitHub Actions and Python dependencies
 
 version: 2
 updates:
@@ -15,4 +15,16 @@ updates:
           - "*"
     commit-message:
       # Prefix all commit messages with "COMP: "
+      prefix: "COMP"
+
+  - package-ecosystem: "pip"
+    directories:
+      - "/SuperBuild/Python"
+      - "/" # requirements-docs.txt
+    schedule:
+      interval: "monthly"
+    # Disable routine version-update PRs, not security-update PRs.
+    # Enable security updates in repository settings after verifying alerts.
+    open-pull-requests-limit: 0
+    commit-message:
       prefix: "COMP"
