@@ -5,17 +5,6 @@
   idna==3.16 --hash=sha256:cc246e3a3f89580c3a951b5ad298ca4638078b2cdd4f115654332b5c26daded5
   # [/idna]
   # [charset-normalizer]
-  # Hashes correspond to the following packages:
-  #  - charset_normalizer-3.4.7-cp312-cp312-macosx_10_13_universal2.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-manylinux_2_31_riscv64.manylinux_2_39_riscv64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-musllinux_1_2_aarch64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-musllinux_1_2_riscv64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-musllinux_1_2_x86_64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-win_amd64.whl
-  #  - charset_normalizer-3.4.7-cp312-cp312-win_arm64.whl
-  #  - charset_normalizer-3.4.7-py3-none-any.whl
   charset-normalizer==3.4.7 --hash=sha256:eca9705049ad3c7345d574e3510665cb2cf844c2f2dcfe675332677f081cbd46 \
                             --hash=sha256:6178f72c5508bfc5fd446a5905e698c6212932f25bcdd4b47a757a50605a90e2 \
                             --hash=sha256:5649fd1c7bade02f320a462fdefd0b4bd3ce036065836d4f42e0de958038e116 \

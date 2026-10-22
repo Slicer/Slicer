@@ -1,12 +1,4 @@
   # [chardet]
-  # Hashes correspond to the following packages:
-  #  - chardet-7.4.3-cp312-cp312-macosx_10_13_x86_64.whl
-  #  - chardet-7.4.3-cp312-cp312-macosx_11_0_arm64.whl
-  #  - chardet-7.4.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl
-  #  - chardet-7.4.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
-  #  - chardet-7.4.3-cp312-cp312-manylinux_2_31_riscv64.manylinux_2_39_riscv64.whl
-  #  - chardet-7.4.3-cp312-cp312-win_amd64.whl
-  #  - chardet-7.4.3-py3-none-any.whl
   chardet==7.4.3 --hash=sha256:75d3c65cc16bddf40b8da1fd25ba84fca5f8070f2b14e86083653c1c85aee971 \
                  --hash=sha256:29af5999f654e8729d251f1724a62b538b1262d9292cccaefddf8a02aae1ef6a \
                  --hash=sha256:626f00299ad62dfe937058a09572beed442ccc7b58f87aa667949b20fd3db235 \

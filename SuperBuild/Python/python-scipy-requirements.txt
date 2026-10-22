@@ -1,15 +1,4 @@
   # [scipy]
-  # Hashes correspond to the following packages:
-  #  - scipy-1.17.1-cp312-cp312-macosx_10_14_x86_64.whl
-  #  - scipy-1.17.1-cp312-cp312-macosx_12_0_arm64.whl
-  #  - scipy-1.17.1-cp312-cp312-macosx_14_0_arm64.whl
-  #  - scipy-1.17.1-cp312-cp312-macosx_14_0_x86_64.whl
-  #  - scipy-1.17.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
-  #  - scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-  #  - scipy-1.17.1-cp312-cp312-musllinux_1_2_aarch64.whl
-  #  - scipy-1.17.1-cp312-cp312-musllinux_1_2_x86_64.whl
-  #  - scipy-1.17.1-cp312-cp312-win_amd64.whl
-  #  - scipy-1.17.1-cp312-cp312-win_arm64.whl
   scipy==1.17.1 --hash=sha256:35c3a56d2ef83efc372eaec584314bd0ef2e2f0d2adb21c55e6ad5b344c0dcb8 \
                 --hash=sha256:fcb310ddb270a06114bb64bbe53c94926b943f5b7f0842194d585c65eb4edd76 \
                 --hash=sha256:cc90d2e9c7e5c7f1a482c9875007c095c3194b1cfedca3c2f3291cdc2bc7c086 \
