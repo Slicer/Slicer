@@ -27,7 +27,7 @@ function(ExternalProject_Add name)
   endif()
   cmake_parse_arguments(ep "" "" "INSTALL_COMMAND;LOG_INSTALL;DEPENDS" ${ARGN})
   set(expected_command
-    "${PYTHON_EXECUTABLE};-m;pip;install;--require-hashes;-r;${requirements_file}")
+    "${PYTHON_EXECUTABLE};-m;pip;install;--only-binary=:all:;--require-hashes;-r;${requirements_file}")
   if(NOT ep_INSTALL_COMMAND STREQUAL expected_command)
     message(FATAL_ERROR "Unexpected install command for ${name}: ${ep_INSTALL_COMMAND}")
   endif()
