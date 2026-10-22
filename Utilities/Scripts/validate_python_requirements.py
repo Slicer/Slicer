@@ -536,9 +536,7 @@ def normalize(root: Path, index: Index) -> None:
             while start and re.match(r"\s*#\s+(Hashes correspond to the following packages:|- .*"
                                      r"\.(?:whl|tar\.gz|zip).*)$", lines[start - 1].rstrip()):
                 start -= 1
-            comments = "  # Hashes correspond to the following packages:\n"
-            comments += "".join(f"  #  - {file['filename']}\n" for file in sorted(files, key=lambda f: f["filename"]))
-            lines[start:pin.end] = [comments + requirement]
+            lines[start:pin.end] = [requirement]
         updates[path] = "".join(lines)
     # Validate every release before modifying any manifest.
     for path, contents in updates.items():

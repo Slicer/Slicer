@@ -252,11 +252,17 @@ class RequirementsTest(unittest.TestCase):
 
     def test_normalization_preserves_pins_and_removes_source_hashes(self):
         path = self.manifests / "python-first-requirements.txt"
-        path.write_text(f"# [foo]\nfoo==1.0 --hash=sha256:{HASH} \\\n --hash=sha256:{'b' * 64}\n# [/foo]\n")
+        path.write_text("# [foo]\n# Preserve this explanation\n"
+                        "# Hashes correspond to the following packages:\n"
+                        "#  - foo-0.9-cp311-cp311-win_amd64.whl\n"
+                        f"foo==1.0 --hash=sha256:{HASH} \\\n --hash=sha256:{'b' * 64}\n# [/foo]\n")
         validator.normalize(self.root, self.index)
         self.assertEqual(validator.read_pins(path)[0].hashes, {HASH})
         self.assertEqual(validator.read_pins(path)[0].version, "1.0")
         self.assertIn("# [/foo]", path.read_text())
+        self.assertIn("# Preserve this explanation", path.read_text())
+        self.assertNotIn("Hashes correspond", path.read_text())
+        self.assertNotIn(".whl", path.read_text())
         once = path.read_text()
         validator.normalize(self.root, self.index)
         self.assertEqual(path.read_text(), once)
