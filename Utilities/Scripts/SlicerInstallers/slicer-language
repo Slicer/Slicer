@@ -1,0 +1,393 @@
+#!/bin/sh
+# List or install 3D Slicer's interface languages (Linux and macOS).
+#
+# Usage:
+#   slicer-language list          print every language Slicer has translations
+#                                 for, with how complete each translation is
+#   slicer-language <code>        install that language and switch Slicer to it,
+#                                 e.g. fr-FR, es-419, pt-BR, zh-Hans
+#
+# Options:
+#   --slicer <path>  the Slicer launcher to use, when this script cannot find
+#                    the one it ships next to
+#   -h, --help       show this help
+#
+# Environment:
+#   SLICER_QUIET     silence progress messages; warnings and errors still show
+#   NO_COLOR         disable colored output
+#
+# Installing a language installs the SlicerLanguagePacks extension
+# (https://github.com/Slicer/SlicerLanguagePacks) along with that language's
+# translation files. Slicer itself has to run for this: only the application can
+# talk to the extensions server, compile translations and write its own
+# settings. It is launched twice, without splash or main window: once to install
+# the extension (skipped when a previous run already did, so repeated runs
+# converge), and once more — so the freshly installed extension's LanguageTools
+# module is loaded — to run that module's own logic: download the .ts
+# translation files, compile them to .qm with Slicer's bundled lrelease and
+# install them into the application's translation folder. The second run then
+# verifies the .qm file for the requested locale exists and actually loads (by
+# installing it as a QTranslator into the running Slicer, exactly what the
+# application does at startup), and only after that writes the same 'language'
+# and 'Internationalization/Enabled' settings the extension's own LanguageTools
+# module writes.
+#
+# Needs network access, Slicer's runtime libraries (see slicer-deps on Linux)
+# and, on Linux, a display — headless machines can provide one with xvfb-run.
+set -eu
+
+SLICER_QUIET="${SLICER_QUIET:-}"
+
+# Where Slicer's translations live. The SlicerLanguagePacks extension queries
+# this very endpoint for its own language list, so what it reports is exactly
+# what can be installed.
+WEBLATE_STATS_URL='https://hosted.weblate.org/api/components/3d-slicer/3d-slicer/statistics/?format=json&page_size=1000'
+
+# Initialized empty so `set -u` is satisfied before setup_colors() runs.
+C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_BLUE=$(printf '\033[1;34m'); C_YELLOW=$(printf '\033[1;33m')
+    C_RED=$(printf '\033[1;31m'); C_GREEN=$(printf '\033[1;32m')
+    C_RESET=$(printf '\033[0m')
+  fi
+}
+
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: slicer-language list
+       slicer-language <language-code> [--slicer <path>]
+
+List or install 3D Slicer's interface languages.
+
+  list             print the available language codes and how complete each
+                   translation is
+  <language-code>  install that language's translation files and switch
+                   Slicer's interface to it, e.g. fr-FR, es-419, pt-BR
+
+Options:
+  --slicer <path>  the Slicer launcher to use, when this script cannot find the
+                   one it ships next to
+  -h, --help       show this help
+USAGE
+}
+
+# Fetch a URL to stdout (for JSON metadata), over enforced HTTPS/TLS 1.2.
+fetch() {
+  if have curl; then
+    curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$1"
+  elif have wget; then
+    wget --https-only --secure-protocol=TLSv1_2 -qO- "$1"
+  else
+    err "This needs 'curl' or 'wget'."
+  fi
+}
+
+# Extract the string value of a JSON field from the metadata blob $1 ($2 = key).
+# Prints nothing when the key is absent.
+json_field() {
+  printf '%s' "$1" \
+    | grep -oE "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" \
+    | head -n1 \
+    | sed 's/^[^:]*:[[:space:]]*"//; s/"$//'
+}
+
+# ---------------------------------------------------------------------------- #
+# locating the Slicer this script ships inside
+# ---------------------------------------------------------------------------- #
+# The directory this script actually lives in, following symlinks: it is
+# installed into Slicer's own bin directory, so everything else is relative to
+# it and nothing has to be passed in.
+self_dir() {
+  self="$0"
+  hops=0
+  while [ -L "$self" ] && [ "$hops" -lt 32 ]; do
+    link="$(readlink -- "$self")"
+    case "$link" in
+      /*) self="$link" ;;
+      *)  self="$(dirname -- "$self")/$link" ;;
+    esac
+    hops=$((hops + 1))
+  done
+  CDPATH='' cd -- "$(dirname -- "$self")" && pwd -P
+}
+
+# The Slicer launcher belonging to the installation this script sits in.
+#   Linux : <appdir>/bin/slicer-language           -> <appdir>/Slicer
+#   macOS : …/Slicer.app/Contents/bin/slicer-language -> …/Contents/MacOS/Slicer
+find_slicer() {
+  root="$(CDPATH='' cd -- "$(self_dir)/.." && pwd -P)" || return 1
+  for candidate in "$root/Slicer" "$root/MacOS/Slicer"; do
+    if [ -f "$candidate" ] && [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------- #
+# list
+# ---------------------------------------------------------------------------- #
+# Print every language Slicer has translations for, with how complete each
+# translation is. Weblate spells locales with underscores (pt_BR) but the
+# extension and Qt use dashes (pt-BR), so codes are printed in the form this
+# script accepts.
+list_languages() {
+  log "Querying the list of 3D Slicer translations…"
+  blob=$(fetch "$WEBLATE_STATS_URL") && [ -n "$blob" ] \
+    || err "Could not query the translation server; browse https://hosted.weblate.org/projects/3d-slicer/ instead."
+
+  printf '\n  %-12s %-40s %s\n' 'CODE' 'LANGUAGE' 'TRANSLATED'
+  # One result object per language; splitting on '{' isolates each (none of the
+  # fields nest). English is the source language, not a translation — skip it.
+  printf '%s' "$blob" | tr '{' '\n' | while IFS= read -r chunk; do
+    code=$(json_field "$chunk" code)
+    [ -n "$code" ] && [ "$code" != en ] || continue
+    name=$(json_field "$chunk" name)
+    pct=$(printf '%s' "$chunk" \
+      | grep -oE '"translated_percent"[[:space:]]*:[[:space:]]*[0-9.]+' \
+      | head -n1 | sed 's/.*:[[:space:]]*//')
+    printf '%s|%s|%s\n' "${pct:-0}" "$(printf '%s' "$code" | tr '_' '-')" "$name"
+  done | sort -t'|' -rn | while IFS='|' read -r pct code name; do
+    printf '  %-12s %-40s %9s%%\n' "$code" "$name" "$pct"
+  done
+
+  printf '\n'
+  log "Run 'slicer-language <code>' with one of the codes above to install it."
+}
+
+# ---------------------------------------------------------------------------- #
+# install
+# ---------------------------------------------------------------------------- #
+configure_language() {
+  lang="$1"; exe="$2"
+
+  # Slicer is a GUI application even with no window shown, so on Linux it still
+  # needs a display; on headless machines fall back to a virtual one.
+  runner=''
+  if [ "$(uname -s)" = Linux ] && [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+    if have xvfb-run; then
+      runner='xvfb-run -a'
+    else
+      err "Installing a language needs a display to launch Slicer once; run this in a desktop session, or install xvfb and re-run."
+    fi
+  fi
+
+  TMP="$(mktemp -d)"
+  trap 'rm -rf "$TMP"' EXIT INT TERM
+
+  ext_pyfile="$TMP/install-language-packs.py"
+  cat > "$ext_pyfile" <<'EOF'
+import sys
+import slicer
+
+# The repository is SlicerLanguagePacks, but the extensions catalog knows the
+# extension by its base name, LanguagePacks.
+name = 'LanguagePacks'
+ok = False
+try:
+    em = slicer.app.extensionsManagerModel()
+    em.interactive = False  # never pop up dialogs
+    if em.isExtensionInstalled(name):
+        ok = True
+    else:
+        try:
+            ok = em.downloadAndInstallExtensionByName(name, True, True)
+        except TypeError:
+            # Older Slicer without the (installDependencies, waitForInstallation) overload.
+            ok = em.downloadAndInstallExtensionByName(name)
+except Exception as exc:
+    print('Failed to install %s: %s' % (name, exc), file=sys.stderr)
+slicer.util.exit(0 if ok else 1)
+EOF
+
+  # $lang was validated in main(), so interpolating it into the script cannot
+  # break out of the quoted string.
+  lang_pyfile="$TMP/set-language.py"
+  cat > "$lang_pyfile" <<EOF
+import glob
+import os
+import re
+import sys
+
+import qt
+import slicer
+
+lang = '$lang'
+
+
+def series():
+    # Translations are maintained per Slicer series ("5.8", …), so ask the
+    # running application which one this is rather than guessing from a path.
+    try:
+        return '%s.%s' % (slicer.app.majorVersion, slicer.app.minorVersion)
+    except Exception:
+        pass
+    try:
+        match = re.match(r'(\d+\.\d+)', slicer.app.applicationVersion)
+        if match:
+            return match.group(1)
+    except Exception:
+        pass
+    return ''
+
+
+def main():
+    # The previous launch installed the extension; this fresh launch loaded its
+    # LanguageTools module, whose logic does the actual work.
+    try:
+        import LanguageTools
+    except ImportError:
+        print('SlicerLanguagePacks is installed but its LanguageTools module did not load.', file=sys.stderr)
+        return 1
+
+    locale = qt.QLocale(lang)
+    if locale.name() == 'C':
+        print("Qt does not recognize '%s' as a language code; run 'slicer-language list' to see the available codes." % lang, file=sys.stderr)
+        return 1
+
+    try:
+        logic = LanguageTools.LanguageToolsLogic()
+        if not logic.lreleasePath:
+            print('This Slicer does not bundle the lrelease tool needed to compile translations; install a more recent Slicer.', file=sys.stderr)
+            return 1
+        # The main branch tracks the preview release, so it is the fallback when
+        # this series has no translations of its own yet.
+        for branch in [b for b in (series(), 'main') if b]:
+            logic.slicerVersion = branch
+            try:
+                logic.downloadTsFilesFromGithub('https://github.com/Slicer/SlicerLanguageTranslations')
+                break
+            except Exception:
+                logic.removeTemporaryFolder()
+        else:
+            print('Could not download the translation files from https://github.com/Slicer/SlicerLanguageTranslations.', file=sys.stderr)
+            return 1
+        logic.normalizeTsFiles()
+        logic.convertTsFilesToQmFiles()
+        logic.installQmFiles()
+        try:
+            logic.installFontFiles()  # fonts for Chinese and other non-Latin scripts
+        except Exception:
+            pass
+        logic.removeTemporaryFolder()
+    except Exception as exc:
+        print('Installing the translation files failed: %s' % exc, file=sys.stderr)
+        return 1
+
+    # installQmFiles() put one file per component here, named after the locale
+    # Qt normalizes the code to. Slicer_<locale>.qm is the one that has to be
+    # there: it holds the application's own strings, and is the file Slicer
+    # loads at startup.
+    folder = slicer.app.translationFolders()[0]
+    if not os.path.isfile(os.path.join(folder, 'Slicer_%s.qm' % locale.name())):
+        # A .ts file whose language Qt cannot place is normalized to the 'C'
+        # locale, so those files are not a language anyone can ask for.
+        codes = sorted({os.path.basename(f)[len('Slicer_'):-len('.qm')].replace('_', '-')
+                        for f in glob.glob(os.path.join(folder, 'Slicer_*.qm'))} - {'C'})
+        print("No translation exists for '%s'. Available: %s" % (lang, ', '.join(codes)), file=sys.stderr)
+        return 1
+
+    # Prove Slicer can load it, by installing it into this very process the
+    # same way the application does at startup.
+    translator = qt.QTranslator()
+    if not translator.load(locale, 'Slicer', '_', folder) or not slicer.app.installTranslator(translator):
+        print("The '%s' translation files in %s exist but Qt could not load them." % (lang, folder), file=sys.stderr)
+        return 1
+
+    # Only now that the translation is present and loadable, switch Slicer to it.
+    settings = slicer.app.userSettings()
+    settings.setValue('Internationalization/Enabled', True)
+    settings.setValue('language', lang)
+    count = len(glob.glob(os.path.join(folder, '*_%s.qm' % locale.name())))
+    print('Installed and verified %d translation files for %s in %s.' % (count, lang, folder))
+    return 0
+
+
+slicer.util.exit(main())
+EOF
+
+  # Assembled in pieces to keep the source lines short.
+  ext_error="Could not install SlicerLanguagePacks. If Slicer failed to start"
+  ext_error="$ext_error for lack of system libraries, install them first (run"
+  ext_error="$ext_error slicer-deps); otherwise launch Slicer and use its"
+  ext_error="$ext_error Extensions Manager."
+
+  # Slicer's own startup chatter goes to stdout; drop it and keep stderr, where
+  # both Slicer and the scripts above report actual problems.
+  log "Installing the SlicerLanguagePacks extension…"
+  # shellcheck disable=SC2086
+  $runner "$exe" --no-splash --no-main-window --python-script "$ext_pyfile" >/dev/null \
+    || err "$ext_error"
+
+  log "Downloading the '$lang' translation and switching Slicer to it…"
+  # shellcheck disable=SC2086
+  $runner "$exe" --no-splash --no-main-window --python-script "$lang_pyfile" >/dev/null \
+    || err "Could not install or verify the '$lang' translation (details above). Launch Slicer and use the extension's LanguageTools module instead."
+
+  log "${C_GREEN}Slicer will start in '$lang' (translation installed and verified).${C_RESET}"
+}
+
+# ---------------------------------------------------------------------------- #
+# main
+# ---------------------------------------------------------------------------- #
+main() {
+  command_arg=''
+  exe_override=''
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -h|--help) usage; exit 0 ;;
+      --slicer)
+        [ $# -ge 2 ] || err "--slicer needs a path."
+        exe_override="$2"; shift ;;
+      --slicer=*) exe_override="${1#--slicer=}" ;;
+      --) shift; break ;;
+      -*) err "Unknown option: $1 (try --help)." ;;
+      *)
+        [ -z "$command_arg" ] || err "Only one language code may be given (try --help)."
+        command_arg="$1" ;;
+    esac
+    shift
+  done
+
+  # Anything after a literal "--" is the language code, so a code that starts
+  # with a dash can still be spelled out.
+  if [ -z "$command_arg" ] && [ $# -gt 0 ]; then command_arg="$1"; fi
+
+  setup_colors
+
+  [ -n "$command_arg" ] || { usage >&2; exit 2; }
+
+  if [ "$command_arg" = list ]; then
+    list_languages
+    exit 0
+  fi
+
+  # The value lands inside a quoted Python string, so only these characters may
+  # pass.
+  case "$command_arg" in
+    *[!A-Za-z0-9_-]*)
+      err "Expected a language code like fr-FR, es-419 or pt-BR (got '$command_arg'), or 'list' to see the available codes." ;;
+  esac
+
+  if [ -n "$exe_override" ]; then
+    exe="$exe_override"
+  else
+    exe="$(find_slicer || true)"
+  fi
+  [ -n "$exe" ] && [ -x "$exe" ] \
+    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+
+  configure_language "$command_arg" "$exe"
+}
+
+main "$@"
