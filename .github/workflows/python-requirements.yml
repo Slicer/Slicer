@@ -6,6 +6,8 @@ on:
     paths:
       - "SuperBuild/External_python*.cmake"
       - "SuperBuild/Python/**"
+      - "CMakeLists.txt"
+      - "Utilities/Scripts/*python*"
       - "CMake/Testing/SlicerPythonRequirementsTest.cmake"
       - ".github/workflows/python-requirements.yml"
   pull_request:
@@ -14,6 +16,8 @@ on:
     paths:
       - "SuperBuild/External_python*.cmake"
       - "SuperBuild/Python/**"
+      - "CMakeLists.txt"
+      - "Utilities/Scripts/*python*"
       - "CMake/Testing/SlicerPythonRequirementsTest.cmake"
       - ".github/workflows/python-requirements.yml"
   workflow_dispatch:
@@ -27,6 +31,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: requirements-base
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install validation tools
+        run: >-
+          python -m pip install --only-binary=:all:
+          -r Utilities/Scripts/requirements-python-validation.txt
+
+      - name: Test dependency validator
+        run: python -m unittest discover -s Utilities/Scripts -p test_validate_python_requirements.py -v
 
       - name: Test SuperBuild Python requirements
         run: >-
@@ -34,3 +59,37 @@ jobs:
           -DSlicer_SOURCE_DIR="${{ github.workspace }}"
           -DTEST_BINARY_DIR="${{ runner.temp }}/SlicerPythonRequirementsTest"
           -P CMake/Testing/SlicerPythonRequirementsTest.cmake
+
+      - name: Validate pinned wheel environments
+        shell: bash
+        run: |
+          args=()
+          if [ "$HAS_BASE" = "true" ]; then
+            args+=(--base-root "$GITHUB_WORKSPACE/requirements-base")
+          fi
+          python Utilities/Scripts/validate_python_requirements.py \
+            --check-pip \
+            --cache "$RUNNER_TEMP/python-wheel-metadata" \
+            --output "$RUNNER_TEMP/python-dependency-report.json" \
+            "${args[@]}"
+        env:
+          HAS_BASE: ${{ github.event_name == 'pull_request' }}
+
+      - name: Publish dependency validation summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/python-dependency-report.md" ]; then
+            cat "$RUNNER_TEMP/python-dependency-report.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload dependency validation report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-dependency-validation
+          path: |
+            ${{ runner.temp }}/python-dependency-report.json
+            ${{ runner.temp }}/python-dependency-report.md
+            ${{ runner.temp }}/python-dependency-report.pip.json
+          if-no-files-found: warn

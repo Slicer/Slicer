@@ -1,0 +1,2 @@
+packaging>=24.2,<27
+license-expression>=30.4,<31

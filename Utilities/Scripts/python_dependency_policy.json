@@ -1,0 +1,65 @@
+{
+  "allowed_licenses": [
+    "0BSD",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MIT-CMU",
+    "MIT-0",
+    "PSF-2.0",
+    "Unlicense",
+    "Zlib"
+  ],
+  "license_exceptions": {
+    "certifi==2026.10.19": {
+      "metadata_sha256": "c5772b145a10a114d0fd21869fae53ffb79df02bc946baa84a45a66a254a3924",
+      "reason": "Maintainer-approved MPL-2.0 exception for this certifi release. MPL-2.0 is file-level copyleft, not permissive; its notice, license, and applicable source-distribution obligations still apply.",
+      "source": "https://spdx.org/licenses/MPL-2.0.html"
+    },
+    "couchdb==1.2": {
+      "metadata_sha256": "c43d25eb6afa4eba93fb878eeb3ccf0bfa92de531ceaa1da8b17ce6e51524754",
+      "reason": "Maintainer-approved BSD declaration for this CouchDB release despite legacy metadata not specifying a precise SPDX variant.",
+      "source": "https://pypi.org/project/CouchDB/1.2/"
+    },
+    "dcmqi==0.4.0": {
+      "metadata_sha256": "aac456d8cf547b6fb69bce50eb1c97034f0a3db6225c6adb4399ec9803f42ea5",
+      "reason": "Maintainer-approved embedded MIT-style license text and MIT classifier for this dcmqi release; not an automatic audit of bundled native components.",
+      "source": "https://pypi.org/project/dcmqi/0.4.0/"
+    },
+    "dicomweb-client==0.61.0": {
+      "metadata_sha256": "6b48be9b84e495abc1ea17e0abcf1c37a7858b815c93c5de7788c8b81c623d50",
+      "reason": "Maintainer-approved MIT declaration for this dicomweb-client release; legacy License field names LICENSE rather than an SPDX identifier.",
+      "source": "https://pypi.org/project/dicomweb-client/0.61.0/"
+    },
+    "gitdb==4.0.12": {
+      "metadata_sha256": "7f2750b2bb89035d119ff1a09c48b218fe4f025b25d511bcdd34e08705793d41",
+      "reason": "Maintainer-approved BSD License declaration for this gitdb release despite legacy metadata not specifying a precise SPDX variant.",
+      "source": "https://pypi.org/project/gitdb/4.0.12/"
+    },
+    "highdicom==0.27.0": {
+      "metadata_sha256": "e2b89fa101585c8c465d50d5a2e72d4cfe472c80a786e585f78f9b218ca0ae07",
+      "reason": "Maintainer-approved MIT declaration for this highdicom release; legacy License field names LICENSE rather than an SPDX identifier.",
+      "source": "https://pypi.org/project/highdicom/0.27.0/"
+    },
+    "scipy==1.17.1": {
+      "metadata_sha256": [
+        "4b376d4b3d3793f42a5cffb077d28b41eaa6cde79d15fed11caa13642711b5d1",
+        "cbb8b0a9c869c5952c635022d57c37886ddcf27601838eabfdfdc6ccbd37c0ba",
+        "e95371d1ee0e396a9b34513197785feaf4946100078bf31ec6943cddc2a1e571"
+      ],
+      "reason": "Maintainer-approved embedded license declarations for the selected SciPy wheels in this release, including their distinct platform metadata. This exception does not classify all bundled components as BSD or replace their license obligations.",
+      "source": "https://pypi.org/project/scipy/1.17.1/"
+    }
+  },
+  "legacy_license_aliases": {
+    "simpleitk==2.5.5": {
+      "expression": "Apache-2.0",
+      "metadata_sha256": "0778602e9b413025314fe082a9ca454c6309e23f2d361e7724c60f5e40f2fbce",
+      "source": "https://github.com/SimpleITK/SimpleITK/blob/v2.5.5/LICENSE"
+    }
+  }
+}
