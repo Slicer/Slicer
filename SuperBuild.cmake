@@ -139,9 +139,9 @@ if(Slicer_USE_PYTHONQT)
       python-extension-manager-requirements
       )
     if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
-      # python-PyGithub requires SSL support in Python
+      # SlicerWizard uses requests for GitHub's HTTPS API.
       list(APPEND Slicer_DEPENDENCIES
-        python-extension-manager-ssl-requirements
+        python-requests-requirements
         )
     else()
       message(STATUS "--------------------------------------------------")

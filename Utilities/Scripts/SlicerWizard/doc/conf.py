@@ -91,7 +91,6 @@ extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.intersphi
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/%i.%i" % sys.version_info[:2], None),
-    "github": ("http://jacquev6.github.io/PyGithub/v1", None),
 }
 
 try:

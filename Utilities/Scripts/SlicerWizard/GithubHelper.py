@@ -1,314 +1,199 @@
-"""Helpers for interacting with github."""
+"""GitHub REST helpers for SlicerWizard, using personal access tokens.
+
+Responses are ordinary dictionaries, not PyGitHub objects. Authentication uses
+GITHUB_TOKEN or Git's credential helper; no JWT signing is needed.
+"""
 
 import git
 import os
 import subprocess
+from urllib.parse import quote, urljoin, urlparse
 
-from github import Github
-from github.GithubObject import NotSet  # noqa: F401
+import requests
 
-from urllib.parse import urlparse
-
-__all__ = [
-    "logIn",
-    "getRepo",
-    "getFork",
-    "getPullRequest",
-]
+__all__ = ["logIn", "getRepo", "getFork", "getPullRequest"]
 
 
-# =============================================================================
 class _CredentialToken:
-    # ---------------------------------------------------------------------------
     def __init__(self, text=None, **kwargs):
-        # Set attributes from named arguments
-        self._keys = set(kwargs.keys())
+        self._keys = set(kwargs)
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-        # Set attributes from input text (i.e. 'git credential fill' output)
         if text is not None:
             for line in text.split("\n"):
                 if "=" in line:
-                    t = line.split("=", 1)
-                    self._keys.add(t[0])
-                    setattr(self, t[0], t[1])
+                    key, value = line.split("=", 1)
+                    self._keys.add(key)
+                    setattr(self, key, value)
 
-    # ---------------------------------------------------------------------------
     def __str__(self):
-        # Return string representation suitable for being fed to 'git credential'
-        lines = [f"{k}={getattr(self, k)}" for k in self._keys]
-        return "%s\n\n" % "\n".join(lines)
+        return "\n".join(f"{key}={getattr(self, key)}" for key in self._keys) + "\n\n"
 
 
-# -----------------------------------------------------------------------------
 def _credentials(client, request, action="fill"):
-    # Set up and execute 'git credential' process, passing stringized token to
-    # the process's stdin
-    p = client.credential(action, as_process=True, istream=subprocess.PIPE)
-    out, err = p.communicate(input=str(request).encode("utf-8"))
-
-    # Raise exception if process failed
-    if p.returncode != 0:
-        raise git.GitCommandError(["credential", action], p.returncode,
-                                  err.rstrip())
-
-    # Return token parsed from the command's output
+    process = client.credential(action, as_process=True, istream=subprocess.PIPE)
+    out, err = process.communicate(input=str(request).encode("utf-8"))
+    if process.returncode != 0:
+        raise git.GitCommandError(["credential", action], process.returncode, err.rstrip())
     return _CredentialToken(out.decode())
 
 
-# -----------------------------------------------------------------------------
+class Github:
+    """The small synchronous GitHub REST surface required by SlicerWizard."""
+
+    def __init__(self, token):
+        token = token.strip()
+        self.session = requests.Session()
+        # Keep netrc credentials from overriding the explicit bearer token.
+        self.session.auth = lambda request: request
+        self.session.headers.update({
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "SlicerWizard",
+        })
+
+    @staticmethod
+    def _url(path):
+        if not path.startswith(("https://", "/")) or path.startswith("//"):
+            raise ValueError("Expected a GitHub API path or HTTPS URL")
+        url = path if path.startswith("https://") else "https://api.github.com" + path
+        parsed = urlparse(url)
+        if (parsed.scheme != "https" or parsed.netloc != "api.github.com"
+                or parsed.username or parsed.fragment):
+            raise ValueError("Refusing to send GitHub credentials to a non-GitHub API URL")
+        return url
+
+    def request(self, method, path, **kwargs):
+        url = self._url(path)
+        # GitHub redirects renamed or transferred repositories; follow those manually
+        # so that credentials are only ever sent to the GitHub API host.
+        for _ in range(5):
+            response = self.session.request(method, url, timeout=30, allow_redirects=False, **kwargs)
+            location = response.headers.get("Location")
+            if response.status_code in (301, 302, 307, 308) and location:
+                url = self._url(urljoin(url, location))
+                kwargs.pop("params", None)
+                continue
+            break
+        if not 200 <= response.status_code < 300:
+            # Do not retry writes: a network failure can occur after GitHub accepted them.
+            raise requests.HTTPError(
+                f"GitHub {method} {urlparse(url).path}: HTTP {response.status_code}: {response.text[:1000]}",
+                response=response)
+        return response
+
+
+    def pages(self, path, **params):
+        """Yield every list item, following GitHub's authenticated pagination."""
+        visited = set()
+        while path:
+            if path in visited:
+                raise ValueError("GitHub returned a pagination loop")
+            visited.add(path)
+            response = self.request("GET", path, params={"per_page": 100, **params})
+            data = response.json()
+            if not isinstance(data, list):
+                raise ValueError("Expected a list from the GitHub API")
+            yield from data
+            path = response.links.get("next", {}).get("url")
+            params = {}
+
+    def get_user(self):
+        return self.request("GET", "/user").json()
+
+    def create_repo(self, name, description=None):
+        payload = {"name": name}
+        if description is not None:
+            payload["description"] = description
+        return self.request("POST", "/user/repos", json=payload).json()
+
+    def create_pull(self, repository, **payload):
+        return self.request("POST", repository["url"] + "/pulls", json=payload).json()
+
+    def edit_pull(self, pull, **payload):
+        return self.request("PATCH", pull["url"], json=payload).json()
+
+    def compare(self, repository, base, head):
+        return self.request(
+            "GET", repository["url"] + f"/compare/{quote(base, safe='')}...{quote(head, safe='')}").json()
+
+
 def logIn(repo=None):
-    """Create github session.
+    """Authenticate a token and approve Git credentials only after success.
 
-    :param repo:
-      If not ``None``, use the git client (i.e. configuration) from the specified
-      git repository; otherwise use a default client.
-    :type repo:
-      :class:`git.Repo <git:git.repo.base.Repo>` or ``None``.
-
-    :returns: A logged in github session.
-    :rtype: :class:`github.Github <github:github.MainClass.Github>`.
-
-    :raises:
-      :class:`github:github.GithubException.BadCredentialsException` if
-      authentication fails.
-
-
-    This obtains and returns a logged in github session using the user's
-    credentials, as managed by `git-credentials`_; login information is obtained
-    as necessary via the same. On success, the credentials are also saved to any
-    store that the user has configured.
-
-    If `GITHUB_TOKEN` environment variable is set, its value will be used
-    as password when invoking `git-credentials`_.
-
-    .. _git-credentials: https://git-scm.com/docs/gitcredentials.html
+    GITHUB_TOKEN takes precedence and is used to authenticate directly, without
+    prompting. Otherwise Git obtains the token, including any required prompting.
+    In both cases the credentials are approved after successful authentication so
+    that a configured credential helper stores them for later ``git push`` calls.
     """
-
-    # Get client; use generic client if no repository
     client = repo.git if repo is not None else git.cmd.Git()
-
-    # Request login credentials
-    github_token = {}
-    if "GITHUB_TOKEN" in os.environ:
-        github_token = {"password": os.environ["GITHUB_TOKEN"]}
-    credRequest = _CredentialToken(protocol="https", host="github.com", **github_token)
-    cred = _credentials(client, credRequest)
-
-    # Log in
-    session = Github(cred.username, cred.password)
-
-    # Try to get the logged in user name; will raise an exception if
-    # authentication failed
-    if session.get_user().login:
-        # Save the credentials
-        _credentials(client, cred, action="approve")
-
-    # Return github session
+    token = os.environ.get("GITHUB_TOKEN", "").strip()
+    if token:
+        session = Github(token)
+        user = session.get_user()
+        cred = _CredentialToken(
+            protocol="https", host="github.com", username=user["login"], password=token)
+    else:
+        cred = _credentials(client, _CredentialToken(protocol="https", host="github.com"))
+        session = Github(cred.password)
+        session.get_user()
+    _credentials(client, cred, action="approve")
     return session
 
 
-# -----------------------------------------------------------------------------
+def _isRepoName(name):
+    parts = name.split("/")
+    return len(parts) == 2 and not any(part in {"", ".", ".."} for part in parts)
+
+
 def getRepo(session, name=None, url=None):
-    """Get a github repository by name or URL.
+    """Return repository metadata, or None for a non-GitHub URL or a 404.
 
-    :param session:
-      A github session object, e.g. as returned from :func:`.logIn`.
-    :type session:
-      :class:`github.Github <github:github.MainClass.Github>` or
-      :class:`github:github.AuthenticatedUser.AuthenticatedUser`
-    :param name:
-      Name of the repository to look up.
-    :type name:
-      :class:`str` or ``None``
-    :param url:
-      Clone URL of the repository.
-    :type url:
-      :class:`str` or ``None``
-
-    :returns: Matching repository, or ``None`` if no such repository was found.
-    :rtype: :class:`github:github.Repository.Repository` or ``None``.
-
-    This function attempts to look up a github repository by either its qualified
-    github name (i.e. '*<owner>*/*<repository>*') or a clone URL:
-
-    .. code-block:: python
-
-      # Create session
-      session = GithubHelper.logIn()
-
-      # Look up repository by name
-      repoA = GithubHelper.getRepo(session, 'octocat/Hello-World')
-
-      # Look up repository by clone URL
-      cloneUrl = 'https://github.com/octocat/Hello-World.git'
-      repoB = GithubHelper.getRepo(session, cloneUrl)
-
-    If both ``name`` and ``url`` are provided, only ``name`` is used. The ``url``
-    must have "github.com" as the host.
+    Other API failures propagate rather than masquerading as a missing repo.
     """
-
+    if name is None:
+        parsed = urlparse(url or "")
+        if parsed.hostname not in {"github.com", "www.github.com"}:
+            return None
+        name = parsed.path.strip("/").removesuffix(".git")
+        if not _isRepoName(name):
+            return None
+    elif not _isRepoName(name):
+        raise ValueError("Expected a GitHub repository name in owner/repository form")
+    path = "/repos/" + "/".join(quote(part, safe="") for part in name.split("/"))
     try:
-        # Look up repository by name
-        if name is not None:
-            return session.get_repo(name)
-
-        # Look up repository by clone URL
-        if url is not None:
-            # Parse URL
-            url = urlparse(url)
-
-            # Check that this is a github URL
-            if not url.hostname.endswith("github.com"):
-                return None
-
-            # Get repository name from clone URL
-            name = url.path
-            if name.startswith("/"):
-                name = name[1:]
-            if name.endswith(".git"):
-                name = name[:-4]
-
-            # Look up repository by name
-            return getRepo(session, name=name)
-
-    except:
-        pass
-
-    return None
+        return session.request("GET", path).json()
+    except requests.HTTPError as error:
+        if error.response is not None and error.response.status_code == 404:
+            return None
+        raise
 
 
-# -----------------------------------------------------------------------------
-def getFork(user, upstream, create=False):
-    """Get user's fork of the specified repository.
-
-    :param user:
-      Github user or organization which owns the requested fork.
-    :type user:
-      :class:`github:github.NamedUser.NamedUser`,
-      :class:`github:github.AuthenticatedUser.AuthenticatedUser` or
-      :class:`github:github.Organization.Organization`
-    :param upstream:
-      Upstream repository of the requested fork.
-    :type upstream:
-      :class:`github:github.Repository.Repository`
-    :param create:
-      If ``True``, create the forked repository if no such fork exists.
-    :type create:
-      :class:`bool`
-
-    :return:
-      The specified fork repository, or ``None`` if no such fork exists and
-      ``create`` is ``False``.
-    :rtype:
-      :class:`github:github.Repository.Repository` or ``None``.
-
-    :raises:
-      :class:`github:github.GithubException.GithubException` if ``user`` does not
-      have permission to create a repository.
-
-    This function attempts to look up a repository owned by the specified user or
-    organization which is a fork of the specified upstream repository, optionally
-    creating one if it does not exist:
-
-    .. code-block:: python
-
-      # Create session
-      session = GithubHelper.logIn()
-
-      # Get user
-      user = session.get_user("jdoe")
-
-      # Get upstream repository
-      upstream = GithubHelper.getRepo(session, 'octocat/Spoon-Knife')
-
-      # Look up fork
-      fork = GithubHelper.getFork(user=user, upstream=upstream)
-    """
-
-    repo = user.get_repo(upstream.name)
-    if repo.fork and repo.parent.url == upstream.url:
-        return repo
-
+def getFork(session, user, upstream, create=False):
+    """Find the user's fork, or create it; reject a conflicting repository."""
+    repo = getRepo(session, name=f"{user['login']}/{upstream['name']}")
+    if repo is not None:
+        if repo.get("fork") and repo.get("parent", {}).get("id") == upstream["id"]:
+            return repo
+        raise ValueError(f"{repo['full_name']} exists but is not a fork of {upstream['full_name']}")
     if create:
-        return user.create_fork(upstream)
-
+        return session.request("POST", upstream["url"] + "/forks", json={}).json()
     return None
 
 
-# -----------------------------------------------------------------------------
-def getPullRequest(upstream, ref, user=None, fork=None, target=None):
-    """Get pull request for the specified user's fork and ref.
-
-    :param upstream:
-      Upstream (target) repository of the requested pull request.
-    :type upstream:
-      :class:`github:github.Repository.Repository`
-    :param user:
-      Github user or organization which owns the requested pull request.
-    :type user:
-      :class:`github:github.NamedUser.NamedUser`,
-      :class:`github:github.AuthenticatedUser.AuthenticatedUser`,
-      :class:`github:github.Organization.Organization` or ``None``
-    :param ref:
-      Branch name or git ref of the requested pull request.
-    :type ref:
-      :class:`str`
-    :param fork:
-      Downstream (fork) repository of the requested pull request.
-    :type fork:
-      :class:`github:github.Repository.Repository` or ``None``
-    :param target:
-      Branch name or git ref of the requested pull request target.
-    :type target:
-      :class:`str` or ``None``
-
-    :return:
-      The specified pull request, or ``None`` if no such pull request exists.
-    :rtype:
-      :class:`github:github.PullRequest.PullRequest` or ``None``.
-
-    This function attempts to look up the pull request made by ``user`` for
-    ``upstream`` to integrate the user's ``ref`` into upstream's ``target``:
-
-    .. code-block:: python
-
-      # Create session
-      session = GithubHelper.logIn()
-
-      # Get user and upstream repository
-      user = session.get_user("jdoe")
-      repo = GithubHelper.getRepo(session, 'octocat/Hello-World')
-
-      # Look up request to merge 'my-branch' of any fork into 'main'
-      pr = GithubHelper.getPullRequest(upstream=repo, user=user,
-                                       ref='my-branch', target='main')
-
-    If any of ``user``, ``fork`` or ``target`` are ``None``, those criteria are
-    not considered when searching for a matching pull request. If multiple
-    matching requests exist, the first matching request is returned.
-    """
-
-    if user is not None:
-        user = user.login
-
-    for p in upstream.get_pulls():
-        # Check candidate request against specified criteria
-        if p.head.ref != ref:
+def getPullRequest(session, upstream, ref, user=None, fork=None, target=None):
+    """Find an open pull request matching the source branch and optional owner."""
+    params = {"state": "open"}
+    if target is not None:
+        params["base"] = target
+    for pull in session.pages(upstream["url"] + "/pulls", **params):
+        head = pull["head"]
+        if head["ref"] != ref:
             continue
-
-        if user is not None and p.head.user.login != user:
+        if user is not None and (head.get("user") or {}).get("login") != user["login"]:
             continue
-
-        if fork is not None and p.head.repo.url != fork.url:
+        if fork is not None and (head.get("repo") or {}).get("id") != fork["id"]:
             continue
-
-        if target is not None and p.base.ref != target:
-            continue
-
-        # If we get here, we found a match
-        return p
-
-    # No match
+        return pull
     return None

@@ -24,10 +24,9 @@ def haveGit():
     if hasattr(http.client, "HTTPSConnection"):
         # SSL is available
         try:
-            global git, GithubHelper, NotSet
+            global git, GithubHelper
             import git  # noqa: F401
             from . import GithubHelper
-            from .GithubHelper import NotSet
 
             _haveGit = True
         except ImportError:
@@ -41,6 +40,7 @@ def haveGit():
 
 from . import __version__, __version_info__
 
+from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 from .Utilities import *
@@ -284,18 +284,19 @@ class ExtensionWizard:
             logging.info("creating github repository")
             gh = GithubHelper.logIn(r)
             ghu = gh.get_user()
-            for ghr in ghu.get_repos():
-                if ghr.name == name:
+            for ghr in gh.pages("/user/repos", affiliation="owner"):
+                if ghr["name"] == name and ghr["owner"]["login"] == ghu["login"]:
                     die("declined: a github repository named '%s' already exists" % name)
 
-            description = p.getValue("EXTENSION_DESCRIPTION", default=NotSet)
-            ghr = ghu.create_repo(name, description=description)
-            logging.debug("created github repository: %s", ghr.url)
+            # A missing description must not raise (getValue raises KeyError for default=None)
+            description = p.getValue("EXTENSION_DESCRIPTION", default="")
+            ghr = gh.create_repo(name, description=description or None)
+            logging.debug("created github repository: %s", ghr["url"])
 
             # Set extension meta-information
             logging.info("updating extension meta-information")
-            raw_url = "{}/{}".format(ghr.html_url.replace("//", "//raw."), branch)
-            self._setExtensionUrl(p, "HOMEPAGE", ghr.html_url)
+            raw_url = "{}/{}".format(ghr["html_url"].replace("//", "//raw."), branch)
+            self._setExtensionUrl(p, "HOMEPAGE", ghr["html_url"])
             self._setExtensionUrl(p, "ICONURL", f"{raw_url}/{name}.png")
             p.save()
 
@@ -312,9 +313,9 @@ class ExtensionWizard:
 
             # Set up the remote and push
             logging.info("preparing to push extension repository")
-            remote = r.create_remote("origin", ghr.clone_url)
+            remote = r.create_remote("origin", ghr["clone_url"])
             remote.push(branch)
-            logging.info("extension published to %s", ghr.url)
+            logging.info("extension published to %s", ghr["url"])
 
         except SystemExit:
             raise
@@ -443,12 +444,12 @@ class ExtensionWizard:
             if upstreamRepo is None:
                 die("error accessing extension index upstream repository")
 
-            logging.debug("index upstream: %s", upstreamRepo.url)
+            logging.debug("index upstream: %s", upstreamRepo["url"])
 
-            forkedRepo = GithubHelper.getFork(user=gh.get_user(), create=True,
+            forkedRepo = GithubHelper.getFork(gh, user=gh.get_user(), create=True,
                                               upstream=upstreamRepo)
 
-            logging.debug("index fork: %s", forkedRepo.url)
+            logging.debug("index fork: %s", forkedRepo["url"])
 
             # Get or create extension index repository
             if args.index is not None:
@@ -461,21 +462,21 @@ class ExtensionWizard:
             if xiRepo is None:
                 logging.info("cloning index repository")
                 xiRepo = getRepo(xip, create=createEmptyRepo)
-                xiRemote = getRemote(xiRepo, [forkedRepo.clone_url], create="origin")
+                xiRemote = getRemote(xiRepo, [forkedRepo["clone_url"]], create="origin")
 
             else:
                 # Check that the index repository is a clone of the github fork
-                xiRemote = [forkedRepo.clone_url, forkedRepo.git_url]
+                xiRemote = [forkedRepo["clone_url"], forkedRepo["git_url"]]
                 xiRemote = getRemote(xiRepo, xiRemote)
                 if xiRemote is None:
                     raise Exception("the extension index repository ('%s')"
                                     " is not a clone of %s" %
-                                    (xiRepo.working_tree_dir, forkedRepo.clone_url))
+                                    (xiRepo.working_tree_dir, forkedRepo["clone_url"]))
 
             logging.debug("index fork remote: %s", xiRemote.url)
 
             # Find or create the upstream remote for the index repository
-            xiUpstream = [upstreamRepo.clone_url, upstreamRepo.git_url]
+            xiUpstream = [upstreamRepo["clone_url"], upstreamRepo["git_url"]]
             xiUpstream = getRemote(xiRepo, xiUpstream, create="upstream")
             logging.debug("index upstream remote: %s", xiUpstream.url)
 
@@ -509,10 +510,10 @@ class ExtensionWizard:
             xiRepo.git.checkout(xiBase, B=branch)
 
             # Check to see if there is an existing pull request
-            pullRequest = GithubHelper.getPullRequest(upstreamRepo, fork=forkedRepo,
+            pullRequest = GithubHelper.getPullRequest(gh, upstreamRepo, fork=forkedRepo,
                                                       ref=branch)
             logging.debug("existing pull request: %s",
-                          pullRequest if pullRequest is None else pullRequest.url)
+                          pullRequest if pullRequest is None else pullRequest["url"])
 
             if update:
                 # Get old SCM revision
@@ -553,19 +554,24 @@ class ExtensionWizard:
 
             # Try to add compare URL to pull request message, if applicable
             if update and oldRef is not None:
-                extensionRepo = GithubHelper.getRepo(gh, url=xd.scmurl)
+                # The compare URL is optional; failing to look up the repository must not
+                # abort the registration (the lookup never raised before the REST rewrite).
+                try:
+                    extensionRepo = GithubHelper.getRepo(gh, url=xd.scmurl)
+                except Exception:
+                    extensionRepo = None
 
                 if extensionRepo is not None:
                     logging.info("building compare URL for update")
-                    logging.debug("  repository: %s", extensionRepo.url)
+                    logging.debug("  repository: %s", extensionRepo["url"])
                     logging.debug("     old SHA: %s", oldRef)
                     logging.debug("     new SHA: %s", xd.scmrevision)
 
                     try:
-                        c = extensionRepo.compare(oldRef, xd.scmrevision)
+                        c = gh.compare(extensionRepo, oldRef, xd.scmrevision)
 
                         msg.append("")
-                        msg.append("See %s to view changes to the extension." % c.html_url)
+                        msg.append("See %s to view changes to the extension." % c["html_url"])
 
                     except:
                         warn("failed to build compare URL: %s" % sys.exc_info()[1])
@@ -577,7 +583,7 @@ class ExtensionWizard:
 
             if args.dryRun:
                 if pullRequest is not None:
-                    logging.info("updating pull request %s", pullRequest.html_url)
+                    logging.info("updating pull request %s", pullRequest["html_url"])
 
                 logging.info("prepared pull request message:\n%s", "\n".join(msg))
 
@@ -587,17 +593,17 @@ class ExtensionWizard:
             if pullRequest is None:
                 logging.info("creating pull request")
 
-                pull = f"{forkedRepo.owner.login}:{branch}"
-                pullRequest = upstreamRepo.create_pull(
+                pull = f"{forkedRepo['owner']['login']}:{branch}"
+                pullRequest = gh.create_pull(upstreamRepo,
                     title=msg[0], body="\n".join(msg[1:]),
                     head=pull, base=args.target)
 
-                logging.info("created pull request %s", pullRequest.html_url)
+                logging.info("created pull request %s", pullRequest["html_url"])
 
             else:
-                logging.info("updating pull request %s", pullRequest.html_url)
-                pullRequest.edit(title=msg[0], body="\n".join(msg[1:]), state="open")
-                logging.info("updated pull request %s", pullRequest.html_url)
+                logging.info("updating pull request %s", pullRequest["html_url"])
+                gh.edit_pull(pullRequest, title=msg[0], body="\n".join(msg[1:]), state="open")
+                logging.info("updated pull request %s", pullRequest["html_url"])
 
         except SystemExit:
             raise
