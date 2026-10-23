@@ -10,7 +10,7 @@
 =========================================================================*/
 #include "itkImageFileWriter.h"
 
-#include "itkCastImageFilter.h"
+#include "itkClampImageFilter.h"
 
 #include "itkPluginUtilities.h"
 #include "CastScalarVolumeCLP.h"
@@ -41,7 +41,10 @@ int DoIt(int argc, char* argv[], Tin, Tout)
   typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  typedef itk::CastImageFilter<InputImageType, OutputImageType> FilterType;
+  // Clamp values to the range of the output type. Converting an out-of-range
+  // value (such as a negative value to an unsigned type) is undefined behavior
+  // and gives different results on different platforms.
+  typedef itk::ClampImageFilter<InputImageType, OutputImageType> FilterType;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
