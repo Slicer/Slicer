@@ -23,11 +23,12 @@ if(exec_not_successful)
   message( SEND_ERROR "${test_cmd} failed with args ${test_name} ${model1} ${model2} ${output_model}" )
 endif()
 
+# Compare the model content (points, cells, point and cell data) instead of the
+# file bytes, because the compressed file content may differ for the same model
+# (for example, zlib-ng output depends on the CPU architecture).
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E compare_files ${output_baseline} ${output_model}
+  COMMAND ${test_cmd} CompareModels ${output_baseline} ${output_model}
   RESULT_VARIABLE test_not_successful
-  OUTPUT_QUIET
-  ERROR_QUIET
   )
 
 if(test_not_successful)
