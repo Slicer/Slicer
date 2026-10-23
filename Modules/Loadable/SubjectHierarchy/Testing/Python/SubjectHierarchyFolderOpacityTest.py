@@ -1,5 +1,7 @@
 import unittest
 
+import qt
+
 import slicer
 
 
@@ -11,6 +13,15 @@ class SubjectHierarchyFolderOpacityTest(unittest.TestCase):
     def runTest(self):
         self.setUp()
         self.test_FolderOpacityAvailableBeforeVisibilityToggle()
+
+    @staticmethod
+    def _menuOfAction(action):
+        # QAction.menu() is not available in Python with Qt 6, so look for the
+        # menu that was set on the action instead.
+        for widget in slicer.app.topLevelWidgets():
+            if isinstance(widget, qt.QMenu) and widget.menuAction() == action:
+                return widget
+        return None
 
     def test_FolderOpacityAvailableBeforeVisibilityToggle(self):
         subjectHierarchyModule = slicer.app.moduleManager().module("SubjectHierarchy")
@@ -38,7 +49,7 @@ class SubjectHierarchyFolderOpacityTest(unittest.TestCase):
         self.assertTrue(opacityAction.visible)
         self.assertIsNone(shNode.GetItemDataNode(folderItem))
 
-        opacityMenu = opacityAction.menu()
+        opacityMenu = self._menuOfAction(opacityAction)
         self.assertIsNotNone(opacityMenu)
         opacitySlider = opacityMenu.actions()[0].defaultWidget()
         self.assertIsNotNone(opacitySlider)
