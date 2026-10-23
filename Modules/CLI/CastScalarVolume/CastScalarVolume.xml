@@ -2,7 +2,7 @@
 <executable>
   <category>Filtering.Arithmetic</category>
   <title>Cast Scalar Volume</title>
-  <description><![CDATA[Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.]]></description>
+  <description><![CDATA[Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.\nValues outside the range of the output type are clamped to the minimum or maximum value of the output type.]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/castscalarvolume.html</documentation-url>
   <license/>
