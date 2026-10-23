@@ -9,7 +9,7 @@
     },
     "dependencies": {},
     "devDependencies": {
-      "@babel/core": "7.2.0",
+      "@babel/core": "7.29.6",
       "parcel-bundler": "^1.6.1"
     },
     "keywords": []
