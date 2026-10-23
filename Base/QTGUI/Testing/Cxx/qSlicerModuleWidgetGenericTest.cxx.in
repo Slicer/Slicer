@@ -33,6 +33,9 @@
 // CTK includes
 #include <ctkErrorLogModel.h>
 
+// MRMLWidgets includes
+#include <qMRMLWidget.h>
+
 // Slicer includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerAbstractModuleWidget.h>
@@ -67,7 +70,9 @@ const int allowedWidgetWidthScreenPercentage = 30; // about 1/3 of the screen wi
 int qSlicer@MODULENAME@ModuleWidgetGenericTest(int argc, char* argv[])
 {
   bool res = true;
+  qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
   app.errorLogModel()->setTerminalOutputs(ctkErrorLogTerminalOutput::All);
 
   qSlicer@MODULENAME@Module module(0);
