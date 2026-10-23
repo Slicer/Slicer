@@ -22,6 +22,7 @@
 #include <QTimer>
 
 // Slicer includes
+#include <qMRMLWidget.h>
 #include <qSlicerApplication.h>
 #include "vtkSlicerConfigure.h"
 
@@ -50,7 +51,9 @@ int qSlicerVolumeRenderingModuleWidgetTest2(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
+  qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
   {
