@@ -76,7 +76,11 @@ void qSlicerSslTester::testHttpsConnection()
   QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
   QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 
-  QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
+  QNetworkRequest request(QUrl(url));
+  // Do not follow redirects, so that the redirect status code itself is checked.
+  // Qt 6 follows redirects by default; Qt 5 does not.
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+  QNetworkReply* reply = manager->get(request);
   eventLoop.exec();
 
   QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
