@@ -1,4 +1,4 @@
-# Set update schedules for GitHub Actions and Python dependencies
+# Set update schedules for GitHub Actions, Python and npm dependencies
 
 version: 2
 updates:
@@ -25,6 +25,15 @@ updates:
       interval: "monthly"
     # Disable routine version-update PRs, not security-update PRs.
     # Enable security updates in repository settings after verifying alerts.
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "COMP"
+
+  - package-ecosystem: "npm"
+    directory: "/Modules/Scripted/WebServer/Resources/docroot"
+    schedule:
+      interval: "monthly"
+    # Disable routine version-update PRs, not security-update PRs.
     open-pull-requests-limit: 0
     commit-message:
       prefix: "COMP"
