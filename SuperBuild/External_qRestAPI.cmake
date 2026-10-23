@@ -40,7 +40,7 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "5c4a76e5a76868989ac556df305bb35273dfd164"
+    "f933aadb440a8660fe02460142f82cc3cfd9db11"
     QUIET
     )
 
