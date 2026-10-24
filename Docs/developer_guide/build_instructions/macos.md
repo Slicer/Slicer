@@ -1,6 +1,6 @@
 # macOS
 
-See example [New experimental Recipe for MacOS (Silicon)](#recipe-for-macos-silicon) below.
+See example [New experimental Recipe for MacOS (Silicon)](#recipe-for-macos-on-arm64-new-work-in-progress) below.
 
 ## Prerequisites
 
@@ -296,6 +296,7 @@ sudo chown -R $(whoami) /opt/scmake /opt/scd
 ##### Create Build Script
 
 ```
+cd /opt/scmake
 vim build_slicer.sh
 ```
 
@@ -322,15 +323,17 @@ fi
 cd "$SLICER_SUPERBUILD_DIR"
 
 # Configure with CMake
+# Adjust the architecture (uname -m), Qt version (qmake --version), and
+# minimum macOS deployment target below for your build environment.
 cmake \
-  -DCMAKE_OSX_ARCHITECTURES=arm64 \ #CHANGE ME: OSX architecture (uname -m)
-  -DSlicer_REQUIRED_QT_VERSION="6.10" \ # CHANGEME: Qt version (qmake --version)
+  -DCMAKE_OSX_ARCHITECTURES=arm64 \
+  -DSlicer_REQUIRED_QT_VERSION="6.10" \
   -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DSlicer_USE_SimpleITK:BOOL=OFF \
   -DSlicer_BUILD_I18N_SUPPORT:BOOL=OFF \
   -DSlicer_BUILD_DICOM_SUPPORT:BOOL=OFF \
   -DSlicer_VTK_SMP_IMPLEMENTATION_TYPE:STRING=Sequential \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=15.7 \ # CHANGEME: OSX version (About this Mac -> macOS)
+  -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=15.7 \
   -DCMAKE_OSX_SYSROOT:STRING="$(xcrun --show-sdk-path)" \
   "$SLICER_SOURCE_DIR"
 
