@@ -2,6 +2,7 @@ set(KIT qSlicer${MODULE_NAME}Module)
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
+  vtkSceneViewConvertLegacySceneViewTest.cxx
   vtkSceneViewEventsTest.cxx
   vtkSceneViewImportSceneTest.cxx
   vtkSceneViewStoreSceneTest.cxx
@@ -13,8 +14,8 @@ set(KIT_TEST_SRCS
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
   SOURCES ${KIT_TEST_SRCS}
-  INCLUDE_DIRECTORIES ${vtkSlicerSequencesModuleLogic_INCLUDE_DIRS}
-  TARGET_LIBRARIES vtkSlicer${MODULE_NAME}ModuleLogic qSlicer${MODULE_NAME}Module vtkSlicerSequencesModuleLogic
+  INCLUDE_DIRECTORIES ${vtkSlicerModelsModuleLogic_INCLUDE_DIRS} ${vtkSlicerSequencesModuleLogic_INCLUDE_DIRS}
+  TARGET_LIBRARIES vtkSlicer${MODULE_NAME}ModuleLogic qSlicer${MODULE_NAME}Module vtkSlicerModelsModuleLogic vtkSlicerSequencesModuleLogic
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
   )
@@ -22,6 +23,7 @@ slicerMacroConfigureModuleCxxTestDriver(
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 
 #-----------------------------------------------------------------------------
+simple_test(vtkSceneViewConvertLegacySceneViewTest)
 simple_test(vtkSceneViewEventsTest)
 simple_test(vtkSceneViewImportSceneTest ${TEMP})
 simple_test(vtkSceneViewStoreSceneTest)
