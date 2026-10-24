@@ -79,6 +79,11 @@ public:
 
   Q_INVOKABLE static void mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList);
 
+  /// Convert a double to the shortest string that converts back to the exact same value
+  /// (for example "0.1", "848", "33.31780242919922"), for storing the value as text
+  /// without loss of precision. QString::number(value) would keep only 6 significant digits.
+  Q_INVOKABLE static QString toExactString(double value);
+
   /// Closes all top-level widgets after a delay (in milliseconds).
   /// This is useful for exiting the application in automated tests.
   /// Simple application close signal cannot close the application if a dialog is shown.
