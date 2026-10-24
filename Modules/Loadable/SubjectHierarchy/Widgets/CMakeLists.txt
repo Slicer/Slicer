@@ -94,3 +94,8 @@ endif()
 if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
   add_subdirectory(DesignerPlugins)
 endif()
+
+#-----------------------------------------------------------------------------
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

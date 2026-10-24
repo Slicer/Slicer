@@ -20,6 +20,8 @@
 
 // Qt includes
 #include <QDebug>
+#include <QHash>
+#include <QSignalBlocker>
 #include <QTimer>
 
 // CTK includes
@@ -39,6 +41,7 @@
 #include <vtkCollection.h>
 
 // STD includes
+#include <functional>
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
@@ -84,6 +87,32 @@ void qMRMLSceneModelPrivate::init()
   this->CallBack->SetCallback(qMRMLSceneModel::onMRMLSceneEvent);
 
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)));
+
+  // Keep the node -> item cache up-to-date. These connections are made before any other
+  // connection to the model, therefore the cache is already up-to-date when other objects
+  // are notified about row insertion.
+  QObject::connect(q,
+                   &QAbstractItemModel::rowsInserted,
+                   q,
+                   [this, q](const QModelIndex& parent, int first, int last)
+                   {
+                     QStandardItem* parentItem = (parent.isValid() ? q->itemFromIndex(parent) : q->invisibleRootItem());
+                     for (int row = first; row <= last; ++row)
+                     {
+                       this->addToRowCacheRecursively(parentItem->child(row, 0));
+                     }
+                   });
+  QObject::connect(q,
+                   &QAbstractItemModel::rowsAboutToBeRemoved,
+                   q,
+                   [this, q](const QModelIndex& parent, int first, int last)
+                   {
+                     QStandardItem* parentItem = (parent.isValid() ? q->itemFromIndex(parent) : q->invisibleRootItem());
+                     for (int row = first; row <= last; ++row)
+                     {
+                       this->removeFromRowCacheRecursively(parentItem->child(row, 0));
+                     }
+                   });
 
   q->setNameColumn(0);
   q->setListenNodeModifiedEvent(qMRMLSceneModel::OnlyVisibleNodes);
@@ -252,6 +281,77 @@ void qMRMLSceneModelPrivate::reparentItems(QList<QStandardItem*>& children, int 
   int max = newParentItem->rowCount() - q->postItems(newParentItem).count();
   int pos = qMin(min + newIndex, max);
   newParentItem->insertRow(pos, children);
+}
+
+//------------------------------------------------------------------------------
+QList<QStandardItem*> qMRMLSceneModelPrivate::createNodeItems(vtkMRMLNode* node)
+{
+  Q_Q(qMRMLSceneModel);
+  QList<QStandardItem*> items;
+  const int columnCount = q->columnCount();
+  for (int column = 0; column < columnCount; ++column)
+  {
+    QStandardItem* newNodeItem = new QStandardItem();
+    q->updateItemFromNode(newNodeItem, node, column);
+    items.append(newNodeItem);
+  }
+  return items;
+}
+
+//------------------------------------------------------------------------------
+namespace
+{
+vtkMRMLNode* nodeFromItemData(QStandardItem* item)
+{
+  if (!item)
+  {
+    return nullptr;
+  }
+  QVariant nodePointer = item->data(qMRMLSceneModel::PointerRole);
+  if (!nodePointer.isValid() || item->data(qMRMLSceneModel::UIDRole).toString() == "scene")
+  {
+    return nullptr;
+  }
+  return reinterpret_cast<vtkMRMLNode*>(nodePointer.toLongLong());
+}
+} // namespace
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::addToRowCacheRecursively(QStandardItem* item)
+{
+  if (!item)
+  {
+    return;
+  }
+  vtkMRMLNode* node = nodeFromItemData(item);
+  if (node)
+  {
+    this->RowCache[node] = item;
+  }
+  const int rowCount = item->rowCount();
+  for (int row = 0; row < rowCount; ++row)
+  {
+    this->addToRowCacheRecursively(item->child(row, 0));
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::removeFromRowCacheRecursively(QStandardItem* item)
+{
+  if (!item)
+  {
+    return;
+  }
+  vtkMRMLNode* node = nodeFromItemData(item);
+  if (node && this->RowCache.value(node, nullptr) == item)
+  {
+    this->RowCache.remove(node);
+  }
+  const int rowCount = item->rowCount();
+  for (int row = 0; row < rowCount; ++row)
+  {
+    this->removeFromRowCacheRecursively(item->child(row, 0));
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -470,44 +570,19 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
 
   QModelIndex nodeIndex;
 
-  // Try to find the nodeIndex in the cache first
-  QMap<vtkMRMLNode*, QPersistentModelIndex>::iterator rowCacheIt = d->RowCache.find(node);
-  if (rowCacheIt == d->RowCache.end())
+  // The cache contains the item of all the nodes that are in the model (it is kept up-to-date from the
+  // row insertion/removal signals of the model), therefore if the node is not in the cache then it is not
+  // in the model (it may be a node that is just being added).
+  QStandardItem* nodeItem = d->RowCache.value(node, nullptr);
+  if (!nodeItem)
   {
-    // not found in cache, therefore it cannot be in the model
     return nodeIndex;
   }
-  if (rowCacheIt.value().isValid())
-  {
-    // An entry found in the cache. If the item at the cached index matches the requested node ID
-    // then we use it.
-    QStandardItem* nodeItem = this->itemFromIndex(rowCacheIt.value());
-    if (nodeItem != nullptr)
-    {
-      if (nodeItem->data(qMRMLSceneModel::UIDRole).toString().compare(QString::fromUtf8(node->GetID())) == 0)
-      {
-        // id matched
-        nodeIndex = rowCacheIt.value();
-      }
-    }
-  }
-
-  // The cache was not up-to-date. Do a slow linear search.
+  nodeIndex = nodeItem->index();
   if (!nodeIndex.isValid())
   {
-    // QAbstractItemModel::match doesn't browse through columns
-    // we need to do it manually
-    QModelIndexList nodeIndexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole, QString(node->GetID()), 1, Qt::MatchExactly | Qt::MatchRecursive);
-    Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
-    if (nodeIndexes.size() == 0)
-    {
-      // maybe the node hasn't been added to the scene yet...
-      // (if it's called from populateScene/inserteNode)
-      d->RowCache.remove(node);
-      return QModelIndex();
-    }
-    nodeIndex = nodeIndexes[0];
-    d->RowCache[node] = nodeIndex;
+    // The item is not in the model (e.g., it has been taken out temporarily while reparenting)
+    return nodeIndex;
   }
   if (column == 0)
   {
@@ -526,8 +601,22 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node) const
 {
-  Q_D(const qMRMLSceneModel);
-  return d->indexes(QString(node->GetID()));
+  QModelIndexList nodeIndexes;
+  QModelIndex nodeIndex = this->indexFromNode(node);
+  if (!nodeIndex.isValid())
+  {
+    return nodeIndexes;
+  }
+  nodeIndexes << nodeIndex;
+  // Add the QModelIndexes from the other columns
+  const int row = nodeIndex.row();
+  QModelIndex nodeParentIndex = nodeIndex.parent();
+  const int sceneColumnCount = this->columnCount(nodeParentIndex);
+  for (int j = 1; j < sceneColumnCount; ++j)
+  {
+    nodeIndexes << this->index(row, j, nodeParentIndex);
+  }
+  return nodeIndexes;
 }
 
 //------------------------------------------------------------------------------
@@ -780,24 +869,91 @@ void qMRMLSceneModel::updateScene()
 void qMRMLSceneModel::populateScene()
 {
   Q_D(qMRMLSceneModel);
-  // Add nodes
-  int index = -1;
-  vtkMRMLNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  d->MisplacedNodes.clear();
   if (!d->MRMLScene)
   {
     return;
   }
+  QStandardItem* sceneItem = this->mrmlSceneItem();
+  if (!sceneItem)
+  {
+    return;
+  }
+
+  // All the model items are created detached from the model, children are appended to their (detached) parent item,
+  // and only the top-level rows (direct children of the scene item) are inserted in the model, in a single step.
+  // Inserting the nodes one by one would make the proxy models and views process each insertion separately,
+  // which takes a long time for large scenes (and there may be many scene models in the application).
+  QHash<vtkMRMLNode*, QStandardItem*> createdItems; // first column item of each created row
+  QList<QList<QStandardItem*>> topLevelRows;
+  // Creates the row of a node (and of its parents, if not created yet) and appends it to its parent.
+  // Nodes are added in the order they are in the scene, except that a parent that appears later in the scene
+  // than its first child is added at the position of that child (this is how the nodes were ordered when they
+  // were inserted one by one).
+  std::function<QStandardItem*(vtkMRMLNode*)> createNodeRow = [&](vtkMRMLNode* node) -> QStandardItem*
+  {
+    QStandardItem* nodeItem = createdItems.value(node, nullptr);
+    if (nodeItem)
+    {
+      return nodeItem;
+    }
+    QList<QStandardItem*> row = d->createNodeItems(node);
+    nodeItem = row[0];
+    createdItems[node] = nodeItem;
+    if (d->ListenNodeModifiedEvent == AllNodes)
+    {
+      this->observeNode(node);
+    }
+    vtkMRMLNode* parentNode = this->parentNode(node);
+    QStandardItem* parentItem = (parentNode ? createNodeRow(parentNode) : nullptr);
+    if (parentItem)
+    {
+      // Parent item is not in the model yet, therefore no signals are emitted
+      parentItem->appendRow(row);
+    }
+    else
+    {
+      topLevelRows << row;
+    }
+    return nodeItem;
+  };
+
+  vtkMRMLNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
   for (d->MRMLScene->GetNodes()->InitTraversal(it); (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it));)
   {
-    index++;
-    d->insertNode(node, index);
+    createNodeRow(node);
   }
-  for (vtkMRMLNode* const misplacedNode : d->MisplacedNodes)
+  if (topLevelRows.isEmpty())
   {
-    this->onMRMLNodeModified(misplacedNode);
+    return;
   }
+
+  // Insert the top-level rows (with all their children) in the model in one step, after the pre-items
+  // and before the post-items
+  const int firstRow = this->preItems(sceneItem).count();
+  const int rowCount = topLevelRows.size();
+  const int columnCount = this->columnCount();
+  // Insert empty rows in one step (a single rowsInserted signal is emitted; proxy models do not accept the
+  // empty rows yet), then set the items of the rows. Signals are blocked while setting the items, because
+  // setChild emits layout and data change signals for each item, instead a single dataChanged signal is
+  // emitted at the end for all the new rows, which makes proxy models accept the rows in one step.
+  // Note: QStandardItem::insertRows(int, QList<QStandardItem*>) is not used because it does not set the
+  // model of the children of the inserted items (setChild does).
+  sceneItem->insertRows(firstRow, rowCount);
+  {
+    const QSignalBlocker blocker(this);
+    for (int row = 0; row < rowCount; ++row)
+    {
+      for (int column = 0; column < columnCount; ++column)
+      {
+        sceneItem->setChild(firstRow + row, column, topLevelRows[row][column]);
+      }
+      // The rows were empty when the rowsInserted signal was emitted, add the items to the cache now
+      d->addToRowCacheRecursively(topLevelRows[row][0]);
+    }
+  }
+  QModelIndex sceneIndex = sceneItem->index();
+  emit dataChanged(this->index(firstRow, 0, sceneIndex), this->index(firstRow + rowCount - 1, columnCount - 1, sceneIndex));
 }
 
 //------------------------------------------------------------------------------
@@ -831,7 +987,6 @@ QStandardItem* qMRMLSceneModelPrivate::insertNode(vtkMRMLNode* node, int nodeInd
   int row = min + nodeIndex;
   if (row > max)
   {
-    this->MisplacedNodes << node;
     row = max;
   }
   nodeItem = q->insertNode(node, parentItem, row);
@@ -845,21 +1000,12 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
   Q_D(qMRMLSceneModel);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
-  QList<QStandardItem*> items;
-  for (int i = 0; i < this->columnCount(); ++i)
-  {
-    QStandardItem* newNodeItem = new QStandardItem();
-    this->updateItemFromNode(newNodeItem, node, i);
-    items.append(newNodeItem);
-  }
+  QList<QStandardItem*> items = d->createNodeItems(node);
 
-  // Insert an invalid item in the cache to indicate that the node is in the model
-  // but we don't know its index yet. This is needed because a custom widget may be notified
-  // about row insertion before insertRow() returns (and the RowCache entry is added).
-  // For example, qSlicerPresetComboBox::setIconToPreset() is called at the end of insertRow,
-  // before the RowCache entry is added.
-  d->RowCache[node] = QModelIndex();
-
+  // The node item is added to the RowCache from the rowsInserted signal, before any other object
+  // is notified about the row insertion (a custom widget may look up the node from the model
+  // before insertRow() returns, for example qSlicerPresetComboBox::setIconToPreset() is called
+  // at the end of insertRow).
   if (parent)
   {
     parent->insertRow(row, items);
@@ -869,7 +1015,6 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
   {
     this->insertRow(row, items);
   }
-  d->RowCache[node] = items[0]->index();
   // TODO: don't listen to nodes that are hidden from editors ?
   if (d->ListenNodeModifiedEvent == AllNodes)
   {
@@ -907,17 +1052,17 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   // (drag-and-drop is performed using delayed update, therefore
   // any node modifications, even those unrelated to changing the parent
   // would override drag-and-drop result).
-  if (this->canBeAChild(node) && !d->DraggedNodes.contains(node))
+  // If the item has no parent, then it means it hasn't been put into the scene yet,
+  // and it will do it automatically (no need to look up the parent item).
+  QStandardItem* parentItem = item->parent();
+  if (parentItem && this->canBeAChild(node) && !d->DraggedNodes.contains(node))
   {
-    QStandardItem* parentItem = item->parent();
     QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
     if (newParentItem == nullptr)
     {
       newParentItem = this->mrmlSceneItem();
     }
-    // If the item has no parent, then it means it hasn't been put into the scene yet.
-    // and it will do it automatically.
-    if (parentItem && parentItem != newParentItem)
+    if (parentItem != newParentItem)
     {
       int newIndex = this->nodeIndex(node);
       if (parentItem != newParentItem || newIndex != item->row())
@@ -1206,11 +1351,10 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   // Remove all the observations on the node
   qvtkDisconnect(node, vtkCommand::NoEvent, this, nullptr);
 
-  // TODO: can be fasten by browsing the tree only once
-  QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole, QString(node->GetID()), 1, Qt::MatchExactly | Qt::MatchRecursive);
-  if (indexes.count())
+  QModelIndex nodeIndex = this->indexFromNode(node);
+  if (nodeIndex.isValid())
   {
-    QStandardItem* item = this->itemFromIndex(indexes[0].sibling(indexes[0].row(), 0));
+    QStandardItem* item = this->itemFromIndex(nodeIndex);
     // The children may be lost if not reparented, we ensure they got reparented.
     while (item->rowCount())
     {
@@ -1227,7 +1371,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
         d->Orphans.removeAll(orphans);
       }
     }
-    this->removeRow(indexes[0].row(), indexes[0].parent());
+    this->removeRow(nodeIndex.row(), nodeIndex.parent());
   }
 }
 
@@ -1351,7 +1495,17 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
     return;
   }
   // Q_ASSERT(node->GetScene()->IsNodePresent(node));
-  QModelIndexList nodeIndexes = d->indexes(nodeUID);
+  QModelIndexList nodeIndexes;
+  if (nodeUID == QString(node->GetID()))
+  {
+    // Fast lookup using the node -> item cache
+    nodeIndexes = this->indexes(node);
+  }
+  else
+  {
+    // The node ID has changed, the items can only be found by the old ID
+    nodeIndexes = d->indexes(nodeUID);
+  }
   // qDebug() << "onMRMLNodeModified" << node->GetID() << nodeIndexes;
   Q_ASSERT(nodeIndexes.count());
   for (int i = 0; i < nodeIndexes.size(); ++i)
