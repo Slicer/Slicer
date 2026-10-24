@@ -250,6 +250,61 @@ int TestVoxelValueUnits(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+//---------------------------------------------------------------------------
+int TestVoxelValueUnitsWithoutLabels(const std::string& tempDir)
+{
+  // Units must be written for an axis that has no label (voxel values without quantity), and an axis
+  // that has a label but no unit (sequence axis with index name but no index unit) must not break writing.
+  // ITK's NrrdIO used to print the units of an axis only if the axis had a label, and crashed on a labeled axis without unit.
+  std::cout << "TestVoxelValueUnitsWithoutLabels" << std::endl;
+  const int numberOfFrames = 2;
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(sequenceNode);
+  sequenceNode->SetIndexName("frame");
+  sequenceNode->SetIndexUnit("");
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkNew<vtkMRMLVectorVolumeNode> volumeNode;
+    vtkNew<vtkImageData> imageData;
+    imageData->SetDimensions(4, 3, 2);
+    imageData->AllocateScalars(VTK_FLOAT, 3);
+    imageData->GetPointData()->GetScalars()->Fill(frameIndex + 0.5);
+    volumeNode->SetAndObserveImageData(imageData);
+    vtkNew<vtkCodedEntry> units;
+    units->SetValueSchemeMeaning("mm/s", "UCUM", "millimeter per second");
+    volumeNode->SetVoxelValueUnits(units);
+    // No voxel value quantity: the pixel axis has units but no label
+    sequenceNode->SetDataNodeAtValue(volumeNode, std::to_string(frameIndex));
+  }
+
+  vtkMRMLVolumeSequenceStorageNode* storageNode = vtkMRMLVolumeSequenceStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeSequenceStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  std::string fileName = tempFilename(tempDir, "voxel_value_units_without_labels", "seq.nrrd", true);
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(sequenceNode), true);
+
+  std::string header = readNrrdHeader(fileName);
+  std::cout << header << std::endl;
+  CHECK_BOOL(header.find("units: \"mm/s\" \"\" \"\" \"\" \"\"") != std::string::npos, true);
+  CHECK_BOOL(header.find("labels: \"\" \"\" \"\" \"\" \"frame\"") != std::string::npos, true);
+
+  vtkMRMLSequenceNode* readSequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  CHECK_NOT_NULL(readSequenceNode);
+  CHECK_BOOL(storageNode->ReadData(readSequenceNode), true);
+  CHECK_INT(readSequenceNode->GetNumberOfDataNodes(), numberOfFrames);
+  CHECK_STD_STRING(readSequenceNode->GetIndexName(), "frame");
+  CHECK_STD_STRING(readSequenceNode->GetIndexUnit(), "");
+  vtkMRMLScalarVolumeNode* readVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(readSequenceNode->GetNthDataNode(0));
+  CHECK_NOT_NULL(readVolumeNode);
+  CHECK_NOT_NULL(readVolumeNode->GetVoxelValueUnits());
+  CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+  CHECK_NULL(readVolumeNode->GetVoxelValueQuantity());
+
+  return EXIT_SUCCESS;
+}
+
 } // namespace
 
 //---------------------------------------------------------------------------
@@ -449,6 +504,7 @@ int vtkMRMLVolumeSequenceStorageNodeNrrdTest(int argc, char* argv[])
 
   // Unit of the voxel values
   CHECK_EXIT_SUCCESS(TestVoxelValueUnits(tempDir));
+  CHECK_EXIT_SUCCESS(TestVoxelValueUnitsWithoutLabels(tempDir));
 
   std::cout << "-----------------------------------------------------" << std::endl;
 
