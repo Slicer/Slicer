@@ -34,6 +34,7 @@
 #include "vtkMRMLSegmentationDisplayNode.h"
 
 // VTK includes
+#include <vtkDataArray.h>
 #include <vtkDataObject.h>
 #include <vtkDoubleArray.h>
 #include <vtkErrorCode.h>
@@ -43,17 +44,18 @@
 #include <vtkImageCast.h>
 #include <vtkImageConstantPad.h>
 #include <vtkImageExtractComponents.h>
+#include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationIntegerVectorKey.h>
 #include <vtkInformationStringKey.h>
 #include <vtkITKArchetypeImageSeriesVectorReaderFile.h>
 #include <vtkMultiBlockDataSet.h>
 #include <vtkNew.h>
-#include <vtkTeemNRRDWriter.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtkTeemNRRDWriter.h>
 #include <vtkTransform.h>
 #include <vtkXMLMultiBlockDataWriter.h>
 #include <vtkXMLMultiBlockDataReader.h>
@@ -630,14 +632,19 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       imageData->GetExtent(commonGeometryExtent);
     }
 
-    // Special case: extent = [0, 0, 0, 0, 0, 0] means there is no image data
+    // Special case: extent = [0, 0, 0, 0, 0, 0] with a blank voxel means there is no image data.
+    // A NRRD file cannot be created without voxel data, so an empty segmentation is written as a single
+    // blank voxel. A single voxel that is set is a segmentation that contains exactly one voxel, which
+    // must be kept: its segment extent refers to that voxel, so discarding the image would leave
+    // nothing to extract the segment from.
     isExtentValid = true;
     if (imageExtentInFile[0] == 0    //
         && imageExtentInFile[1] == 0 //
         && imageExtentInFile[2] == 0 //
         && imageExtentInFile[3] == 0 //
         && imageExtentInFile[4] == 0 //
-        && imageExtentInFile[5] == 0)
+        && imageExtentInFile[5] == 0 //
+        && !vtkMRMLSegmentationStorageNode::IsAnyVoxelSet(imageData))
     {
       imageExtentInFile[1] = -1;
       imageExtentInFile[3] = -1;
@@ -887,8 +894,11 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
             layerExtent[i * 2] += referenceImageExtentOffset[i];
             layerExtent[i * 2 + 1] += referenceImageExtentOffset[i];
           }
-          // Copy with clipping to specified extent
-          if (layerExtent[0] <= layerExtent[1]    //
+          // Copy with clipping to specified extent.
+          // If the file contains no image data then there is nothing to copy, whatever extent the
+          // segment metadata specifies (extracting from an image without voxels would crash).
+          if (isExtentValid                       //
+              && layerExtent[0] <= layerExtent[1] //
               && layerExtent[2] <= layerExtent[3] //
               && layerExtent[4] <= layerExtent[5])
           {
@@ -1010,6 +1020,26 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   this->CreateRepresentationsBySerializedNames(segmentation, containedRepresentationNames);
 
   return 1;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSegmentationStorageNode::IsAnyVoxelSet(vtkImageData* image)
+{
+  vtkDataArray* scalars = (image && image->GetPointData()) ? image->GetPointData()->GetScalars() : nullptr;
+  if (!scalars)
+  {
+    return false;
+  }
+  for (int component = 0; component < scalars->GetNumberOfComponents(); ++component)
+  {
+    double range[2] = { 0.0, 0.0 };
+    scalars->GetRange(range, component);
+    if (range[0] != 0.0 || range[1] != 0.0)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -1288,7 +1318,7 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string fullName)
+int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string path)
 {
   if (!segmentationNode)
   {
@@ -1353,8 +1383,23 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
   vtkOrientedImageDataResample::FillImage(commonGeometryImage, 0);
 
+  std::string tempDir;
+  std::string tempFilePath;
+  if (!this->GenerateTempFilePathForWrite(path, tempDir, tempFilePath))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation", "Failed to create temporary file and directory for writing.");
+    return 0;
+  }
+  if (tempFilePath.empty())
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation", "Failed to create temporary file and directory for writing.");
+    return 0;
+  }
+
   vtkNew<vtkTeemNRRDWriter> writer;
-  writer->SetFileName(fullName.c_str());
+  writer->SetFileName(tempFilePath.c_str());
   writer->SetUseCompression(this->GetUseCompression());
   writer->SetSpace(nrrdSpaceLeftPosteriorSuperior);
   writer->SetMeasurementFrameMatrix(nullptr);
@@ -1509,17 +1554,28 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
 
   writer->Write();
-  this->GetUserMessages()->SetObservedObject(nullptr);
-  int writeSuccess = true;
+
+  // Check for write errors
   if (writer->GetWriteError())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
-                                     "Error writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
-    writeSuccess = false;
+                                     "Error writing temporary NRRD file " << tempFilePath << ". Error code: " << writer->GetWriteError());
+    vtksys::SystemTools::RemoveFile(tempFilePath);
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
   }
 
-  return (writeSuccess ? 1 : 0);
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(path);
+  if (!this->MoveFilesWithLocking(tempDir, targetDir))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation", "Failed to commit temporary files");
+    return 0;
+  }
+
+  this->GetUserMessages()->SetObservedObject(nullptr);
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -1645,10 +1701,25 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     multiBlockDataset->SetBlock(segmentIndex, currentPolyDataCopy);
   }
 
+  std::string tempDir;
+  std::string tempFilePath;
+  if (!this->GenerateTempFilePathForWrite(path, tempDir, tempFilePath))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation", "Failed to create temporary file and directory for writing.");
+    return 0;
+  }
+  if (tempFilePath.empty())
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation", "Failed to create temporary file and directory for writing.");
+    return 0;
+  }
+
   // Write multiblock dataset to disk
   vtkSmartPointer<vtkXMLMultiBlockDataWriter> writer = vtkSmartPointer<vtkXMLMultiBlockDataWriter>::New();
   writer->SetInputData(multiBlockDataset);
-  writer->SetFileName(path.c_str());
+  writer->SetFileName(tempFilePath.c_str());
   if (this->UseCompression)
   {
     writer->SetDataModeToBinary();
@@ -1662,6 +1733,24 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
 
   this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+  if (writer->GetErrorCode() != vtkErrorCode::NoError)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+                                     "Error occurred while writing polydata in file" << tempFilePath << ". Error code: " << writer->GetErrorCode());
+    vtksys::SystemTools::RemoveFile(tempFilePath);
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(path);
+  if (!this->MoveFilesWithLocking(tempDir, targetDir))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation", "Failed to commit temporary files.");
+    return 0;
+  }
+
   this->GetUserMessages()->SetObservedObject(nullptr);
 
   // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
