@@ -217,6 +217,52 @@ int TestVoxelValueUnits(const std::string& tempDir)
 
 } // namespace
 
+int TestVoxelValueUnitsWithoutQuantity(const std::string& tempDir)
+{
+  // Units must be written even if the voxel value quantity is not set (pixel axis with units but without label).
+  // ITK's NrrdIO used to print the units of an axis only if the axis had a label.
+  std::cout << "TestVoxelValueUnitsWithoutQuantity" << std::endl;
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLVectorVolumeNode* vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(vectorVolumeNode);
+  vtkNew<vtkImageData> imageData;
+  imageData->SetDimensions(10, 20, 30);
+  imageData->AllocateScalars(VTK_FLOAT, 3);
+  imageData->GetPointData()->GetScalars()->Fill(12.5);
+  vectorVolumeNode->SetAndObserveImageData(imageData);
+  vtkNew<vtkCodedEntry> units;
+  units->SetValueSchemeMeaning("mm/s", "UCUM", "millimeter per second");
+  vectorVolumeNode->SetVoxelValueUnits(units);
+
+  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  CHECK_NOT_NULL(storageNode);
+  storageNode->SetSingleFile(true);
+  const std::string fileName = tempFilename(tempDir, "voxel_value_units_without_quantity", "nrrd", true);
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(vectorVolumeNode), true);
+
+  std::ifstream file(fileName, std::ios::binary);
+  std::string header;
+  std::string line;
+  while (std::getline(file, line) && !line.empty() && line != "\r")
+  {
+    header += line + "\n";
+  }
+  std::cout << header << std::endl;
+  CHECK_BOOL(header.find("units: \"mm/s\" \"\" \"\" \"\"") != std::string::npos, true);
+  CHECK_BOOL(header.find("labels:") == std::string::npos, true);
+
+  vtkMRMLVectorVolumeNode* readVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  CHECK_NOT_NULL(readVolumeNode);
+  CHECK_BOOL(storageNode->ReadData(readVolumeNode), true);
+  CHECK_NOT_NULL(readVolumeNode->GetVoxelValueUnits());
+  CHECK_STRING(readVolumeNode->GetVoxelValueUnits()->GetCodeValue(), "mm/s");
+  CHECK_NULL(readVolumeNode->GetVoxelValueQuantity());
+
+  return EXIT_SUCCESS;
+}
+
 int TestFlipsLeftHandedVolumes(const std::string& tempDir)
 {
   std::cout << "TestFlipsLeftHandedVolumes" << std::endl;
@@ -506,6 +552,7 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg", false, false, true, false));
   CHECK_EXIT_SUCCESS(TestFlipsLeftHandedVolumes(tempDir));
   CHECK_EXIT_SUCCESS(TestVoxelValueUnits(tempDir));
+  CHECK_EXIT_SUCCESS(TestVoxelValueUnitsWithoutQuantity(tempDir));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
