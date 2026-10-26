@@ -107,6 +107,24 @@ bool vtkMRMLVolumeSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNo
   return refNode->IsA("vtkMRMLSequenceNode");
 }
 
+namespace
+{
+//----------------------------------------------------------------------------
+/// Returns true if the key is "axis N index <field>", where N is an axis that can be the sequence axis.
+bool IsSequenceAxisIndexKey(const std::string& key, const std::string& field)
+{
+  // The sequence axis is the last axis (axis 2 for 2D+t, axis 3 for 3D+t images) or the first axis (axis 0)
+  for (const char* axisIndex : { "0", "2", "3" })
+  {
+    if (key == std::string("axis ") + axisIndex + " index " + field)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+} // namespace
+
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
@@ -148,7 +166,6 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
   std::string dataNodeClassName;
-  unsigned int sequenceAxisIndex = 3;
 
   // Store per frame attributes (read from metadata field such as: "axis M item NNNN attributename")
   // Since most attributes are common across all frames and typically there are only a few of them,
@@ -158,20 +175,12 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
   {
-    if (*kit == "axis 0 index type" || *kit == "axis 3 index type")
+    if (IsSequenceAxisIndexKey(*kit, "type"))
     {
-      if (*kit == "axis 0 index type")
-      {
-        sequenceAxisIndex = 0;
-      }
       volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
     }
-    else if (*kit == "axis 0 index values" || *kit == "axis 3 index values")
+    else if (IsSequenceAxisIndexKey(*kit, "values"))
     {
-      if (*kit == "axis 0 index values")
-      {
-        sequenceAxisIndex = 0;
-      }
       std::string indexValue;
       for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str())); indexValueList >> indexValue;)
       {

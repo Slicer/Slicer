@@ -456,6 +456,97 @@ int TestNrrdVolumeSequenceWithoutListAxis(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+//---------------------------------------------------------------------------
+int TestNrrd2DVolumeSequence(const std::string& tempDir)
+{
+  // 3D NRRD file with 2 domain axes and a "list" axis (2D+t sequence).
+  // Frames are read as single-slice 3D volumes.
+  std::cout << "TestNrrd2DVolumeSequence" << std::endl;
+
+  const int dimensions[2] = { 6, 5 };
+  const int numberOfFrames = 3;
+  const std::string fileName = tempFilename(tempDir, "domain2dlist", "seq.nrrd", true);
+  {
+    std::ofstream file(fileName, std::ios::binary);
+    file << "NRRD0005\n"
+         << "type: int16\n"
+         << "dimension: 3\n"
+         << "space dimension: 2\n"
+         << "sizes: " << dimensions[0] << " " << dimensions[1] << " " << numberOfFrames << "\n"
+         << "space directions: (2,0) (0,3) none\n"
+         << "kinds: domain domain list\n"
+         << "endian: little\n"
+         << "encoding: raw\n"
+         << "labels: \"\" \"\" \"time\"\n"
+         << "units: \"\" \"\" \"s\"\n"
+         << "space origin: (10,20)\n"
+         << "axis 2 index type:=numeric\n"
+         << "axis 2 index values:=0.0 0.1 0.2\n"
+         << "\n";
+    // Voxel value is the voxel index in the 3D image
+    const vtkIdType numberOfVoxels = static_cast<vtkIdType>(dimensions[0]) * dimensions[1] * numberOfFrames;
+    for (vtkIdType voxelIndex = 0; voxelIndex < numberOfVoxels; ++voxelIndex)
+    {
+      const vtkTypeInt16 voxelValue = static_cast<vtkTypeInt16>(voxelIndex);
+      file.write(reinterpret_cast<const char*>(&voxelValue), sizeof(voxelValue));
+    }
+    CHECK_BOOL(file.good(), true);
+  }
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLVolumeSequenceStorageNode> storageNode;
+  scene->AddNode(storageNode);
+  vtkNew<vtkMRMLSequenceNode> sequenceNode;
+  scene->AddNode(sequenceNode);
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->ReadData(sequenceNode), true);
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), numberOfFrames);
+  CHECK_STD_STRING(sequenceNode->GetIndexName(), "time");
+  CHECK_STD_STRING(sequenceNode->GetIndexUnit(), "s");
+  CHECK_INT(sequenceNode->GetIndexType(), vtkMRMLSequenceNode::NumericIndex);
+  CHECK_STD_STRING(sequenceNode->GetNthIndexValue(2), "0.2");
+
+  // Single-slice volume, with the slice axis orthogonal to the image plane.
+  // The image is in LPS coordinate system (ITK convention).
+  const double expectedIjkToRas[4][4] = {
+    { -2.0, 0.0, 0.0, -10.0 }, //
+    { 0.0, -3.0, 0.0, -20.0 }, //
+    { 0.0, 0.0, 1.0, 0.0 },    //
+    { 0.0, 0.0, 0.0, 1.0 }     //
+  };
+  const vtkIdType numberOfVoxelsInFrame = static_cast<vtkIdType>(dimensions[0]) * dimensions[1];
+  for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
+  {
+    vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(sequenceNode->GetNthDataNode(frameIndex));
+    CHECK_NOT_NULL(volumeNode);
+    vtkNew<vtkMatrix4x4> ijkToRas;
+    volumeNode->GetIJKToRASMatrix(ijkToRas);
+    for (int row = 0; row < 4; ++row)
+    {
+      for (int column = 0; column < 4; ++column)
+      {
+        CHECK_DOUBLE_TOLERANCE(ijkToRas->GetElement(row, column), expectedIjkToRas[row][column], 1e-6);
+      }
+    }
+    vtkImageData* imageData = volumeNode->GetImageData();
+    CHECK_NOT_NULL(imageData);
+    CHECK_INT(imageData->GetDimensions()[0], dimensions[0]);
+    CHECK_INT(imageData->GetDimensions()[1], dimensions[1]);
+    CHECK_INT(imageData->GetDimensions()[2], 1);
+    CHECK_INT(imageData->GetNumberOfScalarComponents(), 1);
+    for (int j = 0; j < dimensions[1]; ++j)
+    {
+      for (int i = 0; i < dimensions[0]; ++i)
+      {
+        const vtkIdType expectedVoxelValue = frameIndex * numberOfVoxelsInFrame + i + j * dimensions[0];
+        CHECK_INT(static_cast<int>(imageData->GetScalarComponentAsDouble(i, j, 0, 0)), static_cast<int>(expectedVoxelValue));
+      }
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
 int vtkMRMLVolumeSequenceStorageNodeNrrdTest(int argc, char* argv[])
 {
   if (argc != 11)
@@ -501,6 +592,9 @@ int vtkMRMLVolumeSequenceStorageNodeNrrdTest(int argc, char* argv[])
 
   // 4D image without list axis
   CHECK_EXIT_SUCCESS(TestNrrdVolumeSequenceWithoutListAxis(tempDir));
+
+  // 2D+t image
+  CHECK_EXIT_SUCCESS(TestNrrd2DVolumeSequence(tempDir));
 
   // Unit of the voxel values
   CHECK_EXIT_SUCCESS(TestVoxelValueUnits(tempDir));

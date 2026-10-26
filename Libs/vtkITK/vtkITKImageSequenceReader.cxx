@@ -25,6 +25,7 @@
 #include "vtkImageExtractComponents.h"
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
+#include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
@@ -38,8 +39,9 @@
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
 // STD includes
-#include <cstdlib> // for atoi
-#include <cstring> // for strcmp
+#include <algorithm> // for std::min
+#include <cstdlib>   // for atoi
+#include <cstring>   // for strcmp
 #include <iostream>
 #include <sstream>
 #include <iomanip> // for std::setw and std::setfill
@@ -295,17 +297,46 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, std::vector<vtkS
   reader->Update();
   typename ImageType::ConstPointer image = reader->GetOutput();
 
-  // Get IJK to LPS matrix
+  // Get IJK to LPS matrix of a frame from the image axes that are not the sequence axis.
+  // If frames are 2D images (2D+t sequence) then they are stored as single-slice 3D volumes,
+  // with the slice axis orthogonal to the image plane and unit spacing (same as for 2D images
+  // read by vtkITKArchetypeImageSeriesReader).
   vtkNew<vtkMatrix4x4> ijkToLpsMatrix;
-  for (int i = 0; i < 3; i++)
+  const unsigned int spaceDim = std::min(ImageDimension, 3u);
+  int frameAxis = 0;
+  for (unsigned int imageAxis = 0; imageAxis < ImageDimension && frameAxis < 3; imageAxis++)
   {
-    double spacing = image->GetSpacing()[i];
-    double origin = image->GetOrigin()[i];
+    if (static_cast<int>(imageAxis) == listDimIdx)
+    {
+      continue;
+    }
+    double spacing = image->GetSpacing()[imageAxis];
     for (unsigned int j = 0; j < 3; j++)
     {
-      ijkToLpsMatrix->SetElement(j, i, spacing * image->GetDirection()[j][i]);
+      ijkToLpsMatrix->SetElement(j, frameAxis, j < spaceDim ? spacing * image->GetDirection()[j][imageAxis] : 0.0);
     }
-    ijkToLpsMatrix->SetElement(i, 3, origin);
+    frameAxis++;
+  }
+  for (unsigned int j = 0; j < 3; j++)
+  {
+    ijkToLpsMatrix->SetElement(j, 3, j < spaceDim ? image->GetOrigin()[j] : 0.0);
+  }
+  if (frameAxis == 2)
+  {
+    double axis0[3] = { ijkToLpsMatrix->GetElement(0, 0), ijkToLpsMatrix->GetElement(1, 0), ijkToLpsMatrix->GetElement(2, 0) };
+    double axis1[3] = { ijkToLpsMatrix->GetElement(0, 1), ijkToLpsMatrix->GetElement(1, 1), ijkToLpsMatrix->GetElement(2, 1) };
+    double axis2[3] = { 0.0, 0.0, 1.0 };
+    vtkMath::Cross(axis0, axis1, axis2);
+    if (vtkMath::Normalize(axis2) == 0.0)
+    {
+      axis2[0] = 0.0;
+      axis2[1] = 0.0;
+      axis2[2] = 1.0;
+    }
+    for (unsigned int j = 0; j < 3; j++)
+    {
+      ijkToLpsMatrix->SetElement(j, 2, axis2[j]);
+    }
   }
 
   // Transform from LPS to RAS
@@ -758,8 +789,49 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
     switch (imageIO->GetNumberOfDimensions())
     {
       case 3:
+        // 2D+t sequence, frames are loaded as single-slice 3D volumes
         switch (imageIO->GetPixelType())
         {
+          case itk::CommonEnums::IOPixel::SCALAR:
+            switch (imageIO->GetComponentType())
+            {
+              case itk::ImageIOBase::IOComponentEnum::DOUBLE: //
+                vtkITKExecuteDataFromFile<double, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::FLOAT: //
+                vtkITKExecuteDataFromFile<float, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::LONG: //
+                vtkITKExecuteDataFromFile<long, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::ULONG: //
+                vtkITKExecuteDataFromFile<unsigned long, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::INT: //
+                vtkITKExecuteDataFromFile<int, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::UINT: //
+                vtkITKExecuteDataFromFile<unsigned int, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::SHORT: //
+                vtkITKExecuteDataFromFile<short, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::USHORT: //
+                vtkITKExecuteDataFromFile<unsigned short, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::CHAR: //
+                vtkITKExecuteDataFromFile<char, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              case itk::ImageIOBase::IOComponentEnum::UCHAR: //
+                vtkITKExecuteDataFromFile<unsigned char, 3>(this, this->CachedImages, listDim, imageIO, this->VoxelVectorType);
+                break;
+              default:
+                vtkErrorMacro("Unexpected component type for scalar voxel: " //
+                              << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+                this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+                return;
+            }
+            break;
           case itk::CommonEnums::IOPixel::RGB:
             this->SetVoxelVectorType(vtkITKImageWriter::VoxelVectorTypeColorRGB);
             if (imageIO->GetComponentType() != itk::ImageIOBase::IOComponentEnum::UCHAR)
@@ -829,7 +901,6 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
                 return;
             }
             break;
-          case itk::CommonEnums::IOPixel::SCALAR:
           case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
           case itk::CommonEnums::IOPixel::UNKNOWNPIXELTYPE:
           case itk::CommonEnums::IOPixel::OFFSET:
