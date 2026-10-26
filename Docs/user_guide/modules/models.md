@@ -61,6 +61,7 @@ Models can be edited using Surface toolbox or Dynamic modeler module, or by conv
       - **Specular**: Control specular reflection ("shininess") of the model surface.
       - **Power**: The specular power.
       - **Preview**: A rendering of a sphere using the current material properties.
+    - **Merge coincident points**: Only shown for volumetric meshes (unstructured grids, such as tetrahedral meshes). The surface of a volumetric mesh is displayed by showing the cell faces that are not shared with neighbor cells. If neighbor cells do not share points (for example, along boundaries between mesh partitions that a simulation software exported separately) then their common faces are displayed as internal surfaces, which are visible when the model is semi-transparent. If this option is enabled then points that have exactly the same position are merged for display, which removes these internal surfaces. Point data of merged points is taken from one of them. The model data is not changed. Enabled by default.
 - **Slice Display**:
     - **Visibility**: Control visibility of the model in slice views.
     - **Opacity**: Opacity of the model in slice views.

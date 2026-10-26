@@ -27,6 +27,7 @@ class vtkThreshold;
 class vtkPassThrough;
 class vtkPointSet;
 class vtkPolyData;
+class vtkStaticCleanUnstructuredGrid;
 class vtkUnstructuredGrid;
 
 /// \brief MRML node to represent a display property of 3D surface model.
@@ -134,6 +135,18 @@ public:
   double GetThresholdMin();
   double GetThresholdMax();
 
+  /// Merge points that have the same position in a volumetric (unstructured grid) mesh.
+  /// The surface of a volumetric mesh is made of cell faces that are not shared with other cells.
+  /// If adjacent cells do not share points (for example, along boundaries between mesh partitions
+  /// exported by a simulation software) then their common faces appear as internal surfaces,
+  /// which are visible when the model is semi-transparent. Merging the coincident points
+  /// connects the cells, which removes these internal surfaces.
+  /// Point data of the merged points is taken from one of them.
+  /// It has no effect on surface (polydata) meshes. Enabled by default.
+  void SetMergeCoincidentPoints(bool merge);
+  vtkGetMacro(MergeCoincidentPoints, bool);
+  vtkBooleanMacro(MergeCoincidentPoints, bool);
+
   /// Specifies how to represent the 3D model in a 2D slice.
   /// By default intersection is showed.
   /// \sa SetAndObserveDistanceEncodedProjectionColorNodeID
@@ -219,6 +232,10 @@ protected:
   /// (vtkPolyData).
   vtkGeometryFilter* ConvertToPolyDataFilter;
 
+  /// Merges coincident points of unstructured grid meshes.
+  /// \sa MergeCoincidentPoints
+  vtkStaticCleanUnstructuredGrid* MergeCoincidentPointsFilter;
+
   /// Indicated whether to threshold the output mesh
   /// of the display model node based on its active
   /// scalar values.
@@ -226,6 +243,8 @@ protected:
   bool ThresholdEnabled;
 
   int SliceDisplayMode;
+
+  bool MergeCoincidentPoints{ true };
 
   /// Temporary variable to allow GetThresholdRange() method to return threshold range as a pointer
   double ThresholdRangeTemp[2];

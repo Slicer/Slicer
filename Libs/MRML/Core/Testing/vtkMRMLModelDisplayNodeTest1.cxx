@@ -38,6 +38,7 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeA
 
 int TestScalarRange(vtkPointSet* mesh);
 int TestThreshold(vtkPointSet* mesh);
+int TestMergeCoincidentPoints();
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
@@ -55,6 +56,8 @@ int vtkMRMLModelDisplayNodeTest1(int, char*[])
 
   CHECK_EXIT_SUCCESS(TestThreshold(ug.GetPointer()));
   CHECK_EXIT_SUCCESS(TestThreshold(poly.GetPointer()));
+
+  CHECK_EXIT_SUCCESS(TestMergeCoincidentPoints());
 
   CHECK_EXIT_SUCCESS(TestSetMesh(true, true, true));
   CHECK_EXIT_SUCCESS(TestSetMesh(true, true, false));
@@ -156,6 +159,107 @@ int TestThreshold(vtkPointSet* mesh)
 
   mdNode->ThresholdEnabledOff();
   CHECK_DOUBLE(mdNode->GetOutputMesh()->GetNumberOfCells(), mesh->GetNumberOfCells());
+
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+namespace
+{
+int GetNumberOfSurfaceCells(vtkPointSet* mesh)
+{
+  vtkNew<vtkGeometryFilter> surfaceFilter;
+  surfaceFilter->SetInputData(mesh);
+  surfaceFilter->Update();
+  return surfaceFilter->GetOutput()->GetNumberOfCells();
+}
+} // namespace
+
+//---------------------------------------------------------------------------
+int TestMergeCoincidentPoints()
+{
+  // Two tetrahedra that have a common face, but the points of that face are
+  // stored twice, so the cells do not share any points.
+  vtkNew<vtkPoints> points;
+  points->InsertNextPoint(0.0, 0.0, 0.0);
+  points->InsertNextPoint(1.0, 0.0, 0.0);
+  points->InsertNextPoint(0.0, 1.0, 0.0);
+  points->InsertNextPoint(0.0, 0.0, 1.0);
+  points->InsertNextPoint(1.0, 1.0, 1.0);
+  // duplicates of points 1, 2, 3
+  points->InsertNextPoint(1.0, 0.0, 0.0);
+  points->InsertNextPoint(0.0, 1.0, 0.0);
+  points->InsertNextPoint(0.0, 0.0, 1.0);
+  vtkNew<vtkUnstructuredGrid> ug;
+  ug->SetPoints(points);
+  vtkIdType tetra1[4] = { 0, 1, 2, 3 };
+  vtkIdType tetra2[4] = { 4, 5, 6, 7 };
+  ug->InsertNextCell(VTK_TETRA, 4, tetra1);
+  ug->InsertNextCell(VTK_TETRA, 4, tetra2);
+  // Without merging the points, all the 8 faces are on the surface
+  CHECK_INT(GetNumberOfSurfaceCells(ug), 8);
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelNode"));
+  vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelDisplayNode"));
+  modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+  modelNode->SetAndObserveMesh(ug);
+
+  // Points are merged by default, so the common face is not on the surface
+  CHECK_BOOL(displayNode->GetMergeCoincidentPoints(), true);
+  CHECK_INT(displayNode->GetOutputMesh()->GetNumberOfCells(), 2);
+  CHECK_INT(GetNumberOfSurfaceCells(displayNode->GetOutputMesh()), 6);
+
+  // Thresholding is done before merging
+  vtkNew<vtkShortArray> scalars;
+  scalars->SetName(VOXEL_ARRAY_NAME);
+  for (vtkIdType pointIndex = 0; pointIndex < points->GetNumberOfPoints(); ++pointIndex)
+  {
+    scalars->InsertNextValue(1);
+  }
+  ug->GetPointData()->AddArray(scalars);
+  ug->Modified();
+  displayNode->SetActiveScalarName(VOXEL_ARRAY_NAME);
+  displayNode->ScalarVisibilityOn();
+  displayNode->SetThresholdRange(0, 2);
+  displayNode->ThresholdEnabledOn();
+  CHECK_INT(GetNumberOfSurfaceCells(displayNode->GetOutputMesh()), 6);
+  displayNode->ThresholdEnabledOff();
+
+  // Without merging, the internal faces appear
+  displayNode->SetMergeCoincidentPoints(false);
+  CHECK_INT(GetNumberOfSurfaceCells(displayNode->GetOutputMesh()), 8);
+  displayNode->MergeCoincidentPointsOn();
+  CHECK_INT(GetNumberOfSurfaceCells(displayNode->GetOutputMesh()), 6);
+
+  // Input mesh is not changed
+  CHECK_INT(ug->GetNumberOfPoints(), 8);
+  CHECK_POINTER(displayNode->GetInputMesh(), ug.GetPointer());
+
+  // Option is saved in the scene and copied
+  displayNode->SetMergeCoincidentPoints(false);
+  scene->SetSaveToXMLString(1);
+  scene->Commit();
+  std::string xmlScene = scene->GetSceneXMLString();
+  vtkNew<vtkMRMLScene> reloadedScene;
+  reloadedScene->SetLoadFromXMLString(1);
+  reloadedScene->SetSceneXMLString(xmlScene);
+  reloadedScene->Import();
+  vtkMRMLModelDisplayNode* reloadedDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(reloadedScene->GetFirstNodeByClass("vtkMRMLModelDisplayNode"));
+  CHECK_NOT_NULL(reloadedDisplayNode);
+  CHECK_BOOL(reloadedDisplayNode->GetMergeCoincidentPoints(), false);
+  vtkNew<vtkMRMLModelDisplayNode> copiedDisplayNode;
+  copiedDisplayNode->CopyContent(displayNode);
+  CHECK_BOOL(copiedDisplayNode->GetMergeCoincidentPoints(), false);
+
+  // Polydata meshes are not affected
+  vtkNew<vtkPolyData> poly;
+  vtkNew<vtkUnstructuredGrid> voxelUg;
+  CreateVoxelMeshes(voxelUg, poly);
+  modelNode->SetAndObserveMesh(poly);
+  displayNode->MergeCoincidentPointsOn();
+  CHECK_BOOL(vtkPolyData::SafeDownCast(displayNode->GetOutputMesh()) != nullptr, true);
+  CHECK_INT(displayNode->GetOutputMesh()->GetNumberOfPoints(), poly->GetNumberOfPoints());
 
   return EXIT_SUCCESS;
 }

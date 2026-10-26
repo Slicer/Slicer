@@ -268,6 +268,23 @@
            </property>
           </widget>
          </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="MergeCoincidentPointsLabel">
+           <property name="text">
+            <string>Merge coincident points:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QCheckBox" name="MergeCoincidentPointsCheckBox">
+           <property name="toolTip">
+            <string>Merge points that have the same position in a volumetric mesh. If neighbor cells do not share points (for example, at boundaries between mesh partitions) then their common faces are displayed as internal surfaces. Merging the points removes these surfaces. Only available for volumetric (unstructured grid) meshes.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_2">
            <property name="toolTip">
