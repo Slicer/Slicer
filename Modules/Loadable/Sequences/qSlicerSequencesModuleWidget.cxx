@@ -1119,6 +1119,13 @@ void qSlicerSequencesModuleWidget::onProxyNodeChanged(vtkMRMLNode* newProxyNode)
 
   std::string synchronizedNodeID = senderComboBox->property("MRMLNodeID").toString().toStdString().c_str();
   vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast(this->mrmlScene()->GetNodeByID(synchronizedNodeID));
+  if (synchronizedNode && d->ActiveBrowserNode->GetProxyNode(synchronizedNode) == newProxyNode)
+  {
+    // The proxy node is not changed. The signal may be emitted when the proxy node is just renamed (for example,
+    // when the index value is appended to its name as the browser steps through the items), and renaming the
+    // sequence node in that case would append " sequence" to its name again and again.
+    return;
+  }
 
   // If name sync is enabled between sequence and proxy node then update the sequence node name based on the proxy node
   if (newProxyNode && newProxyNode->GetName() != nullptr //
