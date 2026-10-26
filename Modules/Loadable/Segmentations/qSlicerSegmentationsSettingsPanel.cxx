@@ -212,7 +212,6 @@ void qSlicerSegmentationsSettingsPanel::setUseTerminology(bool on)
 // --------------------------------------------------------------------------
 void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
 {
-  Q_UNUSED(mode);
   if (this->segmentationsLogic())
   {
     this->segmentationsLogic()->SetDefaultOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
@@ -223,7 +222,8 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
 void qSlicerSegmentationsSettingsPanel::onDefaultOverwriteModeChanged(int index)
 {
   Q_D(qSlicerSegmentationsSettingsPanel);
-  this->setDefaultOverwriteMode(d->DefaultOverwriteModeComboBox->itemText(index));
+  // The overwrite mode name is stored in the item data (the item text is translated)
+  this->setDefaultOverwriteMode(d->DefaultOverwriteModeComboBox->itemData(index).toString());
 }
 
 // --------------------------------------------------------------------------
