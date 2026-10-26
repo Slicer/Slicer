@@ -29,6 +29,7 @@ Version:   $Revision: 1.3 $
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#include <vtkStaticCleanUnstructuredGrid.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkVersion.h>
@@ -53,6 +54,12 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->ThresholdRangeTemp[0] = 0.0;
   this->ThresholdRangeTemp[1] = -1.0;
   this->ConvertToPolyDataFilter = vtkGeometryFilter::New();
+  this->MergeCoincidentPointsFilter = vtkStaticCleanUnstructuredGrid::New();
+  // Only merge points that are at the exact same position
+  this->MergeCoincidentPointsFilter->ToleranceIsAbsoluteOn();
+  this->MergeCoincidentPointsFilter->SetAbsoluteTolerance(0.0);
+  // Removing unused points would only make the filter slower, they are not displayed anyway
+  this->MergeCoincidentPointsFilter->RemoveUnusedPointsOff();
   this->ThresholdEnabled = false;
   this->SliceDisplayMode = SliceDisplayIntersection;
   this->BackfaceCulling = 0;
@@ -85,6 +92,7 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
   this->AssignAttribute->Delete();
   this->ThresholdFilter->Delete();
   this->ConvertToPolyDataFilter->Delete();
+  this->MergeCoincidentPointsFilter->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -96,6 +104,7 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEnumMacro(SliceDisplayMode);
   vtkMRMLPrintBooleanMacro(ThresholdEnabled);
   vtkMRMLPrintVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLPrintBooleanMacro(MergeCoincidentPoints);
   vtkMRMLPrintVectorMacro(BackfaceColorHSVOffset, double, 3);
   vtkMRMLPrintBooleanMacro(ClippingCapSurface);
   vtkMRMLPrintFloatMacro(ClippingCapOpacity);
@@ -114,6 +123,7 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
   vtkMRMLWriteXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLWriteXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLWriteXMLBooleanMacro(mergeCoincidentPoints, MergeCoincidentPoints);
   vtkMRMLWriteXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
   vtkMRMLWriteXMLBooleanMacro(clippingCapSurface, ClippingCapSurface);
   vtkMRMLWriteXMLFloatMacro(clippingCapOpacity, ClippingCapOpacity);
@@ -132,6 +142,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
   vtkMRMLReadXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLReadXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLReadXMLBooleanMacro(mergeCoincidentPoints, MergeCoincidentPoints);
   vtkMRMLReadXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
   vtkMRMLReadXMLBooleanMacro(clippingCapSurface, ClippingCapSurface);
   vtkMRMLReadXMLFloatMacro(clippingCapOpacity, ClippingCapOpacity);
@@ -158,6 +169,7 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=t
   vtkMRMLCopyEnumMacro(SliceDisplayMode);
   vtkMRMLCopyBooleanMacro(ThresholdEnabled);
   vtkMRMLCopyVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLCopyBooleanMacro(MergeCoincidentPoints);
   vtkMRMLCopyVectorMacro(BackfaceColorHSVOffset, double, 3);
   vtkMRMLCopyBooleanMacro(ClippingCapSurface);
   vtkMRMLCopyFloatMacro(ClippingCapOpacity);
@@ -279,31 +291,52 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetOutputUnstructuredGrid()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 {
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetDisplayableNode());
+  bool isPolyDataMesh = modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType;
+
+  vtkAlgorithmOutput* outputConnection = nullptr;
   if (this->GetActiveScalarName() && //
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
   {
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetDisplayableNode());
-    if (modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+    if (isPolyDataMesh)
     {
       // Threshold filter generates unstructured grid output. If input is a polydata mesh
       // then the pipeline expects polydata as output mesh, therefore we need to use
       // ConvertToPolyDataFilter output.
       return this->ConvertToPolyDataFilter->GetOutputPort();
     }
-    else
-    {
-      return this->ThresholdFilter->GetOutputPort();
-    }
+    outputConnection = this->ThresholdFilter->GetOutputPort();
   }
   else if (this->GetActiveScalarName())
   {
-    return this->AssignAttribute->GetOutputPort();
+    outputConnection = this->AssignAttribute->GetOutputPort();
   }
   else
   {
-    return this->PassThrough->GetOutputPort();
+    outputConnection = this->PassThrough->GetOutputPort();
   }
+
+  if (this->MergeCoincidentPoints && modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType && this->GetInputMeshConnection())
+  {
+    // Merge coincident points so that cells that do not share points with their neighbors
+    // do not show internal faces.
+    this->MergeCoincidentPointsFilter->SetInputConnection(outputConnection);
+    outputConnection = this->MergeCoincidentPointsFilter->GetOutputPort();
+  }
+  return outputConnection;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetMergeCoincidentPoints(bool merge)
+{
+  if (this->MergeCoincidentPoints == merge)
+  {
+    return;
+  }
+  this->MergeCoincidentPoints = merge;
+  // Modified event triggers update of the display pipeline (GetOutputMeshConnection)
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------

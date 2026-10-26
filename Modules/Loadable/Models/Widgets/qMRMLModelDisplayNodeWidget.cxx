@@ -123,6 +123,7 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   q->connect(this->BackfaceBrightnessOffsetSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setBackfaceBrightnessOffset(double)));
 
   q->connect(this->LightingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLighting(bool)));
+  q->connect(this->MergeCoincidentPointsCheckBox, SIGNAL(toggled(bool)), q, SLOT(setMergeCoincidentPoints(bool)));
   q->connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setInterpolation(int)));
 
   q->connect(this->ScalarsDisplayWidget,
@@ -479,6 +480,17 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->BackfaceSaturationOffsetSpinBox->setValue(hsvOffset[1]);
     d->BackfaceBrightnessOffsetSpinBox->setValue(hsvOffset[2]);
   }
+  // Merging coincident points is only applicable to volumetric meshes
+  vtkMRMLModelNode* modelNode = d->currentModelNode();
+  bool isUnstructuredGrid = modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType;
+  d->MergeCoincidentPointsLabel->setVisible(isUnstructuredGrid);
+  d->MergeCoincidentPointsCheckBox->setVisible(isUnstructuredGrid);
+  if (d->CurrentModelDisplayNode)
+  {
+    QSignalBlocker blocker(d->MergeCoincidentPointsCheckBox);
+    d->MergeCoincidentPointsCheckBox->setChecked(d->CurrentModelDisplayNode->GetMergeCoincidentPoints());
+  }
+
   d->BackfaceHueOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
   d->BackfaceSaturationOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
   d->BackfaceBrightnessOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
@@ -698,6 +710,22 @@ void qMRMLModelDisplayNodeWidget::setLineWidth(double newLineWidth)
   for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
   {
     displayNode->SetLineWidth(newLineWidth);
+  }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setMergeCoincidentPoints(bool merge)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  for (vtkMRMLDisplayNode* const displayNode : displayNodesInSelection)
+  {
+    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    if (!modelDisplayNode)
+    {
+      continue;
+    }
+    modelDisplayNode->SetMergeCoincidentPoints(merge);
   }
 }
 

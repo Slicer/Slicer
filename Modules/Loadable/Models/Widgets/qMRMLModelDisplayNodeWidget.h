@@ -118,6 +118,7 @@ public slots:
   void setEdgeColor(const QColor&);
   void setLighting(bool);
   void setInterpolation(int);
+  void setMergeCoincidentPoints(bool);
 
   /// Show/hide "Configure..." button for clipping
   void setClippingConfigurationButtonVisible(bool);
