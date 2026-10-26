@@ -37,7 +37,9 @@ class MarkupsPropertiesLabelTest(unittest.TestCase):
     def tearDown(self):
         self.renderer.RemoveAllViewProps()
         self.representations.clear()
-        self.window.Finalize()
+        # Do not call self.window.Finalize(): on macOS, vtkCocoaRenderWindow::Finalize()
+        # leaves the vtkCocoaGLView pointing to the render window, and the application
+        # crashes on exit when the closed window is released after the render window is deleted.
         for node in slicer.util.getNodesByClass("vtkMRMLNode"):
             if node.GetID() not in self.originalNodeIDs:
                 slicer.mrmlScene.RemoveNode(node)
