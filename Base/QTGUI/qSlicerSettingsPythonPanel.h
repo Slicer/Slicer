@@ -55,7 +55,7 @@ public slots:
 
 protected slots:
   void onFontChanged(const QFont& font);
-  void onConsoleLogLevelChanged(const QString& levelStr);
+  void onConsoleLogLevelChanged(int index);
 
 signals:
   void consoleLogLevelChanged(const QString&);

@@ -284,7 +284,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   // let's select none, connect the signal and then selecting the first will
   // automatically create the option widget
   descriptionComboBox->setCurrentIndex(-1);
-  QObject::connect(descriptionComboBox, &QComboBox::currentTextChanged, this, &qSlicerDataDialogPrivate::onFileTypeChanged);
+  QObject::connect(descriptionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &qSlicerDataDialogPrivate::onFileTypeChanged);
   QObject::connect(descriptionComboBox, &QComboBox::textActivated, this, &qSlicerDataDialogPrivate::onFileTypeActivated);
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
@@ -410,11 +410,16 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles() const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDataDialogPrivate::onFileTypeChanged(const QString& description)
+void qSlicerDataDialogPrivate::onFileTypeChanged(int index)
 {
+  QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
   int row = this->senderRow();
+  if (!comboBox || row < 0)
+  {
+    return;
+  }
   QString fileName = this->FileWidget->item(row, FileColumn)->text();
-  this->setFileOptions(row, fileName, description);
+  this->setFileOptions(row, fileName, comboBox->itemText(index));
 }
 
 //-----------------------------------------------------------------------------

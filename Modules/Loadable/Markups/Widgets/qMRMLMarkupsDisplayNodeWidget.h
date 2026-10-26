@@ -108,7 +108,7 @@ protected slots:
   void onSelectedColorPickerButtonChanged(QColor qcolor);
   void onUnselectedColorPickerButtonChanged(QColor qcolor);
   void onActiveColorPickerButtonChanged(QColor qcolor);
-  void onGlyphTypeComboBoxChanged(QString value);
+  void onGlyphTypeComboBoxChanged(int index);
   void onGlyphScaleSliderWidgetChanged(double value);
   void onGlyphSizeSliderWidgetChanged(double value);
   void onCurveLineThicknessSliderWidgetChanged(double percentValue);

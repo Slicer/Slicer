@@ -143,7 +143,10 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDefaultSurfaceSmoothing(bool)));
   QObject::connect(this->UseTerminologyCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseTerminology(bool)));
   QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()), q, SLOT(onEditDefaultTerminologyEntry()));
-  QObject::connect(this->DefaultOverwriteModeComboBox, &QComboBox::currentTextChanged, q, &qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode);
+  QObject::connect(this->DefaultOverwriteModeComboBox,
+                   QOverload<int>::of(&QComboBox::currentIndexChanged),
+                   q, //
+                   &qSlicerSegmentationsSettingsPanel::onDefaultOverwriteModeChanged);
   QObject::connect(this->DefaultRepresentation3DComboBox,
                    QOverload<int>::of(&QComboBox::currentIndexChanged),
                    q,
@@ -214,6 +217,13 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
   {
     this->segmentationsLogic()->SetDefaultOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
   }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::onDefaultOverwriteModeChanged(int index)
+{
+  Q_D(qSlicerSegmentationsSettingsPanel);
+  this->setDefaultOverwriteMode(d->DefaultOverwriteModeComboBox->itemText(index));
 }
 
 // --------------------------------------------------------------------------
