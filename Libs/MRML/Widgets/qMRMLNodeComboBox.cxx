@@ -1192,7 +1192,9 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
   d->ComboBox->setFocusProxy(this);
   d->setModel(oldModel);
 
-  connect(d->ComboBox, &QComboBox::currentTextChanged, this, &qMRMLNodeComboBox::emitCurrentNodeChanged);
+  // currentIndexChanged is used instead of currentTextChanged because the text of the current item changes
+  // when the current node is renamed, and that must not be reported as a change of the current node.
+  connect(d->ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &qMRMLNodeComboBox::emitCurrentNodeChanged);
   connect(d->ComboBox, SIGNAL(activated(int)), this, SLOT(emitNodeActivated(int)));
   d->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType));
   delete oldComboBox;
