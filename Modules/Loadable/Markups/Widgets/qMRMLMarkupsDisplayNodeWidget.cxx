@@ -83,7 +83,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->activeColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onActiveColorPickerButtonChanged(QColor)));
-  QObject::connect(this->glyphTypeComboBox, &QComboBox::currentTextChanged, q, &qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged);
+  QObject::connect(this->glyphTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), q, &qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged);
   QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)), q, SLOT(setGlyphSizeIsAbsolute(bool)));
   QObject::connect(this->glyphScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
   QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
@@ -597,9 +597,10 @@ void qMRMLMarkupsDisplayNodeWidget::onActiveColorPickerButtonChanged(QColor colo
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged(QString value)
+void qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged(int index)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
+  const QString value = d->glyphTypeComboBox->itemText(index);
   if (value.isEmpty())
   {
     return;

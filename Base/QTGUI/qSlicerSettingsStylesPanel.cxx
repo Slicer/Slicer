@@ -100,7 +100,7 @@ void qSlicerSettingsStylesPanelPrivate::init()
   // Style setting
   this->populateStyles();
   q->setCurrentStyle("Slicer");
-  QObject::connect(this->StyleComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsStylesPanel::onStyleChanged);
+  QObject::connect(this->StyleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), q, &qSlicerSettingsStylesPanel::onStyleChanged);
   q->registerProperty("Styles/Style", q, "currentStyle", SIGNAL(currentStyleChanged(QString)), qSlicerSettingsStylesPanel::tr("Current style"));
 
   // Connect AdditionalStylePaths buttons
@@ -282,8 +282,10 @@ void qSlicerSettingsStylesPanel::setCurrentStyle(const QString& newStyleName)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsStylesPanel::onStyleChanged(const QString& newStyleName)
+void qSlicerSettingsStylesPanel::onStyleChanged(int index)
 {
+  Q_D(qSlicerSettingsStylesPanel);
+  const QString newStyleName = d->StyleComboBox->itemText(index);
   qSlicerApplication* app = qSlicerApplication::application();
   app->removeEventFilter(app->style());
 

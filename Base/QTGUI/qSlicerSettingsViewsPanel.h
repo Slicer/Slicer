@@ -84,7 +84,7 @@ signals:
   void currentThreeDRulerTypeChanged(const QString&);
 
 protected slots:
-  void onMSAAChanged(const QString&);
+  void onMSAAChanged(int index);
 
 protected:
   QScopedPointer<qSlicerSettingsViewsPanelPrivate> d_ptr;

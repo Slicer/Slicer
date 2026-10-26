@@ -74,8 +74,7 @@ void qSlicerSettingsViewsPanelPrivate::init()
   this->MSAAComboBox->setCurrentIndex(this->MSAAComboBox->findText("Off"));
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->MSAAComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::onMSAAChanged);
-  QObject::connect(this->MSAAComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsViewsPanel::currentMSAAChanged);
+  QObject::connect(this->MSAAComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), q, &qSlicerSettingsViewsPanel::onMSAAChanged);
   q->registerProperty(
     "Views/MSAA", q, "currentMSAA", SIGNAL(currentMSAAChanged(QString)), qSlicerSettingsViewsPanel::tr("Multisampling (MSAA)"), ctkSettingsPanel::OptionRequireRestart);
 
@@ -207,7 +206,7 @@ qSlicerSettingsViewsPanel::qSlicerSettingsViewsPanel(QWidget* _parent)
 qSlicerSettingsViewsPanel::~qSlicerSettingsViewsPanel() = default;
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsViewsPanel::onMSAAChanged(const QString& text)
+void qSlicerSettingsViewsPanel::onMSAAChanged(int index)
 {
   /// For "ctkVTKAbstractView"s (the main data views for the program),
   /// the multisampling properties should be set *before* creating any
@@ -222,9 +221,9 @@ void qSlicerSettingsViewsPanel::onMSAAChanged(const QString& text)
   /// set prior to creation of the OpenGL contexts.
 
   Q_D(const qSlicerSettingsViewsPanel);
-  const int index = d->MSAAComboBox->findText(text);
   const int nSamples = d->MSAAComboBox->itemData(index).toInt();
   ctkVTKAbstractView::setMultiSamples(nSamples);
+  emit this->currentMSAAChanged(d->MSAAComboBox->itemText(index));
 }
 
 // --------------------------------------------------------------------------

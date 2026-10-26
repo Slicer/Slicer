@@ -86,7 +86,10 @@ void qSlicerSettingsPythonPanelPrivate::init()
   //
 
   QObject::connect(this->ConsoleFontButton, SIGNAL(currentFontChanged(QFont)), q, SLOT(onFontChanged(QFont)));
-  QObject::connect(this->ConsoleLogLevelComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsPythonPanel::onConsoleLogLevelChanged);
+  QObject::connect(this->ConsoleLogLevelComboBox,
+                   QOverload<int>::of(&QComboBox::currentIndexChanged),
+                   q, //
+                   &qSlicerSettingsPythonPanel::onConsoleLogLevelChanged);
 
   //
   // Register settings with their corresponding widgets
@@ -108,7 +111,6 @@ void qSlicerSettingsPythonPanelPrivate::init()
   q->registerProperty("Python/Font", this->ConsoleFontButton, "currentFont", SIGNAL(currentFontChanged(QFont)));
 
   q->registerProperty("Python/ConsoleLogLevel", q, "consoleLogLevel", SIGNAL(consoleLogLevelChanged(QString)));
-  QObject::connect(this->ConsoleLogLevelComboBox, &QComboBox::currentTextChanged, q, &qSlicerSettingsPythonPanel::consoleLogLevelChanged);
 }
 
 // --------------------------------------------------------------------------
@@ -134,13 +136,15 @@ void qSlicerSettingsPythonPanel::onFontChanged(const QFont& font)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onConsoleLogLevelChanged(const QString& levelStr)
+void qSlicerSettingsPythonPanel::onConsoleLogLevelChanged(int index)
 {
   Q_D(const qSlicerSettingsPythonPanel);
+  const QString levelStr = d->ConsoleLogLevelComboBox->itemText(index);
   if (qSlicerApplication::application())
   {
     qSlicerApplication::application()->setPythonConsoleLogLevel(ctkErrorLogLevel::logLevelFromString(levelStr));
   }
+  emit this->consoleLogLevelChanged(levelStr);
 }
 
 // --------------------------------------------------------------------------

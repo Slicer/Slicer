@@ -52,7 +52,7 @@ public slots:
   void resetColumnWidths(bool forceFileColumnStretch = false);
 
 protected slots:
-  void onFileTypeChanged(const QString&);
+  void onFileTypeChanged(int index);
   void onFileTypeActivated(const QString&);
 
   //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);

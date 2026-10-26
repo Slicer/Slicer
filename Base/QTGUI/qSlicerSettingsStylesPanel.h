@@ -70,7 +70,7 @@ protected slots:
   void onAdditionalStylePathsChanged();
   void onAddStyleAdditionalPathClicked();
   void onRemoveStyleAdditionalPathClicked();
-  void onStyleChanged(const QString&);
+  void onStyleChanged(int index);
 
   void onFontChanged(const QFont& font);
   void onShowToolTipsToggled(bool);
