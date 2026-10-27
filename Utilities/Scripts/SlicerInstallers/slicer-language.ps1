@@ -18,6 +18,7 @@
 
     Environment:
         SLICER_QUIET      silence progress messages; warnings and errors still show
+        NO_COLOR          disable colored output
 
     Installing a language installs the SlicerLanguagePacks extension
     (https://github.com/Slicer/SlicerLanguagePacks) along with that language's
@@ -48,11 +49,13 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Informational output, suppressed when SLICER_QUIET is set (any non-empty
-# value). Warnings and errors go to their own streams and are never silenced.
-function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }
-function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }
-function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }
+# Informational output, suppressed when SLICER_QUIET is set and left uncolored
+# when NO_COLOR is (any non-empty value, for both). Warnings and errors go to
+# their own streams and are never silenced.
+function Write-Tinted($msg, $color) { if ($env:NO_COLOR) { Write-Host $msg } else { Write-Host $msg -ForegroundColor $color } }
+function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "==> $msg" Cyan } }
+function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "    $msg" DarkGray } }
+function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted $msg Green } }
 
 function Show-Usage {
     Write-Host @"

@@ -50,7 +50,7 @@
                              particular SLICER_VERSION to pin the version.
         SLICER_QUIET         set to silence progress messages, the logo and the
                              download bar; warnings, errors and prompts still show
-        NO_COLOR             set to disable colored output
+        NO_COLOR             set to disable colored output and the logo
 
     Docs: https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html
 #>
@@ -64,12 +64,14 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'Continue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Informational output, suppressed when SLICER_QUIET is set (any non-empty value).
-# Warnings (Write-Warning) and errors (Write-Error) go to their own streams and
-# are never silenced, mirroring log() vs warn()/err() in install.sh.
-function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }
-function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }
-function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }
+# Informational output, suppressed when SLICER_QUIET is set and left uncolored
+# when NO_COLOR is (any non-empty value, for both). Warnings (Write-Warning) and
+# errors (Write-Error) go to their own streams and are never silenced, mirroring
+# log() vs warn()/err() in install.sh.
+function Write-Tinted($msg, $color) { if ($env:NO_COLOR) { Write-Host $msg } else { Write-Host $msg -ForegroundColor $color } }
+function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "==> $msg" Cyan } }
+function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "    $msg" DarkGray } }
+function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted $msg Green } }
 
 # Show the colored 3D Slicer logo (best-effort). Virtual-terminal processing is
 # enabled first so the ANSI colors render even in legacy Windows consoles; the
@@ -835,6 +837,7 @@ $innerLanguagePs1 = @(
     ''
     '    Environment:'
     '        SLICER_QUIET      silence progress messages; warnings and errors still show'
+    '        NO_COLOR          disable colored output'
     ''
     '    Installing a language installs the SlicerLanguagePacks extension'
     '    (https://github.com/Slicer/SlicerLanguagePacks) along with that language''s'
@@ -865,11 +868,13 @@ $innerLanguagePs1 = @(
     '$ErrorActionPreference = ''Stop'''
     '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
     ''
-    '# Informational output, suppressed when SLICER_QUIET is set (any non-empty'
-    '# value). Warnings and errors go to their own streams and are never silenced.'
-    'function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }'
-    'function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }'
-    'function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }'
+    '# Informational output, suppressed when SLICER_QUIET is set and left uncolored'
+    '# when NO_COLOR is (any non-empty value, for both). Warnings and errors go to'
+    '# their own streams and are never silenced.'
+    'function Write-Tinted($msg, $color) { if ($env:NO_COLOR) { Write-Host $msg } else { Write-Host $msg -ForegroundColor $color } }'
+    'function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "==> $msg" Cyan } }'
+    'function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "    $msg" DarkGray } }'
+    'function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted $msg Green } }'
     ''
     'function Show-Usage {'
     '    Write-Host @"'
@@ -1139,6 +1144,7 @@ $innerShortcutsPs1 = @(
     ''
     '    Environment:'
     '        SLICER_QUIET      silence progress messages; warnings and errors still show'
+    '        NO_COLOR          disable colored output'
     ''
     '    The shortcut launches the installation this script sits in, and is named the'
     '    way Slicer''s own installer names its desktop shortcut ("Slicer 5.12.3"), so'
@@ -1159,11 +1165,13 @@ $innerShortcutsPs1 = @(
     'Set-StrictMode -Version Latest'
     '$ErrorActionPreference = ''Stop'''
     ''
-    '# Informational output, suppressed when SLICER_QUIET is set (any non-empty'
-    '# value). Warnings and errors go to their own streams and are never silenced.'
-    'function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }'
-    'function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }'
-    'function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }'
+    '# Informational output, suppressed when SLICER_QUIET is set and left uncolored'
+    '# when NO_COLOR is (any non-empty value, for both). Warnings and errors go to'
+    '# their own streams and are never silenced.'
+    'function Write-Tinted($msg, $color) { if ($env:NO_COLOR) { Write-Host $msg } else { Write-Host $msg -ForegroundColor $color } }'
+    'function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "==> $msg" Cyan } }'
+    'function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "    $msg" DarkGray } }'
+    'function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted $msg Green } }'
     ''
     '# The Slicer.exe belonging to the installation this script sits in. It is'
     '# installed into Slicer''s own bin directory, so the launcher is one level up and'

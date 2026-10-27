@@ -19,6 +19,7 @@
 
     Environment:
         SLICER_QUIET      silence progress messages; warnings and errors still show
+        NO_COLOR          disable colored output
 
     The shortcut launches the installation this script sits in, and is named the
     way Slicer's own installer names its desktop shortcut ("Slicer 5.12.3"), so
@@ -39,11 +40,13 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# Informational output, suppressed when SLICER_QUIET is set (any non-empty
-# value). Warnings and errors go to their own streams and are never silenced.
-function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }
-function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }
-function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }
+# Informational output, suppressed when SLICER_QUIET is set and left uncolored
+# when NO_COLOR is (any non-empty value, for both). Warnings and errors go to
+# their own streams and are never silenced.
+function Write-Tinted($msg, $color) { if ($env:NO_COLOR) { Write-Host $msg } else { Write-Host $msg -ForegroundColor $color } }
+function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "==> $msg" Cyan } }
+function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted "    $msg" DarkGray } }
+function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Tinted $msg Green } }
 
 # The Slicer.exe belonging to the installation this script sits in. It is
 # installed into Slicer's own bin directory, so the launcher is one level up and
