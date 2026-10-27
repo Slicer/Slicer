@@ -554,6 +554,13 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                     self.clippedMaskImageData = None
 
         previewNode.SetName(segmentationNode.GetName() + " preview")
+        # Show the preview in the same views as the input segmentation. View node IDs are not copied
+        # from the scene's default display node, so if that disables ShowInAllViewsByDefault the preview
+        # would otherwise be shown in no view at all.
+        previewDisplayNode = previewNode.GetDisplayNode()
+        segmentationDisplayNode = segmentationNode.GetDisplayNode()
+        previewDisplayNode.SetShowInAllViewsByDefault(segmentationDisplayNode.GetShowInAllViewsByDefault())
+        previewDisplayNode.SetViewNodeIDs(segmentationDisplayNode.GetViewNodeIDs())
         previewNode.RemoveClosedSurfaceRepresentation()  # Force the closed surface representation to update
         # TODO: This will no longer be required when we can use the segment editor to set multiple segments
         # as the closed surfaces will be converted as necessary by the segmentation logic.
