@@ -2,7 +2,7 @@
 # 3D Slicer one-line installer for Linux and macOS.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/mauigna06/slicer-installer/main/install.sh | sh
+#   curl -fsSL https://download.slicer.org/install.sh | sh
 #
 # What it does:
 #   * Preflights required tools.
@@ -12,13 +12,14 @@
 #             ~/.local/bin, and adds a desktop menu entry.
 #   * macOS : mounts the .dmg and copies Slicer.app into ~/Applications.
 #
-# Installing Slicer is all this script does. The two things that are not that —
-# installing Slicer's Linux runtime libraries, and installing an interface
-# language — are separate scripts that live inside the installation and are run
-# afterwards, by you, when you want them:
+# Installing Slicer is all this script does. The things that are not that —
+# installing Slicer's Linux runtime libraries, installing an interface language,
+# and putting Slicer on the desktop and the dock — are separate scripts that live
+# inside the installation and are run afterwards, by you, when you want them:
 #
-#   <install>/bin/slicer-deps       the system libraries Slicer needs (Linux)
-#   <install>/bin/slicer-language   list or install interface languages
+#   <install>/bin/slicer-deps        the system libraries Slicer needs (Linux)
+#   <install>/bin/slicer-language    list or install interface languages
+#   <install>/bin/slicer-shortcuts   a desktop icon, and a pin on the dock
 #
 # Slicer packages built after those scripts were added upstream ship them
 # themselves; for every other package this installer writes its own copies, so
@@ -717,7 +718,7 @@ resolve_existing_install() {
 # by hand. They have to be embedded rather than read from the repo because this
 # script is fetched and piped to sh, with no repo alongside it.
 # --- BEGIN generated inner scripts (tools/sync-embedded.sh) --- #
-# Generated from inner/ — edit those files, then run tools/sync-embedded.sh.
+# Generated from the inner scripts — edit those files, then run tools/sync-embedded.sh.
 write_inner_slicer_language() {
   cat > "$1" <<'SLICER_INNER_SCRIPT_EOF'
 #!/bin/sh
@@ -1306,6 +1307,454 @@ main() {
 main "$@"
 SLICER_INNER_SCRIPT_EOF
 }
+write_inner_slicer_shortcuts() {
+  cat > "$1" <<'SLICER_INNER_SCRIPT_EOF'
+#!/bin/sh
+# Put 3D Slicer on the desktop and pin it to the dock (Linux and macOS).
+#
+# Usage:
+#   slicer-shortcuts              add a desktop icon and pin Slicer to the dock
+#   slicer-shortcuts --desktop    only the desktop icon
+#   slicer-shortcuts --dock       only the dock
+#   slicer-shortcuts --remove     take them away again; with --desktop or
+#                                 --dock, only that one
+#
+# Options:
+#   --slicer <path>  the Slicer launcher to use, when this script cannot find
+#                    the one it ships next to
+#   -h, --help       show this help
+#
+# Environment:
+#   SLICER_QUIET     silence progress messages; warnings and errors still show
+#   NO_COLOR         disable colored output
+#
+# Both launch the installation this script sits in, and --remove only takes
+# away what launches it, so the shortcuts of another installed version are left
+# alone. Running it for a second installation moves the shortcuts over to that
+# one.
+#
+# Linux: the desktop icon is a desktop entry in your desktop folder, as
+# xdg-user-dir reports it. The dock is automated on GNOME and the desktops built
+# on it (Ubuntu Dock, Dash to Dock), whose pinned apps name Slicer's app-menu
+# entry; that entry is first pointed at this installation. Other desktops keep
+# their panel launchers in formats of their own, so there this prints how to pin
+# Slicer by hand.
+#
+# macOS: the desktop icon is a link to Slicer.app, and the Dock gets a tile for
+# it. The Dock restarts to show the change.
+#
+# Neither needs root, and neither is needed to run Slicer.
+set -eu
+
+SLICER_QUIET="${SLICER_QUIET:-}"
+
+# The app-menu entry install.sh writes. GNOME's pinned apps refer to it by this
+# file name, and the desktop icon reuses the name so a second run replaces it.
+APPS_DIR="$HOME/.local/share/applications"
+DESKTOP_ID='slicer.desktop'
+
+# Initialized empty so `set -u` is satisfied before setup_colors() runs.
+C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_BLUE=$(printf '\033[1;34m'); C_YELLOW=$(printf '\033[1;33m')
+    C_RED=$(printf '\033[1;31m'); C_GREEN=$(printf '\033[1;32m')
+    C_RESET=$(printf '\033[0m')
+  fi
+}
+
+log()  { [ -z "$SLICER_QUIET" ] || return 0; printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+err()  { printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: slicer-shortcuts [--desktop] [--dock] [--remove] [--slicer <path>]
+
+Put 3D Slicer on the desktop and pin it to the dock, or take them away again.
+
+  --desktop        only the desktop icon
+  --dock           only the dock
+                   (with neither, both)
+  --remove         remove instead of adding; only what launches this
+                   installation is removed
+
+Options:
+  --slicer <path>  the Slicer launcher to use, when this script cannot find the
+                   one it ships next to
+  -h, --help       show this help
+USAGE
+}
+
+# ---------------------------------------------------------------------------- #
+# locating the Slicer this script ships inside
+# ---------------------------------------------------------------------------- #
+# The directory this script actually lives in, following symlinks: it is
+# installed into Slicer's own bin directory, so everything else is relative to
+# it and nothing has to be passed in.
+self_dir() {
+  self="$0"
+  hops=0
+  while [ -L "$self" ] && [ "$hops" -lt 32 ]; do
+    link="$(readlink -- "$self")"
+    case "$link" in
+      /*) self="$link" ;;
+      *)  self="$(dirname -- "$self")/$link" ;;
+    esac
+    hops=$((hops + 1))
+  done
+  CDPATH='' cd -- "$(dirname -- "$self")" && pwd -P
+}
+
+# The Slicer launcher belonging to the installation this script sits in.
+#   Linux : <appdir>/bin/slicer-shortcuts              -> <appdir>/Slicer
+#   macOS : …/Slicer.app/Contents/bin/slicer-shortcuts -> …/Contents/MacOS/Slicer
+find_slicer() {
+  root="$(CDPATH='' cd -- "$(self_dir)/.." && pwd -P)" || return 1
+  for candidate in "$root/Slicer" "$root/MacOS/Slicer"; do
+    if [ -f "$candidate" ] && [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------- #
+# Linux
+# ---------------------------------------------------------------------------- #
+# Print the desktop entry that launches the Slicer in the directory $1. The same
+# entry install.sh writes for the app menu (install_desktop_entry), so both stay
+# interchangeable. StartupWMClass is the class of Slicer's main window, which
+# Qt takes from the application name; it lets a dock show a running Slicer under
+# its pinned icon instead of beside it.
+desktop_entry() {
+  appdir="$1"
+  icon=$(find "$appdir" -type f -name '3DSlicer-DesktopIcon.png' 2>/dev/null | head -n1 || true)
+  [ -n "$icon" ] || icon=$(find "$appdir" -maxdepth 3 -iname 'slicer*.png' 2>/dev/null | head -n1 || true)
+  [ -n "$icon" ] || icon="$appdir/Slicer"
+
+  cat <<EOF
+[Desktop Entry]
+Type=Application
+Name=3D Slicer
+GenericName=Medical Image Computing
+Comment=Analyze and visualize medical image data
+Exec=$appdir/Slicer %F
+Icon=$icon
+Terminal=false
+Categories=Graphics;Science;Education;
+Keywords=medical;imaging;DICOM;visualization;segmentation;
+StartupWMClass=Slicer
+EOF
+}
+
+# True when the desktop entry $1 launches the Slicer in the directory $2.
+launches() { [ -f "$1" ] && grep -qF "Exec=$2/Slicer " "$1"; }
+
+# The user's desktop folder, or nothing when there is none. xdg-user-dir answers
+# with the home directory itself when no desktop folder is configured, and
+# writing desktop icons into $HOME would only litter it.
+desktop_dir() {
+  dir=''
+  if have xdg-user-dir; then dir="$(xdg-user-dir DESKTOP 2>/dev/null || true)"; fi
+  [ -n "$dir" ] || dir="$HOME/Desktop"
+  dir="${dir%/}"
+  if [ "$dir" != "${HOME%/}" ] && [ -d "$dir" ]; then printf '%s\n' "$dir"; fi
+}
+
+linux_desktop_add() {
+  appdir="$1"
+  dir="$(desktop_dir)"
+  if [ -z "$dir" ]; then
+    warn "No desktop folder found (xdg-user-dir DESKTOP); skipping the desktop icon."
+    return 0
+  fi
+
+  file="$dir/$DESKTOP_ID"
+  if [ -f "$file" ] && ! launches "$file" "$appdir"; then
+    log "The desktop icon launched another copy of Slicer; it now launches this one."
+  fi
+  desktop_entry "$appdir" > "$file"
+  chmod 755 "$file"
+
+  # GNOME's desktop icons and Xfce run a desktop entry from the desktop only
+  # once it is marked as trusted, and otherwise show "Allow Launching" first.
+  # The user asked for this icon, so mark it; elsewhere these are no-ops.
+  if have gio; then
+    gio set "$file" metadata::trusted true >/dev/null 2>&1 || true
+    if have sha256sum; then
+      gio set "$file" metadata::xfce-exe-checksum "$(sha256sum "$file" | cut -d' ' -f1)" >/dev/null 2>&1 || true
+    fi
+  fi
+  log "Desktop icon created: $file"
+}
+
+linux_desktop_remove() {
+  appdir="$1"
+  dir="$(desktop_dir)"
+  [ -n "$dir" ] || return 0
+  if launches "$dir/$DESKTOP_ID" "$appdir"; then
+    rm -f "$dir/$DESKTOP_ID"
+    log "Desktop icon removed: $dir/$DESKTOP_ID"
+  fi
+}
+
+# Point the app-menu entry at this installation. A dock pins an entry by name,
+# so pinning "slicer.desktop" pins whatever copy that entry launches.
+linux_menu_entry() {
+  appdir="$1"
+  file="$APPS_DIR/$DESKTOP_ID"
+  launches "$file" "$appdir" && return 0
+
+  if [ -f "$file" ]; then
+    log "The app-menu entry launched another copy of Slicer; it now launches this one."
+  fi
+  mkdir -p "$APPS_DIR"
+  desktop_entry "$appdir" > "$file"
+  if have update-desktop-database; then
+    update-desktop-database "$APPS_DIR" >/dev/null 2>&1 || true
+  fi
+}
+
+# True when GNOME Shell is this user's desktop and its settings can be reached.
+# Its dock (and Ubuntu's, and Dash to Dock) shows the apps listed in one
+# setting, but writing that setting does anything only while gnome-shell runs;
+# and without a session bus gsettings quietly writes to memory and forgets.
+gnome_dock_available() {
+  have gsettings && have pgrep || return 1
+  pgrep -u "$(id -u)" -x gnome-shell >/dev/null 2>&1 || return 1
+  [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ -S "${XDG_RUNTIME_DIR:-/nonexistent}/bus" ] || return 1
+  gsettings writable org.gnome.shell favorite-apps >/dev/null 2>&1
+}
+
+# The dock's pinned apps as gsettings prints them: ['a.desktop', 'b.desktop'],
+# or @as [] when there are none.
+gnome_favorites() { gsettings get org.gnome.shell favorite-apps 2>/dev/null; }
+
+linux_dock_add() {
+  appdir="$1"
+  linux_menu_entry "$appdir"
+
+  if ! gnome_dock_available; then
+    log "Pinning to the dock is automated on GNOME only. To pin Slicer here, open"
+    log "your app menu, right-click 3D Slicer and pin it (or add it to the panel)."
+    return 0
+  fi
+
+  favorites="$(gnome_favorites)" || favorites=''
+  case "$favorites" in
+    *"'$DESKTOP_ID'"*) log "3D Slicer is already pinned to the dock."; return 0 ;;
+    '@as []'|'[]')     favorites="['$DESKTOP_ID']" ;;
+    '['*']')           favorites="${favorites%]}, '$DESKTOP_ID']" ;;
+    *) warn "Could not read the dock's pinned apps; pin 3D Slicer from your app menu instead."; return 0 ;;
+  esac
+  if ! gsettings set org.gnome.shell favorite-apps "$favorites" 2>/dev/null; then
+    warn "Could not pin 3D Slicer to the dock; pin it from your app menu instead."
+    return 0
+  fi
+  log "${C_GREEN}Pinned 3D Slicer to the dock.${C_RESET}"
+}
+
+# Unpin only when the pinned entry launches this installation: otherwise the
+# pin belongs to another copy of Slicer.
+linux_dock_remove() {
+  appdir="$1"
+  launches "$APPS_DIR/$DESKTOP_ID" "$appdir" || return 0
+  gnome_dock_available || return 0
+
+  favorites="$(gnome_favorites)" || return 0
+  case "$favorites" in
+    *"'$DESKTOP_ID'"*) ;;
+    *) return 0 ;;
+  esac
+  id_re="$(printf '%s' "$DESKTOP_ID" | sed 's/\./\\./g')"
+  favorites="$(printf '%s' "$favorites" | sed "s/, '$id_re'//; s/'$id_re', //; s/'$id_re'//")"
+  if ! gsettings set org.gnome.shell favorite-apps "$favorites" 2>/dev/null; then
+    warn "Could not unpin 3D Slicer from the dock; unpin it by hand."
+    return 0
+  fi
+  log "Unpinned 3D Slicer from the dock."
+}
+
+# ---------------------------------------------------------------------------- #
+# macOS
+# ---------------------------------------------------------------------------- #
+# A Finder alias would need the Finder's permission to be scripted, which
+# macOS asks the user for; a symbolic link to the bundle shows the app's icon
+# and opens it just the same, without asking.
+macos_desktop_link() { printf '%s\n' "$HOME/Desktop/3D Slicer"; }
+
+macos_desktop_add() {
+  bundle="$1"
+  link="$(macos_desktop_link)"
+  if [ ! -d "$HOME/Desktop" ]; then
+    warn "No desktop folder found ($HOME/Desktop); skipping the desktop icon."
+    return 0
+  fi
+  if [ -e "$link" ] && [ ! -L "$link" ]; then
+    warn "$link already exists and is not a link to Slicer; leaving it alone."
+    return 0
+  fi
+  ln -sfn "$bundle" "$link"
+  log "Desktop icon created: $link"
+}
+
+macos_desktop_remove() {
+  bundle="$1"
+  link="$(macos_desktop_link)"
+  if [ -L "$link" ] && [ "$(readlink "$link")" = "$bundle" ]; then
+    rm -f "$link"
+    log "Desktop icon removed: $link"
+  fi
+}
+
+# The Dock writes the tiles it adds as file:// URLs, with spaces escaped; ours
+# are plain paths. Match both.
+macos_bundle_url() { printf 'file://%s/' "$(printf '%s' "$1" | sed 's/ /%20/g')"; }
+
+# True when the Dock already has a tile for the bundle $1.
+macos_dock_has() {
+  tiles="$(/usr/bin/defaults read com.apple.dock persistent-apps 2>/dev/null)" || return 1
+  printf '%s' "$tiles" | grep -qF "$1" && return 0
+  printf '%s' "$tiles" | grep -qF "$(macos_bundle_url "$1")"
+}
+
+macos_dock_add() {
+  bundle="$1"
+  if macos_dock_has "$bundle"; then
+    log "3D Slicer is already in the Dock."
+    return 0
+  fi
+
+  # The path lands inside XML, so escape what XML reserves.
+  path_xml="$(printf '%s' "$bundle" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')"
+  tile="<dict><key>tile-data</key><dict><key>file-data</key><dict>"
+  tile="$tile<key>_CFURLString</key><string>$path_xml</string>"
+  tile="$tile<key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+  if ! /usr/bin/defaults write com.apple.dock persistent-apps -array-add "$tile"; then
+    warn "Could not add 3D Slicer to the Dock; drag it there from $bundle instead."
+    return 0
+  fi
+  /usr/bin/killall Dock 2>/dev/null || true
+  log "${C_GREEN}Added 3D Slicer to the Dock.${C_RESET}"
+}
+
+# `defaults` can append to an array but not remove from it, so take the Dock's
+# settings out, delete the matching tiles with PlistBuddy, and put them back.
+# Going through `defaults` both ways keeps the preferences daemon's cached copy
+# in step, which editing the plist file directly would not.
+macos_dock_remove() {
+  bundle="$1"
+  macos_dock_has "$bundle" || return 0
+
+  plist="$(mktemp)"
+  if ! /usr/bin/defaults export com.apple.dock "$plist"; then
+    rm -f "$plist"
+    warn "Could not read the Dock's settings; remove 3D Slicer from the Dock by hand."
+    return 0
+  fi
+
+  url="$(macos_bundle_url "$bundle")"
+  hits=''
+  i=0
+  while /usr/libexec/PlistBuddy -c "Print :persistent-apps:$i" "$plist" >/dev/null 2>&1; do
+    tile="$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:$i:tile-data:file-data:_CFURLString" "$plist" 2>/dev/null || true)"
+    case "$tile" in
+      "$bundle"|"$bundle/"|"$url"|"${url%/}") hits="$i $hits" ;;  # highest index first
+    esac
+    i=$((i + 1))
+  done
+
+  # Deleting from the end keeps the indexes still to delete valid.
+  for i in $hits; do
+    /usr/libexec/PlistBuddy -c "Delete :persistent-apps:$i" "$plist" >/dev/null
+  done
+  if [ -n "$hits" ] && /usr/bin/defaults import com.apple.dock "$plist"; then
+    /usr/bin/killall Dock 2>/dev/null || true
+    log "Removed 3D Slicer from the Dock."
+  fi
+  rm -f "$plist"
+}
+
+# ---------------------------------------------------------------------------- #
+# main
+# ---------------------------------------------------------------------------- #
+main() {
+  desktop=''
+  dock=''
+  remove=''
+  exe_override=''
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --desktop) desktop=1 ;;
+      --dock)    dock=1 ;;
+      --remove)  remove=1 ;;
+      -h|--help) usage; exit 0 ;;
+      --slicer)
+        [ $# -ge 2 ] || err "--slicer needs a path."
+        exe_override="$2"; shift ;;
+      --slicer=*) exe_override="${1#--slicer=}" ;;
+      -*) err "Unknown option: $1 (try --help)." ;;
+      *)  err "Unexpected argument: $1 (try --help)." ;;
+    esac
+    shift
+  done
+
+  setup_colors
+
+  if [ -z "$desktop" ] && [ -z "$dock" ]; then
+    desktop=1
+    dock=1
+  fi
+
+  if [ -n "$exe_override" ]; then
+    exe="$exe_override"
+  else
+    exe="$(find_slicer || true)"
+  fi
+  [ -n "$exe" ] && [ -x "$exe" ] \
+    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+
+  case "$(uname -s)" in
+    Linux)
+      appdir="$(CDPATH='' cd -- "$(dirname -- "$exe")" && pwd -P)"
+      if [ -n "$remove" ]; then
+        [ -z "$desktop" ] || linux_desktop_remove "$appdir"
+        [ -z "$dock" ]    || linux_dock_remove "$appdir"
+      else
+        [ -z "$desktop" ] || linux_desktop_add "$appdir"
+        [ -z "$dock" ]    || linux_dock_add "$appdir"
+      fi
+      ;;
+    Darwin)
+      # …/Slicer.app/Contents/MacOS/Slicer
+      bundle="$(CDPATH='' cd -- "$(dirname -- "$exe")/../.." && pwd -P)"
+      case "$bundle" in
+        *.app) ;;
+        *) err "$exe is not inside an application bundle; pass --slicer <path> to Slicer.app/Contents/MacOS/Slicer." ;;
+      esac
+      if [ -n "$remove" ]; then
+        [ -z "$desktop" ] || macos_desktop_remove "$bundle"
+        [ -z "$dock" ]    || macos_dock_remove "$bundle"
+      else
+        [ -z "$desktop" ] || macos_desktop_add "$bundle"
+        [ -z "$dock" ]    || macos_dock_add "$bundle"
+      fi
+      ;;
+    *)
+      err "slicer-shortcuts handles Linux and macOS; on Windows, use slicer-shortcuts.ps1."
+      ;;
+  esac
+}
+
+main "$@"
+SLICER_INNER_SCRIPT_EOF
+}
 # --- END generated inner scripts --- #
 
 # Write the helper scripts into $1 (Slicer's own bin directory inside the
@@ -1319,14 +1768,15 @@ install_inner_tools() {
   mkdir -p "$TOOLS_DIR" 2>/dev/null || { TOOLS_DIR=''; return 0; }
 
   written=''
-  for name in slicer-language slicer-deps; do
+  for name in slicer-language slicer-deps slicer-shortcuts; do
     # slicer-deps installs distribution packages; there is no such thing on macOS.
     [ "$name" != slicer-deps ] || [ "$(uname -s)" = Linux ] || continue
     [ ! -e "$TOOLS_DIR/$name" ] || continue
 
     case "$name" in
-      slicer-language) write_inner_slicer_language "$TOOLS_DIR/$name" || continue ;;
-      slicer-deps)     write_inner_slicer_deps     "$TOOLS_DIR/$name" || continue ;;
+      slicer-language)  write_inner_slicer_language  "$TOOLS_DIR/$name" || continue ;;
+      slicer-deps)      write_inner_slicer_deps      "$TOOLS_DIR/$name" || continue ;;
+      slicer-shortcuts) write_inner_slicer_shortcuts "$TOOLS_DIR/$name" || continue ;;
     esac
     chmod +x "$TOOLS_DIR/$name" 2>/dev/null || true
     written="$written $name"
@@ -1338,10 +1788,20 @@ install_inner_tools() {
 # ---------------------------------------------------------------------------- #
 # Linux
 # ---------------------------------------------------------------------------- #
+# Take away the desktop icon and dock pin that launch the installation whose
+# bin directory is $1, with that installation's own slicer-shortcuts, before the
+# installation is deleted and they are left pointing at nothing. Best-effort.
+remove_shortcuts() {
+  if [ -x "$1/slicer-shortcuts" ]; then
+    "$1/slicer-shortcuts" --remove || true
+  fi
+}
+
 # Remove the Linux installation at $1 (a Slicer-<version>-linux-<arch> directory):
 # the directory itself, the launcher and "current version" symlinks that point
-# into it, and the desktop entry when it still launches this copy. Anything that
-# points at a different install is deliberately left alone.
+# into it, and the desktop entry, desktop icon and dock pin when they still launch
+# this copy. Anything that points at a different install is deliberately left
+# alone.
 uninstall_linux() {
   target="$1"
   bindir="$HOME/.local/bin"
@@ -1349,6 +1809,7 @@ uninstall_linux() {
   apps_dir="$HOME/.local/share/applications"
   desktop_file="$apps_dir/slicer.desktop"
 
+  remove_shortcuts "$target/bin"
   rm -rf "$target"
 
   # Drop the launcher and "current version" symlinks only when they still resolve
@@ -1386,6 +1847,9 @@ install_desktop_entry() {
   [ -n "$icon" ] || icon=$(find "$appdir" -maxdepth 3 -iname 'slicer*.png' 2>/dev/null | head -n1 || true)
   [ -n "$icon" ] || icon="$appdir/Slicer"
 
+  # StartupWMClass is the class of Slicer's main window, which Qt takes from the
+  # application name; it lets a dock show a running Slicer under its pinned
+  # icon instead of beside it. slicer-shortcuts writes this same entry.
   cat > "$desktop_file" <<EOF
 [Desktop Entry]
 Type=Application
@@ -1397,6 +1861,7 @@ Icon=$icon
 Terminal=false
 Categories=Graphics;Science;Education;
 Keywords=medical;imaging;DICOM;visualization;segmentation;
+StartupWMClass=Slicer
 EOF
 
   if have update-desktop-database; then
@@ -1486,6 +1951,7 @@ uninstall_macos() {
     /usr/bin/pkill -x Slicer 2>/dev/null || true
     sleep 1
   fi
+  remove_shortcuts "$target/Contents/bin"
   rm -rf "$target"
   log "Removed $target"
 }
@@ -1609,6 +2075,7 @@ main() {
     log "                    system libraries Slicer needs from your distribution"
   fi
   log "  ${C_GREEN}slicer-language${C_RESET}   list or install Slicer's interface languages"
+  log "  ${C_GREEN}slicer-shortcuts${C_RESET}  add a desktop icon and pin Slicer to the dock"
 }
 
 main "$@"

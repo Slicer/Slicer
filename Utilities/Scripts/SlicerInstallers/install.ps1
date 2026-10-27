@@ -2,7 +2,7 @@
     3D Slicer one-line installer for Windows.
 
     Usage (PowerShell or cmd):
-        powershell -c "irm https://raw.githubusercontent.com/mauigna06/slicer-installer/main/install.ps1 | iex"
+        powershell -c "irm https://download.slicer.org/install.ps1 | iex"
 
     What it does:
         * Downloads the latest STABLE Slicer installer from the official server.
@@ -16,15 +16,19 @@
     whether to abort, reinstall over it, install it into another directory, or
     uninstall the existing copy.
 
-    Installing Slicer is all this script does. Choosing an interface language is
-    a separate script that lives inside the installation and is run afterwards,
-    by you, when you want it:
+    Installing Slicer is all this script does. Choosing an interface language,
+    and putting Slicer on the desktop, are separate scripts that live inside the
+    installation and are run afterwards, by you, when you want them:
 
-        <install>\bin\slicer-language.ps1   list or install interface languages
+        <install>\bin\slicer-language.ps1    list or install interface languages
+        <install>\bin\slicer-shortcuts.ps1   a desktop shortcut
 
-    Slicer packages built after that script was added upstream ship it
-    themselves; for every other package this installer writes its own copy, so
-    it is there either way. A package that already has it is left alone.
+    Windows blocks running .ps1 files by default, so run them with:
+        powershell -ExecutionPolicy Bypass -File <install>\bin\<script>.ps1
+
+    Slicer packages built after those scripts were added upstream ship them
+    themselves; for every other package this installer writes its own copies, so
+    they are there either way. A package that already has them is left alone.
 
     Environment overrides:
         SLICER_RELEASE_TYPE  stable (default) | preview | any
@@ -576,6 +580,23 @@ function Read-InstallDir {
     }
 }
 
+# Take away the desktop shortcut that launches the installation in $InstallDir,
+# with that installation's own slicer-shortcuts.ps1, before it is uninstalled.
+# Slicer's uninstaller deletes a desktop shortcut only under the name it would
+# have given one itself. Runs in a child PowerShell -- the one running this --
+# because Windows' default execution policy blocks invoking a .ps1 file
+# directly. Best-effort.
+function Remove-Shortcuts {
+    param([string]$InstallDir)
+    $script = Join-Path $InstallDir 'bin\slicer-shortcuts.ps1'
+    if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { return }
+    try {
+        & (Get-Process -Id $PID).Path -NoProfile -ExecutionPolicy Bypass -File $script -Desktop -Remove
+    } catch {
+        Write-Warning "Could not remove the desktop shortcut: $($_.Exception.Message)"
+    }
+}
+
 # Run the registered uninstaller for an existing install and wait for it to
 # finish. Slicer's uninstaller is NSIS-based, so it takes /S for a silent run;
 # QuietUninstallString, when the registry records one, already includes it.
@@ -612,6 +633,7 @@ function Uninstall-Slicer {
     }
 
     Write-Step "Uninstalling $($Existing.Name)..."
+    if ($location) { Remove-Shortcuts -InstallDir $location }
     if ($location) {
         $temp = Join-Path $env:TEMP ("SlicerUninstall-" + [guid]::NewGuid().ToString('N') + ".exe")
         Copy-Item -LiteralPath $exe -Destination $temp -Force
@@ -791,7 +813,7 @@ function Save-UrlWithProgress {
 # rather than read from the repo because this script is fetched and piped to
 # iex, with no repo alongside it.
 # --- BEGIN generated inner scripts (tools/sync-embedded.sh) --- #
-# Generated from inner/ -- edit those files, then run tools/sync-embedded.sh.
+# Generated from the inner scripts -- edit those files, then run tools/sync-embedded.sh.
 $innerLanguagePs1 = @(
     '<#'
     '    List or install 3D Slicer''s interface languages (Windows).'
@@ -1095,6 +1117,186 @@ $innerLanguagePs1 = @(
     ''
     'Install-Language -Code $Language -Exe $exe'
 ) -join "`n"
+$innerShortcutsPs1 = @(
+    '<#'
+    '    Put 3D Slicer on the desktop, and pin it to the taskbar (Windows).'
+    ''
+    '    Usage:'
+    '        slicer-shortcuts.ps1              add a desktop shortcut, and show how to'
+    '                                          pin Slicer to the taskbar'
+    '        slicer-shortcuts.ps1 -Desktop     only the desktop shortcut'
+    '        slicer-shortcuts.ps1 -Taskbar     only the taskbar'
+    '        slicer-shortcuts.ps1 -Remove      remove the desktop shortcut again'
+    ''
+    '    Parameters:'
+    '        -Desktop          the desktop shortcut'
+    '        -Taskbar          the taskbar. Windows does not let a program pin itself'
+    '                          to the taskbar -- that is reserved to the user -- so'
+    '                          this shows how to pin Slicer by hand'
+    '        -Remove           remove instead of adding'
+    '        -SlicerExe <path> the Slicer.exe to use, when this script cannot find'
+    '                          the one it ships next to'
+    ''
+    '    Environment:'
+    '        SLICER_QUIET      silence progress messages; warnings and errors still show'
+    ''
+    '    The shortcut launches the installation this script sits in, and is named the'
+    '    way Slicer''s own installer names its desktop shortcut ("Slicer 5.12.3"), so'
+    '    uninstalling Slicer removes it too. -Remove deletes only shortcuts that launch'
+    '    this installation, so another installed version''s are left alone.'
+    ''
+    '    Windows blocks running .ps1 files by default; run this one with:'
+    '        powershell -ExecutionPolicy Bypass -File <path>\slicer-shortcuts.ps1'
+    '#>'
+    '[CmdletBinding()]'
+    'param('
+    '    [switch]$Desktop,'
+    '    [switch]$Taskbar,'
+    '    [switch]$Remove,'
+    '    [string]$SlicerExe = '''''
+    ')'
+    ''
+    'Set-StrictMode -Version Latest'
+    '$ErrorActionPreference = ''Stop'''
+    ''
+    '# Informational output, suppressed when SLICER_QUIET is set (any non-empty'
+    '# value). Warnings and errors go to their own streams and are never silenced.'
+    'function Write-Step($msg) { if (-not $env:SLICER_QUIET) { Write-Host "==> $msg" -ForegroundColor Cyan } }'
+    'function Write-Note($msg) { if (-not $env:SLICER_QUIET) { Write-Host "    $msg" -ForegroundColor DarkGray } }'
+    'function Write-Done($msg) { if (-not $env:SLICER_QUIET) { Write-Host $msg -ForegroundColor Green } }'
+    ''
+    '# The Slicer.exe belonging to the installation this script sits in. It is'
+    '# installed into Slicer''s own bin directory, so the launcher is one level up and'
+    '# nothing has to be passed in.'
+    'function Find-Slicer {'
+    '    if (-not $PSScriptRoot) { return '''' }'
+    '    $root = Split-Path -Parent $PSScriptRoot'
+    '    foreach ($candidate in @((Join-Path $root ''Slicer.exe''), (Join-Path $PSScriptRoot ''Slicer.exe''))) {'
+    '        if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }'
+    '    }'
+    '    return '''''
+    '}'
+    ''
+    '# The name Slicer''s installer gave the installation in $Root: the DisplayName of'
+    '# the uninstall entry it registered ("Slicer 5.12.3"), which is also what it'
+    '# names the desktop shortcut it creates, and deletes again on uninstall. Falls'
+    '# back to the directory''s own name -- the same string, unless Slicer was'
+    '# installed into a directory of the user''s choosing.'
+    '#'
+    '# Property access goes through PSObject.Properties because Set-StrictMode turns a'
+    '# missing registry value into a terminating error rather than $null.'
+    'function Get-ShortcutName {'
+    '    param([string]$Root)'
+    '    $keys = @('
+    '        ''HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'','
+    '        ''HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'','
+    '        ''HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'''
+    '    )'
+    '    $want = $Root.TrimEnd(''\'')'
+    '    foreach ($entry in @(Get-ItemProperty $keys -ErrorAction SilentlyContinue)) {'
+    '        if (-not $entry.PSObject.Properties[''DisplayName'']) { continue }'
+    ''
+    '        $dirs = @()'
+    '        if ($entry.PSObject.Properties[''InstallLocation'']) {'
+    '            $dirs += ([string]$entry.InstallLocation).Trim(''"'').TrimEnd(''\'')'
+    '        }'
+    '        if ($entry.PSObject.Properties[''UninstallString'']) {'
+    '            $cmd = [string]$entry.UninstallString'
+    '            if ($cmd -match ''^\s*"([^"]+)"'' -or $cmd -match ''^\s*(\S+)'') { $dirs += Split-Path -Parent $Matches[1] }'
+    '        }'
+    '        # -eq on strings ignores case, as Windows paths do.'
+    '        if ($dirs -contains $want) {'
+    '            $name = [string]$entry.DisplayName'
+    '            foreach ($c in [IO.Path]::GetInvalidFileNameChars()) { $name = $name.Replace([string]$c, ''_'') }'
+    '            if ($name) { return $name }'
+    '        }'
+    '    }'
+    '    return Split-Path -Leaf $want'
+    '}'
+    ''
+    '# The desktop shortcuts that launch $Exe, whatever they are called.'
+    'function Get-DesktopShortcuts {'
+    '    param([string]$Folder, [string]$Exe)'
+    '    $shell = New-Object -ComObject WScript.Shell'
+    '    Get-ChildItem -LiteralPath $Folder -Filter ''*.lnk'' -File -ErrorAction SilentlyContinue |'
+    '        Where-Object { $shell.CreateShortcut($_.FullName).TargetPath -eq $Exe }'
+    '}'
+    ''
+    'function Add-DesktopShortcut {'
+    '    param([string]$Folder, [string]$Exe)'
+    ''
+    '    $existing = @(Get-DesktopShortcuts -Folder $Folder -Exe $Exe)'
+    '    if ($existing.Count -gt 0) {'
+    '        Write-Step "Desktop shortcut already there: $($existing[0].FullName)"'
+    '        return'
+    '    }'
+    ''
+    '    $root = Split-Path -Parent $Exe'
+    '    $lnk = Join-Path $Folder ((Get-ShortcutName -Root $root) + ''.lnk'')'
+    '    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)'
+    '    $shortcut.TargetPath = $Exe'
+    '    $shortcut.WorkingDirectory = $root'
+    '    $shortcut.IconLocation = "$Exe,0"'
+    '    $shortcut.Description = ''3D Slicer'''
+    '    $shortcut.Save()'
+    '    Write-Step "Desktop shortcut created: $lnk"'
+    '}'
+    ''
+    'function Remove-DesktopShortcut {'
+    '    param([string]$Folder, [string]$Exe)'
+    '    foreach ($lnk in @(Get-DesktopShortcuts -Folder $Folder -Exe $Exe)) {'
+    '        Remove-Item -LiteralPath $lnk.FullName -Force'
+    '        Write-Step "Desktop shortcut removed: $($lnk.FullName)"'
+    '    }'
+    '}'
+    ''
+    '# Windows offers programs no way to pin themselves to the taskbar: the shell'
+    '# verb that used to do it was withdrawn in Windows 10 version 1809, and the API'
+    '# Windows 11 added is limited to packaged (Store) apps. Pinning is the user''s'
+    '# call, so say how.'
+    'function Show-TaskbarSteps {'
+    '    if ($Remove) {'
+    '        Write-Step ''To unpin 3D Slicer, right-click its taskbar icon and choose "Unpin from taskbar".'''
+    '        return'
+    '    }'
+    '    Write-Step ''Windows lets only you pin apps to the taskbar. To pin 3D Slicer:'''
+    '    Write-Note ''1. Open the Start menu and find Slicer, or start Slicer and find its taskbar icon.'''
+    '    Write-Note ''2. Right-click it and choose "Pin to taskbar".'''
+    '}'
+    ''
+    '# ---------------------------------------------------------------------------- #'
+    '# main'
+    '# ---------------------------------------------------------------------------- #'
+    'if ((-not $Desktop) -and (-not $Taskbar)) {'
+    '    $Desktop = $true'
+    '    $Taskbar = $true'
+    '}'
+    ''
+    '$exe = if ($SlicerExe) { $SlicerExe } else { Find-Slicer }'
+    'if ((-not $exe) -or (-not (Test-Path -LiteralPath $exe -PathType Leaf))) {'
+    '    Write-Error ''Could not find Slicer.exe next to this script; pass -SlicerExe <path> to point at it.'''
+    '    exit 1'
+    '}'
+    '# Shortcuts record full paths, so compare against one.'
+    '$exe = (Resolve-Path -LiteralPath $exe).ProviderPath'
+    ''
+    'if ($Desktop) {'
+    '    # The Desktop special folder, not $HOME\Desktop: OneDrive and folder'
+    '    # redirection move it elsewhere.'
+    '    $folder = [Environment]::GetFolderPath(''Desktop'')'
+    '    if ((-not $folder) -or (-not (Test-Path -LiteralPath $folder -PathType Container))) {'
+    '        Write-Warning ''No desktop folder found; skipping the desktop shortcut.'''
+    '    } elseif ($Remove) {'
+    '        Remove-DesktopShortcut -Folder $folder -Exe $exe'
+    '    } else {'
+    '        Add-DesktopShortcut -Folder $folder -Exe $exe'
+    '    }'
+    '}'
+    ''
+    'if ($Taskbar) {'
+    '    Show-TaskbarSteps'
+    '}'
+) -join "`n"
 # --- END generated inner scripts --- #
 
 # The directory Slicer.exe sits in is the installation root: that is where the
@@ -1113,28 +1315,38 @@ function Resolve-InstallRoot {
     return $start
 }
 
-# Write the helper script into Slicer's own bin directory, unless the package
-# already ships it: Slicer packages built after this script was added upstream
-# carry their own -- possibly newer -- copy, and that one must win. Best-effort;
-# a read-only or otherwise awkward installation directory is not a reason to
-# fail an install that has already succeeded.
+# Write the helper scripts into Slicer's own bin directory, skipping any the
+# package already ships: Slicer packages built after these scripts were added
+# upstream carry their own -- possibly newer -- copies, and those must win.
+# Best-effort; a read-only or otherwise awkward installation directory is not a
+# reason to fail an install that has already succeeded.
 function Install-InnerTools {
     param([Parameter(Mandatory)] [string]$ExePath)
 
     $toolsDir = Join-Path (Resolve-InstallRoot -ExePath $ExePath) 'bin'
-    $target = Join-Path $toolsDir 'slicer-language.ps1'
+    $tools = [ordered]@{
+        'slicer-language.ps1'  = $innerLanguagePs1
+        'slicer-shortcuts.ps1' = $innerShortcutsPs1
+    }
     try {
-        if (-not (Test-Path -LiteralPath $target)) {
-            New-Item -ItemType Directory -Force -Path $toolsDir -ErrorAction Stop | Out-Null
-            Set-Content -LiteralPath $target -Value $innerLanguagePs1 -Encoding ASCII -ErrorAction Stop
+        foreach ($name in $tools.Keys) {
+            $target = Join-Path $toolsDir $name
+            if (-not (Test-Path -LiteralPath $target)) {
+                New-Item -ItemType Directory -Force -Path $toolsDir -ErrorAction Stop | Out-Null
+                Set-Content -LiteralPath $target -Value $tools[$name] -Encoding ASCII -ErrorAction Stop
+            }
         }
     } catch {
         Write-Warning "Could not install the helper scripts into ${toolsDir}: $($_.Exception.Message)"
         return
     }
 
+    # Windows' default execution policy blocks running a .ps1 file by name;
+    # -ExecutionPolicy Bypass lifts that for the one run, and nothing else.
     Write-Step "Optional tools in ${toolsDir}:"
-    Write-Note "slicer-language.ps1   list or install Slicer's interface languages"
+    Write-Note "slicer-language.ps1    list or install Slicer's interface languages"
+    Write-Note "slicer-shortcuts.ps1   add a desktop shortcut for Slicer"
+    Write-Note "Run one with: powershell -ExecutionPolicy Bypass -File `"$toolsDir\<script>.ps1`""
 }
 
 # Assigned inside the try; declared here so the finally block can reference them

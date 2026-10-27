@@ -10,8 +10,9 @@
 #
 #  * The *inner* scripts handled below. They do the things that are not
 #    installing Slicer -- installing the system libraries Slicer needs from a
-#    Linux distribution, and installing an interface language -- and are run by
-#    the user afterwards, on demand. Those belong inside the package.
+#    Linux distribution, installing an interface language, and putting Slicer
+#    on the desktop and the dock -- and are run by the user afterwards, on
+#    demand. Those belong inside the package.
 #
 # The inner scripts locate Slicer relative to their own path: the launcher sits
 # one directory above bin/ in an installed package, in a build tree, and (as
@@ -34,8 +35,8 @@ endif()
 set(installer_scripts)
 
 if(UNIX)
-  # Linux and macOS share one POSIX sh implementation.
-  list(APPEND installer_scripts slicer-language)
+  # Linux and macOS share one POSIX sh implementation of each.
+  list(APPEND installer_scripts slicer-language slicer-shortcuts)
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -45,7 +46,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(WIN32)
-  list(APPEND installer_scripts slicer-language.ps1)
+  list(APPEND installer_scripts slicer-language.ps1 slicer-shortcuts.ps1)
 endif()
 
 foreach(script IN LISTS installer_scripts)

@@ -161,6 +161,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Scripts shipped inside the package for installing Slicer's system
-# dependencies and its interface languages.
+# dependencies and its interface languages, and for adding Slicer to the
+# desktop and the dock.
 #-----------------------------------------------------------------------------
 add_subdirectory(SlicerInstallers)
