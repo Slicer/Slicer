@@ -406,8 +406,9 @@ main() {
   else
     exe="$(find_slicer || true)"
   fi
-  [ -n "$exe" ] && [ -x "$exe" ] \
-    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  if [ -z "$exe" ] || [ ! -x "$exe" ]; then
+    err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  fi
 
   case "$(uname -s)" in
     Linux)

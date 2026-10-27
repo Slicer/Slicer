@@ -865,15 +865,16 @@ find_slicer() {
 # script accepts.
 list_languages() {
   log "Querying the list of 3D Slicer translations…"
-  blob=$(fetch "$WEBLATE_STATS_URL") && [ -n "$blob" ] \
-    || err "Could not query the translation server; browse https://hosted.weblate.org/projects/3d-slicer/ instead."
+  if ! blob=$(fetch "$WEBLATE_STATS_URL") || [ -z "$blob" ]; then
+    err "Could not query the translation server; browse https://hosted.weblate.org/projects/3d-slicer/ instead."
+  fi
 
   printf '\n  %-12s %-40s %s\n' 'CODE' 'LANGUAGE' 'TRANSLATED'
   # One result object per language; splitting on '{' isolates each (none of the
   # fields nest). English is the source language, not a translation — skip it.
   printf '%s' "$blob" | tr '{' '\n' | while IFS= read -r chunk; do
     code=$(json_field "$chunk" code)
-    [ -n "$code" ] && [ "$code" != en ] || continue
+    case "$code" in ''|en) continue ;; esac
     name=$(json_field "$chunk" name)
     pct=$(printf '%s' "$chunk" \
       | grep -oE '"translated_percent"[[:space:]]*:[[:space:]]*[0-9.]+' \
@@ -1107,8 +1108,9 @@ main() {
   else
     exe="$(find_slicer || true)"
   fi
-  [ -n "$exe" ] && [ -x "$exe" ] \
-    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  if [ -z "$exe" ] || [ ! -x "$exe" ]; then
+    err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  fi
 
   configure_language "$command_arg" "$exe"
 }
@@ -1717,8 +1719,9 @@ main() {
   else
     exe="$(find_slicer || true)"
   fi
-  [ -n "$exe" ] && [ -x "$exe" ] \
-    || err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  if [ -z "$exe" ] || [ ! -x "$exe" ]; then
+    err "Could not find the Slicer launcher next to this script; pass --slicer <path> to point at it."
+  fi
 
   case "$(uname -s)" in
     Linux)
