@@ -25,7 +25,7 @@ GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is suffi
 
 ## Installing 3D Slicer
 
-To download Slicer, click [here](https://download.slicer.org/).
+To download Slicer, click [here](https://download.slicer.org/). To download and install it with a single command instead, see [Installing from the command line](#installing-from-the-command-line).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
@@ -178,6 +178,54 @@ If double-clicking the app does not launch it, try the following steps in order:
    ```
 
    try moving the executable into your *Software Home* folder and double-click the app again. It should launch properly from there.
+
+### Installing from the command line
+
+Slicer can also be downloaded and installed with a single command. The command downloads the latest Slicer Stable Release, verifies it against the published SHA-512 checksum, and installs it for the current user, without administrator rights.
+
+Linux and macOS:
+
+```shell
+curl -fsSL https://download.slicer.org/install.sh | sh
+```
+
+Windows (in cmd or PowerShell):
+
+```shell
+powershell -c "irm https://download.slicer.org/install.ps1 | iex"
+```
+
+- Linux: Slicer is installed into `~/.local/opt`, a `Slicer` launcher is linked into `~/.local/bin`, and a desktop menu entry is created.
+- macOS: `Slicer.app` is copied into `~/Applications`.
+- Windows: Slicer's regular installer runs silently, and installs into `%LOCALAPPDATA%\NA-MIC\Slicer <version>`.
+- If that version is already installed, the command asks whether to abort, reinstall it, install a second copy elsewhere, or uninstall it.
+
+When it finishes, the command prints the `bin` folder inside the installation, which holds a few optional helper scripts:
+
+- `slicer-deps` (Linux): prints the command that installs the system libraries Slicer needs, and `slicer-deps --install` runs it, using `sudo`. Run it if Slicer does not start.
+- `slicer-language`: `slicer-language list` shows the available interface languages, and for example `slicer-language es-419` installs one and switches Slicer to it.
+- `slicer-shortcuts`: adds a desktop icon and pins Slicer to the dock. On Windows it adds a desktop shortcut and shows how to pin Slicer to the taskbar, since Windows does not let programs pin themselves.
+
+On Windows the helpers are `slicer-language.ps1` and `slicer-shortcuts.ps1`. Windows blocks running a `.ps1` file by name by default, so run them with `powershell -ExecutionPolicy Bypass -File "<Slicer folder>\bin\slicer-shortcuts.ps1"`.
+
+Environment variables change what is installed, and how. On Linux and macOS they go right before `sh`, after the pipe:
+
+```shell
+# Install the latest Preview Release
+curl -fsSL https://download.slicer.org/install.sh | SLICER_RELEASE_TYPE=preview sh
+
+# Install version 5.12.0 without asking anything, for scripts and CI
+curl -fsSL https://download.slicer.org/install.sh | SLICER_NONINTERACTIVE=1 SLICER_VERSION=5.12.0 sh
+```
+
+On Windows, set them in PowerShell before the pipe:
+
+```powershell
+# Install the latest Preview Release
+$env:SLICER_RELEASE_TYPE="preview"; irm https://download.slicer.org/install.ps1 | iex
+```
+
+[ENVIRONMENT.md](https://github.com/Slicer/Slicer/blob/main/Utilities/Scripts/SlicerInstallers/ENVIRONMENT.md) describes every variable: choosing a version or an exact build, the installation folder, what to do with an existing installation, quiet and unattended runs, and the download cache.
 
 ## Using Slicer
 

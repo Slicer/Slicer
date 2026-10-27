@@ -59,9 +59,13 @@
 #                        particular SLICER_VERSION to pin the version to install.
 #   SLICER_QUIET         set to silence progress messages, the logo and the
 #                        download bar; warnings, errors and prompts still show
-#   NO_COLOR             set to disable colored output
+#   NO_COLOR             set to disable colored output and the logo
 #
-# Docs: https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html
+# Every variable is explained in full, with examples, in ENVIRONMENT.md beside
+# this script:
+#   https://github.com/Slicer/Slicer/blob/main/Utilities/Scripts/SlicerInstallers/ENVIRONMENT.md
+#
+# Docs: https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html#installing-from-the-command-line
 #
 # All code is wrapped in main(), invoked on the last line, so that a truncated
 # `curl | sh` download can never execute a half-written script.
