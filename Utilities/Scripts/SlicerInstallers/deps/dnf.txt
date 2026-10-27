@@ -1,0 +1,19 @@
+# Slicer's runtime system libraries on Fedora/RHEL (dnf).
+# One package per line. Blank lines and # comments are ignored.
+# See README.md in this directory; run tools/sync-deps.sh after editing.
+
+mesa-libGLU
+mesa-libGL
+libnsl
+libXrender
+pulseaudio-libs-glib2
+nss
+libXcomposite
+libXdamage
+libXrandr
+ftgl
+libXcursor
+libXi
+libXtst
+alsa-lib
+qt5-qtx11extras

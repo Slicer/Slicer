@@ -1,0 +1,13 @@
+# Slicer's runtime system libraries on Debian/Ubuntu (apt-get).
+# One package per line. Blank lines and # comments are ignored.
+# "a | b" means: install whichever of the two this apt knows about.
+# See README.md in this directory; run tools/sync-deps.sh after editing.
+
+libglu1-mesa
+libpulse-mainloop-glib0
+libnss3
+qt5dxcb-plugin
+libsm6
+
+# ALSA was renamed during the 64-bit time_t transition (Ubuntu 24.04+).
+libasound2t64 | libasound2

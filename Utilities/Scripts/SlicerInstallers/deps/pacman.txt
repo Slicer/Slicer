@@ -1,0 +1,15 @@
+# Slicer's runtime system libraries on Arch Linux (pacman).
+# One package per line. Blank lines and # comments are ignored.
+# See README.md in this directory; run tools/sync-deps.sh after editing.
+
+glu
+nss
+alsa-lib
+libxrender
+libxcomposite
+libxdamage
+libxrandr
+libxcursor
+libxi
+libxtst
+ftgl

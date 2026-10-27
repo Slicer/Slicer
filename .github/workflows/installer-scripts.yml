@@ -1,0 +1,62 @@
+name: CI (Installer Scripts)
+
+# The one-line installers in Utilities/Scripts/SlicerInstallers are served
+# straight from this repository, and carry generated copies of the inner
+# scripts and of the package lists in deps/. Nothing is built from them, so the
+# build workflow does not look at them; check them here instead.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Utilities/Scripts/SlicerInstallers/**"
+      - ".github/workflows/installer-scripts.yml"
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "Utilities/Scripts/SlicerInstallers/**"
+      - ".github/workflows/installer-scripts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  installer-scripts:
+    name: Installer Scripts
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Utilities/Scripts/SlicerInstallers
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Fails, with a diff, when deps/*.txt or an inner script was edited
+      # without re-running tools/sync-embedded.sh.
+      - name: Check the generated copies are up to date
+        run: sh tools/sync-embedded.sh --check
+
+      # The same check as the slicer-installers-embedded-copies-test CTest.
+      - name: Check the embedded copies
+        run: cmake -DSOURCE_DIR="$PWD" -P CheckEmbeddedCopies.cmake
+
+      - name: Shell syntax
+        run: |
+          for f in install.sh slicer-deps slicer-language slicer-shortcuts tools/sync-embedded.sh; do
+            sh -n "$f"
+          done
+
+      - name: shellcheck
+        run: shellcheck -s sh install.sh slicer-deps slicer-language slicer-shortcuts tools/sync-embedded.sh
+
+      - name: PowerShell syntax
+        shell: pwsh
+        run: |
+          foreach ($f in @('install.ps1', 'slicer-language.ps1', 'slicer-shortcuts.ps1')) {
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile(
+                  (Resolve-Path $f), [ref]$null, [ref]$errors) | Out-Null
+              if ($errors) { $errors | ForEach-Object { Write-Host $_ }; throw "$f failed to parse" }
+          }
