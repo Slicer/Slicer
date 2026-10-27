@@ -15,6 +15,11 @@ redirects those two URLs to the copies on this repository's `main` branch, so a
 change merged here is what users get. `CMakeLists.txt` deliberately does not
 install them.
 
+Being piped into a shell, they take no arguments: every option is an
+environment variable, and [`ENVIRONMENT.md`](ENVIRONMENT.md) documents them all.
+A change to what either installer reads, or to how it behaves, belongs there
+too.
+
 ## Inner scripts — installed into the package
 
 | File | Platform | What it does |
