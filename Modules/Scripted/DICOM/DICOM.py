@@ -332,6 +332,9 @@ class DICOM(ScriptedLoadableModule):
         tagsToPrecache = sorted(set(tagsToPrecache))  # remove duplicates
         slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
 
+        # Number of threads that read the files during import (0: default)
+        slicer.dicomDatabase.indexingThreadCount = settingsValue("DICOM/indexingThreadCount", 0, converter=int)
+
         # Try to initialize the database using the location stored in settings
         if slicer.app.commandOptions().testingEnabled:
             # For automatic tests (use a separate DICOM database for testing)
@@ -620,6 +623,22 @@ class _ui_DICOMSettingsPanel:
             "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
         thumbnailsSizeComboBox.currentIndexChanged.connect(self.onThumbnailsSizeChanged)
 
+        threadCountSpinBox = qt.QSpinBox()
+        threadCountSpinBox.toolTip = _(
+            "Number of threads that read DICOM files in parallel during import."
+            " Higher values may result faster import from SSD or network drives, but may slow down import from HDD drives.")
+        threadCountSpinBox.minimum = 0
+        threadCountSpinBox.maximum = 50
+        # Number of threads that is used by default (a database with the default indexingThreadCount value)
+        defaultThreadCount = ctk.ctkDICOMDatabase().effectiveIndexingThreadCount
+        threadCountSpinBox.specialValueText = _("Default ({threadCount})").format(threadCount=defaultThreadCount)
+        threadCountSpinBox.value = 0
+        genericGroupBoxFormLayout.addRow(_("Import threads:"), threadCountSpinBox)
+        parent.registerProperty(
+            "DICOM/indexingThreadCount", threadCountSpinBox,
+            "value", str(qt.SIGNAL("valueChanged(int)")))
+        threadCountSpinBox.valueChanged.connect(self.onThreadCountChanged)
+
         vBoxLayout.addWidget(genericGroupBox)
 
         # Add settings panel for the plugins
@@ -679,6 +698,10 @@ class _ui_DICOMSettingsPanel:
             # Logging is disabled
             self.detailedLoggingStatusLabel.text = _("Disabled")
             self.detailedLoggingToggleButton.text = _("Enable for 4 hours")
+
+    def onThreadCountChanged(self, threadCount):
+        if slicer.dicomDatabase:
+            slicer.dicomDatabase.indexingThreadCount = threadCount
 
     def onThumbnailsSizeChanged(self):
         browserWidget = slicer.modules.DICOMInstance.browserWidget
