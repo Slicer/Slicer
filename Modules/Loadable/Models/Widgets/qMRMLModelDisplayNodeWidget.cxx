@@ -78,6 +78,8 @@ public:
   //   needed because selection of both folders and models are supported
   vtkWeakPointer<vtkMRMLModelDisplayNode> CurrentModelDisplayNode;
   vtkWeakPointer<vtkMRMLDisplayNode> CurrentDisplayNode;
+  /// Model node that the currently displayed display node belongs to.
+  vtkMRMLModelNode* currentModelNode() const;
 
   vtkSmartPointer<vtkProperty> Property;
   QList<vtkIdType> CurrentSubjectHierarchyItemIDs;
@@ -209,6 +211,14 @@ QList<vtkMRMLDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::displayNodesFromS
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLModelNode* qMRMLModelDisplayNodeWidgetPrivate::currentModelNode() const
+{
+  if (!this->CurrentDisplayNode.GetPointer())
+  {
+    return nullptr;
+  }
+  return vtkMRMLModelNode::SafeDownCast(this->CurrentDisplayNode->GetDisplayableNode());
+}
 
 //------------------------------------------------------------------------------
 qMRMLModelDisplayNodeWidget::qMRMLModelDisplayNodeWidget(QWidget* _parent)
