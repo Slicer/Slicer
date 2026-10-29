@@ -48,6 +48,15 @@ We encourage all developers to:
   core functionality, should be carefully reviewed and integrated. Ideally, several
   developers would test that the changes don't break extensions.
 
+### Use of generative AI
+
+Contributions are expected to originate with humans. Generative AI may be used as an
+aid, but it must be disclosed and you remain responsible for everything you submit.
+Read the [AI policy](https://github.com/Slicer/Slicer/blob/main/AI_POLICY.md) before
+using it: it describes what is expected from contributors and reviewers. In particular,
+review and understand all generated content yourself before asking for a review, and
+disclose AI usage in the pull request description.
+
 ### How to write commit messages ?
 
 Write your commit messages using the standard prefixes for Slicer commit
