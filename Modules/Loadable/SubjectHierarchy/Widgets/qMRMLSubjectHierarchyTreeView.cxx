@@ -313,13 +313,27 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupVisibilityButton(const QModelInd
     return;
   }
 
+  QIcon icon = proxyIndex.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>();
+  auto* existingButton = qobject_cast<QToolButton*>(q->indexWidget(proxyIndex));
+  if (existingButton && existingButton->property("itemID").value<vtkIdType>() == itemID)
+  {
+    // Button is already set up for this item (setupAllButtons may be called many times, for example
+    // after each row insertion while loading a scene). Creating and showing new buttons is expensive,
+    // so just make sure the icon is up-to-date.
+    if (existingButton->icon().cacheKey() != icon.cacheKey())
+    {
+      existingButton->setIcon(icon);
+    }
+    return;
+  }
+
   auto* button = new QToolButton();
   button->setAutoRaise(true);
   button->setFocusPolicy(Qt::NoFocus);
   int iconSize = button->style()->pixelMetric(QStyle::PM_SmallIconSize);
   button->setIconSize(QSize(iconSize, iconSize));
   button->setStyleSheet("QToolButton { padding: 0px; }");
-  button->setIcon(proxyIndex.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
+  button->setIcon(icon);
   button->setProperty("itemID", QVariant::fromValue(itemID));
 
   QObject::connect(button, &QToolButton::clicked, q, &qMRMLSubjectHierarchyTreeView::onVisibilityButtonClicked);
@@ -362,6 +376,19 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& p
   if (!color.isValid() || color.alpha() == 0)
   {
     q->setIndexWidget(proxyIndex, nullptr);
+    return;
+  }
+  auto* existingButton = qobject_cast<QToolButton*>(q->indexWidget(proxyIndex));
+  if (existingButton && existingButton->property("itemID").value<vtkIdType>() == itemID)
+  {
+    // Button is already set up for this item, just make sure the icon and the stored index are up-to-date
+    // (see setupVisibilityButton)
+    QIcon icon = this->colorIcon(color);
+    if (existingButton->icon().cacheKey() != icon.cacheKey())
+    {
+      existingButton->setIcon(icon);
+    }
+    existingButton->setProperty("persistentIndex", QVariant::fromValue(QPersistentModelIndex(proxyIndex)));
     return;
   }
   auto* button = new QToolButton();
@@ -1961,6 +1988,10 @@ void qMRMLSubjectHierarchyTreeView::expandItem(vtkIdType itemID)
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
     {
+      // Request a delayed layout first: it makes expand() only store the expanded state (no immediate
+      // relayout and geometry update), which is important when many items are expanded in a row
+      // (e.g., after loading a scene). The layout is performed once, from the event loop.
+      this->scheduleDelayedItemsLayout();
       this->expand(itemIndex);
     }
   }
@@ -1975,6 +2006,8 @@ void qMRMLSubjectHierarchyTreeView::collapseItem(vtkIdType itemID)
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
     {
+      // See expandItem()
+      this->scheduleDelayedItemsLayout();
       this->collapse(itemIndex);
     }
   }
