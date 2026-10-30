@@ -845,7 +845,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     return;
   }
 
-  if (this->HistogramStatistics == nullptr)
+  if (this->GetAutoWindowLevel() && this->HistogramStatistics == nullptr)
   {
     this->HistogramStatistics = vtkImageHistogramStatistics::New();
 
@@ -867,20 +867,24 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     this->HistogramStatistics->SetAutoRangeExpansionFactors(0.0, 0.0);
   }
 
+  if (this->GetAutoWindowLevel())
+  {
+    this->HistogramStatistics->SetInputData(imageDataScalar);
+    this->HistogramStatistics->Update();
+  }
   this->IsInCalculateAutoLevels = true;
-  this->HistogramStatistics->SetInputData(imageDataScalar);
-  this->HistogramStatistics->Update();
-  double* intensityRange = this->HistogramStatistics->GetAutoRange();
-  vtkDebugMacro("CalculateScalarAutoLevels:" << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
-
   int disabledModify = this->StartModify();
   if (this->GetAutoWindowLevel())
   {
+    double* intensityRange = this->HistogramStatistics->GetAutoRange();
+    vtkDebugMacro("CalculateScalarAutoLevels:" << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
     this->SetWindowLevelMinMax(intensityRange[0], intensityRange[1]);
   }
   if (this->GetAutoThreshold())
   {
-    this->SetThreshold(intensityRange[0], intensityRange[1]);
+    double scalarRange[2];
+    imageDataScalar->GetScalarRange(scalarRange);
+    this->SetThreshold(scalarRange[0], scalarRange[1]);
   }
   this->EndModify(disabledModify);
   this->IsInCalculateAutoLevels = false;
