@@ -1000,6 +1000,9 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject,
     return false;
   }
 
+  // An inverse transform gets its coefficients from the forward transform when it is updated,
+  // for example the transform from parent of a B-spline that is stored as transform to parent
+  bsplineVtk->Update();
   vtkImageData* bsplineCoefficients = bsplineVtk->GetCoefficientData();
 
   if (bsplineCoefficients == nullptr)
@@ -1052,6 +1055,9 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
     return false;
   }
 
+  // An inverse transform gets its coefficients from the forward transform when it is updated,
+  // for example the transform from parent of a B-spline that is stored as transform to parent
+  bsplineVtk->Update();
   vtkImageData* bsplineCoefficients = bsplineVtk->GetCoefficientData();
 
   if (bsplineCoefficients == nullptr)
