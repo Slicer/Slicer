@@ -178,8 +178,9 @@ public:
   ///  true:    ______  false:
   ///        __/               __/|_____
   /// \endverbatim
+  /// \arg \b component is the index of the scalar component whose transfer function is set
   /// \sa SetWindowLevelToVolumeProp()
-  void SetThresholdToVolumeProp(double scalarRange[2], double threshold[2], vtkVolumeProperty* node, bool linearRamp = false, bool stayUpAtUpperLimit = false);
+  void SetThresholdToVolumeProp(double scalarRange[2], double threshold[2], vtkVolumeProperty* node, bool linearRamp = false, bool stayUpAtUpperLimit = false, int component = 0);
 
   /// Create a color transfer function that ranges from \a scalarRange[0] to
   /// \a scalarRange[1] and containing a \a windowLevel[0] wide ramp centered
@@ -204,19 +205,29 @@ public:
   /// The optional \a mappingMethod adjusts how values are compressed within
   /// the scalar range. The default option is linear compression.
   /// \a invertColormap optionally flips the colormap.
-  /// The function is then applied to the volume property \a node.
+  /// The function is then applied to the \a component of the volume property \a node.
   /// \sa SetThresholdToVolumeProp
   void SetWindowLevelToVolumeProp(double scalarRange[2],
                                   double windowLevel[2],
                                   vtkScalarsToColors* lut,
                                   vtkVolumeProperty* node,
                                   vtkImageMapToWindowLevelAddon::WindowMappingMode mode = vtkImageMapToWindowLevelAddon::Linear,
-                                  bool invertColormap = false);
+                                  bool invertColormap = false,
+                                  int component = 0);
 
   /// Create an opacity transfer function for gradient opacity.
   /// It ranges from 0 to scalarRange[1] - scalarRange[0].
+  /// The function is applied to the \a component of the volume property \a node.
   /// \sa SetThresholdToVolumeProp, SetWindowLevelToVolumeProp
-  void SetGradientOpacityToVolumeProp(double scalarRange[2], vtkVolumeProperty* node);
+  void SetGradientOpacityToVolumeProp(double scalarRange[2], vtkVolumeProperty* node, int component = 0);
+
+  /// Initialize the transfer functions of the additional (index > 0) scalar components
+  /// of a multi-component volume, based on the intensity range of each component.
+  /// The first component is not modified, as it is set from the volume display node or a preset.
+  /// Without this, additional components use the VTK default transfer functions
+  /// (fully opaque in the 0..1024 range), which render the volume as a solid block
+  /// in independent components mode.
+  void SetComponentTransferFunctionsFromVolume(vtkMRMLVolumeRenderingDisplayNode* displayNode);
 
   /// Generate and set to the volume property \a node an opacity and color
   /// transfer function from the labelmap LUT \a colors.

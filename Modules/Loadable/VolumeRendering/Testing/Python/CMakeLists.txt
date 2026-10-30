@@ -1,4 +1,5 @@
 slicer_add_python_unittest(SCRIPT VolumeRenderingRenderPassTest.py)
+slicer_add_python_unittest(SCRIPT VolumeRenderingMultiComponentTest.py)
 
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
 
