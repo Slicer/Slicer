@@ -325,7 +325,6 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
   {
     // Full computation
     NodeKeyValueType* distanceVolumePtr = static_cast<NodeKeyValueType*>(m_DistanceVolume->GetScalarPointer());
-    LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
 
     // Normal Dijkstra (to be used in initializing the segmenter for the current image)
     while (!m_Heap->IsEmpty())
