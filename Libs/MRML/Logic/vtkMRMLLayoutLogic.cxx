@@ -1169,6 +1169,7 @@ void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
   this->UpdateViewNodes();
   // Create/Retrieve Layout node
   this->UpdateLayoutNode();
+  this->MergeLegacyLayoutNodes();
   // Restore the layout to its old state after importing a scene
   // TBD: check on GetIsUpdating() should be enough
   if (this->LayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutNone //
@@ -1179,6 +1180,34 @@ void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
   )
   {
     this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::MergeLegacyLayoutNodes()
+{
+  if (!this->GetMRMLScene() || !this->LayoutNode)
+  {
+    return;
+  }
+  std::vector<vtkMRMLNode*> layoutNodes;
+  this->GetMRMLScene()->GetNodesByClass("vtkMRMLLayoutNode", layoutNodes);
+  for (vtkMRMLNode* node : layoutNodes)
+  {
+    vtkMRMLLayoutNode* legacyLayoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
+    if (!legacyLayoutNode || legacyLayoutNode == this->LayoutNode)
+    {
+      continue;
+    }
+    if (legacyLayoutNode->GetSingletonTag() && strlen(legacyLayoutNode->GetSingletonTag()) > 0)
+    {
+      // not a legacy node (singleton nodes are merged by the scene)
+      continue;
+    }
+    // Settings that are not stored in the legacy file are reset to default.
+    // Layout descriptions registered by the logic are not overwritten.
+    this->LayoutNode->CopyContent(legacyLayoutNode);
+    this->GetMRMLScene()->RemoveNode(legacyLayoutNode);
   }
 }
 
