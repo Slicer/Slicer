@@ -3068,7 +3068,6 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::GetCompatibleColorNo
 //---------------------------------------------------------------------------
 vtkMRMLColorNode* vtkSlicerTerminologiesModuleLogic::GetFirstCompatibleColorNodeByName(std::string name)
 {
-  std::vector<std::string> compatibleColorNodeIDs;
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
   {
