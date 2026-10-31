@@ -254,6 +254,13 @@ slicer_add_python_unittest(
   SLICER_ARGS --disable-modules --ignore-slicerrc
   )
 
+# Blending of more than three layers in a slice view (N-layer API, see issue #8294).
+slicer_add_python_unittest(
+  SCRIPT SliceLogicNLayerTest.py
+  SLICER_ARGS --no-main-window --disable-modules --ignore-slicerrc
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 if(VTK_DEBUG_LEAKS AND Slicer_HAS_CONSOLE_IO_SUPPORT)
   set(testname MRMLCreateNodeByClassWithoutSetReferenceCount)
   slicer_add_python_test(
