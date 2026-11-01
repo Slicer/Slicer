@@ -495,6 +495,14 @@ void qSlicerCoreApplicationPrivate::init()
   }
 #endif
 
+#if defined(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT) || defined(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
+  // In testing mode the server is not contacted automatically: test results must not depend on
+  // network access, and a network request still in progress when the application exits can prevent
+  // a clean shutdown. Testing mode starts with empty settings, so the update checks would otherwise
+  // be due at every start.
+  const bool automaticServerContactAllowed = !q->testAttribute(qSlicerCoreApplication::AA_EnableTesting);
+#endif
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 
   qSlicerExtensionsManagerModel* model = new qSlicerExtensionsManagerModel(q);
@@ -541,7 +549,10 @@ void qSlicerCoreApplicationPrivate::init()
   model->setInteractive(false);
 
   // If auto-update is disabled then this will not contact the server
-  model->updateExtensionsMetadataFromServer();
+  if (automaticServerContactAllowed)
+  {
+    model->updateExtensionsMetadataFromServer();
+  }
 
   model->updateModel();
 
@@ -559,7 +570,7 @@ void qSlicerCoreApplicationPrivate::init()
     qDebug() << "Successfully uninstalled extension" << extensionName;
   }
 
-  if (model->autoUpdateCheck())
+  if (automaticServerContactAllowed && model->autoUpdateCheck())
   {
     // The latest metadata updates may not be available yet (because
     // model->updateExtensionsMetadataFromServer() has just been called)
@@ -584,7 +595,7 @@ void qSlicerCoreApplicationPrivate::init()
   qSlicerApplicationUpdateManager* applicationUpdateManager = new qSlicerApplicationUpdateManager(q);
   applicationUpdateManager->setSlicerRequirements(q->revision(), q->os(), q->arch());
   q->setapplicationUpdateManager(applicationUpdateManager);
-  if (applicationUpdateManager->autoUpdateCheck())
+  if (automaticServerContactAllowed && applicationUpdateManager->autoUpdateCheck())
   {
     applicationUpdateManager->checkForUpdate();
   }
