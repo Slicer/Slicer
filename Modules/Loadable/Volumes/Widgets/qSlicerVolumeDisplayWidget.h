@@ -11,6 +11,7 @@
 #include "qSlicerVolumesModuleWidgetsExport.h"
 
 class vtkMRMLNode;
+class qSlicerVectorVolumeDisplayWidget;
 class qSlicerVolumeDisplayWidgetPrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerVolumeDisplayWidget : public qMRMLWidget
@@ -23,6 +24,9 @@ public:
   typedef qMRMLWidget Superclass;
   explicit qSlicerVolumeDisplayWidget(QWidget* parent = nullptr);
   ~qSlicerVolumeDisplayWidget() override;
+
+  /// The widget that is shown for vector volumes
+  qSlicerVectorVolumeDisplayWidget* vectorVolumeDisplayWidget() const;
 
 public slots:
   /// Set the MRML node of interest

@@ -8,6 +8,7 @@ set(KIT_TEST_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest2.cxx
+  qSlicerVectorVolumeDisplayWidgetTest1.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -26,3 +27,4 @@ slicerMacroConfigureModuleCxxTestDriver(
 simple_test(qSlicerDiffusionTensorVolumeDisplayWidgetTest1)
 simple_test(qSlicerDTISliceDisplayWidgetTest1)
 simple_test(qSlicerDTISliceDisplayWidgetTest2 DATA{${INPUT}/helix-DTI.nhdr})
+simple_test(qSlicerVectorVolumeDisplayWidgetTest1)

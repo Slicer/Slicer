@@ -6,12 +6,14 @@
 #include "qSlicerDiffusionWeightedVolumeDisplayWidget.h"
 #include "qSlicerLabelMapVolumeDisplayWidget.h"
 #include "qSlicerScalarVolumeDisplayWidget.h"
+#include "qSlicerVectorVolumeDisplayWidget.h"
 #include "qSlicerVolumeDisplayWidget.h"
 
 // MRML includes
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumeDisplayWidgetPrivate
@@ -37,6 +39,7 @@ public:
   qSlicerLabelMapVolumeDisplayWidget* LabelMapVolumeDisplayWidget{ nullptr };
   qSlicerDiffusionWeightedVolumeDisplayWidget* DWVolumeDisplayWidget{ nullptr };
   qSlicerDiffusionTensorVolumeDisplayWidget* DTVolumeDisplayWidget{ nullptr };
+  qSlicerVectorVolumeDisplayWidget* VectorVolumeDisplayWidget{ nullptr };
 };
 
 // --------------------------------------------------------------------------
@@ -69,6 +72,10 @@ void qSlicerVolumeDisplayWidgetPrivate::init()
   this->DTVolumeDisplayWidget = new qSlicerDiffusionTensorVolumeDisplayWidget(q);
   this->DTVolumeDisplayWidget->hide();
   layout->addWidget(this->DTVolumeDisplayWidget);
+
+  this->VectorVolumeDisplayWidget = new qSlicerVectorVolumeDisplayWidget(q);
+  this->VectorVolumeDisplayWidget->hide();
+  layout->addWidget(this->VectorVolumeDisplayWidget);
 }
 
 // --------------------------------------------------------------------------
@@ -101,6 +108,10 @@ qSlicerWidget* qSlicerVolumeDisplayWidgetPrivate::widgetForVolume(vtkMRMLNode* v
   else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volumeNode))
   {
     return this->DWVolumeDisplayWidget;
+  }
+  else if (vtkMRMLVectorVolumeNode::SafeDownCast(volumeNode))
+  {
+    return this->VectorVolumeDisplayWidget;
   }
   else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(volumeNode))
   {
@@ -147,6 +158,10 @@ void qSlicerVolumeDisplayWidgetPrivate::setVolumeInWidget(qSlicerWidget* display
   {
     this->DTVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
   }
+  if (displayWidget == this->VectorVolumeDisplayWidget)
+  {
+    this->VectorVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+  }
   if (!scene && displayWidget->mrmlScene() != scene)
   {
     // remove scene after the node has been removed
@@ -174,6 +189,10 @@ vtkMRMLVolumeNode* qSlicerVolumeDisplayWidgetPrivate::volumeInWidget(qSlicerWidg
   {
     return this->DTVolumeDisplayWidget->volumeNode();
   }
+  if (displayWidget == this->VectorVolumeDisplayWidget)
+  {
+    return this->VectorVolumeDisplayWidget->volumeNode();
+  }
   return nullptr;
 }
 
@@ -190,6 +209,13 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget() = default;
+
+// --------------------------------------------------------------------------
+qSlicerVectorVolumeDisplayWidget* qSlicerVolumeDisplayWidget::vectorVolumeDisplayWidget() const
+{
+  Q_D(const qSlicerVolumeDisplayWidget);
+  return d->VectorVolumeDisplayWidget;
+}
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* aVolumeNode)
