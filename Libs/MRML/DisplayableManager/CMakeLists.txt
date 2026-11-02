@@ -76,11 +76,13 @@ set(DisplayableManager_SRCS
   vtkMRMLViewDisplayableManager.cxx
   vtkMRMLThreeDReformatDisplayableManager.cxx
   vtkMRMLThreeDSliceEdgeDisplayableManager.cxx
+  vtkMRMLVectorFieldDisplayableManager.cxx
 
   # DisplayableManager associated with SliceView
   vtkMRMLCrosshairDisplayableManager.cxx
   vtkMRMLCrosshairDisplayableManager3D.cxx
   vtkMRMLModelSliceDisplayableManager.cxx
+  vtkMRMLVectorFieldSliceDisplayableManager.cxx
   vtkMRMLVolumeGlyphSliceDisplayableManager.cxx
 
   # DisplayableManager common between ThreeDView and SliceView

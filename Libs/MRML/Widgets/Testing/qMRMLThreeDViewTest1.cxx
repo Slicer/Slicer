@@ -52,6 +52,7 @@ int qMRMLThreeDViewTest1(int argc, char* argv[])
                                                                    << "vtkMRMLViewDisplayableManager"
                                                                    << "vtkMRMLModelDisplayableManager"
                                                                    << "vtkMRMLThreeDReformatDisplayableManager"
+                                                                   << "vtkMRMLVectorFieldDisplayableManager"
                                                                    << "vtkMRMLOrientationMarkerDisplayableManager"
                                                                    << "vtkMRMLRulerDisplayableManager"
                                                                    << "vtkMRMLThreeDSliceEdgeDisplayableManager";

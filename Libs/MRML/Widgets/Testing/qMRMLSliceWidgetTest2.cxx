@@ -137,6 +137,7 @@ int qMRMLSliceWidgetTest2(int argc, char* argv[])
   // test the list of displayable managers
   QStringList expectedDisplayableManagerClassNames = QStringList() << "vtkMRMLVolumeGlyphSliceDisplayableManager"
                                                                    << "vtkMRMLModelSliceDisplayableManager"
+                                                                   << "vtkMRMLVectorFieldSliceDisplayableManager"
                                                                    << "vtkMRMLCrosshairDisplayableManager"
                                                                    << "vtkMRMLOrientationMarkerDisplayableManager"
                                                                    << "vtkMRMLRulerDisplayableManager"
