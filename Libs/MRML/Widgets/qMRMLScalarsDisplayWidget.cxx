@@ -35,6 +35,9 @@
 // VTK includes
 #include <vtkPointSet.h>
 
+// STD includes
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 class qMRMLScalarsDisplayWidgetPrivate : public Ui_qMRMLScalarsDisplayWidget
 {
@@ -75,6 +78,7 @@ void qMRMLScalarsDisplayWidgetPrivate::init()
   // Scalar
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setScalarsVisibility(bool)));
   QObject::connect(this->ActiveScalarComboBox, SIGNAL(activated(int)), q, SLOT(onCurrentArrayActivated()));
+  QObject::connect(this->ActiveScalarComponentSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setActiveScalarComponent(int)));
   QObject::connect(this->ScalarsColorNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
   // scalar range
   QObject::connect(this->DisplayedScalarRangeModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setScalarRangeMode(int)));
@@ -267,6 +271,28 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
     }
     displayNode->EndModify(wasModified);
   }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidget::setActiveScalarComponent(int component)
+{
+  Q_D(qMRMLScalarsDisplayWidget);
+  // Iterate through a copy of d->CurrentDisplayNodes, as the list may change due to callbacks
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> displayNodes = d->CurrentDisplayNodes;
+  for (vtkMRMLDisplayNode* const displayNode : displayNodes)
+  {
+    if (displayNode)
+    {
+      displayNode->SetActiveScalarComponent(component);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+int qMRMLScalarsDisplayWidget::activeScalarComponent() const
+{
+  Q_D(const qMRMLScalarsDisplayWidget);
+  return d->ActiveScalarComponentSpinBox->value();
 }
 
 //------------------------------------------------------------------------------
@@ -595,6 +621,17 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
     }
   }
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
+
+  // The component of a multi-component array that is shown; a single-component array has
+  // nothing to choose
+  int numberOfComponents = (firstDisplayNode ? firstDisplayNode->GetActiveScalarNumberOfComponents() : 1);
+  wasBlocking = d->ActiveScalarComponentSpinBox->blockSignals(true);
+  d->ActiveScalarComponentSpinBox->setVisible(numberOfComponents > 1);
+  d->ActiveScalarComponentSpinBox->setMaximum(std::max(0, numberOfComponents - 1));
+  int component = (firstDisplayNode ? firstDisplayNode->GetActiveScalarComponent() : -1);
+  // A component that the array does not have shows the magnitude, which is what is drawn
+  d->ActiveScalarComponentSpinBox->setValue(component < numberOfComponents ? component : -1);
+  d->ActiveScalarComponentSpinBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ScalarsColorNodeComboBox->blockSignals(true);
   if (d->ScalarsColorNodeComboBox->mrmlScene() != this->mrmlScene())

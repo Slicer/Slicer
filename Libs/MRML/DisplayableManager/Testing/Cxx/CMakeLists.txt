@@ -6,6 +6,7 @@ set(KIT_TEST_SRCS
   vtkMRMLCameraWidgetTest1.cxx
   vtkMRMLModelClipDisplayableManagerTest.cxx
   vtkMRMLModelDisplayableManagerTest.cxx
+  vtkMRMLModelScalarComponentDisplayableManagerTest1.cxx
   vtkMRMLModelSliceDisplayableManagerTest.cxx
   vtkMRMLThreeDReformatDisplayableManagerTest1.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx

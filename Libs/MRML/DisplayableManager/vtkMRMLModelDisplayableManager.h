@@ -33,6 +33,7 @@ class vtkPlane;
 class vtkPointPicker;
 class vtkProp3D;
 class vtkPropPicker;
+class vtkScalarsToColors;
 class vtkTransform;
 class vtkWorldPointPicker;
 
@@ -110,6 +111,10 @@ public:
   ///   or active cell scalar name in the model node is vtkDataSetAttributes::SCALARS.
   ///   False otherwise.
   static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = nullptr);
+
+  /// Make a lookup table map a multi-component array by one of its components, or by its
+  /// magnitude if component is -1 (see vtkMRMLDisplayNode::GetEffectiveActiveScalarComponent()).
+  static void SetLookupTableComponent(vtkScalarsToColors* lookupTable, int component);
 
 protected:
   int ActiveInteractionModes() override;

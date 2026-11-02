@@ -53,6 +53,9 @@ public:
 
   bool scalarsVisibility() const;
   QString activeScalarName() const;
+  /// Component of a multi-component active scalar array that is shown, -1 for the magnitude.
+  /// \sa vtkMRMLDisplayNode::SetActiveScalarComponent()
+  int activeScalarComponent() const;
   vtkMRMLColorNode* scalarsColorNode() const;
 
   /// Set scalar range mode
@@ -84,6 +87,7 @@ public slots:
 
   void setScalarsVisibility(bool);
   void setActiveScalarName(const QString&);
+  void setActiveScalarComponent(int component);
   void setScalarsColorNode(vtkMRMLNode*);
   void setScalarsColorNode(vtkMRMLColorNode*);
   void setScalarsDisplayRange(double min, double max);

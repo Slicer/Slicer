@@ -299,6 +299,9 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
   {
+    // The array, and so the number of its components, may have changed since the threshold
+    // was set up
+    this->UpdateThresholdComponent();
     if (isPolyDataMesh)
     {
       // Threshold filter generates unstructured grid output. If input is a polydata mesh
@@ -366,7 +369,9 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
     vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
-      dataArray->GetRange(dataRange);
+      // Multi-component arrays are thresholded by the same value they are coloured by: the
+      // chosen component or the magnitude (which VTK spells as component -1)
+      dataArray->GetRange(dataRange, this->GetEffectiveActiveScalarComponent(dataArray));
     }
     if (dataRange[0] <= dataRange[1])
     {
@@ -468,8 +473,19 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
   {
     this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, vtkDataSetAttributes::SCALARS);
   }
+  this->UpdateThresholdComponent();
 
   this->UpdateScalarRange();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdateThresholdComponent()
+{
+  vtkDataArray* dataArray = this->GetActiveScalarArray();
+  int component = this->GetEffectiveActiveScalarComponent(dataArray);
+  this->ThresholdFilter->SetComponentModeToUseSelected();
+  // vtkThreshold uses the magnitude when the selected component is the number of components
+  this->ThresholdFilter->SetSelectedComponent(component >= 0 ? component : (dataArray ? dataArray->GetNumberOfComponents() : 0));
 }
 
 //-----------------------------------------------------------

@@ -55,6 +55,7 @@
 #include <vtkImplicitFunction.h>
 #include <vtkImplicitFunctionCollection.h>
 #include <vtkLookupTable.h>
+#include <vtkScalarsToColors.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -1497,6 +1498,17 @@ void vtkMRMLModelDisplayableManager::UpdateMapperProperties(vtkMRMLModelNode* mo
       vtkSmartPointer<vtkLookupTable> dNodeLUT =
         vtkSmartPointer<vtkLookupTable>::Take(displayNode->GetColorNode() ? displayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
       mapper->SetLookupTable(dNodeLUT);
+
+      // Multi-component arrays are colored by magnitude or the chosen component. Set on the mapper's table, not dNodeLUT:
+      // without a color node dNodeLUT is null and the mapper uses its own table.
+      vtkDataArray* activeScalarArray = displayNode->GetActiveScalarArray();
+      // A mapper only uses the vector mode of its table if its own array component is negative
+      mapper->SetArrayComponent(activeScalarArray ? displayNode->GetEffectiveActiveScalarComponent(activeScalarArray) : 0);
+      vtkScalarsToColors* mapperLookupTable = mapper->GetLookupTable();
+      if (mapperLookupTable && activeScalarArray && activeScalarArray->GetNumberOfComponents() > 1)
+      {
+        vtkMRMLModelDisplayableManager::SetLookupTableComponent(mapperLookupTable, displayNode->GetEffectiveActiveScalarComponent(activeScalarArray));
+      }
     }
 
     // Set scalar range
@@ -1726,6 +1738,22 @@ const char* vtkMRMLModelDisplayableManager::GetActiveScalarName(vtkMRMLDisplayNo
     }
   }
   return nullptr;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetLookupTableComponent(vtkScalarsToColors* lookupTable, int component)
+{
+  if (!lookupTable)
+  {
+    return;
+  }
+  if (component < 0)
+  {
+    lookupTable->SetVectorModeToMagnitude();
+    return;
+  }
+  lookupTable->SetVectorModeToComponent();
+  lookupTable->SetVectorComponent(component);
 }
 
 //---------------------------------------------------------------------------
