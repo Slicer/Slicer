@@ -25,7 +25,10 @@ Version:   $Revision: 1.14 $
 vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLVectorVolumeNode::vtkMRMLVectorVolumeNode() = default;
+vtkMRMLVectorVolumeNode::vtkMRMLVectorVolumeNode()
+{
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVectorVolumeNode", "Vector Volume");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode() = default;
@@ -33,8 +36,6 @@ vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeNode::WriteXML(ostream& of, int nIndent)
 {
-  this->TypeDisplayName = vtkMRMLTr("vtkMRMLVectorVolumeNode", "Vector Volume");
-
   Superclass::WriteXML(of, nIndent);
 }
 
